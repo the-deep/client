@@ -108,7 +108,7 @@ export default class HelpLink extends React.PureComponent {
                         className={styles.icon}
                         name="helpOutlined"
                     />
-                    <div className={styles.content} >
+                    <div>
                         <div
                             className={styles.text}
                             title={meta.title}
@@ -133,7 +133,6 @@ export default class HelpLink extends React.PureComponent {
                             title={_ts('components.navbar', 'addOrEditHelpLinkTitle')}
                         >
                             <Icon
-                                className={styles.addOrEditIconClassName}
                                 name={currentPageMeta ? 'edit' : 'add'}
                             />
                         </a>

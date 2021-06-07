@@ -306,6 +306,7 @@ export default class ProjectDetails extends React.PureComponent {
                         dragHandleModifier={this.renderDragHandle}
                         itemClassName={_cs(
                             styles.cardContainer,
+                            // eslint-disable-next-line css-modules/no-undef-class
                             disableHover && styles.disableHover,
                         )}
                         onSortStart={this.handleSortStart}

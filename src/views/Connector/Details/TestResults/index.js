@@ -272,7 +272,6 @@ export default class ConnectorTestResults extends React.PureComponent {
                 onClose={closeModal}
             >
                 <ModalHeader
-                    className={styles.header}
                     title={_ts('connector', 'testResultsHeading', { title })}
                     rightComponent={
                         <Button

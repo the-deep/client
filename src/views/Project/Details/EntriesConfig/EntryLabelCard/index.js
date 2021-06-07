@@ -60,6 +60,7 @@ export default class EntryLabelCard extends React.PureComponent {
                     className,
                     styles.labelCard,
                     readOnly && styles.readOnly,
+                    // eslint-disable-next-line css-modules/no-undef-class
                     disableHover && styles.disableHover,
                 )}
             >

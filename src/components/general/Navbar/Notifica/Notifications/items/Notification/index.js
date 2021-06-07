@@ -82,7 +82,6 @@ function Notification(props) {
                 { !icon &&
                     <Icon
                         name="defaultIcon"
-                        className={styles.defaultIcon}
                     />
                 }
             </div>

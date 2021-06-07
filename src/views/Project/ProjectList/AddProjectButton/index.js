@@ -53,7 +53,6 @@ export default class AddProjectButton extends React.PureComponent {
 
         const className = `
             ${classNameFromProps}
-            ${styles.addProjectButton}
         `;
 
         return (

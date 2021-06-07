@@ -13,10 +13,15 @@ import styles from './styles.scss';
 const propTypes = {
     errorText: PropTypes.string.isRequired,
     reportButtonText: PropTypes.string.isRequired,
+    className: PropTypes.string,
+};
+const defaultProps = {
+    className: undefined,
 };
 
 export default class ErrorMessage extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     static handleException = handleException;
     static shouldHideReport = ({ isDevMode }) => isDevMode;

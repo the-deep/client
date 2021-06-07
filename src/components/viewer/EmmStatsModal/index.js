@@ -68,7 +68,6 @@ export default class EmmStatsModal extends React.PureComponent {
             >
                 <ModalHeader
                     title={_ts('emmStatsModal', 'emmStatsModalTitle')}
-                    headingClassName={styles.heading}
                     rightComponent={
                         <Button
                             onClick={closeModal}
@@ -81,7 +80,7 @@ export default class EmmStatsModal extends React.PureComponent {
                     {showTriggers && (
                         <div className={styles.content}>
                             <header className={styles.header}>
-                                <h4 className={styles.heading}>
+                                <h4>
                                     {_ts('emmStatsModal', 'emmTriggersTitle')}
                                 </h4>
                             </header>
@@ -98,7 +97,7 @@ export default class EmmStatsModal extends React.PureComponent {
                     {showEntities && (
                         <div className={styles.content}>
                             <header className={styles.header}>
-                                <h4 className={styles.heading}>
+                                <h4>
                                     {_ts('emmStatsModal', 'emmEntitiesTitle')}
                                 </h4>
                             </header>

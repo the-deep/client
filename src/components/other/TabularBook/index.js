@@ -229,6 +229,11 @@ const propTypes = {
     setSelectedTab: PropTypes.func.isRequired,
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    onTabularBookCreate: PropTypes.func,
+    fileId: PropTypes.number,
+    fileType: PropTypes.string,
+    projectId: PropTypes.number,
 };
 
 const defaultProps = {
@@ -239,6 +244,10 @@ const defaultProps = {
     leadTitle: '',
     highlightList: [],
     selectedTab: undefined,
+    fileId: undefined,
+    fileType: undefined,
+    projectId: undefined,
+    onTabularBookCreate: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -791,7 +800,6 @@ export default class TabularBook extends React.PureComponent {
                     hide={this.shouldHideEditButton}
                     render={
                         <WarningModalButton
-                            className={styles.editButton}
                             iconName="edit"
                             transparent
                             title={_ts('tabular', 'sheetEditButtonTooltip')} // Edit

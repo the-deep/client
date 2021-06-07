@@ -137,34 +137,4 @@
 .legend {
     display: table;
     margin: auto;
-
-    .legend-element {
-        display: table-row;
-
-        .color-container {
-            display: table-cell;
-            padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
-
-            .color {
-                border-radius: .5em;
-                width: 1em;
-                height: 1em;
-            }
-        }
-
-        .value {
-            display: table-cell;
-            padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
-            min-width: 108px;
-        }
-
-        .percent {
-            display: table-cell;
-            font-weight: var(--dui-font-weight-bold);
-        }
-    }
-}
-
-.legend {
-    margin: auto;
 }

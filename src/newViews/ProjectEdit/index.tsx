@@ -112,14 +112,12 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                         <Tab
                             name="general"
                             className={styles.tab}
-                            activeClassName={styles.activeTab}
                         >
                             {_ts('projectEdit', 'projectDetailsLabel')}
                         </Tab>
                         <Tab
                             name="users"
                             className={styles.tab}
-                            activeClassName={styles.activeTab}
                             disabled={isNotDefined(projectId)}
                         >
                             {_ts('projectEdit', 'usersLabel')}
@@ -127,7 +125,6 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                         <Tab
                             name="framework"
                             className={styles.tab}
-                            activeClassName={styles.activeTab}
                             disabled={isNotDefined(projectId)}
                         >
                             {_ts('projectEdit', 'frameworkLabel')}

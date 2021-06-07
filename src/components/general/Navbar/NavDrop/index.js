@@ -113,7 +113,10 @@ const propTypes = {
     activeProjectId: PropTypes.number,
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
+        displayName: PropTypes.string,
+        displayPictureUrl: PropTypes.string,
     }),
+    onLogout: PropTypes.func.isRequired,
     userInformation: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     links: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     adminPanelLink: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

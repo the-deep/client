@@ -23,6 +23,7 @@ const propTypes = {
     sectorId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     affectedGroups: PropTypes.arrayOf(PropTypes.object).isRequired,
     specificNeedGroups: PropTypes.arrayOf(PropTypes.object).isRequired,
+    underlyingFactors: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const defaultProps = {
@@ -167,16 +168,6 @@ export default class Sector extends React.PureComponent {
                     rowSubFieldTitles={Sector.rowSubFieldTitles}
                     classNames={{
                         wrapper: className,
-                        table: styles.table,
-                        head: styles.head,
-                        body: styles.body,
-                        row: styles.row,
-                        header: styles.header,
-                        cell: styles.cell,
-                        sectionTitle: styles.sectionTitle,
-                        sectionTitleCell: styles.sectionTitleCell,
-                        sectionNonFieldErrors: styles.sectionNonFieldErrors,
-                        sectionTitleWrapper: styles.sectionTitleWrapper,
                     }}
                     inputModifier={this.renderInput}
                 />

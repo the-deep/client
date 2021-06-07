@@ -38,6 +38,12 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     widgets: PropTypes.array,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    statsConfig: PropTypes.object.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    setAfViewStatsConfig: PropTypes.func.isRequired,
 };
 const defaultProps = {
     className: '',

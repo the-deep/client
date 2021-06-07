@@ -8,17 +8,21 @@ declare module '@togglecorp/faram' {
                 [key: string]: unknown[] | ArraySchema | ObjectSchema | ObjectSchemaWithIdentifier;
             };
         };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         validation?: (value: any) => string[];
     }
     interface ObjectSchema {
         fields: {
             [key: string]: unknown[] | ArraySchema | ObjectSchema | ObjectSchemaWithIdentifier;
         };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         validation?: (value: any) => string[];
     }
     export interface ArraySchema {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         validation?: (value: any) => string[];
         member: ObjectSchema | ObjectSchemaWithIdentifier;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         keySelector: (value: any) => string | number;
     }
     export type Schema = ObjectSchema | ObjectSchemaWithIdentifier;
@@ -27,6 +31,7 @@ declare module '@togglecorp/faram' {
         fields: {
             [key: string]: ArrayComputeSchema
             | ObjectComputeSchema
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             | ((attr: any, w: any, d: any, v?: any) => any);
         };
     }
@@ -49,10 +54,15 @@ declare module '@togglecorp/faram' {
         className?: string;
         schema: Schema;
         computeSchema?: ComputeSchema;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         value: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         error: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange: (faramValues: any, faramErrors: any) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onValidationSuccess?: (faramValues: any, faramValues: any) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onValidationFailure?: (faramErrors: any) => void;
         disabled?: boolean;
     }
@@ -61,9 +71,12 @@ declare module '@togglecorp/faram' {
     }
 
     export function detachedFaram(args: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         value: any;
         schema: Schema;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onValidationSuccess?: (faramValues: any, faramValues: any) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onValidationFailure?: (faramErrors: any) => void;
     }): void;
 
@@ -85,32 +98,51 @@ declare module '@togglecorp/faram' {
         mesage?: string;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const exclusiveInBetweenCondition: (min: number, max: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const inclusiveInBetweenCondition: (min: number, max: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const lessThanCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const greaterThanCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const lessThanOrEqualToCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const greaterThanOrEqualToCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const lengthLessThanCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const lengthGreaterThanCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const lengthEqualToCondition: (n: number) => (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const requiredCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const numberCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const integerCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const emailCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const urlCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const lenientUrlCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const dateCondition: (value: any) => ValidOp;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const timeCondition: (value: any) => ValidOp;
 
     function FaramInputElement<T>(component: React.ComponentType<T>):
         React.ComponentType<
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (Omit<T, 'value' | 'onChange'> & { faramElementName: string; faramInfo?: any })
             | (T & { faramElementName?: undefined })
         >;
 
     function FaramActionElement<T>(component: React.ComponentType<T>):
         React.ComponentType<
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (Omit<T, 'disabled' | 'changeDelay' | 'onClick'> & { faramElementName: string; faramAction: any })
             | (T & { faramElementName?: undefined })
         >;

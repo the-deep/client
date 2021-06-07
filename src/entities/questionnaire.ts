@@ -428,6 +428,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
     }
 
     interface SettingsColumn {
+        // eslint-disable-next-line camelcase
         form_title?: number;
     }
 

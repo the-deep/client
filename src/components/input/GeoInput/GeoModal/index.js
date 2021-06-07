@@ -367,7 +367,6 @@ function GeoModal(props) {
         <Modal
             className={_cs(
                 styles.geoModal,
-                modalLeftComponent && styles.hasLeft,
             )}
         >
             <ModalHeader title={title} />
@@ -421,7 +420,6 @@ function GeoModal(props) {
                     <RegionMap
                         className={_cs(
                             styles.map,
-                            modalLeftComponent && styles.hasLeft,
                         )}
                         editMode={editMode}
 

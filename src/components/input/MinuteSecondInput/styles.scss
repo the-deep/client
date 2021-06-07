@@ -34,10 +34,6 @@
     }
 
     &:focus-within {
-        .date-input {
-            border-bottom-color: var(--color-accent);
-        }
-
         .label {
             color: var(--color-accent);
         }

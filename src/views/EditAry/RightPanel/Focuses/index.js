@@ -79,10 +79,9 @@ export default class Focuses extends React.PureComponent {
             <div className={styles.focuses}>
                 {pending && <LoadingAnimation />}
                 <FaramGroup faramElementName="methodology">
-                    <div className={_cs(styles.sectionItem, styles.middleSectionItem)}>
+                    <div className={_cs(styles.sectionItem)}>
                         <Header
                             title={focusesTitle}
-                            headingClassName={styles.heading}
                             className={styles.header}
                         />
                         <ChecklistInput
@@ -94,9 +93,8 @@ export default class Focuses extends React.PureComponent {
                             labelSelector={titleSelector}
                         />
                     </div>
-                    <div className={_cs(styles.sectionItem, styles.middleSectionItem)}>
+                    <div className={_cs(styles.sectionItem)}>
                         <Header
-                            headingClassName={styles.heading}
                             title={sectorsTitle}
                             className={styles.header}
                         />
@@ -109,10 +107,9 @@ export default class Focuses extends React.PureComponent {
                             labelSelector={titleSelector}
                         />
                     </div>
-                    <div className={_cs(styles.sectionItem, styles.affectedGroups)}>
+                    <div className={_cs(styles.sectionItem)}>
                         <Header
                             className={styles.header}
-                            headingClassName={styles.heading}
                             title={affectedGroupsTitle}
                         />
                         <OrganigramInput
@@ -125,10 +122,9 @@ export default class Focuses extends React.PureComponent {
                             showLabel={false}
                         />
                     </div>
-                    <div className={_cs(styles.sectionItem, styles.locationSelection)}>
+                    <div className={_cs(styles.sectionItem)}>
                         <Header
                             className={styles.header}
-                            headingClassName={styles.heading}
                             title={locationsTitle}
                         />
                         <GeoInput

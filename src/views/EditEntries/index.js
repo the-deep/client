@@ -115,6 +115,8 @@ const propTypes = {
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types, react/forbid-prop-types
+    labels: PropTypes.array,
 
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
     setAnalysisFramework: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
@@ -151,6 +153,7 @@ const defaultProps = {
     entryGroupStatuses: {},
     schema: {},
     computeSchema: {},
+    labels: undefined,
 };
 
 const mapStateToProps = state => ({

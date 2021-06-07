@@ -11,7 +11,6 @@ import _cs from '#cs';
 import _ts from '#ts';
 
 import Region from './Region';
-import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -125,9 +124,8 @@ export default class GeoViz extends React.PureComponent {
         const frequency = this.getGeoFrequency(data);
 
         return (
-            <div className={_cs(styles.geoViz, className, 'geo-viz')}>
+            <div className={_cs(className, 'geo-viz')}>
                 <SelectInput
-                    className={styles.regionSelectInput}
                     options={regions}
                     keySelector={GeoViz.entityKeySelector}
                     labelSelector={GeoViz.entityLabelSelector}
@@ -138,14 +136,12 @@ export default class GeoViz extends React.PureComponent {
                     hideClearButton
                 />
                 <Button
-                    className={styles.refreshButton}
                     onClick={this.handleRefresh}
                     iconName="refresh"
                 />
                 {regionId && (
                     <Region
                         key={uniqueKey}
-                        className={styles.map}
                         regionId={regionId}
                         adminLevelId={adminLevelId}
                         adminLevels={adminLevels}
@@ -156,7 +152,7 @@ export default class GeoViz extends React.PureComponent {
                     />
                 )}
                 {!regionId && (
-                    <Message className={styles.map}>
+                    <Message>
                         {_ts('geoViz', 'noRegionSelectedMessage')}
                     </Message>
                 )}

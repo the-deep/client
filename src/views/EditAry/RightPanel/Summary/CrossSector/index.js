@@ -179,16 +179,6 @@ export default class CrossSector extends React.PureComponent {
                     rowSubFieldTitles={CrossSector.rowSubFieldTitles}
                     classNames={{
                         wrapper: className,
-                        table: styles.table,
-                        head: styles.head,
-                        body: styles.body,
-                        row: styles.row,
-                        header: styles.header,
-                        cell: styles.cell,
-                        sectionTitle: styles.sectionTitle,
-                        sectionTitleCell: styles.sectionTitleCell,
-                        sectionNonFieldErrors: styles.sectionNonFieldErrors,
-                        sectionTitleWrapper: styles.sectionTitleWrapper,
                     }}
                     inputModifier={this.renderInput}
                 />

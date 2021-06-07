@@ -395,6 +395,7 @@ function WidgetFaram(props) {
         const entryKey = entryAccessor.key(entry);
         const isExcerptWidget = widgetId === 'excerptWidget';
 
+        // FIXME: move this outside
         const Header = ({
             hasError: hasErrorForHeader,
             error: errorForHeader,
@@ -438,6 +439,10 @@ function WidgetFaram(props) {
                 )}
             </div>
         );
+        Header.propTypes = {
+            hasError: PropTypes.bool,
+            error: PropTypes.string,
+        };
 
         return (
             <FaramGroup faramElementName={String(id)}>
@@ -522,7 +527,6 @@ function WidgetFaram(props) {
 
         return (
             <WidgetContentWrapper
-                className={styles.content}
                 blockDrop={!isDroppable}
             >
                 <FaramGroup faramElementName={String(id)}>

@@ -27,11 +27,13 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setWordCategoryList: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     wordCategoryList: [],
     readOnly: false,
+    className: undefined,
 };
 
 const mapStateToProps = (state, props) => ({

@@ -9,6 +9,8 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    data: PropTypes.object.isRequired,
 };
 
 const defaultProps = {

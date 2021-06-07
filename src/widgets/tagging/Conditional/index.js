@@ -5,6 +5,7 @@ import Conditional from '#widgetComponents/Conditional';
 
 const propTypes = {
     widget: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         properties: PropTypes.object,
     }).isRequired,
     widgetType: PropTypes.string.isRequired,

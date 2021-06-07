@@ -15,7 +15,6 @@ import {
 } from '#redux';
 
 import Questionnaire from '../Questionnaire';
-import styles from './styles.scss';
 
 const propTypes = {
     pending: PropTypes.bool,
@@ -62,7 +61,7 @@ export default class CNAPage extends React.PureComponent {
         const questionnaires = this.getQuestionnaireList(questionnaireList);
 
         return (
-            <div className={_cs(className, styles.cna)}>
+            <div className={_cs(className)}>
                 {pending && <LoadingAnimation />}
                 <Questionnaire
                     data={questionnaires}

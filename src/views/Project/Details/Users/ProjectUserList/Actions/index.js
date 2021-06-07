@@ -93,6 +93,7 @@ const propTypes = {
         memberName: PropTypes.string,
         memberEmail: PropTypes.string,
         linkedGroup: PropTypes.number,
+        // eslint-disable-next-line react/forbid-prop-types
         userGroupOptions: PropTypes.array,
     }).isRequired,
     projectRoleList: PropTypes.arrayOf(

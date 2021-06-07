@@ -30,7 +30,6 @@ export default class FourHundredThree extends React.PureComponent {
                         </p>
                         <BackLink
                             defaultLink={pathNames.landingPage}
-                            className={styles.landingPageLink}
                         >
                             {_ts('fourHundredThree', 'backToDeep')}
                         </BackLink>

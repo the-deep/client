@@ -220,14 +220,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 headerIcons={(
                     <>
                         <QuickActionButton
-                            className={styles.button}
                             name={undefined}
                             disabled
                         >
                             <IoCheckmarkCircleSharp />
                         </QuickActionButton>
                         <QuickActionButton
-                            className={styles.button}
                             name={undefined}
                             disabled
                         >
@@ -238,7 +236,6 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 // actionsContainerClassName={styles.actionsContainer}
                 headerActions={(
                     <QuickActionButton
-                        className={styles.button}
                         name={index}
                         onClick={onRemove}
                         // FIXME: use translation

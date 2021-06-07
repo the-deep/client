@@ -22,10 +22,6 @@
             padding: 0 var(--spacing-small);
             overflow-y: auto;
 
-            .list-selection {
-                overflow-y: auto;
-            }
-
             :global .list-view {
                 display: flex;
                 flex-direction: column;

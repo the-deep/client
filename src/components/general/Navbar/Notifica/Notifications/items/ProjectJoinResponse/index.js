@@ -13,8 +13,6 @@ import _ts from '#ts';
 import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';
 import LinkItem from '../LinkItem';
 
-import styles from './styles.scss';
-
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     notification: PropTypes.object,
@@ -112,7 +110,7 @@ function ProjectJoinResponseItem(props) {
 
     return (
         <Notification
-            className={_cs(className, styles.projectJoinResponseNotification)}
+            className={_cs(className)}
             notificationId={notificationId}
             seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}

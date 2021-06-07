@@ -43,6 +43,7 @@ const FileTypeViewer = ({ lead }) => {
 
 FileTypeViewer.propTypes = {
     lead: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         attachment: PropTypes.object,
         url: PropTypes.string,
         tabularBook: PropTypes.number,

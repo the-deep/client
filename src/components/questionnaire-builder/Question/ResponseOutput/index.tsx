@@ -111,16 +111,12 @@ function ResponseOutput(props: Props) {
     return (
         <ListView
             data={options}
-            className={_cs(styles.responseOutput, className)}
+            className={_cs(className)}
             keySelector={responseOptionKeySelector}
             renderer={ResponseOption}
             rendererParams={getResponseOptionRendererParams}
         />
     );
 }
-
-ResponseOutput.defaultProps = {
-    value: [],
-};
 
 export default ResponseOutput;

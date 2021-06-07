@@ -69,6 +69,12 @@ const propTypes = {
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+
+    analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    computeSchema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    onEntryStateChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {

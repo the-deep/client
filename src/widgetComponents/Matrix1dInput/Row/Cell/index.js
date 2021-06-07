@@ -134,7 +134,7 @@ export default class Matrix1dCell extends React.PureComponent {
                     backgroundColor: color,
                 }}
             >
-                <div className={_cs(styles.buttonContent, contentClassName)}>
+                <div className={_cs(contentClassName)}>
                     { content }
                 </div>
             </button>

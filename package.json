@@ -15,7 +15,7 @@
         "build": "webpack --mode production --config config/webpack.prod.js --env.NODE_ENV=production",
         "typecheck": "tsc --incremental",
         "test": "TZ=Asia/Katmandu jest",
-        "lint": "eslint ./src --rule 'import/no-unresolved: 0' --cache",
+        "lint": "eslint ./src --config .eslintrc-check.js --cache",
         "test:watch": "jest --watch",
         "test:coverage": "TZ=Asia/Katmandu jest --coverage",
         "vendor:clone": "./scripts/vendor-clone.sh"

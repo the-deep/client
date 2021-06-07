@@ -52,6 +52,8 @@ const propTypes = {
     authenticated: PropTypes.bool.isRequired,
     lastNotify: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     notifyHide: PropTypes.func.isRequired,
+    currentThemeId: PropTypes.string.isRequired,
+    location: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({

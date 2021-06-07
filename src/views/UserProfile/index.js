@@ -197,7 +197,7 @@ export default class UserProfile extends React.PureComponent {
                                                     <div className={styles.first}>
                                                         { userInformation.firstName }
                                                     </div>
-                                                    <div className={styles.last}>
+                                                    <div>
                                                         { userInformation.lastName }
                                                     </div>
                                                 </div>

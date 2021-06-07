@@ -78,9 +78,13 @@ const getFieldStat = (value) => {
 const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         fields: PropTypes.array,
+        // eslint-disable-next-line react/forbid-prop-types
         rows: PropTypes.array,
+        // eslint-disable-next-line react/forbid-prop-types
         options: PropTypes.object,
+        dataRowIndex: PropTypes.number,
     }),
     sheetId: PropTypes.number.isRequired,
     projectRegions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -96,6 +100,9 @@ const propTypes = {
     fieldEditPending: PropTypes.object.isRequired,
     // onSheetChange: PropTypes.func.isRequired,
     viewMode: PropTypes.bool,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    highlights: PropTypes.object,
 };
 
 const defaultProps = {
@@ -105,6 +112,7 @@ const defaultProps = {
     isFieldRetrievePending: false,
     viewMode: false,
     projectRegions: {},
+    highlights: {},
 };
 
 const comparators = {
@@ -555,7 +563,7 @@ export default class Sheet extends React.PureComponent {
                                 value={slicedRows.length}
                                 precision={0}
                             />
-                            <div className={styles.label}>
+                            <div>
                                 {/* FIXME: use strings */}
                                 rows
                             </div>
@@ -566,7 +574,7 @@ export default class Sheet extends React.PureComponent {
                                 className={styles.value}
                                 value={columns.length}
                             />
-                            <div className={styles.label}>
+                            <div>
                                 {/* FIXME: use strings */}
                                 columns
                             </div>

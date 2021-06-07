@@ -46,7 +46,6 @@ export default class TimeRangeOutput extends React.PureComponent {
             <div className={className}>
                 <FormattedTime
                     value={from}
-                    className={styles.time}
                     mode="hh:mm"
                     emptyComponent={emptyComponent}
                 />
@@ -55,7 +54,6 @@ export default class TimeRangeOutput extends React.PureComponent {
                 </span>
                 <FormattedTime
                     value={to}
-                    className={styles.time}
                     mode="hh:mm"
                     emptyComponent={emptyComponent}
                 />

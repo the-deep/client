@@ -75,7 +75,6 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                         <Tab
                             name="framework-details"
                             className={styles.tab}
-                            activeClassName={styles.activeTab}
                         >
                             {_ts('analyticalFramework', 'frameworkDetails')}
                         </Tab>
@@ -83,7 +82,6 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                             name="primary-tagging"
                             className={styles.tab}
                             disabled={isNotDefined(frameworkId)}
-                            activeClassName={styles.activeTab}
                         >
                             {_ts('analyticalFramework', 'primaryTagging')}
                         </Tab>
@@ -91,7 +89,6 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                             name="secondary-tagging"
                             className={styles.tab}
                             disabled={isNotDefined(frameworkId)}
-                            activeClassName={styles.activeTab}
                         >
                             {_ts('analyticalFramework', 'secondaryTagging')}
                         </Tab>
@@ -99,7 +96,6 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                             name="review"
                             className={styles.tab}
                             disabled={isNotDefined(frameworkId)}
-                            activeClassName={styles.activeTab}
                         >
                             {_ts('analyticalFramework', 'review')}
                         </Tab>

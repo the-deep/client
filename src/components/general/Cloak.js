@@ -29,6 +29,8 @@ const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
+        isSuperuser: PropTypes.bool,
+        accessibleFeatures: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     }),
     userProjects: PropTypes.arrayOf(
         PropTypes.shape({

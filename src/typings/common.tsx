@@ -19,9 +19,13 @@ export interface KeyValueElement {
 // Redux
 
 export interface AppState {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     domainData: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     siloDomainData: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     route: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     auth: any;
 }
 

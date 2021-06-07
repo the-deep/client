@@ -15,28 +15,12 @@
             flex-grow: 1;
             padding: 0 var(--spacing-medium);
         }
-
-        .filter {
-            margin: 0 var(--spacing-medium);
-        }
     }
 
     .sidebar {
         display: flex;
         flex-direction: column;
         overflow: auto;
-
-        .project-details {
-            padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
-
-            .heading {
-                padding: var(--spacing-small) var(--spacing-medium);
-            }
-
-            .value {
-                padding: 0 var(--spacing-medium);
-            }
-        }
 
         .question-status {
             padding: var(--spacing-medium) 0;
@@ -104,10 +88,6 @@
                         .heading {
                             padding: var(--spacing-medium);
                         }
-                    }
-
-                    .content {
-                        flex-grow: 1;
                     }
                 }
             }

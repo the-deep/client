@@ -72,7 +72,7 @@ export default class PlannedMetadataGroups extends React.PureComponent {
 
         return (
             <div className={styles.widgetGroup}>
-                <h3 className={styles.heading}>
+                <h3>
                     {isStakeholder &&
                         <React.Fragment>
                             {title}
@@ -89,7 +89,6 @@ export default class PlannedMetadataGroups extends React.PureComponent {
                 </h3>
                 <ListView
                     className={_cs(
-                        styles.content,
                         isStakeholder && styles.stakeholder,
                     )}
                     data={fields}

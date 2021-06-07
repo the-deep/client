@@ -8,6 +8,17 @@ import React from 'react';
 import Numeral from '#rscv/Numeral';
 import HighlightableText from '#components/viewer/HighlightableTextOutput';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    {
+        markAsUsed: [
+            'normal', 'table', 'block', 'small-block', 'stretched'
+        ],
+        camelCase: true
+    }
+]
+*/
 import styles from './styles.scss';
 
 const propTypes = {

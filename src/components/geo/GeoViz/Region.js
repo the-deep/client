@@ -20,8 +20,6 @@ import {
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
-
 const emptyObject = {};
 
 const propTypes = {
@@ -105,17 +103,16 @@ const LinearLegend = ({ min, max, colors }) => {
     };
 
     return (
-        <div className={styles.legend}>
+        <div>
             <header>
-                <h4 className={styles.heading}>
+                <h4>
                     {_ts('geoViz', 'legendTitle')}
                 </h4>
             </header>
             <div
-                className={styles.bar}
                 style={style}
             />
-            <div className={styles.legendNumbers} >
+            <div>
                 <Numeral
                     value={min}
                     precision={0}

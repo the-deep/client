@@ -81,19 +81,6 @@
                 overflow-y: auto;
             }
         }
-
-        .usergroup-alt {
-            @include shadow-medium;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: center;
-            padding: var(--spacing-medium-alt);
-            color: var(--color-text-on-foreground);
-            font-size: var(--font-size-extra-large);
-            grid-area: info / info / groups / groups;
-        }
     }
 }
 

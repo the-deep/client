@@ -33,7 +33,10 @@ const healthBarKeySelector = x => x.key;
 export default class Header extends React.PureComponent {
     static propTypes = {
         fieldId: PropTypes.number.isRequired,
-        value: PropTypes.shape({}).isRequired,
+        value: PropTypes.shape({
+            type: PropTypes.string,
+            title: PropTypes.string,
+        }).isRequired,
         filterValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
         onSortClick: PropTypes.func.isRequired,
         onFilterChange: PropTypes.func.isRequired,
@@ -147,7 +150,6 @@ export default class Header extends React.PureComponent {
                         hide={this.shouldHideEditButton}
                         render={
                             <WarningModalButton
-                                className={styles.editButton}
                                 iconName="edit"
                                 transparent
                                 title={_ts('tabular.header', 'columnEditButtonTooltip')}

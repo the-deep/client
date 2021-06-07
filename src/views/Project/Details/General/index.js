@@ -56,6 +56,9 @@ const EmptyComponent = ({ readOnly }) => (
         }
     </Message>
 );
+EmptyComponent.propTypes = {
+    readOnly: PropTypes.bool,
+};
 
 const propTypes = {
     className: PropTypes.string,
@@ -149,6 +152,10 @@ function OrganizationDetails({
         </div>
     );
 }
+OrganizationDetails.propTypes = {
+    logo: PropTypes.string,
+    title: PropTypes.string,
+};
 
 const organizationDetailsKeySelector = d => d.organization;
 const organizationDetailsRendererParams = (_, d) => ({

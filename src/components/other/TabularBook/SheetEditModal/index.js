@@ -36,6 +36,8 @@ export default class SheetEditModal extends React.PureComponent {
         closeModal: PropTypes.func,
         disabled: PropTypes.bool,
         disabledDelete: PropTypes.bool,
+        dataRowIndex: PropTypes.number,
+        dataRowCount: PropTypes.number,
     };
 
     static defaultProps = {
@@ -43,6 +45,8 @@ export default class SheetEditModal extends React.PureComponent {
         closeModal: () => {},
         disabled: false,
         disabledDelete: false,
+        dataRowIndex: undefined,
+        dataRowCount: undefined,
     }
 
     constructor(props) {

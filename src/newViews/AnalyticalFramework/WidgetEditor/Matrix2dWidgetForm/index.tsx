@@ -221,7 +221,6 @@ function SubRowInput(props: SubRowInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
-                    className={styles.removeButton}
                     name={index}
                     onClick={onRemove}
                     // FIXME: use translation
@@ -233,7 +232,6 @@ function SubRowInput(props: SubRowInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                className={styles.label}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -242,7 +240,6 @@ function SubRowInput(props: SubRowInputProps) {
                 error={error?.fields?.label}
             />
             <TextArea
-                className={styles.tooltip}
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
@@ -315,7 +312,6 @@ function RowInput(props: RowInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
-                    className={styles.removeButton}
                     name={index}
                     onClick={onRemove}
                     // FIXME: use translation
@@ -327,7 +323,6 @@ function RowInput(props: RowInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                className={styles.label}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -336,7 +331,6 @@ function RowInput(props: RowInputProps) {
                 error={error?.fields?.label}
             />
             <TextArea
-                className={styles.tooltip}
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
@@ -364,7 +358,6 @@ function RowInput(props: RowInputProps) {
                 <NonFieldError error={error?.fields?.subRows} />
                 {value.subRows?.map((subRow, subRowIndex) => (
                     <SubRowInput
-                        className={styles.subRowInput}
                         key={subRow.clientId}
                         index={subRowIndex}
                         value={subRow}
@@ -413,7 +406,6 @@ function SubColumnInput(props: SubColumnInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
-                    className={styles.removeButton}
                     name={index}
                     onClick={onRemove}
                     // FIXME: use translation
@@ -425,7 +417,6 @@ function SubColumnInput(props: SubColumnInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                className={styles.label}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -434,7 +425,6 @@ function SubColumnInput(props: SubColumnInputProps) {
                 error={error?.fields?.label}
             />
             <TextArea
-                className={styles.tooltip}
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
@@ -507,7 +497,6 @@ function ColumnInput(props: ColumnInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
-                    className={styles.removeButton}
                     name={index}
                     onClick={onRemove}
                     // FIXME: use translation
@@ -519,7 +508,6 @@ function ColumnInput(props: ColumnInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                className={styles.label}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -528,7 +516,6 @@ function ColumnInput(props: ColumnInputProps) {
                 error={error?.fields?.label}
             />
             <TextArea
-                className={styles.tooltip}
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
@@ -556,7 +543,6 @@ function ColumnInput(props: ColumnInputProps) {
                 <NonFieldError error={error?.fields?.subColumns} />
                 {value.subColumns?.map((subColumn, subColumnIndex) => (
                     <SubColumnInput
-                        className={styles.subColumnInput}
                         key={subColumn.clientId}
                         index={subColumnIndex}
                         value={subColumn}
@@ -662,7 +648,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <NonFieldError error={error?.fields?.rows} />
                 {value?.rows?.map((row, index) => (
                     <RowInput
-                        className={styles.rowInput}
                         key={row.clientId}
                         index={index}
                         value={row}
@@ -691,7 +676,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <NonFieldError error={error?.fields?.columns} />
                 {value?.columns?.map((column, index) => (
                     <ColumnInput
-                        className={styles.columnInput}
                         key={column.clientId}
                         index={index}
                         value={column}
@@ -754,7 +738,6 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                 headerActions={(
                     <>
                         <Button
-                            className={styles.button}
                             name={undefined}
                             onClick={onCancel}
                             variant="tertiary"
@@ -763,7 +746,6 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                             Cancel
                         </Button>
                         <Button
-                            className={styles.button}
                             name={undefined}
                             type="submit"
                             disabled={pristine}

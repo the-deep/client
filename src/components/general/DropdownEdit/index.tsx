@@ -72,15 +72,21 @@ function DropdownEdit<T extends string | number | boolean>(props: Props<T>) {
         setShowDropdown(value);
     }, [setShowDropdown]);
 
-    const optionKeySelector = (d: Option<T>) => d.key;
-    const optionLabelSelector = (d: Option<T>) => d.value;
+    const optionKeySelector = useCallback(
+        (d: Option<T>) => d.key,
+        [],
+    );
+    const optionLabelSelector = useCallback(
+        (d: Option<T>) => d.value,
+        [],
+    );
 
     const optionRendererParams = useCallback((key: T, data: Option<T>) => ({
         isActive: key === currentSelection,
         itemKey: key,
         label: optionLabelSelector(data),
         onItemSelect,
-    }), [onItemSelect, currentSelection]);
+    }), [onItemSelect, currentSelection, optionLabelSelector]);
 
     return (
         <DropdownMenu
