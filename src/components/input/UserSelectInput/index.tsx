@@ -5,7 +5,6 @@ import { MultiResponse, BasicUser } from '#typings';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import _ts from '#ts';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 type Def = { containerClassName?: string };
 type UserSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -47,8 +46,7 @@ function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
             skip: !opened,
             query: searchQueryParams,
             schemaName: 'usersGetResponse',
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('components.userSelectInput', 'title'))({ error: errorBody }),
+            failureHeader: _ts('components.userSelectInput', 'title'),
         },
     );
 

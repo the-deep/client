@@ -11,7 +11,6 @@ import { MdPlaylistAddCheck } from 'react-icons/md';
 import List from '#rsu/../v2/View/List';
 
 import { useRequest, useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
     Assignment,
@@ -51,8 +50,7 @@ function Assignments() {
             url: 'server://assignments/',
             method: 'GET',
             query: assignmentsQuery,
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('assignment', 'assignmentListFetchFailed'))({ error: errorBody }),
+            failureHeader: _ts('assignment', 'assignmentListFetchFailed'),
         },
     );
 
@@ -67,8 +65,7 @@ function Assignments() {
             onSuccess: () => {
                 getAssignments();
             },
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('assignment', 'markAsDoneFailed'))({ error: errorBody }),
+            failureHeader: _ts('assignment', 'markAsDoneFailed'),
         },
     );
 
@@ -83,8 +80,7 @@ function Assignments() {
             onSuccess: () => {
                 getAssignments();
             },
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('assignment', 'markBulkAsDoneFailed'))({ error: errorBody }),
+            failureHeader: _ts('assignment', 'markBulkAsDoneFailed'),
         },
     );
 

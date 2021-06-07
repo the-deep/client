@@ -18,7 +18,6 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import notify from '#notify';
 import _ts from '#ts';
 
@@ -106,10 +105,7 @@ function AddFrameworkModal(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: (_, errorBody) => {
-            // NOTE: Handle form error later on
-            notifyOnFailure(_ts('projectEdit', 'projectMembershipPostFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'projectMembershipPostFailed'),
     });
 
     const handleSubmit = useCallback(

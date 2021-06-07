@@ -5,7 +5,6 @@ import {
     MultiResponse,
 } from '#typings';
 import { ProjectMemberships } from '#typings/project';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import UserList from './UserList';
@@ -35,9 +34,7 @@ function Users(props: Props) {
             member: activeUserId,
         },
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectMembershipFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'projectMembershipFetchFailed'),
     });
 
     const activeUserMembership = projectMembershipsResponse?.results?.[0];

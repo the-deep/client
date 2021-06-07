@@ -17,7 +17,6 @@ import {
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldError from '#components/ui/NonFieldError';
 import { useRequest, useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { MultiResponse, BasicUser, Membership } from '#typings';
 import UserSelectInput from '#components/input/UserSelectInput';
 import _ts from '#ts';
@@ -114,9 +113,7 @@ function AddUserModal(props: Props) {
             : 'server://public-framework-roles/',
         method: 'GET',
         query: queryForRoles,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('analyticalFramework.addUser', 'roleFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('analyticalFramework.addUser', 'roleFetchFailed'),
     });
 
     const {
@@ -134,9 +131,7 @@ function AddUserModal(props: Props) {
             onTableReload();
             onModalClose();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('analyticalFramework.addUser', 'membershipPostFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
     });
 
     const handleSubmit = useCallback(

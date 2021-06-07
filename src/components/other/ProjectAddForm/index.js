@@ -24,7 +24,6 @@ import {
 } from '#redux';
 import _ts from '#ts';
 import notify from '#notify';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
 
@@ -112,9 +111,9 @@ function ProjectAddForm(props) {
             });
             onModalClose();
         },
-        onFailure: (error, errorBody) => {
-            setFaramErrors(errorBody?.faramErrors);
-            notifyOnFailure(_ts('components.addProject', 'addProjectModalLabel'))({ error: errorBody });
+        failureHeader: _ts('components.addProject', 'addProjectModalLabel'),
+        onFailure: (error) => {
+            setFaramErrors(error.value.faramErrors);
         },
     });
 

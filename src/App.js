@@ -38,7 +38,12 @@ import {
 import getUserConfirmation from '#utils/getUserConfirmation';
 
 import { RequestContext } from '#utils/request';
-import { processDeepUrls, processDeepOptions } from '#utils/request/utils';
+import {
+    processDeepUrls,
+    processDeepOptions,
+    processDeepResponse,
+    processDeepError,
+} from '#utils/request/deep';
 
 import schema from '#schema';
 
@@ -161,9 +166,12 @@ export default class App extends React.PureComponent {
             return <AppLoading />;
         }
 
+        // FIXME: memoize this
         const requestContextValue = {
             transformUrl: processDeepUrls,
-            transformOptions: (url, options) => processDeepOptions(url, options, access),
+            transformOptions: processDeepOptions(access),
+            transformResponse: processDeepResponse,
+            transformError: processDeepError,
         };
 
         return (

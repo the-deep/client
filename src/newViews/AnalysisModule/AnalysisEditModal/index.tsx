@@ -27,7 +27,6 @@ import { useRequest, useLazyRequest } from '#utils/request';
 
 import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
-import { notifyOnFailure } from '#utils/requestNotify';
 import NonFieldError from '#components/ui/NonFieldError';
 import {
     AnalysisElement,
@@ -147,9 +146,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         query: frameworkQueryFields,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('analysis.editModal', 'frameworkTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('analysis.editModal', 'frameworkTitle'),
     });
 
     const matrixPillars: MatrixTocElement[] = React.useMemo(() => (
@@ -167,8 +164,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         url: `server://projects/${projectId}/members/`,
         query: usersQueryFields,
         method: 'GET',
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analysis.editModal', 'usersTitle'))({ error: errorBody }),
+        failureHeader: _ts('analysis.editModal', 'usersTitle'),
     });
 
     const id = initialValue?.id;
@@ -187,11 +183,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             }
             onModalClose();
         },
-        onFailure: (_, errorBody) => {
-            // TODO: set form errors properly
-            // onErrorSet();
-            notifyOnFailure(_ts('analysis.editModal', 'anaylsisEditModal'))({ error: errorBody });
-        },
+        failureHeader: _ts('analysis.editModal', 'anaylsisEditModal'),
     });
 
     const {

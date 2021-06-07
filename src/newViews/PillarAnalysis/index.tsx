@@ -39,7 +39,6 @@ import { processEntryFilters } from '#entities/entries';
 import notify from '#notify';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
     GeoOptions,
@@ -255,10 +254,7 @@ function PillarAnalysis(props: Props) {
                 analyticalStatements: response.analyticalStatements,
             }));
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'pillarAnalysisTitle'))({ error: errorBody });
-        },
-        // FIXME: add schema
+        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
     });
 
     const {
@@ -281,10 +277,7 @@ function PillarAnalysis(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'pillarAnalysisTitle'))({ error: errorBody });
-        },
-        // FIXME: add schema
+        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
     });
 
     const {
@@ -294,10 +287,7 @@ function PillarAnalysis(props: Props) {
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         query: frameworkQueryFields,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'frameworkTitle'))({ error: errorBody });
-        },
-        // FIXME: add schema
+        failureHeader: _ts('pillarAnalysis', 'frameworkTitle'),
     });
 
     const geoOptionsRequestQueryParams = useMemo(() => ({
@@ -312,10 +302,7 @@ function PillarAnalysis(props: Props) {
         method: 'GET',
         query: geoOptionsRequestQueryParams,
         schemaName: 'geoOptions',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'geoLabel'))({ error: errorBody });
-        },
-        // FIXME: add schema
+        failureHeader: _ts('pillarAnalysis', 'geoLabel'),
     });
 
     const entriesRequestBody = useMemo(() => {
@@ -368,10 +355,7 @@ function PillarAnalysis(props: Props) {
             setEntriesCount(response.count);
             setEntries(response.results);
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'entriesTitle'))({ error: errorBody });
-        },
-        // FIXME: add schema
+        failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
     });
 
     const {
@@ -381,9 +365,7 @@ function PillarAnalysis(props: Props) {
         skip: !pendingEntries,
         url: 'server://discarded-entry-options/',
         query: entriesRequestQuery,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'entriesTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
         // FIXME: Remove this response later on
         mockResponse: fakeTags,
     });
@@ -425,10 +407,7 @@ function PillarAnalysis(props: Props) {
                 ),
             }));
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'analysisPillarEntriesTitle'))({ error: errorBody });
-        },
-        // FIXME: add schema
+        failureHeader: _ts('pillarAnalysis', 'analysisPillarEntriesTitle'),
     });
 
     const handleEntryDrop = useCallback(

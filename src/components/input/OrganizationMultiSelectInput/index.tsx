@@ -5,7 +5,6 @@ import { BasicOrganization, MultiResponse } from '#typings';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import _ts from '#ts';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 type Def = { containerClassName?: string };
 type OrganizationSelectInputProps<K extends string> = SearchMultiSelectInputProps<
@@ -40,8 +39,7 @@ function OrganizationMultiSelectInput<K extends string>(props: OrganizationSelec
             method: 'GET',
             skip: !opened,
             query: searchQueryParams,
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('components.organizationSelectInput', 'title'))({ error: errorBody }),
+            failureHeader: _ts('components.organizationSelectInput', 'title'),
         },
     );
 

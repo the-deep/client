@@ -89,15 +89,7 @@ function AssessmentExportSelection(props: OwnProps) {
 
             setExportClass(undefined);
         },
-        onFailure: () => {
-            setExportClass(undefined);
-            notify.send({
-                title: _ts('export', 'headerExport'),
-                type: notify.type.ERROR,
-                message: _ts('export', 'exportFailedNotifyMessage'),
-                duration: 15000,
-            });
-        },
+        failureHeader: _ts('export', 'headerExport'),
     });
 
     const startExport = useCallback((preview: boolean, item: string) => {

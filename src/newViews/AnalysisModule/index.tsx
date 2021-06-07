@@ -37,7 +37,6 @@ import Timeline from '#components/viz/Timeline';
 import { useRequest, useLazyRequest } from '#utils/request';
 import RechartsLegend from '#components/ui/RechartsLegend';
 import { SubNavbar } from '#components/general/Navbar';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { getDateWithTimezone } from '#utils/common';
 import { shortMonthNamesMap } from '#utils/safeCommon';
 import {
@@ -177,8 +176,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
         query: analysisQueryOptions,
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
+        failureHeader: _ts('analysis', 'analysisModule'),
     });
 
     const {
@@ -217,8 +215,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         {
             url: `server://projects/${activeProject}/analysis-overview/`,
             method: 'GET',
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
+            failureHeader: _ts('analysis', 'analysisModule'),
         },
     );
 

@@ -54,6 +54,7 @@
         "#qbc/*": ["./src/components/questionnaire-builder/*"]
     }
   },
+  "exclude": ["**/node_modules", "**/.*/"],
   "include": [
     "src"
   ]

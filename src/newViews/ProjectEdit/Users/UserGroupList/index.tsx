@@ -18,7 +18,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { createDateColumn } from '#dui/tableHelpers';
-import { notifyOnFailure } from '#utils/requestNotify';
 import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
@@ -80,9 +79,7 @@ function UserGroupList(props: Props) {
         url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
         query: queryForRequest,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'usergroupFetchFailed'),
     });
 
     const {
@@ -93,9 +90,7 @@ function UserGroupList(props: Props) {
         onSuccess: () => {
             triggerUsergroupResponse();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'usergroupDeleteFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'usergroupDeleteFailed'),
     });
 
     const handleEditUsergroupClick = useCallback((usergroupId) => {

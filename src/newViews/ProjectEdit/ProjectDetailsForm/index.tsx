@@ -35,7 +35,6 @@ import {
     useLazyRequest,
     useRequest,
 } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
 
@@ -109,8 +108,7 @@ function ProjectDetailsForm(props: Props) {
         onSuccess: (response) => {
             setProjectDetails(response);
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
     const {
@@ -126,8 +124,7 @@ function ProjectDetailsForm(props: Props) {
                 onCreate(response);
             }
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
     const handleSubmit = useCallback((values: FormType) => {

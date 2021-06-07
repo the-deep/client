@@ -13,7 +13,6 @@ import Cloak from '#components/general/Cloak';
 import ConfirmButton from '#rsca/ConfirmButton';
 
 import { useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { Permission } from '#typings/common';
 
 import _ts from '#ts';
@@ -65,8 +64,7 @@ function ShareModal(props: ComponentProps) {
                     onShareLinkChange(response?.publicUrl, !isEntriesVizPublic);
                 }
             },
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('entries', 'shareVizLink'))({ error: errorBody }),
+            failureHeader: _ts('entries', 'shareVizLink'),
         },
     );
 
@@ -83,8 +81,7 @@ function ShareModal(props: ComponentProps) {
                     onShareLinkChange(response?.publicUrl, isEntriesVizPublic);
                 }
             },
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('entries', 'resetVizLink'))({ error: errorBody }),
+            failureHeader: _ts('entries', 'resetVizLink'),
         },
     );
 

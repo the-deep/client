@@ -8,7 +8,6 @@ import { GiShrug } from 'react-icons/gi';
 import List from '#rsu/../v2/View/List';
 
 import { useRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { MultiResponse } from '#typings';
 import {
     RecentActivityItem,
@@ -26,8 +25,7 @@ function RecentActivities() {
     } = useRequest<MultiResponse<RecentActivityItem>>({
         url: 'server://projects/recent-activities/',
         method: 'GET',
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('recentActivity', 'recentActivitiesFetchFailed'))({ error: errorBody }),
+        failureHeader: _ts('recentActivity', 'recentActivitiesFetchFailed'),
     });
 
     const activityRendererParams = useCallback((_: string, info: RecentActivityItem) => ({

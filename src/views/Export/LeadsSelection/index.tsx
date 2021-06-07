@@ -18,7 +18,6 @@ import {
     GeoOptions,
     ProjectDetails,
 } from '#typings';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { Header } from '#rscv/Table';
 
 import { FaramValues } from '../ExportSelection';
@@ -137,9 +136,7 @@ function LeadsSelection(props: ComponentProps) {
         query: leadsRequestQuery,
         skip: pending || filterOptionsPending,
         body: leadsRequestBody,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
-        },
+        failureHeader: _ts('export', 'leadsLabel'),
     });
 
     const isDisabled = leadsResponse?.results.length === 0;

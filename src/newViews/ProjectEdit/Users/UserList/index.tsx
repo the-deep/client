@@ -14,7 +14,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { createDateColumn } from '#dui/tableHelpers';
-import { notifyOnFailure } from '#utils/requestNotify';
 import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
 import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
@@ -75,9 +74,7 @@ function UserList(props: Props) {
         url: `server://projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: queryForRequest,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'userFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'userFetchFailed'),
     });
 
     const {
@@ -88,9 +85,7 @@ function UserList(props: Props) {
         onSuccess: () => {
             triggerGetUsers();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'membershipDeleteFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'membershipDeleteFailed'),
     });
 
     const handleEditMembershipClick = useCallback((membershipId) => {

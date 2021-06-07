@@ -24,7 +24,6 @@ import {
 } from '#utils/framework';
 import { useRequest, useLazyRequest } from '#utils/request';
 
-import { notifyOnFailure } from '#utils/requestNotify';
 import ExpandableContainer from '#dui/ExpandableContainer';
 import _ts from '#ts';
 import notify from '#notify';
@@ -199,9 +198,7 @@ function EntriesExportSelection(props: Props) {
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'afLabel'))({ error: errorBody });
-        },
+        failureHeader: _ts('export', 'afLabel'),
     });
 
     const geoOptionsRequestQueryParams = useMemo(() => ({
@@ -218,9 +215,7 @@ function EntriesExportSelection(props: Props) {
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'geoLabel'))({ error: errorBody });
-        },
+        failureHeader: _ts('export', 'geoLabel'),
     });
 
     useEffect(() => {
@@ -269,14 +264,7 @@ function EntriesExportSelection(props: Props) {
                 });
             }
         },
-        onFailure: () => {
-            notify.send({
-                title: _ts('export', 'headerExport'),
-                type: notify.type.ERROR,
-                message: _ts('export', 'exportFailedNotifyMessage'),
-                duration: 15000,
-            });
-        },
+        failureHeader: _ts('export', 'headerExport'),
     });
 
     const startExport = useCallback((preview: boolean) => {

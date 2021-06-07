@@ -17,7 +17,6 @@ import {
 import UserSelectInput from '#components/input/UserSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import {
     MultiResponse,
     BasicUser,
@@ -104,9 +103,7 @@ function AddUserModal(props: Props) {
     } = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectRoleFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'projectRoleFetchFailed'),
     });
 
     const {
@@ -124,9 +121,7 @@ function AddUserModal(props: Props) {
             onTableReload();
             onModalClose();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectMembershipPostFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'projectMembershipPostFailed'),
     });
 
     const handleSubmit = useCallback(

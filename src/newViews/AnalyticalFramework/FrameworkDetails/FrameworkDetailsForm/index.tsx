@@ -18,7 +18,6 @@ import {
     Container,
     Tag,
 } from '@the-deep/deep-ui';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { AnalyticalFramework, BasicOrganization } from '#typings';
@@ -79,8 +78,7 @@ function FrameworkDetailsForm(props: Props) {
         onSuccess: (response) => {
             onValueSet(response);
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analyticalFramework', 'title'))({ error: errorBody }),
+        failureHeader: _ts('analyticalFramework', 'title'),
     });
 
     const handleSubmit = useCallback(() => {
