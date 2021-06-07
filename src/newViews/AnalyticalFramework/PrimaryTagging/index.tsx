@@ -372,7 +372,7 @@ function PrimaryTagging(props: Props) {
                         >
                             <Button
                                 name={undefined}
-                                variant="inverted"
+                                variant="secondary"
                                 onClick={setShowPreviewModalTrue}
                             >
                                 {_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}

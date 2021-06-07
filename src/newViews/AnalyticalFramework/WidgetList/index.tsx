@@ -129,7 +129,7 @@ function WidgetList(props: Props) {
             <ExpandableContainer
                 // FIXME: use strings
                 heading="Widgets"
-                childrenContainerClassName={styles.children}
+                contentClassName={styles.children}
                 defaultVisibility={!!props.sectionsDisabled}
             >
                 <AddItem

@@ -19,9 +19,6 @@ interface Props {
 function OrganizationField(props: Props) {
     const { containerClassName, onChange, value, ...otherProps } = props;
 
-    const handleDragEnter = useCallback(() => {
-    }, []);
-
     const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         try {
             const data = e.dataTransfer.getData('text');
@@ -51,7 +48,7 @@ function OrganizationField(props: Props) {
         onDragEnter,
         onDragLeave,
         onDrop,
-    } = useDropHandler(handleDragEnter, handleDrop);
+    } = useDropHandler(handleDrop);
 
     return (
         <div
