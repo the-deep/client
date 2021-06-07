@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
+import NonFieldError from '#components/ui/NonFieldError';
 
 import {
     AppState,
@@ -16,11 +17,11 @@ import {
     Footer,
     List,
 } from '@the-deep/deep-ui';
+import Avatar from '#components/ui/Avatar';
 
 import _ts from '#ts';
 import { activeUserSelector } from '#redux';
 import { useRequest, useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import {
     ObjectSchema,
     requiredStringCondition,
@@ -53,7 +54,7 @@ interface User {
     emailOptOuts: EmailOptOut[];
 }
 
-type FormType = Partial<Pick<User, 'firstName' | 'lastName' | 'organization' | 'language' | 'emailOptOuts'>>;
+type FormType = Partial<Pick<User, 'firstName' | 'lastName' | 'organization' | 'language' | 'emailOptOuts' | 'displayPictureUrl'>>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -107,13 +108,11 @@ function MyProfile(props: Props) {
     } = useRequest<User>({
         url: `server://users/${activeUser.userId}/`,
         method: 'GET',
-        onSuccess: (response) => {
-            onValueSet(response ?? {});
+        onSuccess: (response: User) => {
+            onValueSet(response);
             onErrorSet({});
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('myProfile', 'myProfileTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
     const {
         pending: languagesPending,
@@ -121,9 +120,7 @@ function MyProfile(props: Props) {
     } = useRequest<MultiResponse<LanguagePreference>>({
         url: 'server://languages/',
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('myProfile', 'myProfileTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
 
     const {
@@ -134,12 +131,10 @@ function MyProfile(props: Props) {
         method: 'PATCH',
         body: ctx => ctx,
         onSuccess: (response) => {
-            onValueSet(response ?? {});
+            onValueSet(response);
             onErrorSet({});
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('myProfile', 'myProfileTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
 
     const handleCheck = useCallback((checked: boolean, name: EmailOptOut) => {
@@ -149,7 +144,7 @@ function MyProfile(props: Props) {
                 name]), 'emailOptOuts' as const);
         } else {
             onValueChange((oldValue: EmailOptOut[] | undefined) => ([
-                ...(oldValue ?? [])?.filter(v => v !== name),
+                ...(oldValue ?? []).filter(v => v !== name),
             ]), 'emailOptOuts' as const);
         }
     }, [onValueChange]);
@@ -161,105 +156,111 @@ function MyProfile(props: Props) {
         label: data.label,
     }), [value, handleCheck]);
 
-    const handleSubmit = useCallback((values: FormType) => {
-        userPatch(values);
-    }, [userPatch]);
+    const handleSubmit = userPatch;
 
     const disabled = userGetPending || userPatchPending || languagesPending;
     return (
-        <Container
-            className={styles.myProfile}
-            heading={_ts('myProfile', 'myProfileTitle')}
-            sub
-            headerClassName={styles.header}
-            headingClassName={styles.heading}
-            contentClassName={styles.content}
+        <form
+            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <form
-                className={styles.form}
-                onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            <Container
+                className={styles.myProfile}
+                heading={_ts('myProfile', 'myProfileTitle')}
+                sub
+                headerClassName={styles.header}
+                headingClassName={styles.heading}
+                footerClassName={styles.footer}
+                footerActions={
+                    <Footer
+                        actions={(
+                            <Button
+                                disabled={disabled || pristine}
+                                type="submit"
+                                variant="primary"
+                                name="saveProfile"
+                            >
+                                {_ts('myProfile', 'saveMyProfile')}
+                            </Button>
+                        )}
+                    />
+                }
+                contentClassName={styles.content}
             >
+
                 {(userGetPending || languagesPending) && <PendingMessage />}
-                {error?.$internal && (
-                    <p>
-                        {error.$internal}
-                    </p>
-                )}
-                <div className={styles.mainContent}>
-                    <Container
-                        className={styles.personalInfo}
-                        heading={_ts('myProfile', 'personalInfo')}
-                        sub
-                    >
-                        <TextInput
-                            name="firstName"
-                            disabled={disabled}
-                            onChange={onValueChange}
-                            value={value?.firstName}
-                            error={error?.fields?.firstName}
-                            label={_ts('myProfile', 'firstName')}
-                            placeholder={_ts('myProfile', 'firstName')}
-                            autoFocus
-                        />
-                        <TextInput
-                            name="lastName"
-                            disabled={disabled}
-                            onChange={onValueChange}
-                            value={value?.lastName}
-                            error={error?.fields?.lastName}
-                            label={_ts('myProfile', 'lastName')}
-                            placeholder={_ts('myProfile', 'lastName')}
-                        />
-                        <TextInput
-                            name="organization"
-                            disabled={disabled}
-                            onChange={onValueChange}
-                            value={value?.organization}
-                            error={error?.fields?.organization}
-                            label={_ts('myProfile', 'organization')}
-                            placeholder={_ts('myProfile', 'organization')}
-                        />
-                    </Container>
-                    <Container
-                        className={styles.preferences}
-                        sub
-                        heading={_ts('myProfile', 'preferences')}
-                    >
-                        <SelectInput
-                            name="language"
-                            disabled={disabled}
-                            onChange={onValueChange}
-                            value={value?.language}
-                            error={error?.fields?.language}
-                            label={_ts('myProfile', 'platformLanguage')}
-                            placeholder={_ts('myProfile', 'platformLanguage')}
-                            keySelector={langaugeKeySelector}
-                            labelSelector={languageLabelSelector}
-                            options={languageResponse?.results}
-                        />
-                        <List
-                            data={emailOptOutsOptions}
-                            renderer={Checkbox}
-                            keySelector={emailOptOutKeySelector}
-                            rendererParams={rowRendererParams}
-                        />
-                    </Container>
-                </div>
-                <Footer
-                    className={styles.footer}
-                    actions={(
-                        <Button
-                            disabled={disabled || pristine}
-                            type="submit"
-                            variant="primary"
-                            name="saveProfile"
-                        >
-                            {_ts('myProfile', 'saveMyProfile')}
-                        </Button>
-                    )}
+                <NonFieldError
+                    className={styles.input}
+                    error={error}
                 />
-            </form>
-        </Container>
+                <div className={styles.mainContent}>
+                    <Avatar
+                        className={styles.displayPicture}
+                        src={value?.displayPictureUrl}
+                        name={`${value.firstName} ${value.lastName}`}
+                    />
+                    <div className={styles.userInfo}>
+                        <Container
+                            className={styles.personalInfo}
+                            heading={_ts('myProfile', 'personalInfo')}
+                            sub
+                        >
+                            <TextInput
+                                name="firstName"
+                                disabled={disabled}
+                                onChange={onValueChange}
+                                value={value?.firstName}
+                                error={error?.fields?.firstName}
+                                label={_ts('myProfile', 'firstName')}
+                                placeholder={_ts('myProfile', 'firstName')}
+                                autoFocus
+                            />
+                            <TextInput
+                                name="lastName"
+                                disabled={disabled}
+                                onChange={onValueChange}
+                                value={value?.lastName}
+                                error={error?.fields?.lastName}
+                                label={_ts('myProfile', 'lastName')}
+                                placeholder={_ts('myProfile', 'lastName')}
+                            />
+                            <TextInput
+                                name="organization"
+                                disabled={disabled}
+                                onChange={onValueChange}
+                                value={value?.organization}
+                                error={error?.fields?.organization}
+                                label={_ts('myProfile', 'organization')}
+                                placeholder={_ts('myProfile', 'organization')}
+                            />
+                        </Container>
+                        <Container
+                            className={styles.preferences}
+                            sub
+                            heading={_ts('myProfile', 'preferences')}
+                        >
+                            <SelectInput
+                                name="language"
+                                disabled={disabled}
+                                onChange={onValueChange}
+                                value={value?.language}
+                                error={error?.fields?.language}
+                                label={_ts('myProfile', 'platformLanguage')}
+                                placeholder={_ts('myProfile', 'platformLanguage')}
+                                keySelector={langaugeKeySelector}
+                                labelSelector={languageLabelSelector}
+                                options={languageResponse?.results}
+                            />
+                            <List
+                                data={emailOptOutsOptions}
+                                renderer={Checkbox}
+                                keySelector={emailOptOutKeySelector}
+                                rendererParams={rowRendererParams}
+                            />
+                        </Container>
+                    </div>
+                </div>
+            </Container>
+        </form>
     );
 }
 
