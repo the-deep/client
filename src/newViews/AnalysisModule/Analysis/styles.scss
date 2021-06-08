@@ -8,15 +8,10 @@
 
     .pillar-content {
         position: relative;
-        padding: 0 !important;
-        overflow: unset;
+        padding: 0;
 
         .content {
-            padding: var(--dui-spacing-large);
-
             .content-item {
-                margin: var(--spacing-medium) 0;
-
                 .sub-heading {
                     display: flex;
                     padding: var(--spacing-extra-small) 0;
@@ -37,38 +32,6 @@
                         flex-basis: 1;
                         margin-left: var(--spacing-small);
                     }
-                }
-            }
-        }
-
-        .pillar-analyses {
-            display: flex;
-            flex-direction: column;
-            margin: calc(-1 * (var(--dui-spacing-large) - var(--dui-spacing-small)))
-                calc(-1 * (var(--dui-spacing-large) - var(--dui-spacing-medium)));
-            border-left: 4px solid var(--color-separator);
-
-            .accordion-button {
-                display: flex;
-                flex-grow: 1;
-                justify-content: flex-start;
-                outline: var(--color-separator);
-                border: none;
-                border-top: var(--width-separator-thin) solid var(--color-separator);
-                border-radius: 0;
-                background: none;
-                padding: var(--dui-spacing-medium) var(--dui-spacing-large);
-                width: 100%;
-                color: var(--color-link);
-            }
-
-            .pillar-analysis-content {
-                border-top: var(--width-separator-thin) solid var(--color-separator);
-
-                .pillar-list {
-                    display: flex;
-                    flex-direction: column;
-                    flex-grow: 1;
                 }
             }
         }

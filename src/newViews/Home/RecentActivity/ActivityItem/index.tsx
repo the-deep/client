@@ -42,7 +42,10 @@ function ActivityItem(props: RecentActivityProps) {
                 childrenContainerClassName={styles.mainContent}
             >
                 <div className={styles.description}>
-                    <Link to={emptyLink}>
+                    <Link
+                        to={emptyLink}
+                        className={styles.link}
+                    >
                         {createdByDisplayName}
                     </Link>
                     &nbsp;
@@ -51,7 +54,10 @@ function ActivityItem(props: RecentActivityProps) {
                         : _ts('recentActivity', 'entryCommentAdded')
                     }
                     &nbsp;
-                    <Link to={emptyLink}>
+                    <Link
+                        to={emptyLink}
+                        className={styles.link}
+                    >
                         {projectDisplayName}
                     </Link>
                 </div>

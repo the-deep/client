@@ -19,52 +19,54 @@ const styleProperties = {
         colorBackgroundReadNotification: '#f5f5f5',
         colorBackgroundDangerHint: '#fffafa',
         colorAccentOnHover: '#008975cc',
+        colorBackgroundScrollbar: 'transparent',
 
         duiColorSurfaceInformational: '#f5f8fb',
     },
 
     dimens: {
-        widthEditFrameworkModal: '860px',
-        widthSearchInput: '214px',
-        minHeightSearchInput: '88px',
-        maxHeightSearchInput: '280px',
-        widthUserItemPicture: '30px',
-        heightUserItemPicture: '30px',
-        widthErrorPaneStringManagement: '320px',
+        widthEditFrameworkModal: '52rem',
+        widthSearchInput: '13rem',
+        minHeightSearchInput: '5.5rem',
+        maxHeightSearchInput: '17.5rem',
+        widthUserItemPicture: '1.875rem',
+        heightUserItemPicture: '1.875rem',
+        widthErrorPaneStringManagement: '20rem',
 
         widthConnectorTestModal: '96vw',
         heightConnectorTestModal: '96vh',
 
         entryCommentMaxHeightCommentHistory: '60vh',
-        entryCommentDropdownWidth: '96px',
+        entryCommentDropdownWidth: '6rem',
         entryCommentModalMaxHeight: '80vh',
-        entryCommentModalWidth: '480px',
+        entryCommentModalWidth: '30rem',
 
         entryGroupModalMaxHeight: '60vh',
         entryGroupModalMaxWidth: '60vw',
-        entryGroupModalMinWidth: '360px',
+        entryGroupModalMinWidth: '22.5rem',
 
         widthModalLarge: '80vw',
         heightModalMedium: '70vh',
 
-        heightEntryLabelCard: '144px',
-        widthEntryLabelCard: '320px',
+        heightEntryLabelCard: '9rem',
+        widthEntryLabelCard: '20rem',
 
-        widthTableCheckbox: '56px',
-        widthTableDateTime: '120px',
-        widthTableIcon: '56px',
+        widthTableCheckbox: '3.5rem',
+        widthTableDateTime: '7.5rem',
+        widthTableIcon: '3.5rem',
 
-        widthScrollbar: '8px',
+        widthScrollbar: '0.5rem',
+        radiusScrollbarBorder: '0.25rem',
 
-        heightMatrixHeader: '20px',
+        heightMatrixHeader: '1.25rem',
 
-        widthProjectDetailLeftPane: '280px',
-        widthQuestionIcon: '48px',
-        heightQuestionIcon: '48px',
-        heightNagbar: '64px',
-        heightSubNavbar: '48px',
+        widthProjectDetailLeftPane: '17.5rem',
+        widthQuestionIcon: '3rem',
+        heightQuestionIcon: '3rem',
+        heightNagbar: '4rem',
+        heightSubNavbar: '3rem',
 
-        heightActionBar: '42px',
+        heightActionBar: '2.625rem',
 
         fontSizeSuperSmall: '0.5rem',
         fontSizeSuperSmallAlt: '0.58rem',
@@ -86,7 +88,7 @@ const styleProperties = {
         fontSizeUltraLargeAlt: '6.1rem',
 
         // We do not use variable name extreme
-        fontSizeExtremeLarge: '32px',
+        fontSizeExtremeLarge: '2rem',
 
         spacingSuperSmall: '0.14rem',
         spacingExtraSmall: '0.26rem',
@@ -107,5 +109,3 @@ const styleProperties = {
 };
 
 export default styleProperties;
-
-export const convertToNumber = value => value.substring(0, value.length - 2);

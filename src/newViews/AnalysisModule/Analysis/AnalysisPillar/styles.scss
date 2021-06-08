@@ -9,32 +9,17 @@
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
 
-
     .heading {
         display: flex;
 
         .left {
             display: flex;
-
-            .tag {
-                flex-shrink: 0;
-                margin-left: var(--spacing-large);
-            }
         }
 
         .sub-heading {
             display: flex;
             align-items: center;
             color: var(--color-text-placeholder);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-
-            .button {
-                margin: 0 var(--dui-spacing-extra-small);
-            }
         }
     }
 

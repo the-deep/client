@@ -4,13 +4,15 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Pager,
     ContainerCard,
-    Button,
     QuickActionButton,
+    List,
+    ListView,
+    Container,
+    ExpandableContainer,
 } from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
 import DateRangeOutput from '#dui/DateRangeOutput';
-import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import TextOutput from '#components/general/TextOutput';
 
@@ -104,7 +106,6 @@ function Analysis(props: ComponentProps) {
     }, [analysisId, onEdit]);
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [expanded, setExpanded] = useState<boolean>(false);
 
     const queryOptions = useMemo(() => ({
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
@@ -117,7 +118,6 @@ function Analysis(props: ComponentProps) {
         retrigger: pillarGetTrigger,
     } = useRequest<MultiResponse<AnalysisPillars>>(
         {
-            skip: !expanded,
             url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/`,
             method: 'GET',
             query: queryOptions,
@@ -132,7 +132,7 @@ function Analysis(props: ComponentProps) {
 
     const {
         pending: pendingPillarDelete,
-        trigger: deletePillarTrigger,
+        trigger: triggerPillarDelete,
         context: deletePillarId,
     } = useLazyRequest<unknown, number>(
         {
@@ -145,29 +145,18 @@ function Analysis(props: ComponentProps) {
         },
     );
 
-    // FIXME: please use variable name with the context
-    // i.e. What click does this handles?
-    // suggestion: handleAccordionButtonClick
-    const handleClick = useCallback(() => {
-        setExpanded(!expanded);
-    }, [expanded]);
-
-    const handlePillarAnalysisToDelete = useCallback((toDeleteKey: number) => {
-        deletePillarTrigger(toDeleteKey);
-    }, [deletePillarTrigger]);
-
     const analysisPillarRendererParams = useCallback((_, data: AnalysisPillars) => ({
         analysisId: data.analysis,
         assigneeName: data.assigneeName,
         createdAt,
-        onDelete: handlePillarAnalysisToDelete,
+        onDelete: triggerPillarDelete,
         statements: data.analyticalStatements,
         pillarId: data.id,
         projectId: activeProject,
         title: data.title,
         pendingPillarDelete: pendingPillarDelete && data.id === deletePillarId,
     }), [
-        handlePillarAnalysisToDelete,
+        triggerPillarDelete,
         createdAt,
         activeProject,
         pendingPillarDelete,
@@ -196,7 +185,7 @@ function Analysis(props: ComponentProps) {
         <ContainerCard
             className={_cs(className, styles.analysisItem)}
             heading={title}
-            sub
+            headingSize="small"
             headerDescription={(
                 <DateRangeOutput
                     startDate={startDate}
@@ -241,54 +230,39 @@ function Analysis(props: ComponentProps) {
                         noColon
                     />
                 </div>
-                <div className={styles.contentItem}>
-                    <h3 className={styles.subHeading}>
-                        {_ts('analysis', 'pillarAssignments')}
-                    </h3>
-                    <ListView
+                <Container
+                    sub
+                    heading={_ts('analysis', 'pillarAssignments')}
+                >
+                    <List
                         data={analysisPillarsFromProps}
                         renderer={PillarListItem}
                         rendererParams={pillarListRendererParams}
                         keySelector={keySelector}
                     />
-                </div>
+                </Container>
             </div>
-            <div className={styles.pillarAnalyses}>
-                <Button
-                    name={undefined}
-                    className={styles.accordionButton}
-                    icons={(
-                        <Icon name={expanded
-                            ? 'chevronUp'
-                            : 'chevronDown'}
-                        />
-                    )}
-                    onClick={handleClick}
-                >
-                    {_ts('analysis', 'pillarAnalysisCount', { count: analysisPillarsFromProps.length })}
-                </Button>
-                {expanded && (
-                    <>
-                        <div className={styles.pillarAnalysisContent}>
-                            <ListView
-                                className={styles.pillarList}
-                                data={pillarResponse?.results}
-                                keySelector={keySelector}
-                                renderer={AnalysisPillar}
-                                rendererParams={analysisPillarRendererParams}
-                                pending={pillarPending}
-                            />
-                        </div>
-                        <Pager
-                            activePage={activePage}
-                            itemsCount={pillarResponse?.count ?? 0}
-                            maxItemsPerPage={MAX_ITEMS_PER_PAGE}
-                            onActivePageChange={setActivePage}
-                            itemsPerPageControlHidden
-                        />
-                    </>
+            <ExpandableContainer
+                heading={_ts('analysis', 'pillarAnalysisCount', { count: analysisPillarsFromProps.length })}
+                footerContent={(
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={pillarResponse?.count ?? 0}
+                        maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
+                    />
                 )}
-            </div>
+            >
+                <ListView
+                    className={styles.pillarList}
+                    data={pillarResponse?.results}
+                    keySelector={keySelector}
+                    pending={pillarPending}
+                    renderer={AnalysisPillar}
+                    rendererParams={analysisPillarRendererParams}
+                />
+            </ExpandableContainer>
         </ContainerCard>
     );
 }

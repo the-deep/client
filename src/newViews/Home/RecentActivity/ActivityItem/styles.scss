@@ -39,5 +39,10 @@
             color: var(--dui-color-text-label);
             font-size: var(--dui-font-size-small);
         }
+
+        .link {
+            color: var(--dui-color-brand);
+            font-weight: var(--dui-font-weight-bold);
+        }
     }
 }

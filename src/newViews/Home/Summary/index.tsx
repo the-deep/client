@@ -64,12 +64,14 @@ function Summary(props: Props) {
                 coloredBackground
             />
             <PercentageInformationCard
+                className={styles.percentageInfoCard}
                 value={taggedPercent}
                 variant="complement2"
                 label={_ts('home', 'sourcesTagged')}
                 icon={<IoDocumentOutline />}
             />
             <PercentageInformationCard
+                className={styles.percentageInfoCard}
                 value={verifiedPercent}
                 label={_ts('home', 'sourcesTaggedValidated')}
                 variant="complement1"

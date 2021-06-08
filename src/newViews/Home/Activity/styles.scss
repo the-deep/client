@@ -1,6 +1,7 @@
 .activity {
     position: relative;
     min-height: 300px;
+    padding: var(--dui-spacing-large);
 
     .container {
         display: flex;
@@ -13,8 +14,7 @@
         flex-direction: column;
         flex-grow: 1;
         justify-content: center;
-        // color: var(--dui-color-text-watermark);
-        color: var(--dui-color-text-disabled);
+        color: var(--dui-color-text-watermark);
 
         .icon {
             flex-shrink: 0;

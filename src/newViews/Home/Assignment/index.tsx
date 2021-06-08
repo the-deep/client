@@ -7,6 +7,7 @@ import {
     PendingMessage,
 } from '@the-deep/deep-ui';
 import { MdPlaylistAddCheck } from 'react-icons/md';
+import { IoCheckmarkDone } from 'react-icons/io5';
 
 import List from '#rsu/../v2/View/List';
 
@@ -99,7 +100,6 @@ function Assignments() {
 
     return (
         <Container
-            sub
             heading={_ts('assignment', 'myAssignments')}
             headerActions={(
                 assignmentsResponse && assignmentsResponse.count > 0 && (
@@ -108,8 +108,9 @@ function Assignments() {
                         onClick={handleBulkActionClick}
                         disabled={bulkPending}
                         variant="action"
+                        title={_ts('assignment', 'markAllAsDone')}
                     >
-                        {_ts('assignment', 'markAllAsDone')}
+                        <IoCheckmarkDone />
                     </Button>
                 )
             )}

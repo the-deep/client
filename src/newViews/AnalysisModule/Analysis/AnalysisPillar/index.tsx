@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { reverseRoute } from '@togglecorp/fujs';
 import {
     Container,
@@ -46,10 +46,6 @@ function AnalysisPillar(props: ComponentProps) {
     const completed = false;
     // setIsCompleted to be used when the status is passed by API
 
-    const handleDeletePillar = useCallback(() => {
-        onDelete(pillarId);
-    }, [pillarId, onDelete]);
-
     const editLink = reverseRoute(pathNames.pillarAnalysis, {
         projectId,
         analysisId,
@@ -65,52 +61,49 @@ function AnalysisPillar(props: ComponentProps) {
             heading={(
                 <div className={styles.left}>
                     {title}
-                    <Tag
-                        className={styles.tag}
-                        variant={completed ? 'accent' : 'gradient1'}
-                    >
-                        {completed
-                            ? _ts('analysis', 'completeLabel')
-                            : _ts('analysis', 'inProgressLabel')
-                        }
-                    </Tag>
                 </div>
             )}
-            headerClassName={styles.heading}
+            headingDescription={(
+                <Tag variant={completed ? 'accent' : 'gradient1'}>
+                    {completed
+                        ? _ts('analysis', 'completeLabel')
+                        : _ts('analysis', 'inProgressLabel')
+                    }
+                </Tag>
+            )}
             headerActions={(
-                <div className={styles.headerRight}>
+                <>
                     <QuickActionLink
                         to={editLink}
                         disabled={disabled}
-                        className={styles.button}
                     >
                         <Icon name="edit" />
                     </QuickActionLink>
                     <QuickActionButton
                         name={undefined}
-                        className={styles.button}
                         disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
-                        name={undefined}
-                        className={styles.button}
-                        onClick={handleDeletePillar}
+                        name={pillarId}
+                        onClick={onDelete}
                         disabled={disabled}
                     >
                         <Icon name="delete" />
                     </QuickActionButton>
-                </div>
+                </>
             )}
             headerDescription={(
-                <div className={styles.subHeading}>
-                    {_ts('analysis', 'creationDate')}
-                    <DateOutput
-                        value={createdAt}
-                        format="dd MMM, yyyy"
-                    />
-                </div>
+                <TextOutput
+                    label={_ts('analysis', 'creationDate')}
+                    value={(
+                        <DateOutput
+                            value={createdAt}
+                            format="dd MMM, yyyy"
+                        />
+                    )}
+                />
             )}
         >
             <div className={styles.pillarBody}>

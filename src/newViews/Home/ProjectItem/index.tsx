@@ -12,6 +12,7 @@ import {
     Card,
     ButtonLikeLink,
     InformationCard,
+    ElementFragments,
 } from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
@@ -154,7 +155,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
         <ContainerCard
             className={_cs(className, styles.projectItem)}
             heading={title}
-            sub
+            headingSize="small"
             headerDescription={(
                 <DateRangeOutput
                     startDate={startDate}
@@ -163,27 +164,27 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
             )}
             headerActions={(
                 <>
-                    <div className={styles.privacyLabel}>
-                        {isPrivate ? (
-                            _ts('home.recentProjects', 'privateProjectLabel')
-                        ) : (
-                            _ts('home.recentProjects', 'publicProjectLabel')
-                        )}
-                    </div>
-                    <Icon
-                        className={styles.privacyIcon}
-                        name={isPrivate ? 'locked' : 'unlocked'}
-                    />
-                    {canEditProject && (
-                        <ButtonLikeLink
-                            className={styles.link}
-                            variant="tertiary"
-                            to={reverseRoute(pathNames.editProject, { projectId })}
-                            icons={(
+                    <div className={styles.privacyBadge}>
+                        <ElementFragments
+                            actions={(
                                 <Icon
-                                    name="edit"
+                                    className={styles.privacyIcon}
+                                    name={isPrivate ? 'locked' : 'unlocked'}
                                 />
                             )}
+                        >
+                            {isPrivate ? (
+                                _ts('home.recentProjects', 'privateProjectLabel')
+                            ) : (
+                                _ts('home.recentProjects', 'publicProjectLabel')
+                            )}
+                        </ElementFragments>
+                    </div>
+                    {canEditProject && (
+                        <ButtonLikeLink
+                            variant="tertiary"
+                            to={reverseRoute(pathNames.editProject, { projectId })}
+                            icons={<Icon name="edit" />}
                         >
                             {_ts('home.recentProjects', 'editProjectButtonLabel')}
                         </ButtonLikeLink>
@@ -191,6 +192,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                 </>
             )}
             contentClassName={styles.content}
+            horizontallyCompactContent
         >
             <div className={styles.info}>
                 <div className={styles.basicDetails}>
