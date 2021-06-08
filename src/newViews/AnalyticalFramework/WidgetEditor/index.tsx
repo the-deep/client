@@ -7,6 +7,7 @@ import DateWidgetForm from './DateWidgetForm';
 import Matrix2dWidgetForm from './Matrix2dWidgetForm';
 import Matrix1dWidgetForm from './Matrix1dWidgetForm';
 import TimeWidgetForm from './TimeWidgetForm';
+import DateRangeWidgetForm from './DateRangeWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
@@ -76,6 +77,16 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'time') {
         return (
             <TimeWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'date-range') {
+        return (
+            <DateRangeWidgetForm
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
