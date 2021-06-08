@@ -3,6 +3,7 @@ import {
     Button,
     TextInput,
     NumberInput,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -41,7 +42,7 @@ const dataSchema: DataSchema = {
         maxValue: [],
     }),
     validation: (value) => {
-        const { minValue, maxValue } = value;
+        const { minValue, maxValue } = value ?? {};
         if (isTruthy(minValue) && isTruthy(maxValue) && minValue >= maxValue) {
             return 'Min value must be less than max value.'; // TODO: use translation
         }
@@ -84,9 +85,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
     return (
-        <div
-            className={_cs(className, styles.data)}
-        >
+        <div className={_cs(className, styles.data)}>
             <NonFieldError error={error} />
             <NumberInput
                 className={styles.input}
@@ -162,42 +161,50 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
             className={styles.widgetEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <div className={styles.buttonContainer}>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    onClick={onCancel}
-                    variant="tertiary"
-                    // FIXME: use strings
-                >
-                    Cancel
-                </Button>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    type="submit"
-                    disabled={pristine}
-                    // FIXME: use strings
-                >
-                    Save
-                </Button>
-            </div>
-            <NonFieldError error={error} />
-            <TextInput
-                className={styles.input}
-                // FIXME: use translation
-                label="Title"
-                name="title"
-                value={value.title}
-                onChange={onValueChange}
-                error={error?.fields?.title}
-            />
-            <DataInput
-                name="data"
-                value={value.data}
-                onChange={onValueChange}
-                error={error?.fields?.data}
-            />
+            <Container
+                heading={value?.title ?? 'Unnamed'}
+                headerActions={(
+                    <>
+                        <Button
+                            name={undefined}
+                            onClick={onCancel}
+                            variant="tertiary"
+                            // FIXME: use strings
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            name={undefined}
+                            type="submit"
+                            disabled={pristine}
+                            // FIXME: use strings
+                        >
+                            Save
+                        </Button>
+                    </>
+                )}
+                footerContent={(
+                    <NonFieldError error={error} />
+                )}
+                horizontallyCompactContent
+                sub
+            >
+                <TextInput
+                    className={styles.input}
+                    // FIXME: use translation
+                    label="Title"
+                    name="title"
+                    value={value.title}
+                    onChange={onValueChange}
+                    error={error?.fields?.title}
+                />
+                <DataInput
+                    name="data"
+                    value={value.data}
+                    onChange={onValueChange}
+                    error={error?.fields?.data}
+                />
+            </Container>
         </form>
     );
 }
