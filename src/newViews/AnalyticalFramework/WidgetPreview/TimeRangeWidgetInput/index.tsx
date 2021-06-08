@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import {
+    TextInput,
     QuickActionButton,
-    DateInput,
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
@@ -22,7 +22,7 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 }
 
-function DateRangeWidgetInput<N extends string>(props: Props<N>) {
+function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
         title,
@@ -38,14 +38,14 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         (to: string | undefined) => {
             onChange({ to, from: value?.from }, name);
         },
-        [onChange, name, value],
+        [onChange, value, name],
     );
 
     const handleFromChange = useCallback(
         (from: string | undefined) => {
             onChange({ to: value?.to, from }, name);
         },
-        [onChange, name, value],
+        [onChange, value, name],
     );
 
     const handleValueSwap = useCallback(
@@ -61,17 +61,17 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
         >
-            <DateInput
+            <TextInput // TODO use TimeRangeInput when added to deep-ui
                 name="from"
-                label="From" // FIXME: use translations
+                label="From" // FIXME use translations
                 onChange={handleFromChange}
                 value={value?.from}
                 readOnly={readOnly}
                 disabled={disabled}
             />
-            <DateInput // FIXME: use DateRangeInput if possible and available
+            <TextInput // TODO use TimeRangeInput when added to deep-ui
                 name="to"
-                label="To" // FIXME: use translations
+                label="To" // FIXME use translations
                 onChange={handleToChange}
                 value={value?.to}
                 readOnly={readOnly}
@@ -89,4 +89,4 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
     );
 }
 
-export default DateRangeWidgetInput;
+export default TimeRangeWidgetInput;

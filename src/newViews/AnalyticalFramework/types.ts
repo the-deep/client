@@ -76,6 +76,7 @@ interface NumberData extends BaseData<number> {
     maxValue?: number;
     minValue?: number;
 }
+
 interface SelectData extends BaseData<string> {
     options: KeyLabel[];
 }
@@ -149,7 +150,7 @@ export interface TimeWidget extends BaseWidget {
     type: 'time';
     data: BaseData<string>;
 }
-interface TimeRangeWidget extends BaseWidget {
+export interface TimeRangeWidget extends BaseWidget {
     type: 'time-range';
     data: BaseData<string>;
 }
