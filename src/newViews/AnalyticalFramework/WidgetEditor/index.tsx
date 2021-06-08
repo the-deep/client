@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 
 import { Widget, PartialForm } from '../types';
 import TextWidgetForm from './TextWidgetForm';
+import NumberWidgetForm from './NumberWidgetForm';
 import DateWidgetForm from './DateWidgetForm';
 import Matrix2dWidgetForm from './Matrix2dWidgetForm';
 import Matrix1dWidgetForm from './Matrix1dWidgetForm';
@@ -44,6 +45,16 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'text') {
         return (
             <TextWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'number') {
+        return (
+            <NumberWidgetForm
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}

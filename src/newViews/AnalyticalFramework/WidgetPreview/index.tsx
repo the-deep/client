@@ -4,6 +4,7 @@ import { Widget, PartialForm } from '../types';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
+import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidgetInput';
 
 import BaseWidgetInput from './BaseWidgetInput';
 
@@ -46,6 +47,24 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 name={name}
                 onChange={onChangeForText}
                 value={valueForText}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+            />
+        );
+    }
+    if (widget.type === 'number') {
+        // NOTE: we are casting this value
+        const onChangeForNumber = onChange as NumberWidgetInputProps<string>['onChange'];
+        const valueForNumber = value as NumberWidgetInputProps<string>['value'];
+
+        return (
+            <NumberWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForNumber}
+                value={valueForNumber}
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}

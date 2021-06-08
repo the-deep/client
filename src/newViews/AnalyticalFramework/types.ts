@@ -125,7 +125,7 @@ interface BaseWidget {
     type: Types;
 }
 
-interface NumberWidget extends BaseWidget {
+export interface NumberWidget extends BaseWidget {
     type: 'number';
     data: NumberData;
 }
