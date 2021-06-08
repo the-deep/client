@@ -1,0 +1,15 @@
+.widget-edit {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--spacing-medium) - var(--spacing-small));
+
+    .input {
+        padding: var(--spacing-small);
+    }
+}
+
+.data {
+    .input {
+        padding: var(--spacing-small);
+    }
+}
