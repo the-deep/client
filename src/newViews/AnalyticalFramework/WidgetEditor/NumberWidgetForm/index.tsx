@@ -14,7 +14,7 @@ import {
     Error,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
-import { _cs, isTruthy } from '@togglecorp/fujs';
+import { isTruthy } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
 
@@ -71,7 +71,6 @@ interface DataInputProps<K extends string>{
     value: PartialDataType | undefined;
     error: Error<DataType> | undefined;
     onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
-    className?: string;
 }
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
@@ -79,14 +78,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         error,
         onChange,
         name,
-        className,
     } = props;
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
     return (
-        <div className={_cs(className, styles.data)}>
-            <NonFieldError error={error} />
+        <>
+            <NonFieldError
+                className={styles.input}
+                error={error}
+            />
             <NumberInput
                 className={styles.input}
                 // FIXME: use translation
@@ -114,7 +115,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 onChange={onFieldChange}
                 error={error?.fields?.maxValue}
             />
-        </div>
+        </>
     );
 }
 
@@ -158,7 +159,7 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
 
     return (
         <form
-            className={styles.widgetEdit}
+            className={styles.form}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
             <Container
