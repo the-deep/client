@@ -155,7 +155,7 @@ interface TimeRangeWidget extends BaseWidget {
 }
 export interface DateRangeWidget extends BaseWidget {
     type: 'date-range';
-    data: BaseData<{ to: string, from: string }>;
+    data: BaseData<string>;
 }
 export interface Matrix1dWidget extends BaseWidget {
     type: 'matrix-1d';

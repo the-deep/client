@@ -1,5 +1,9 @@
 import React, { useCallback } from 'react';
-import { DateInput } from '@the-deep/deep-ui';
+import {
+    QuickActionButton,
+    DateInput,
+} from '@the-deep/deep-ui';
+import { IoSwapHorizontal } from 'react-icons/io5';
 
 import WidgetWrapper from '../../Widget';
 
@@ -8,9 +12,11 @@ export interface Props <N extends string>{
     className?: string;
 
     name: N,
-    value: { to?: string, from?: string } | null | undefined,
-    onChange: (value: { to?: string, from?: string } | undefined, name: N) => void,
-
+    value: { to: string | undefined, from: string | undefined } | null | undefined,
+        onChange: (
+            value: { to: string | undefined, from: string | undefined } | undefined,
+            name: N,
+        ) => void,
     actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
@@ -42,6 +48,13 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         [onChange, name, value],
     );
 
+    const handleValueSwap = useCallback(
+        () => {
+            onChange({ to: value?.from, from: value?.to }, name);
+        },
+        [onChange, value, name],
+    );
+
     return (
         <WidgetWrapper
             className={className}
@@ -49,19 +62,27 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             actions={actions}
         >
             <DateInput // FIXME: use DateRangeInput if possible and available
-                name={name}
+                name="to"
                 onChange={handleToChange}
                 value={value?.to}
                 readOnly={readOnly}
                 disabled={disabled}
             />
             <DateInput
-                name={name}
+                name="from"
                 onChange={handleFromChange}
                 value={value?.from}
                 readOnly={readOnly}
                 disabled={disabled}
             />
+            <QuickActionButton
+                name={undefined}
+                onClick={handleValueSwap}
+                title="Swap Values" // FIXME: use translations
+                variant="action"
+            >
+                <IoSwapHorizontal />
+            </QuickActionButton>
         </WidgetWrapper>
     );
 }
