@@ -3,6 +3,7 @@ import {
     Button,
     TextInput,
     DateInput,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -13,7 +14,6 @@ import {
     Error,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
-import { _cs } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
 
@@ -61,24 +61,24 @@ interface DataInputProps<K extends string>{
     value: PartialDataType | undefined;
     error: Error<DataType> | undefined;
     onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
-    className?: string;
 }
+
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
         error,
         onChange,
         name,
-        className,
     } = props;
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
     return (
-        <div
-            className={_cs(className, styles.data)}
-        >
-            <NonFieldError error={error} />
+        <>
+            <NonFieldError
+                error={error}
+                className={styles.input}
+            />
             <DateInput
                 className={styles.input}
                 // FIXME: use translation
@@ -88,7 +88,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 onChange={onFieldChange}
                 error={error?.fields?.defaultValue}
             />
-        </div>
+        </>
     );
 }
 
@@ -132,45 +132,53 @@ function DateWidgetForm(props: DateWidgetFormProps) {
 
     return (
         <form
-            className={styles.widgetEdit}
+            className={styles.form}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <div className={styles.buttonContainer}>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    onClick={onCancel}
-                    variant="tertiary"
-                    // FIXME: use strings
-                >
-                    Cancel
-                </Button>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    type="submit"
-                    disabled={pristine}
-                    // FIXME: use strings
-                >
-                    Save
-                </Button>
-            </div>
-            <NonFieldError error={error} />
-            <TextInput
-                className={styles.input}
-                // FIXME: use translation
-                label="Title"
-                name="title"
-                value={value.title}
-                onChange={onValueChange}
-                error={error?.fields?.title}
-            />
-            <DataInput
-                name="data"
-                value={value.data}
-                onChange={onValueChange}
-                error={error?.fields?.data}
-            />
+            <Container
+                heading={value?.title ?? 'Unnamed'}
+                headerActions={(
+                    <>
+                        <Button
+                            name={undefined}
+                            onClick={onCancel}
+                            variant="tertiary"
+                            // FIXME: use strings
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            name={undefined}
+                            type="submit"
+                            disabled={pristine}
+                            // FIXME: use strings
+                        >
+                            Save
+                        </Button>
+                    </>
+                )}
+                footerContent={(
+                    <NonFieldError error={error} />
+                )}
+                horizontallyCompactContent
+                sub
+            >
+                <TextInput
+                    className={styles.input}
+                    // FIXME: use translation
+                    label="Title"
+                    name="title"
+                    value={value.title}
+                    onChange={onValueChange}
+                    error={error?.fields?.title}
+                />
+                <DataInput
+                    name="data"
+                    value={value.data}
+                    onChange={onValueChange}
+                    error={error?.fields?.data}
+                />
+            </Container>
         </form>
     );
 }

@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from 'react';
 import {
     Button,
     TextInput,
-    NumberInput,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -14,14 +13,13 @@ import {
     Error,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
-import { isTruthy } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
 
-import { NumberWidget, PartialForm } from '../../types';
+import { TimeWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
 
-type FormType = NumberWidget;
+type FormType = TimeWidget;
 type PartialFormType = PartialForm<
     FormType,
     'clientId' | 'type'
@@ -38,16 +36,7 @@ type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({
         defaultValue: [],
-        minValue: [],
-        maxValue: [],
     }),
-    validation: (value) => {
-        const { minValue, maxValue } = value ?? {};
-        if (isTruthy(minValue) && isTruthy(maxValue) && minValue >= maxValue) {
-            return 'Min value must be less than max value.'; // TODO: use translation
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -72,6 +61,7 @@ interface DataInputProps<K extends string>{
     error: Error<DataType> | undefined;
     onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
 }
+
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
@@ -88,45 +78,27 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 className={styles.input}
                 error={error}
             />
-            <NumberInput
-                className={styles.input}
+            <TextInput // FIXME: use TimeInput when added through deep-ui
                 // FIXME: use translation
                 label="Default Value"
+                className={styles.input}
                 name="defaultValue"
                 value={value?.defaultValue}
                 onChange={onFieldChange}
                 error={error?.fields?.defaultValue}
             />
-            <NumberInput
-                className={styles.input}
-                // FIXME: use translation
-                label="Min Value"
-                name="minValue"
-                value={value?.minValue}
-                onChange={onFieldChange}
-                error={error?.fields?.minValue}
-            />
-            <NumberInput
-                className={styles.input}
-                // FIXME: use translation
-                label="Max Value"
-                name="maxValue"
-                value={value?.maxValue}
-                onChange={onFieldChange}
-                error={error?.fields?.maxValue}
-            />
         </>
     );
 }
 
-interface NumberWidgetFormProps {
+interface TimeWidgetFormProps {
     onCancel: () => void;
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
 }
 
-function NumberWidgetForm(props: NumberWidgetFormProps) {
+function TimeWidgetForm(props: TimeWidgetFormProps) {
     const {
         onChange,
         onSave,
@@ -191,8 +163,8 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
                 sub
             >
                 <TextInput
-                    className={styles.input}
                     // FIXME: use translation
+                    className={styles.input}
                     label="Title"
                     name="title"
                     value={value.title}
@@ -210,4 +182,4 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
     );
 }
 
-export default NumberWidgetForm;
+export default TimeWidgetForm;

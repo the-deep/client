@@ -5,6 +5,7 @@ import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInpu
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
 import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidgetInput';
+import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInput';
 
 import BaseWidgetInput from './BaseWidgetInput';
 
@@ -83,6 +84,24 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 name={name}
                 onChange={onChangeForDate}
                 value={valueForDate}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+            />
+        );
+    }
+    if (widget.type === 'time') {
+        // NOTE: we are casting this value
+        const onChangeForTime = onChange as TimeWidgetInputProps<string>['onChange'];
+        const valueForTime = value as TimeWidgetInputProps<string>['value'];
+
+        return (
+            <TimeWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForTime}
+                value={valueForTime}
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}

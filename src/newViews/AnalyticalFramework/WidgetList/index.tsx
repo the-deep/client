@@ -25,6 +25,10 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
     },
     {
+        type: 'time',
+        clientId: 'random',
+    },
+    {
         type: 'matrix-1d',
         clientId: 'random',
     },
@@ -154,6 +158,13 @@ function WidgetList(props: Props) {
                     name="number"
                     // FIXME: use strings
                     label="Number Widget"
+                    className={styles.addMoreItem}
+                    onAddClick={handleAddClick}
+                />
+                <AddItem
+                    name="time"
+                    // FIXME: use strings
+                    label="Time Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />

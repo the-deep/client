@@ -145,7 +145,7 @@ export interface DateWidget extends BaseWidget {
     type: 'date';
     data: BaseData<string>;
 }
-interface TimeWidget extends BaseWidget {
+export interface TimeWidget extends BaseWidget {
     type: 'time';
     data: BaseData<string>;
 }
