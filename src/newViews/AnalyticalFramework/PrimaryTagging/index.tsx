@@ -9,8 +9,11 @@ import {
     Tab,
     TabList,
     TabPanel,
+    QuickActionButton,
+    ButtonProps,
 } from '@the-deep/deep-ui';
 import { _cs, randomString } from '@togglecorp/fujs';
+import { FiEdit2 } from 'react-icons/fi';
 
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
@@ -317,6 +320,18 @@ function PrimaryTagging(props: Props) {
         [sections, tempSections, tempWidget],
     );
 
+    const [sectionToEdit, setSectionToEdit] = useState<string | undefined>(undefined);
+
+    const handleSectionEditClick: ButtonProps<string>['onClick'] = useCallback((newSectionToEdit, event) => {
+        event.stopPropagation();
+        setSectionToEdit(newSectionToEdit);
+        handleSectionsEdit();
+    }, [handleSectionsEdit]);
+
+    const handleTabChange = useCallback((newSelection: string) => {
+        setSelectedSection(newSelection);
+    }, []);
+
     const sectionEditMode = !!tempSections && !tempWidget;
     const widgetEditMode = !tempSections && !!tempWidget;
 
@@ -326,8 +341,9 @@ function PrimaryTagging(props: Props) {
         <div className={_cs(styles.primaryTagging, className)}>
             <Container
                 className={styles.widgetListContainer}
+                contentClassName={styles.widgetListContent}
                 heading={_ts('analyticalFramework.primaryTagging', 'buildingModulesHeading')}
-                sub
+                horizontallyCompactContent
             >
                 {!editMode && (
                     <WidgetList
@@ -338,6 +354,7 @@ function PrimaryTagging(props: Props) {
                 {sectionEditMode && tempSections && (
                     <SectionsEditor
                         initialValue={tempSections}
+                        focusedSection={sectionToEdit}
                         onChange={handleTempSectionsChange}
                         onSave={handleTempSectionsSave}
                         onCancel={handleSectionsEditCancel}
@@ -356,7 +373,7 @@ function PrimaryTagging(props: Props) {
             <div className={styles.frameworkPreview}>
                 <Tabs
                     value={selectedSection}
-                    onChange={setSelectedSection}
+                    onChange={handleTabChange}
                     variant="step"
                 >
                     <div className={styles.topBar}>
@@ -385,10 +402,20 @@ function PrimaryTagging(props: Props) {
                                 <Tab
                                     key={section.clientId}
                                     name={section.clientId}
+                                    borderWrapperClassName={styles.borderWrapper}
                                     className={styles.tab}
+                                    title={section.tooltip}
                                     // FIXME: use strings
                                 >
                                     {section.title || 'Unnamed'}
+                                    <QuickActionButton
+                                        className={styles.sectionEditButton}
+                                        name={section.clientId}
+                                        disabled={editMode}
+                                        onClick={handleSectionEditClick}
+                                    >
+                                        <FiEdit2 />
+                                    </QuickActionButton>
                                 </Tab>
                             ))}
                         </TabList>
