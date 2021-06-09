@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import NonFieldError from '#components/ui/NonFieldError';
 
 import {
@@ -14,13 +15,15 @@ import {
     Container,
     Checkbox,
     Button,
-    Footer,
     List,
 } from '@the-deep/deep-ui';
 import Avatar from '#components/ui/Avatar';
 
 import _ts from '#ts';
-import { activeUserSelector } from '#redux';
+import {
+    activeUserSelector,
+    setUserInformationAction,
+} from '#redux';
 import { useRequest, useLazyRequest } from '#utils/request';
 import {
     ObjectSchema,
@@ -28,13 +31,10 @@ import {
     useForm,
     createSubmitHandler,
     arrayCondition,
+    requiredCondition,
 } from '@togglecorp/toggle-form';
 
 import styles from './styles.scss';
-
-const mapStateToProps = (state: AppState) => ({
-    activeUser: activeUserSelector(state),
-});
 
 type EmailOptOut = 'news_and_updates' | 'join_requests' | 'email_comment';
 
@@ -63,7 +63,7 @@ const schema: FormSchema = {
         firstName: [requiredStringCondition],
         lastName: [requiredStringCondition],
         organization: [],
-        language: [requiredStringCondition],
+        language: [requiredCondition],
         emailOptOuts: [arrayCondition],
     }),
 };
@@ -83,14 +83,25 @@ const languageLabelSelector = (d: LanguagePreference) => d.title;
 
 const initialValue: FormType = {};
 
+interface PropsFromDispatch {
+    setUserInformation: typeof setUserInformationAction;
+}
+const mapStateToProps = (state: AppState) => ({
+    activeUser: activeUserSelector(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setUserInformation: params => dispatch(setUserInformationAction(params)),
+});
 
 interface Props {
     activeUser: { userId: number };
 }
 
-function MyProfile(props: Props) {
+function MyProfile(props: Props & PropsFromDispatch) {
     const {
         activeUser,
+        setUserInformation,
     } = props;
 
     const {
@@ -111,6 +122,10 @@ function MyProfile(props: Props) {
         onSuccess: (response: User) => {
             onValueSet(response);
             onErrorSet({});
+            setUserInformation({
+                userId: activeUser.userId,
+                information: response,
+            });
         },
         failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
@@ -133,6 +148,10 @@ function MyProfile(props: Props) {
         onSuccess: (response) => {
             onValueSet(response);
             onErrorSet({});
+            setUserInformation({
+                userId: activeUser.userId,
+                information: response,
+            });
         },
         failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
@@ -161,42 +180,36 @@ function MyProfile(props: Props) {
     const disabled = userGetPending || userPatchPending || languagesPending;
     return (
         <form
+            className={styles.form}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
             <Container
                 className={styles.myProfile}
-                heading={_ts('myProfile', 'myProfileTitle')}
-                sub
                 headerClassName={styles.header}
-                headingClassName={styles.heading}
-                footerClassName={styles.footer}
-                footerActions={
-                    <Footer
-                        actions={(
-                            <Button
-                                disabled={disabled || pristine}
-                                type="submit"
-                                variant="primary"
-                                name="saveProfile"
-                            >
-                                {_ts('myProfile', 'saveMyProfile')}
-                            </Button>
-                        )}
-                    />
-                }
-                contentClassName={styles.content}
+                heading={_ts('myProfile', 'myProfileTitle')}
+                contentClassName={styles.profileContent}
             >
-
-                {(userGetPending || languagesPending) && <PendingMessage />}
-                <NonFieldError
-                    className={styles.input}
-                    error={error}
-                />
-                <div className={styles.mainContent}>
+                <Container
+                    footerActions={(
+                        <Button
+                            disabled={disabled || pristine}
+                            type="submit"
+                            variant="primary"
+                            name="saveProfile"
+                        >
+                            {_ts('myProfile', 'saveMyProfile')}
+                        </Button>
+                    )}
+                    className={styles.content}
+                >
+                    {(userGetPending || languagesPending) && <PendingMessage />}
                     <Avatar
                         className={styles.displayPicture}
                         src={value?.displayPictureUrl}
-                        name={`${value.firstName} ${value.lastName}`}
+                        name={`${value?.firstName} ${value?.lastName}`}
+                    />
+                    <NonFieldError
+                        error={error}
                     />
                     <div className={styles.userInfo}>
                         <Container
@@ -250,7 +263,7 @@ function MyProfile(props: Props) {
                                 labelSelector={languageLabelSelector}
                                 options={languageResponse?.results}
                             />
-                            <List
+                            <List // FIXME:  use ListSelection component when available
                                 data={emailOptOutsOptions}
                                 renderer={Checkbox}
                                 keySelector={emailOptOutKeySelector}
@@ -258,10 +271,10 @@ function MyProfile(props: Props) {
                             />
                         </Container>
                     </div>
-                </div>
+                </Container>
             </Container>
         </form>
     );
 }
 
-export default connect(mapStateToProps)(MyProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);

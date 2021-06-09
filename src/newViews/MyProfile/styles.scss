@@ -1,54 +1,56 @@
-.my-profile {
+.form {
     display: flex;
-    background-color: var(--dui-color-background);
+    flex-direction: column;
     height: 100%;
+    overflow-y: auto;
 
-    .header {
-        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
-
-        .heading {
-            text-transform: uppercase;
-            color: var(--dui-color-brand);
-        }
-    }
-
-    .footer {
-        padding: 0 var(--dui-spacing-super-large);
-    }
-
-    .content {
+    .my-profile {
         display: flex;
         flex-grow: 1;
-        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small))
+            var(--dui-spacing-super-large);
 
-        .main-content {
+        .header {
+            margin: var(--dui-spacing-small) 0;
+        }
+
+        .profile-content {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+            margin: var(--dui-spacing-small) 0;
             background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 
-            .display-picture {
+            .content {
                 display: flex;
-                align-self: center;
-                margin: var(--dui-spacing-medium);
-                width: 100px;
-                height: 100px;
-            }
-
-            .user-info {
-                display: flex;
+                flex-direction: column;
                 flex-grow: 1;
+                background-color: var(--dui-color-foreground);
 
-                .personal-info {
-                    flex: 1;
-                    background-color: var(--dui-color-foreground);
-                    padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+                .display-picture {
+                    display: flex;
+                    align-self: center;
+                    margin: var(--dui-spacing-small) auto;
+                    width: calc(96px + 15vh);
+                    height: calc(96px + 15vh);
                 }
 
-                .preferences {
-                    flex: 1;
-                    background-color: var(--dui-color-foreground);
-                    padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+                .user-info {
+                    display: flex;
+                    flex-grow: 1;
+
+                    .personal-info {
+                        flex: 1;
+                        background-color: var(--dui-color-foreground);
+                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+                    }
+
+                    .preferences {
+                        flex: 1;
+                        background-color: var(--dui-color-foreground);
+                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+                    }
                 }
             }
         }
