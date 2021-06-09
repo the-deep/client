@@ -9,6 +9,8 @@ import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInpu
 import DateRangeWidgetInput, { Props as DateRangeWidgetInputProps } from './DateRangeWidgetInput';
 import TimeRangeWidgetInput, { Props as TimeRangeWidgetInputProps } from './TimeRangeWidgetInput';
 import ScaleWidgetInput, { Props as ScaleWidgetInputProps } from './ScaleWidgetInput';
+import MultiSelectWidgetInput, { Props as MultiSelectWidgetInputProps } from './MultiSelectWidgetInput';
+import SingleSelectWidgetInput, { Props as SingleSelectWidgetInputProps } from './SingleSelectWidgetInput';
 
 import BaseWidgetInput from './BaseWidgetInput';
 
@@ -176,6 +178,44 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 name={name}
                 onChange={onChangeForTimeRange}
                 value={valueForTimeRange}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+                widget={widget}
+            />
+        );
+    }
+    if (widget.type === 'multi-select') {
+        // NOTE: we are casting this value
+        const onChangeForMultiSelect = onChange as MultiSelectWidgetInputProps<string>['onChange'];
+        const valueForMultiSelect = value as MultiSelectWidgetInputProps<string>['value'];
+
+        return (
+            <MultiSelectWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForMultiSelect}
+                value={valueForMultiSelect}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+                widget={widget}
+            />
+        );
+    }
+    if (widget.type === 'single-select') {
+        // NOTE: we are casting this value
+        const onChangeForSingleSelect = onChange as SingleSelectWidgetInputProps<string>['onChange'];
+        const valueForSingleSelect = value as SingleSelectWidgetInputProps<string>['value'];
+
+        return (
+            <SingleSelectWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForSingleSelect}
+                value={valueForSingleSelect}
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
