@@ -45,7 +45,7 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['data']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'type'>;
 
 type ColumnType = DataType['columns'][number];
 export type PartialColumnType = PartialForm<
