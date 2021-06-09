@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
     IoTrash,
     IoAdd,
@@ -101,8 +101,25 @@ function SectionInput(props: SectionInputProps) {
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
+    const divRef = useRef<HTMLDivElement>(null);
+
+    useEffect(
+        () => {
+            if (autoFocus && divRef.current) {
+                divRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+            }
+        },
+        [autoFocus],
+    );
+
     return (
         <Container
+            containerElementProps={{
+                ref: divRef,
+            }}
             headerActions={(
                 <QuickActionButton
                     name={index}

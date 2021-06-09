@@ -10,15 +10,15 @@
     .section-input {
         &.focus {
             // FIXME: Use standard values
-            animation: focus .5s 2;
+            animation: focus 2s 1 ease-out;
         }
     }
 
     @keyframes focus {
-        from  {
+        0% {
             background-color: var(--dui-color-surface-information);
         }
-        to {
+        100% {
             background-color: transparent;
         }
     }
