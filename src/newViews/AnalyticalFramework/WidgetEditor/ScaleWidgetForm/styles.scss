@@ -3,6 +3,7 @@
     flex-direction: column;
     overflow-y: auto;
 
+    .error,
     .input {
         padding: var(--spacing-small);
     }
