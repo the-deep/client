@@ -153,7 +153,7 @@ interface TimeRangeWidget extends BaseWidget {
     type: 'time-range';
     data: BaseData<string>;
 }
-interface DateRangeWidget extends BaseWidget {
+export interface DateRangeWidget extends BaseWidget {
     type: 'date-range';
     data: BaseData<string>;
 }
