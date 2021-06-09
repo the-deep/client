@@ -74,6 +74,13 @@ const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         sections: sectionsSchema,
     }),
+    validation: (data) => {
+        if ((data?.sections?.length ?? 0) <= 0) {
+            // FIXME: use strings
+            return 'At least one section is required.';
+        }
+        return undefined;
+    },
 };
 
 const defaultVal: PartialSectionType = {
@@ -167,6 +174,7 @@ interface Props {
     onSave: (value: Section[]) => void;
     onChange: (value: PartialSectionType[]) => void;
     focusedSection?: string;
+    onFocusChange: (value: string) => void;
 }
 
 function SectionsEditor(props: Props) {
@@ -176,6 +184,7 @@ function SectionsEditor(props: Props) {
         onSave,
         onCancel,
         focusedSection,
+        onFocusChange,
     } = props;
 
     const defaultFormValues: PartialFormType = {
@@ -219,8 +228,9 @@ function SectionsEditor(props: Props) {
                 [...oldSections, newSection],
                 'sections' as const,
             );
+            onFocusChange(clientId);
         },
-        [onValueChange, value.sections],
+        [onValueChange, value.sections, onFocusChange],
     );
 
     const handleSubmit = useCallback(

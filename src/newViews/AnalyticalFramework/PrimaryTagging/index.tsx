@@ -355,6 +355,7 @@ function PrimaryTagging(props: Props) {
                     <SectionsEditor
                         initialValue={tempSections}
                         focusedSection={sectionToEdit}
+                        onFocusChange={setSectionToEdit}
                         onChange={handleTempSectionsChange}
                         onSave={handleTempSectionsSave}
                         onCancel={handleSectionsEditCancel}
