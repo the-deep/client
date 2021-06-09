@@ -196,6 +196,7 @@ export type Widget = NumberWidget
 export interface Section {
     clientId: string;
     title: string;
+    tooltip?: string;
     widgets: Widget[];
 }
 

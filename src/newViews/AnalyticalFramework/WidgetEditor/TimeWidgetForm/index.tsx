@@ -75,7 +75,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError
-                className={styles.input}
+                className={styles.error}
                 error={error}
             />
             <TextInput // FIXME: use TimeInput when added through deep-ui
@@ -156,12 +156,13 @@ function TimeWidgetForm(props: TimeWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                footerContent={(
-                    <NonFieldError error={error} />
-                )}
                 horizontallyCompactContent
                 sub
             >
+                <NonFieldError
+                    className={styles.error}
+                    error={error}
+                />
                 <TextInput
                     // FIXME: use translation
                     className={styles.input}

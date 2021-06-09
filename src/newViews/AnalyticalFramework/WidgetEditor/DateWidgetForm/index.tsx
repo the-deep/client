@@ -77,7 +77,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         <>
             <NonFieldError
                 error={error}
-                className={styles.input}
+                className={styles.error}
             />
             <DateInput
                 className={styles.input}
@@ -157,12 +157,13 @@ function DateWidgetForm(props: DateWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                footerContent={(
-                    <NonFieldError error={error} />
-                )}
                 horizontallyCompactContent
                 sub
             >
+                <NonFieldError
+                    className={styles.error}
+                    error={error}
+                />
                 <TextInput
                     className={styles.input}
                     // FIXME: use translation

@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
 import {
     Button,
+    Container,
     TextInput,
+    TextArea,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
@@ -20,7 +22,10 @@ import {
     StateArg,
     Error,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
 
@@ -53,6 +58,7 @@ const sectionSchema: SectionSchema = {
     fields: (): SectionSchemaFields => ({
         clientId: [],
         title: [requiredStringCondition],
+        tooltip: [],
         widgets: [arrayCondition],
     }),
 };
@@ -68,6 +74,13 @@ const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         sections: sectionsSchema,
     }),
+    validation: (data) => {
+        if ((data?.sections?.length ?? 0) <= 0) {
+            // FIXME: use strings
+            return 'At least one section is required.';
+        }
+        return undefined;
+    },
 };
 
 const defaultVal: PartialSectionType = {
@@ -80,6 +93,7 @@ interface SectionInputProps {
     onChange: (value: StateArg<PartialSectionType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    autoFocus: boolean;
 }
 function SectionInput(props: SectionInputProps) {
     const {
@@ -89,33 +103,68 @@ function SectionInput(props: SectionInputProps) {
         onChange,
         onRemove,
         index,
+        autoFocus,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
+    const divRef = useRef<HTMLDivElement>(null);
+
+    useEffect(
+        () => {
+            if (autoFocus && divRef.current) {
+                divRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+            }
+        },
+        [autoFocus],
+    );
+
     return (
-        <div className={className}>
+        <Container
+            containerElementProps={{
+                ref: divRef,
+            }}
+            headerActions={(
+                <QuickActionButton
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Title"
+                >
+                    <IoTrash />
+                </QuickActionButton>
+            )}
+            heading={(
+                <TextInput
+                    name="title"
+                    placeholder="Enter section title"
+                    value={value.title}
+                    onChange={onFieldChange}
+                    error={error?.fields?.title}
+                    autoFocus={autoFocus}
+                />
+            )}
+            className={_cs(
+                className,
+                autoFocus && styles.focus,
+            )}
+            horizontallyCompactContent
+            sub
+        >
             <NonFieldError error={error} />
-            <TextInput
-                className={styles.title}
+            <TextArea
                 // FIXME: use translation
-                label="Title"
-                name="title"
+                label="Tooltip"
+                name="tooltip"
                 rows={4}
-                value={value.title}
+                value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.title}
+                error={error?.fields?.tooltip}
             />
-            <QuickActionButton
-                className={styles.removeButton}
-                name={index}
-                onClick={onRemove}
-                // FIXME: use translation
-                title="Remove Title"
-            >
-                <IoTrash />
-            </QuickActionButton>
-        </div>
+        </Container>
     );
 }
 
@@ -124,6 +173,8 @@ interface Props {
     onCancel: () => void;
     onSave: (value: Section[]) => void;
     onChange: (value: PartialSectionType[]) => void;
+    focusedSection?: string;
+    onFocusChange: (value: string) => void;
 }
 
 function SectionsEditor(props: Props) {
@@ -132,6 +183,8 @@ function SectionsEditor(props: Props) {
         onChange,
         onSave,
         onCancel,
+        focusedSection,
+        onFocusChange,
     } = props;
 
     const defaultFormValues: PartialFormType = {
@@ -175,8 +228,9 @@ function SectionsEditor(props: Props) {
                 [...oldSections, newSection],
                 'sections' as const,
             );
+            onFocusChange(clientId);
         },
-        [onValueChange, value.sections],
+        [onValueChange, value.sections, onFocusChange],
     );
 
     const handleSubmit = useCallback(
@@ -189,42 +243,33 @@ function SectionsEditor(props: Props) {
 
     return (
         <form
-            className={styles.sectionEdit}
+            className={styles.form}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <div className={styles.buttonContainer}>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    onClick={onCancel}
-                    variant="tertiary"
-                    // FIXME: use strings
-                >
-                    Cancel
-                </Button>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    type="submit"
-                    disabled={pristine}
-                    // FIXME: use strings
-                >
-                    Save
-                </Button>
-            </div>
-            {value.sections?.map((section, index) => (
-                <SectionInput
-                    className={styles.sectionInput}
-                    key={section.clientId}
-                    index={index}
-                    value={section}
-                    onChange={onSectionsChange}
-                    onRemove={onSectionsRemove}
-                    error={error?.fields?.sections?.members?.[section.clientId]}
-                />
-            ))}
-            {(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
-                <div className={styles.footerContainer}>
+            <Container
+                // FIXME: Use translation
+                heading="Sections"
+                headerActions={(
+                    <>
+                        <Button
+                            name={undefined}
+                            onClick={onCancel}
+                            variant="tertiary"
+                            // FIXME: use strings
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            name={undefined}
+                            type="submit"
+                            disabled={pristine}
+                            // FIXME: use strings
+                        >
+                            Save
+                        </Button>
+                    </>
+                )}
+                footerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
                     <Button
                         name={undefined}
                         icons={(<IoAdd />)}
@@ -234,8 +279,25 @@ function SectionsEditor(props: Props) {
                     >
                         Add
                     </Button>
-                </div>
-            )}
+                )}
+                contentClassName={styles.content}
+                sub
+            >
+                <NonFieldError error={error} />
+                <NonFieldError error={error?.fields?.sections} />
+                {value.sections?.map((section, index) => (
+                    <SectionInput
+                        className={styles.sectionInput}
+                        key={section.clientId}
+                        index={index}
+                        value={section}
+                        onChange={onSectionsChange}
+                        onRemove={onSectionsRemove}
+                        error={error?.fields?.sections?.members?.[section.clientId]}
+                        autoFocus={focusedSection === section.clientId}
+                    />
+                ))}
+            </Container>
         </form>
     );
 }

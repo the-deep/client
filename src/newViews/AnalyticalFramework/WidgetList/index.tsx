@@ -124,6 +124,7 @@ function WidgetList(props: Props) {
                         name="section"
                         // FIXME: use strings
                         label="Sections"
+                        className={styles.addMoreItem}
                         onAddClick={props.onSectionsEdit}
                     />
                     <AddItem

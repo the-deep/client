@@ -85,7 +85,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError
-                className={styles.input}
+                className={styles.error}
                 error={error}
             />
             <NumberInput
@@ -184,12 +184,13 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                footerContent={(
-                    <NonFieldError error={error} />
-                )}
                 horizontallyCompactContent
                 sub
             >
+                <NonFieldError
+                    className={styles.error}
+                    error={error}
+                />
                 <TextInput
                     className={styles.input}
                     // FIXME: use translation

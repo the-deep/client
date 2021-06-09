@@ -1,9 +1,20 @@
 .primary-tagging {
     display: flex;
+    overflow-y: auto;
 
     .widget-list-container {
+        display: flex;
+        flex-direction: column;
         background-color: var(--dui-color-foreground);
-        width: calc(160px + 10vw);
+        width: calc(240px + 10vw);
+        overflow-y: auto;
+
+        .widget-list-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
     }
 
     .framework-preview {
@@ -24,13 +35,28 @@
             background-color: var(--dui-color-foreground);
 
             .tabs {
-                >* {
+                .border-wrapper {
                     display: flex;
                     flex-grow: 1;
                 }
 
                 .tab {
                     flex-grow: 1;
+
+                    .section-edit-button {
+                        position: absolute;
+                        top: 50%;
+                        right: 2em;
+                        transform: translateY(-50%);
+                        transition: var(--dui-duration-transition-medium) opacity ease-in-out;
+                        opacity: 0;
+                    }
+
+                    &:hover {
+                        .section-edit-button {
+                            opacity: 1;
+                        }
+                    }
                 }
             }
 
