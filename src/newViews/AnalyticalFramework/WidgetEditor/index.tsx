@@ -9,6 +9,7 @@ import Matrix2dWidgetForm from './Matrix2dWidgetForm';
 import Matrix1dWidgetForm from './Matrix1dWidgetForm';
 import TimeWidgetForm from './TimeWidgetForm';
 import DateRangeWidgetForm from './DateRangeWidgetForm';
+import ScaleWidgetForm from './ScaleWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
@@ -118,6 +119,16 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'matrix-2d') {
         return (
             <Matrix2dWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'scale') {
+        return (
+            <ScaleWidgetForm
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}

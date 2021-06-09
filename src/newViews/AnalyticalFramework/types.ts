@@ -187,7 +187,7 @@ interface OrganigramWidget extends BaseWidget {
     type: 'organigram';
     data: OrganigramData;
 }
-interface ScaleWidget extends BaseWidget {
+export interface ScaleWidget extends BaseWidget {
     type: 'scale';
     data: ScaleData;
 }

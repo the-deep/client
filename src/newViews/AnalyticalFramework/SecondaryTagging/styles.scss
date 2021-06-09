@@ -1,9 +1,19 @@
 .secondary-tagging {
     display: flex;
+    overflow-y: auto;
 
     .widget-list-container {
+        display: flex;
+        flex-direction: column;
         background-color: var(--dui-color-foreground);
         width: calc(240px + 10vw);
+        overflow-y: auto;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
     }
 
     .framework-preview {

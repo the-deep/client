@@ -1,0 +1,19 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .input {
+        padding: var(--spacing-small);
+    }
+
+    .editor-content {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .options-list {
+            overflow-y: auto;
+        }
+    }
+}
