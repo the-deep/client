@@ -1,19 +1,6 @@
-.widget-edit {
-    display: flex;
-    flex-direction: column;
-    padding: calc(var(--spacing-medium) - var(--spacing-small));
-
-    .button-container {
-        display: flex;
-        justify-content: flex-end;
-        padding: calc(var(--spacing-small) - var(--spacing-extra-small));
-
-        .button {
-            margin: var(--spacing-extra-small);
-        }
-    }
-
+.form {
+    .error,
     .input {
-        padding: var(--spacing-small);
+        margin: var(--dui-spacing-small) var(--dui-spacing-medium);
     }
 }

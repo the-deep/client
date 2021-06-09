@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import {
     Button,
+    Container,
     TextInput,
 } from '@the-deep/deep-ui';
 import {
@@ -77,39 +78,48 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
 
     return (
         <form
-            className={styles.widgetEdit}
+            className={styles.form}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <div className={styles.buttonContainer}>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    onClick={onCancel}
-                    variant="tertiary"
-                    // FIXME: use strings
-                >
-                    Cancel
-                </Button>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    type="submit"
-                    disabled={pristine}
-                    // FIXME: use strings
-                >
-                    Save
-                </Button>
-            </div>
-            <NonFieldError error={error} />
-            <TextInput
-                className={styles.input}
-                // FIXME: use translation
-                label="Title"
-                name="title"
-                value={value.title}
-                onChange={onValueChange}
-                error={error?.fields?.title}
-            />
+            <Container
+                heading={value?.title ?? 'Unnamed'}
+                headerActions={(
+                    <>
+                        <Button
+                            name={undefined}
+                            onClick={onCancel}
+                            variant="tertiary"
+                            // FIXME: use strings
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            name={undefined}
+                            type="submit"
+                            disabled={pristine}
+                            // FIXME: use strings
+                        >
+                            Save
+                        </Button>
+                    </>
+                )}
+                horizontallyCompactContent
+                sub
+            >
+                <NonFieldError
+                    className={styles.error}
+                    error={error}
+                />
+                <TextInput
+                    // FIXME: use translation
+                    className={styles.input}
+                    label="Title"
+                    name="title"
+                    value={value?.title}
+                    onChange={onValueChange}
+                    error={error?.fields?.title}
+                />
+            </Container>
         </form>
     );
 }
