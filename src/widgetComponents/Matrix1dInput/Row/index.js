@@ -38,7 +38,7 @@ const defaultProps = {
 };
 
 const orientationStyleMaps = {
-    horizontal: styles.horizontalRow,
+    // horizontal: styles.horizontalRow,
     vertical: styles.verticalRow,
     pivoted: styles.pivotedRow,
 };

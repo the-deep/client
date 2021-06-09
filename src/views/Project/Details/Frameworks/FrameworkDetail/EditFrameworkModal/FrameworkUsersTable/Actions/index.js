@@ -84,6 +84,7 @@ const propTypes = {
     memberDetails: PropTypes.shape({
         name: PropTypes.string,
         email: PropTypes.string,
+        displayName: PropTypes.string,
     }),
     isActiveUser: PropTypes.bool.isRequired,
     canEditMemberships: PropTypes.bool.isRequired,

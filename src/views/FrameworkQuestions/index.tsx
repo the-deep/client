@@ -260,7 +260,6 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         searchValue,
                         questions: filteredQuestions,
                         isFiltered: treeFilter.length > 0 || !!searchValue,
-                        questionClassName: styles.question,
 
                         showLoadingOverlay: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
@@ -307,7 +306,6 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         questions: filteredQuestions,
-                        questionClassName: styles.question,
                         isFiltered: treeFilter.length > 0,
                         archived: true,
                     });

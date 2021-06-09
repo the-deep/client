@@ -80,6 +80,11 @@ const PageNormal = ({ name, disabled, noProjectPermission, ...otherProps }) => {
         </Fragment>
     );
 };
+PageNormal.propTypes = {
+    name: PropTypes.string.isRequired,
+    disabled: PropTypes.bool,
+    noProjectPermission: PropTypes.bool,
+};
 
 const propTypes = {
     match: PropTypes.shape({
@@ -96,6 +101,7 @@ const propTypes = {
 
     location: PropTypes.shape({
         pathname: PropTypes.string,
+        hash: PropTypes.string,
     }).isRequired,
 
     activeProjectId: PropTypes.number,

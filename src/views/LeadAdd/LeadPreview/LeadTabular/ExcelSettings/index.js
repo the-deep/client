@@ -55,7 +55,7 @@ export default class ExcelSettings extends React.PureComponent {
                             disabled={sheet.noHeaders || sheet.skip || disabled}
                             separator=" "
                         />
-                        <div className={styles.rightContent}>
+                        <div>
                             <Checkbox
                                 className={styles.input}
                                 faramElementName="noHeaders"

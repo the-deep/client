@@ -49,6 +49,7 @@ const propTypes = {
         region: PropTypes.number,
         parent: PropTypes.number,
         geoShapeFile: PropTypes.number,
+        // eslint-disable-next-line react/forbid-prop-types
         geoShapeFileDetails: PropTypes.object,
     }),
     onClose: PropTypes.func.isRequired,

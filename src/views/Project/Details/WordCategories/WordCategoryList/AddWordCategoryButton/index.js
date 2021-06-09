@@ -49,7 +49,6 @@ export default class AddWordCategoryButton extends React.PureComponent {
 
         const className = `
             ${classNameFromProps}
-            ${styles.addWordCategoryButton}
         `;
         return (
             <React.Fragment>

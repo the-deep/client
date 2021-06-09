@@ -100,7 +100,7 @@ export default class GeoFilter extends React.PureComponent {
                 showHintAndError={false}
                 icons={(
                     <RotatingInput
-                        className={_cs(disabled && styles.disabled, styles.rotatingInput)}
+                        className={_cs(styles.rotatingInput)}
                         value={includeSubRegions}
                         options={options}
                         onChange={this.handleRotatingInputChange}

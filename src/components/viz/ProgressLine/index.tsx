@@ -7,6 +7,17 @@ import {
 
 import Numeral from '#rscv/Numeral';
 
+/*
+eslint css-modules/no-unused-class: [
+    1,
+    {
+        markAsUsed: [
+            'complement1', 'complement2', 'complement3',
+        ],
+        camelCase: true
+    }
+]
+*/
 import styles from './styles.scss';
 
 interface Props {

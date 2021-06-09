@@ -35,6 +35,15 @@ const propTypes = {
     hash: PropTypes.string,
     leadId: PropTypes.number.isRequired,
     selectedEntryKey: PropTypes.string,
+
+    analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    computeSchema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    onEntryStateChange: PropTypes.func.isRequired,
+
+    tabularFields: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    entryStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {

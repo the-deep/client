@@ -312,13 +312,11 @@ export default class LeadsViz extends React.PureComponent {
         return (
             <Fragment>
                 <GeoReferencedMap
-                    className={`${styles.geoReferencedMap} ${styles.viz}`}
                     vizContainerClass={styles.chartContainer}
                     loading={geoPointsDataPending}
                     geoPoints={geoPointsData.points}
                 />
                 <TreeMapView
-                    className={`${styles.treeMap} ${styles.viz}`}
                     data={hierarchicalData}
                     vizContainerClass={styles.chartContainer}
                     loading={hierarchicalDataPending}
@@ -327,7 +325,6 @@ export default class LeadsViz extends React.PureComponent {
                     labelSelector={LeadsViz.labelValueSelector}
                 />
                 <SunBurstView
-                    className={`${styles.sunBurst} ${styles.viz}`}
                     data={hierarchicalData}
                     vizContainerClass={styles.chartContainer}
                     loading={hierarchicalDataPending}
@@ -336,7 +333,6 @@ export default class LeadsViz extends React.PureComponent {
                     labelSelector={LeadsViz.labelValueSelector}
                 />
                 <ChordDiagramView
-                    className={`${styles.chordDiagram} ${styles.viz}`}
                     data={chordData.values}
                     loading={chordDataPending}
                     headerText={_ts('leadsViz', 'chordDiagram')}
@@ -346,7 +342,6 @@ export default class LeadsViz extends React.PureComponent {
                     labelSelector={LeadsViz.labelValueSelector}
                 />
                 <CorrelationMatrixView
-                    className={`${styles.correlationMatrix} ${styles.viz}`}
                     data={correlationData}
                     colorSchemeType="continuous"
                     headerText={_ts('leadsViz', 'correlationMatrix')}
@@ -354,7 +349,6 @@ export default class LeadsViz extends React.PureComponent {
                     vizContainerClass={styles.chartContainer}
                 />
                 <ForceDirectedGraphView
-                    className={`${styles.forceDirectedGraph} ${styles.viz}`}
                     data={forceDirectedData}
                     loading={forceDirectedDataPending}
                     headerText={_ts('leadsViz', 'forcedDirectedGraph')}
@@ -365,7 +359,6 @@ export default class LeadsViz extends React.PureComponent {
                     useVoronoi={false}
                 />
                 <CollapsibleTreeView
-                    className={`${styles.collapsibleTree} ${styles.viz}`}
                     headerText={_ts('leadsViz', 'collapsibleTreeView')}
                     data={hierarchicalData}
                     loading={hierarchicalDataPending}
@@ -373,7 +366,6 @@ export default class LeadsViz extends React.PureComponent {
                     labelSelector={LeadsViz.labelValueSelector}
                 />
                 <RadialDendrogramView
-                    className={`${styles.radialDendrogram} ${styles.viz}`}
                     headerText={_ts('leadsViz', 'radialDendogram')}
                     data={hierarchicalData}
                     loading={hierarchicalDataPending}

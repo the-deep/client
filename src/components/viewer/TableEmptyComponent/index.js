@@ -8,38 +8,44 @@ import noFilter from '#resources/img/no-filter.png';
 
 import styles from './styles.scss';
 
-const TableEmptyComponent = ({ emptyText, filteredEmptyText }) => ({
-    // className,
-    isFiltered,
-}) => {
-    if (isFiltered) {
+function TableEmptyComponent({ emptyText, filteredEmptyText }) {
+    function TableMessage({
+        isFiltered,
+    }) {
+        if (isFiltered) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{filteredEmptyText}</span>
+                </Message>
+            );
+        }
+
         return (
             <Message
-                className={styles.emptyFilterMessage}
+                className={styles.emptyMessage}
             >
                 <img
                     className={styles.image}
-                    src={noFilter}
+                    src={noSearch}
                     alt=""
                 />
-                <span>{filteredEmptyText}</span>
+                <span>{emptyText}</span>
             </Message>
         );
     }
+    TableMessage.propTypes = {
+        isFiltered: PropTypes.bool,
+    };
 
-    return (
-        <Message
-            className={styles.emptyMessage}
-        >
-            <img
-                className={styles.image}
-                src={noSearch}
-                alt=""
-            />
-            <span>{emptyText}</span>
-        </Message>
-    );
-};
+    return TableMessage;
+}
 
 TableEmptyComponent.propTypes = {
     className: PropTypes.string,

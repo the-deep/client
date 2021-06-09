@@ -22,12 +22,6 @@
                 padding: var(--spacing-small);
                 color: var(--color-danger);
             }
-
-            .message {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
         }
     }
 }

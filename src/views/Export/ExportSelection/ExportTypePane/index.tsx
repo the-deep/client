@@ -205,7 +205,6 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 <Checkbox
                     label={_ts('export', 'showAdditionalMetadataLabel')}
                     value={showAdditionalMetadata}
-                    className={styles.showAdditionalMetadataCheckbox}
                     onChange={onShowAdditionalMetadataChange}
                 />
             </div>
@@ -234,10 +233,8 @@ function RenderExcelOptions(props: RenderExcelProps) {
             />
             <div
                 key="info"
-                className={styles.info}
             >
                 <Icon
-                    className={styles.icon}
                     name="info"
                 />
                 <div>

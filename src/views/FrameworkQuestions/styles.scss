@@ -33,17 +33,6 @@
                     flex-grow: 1;
                     padding: var(--spacing-medium);
                 }
-
-                .actions {
-                    flex-shrink: 0;
-                    padding: 0 var(--spacing-medium);
-                }
-            }
-
-
-            .content {
-                flex-grow: 1;
-                overflow: auto;
             }
         }
     }

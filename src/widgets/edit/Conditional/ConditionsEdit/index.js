@@ -39,6 +39,7 @@ import styles from './styles.scss';
 const propTypes = {
     widgetTitle: PropTypes.string.isRequired,
     conditions: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         list: PropTypes.array,
         operator: PropTypes.oneOf(['AND', 'OR', 'XOR']),
     }).isRequired,

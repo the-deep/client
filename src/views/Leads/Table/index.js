@@ -138,7 +138,7 @@ function Table(props) {
         () => {
             clearSelection();
         },
-        [activeProject, filters],
+        [activeProject, filters, clearSelection],
     );
 
     const handleLeadsRemove = useCallback((leadIds) => {
@@ -254,13 +254,13 @@ function Table(props) {
                 key: 'page_count',
                 order: 3,
                 defaultSortOrder: 'dsc',
-                modifier: ({ pageCount }) => {
-                    if (pageCount === 0) {
+                modifier: (data) => {
+                    if (data.pageCount === 0) {
                         return '-';
                     }
                     return (
                         <Numeral
-                            value={pageCount}
+                            value={data.pageCount}
                             precision={0}
                         />
                     );
@@ -310,14 +310,14 @@ function Table(props) {
             {
                 key: 'assignee',
                 order: 8,
-                modifier: ({ assignee, assigneeDetails }) => (
-                    assignee ? (
+                modifier: data => (
+                    data.assignee ? (
                         <Link
-                            key={assignee}
+                            key={data.assignee}
                             className="assignee-link"
-                            to={reverseRoute(pathNames.userProfile, { userId: assignee })}
+                            to={reverseRoute(pathNames.userProfile, { userId: data.assignee })}
                         >
-                            {assigneeDetails.displayName}
+                            {data.assigneeDetails.displayName}
                         </Link>
                     ) : null
                 ),
@@ -577,6 +577,9 @@ Table.propTypes = {
     onSearchSimilarLead: PropTypes.func.isRequired,
     onRemoveLead: PropTypes.func.isRequired,
     activeProject: PropTypes.number,
+    onLeadsRemoveSuccess: PropTypes.func.isRequired,
+    containerRef: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    filters: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 Table.defaultProps = {

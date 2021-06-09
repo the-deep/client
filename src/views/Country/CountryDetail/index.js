@@ -43,7 +43,9 @@ const propTypes = {
         title: PropTypes.string,
     }).isRequired,
     regionDetail: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         faramValues: PropTypes.object,
+        // eslint-disable-next-line react/forbid-prop-types
         faramErrors: PropTypes.object,
         pristine: PropTypes.bool,
     }),

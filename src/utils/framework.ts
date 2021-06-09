@@ -145,6 +145,7 @@ const contextualWidgetTypes = [
     'timeRangeWidget',
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isWidgetData(arg: any): arg is WidgetData {
     return arg?.data?.value !== undefined;
 }

@@ -27,16 +27,6 @@
                 background-color: var(--color-primary);
             }
 
-            .action-buttons {
-                flex-shrink: 0;
-                transition: var(--duration-transition-medium) opacity ease-in-out;
-                opacity: 0;
-
-                >* {
-                    padding: var(--spacing-extra-small) var(--spacing-extra-small-alt);
-                }
-            }
-
             &.error {
                 .heading {
                     color: var(--color-danger);
@@ -44,15 +34,6 @@
                         display: inline-block;
                         margin-right: var(--spacing-small);
                     }
-                }
-            }
-        }
-
-
-        &:hover {
-            .header {
-                .action-buttons {
-                    opacity: 1;
                 }
             }
         }

@@ -169,7 +169,6 @@ class LeadPreview extends React.PureComponent {
                                         />
                                     ) : (
                                         <LeadTabular
-                                            className={styles.leadTabular}
                                             fileType={tabularFileType}
                                             setTabularBook={this.handleTabularBookSet}
                                             onCancel={this.handleTabularModalClose}

@@ -162,7 +162,6 @@ function CellInput(props: CellInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
-                    className={styles.removeButton}
                     name={index}
                     onClick={onRemove}
                     // FIXME: use translation
@@ -174,7 +173,6 @@ function CellInput(props: CellInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                className={styles.label}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -183,7 +181,6 @@ function CellInput(props: CellInputProps) {
                 error={error?.fields?.label}
             />
             <TextArea
-                className={styles.tooltip}
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
@@ -256,7 +253,6 @@ function RowInput(props: RowInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
-                    className={styles.removeButton}
                     name={index}
                     onClick={onRemove}
                     // FIXME: use translation
@@ -268,7 +264,6 @@ function RowInput(props: RowInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                className={styles.label}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -277,7 +272,6 @@ function RowInput(props: RowInputProps) {
                 error={error?.fields?.label}
             />
             <TextArea
-                className={styles.tooltip}
                 // FIXME: use translation
                 label="Tooltip"
                 name="tooltip"
@@ -305,7 +299,6 @@ function RowInput(props: RowInputProps) {
                 <NonFieldError error={error?.fields?.cells} />
                 {value.cells?.map((cell, cellIndex) => (
                     <CellInput
-                        className={styles.cellInput}
                         key={cell.clientId}
                         index={cellIndex}
                         value={cell}
@@ -386,7 +379,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <NonFieldError error={error?.fields?.rows} />
                 {value?.rows?.map((row, index) => (
                     <RowInput
-                        className={styles.rowInput}
                         key={row.clientId}
                         index={index}
                         value={row}
@@ -449,7 +441,6 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                 headerActions={(
                     <>
                         <Button
-                            className={styles.button}
                             name={undefined}
                             onClick={onCancel}
                             variant="tertiary"
@@ -458,7 +449,6 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                             Cancel
                         </Button>
                         <Button
-                            className={styles.button}
                             name={undefined}
                             type="submit"
                             disabled={pristine}

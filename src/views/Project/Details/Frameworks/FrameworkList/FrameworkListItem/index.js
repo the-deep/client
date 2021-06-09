@@ -51,6 +51,7 @@ FrameworkListItem.propTypes = {
     isSelected: PropTypes.bool.isRequired,
     framework: PropTypes.shape({
         title: PropTypes.string,
+        isPrivate: PropTypes.bool,
     }),
     onClick: PropTypes.func.isRequired,
 };

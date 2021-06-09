@@ -95,7 +95,6 @@ export default class ActionButtons extends React.PureComponent {
                     confirmationMessage={_ts('assessments.planned', 'plannedAryDeleteConfirmText')}
                 />
                 <ModalButton
-                    className={styles.modalButton}
                     transparent
                     modal={
                         <PlannedAryForm

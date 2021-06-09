@@ -18,11 +18,13 @@ const propTypes = {
     onChange: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     value: PropTypes.array,
+    isDroppable: PropTypes.bool,
 };
 
 const defaultProps = {
     containerClassName: undefined,
     value: undefined,
+    isDroppable: undefined,
 };
 
 class Widget extends React.PureComponent {

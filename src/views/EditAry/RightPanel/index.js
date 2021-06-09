@@ -55,6 +55,10 @@ const propTypes = {
 
     showHNO: PropTypes.bool,
     showCNA: PropTypes.bool,
+
+    onUploadPending: PropTypes.func.isRequired,
+    files: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setFiles: PropTypes.func.isRequired,
 };
 
 const defaultProps = {

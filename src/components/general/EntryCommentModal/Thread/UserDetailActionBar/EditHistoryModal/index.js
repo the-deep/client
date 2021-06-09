@@ -59,7 +59,6 @@ export default class EditHistoryModal extends React.PureComponent {
                 onClose={closeModal}
             >
                 <ModalHeader
-                    headingClassName={styles.heading}
                     title={_ts('entryComments', 'textHistoryTitle')}
                     rightComponent={
                         <Button

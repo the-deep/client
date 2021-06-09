@@ -10,13 +10,4 @@
     display: inline;
     align-items: center;
     justify-content: center;
-
-    .label {
-        margin-right: var(--spacing-small);
-    }
-
-    .loading-animation {
-        display: inline-block;
-        animation: spin 1s linear infinite;
-    }
 }

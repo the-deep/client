@@ -9,7 +9,9 @@ import Field from './Field';
 const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         fields: PropTypes.array,
+        // eslint-disable-next-line react/forbid-prop-types
         options: PropTypes.object,
     }),
     onClick: PropTypes.func.isRequired,

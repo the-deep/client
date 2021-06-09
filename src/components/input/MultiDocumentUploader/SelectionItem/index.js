@@ -26,6 +26,7 @@ const propTypes = {
     startPage: PropTypes.number.isRequired,
     endPage: PropTypes.number,
     type: PropTypes.string,
+    url: PropTypes.string,
 };
 
 const defaultProps = {
@@ -34,6 +35,7 @@ const defaultProps = {
     disabled: false,
     readOnly: false,
     endPage: undefined,
+    url: undefined,
 };
 
 const ModalButton = modalize(Button);

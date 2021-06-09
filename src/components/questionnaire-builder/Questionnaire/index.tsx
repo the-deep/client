@@ -123,7 +123,7 @@ const Questionnaire = (props: Props) => {
         <div className={_cs(styles.questionnaire, className)}>
             <header className={styles.header}>
                 <div className={styles.left}>
-                    <h3 className={styles.heading}>
+                    <h3>
                         { title }
                     </h3>
                     <div className={styles.info}>

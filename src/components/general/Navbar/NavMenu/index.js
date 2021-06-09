@@ -49,6 +49,7 @@ const propTypes = {
     projectId: PropTypes.number,
     countryId: PropTypes.number,
     className: PropTypes.string,
+    boundingClientRect: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -56,6 +57,7 @@ const defaultProps = {
     projectId: undefined,
     countryId: undefined,
     links: [],
+    boundingClientRect: undefined,
 };
 
 class NavMenu extends React.PureComponent {

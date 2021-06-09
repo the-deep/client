@@ -383,7 +383,7 @@ export default class GridItem extends React.PureComponent {
                                 {_ts('leads', 'assignee')}: {assigneeDisplayName}
                             </Link>
                         }
-                        <div className={styles.priority}>
+                        <div>
                             {_ts('leads', 'priorityLevel')}: {priorityDisplay}
                         </div>
                         <div className={styles.publisher}>

@@ -317,7 +317,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         headerRightComponent: (
                             <SearchInput
                                 value={searchValue}
-                                className={styles.searchInput}
                                 onChange={this.handleSearchValueChange}
                                 placeholder="Search questions"
                                 showLabel={false}
@@ -361,7 +360,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         headerRightComponent: (
                             <SearchInput
                                 value={searchValue}
-                                className={styles.searchInput}
                                 onChange={this.handleSearchValueChange}
                                 placeholder="Search questions"
                                 showLabel={false}

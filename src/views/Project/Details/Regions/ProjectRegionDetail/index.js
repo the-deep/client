@@ -43,9 +43,12 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     regionDetail: PropTypes.shape({
         id: PropTypes.number,
+        // eslint-disable-next-line react/forbid-prop-types
         faramValues: PropTypes.object,
+        // eslint-disable-next-line react/forbid-prop-types
         faramErrors: PropTypes.object,
         pristine: PropTypes.bool,
+        public: PropTypes.bool,
     }),
     addNewRegion: PropTypes.func.isRequired,
     setRegionDetails: PropTypes.func.isRequired,

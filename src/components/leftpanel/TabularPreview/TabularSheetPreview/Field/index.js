@@ -21,6 +21,10 @@ const propTypes = {
     leadKey: PropTypes.string,
     onClick: PropTypes.func.isRequired,
     showGraphs: PropTypes.bool.isRequired,
+
+    onFieldStateChange: PropTypes.func,
+    tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    fieldState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -29,6 +33,9 @@ const defaultProps = {
     leadKey: undefined,
     options: undefined,
     healthStats: {},
+    onFieldStateChange: undefined,
+    tabularFieldData: undefined,
+    fieldState: undefined,
 };
 
 const healthColorScheme = [

@@ -25,11 +25,6 @@
             @extend %base;
         }
 
-        .edit-link {
-            @extend %link;
-            @include transparent-button-like-link(var(--color-warning));
-        }
-
         .add-entry-link,
         .add-assessment-link {
             @extend %link;
@@ -37,18 +32,10 @@
 
         .add-entry-link {
             color: var(--color-accent);
-
-            &.disabled {
-                pointer-events: none;
-            }
         }
 
         .add-assessment-link {
             color: var(--color-info);
-
-            &.disabled {
-                pointer-events: none;
-            }
         }
     }
 }

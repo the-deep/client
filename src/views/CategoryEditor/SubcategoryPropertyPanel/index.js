@@ -24,7 +24,7 @@ import styles from './styles.scss';
 import NGram from './NGram';
 
 const propTypes = {
-    subcategory: PropTypes.shape({ id: PropTypes.string }),
+    subcategory: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     updateSelectedSubcategory: PropTypes.func.isRequired,
     removeSelectedSubcategory: PropTypes.func.isRequired,
     removeSubcategoryNGram: PropTypes.func.isRequired,

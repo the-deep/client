@@ -18,6 +18,10 @@ const propTypes = {
         title: PropTypes.string.isRequired,
     }).isRequired,
     dataLoading: PropTypes.bool.isRequired,
+    className: PropTypes.string,
+};
+const defaultProps = {
+    className: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -27,6 +31,7 @@ const mapStateToProps = (state, props) => ({
 @connect(mapStateToProps)
 export default class CountryGeneral extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     render() {
         const {

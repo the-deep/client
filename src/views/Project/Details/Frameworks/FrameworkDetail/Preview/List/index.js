@@ -14,11 +14,14 @@ import styles from './styles.scss';
 const propTypes = {
     framework: PropTypes.shape({
         id: PropTypes.number,
+        // eslint-disable-next-line react/forbid-prop-types
         widgets: PropTypes.array,
     }).isRequired,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: undefined,
 };
 
 const widgetLayoutSelector = (widget) => {

@@ -113,7 +113,6 @@ export default class ActionButtons extends React.PureComponent {
                     confirmationMessage={_ts('assessments', 'aryDeleteConfirmText')}
                 />
                 <AryCopyModalButton
-                    className={styles.aryCopyButton}
                     modal={(
                         <AryCopyModal
                             assessmentId={row.id}

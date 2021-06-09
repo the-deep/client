@@ -103,7 +103,11 @@ module.exports = {
             ExportDeclaration: { consistent: true },
         }],
 
-        'jsx-a11y/label-has-for': 'warn',
+        'jsx-a11y/label-has-for': [ 'error', {
+            'required': {
+                'some': [ 'nesting', 'id'  ],
+            },
+        }],
 
         'no-use-before-define': 'off',
         '@typescript-eslint/no-use-before-define': ['error', 'nofunc'],

@@ -356,7 +356,6 @@ export default class PlannedArys extends React.PureComponent {
                         />
                         <PlannedAryFilterForm className={styles.filters} />
                         <ModalButton
-                            className={styles.modalButton}
                             modal={
                                 <PlannedAryForm
                                     projectId={activeProject}

@@ -57,7 +57,7 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
     } = props;
 
     return (
-        <div className={_cs(className, styles.addItem)}>
+        <div className={_cs(className)}>
             <Header
                 className={styles.header}
                 heading={label}
@@ -72,7 +72,7 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
                     </QuickActionButton>
                 )}
             />
-            <div className={styles.childrenContainer}>
+            <div>
                 {children}
             </div>
         </div>

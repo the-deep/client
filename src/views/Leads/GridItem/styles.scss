@@ -84,14 +84,6 @@
         float: right;
     }
 
-    .document-type-processed {
-        @include documentType(var(--processed-color));
-    }
-
-    .document-type-pending {
-        @include documentType(var(--unprocessed-color));
-    }
-
     .lead-info {
         @include transition-slow;
         z-index: 1;
@@ -240,11 +232,6 @@
     &:hover {
         .time-from {
             display: none;
-            opacity: 0;
-        }
-
-        .document-type-pending,
-        .document-type-processed {
             opacity: 0;
         }
 

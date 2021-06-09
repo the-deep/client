@@ -41,10 +41,14 @@ const propTypes = {
     value: PropTypes.shape({
         title: PropTypes.string,
         type: PropTypes.string,
+        // eslint-disable-next-line react/forbid-prop-types
         cache: PropTypes.object,
+        // eslint-disable-next-line react/forbid-prop-types
         options: PropTypes.object,
     }),
     hideDetails: PropTypes.bool,
+    onEntryStateChange: PropTypes.func.isRequired,
+    entryState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -55,6 +59,7 @@ const defaultProps = {
         series: [],
     },
     hideDetails: false,
+    entryState: undefined,
 };
 
 const chartMargins = {
@@ -575,7 +580,6 @@ export default class DataSeries extends React.PureComponent {
                             {showSort &&
                                 <RotatingInput
                                     disabled={disabled}
-                                    className={styles.sortButton}
                                     rendererSelector={sortRendererSelector}
                                     keySelector={sortKeySelector}
                                     value={activeSort}
@@ -598,7 +602,6 @@ export default class DataSeries extends React.PureComponent {
                             }
                             <ModalButton
                                 iconName="expand"
-                                className={styles.expandButton}
                                 transparent
                                 disabled={disabled}
                                 modal={
@@ -623,7 +626,6 @@ export default class DataSeries extends React.PureComponent {
                             alt=""
                         />
                         <LoadingAnimation
-                            className={styles.processing}
                             // FIXME: use strings
                             message="Processing graph..."
                         />

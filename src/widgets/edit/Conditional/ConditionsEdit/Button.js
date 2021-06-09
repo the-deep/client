@@ -11,6 +11,7 @@ import ConditionsEditModal from '.';
 const propTypes = {
     widgetTitle: PropTypes.string.isRequired,
     value: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         list: PropTypes.array,
         operator: PropTypes.oneOf(['AND', 'OR', 'XOR']),
     }).isRequired,

@@ -114,6 +114,17 @@ const Preview = ({
         </Message>
     );
 };
+Preview.propTypes = {
+    className: PropTypes.string,
+    url: PropTypes.string,
+    mimeType: PropTypes.string,
+    canShowIframe: PropTypes.bool,
+    previewError: PropTypes.string,
+    isHttps: PropTypes.bool,
+    cannotPreviewUrlMessage: PropTypes.string,
+    invalidUrlMessage: PropTypes.string,
+    children: PropTypes.node,
+};
 
 const Bar = ({ url = '', children }) => {
     const className = _cs(
@@ -147,6 +158,10 @@ const Bar = ({ url = '', children }) => {
             }
         </div>
     );
+};
+Bar.propTypes = {
+    url: PropTypes.string,
+    children: PropTypes.node,
 };
 
 /*

@@ -17,6 +17,7 @@ import styles from './styles.scss';
 const propTypes = {
     dimension: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     dimensionId: PropTypes.string.isRequired,
+    meta: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {

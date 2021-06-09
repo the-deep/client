@@ -45,7 +45,6 @@ export default class DateRangeOutput extends React.PureComponent {
             <div className={className}>
                 <FormattedDate
                     value={from}
-                    className={styles.date}
                     mode="dd-MM-yyyy"
                     emptyComponent={emptyComponent}
                 />
@@ -54,7 +53,6 @@ export default class DateRangeOutput extends React.PureComponent {
                 </span>
                 <FormattedDate
                     value={to}
-                    className={styles.date}
                     mode="dd-MM-yyyy"
                     emptyComponent={emptyComponent}
                 />

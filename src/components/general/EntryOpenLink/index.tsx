@@ -1,12 +1,10 @@
 import React from 'react';
-import { reverseRoute, _cs } from '@togglecorp/fujs';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
 import { pathNames } from '#constants';
-
-import styles from './styles.scss';
 
 interface EntryOpenLinkProps {
     className?: string;
@@ -36,7 +34,7 @@ function EntryOpenLink(props: EntryOpenLinkProps) {
 
     return (
         <ButtonLikeLink
-            className={_cs(styles.entryOpenLink, className)}
+            className={className}
             to={route}
             disabled={disabled}
         >

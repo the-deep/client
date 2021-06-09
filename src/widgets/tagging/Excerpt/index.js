@@ -30,6 +30,9 @@ const propTypes = {
     showFormatButton: PropTypes.bool,
     readOnly: PropTypes.bool,
     highlightHidden: PropTypes.bool,
+    onEntryStateChange: PropTypes.func.isRequired,
+    entryKey: PropTypes.string.isRequired,
+    entryState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -49,6 +52,7 @@ const defaultProps = {
     onExcerptReset: () => {},
     onHighlightHiddenChange: () => {},
     highlightHidden: false,
+    entryState: undefined,
 };
 
 // FIXME: reuse this from entities.editEntries

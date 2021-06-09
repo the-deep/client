@@ -26,10 +26,12 @@ const propTypes = {
     setEntries: PropTypes.func.isRequired,
     activeProjectId: PropTypes.number.isRequired,
     activeSector: PropTypes.string,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     activeSector: undefined,
+    className: undefined,
 };
 
 const mapStateToProps = state => ({

@@ -703,7 +703,6 @@ export default class AssistedTagging extends React.PureComponent {
             'assited-tagging',
             showAssistant && styles.assistantShown,
             showAssistant && 'assistant-shown',
-            showAssistantOptions && styles.assistantOptionsShown,
             showAssistantOptions && 'assistant-option-shown',
         );
 

@@ -31,10 +31,6 @@
     .main {
         overflow: auto;
 
-        &.active {
-            display: block;
-        }
-
         .assessments {
             display: flex;
             height: 100%;

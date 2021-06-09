@@ -89,6 +89,7 @@ const propTypes = {
     setActiveProject: PropTypes.func.isRequired,
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
+        // eslint-disable-next-line react/forbid-prop-types
         accessibleFeatures: PropTypes.array,
     }),
     userProjects: PropTypes.arrayOf(

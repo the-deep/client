@@ -37,12 +37,20 @@ const propTypes = {
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setDefaultRequestParams: PropTypes.func.isRequired,
+
+    setTabularData: PropTypes.func.isRequired,
+    patchTabularFields: PropTypes.func.isRequired,
+
+    sheets: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabs: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     highlights: [],
     selectedTab: undefined,
+    sheets: undefined,
+    tabs: undefined,
 };
 
 const mapStateToProps = (state, props) => ({

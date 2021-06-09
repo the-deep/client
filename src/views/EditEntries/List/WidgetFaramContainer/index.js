@@ -56,6 +56,17 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+
+    analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    computeSchema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    onEntryStateChange: PropTypes.func.isRequired,
+
+    selectedEntryKey: PropTypes.string,
+
+    entryState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -65,6 +76,10 @@ const defaultProps = {
     entry: undefined,
     entryGroups: [],
     labels: [],
+    selectedEntryKey: undefined,
+
+    entryState: undefined,
+    tabularData: undefined,
 };
 
 const mapStateToProps = state => ({

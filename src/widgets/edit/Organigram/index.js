@@ -146,7 +146,6 @@ export default class OrganigramEditWidget extends React.PureComponent {
                         <NonFieldErrors faramElement />
                         <div className={styles.titleInputContainer}>
                             <TextInput
-                                className={styles.titleInput}
                                 faramElementName="title"
                                 label={textInputLabel}
                                 placeholder={textInputPlaceholder}
