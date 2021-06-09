@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
 
-import { Matrix1dWidget, PartialForm } from '../../types';
+import { Matrix1dValue, Matrix1dWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 import styles from './styles.scss';
@@ -10,12 +10,6 @@ export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
     'clientId' | 'type'
 >;
-
-interface Value {
-    [key: string]: {
-        [key: string]: boolean | undefined,
-    } | undefined,
-}
 
 type Row = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['data']>['rows']>[number];
 type Cell = NonNullable<NonNullable<Row>['cells']>[number];
@@ -68,7 +62,7 @@ interface RowProps {
     disabled?: boolean;
     readOnly?: boolean;
     row: Row;
-    value: NonNullable<Value>[string];
+    value: NonNullable<Matrix1dValue>[string];
     onCellChange: (rowId: string, cellId: string, selected: boolean) => void;
 }
 
@@ -131,8 +125,8 @@ export interface Props <N extends string>{
     className?: string;
 
     name: N,
-    value: Value | null | undefined,
-    onChange: (value: Value | undefined, name: N) => void,
+    value: Matrix1dValue | null | undefined,
+    onChange: (value: Matrix1dValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;
