@@ -25,11 +25,15 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
     },
     {
+        type: 'date-range',
+        clientId: 'random',
+    },
+    {
         type: 'time',
         clientId: 'random',
     },
     {
-        type: 'date-range',
+        type: 'time-range',
         clientId: 'random',
     },
     {
@@ -152,6 +156,13 @@ function WidgetList(props: Props) {
                     onAddClick={handleAddClick}
                 />
                 <AddItem
+                    name="number"
+                    // FIXME: use strings
+                    label="Number Widget"
+                    className={styles.addMoreItem}
+                    onAddClick={handleAddClick}
+                />
+                <AddItem
                     name="date"
                     // FIXME: use strings
                     label="Date Widget"
@@ -159,9 +170,9 @@ function WidgetList(props: Props) {
                     onAddClick={handleAddClick}
                 />
                 <AddItem
-                    name="number"
+                    name="date-range"
                     // FIXME: use strings
-                    label="Number Widget"
+                    label="Date Range Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
@@ -173,9 +184,9 @@ function WidgetList(props: Props) {
                     onAddClick={handleAddClick}
                 />
                 <AddItem
-                    name="date-range"
+                    name="time-range"
                     // FIXME: use strings
-                    label="Date Range Widget"
+                    label="Time Range Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />

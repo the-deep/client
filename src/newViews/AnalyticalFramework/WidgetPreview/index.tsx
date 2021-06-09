@@ -7,6 +7,7 @@ import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix
 import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidgetInput';
 import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInput';
 import DateRangeWidgetInput, { Props as DateRangeWidgetInputProps } from './DateRangeWidgetInput';
+import TimeRangeWidgetInput, { Props as TimeRangeWidgetInputProps } from './TimeRangeWidgetInput';
 
 import BaseWidgetInput from './BaseWidgetInput';
 
@@ -121,6 +122,23 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 name={name}
                 onChange={onChangeForDate}
                 value={valueForDate}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+            />
+        );
+    }
+    if (widget.type === 'time-range') {
+        // NOTE: we are casting this value
+        const onChangeForTimeRange = onChange as TimeRangeWidgetInputProps<string>['onChange'];
+        const valueForTimeRange = value as TimeRangeWidgetInputProps<string>['value'];
+        return (
+            <TimeRangeWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForTimeRange}
+                value={valueForTimeRange}
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
