@@ -3,17 +3,19 @@ import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
     TextInput,
+    Header,
 } from '@the-deep/deep-ui';
 import { Organization, MultiResponse } from '#typings';
 
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import _ts from '#ts';
-
+import AddOrganizationButton from '#components/general/AddOrganizationButton';
 import Stakeholder from './Stakeholder';
 import styles from './styles.scss';
 
 const stakeholderKeySelector = (d: Organization) => d.id.toString();
+const SEARCH_LIMIT = 25;
 
 interface Props {
     className?: string;
@@ -29,6 +31,7 @@ function SearchStakeholder(props: Props) {
 
     const searchQueryParams = useMemo(() => ({
         search: debouncedSearchText,
+        limit: SEARCH_LIMIT,
     }), [debouncedSearchText]);
 
     const {
@@ -58,8 +61,21 @@ function SearchStakeholder(props: Props) {
         setSearchText(newValue);
     }, []);
 
+    const handleOrganizationAdd = useCallback((v: Organization) => {
+        setSearchText(v.title);
+    }, []);
+
     return (
         <div className={_cs(className, styles.searchStakeholder)}>
+            <Header
+                heading={_ts('project.detail.stakeholders', 'organizationsTitle')}
+                headingSize="medium"
+                actions={(
+                    <AddOrganizationButton
+                        onOrganizationAdd={handleOrganizationAdd}
+                    />
+                )}
+            />
             <TextInput
                 className={styles.searchInput}
                 name="search"

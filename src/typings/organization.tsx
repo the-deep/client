@@ -6,19 +6,25 @@ export interface BasicOrganization {
     logoUrl?: string;
 }
 
-export interface Organization extends BasicOrganization {
+export interface OrganizationType {
     id: number;
+    title: string;
+    shortName: string;
+    description: string;
+    reliefWebId: string;
+}
+export interface Organization extends BasicOrganization {
     createdAt: string;
     modifiedAt: string;
     regionsDisplay: BasicElement[];
-    title: string;
     shortName: string;
     longName: string;
     url: string;
     verified: boolean;
     regions: number[];
     logo?: number;
-    logoUrl?: string;
+    organizationType?: number;
+    organizationTypeDisplay: OrganizationType;
 }
 
 export interface OrganizationDetails {
