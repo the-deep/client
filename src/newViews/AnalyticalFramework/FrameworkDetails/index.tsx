@@ -44,7 +44,10 @@ interface User {
     joinedAt: string;
     memberDetails: {
         displayName: string;
-        organizationName: string;
+        organizationTitle?: string;
+    };
+    roleDetails: {
+        title: string;
     };
     addedByDetails?: {
         displayName: string;
@@ -176,7 +179,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
                 createStringColumn<User, number>(
                     'organization',
                     'Organization',
-                    item => item?.memberDetails?.organizationName,
+                    item => item?.memberDetails?.organizationTitle,
                 ),
                 createStringColumn<User, number>(
                     'added_by',
@@ -191,7 +194,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
                 createStringColumn<User, number>(
                     'role',
                     'Assigned Role',
-                    item => item?.roleDisplay,
+                    item => item?.roleDetails?.title,
                 ),
                 actionColumn,
             ]);
