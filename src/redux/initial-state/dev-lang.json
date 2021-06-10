@@ -1360,7 +1360,13 @@
         "-810289191": "My Profile",
         "-91292812": "Add Stakeholder",
         "-91928382": "Edit Stakeholder",
-        "-91293882": "Search Stakeholder"
+        "-91293882": "Search Stakeholder",
+        "-9182838180": "Add Organization",
+        "-8183881818": "Save",
+        "-9188188108": "Title",
+        "-9183810818": "Short Name",
+        "-8171192837": "url",
+        "-8183719471": "Organization Type"
     },
     "links": {
         "browserExtension": {
@@ -3893,6 +3899,14 @@
         },
         "components.organizationSelectInput": {
             "title": 154
+        },
+        "addOrganizationModal": {
+            "title": -9182838180,
+            "save": -8183881818,
+            "titleLabel": -9188188108,
+            "shortName": -9183810818,
+            "url": -8171192837,
+            "organizationType": -8183719471
         }
     }
 }
