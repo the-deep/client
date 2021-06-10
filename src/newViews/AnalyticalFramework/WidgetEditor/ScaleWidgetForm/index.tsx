@@ -6,6 +6,7 @@ import {
 import {
     Button,
     Checkbox,
+    SelectInput,
     TextInput,
     TextArea,
     QuickActionButton,
@@ -26,10 +27,10 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     randomString,
-    isTruthyString,
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
+import { isValidColor } from '#utils/safeCommon';
 
 import { ScaleWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
@@ -61,14 +62,7 @@ const optionSchema: OptionSchema = {
         clientId: [],
         label: [requiredStringCondition],
         tooltip: [],
-        color: [(val) => {
-            const regex = /^#(?:[0-9A-F]{3}|[0-9A-F]{6})$/i;
-            if (isTruthyString(val) && !regex.test(val)) {
-                // FIXME: Use string
-                return 'This must be a valid hex code';
-            }
-            return undefined;
-        }],
+        color: [isValidColor],
     }),
 };
 
@@ -83,18 +77,14 @@ type DataSchema = ObjectSchema<PartialDataType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({
-        defaultValue: [],
+        defaultValue: [requiredStringCondition],
         options: optionsSchema,
     }),
     validation: (data) => {
-        const errors = [];
-        if (!data?.defaultValue) {
-            errors.push('At least one option should be marked as default.');
-        }
         if ((data?.options?.length ?? 0) <= 0) {
-            errors.push('At least one option is required.');
+            return 'At least one option is required.';
         }
-        return errors.length > 0 ? errors.join(' ') : undefined;
+        return undefined;
     },
 };
 
@@ -115,6 +105,10 @@ const schema: FormSchema = {
 const defaultOptionVal: PartialOptionType = {
     clientId: 'random',
 };
+
+const optionKeySelector = (o: PartialOptionType) => o.clientId;
+const optionLabelSelector = (o: PartialOptionType) => o.label ?? 'Unnamed';
+
 interface OptionInputProps {
     className?: string;
     value: PartialOptionType;
@@ -124,7 +118,7 @@ interface OptionInputProps {
     index: number;
     isDefault: boolean;
     clientId: string;
-    onDefaultValueChange: (clientId?: string) => void;
+    onDefaultValueChange: (clientId: string | undefined) => void;
 }
 function OptionInput(props: OptionInputProps) {
     const {
@@ -152,7 +146,7 @@ function OptionInput(props: OptionInputProps) {
         if (newVal) {
             onDefaultValueChange(clientId);
         } else {
-            onDefaultValueChange();
+            onDefaultValueChange(undefined);
         }
     }, [onDefaultValueChange, clientId]);
 
@@ -164,23 +158,25 @@ function OptionInput(props: OptionInputProps) {
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={handleRemove}
-                    // FIXME: use translation
-                    title="Remove Option"
-                >
-                    <IoTrash />
-                </QuickActionButton>
+                <>
+                    <Checkbox
+                        value={isDefault}
+                        label="Default"
+                        name="default-checkbox"
+                        onChange={handleCheckboxChange}
+                    />
+                    <QuickActionButton
+                        name={index}
+                        onClick={handleRemove}
+                        // FIXME: use translation
+                        title="Remove Option"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                </>
             )}
         >
             <NonFieldError error={error} />
-            <Checkbox
-                value={isDefault}
-                label="Default"
-                name="default-checkbox"
-                onChange={handleCheckboxChange}
-            />
             <TextInput
                 // FIXME: use translation
                 label="Color"
@@ -271,6 +267,19 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             <NonFieldError
                 className={styles.error}
                 error={error}
+            />
+            <SelectInput
+                className={styles.input}
+                // FIXME: Use string
+                label="Default Value"
+                name="defaultValue"
+                value={value?.defaultValue}
+                onChange={onFieldChange}
+                options={value?.options}
+                keySelector={optionKeySelector}
+                labelSelector={optionLabelSelector}
+                error={error?.fields?.defaultValue}
+                readOnly
             />
             <Container
                 className={className}
