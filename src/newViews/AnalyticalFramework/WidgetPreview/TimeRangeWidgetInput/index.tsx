@@ -6,17 +6,18 @@ import {
 import { IoSwapHorizontal } from 'react-icons/io5';
 
 import WidgetWrapper from '../../Widget';
+import { TimeRangeValue } from '../../types';
 
 export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
 
     name: N,
-    value: { to: string | undefined, from: string | undefined } | null | undefined,
-        onChange: (
-            value: { to: string | undefined, from: string | undefined } | undefined,
-            name: N,
-        ) => void,
+    value: TimeRangeValue | null | undefined,
+    onChange: (
+        value: TimeRangeValue | undefined,
+        name: N,
+    ) => void,
     actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;

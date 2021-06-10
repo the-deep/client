@@ -2,14 +2,15 @@ import React from 'react';
 import { DateInput } from '@the-deep/deep-ui';
 
 import WidgetWrapper from '../../Widget';
+import { DateValue } from '../../types';
 
 export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
 
     name: N,
-    value: string | null | undefined,
-    onChange: (value: string | undefined, name: N) => void,
+    value: DateValue | null | undefined,
+    onChange: (value: DateValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;

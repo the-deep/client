@@ -317,7 +317,7 @@ const defaultVal: PartialDataType = {};
 interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
-    error: Error<DataType> | undefined;
+    error: Error<PartialDataType> | undefined;
     onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
     className?: string;
 }

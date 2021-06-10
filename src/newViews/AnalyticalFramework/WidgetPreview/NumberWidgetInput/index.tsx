@@ -2,14 +2,15 @@ import React from 'react';
 import { NumberInput } from '@the-deep/deep-ui';
 
 import WidgetWrapper from '../../Widget';
+import { NumberValue } from '../../types';
 
 export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
 
     name: N,
-    value: number | null | undefined,
-    onChange: (value: number | undefined, name: N) => void,
+    value: NumberValue | null | undefined,
+    onChange: (value: NumberValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;

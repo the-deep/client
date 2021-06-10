@@ -34,6 +34,162 @@ import {
 
 import styles from './styles.scss';
 
+// FIXME: this is just temporary data. should remove this later on
+const matrix1d: Matrix1dWidget = {
+    clientId: 'just-some-random-thing',
+    type: 'matrix-1d',
+    title: 'Matrix 1d',
+    order: 1,
+    width: 'full',
+    condition: [],
+    data: {
+        rows: [
+            {
+                clientId: '1',
+                label: 'Context',
+                color: 'white',
+                cells: [
+                    {
+                        clientId: '1-1',
+                        label: 'Environment',
+                    },
+                    {
+                        clientId: '1-2',
+                        label: 'Socio-cultural',
+                    },
+                    {
+                        clientId: '1-3',
+                        label: 'Economy',
+                    },
+                    {
+                        clientId: '1-4',
+                        label: 'Demography',
+                    },
+                    {
+                        clientId: '1-5',
+                        label: 'Legal',
+                    },
+                    {
+                        clientId: '1-6',
+                        label: 'Security',
+                    },
+                ],
+            },
+            {
+                clientId: '2',
+                label: 'Shock and Event',
+                color: 'white',
+                cells: [
+                    {
+                        clientId: '2-1',
+                        label: 'Aggravating factors',
+                    },
+                    {
+                        clientId: '2-2',
+                        label: 'Type and characterstics',
+                    },
+                ],
+            },
+            {
+                clientId: '3',
+                label: 'Displacement Profile',
+                color: 'white',
+                cells: [
+                    {
+                        clientId: '3-1',
+                        label: 'Type/number',
+                    },
+                    {
+                        clientId: '3-2',
+                        label: 'Movement',
+                    },
+                    {
+                        clientId: '3-3',
+                        label: 'Push factors',
+                    },
+                    {
+                        clientId: '3-4',
+                        label: 'Pull factors',
+                    },
+                    {
+                        clientId: '3-5',
+                        label: 'Intentions',
+                    },
+                    {
+                        clientId: '3-6',
+                        label: 'Local Integration',
+                    },
+                ],
+            },
+            {
+                clientId: '4',
+                label: 'Casualties',
+                color: 'white',
+                cells: [
+                    {
+                        clientId: '4-1',
+                        label: 'Injured',
+                    },
+                    {
+                        clientId: '4-2',
+                        label: 'Missing',
+                    },
+                    {
+                        clientId: '4-3',
+                        label: 'Dead',
+                    },
+                ],
+            },
+            {
+                clientId: '5',
+                label: 'Humanitarian Access',
+                color: 'white',
+                cells: [
+                    {
+                        clientId: '5-1',
+                        label: 'Relief to Beneficiaries',
+                    },
+                    {
+                        clientId: '5-2',
+                        label: 'Beneficiaries to Relief',
+                    },
+                    {
+                        clientId: '5-3',
+                        label: 'Physical Constraints',
+                    },
+                    {
+                        clientId: '5-4',
+                        label: 'Humanitarian Access Gap',
+                    },
+                ],
+            },
+            {
+                clientId: '6',
+                label: 'Information',
+                color: 'white',
+                cells: [
+                    {
+                        clientId: '6-1',
+                        label: 'Communication Means',
+                    },
+                    {
+                        clientId: '6-2',
+                        label: 'Information Challenge',
+                    },
+                    {
+                        clientId: '6-3',
+                        label: 'Information Needs',
+                    },
+                    {
+                        clientId: '6-4',
+                        label: 'Information Gaps',
+                    },
+                ],
+            },
+        ],
+    },
+};
+
 interface Props {
     className?: string;
     frameworkId: number;
@@ -55,170 +211,13 @@ function PrimaryTagging(props: Props) {
     ] = useModalState(false);
 
     const initialSections = useMemo(
-        (): Section[] => {
-            // FIXME: this is just temporary data. should remove this later on
-            const matrix1d: Matrix1dWidget = {
-                clientId: 'just-some-random-thing',
-                type: 'matrix-1d',
-                title: 'Matrix 1d',
-                order: 1,
-                width: 'full',
-                condition: [],
-                data: {
-                    rows: [
-                        {
-                            clientId: '1',
-                            label: 'Context',
-                            color: 'white',
-                            cells: [
-                                {
-                                    clientId: '1-1',
-                                    label: 'Environment',
-                                },
-                                {
-                                    clientId: '1-2',
-                                    label: 'Socio-cultural',
-                                },
-                                {
-                                    clientId: '1-3',
-                                    label: 'Economy',
-                                },
-                                {
-                                    clientId: '1-4',
-                                    label: 'Demography',
-                                },
-                                {
-                                    clientId: '1-5',
-                                    label: 'Legal',
-                                },
-                                {
-                                    clientId: '1-6',
-                                    label: 'Security',
-                                },
-                            ],
-                        },
-                        {
-                            clientId: '2',
-                            label: 'Shock and Event',
-                            color: 'white',
-                            cells: [
-                                {
-                                    clientId: '2-1',
-                                    label: 'Aggravating factors',
-                                },
-                                {
-                                    clientId: '2-2',
-                                    label: 'Type and characterstics',
-                                },
-                            ],
-                        },
-                        {
-                            clientId: '3',
-                            label: 'Displacement Profile',
-                            color: 'white',
-                            cells: [
-                                {
-                                    clientId: '3-1',
-                                    label: 'Type/number',
-                                },
-                                {
-                                    clientId: '3-2',
-                                    label: 'Movement',
-                                },
-                                {
-                                    clientId: '3-3',
-                                    label: 'Push factors',
-                                },
-                                {
-                                    clientId: '3-4',
-                                    label: 'Pull factors',
-                                },
-                                {
-                                    clientId: '3-5',
-                                    label: 'Intentions',
-                                },
-                                {
-                                    clientId: '3-6',
-                                    label: 'Local Integration',
-                                },
-                            ],
-                        },
-                        {
-                            clientId: '4',
-                            label: 'Casualties',
-                            color: 'white',
-                            cells: [
-                                {
-                                    clientId: '4-1',
-                                    label: 'Injured',
-                                },
-                                {
-                                    clientId: '4-2',
-                                    label: 'Missing',
-                                },
-                                {
-                                    clientId: '4-3',
-                                    label: 'Dead',
-                                },
-                            ],
-                        },
-                        {
-                            clientId: '5',
-                            label: 'Humanitarian Access',
-                            color: 'white',
-                            cells: [
-                                {
-                                    clientId: '5-1',
-                                    label: 'Relief to Beneficiaries',
-                                },
-                                {
-                                    clientId: '5-2',
-                                    label: 'Beneficiaries to Relief',
-                                },
-                                {
-                                    clientId: '5-3',
-                                    label: 'Physical Constraints',
-                                },
-                                {
-                                    clientId: '5-4',
-                                    label: 'Humanitarian Access Gap',
-                                },
-                            ],
-                        },
-                        {
-                            clientId: '6',
-                            label: 'Information',
-                            color: 'white',
-                            cells: [
-                                {
-                                    clientId: '6-1',
-                                    label: 'Communication Means',
-                                },
-                                {
-                                    clientId: '6-2',
-                                    label: 'Information Challenge',
-                                },
-                                {
-                                    clientId: '6-3',
-                                    label: 'Information Needs',
-                                },
-                                {
-                                    clientId: '6-4',
-                                    label: 'Information Gaps',
-                                },
-                            ],
-                        },
-                    ],
-                },
-            };
-            return [
-                {
-                    clientId: randomString(),
-                    title: 'Operational Environment',
-                    widgets: [matrix1d],
-                },
-            ];
-        },
+        (): Section[] => [
+            {
+                clientId: randomString(),
+                title: 'Operational Environment',
+                widgets: [matrix1d],
+            },
+        ],
         [],
     );
 
