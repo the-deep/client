@@ -72,6 +72,12 @@ type CellsSchemaMember = ReturnType<CellsSchema['member']>;
 const cellsSchema: CellsSchema = {
     keySelector: col => col.clientId,
     member: (): CellsSchemaMember => cellSchema,
+    validation: (cells) => {
+        if ((cells?.length ?? 0) <= 0) {
+            return 'At least one cell is required.';
+        }
+        return undefined;
+    },
 };
 
 type RowSchema = ObjectSchema<PartialRowType>;
@@ -84,12 +90,6 @@ const rowSchema: RowSchema = {
         color: [],
         cells: cellsSchema,
     }),
-    validation: (row) => {
-        if ((row?.cells?.length ?? 0) <= 0) {
-            return 'At least one cell is required.';
-        }
-        return undefined;
-    },
 };
 
 type RowsSchema = ArraySchema<PartialRowType>;
@@ -97,6 +97,12 @@ type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
     keySelector: col => col.clientId,
     member: (): RowsSchemaMember => rowSchema,
+    validation: (rows) => {
+        if ((rows?.length ?? 0) <= 0) {
+            return 'At least one row is required.';
+        }
+        return undefined;
+    },
 };
 
 type DataSchema = ObjectSchema<PartialDataType>;
@@ -105,12 +111,6 @@ const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({
         rows: rowsSchema,
     }),
-    validation: (data) => {
-        if ((data?.rows?.length ?? 0) <= 0) {
-            return 'At least one row is required.';
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -465,6 +465,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                     // FIXME: use translation
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}

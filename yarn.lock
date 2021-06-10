@@ -1821,10 +1821,10 @@
     abort-controller "^3.0.0"
     hoist-non-react-statics "^3.3.0"
 
-"@togglecorp/toggle-form@^0.2.0-beta.4":
-  version "0.2.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@togglecorp/toggle-form/-/toggle-form-0.2.0-beta.4.tgz#0608bbcae42c7cf7b2260b2bf7353a30cbbb3806"
-  integrity sha512-8/jwUbHaVocWA6nrq642SAGru5kwzkOvvHW/Y1W/yLmpwCWRp1sPfHpPY3fHxeP3muZIFLbQiHC+fkOkGbRxpQ==
+"@togglecorp/toggle-form@^0.2.0-beta.6":
+  version "0.2.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@togglecorp/toggle-form/-/toggle-form-0.2.0-beta.6.tgz#c5cf140ad2c2607e4c3c5448edd08d0390c6c780"
+  integrity sha512-sZCJPbyy5StVdmTQGTWtD/TqVgRc/it1pLVJCgFc5Ocxik1bo22GTVqdf4Fwf42iVp7ZXQpzIRt46eL0iRPPwg==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"

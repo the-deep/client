@@ -71,6 +71,12 @@ type OptionsSchemaMember = ReturnType<OptionsSchema['member']>;
 const optionsSchema: OptionsSchema = {
     keySelector: col => col.clientId,
     member: (): OptionsSchemaMember => optionSchema,
+    validation: (options) => {
+        if ((options?.length ?? 0) <= 0) {
+            return 'At least one option is required.';
+        }
+        return undefined;
+    },
 };
 
 type DataSchema = ObjectSchema<PartialDataType>;
@@ -80,12 +86,6 @@ const dataSchema: DataSchema = {
         defaultValue: [requiredStringCondition],
         options: optionsSchema,
     }),
-    validation: (data) => {
-        if ((data?.options?.length ?? 0) <= 0) {
-            return 'At least one option is required.';
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -179,19 +179,19 @@ function OptionInput(props: OptionInputProps) {
             <NonFieldError error={error} />
             <TextInput
                 // FIXME: use translation
-                label="Color"
-                name="color"
-                value={value.color}
-                onChange={onFieldChange}
-                error={error?.fields?.color}
-            />
-            <TextInput
-                // FIXME: use translation
                 label="Label"
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.fields?.label}
+            />
+            <TextInput
+                // FIXME: use translation
+                label="Color"
+                name="color"
+                value={value.color}
+                onChange={onFieldChange}
+                error={error?.fields?.color}
             />
             <TextArea
                 // FIXME: use translation
@@ -390,6 +390,7 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
                     // FIXME: use translation
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}

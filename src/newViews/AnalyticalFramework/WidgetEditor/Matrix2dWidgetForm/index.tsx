@@ -74,6 +74,12 @@ type SubColumnsSchemaMember = ReturnType<SubColumnsSchema['member']>;
 const subColumnsSchema: SubColumnsSchema = {
     keySelector: col => col.clientId,
     member: (): SubColumnsSchemaMember => subColumnSchema,
+    validation: (subColumns) => {
+        if ((subColumns?.length ?? 0) <= 0) {
+            return 'At least one column is required.';
+        }
+        return undefined;
+    },
 };
 
 type ColumnSchema = ObjectSchema<PartialColumnType>;
@@ -85,12 +91,6 @@ const columnSchema: ColumnSchema = {
         tooltip: [],
         subColumns: subColumnsSchema,
     }),
-    validation: (column) => {
-        if ((column?.subColumns?.length ?? 0) <= 0) {
-            return 'At least one column is required.';
-        }
-        return undefined;
-    },
 };
 
 type ColumnsSchema = ArraySchema<PartialColumnType>;
@@ -98,6 +98,12 @@ type ColumnsSchemaMember = ReturnType<ColumnsSchema['member']>;
 const columnsSchema: ColumnsSchema = {
     keySelector: col => col.clientId,
     member: (): ColumnsSchemaMember => columnSchema,
+    validation: (columns) => {
+        if ((columns?.length ?? 0) <= 0) {
+            return 'At least one column is required.';
+        }
+        return undefined;
+    },
 };
 
 type RowType = DataType['rows'][number];
@@ -127,6 +133,12 @@ type SubRowsSchemaMember = ReturnType<SubRowsSchema['member']>;
 const subRowsSchema: SubRowsSchema = {
     keySelector: col => col.clientId,
     member: (): SubRowsSchemaMember => subRowSchema,
+    validation: (subRows) => {
+        if ((subRows?.length ?? 0) <= 0) {
+            return 'At least one sub row is required.';
+        }
+        return undefined;
+    },
 };
 
 type RowSchema = ObjectSchema<PartialRowType>;
@@ -139,12 +151,6 @@ const rowSchema: RowSchema = {
         color: [],
         subRows: subRowsSchema,
     }),
-    validation: (row) => {
-        if ((row?.subRows?.length ?? 0) <= 0) {
-            return 'At least one sub row is required.';
-        }
-        return undefined;
-    },
 };
 
 type RowsSchema = ArraySchema<PartialRowType>;
@@ -152,6 +158,12 @@ type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
     keySelector: col => col.clientId,
     member: (): RowsSchemaMember => rowSchema,
+    validation: (rows) => {
+        if ((rows?.length ?? 0) <= 0) {
+            return 'At least one row is required.';
+        }
+        return undefined;
+    },
 };
 
 type DataSchema = ObjectSchema<PartialDataType>;
@@ -161,15 +173,6 @@ const dataSchema: DataSchema = {
         rows: rowsSchema,
         columns: columnsSchema,
     }),
-    validation: (data) => {
-        if ((data?.rows?.length ?? 0) <= 0) {
-            return 'At least one row is required.';
-        }
-        if ((data?.columns?.length ?? 0) <= 0) {
-            return 'At least one column is required.';
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -762,6 +765,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                     // FIXME: use translation
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}

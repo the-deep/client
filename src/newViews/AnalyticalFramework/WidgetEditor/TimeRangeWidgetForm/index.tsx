@@ -115,6 +115,7 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
                     className={styles.input}
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value?.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}
