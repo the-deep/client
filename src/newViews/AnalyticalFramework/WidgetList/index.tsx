@@ -48,6 +48,14 @@ const partialWidgets: PartialWidget[] = [
         type: 'scale',
         clientId: 'random',
     },
+    {
+        type: 'single-select',
+        clientId: 'random',
+    },
+    {
+        type: 'multi-select',
+        clientId: 'random',
+    },
 ];
 
 interface AddItemProps<T extends string | number | undefined> {
@@ -199,6 +207,20 @@ function WidgetList(props: Props) {
                     name="scale"
                     // FIXME: use strings
                     label="Scale Widget"
+                    className={styles.addMoreItem}
+                    onAddClick={handleAddClick}
+                />
+                <AddItem
+                    name="single-select"
+                    // FIXME: use strings
+                    label="Single Select Widget"
+                    className={styles.addMoreItem}
+                    onAddClick={handleAddClick}
+                />
+                <AddItem
+                    name="multi-select"
+                    // FIXME: use strings
+                    label="Multi Select Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />

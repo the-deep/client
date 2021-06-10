@@ -1,40 +1,39 @@
 import React from 'react';
 import {
-    ScaleInput,
+    MultiSelectInput,
 } from '@the-deep/deep-ui';
 
-import { ScaleValue, ScaleWidget, PartialForm } from '../../types';
+import { MultiSelectValue, MultiSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
-export type PartialScaleWidget = PartialForm<
-    ScaleWidget,
+export type PartialMultiSelectWidget = PartialForm<
+    MultiSelectWidget,
     'clientId' | 'type'
 >;
 
 type Option = NonNullable<NonNullable<
-    NonNullable<PartialScaleWidget>['data']
+    NonNullable<PartialMultiSelectWidget>['data']
 >['options']>[number];
 
 const optionKeySelector = (option: Option) => option.clientId;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
-const optionColorSelector = (option: Option) => option.color ?? '#414141';
 
-export interface Props<N extends string>{
+export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
 
     name: N,
-    value: ScaleValue | null | undefined,
-    onChange: (value: ScaleValue | undefined, name: N) => void,
+    value: MultiSelectValue | null | undefined,
+    onChange: (value: MultiSelectValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 
-    widget: PartialScaleWidget,
+    widget: PartialMultiSelectWidget,
 }
 
-function ScaleWidgetInput<N extends string>(props: Props<N>) {
+function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
         title,
@@ -53,14 +52,13 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
         >
-            <ScaleInput
+            <MultiSelectInput
                 name={name}
                 options={widget?.data?.options}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
-                colorSelector={optionColorSelector}
                 onChange={onChange}
-                value={value ?? widget?.data?.defaultValue}
+                value={value}
                 readOnly={readOnly}
                 disabled={disabled}
             />
@@ -68,4 +66,4 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
     );
 }
 
-export default ScaleWidgetInput;
+export default MultiSelectWidgetInput;

@@ -9,7 +9,9 @@ import Matrix2dWidgetForm from './Matrix2dWidgetForm';
 import Matrix1dWidgetForm from './Matrix1dWidgetForm';
 import TimeWidgetForm from './TimeWidgetForm';
 import DateRangeWidgetForm from './DateRangeWidgetForm';
+import MultiSelectWidgetForm from './MultiSelectWidgetForm';
 import ScaleWidgetForm from './ScaleWidgetForm';
+import SingleSelectWidgetForm from './SingleSelectWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
@@ -129,6 +131,26 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'scale') {
         return (
             <ScaleWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'single-select') {
+        return (
+            <SingleSelectWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'multi-select') {
+        return (
+            <MultiSelectWidgetForm
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}

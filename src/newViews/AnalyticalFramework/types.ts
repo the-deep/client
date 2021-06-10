@@ -151,11 +151,11 @@ export interface TextWidget extends BaseWidget {
     type: 'text';
     data: BaseData<TextValue>;
 }
-interface SingleSelectWidget extends BaseWidget {
+export interface SingleSelectWidget extends BaseWidget {
     type: 'single-select';
     data: SingleSelectData;
 }
-interface MultiSelectWidget extends BaseWidget {
+export interface MultiSelectWidget extends BaseWidget {
     type: 'multi-select';
     data: MultiSelectData;
 }
