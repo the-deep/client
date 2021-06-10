@@ -1369,7 +1369,14 @@
         "-8183719471": "Organization Type",
         "-9182819349": "Personal Info",
         "-8182838101": "Preferences",
-        "-8183718381": "Platform Language"
+        "-8183718381": "Platform Language",
+        "-8128301084": "New password and retyped password doesn't match.",
+        "-919481010": "Change password",
+        "-818401818": "Change",
+        "-181814830": "Cancel",
+        "-819410810": "Current password",
+        "-819181030": "New password",
+        "-918202011": "Retype password"
     },
     "links": {
         "browserExtension": {
@@ -3920,6 +3927,15 @@
             "lastName": 152,
             "organization": 154,
             "saveMyProfile": 25
+        },
+        "changePassword": {
+            "title": -919481010,
+            "passwordMismatch": -8128301084,
+            "change": -818401818,
+            "cancel": -181814830,
+            "currentPassword": -819410810,
+            "newPassword": -819181030,
+            "retypePassword": -918202011
         }
     }
 }
