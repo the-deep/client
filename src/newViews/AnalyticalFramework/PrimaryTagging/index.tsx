@@ -229,6 +229,19 @@ function PrimaryTagging(props: Props) {
 
     const [tempWidget, setTempWidget] = useState<TempWidget | undefined>();
 
+    const [sectionToEdit, setSectionToEdit] = useState<string | undefined>(undefined);
+
+    const handleSectionsAdd = useCallback(
+        () => {
+            const newClientId = randomString();
+            setSectionToEdit(newClientId);
+            setTempSections([
+                ...sections,
+                { clientId: newClientId },
+            ]);
+        },
+        [sections],
+    );
     const handleSectionsEdit = useCallback(
         () => {
             setTempSections(sections);
@@ -319,8 +332,6 @@ function PrimaryTagging(props: Props) {
         [sections, tempSections, tempWidget],
     );
 
-    const [sectionToEdit, setSectionToEdit] = useState<string | undefined>(undefined);
-
     const handleSectionEditClick: ButtonProps<string>['onClick'] = useCallback((newSectionToEdit, event) => {
         event.stopPropagation();
         setSectionToEdit(newSectionToEdit);
@@ -346,7 +357,7 @@ function PrimaryTagging(props: Props) {
             >
                 {!editMode && (
                     <WidgetList
-                        onSectionsEdit={handleSectionsEdit}
+                        onSectionsAdd={handleSectionsAdd}
                         onWidgetAdd={handleWidgetAdd}
                     />
                 )}

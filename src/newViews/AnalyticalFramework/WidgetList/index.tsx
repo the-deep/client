@@ -97,7 +97,7 @@ type Props = {
 } & ({
     sectionsDisabled: true;
 } | {
-    onSectionsEdit: () => void;
+    onSectionsAdd: () => void;
     sectionsDisabled?: false;
 })
 
@@ -129,7 +129,7 @@ function WidgetList(props: Props) {
                         // FIXME: use strings
                         label="Sections"
                         className={styles.addMoreItem}
-                        onAddClick={props.onSectionsEdit}
+                        onAddClick={props.onSectionsAdd}
                     />
                     <AddItem
                         name="matrix-1d"

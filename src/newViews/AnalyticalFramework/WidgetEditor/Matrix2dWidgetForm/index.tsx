@@ -9,7 +9,7 @@ import {
     TextArea,
     QuickActionButton,
     ExpandableContainer,
-    ContainerCard,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -342,7 +342,7 @@ function RowInput(props: RowInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Sub Rows"
@@ -369,7 +369,7 @@ function RowInput(props: RowInputProps) {
                         error={error?.fields?.subRows?.members?.[subRow.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </ExpandableContainer>
     );
 }
@@ -527,7 +527,7 @@ function ColumnInput(props: ColumnInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Sub Columns"
@@ -554,7 +554,7 @@ function ColumnInput(props: ColumnInputProps) {
                         error={error?.fields?.subColumns?.members?.[subColumn.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </ExpandableContainer>
     );
 }
@@ -632,7 +632,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError error={error} />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Rows"
@@ -659,8 +659,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         error={error?.fields?.rows?.members?.[row.clientId]}
                     />
                 ))}
-            </ContainerCard>
-            <ContainerCard
+            </Container>
+            <Container
                 className={className}
                 sub
                 heading="Columns"
@@ -687,7 +687,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         error={error?.fields?.columns?.members?.[column.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </>
     );
 }
@@ -735,7 +735,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
             className={styles.widgetEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <ContainerCard
+            <Container
                 heading={value.title ?? 'Unnamed'}
                 horizontallyCompactContent
                 headerActions={(
@@ -776,7 +776,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                     onChange={onValueChange}
                     error={error?.fields?.data}
                 />
-            </ContainerCard>
+            </Container>
         </form>
     );
 }

@@ -9,7 +9,7 @@ import {
     TextArea,
     QuickActionButton,
     ExpandableContainer,
-    ContainerCard,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -280,7 +280,7 @@ function RowInput(props: RowInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Cells"
@@ -307,7 +307,7 @@ function RowInput(props: RowInputProps) {
                         error={error?.fields?.cells?.members?.[cell.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </ExpandableContainer>
     );
 }
@@ -360,9 +360,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError error={error} />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
+                // FIXME: Use translation
                 heading="Rows"
                 horizontallyCompactContent
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
@@ -387,7 +388,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         error={error?.fields?.rows?.members?.[row.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </>
     );
 }
@@ -435,7 +436,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
             className={styles.widgetEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <ContainerCard
+            <Container
                 heading={value.title ?? 'Unnamed'}
                 horizontallyCompactContent
                 headerActions={(
@@ -476,7 +477,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                     onChange={onValueChange}
                     error={error?.fields?.data}
                 />
-            </ContainerCard>
+            </Container>
         </form>
     );
 }
