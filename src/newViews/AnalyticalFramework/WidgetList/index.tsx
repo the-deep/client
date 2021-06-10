@@ -213,14 +213,14 @@ function WidgetList(props: Props) {
                 <AddItem
                     name="single-select"
                     // FIXME: use strings
-                    label="Single Select"
+                    label="Single Select Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="multi-select"
                     // FIXME: use strings
-                    label="Multi Select"
+                    label="Multi Select Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
