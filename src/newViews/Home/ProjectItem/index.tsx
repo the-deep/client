@@ -13,13 +13,13 @@ import {
     ButtonLikeLink,
     InformationCard,
     ElementFragments,
+    TextOutput,
 } from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
 import DateRangeOutput from '#dui/DateRangeOutput';
 import List from '#rscv/List';
 import Icon from '#rscg/Icon';
-import TextOutput from '#components/general/TextOutput';
 import ProgressLine from '#components/viz/ProgressLine';
 
 import {
@@ -45,35 +45,6 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 const emptyComponent = () => null;
-
-interface RecentlyActiveUserProps {
-    className?: string;
-    name: string;
-    date: string;
-}
-
-function RecentlyActiveUser(props: RecentlyActiveUserProps) {
-    const {
-        className,
-        name,
-        date,
-    } = props;
-
-    return (
-        <div className={_cs(className, styles.recentlyActiveUser)}>
-            <div className={styles.name}>
-                {name}
-            </div>
-            <FormattedDate
-                className={styles.date}
-                // FIXME: Remove this fallback
-                value={date ?? Date.now()}
-                mode="hh:mmaaa, MMM dd, yyyy"
-                emptyComponent={emptyComponent}
-            />
-        </div>
-    );
-}
 
 const tickFormatter = (value: number | string) => {
     const date = new Date(value);
@@ -138,8 +109,19 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
     } = props;
 
     const recentlyActiveRendererParams = useCallback((key, data) => ({
-        name: data.name,
-        date: data.date,
+        className: styles.recentlyActiveItem,
+        label: data.name,
+        labelContainerClassName: styles.recentlyActiveUserName,
+        hideLabelColon: true,
+        value: (
+            <FormattedDate
+                className={styles.recentActivityDate}
+                // FIXME: Remove this fallback
+                value={data.date ?? Date.now()}
+                mode="hh:mmaaa, MMM dd, yyyy"
+                emptyComponent={emptyComponent}
+            />
+        ),
     }), []);
 
     const convertedProjectActivity = useMemo(() => (
@@ -168,7 +150,6 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                         <ElementFragments
                             actions={(
                                 <Icon
-                                    className={styles.privacyIcon}
                                     name={isPrivate ? 'locked' : 'unlocked'}
                                 />
                             )}
@@ -205,30 +186,35 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                         <TextOutput
                             label={_ts('home.recentProjects', 'projectOwnerLabel')}
                             value={projectOwnerName}
-                            type="small-block"
+                            block
+                            hideLabelColon
                         />
                         <TextOutput
                             label={_ts('home.recentProjects', 'analysisFrameworkLabel')}
                             value={analysisFrameworkTitle}
-                            type="small-block"
+                            hideLabelColon
+                            block
                         />
                         <TextOutput
                             label={_ts('home.recentProjects', 'teamMembersTitle')}
                             value={totalUsers}
-                            type="small-block"
-                            isNumericValue
+                            valueType="number"
+                            hideLabelColon
+                            block
                         />
                     </div>
                     <div className={styles.column}>
                         <TextOutput
                             label={_ts('home.recentProjects', 'recentlyActiveUsersLabel')}
-                            type="small-block"
+                            block
+                            hideLabelColon
+                            valueContainerClassName={styles.recentlyActiveList}
                             value={(
                                 <List
                                     data={recentlyActive}
                                     keySelector={recentlyActiveKeySelector}
                                     rendererParams={recentlyActiveRendererParams}
-                                    renderer={RecentlyActiveUser}
+                                    renderer={TextOutput}
                                 />
                             )}
                         />

@@ -17,9 +17,9 @@
                 display: flex;
 
                 .description {
-                    padding: var(--dui-spacing-small) 0;
                     flex-basis: 50%;
                     flex-grow: 0;
+                    padding: var(--dui-spacing-small) 0;
                     line-height: 1.8;
                 }
             }
@@ -36,27 +36,27 @@
                     }
                 }
 
-                .recently-active-user {
-                    display: flex;
-                    align-items: center;
-                    flex-wrap: wrap;
-                    margin: 0 calc(-1 * var(--dui-spacing-small));
+                .recently-active-list {
+                    padding-top: calc(var(--dui-spacing-small) - var(--dui-spacing-super-small));
+                    padding-bottom: calc(var(--dui-spacing-small) - var(--dui-spacing-super-small));
+                    font-weight: var(--dui-font-weight-medium);
 
-                    .name {
-                        flex-shrink: 0;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        color: var(--dui-color-text-dark);
-                        font-size: var(--font-size-medium-alt);
-                        font-weight: var(--font-weight-bold);
-                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small)
-                    }
+                    .recently-active-item {
+                        display: flex;
+                        flex-wrap: wrap;
+                        margin: 0 calc(-1 * var(--dui-spacing-medium));
+                        padding-top: var(--dui-spacing-super-small);
+                        padding-bottom: var(--dui-spacing-super-small);
 
-                    .date {
-                        flex-shrink: 0;
-                        color: var(--dui-color-label);
-                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small)
+                        .recently-active-user-name {
+                            font-weight: var(--dui-font-weight-bold);
+                        }
+
+                        .recent-activity-date {
+                            color: var(--dui-color-text-label);
+                            font-size: var(--dui-font-size-small);
+                            font-weight: var(--dui-font-weight-medium);
+                        }
                     }
                 }
             }
@@ -73,9 +73,9 @@
                 align-content: flex-start;
                 align-items: flex-start;
                 flex-wrap: wrap;
+                margin: var(--dui-spacing-small);
                 background-color: var(--dui-color-background-information);
                 width: 7.8rem;
-                margin: var(--dui-spacing-small);
 
                 .bookmark-icon {
                     margin-left: 0;
@@ -107,11 +107,11 @@
     }
 
     .privacy-badge {
-        padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
         display: flex;
+        padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
         text-transform: uppercase;
         color: var(--dui-color-text-label);
-        font-weight: var(--font-weight-bold);
         font-size: var(--dui-font-size-small);
+        font-weight: var(--font-weight-bold);
     }
 }

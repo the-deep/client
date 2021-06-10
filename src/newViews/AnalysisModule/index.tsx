@@ -394,6 +394,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 contentClassName={styles.analysesContainer}
                 heading={_ts('analysis', 'allAnalyses')}
                 headingDescription={analysesResponse?.count}
+                inlineHeadingDescription
                 headerActions={(
                     <DateFilter
                         placeholder={_ts('analysis', 'selectAnalysisDate')}

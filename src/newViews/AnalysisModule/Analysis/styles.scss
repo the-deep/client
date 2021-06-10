@@ -5,45 +5,73 @@
     border: var(--width-separator-thin) solid var(--dui-border-color-card);
     border-radius: var(--dui-border-radius-card);
     background-color: var(--color-foreground);
+    overflow: auto;
 
-    .pillar-content {
-        position: relative;
-        padding: 0;
+    .analysis-details {
+        display: flex;
+        height: 15rem;
+        overflow: auto;
 
-        .content {
-            .content-item {
-                .sub-heading {
-                    display: flex;
-                    padding: var(--spacing-extra-small) 0;
-                    color: var(--dui-color-text-dark);
-                    font-size: var(--font-size-medium-alt);
-                }
+        .meta-section {
+            display: flex;
+            flex-basis: 30%;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium)) 0;
+            overflow: auto;
 
-                .pillar-list-content {
-                    display: flex;
+            .team-lead-name {
+                flex-shrink: 0;
+                margin: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+            }
 
-                    .analyst {
-                        flex-basis: 1;
-                        margin-right: var(--spacing-small);
-                        font-weight: var(--font-weight-bold);
-                    }
+            .pillar-assignments {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                margin: calc(var(--spacing-extra-large) - var(--spacing-small)) 0;
+                overflow: auto;
 
-                    .analysis-pillar {
-                        flex-basis: 1;
-                        margin-left: var(--spacing-small);
+                .overflow-wrapper {
+                    flex-grow: 1;
+                    overflow: auto;
+                    font-weight: var(--dui-font-weight-medium);
+
+                    .pillar-assignment-list {
+                        display: table;
+                        margin: 0 calc(-1 * var(--dui-spacing-medium));
+                        width: calc(100% + var(--dui-spacing-medium));
+                        table-layout: fixed;
                     }
                 }
             }
         }
+
+        .chart-section {
+            display: flex;
+            align-items: center;
+            flex-basis: 60%;
+            flex-grow: 1;
+            justify-content: center;
+            background-color: var(--dui-color-background-information);
+        }
     }
 
-    .text-output {
-        align-items: flex-start;
-        flex-direction: column;
-        font-size: var(--font-size-medium);
+    .pillar-analyses {
+        border-left: 0.4rem solid var(--dui-color-surface-information);
 
-        .value {
-            font-weight: var(--font-weight-bold);
+        .pillar-analyses-header {
+            border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            padding-top: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+            padding-bottom: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+        }
+
+        .pillar-list {
+            .pillar {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                background-color: transparent;
+            }
         }
     }
 }

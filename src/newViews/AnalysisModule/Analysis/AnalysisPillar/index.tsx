@@ -1,16 +1,18 @@
 import React from 'react';
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    _cs,
+} from '@togglecorp/fujs';
 import {
     Container,
     Tag,
     QuickActionButton,
     QuickActionLink,
-    DateOutput,
     PendingMessage,
+    TextOutput,
 } from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
-import TextOutput from '#components/general/TextOutput';
 
 import { AnalysisPillars } from '#typings';
 import { pathNames } from '#constants';
@@ -28,6 +30,7 @@ interface ComponentProps {
     pillarId: AnalysisPillars['id'];
     projectId: number;
     pendingPillarDelete: boolean;
+    className?: string;
 }
 
 function AnalysisPillar(props: ComponentProps) {
@@ -41,6 +44,7 @@ function AnalysisPillar(props: ComponentProps) {
         createdAt,
         pendingPillarDelete,
         statements,
+        className,
     } = props;
 
     const completed = false;
@@ -56,13 +60,9 @@ function AnalysisPillar(props: ComponentProps) {
 
     return (
         <Container
-            className={styles.pillar}
+            className={_cs(styles.analysisPillar, className)}
             sub
-            heading={(
-                <div className={styles.left}>
-                    {title}
-                </div>
-            )}
+            heading={title}
             headingDescription={(
                 <Tag variant={completed ? 'accent' : 'gradient1'}>
                     {completed
@@ -71,6 +71,7 @@ function AnalysisPillar(props: ComponentProps) {
                     }
                 </Tag>
             )}
+            inlineHeadingDescription
             headerActions={(
                 <>
                     <QuickActionLink
@@ -96,49 +97,36 @@ function AnalysisPillar(props: ComponentProps) {
             )}
             headerDescription={(
                 <TextOutput
+                    className={styles.createdAt}
                     label={_ts('analysis', 'creationDate')}
-                    value={(
-                        <DateOutput
-                            value={createdAt}
-                            format="dd MMM, yyyy"
-                        />
-                    )}
+                    value={createdAt}
+                    valueType="date"
                 />
             )}
+            contentClassName={styles.content}
+            horizontallyCompactContent
         >
-            <div className={styles.pillarBody}>
-                {pendingPillarDelete && <PendingMessage />}
-                <div className={styles.analystItem}>
-                    <TextOutput
-                        label={_ts('analysis', 'analyst')}
-                        value={assigneeName}
-                        noColon
-                        type="small-block"
-                    />
-                </div>
-                <div className={styles.statementsItem}>
-                    <TextOutput
-                        label={_ts('analysis', 'statementsTitle')}
-                        type="small-block"
-                        value={(
-                            <div className={styles.statements}>
-                                {statements?.map(statement => (
-                                    <div
-                                        key={statement.id}
-                                        className={styles.statement}
-                                    >
-                                        <div className={styles.statementText}>
-                                            {statement.statement}
-                                        </div>
-                                        <div className={styles.entryCount}>
-                                            {`${statement.analyticalEntries.length} Entries`}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    />
-                </div>
+            {pendingPillarDelete && <PendingMessage />}
+            <div className={styles.metaSection}>
+                <TextOutput
+                    label={_ts('analysis', 'analyst')}
+                    value={assigneeName}
+                    block
+                    hideLabelColon
+                />
+            </div>
+            <div className={styles.statementsSection}>
+                <TextOutput
+                    label={_ts('analysis', 'statementsTitle')}
+                    block
+                    value={statements?.map(statement => (
+                        <TextOutput
+                            key={statement.id}
+                            value={statement.statement}
+                            description={`${statement.analyticalEntries.length} Entries`}
+                        />
+                    ))}
+                />
             </div>
         </Container>
     );
