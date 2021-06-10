@@ -166,6 +166,7 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                     // FIXME: use translation
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}

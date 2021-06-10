@@ -1,4 +1,7 @@
-import { isDefined } from '@togglecorp/fujs';
+import {
+    isDefined,
+    isTruthyString,
+} from '@togglecorp/fujs';
 
 export function breadcrumb(...args: (string | undefined)[]) {
     return args.filter(arg => isDefined(arg)).join(' › ');
@@ -6,6 +9,15 @@ export function breadcrumb(...args: (string | undefined)[]) {
 
 type MonthNameMap = {
     [key: number]: string;
+}
+
+export function isValidColor(value?: string) {
+    const regex = /^#(?:[0-9A-F]{3}|[0-9A-F]{6})$/i;
+    if (isTruthyString(value) && !regex.test(value)) {
+        // FIXME: Use string
+        return 'This must be a valid hex color.';
+    }
+    return undefined;
 }
 
 export const shortMonthNamesMap: MonthNameMap = {

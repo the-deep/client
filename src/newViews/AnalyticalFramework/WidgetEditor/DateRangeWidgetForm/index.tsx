@@ -111,6 +111,7 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
                     className={styles.input}
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value?.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}

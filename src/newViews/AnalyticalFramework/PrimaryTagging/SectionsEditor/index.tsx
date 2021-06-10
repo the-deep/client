@@ -9,6 +9,7 @@ import {
     TextInput,
     TextArea,
     QuickActionButton,
+    ExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -21,6 +22,7 @@ import {
     createSubmitHandler,
     StateArg,
     Error,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
     _cs,
@@ -68,19 +70,19 @@ type SectionsSchemaMember = ReturnType<SectionsSchema['member']>;
 const sectionsSchema: SectionsSchema = {
     keySelector: col => col.clientId,
     member: (): SectionsSchemaMember => sectionSchema,
+    validation: (sections) => {
+        if ((sections?.length ?? 0) <= 0) {
+            // FIXME: use strings
+            return 'At least one section is required.';
+        }
+        return undefined;
+    },
 };
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         sections: sectionsSchema,
     }),
-    validation: (data) => {
-        if ((data?.sections?.length ?? 0) <= 0) {
-            // FIXME: use strings
-            return 'At least one section is required.';
-        }
-        return undefined;
-    },
 };
 
 const defaultVal: PartialSectionType = {
@@ -122,11 +124,15 @@ function SectionInput(props: SectionInputProps) {
         [autoFocus],
     );
 
+    const errored = analyzeErrors(error);
+    const heading = value.title ?? `Section ${index + 1}`;
+
     return (
-        <Container
+        <ExpandableContainer
             containerElementProps={{
                 ref: divRef,
             }}
+            heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
                 <QuickActionButton
                     name={index}
@@ -137,24 +143,22 @@ function SectionInput(props: SectionInputProps) {
                     <IoTrash />
                 </QuickActionButton>
             )}
-            heading={(
-                <TextInput
-                    name="title"
-                    placeholder="Enter section title"
-                    value={value.title}
-                    onChange={onFieldChange}
-                    error={error?.fields?.title}
-                    autoFocus={autoFocus}
-                />
-            )}
             className={_cs(
                 className,
                 autoFocus && styles.focus,
             )}
             horizontallyCompactContent
-            sub
+            defaultVisibility={autoFocus}
         >
             <NonFieldError error={error} />
+            <TextInput
+                name="title"
+                label="Title"
+                value={value.title}
+                onChange={onFieldChange}
+                error={error?.fields?.title}
+                autoFocus={autoFocus}
+            />
             <TextArea
                 // FIXME: use translation
                 label="Tooltip"
@@ -164,7 +168,7 @@ function SectionInput(props: SectionInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-        </Container>
+        </ExpandableContainer>
     );
 }
 
@@ -247,8 +251,6 @@ function SectionsEditor(props: Props) {
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
             <Container
-                // FIXME: Use translation
-                heading="Sections"
                 headerActions={(
                     <>
                         <Button
@@ -269,34 +271,42 @@ function SectionsEditor(props: Props) {
                         </Button>
                     </>
                 )}
-                footerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
-                    <Button
-                        name={undefined}
-                        icons={(<IoAdd />)}
-                        onClick={handleAdd}
-                        // FIXME: use strings
-                        variant="tertiary"
-                    >
-                        Add
-                    </Button>
-                )}
                 contentClassName={styles.content}
                 sub
             >
                 <NonFieldError error={error} />
-                <NonFieldError error={error?.fields?.sections} />
-                {value.sections?.map((section, index) => (
-                    <SectionInput
-                        className={styles.sectionInput}
-                        key={section.clientId}
-                        index={index}
-                        value={section}
-                        onChange={onSectionsChange}
-                        onRemove={onSectionsRemove}
-                        error={error?.fields?.sections?.members?.[section.clientId]}
-                        autoFocus={focusedSection === section.clientId}
-                    />
-                ))}
+                <Container
+                    sub
+                    // FIXME: Use translation
+                    heading="Sections"
+                    horizontallyCompactContent
+                    headerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleAdd}
+                            // FIXME: use strings
+                            title="Add section"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                >
+                    <>
+                        <NonFieldError error={error?.fields?.sections} />
+                        {value.sections?.map((section, index) => (
+                            <SectionInput
+                                className={styles.sectionInput}
+                                key={section.clientId}
+                                index={index}
+                                value={section}
+                                onChange={onSectionsChange}
+                                onRemove={onSectionsRemove}
+                                error={error?.fields?.sections?.members?.[section.clientId]}
+                                autoFocus={focusedSection === section.clientId}
+                            />
+                        ))}
+                    </>
+                </Container>
             </Container>
         </form>
     );

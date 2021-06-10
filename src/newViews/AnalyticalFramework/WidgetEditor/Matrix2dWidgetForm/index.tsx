@@ -9,7 +9,7 @@ import {
     TextArea,
     QuickActionButton,
     ExpandableContainer,
-    ContainerCard,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -74,6 +74,12 @@ type SubColumnsSchemaMember = ReturnType<SubColumnsSchema['member']>;
 const subColumnsSchema: SubColumnsSchema = {
     keySelector: col => col.clientId,
     member: (): SubColumnsSchemaMember => subColumnSchema,
+    validation: (subColumns) => {
+        if ((subColumns?.length ?? 0) <= 0) {
+            return 'At least one column is required.';
+        }
+        return undefined;
+    },
 };
 
 type ColumnSchema = ObjectSchema<PartialColumnType>;
@@ -85,12 +91,6 @@ const columnSchema: ColumnSchema = {
         tooltip: [],
         subColumns: subColumnsSchema,
     }),
-    validation: (column) => {
-        if ((column?.subColumns?.length ?? 0) <= 0) {
-            return 'At least one column is required.';
-        }
-        return undefined;
-    },
 };
 
 type ColumnsSchema = ArraySchema<PartialColumnType>;
@@ -98,6 +98,12 @@ type ColumnsSchemaMember = ReturnType<ColumnsSchema['member']>;
 const columnsSchema: ColumnsSchema = {
     keySelector: col => col.clientId,
     member: (): ColumnsSchemaMember => columnSchema,
+    validation: (columns) => {
+        if ((columns?.length ?? 0) <= 0) {
+            return 'At least one column is required.';
+        }
+        return undefined;
+    },
 };
 
 type RowType = DataType['rows'][number];
@@ -127,6 +133,12 @@ type SubRowsSchemaMember = ReturnType<SubRowsSchema['member']>;
 const subRowsSchema: SubRowsSchema = {
     keySelector: col => col.clientId,
     member: (): SubRowsSchemaMember => subRowSchema,
+    validation: (subRows) => {
+        if ((subRows?.length ?? 0) <= 0) {
+            return 'At least one sub row is required.';
+        }
+        return undefined;
+    },
 };
 
 type RowSchema = ObjectSchema<PartialRowType>;
@@ -139,12 +151,6 @@ const rowSchema: RowSchema = {
         color: [],
         subRows: subRowsSchema,
     }),
-    validation: (row) => {
-        if ((row?.subRows?.length ?? 0) <= 0) {
-            return 'At least one sub row is required.';
-        }
-        return undefined;
-    },
 };
 
 type RowsSchema = ArraySchema<PartialRowType>;
@@ -152,6 +158,12 @@ type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
     keySelector: col => col.clientId,
     member: (): RowsSchemaMember => rowSchema,
+    validation: (rows) => {
+        if ((rows?.length ?? 0) <= 0) {
+            return 'At least one row is required.';
+        }
+        return undefined;
+    },
 };
 
 type DataSchema = ObjectSchema<PartialDataType>;
@@ -161,15 +173,6 @@ const dataSchema: DataSchema = {
         rows: rowsSchema,
         columns: columnsSchema,
     }),
-    validation: (data) => {
-        if ((data?.rows?.length ?? 0) <= 0) {
-            return 'At least one row is required.';
-        }
-        if ((data?.columns?.length ?? 0) <= 0) {
-            return 'At least one column is required.';
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -339,7 +342,7 @@ function RowInput(props: RowInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Sub Rows"
@@ -366,7 +369,7 @@ function RowInput(props: RowInputProps) {
                         error={error?.fields?.subRows?.members?.[subRow.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </ExpandableContainer>
     );
 }
@@ -524,7 +527,7 @@ function ColumnInput(props: ColumnInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Sub Columns"
@@ -551,7 +554,7 @@ function ColumnInput(props: ColumnInputProps) {
                         error={error?.fields?.subColumns?.members?.[subColumn.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </ExpandableContainer>
     );
 }
@@ -629,7 +632,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError error={error} />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Rows"
@@ -656,8 +659,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         error={error?.fields?.rows?.members?.[row.clientId]}
                     />
                 ))}
-            </ContainerCard>
-            <ContainerCard
+            </Container>
+            <Container
                 className={className}
                 sub
                 heading="Columns"
@@ -684,7 +687,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         error={error?.fields?.columns?.members?.[column.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </>
     );
 }
@@ -732,7 +735,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
             className={styles.widgetEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <ContainerCard
+            <Container
                 heading={value.title ?? 'Unnamed'}
                 horizontallyCompactContent
                 headerActions={(
@@ -762,6 +765,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                     // FIXME: use translation
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}
@@ -772,7 +776,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                     onChange={onValueChange}
                     error={error?.fields?.data}
                 />
-            </ContainerCard>
+            </Container>
         </form>
     );
 }

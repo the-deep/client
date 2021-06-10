@@ -9,7 +9,7 @@ import {
     TextArea,
     QuickActionButton,
     ExpandableContainer,
-    ContainerCard,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -72,6 +72,12 @@ type CellsSchemaMember = ReturnType<CellsSchema['member']>;
 const cellsSchema: CellsSchema = {
     keySelector: col => col.clientId,
     member: (): CellsSchemaMember => cellSchema,
+    validation: (cells) => {
+        if ((cells?.length ?? 0) <= 0) {
+            return 'At least one cell is required.';
+        }
+        return undefined;
+    },
 };
 
 type RowSchema = ObjectSchema<PartialRowType>;
@@ -84,12 +90,6 @@ const rowSchema: RowSchema = {
         color: [],
         cells: cellsSchema,
     }),
-    validation: (row) => {
-        if ((row?.cells?.length ?? 0) <= 0) {
-            return 'At least one cell is required.';
-        }
-        return undefined;
-    },
 };
 
 type RowsSchema = ArraySchema<PartialRowType>;
@@ -97,6 +97,12 @@ type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
     keySelector: col => col.clientId,
     member: (): RowsSchemaMember => rowSchema,
+    validation: (rows) => {
+        if ((rows?.length ?? 0) <= 0) {
+            return 'At least one row is required.';
+        }
+        return undefined;
+    },
 };
 
 type DataSchema = ObjectSchema<PartialDataType>;
@@ -105,12 +111,6 @@ const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({
         rows: rowsSchema,
     }),
-    validation: (data) => {
-        if ((data?.rows?.length ?? 0) <= 0) {
-            return 'At least one row is required.';
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -280,7 +280,7 @@ function RowInput(props: RowInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
                 heading="Cells"
@@ -307,7 +307,7 @@ function RowInput(props: RowInputProps) {
                         error={error?.fields?.cells?.members?.[cell.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </ExpandableContainer>
     );
 }
@@ -360,9 +360,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError error={error} />
-            <ContainerCard
+            <Container
                 className={className}
                 sub
+                // FIXME: Use translation
                 heading="Rows"
                 horizontallyCompactContent
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
@@ -387,7 +388,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         error={error?.fields?.rows?.members?.[row.clientId]}
                     />
                 ))}
-            </ContainerCard>
+            </Container>
         </>
     );
 }
@@ -435,7 +436,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
             className={styles.widgetEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <ContainerCard
+            <Container
                 heading={value.title ?? 'Unnamed'}
                 horizontallyCompactContent
                 headerActions={(
@@ -465,6 +466,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                     // FIXME: use translation
                     label="Title"
                     name="title"
+                    autoFocus
                     value={value.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}
@@ -475,7 +477,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                     onChange={onValueChange}
                     error={error?.fields?.data}
                 />
-            </ContainerCard>
+            </Container>
         </form>
     );
 }

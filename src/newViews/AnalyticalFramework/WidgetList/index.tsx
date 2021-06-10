@@ -44,6 +44,10 @@ const partialWidgets: PartialWidget[] = [
         type: 'matrix-2d',
         clientId: 'random',
     },
+    {
+        type: 'scale',
+        clientId: 'random',
+    },
 ];
 
 interface AddItemProps<T extends string | number | undefined> {
@@ -93,7 +97,7 @@ type Props = {
 } & ({
     sectionsDisabled: true;
 } | {
-    onSectionsEdit: () => void;
+    onSectionsAdd: () => void;
     sectionsDisabled?: false;
 })
 
@@ -125,7 +129,7 @@ function WidgetList(props: Props) {
                         // FIXME: use strings
                         label="Sections"
                         className={styles.addMoreItem}
-                        onAddClick={props.onSectionsEdit}
+                        onAddClick={props.onSectionsAdd}
                     />
                     <AddItem
                         name="matrix-1d"
@@ -188,6 +192,13 @@ function WidgetList(props: Props) {
                     name="time-range"
                     // FIXME: use strings
                     label="Time Range Widget"
+                    className={styles.addMoreItem}
+                    onAddClick={handleAddClick}
+                />
+                <AddItem
+                    name="scale"
+                    // FIXME: use strings
+                    label="Scale Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />

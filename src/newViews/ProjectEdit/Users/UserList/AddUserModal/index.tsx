@@ -42,7 +42,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>
 
 const schema: FormSchema = {
     fields: (value): FormSchemaFields => {
-        if (isDefined(value.id)) {
+        if (isDefined(value?.id)) {
             return ({
                 role: [requiredCondition],
             });
