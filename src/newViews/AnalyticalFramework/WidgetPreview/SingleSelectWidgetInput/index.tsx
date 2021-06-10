@@ -3,7 +3,7 @@ import {
     SelectInput,
 } from '@the-deep/deep-ui';
 
-import { SingleSelectWidget, PartialForm } from '../../types';
+import { SingleSelectValue, SingleSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialSingleSelectWidget = PartialForm<
@@ -23,8 +23,8 @@ export interface Props <N extends string>{
     className?: string;
 
     name: N,
-    value: string | null | undefined,
-    onChange: (value: string | undefined, name: N) => void,
+    value: SingleSelectValue | null | undefined,
+    onChange: (value: SingleSelectValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;

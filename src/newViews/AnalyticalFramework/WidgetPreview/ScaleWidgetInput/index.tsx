@@ -3,7 +3,7 @@ import {
     ScaleInput,
 } from '@the-deep/deep-ui';
 
-import { ScaleWidget, PartialForm } from '../../types';
+import { ScaleValue, ScaleWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialScaleWidget = PartialForm<
@@ -19,13 +19,13 @@ const optionKeySelector = (option: Option) => option.clientId;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 const optionColorSelector = (option: Option) => option.color ?? '#414141';
 
-export interface Props <N extends string>{
+export interface Props<N extends string>{
     title: string | undefined;
     className?: string;
 
     name: N,
-    value: string | null | undefined,
-    onChange: (value: string | undefined, name: N) => void,
+    value: ScaleValue | null | undefined,
+    onChange: (value: ScaleValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;

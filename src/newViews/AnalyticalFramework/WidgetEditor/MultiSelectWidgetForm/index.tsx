@@ -5,7 +5,6 @@ import {
 } from 'react-icons/io5';
 import {
     Button,
-    Checkbox,
     TextInput,
     TextArea,
     QuickActionButton,
@@ -66,21 +65,20 @@ type OptionsSchemaMember = ReturnType<OptionsSchema['member']>;
 const optionsSchema: OptionsSchema = {
     keySelector: col => col.clientId,
     member: (): OptionsSchemaMember => optionSchema,
+    validation: (options) => {
+        if ((options?.length ?? 0) <= 0) {
+            return 'At least one option is required.';
+        }
+        return undefined;
+    },
 };
 
 type DataSchema = ObjectSchema<PartialDataType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({
-        defaultValue: [],
         options: optionsSchema,
     }),
-    validation: (data) => {
-        if ((data?.options?.length ?? 0) <= 0) {
-            return 'At least one option is required.';
-        }
-        return undefined;
-    },
 };
 
 const schema: FormSchema = {
@@ -105,11 +103,8 @@ interface OptionInputProps {
     value: PartialOptionType;
     error: Error<OptionType> | undefined;
     onChange: (value: StateArg<PartialOptionType>, index: number) => void;
-    onRemove: (index: number, isDefault: boolean) => void;
+    onRemove: (index: number) => void;
     index: number;
-    isDefault: boolean;
-    clientId: string;
-    onDefaultValueChange: (clientId?: string) => void;
 }
 function OptionInput(props: OptionInputProps) {
     const {
@@ -119,27 +114,12 @@ function OptionInput(props: OptionInputProps) {
         onChange,
         onRemove,
         index,
-        isDefault,
-        clientId,
-        onDefaultValueChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
 
-    const handleRemove = useCallback(() => {
-        onRemove(index, isDefault);
-    }, [onRemove, index, isDefault]);
-
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Option ${index + 1}`;
-
-    const handleCheckboxChange = useCallback((newVal: boolean) => {
-        if (newVal) {
-            onDefaultValueChange(clientId);
-        } else {
-            onDefaultValueChange();
-        }
-    }, [onDefaultValueChange, clientId]);
 
     return (
         <ExpandableContainer
@@ -151,7 +131,7 @@ function OptionInput(props: OptionInputProps) {
             headerActions={(
                 <QuickActionButton
                     name={index}
-                    onClick={handleRemove}
+                    onClick={onRemove}
                     // FIXME: use translation
                     title="Remove Option"
                 >
@@ -160,12 +140,6 @@ function OptionInput(props: OptionInputProps) {
             )}
         >
             <NonFieldError error={error} />
-            <Checkbox
-                value={isDefault}
-                label="Default"
-                name="default-checkbox"
-                onChange={handleCheckboxChange}
-            />
             <TextInput
                 // FIXME: use translation
                 label="Label"
@@ -212,17 +186,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onValueRemove: onOptionsRemove,
     } = useFormArray('options', onFieldChange);
 
-    const handleDefaultValueChange = useCallback((newDefaultValue?: string) => {
-        onFieldChange(newDefaultValue, 'defaultValue');
-    }, [onFieldChange]);
-
-    const handleOptionRemove = useCallback((index: number, isDefault: boolean) => {
-        if (isDefault) {
-            onFieldChange(undefined, 'defaultValue');
-        }
-        onOptionsRemove(index);
-    }, [onOptionsRemove, onFieldChange]);
-
     const handleAdd = useCallback(
         () => {
             const oldOptions = value?.options ?? [];
@@ -268,15 +231,12 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <NonFieldError error={error?.fields?.options} />
                 {value?.options?.map((option, index) => (
                     <OptionInput
-                        clientId={option.clientId}
                         key={option.clientId}
                         index={index}
                         value={option}
                         onChange={onOptionsChange}
-                        onRemove={handleOptionRemove}
+                        onRemove={onOptionsRemove}
                         error={error?.fields?.options?.members?.[option.clientId]}
-                        isDefault={value?.defaultValue === option.clientId}
-                        onDefaultValueChange={handleDefaultValueChange}
                     />
                 ))}
             </Container>

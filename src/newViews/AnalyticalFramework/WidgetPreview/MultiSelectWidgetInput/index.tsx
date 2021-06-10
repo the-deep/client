@@ -3,7 +3,7 @@ import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
 
-import { MultiSelectWidget, PartialForm } from '../../types';
+import { MultiSelectValue, MultiSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialMultiSelectWidget = PartialForm<
@@ -23,8 +23,8 @@ export interface Props <N extends string>{
     className?: string;
 
     name: N,
-    value: string[] | null | undefined,
-    onChange: (value: string[] | undefined, name: N) => void,
+    value: MultiSelectValue | null | undefined,
+    onChange: (value: MultiSelectValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;
