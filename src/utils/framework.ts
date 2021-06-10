@@ -548,9 +548,11 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
         .filter(w => w.widgetId === 'scaleWidget')
         .map((w) => {
             const attributeData = entry.attributes[w.id];
-            const { properties: { data } } = w as WidgetElement<ScaleWidget>;
+            const { properties } = w as WidgetElement<ScaleWidget>;
             if (isWidgetData(attributeData)) {
-                const value = data?.scaleUnits.find(v => v.key === attributeData.data.value);
+                const value = properties?.data?.scaleUnits.find(
+                    v => v.key === attributeData.data.value,
+                );
                 return value;
             }
             return undefined;
@@ -578,19 +580,17 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
                     const { selectedWidgetKey } = widgetAttributeData;
                     const attributeData = widgetAttributeData[selectedWidgetKey];
 
-                    if (attributeData && isWidgetData(attributeData)) {
-                        const {
-                            properties: {
-                                data: widgetData,
-                            },
-                        } = widget as WidgetElement<ScaleWidget>;
-
-                        if (widgetData?.scaleUnits) {
-                            const { scaleUnits } = widgetData;
-                            return scaleUnits.find(v => v.key === attributeData.data.value);
-                        }
+                    if (!attributeData || !isWidgetData(attributeData)) {
+                        return undefined;
                     }
-                    return undefined;
+
+                    const {
+                        properties: scaleProperties,
+                    } = widget as WidgetElement<ScaleWidget>;
+
+                    return scaleProperties?.data?.scaleUnits.find(
+                        v => v.key === attributeData.data.value,
+                    );
                 });
         }).flat().filter(isDefined);
     return [

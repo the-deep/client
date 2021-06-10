@@ -58,7 +58,7 @@ export function getFrameworkMatrices(
 
     const dimensions: TreeItem[] = matrix2dWidgets
         .map(widget => (
-            widget.properties.data.dimensions.map(dimension => ({
+            widget.properties.data?.dimensions.map(dimension => ({
                 key: dimension.id,
                 title: dimension.title || 'Untitled row',
                 parentKey: `row-${widget.key}`,
@@ -73,13 +73,13 @@ export function getFrameworkMatrices(
                         || (frameworkAttribute.type === 'dimension' && frameworkAttribute.value === dimension.id)
                     );
                 }).length,
-            }))
+            })) ?? []
         ))
         .flat();
 
     const subdimensions: TreeItem[] = matrix2dWidgets
         .map(widget => (
-            widget.properties.data.dimensions.map(dimension => (
+            widget.properties.data?.dimensions.map(dimension => (
                 dimension.subdimensions.map(subdimension => ({
                     key: subdimension.id,
                     title: subdimension.title || 'Untitled sub row',
@@ -93,13 +93,13 @@ export function getFrameworkMatrices(
                         return frameworkAttribute.type === 'subdimension' && frameworkAttribute.value === dimension.id;
                     }).length,
                 }))
-            )).flat()
+            )).flat() ?? []
         ))
         .flat();
 
     const sectors: TreeItem[] = matrix2dWidgets
         .map(widget => (
-            widget.properties.data.sectors.map(sector => ({
+            widget.properties.data?.sectors.map(sector => ({
                 key: sector.id,
                 title: sector.title || 'Untitled column',
                 parentKey: `column-${widget.key}`,
@@ -114,13 +114,13 @@ export function getFrameworkMatrices(
                         || (frameworkAttribute.type === 'sector' && frameworkAttribute.value === sector.id)
                     );
                 }).length,
-            }))
+            })) ?? []
         ))
         .flat();
 
     const subsectors: TreeItem[] = matrix2dWidgets
         .map(widget => (
-            widget.properties.data.sectors.map(sector => (
+            widget.properties.data?.sectors.map(sector => (
                 sector.subsectors.map(subsector => ({
                     key: subsector.id,
                     title: subsector.title || 'Untitled sub column',
@@ -134,7 +134,7 @@ export function getFrameworkMatrices(
                         return frameworkAttribute.type === 'subsector' && frameworkAttribute.value === sector.id;
                     }).length,
                 }))
-            )).flat()
+            )).flat() ?? []
         ))
         .flat();
 
