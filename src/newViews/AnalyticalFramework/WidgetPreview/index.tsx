@@ -8,6 +8,7 @@ import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidg
 import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInput';
 import DateRangeWidgetInput, { Props as DateRangeWidgetInputProps } from './DateRangeWidgetInput';
 import TimeRangeWidgetInput, { Props as TimeRangeWidgetInputProps } from './TimeRangeWidgetInput';
+import ScaleWidgetInput, { Props as ScaleWidgetInputProps } from './ScaleWidgetInput';
 
 import BaseWidgetInput from './BaseWidgetInput';
 
@@ -157,6 +158,24 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 name={name}
                 onChange={onChangeForMatrix1d}
                 value={valueForMatrix1d}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+                widget={widget}
+            />
+        );
+    }
+    if (widget.type === 'scale') {
+        // NOTE: we are casting this value
+        const onChangeForTimeRange = onChange as ScaleWidgetInputProps<string>['onChange'];
+        const valueForTimeRange = value as ScaleWidgetInputProps<string>['value'];
+        return (
+            <ScaleWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForTimeRange}
+                value={valueForTimeRange}
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
