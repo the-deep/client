@@ -1,5 +1,58 @@
-.my-profile {
+.form {
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow-y: auto;
+
+    .my-profile {
+        display: flex;
+        flex-grow: 1;
+        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small))
+            var(--dui-spacing-super-large);
+
+        .header {
+            margin: var(--dui-spacing-small) 0;
+        }
+
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            margin: var(--dui-spacing-small) 0;
+            background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+
+            .content {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                background-color: var(--dui-color-foreground);
+
+                .display-picture {
+                    display: flex;
+                    align-self: center;
+                    margin: var(--dui-spacing-small) auto;
+                    width: calc(96px + 15vh);
+                    height: calc(96px + 15vh);
+                }
+
+                .user-info {
+                    display: flex;
+                    flex-grow: 1;
+
+                    .personal-info {
+                        flex: 1;
+                        background-color: var(--dui-color-foreground);
+                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+                    }
+
+                    .preferences {
+                        flex: 1;
+                        background-color: var(--dui-color-foreground);
+                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+                    }
+                }
+            }
+        }
+    }
 }

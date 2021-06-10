@@ -1357,7 +1357,7 @@
         "-89164075": "Failed to fetch framework roles.",
         "-26472388": "Are you sure you want to remove this user from the framework?",
         "-53075174": "Are you sure you want to remove this entry from discarded entries list?",
-        "-810289191": "My Profile",
+        "-810289191": "User Profile",
         "-91292812": "Add Stakeholder",
         "-91928382": "Edit Stakeholder",
         "-91293882": "Search Stakeholder",
@@ -1366,7 +1366,10 @@
         "-9188188108": "Title",
         "-9183810818": "Short Name",
         "-8171192837": "url",
-        "-8183719471": "Organization Type"
+        "-8183719471": "Organization Type",
+        "-9182819349": "Personal Info",
+        "-8182838101": "Preferences",
+        "-8183718381": "Platform Language"
     },
     "links": {
         "browserExtension": {
@@ -3907,6 +3910,16 @@
             "shortName": -9183810818,
             "url": -8171192837,
             "organizationType": -8183719471
+        },
+        "myProfile": {
+            "myProfileTitle": -810289191,
+            "personalInfo": -9182819349,
+            "preferences": "-8182838101",
+            "platformLanguage": "-8183718381",
+            "firstName": 150,
+            "lastName": 152,
+            "organization": 154,
+            "saveMyProfile": 25
         }
     }
 }
