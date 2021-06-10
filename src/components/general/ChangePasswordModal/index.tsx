@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { isDefined } from '@togglecorp/fujs';
+import { isDefined, isTruthyString } from '@togglecorp/fujs';
 import {
     useForm,
     ObjectSchema,
@@ -11,14 +11,13 @@ import {
 import {
     Button,
     Modal,
-    TextInput,
+    PasswordInput,
 } from '@the-deep/deep-ui';
+
 import NonFieldError from '#components/ui/NonFieldError';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { User } from '#typings';
-
-import styles from './styles.scss';
 
 type FormType = {
     oldPassword?: string;
@@ -28,28 +27,46 @@ type FormType = {
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
+type FormSchemaFieldDepenencies = ReturnType<NonNullable<FormSchema['fieldDependencies']>>;
+
+
+function sameWithPasswordCondition(
+    password: string | undefined,
+    value: PartialForm<FormType>,
+) {
+    if (
+        isTruthyString(value?.newPassword)
+        && isTruthyString(password)
+        && value.newPassword !== password
+    ) {
+        return _ts('changePassword', 'passwordMismatch');
+    }
+
+    return undefined;
+}
 
 const changePasswordSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        oldPassword: [requiredCondition],
-        newPassword: [
+        oldPassword: [
+            requiredCondition,
             lengthGreaterThanCondition(4),
             lengthSmallerThanCondition(129),
+        ],
+        newPassword: [
             requiredCondition,
+            lengthGreaterThanCondition(4),
+            lengthSmallerThanCondition(129),
         ],
         confirmPassword: [
             requiredCondition,
+            sameWithPasswordCondition,
+            lengthGreaterThanCondition(4),
+            lengthSmallerThanCondition(129),
         ],
     }),
-    validation: (value) => {
-        if (
-            value?.confirmPassword &&
-            value?.newPassword &&
-            value.confirmPassword !== value.newPassword) {
-            return _ts('changePassword', 'passwordMismatch');
-        }
-        return undefined;
-    },
+    fieldDependencies: (): FormSchemaFieldDepenencies => ({
+        confirmPassword: ['newPassword'],
+    }),
 };
 
 const defaultFormValue: PartialForm<FormType> = {};
@@ -98,10 +115,8 @@ function ChangePasswordModal(props: Props) {
 
     return (
         <Modal
-            className={styles.changePasswordModal}
             heading={_ts('changePassword', 'title')}
             onCloseButtonClick={onModalClose}
-            bodyClassName={styles.modalBody}
             footerActions={(
                 <>
                     <Button
@@ -125,7 +140,7 @@ function ChangePasswordModal(props: Props) {
             )}
         >
             <NonFieldError error={error} />
-            <TextInput // FIXME: use PasswordInput when availabe
+            <PasswordInput
                 name="oldPassword"
                 type="password"
                 label={_ts('changePassword', 'currentPassword')}
@@ -135,7 +150,7 @@ function ChangePasswordModal(props: Props) {
                 disabled={pending}
                 onChange={onValueChange}
             />
-            <TextInput // FIXME: use PasswordInput when availabe
+            <PasswordInput
                 name="newPassword"
                 type="password"
                 label={_ts('changePassword', 'newPassword')}
@@ -145,7 +160,7 @@ function ChangePasswordModal(props: Props) {
                 disabled={pending}
                 onChange={onValueChange}
             />
-            <TextInput // FIXME: use PasswordInput when availabe
+            <PasswordInput
                 name="confirmPassword"
                 type="password"
                 label={_ts('changePassword', 'retypePassword')}

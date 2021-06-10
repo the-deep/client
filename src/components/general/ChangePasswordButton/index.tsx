@@ -1,8 +1,8 @@
 import React from 'react';
-
-import { useModalState } from '#hooks/stateManagement';
 import { IoArrowForward } from 'react-icons/io5';
 import { Button } from '@the-deep/deep-ui';
+
+import { useModalState } from '#hooks/stateManagement';
 import ChangePasswordModal, { Props as ChangePasswordModalProps } from '#components/general/ChangePasswordModal';
 import _ts from '#ts';
 
@@ -19,11 +19,9 @@ function ChangePasswordButton(props: Props) {
     } = props;
 
     const [
+        isShown,
         showModal,
-        ,
         hideModal,
-        ,
-        toggleModalShow,
     ] = useModalState(false);
 
     return (
@@ -32,13 +30,13 @@ function ChangePasswordButton(props: Props) {
                 className={className}
                 name={undefined}
                 variant="secondary"
-                onClick={toggleModalShow}
+                onClick={showModal}
                 disabled={disabled}
                 actions={<IoArrowForward />}
             >
                 {_ts('changePassword', 'title')}
             </Button>
-            {showModal && (
+            {isShown && (
                 <ChangePasswordModal
                     {...stakeholderModalProps}
                     onModalClose={hideModal}
