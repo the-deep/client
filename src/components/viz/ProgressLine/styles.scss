@@ -1,6 +1,7 @@
 .progress-bar {
     display: flex;
     align-items: center;
+    padding: var(--dui-spacing-small) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
 
     .number-circle {
         display: flex;
@@ -8,10 +9,11 @@
         flex-shrink: 0;
         justify-content: center;
         border-radius: 50%;
-        width: 48px;
-        height: 48px;
+        width: 2.6rem;
+        height: 2.6rem;
         font-size: var(--dui-font-size-large);
         font-weight: var(--font-weight-bold);
+        margin: 0 var(--dui-spacing-small);
 
         &.complement1 {
             background-color: var(--dui-color-complement1);
@@ -31,16 +33,19 @@
 
     .right {
         flex-grow: 1;
-        padding: 0 var(--spacing-medium);
+        padding: 0 var(--dui-spacing-small);
 
         .title {
-            padding: var(--spacing-extra-small) 0;
+            padding: var(--dui-spacing-extra-small) 0;
+            font-size: var(--dui-font-size-small);
         }
 
         .line {
-            border-radius: var(--dui-border-radius-progress-bar);
+            --height-bar: 0.5em;
+
+            border-radius: calc(var(--height-bar) / 2);
             background-color: var(--dui-color-grey6);
-            height: var(--dui-height-progress-bar);
+            height: var(--height-bar);
 
             .progress {
                 transition: var(--duration-transition-slow) width ease-in-out;

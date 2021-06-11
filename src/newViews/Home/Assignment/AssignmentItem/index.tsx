@@ -48,19 +48,28 @@ function AssignmentItem(props: AssignmentRendererProps) {
                 childrenContainerClassName={styles.mainContent}
             >
                 <div className={styles.description}>
-                    <Link to={emptyLink}>
+                    <Link
+                        to={emptyLink}
+                        className={styles.link}
+                    >
                         {props.createdByDetails.displayName}
                     </Link>
                     &nbsp;
                     {_ts('assignment', 'assignedYou')}
                     &nbsp;
-                    <Link to={emptyLink}>
+                    <Link
+                        to={emptyLink}
+                        className={styles.link}
+                    >
                         {props.contentObjectDetails?.title}
                     </Link>
                     &nbsp;
                     {_ts('assignment', 'in')}
                     &nbsp;
-                    <Link to={emptyLink}>
+                    <Link
+                        to={emptyLink}
+                        className={styles.link}
+                    >
                         {props.projectDetails?.title}
                     </Link>
                 </div>

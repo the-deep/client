@@ -27,10 +27,10 @@ import {
     Container,
     InformationCard,
     PercentageInformationCard,
+    ListView,
 } from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
-import ListView from '#rscv/List/ListView';
 import DateFilter from '#rsci/DateFilter';
 import Timeline from '#components/viz/Timeline';
 
@@ -147,7 +147,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const [
         showAnalysisAddModal,
-        setModalShow,
+        setModalVisible,
         setModalHidden,
     ] = useModalState(false);
 
@@ -171,7 +171,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const {
         pending: pendingAnalyses,
         response: analysesResponse,
-        retrigger: getAnalysisTrigger,
+        retrigger: triggerGetAnalysis,
     } = useRequest<MultiResponse<AnalysisElement>>({
         url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
@@ -188,9 +188,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
             url: ctx => `server://projects/${activeProject}/analysis/${ctx.value}/clone-analysis/`,
             body: ctx => ({ title: ctx.title }),
             method: 'POST',
-            onSuccess: () => {
-                getAnalysisTrigger();
-            },
+            onSuccess: triggerGetAnalysis,
         },
     );
     const analysisIdToClone = context?.value;
@@ -203,9 +201,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         {
             url: ctx => `server://projects/${activeProject}/analysis/${ctx}/`,
             method: 'DELETE',
-            onSuccess: () => {
-                getAnalysisTrigger();
-            },
+            onSuccess: triggerGetAnalysis,
         },
     );
 
@@ -241,19 +237,19 @@ function AnalysisModule(props: AnalysisModuleProps) {
     ), [analysesResponse?.results, analysisToEdit]);
 
     const handleAnalysisEditSuccess = useCallback(() => {
-        getAnalysisTrigger();
+        triggerGetAnalysis();
         setModalHidden();
-    }, [setModalHidden, getAnalysisTrigger]);
+    }, [setModalHidden, triggerGetAnalysis]);
 
     const handleAnalysisEditClick = useCallback((analysisId) => {
         setAnalysisToEdit(analysisId);
-        setModalShow();
-    }, [setModalShow]);
+        setModalVisible();
+    }, [setModalVisible]);
 
     const handleNewAnalysisCreateClick = useCallback(() => {
         setAnalysisToEdit(undefined);
-        setModalShow();
-    }, [setModalShow]);
+        setModalVisible();
+    }, [setModalVisible]);
 
     const analysisRendererParams = useCallback((key: number, data: AnalysisElement) => ({
         className: styles.analysis,
@@ -268,14 +264,14 @@ function AnalysisModule(props: AnalysisModuleProps) {
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
         analysisPillars: data.analysisPillar,
-        onAnalysisPillarDelete: getAnalysisTrigger,
+        onAnalysisPillarDelete: triggerGetAnalysis,
         pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
         pendingAnalysisClone: pendingAnalysisClone && analysisIdToClone === key,
     }), [
         handleAnalysisEditClick,
         handleAnalysisToDeleteClick,
         handleAnalysisToCloneClick,
-        getAnalysisTrigger,
+        triggerGetAnalysis,
         pendingAnalysisDelete,
         pendingAnalysisClone,
         analysisIdToDelete,
@@ -302,7 +298,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 className={styles.summary}
                 contentClassName={styles.summaryContent}
                 heading={_ts('analysis', 'analysesOverview')}
-                headingClassName={styles.header}
             >
                 <div className={styles.infoCardContainer}>
                     <InformationCard
@@ -397,14 +392,9 @@ function AnalysisModule(props: AnalysisModuleProps) {
             <Container
                 className={styles.allAnalyses}
                 contentClassName={styles.analysesContainer}
-                heading={(
-                    <div className={styles.heading}>
-                        {_ts('analysis', 'allAnalyses')}
-                        <span className={styles.lightText}>
-                            {analysesResponse?.count}
-                        </span>
-                    </div>
-                )}
+                heading={_ts('analysis', 'allAnalyses')}
+                headingDescription={analysesResponse?.count}
+                inlineHeadingDescription
                 headerActions={(
                     <DateFilter
                         placeholder={_ts('analysis', 'selectAnalysisDate')}
@@ -412,8 +402,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         onChange={setFilter}
                     />
                 )}
-                headerClassName={styles.header}
-                footerClassName={styles.footer}
                 footerActions={(
                     <Pager
                         activePage={activePage}
@@ -431,7 +419,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     rendererParams={analysisRendererParams}
                     keySelector={analysisKeySelector}
                     pending={pendingAnalyses}
-                    emptyComponent={EmptyAnalysisContainer}
+                    emptyMessage={EmptyAnalysisContainer}
                 />
             </Container>
             {showAnalysisAddModal && (

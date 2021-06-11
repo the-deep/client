@@ -208,6 +208,9 @@ function Home(props: ViewProps) {
                     <Container
                         className={styles.taggingActivityContainer}
                         heading={_ts('home', 'projectTaggingActivityHeading')}
+                        // FIXME: use actual content
+                        headingDescription="Last 3 months"
+                        inlineHeadingDescription
                         contentClassName={styles.content}
                     >
                         <Activity

@@ -7,24 +7,25 @@
 
     .main-content {
         flex-grow: 1;
+        padding-left: var(--dui-spacing-large);
 
         .top-section {
             display: flex;
             flex-wrap: wrap;
-            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+            padding: 0 calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
 
             .summary-container {
-                flex-basis: 20%;
+                flex-basis: 10%;
                 flex-grow: 1;
                 overflow: auto;
             }
 
             .tagging-activity-container {
                 display: flex;
-                flex-basis: 30%;
+                flex-basis: 40%;
                 flex-direction: column;
                 flex-grow: 1;
-                min-width: 480px;
+                min-width: 30rem;
                 overflow: auto;
 
                 .content {
@@ -42,7 +43,7 @@
         }
 
         .bottom-section {
-            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+            padding: 0 calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
 
             .bottom-section-content {
                 position: relative;
@@ -83,11 +84,11 @@
 
     .side-content {
         align-self: flex-start;
-        flex-basis: calc(200px + 10vw);
+        flex-basis: calc(12em + 10vw);
         flex-grow: 0;
         flex-shrink: 0;
         background-color: var(--dui-color-foreground);
-        padding: calc(var(--spacing-extra-large) - var(--spacing-medium));
+        padding-right: var(--dui-spacing-large);
         overflow: auto;
     }
 }

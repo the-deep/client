@@ -1,74 +1,9 @@
-.pillar {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    margin: var(--spacing-small) 0;
-    background: white;
-
-    &:not(:last-child) {
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+.analysis-pillar {
+    .created-at {
+        margin: calc(-1 * var(--dui-spacing-small)) calc(-1 * var(--dui-spacing-medium));
     }
 
-
-    .heading {
+    .content {
         display: flex;
-
-        .left {
-            display: flex;
-
-            .tag {
-                flex-shrink: 0;
-                margin-left: var(--spacing-large);
-            }
-        }
-
-        .sub-heading {
-            display: flex;
-            align-items: center;
-            color: var(--color-text-placeholder);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-
-            .button {
-                margin: 0 var(--dui-spacing-extra-small);
-            }
-        }
-    }
-
-    .pillar-body {
-        display: flex;
-        align-items: flex-start;
-
-        .analyst-item {
-            flex-shrink: 0;
-        }
-
-        .statements-item {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-
-            .statements {
-                display: flex;
-                flex-wrap: wrap;
-
-                .statement {
-                    display: flex;
-                    flex-basis: calc(100% / 3);
-
-                    .statement-text {
-                        padding: 0 var(--dui-spacing-small);
-                        font-weight: var(--dui-font-weight-bold);
-                    }
-
-                    .entry-count {
-                        font-weight: var(--dui-font-weight-light);
-                    }
-                }
-            }
-        }
     }
 }

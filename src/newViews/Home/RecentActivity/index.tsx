@@ -40,7 +40,6 @@ function RecentActivities() {
 
     return (
         <Container
-            sub
             className={styles.recentActivity}
             heading={_ts('recentActivity', 'recentActivitiesHeading')}
         >

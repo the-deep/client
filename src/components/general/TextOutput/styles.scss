@@ -29,7 +29,6 @@
 
     .value {
         flex-grow: 1;
-        font-family: var(--font-family-sans-serif);
     }
 }
 
@@ -79,14 +78,14 @@
     .label {
         padding: var(--spacing-extra-small) 0;
         color: var(--dui-color-label);
-        font-size: var(--font-size-medium-alt);
+        font-size: var(--font-size-medium);
         font-weight: var(--font-weight-normal);
     }
 
     .value {
         padding: var(--spacing-extra-small) 0;
         color: var(--dui-color-text-dark);
-        font-size: var(--font-size-medium-alt);
+        font-size: var(--font-size-medium);
         font-weight: var(--font-weight-bold);
     }
 }

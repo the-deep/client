@@ -1,7 +1,7 @@
 .summary {
     --gap: var(--dui-spacing-large);
-    --max-item-width: 260px;
-    --min-item-width: 200px;
+    --max-item-width: 20rem;
+    --min-item-width: 13rem;
     --item-per-row: 2;
     --ipr-1: calc(var(--item-per-row) - 1);
 
@@ -22,5 +22,10 @@
             min-width: var(--min-item-width);
             max-width: var(--max-item-width);
         }
+    }
+
+    .percentage-info-card {
+        padding-right: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+        padding-left: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
     }
 }

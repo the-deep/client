@@ -1,16 +1,18 @@
-import React, { useCallback } from 'react';
-import { reverseRoute } from '@togglecorp/fujs';
+import React from 'react';
+import {
+    reverseRoute,
+    _cs,
+} from '@togglecorp/fujs';
 import {
     Container,
     Tag,
     QuickActionButton,
     QuickActionLink,
-    DateOutput,
     PendingMessage,
+    TextOutput,
 } from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
-import TextOutput from '#components/general/TextOutput';
 
 import { AnalysisPillars } from '#typings';
 import { pathNames } from '#constants';
@@ -28,6 +30,7 @@ interface ComponentProps {
     pillarId: AnalysisPillars['id'];
     projectId: number;
     pendingPillarDelete: boolean;
+    className?: string;
 }
 
 function AnalysisPillar(props: ComponentProps) {
@@ -41,14 +44,11 @@ function AnalysisPillar(props: ComponentProps) {
         createdAt,
         pendingPillarDelete,
         statements,
+        className,
     } = props;
 
     const completed = false;
     // setIsCompleted to be used when the status is passed by API
-
-    const handleDeletePillar = useCallback(() => {
-        onDelete(pillarId);
-    }, [pillarId, onDelete]);
 
     const editLink = reverseRoute(pathNames.pillarAnalysis, {
         projectId,
@@ -60,92 +60,73 @@ function AnalysisPillar(props: ComponentProps) {
 
     return (
         <Container
-            className={styles.pillar}
+            className={_cs(styles.analysisPillar, className)}
             sub
-            heading={(
-                <div className={styles.left}>
-                    {title}
-                    <Tag
-                        className={styles.tag}
-                        variant={completed ? 'accent' : 'gradient1'}
-                    >
-                        {completed
-                            ? _ts('analysis', 'completeLabel')
-                            : _ts('analysis', 'inProgressLabel')
-                        }
-                    </Tag>
-                </div>
+            heading={title}
+            headingDescription={(
+                <Tag variant={completed ? 'accent' : 'gradient1'}>
+                    {completed
+                        ? _ts('analysis', 'completeLabel')
+                        : _ts('analysis', 'inProgressLabel')
+                    }
+                </Tag>
             )}
-            headerClassName={styles.heading}
+            inlineHeadingDescription
             headerActions={(
-                <div className={styles.headerRight}>
+                <>
                     <QuickActionLink
                         to={editLink}
                         disabled={disabled}
-                        className={styles.button}
                     >
                         <Icon name="edit" />
                     </QuickActionLink>
                     <QuickActionButton
                         name={undefined}
-                        className={styles.button}
                         disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
-                        name={undefined}
-                        className={styles.button}
-                        onClick={handleDeletePillar}
+                        name={pillarId}
+                        onClick={onDelete}
                         disabled={disabled}
                     >
                         <Icon name="delete" />
                     </QuickActionButton>
-                </div>
+                </>
             )}
             headerDescription={(
-                <div className={styles.subHeading}>
-                    {_ts('analysis', 'creationDate')}
-                    <DateOutput
-                        value={createdAt}
-                        format="dd MMM, yyyy"
-                    />
-                </div>
+                <TextOutput
+                    className={styles.createdAt}
+                    label={_ts('analysis', 'creationDate')}
+                    value={createdAt}
+                    valueType="date"
+                />
             )}
+            contentClassName={styles.content}
+            horizontallyCompactContent
         >
-            <div className={styles.pillarBody}>
-                {pendingPillarDelete && <PendingMessage />}
-                <div className={styles.analystItem}>
-                    <TextOutput
-                        label={_ts('analysis', 'analyst')}
-                        value={assigneeName}
-                        noColon
-                        type="small-block"
-                    />
-                </div>
-                <div className={styles.statementsItem}>
-                    <TextOutput
-                        label={_ts('analysis', 'statementsTitle')}
-                        type="small-block"
-                        value={(
-                            <div className={styles.statements}>
-                                {statements?.map(statement => (
-                                    <div
-                                        key={statement.id}
-                                        className={styles.statement}
-                                    >
-                                        <div className={styles.statementText}>
-                                            {statement.statement}
-                                        </div>
-                                        <div className={styles.entryCount}>
-                                            {`${statement.analyticalEntries.length} Entries`}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    />
-                </div>
+            {pendingPillarDelete && <PendingMessage />}
+            <div className={styles.metaSection}>
+                <TextOutput
+                    label={_ts('analysis', 'analyst')}
+                    value={assigneeName}
+                    block
+                    hideLabelColon
+                />
+            </div>
+            <div className={styles.statementsSection}>
+                <TextOutput
+                    label={_ts('analysis', 'statementsTitle')}
+                    block
+                    value={statements?.map(statement => (
+                        <TextOutput
+                            key={statement.id}
+                            value={statement.statement}
+                            description={`${statement.analyticalEntries.length} Entries`}
+                        />
+                    ))}
+                />
             </div>
         </Container>
     );

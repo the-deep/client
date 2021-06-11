@@ -7,11 +7,12 @@
         .color-container {
             display: table-cell;
             padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+            vertical-align: middle;
 
             .color {
-                border-radius: .5em;
-                width: 1em;
-                height: 1em;
+                border-radius: .4em;
+                width: 0.8em;
+                height: 0.8em;
             }
         }
 
@@ -19,6 +20,7 @@
             display: table-cell;
             padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
             min-width: 108px;
+            font-weight: var(--dui-font-weight-bold);
         }
 
         .percent {
