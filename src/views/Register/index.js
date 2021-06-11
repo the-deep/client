@@ -53,7 +53,7 @@ function Register() {
                 recaptchaRef.current.reset();
             }
         },
-        onFailure: ({ value: { errorCode, faramErrors: newFaramErrors } }) => {
+        onFailure: ({ errorCode, value: { faramErrors: newFaramErrors } }) => {
             if (recaptchaRef.current && recaptchaRef.current.reset) {
                 recaptchaRef.current.reset();
             }

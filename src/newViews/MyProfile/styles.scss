@@ -44,6 +44,10 @@
                         flex: 1;
                         background-color: var(--dui-color-foreground);
                         padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+
+                        .change-password {
+                            margin: var(--dui-spacing-medium);
+                        }
                     }
 
                     .preferences {

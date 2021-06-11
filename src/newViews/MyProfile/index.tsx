@@ -1,13 +1,6 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import NonFieldError from '#components/ui/NonFieldError';
-
-import {
-    AppState,
-    LanguagePreference,
-    MultiResponse,
-} from '#typings';
 import {
     TextInput,
     SelectInput,
@@ -17,14 +10,6 @@ import {
     Button,
     List,
 } from '@the-deep/deep-ui';
-import Avatar from '#components/ui/Avatar';
-
-import _ts from '#ts';
-import {
-    activeUserSelector,
-    setUserInformationAction,
-} from '#redux';
-import { useRequest, useLazyRequest } from '#utils/request';
 import {
     ObjectSchema,
     requiredStringCondition,
@@ -33,6 +18,21 @@ import {
     arrayCondition,
     requiredCondition,
 } from '@togglecorp/toggle-form';
+
+import Avatar from '#components/ui/Avatar';
+import NonFieldError from '#components/ui/NonFieldError';
+import _ts from '#ts';
+import {
+    activeUserSelector,
+    setUserInformationAction,
+} from '#redux';
+import {
+    AppState,
+    LanguagePreference,
+    MultiResponse,
+} from '#typings';
+import { useRequest, useLazyRequest } from '#utils/request';
+import ChangePasswordButton from '#components/general/ChangePasswordButton';
 
 import styles from './styles.scss';
 
@@ -244,6 +244,9 @@ function MyProfile(props: Props & PropsFromDispatch) {
                                 error={error?.fields?.organization}
                                 label={_ts('myProfile', 'organization')}
                                 placeholder={_ts('myProfile', 'organization')}
+                            />
+                            <ChangePasswordButton
+                                className={styles.changePassword}
                             />
                         </Container>
                         <Container
