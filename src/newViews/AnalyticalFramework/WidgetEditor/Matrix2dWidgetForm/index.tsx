@@ -76,7 +76,7 @@ const subColumnsSchema: SubColumnsSchema = {
     member: (): SubColumnsSchemaMember => subColumnSchema,
     validation: (subColumns) => {
         if ((subColumns?.length ?? 0) <= 0) {
-            return 'At least one column is required.';
+            return 'At least one sub column is required.';
         }
         return undefined;
     },
@@ -98,12 +98,14 @@ type ColumnsSchemaMember = ReturnType<ColumnsSchema['member']>;
 const columnsSchema: ColumnsSchema = {
     keySelector: col => col.clientId,
     member: (): ColumnsSchemaMember => columnSchema,
+    /*
     validation: (columns) => {
         if ((columns?.length ?? 0) <= 0) {
             return 'At least one column is required.';
         }
         return undefined;
     },
+    */
 };
 
 type RowType = DataType['rows'][number];

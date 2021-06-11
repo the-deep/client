@@ -39,7 +39,7 @@ export type Matrix1dValue = {
 export type Matrix2dValue = {
     [key: string]: {
         [key: string]: {
-            [key: string]: string[],
+            [key: string]: string[] | undefined,
         } | undefined,
     } | undefined,
 };

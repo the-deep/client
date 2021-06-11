@@ -4,6 +4,7 @@ import { Widget, PartialForm } from '../types';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
+import Matrix2dWidgetInput, { Props as Matrix2dWidgetInputProps } from './Matrix2dWidgetInput';
 import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidgetInput';
 import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInput';
 import DateRangeWidgetInput, { Props as DateRangeWidgetInputProps } from './DateRangeWidgetInput';
@@ -160,6 +161,25 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 name={name}
                 onChange={onChangeForMatrix1d}
                 value={valueForMatrix1d}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+                widget={widget}
+            />
+        );
+    }
+    if (widget.type === 'matrix-2d') {
+        // NOTE: we are casting this value
+        const onChangeForMatrix2d = onChange as Matrix2dWidgetInputProps<string>['onChange'];
+        const valueForMatrix2d = value as Matrix2dWidgetInputProps<string>['value'];
+
+        return (
+            <Matrix2dWidgetInput
+                className={className}
+                title={widget.title}
+                name={name}
+                onChange={onChangeForMatrix2d}
+                value={valueForMatrix2d}
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
