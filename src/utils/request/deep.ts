@@ -28,7 +28,7 @@ export interface ErrorFromServer {
 function alterResponse(errors: ErrorFromServer['errors']): Error['value']['faramErrors'] {
     const otherErrors = mapToMap(
         errors,
-        item => item,
+        item => (item === 'nonFieldErrors' ? '$internal' : item),
         item => (Array.isArray(item) ? item.join(' ') : item),
     );
     return otherErrors;
