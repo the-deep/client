@@ -1,5 +1,10 @@
 import React, { useCallback } from 'react';
-import { Button, List } from '@the-deep/deep-ui';
+import { _cs } from '@togglecorp/fujs';
+import {
+    Checkbox,
+    Heading,
+    List,
+} from '@the-deep/deep-ui';
 
 import { Matrix2dValue, Matrix2dWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
@@ -41,22 +46,29 @@ function Cell(props: CellProps) {
     } = props;
 
     const handleSubRowChange = useCallback(
-        () => {
-            onSubRowChange(rowId, subRowId, columnId, selected ? undefined : []);
+        (val: boolean) => {
+            onSubRowChange(rowId, subRowId, columnId, val ? [] : undefined);
         },
-        [rowId, subRowId, columnId, onSubRowChange, selected],
+        [rowId, subRowId, columnId, onSubRowChange],
     );
 
     return (
-        <Button
-            name={undefined}
-            onClick={handleSubRowChange}
-            disabled={disabled}
+        <td
             title={title}
-            variant={selected ? 'primary' : 'secondary'}
+            className={_cs(styles.tableCell, styles.checkboxCell)}
         >
-            x
-        </Button>
+            <Checkbox
+                className={styles.input}
+                checkmarkClassName={_cs(
+                    !selected && styles.notSelected,
+                )}
+                name={columnId}
+                onChange={handleSubRowChange}
+                disabled={disabled}
+                value={selected}
+                labelContainerClassName={styles.label}
+            />
+        </td>
     );
 }
 
@@ -97,10 +109,13 @@ function SubRow(props: SubRowProps) {
     } = subRow;
 
     return (
-        <div className={className}>
-            <div title={title ?? ''}>
+        <tr className={_cs(className, styles.tableRow)}>
+            <td
+                className={_cs(styles.tableCell, styles.subRowHeading)}
+                title={title ?? ''}
+            >
                 {label ?? 'Unnamed'}
-            </div>
+            </td>
             {columns?.map(column => (
                 <Cell
                     key={column.clientId}
@@ -113,7 +128,7 @@ function SubRow(props: SubRowProps) {
                     onSubRowChange={onSubRowChange}
                 />
             ))}
-        </div>
+        </tr>
     );
 }
 
@@ -165,33 +180,36 @@ function Row(props: RowProps) {
     );
 
     return (
-        <div className={styles.row}>
-            <div
+        <div className={styles.matrixRow}>
+            <Heading
                 className={styles.title}
+                size="extraSmall"
                 title={tooltip ?? ''}
             >
                 {label ?? 'Unnamed'}
-            </div>
-            <div className={styles.tags}>
-                <div />
-                {columns?.map(column => (
-                    <div
-                        key={column.clientId}
-                        title={column.tooltip}
-                    >
-                        {column.label}
-                    </div>
-                ))}
-            </div>
-            <div className={styles.tags}>
-                {/* Show columns here */}
+            </Heading>
+            <table className={styles.table}>
+                <tr className={_cs(styles.tableRow, styles.tableHead)}>
+                    <th
+                        className={styles.tableHeader}
+                    />
+                    {columns?.map(column => (
+                        <th
+                            className={styles.tableHeader}
+                            key={column.clientId}
+                            title={column.tooltip}
+                        >
+                            {column.label}
+                        </th>
+                    ))}
+                </tr>
                 <List
                     data={subRows}
                     keySelector={subRowKeySelector}
                     rendererParams={subRowRendererParams}
                     renderer={SubRow}
                 />
-            </div>
+            </table>
         </div>
     );
 }
