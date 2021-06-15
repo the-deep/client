@@ -22,7 +22,7 @@ import Canvas from '../Canvas';
 import WidgetEditor from '../WidgetEditor';
 import WidgetList from '../WidgetList';
 import { PartialWidget } from '../WidgetPreview';
-import { Section, Widget, Matrix1dWidget } from '../types';
+import { Section, Widget, Matrix1dWidget, Matrix2dWidget } from '../types';
 
 import SectionsEditor, { PartialSectionType } from './SectionsEditor';
 import {
@@ -190,6 +190,122 @@ const matrix1d: Matrix1dWidget = {
     },
 };
 
+const matrix2d: Matrix2dWidget = {
+    clientId: 'just-and-random-thing',
+    type: 'matrix-2d',
+    title: 'Matrix 2d',
+    order: 2,
+    width: 'full',
+    condition: [],
+    data: {
+        rows: [
+            {
+                clientId: '1',
+                label: 'Scope and Scale',
+                color: 'white',
+                subRows: [
+                    {
+                        clientId: '1-1',
+                        label: 'Drivers/Aggravating Factors',
+                    },
+                    {
+                        clientId: '1-2',
+                        label: 'System Disruption',
+                    },
+                    {
+                        clientId: '1-3',
+                        label: 'Damages and Losses',
+                    },
+                    {
+                        clientId: '1-4',
+                        label: 'People Affected',
+                    },
+                ],
+            },
+            {
+                clientId: '2',
+                label: 'Humanitarian Conditions',
+                color: 'white',
+                subRows: [
+                    {
+                        clientId: '2-1',
+                        label: 'Pilots/Conciliating Factors',
+                    },
+                    {
+                        clientId: '2-2',
+                        label: 'System Reconciliation',
+                    },
+                    {
+                        clientId: '2-3',
+                        label: 'Improvements and Wins',
+                    },
+                    {
+                        clientId: '2-4',
+                        label: 'Monkeys Affected',
+                    },
+                ],
+            },
+        ],
+        columns: [
+            {
+                clientId: '1',
+                label: 'Cross',
+                subColumns: [],
+            },
+            {
+                clientId: '2',
+                label: 'Food',
+                subColumns: [],
+            },
+            {
+                clientId: '3',
+                label: 'Livelihoods',
+                subColumns: [],
+            },
+            {
+                clientId: '4',
+                label: 'Health',
+                subColumns: [],
+            },
+            {
+                clientId: '5',
+                label: 'Nutrition',
+                subColumns: [],
+            },
+            {
+                clientId: '6',
+                label: 'WASH',
+                subColumns: [],
+            },
+            {
+                clientId: '7',
+                label: 'Protection',
+                subColumns: [],
+            },
+            {
+                clientId: '8',
+                label: 'Education',
+                subColumns: [],
+            },
+            {
+                clientId: '9',
+                label: 'Shelter',
+                subColumns: [],
+            },
+            {
+                clientId: '10',
+                label: 'Agriculture',
+                subColumns: [],
+            },
+            {
+                clientId: '11',
+                label: 'Logistics',
+                subColumns: [],
+            },
+        ],
+    },
+};
+
 interface Props {
     className?: string;
     frameworkId: number;
@@ -215,7 +331,7 @@ function PrimaryTagging(props: Props) {
             {
                 clientId: randomString(),
                 title: 'Operational Environment',
-                widgets: [matrix1d],
+                widgets: [matrix1d, matrix2d],
             },
         ],
         [],
