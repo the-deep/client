@@ -1379,7 +1379,7 @@
         "-780818101": "Update Comment",
         "-8791231793": "last modified on",
         "-10291009": "Verify",
-        "-95647689": "Unverify",
+        "-95647689": "Verified",
         "-41523534": "Uncontrol entry",
         "-66805221": "Unverify entry",
         "-70288448": "Verified only by you",
@@ -1400,7 +1400,7 @@
         "-998103293": "Badges",
         "-797987183": "Quality Cotroller",
         "-180812081": "Control",
-        "-18084021": "Uncontrol"
+        "-18084021": "Controlled"
     },
     "links": {
         "browserExtension": {
