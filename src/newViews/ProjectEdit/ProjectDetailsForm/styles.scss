@@ -87,9 +87,9 @@
                 display: flex;
                 justify-content: space-between;
 
-                .tags {
+                .status {
                     display: flex;
-                    flex: 1 0 50%;
+                    flex: 1 0 40%;
                     background-color: var(--dui-color-white);
 
                     .heading {
@@ -103,6 +103,26 @@
 
                     .first-tag {
                         margin-right: var(--dui-spacing-medium);
+                    }
+                }
+
+                .visibility {
+                    display: flex;
+                    flex: 1 0 60%;
+                    background-color: var(--dui-color-white);
+
+                    .heading {
+                        font-size: var(--dui-font-size-heading-extra-small);
+                    }
+
+                    .items {
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .segment-input {
+                        display: flex;
+                        padding: 0;
                     }
                 }
             }
