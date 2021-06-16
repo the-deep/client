@@ -1,5 +1,4 @@
 import React, { useMemo, useCallback } from 'react';
-import { BiBarChartSquare } from 'react-icons/bi';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
@@ -218,20 +217,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 contentClassName={styles.dragContent}
                 headerClassName={styles.header}
                 headerIcons={(
-                    <>
-                        <QuickActionButton
-                            name={undefined}
-                            disabled
-                        >
-                            <IoCheckmarkCircleSharp />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={undefined}
-                            disabled
-                        >
-                            <BiBarChartSquare />
-                        </QuickActionButton>
-                    </>
+                    <QuickActionButton
+                        name={undefined}
+                        disabled
+                    >
+                        <IoCheckmarkCircleSharp />
+                    </QuickActionButton>
                 )}
                 // actionsContainerClassName={styles.actionsContainer}
                 headerActions={(

@@ -627,8 +627,11 @@ function PillarAnalysis(props: Props) {
                         <CollapsibleContainer
                             className={styles.entryListSection}
                             expandButtonClassName={styles.expandEntryListButton}
-                            headerIcons={(
-                                <TabList className={styles.header}>
+                            headerClassName={styles.entryListHeader}
+                            headingClassName={styles.tabListHeading}
+                            headingSize="small"
+                            heading={(
+                                <TabList className={styles.tabList}>
                                     <Tab name="entries">
                                         {_ts('pillarAnalysis', 'entriesTabLabel')}
                                     </Tab>
