@@ -4,7 +4,6 @@ import {
     Button,
     Container,
     ContainerCard,
-    Tag,
     Footer,
     PendingMessage,
     TextInput,
@@ -52,8 +51,10 @@ import {
 } from '#redux';
 import featuresMapping from '#constants/features';
 
-import styles from './styles.scss';
 import StakeholderList from './StakeholderList';
+import RequestPrivateProjectButton from './RequestPrivateProjectButton';
+
+import styles from './styles.scss';
 
 interface StakeholderType {
     id: string;
@@ -248,7 +249,7 @@ function ProjectDetailsForm(props: Props) {
     const groupedStakeholders = useMemo(
         () => listToGroupList(
 
-            value.organizations ?? [],
+            value?.organizations ?? [],
             o => o.organizationType,
             o => o.organization,
         ),
@@ -327,43 +328,28 @@ function ProjectDetailsForm(props: Props) {
                         placeholder={_ts('projectEdit', 'projectDescription')}
                         rows={4}
                     />
-                    <div className={styles.projectTags}>
-                        <Container
-                            className={styles.status}
-                            headingClassName={styles.heading}
-                            contentClassName={styles.items}
-                            heading={_ts('projectEdit', 'projectStatus')}
-                        >
-                            <Tag
-                                className={styles.firstTag}
-                                variant={projectDetails?.status === 'active' ? 'complement1' : 'default'}
-                            >
-                                {_ts('projectEdit', 'activeProject')}
-                            </Tag>
-                            <Tag
-                                variant={!projectDetails?.status || projectDetails.status === 'inactive' ? 'complement1' : 'default'}
-                            >
-                                {_ts('projectEdit', 'inactiveProject')}
-                            </Tag>
-                        </Container>
-                        <Container
-                            className={styles.visibility}
-                            headingClassName={styles.heading}
-                            contentClassName={styles.items}
-                            heading={_ts('projectEdit', 'projectVisibility')}
-                        >
-                            <SegmentInput
-                                className={styles.segmentInput}
-                                name="isPrivate"
-                                value={value.isPrivate}
-                                options={projectVisibilityOptions}
-                                keySelector={projectVisibilityKeySelector}
-                                labelSelector={projectVisibilityLabelSelector}
-                                onChange={onValueChange}
-                                readOnly={isDefined(projectId) || !accessPrivateProject}
+                    <Container
+                        className={styles.visibility}
+                        headingClassName={styles.visibilityHeading}
+                        contentClassName={styles.items}
+                        heading={_ts('projectEdit', 'projectVisibility')}
+                    >
+                        <SegmentInput
+                            className={styles.segmentInput}
+                            name="isPrivate"
+                            value={value?.isPrivate}
+                            options={projectVisibilityOptions}
+                            keySelector={projectVisibilityKeySelector}
+                            labelSelector={projectVisibilityLabelSelector}
+                            onChange={onValueChange}
+                            disabled={isDefined(projectId) || !accessPrivateProject}
+                        />
+                        { !accessPrivateProject && !isDefined(projectId) && (
+                            <RequestPrivateProjectButton
+                                className={styles.requestButton}
                             />
-                        </Container>
-                    </div>
+                        )}
+                    </Container>
                     <Container
                         className={styles.features}
                         headingClassName={styles.heading}
