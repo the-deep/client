@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { connect } from 'react-redux';
 import {
     Button,
     Container,
     ContainerCard,
-    Link,
-    Tag,
     Footer,
     PendingMessage,
     TextInput,
@@ -12,6 +11,7 @@ import {
     TextArea,
     Checkbox,
     ListView,
+    SegmentInput,
 } from '@the-deep/deep-ui';
 import {
     isDefined,
@@ -32,7 +32,13 @@ import {
 import NonFieldError from '#components/ui/NonFieldError';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
-import { BasicOrganization, ProjectDetails } from '#typings';
+import {
+    BasicOrganization,
+    KeyValueElement,
+    ProjectDetails,
+    AppState,
+    User,
+} from '#typings';
 import { organizationTitleSelector } from '#entities/organization';
 
 import _ts from '#ts';
@@ -40,9 +46,15 @@ import {
     useLazyRequest,
     useRequest,
 } from '#utils/request';
+import {
+    activeUserSelector,
+} from '#redux';
+import featuresMapping from '#constants/features';
+
+import StakeholderList from './StakeholderList';
+import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 
 import styles from './styles.scss';
-import StakeholderList from './StakeholderList';
 
 interface StakeholderType {
     id: string;
@@ -72,6 +84,20 @@ const stakeholderTypes: StakeholderType[] = [
     },
 ];
 
+const projectVisibilityOptions: KeyValueElement[] = [
+    {
+        key: 'false',
+        value: _ts('projectEdit', 'publicProject'),
+    },
+    {
+        key: 'true',
+        value: _ts('projectEdit', 'privateProject'),
+    },
+];
+
+const projectVisibilityKeySelector = (v: KeyValueElement): string => v.key;
+const projectVisibilityLabelSelector = (v: KeyValueElement): string => v.value;
+
 type FormType = {
     id?: number;
     title?: string;
@@ -79,6 +105,7 @@ type FormType = {
     endDate?: string;
     description?: string;
     hasAssessments?: boolean;
+    isPrivate?: string;
     organizations?: BasicProjectOrganization[];
 }
 
@@ -111,6 +138,7 @@ const schema: FormSchema = {
         description: [],
         hasAssessments: [],
         organizations: organizationListSchema,
+        isPrivate: [],
     }),
 };
 
@@ -128,10 +156,18 @@ const getOrganizationOptions = (project: ProjectDetails) =>
 
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
-const initialValue: FormType = {};
+const initialValue: FormType = {
+    isPrivate: 'false',
+    hasAssessments: false,
+};
+
+const mapStateToProps = (state: AppState) => ({
+    activeUser: activeUserSelector(state),
+});
 
 interface Props {
     projectId: number;
+    activeUser: User;
     onCreate: (value: ProjectDetails) => void;
 }
 
@@ -139,6 +175,9 @@ function ProjectDetailsForm(props: Props) {
     const {
         projectId,
         onCreate,
+        activeUser: {
+            accessibleFeatures = [],
+        },
     } = props;
 
     const {
@@ -159,8 +198,9 @@ function ProjectDetailsForm(props: Props) {
             onValueSet((): FormType => (
                 projectDetails ? {
                     ...projectDetails,
+                    isPrivate: projectDetails.isPrivate.toString(),
                     organizations: getOrganizationValues(projectDetails),
-                } : {}
+                } : initialValue
             ));
             onErrorSet({});
         },
@@ -185,7 +225,7 @@ function ProjectDetailsForm(props: Props) {
     const {
         pending: projectPatchPending,
         trigger: projectPatch,
-    } = useLazyRequest<ProjectDetails, unknown>({
+    } = useLazyRequest<ProjectDetails, FormType>({
         url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
         method: projectId ? 'PATCH' : 'POST',
         body: ctx => ctx,
@@ -209,7 +249,7 @@ function ProjectDetailsForm(props: Props) {
     const groupedStakeholders = useMemo(
         () => listToGroupList(
 
-            value.organizations ?? [],
+            value?.organizations ?? [],
             o => o.organizationType,
             o => o.organization,
         ),
@@ -227,6 +267,10 @@ function ProjectDetailsForm(props: Props) {
             };
         },
         [groupedStakeholders, stakeholderOptions],
+    );
+
+    const accessPrivateProject = accessibleFeatures.some(
+        f => f.key === featuresMapping.privateProject,
     );
 
     const disabled = pending || projectPatchPending;
@@ -284,52 +328,28 @@ function ProjectDetailsForm(props: Props) {
                         placeholder={_ts('projectEdit', 'projectDescription')}
                         rows={4}
                     />
-                    <div className={styles.projectTags}>
-                        <Container
-                            className={styles.tags}
-                            headingClassName={styles.heading}
-                            contentClassName={styles.items}
-                            heading={_ts('projectEdit', 'projectStatus')}
-                        >
-                            <Tag
-                                className={styles.firstTag}
-                                variant={projectDetails?.status === 'active' ? 'complement1' : 'default'}
-                            >
-                                {_ts('projectEdit', 'activeProject')}
-                            </Tag>
-                            <Tag
-                                variant={!projectDetails?.status || projectDetails.status === 'inactive' ? 'complement1' : 'default'}
-                            >
-                                {_ts('projectEdit', 'inactiveProject')}
-                            </Tag>
-                        </Container>
-                        <Container
-                            className={styles.tags}
-                            headingClassName={styles.heading}
-                            contentClassName={styles.items}
-                            heading={_ts('projectEdit', 'projectVisibility')}
-                        >
-                            <Tag
-                                className={styles.firstTag}
-                                variant={projectDetails?.isPrivate ? 'default' : 'complement1'}
-                            >
-                                {_ts('projectEdit', 'publicProject')}
-                            </Tag>
-                            {projectDetails?.isPrivate ? (
-                                <Tag
-                                    variant="complement1"
-                                >
-                                    {_ts('projectEdit', 'publicProject')}
-                                </Tag>
-                            ) : (
-                                <Link
-                                    to="mailto:pm@thedeep.io"
-                                >
-                                    {_ts('projectEdit', 'requestPrivateProject')}
-                                </Link>
-                            )}
-                        </Container>
-                    </div>
+                    <Container
+                        className={styles.visibility}
+                        headingClassName={styles.visibilityHeading}
+                        contentClassName={styles.items}
+                        heading={_ts('projectEdit', 'projectVisibility')}
+                    >
+                        <SegmentInput
+                            className={styles.segmentInput}
+                            name="isPrivate"
+                            value={value?.isPrivate}
+                            options={projectVisibilityOptions}
+                            keySelector={projectVisibilityKeySelector}
+                            labelSelector={projectVisibilityLabelSelector}
+                            onChange={onValueChange}
+                            disabled={isDefined(projectId) || !accessPrivateProject}
+                        />
+                        { !accessPrivateProject && !isDefined(projectId) && (
+                            <RequestPrivateProjectButton
+                                className={styles.requestButton}
+                            />
+                        )}
+                    </Container>
                     <Container
                         className={styles.features}
                         headingClassName={styles.heading}
@@ -414,4 +434,4 @@ function ProjectDetailsForm(props: Props) {
     );
 }
 
-export default ProjectDetailsForm;
+export default connect(mapStateToProps)(ProjectDetailsForm);

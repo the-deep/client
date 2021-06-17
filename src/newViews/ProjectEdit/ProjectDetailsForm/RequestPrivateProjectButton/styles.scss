@@ -1,0 +1,17 @@
+.request-private-project-modal {
+    display: flex;
+    flex-direction: column;
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+
+        .input {
+            padding: var(--dui-spacing-medium) 0;
+        }
+
+        .message {
+            padding: var(--dui-spacing-medium) 0;
+        }
+    }
+}

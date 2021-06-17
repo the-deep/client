@@ -1376,7 +1376,14 @@
         "-181814830": "Cancel",
         "-819410810": "Current password",
         "-819181030": "New password",
-        "-918202011": "Retype password"
+        "-918202011": "Retype password",
+        "-81828318": "Request a private project",
+        "-9188191842": "Describe the planned use",
+        "-8918101919": "Description of planned use of your project",
+        "-8181849174": "Justify the need for setting it up in a private environment",
+        "-9018181881": "Reason for your request",
+        "-8188181919": "A message will be sent with this information to the DEEP team.",
+        "-182838183": "Send"
     },
     "links": {
         "browserExtension": {
@@ -3771,6 +3778,7 @@
             "inactiveProject": -80991835,
             "projectVisibility": -71037102,
             "publicProject": -59389,
+            "privateProject": -92759559,
             "requestPrivateProject": -708101013,
             "projectAdditionalFeatures": -69797123,
             "projectAssessmentRegistry": -85659768,
@@ -3936,6 +3944,16 @@
             "currentPassword": -819410810,
             "newPassword": -819181030,
             "retypePassword": -918202011
+        },
+        "requestPrivateProject": {
+            "title": -81828318,
+            "send": -182838183,
+            "cancel": 61,
+            "description": -9188191842,
+            "descriptionPlaceholder": -8918101919,
+            "justification": -8181849174,
+            "justificationPlaceholder": -9018181881,
+            "message": -8188181919
         }
     }
 }

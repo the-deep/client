@@ -83,27 +83,26 @@
                 }
             }
 
-            .project-tags {
-                display: flex;
-                justify-content: space-between;
+            .visibility {
+                background-color: var(--dui-color-white);
 
-                .tags {
+                .visibility-heading {
+                    font-size: var(--dui-font-size-heading-extra-small);
+                }
+
+                .items {
                     display: flex;
-                    flex: 1 0 50%;
-                    background-color: var(--dui-color-white);
+                    align-items: center;
+                }
 
-                    .heading {
-                        font-size: var(--dui-font-size-heading-extra-small);
-                    }
+                .segment-input {
+                    display: flex;
+                    flex-shrink: 0;
+                    padding: 0;
+                }
 
-                    .items {
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .first-tag {
-                        margin-right: var(--dui-spacing-medium);
-                    }
+                .request-button {
+                    margin-left: var(--dui-spacing-small);
                 }
             }
 
