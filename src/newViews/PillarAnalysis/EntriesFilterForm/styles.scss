@@ -6,7 +6,7 @@
     .filter {
         display: none;
         order: 1;
-        margin: var(--dui-spacing-medium);
+        margin: var(--dui-spacing-small);
 
         &.show-filter {
             display: block;
@@ -23,6 +23,6 @@
     .button {
         justify-self: flex-end;
         order: 2;
-        margin: var(--dui-spacing-medium);
+        margin: var(--dui-spacing-small);
     }
 }

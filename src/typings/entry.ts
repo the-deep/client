@@ -138,6 +138,6 @@ export interface TocCountMap {
 }
 
 export interface EntryOptions {
-    createdBy: KeyValueElement;
+    createdBy: KeyValueElement[];
     projectEntryLabel: BasicElement[];
 }

@@ -10,6 +10,10 @@ import { useRequest } from '#utils/request';
 import {
     MultiResponse,
 } from '#typings';
+import {
+    EntryType,
+    TabularDataFields,
+} from '#typings/entry';
 
 import _ts from '#ts';
 
@@ -21,6 +25,15 @@ import styles from './styles.scss';
 interface DiscardedEntry extends EntryFieldsMin {
     tag: number;
     tagDisplay: string;
+    entryDetails: {
+        droppedExcerpt?: string;
+        entryType: EntryType;
+        excerpt?: string;
+        imageDetails?: {
+            file?: string;
+        };
+        tabularFieldData?: TabularDataFields;
+    };
 }
 
 const keySelector = (d: DiscardedTags) => d.key;
@@ -68,10 +81,10 @@ function DiscardedEntries(props: Props) {
     const entryCardRendererParams = useCallback((key: number, data: DiscardedEntry) => ({
         entryId: key,
         tagDisplay: data.tagDisplay,
-        excerpt: data.excerpt,
-        imageDetails: data.imageDetails,
-        tabularFieldData: data.tabularFieldData,
-        type: data.entryType,
+        excerpt: data.entryDetails?.excerpt,
+        imageDetails: data.entryDetails?.imageDetails,
+        tabularFieldData: data.entryDetails?.tabularFieldData,
+        type: data.entryDetails?.entryType,
         pillarId,
         onEntryUndiscard: triggerEntriesPull,
     }), [pillarId, triggerEntriesPull]);

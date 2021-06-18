@@ -30,6 +30,7 @@ function DiscardedEntry(props: Props) {
         pillarId,
         onEntryUndiscard,
         tagDisplay,
+        type,
         ...otherProps
     } = props;
 
@@ -54,7 +55,10 @@ function DiscardedEntry(props: Props) {
     return (
         <Container
             className={_cs(className, styles.entryItem)}
-            contentClassName={styles.children}
+            contentClassName={_cs(
+                styles.children,
+                type === 'image' && styles.image,
+            )}
             footerIcons={(
                 <Tag>
                     {tagDisplay}
@@ -74,6 +78,7 @@ function DiscardedEntry(props: Props) {
         >
             {pending && (<PendingMessage />)}
             <EntryItem
+                type={type}
                 {...otherProps}
             />
         </Container>

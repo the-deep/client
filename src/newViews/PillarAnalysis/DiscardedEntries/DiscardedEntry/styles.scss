@@ -1,10 +1,15 @@
 .entry-item {
-    --min-height-entry: 180px;
+    --max-height-entry: 180px;
 
     margin: var(--dui-spacing-medium);
     background-color: var(--dui-color-white);
 
     .children {
-        height: var(--min-height-entry);
+        &:not(&.image) {
+            max-height: var(--max-height-entry);
+        }
+        &.image {
+            height: 120px;
+        }
     }
 }

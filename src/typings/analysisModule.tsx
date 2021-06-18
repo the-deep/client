@@ -15,6 +15,7 @@ export interface AnalysisPillars {
         clientId: string;
         order?: number;
         statement?: string;
+        includeInReport?: boolean;
         analyticalEntries: {
             id?: number;
             clientId: string;

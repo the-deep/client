@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
+    IoEllipseOutline,
 } from 'react-icons/io5';
 import {
     _cs,
@@ -167,6 +168,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         [handleAnalyticalEntryDrop],
     );
 
+    const handleIncludeInReportChange = useCallback(() => {
+        onFieldChange((oldVal?: boolean) => !oldVal, 'includeInReport' as const);
+    }, [onFieldChange]);
+
     const dragValue = useMemo(() => ({
         statementClientId: value.clientId,
     }), [value.clientId]);
@@ -218,10 +223,14 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 headerClassName={styles.header}
                 headerIcons={(
                     <QuickActionButton
-                        name={undefined}
-                        disabled
+                        className={styles.includeInReportButton}
+                        name="includeInReport"
+                        onClick={handleIncludeInReportChange}
                     >
-                        <IoCheckmarkCircleSharp />
+                        {value?.includeInReport
+                            ? <IoCheckmarkCircleSharp />
+                            : <IoEllipseOutline />
+                        }
                     </QuickActionButton>
                 )}
                 // actionsContainerClassName={styles.actionsContainer}

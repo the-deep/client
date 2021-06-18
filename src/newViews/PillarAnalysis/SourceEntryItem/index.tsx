@@ -34,6 +34,7 @@ function SourceEntryItem(props: Props) {
         pillarId,
         onEntryDiscard,
         discardedTags,
+        type,
         ...otherProps
     } = props;
 
@@ -67,7 +68,10 @@ function SourceEntryItem(props: Props) {
             className={_cs(className, styles.entryItem, disabled && styles.disabled)}
             name="entry"
             value={value}
-            contentClassName={styles.children}
+            contentClassName={_cs(
+                styles.children,
+                type === 'image' && styles.image,
+            )}
             footerActions={(
                 <QuickActionButton
                     name="popup"
@@ -96,6 +100,7 @@ function SourceEntryItem(props: Props) {
             )}
         >
             <EntryItem
+                type={type}
                 {...otherProps}
             />
         </DraggableContent>

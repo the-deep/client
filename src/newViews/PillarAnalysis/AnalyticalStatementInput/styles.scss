@@ -22,6 +22,11 @@
             border-bottom: none;
             background-color: var(--dui-color-surface-informational);
             padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
+
+            .include-in-report-button {
+                padding: 0;
+                font-size: 1.3em;
+            }
         }
 
         .drag-content {

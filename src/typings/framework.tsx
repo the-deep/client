@@ -110,6 +110,11 @@ export interface ExportableFields {
     };
 }
 
+export interface FilterOption {
+    key: string;
+    label: string;
+}
+
 export interface FilterFields {
     filterType: string;
     id: number;
@@ -119,7 +124,7 @@ export interface FilterFields {
     properties: {
         // TODO: use actual enum
         type: string;
-        options: unknown[];
+        options: FilterOption[];
     };
 }
 

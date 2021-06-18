@@ -1281,7 +1281,7 @@
         "-14680704": "Recent Activities",
         "-46268038": "Recent Activities Fetch Failed",
         "-64388086": "Discarded Entries",
-        "-39990212": "All entries",
+        "-39990212": "All entries {entriesCount}",
         "-71989999": "Show Additional Metadata",
         "-17639815": "Show Ary Detail",
         "-50734970": "Show Entry Id",

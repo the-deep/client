@@ -6,17 +6,15 @@ import {
 } from '@togglecorp/fujs';
 import {
     Button,
+    MultiSelectInput as NewMultiSelectInput,
+    SelectInput as NewSelectInput,
 } from '@the-deep/deep-ui';
-import Faram from '@togglecorp/faram';
+import Faram, { FaramInputElement } from '@togglecorp/faram';
 
 import List from '#rsu/../v2/View/List';
 import { useRequest } from '#utils/request';
 import DateFilter from '#rsci/DateFilter';
-import SelectInput from '#rsci/SelectInput';
-import MultiSelectInput from '#rsci/MultiSelectInput';
 import { useModalState } from '#hooks/stateManagement';
-
-import FrameworkFilter from '#components/other/FrameworkFilter';
 
 import {
     GeoOptions,
@@ -29,8 +27,12 @@ import {
 } from '#typings';
 import _ts from '#ts';
 
+import FrameworkFilter from './FrameworkFilter';
 import { FaramValues } from '../';
 import styles from './styles.scss';
+
+const MultiSelectInput = FaramInputElement(NewMultiSelectInput);
+const SelectInput = FaramInputElement(NewSelectInput);
 
 const filterKeySelector = (d: FilterFields) => d.key;
 const optionLabelSelector = (d: KeyValueElement) => d.value;
@@ -206,13 +208,13 @@ function EntriesFilterForm(props: OwnProps) {
         >
             <MultiSelectInput
                 className={styles.filter}
+                name="created_by"
                 faramElementName="created_by"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
                 label={_ts('pillarAnalysis', 'createdByFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
-                showHintAndError={false}
             />
             <DateFilter
                 className={styles.filter}
@@ -223,52 +225,52 @@ function EntriesFilterForm(props: OwnProps) {
             />
             <MultiSelectInput
                 className={styles.filter}
+                name="comment_assignee"
                 faramElementName="comment_assignee"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
                 label={_ts('pillarAnalysis', 'commentAssignedToFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
-                showHintAndError={false}
             />
             <MultiSelectInput
                 className={styles.filter}
+                name="comment_created_by"
                 faramElementName="comment_created_by"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
                 label={_ts('pillarAnalysis', 'commentCreatedByFilterLabel')}
-                showHintAndError={false}
                 placeholder={_ts('pillarAnalysis', 'commentCreatedByPlaceholder')}
             />
             <SelectInput
                 className={styles.filter}
                 faramElementName="comment_status"
+                name="comment_status"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={commentStatusOptions}
                 label={_ts('pillarAnalysis', 'commentStatusOptionsFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'commentStatusPlaceholder')}
-                showHintAndError={false}
             />
             <SelectInput
                 className={styles.filter}
+                name="verified"
                 faramElementName="verified"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={verificationStatusOptions}
                 label={_ts('pillarAnalysis', 'verificationStatusOptionsFilterLabel')}
-                showHintAndError={false}
                 placeholder={_ts('pillarAnalysis', 'verificationStatusPlaceholder')}
             />
             <MultiSelectInput
                 className={styles.filter}
+                name="entry_type"
                 faramElementName="entry_type"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryTypeOptions}
                 label={_ts('pillarAnalysis', 'entryTypeFilterLabel')}
-                showHintAndError={false}
                 placeholder={_ts('pillarAnalysis', 'entryTypePlaceholder')}
             />
             { filteredFrameworkFilters.length > 0 && (

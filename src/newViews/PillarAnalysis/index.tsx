@@ -95,7 +95,7 @@ const fakeTags: DiscardedTags[] = [
     },
 ];
 
-// This is an aribitrary number
+// This is an aribtrary number
 const STATEMENTS_LIMIT = 30;
 
 type TabNames = 'entries' | 'discarded';
@@ -187,9 +187,6 @@ function PillarAnalysis(props: Props) {
     // FIXME: please use new form
     const [filtersValue, setFiltersValue] = useState<FaramValues>({});
     const [activePage, setActivePage] = useState(1);
-    // FIXME: these are useless
-    const [entriesCount, setEntriesCount] = useState(0);
-    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
 
     // NOTE: retain entries mapping to show entry information in entry cards
     const [entriesMapping, setEntriesMapping] = useState<Obj<EntryFieldsMin>>({});
@@ -345,6 +342,7 @@ function PillarAnalysis(props: Props) {
 
     const {
         pending: pendingEntries,
+        response: entriesResponse,
         retrigger: reTriggerEntriesList,
     } = useRequest<MultiResponse<EntryFieldsMin>>({
         url: `server://analysis-pillar/${pillarId}/entries/`,
@@ -352,11 +350,8 @@ function PillarAnalysis(props: Props) {
         skip: pendingPillarAnalysis || pendingFramework,
         body: entriesRequestBody,
         query: entriesRequestQuery,
-        onSuccess: (response) => {
-            setEntriesCount(response.count);
-            setEntries(response.results);
-        },
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
+        preserveResponse: true,
     });
 
     const {
@@ -379,6 +374,7 @@ function PillarAnalysis(props: Props) {
         }),
         [initialEntries],
     );
+
     const analysisEntriesRequestQuery = useMemo(() => ({
         // NOTE: 30 columns x 50 rows
         limit: 30 * 50,
@@ -391,6 +387,7 @@ function PillarAnalysis(props: Props) {
             'tabular_field_data',
         ],
     }), []);
+
     const {
         pending: pendingEntriesInitialData,
     } = useRequest<MultiResponse<EntryFieldsMin>>({
@@ -413,7 +410,7 @@ function PillarAnalysis(props: Props) {
 
     const handleEntryDrop = useCallback(
         (entryId: number) => {
-            const entry = entries?.find(item => item.id === entryId);
+            const entry = entriesResponse?.results?.find(item => item.id === entryId);
             if (!entry) {
                 console.error('Me no understand how this entry came from', entryId);
                 return;
@@ -423,7 +420,7 @@ function PillarAnalysis(props: Props) {
                 [entryId]: entry,
             }));
         },
-        [entries],
+        [entriesResponse?.results],
     );
 
     const handleAnalyticalStatementDrop = useCallback((droppedId: string, dropOverId?: string) => {
@@ -550,6 +547,12 @@ function PillarAnalysis(props: Props) {
                 heading={activeProject?.title}
                 actions={(
                     <>
+                        <BackLink
+                            className={styles.button}
+                            defaultLink="/"
+                        >
+                            {_ts('pillarAnalysis', 'closeButtonLabel')}
+                        </BackLink>
                         <Button
                             name={undefined}
                             className={styles.button}
@@ -561,12 +564,6 @@ function PillarAnalysis(props: Props) {
                         >
                             {_ts('pillarAnalysis', 'saveButtonLabel')}
                         </Button>
-                        <BackLink
-                            className={styles.button}
-                            defaultLink="/"
-                        >
-                            {_ts('pillarAnalysis', 'closeButtonLabel')}
-                        </BackLink>
                     </>
                 )}
             >
@@ -587,7 +584,7 @@ function PillarAnalysis(props: Props) {
                             onChange={onValueChange}
                             value={value.mainStatement}
                             error={error?.fields?.mainStatement}
-                            rows={6}
+                            rows={4}
                             disabled={pending}
                         />
                     </div>
@@ -602,7 +599,7 @@ function PillarAnalysis(props: Props) {
                             value={value.informationGap}
                             onChange={onValueChange}
                             error={error?.fields?.informationGap}
-                            rows={6}
+                            rows={4}
                             disabled={pending}
                         />
                     </div>
@@ -633,7 +630,11 @@ function PillarAnalysis(props: Props) {
                             heading={(
                                 <TabList className={styles.tabList}>
                                     <Tab name="entries">
-                                        {_ts('pillarAnalysis', 'entriesTabLabel')}
+                                        {_ts(
+                                            'pillarAnalysis',
+                                            'entriesTabLabel',
+                                            { entriesCount: entriesResponse?.count },
+                                        )}
                                     </Tab>
                                     <Tab name="discarded">
                                         {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
@@ -643,7 +644,7 @@ function PillarAnalysis(props: Props) {
                         >
                             <TabPanel name="entries">
                                 <ListView
-                                    data={entries}
+                                    data={entriesResponse?.results}
                                     keySelector={entryKeySelector}
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
@@ -651,10 +652,11 @@ function PillarAnalysis(props: Props) {
                                 />
                                 <Pager
                                     activePage={activePage}
-                                    itemsCount={entriesCount}
+                                    itemsCount={entriesResponse?.count ?? 0}
                                     maxItemsPerPage={maxItemsPerPage}
                                     onActivePageChange={setActivePage}
                                     itemsPerPageControlHidden
+                                    hideInfo
                                 />
                             </TabPanel>
                             <TabPanel name="discarded">

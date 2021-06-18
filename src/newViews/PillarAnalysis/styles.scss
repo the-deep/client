@@ -17,10 +17,11 @@
         .actions {
             display: flex;
             align-items: center;
-            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-extra-small));
 
             .button {
-                margin: var(--dui-spacing-small);
+                margin: 0 var(--dui-spacing-extra-small);
+                font-weight: var(--dui-font-weight-bold);
             }
         }
     }
@@ -35,13 +36,13 @@
         .inputs-container {
             display: flex;
             flex-shrink: 0;
-            padding: var(--dui-spacing-medium) calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
+            padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
 
             .input-container {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                padding: var(--dui-spacing-large);
+                padding: var(--dui-spacing-small) var(--dui-spacing-large);
 
                 .input-header {
                     padding: var(--dui-spacing-medium) 0;
@@ -51,7 +52,7 @@
 
         .entries-filter {
             flex-shrink: 0;
-            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+            padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
         }
 
         .workspace {

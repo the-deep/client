@@ -1,49 +1,43 @@
 import React from 'react';
 
-import {
-    EntryType,
-    TabularDataFields,
-} from '#typings/entry';
-import ExcerptOutput from '#widgetComponents/ExcerptOutput';
+import { TabularDataFields } from '#typings/entry';
+import ExcerptOutput from './ExcerptOutput';
 
 export interface Props {
-    type: EntryType;
-    excerpt?: string; // eslint-disable-line react/no-unused-prop-types
+    type: 'image' | 'excerpt' | 'dataSeries';
+    excerpt?: string;
     imageDetails?: {
         file?: string;
-    }; // eslint-disable-line react/no-unused-prop-types
-    tabularFieldData?: TabularDataFields; // eslint-disable-line react/no-unused-prop-types
+    };
+    tabularFieldData?: TabularDataFields;
 }
 
-const getEntryValue = (props: Props, entryType: EntryType) => {
-    if (entryType === 'image') {
-        return props.imageDetails?.file;
-    }
-    if (entryType === 'dataSeries') {
-        return props.tabularFieldData;
-    }
-    return props.excerpt;
-};
-
-const entryTypeToExcerptTypeMap: {
-    [key in EntryType]: 'text' | 'image' | 'dataSeries';
-} = {
-    excerpt: 'text',
-    image: 'image',
-    dataSeries: 'dataSeries',
-};
-
 function EntryItem(props: Props) {
-    const {
-        type,
-    } = props;
-
-    return (
-        <ExcerptOutput
-            type={entryTypeToExcerptTypeMap[type]}
-            value={getEntryValue(props, type)}
-        />
-    );
+    if (props.type === 'image') {
+        return (
+            <ExcerptOutput
+                type="image"
+                image={props?.imageDetails?.file}
+            />
+        );
+    }
+    if (props.type === 'excerpt') {
+        return (
+            <ExcerptOutput
+                type="excerpt"
+                value={props.excerpt}
+            />
+        );
+    }
+    if (props.type === 'dataSeries') {
+        return (
+            <ExcerptOutput
+                type="dataSeries"
+                dataSeries={props.tabularFieldData}
+            />
+        );
+    }
+    return null;
 }
 
 export default EntryItem;
