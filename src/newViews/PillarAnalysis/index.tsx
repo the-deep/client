@@ -337,6 +337,7 @@ function PillarAnalysis(props: Props) {
             'image_details',
             'entry_type',
             'tabular_field_data',
+            'created_at',
         ],
     }), [activePage]);
 
@@ -524,14 +525,22 @@ function PillarAnalysis(props: Props) {
     const entryCardRendererParams = useCallback((key: number, data: EntryFieldsMin) => ({
         entryId: key,
         excerpt: data.excerpt,
+        createdAt: data.createdAt,
         imageDetails: data.imageDetails,
         tabularFieldData: data.tabularFieldData,
         type: data.entryType,
         disabled: usedUpEntriesMap[key],
         pillarId,
+        pillarModifiedDate: pillarAnalysis?.modifiedAt,
         discardedTags,
         onEntryDiscard: reTriggerEntriesList,
-    }), [usedUpEntriesMap, pillarId, reTriggerEntriesList, discardedTags]);
+    }), [
+        usedUpEntriesMap,
+        pillarId,
+        reTriggerEntriesList,
+        discardedTags,
+        pillarAnalysis?.modifiedAt,
+    ]);
 
     const pending = pendingPillarAnalysis
     || pendingEntriesInitialData

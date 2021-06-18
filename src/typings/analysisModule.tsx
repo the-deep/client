@@ -24,6 +24,7 @@ export interface AnalysisPillars {
         }[];
     }[];
     createdAt: string;
+    modifiedAt: string;
     analysis: number;
 
     title: string;

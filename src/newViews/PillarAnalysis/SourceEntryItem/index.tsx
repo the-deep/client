@@ -1,8 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
-import { IoTrash } from 'react-icons/io5';
-
 import {
+    _cs,
+    compareDate,
+} from '@togglecorp/fujs';
+import { IoTrash } from 'react-icons/io5';
+import {
+    Tag,
     DraggableContent,
     Button,
     Popup,
@@ -24,12 +27,16 @@ interface Props extends EntryItemProps {
     pillarId: number;
     onEntryDiscard: () => void;
     discardedTags?: DiscardedTags[];
+    createdAt?: string;
+    pillarModifiedDate?: string;
 }
 
 function SourceEntryItem(props: Props) {
     const {
         className,
         entryId,
+        createdAt,
+        pillarModifiedDate,
         disabled,
         pillarId,
         onEntryDiscard,
@@ -63,14 +70,28 @@ function SourceEntryItem(props: Props) {
         });
     }, [trigger, entryId]);
 
+    const isNewEntry = compareDate(createdAt, pillarModifiedDate) > 0;
+
     return (
         <DraggableContent
-            className={_cs(className, styles.entryItem, disabled && styles.disabled)}
+            className={_cs(
+                className,
+                styles.entryItem,
+                disabled && styles.disabled,
+                isNewEntry && styles.newEntry,
+            )}
             name="entry"
             value={value}
             contentClassName={_cs(
                 styles.children,
                 type === 'image' && styles.image,
+            )}
+            footerIcons={isNewEntry && (
+                <Tag
+                    variant="complement1"
+                >
+                    {_ts('pillarAnalysis', 'newEntryTagLabel')}
+                </Tag>
             )}
             footerActions={(
                 <QuickActionButton

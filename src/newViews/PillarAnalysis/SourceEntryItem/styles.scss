@@ -18,6 +18,10 @@
         /* FIXME: this is a hack */
         pointer-events: none;
     }
+
+    &.new-entry {
+        border-left: var(--dui-width-separator-thick) solid var(--dui-color-complement1);
+    }
 }
 
 .popup-container {
