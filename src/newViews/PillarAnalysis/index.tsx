@@ -102,7 +102,8 @@ type TabNames = 'entries' | 'discarded';
 
 // FIXME: remove this
 export interface FaramValues {
-    [key: string]: string | string[] | FaramValues;
+    // eslint-disable-next-line
+    [key: string]: string | string[] | FaramValues | boolean | undefined;
 }
 
 const frameworkQueryFields = {

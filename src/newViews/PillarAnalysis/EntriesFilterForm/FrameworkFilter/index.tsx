@@ -3,14 +3,16 @@ import {
     _cs,
     mapToList,
 } from '@togglecorp/fujs';
-import { FaramInputElement } from '@togglecorp/faram';
 import {
-    MultiSelectInput as NewMultiSelectInput,
-    TextInput as NewTextInput,
+    MultiSelectInput,
+    TextInput,
 } from '@the-deep/deep-ui';
 
 import DateFilter from '#rsci/DateFilter';
 import TimeFilter from '#rsci/TimeFilter';
+import {
+    EntriesAsList,
+} from '@togglecorp/toggle-form';
 
 import _ts from '#ts';
 
@@ -19,13 +21,10 @@ import {
     FilterOption,
     GeoOptions,
 } from '#typings';
-import NewGeoMultiSelectInput from '#components/input/GeoMultiSelectInput';
+import GeoMultiSelectInput from '#components/input/GeoMultiSelectInput';
+import { FaramValues } from '../../';
 
 import styles from './styles.scss';
-
-const MultiSelectInput = FaramInputElement(NewMultiSelectInput);
-const TextInput = FaramInputElement(NewTextInput);
-const GeoMultiSelectInput = FaramInputElement(NewGeoMultiSelectInput);
 
 const filterKeySelector = (d: FilterOption) => d.key;
 const filterLabelSelector = (d: FilterOption) => d.label;
@@ -36,6 +35,8 @@ interface Props {
     filter: FilterFields['properties'];
     geoOptions?: GeoOptions;
     className?: string;
+    value: FaramValues;
+    onValueChange: (...entries: EntriesAsList<FaramValues>) => void;
 }
 
 function FrameworkFilter(props: Props) {
@@ -45,10 +46,12 @@ function FrameworkFilter(props: Props) {
         filter,
         geoOptions = {},
         className,
+        value,
+        onValueChange,
     } = props;
 
     if (!filter || !filter.type) {
-        return null;
+        return <div />;
     }
 
     switch (filter.type) {
@@ -57,8 +60,9 @@ function FrameworkFilter(props: Props) {
             return (
                 <GeoMultiSelectInput
                     name={filterKey}
+                    value={value?.[filterKey] as (string[] | undefined)}
+                    onChange={onValueChange}
                     className={_cs(styles.frameworkFilter, className)}
-                    faramElementName={filterKey}
                     label={title}
                     options={options}
                     placeholder={_ts('entries', 'multiselectPlaceholder')}
@@ -70,7 +74,8 @@ function FrameworkFilter(props: Props) {
             return (
                 <MultiSelectInput
                     name={filterKey}
-                    faramElementName={filterKey}
+                    value={value?.[filterKey] as (string[] | undefined)}
+                    onChange={onValueChange}
                     label={title}
                     options={filter.options}
                     keySelector={filterKeySelector}
@@ -103,14 +108,15 @@ function FrameworkFilter(props: Props) {
             return (
                 <TextInput
                     name={filterKey}
-                    faramElementName={filterKey}
+                    value={value?.[filterKey] as (string | undefined)}
+                    onChange={onValueChange}
                     label={title}
                     placeholder={_ts('entries', 'textSearchPlaceholder')}
                     className={_cs(styles.frameworkFilter, className)}
                 />
             );
         default:
-            return null;
+            return <div />;
     }
 }
 

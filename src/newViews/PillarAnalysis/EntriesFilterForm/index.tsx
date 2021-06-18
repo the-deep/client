@@ -1,17 +1,21 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import {
     _cs,
     listToMap,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
+    List,
     Button,
-    MultiSelectInput as NewMultiSelectInput,
-    SelectInput as NewSelectInput,
+    MultiSelectInput,
+    SelectInput,
 } from '@the-deep/deep-ui';
-import Faram, { FaramInputElement } from '@togglecorp/faram';
+import {
+    ObjectSchema,
+    useForm,
+    createSubmitHandler,
+} from '@togglecorp/toggle-form';
 
-import List from '#rsu/../v2/View/List';
 import { useRequest } from '#utils/request';
 import DateFilter from '#rsci/DateFilter';
 import { useModalState } from '#hooks/stateManagement';
@@ -20,7 +24,6 @@ import {
     GeoOptions,
     EntryOptions,
     KeyValueElement,
-    BooleanKeyValueElement,
     WidgetElement,
     ProjectDetails,
     FilterFields,
@@ -31,20 +34,17 @@ import FrameworkFilter from './FrameworkFilter';
 import { FaramValues } from '../';
 import styles from './styles.scss';
 
-const MultiSelectInput = FaramInputElement(NewMultiSelectInput);
-const SelectInput = FaramInputElement(NewSelectInput);
-
 const filterKeySelector = (d: FilterFields) => d.key;
 const optionLabelSelector = (d: KeyValueElement) => d.value;
 const optionKeySelector = (d: KeyValueElement) => d.key;
 
-const verificationStatusOptions: BooleanKeyValueElement[] = [
+const verificationStatusOptions: KeyValueElement[] = [
     {
-        key: true,
+        key: 'true',
         value: _ts('pillarAnalysis', 'verifiedLabel'),
     },
     {
-        key: false,
+        key: 'false',
         value: _ts('pillarAnalysis', 'unverifiedLabel'),
     },
 ];
@@ -74,6 +74,20 @@ const commentStatusOptions: KeyValueElement[] = [
     },
 ];
 
+type FormType = FaramValues;
+
+type FormSchema = ObjectSchema<FormType>;
+type FormSchemaFields = ReturnType<FormSchema['fields']>;
+
+const schema: FormSchema = {
+    fields: (): FormSchemaFields => ({
+        created_by: [],
+    }),
+};
+
+const initialValue: FormType = {
+};
+
 interface OwnProps {
     className?: string;
     filters?: FilterFields[];
@@ -99,18 +113,11 @@ function EntriesFilterForm(props: OwnProps) {
         disabled,
     } = props;
 
-    const [faramValues, setFaramValues] = useState(filtersValue);
-    const [faramErrors, setFaramErrors] = useState({});
-
-    useEffect(() => {
-        setFaramValues(filtersValue);
-    }, [filtersValue]);
     const [
         allFiltersVisible,
         showAllFilters,
         hideAllFilters,
     ] = useModalState(false);
-    const [pristine, setPristine] = useState(true);
 
     const entryOptionsQueryParams = useMemo(() => ({
         projects: [projectId],
@@ -126,24 +133,24 @@ function EntriesFilterForm(props: OwnProps) {
         failureHeader: _ts('pillarAnalysis', 'entryOptions'),
     });
 
-    const schema = useMemo(() => ({
-        fields: {
-            created_at: [],
-            created_by: [],
-            comment_assignee: [],
-            comment_created_by: [],
-            comment_status: [],
-            verified: [],
-            entry_type: [],
-            project_entry_labels: [],
-            lead_group_label: [],
-            ...listToMap(filters, v => v.key, () => []),
-        },
-    }), [filters]);
+    const {
+        pristine,
+        validate,
+        onErrorSet,
+        value,
+        onValueSet,
+        onValueChange,
+    } = useForm(initialValue, schema);
+
+    useEffect(() => {
+        if (filtersValue) {
+            onValueSet(filtersValue);
+        }
+    }, [filtersValue, onValueSet]);
 
     const isFilterEmpty = useMemo(() => (
-        doesObjectHaveNoData(faramValues, [''])
-    ), [faramValues]);
+        doesObjectHaveNoData(value, [''])
+    ), [value]);
 
     const isClearDisabled = isFilterEmpty && pristine;
 
@@ -166,59 +173,47 @@ function EntriesFilterForm(props: OwnProps) {
             filter: data.properties,
             regions,
             geoOptions,
+            value,
+            onValueChange,
             className: _cs(
                 styles.filter,
                 isMatrixFilter && styles.showFilter,
             ),
         });
-    }, [regions, geoOptions]);
-
-    const handleFaramChange = useCallback((newValues) => {
-        setFaramValues(newValues);
-        setPristine(false);
-    }, []);
-
-    const handleFaramValidationSuccess = useCallback((_, finalValues) => {
-        onFiltersValueChange(finalValues);
-        setPristine(true);
-    }, [onFiltersValueChange]);
+    }, [regions, geoOptions, value, onValueChange]);
 
     const handleClearFilters = useCallback(() => {
-        setFaramValues({});
         onFiltersValueChange({});
-        setPristine(true);
     }, [onFiltersValueChange]);
 
     const pending = entryOptionsPending;
 
+    const handleSubmit = useCallback(() => {
+        onFiltersValueChange(value);
+    }, [onFiltersValueChange, value]);
+
     return (
-        <Faram
-            schema={schema}
-            value={faramValues}
-            error={faramErrors}
-            disabled={pending || disabled}
-            onValidationSuccess={handleFaramValidationSuccess}
-            onValidationFailure={setFaramErrors}
-            onChange={handleFaramChange}
+        <form
             className={_cs(
                 className,
                 styles.entriesFilterForm,
                 allFiltersVisible && styles.showFilters,
             )}
+            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
             <MultiSelectInput
                 className={styles.filter}
                 name="created_by"
-                faramElementName="created_by"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
+                value={value?.created_by as (string[] | undefined)}
+                onChange={onValueChange}
                 options={entryOptions?.createdBy}
                 label={_ts('pillarAnalysis', 'createdByFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
             />
             <DateFilter
                 className={styles.filter}
-                faramElementName="created_at"
                 label={_ts('pillarAnalysis', 'createdAtFilterLabel')}
                 placeholder={_ts('leads', 'placeholderAnytime')}
                 showHintAndError={false}
@@ -226,7 +221,8 @@ function EntriesFilterForm(props: OwnProps) {
             <MultiSelectInput
                 className={styles.filter}
                 name="comment_assignee"
-                faramElementName="comment_assignee"
+                value={value?.comment_assignee as (string[] | undefined)}
+                onChange={onValueChange}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
@@ -236,7 +232,8 @@ function EntriesFilterForm(props: OwnProps) {
             <MultiSelectInput
                 className={styles.filter}
                 name="comment_created_by"
-                faramElementName="comment_created_by"
+                value={value?.comment_created_by as (string[] | undefined)}
+                onChange={onValueChange}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
@@ -245,10 +242,11 @@ function EntriesFilterForm(props: OwnProps) {
             />
             <SelectInput
                 className={styles.filter}
-                faramElementName="comment_status"
-                name="comment_status"
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
+                value={value?.comment_status as (string | undefined)}
+                onChange={onValueChange}
+                name="comment_status"
                 options={commentStatusOptions}
                 label={_ts('pillarAnalysis', 'commentStatusOptionsFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'commentStatusPlaceholder')}
@@ -256,7 +254,8 @@ function EntriesFilterForm(props: OwnProps) {
             <SelectInput
                 className={styles.filter}
                 name="verified"
-                faramElementName="verified"
+                value={value?.verified as (string | undefined)}
+                onChange={onValueChange}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={verificationStatusOptions}
@@ -266,7 +265,8 @@ function EntriesFilterForm(props: OwnProps) {
             <MultiSelectInput
                 className={styles.filter}
                 name="entry_type"
-                faramElementName="entry_type"
+                value={value?.entry_type as (string[] | undefined)}
+                onChange={onValueChange}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryTypeOptions}
@@ -310,7 +310,7 @@ function EntriesFilterForm(props: OwnProps) {
                     : _ts('pillarAnalysis', 'ShowFiltersLabel')
                 }
             </Button>
-        </Faram>
+        </form>
     );
 }
 
