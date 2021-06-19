@@ -29,7 +29,7 @@ interface AnalyticalEntryInputProps {
     onRemove: (index: number) => void;
     index: number;
     onAnalyticalEntryDrop: (droppedValue: DroppedValue, dropOverEntryClientId: string) => void;
-    dropDisabled: boolean;
+    dropDisabled?: boolean;
 }
 
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
