@@ -25,6 +25,7 @@ export interface AnalysisPillars {
     }[];
     createdAt: string;
     modifiedAt: string;
+    versionId: string;
     analysis: number;
 
     title: string;

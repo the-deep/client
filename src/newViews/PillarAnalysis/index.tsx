@@ -76,27 +76,21 @@ export interface DiscardedTags {
     value: string;
 }
 
-const fakeTags: DiscardedTags[] = [
-    {
-        key: 0,
-        value: 'Redundant',
-    },
-    {
-        key: 1,
-        value: 'Too old',
-    },
-    {
-        key: 2,
-        value: 'Anecdotal',
-    },
-    {
-        key: 3,
-        value: 'Outlier',
-    },
-];
-
 // This is an aribtrary number
 const STATEMENTS_LIMIT = 30;
+
+const analysisEntriesRequestQuery = {
+    // NOTE: 30 columns x 50 rows
+    limit: 30 * 50,
+    fields: [
+        'id',
+        'excerpt',
+        'dropped_excerpt',
+        'image_details',
+        'entry_type',
+        'tabular_field_data',
+    ],
+};
 
 type TabNames = 'entries' | 'discarded';
 
@@ -360,12 +354,8 @@ function PillarAnalysis(props: Props) {
         pending: pendingDiscardedTags,
         response: discardedTags,
     } = useRequest<DiscardedTags[]>({
-        skip: !pendingEntries,
         url: 'server://discarded-entry-options/',
-        query: entriesRequestQuery,
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
-        // FIXME: Remove this response later on
-        mockResponse: fakeTags,
     });
 
     const analysisEntriesRequestBody = useMemo(
@@ -376,19 +366,6 @@ function PillarAnalysis(props: Props) {
         }),
         [initialEntries],
     );
-
-    const analysisEntriesRequestQuery = useMemo(() => ({
-        // NOTE: 30 columns x 50 rows
-        limit: 30 * 50,
-        fields: [
-            'id',
-            'excerpt',
-            'dropped_excerpt',
-            'image_details',
-            'entry_type',
-            'tabular_field_data',
-        ],
-    }), []);
 
     const {
         pending: pendingEntriesInitialData,
@@ -486,6 +463,32 @@ function PillarAnalysis(props: Props) {
         },
         [onValueChange, value.analyticalStatements],
     );
+
+    /*
+    useEffect(() => {
+        if (
+            pendingPillarAnalysis
+            || (value.analyticalStatements?.length ?? 0) >= 1
+            || (pillarAnalysis?.versionId ?? 1) > 1
+        ) {
+            return;
+        }
+        const clientId1 = randomString();
+        const clientId2 = randomString();
+        const newAnalyticalStatement1: PartialAnalyticalStatementType = {
+            clientId: clientId1,
+            order: 1,
+        };
+        const newAnalyticalStatement2: PartialAnalyticalStatementType = {
+            clientId: clientId2,
+            order: 2,
+        };
+        onValueChange(
+            [newAnalyticalStatement1, newAnalyticalStatement2],
+            'analyticalStatements' as const,
+        );
+    }, [value.analyticalStatements, pillarAnalysis, onValueChange, pendingPillarAnalysis]);
+    */
 
     type AnalyticalStatements = typeof value.analyticalStatements;
 
