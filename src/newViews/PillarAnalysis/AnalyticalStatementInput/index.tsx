@@ -227,7 +227,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         name="includeInReport"
                         onClick={handleIncludeInReportChange}
                     >
-                        {value?.includeInReport
+                        {value.includeInReport
                             ? <IoCheckmarkCircleSharp />
                             : <IoEllipseOutline />
                         }

@@ -99,11 +99,13 @@ interface AuthoringOrganizations {
     organizationTypeTitle: string;
 }
 
+/*
 const dummyAuthoringOrganizations: AuthoringOrganizations[] = [
     { count: 10, organizationTypeId: 1, organizationTypeTitle: 'NGOs' },
     { count: 10, organizationTypeId: 1, organizationTypeTitle: 'Government' },
     { count: 10, organizationTypeId: 1, organizationTypeTitle: 'UN Agency' },
 ];
+ */
 
 interface TimelineData {
     key: number;
@@ -217,7 +219,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const piechartData = dummyAuthoringOrganizations ?? overviewResponse?.authoringOrganizations;
+    const piechartData = overviewResponse?.authoringOrganizations ?? [];
 
     const timelineData: TimelineData[] = useMemo(() => (overviewResponse?.analysisList?.map(d => ({
         key: d.id,

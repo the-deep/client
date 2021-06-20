@@ -17,7 +17,7 @@ function EntryItem(props: Props) {
         return (
             <ExcerptOutput
                 type="image"
-                image={props?.imageDetails?.file}
+                image={props.imageDetails?.file}
             />
         );
     }

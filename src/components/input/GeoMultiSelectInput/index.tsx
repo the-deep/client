@@ -46,7 +46,7 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
                 || caseInsensitiveSubmatch(option.label, debouncedSearchText);
             return searchFilter;
         });
-        if (filteredOptions && (filteredOptions?.length ?? 0 > 50)) {
+        if (filteredOptions && (filteredOptions.length ?? 0 > 50)) {
             filteredOptions.length = 50;
         }
         return filteredOptions;

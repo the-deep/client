@@ -249,10 +249,12 @@ function PillarAnalysis(props: Props) {
                 const newAnalyticalStatement1: PartialAnalyticalStatementType = {
                     clientId: clientId1,
                     order: 1,
+                    includeInReport: false,
                 };
                 const newAnalyticalStatement2: PartialAnalyticalStatementType = {
                     clientId: clientId2,
                     order: 2,
+                    includeInReport: false,
                 };
                 analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
             }
@@ -473,6 +475,7 @@ function PillarAnalysis(props: Props) {
             const newAnalyticalStatement: PartialAnalyticalStatementType = {
                 clientId,
                 order: oldStatements.length,
+                includeInReport: false,
             };
             onValueChange(
                 [...oldStatements, newAnalyticalStatement],
