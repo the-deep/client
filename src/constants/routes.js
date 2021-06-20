@@ -275,6 +275,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'userGroup');
 
+    newUserGroup: {
+        order: 95,
+        type: ROUTE.private,
+        path: '/new-user-groups/',
+        loader: () => import('../newViews/UserGroup'),
+        links: allLinks,
+    },
+
     frameworkQuestions: {
         order: 99,
         type: ROUTE.private,
