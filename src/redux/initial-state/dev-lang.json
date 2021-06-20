@@ -1258,7 +1258,7 @@
         "-30498150": "Analyst",
         "-50636670": "Team Lead",
         "-31952614": "Pillar Assignments",
-        "-30091387": "Edit analysis",
+        "-30091387": "Edit Analysis",
         "-91939891": "Pillar analysis required",
         "-49556": "Pillars",
         "-35552020": "Team lead",
@@ -1384,7 +1384,11 @@
         "-9018181881": "Reason for your request",
         "-8188181919": "A message will be sent with this information to the DEEP team.",
         "-182838183": "Send",
-        "-48751509": "New"
+        "-48751509": "New",
+        "-20774380": "Deleting an analysis will delete all its containing pillar analyses. Are you sure you want to delete this analysis and its pillar analyses?",
+        "-1510570": "Are you sure you want to delete this pillar analysis?",
+        "-94802963": "Continue Analysis",
+        "-7668049": "Framework Overview"
     },
     "links": {
         "browserExtension": {
@@ -3686,7 +3690,6 @@
             "totalEntriesLabel": -89597029,
             "totalSourcesLabel": -25324892,
             "analysisModule": -55670188,
-            "addPillarAnalysis": -70983044,
             "noAnalysisCreatedLabel": -57723792,
             "setupNewAnalysisButtonLabel": -90678740,
             "pillarAnalysisCount": -45423653,
@@ -3698,7 +3701,17 @@
             "pillarAssignments": -31952614,
             "allAnalyses": -80223054,
             "selectAnalysisDate": -35701649,
-            "statementsTitle": -31309732
+            "statementsTitle": -31309732,
+            "cloneAnalysisButtonTitle": 353,
+            "continueAnalysisButton": -94802963,
+            "editAnalysisTitle": -30091387,
+            "cloneAnalysisConfirmMessage": 354,
+            "deleteAnalysisButtonTitle": -94736495,
+            "deletePillarButtonTitle": -94736495,
+            "deleteAnalysisConfirmMessage": -20774380,
+            "deletePillarConfirmMessage": -1510570,
+            "overviewSectionHeader": 781,
+            "frameworkOverviewHeader": -7668049
         },
         "analysis.editModal": {
             "addAnalysisModalHeading": -90678740,
@@ -3914,8 +3927,7 @@
             "selectRolePlaceholder": 14,
             "selectUserPlaceholder": 14,
             "submitLabel": 826,
-            "userLabel": 1200,
-            "usersFetchFailed": -93154523
+            "userLabel": 1200
         },
         "components.organizationSelectInput": {
             "title": 154

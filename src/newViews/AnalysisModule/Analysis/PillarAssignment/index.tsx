@@ -1,13 +1,14 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import styles from './styles.css';
+import styles from './styles.scss';
 
 interface Props {
     className?: string;
     assigneeName?: string;
     pillarTitle?: string;
-    status?: string;
+    entriesAnalyzed?: number;
+    totalEntries?: number;
 }
 
 function PillarAssignment(props: Props) {
@@ -15,8 +16,17 @@ function PillarAssignment(props: Props) {
         className,
         assigneeName,
         pillarTitle,
-        status,
+        entriesAnalyzed = 0,
+        totalEntries = 0,
     } = props;
+
+    let statusLabel = 'In progress';
+    if (entriesAnalyzed === totalEntries && entriesAnalyzed > 0) {
+        statusLabel = 'Analysis Completed';
+    } else if (totalEntries === 0) {
+        statusLabel = 'No Analysis';
+    }
+    const isAnalysisCompleted = entriesAnalyzed === totalEntries && totalEntries > 0;
 
     return (
         <div className={_cs(styles.pillarAssignment, className)}>
@@ -33,10 +43,13 @@ function PillarAssignment(props: Props) {
                 { pillarTitle }
             </div>
             <div
-                className={styles.status}
-                title={status}
+                className={_cs(
+                    styles.status,
+                    isAnalysisCompleted && styles.completedAnalysis,
+                )}
+                title={statusLabel}
             >
-                { status }
+                { statusLabel }
             </div>
         </div>
     );

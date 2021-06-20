@@ -21,6 +21,7 @@ import {
     Cell,
 } from 'recharts';
 import {
+    ContainerCard,
     Pager,
     Button,
     Card,
@@ -45,7 +46,7 @@ import {
 
 import {
     AppState,
-    AnalysisElement,
+    AnalysisSummary,
     MultiResponse,
 } from '#typings';
 
@@ -68,9 +69,12 @@ const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
 });
 
-const analysisKeySelector = (d: AnalysisElement) => d.id;
+const analysisKeySelector = (d: AnalysisSummary) => d.id;
 const maxItemsPerPage = 5;
 const colorScheme = [
+    '#008eff',
+    '#1a3ed0',
+    '#00c9f0',
     '#2878bf',
     '#71efff',
     '#42b7df',
@@ -95,13 +99,11 @@ interface AuthoringOrganizations {
     organizationTypeTitle: string;
 }
 
-/*
 const dummyAuthoringOrganizations: AuthoringOrganizations[] = [
     { count: 10, organizationTypeId: 1, organizationTypeTitle: 'NGOs' },
-    { count: 6, organizationTypeId: 1, organizationTypeTitle: 'Government' },
-    { count: 16, organizationTypeId: 1, organizationTypeTitle: 'UN Agency' },
+    { count: 10, organizationTypeId: 1, organizationTypeTitle: 'Government' },
+    { count: 10, organizationTypeId: 1, organizationTypeTitle: 'UN Agency' },
 ];
- */
 
 interface TimelineData {
     key: number;
@@ -172,8 +174,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
         pending: pendingAnalyses,
         response: analysesResponse,
         retrigger: triggerGetAnalysis,
-    } = useRequest<MultiResponse<AnalysisElement>>({
-        url: `server://projects/${activeProject}/analysis/`,
+    } = useRequest<MultiResponse<AnalysisSummary>>({
+        url: `server://projects/${activeProject}/analysis/summary/`,
         method: 'GET',
         query: analysisQueryOptions,
         failureHeader: _ts('analysis', 'analysisModule'),
@@ -215,13 +217,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const piechartData = overviewResponse?.authoringOrganizations ?? [];
+    const piechartData = dummyAuthoringOrganizations ?? overviewResponse?.authoringOrganizations;
 
-    const timelineData: TimelineData[] = useMemo(() => (analysesResponse?.results?.map(d => ({
+    const timelineData: TimelineData[] = useMemo(() => (overviewResponse?.analysisList?.map(d => ({
         key: d.id,
         value: new Date(d.createdAt).getTime(),
         label: d.title,
-    })) ?? []), [analysesResponse?.results]);
+    })) ?? []), [overviewResponse?.analysisList]);
 
     const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
 
@@ -231,10 +233,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
         [cloneAnalysisTrigger],
     );
-
-    const analysisObjectToEdit = useMemo(() => (
-        analysesResponse?.results?.find(a => a.id === analysisToEdit)
-    ), [analysesResponse?.results, analysisToEdit]);
 
     const handleAnalysisEditSuccess = useCallback(() => {
         triggerGetAnalysis();
@@ -251,19 +249,24 @@ function AnalysisModule(props: AnalysisModuleProps) {
         setModalVisible();
     }, [setModalVisible]);
 
-    const analysisRendererParams = useCallback((key: number, data: AnalysisElement) => ({
+    const analysisRendererParams = useCallback((key: number, data: AnalysisSummary) => ({
         className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
         onDelete: handleAnalysisToDeleteClick,
         onClone: handleAnalysisToCloneClick,
         title: data.title,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        startDate: data.publicationDate?.startDate,
+        endDate: data.publicationDate?.endDate,
         teamLeadName: data.teamLeadName,
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
-        analysisPillars: data.analysisPillar,
+        frameworkOverview: data.frameworkOverview,
+        analyzedSources: data.analyzedSources,
+        analyzedEntries: data.analyzedEntries,
+        totalSources: data.totalSources,
+        totalEntries: data.totalEntries,
+        analysisPillars: data.pillarSummary,
         onAnalysisPillarDelete: triggerGetAnalysis,
         pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
         pendingAnalysisClone: pendingAnalysisClone && analysisIdToClone === key,
@@ -327,7 +330,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         icon={<IoCheckmarkCircle />}
                     />
                 </div>
-                <Card className={styles.pieChartContainer}>
+                <ContainerCard
+                    className={styles.pieChartContainer}
+                    footerIcons={(
+                        <p>Sources by type</p>
+                    )}
+                >
                     { piechartData?.length > 0 ? (
                         <ResponsiveContainer>
                             <PieChart>
@@ -366,7 +374,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             </div>
                         </div>
                     )}
-                </Card>
+                </ContainerCard>
                 <Card className={styles.analysesTimelineContainer}>
                     {timelineData?.length > 0 ? (
                         <Timeline
@@ -427,7 +435,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     onSuccess={handleAnalysisEditSuccess}
                     onModalClose={setModalHidden}
                     projectId={activeProject}
-                    value={analysisObjectToEdit}
+                    analysisToEdit={analysisToEdit}
                 />
             )}
         </div>

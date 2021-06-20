@@ -65,7 +65,6 @@ function ExcerptOutput(props: Props) {
             </p>
         );
     }
-    console.error('Excerpt should either be image or text');
     return null;
 }
 

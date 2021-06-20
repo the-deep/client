@@ -1,9 +1,41 @@
 .analysis-pillar {
+    .header {
+        padding: var(--dui-spacing-small) var(--dui-spacing-large);
+    }
     .created-at {
         margin: calc(-1 * var(--dui-spacing-small)) calc(-1 * var(--dui-spacing-medium));
     }
-
     .content {
         display: flex;
+
+        .left-container {
+            flex-shrink: 0;
+        }
+
+        .right-container {
+            flex-grow: 1;
+
+            .statements-container {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 0 var(--spacing-extra-small);
+
+                .statement {
+                    align-items: flex-start;
+                    flex-basis: 32%;
+                    padding: var(--dui-spacing-super-small) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
+
+                    .statement-text {
+                        padding: 0 var(--dui-spacing-small);
+                        text-align: justify;
+                    }
+
+                    .description {
+                        flex-shrink: 0;
+                        font-size: var(--dui-font-size-medium);
+                    }
+                }
+            }
+        }
     }
 }

@@ -238,13 +238,31 @@ function PillarAnalysis(props: Props) {
                 o => o.id,
             );
             setFiltersValue(newFilters);
+            // eslint-disable-next-line max-len
+            let analyticalStatements: PartialAnalyticalStatementType[] = response.analyticalStatements ?? [];
+            if (
+                (response.analyticalStatements?.length ?? 0) === 0
+                || response.versionId === 1
+            ) {
+                const clientId1 = randomString();
+                const clientId2 = randomString();
+                const newAnalyticalStatement1: PartialAnalyticalStatementType = {
+                    clientId: clientId1,
+                    order: 1,
+                };
+                const newAnalyticalStatement2: PartialAnalyticalStatementType = {
+                    clientId: clientId2,
+                    order: 2,
+                };
+                analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
+            }
 
             // FIXME: check set pristine value
             // FIXME: only set after checking version id
             onValueSet((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
-                analyticalStatements: response.analyticalStatements,
+                analyticalStatements,
             }));
         },
         failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
@@ -463,32 +481,6 @@ function PillarAnalysis(props: Props) {
         },
         [onValueChange, value.analyticalStatements],
     );
-
-    /*
-    useEffect(() => {
-        if (
-            pendingPillarAnalysis
-            || (value.analyticalStatements?.length ?? 0) >= 1
-            || (pillarAnalysis?.versionId ?? 1) > 1
-        ) {
-            return;
-        }
-        const clientId1 = randomString();
-        const clientId2 = randomString();
-        const newAnalyticalStatement1: PartialAnalyticalStatementType = {
-            clientId: clientId1,
-            order: 1,
-        };
-        const newAnalyticalStatement2: PartialAnalyticalStatementType = {
-            clientId: clientId2,
-            order: 2,
-        };
-        onValueChange(
-            [newAnalyticalStatement1, newAnalyticalStatement2],
-            'analyticalStatements' as const,
-        );
-    }, [value.analyticalStatements, pillarAnalysis, onValueChange, pendingPillarAnalysis]);
-    */
 
     type AnalyticalStatements = typeof value.analyticalStatements;
 
