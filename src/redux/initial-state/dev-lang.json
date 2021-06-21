@@ -4119,6 +4119,12 @@
             "apply": 427,
             "clearAll": -91010810184,
             "showAll": -1818191919
+        },
+        "entriesStats": {
+            "totalLeads": -987979879,
+            "totalSources": -987979871,
+            "totalUnverifiedEntries": -879879798,
+            "totalVerifiedEntries": -897879798
         }
     }
 }

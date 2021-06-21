@@ -33,7 +33,7 @@ import NonFieldError from '#components/ui/NonFieldError';
 
 import styles from './styles.scss';
 
-type FormType = {
+export type FormType = {
     status?: string[];
     createdAt?: string;
     publishedOn?: string;
