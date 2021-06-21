@@ -4081,6 +4081,12 @@
             "memberAddFailed": 177,
             "roleLabel": 12509,
             "editMemberLabel": -57329096
+        },
+        "entriesStats": {
+            "totalLeads": -987979879,
+            "totalSources": -987979871,
+            "totalUnverifiedEntries": -879879798,
+            "totalVerifiedEntries": -897879798
         }
     }
 }
