@@ -278,7 +278,7 @@ export const routes = {
     newUserGroup: {
         order: 95,
         type: ROUTE.private,
-        path: '/new-user-groups/',
+        path: '/new-ui/user-groups/',
         loader: () => import('../newViews/UserGroup'),
         links: allLinks,
     },
