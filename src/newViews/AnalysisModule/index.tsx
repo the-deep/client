@@ -99,14 +99,6 @@ interface AuthoringOrganizations {
     organizationTypeTitle: string;
 }
 
-/*
-const dummyAuthoringOrganizations: AuthoringOrganizations[] = [
-    { count: 10, organizationTypeId: 1, organizationTypeTitle: 'NGOs' },
-    { count: 10, organizationTypeId: 1, organizationTypeTitle: 'Government' },
-    { count: 10, organizationTypeId: 1, organizationTypeTitle: 'UN Agency' },
-];
- */
-
 interface TimelineData {
     key: number;
     value: number;
@@ -335,7 +327,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 <ContainerCard
                     className={styles.pieChartContainer}
                     footerIcons={(
-                        <p>Sources by type</p>
+                        <p>{_ts('analysis', 'sourcesByTypeLabel')}</p>
                     )}
                 >
                     { piechartData?.length > 0 ? (

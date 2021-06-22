@@ -1391,7 +1391,12 @@
         "-7668049": "Framework Overview",
         "-68241766": "Continue Tagging",
         "-32431240": "View Tagging",
-        "-86877211": "Are you sure you want to clone this pillar analysis?"
+        "-86877211": "Are you sure you want to clone this pillar analysis?",
+        "-30251271": "{entriesCount} Entries",
+        "-90582895": "Analysis Completed",
+        "-14918070": "No Analysis",
+        "-93108581": "Sources by type",
+        "-28285008": "Quantitative data is not supported at the moment."
     },
     "links": {
         "browserExtension": {
@@ -3718,7 +3723,12 @@
             "overviewSectionHeader": 781,
             "frameworkOverviewHeader": -7668049,
             "clonePillarButtonTitle": 353,
-            "clonePillarConfirmMessage": -86877211
+            "clonePillarConfirmMessage": -86877211,
+            "inProgressTagLabel": -33667410,
+            "entriesCount": -30251271,
+            "noAnalysisTagLabel": -14918070,
+            "analysisCompletedTagLabel": -90582895,
+            "sourcesByTypeLabel": -93108581
         },
         "analysis.editModal": {
             "addAnalysisModalHeading": -90678740,
@@ -3975,6 +3985,12 @@
             "justification": -8181849174,
             "justificationPlaceholder": -9018181881,
             "message": -8188181919
+        },
+        "components.excerptOutput": {
+            "quantitativeDataNotSupportedLabel": -28285008
+        },
+        "components.userSelectInput": {
+            "title": 13
         }
     }
 }

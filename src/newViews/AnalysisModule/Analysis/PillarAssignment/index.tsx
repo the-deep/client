@@ -1,6 +1,8 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import _ts from '#ts';
+
 import styles from './styles.scss';
 
 interface Props {
@@ -20,11 +22,11 @@ function PillarAssignment(props: Props) {
         totalEntries = 0,
     } = props;
 
-    let statusLabel = 'In progress';
+    let statusLabel = _ts('analysis', 'inProgressTagLabel');
     if (entriesAnalyzed === totalEntries && entriesAnalyzed > 0) {
-        statusLabel = 'Analysis Completed';
+        statusLabel = _ts('analysis', 'analysisCompletedTagLabel');
     } else if (totalEntries === 0) {
-        statusLabel = 'No Analysis';
+        statusLabel = _ts('analysis', 'noAnalysisTagLabel');
     }
     const isAnalysisCompleted = entriesAnalyzed === totalEntries && totalEntries > 0;
 

@@ -152,7 +152,15 @@ function AnalysisPillar(props: ComponentProps) {
                             value={statement.statement}
                             valueContainerClassName={styles.statementText}
                             descriptionContainerClassName={styles.description}
-                            description={`${statement.analyticalEntries.length} Entries`}
+                            description={
+                                _ts(
+                                    'analysis',
+                                    'entriesCount',
+                                    {
+                                        entriesCount: statement.analyticalEntries.length,
+                                    },
+                                )
+                            }
                         />
                     ))}
                 />

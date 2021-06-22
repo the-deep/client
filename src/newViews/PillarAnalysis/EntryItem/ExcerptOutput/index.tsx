@@ -2,6 +2,7 @@ import React from 'react';
 import { ImagePreview } from '@the-deep/deep-ui';
 
 import { TabularDataFields } from '#typings';
+import _ts from '#ts';
 
 interface BaseProps {
     className?: string;
@@ -61,7 +62,7 @@ function ExcerptOutput(props: Props) {
          */
         return (
             <p className={className}>
-                Quantitative data is not supported at the moment.
+                {_ts('components.excerptOutput', 'quantitativeDataNotSupportedLabel')}
             </p>
         );
     }
