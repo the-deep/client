@@ -4,7 +4,7 @@ import {
 } from './common';
 
 export type Confidentiality = 'confidential' | 'unprotected';
-export type LeadStatus = 'pending' | 'processed';
+export type LeadStatus = 'pending' | 'processed' | 'validated';
 export type LeadSourceType = 'Text' | 'Disk' | 'Website' |
     'Dropbox' | 'Google Drive' | 'RSS Feed' | 'EMM' | 'Web API' | 'Unknown';
 

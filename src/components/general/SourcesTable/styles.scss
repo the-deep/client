@@ -1,0 +1,20 @@
+.sources-table-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+
+    .content {
+        display: flex;
+
+        .status {
+            margin: var(--dui-spacing-small);
+            height: var(--dui-font-size-large);
+        }
+    }
+
+    .pager {
+        display: flex;
+    }
+}
+
+
