@@ -4,25 +4,27 @@ export interface PillarFilterItem {
     uniqueId: string;
 }
 
+export interface AnalyticalStatement {
+    id?: number;
+    clientId: string;
+    order?: number;
+    statement?: string;
+    includeInReport?: boolean;
+    analyticalEntries: {
+        id?: number;
+        clientId: string;
+        entry: number;
+        order?: number;
+    }[];
+}
+
 export interface AnalysisPillars {
     id: number;
     assigneeName: string;
     analysisTitle: string;
     mainStatement?: string;
     informationGap?: string;
-    analyticalStatements?: {
-        id?: number;
-        clientId: string;
-        order?: number;
-        statement?: string;
-        includeInReport?: boolean;
-        analyticalEntries: {
-            id?: number;
-            clientId: string;
-            entry: number;
-            order?: number;
-        }[];
-    }[];
+    analyticalStatements?: AnalyticalStatement[];
     createdAt: string;
     modifiedAt: string;
     versionId: number;

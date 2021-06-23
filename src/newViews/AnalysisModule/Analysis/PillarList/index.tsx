@@ -18,7 +18,7 @@ import AnalysisPillar from '../AnalysisPillar';
 import styles from './styles.scss';
 
 const MAX_ITEMS_PER_PAGE = 5;
-const keySelector = (item: AnalysisPillars) => (item.id);
+const keySelector = (item: AnalysisPillars) => item.id;
 
 interface Props {
     className?: string;
@@ -39,7 +39,7 @@ function AnalysisDetails(props: Props) {
         analysisId,
     } = props;
 
-    const [activePage, setActivePage] = useState<number>(1);
+    const [activePage, setActivePage] = useState(1);
 
     const queryOptions = useMemo(() => ({
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,

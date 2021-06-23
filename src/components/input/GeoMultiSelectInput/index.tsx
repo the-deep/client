@@ -36,7 +36,6 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
         ...otherProps
     } = props;
 
-    const [, setOpened] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
@@ -63,7 +62,6 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
             searchOptions={searchOptions}
             optionsPending={false}
             totalOptionsCount={options?.length}
-            onShowDropdownChange={setOpened}
         />
     );
 }

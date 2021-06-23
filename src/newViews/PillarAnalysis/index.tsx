@@ -244,6 +244,9 @@ function PillarAnalysis(props: Props) {
                 (response.analyticalStatements?.length ?? 0) === 0
                 || response.versionId === 1
             ) {
+                // NOTE: We are adding 2 analytical statements if the pillar analysis
+                // is new and doesn't have any analytical statements
+                // by default (happens if its cloned)
                 const clientId1 = randomString();
                 const clientId2 = randomString();
                 const newAnalyticalStatement1: PartialAnalyticalStatementType = {

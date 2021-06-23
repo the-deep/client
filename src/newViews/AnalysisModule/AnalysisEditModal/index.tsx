@@ -140,7 +140,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 analysisPillar: response.analysisPillar.map(ap => ({
                     key: String(ap.id),
                     assignee: ap.assignee,
-                    filters: ap.filters ? ap.filters.map(f => f.uniqueId) : undefined,
+                    filters: ap.filters?.map(f => f.uniqueId),
                     title: ap.title,
                 })),
             });

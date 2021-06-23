@@ -50,16 +50,6 @@ function ExcerptOutput(props: Props) {
         );
     }
     if (props.type === 'dataSeries') {
-        /*
-            return (
-                <DataSeries
-                    className={styles.dataSeries}
-                    value={props.dataSeries}
-                    onEntryStateChange={setEntryState}
-                    entryState={entryState}
-                />
-            );
-         */
         return (
             <p className={className}>
                 {_ts('components.excerptOutput', 'quantitativeDataNotSupportedLabel')}

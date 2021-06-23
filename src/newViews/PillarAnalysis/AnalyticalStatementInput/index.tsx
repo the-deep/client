@@ -223,9 +223,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 headerClassName={styles.header}
                 headerIcons={(
                     <QuickActionButton
-                        className={styles.includeInReportButton}
                         name="includeInReport"
                         onClick={handleIncludeInReportChange}
+                        big
                     >
                         {value.includeInReport
                             ? <IoCheckmarkCircleSharp />

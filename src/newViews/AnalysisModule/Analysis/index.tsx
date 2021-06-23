@@ -53,17 +53,24 @@ const renderCustomizedLabel = (props: any) => {
     return (
         <g>
             <text
+                className={styles.barLabel}
                 x={x + (width / 2)}
                 y={y - radius}
-                fill="#717171"
-                textAnchor="middle"
-                dominantBaseline="middle"
             >
                 {`${Math.round(value)}%`}
             </text>
         </g>
     );
 };
+
+const barChartMargin = {
+    top: 5,
+    right: 30,
+    left: 20,
+    bottom: 5,
+};
+const BAR_TICK_COUNT = 5;
+const MAX_BAR_SIZE = 16;
 
 interface ComponentProps {
     analysisId: number;
@@ -120,10 +127,6 @@ function Analysis(props: ComponentProps) {
         frameworkOverview,
     } = props;
 
-    const handleEditClick = useCallback(() => {
-        onEdit(analysisId);
-    }, [analysisId, onEdit]);
-
     const handleCloneAnalysis = useCallback(() => {
         onClone(analysisId, title);
     }, [analysisId, onClone, title]);
@@ -167,8 +170,8 @@ function Analysis(props: ComponentProps) {
             headerActions={(
                 <>
                     <Button
-                        name="edit"
-                        onClick={handleEditClick}
+                        name={analysisId}
+                        onClick={onEdit}
                         disabled={disabled}
                         variant="tertiary"
                         icons={(
@@ -258,12 +261,7 @@ function Analysis(props: ComponentProps) {
                     <ResponsiveContainer className={styles.responsiveContainer}>
                         <BarChart
                             data={barChartData}
-                            margin={{
-                                top: 5,
-                                right: 30,
-                                left: 20,
-                                bottom: 5,
-                            }}
+                            margin={barChartMargin}
                         >
                             <XAxis
                                 dataKey="title"
@@ -277,7 +275,7 @@ function Analysis(props: ComponentProps) {
                             <YAxis
                                 axisLine={false}
                                 domain={[0, 100]}
-                                tickCount={5}
+                                tickCount={BAR_TICK_COUNT}
                                 tickLine={false}
                             />
                             <Bar
@@ -286,7 +284,7 @@ function Analysis(props: ComponentProps) {
                                 background={{
                                     fill: 'var(--dui-color-background-information)',
                                 }}
-                                maxBarSize={16}
+                                maxBarSize={MAX_BAR_SIZE}
                             >
                                 <LabelList
                                     // NOTE: LabelList required data for some reason

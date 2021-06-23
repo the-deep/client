@@ -90,9 +90,7 @@ export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFi
                 getDateWithTimezone(encodeDate(endDate)),
             ]);
         } else if (filterKey === 'verified') {
-            const isVerified = typeof filterOptions === 'string'
-                ? filterOptions === 'true'
-                : filterOptions;
+            const isVerified = String(filterOptions) === 'true';
 
             result.push([
                 'verified',

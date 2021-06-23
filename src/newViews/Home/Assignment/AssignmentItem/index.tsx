@@ -41,6 +41,7 @@ function AssignmentItem(props: AssignmentRendererProps) {
                         className={styles.markAsDoneButton}
                         onClick={handleClick}
                         disabled={markAsDonePending}
+                        big
                     >
                         <IoCheckmarkCircle />
                     </QuickActionButton>

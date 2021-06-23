@@ -10,6 +10,7 @@ import {
     ButtonLikeLink,
     PendingMessage,
     TextOutput,
+    List,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
 import {
@@ -17,16 +18,21 @@ import {
     IoTrashOutline,
 } from 'react-icons/io5';
 
-import { AnalysisPillars } from '#typings';
+import {
+    AnalysisPillars,
+    AnalyticalStatement,
+} from '#typings';
 import { pathNames } from '#constants';
 
 import _ts from '#ts';
 import styles from './styles.scss';
 
+const statementKeySelector = (d: AnalyticalStatement) => d.clientId;
+
 interface ComponentProps {
     analysisId: number;
     assigneeName?: string;
-    statements?: AnalysisPillars['analyticalStatements'];
+    statements?: AnalyticalStatement[];
     title: string;
     createdAt: string;
     onDelete: (value: number) => void;
@@ -68,6 +74,20 @@ function AnalysisPillar(props: ComponentProps) {
     const onCloneConfirmClick = useCallback(() => {
         console.warn('cloning', pillarId);
     }, [pillarId]);
+
+    const statementRendererParams = useCallback((key, data: AnalyticalStatement) => ({
+        className: styles.statement,
+        valueContainerClassName: styles.statementText,
+        descriptionContainerClassName: styles.description,
+        description: _ts(
+            'analysis',
+            'entriesCount',
+            {
+                entriesCount: data.analyticalEntries.length,
+            },
+        ),
+        value: data.statement,
+    }), []);
 
     return (
         <Container
@@ -145,24 +165,14 @@ function AnalysisPillar(props: ComponentProps) {
                     label={_ts('analysis', 'statementsTitle')}
                     block
                     valueContainerClassName={styles.statementsContainer}
-                    value={statements?.map(statement => (
-                        <TextOutput
-                            className={styles.statement}
-                            key={statement.id}
-                            value={statement.statement}
-                            valueContainerClassName={styles.statementText}
-                            descriptionContainerClassName={styles.description}
-                            description={
-                                _ts(
-                                    'analysis',
-                                    'entriesCount',
-                                    {
-                                        entriesCount: statement.analyticalEntries.length,
-                                    },
-                                )
-                            }
+                    value={(
+                        <List
+                            data={statements}
+                            rendererParams={statementRendererParams}
+                            renderer={TextOutput}
+                            keySelector={statementKeySelector}
                         />
-                    ))}
+                    )}
                 />
             )}
         </Container>

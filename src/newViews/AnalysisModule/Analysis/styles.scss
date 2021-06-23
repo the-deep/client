@@ -11,7 +11,7 @@
     overflow-y: auto;
 
     .content {
-        // NOTE: I don't want to do this
+        // NOTE: We don't want to do this
         padding-bottom: 0;
         overflow: unset;
 
@@ -82,6 +82,12 @@
 
                     .responsive-container {
                         flex-grow: 1;
+
+                        .bar-label {
+                            fill: '#717171';
+                            text-anchor: middle;
+                            dominant-baseline: middle;
+                        }
                     }
                 }
             }

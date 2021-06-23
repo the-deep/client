@@ -29,6 +29,8 @@ import styles from './styles.scss';
 const filterKeySelector = (d: FilterOption) => d.key;
 const filterLabelSelector = (d: FilterOption) => d.label;
 
+const emptyGeoOptions: GeoOptions = {};
+
 interface Props {
     title: string;
     filterKey: string;
@@ -44,13 +46,13 @@ function FrameworkFilter(props: Props) {
         title,
         filterKey,
         filter,
-        geoOptions = {},
+        geoOptions = emptyGeoOptions,
         className,
         value,
         onValueChange,
     } = props;
 
-    if (!filter || !filter.type) {
+    if (!filter?.type) {
         return <div />;
     }
 
