@@ -44,6 +44,10 @@ export const allLinks = {
                 'export',
                 'userExports',
                 'analysisModule',
+                'tagging',
+                'sources',
+                'taggingDashboard',
+                'taggingExport',
             ].includes(pathKey) || !hasProjects
         ),
     },

@@ -1408,7 +1408,8 @@
         "-25752304": "Are you sure you want to remove this member from this usergroup?",
         "-57329096": "Edit member",
         "-69672375": "Failed to add usergroups",
-        "-60399046": "Failed to delete usergroup"
+        "-60399046": "Failed to delete usergroup",
+        "-183108101": "Tagging"
     },
     "links": {
         "browserExtension": {
@@ -2417,7 +2418,11 @@
             "editProject": 31,
             "analyticalFramework": -91820939,
             "myProfile": -810289191,
-            "exploreDeep": -77375980
+            "exploreDeep": -77375980,
+            "tagging": -183108101,
+            "sources": -183108101,
+            "taggingDashboard": -183108101,
+            "taggingExport": -183108101
         },
         "project.general": {
             "projectNameLabel": 103,

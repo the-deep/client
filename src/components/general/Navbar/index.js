@@ -181,7 +181,7 @@ function Navbar(props) {
 
         const accessNewUi = accessibleFeatures?.find(f => f.key === featuresMapping.newUi);
         if (accessNewUi) {
-            navLinks.unshift('home');
+            navLinks.unshift('home', 'tagging');
         }
         return getValidLinks(navLinks, currentPath);
     }, [currentPath, accessibleFeatures]);

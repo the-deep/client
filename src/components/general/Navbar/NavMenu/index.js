@@ -26,7 +26,6 @@ const NavItem = ({ itemKey, className, disabled, ...otherProps }) => (
         to={reverseRoute(pathNames[itemKey], otherProps)}
         className={`${className} ${disabled ? styles.disabled : ''}`}
         disabled={disabled}
-        exact
     >
         { _ts('pageTitle', itemKey) }
     </NavLink>
