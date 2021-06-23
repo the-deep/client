@@ -527,6 +527,7 @@ function WidgetFaram(props) {
 
         return (
             <WidgetContentWrapper
+                className={styles.content}
                 blockDrop={!isDroppable}
             >
                 <FaramGroup faramElementName={String(id)}>
