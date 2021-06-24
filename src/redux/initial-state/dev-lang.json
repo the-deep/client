@@ -1383,7 +1383,11 @@
         "-8181849174": "Justify the need for setting it up in a private environment",
         "-9018181881": "Reason for your request",
         "-8188181919": "A message will be sent with this information to the DEEP team.",
-        "-182838183": "Send"
+        "-182838183": "Send",
+        "-1894810190": "Original date",
+        "-91010810184": "Clear all",
+        "-1818191919": "Show all filters",
+        "-181828381": "Tagging status"
     },
     "links": {
         "browserExtension": {
@@ -3954,6 +3958,17 @@
             "justification": -8181849174,
             "justificationPlaceholder": -9018181881,
             "message": -8188181919
+        },
+        "sourcesFilter": {
+            "title": -987979871,
+            "status": -181828381,
+            "originalDate": -1894810190,
+            "addedOn": -12808201,
+            "assignee": 6,
+            "search": 9,
+            "apply": 427,
+            "clearAll": -91010810184,
+            "showAll": -1818191919
         }
     }
 }

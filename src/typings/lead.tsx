@@ -69,15 +69,15 @@ export interface EmmEntity {
 }
 
 export interface LeadOptions {
-    status: KeyValueElement;
-    project: KeyValueElement;
-    assignee: KeyValueElement;
-    leadGroup: KeyValueElement;
-    priority: KeyValueElement;
-    confidentiality: KeyValueElement;
-    organizationTypes: KeyValueElement;
+    status: KeyValueElement[];
+    project: KeyValueElement[];
+    assignee: KeyValueElement[];
+    leadGroup: KeyValueElement[];
+    priority: KeyValueElement[];
+    confidentiality: KeyValueElement[];
+    organizationTypes: KeyValueElement[];
     hasEmmLeads: boolean;
-    emmEntities?: EmmEntity;
-    emmRiskFactors?: EmmEntity;
-    emmKeywords?: EmmEntity;
+    emmEntities?: EmmEntity[];
+    emmRiskFactors?: EmmEntity[];
+    emmKeywords?: EmmEntity[];
 }
