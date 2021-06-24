@@ -8,6 +8,7 @@ import {
     randomString,
     listToMap,
     Obj,
+    checkVersion,
 } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
@@ -142,7 +143,9 @@ interface PropsFromState {
     activeProject: ProjectDetails;
     pillarAnalysis: {
         id: number;
+        versionId: number;
         data: FormType;
+        pristine: boolean;
     } | undefined;
 }
 
@@ -162,6 +165,9 @@ function PillarAnalysis(props: Props) {
 
     const initialValue = pillarAnalysisFromProps?.data ?? defaultFormValues;
 
+    const [versionId, setVersionId] = useState(pillarAnalysisFromProps?.versionId);
+
+    // TODO: pass pristine value
     const {
         pristine,
         value,
@@ -221,11 +227,12 @@ function PillarAnalysis(props: Props) {
         () => {
             setPillarAnalysisData({
                 id: pillarId,
+                versionId,
                 data: value,
                 pristine,
             });
         },
-        [value, pillarId, setPillarAnalysisData, pristine],
+        [value, versionId, pillarId, setPillarAnalysisData, pristine],
     );
 
     const {
@@ -265,6 +272,16 @@ function PillarAnalysis(props: Props) {
                 analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
             }
 
+            const {
+                shouldSetValue,
+                isValueOverriden,
+            } = checkVersion(versionId, response.versionId);
+
+            if (!shouldSetValue) {
+                return;
+            }
+            setVersionId(response.versionId);
+
             // FIXME: check set pristine value
             // FIXME: only set after checking version id
             setValue((): FormType => ({
@@ -272,6 +289,21 @@ function PillarAnalysis(props: Props) {
                 informationGap: response.informationGap,
                 analyticalStatements,
             }));
+
+            // NOTE:
+            // sometimes
+            // 1. user could just open old document (the cache is set)
+            // 2. user doesn't modify anything
+            // 3. user returns later and finds there's new data on server
+            // 4. we don't need to show notification in this case even if it's overridden
+            if (isValueOverriden && !pristine) {
+                notify.send({
+                    type: notify.type.WARNING,
+                    title: _ts('pillarAnalysis', 'dataUpdate'),
+                    message: _ts('pillarAnalysis', 'dateOverridden'),
+                    duration: notify.duration.SLOW,
+                });
+            }
         },
         failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
     });
@@ -284,6 +316,7 @@ function PillarAnalysis(props: Props) {
         body: ctx => ctx,
         method: 'PATCH',
         onSuccess: (response) => {
+            setVersionId(response.versionId);
             setValue((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,

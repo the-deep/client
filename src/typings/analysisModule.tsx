@@ -20,6 +20,7 @@ export interface AnalyticalStatement {
 
 export interface AnalysisPillars {
     id: number;
+    versionId: number;
     assigneeName: string;
     analysisTitle: string;
     mainStatement?: string;
