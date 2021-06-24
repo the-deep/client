@@ -69,4 +69,8 @@
             border: var(--width-separator-thin) solid var(--color-separator);
         }
     }
+
+    .content {
+        background-color: var(--color-foreground);
+    }
 }
