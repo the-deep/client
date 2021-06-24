@@ -28,7 +28,6 @@ export interface AnalysisPillars {
     analyticalStatements?: AnalyticalStatement[];
     createdAt: string;
     modifiedAt: string;
-    versionId: number;
     analysis: number;
 
     title: string;

@@ -167,7 +167,6 @@ function PillarAnalysis(props: Props) {
 
     const [versionId, setVersionId] = useState(pillarAnalysisFromProps?.versionId);
 
-    // TODO: pass pristine value
     const {
         pristine,
         value,
@@ -176,7 +175,7 @@ function PillarAnalysis(props: Props) {
         setValue,
         validate,
         setError,
-    } = useForm(schema, initialValue);
+    } = useForm(schema, initialValue, pillarAnalysisFromProps?.pristine);
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.analyticalStatements);
