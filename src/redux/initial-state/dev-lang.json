@@ -1417,7 +1417,11 @@
         "-1823418301": "Upload an image of your framework",
         "-183810101": "Preview",
         "-184814819": "You can upload the image of your existing framework as a reference.",
-        "-19123812": "Preview image"
+        "-19123812": "Preview image",
+        "-1894810190": "Original date",
+        "-91010810184": "Clear all",
+        "-1818191919": "Show all filters",
+        "-181828381": "Tagging status"
     },
     "links": {
         "browserExtension": {
@@ -4104,6 +4108,17 @@
             "dashboard": -9188181010,
             "export": -1810834810,
             "addSource": -1881010101
+        },
+        "sourcesFilter": {
+            "title": -987979871,
+            "status": -181828381,
+            "originalDate": -1894810190,
+            "addedOn": -12808201,
+            "assignee": 6,
+            "search": 9,
+            "apply": 427,
+            "clearAll": -91010810184,
+            "showAll": -1818191919
         }
     }
 }

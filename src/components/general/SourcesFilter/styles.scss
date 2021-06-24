@@ -1,0 +1,37 @@
+.sources-filter {
+    display: flex;
+
+    .header {
+        display: flex;
+        flex-direction: column;
+
+        .heading {
+            display: none;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            margin-right: 0 var(--dui-spacing-medium);
+
+            .actions {
+                display: flex;
+                align-items: flex-end;
+                margin-left: 0 var(--dui-spacing-medium);
+
+                .button {
+                    padding: var(--dui-spacing-small);
+                    font-size: var(--dui-font-size-small);
+                }
+            }
+        }
+    }
+
+    .content {
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+    }
+}
