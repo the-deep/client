@@ -1,9 +1,30 @@
 import notify from '#notify';
-import { mapToMap } from '@togglecorp/fujs';
+import { mapToMap, isDefined } from '@togglecorp/fujs';
 import { serverlessEndpoint, wsEndpoint, getVersionedUrl } from '#config/rest';
 
 import { ContextInterface } from './context';
 import schema from '../../schema';
+
+type Literal = string | number | boolean | File;
+
+type FormDataCompatibleObj = Record<string, Literal | Literal[] | null | undefined>;
+
+function getFormData(jsonData: FormDataCompatibleObj) {
+    const formData = new FormData();
+    Object.keys(jsonData || {}).forEach(
+        (key) => {
+            const value = jsonData?.[key];
+            if (value && Array.isArray(value)) {
+                value.forEach((v) => {
+                    formData.append(key, v instanceof Blob ? v : String(v));
+                });
+            } else if (isDefined(value)) {
+                formData.append(key, value instanceof Blob ? value : String(value));
+            }
+        },
+    );
+    return formData;
+}
 
 export interface Error {
     reason: string;
@@ -35,6 +56,7 @@ function alterResponse(errors: ErrorFromServer['errors']): Error['value']['faram
 }
 
 export interface OptionBase {
+    formData?: boolean;
     schemaName?: string;
     failureHeader?: string;
 }
@@ -69,6 +91,7 @@ export const processDeepOptions = (access: string | undefined) => {
     const callback: DeepContextInterface['transformOptions'] = (
         url,
         options,
+        requestOptions,
     ) => {
         const {
             body,
@@ -77,6 +100,13 @@ export const processDeepOptions = (access: string | undefined) => {
         } = options;
 
         const isInternalRequest = url.startsWith(serverPrefix) || url.startsWith(serverlessPrefix);
+
+        let requestBody;
+        if (requestOptions.formData) {
+            requestBody = getFormData(body as FormDataCompatibleObj);
+        } else {
+            requestBody = body ? JSON.stringify(body) : undefined;
+        }
 
         const res = {
             method: 'GET',
@@ -88,7 +118,7 @@ export const processDeepOptions = (access: string | undefined) => {
                 'Content-Type': 'application/json; charset=utf-8',
                 ...headers,
             },
-            body: body ? JSON.stringify(body) : undefined,
+            body: requestBody,
             ...otherOptions,
         };
         return res;

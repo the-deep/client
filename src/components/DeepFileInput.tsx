@@ -32,20 +32,20 @@ function DeepFileInput<T extends string>(props: Props<T>) {
         ...otherProps
     } = props;
 
+    const [value, setValue] = useState<File | undefined>();
+
     const {
         pending,
         trigger,
     } = useLazyRequest<Option, File>({
+        formData: true,
         url: '/files/',
         method: 'POST',
-        // FIXME: IDK how this works
-        body: (ctx) => {
-            const formData = new FormData();
-            formData.append('file', ctx);
-            formData.append('title', ctx.name);
-            formData.append('isPublic', String(isPublic));
-            return formData;
-        },
+        body: ctx => ({
+            file: ctx,
+            title: ctx.name,
+            isPublic,
+        }),
         onSuccess: (response) => {
             onChange(response.id, name);
             setOption(response);
@@ -56,35 +56,28 @@ function DeepFileInput<T extends string>(props: Props<T>) {
     });
 
     const handleChange = useCallback(
-        (files: File[]) => {
-            if (files.length <= 0) {
-                console.error('No file was selected');
-                return;
-            }
-            const [firstFile] = files;
-            trigger(firstFile);
+        (file: File) => {
+            trigger(file);
+            setValue(file);
         },
         [trigger],
     );
 
     let currentStatus;
     if (pending) {
-        currentStatus = 'Uploading file';
+        currentStatus = 'Uploading file'; // FIXME add translations
     } else if (!valueFromProps) {
-        currentStatus = 'No file selected';
+        currentStatus = 'No file selected'; // FIXME add translations
     } else if (option && option.id === valueFromProps) {
         currentStatus = option.title;
     } else {
-        currentStatus = '?';
+        currentStatus = '?'; // FIXME add translations
     }
-
-    const [value, setValue] = useState<File | undefined>();
 
     return (
         <FileInput
             {...otherProps}
             value={value}
-            onChange={setValue}
             disabled={disabled || pending}
             name={name}
             onChange={handleChange}
