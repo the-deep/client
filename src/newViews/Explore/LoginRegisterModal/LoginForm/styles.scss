@@ -1,0 +1,29 @@
+.login-form {
+    --width-login-content: 640px;
+
+    .login-form-container {
+        margin: auto;
+        background-color: var(--dui-color-foreground);
+        width: var(--width-login-content);
+
+        .input-container {
+            display: flex;
+            align-items: center;
+
+            .input {
+                flex-grow: 1;
+                margin: 0 var(--dui-spacing-medium);
+            }
+        }
+
+        .login-button {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+            .button {
+                margin: var(--spacing-medium) 0;
+            }
+        }
+    }
+}

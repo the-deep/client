@@ -16,7 +16,7 @@ const notAdmin = ({ isLoggedIn, isAdmin }) => (
     !isLoggedIn || !isAdmin
 );
 const notDevAndAdmin = ({ isLoggedIn, isDevMode, isAdmin }) => (
-    !isLoggedIn || (!isDevMode && !isAdmin)
+    isLoggedIn || (!isDevMode && !isAdmin)
 );
 
 const notLeadViewable = ({ isLoggedIn, leadPermissions }) => (

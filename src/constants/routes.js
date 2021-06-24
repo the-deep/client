@@ -40,6 +40,16 @@ export const routes = {
         links: noLinks,
     }, // _ts('pageTitle', 'login');
 
+    exploreDeep: {
+        order: 10,
+        type: ROUTE.exclusivelyPublic,
+        redirectTo: '/',
+        path: '/new-ui/explore/',
+        hideNavbar: true,
+        loader: () => import('../newViews/Explore'),
+        links: noLinks,
+    }, // _ts('pageTitle', 'exploreDeep');
+
     register: {
         order: 11,
         type: ROUTE.exclusivelyPublic,
@@ -317,7 +327,7 @@ export const routes = {
 
     stringManagement: {
         order: 150,
-        type: ROUTE.private,
+        type: ROUTE.public,
         path: '/string-management/',
         loader: () => import('../views/StringManagement'),
         links: allLinks,

@@ -127,6 +127,7 @@
         "webpack-pwa-manifest": "^4.2.0"
     },
     "dependencies": {
+        "@hcaptcha/react-hcaptcha": "^0.3.6",
         "@mapbox/mapbox-gl-draw": "^1.2.0",
         "@the-deep/deep-ui": "^1.4.1-beta.3",
         "@timilsinabishal/react-components": "https://github.com/the-deep/react-components",

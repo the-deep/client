@@ -1396,7 +1396,9 @@
         "-90582895": "Analysis Completed",
         "-14918070": "No Analysis",
         "-93108581": "Sources by type",
-        "-28285008": "Quantitative data is not supported at the moment."
+        "-28285008": "Quantitative data is not supported at the moment.",
+        "-4525919": "Welcome to DEEP!",
+        "-4288502": "The humanitarian secondary data review & analysis platform"
     },
     "links": {
         "browserExtension": {
@@ -3986,11 +3988,20 @@
             "justificationPlaceholder": -9018181881,
             "message": -8188181919
         },
+<<<<<<< HEAD
         "components.excerptOutput": {
             "quantitativeDataNotSupportedLabel": -28285008
         },
         "components.userSelectInput": {
             "title": 13
+=======
+        "explore": {
+            "loginButtonLabel": 814
+        },
+        "explore.login": {
+            "welcomeToDeepText": -4525919,
+            "deepSubText": -4288502
+>>>>>>> e4e23b4e1 (Add HCaptcha in new login)
         }
     }
 }
