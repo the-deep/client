@@ -6,13 +6,22 @@
         background-color: var(--dui-color-foreground);
         width: var(--width-login-content);
 
-        .input-container {
+        .content {
             display: flex;
-            align-items: center;
+            flex-direction: column;
 
-            .input {
-                flex-grow: 1;
+            .error {
                 margin: 0 var(--dui-spacing-medium);
+            }
+
+            .input-container {
+                display: flex;
+                align-items: center;
+
+                .input {
+                    flex-grow: 1;
+                    margin: 0 var(--dui-spacing-medium);
+                }
             }
         }
 

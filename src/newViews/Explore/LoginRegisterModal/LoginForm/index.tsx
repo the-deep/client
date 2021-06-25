@@ -22,6 +22,7 @@ import Captcha from '@hcaptcha/react-hcaptcha';
 
 import { useLazyRequest } from '#utils/request';
 import HCaptcha from '#components/ui/HCaptcha';
+import NonFieldError from '#components/ui/NonFieldError';
 
 import {
     loginAction,
@@ -34,10 +35,16 @@ import styles from './styles.scss';
 
 const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY as string;
 
+interface LoginResponse {
+    access: string;
+    refresh: string;
+}
+
 interface LoginFields {
     // NOTE: Email must be sent as username
     username: string;
     password: string;
+    // eslint-disable-next-line camelcase
     hcaptcha_response?: string;
 }
 
@@ -111,42 +118,40 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
 
     const {
         trigger: loginTrigger,
-    } = useLazyRequest({
+    } = useLazyRequest<LoginResponse, LoginFields>({
         url: 'server://token/',
         method: 'POST',
         body: ctx => ctx,
-        onSuccess: (response) => {
-            // const { refresh, access } = response;
-            console.warn('here', response, login, authenticate, startSiloTasks);
-            // login({ refresh, access });
-            // startSiloTasks(() => console.log('Silo tasks started'));
-            // authenticate();
-            // if (recaptchaRef.current && recaptchaRef.current.reset) {
-            //     recaptchaRef.current.reset();
-            // }
+        onSuccess: ({ refresh, access }) => {
+            login({ refresh, access });
+            startSiloTasks(() => console.log('Silo tasks started'));
+            authenticate();
         },
-        onFailure: (response) => {
-            if (response.errorCode === 4004) {
-                /*
-                setFaramErrors({
-                    ...newFaramErrors,
+        onFailure: ({ errorCode, value: errorValue }) => {
+            if (errorCode === 4004) {
+                onErrorSet({
+                    fields: {
+                        ...errorValue.faramErrors,
+                    },
                     $internal: [
-                        showReCaptcha
+                        captchaRequired
                             ? _ts('login', 'retryRecaptcha')
                             : _ts('login', 'enterRecaptcha'),
                     ],
                 });
-                 */
                 setCaptchaRequired(true);
             } else {
-                // setFaramErrors(newFaramErrors);
-                // setPending(false);
+                onErrorSet({
+                    fields: { ...errorValue.faramErrors },
+                    $internal: errorValue.faramErrors.$internal,
+                });
             }
         },
         schemaName: 'tokenGetResponse',
     });
 
     const handleSubmit = useCallback((finalValue) => {
+        elementRef.current?.resetCaptcha();
         loginTrigger(finalValue);
     }, [loginTrigger]);
 
@@ -157,7 +162,16 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         >
             <Container
                 className={styles.loginFormContainer}
-                contentClassName={styles.inputContainer}
+                contentClassName={styles.content}
+                footerContent={captchaRequired && (
+                    <HCaptcha
+                        name="hcaptcha_response"
+                        elementRef={elementRef}
+                        siteKey={HCaptchaSitekey}
+                        onChange={onValueChange}
+                        error={error?.fields?.hcaptcha_response}
+                    />
+                )}
                 footerActions={(
                     <div className={styles.loginButton}>
                         <Button
@@ -181,36 +195,31 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     </div>
                 )}
             >
-                <TextInput
-                    name="username"
-                    className={styles.input}
-                    onChange={onValueChange}
-                    value={value?.username}
-                    error={error?.fields?.username}
-                    label={_ts('explore.login', 'emailLabel')}
-                    placeholder={_ts('myProfile', 'emailPlaceholder')}
-                    autoFocus
+                <NonFieldError
+                    className={styles.error}
+                    error={error}
                 />
-                <PasswordInput
-                    name="password"
-                    className={styles.input}
-                    onChange={onValueChange}
-                    value={value?.password}
-                    error={error?.fields?.password}
-                    label={_ts('explore.login', 'password')}
-                    placeholder={_ts('explore.login', 'password')}
-                />
-                {captchaRequired && (
-                    <HCaptcha
-                        name="hcaptcha_response"
-                        elementRef={elementRef}
-                        siteKey={HCaptchaSitekey}
-                        // value={value.captcha}
+                <div className={styles.inputContainer}>
+                    <TextInput
+                        name="username"
+                        className={styles.input}
                         onChange={onValueChange}
-                        error={error?.fields?.hcaptcha_response}
+                        value={value?.username}
+                        error={error?.fields?.username}
+                        label={_ts('explore.login', 'emailLabel')}
+                        placeholder={_ts('myProfile', 'emailPlaceholder')}
+                        autoFocus
                     />
-                )}
-
+                    <PasswordInput
+                        name="password"
+                        className={styles.input}
+                        onChange={onValueChange}
+                        value={value?.password}
+                        error={error?.fields?.password}
+                        label={_ts('explore.login', 'password')}
+                        placeholder={_ts('explore.login', 'password')}
+                    />
+                </div>
             </Container>
         </form>
     );
