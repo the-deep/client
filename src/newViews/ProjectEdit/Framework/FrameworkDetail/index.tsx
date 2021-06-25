@@ -50,6 +50,7 @@ interface Framework {
     createdAt: string;
     createdByName: string;
     visibleProjects: ProjectItem[];
+    previewImage?: string;
 }
 
 const itemKeySelector = (d: ProjectItem) => d.id;
@@ -281,8 +282,11 @@ function FrameworkDetail(props: Props) {
                     />
                 </div>
                 <Card className={styles.rightContainer}>
-                    { /* FIXME: This content will be removed later */}
-                    Framework preview goes here
+                    <ImagePreview
+                        alt={_ts('projectEdit', 'frameworkReferenceImageAlt')}
+                        hideTools
+                        src={frameworkDetails?.previewImage}
+                    />
                 </Card>
             </ContainerCard>
             {referenceImageShown && (
@@ -294,7 +298,7 @@ function FrameworkDetail(props: Props) {
                     <ImagePreview
                         alt={_ts('projectEdit', 'frameworkReferenceImageAlt')}
                         hideTools
-                        src=""
+                        src={frameworkDetails?.previewImage}
                     />
                 </Modal>
             )}

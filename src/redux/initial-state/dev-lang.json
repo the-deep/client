@@ -1413,7 +1413,11 @@
         "-818201101": "Sources",
         "-9188181010": "Dashboard",
         "-1810834810": "Export",
-        "-1881010101": "Add a source"
+        "-1881010101": "Add a source",
+        "-1823418301": "Upload an image of your framework",
+        "-183810101": "Preview",
+        "-184814819": "You can upload the image of your existing framework as a reference.",
+        "-19123812": "Preview image"
     },
     "links": {
         "browserExtension": {
@@ -3945,7 +3949,11 @@
             "frameworkUsersHeading": -28777942,
             "deleteUserLabel": 924,
             "editUserLabel": -67231440,
-            "removeUserConfirmation": -26472388
+            "removeUserConfirmation": -26472388,
+            "uploadFrameworkImage": -1823418301,
+            "previewImageHeading": -183810101,
+            "uploadFrameworkImageText": -184814819,
+            "previewImage": -19123812
         },
         "analyticalFramework.primaryTagging": {
             "nextButtonLabel": 23,
