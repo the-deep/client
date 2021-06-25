@@ -1,6 +1,8 @@
-.sub-navbar {
+.links {
     display: flex;
     align-items: center;
+    flex-grow: 1;
+    justify-content: center;
 
     .nav-link {
         display: flex;
@@ -24,4 +26,10 @@
     .button {
         margin-left: auto;
     }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }

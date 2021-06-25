@@ -18,6 +18,7 @@ import Icon from '#rscg/Icon';
 import Confirm from '#rscv/Modal/Confirm';
 import { useLazyRequest } from '#utils/request';
 import SelectInput from '#rsci/SelectInput';
+import { SelectInput as NewSelectInput, QuickActionLink } from '@the-deep/deep-ui';
 
 import Badge from '#components/viewer/Badge';
 
@@ -40,6 +41,7 @@ import {
     hideNavbar,
     showSubNavbar,
     getCurrentMatch,
+    viewsAcl,
 } from '#constants';
 import featuresMapping from '#constants/features';
 import NavbarContext from '#components/NavbarContext';
@@ -65,7 +67,10 @@ export const SubNavbar = ({
     if (!parentNode) {
         return null;
     }
-    return ReactDOM.createPortal(children, parentNode);
+    return ReactDOM.createPortal(
+        children,
+        parentNode,
+    );
 };
 
 
@@ -248,6 +253,10 @@ function Navbar(props) {
     const projectSelectInputLink = currentValidLinks.projectSelect;
     const adminPanelLink = currentValidLinks.adminPanel;
 
+    const editLink = reverseRoute(pathNames.editProject, {
+        projectId: activeProject,
+    });
+
     return (
         <nav className={_cs(className, styles.navbar)}>
             <div className={styles.topNavbar}>
@@ -339,20 +348,28 @@ function Navbar(props) {
                         <Cloak
                             {...projectSelectInputLink}
                             render={
-                                <SelectInput
-                                    hideClearButton
+                                <NewSelectInput
+                                    className={styles.projectSelectInput}
+                                    nonClearable
                                     keySelector={projectKeySelector}
                                     labelSelector={projectLabelSelector}
                                     optionLabelSelector={optionLabelSelector}
                                     onChange={handleProjectChange}
                                     options={userProjects}
                                     placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                                    showHintAndError={false}
-                                    showLabel={false}
-                                    className={styles.projectSelectInput}
                                     value={activeProject}
                                 />
                             }
+                        />
+                        <Cloak
+                            {...viewsAcl.editProject}
+                            render={activeProject && (
+                                <QuickActionLink
+                                    to={editLink}
+                                >
+                                    <Icon name="edit" />
+                                </QuickActionLink>
+                            )}
                         />
                     </div>
                     <div

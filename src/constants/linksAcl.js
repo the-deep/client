@@ -7,6 +7,7 @@ const notClusteringViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
 
 export const noLinks = {};
 export const allLinks = {
+    home: viewsAcl.home,
     leads: viewsAcl.leads,
     entries: viewsAcl.entries,
     arys: viewsAcl.arys,

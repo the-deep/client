@@ -30,12 +30,22 @@ function Navbar(props: Props) {
         activeProject,
     } = props;
 
-    const sourcesRoute = reverseRoute(pathNames.tagging, { projectId: activeProject });
-    const dashboardRoute = reverseRoute(pathNames.taggingDashboard, { projectId: activeProject });
-    const exportRoute = reverseRoute(pathNames.taggingExport, { projectId: activeProject });
+    const sourcesRoute = reverseRoute(
+        pathNames.tagging,
+        { projectId: activeProject },
+    );
+    const dashboardRoute = reverseRoute(
+        pathNames.taggingDashboard,
+        { projectId: activeProject },
+    );
+    const exportRoute = reverseRoute(
+        pathNames.taggingExport,
+        { projectId: activeProject },
+    );
+
     return (
         <SubNavbar>
-            <div className={styles.subNavbar}>
+            <div className={styles.links}>
                 <NavLink
                     className={styles.navLink}
                     activeClassName={styles.active}
@@ -60,11 +70,14 @@ function Navbar(props: Props) {
                 >
                     {_ts('tagging', 'export')}
                 </NavLink>
+            </div>
+            <div className={styles.actions}>
                 <Button
                     className={styles.button}
                     name={undefined}
                     variant="secondary"
                     actions={<IoChevronDown />}
+                    disabled
                 >
                     {_ts('tagging', 'addSource')}
                 </Button>
