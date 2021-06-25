@@ -45,7 +45,6 @@ export const allLinks = {
                 'userExports',
                 'analysisModule',
                 'tagging',
-                'sources',
                 'taggingDashboard',
                 'taggingExport',
             ].includes(pathKey) || !hasProjects

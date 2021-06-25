@@ -335,16 +335,9 @@ export const routes = {
     }, // _ts('pageTitle', 'landingPage');
 
     tagging: {
-        order: 160,
-        type: ROUTE.private,
-        path: '/new-ui/tagging/',
-        loader: () => import('../newViews/Tagging'),
-        links: allLinks,
-    },
-    sources: {
         order: 161,
         type: ROUTE.private,
-        path: '/new-ui/tagging/sources/',
+        path: '/new-ui/projects/:projectId/tagging/',
         loader: () => import('../newViews/Tagging/Sources'),
         showSubNavbar: true,
         links: allLinks,
@@ -352,7 +345,7 @@ export const routes = {
     taggingDashboard: {
         order: 162,
         type: ROUTE.private,
-        path: '/new-ui/tagging/dashboard/',
+        path: '/new-ui/projects/:projectId/tagging/dashboard/',
         loader: () => import('../newViews/Tagging/Dashboard'),
         showSubNavbar: true,
         links: allLinks,
@@ -361,7 +354,7 @@ export const routes = {
         order: 163,
         type: ROUTE.private,
         parentNode: 'tagging',
-        path: '/new-ui/tagging/export/',
+        path: '/new-ui/projects/:projectId/tagging/export/',
         loader: () => import('../newViews/Tagging/Export'),
         showSubNavbar: true,
         links: allLinks,

@@ -115,6 +115,7 @@ const acl = {
     frameworkQuestions: { hide: notQuestionnaireViewable },
 
     analysisModule: { hide: notAnalysisModuleViewable },
+    tagging: { hide: notLeadViewable },
 
     exploreDeep: {},
     projectDenied: {},

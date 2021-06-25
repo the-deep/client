@@ -1409,7 +1409,11 @@
         "-57329096": "Edit member",
         "-69672375": "Failed to add usergroups",
         "-60399046": "Failed to delete usergroup",
-        "-183108101": "Tagging"
+        "-183108101": "Tagging",
+        "-818201101": "Sources",
+        "-9188181010": "Dashboard",
+        "-1810834810": "Export",
+        "-1881010101": "Add a source"
     },
     "links": {
         "browserExtension": {
@@ -4086,6 +4090,12 @@
             "memberAddFailed": 177,
             "roleLabel": 12509,
             "editMemberLabel": -57329096
+        },
+        "tagging": {
+            "sources": -818201101,
+            "dashboard": -9188181010,
+            "export": -1810834810,
+            "addSource": -1881010101
         }
     }
 }

@@ -1,20 +1,38 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
+    withRouter,
     NavLink,
 } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
 import { pathNames } from '#constants';
 import { SubNavbar } from '#components/general/Navbar';
+import { IoChevronDown } from 'react-icons/io5';
+import {
+    AppState,
+} from '#typings';
 import {
     Button,
 } from '@the-deep/deep-ui';
+import _ts from '#ts';
+import { activeProjectIdFromStateSelector } from '#redux';
 
 import styles from './styles.scss';
 
-function Navbar() {
-    const sourcesRoute = reverseRoute(pathNames.sources, {});
-    const dashboardRoute = reverseRoute(pathNames.taggingDashboard, {});
-    const exportRoute = reverseRoute(pathNames.taggingExport, {});
+const mapStateToProps = (state: AppState) => ({
+    activeProject: activeProjectIdFromStateSelector(state),
+});
+interface Props {
+    activeProject: number;
+}
+function Navbar(props: Props) {
+    const {
+        activeProject,
+    } = props;
+
+    const sourcesRoute = reverseRoute(pathNames.tagging, { projectId: activeProject });
+    const dashboardRoute = reverseRoute(pathNames.taggingDashboard, { projectId: activeProject });
+    const exportRoute = reverseRoute(pathNames.taggingExport, { projectId: activeProject });
     return (
         <SubNavbar>
             <div className={styles.subNavbar}>
@@ -24,7 +42,7 @@ function Navbar() {
                     to={sourcesRoute}
                     exact
                 >
-                    sources
+                    {_ts('tagging', 'sources')}
                 </NavLink>
                 <NavLink
                     className={styles.navLink}
@@ -32,7 +50,7 @@ function Navbar() {
                     to={dashboardRoute}
                     exact
                 >
-                    dashboard
+                    {_ts('tagging', 'dashboard')}
                 </NavLink>
                 <NavLink
                     className={styles.navLink}
@@ -40,18 +58,19 @@ function Navbar() {
                     to={exportRoute}
                     exact
                 >
-                    export
+                    {_ts('tagging', 'export')}
                 </NavLink>
                 <Button
                     className={styles.button}
                     name={undefined}
-                    variant="primary"
+                    variant="secondary"
+                    actions={<IoChevronDown />}
                 >
-                    Add
+                    {_ts('tagging', 'addSource')}
                 </Button>
             </div>
         </SubNavbar>
     );
 }
 
-export default Navbar;
+export default withRouter(connect(mapStateToProps)(Navbar));
