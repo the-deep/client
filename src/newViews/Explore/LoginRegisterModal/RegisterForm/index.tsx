@@ -98,7 +98,11 @@ function RegisterModal(props: Props) {
     });
 
     const handleSubmit = useCallback((finalValue) => {
-        triggerRegister(finalValue);
+        elementRef.current?.resetCaptcha();
+        triggerRegister({
+            ...finalValue,
+            username: finalValue.email,
+        });
     }, [triggerRegister]);
 
     return (

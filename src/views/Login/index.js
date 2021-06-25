@@ -172,6 +172,7 @@ function Login(props) {
             hcaptchaResponse,
         };
         setLoginUrl('server://token/');
+        elementRef.current?.resetCaptcha();
         loginTrigger(params);
     }, [loginTrigger]);
 

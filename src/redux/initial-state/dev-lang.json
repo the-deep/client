@@ -1400,7 +1400,8 @@
         "-4525919": "Welcome to DEEP!",
         "-4288502": "The humanitarian secondary data review & analysis platform",
         "-2006367": "Don't have an account yet?",
-        "-77375980": "Explore"
+        "-77375980": "Explore",
+        "-16156610": "If you want to explore Deep, simply close this window."
     },
     "links": {
         "browserExtension": {
@@ -3998,7 +3999,8 @@
             "title": 13
         },
         "explore": {
-            "loginButtonLabel": 814
+            "loginButtonLabel": 814,
+            "closeModalToExploreDeepLabel": -16156610
         },
         "explore.login": {
             "welcomeToDeepText": -4525919,
@@ -4019,7 +4021,7 @@
             "organizationLabel": 154,
             "registerButtonLabel": 811,
             "registerFormHeader": -2006367,
-            "checkYourEmailText": 812,
+            "checkYourEmailText": 818,
             "emailPlaceholder": 184,
             "firstNamePlaceholder": 150,
             "lastNamePlaceholder": 152,

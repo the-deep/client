@@ -28,7 +28,8 @@ function LoginRegisterModal(props: Props) {
         <Modal
             className={_cs(styles.modal, className)}
             headerClassName={styles.header}
-            closeButtonClassname={styles.closeButton}
+            headingSize="small"
+            closeButtonClassName={styles.closeButton}
             heading={(
                 <div className={styles.headingContainer}>
                     <Icon
@@ -45,6 +46,8 @@ function LoginRegisterModal(props: Props) {
                     </div>
                 </div>
             )}
+            footer={_ts('explore', 'closeModalToExploreDeepLabel')}
+            footerClassName={styles.footer}
             onCloseButtonClick={onClose}
             bodyClassName={styles.content}
         >

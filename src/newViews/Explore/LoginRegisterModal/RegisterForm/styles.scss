@@ -20,7 +20,9 @@
     }
 
     .register-success {
-        margin: auto;
+        display: flex;
+        justify-content: center;
+        margin: var(--dui-spacing-medium) auto;
         width: var(--width-register-content);
     }
 }
