@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import {
     Button,
     Container,
     PasswordInput,
+    ButtonLikeLink,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -19,9 +20,11 @@ import {
     lengthSmallerThanCondition,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
+import { parseUrlParams } from '@togglecorp/react-rest-request';
 
 import { useLazyRequest } from '#utils/request';
 import HCaptcha from '#components/ui/HCaptcha';
+import { hidUrl } from '#config/hid';
 import NonFieldError from '#components/ui/NonFieldError';
 
 import {
@@ -34,6 +37,23 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY as string;
+
+interface HidQuery {
+    // eslint-disable-next-line camelcase
+    access_token: string;
+    // eslint-disable-next-line camelcase
+    expires_in: string;
+    state: string;
+    // eslint-disable-next-line camelcase
+    token_type: string;
+}
+
+interface HidParams {
+    accessToken: string;
+    expiresIn: string;
+    state: string;
+    tokenType: string;
+}
 
 interface LoginResponse {
     access: string;
@@ -88,6 +108,7 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 
 interface Props {
     className?: string;
+    location: Location;
 }
 
 function LoginRegisterModal(props: Props & PropsFromDispatch) {
@@ -96,6 +117,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         login,
         authenticate,
         startSiloTasks,
+        location,
     } = props;
     const [captchaRequired, setCaptchaRequired] = useState(false);
 
@@ -149,6 +171,63 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         schemaName: 'tokenGetResponse',
     });
 
+    const {
+        trigger: hidLoginTrigger,
+    } = useLazyRequest<LoginResponse, HidParams>({
+        url: 'server://token/',
+        method: 'POST',
+        body: ctx => ctx,
+        onSuccess: ({ refresh, access }) => {
+            login({ refresh, access });
+            startSiloTasks(() => console.log('Silo tasks started'));
+            authenticate();
+        },
+        onFailure: ({ errorCode, value: errorValue }) => {
+            if (errorCode === 4004) {
+                onErrorSet({
+                    fields: {
+                        ...errorValue.faramErrors,
+                    },
+                    $internal: [
+                        captchaRequired
+                            ? _ts('explore.login', 'retryRecaptcha')
+                            : _ts('explore.login', 'enterRecaptcha'),
+                    ],
+                });
+                setCaptchaRequired(true);
+            } else {
+                onErrorSet({
+                    fields: { ...errorValue.faramErrors },
+                    $internal: errorValue.faramErrors.$internal,
+                });
+            }
+        },
+        schemaName: 'tokenGetResponse',
+    });
+
+    // FIXME: We need to change the redirect URL in hid configurations later on
+    const checkParamsFromHid = useCallback(() => {
+        // Get params from the current url
+        // NOTE: hid provides query as hash
+        // eslint-disable-next-line camelcase
+        const query = parseUrlParams(location.hash.replace('#', '')) as { access_token?: string };
+        // Login User with HID access_token
+        if (query.access_token) {
+            const hidQuery = query as HidQuery;
+            const params = {
+                accessToken: hidQuery.access_token,
+                expiresIn: hidQuery.expires_in,
+                state: hidQuery.state,
+                tokenType: hidQuery.token_type,
+            };
+            hidLoginTrigger(params);
+        }
+    }, [hidLoginTrigger, location]);
+
+    useEffect(() => {
+        checkParamsFromHid();
+    }, [checkParamsFromHid]);
+
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
         loginTrigger(finalValue);
@@ -183,14 +262,14 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                             {_ts('explore.login', 'loginButtonLabel')}
                         </Button>
                         {_ts('explore.login', 'or')}
-                        <Button
+                        <ButtonLikeLink
                             disabled={pristine}
                             className={styles.button}
                             variant="secondary"
-                            name="loginWithHid"
+                            to={hidUrl}
                         >
                             {_ts('explore.login', 'loginWithHid')}
-                        </Button>
+                        </ButtonLikeLink>
                     </div>
                 )}
             >
