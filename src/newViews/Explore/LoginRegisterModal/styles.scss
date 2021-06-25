@@ -5,6 +5,7 @@
     min-width: 720px;
     height: 80vh;
     min-height: 720px;
+    max-height: 96vh;
 
     .header {
         background-color: var(--dui-color-brand);
@@ -27,7 +28,7 @@
         .heading-container {
             display: flex;
             justify-content: center;
-            padding: var(--dui-spacing-extra-large);
+            padding: var(--dui-spacing-large);
 
             .deep-logo {
                 margin: var(--dui-spacing-large);

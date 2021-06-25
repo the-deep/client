@@ -44,8 +44,7 @@ interface LoginFields {
     // NOTE: Email must be sent as username
     username: string;
     password: string;
-    // eslint-disable-next-line camelcase
-    hcaptcha_response?: string;
+    hcaptchaResponse?: string;
 }
 
 type FormType = Partial<LoginFields>;
@@ -65,7 +64,7 @@ const schema = (captchaRequired: boolean): FormSchema => ({
         if (captchaRequired) {
             basicFields = {
                 ...basicFields,
-                hcaptcha_response: [requiredStringCondition],
+                hcaptchaResponse: [requiredStringCondition],
             };
         }
         return basicFields;
@@ -135,8 +134,8 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     },
                     $internal: [
                         captchaRequired
-                            ? _ts('login', 'retryRecaptcha')
-                            : _ts('login', 'enterRecaptcha'),
+                            ? _ts('explore.login', 'retryRecaptcha')
+                            : _ts('explore.login', 'enterRecaptcha'),
                     ],
                 });
                 setCaptchaRequired(true);
@@ -165,11 +164,11 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                 contentClassName={styles.content}
                 footerContent={captchaRequired && (
                     <HCaptcha
-                        name="hcaptcha_response"
+                        name="hcaptchaResponse"
                         elementRef={elementRef}
                         siteKey={HCaptchaSitekey}
                         onChange={onValueChange}
-                        error={error?.fields?.hcaptcha_response}
+                        error={error?.fields?.hcaptchaResponse}
                     />
                 )}
                 footerActions={(
@@ -207,7 +206,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         value={value?.username}
                         error={error?.fields?.username}
                         label={_ts('explore.login', 'emailLabel')}
-                        placeholder={_ts('myProfile', 'emailPlaceholder')}
+                        placeholder={_ts('explore.login', 'emailPlaceholder')}
                         autoFocus
                     />
                     <PasswordInput

@@ -1398,7 +1398,9 @@
         "-93108581": "Sources by type",
         "-28285008": "Quantitative data is not supported at the moment.",
         "-4525919": "Welcome to DEEP!",
-        "-4288502": "The humanitarian secondary data review & analysis platform"
+        "-4288502": "The humanitarian secondary data review & analysis platform",
+        "-2006367": "Don't have an account yet?",
+        "-77375980": "Explore"
     },
     "links": {
         "browserExtension": {
@@ -2406,7 +2408,8 @@
             "pillarAnalysis": -52946834,
             "editProject": 31,
             "analyticalFramework": -91820939,
-            "myProfile": -810289191
+            "myProfile": -810289191,
+            "exploreDeep": -77375980
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3988,20 +3991,40 @@
             "justificationPlaceholder": -9018181881,
             "message": -8188181919
         },
-<<<<<<< HEAD
         "components.excerptOutput": {
             "quantitativeDataNotSupportedLabel": -28285008
         },
         "components.userSelectInput": {
             "title": 13
-=======
+        },
         "explore": {
             "loginButtonLabel": 814
         },
         "explore.login": {
             "welcomeToDeepText": -4525919,
-            "deepSubText": -4288502
->>>>>>> e4e23b4e1 (Add HCaptcha in new login)
+            "deepSubText": -4288502,
+            "emailLabel": 184,
+            "loginButtonLabel": 814,
+            "loginWithHid": 805,
+            "or": 806,
+            "password": 808,
+            "enterRecaptcha": 894,
+            "retryRecaptcha": 894,
+            "emailPlaceholder": 184
+        },
+        "explore.register": {
+            "emailLabel": 184,
+            "firstNameLabel": 150,
+            "lastNameLabel": 152,
+            "organizationLabel": 154,
+            "registerButtonLabel": 811,
+            "registerFormHeader": -2006367,
+            "checkYourEmailText": 812,
+            "emailPlaceholder": 184,
+            "firstNamePlaceholder": 150,
+            "lastNamePlaceholder": 152,
+            "organizationPlaceholder": 154,
+            "retryRecaptcha": 894
         }
     }
 }

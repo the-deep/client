@@ -5,6 +5,7 @@
         margin: auto;
         background-color: var(--dui-color-foreground);
         width: var(--width-register-content);
+        overflow: unset;
 
         .input-container {
             display: flex;
@@ -16,5 +17,10 @@
                 margin: var(--dui-spacing-medium);
             }
         }
+    }
+
+    .register-success {
+        margin: auto;
+        width: var(--width-register-content);
     }
 }

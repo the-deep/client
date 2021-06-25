@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
 import Faram, {
+    FaramInputElement,
     requiredCondition,
     emailCondition,
     lengthGreaterThanCondition,
@@ -11,15 +12,14 @@ import Faram, {
 } from '@togglecorp/faram';
 import { parseUrlParams } from '@togglecorp/react-rest-request';
 
+import NewHCaptcha from '#components/ui/HCaptcha';
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
 import { useLazyRequest } from '#utils/request';
 
 import { hidUrl } from '#config/hid';
-import { reCaptchaSiteKey } from '#config/reCaptcha';
 import { pathNames } from '#constants';
 import {
     loginAction,
@@ -29,6 +29,9 @@ import { startSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroun
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const HCaptcha = FaramInputElement(NewHCaptcha);
+const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY;
 
 const mapDispatchToProps = dispatch => ({
     authenticate: () => dispatch(authenticateAction()),
@@ -50,7 +53,7 @@ const schema = {
     },
 };
 
-const schemaWithRecaptcha = {
+const schemaWithCaptcha = {
     fields: {
         email: [
             requiredCondition,
@@ -61,7 +64,7 @@ const schemaWithRecaptcha = {
             lengthGreaterThanCondition(4),
             lengthLessThanCondition(129),
         ],
-        recaptchaResponse: [requiredCondition],
+        hcaptchaResponse: [requiredCondition],
     },
 };
 
@@ -78,9 +81,10 @@ function Login(props) {
     const [faramErrors, setFaramErrors] = useState({});
     const [pending, setPending] = useState(false);
     const [loginUrl, setLoginUrl] = useState(false);
-    const [showReCaptcha, setShowReCaptcha] = useState(false);
     const [finalSchema, setFinalSchema] = useState(schema);
-    const recaptchaRef = useRef(null);
+
+    const [captchaRequired, setCaptchaRequired] = useState(false);
+    const elementRef = useRef(null);
 
     const {
         pending: loginPending,
@@ -94,24 +98,18 @@ function Login(props) {
             login({ refresh, access });
             startSiloTasks(() => console.log('Silo tasks started'));
             authenticate();
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
-            }
         },
         onFailure: ({ errorCode, value: { faramErrors: newFaramErrors } }) => {
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
-            }
             if (errorCode === 4004) {
                 setFaramErrors({
                     ...newFaramErrors,
                     $internal: [
-                        showReCaptcha ? _ts('login', 'retryRecaptcha') : _ts('login', 'enterRecaptcha'),
+                        captchaRequired ? _ts('login', 'retryRecaptcha') : _ts('login', 'enterRecaptcha'),
                     ],
                 });
                 setPending(false);
-                setShowReCaptcha(true);
-                setFinalSchema(schemaWithRecaptcha);
+                setCaptchaRequired(true);
+                setFinalSchema(schemaWithCaptcha);
             } else {
                 setFaramErrors(newFaramErrors);
                 setPending(false);
@@ -165,13 +163,13 @@ function Login(props) {
         {
             email,
             password,
-            recaptchaResponse,
+            hcaptchaResponse,
         },
     ) => {
         const params = {
             username: email,
             password,
-            recaptchaResponse,
+            hcaptchaResponse,
         };
         setLoginUrl('server://token/');
         loginTrigger(params);
@@ -235,11 +233,11 @@ function Login(props) {
                         placeholder={_ts('login', 'passwordPlaceholder')}
                         type="password"
                     />
-                    { showReCaptcha &&
-                        <ReCaptcha
-                            componentRef={recaptchaRef}
-                            faramElementName="recaptchaResponse"
-                            siteKey={reCaptchaSiteKey}
+                    { captchaRequired &&
+                        <HCaptcha
+                            componentRef={elementRef}
+                            faramElementName="hcaptchaResponse"
+                            siteKey={HCaptchaSitekey}
                         />
                     }
                     <div className={styles.actionButtons}>
