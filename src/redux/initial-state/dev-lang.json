@@ -1401,7 +1401,9 @@
         "-4288502": "The humanitarian secondary data review & analysis platform",
         "-2006367": "Don't have an account yet?",
         "-77375980": "Explore",
-        "-16156610": "If you want to explore Deep, simply close this window."
+        "-16156610": "If you want to explore Deep, simply close this window.",
+        "-12448542": "Forgot your password?",
+        "-31997661": "Reset your password"
     },
     "links": {
         "browserExtension": {
@@ -4012,7 +4014,8 @@
             "password": 808,
             "enterRecaptcha": 894,
             "retryRecaptcha": 894,
-            "emailPlaceholder": 184
+            "emailPlaceholder": 184,
+            "forgotPasswordButtonLabel": -12448542
         },
         "explore.register": {
             "emailLabel": 184,
@@ -4027,6 +4030,16 @@
             "lastNamePlaceholder": 152,
             "organizationPlaceholder": 154,
             "retryRecaptcha": 894
+        },
+        "explore.forgotPasswordModal": {
+            "retryRecaptcha": 894
+        },
+        "explore.passwordReset": {
+            "emailLabel": 184,
+            "emailPlaceholder": 813,
+            "forgotPasswordModalHeading": -31997661,
+            "resetPasswordButtonLabel": -77593412,
+            "checkYourEmailText": 812
         }
     }
 }

@@ -12,6 +12,10 @@
             align-items: center;
             flex-wrap: wrap;
 
+            .error {
+                margin: var(--dui-spacing-medium);
+            }
+
             .input {
                 flex-basis: calc(50% - 2 * var(--dui-spacing-medium));
                 margin: var(--dui-spacing-medium);

@@ -16,6 +16,7 @@ import {
 import Captcha from '@hcaptcha/react-hcaptcha';
 import { useLazyRequest } from '#utils/request';
 import HCaptcha from '#components/ui/HCaptcha';
+import NonFieldError from '#components/ui/NonFieldError';
 
 import _ts from '#ts';
 
@@ -140,6 +141,10 @@ function RegisterModal(props: Props) {
                         </Button>
                     )}
                 >
+                    <NonFieldError
+                        className={styles.error}
+                        error={error}
+                    />
                     <TextInput
                         name="firstName"
                         className={styles.input}

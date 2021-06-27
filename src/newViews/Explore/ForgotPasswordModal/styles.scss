@@ -1,0 +1,12 @@
+.password-reset-form {
+    .content {
+        .password-reset-success {
+            margin: var(--dui-spacing-small);
+        }
+
+        .error,
+        .input {
+            margin: var(--dui-spacing-small);
+        }
+    }
+}

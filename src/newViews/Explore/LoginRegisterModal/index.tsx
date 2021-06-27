@@ -16,12 +16,14 @@ import styles from './styles.scss';
 interface Props {
     className?: string;
     onClose: () => void;
+    onForgotPasswordClick: (email?: string) => void;
 }
 
 function LoginRegisterModal(props: Props) {
     const {
         className,
         onClose,
+        onForgotPasswordClick,
     } = props;
 
     return (
@@ -51,7 +53,10 @@ function LoginRegisterModal(props: Props) {
             onCloseButtonClick={onClose}
             bodyClassName={styles.content}
         >
-            <LoginForm className={styles.login} />
+            <LoginForm
+                className={styles.login}
+                onForgotPasswordClick={onForgotPasswordClick}
+            />
             <RegisterForm />
         </Modal>
     );

@@ -109,6 +109,7 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 interface Props {
     className?: string;
     location: Location;
+    onForgotPasswordClick: (email?: string) => void;
 }
 
 function LoginRegisterModal(props: Props & PropsFromDispatch) {
@@ -118,7 +119,9 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         authenticate,
         startSiloTasks,
         location,
+        onForgotPasswordClick,
     } = props;
+
     const [captchaRequired, setCaptchaRequired] = useState(false);
 
     const elementRef = useRef<Captcha>(null);
@@ -210,7 +213,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         // Get params from the current url
         // NOTE: hid provides query as hash
         // eslint-disable-next-line camelcase
-        const query = parseUrlParams(location.hash.replace('#', '')) as { access_token?: string };
+        const query = parseUrlParams(location?.hash?.replace('#', '')) as { access_token?: string };
         // Login User with HID access_token
         if (query.access_token) {
             const hidQuery = query as HidQuery;
@@ -249,6 +252,15 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         onChange={onValueChange}
                         error={error?.fields?.hcaptchaResponse}
                     />
+                )}
+                footerIcons={(
+                    <Button
+                        name={value?.username}
+                        onClick={onForgotPasswordClick}
+                        variant="action"
+                    >
+                        {_ts('explore.login', 'forgotPasswordButtonLabel')}
+                    </Button>
                 )}
                 footerActions={(
                     <div className={styles.loginButton}>
