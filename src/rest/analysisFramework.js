@@ -1,7 +1,7 @@
 import {
     POST,
     wsEndpoint,
-    PUT,
+    PATCH,
     commonHeaderForPost,
     p,
 } from '#config/rest';
@@ -38,7 +38,7 @@ export const createParamsForAfClone = data => ({
 });
 
 export const createParamsForAnalysisFrameworkEdit = data => ({
-    method: PUT,
+    method: PATCH,
     headers: commonHeaderForPost,
     body: JSON.stringify(data),
 });

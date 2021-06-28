@@ -207,9 +207,6 @@ export default class AnalysisFramework extends React.PureComponent {
         const { analysisFrameworkId: newAnalysisFrameworkId } = nextProps;
 
         if (oldAnalysisFrameworkId !== newAnalysisFrameworkId) {
-            if (this.analysisFrameworkSaveRequest) {
-                this.analysisFrameworkSaveRequest.stop();
-            }
             this.geoOptionsRequest.stop();
 
             this.frameworkGetRequest.init(newAnalysisFrameworkId);
@@ -306,7 +303,17 @@ export default class AnalysisFramework extends React.PureComponent {
             analysisFramework,
         } = this.props;
 
-        this.frameworkSaveRequest.init(analysisFrameworkId, analysisFramework);
+        if (!analysisFramework) {
+            return;
+        }
+
+        // NOTE: only sending data on save that is necessary
+        const value = {
+            id: analysisFramework.id,
+            properties: analysisFramework.properties,
+            widgets: analysisFramework.widgets,
+        };
+        this.frameworkSaveRequest.init(analysisFrameworkId, value);
         this.frameworkSaveRequest.start();
     }
 
