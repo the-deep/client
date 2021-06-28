@@ -236,7 +236,7 @@ function Login(props) {
                     />
                     { captchaRequired &&
                         <HCaptcha
-                            componentRef={elementRef}
+                            elementRef={elementRef}
                             faramElementName="hcaptchaResponse"
                             siteKey={HCaptchaSitekey}
                         />

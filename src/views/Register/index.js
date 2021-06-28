@@ -130,7 +130,7 @@ function Register() {
                             placeholder={_ts('register', 'emailPlaceholder')}
                         />
                         <HCaptcha
-                            componentRef={elementRef}
+                            elementRef={elementRef}
                             faramElementName="hcaptchaResponse"
                             siteKey={HCaptchaSitekey}
                         />

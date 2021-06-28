@@ -114,7 +114,7 @@ function PasswordReset() {
                                 placeholder={_ts('passwordReset', 'emailPlaceholder')}
                             />
                             <HCaptcha
-                                componentRef={captchaRef}
+                                elementRef={captchaRef}
                                 faramElementName="hcaptchaResponse"
                                 siteKey={HCaptchaSitekey}
                             />

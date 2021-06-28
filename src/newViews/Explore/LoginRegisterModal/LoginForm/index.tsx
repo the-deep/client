@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { _cs } from '@togglecorp/fujs';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { IoChevronForwardSharp } from 'react-icons/io5';
 import {
     TextInput,
     Button,
@@ -237,22 +238,13 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                 contentClassName={styles.content}
                 footerContent={captchaRequired && (
                     <HCaptcha
+                        className={styles.captcha}
                         name="hcaptchaResponse"
                         elementRef={elementRef}
                         siteKey={HCaptchaSitekey}
                         onChange={onValueChange}
                         error={error?.fields?.hcaptchaResponse}
                     />
-                )}
-                footerIconsContainerClassName={styles.footerIcons}
-                footerIcons={(
-                    <Button
-                        name={value?.username}
-                        onClick={onForgotPasswordClick}
-                        variant="action"
-                    >
-                        {_ts('explore.login', 'forgotPasswordButtonLabel')}
-                    </Button>
                 )}
                 footerActions={(
                     <div className={styles.loginButton}>
@@ -302,6 +294,17 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         placeholder={_ts('explore.login', 'password')}
                     />
                 </div>
+                <Button
+                    className={styles.forgetPasswordButton}
+                    name={value?.username}
+                    onClick={onForgotPasswordClick}
+                    variant="action"
+                    actions={(
+                        <IoChevronForwardSharp />
+                    )}
+                >
+                    {_ts('explore.login', 'forgotPasswordButtonLabel')}
+                </Button>
             </Container>
         </form>
     );

@@ -5,6 +5,7 @@
         margin: auto;
         background-color: var(--dui-color-foreground);
         width: var(--width-login-content);
+        overflow: unset;
 
         .content {
             display: flex;
@@ -23,10 +24,16 @@
                     margin: 0 var(--dui-spacing-medium);
                 }
             }
+
+            .forget-password-button {
+                margin: var(--dui-spacing-small) var(--dui-spacing-medium);
+                color: var(--dui-color-accent);
+                font-size: var(--dui-font-size-extra-small);
+            }
         }
 
-        .footer-icons {
-            align-self: flex-start;
+        .captcha {
+            margin: 0 var(--dui-spacing-medium);
         }
 
         .login-button {

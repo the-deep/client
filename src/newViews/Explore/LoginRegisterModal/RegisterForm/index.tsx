@@ -120,6 +120,7 @@ function RegisterModal(props: Props) {
                     heading={_ts('explore.register', 'registerFormHeader')}
                     footerContent={(
                         <HCaptcha
+                            className={styles.captcha}
                             name="hcaptchaResponse"
                             elementRef={elementRef}
                             siteKey={HCaptchaSitekey}
@@ -152,7 +153,6 @@ function RegisterModal(props: Props) {
                         label={_ts('explore.register', 'firstNameLabel')}
                         placeholder={_ts('explore.register', 'firstNamePlaceholder')}
                         disabled={registerPending}
-                        autoFocus
                     />
                     <TextInput
                         name="lastName"
@@ -163,7 +163,6 @@ function RegisterModal(props: Props) {
                         label={_ts('explore.register', 'lastNameLabel')}
                         placeholder={_ts('explore.register', 'lastNamePlaceholder')}
                         disabled={registerPending}
-                        autoFocus
                     />
                     <TextInput
                         name="organization"
@@ -174,7 +173,6 @@ function RegisterModal(props: Props) {
                         label={_ts('explore.register', 'organizationLabel')}
                         placeholder={_ts('explore.register', 'organizationPlaceholder')}
                         disabled={registerPending}
-                        autoFocus
                     />
                     <TextInput
                         name="email"
@@ -185,7 +183,6 @@ function RegisterModal(props: Props) {
                         label={_ts('explore.register', 'emailLabel')}
                         placeholder={_ts('explore.register', 'emailPlaceholder')}
                         disabled={registerPending}
-                        autoFocus
                     />
                 </Container>
             )}
