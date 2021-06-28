@@ -8,6 +8,7 @@ import {
     Button,
     Container,
     PasswordInput,
+    PendingMessage,
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
 import {
@@ -141,6 +142,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
     } = useForm(initialValue, mySchema);
 
     const {
+        pending: loginPending,
         trigger: loginTrigger,
     } = useLazyRequest<LoginResponse, LoginFields>({
         url: 'server://token/',
@@ -173,6 +175,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
     });
 
     const {
+        pending: hidLoginPending,
         trigger: hidLoginTrigger,
     } = useLazyRequest<LoginResponse, HidParams>({
         url: 'server://token/',
@@ -227,11 +230,14 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         loginTrigger(finalValue);
     }, [loginTrigger]);
 
+    const pending = hidLoginPending || loginPending;
+
     return (
         <form
             className={_cs(styles.loginForm, className)}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
+            {pending && <PendingMessage />}
             <Container
                 className={styles.loginFormContainer}
                 contentClassName={styles.content}
@@ -249,7 +255,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     <div className={styles.loginButton}>
                         <Button
                             className={styles.button}
-                            disabled={pristine}
+                            disabled={pristine || pending}
                             type="submit"
                             variant="primary"
                             name="login"
@@ -258,7 +264,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         </Button>
                         {_ts('explore.login', 'or')}
                         <ButtonLikeLink
-                            disabled={pristine}
+                            disabled={pristine || pending}
                             className={styles.button}
                             variant="secondary"
                             to={hidUrl}
@@ -281,6 +287,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         error={error?.fields?.username}
                         label={_ts('explore.login', 'emailLabel')}
                         placeholder={_ts('explore.login', 'emailPlaceholder')}
+                        disabled={pending}
                         autoFocus
                     />
                     <PasswordInput
@@ -291,6 +298,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         error={error?.fields?.password}
                         label={_ts('explore.login', 'password')}
                         placeholder={_ts('explore.login', 'password')}
+                        disabled={pending}
                     />
                 </div>
                 <Button

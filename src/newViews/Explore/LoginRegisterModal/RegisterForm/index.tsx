@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     TextInput,
     Button,
+    PendingMessage,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -24,7 +25,7 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 interface RegisterFields {
-    email: string;
+    username: string;
     firstName: string;
     lastName: string;
     organization: string;
@@ -37,7 +38,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        email: [emailCondition, requiredCondition],
+        username: [emailCondition, requiredCondition],
         firstName: [requiredStringCondition],
         lastName: [requiredStringCondition],
         organization: [requiredStringCondition],
@@ -97,10 +98,7 @@ function RegisterModal(props: Props) {
 
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
-        triggerRegister({
-            ...finalValue,
-            username: finalValue.email,
-        });
+        triggerRegister(finalValue);
     }, [triggerRegister]);
 
     return (
@@ -108,9 +106,10 @@ function RegisterModal(props: Props) {
             className={_cs(styles.registerForm, className)}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
+            {registerPending && <PendingMessage />}
             {success ? (
                 <div className={styles.registerSuccess}>
-                    {_ts('explore.register', 'checkYourEmailText', { email: context?.email })}
+                    {_ts('explore.register', 'checkYourEmailText', { email: context?.username })}
                 </div>
             ) : (
                 <Container
@@ -174,11 +173,11 @@ function RegisterModal(props: Props) {
                         disabled={registerPending}
                     />
                     <TextInput
-                        name="email"
+                        name="username"
                         className={styles.input}
                         onChange={onValueChange}
-                        value={value?.email}
-                        error={error?.fields?.email}
+                        value={value?.username}
+                        error={error?.fields?.username}
                         label={_ts('explore.register', 'emailLabel')}
                         placeholder={_ts('explore.register', 'emailPlaceholder')}
                         disabled={registerPending}
