@@ -2,22 +2,25 @@ import React, { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import Faram, {
+    FaramInputElement,
     emailCondition,
     requiredCondition,
 } from '@togglecorp/faram';
 import { reverseRoute } from '@togglecorp/fujs';
 
+import NewHCaptcha from '#components/ui/HCaptcha';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
 
-import { reCaptchaSiteKey } from '#config/reCaptcha';
 import { useLazyRequest } from '#utils/request';
 import { pathNames } from '#constants';
 import _ts from '#ts';
+import HCaptchaSiteKey from '#config/hCaptcha';
 
 import styles from './styles.scss';
+
+const HCaptcha = FaramInputElement(NewHCaptcha);
 
 const faramSchema = {
     fields: {
@@ -28,7 +31,7 @@ const faramSchema = {
             requiredCondition,
             emailCondition,
         ],
-        recaptchaResponse: [requiredCondition],
+        hcaptchaResponse: [requiredCondition],
     },
 };
 
@@ -37,7 +40,7 @@ function Register() {
     const [faramErrors, setFaramErrors] = useState({});
     const [success, setSuccess] = useState(false);
 
-    const recaptchaRef = useRef(null);
+    const elementRef = useRef(null);
 
     const {
         pending: registerPending,
@@ -49,14 +52,8 @@ function Register() {
         body: ctx => ctx,
         onSuccess: () => {
             setSuccess(true);
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
-            }
         },
         onFailure: ({ errorCode, value: { faramErrors: newFaramErrors } }) => {
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
-            }
             if (errorCode === 4004) {
                 setFaramErrors({
                     ...newFaramErrors,
@@ -84,6 +81,7 @@ function Register() {
     }, []);
 
     const handleFaramValidationSuccess = useCallback((finalValues) => {
+        elementRef.current?.resetCaptcha();
         triggerRegister({
             ...finalValues,
             // NOTE: username of the user is their email address
@@ -131,10 +129,10 @@ function Register() {
                             label={_ts('register', 'emailLabel')}
                             placeholder={_ts('register', 'emailPlaceholder')}
                         />
-                        <ReCaptcha
-                            componentRef={recaptchaRef}
-                            faramElementName="recaptchaResponse"
-                            siteKey={reCaptchaSiteKey}
+                        <HCaptcha
+                            elementRef={elementRef}
+                            faramElementName="hcaptchaResponse"
+                            siteKey={HCaptchaSiteKey}
                         />
                         <div className={styles.actionButtons}>
                             <PrimaryButton

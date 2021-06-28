@@ -1,23 +1,26 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Faram, {
+    FaramInputElement,
     requiredCondition,
     emailCondition,
 } from '@togglecorp/faram';
 import { reverseRoute } from '@togglecorp/fujs';
 
+import NewHCaptcha from '#components/ui/HCaptcha';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import _ts from '#ts';
 import { pathNames } from '#constants';
-import { reCaptchaSiteKey } from '#config/reCaptcha';
 import { useLazyRequest } from '#utils/request';
+import HCaptchaSiteKey from '#config/hCaptcha';
 
 import styles from './styles.scss';
+
+const HCaptcha = FaramInputElement(NewHCaptcha);
 
 const faramSchema = {
     fields: {
@@ -25,7 +28,7 @@ const faramSchema = {
             requiredCondition,
             emailCondition,
         ],
-        recaptchaResponse: [
+        hcaptchaResponse: [
             requiredCondition,
         ],
     },
@@ -36,7 +39,7 @@ function PasswordReset() {
     const [faramErrors, setFaramErrors] = useState({});
     const [success, setSuccess] = useState(false);
 
-    const recaptchaRef = useRef(null);
+    const captchaRef = useRef(null);
 
     const {
         pending: resetPending,
@@ -47,14 +50,8 @@ function PasswordReset() {
         body: ctx => ctx,
         onSuccess: () => {
             setSuccess(true);
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
-            }
         },
         onFailure: ({ value: { errorCode, faramErrors: newFaramErrors } }) => {
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
-            }
             if (errorCode === 4004) {
                 setFaramErrors({
                     ...newFaramErrors,
@@ -79,9 +76,10 @@ function PasswordReset() {
     }, []);
 
     const handleFaramValidationSuccess = useCallback((_, finalValues) => {
+        captchaRef.current?.resetCaptcha();
         triggerReset({
             email: finalValues.email,
-            recaptchaResponse: finalValues.recaptchaResponse,
+            hcaptchaResponse: finalValues.hcaptchaResponse,
         });
     }, [triggerReset]);
 
@@ -115,10 +113,10 @@ function PasswordReset() {
                                 label={_ts('passwordReset', 'emailLabel')}
                                 placeholder={_ts('passwordReset', 'emailPlaceholder')}
                             />
-                            <ReCaptcha
-                                faramElementName="recaptchaResponse"
-                                componentRef={recaptchaRef}
-                                siteKey={reCaptchaSiteKey}
+                            <HCaptcha
+                                elementRef={captchaRef}
+                                faramElementName="hcaptchaResponse"
+                                siteKey={HCaptchaSiteKey}
                             />
                             <div className={styles.actionButtons}>
                                 <PrimaryButton type="submit">

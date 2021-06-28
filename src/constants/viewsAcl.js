@@ -116,6 +116,7 @@ const acl = {
 
     analysisModule: { hide: notAnalysisModuleViewable },
 
+    exploreDeep: {},
     projectDenied: {},
     fourHundredThree: {},
     fourHundredFour: {},
