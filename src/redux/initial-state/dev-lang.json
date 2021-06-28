@@ -144,7 +144,7 @@
         "173": "Projects",
         "174": "Add project",
         "175": "Groups",
-        "176": "Add usergroup",
+        "176": "Usergroup title",
         "177": "Failed to add members.",
         "178": "e.g. ACAPS",
         "179": "Create",
@@ -157,7 +157,7 @@
         "189": "Grant admin rights",
         "190": "Delete member",
         "191": "Delete lead",
-        "192": "Add member",
+        "192": "Member",
         "194": "Are you sure you want to delete the usergroup {title}?",
         "195": "Are you sure you want to revoke admin rights form {memberName}?",
         "196": "Are you sure your want to grant admin rights to {memberName}?",
@@ -1403,7 +1403,12 @@
         "-77375980": "Explore",
         "-16156610": "If you want to explore Deep, simply close this window.",
         "-12448542": "Forgot your password?",
-        "-31997661": "Reset your password"
+        "-31997661": "Reset your password",
+        "-79060215": "Are you sure you want to delete this usergroup?",
+        "-25752304": "Are you sure you want to remove this member from this usergroup?",
+        "-57329096": "Edit member",
+        "-69672375": "Failed to add usergroups",
+        "-60399046": "Failed to delete usergroup"
     },
     "links": {
         "browserExtension": {
@@ -4040,6 +4045,42 @@
             "forgotPasswordModalHeading": -31997661,
             "resetPasswordButtonLabel": -77593412,
             "checkYourEmailText": 812
+        },
+        "usergroup": {
+            "addUsergroupButtonLabel": -88838184,
+            "usergroupPageTitle": -70810293,
+            "actionLabel": 16,
+            "addedOnLabel": -12808201,
+            "createdOnLabel": -779713983,
+            "emailLabel": 184,
+            "groupLabel": -70810113,
+            "membersLabel": 166,
+            "nameLabel": 103,
+            "roleLabel": -80813940,
+            "deleteUsergroupConfirmMessage": -79060215,
+            "deleteMemberConfirmMessage": -25752304,
+            "deleteMemberLabel": 190,
+            "deleteUsergroupLabel": 169,
+            "editMemberLabel": -57329096,
+            "editUsergroupLabel": 168,
+            "fetchUsergroupFailed": -55358986,
+            "memberDeleteFailed": -30147930,
+            "usergroupDeleteFailed": -60399046,
+            "addMemberLabel": 192
+        },
+        "usergroup.editModal": {
+            "addUsergroupFailed": -69672375,
+            "addUsergroupHeading": 201,
+            "submitLabel": 826,
+            "usergroupTitleLabel": 176,
+            "usergroupTitlePlaceholder": 201
+        },
+        "usergroup.memberEditModal": {
+            "addMemberLabel": 192,
+            "addMemberPlaceholderLabel": 192,
+            "memberAddFailed": 177,
+            "roleLabel": 12509,
+            "editMemberLabel": -57329096
         }
     }
 }

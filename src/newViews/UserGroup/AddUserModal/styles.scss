@@ -1,0 +1,12 @@
+.modal {
+    display: flex;
+
+    .modal-body {
+        display: flex;
+        align-items: flex-end;
+
+        .input {
+            padding: var(--spacing-medium);
+        }
+    }
+}

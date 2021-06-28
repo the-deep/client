@@ -1,0 +1,16 @@
+.user-group {
+    display: flex;
+    flex-direction: column;
+
+    .add-usergroup-button {
+        display: flex;
+    }
+
+    .usergroup-table {
+        width: 100%;
+    }
+
+    .expanded-table {
+        width: 100%;
+    }
+}
