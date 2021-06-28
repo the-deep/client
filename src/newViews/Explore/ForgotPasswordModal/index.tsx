@@ -87,9 +87,7 @@ function ForgotPasswordModal(props: Props) {
                     fields: {
                         ...errorValue.faramErrors,
                     },
-                    $internal: [
-                        _ts('explore.forgotPasswordModal', 'retryRecaptcha'),
-                    ],
+                    $internal: _ts('explore.forgotPasswordModal', 'retryRecaptcha'),
                 });
             } else {
                 onErrorSet({
@@ -105,8 +103,8 @@ function ForgotPasswordModal(props: Props) {
         () => {
             const { errored, error: err, value: val } = validate();
             onErrorSet(err);
-            elementRef.current?.resetCaptcha();
             if (!errored && isDefined(val)) {
+                elementRef.current?.resetCaptcha();
                 triggerReset(val as ForgotPasswordFields);
             }
         },

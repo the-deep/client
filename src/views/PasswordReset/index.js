@@ -72,7 +72,6 @@ function PasswordReset() {
     }, []);
 
     const handleFaramValidationFailure = useCallback((newFaramErrors) => {
-        captchaRef.current?.resetCaptcha();
         setFaramErrors(newFaramErrors);
     }, []);
 

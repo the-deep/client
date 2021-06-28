@@ -16,7 +16,7 @@ const notAdmin = ({ isLoggedIn, isAdmin }) => (
     !isLoggedIn || !isAdmin
 );
 const notDevAndAdmin = ({ isLoggedIn, isDevMode, isAdmin }) => (
-    isLoggedIn || (!isDevMode && !isAdmin)
+    !isLoggedIn || (!isDevMode && !isAdmin)
 );
 
 const notLeadViewable = ({ isLoggedIn, leadPermissions }) => (
@@ -116,6 +116,7 @@ const acl = {
 
     analysisModule: { hide: notAnalysisModuleViewable },
 
+    exploreDeep: {},
     projectDenied: {},
     fourHundredThree: {},
     fourHundredFour: {},

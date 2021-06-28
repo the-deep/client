@@ -84,9 +84,7 @@ function RegisterModal(props: Props) {
                     fields: {
                         ...errorValue.faramErrors,
                     },
-                    $internal: [
-                        _ts('explore.register', 'retryRecaptcha'),
-                    ],
+                    $internal: _ts('explore.register', 'retryRecaptcha'),
                 });
             } else {
                 onErrorSet({

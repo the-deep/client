@@ -157,11 +157,9 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     fields: {
                         ...errorValue.faramErrors,
                     },
-                    $internal: [
-                        captchaRequired
-                            ? _ts('explore.login', 'retryRecaptcha')
-                            : _ts('explore.login', 'enterRecaptcha'),
-                    ],
+                    $internal: captchaRequired
+                        ? _ts('explore.login', 'retryRecaptcha')
+                        : _ts('explore.login', 'enterRecaptcha'),
                 });
                 setCaptchaRequired(true);
             } else {
@@ -191,11 +189,9 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     fields: {
                         ...errorValue.faramErrors,
                     },
-                    $internal: [
-                        captchaRequired
-                            ? _ts('explore.login', 'retryRecaptcha')
-                            : _ts('explore.login', 'enterRecaptcha'),
-                    ],
+                    $internal: captchaRequired
+                        ? _ts('explore.login', 'retryRecaptcha')
+                        : _ts('explore.login', 'enterRecaptcha'),
                 });
                 setCaptchaRequired(true);
             } else {
@@ -208,8 +204,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
         schemaName: 'tokenGetResponse',
     });
 
-    // FIXME: We need to change the redirect URL in hid configurations later on
-    const checkParamsFromHid = useCallback(() => {
+    useEffect(() => {
         // Get params from the current url
         // NOTE: hid provides query as hash
         // eslint-disable-next-line camelcase
@@ -226,10 +221,6 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
             hidLoginTrigger(params);
         }
     }, [hidLoginTrigger, location]);
-
-    useEffect(() => {
-        checkParamsFromHid();
-    }, [checkParamsFromHid]);
 
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
@@ -253,6 +244,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         error={error?.fields?.hcaptchaResponse}
                     />
                 )}
+                footerIconsContainerClassName={styles.footerIcons}
                 footerIcons={(
                     <Button
                         name={value?.username}
