@@ -18,7 +18,8 @@ const propTypes = {
     projectDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
-    image: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -27,7 +28,8 @@ const defaultProps = {
     projectDetails: {},
     entryType: undefined,
     excerpt: undefined,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
     tabularFieldData: undefined,
 };
 
@@ -57,8 +59,9 @@ export default class GeoWidget extends React.PureComponent {
             projectDetails,
             entryType,
             excerpt,
-            image,
             tabularFieldData,
+            imageRaw,
+            imageDetails,
         } = this.props;
 
         let excerptValue;
@@ -67,7 +70,7 @@ export default class GeoWidget extends React.PureComponent {
                 excerptValue = excerpt;
                 break;
             case IMAGE:
-                excerptValue = image;
+                excerptValue = imageDetails?.file ?? imageRaw;
                 break;
             case DATA_SERIES:
                 excerptValue = tabularFieldData;

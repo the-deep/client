@@ -16,7 +16,8 @@ const propTypes = {
     widgetType: PropTypes.string.isRequired,
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
-    image: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularField: PropTypes.number,
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     isView: PropTypes.bool,
@@ -30,7 +31,8 @@ const propTypes = {
 const defaultProps = {
     entryType: 'excerpt',
     excerpt: undefined,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
     tabularField: undefined,
     tabularFieldData: undefined,
     isView: false,
@@ -87,7 +89,8 @@ export default class Conditional extends React.PureComponent {
         const {
             entryType,
             excerpt,
-            image,
+            imageDetails,
+            imageRaw,
             tabularField,
             tabularFieldData,
         } = this.props;
@@ -103,7 +106,8 @@ export default class Conditional extends React.PureComponent {
                         widget={widget}
                         entryType={entryType}
                         excerpt={excerpt}
-                        image={image}
+                        imageDetails={imageDetails}
+                        imageRaw={imageRaw}
                         tabularField={tabularField}
                         tabularFieldData={tabularFieldData}
                     />
