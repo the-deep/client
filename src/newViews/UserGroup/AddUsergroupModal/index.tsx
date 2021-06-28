@@ -16,7 +16,6 @@ import {
 import { useLazyRequest } from '#utils/request';
 import NonFieldError from '#components/ui/NonFieldError';
 import _ts from '#ts';
-import styles from './styles.scss';
 
 interface UsergroupAdd {
     title: string;
@@ -33,7 +32,7 @@ export interface Membership {
     member: number;
     memberName: string;
     memberEmail: string;
-    role: string;
+    role: 'admin' | 'normal';
     group: number;
     joinedAt: string;
 }
@@ -42,7 +41,7 @@ export interface Usergroup {
     id: number;
     title: string;
     description: string;
-    role: string;
+    role: 'admin' | 'normal';
     memberships: Membership[];
     globalCrisisMonitoring: boolean;
     createdAt: string;
@@ -115,7 +114,6 @@ function AddUsergroupModal(props: Props) {
 
     return (
         <Modal
-            className={styles.modal}
             heading={_ts('usergroup.editModal', 'addUsergroupHeading')}
             onCloseButtonClick={onModalClose}
             footerActions={(
@@ -134,7 +132,6 @@ function AddUsergroupModal(props: Props) {
             <NonFieldError error={error} />
             <TextInput
                 name="title"
-                className={styles.input}
                 value={value.title}
                 error={error?.fields?.title}
                 onChange={onValueChange}

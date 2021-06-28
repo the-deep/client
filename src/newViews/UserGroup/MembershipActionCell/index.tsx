@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrash, IoAdd } from 'react-icons/io5';
+import { IoTrash } from 'react-icons/io5';
 import { MdModeEdit } from 'react-icons/md';
 import {
     QuickActionButton,
@@ -9,46 +9,46 @@ import {
 
 import styles from './styles.scss';
 
-export interface Props<T> {
+export interface Props {
     className?: string;
-    itemKey: T;
-    groupKey?: T;
-    member?: T;
-    onAddClick?: (key: T) => void;
-    onEditClick: (key: T, group?: T, member?: T) => void;
-    onDeleteClick: (key: T) => void;
+    itemKey: number;
+    groupKey: number;
+    member: number;
+    memberRole: 'admin' | 'normal';
+    onAddClick?: (key: number) => void;
+    onEditClick: (
+        user: { id: number; member: number; role: 'admin' | 'normal' },
+        group: number,
+    ) => void;
+    onDeleteClick: (key: number) => void;
     disabled?: boolean;
-    addButtonTitle?: string;
     editButtonTitle?: string;
     deleteButtonTitle?: string;
     deleteConfirmationMessage?: string;
 }
 
-function ActionCell<T>(props: Props<T>) {
+function ActionCell(props: Props) {
     const {
         className,
         itemKey,
         groupKey,
         member,
-        onAddClick,
         onEditClick,
         onDeleteClick,
         disabled,
-        addButtonTitle,
         editButtonTitle,
         deleteButtonTitle,
         deleteConfirmationMessage,
+        memberRole,
     } = props;
 
-    const handleAddButtonClick = useCallback(() => {
-        if (onAddClick) {
-            onAddClick(itemKey);
-        }
-    }, [itemKey, onAddClick]);
-
     const handleEditButtonClick = useCallback(() => {
-        onEditClick(itemKey, groupKey, member);
-    }, [itemKey, onEditClick, groupKey, member]);
+        onEditClick({
+            id: itemKey,
+            member,
+            role: memberRole,
+        }, groupKey);
+    }, [itemKey, onEditClick, groupKey, member, memberRole]);
 
     const handleDeleteUserGroupClick = useCallback(() => {
         onDeleteClick(itemKey);
@@ -56,17 +56,6 @@ function ActionCell<T>(props: Props<T>) {
 
     return (
         <div className={_cs(styles.actionCell, className)}>
-            {onAddClick &&
-                <QuickActionButton
-                    className={styles.button}
-                    name="addButton"
-                    onClick={handleAddButtonClick}
-                    disabled={disabled}
-                    title={addButtonTitle}
-                >
-                    <IoAdd />
-                </QuickActionButton>
-            }
             <QuickActionButton
                 className={styles.button}
                 name="editButton"

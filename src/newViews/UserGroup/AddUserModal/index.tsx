@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 
 import { isDefined } from '@togglecorp/fujs';
 
@@ -43,11 +43,11 @@ const schema: FormSchema = {
 };
 
 interface Role {
-    id: string;
+    id: 'normal' | 'admin';
     title: string;
 }
 
-const roles:Role[] = [
+const roles: Role[] = [
     {
         id: 'normal',
         title: 'Normal',
@@ -58,15 +58,18 @@ const roles:Role[] = [
     },
 
 ];
-const keySelector = (d:Role) => d.id;
-const labelSelector = (d:Role) => d.title;
+const keySelector = (d: Role) => d.id;
+const labelSelector = (d: Role) => d.title;
 
 interface Props {
     onModalClose: () => void;
     group: number;
     onUserAddSuccess: () => void;
-    memberToEdit?: member;
-    member?: number;
+    userToEdit?: {
+        id: number;
+        member: number;
+        role: 'admin' | 'normal';
+    };
     memberOptions?: BasicUser[];
 }
 
@@ -75,13 +78,17 @@ function AddUserModal(props: Props) {
         onModalClose,
         group,
         onUserAddSuccess,
-        member,
-        memberToEdit,
+        userToEdit,
         memberOptions,
     } = props;
 
     const [userOptions, setUserOptions] = useState<BasicUser[] | null | undefined>();
-    const formValue: PartialForm<FormType> = { group, member };
+
+    const formValue: PartialForm<FormType> = useMemo(() => ({
+        group,
+        member: userToEdit?.member,
+        role: userToEdit?.role,
+    }), [userToEdit, group]);
 
     const {
         pristine,
@@ -96,10 +103,10 @@ function AddUserModal(props: Props) {
         pending: pendingAddMember,
         trigger: triggerAddMember,
     } = useLazyRequest<Membership, FormType>({
-        url: isDefined(memberToEdit)
-            ? `server://group-memberships/${memberToEdit}/`
+        url: isDefined(userToEdit)
+            ? `server://group-memberships/${userToEdit?.id}/`
             : 'server://group-memberships/',
-        method: isDefined(memberToEdit)
+        method: isDefined(userToEdit?.id)
             ? 'PATCH'
             : 'POST',
         body: ctx => ctx,
@@ -120,12 +127,13 @@ function AddUserModal(props: Props) {
 
     return (
         <Modal
-            heading={isDefined(member)
+            heading={isDefined(userToEdit)
                 ? _ts('usergroup.memberEditModal', 'editMemberLabel')
                 : _ts('usergroup.memberEditModal', 'addMemberLabel')
             }
             onCloseButtonClick={onModalClose}
             className={styles.modal}
+            bodyClassName={styles.modalBody}
             footerActions={(
                 <Button
                     name="submit"
@@ -143,13 +151,13 @@ function AddUserModal(props: Props) {
                 name="member"
                 value={value.member}
                 onChange={onValueChange}
-                options={isDefined(member)
+                options={isDefined(userToEdit)
                     ? memberOptions
                     : userOptions
                 }
                 onOptionsChange={setUserOptions}
                 error={error?.fields?.member}
-                disabled={pendingAddMember || isDefined(member)}
+                disabled={pendingAddMember || isDefined(userToEdit)}
                 label={_ts('usergroup.memberEditModal', 'addMemberLabel')}
                 placeholder={_ts('usergroup.memberEditModal', 'addMemberPlaceholderLabel')}
             />
