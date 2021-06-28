@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { isDefined } from '@togglecorp/fujs';
 import {
     Modal,
@@ -28,6 +28,27 @@ type FormType = {
     title: string;
 };
 
+export interface Membership {
+    id: number;
+    member: number;
+    memberName: string;
+    memberEmail: string;
+    role: string;
+    group: number;
+    joinedAt: string;
+}
+
+export interface Usergroup {
+    id: number;
+    title: string;
+    description: string;
+    role: string;
+    memberships: Membership[];
+    globalCrisisMonitoring: boolean;
+    createdAt: string;
+    modifiedAt: string;
+}
+
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -39,17 +60,24 @@ const schema: FormSchema = {
 
 const defaultFormValue: PartialForm<FormType> = {};
 
+
 interface Props {
     onModalClose: () => void;
-    onTableReload: () => void;
+    onSuccess: () => void;
+    value?: Usergroup,
 }
 function AddUsergroupModal(props: Props) {
     const {
         onModalClose,
-        onTableReload,
+        onSuccess,
+        value: initialValue,
     } = props;
 
-    const formValue: PartialForm<FormType> = defaultFormValue;
+    const [initialFormValue] = useState<PartialForm<FormType>>(
+        isDefined(initialValue) ? ({
+            title: initialValue.title,
+        }) : defaultFormValue,
+    );
 
     const {
         pristine,
@@ -58,18 +86,22 @@ function AddUsergroupModal(props: Props) {
         onValueChange,
         validate,
         onErrorSet,
-    } = useForm(formValue, schema);
+    } = useForm(initialFormValue, schema);
 
     const {
         pending: pendingAddUsergroup,
         trigger: triggerAddUsergroup,
     } = useLazyRequest<unknown, UsergroupAdd>({
-        url: 'server://user-groups/',
-        method: 'POST',
+        url: isDefined(initialValue?.id)
+            ? `server://user-groups/${initialValue?.id}/`
+            : 'server://user-groups/',
+        method: isDefined(initialValue?.id)
+            ? 'PATCH'
+            : 'POST',
         body: ctx => ctx,
         onSuccess: () => {
+            onSuccess();
             onModalClose();
-            onTableReload();
         },
         failureHeader: _ts('usergroup.editModal', 'addUsergroupFailed'),
     });
@@ -86,7 +118,7 @@ function AddUsergroupModal(props: Props) {
             className={styles.modal}
             heading={_ts('usergroup.editModal', 'addUsergroupHeading')}
             onCloseButtonClick={onModalClose}
-            footer={(
+            footerActions={(
                 <Button
                     name="submit"
                     variant="primary"

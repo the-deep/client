@@ -30,37 +30,20 @@ import {
     AppState,
     MultiResponse,
 } from '#typings';
-import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
-import AddUsergroupModal from './AddUsergroupModal';
+import AddUsergroupModal, {
+    Membership,
+    Usergroup,
+} from './AddUsergroupModal';
+import AddUserModal from './AddUserModal';
+import AddActionCell, { Props as AddActionCellProps } from './AddEditDeleteActionCell';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
 });
-
-interface Membership {
-    id: number;
-    member: number;
-    memberName: string;
-    memberEmail: string;
-    role: string;
-    group: number;
-    joinedAt: string;
-}
-
-interface Usergroup {
-    id: number;
-    title: string;
-    description: string;
-    role: string;
-    memberships: Membership[];
-    globalCrisisMonitoring: boolean;
-    createdAt: string;
-    modifiedAt: string;
-}
 
 const MAX_ITEMS_PER_PAGE = 10;
 const usergroupKeySelector = (d:Usergroup) => d.id;
@@ -76,10 +59,19 @@ function UserGroup(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [activeUsergroupId, setActiveUsergroupId] = useState<number | undefined>();
+    const [usergroupToEdit, setUsergroupToEdit] = useState<number | undefined>();
+    const [userToEdit, setUserToEdit] = useState<number | undefined>();
+    const [member, setMember] = useState<number | undefined>();
     const [
-        showAddUSerGroupModal,
-        setModalShow,
-        setModalHidden,
+        showAddUserGroupModal,
+        setUsergroupModalShow,
+        setUsergroupModalHidden,
+    ] = useModalState(false);
+    const [
+        showAddUserModal,
+        setUserModalShow,
+        setUserModalHidden,
     ] = useModalState(false);
 
     const usergroupQuery = useMemo(() => ({
@@ -121,17 +113,56 @@ function UserGroup(props: Props) {
         failureHeader: _ts('usergroup', 'memberDeleteFailed'),
     });
 
-    // FIXME: To be handled
-    const handleEditUsergroupClick = useCallback(() => {}, []);
+    const usergroupObjectToEdit = useMemo(() => (
+        usergroupResponse?.results?.find(a => a.id === usergroupToEdit)
+    ), [usergroupResponse?.results, usergroupToEdit]);
 
-    // FIXME: To be handled
-    const handleEditMemberClick = useCallback(() => {}, []);
+    const handleAddUsergroupClick = useCallback(() => {
+        setUsergroupToEdit(undefined);
+        setUsergroupModalShow();
+    }, [setUsergroupModalShow]);
+
+    const handleEditUsergroupClick = useCallback((value) => {
+        setUsergroupToEdit(value);
+        setUsergroupModalShow();
+    }, [setUsergroupModalShow]);
+
+    const handleEditUsergroupSuccess = useCallback(() => {
+        usergroupResponseTrigger();
+        setUsergroupModalHidden();
+    }, [setUsergroupModalHidden, usergroupResponseTrigger]);
+
+    const handleMemberAddClick = useCallback((value) => {
+        setUserToEdit(undefined);
+        setActiveUsergroupId(value);
+        setUserModalShow();
+    }, [setUserModalShow]);
+
+    const handleEditMemberClick = useCallback((value, group, memberValue) => {
+        setUserToEdit(value);
+        setMember(memberValue);
+        setActiveUsergroupId(group);
+        setUserModalShow();
+    }, [setUserModalShow]);
+
+    const usergroupMemberOptions = useMemo(() => {
+        const user = usergroupResponse
+            ?.results
+            ?.find(v => v.id === activeUsergroupId)
+            ?.memberships
+            .map(v => ({
+                id: v.member,
+                displayName: v.memberName,
+                role: v.role,
+            }));
+        return user;
+    }, [usergroupResponse, activeUsergroupId]);
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
             Usergroup,
             number,
-            ActionCellProps<number>,
+            AddActionCellProps<number>,
             TableHeaderCellProps
         > = {
             id: 'action',
@@ -140,14 +171,17 @@ function UserGroup(props: Props) {
             headerCellRendererParams: {
                 sortable: false,
             },
-            cellRenderer: ActionCell,
-            cellRendererParams: passedUserId => ({
-                itemKey: passedUserId,
+            cellRenderer: AddActionCell,
+            cellRendererParams: (passedUsergroupId, data) => ({
+                itemKey: passedUsergroupId,
                 onEditClick: handleEditUsergroupClick,
                 onDeleteClick: usergroupDeleteTrigger,
+                onAddClick: handleMemberAddClick,
+                addButtonTitle: _ts('usergroup', 'addMemberLabel'),
                 editButtonTitle: _ts('usergroup', 'editUsergroupLabel'),
                 deleteButtonTitle: _ts('usergroup', 'deleteUsergroupLabel'),
                 deleteConfirmationMessage: _ts('usergroup', 'deleteUsergroupConfirmMessage'),
+                disabled: data.role === 'norma;',
             }),
         };
 
@@ -170,13 +204,18 @@ function UserGroup(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [handleEditUsergroupClick, usergroupDeleteTrigger]);
+    },
+    [
+        handleEditUsergroupClick,
+        usergroupDeleteTrigger,
+        handleMemberAddClick,
+    ]);
 
     const membersColumns = useMemo(() => {
         const actionColumn: TableColumn<
             Membership,
             number,
-            ActionCellProps<number>,
+            AddActionCellProps<number>,
             TableHeaderCellProps
         > = {
             id: 'action',
@@ -185,8 +224,10 @@ function UserGroup(props: Props) {
             headerCellRendererParams: {
                 sortable: false,
             },
-            cellRenderer: ActionCell,
-            cellRendererParams: passedUserId => ({
+            cellRenderer: AddActionCell,
+            cellRendererParams: (passedUserId, data) => ({
+                member: data.member,
+                groupKey: data.group,
                 itemKey: passedUserId,
                 onEditClick: handleEditMemberClick,
                 onDeleteClick: memberDeleteTrigger,
@@ -243,7 +284,7 @@ function UserGroup(props: Props) {
                     name="addUsergroup"
                     className={styles.addUsergroupButton}
                     icons={<IoAdd />}
-                    onClick={setModalShow}
+                    onClick={handleAddUsergroupClick}
                 >
                     {_ts('usergroup', 'addUsergroupButtonLabel')}
                 </Button>
@@ -266,10 +307,21 @@ function UserGroup(props: Props) {
                 data={usergroupResponse?.results}
                 rowModifier={rowModifier}
             />
-            {showAddUSerGroupModal && (
+            {showAddUserGroupModal && (
                 <AddUsergroupModal
-                    onModalClose={setModalHidden}
-                    onTableReload={usergroupResponseTrigger}
+                    onModalClose={setUsergroupModalHidden}
+                    onSuccess={handleEditUsergroupSuccess}
+                    value={usergroupObjectToEdit}
+                />
+            )}
+            {showAddUserModal && activeUsergroupId && (
+                <AddUserModal
+                    onModalClose={setUserModalHidden}
+                    group={activeUsergroupId}
+                    onUserAddSuccess={usergroupResponseTrigger}
+                    memberToEdit={userToEdit}
+                    member={member}
+                    memberOptions={usergroupMemberOptions}
                 />
             )}
         </Container>

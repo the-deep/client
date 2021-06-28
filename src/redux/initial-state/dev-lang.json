@@ -144,7 +144,7 @@
         "173": "Projects",
         "174": "Add project",
         "175": "Groups",
-        "176": "Add usergroup",
+        "176": "Usergroup title",
         "177": "Failed to add members.",
         "178": "e.g. ACAPS",
         "179": "Create",
@@ -157,7 +157,7 @@
         "189": "Grant admin rights",
         "190": "Delete member",
         "191": "Delete lead",
-        "192": "Add member",
+        "192": "Member",
         "194": "Are you sure you want to delete the usergroup {title}?",
         "195": "Are you sure you want to revoke admin rights form {memberName}?",
         "196": "Are you sure your want to grant admin rights to {memberName}?",
@@ -4065,7 +4065,8 @@
             "editUsergroupLabel": 168,
             "fetchUsergroupFailed": -55358986,
             "memberDeleteFailed": -30147930,
-            "usergroupDeleteFailed": -60399046
+            "usergroupDeleteFailed": -60399046,
+            "addMemberLabel": 192
         },
         "usergroup.editModal": {
             "addUsergroupFailed": -69672375,
@@ -4073,6 +4074,13 @@
             "submitLabel": 826,
             "usergroupTitleLabel": 176,
             "usergroupTitlePlaceholder": 201
+        },
+        "usergroup.memberEditModal": {
+            "addMemberLabel": 192,
+            "addMemberPlaceholderLabel": 192,
+            "memberAddFailed": 177,
+            "roleLabel": 12509,
+            "editMemberLabel": -57329096
         }
     }
 }

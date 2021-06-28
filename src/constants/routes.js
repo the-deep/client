@@ -281,7 +281,8 @@ export const routes = {
         path: '/new-ui/user-groups/',
         loader: () => import('../newViews/UserGroup'),
         links: allLinks,
-    },
+    }, // _ts('pageTitle', 'newUserGroup');
+
 
     frameworkQuestions: {
         order: 99,
