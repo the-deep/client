@@ -20,6 +20,8 @@ function getFormData(jsonData: FormDataCompatibleObj) {
                 });
             } else if (isDefined(value)) {
                 formData.append(key, value instanceof Blob ? value : String(value));
+            } else {
+                formData.append(key, '');
             }
         },
     );
@@ -100,15 +102,24 @@ export const processDeepOptions = (access: string | undefined) => {
         } = options;
 
         const isInternalRequest = url.startsWith(serverPrefix) || url.startsWith(serverlessPrefix);
-
-        let requestBody;
         if (requestOptions.formData) {
-            requestBody = getFormData(body as FormDataCompatibleObj);
-        } else {
-            requestBody = body ? JSON.stringify(body) : undefined;
+            const requestBody = getFormData(body as FormDataCompatibleObj);
+            return {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: access && isInternalRequest
+                        ? `Bearer ${access}`
+                        : '',
+                    ...headers,
+                },
+                body: requestBody,
+                ...otherOptions,
+            };
         }
 
-        const res = {
+        const requestBody = body ? JSON.stringify(body) : undefined;
+        return {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -121,7 +132,6 @@ export const processDeepOptions = (access: string | undefined) => {
             body: requestBody,
             ...otherOptions,
         };
-        return res;
     };
     return callback;
 };
