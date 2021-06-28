@@ -1,17 +1,17 @@
-const notLoggedIn = ({ isLoggedIn }) => !isLoggedIn;
 /*
 const notProjectMember = ({ isLoggedIn, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.view
 );
 */
-const notProjectAdmin = ({ isLoggedIn, setupPermissions }) => (
-    !isLoggedIn || !setupPermissions.modify
-);
 /*
 const notDev = ({ isLoggedIn, isDevMode }) => (
     !isLoggedIn || !isDevMode
 );
 */
+const notLoggedIn = ({ isLoggedIn }) => !isLoggedIn;
+const notProjectAdmin = ({ isLoggedIn, setupPermissions }) => (
+    !isLoggedIn || !setupPermissions.modify
+);
 const notAdmin = ({ isLoggedIn, isAdmin }) => (
     !isLoggedIn || !isAdmin
 );
@@ -73,6 +73,11 @@ const acl = {
     login: {},
     register: {},
     passwordReset: {},
+    projectDenied: {},
+    fourHundredThree: {},
+    fourHundredFour: {},
+    entryCommentRedirect: {},
+    entryEditRedirect: {},
 
     discoverProjects: { hide: notLoggedIn },
     home: { hide: notLoggedIn },
@@ -114,12 +119,16 @@ const acl = {
     questionnaireBuilder: { hide: notQuestionnaireEditable },
     frameworkQuestions: { hide: notQuestionnaireViewable },
 
-    analysisModule: { hide: notAnalysisModuleViewable },
+    tagging: { hide: notLeadViewable },
+    taggingDashboard: { hide: notLeadViewable },
+    taggingExport: { hide: notExportCreatable },
 
     exploreDeep: {},
-    projectDenied: {},
-    fourHundredThree: {},
-    fourHundredFour: {},
+    analysisModule: { hide: notAnalysisModuleViewable },
+    pillarAnalysis: { hide: notAnalysisModuleViewable },
+
+    analyticalFramework: { hide: notLoggedIn },
+    myProfile: { hide: notLoggedIn },
 };
 
 export default acl;

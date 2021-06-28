@@ -334,6 +334,31 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'landingPage');
 
+    tagging: {
+        order: 161,
+        type: ROUTE.private,
+        path: '/new-ui/projects/:projectId/tagging/',
+        loader: () => import('../newViews/Tagging/Sources'),
+        showSubNavbar: true,
+        links: allLinks,
+    },
+    taggingDashboard: {
+        order: 162,
+        type: ROUTE.private,
+        path: '/new-ui/projects/:projectId/tagging/dashboard/',
+        loader: () => import('../newViews/Tagging/Dashboard'),
+        showSubNavbar: true,
+        links: allLinks,
+    },
+    taggingExport: {
+        order: 163,
+        type: ROUTE.private,
+        parentNode: 'tagging',
+        path: '/new-ui/projects/:projectId/tagging/export/',
+        loader: () => import('../newViews/Tagging/Export'),
+        showSubNavbar: true,
+        links: allLinks,
+    },
     stringManagement: {
         order: 150,
         type: ROUTE.public,

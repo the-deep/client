@@ -136,11 +136,18 @@
         height: var(--height-sub-navbar);
 
         .project-select-input-wrapper {
+            display: flex;
+            align-items: center;
             flex-shrink: 0;
             margin: var(--dui-spacing-medium);
+
+            >* {
+                margin: 0 var(--spacing-small);
+            }
         }
 
         .sub-navbar-right-components {
+            display: flex;
             flex-grow: 1;
             margin: var(--dui-spacing-medium);
         }
