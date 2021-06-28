@@ -42,6 +42,7 @@ interface User {
     role: number;
     roleDisplay: string;
     joinedAt: string;
+
     memberDetails: {
         displayName: string;
         organizationTitle?: string;
