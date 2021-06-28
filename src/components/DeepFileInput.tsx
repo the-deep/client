@@ -56,11 +56,16 @@ function DeepFileInput<T extends string>(props: Props<T>) {
     });
 
     const handleChange = useCallback(
-        (file: File) => {
-            trigger(file);
+        (file: File | undefined) => {
             setValue(file);
+
+            if (file) {
+                trigger(file);
+            } else {
+                onChange(undefined, name);
+            }
         },
-        [trigger],
+        [trigger, name, onChange],
     );
 
     let currentStatus;
@@ -77,12 +82,13 @@ function DeepFileInput<T extends string>(props: Props<T>) {
     return (
         <FileInput
             {...otherProps}
-            value={value}
             disabled={disabled || pending}
             name={name}
-            onChange={handleChange}
             overrideStatus
             status={currentStatus}
+            value={value}
+            onChange={handleChange}
+            multiple={false}
         />
     );
 }

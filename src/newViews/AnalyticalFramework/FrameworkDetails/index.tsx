@@ -79,14 +79,24 @@ function FrameworkDetails(props: Props & PropsFromState) {
         activeUser,
     } = props;
 
+    const [
+        analyticalFramework,
+        setFramework,
+    ] = useState<AnalyticalFramework | undefined>(undefined);
+
     const {
         pending: frameworkGetPending,
-        response: analyticalFramework,
     } = useRequest<AnalyticalFramework>({
         skip: isNotDefined(frameworkId),
         url: `server://analysis-frameworks/${frameworkId}/`,
         method: 'GET',
         failureHeader: _ts('analyticalFramework', 'title'),
+        onSuccess: (response) => {
+            setFramework(response);
+        },
+        onFailure: () => {
+            setFramework(undefined);
+        },
     });
 
     const [activePage, setActivePage] = useState(1);
@@ -210,6 +220,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
                 frameworkId={frameworkId}
                 key={analyticalFramework?.title}
                 analyticalFramework={analyticalFramework}
+                onSuccess={setFramework}
                 frameworkGetPending={frameworkGetPending}
             />
             {frameworkId && (

@@ -13,8 +13,9 @@ interface Props<N> {
     className?: string;
     alt: string;
     name: N;
-    value: string | File | null | undefined;
-    onChange: (files: File | null | undefined, name: N) => void;
+    image: string | undefined;
+    value: File | null | undefined;
+    onChange: (files: File | undefined, name: N) => void;
 }
 
 function UploadImage<N extends string>(props: Props<N>) {
@@ -23,6 +24,7 @@ function UploadImage<N extends string>(props: Props<N>) {
         alt,
         name,
         value,
+        image,
         onChange,
     } = props;
 
@@ -37,7 +39,7 @@ function UploadImage<N extends string>(props: Props<N>) {
                 <div className={styles.content}>
                     <ImagePreview
                         className={styles.imagePreview}
-                        src={(value instanceof File) ? URL.createObjectURL(value) : value}
+                        src={value ? URL.createObjectURL(value) : image}
                         hideTools
                         alt={alt}
                     />
