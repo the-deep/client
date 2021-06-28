@@ -7,6 +7,7 @@ import {
     Button,
     Modal,
     TextInput,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -111,57 +112,60 @@ function ForgotPasswordModal(props: Props) {
     );
 
     return (
-        <Modal
-            className={_cs(styles.passwordResetForm, className)}
-            headingSize="small"
-            heading={_ts('explore.passwordReset', 'forgotPasswordModalHeading')}
-            footerActions={!success && (
-                <Button
-                    disabled={pristine || resetPending}
-                    type="submit"
-                    variant="primary"
-                    onClick={handleSubmit}
-                    name="login"
-                >
-                    {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
-                </Button>
-            )}
-            onCloseButtonClick={onClose}
-            bodyClassName={styles.content}
-        >
-            {success ? (
-                <div className={styles.passwordResetSuccess}>
-                    {_ts('explore.passwordReset', 'checkYourEmailText', { email: context?.email })}
-                </div>
-            ) : (
-                <>
-                    <NonFieldError
-                        className={styles.error}
-                        error={error}
-                    />
-                    <TextInput
-                        name="email"
-                        className={styles.input}
-                        onChange={onValueChange}
-                        value={value?.email}
-                        error={error?.fields?.email}
-                        label={_ts('explore.passwordReset', 'emailLabel')}
-                        placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}
-                        disabled={resetPending}
-                        autoFocus
-                    />
-                    <HCaptcha
-                        className={styles.input}
-                        name="hcaptchaResponse"
-                        elementRef={elementRef}
-                        siteKey={HCaptchaSiteKey}
-                        onChange={onValueChange}
-                        error={error?.fields?.hcaptchaResponse}
-                        disabled={resetPending}
-                    />
-                </>
-            )}
-        </Modal>
+        <>
+            {resetPending && <PendingMessage />}
+            <Modal
+                className={_cs(styles.passwordResetForm, className)}
+                headingSize="small"
+                heading={_ts('explore.passwordReset', 'forgotPasswordModalHeading')}
+                footerActions={!success && (
+                    <Button
+                        disabled={pristine || resetPending}
+                        type="submit"
+                        variant="primary"
+                        onClick={handleSubmit}
+                        name="login"
+                    >
+                        {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
+                    </Button>
+                )}
+                onCloseButtonClick={onClose}
+                bodyClassName={styles.content}
+            >
+                {success ? (
+                    <div className={styles.passwordResetSuccess}>
+                        {_ts('explore.passwordReset', 'checkYourEmailText', { email: context?.email })}
+                    </div>
+                ) : (
+                    <>
+                        <NonFieldError
+                            className={styles.error}
+                            error={error}
+                        />
+                        <TextInput
+                            name="email"
+                            className={styles.input}
+                            onChange={onValueChange}
+                            value={value?.email}
+                            error={error?.fields?.email}
+                            label={_ts('explore.passwordReset', 'emailLabel')}
+                            placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}
+                            disabled={resetPending}
+                            autoFocus
+                        />
+                        <HCaptcha
+                            className={styles.input}
+                            name="hcaptchaResponse"
+                            elementRef={elementRef}
+                            siteKey={HCaptchaSiteKey}
+                            onChange={onValueChange}
+                            error={error?.fields?.hcaptchaResponse}
+                            disabled={resetPending}
+                        />
+                    </>
+                )}
+            </Modal>
+        </>
     );
 }
 
