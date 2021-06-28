@@ -1,5 +1,5 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import { MdFileUpload } from 'react-icons/md';
 import {
     Container,
@@ -11,18 +11,18 @@ import styles from './styles.scss';
 
 interface Props<N> {
     className?: string;
-    src?: string;
     alt: string;
     name: N;
+    value: string | File | null | undefined;
     onChange: (files: File | null | undefined, name: N) => void;
 }
 
 function UploadImage<N extends string>(props: Props<N>) {
     const {
         className,
-        src,
         alt,
         name,
+        value,
         onChange,
     } = props;
 
@@ -33,18 +33,18 @@ function UploadImage<N extends string>(props: Props<N>) {
             heading={_ts('analyticalFramework', 'previewImageHeading')}
             contentClassName={styles.container}
         >
-            { src ? (
+            { isDefined(value) ? (
                 <div className={styles.content}>
                     <ImagePreview
                         className={styles.imagePreview}
-                        src={src}
+                        src={(value instanceof File) ? URL.createObjectURL(value) : value}
                         hideTools
                         alt={alt}
                     />
                     <FileInput
                         className={styles.input}
                         name={name}
-                        value={undefined}
+                        value={(value instanceof File) ? value : undefined}
                         onChange={onChange}
                         showStatus={false}
                         accept="image/*"
@@ -58,7 +58,7 @@ function UploadImage<N extends string>(props: Props<N>) {
                     {_ts('analyticalFramework', 'uploadFrameworkImageText')}
                     <FileInput
                         name={name}
-                        value={undefined}
+                        value={value}
                         onChange={onChange}
                         showStatus={false}
                         accept="image/*"

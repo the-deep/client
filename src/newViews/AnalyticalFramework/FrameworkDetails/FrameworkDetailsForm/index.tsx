@@ -35,7 +35,7 @@ interface Props {
 
 
 type FormType = Pick<AnalyticalFramework, 'title' | 'organization' | 'description' | 'isPrivate' | 'createdByName' | 'createdAt'> & {
-    previewImage?: File | null;
+    previewImage: File | string | null | undefined;
 }
 type PartialFormType = PartialForm<FormType>;
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -191,12 +191,9 @@ function FrameworkDetailsForm(props: Props) {
                 </div>
                 <UploadImage
                     className={styles.imagePreview}
-                    src={(value?.previewImage instanceof File) ?
-                        URL.createObjectURL(value.previewImage)
-                        : analyticalFrameworkFromProps?.previewImage
-                    }
                     alt={_ts('analyticalFramework', 'previewImage')}
                     name="previewImage"
+                    value={value.previewImage}
                     onChange={onValueChange}
                 />
             </div>
