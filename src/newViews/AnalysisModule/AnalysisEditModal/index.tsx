@@ -15,6 +15,7 @@ import {
     arrayCondition,
 } from '@togglecorp/toggle-form';
 import {
+    PendingMessage,
     Button,
     Modal,
     TextInput,
@@ -104,7 +105,7 @@ interface AnalysisEditModalProps {
     className?: string;
     onSuccess: (value: AnalysisElement, isEditMode: boolean) => void;
     onModalClose: () => void;
-    value?: AnalysisElement;
+    analysisToEdit?: number;
     projectId: number;
 }
 
@@ -113,22 +114,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         className,
         onSuccess,
         onModalClose,
-        value: initialValue,
+        analysisToEdit,
         projectId,
     } = props;
-
-    const [initialFormValue] = React.useState<PartialForm<FormType>>(
-        isDefined(initialValue) ? ({
-            teamLead: initialValue.teamLead,
-            title: initialValue.title,
-            analysisPillar: initialValue.analysisPillar.map(ap => ({
-                key: String(ap.id),
-                assignee: ap.assignee,
-                filters: ap.filters ? ap.filters.map(f => f.uniqueId) : undefined,
-                title: ap.title,
-            })),
-        }) : defaultAnalysisFormValues,
-    );
 
     const {
         pristine,
@@ -137,7 +125,27 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         onValueChange,
         validate,
         onErrorSet,
-    } = useForm(initialFormValue, analysisFormSchema);
+        onValueSet,
+    } = useForm(defaultAnalysisFormValues, analysisFormSchema);
+
+    const {
+        pending: analysisGetPending,
+    } = useRequest<AnalysisElement>({
+        skip: !analysisToEdit,
+        url: `server://projects/${projectId}/analysis/${analysisToEdit}/`,
+        onSuccess: (response) => {
+            onValueSet({
+                teamLead: response.teamLead,
+                title: response.title,
+                analysisPillar: response.analysisPillar.map(ap => ({
+                    key: String(ap.id),
+                    assignee: ap.assignee,
+                    filters: ap.filters?.map(f => f.uniqueId),
+                    title: ap.title,
+                })),
+            });
+        },
+    });
 
     const {
         pending: pendingFramework,
@@ -167,24 +175,25 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         failureHeader: _ts('analysis.editModal', 'usersTitle'),
     });
 
-    const id = initialValue?.id;
     const {
         pending: pendingAnalysisEdit,
         trigger: triggerAnalysisEdit,
     } = useLazyRequest<AnalysisElement, unknown>({
-        url: isDefined(id)
-            ? `server://projects/${projectId}/analysis/${id}/`
+        url: isDefined(analysisToEdit)
+            ? `server://projects/${projectId}/analysis/${analysisToEdit}/`
             : `server://projects/${projectId}/analysis/`,
-        method: isDefined(id) ? 'PATCH' : 'POST',
+        method: isDefined(analysisToEdit) ? 'PATCH' : 'POST',
         body: ctx => ctx,
         onSuccess: (response) => {
             if (response) {
-                onSuccess(response, isDefined(initialValue));
+                onSuccess(response, isDefined(analysisToEdit));
             }
             onModalClose();
         },
         failureHeader: _ts('analysis.editModal', 'anaylsisEditModal'),
     });
+
+    const pending = pendingFramework || pendingUsersList || pendingAnalysisEdit;
 
     const {
         onValueChange: onRowChange,
@@ -202,10 +211,11 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             matrixPillars,
             onChange: onRowChange as PillarAnalysisProps['onChange'],
             onRemove: onRowRemove,
+            pending,
             usersList: usersListResponse?.results ?? [],
             value: data,
         }),
-        [usersListResponse, matrixPillars, error, onRowChange, onRowRemove],
+        [usersListResponse, matrixPillars, error, onRowChange, onRowRemove, pending],
     );
 
     type AnalysisPillarList = typeof value.analysisPillar;
@@ -215,8 +225,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             [...(oldValue ?? []), newRow]
         ), 'analysisPillar' as const);
     }, [onValueChange]);
-
-    const pending = pendingFramework || pendingUsersList;
 
     const handleSubmitButtonClick = React.useCallback(() => {
         const {
@@ -255,7 +263,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         <Modal
             className={_cs(styles.analysisEditModal, className)}
             heading={
-                isDefined(initialValue)
+                isDefined(analysisToEdit)
                     ? _ts('analysis.editModal', 'editAnalysisModalHeading')
                     : _ts('analysis.editModal', 'addAnalysisModalHeading')
             }
@@ -270,7 +278,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                         onClick={handleSubmitButtonClick}
                     >
                         {
-                            isDefined(initialValue)
+                            isDefined(analysisToEdit)
                                 ? _ts('analysis.editModal', 'editButtonLabel')
                                 : _ts('analysis.editModal', 'createButtonLabel')
                         }
@@ -278,6 +286,10 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 </>
             )}
         >
+            {/*
+                NOTE: Set delay to 0 as it needs to be blocked
+            */}
+            {analysisGetPending && <PendingMessage />}
             <NonFieldError error={error} />
             <TextInput
                 className={styles.input}
@@ -318,6 +330,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                         onClick={handleAddRowButtonClick}
                         icons={<IoAdd />}
                         variant="tertiary"
+                        disabled={pending}
                     >
                         {_ts('analysis.editModal', 'addAnAnalystButtonLabel')}
                     </Button>

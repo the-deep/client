@@ -10,5 +10,5 @@ export interface GeoOption {
 }
 
 export interface GeoOptions {
-    [regionKey: number]: GeoOption[];
+    [regionKey: string]: GeoOption[];
 }

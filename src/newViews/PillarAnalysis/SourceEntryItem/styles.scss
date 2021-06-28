@@ -1,17 +1,26 @@
 .entry-item {
-    --min-height-entry: 180px;
+    --max-height-entry: 180px;
 
     margin: var(--dui-spacing-medium);
     background-color: var(--dui-color-white);
 
     .children {
-        height: var(--min-height-entry);
+        &:not(&.image) {
+            max-height: var(--max-height-entry);
+        }
+        &.image {
+            height: 120px;
+        }
     }
 
     &.disabled {
         opacity: var(--dui-opacity-disabled-element);
         /* FIXME: this is a hack */
         pointer-events: none;
+    }
+
+    &.new-entry {
+        border-left: var(--dui-width-separator-thick) solid var(--dui-color-complement1);
     }
 }
 

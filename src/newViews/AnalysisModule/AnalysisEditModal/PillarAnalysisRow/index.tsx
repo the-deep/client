@@ -50,6 +50,7 @@ export interface Props {
     onRemove: (index: number) => void;
     usersList: UserMini[];
     value: Value;
+    pending: boolean;
 }
 
 function PillarAnalysisRow(props: Props) {
@@ -62,6 +63,7 @@ function PillarAnalysisRow(props: Props) {
         onRemove,
         usersList,
         value,
+        pending,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultValue);
@@ -76,6 +78,7 @@ function PillarAnalysisRow(props: Props) {
                 onChange={onFieldChange}
                 placeholder={_ts('analysis.editModal', 'pillarAnalysisTitlePlaceholder')}
                 value={value.title}
+                disabled={pending}
             />
             <SelectInput
                 className={styles.input}
@@ -88,6 +91,7 @@ function PillarAnalysisRow(props: Props) {
                 options={usersList}
                 placeholder={_ts('analysis.editModal', 'pillarAnalysisAssigneePlaceholder')}
                 value={value.assignee}
+                disabled={pending}
             />
             <MultiSelectInput
                 className={styles.input}
@@ -102,11 +106,13 @@ function PillarAnalysisRow(props: Props) {
                 options={matrixPillars}
                 placeholder={_ts('analysis.editModal', 'matrixPillarsPlaceholder')}
                 value={value.filters}
+                disabled={pending}
             />
             <QuickActionButton
                 className={styles.removeButton}
                 name={index}
                 onClick={onRemove}
+                disabled={pending}
             >
                 <IoClose />
             </QuickActionButton>

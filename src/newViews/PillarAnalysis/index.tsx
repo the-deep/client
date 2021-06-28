@@ -61,7 +61,7 @@ import {
 import EntriesFilterForm from './EntriesFilterForm';
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem from './SourceEntryItem';
-import AnalyticalStatementInput from './AnalyticalStatementInput';
+import AnalyticalStatementInput, { ENTRIES_LIMIT } from './AnalyticalStatementInput';
 import {
     schema,
     defaultFormValues,
@@ -76,33 +76,28 @@ export interface DiscardedTags {
     value: string;
 }
 
-const fakeTags: DiscardedTags[] = [
-    {
-        key: 0,
-        value: 'Redundant',
-    },
-    {
-        key: 1,
-        value: 'Too old',
-    },
-    {
-        key: 2,
-        value: 'Anecdotal',
-    },
-    {
-        key: 3,
-        value: 'Outlier',
-    },
-];
-
-// This is an aribitrary number
+// This is an aribtrary number
 const STATEMENTS_LIMIT = 30;
+
+const analysisEntriesRequestQuery = {
+    // NOTE: 30 columns x 50 rows
+    limit: STATEMENTS_LIMIT * ENTRIES_LIMIT,
+    fields: [
+        'id',
+        'excerpt',
+        'dropped_excerpt',
+        'image_details',
+        'entry_type',
+        'tabular_field_data',
+    ],
+};
 
 type TabNames = 'entries' | 'discarded';
 
 // FIXME: remove this
 export interface FaramValues {
-    [key: string]: string | string[] | FaramValues;
+    // eslint-disable-next-line
+    [key: string]: string | string[] | FaramValues | boolean | undefined;
 }
 
 const frameworkQueryFields = {
@@ -187,9 +182,6 @@ function PillarAnalysis(props: Props) {
     // FIXME: please use new form
     const [filtersValue, setFiltersValue] = useState<FaramValues>({});
     const [activePage, setActivePage] = useState(1);
-    // FIXME: these are useless
-    const [entriesCount, setEntriesCount] = useState(0);
-    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
 
     // NOTE: retain entries mapping to show entry information in entry cards
     const [entriesMapping, setEntriesMapping] = useState<Obj<EntryFieldsMin>>({});
@@ -246,13 +238,36 @@ function PillarAnalysis(props: Props) {
                 o => o.id,
             );
             setFiltersValue(newFilters);
+            // eslint-disable-next-line max-len
+            let analyticalStatements: PartialAnalyticalStatementType[] = response.analyticalStatements ?? [];
+            if (
+                (response.analyticalStatements?.length ?? 0) === 0
+                && response.versionId === 1
+            ) {
+                // NOTE: We are adding 2 analytical statements if the pillar analysis
+                // is new and doesn't have any analytical statements
+                // by default (happens if its cloned)
+                const clientId1 = randomString();
+                const clientId2 = randomString();
+                const newAnalyticalStatement1: PartialAnalyticalStatementType = {
+                    clientId: clientId1,
+                    order: 1,
+                    includeInReport: false,
+                };
+                const newAnalyticalStatement2: PartialAnalyticalStatementType = {
+                    clientId: clientId2,
+                    order: 2,
+                    includeInReport: false,
+                };
+                analyticalStatements = [newAnalyticalStatement1, newAnalyticalStatement2];
+            }
 
             // FIXME: check set pristine value
             // FIXME: only set after checking version id
             onValueSet((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
-                analyticalStatements: response.analyticalStatements,
+                analyticalStatements,
             }));
         },
         failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
@@ -340,11 +355,13 @@ function PillarAnalysis(props: Props) {
             'image_details',
             'entry_type',
             'tabular_field_data',
+            'created_at',
         ],
     }), [activePage]);
 
     const {
         pending: pendingEntries,
+        response: entriesResponse,
         retrigger: reTriggerEntriesList,
     } = useRequest<MultiResponse<EntryFieldsMin>>({
         url: `server://analysis-pillar/${pillarId}/entries/`,
@@ -352,23 +369,16 @@ function PillarAnalysis(props: Props) {
         skip: pendingPillarAnalysis || pendingFramework,
         body: entriesRequestBody,
         query: entriesRequestQuery,
-        onSuccess: (response) => {
-            setEntriesCount(response.count);
-            setEntries(response.results);
-        },
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
+        preserveResponse: true,
     });
 
     const {
         pending: pendingDiscardedTags,
         response: discardedTags,
     } = useRequest<DiscardedTags[]>({
-        skip: !pendingEntries,
         url: 'server://discarded-entry-options/',
-        query: entriesRequestQuery,
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
-        // FIXME: Remove this response later on
-        mockResponse: fakeTags,
     });
 
     const analysisEntriesRequestBody = useMemo(
@@ -379,18 +389,7 @@ function PillarAnalysis(props: Props) {
         }),
         [initialEntries],
     );
-    const analysisEntriesRequestQuery = useMemo(() => ({
-        // NOTE: 30 columns x 50 rows
-        limit: 30 * 50,
-        fields: [
-            'id',
-            'excerpt',
-            'dropped_excerpt',
-            'image_details',
-            'entry_type',
-            'tabular_field_data',
-        ],
-    }), []);
+
     const {
         pending: pendingEntriesInitialData,
     } = useRequest<MultiResponse<EntryFieldsMin>>({
@@ -413,7 +412,7 @@ function PillarAnalysis(props: Props) {
 
     const handleEntryDrop = useCallback(
         (entryId: number) => {
-            const entry = entries?.find(item => item.id === entryId);
+            const entry = entriesResponse?.results?.find(item => item.id === entryId);
             if (!entry) {
                 console.error('Me no understand how this entry came from', entryId);
                 return;
@@ -423,7 +422,7 @@ function PillarAnalysis(props: Props) {
                 [entryId]: entry,
             }));
         },
-        [entries],
+        [entriesResponse?.results],
     );
 
     const handleAnalyticalStatementDrop = useCallback((droppedId: string, dropOverId?: string) => {
@@ -479,6 +478,7 @@ function PillarAnalysis(props: Props) {
             const newAnalyticalStatement: PartialAnalyticalStatementType = {
                 clientId,
                 order: oldStatements.length,
+                includeInReport: false,
             };
             onValueChange(
                 [...oldStatements, newAnalyticalStatement],
@@ -527,14 +527,22 @@ function PillarAnalysis(props: Props) {
     const entryCardRendererParams = useCallback((key: number, data: EntryFieldsMin) => ({
         entryId: key,
         excerpt: data.excerpt,
+        createdAt: data.createdAt,
         imageDetails: data.imageDetails,
         tabularFieldData: data.tabularFieldData,
         type: data.entryType,
         disabled: usedUpEntriesMap[key],
         pillarId,
+        pillarModifiedDate: pillarAnalysis?.modifiedAt,
         discardedTags,
         onEntryDiscard: reTriggerEntriesList,
-    }), [usedUpEntriesMap, pillarId, reTriggerEntriesList, discardedTags]);
+    }), [
+        usedUpEntriesMap,
+        pillarId,
+        reTriggerEntriesList,
+        discardedTags,
+        pillarAnalysis?.modifiedAt,
+    ]);
 
     const pending = pendingPillarAnalysis
     || pendingEntriesInitialData
@@ -550,6 +558,12 @@ function PillarAnalysis(props: Props) {
                 heading={activeProject?.title}
                 actions={(
                     <>
+                        <BackLink
+                            className={styles.button}
+                            defaultLink="/"
+                        >
+                            {_ts('pillarAnalysis', 'closeButtonLabel')}
+                        </BackLink>
                         <Button
                             name={undefined}
                             className={styles.button}
@@ -561,12 +575,6 @@ function PillarAnalysis(props: Props) {
                         >
                             {_ts('pillarAnalysis', 'saveButtonLabel')}
                         </Button>
-                        <BackLink
-                            className={styles.button}
-                            defaultLink="/"
-                        >
-                            {_ts('pillarAnalysis', 'closeButtonLabel')}
-                        </BackLink>
                     </>
                 )}
             >
@@ -587,7 +595,7 @@ function PillarAnalysis(props: Props) {
                             onChange={onValueChange}
                             value={value.mainStatement}
                             error={error?.fields?.mainStatement}
-                            rows={6}
+                            rows={4}
                             disabled={pending}
                         />
                     </div>
@@ -602,7 +610,7 @@ function PillarAnalysis(props: Props) {
                             value={value.informationGap}
                             onChange={onValueChange}
                             error={error?.fields?.informationGap}
-                            rows={6}
+                            rows={4}
                             disabled={pending}
                         />
                     </div>
@@ -627,10 +635,17 @@ function PillarAnalysis(props: Props) {
                         <CollapsibleContainer
                             className={styles.entryListSection}
                             expandButtonClassName={styles.expandEntryListButton}
-                            headerIcons={(
-                                <TabList className={styles.header}>
+                            headerClassName={styles.entryListHeader}
+                            headingClassName={styles.tabListHeading}
+                            headingSize="small"
+                            heading={(
+                                <TabList className={styles.tabList}>
                                     <Tab name="entries">
-                                        {_ts('pillarAnalysis', 'entriesTabLabel')}
+                                        {_ts(
+                                            'pillarAnalysis',
+                                            'entriesTabLabel',
+                                            { entriesCount: entriesResponse?.count },
+                                        )}
                                     </Tab>
                                     <Tab name="discarded">
                                         {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
@@ -640,7 +655,7 @@ function PillarAnalysis(props: Props) {
                         >
                             <TabPanel name="entries">
                                 <ListView
-                                    data={entries}
+                                    data={entriesResponse?.results}
                                     keySelector={entryKeySelector}
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
@@ -648,10 +663,11 @@ function PillarAnalysis(props: Props) {
                                 />
                                 <Pager
                                     activePage={activePage}
-                                    itemsCount={entriesCount}
+                                    itemsCount={entriesResponse?.count ?? 0}
                                     maxItemsPerPage={maxItemsPerPage}
                                     onActivePageChange={setActivePage}
                                     itemsPerPageControlHidden
+                                    hideInfo
                                 />
                             </TabPanel>
                             <TabPanel name="discarded">

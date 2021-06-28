@@ -57,7 +57,7 @@ function RechartsLegend(props: Props) {
                         </div>
                         {isDefined(percent) && (
                             <div className={styles.percent}>
-                                {`${100 * percent}%`}
+                                {`${Math.round(10000 * percent) / 100}%`}
                             </div>
                         )}
                     </div>

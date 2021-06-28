@@ -49,6 +49,7 @@ const analyticalStatementSchema: AnalyticalStatementSchema = {
         clientId: [],
         order: [],
         statement: [requiredStringCondition],
+        includeInReport: [],
         analyticalEntries: analyticalEntriesSchema,
     }),
 };

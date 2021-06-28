@@ -132,6 +132,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
     ), [projectActivity]);
 
     const canEditProject = projectRoles[role]?.setupPermissions?.modify;
+    const canAddEntries = projectRoles[role]?.entryPermissions?.modify;
 
     return (
         <ContainerCard
@@ -174,6 +175,16 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
             )}
             contentClassName={styles.content}
             horizontallyCompactContent
+            footerActions={(
+                <ButtonLikeLink
+                    to={reverseRoute(pathNames.leads, { projectId })}
+                >
+                    {canAddEntries
+                        ? _ts('home', 'continueTaggingButton')
+                        : _ts('home', 'viewTaggingButton')
+                    }
+                </ButtonLikeLink>
+            )}
         >
             <div className={styles.info}>
                 <div className={styles.basicDetails}>

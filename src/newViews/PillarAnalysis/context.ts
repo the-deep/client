@@ -4,7 +4,7 @@ import { EntryFields } from '#typings';
 
 export type EntryFieldsMin = Pick<
     EntryFields,
-    'id' | 'excerpt' | 'droppedExcerpt' | 'imageDetails' | 'entryType' | 'tabularFieldData'
+    'id' | 'excerpt' | 'droppedExcerpt' | 'imageDetails' | 'entryType' | 'tabularFieldData' | 'createdAt'
 >;
 
 interface ContextProps {

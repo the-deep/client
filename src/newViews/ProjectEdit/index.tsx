@@ -90,6 +90,12 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                     contentClassName={styles.content}
                     actions={(
                         <>
+                            <BackLink
+                                className={styles.button}
+                                defaultLink="/"
+                            >
+                                {_ts('projectEdit', 'closeButtonLabel')}
+                            </BackLink>
                             <Button
                                 name={undefined}
                                 className={styles.button}
@@ -99,12 +105,6 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                             >
                                 {_ts('projectEdit', 'saveButtonLabel')}
                             </Button>
-                            <BackLink
-                                className={styles.button}
-                                defaultLink="/"
-                            >
-                                {_ts('projectEdit', 'closeButtonLabel')}
-                            </BackLink>
                         </>
                     )}
                 >

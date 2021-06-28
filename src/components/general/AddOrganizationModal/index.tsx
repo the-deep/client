@@ -167,5 +167,4 @@ function AddOrganizationModal(props: Props) {
         </Modal>
     );
 }
-
 export default AddOrganizationModal;

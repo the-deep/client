@@ -89,6 +89,13 @@ export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFi
                 `${filterKey}__lt`,
                 getDateWithTimezone(encodeDate(endDate)),
             ]);
+        } else if (filterKey === 'verified') {
+            const isVerified = String(filterOptions) === 'true';
+
+            result.push([
+                'verified',
+                isVerified,
+            ]);
         } else if (filterKey === 'lead_published_on') {
             const { startDate, endDate: oldEndDate } = filterOptions;
             const endDate = new Date(oldEndDate);

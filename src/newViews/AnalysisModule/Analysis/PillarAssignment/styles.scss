@@ -28,5 +28,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        &.completed-analysis {
+            font-weight: var(--dui-font-weight-bold);
+        }
     }
 }

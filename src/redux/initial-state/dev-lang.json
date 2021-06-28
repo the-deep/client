@@ -1258,7 +1258,7 @@
         "-30498150": "Analyst",
         "-50636670": "Team Lead",
         "-31952614": "Pillar Assignments",
-        "-30091387": "Edit analysis",
+        "-30091387": "Edit Analysis",
         "-91939891": "Pillar analysis required",
         "-49556": "Pillars",
         "-35552020": "Team lead",
@@ -1281,7 +1281,7 @@
         "-14680704": "Recent Activities",
         "-46268038": "Recent Activities Fetch Failed",
         "-64388086": "Discarded Entries",
-        "-39990212": "All entries",
+        "-39990212": "All entries {entriesCount}",
         "-71989999": "Show Additional Metadata",
         "-17639815": "Show Ary Detail",
         "-50734970": "Show Entry Id",
@@ -1383,7 +1383,20 @@
         "-8181849174": "Justify the need for setting it up in a private environment",
         "-9018181881": "Reason for your request",
         "-8188181919": "A message will be sent with this information to the DEEP team.",
-        "-182838183": "Send"
+        "-182838183": "Send",
+        "-48751509": "New",
+        "-20774380": "Deleting an analysis will delete all its containing pillar analyses. Are you sure you want to delete this analysis and its pillar analyses?",
+        "-1510570": "Are you sure you want to delete this pillar analysis?",
+        "-94802963": "Continue Analysis",
+        "-7668049": "Framework Overview",
+        "-68241766": "Continue Tagging",
+        "-32431240": "View Tagging",
+        "-86877211": "Are you sure you want to clone this pillar analysis?",
+        "-30251271": "{entriesCount} Entries",
+        "-90582895": "Analysis Completed",
+        "-14918070": "No Analysis",
+        "-93108581": "Sources by type",
+        "-28285008": "Quantitative data is not supported at the moment."
     },
     "links": {
         "browserExtension": {
@@ -3178,7 +3191,9 @@
             "totalAddedSources": -678768686,
             "sourcesTagged": -686861344,
             "sourcesTaggedValidated": -686861268,
-            "recentProjectsTitle": -52545948
+            "recentProjectsTitle": -52545948,
+            "continueTaggingButton": -68241766,
+            "viewTaggingButton": -32431240
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -3685,7 +3700,6 @@
             "totalEntriesLabel": -89597029,
             "totalSourcesLabel": -25324892,
             "analysisModule": -55670188,
-            "addPillarAnalysis": -70983044,
             "noAnalysisCreatedLabel": -57723792,
             "setupNewAnalysisButtonLabel": -90678740,
             "pillarAnalysisCount": -45423653,
@@ -3697,7 +3711,24 @@
             "pillarAssignments": -31952614,
             "allAnalyses": -80223054,
             "selectAnalysisDate": -35701649,
-            "statementsTitle": -31309732
+            "statementsTitle": -31309732,
+            "cloneAnalysisButtonTitle": 353,
+            "continueAnalysisButton": -94802963,
+            "editAnalysisTitle": -30091387,
+            "cloneAnalysisConfirmMessage": 354,
+            "deleteAnalysisButtonTitle": -94736495,
+            "deletePillarButtonTitle": -94736495,
+            "deleteAnalysisConfirmMessage": -20774380,
+            "deletePillarConfirmMessage": -1510570,
+            "overviewSectionHeader": 781,
+            "frameworkOverviewHeader": -7668049,
+            "clonePillarButtonTitle": 353,
+            "clonePillarConfirmMessage": -86877211,
+            "inProgressTagLabel": -33667410,
+            "entriesCount": -30251271,
+            "noAnalysisTagLabel": -14918070,
+            "analysisCompletedTagLabel": -90582895,
+            "sourcesByTypeLabel": -93108581
         },
         "analysis.editModal": {
             "addAnalysisModalHeading": -90678740,
@@ -3731,7 +3762,7 @@
             "commentCreatedByFilterLabel": -95143967,
             "commentAssignedToFilterLabel": -93432291,
             "commentCreatedByPlaceholder": 17,
-            "commentStatusOptionsFilterLabel": 14,
+            "commentStatusOptionsFilterLabel": -84296296,
             "commentStatusPlaceholder": 14,
             "createdAtFilterLabel": 163,
             "createdByFilterLabel": 538,
@@ -3760,7 +3791,8 @@
             "analysisPillarEntriesTitle": -30397704,
             "pillarAnalaysisUpdateSuccess": -33611896,
             "confirmUndiscardEntryMessage": -53075174,
-            "pillarAnalysisUpdateSuccess": -33611896
+            "pillarAnalysisUpdateSuccess": -33611896,
+            "newEntryTagLabel": -48751509
         },
         "projectEdit": {
             "closeButtonLabel": -39430073,
@@ -3912,8 +3944,7 @@
             "selectRolePlaceholder": 14,
             "selectUserPlaceholder": 14,
             "submitLabel": 826,
-            "userLabel": 1200,
-            "usersFetchFailed": -93154523
+            "userLabel": 1200
         },
         "components.organizationSelectInput": {
             "title": 154
@@ -3954,6 +3985,12 @@
             "justification": -8181849174,
             "justificationPlaceholder": -9018181881,
             "message": -8188181919
+        },
+        "components.excerptOutput": {
+            "quantitativeDataNotSupportedLabel": -28285008
+        },
+        "components.userSelectInput": {
+            "title": 13
         }
     }
 }

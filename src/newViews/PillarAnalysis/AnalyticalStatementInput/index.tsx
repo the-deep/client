@@ -1,8 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
-import { BiBarChartSquare } from 'react-icons/bi';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
+    IoEllipseOutline,
 } from 'react-icons/io5';
 import {
     _cs,
@@ -34,7 +34,7 @@ import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
 
-const ENTRIES_LIMIT = 50;
+export const ENTRIES_LIMIT = 50;
 
 export interface DroppedValue {
     entryId: number;
@@ -168,6 +168,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         [handleAnalyticalEntryDrop],
     );
 
+    const handleIncludeInReportChange = useCallback(() => {
+        onFieldChange((oldVal?: boolean) => !oldVal, 'includeInReport' as const);
+    }, [onFieldChange]);
+
     const dragValue = useMemo(() => ({
         statementClientId: value.clientId,
     }), [value.clientId]);
@@ -218,20 +222,16 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 contentClassName={styles.dragContent}
                 headerClassName={styles.header}
                 headerIcons={(
-                    <>
-                        <QuickActionButton
-                            name={undefined}
-                            disabled
-                        >
-                            <IoCheckmarkCircleSharp />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={undefined}
-                            disabled
-                        >
-                            <BiBarChartSquare />
-                        </QuickActionButton>
-                    </>
+                    <QuickActionButton
+                        name="includeInReport"
+                        onClick={handleIncludeInReportChange}
+                        big
+                    >
+                        {value.includeInReport
+                            ? <IoCheckmarkCircleSharp />
+                            : <IoEllipseOutline />
+                        }
+                    </QuickActionButton>
                 )}
                 // actionsContainerClassName={styles.actionsContainer}
                 headerActions={(

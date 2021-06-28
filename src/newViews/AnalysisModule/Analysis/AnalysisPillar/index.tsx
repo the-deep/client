@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     reverseRoute,
     _cs,
@@ -6,24 +6,32 @@ import {
 import {
     Container,
     Tag,
-    QuickActionButton,
-    QuickActionLink,
+    QuickActionConfirmButton,
+    ButtonLikeLink,
     PendingMessage,
     TextOutput,
+    List,
 } from '@the-deep/deep-ui';
+import { FiEdit2 } from 'react-icons/fi';
+import {
+    IoTrashOutline,
+} from 'react-icons/io5';
 
-import Icon from '#rscg/Icon';
-
-import { AnalysisPillars } from '#typings';
+import {
+    AnalysisPillars,
+    AnalyticalStatement,
+} from '#typings';
 import { pathNames } from '#constants';
 
 import _ts from '#ts';
 import styles from './styles.scss';
 
+const statementKeySelector = (d: AnalyticalStatement) => d.clientId;
+
 interface ComponentProps {
     analysisId: number;
     assigneeName?: string;
-    statements?: AnalysisPillars['analyticalStatements'];
+    statements?: AnalyticalStatement[];
     title: string;
     createdAt: string;
     onDelete: (value: number) => void;
@@ -58,11 +66,30 @@ function AnalysisPillar(props: ComponentProps) {
 
     const disabled = pendingPillarDelete;
 
+    const onDeleteConfirmClick = useCallback(() => {
+        onDelete(pillarId);
+    }, [onDelete, pillarId]);
+
+    const statementRendererParams = useCallback((key, data: AnalyticalStatement) => ({
+        className: styles.statement,
+        valueContainerClassName: styles.statementText,
+        descriptionContainerClassName: styles.description,
+        description: _ts(
+            'analysis',
+            'entriesCount',
+            {
+                entriesCount: data.analyticalEntries.length,
+            },
+        ),
+        value: data.statement,
+    }), []);
+
     return (
         <Container
             className={_cs(styles.analysisPillar, className)}
             sub
             heading={title}
+            headerClassName={styles.header}
             headingDescription={(
                 <Tag variant={completed ? 'accent' : 'gradient1'}>
                     {completed
@@ -74,25 +101,27 @@ function AnalysisPillar(props: ComponentProps) {
             inlineHeadingDescription
             headerActions={(
                 <>
-                    <QuickActionLink
+                    <ButtonLikeLink
                         to={editLink}
                         disabled={disabled}
+                        variant="tertiary"
+                        icons={(
+                            <FiEdit2 />
+                        )}
                     >
-                        <Icon name="edit" />
-                    </QuickActionLink>
-                    <QuickActionButton
-                        name={undefined}
-                        disabled={disabled}
-                    >
-                        <Icon name="copy" />
-                    </QuickActionButton>
-                    <QuickActionButton
+                        {_ts('analysis', 'continueAnalysisButton')}
+                    </ButtonLikeLink>
+                    <QuickActionConfirmButton
                         name={pillarId}
-                        onClick={onDelete}
+                        onConfirm={onDeleteConfirmClick}
+                        title={_ts('analysis', 'deletePillarButtonTitle')}
+                        message={_ts('analysis', 'deletePillarConfirmMessage')}
                         disabled={disabled}
+                        showConfirmationInitially={false}
+                        variant="secondary"
                     >
-                        <Icon name="delete" />
-                    </QuickActionButton>
+                        <IoTrashOutline />
+                    </QuickActionConfirmButton>
                 </>
             )}
             headerDescription={(
@@ -104,10 +133,9 @@ function AnalysisPillar(props: ComponentProps) {
                 />
             )}
             contentClassName={styles.content}
-            horizontallyCompactContent
         >
             {pendingPillarDelete && <PendingMessage />}
-            <div className={styles.metaSection}>
+            <div className={styles.leftContainer}>
                 <TextOutput
                     label={_ts('analysis', 'analyst')}
                     value={assigneeName}
@@ -115,19 +143,22 @@ function AnalysisPillar(props: ComponentProps) {
                     hideLabelColon
                 />
             </div>
-            <div className={styles.statementsSection}>
+            {(statements?.length ?? 0) > 0 && (
                 <TextOutput
+                    className={styles.rightContainer}
                     label={_ts('analysis', 'statementsTitle')}
                     block
-                    value={statements?.map(statement => (
-                        <TextOutput
-                            key={statement.id}
-                            value={statement.statement}
-                            description={`${statement.analyticalEntries.length} Entries`}
+                    valueContainerClassName={styles.statementsContainer}
+                    value={(
+                        <List
+                            data={statements}
+                            rendererParams={statementRendererParams}
+                            renderer={TextOutput}
+                            keySelector={statementKeySelector}
                         />
-                    ))}
+                    )}
                 />
-            </div>
+            )}
         </Container>
     );
 }
