@@ -58,7 +58,8 @@ function AnalysisDetails(props: Props) {
         },
     );
 
-    // NOTE: Whenever the details of the analysis is changed, we refetch all the pillar
+    // NOTE: Whenever the details of the analysis is changed,
+    // the modifiedAt field from parent changes and we refetch all the pillar
     // analysis of that analysis
     useEffect(() => {
         pillarGetTrigger();

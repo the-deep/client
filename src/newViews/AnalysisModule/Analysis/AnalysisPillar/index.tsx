@@ -14,7 +14,6 @@ import {
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
 import {
-    IoCopyOutline,
     IoTrashOutline,
 } from 'react-icons/io5';
 
@@ -71,10 +70,6 @@ function AnalysisPillar(props: ComponentProps) {
         onDelete(pillarId);
     }, [onDelete, pillarId]);
 
-    const onCloneConfirmClick = useCallback(() => {
-        console.warn('cloning', pillarId);
-    }, [pillarId]);
-
     const statementRendererParams = useCallback((key, data: AnalyticalStatement) => ({
         className: styles.statement,
         valueContainerClassName: styles.statementText,
@@ -116,17 +111,6 @@ function AnalysisPillar(props: ComponentProps) {
                     >
                         {_ts('analysis', 'continueAnalysisButton')}
                     </ButtonLikeLink>
-                    <QuickActionConfirmButton
-                        name={pillarId}
-                        onConfirm={onCloneConfirmClick}
-                        title={_ts('analysis', 'clonePillarButtonTitle')}
-                        message={_ts('analysis', 'clonePillarConfirmMessage')}
-                        disabled={disabled}
-                        showConfirmationInitially={false}
-                        variant="secondary"
-                    >
-                        <IoCopyOutline />
-                    </QuickActionConfirmButton>
                     <QuickActionConfirmButton
                         name={pillarId}
                         onConfirm={onDeleteConfirmClick}

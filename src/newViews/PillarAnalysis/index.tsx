@@ -61,7 +61,7 @@ import {
 import EntriesFilterForm from './EntriesFilterForm';
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem from './SourceEntryItem';
-import AnalyticalStatementInput from './AnalyticalStatementInput';
+import AnalyticalStatementInput, { ENTRIES_LIMIT } from './AnalyticalStatementInput';
 import {
     schema,
     defaultFormValues,
@@ -81,7 +81,7 @@ const STATEMENTS_LIMIT = 30;
 
 const analysisEntriesRequestQuery = {
     // NOTE: 30 columns x 50 rows
-    limit: 30 * 50,
+    limit: STATEMENTS_LIMIT * ENTRIES_LIMIT,
     fields: [
         'id',
         'excerpt',
@@ -242,7 +242,7 @@ function PillarAnalysis(props: Props) {
             let analyticalStatements: PartialAnalyticalStatementType[] = response.analyticalStatements ?? [];
             if (
                 (response.analyticalStatements?.length ?? 0) === 0
-                || response.versionId === 1
+                && response.versionId === 1
             ) {
                 // NOTE: We are adding 2 analytical statements if the pillar analysis
                 // is new and doesn't have any analytical statements

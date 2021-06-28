@@ -46,20 +46,15 @@ export interface PillarSummary {
     pillarTitle: string;
     analyticalStatementCount: number;
     analyticalStatements: AnalyticalStatementSummary[];
-    assignee: string;
+    assigneeDetails: { displayName: string };
     createdAt: string;
-    entriesAnalyzed?: number;
+    analyzedEntries?: number;
 }
 
 export interface AnalysisSummary {
     id: number;
     title: string;
-    pillarSummary: PillarSummary[];
-    frameworkOverview: {
-        id: number;
-        title: string;
-        entriesAnalyzed: number;
-    }[];
+    pillars: PillarSummary[];
     publicationDate?: {
         startDate?: string;
         endDate?: string;
@@ -67,7 +62,10 @@ export interface AnalysisSummary {
     createdAt: string;
     modifiedAt: string;
     teamLead: number;
-    teamLeadName: string;
+    teamLeadDetails: {
+        id: number;
+        displayName: string;
+    };
     totalEntries: number;
     totalSources: number;
     analyzedEntries: number;
@@ -78,7 +76,10 @@ export interface AnalysisElement {
     id: number;
     title: string;
     teamLead: number;
-    teamLeadName: string;
+    teamLeadDetails: {
+        id: number;
+        displayName: string;
+    };
     analysisPillar: AnalysisPillars[];
     startDate?: string;
     endDate?: string;

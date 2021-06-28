@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
     caseInsensitiveSubmatch,
-    isFalsyString,
+    isTruthyString,
 } from '@togglecorp/fujs';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import {
@@ -39,16 +39,26 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
-    const searchOptions = useMemo(() => {
-        const filteredOptions = options?.filter((option) => {
-            const searchFilter = isFalsyString(debouncedSearchText)
-                || caseInsensitiveSubmatch(option.label, debouncedSearchText);
-            return searchFilter;
-        });
-        if (filteredOptions && (filteredOptions.length ?? 0 > 50)) {
-            filteredOptions.length = 50;
+    const {
+        searchOptions,
+        filteredOptionsLength,
+    } = useMemo(() => {
+        let filteredOptions = options;
+        if (isTruthyString(debouncedSearchText)) {
+            filteredOptions = options?.filter(option => (
+                caseInsensitiveSubmatch(option.label, debouncedSearchText)
+            ));
         }
-        return filteredOptions;
+        if (filteredOptions && (filteredOptions.length ?? 0 > 50)) {
+            return ({
+                searchOptions: filteredOptions.slice(0, 50),
+                filteredOptionsLength: filteredOptions.length,
+            });
+        }
+        return {
+            searchOptions: filteredOptions,
+            filteredOptionsLength: filteredOptions?.length,
+        };
     }, [debouncedSearchText, options]);
 
     return (
@@ -61,7 +71,7 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
             options={options}
             searchOptions={searchOptions}
             optionsPending={false}
-            totalOptionsCount={options?.length}
+            totalOptionsCount={filteredOptionsLength}
         />
     );
 }

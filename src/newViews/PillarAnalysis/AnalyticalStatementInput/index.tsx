@@ -34,7 +34,7 @@ import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
 
-const ENTRIES_LIMIT = 50;
+export const ENTRIES_LIMIT = 50;
 
 export interface DroppedValue {
     entryId: number;

@@ -81,7 +81,6 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        created_by: [],
     }),
 };
 
@@ -143,9 +142,7 @@ function EntriesFilterForm(props: OwnProps) {
     } = useForm(initialValue, schema);
 
     useEffect(() => {
-        if (filtersValue) {
-            onValueSet(filtersValue);
-        }
+        onValueSet(filtersValue ?? initialValue);
     }, [filtersValue, onValueSet]);
 
     const isFilterEmpty = useMemo(() => (

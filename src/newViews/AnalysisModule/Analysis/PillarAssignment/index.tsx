@@ -9,7 +9,7 @@ interface Props {
     className?: string;
     assigneeName?: string;
     pillarTitle?: string;
-    entriesAnalyzed?: number;
+    analyzedEntries?: number;
     totalEntries?: number;
 }
 
@@ -18,17 +18,17 @@ function PillarAssignment(props: Props) {
         className,
         assigneeName,
         pillarTitle,
-        entriesAnalyzed = 0,
+        analyzedEntries = 0,
         totalEntries = 0,
     } = props;
 
     let statusLabel = _ts('analysis', 'inProgressTagLabel');
-    if (entriesAnalyzed === totalEntries && entriesAnalyzed > 0) {
+    if (analyzedEntries === totalEntries && analyzedEntries > 0) {
         statusLabel = _ts('analysis', 'analysisCompletedTagLabel');
     } else if (totalEntries === 0) {
         statusLabel = _ts('analysis', 'noAnalysisTagLabel');
     }
-    const isAnalysisCompleted = entriesAnalyzed === totalEntries && totalEntries > 0;
+    const isAnalysisCompleted = analyzedEntries === totalEntries && totalEntries > 0;
 
     return (
         <div className={_cs(styles.pillarAssignment, className)}>

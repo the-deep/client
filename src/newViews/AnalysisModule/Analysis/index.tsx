@@ -32,7 +32,6 @@ import DateRangeOutput from '#dui/DateRangeOutput';
 import {
     AppState,
     PillarSummary,
-    AnalysisSummary,
 } from '#typings';
 
 import _ts from '#ts';
@@ -88,8 +87,7 @@ interface ComponentProps {
     pendingAnalysisDelete: boolean;
     onClone: (value: number, title: string) => void;
     pendingAnalysisClone: boolean;
-    analysisPillars: PillarSummary[];
-    frameworkOverview: AnalysisSummary['frameworkOverview'];
+    pillars: PillarSummary[];
     totalEntries: number;
     totalSources: number;
     analyzedEntries: number;
@@ -113,7 +111,7 @@ function Analysis(props: ComponentProps) {
         analysisId,
         teamLeadName,
         onAnalysisPillarDelete,
-        analysisPillars: analysisPillarsFromProps,
+        pillars,
         createdAt,
         onEdit,
         onDelete,
@@ -124,7 +122,6 @@ function Analysis(props: ComponentProps) {
         totalEntries,
         totalSources,
         pendingAnalysisClone,
-        frameworkOverview,
     } = props;
 
     const handleCloneAnalysis = useCallback(() => {
@@ -133,9 +130,9 @@ function Analysis(props: ComponentProps) {
 
     const pillarAssignmentRendererParams = useCallback(
         (_: number, data: PillarSummary) => ({
-            assigneeName: data.assignee,
+            assigneeName: data.assigneeDetails.displayName,
             pillarTitle: data.pillarTitle,
-            entriesAnalyzed: data.entriesAnalyzed,
+            analyzedEntries: data.analyzedEntries,
             totalEntries,
         }),
         [totalEntries],
@@ -146,13 +143,13 @@ function Analysis(props: ComponentProps) {
     }, [analysisId, onDelete]);
 
     const barChartData = useMemo(() => (
-        frameworkOverview.map(o => ({
+        pillars.map(o => ({
             ...o,
             percent: Math.round(
-                (o.entriesAnalyzed / (totalEntries === 0 ? 1 : totalEntries)) * 10000,
+                ((o.analyzedEntries ?? 0) / (totalEntries === 0 ? 1 : totalEntries)) * 10000,
             ) / 100,
         }))
-    ), [frameworkOverview, totalEntries]);
+    ), [pillars, totalEntries]);
 
     const disabled = pendingAnalysisDelete || pendingAnalysisClone;
 
@@ -226,7 +223,7 @@ function Analysis(props: ComponentProps) {
                         value={(
                             <ListView
                                 className={styles.pillarAssignmentList}
-                                data={analysisPillarsFromProps}
+                                data={pillars}
                                 renderer={PillarAssignment}
                                 rendererParams={pillarAssignmentRendererParams}
                                 keySelector={pillarSummaryKeySelector}
@@ -300,7 +297,7 @@ function Analysis(props: ComponentProps) {
             <ExpandableContainer
                 className={styles.pillarAnalyses}
                 headerClassName={styles.pillarAnalysesHeader}
-                heading={_ts('analysis', 'pillarAnalysisCount', { count: analysisPillarsFromProps.length })}
+                heading={_ts('analysis', 'pillarAnalysisCount', { count: pillars.length })}
                 headingSize="extraSmall"
                 sub
                 alwaysMountContent={false}
