@@ -27,11 +27,11 @@ import {
 } from '#redux';
 import { startSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
 import _ts from '#ts';
+import HCaptchaSiteKey from '#config/hCaptcha';
 
 import styles from './styles.scss';
 
 const HCaptcha = FaramInputElement(NewHCaptcha);
-const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY;
 
 const mapDispatchToProps = dispatch => ({
     authenticate: () => dispatch(authenticateAction()),
@@ -238,7 +238,7 @@ function Login(props) {
                         <HCaptcha
                             elementRef={elementRef}
                             faramElementName="hcaptchaResponse"
-                            siteKey={HCaptchaSitekey}
+                            siteKey={HCaptchaSiteKey}
                         />
                     }
                     <div className={styles.actionButtons}>

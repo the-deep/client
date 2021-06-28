@@ -17,12 +17,11 @@ import Captcha from '@hcaptcha/react-hcaptcha';
 import { useLazyRequest } from '#utils/request';
 import HCaptcha from '#components/ui/HCaptcha';
 import NonFieldError from '#components/ui/NonFieldError';
+import HCaptchaSiteKey from '#config/hCaptcha';
 
 import _ts from '#ts';
 
 import styles from './styles.scss';
-
-const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY as string;
 
 interface RegisterFields {
     email: string;
@@ -123,7 +122,7 @@ function RegisterModal(props: Props) {
                             className={styles.captcha}
                             name="hcaptchaResponse"
                             elementRef={elementRef}
-                            siteKey={HCaptchaSitekey}
+                            siteKey={HCaptchaSiteKey}
                             onChange={onValueChange}
                             error={error?.fields?.hcaptchaResponse}
                             disabled={registerPending}

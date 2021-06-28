@@ -16,11 +16,11 @@ import TextInput from '#rsci/TextInput';
 import { useLazyRequest } from '#utils/request';
 import { pathNames } from '#constants';
 import _ts from '#ts';
+import HCaptchaSiteKey from '#config/hCaptcha';
 
 import styles from './styles.scss';
 
 const HCaptcha = FaramInputElement(NewHCaptcha);
-const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY;
 
 const faramSchema = {
     fields: {
@@ -132,7 +132,7 @@ function Register() {
                         <HCaptcha
                             elementRef={elementRef}
                             faramElementName="hcaptchaResponse"
-                            siteKey={HCaptchaSitekey}
+                            siteKey={HCaptchaSiteKey}
                         />
                         <div className={styles.actionButtons}>
                             <PrimaryButton

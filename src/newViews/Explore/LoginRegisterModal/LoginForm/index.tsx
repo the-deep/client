@@ -34,10 +34,9 @@ import {
 } from '#redux';
 import { startSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
 import _ts from '#ts';
+import HCaptchaSiteKey from '#config/hCaptcha';
 
 import styles from './styles.scss';
-
-const HCaptchaSitekey = process.env.REACT_APP_HCATPCHA_SITEKEY as string;
 
 interface HidQuery {
     // eslint-disable-next-line camelcase
@@ -241,7 +240,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         className={styles.captcha}
                         name="hcaptchaResponse"
                         elementRef={elementRef}
-                        siteKey={HCaptchaSitekey}
+                        siteKey={HCaptchaSiteKey}
                         onChange={onValueChange}
                         error={error?.fields?.hcaptchaResponse}
                     />
