@@ -5,7 +5,6 @@ import {
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
-    PartialForm,
     requiredCondition,
     useForm,
 } from '@togglecorp/toggle-form';
@@ -22,41 +21,62 @@ import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { AnalyticalFramework, BasicOrganization } from '#typings';
 import OrganizationSelectInput from '#components/input/OrganizationSelectInput';
+
+import UploadImage from './UploadImage';
 import styles from './styles.scss';
+
+
+type PartialFormType = {
+    title?: string;
+    organization?: number;
+    description?: string;
+    previewImage?: File;
+};
+type FormSchema = ObjectSchema<PartialFormType>;
+type FormSchemaFields = ReturnType<FormSchema['fields']>;
+
+const defaultFormValues: PartialFormType = {};
+
+const schema: FormSchema = {
+    fields: (): FormSchemaFields => ({
+        title: [requiredCondition],
+        description: [],
+        organization: [],
+        previewImage: [],
+    }),
+};
 
 interface Props {
     frameworkId: number;
     className?: string;
     analyticalFramework?: AnalyticalFramework;
     frameworkGetPending: boolean;
+    onSuccess: (value: AnalyticalFramework) => void;
 }
-
-type FormType = Pick<AnalyticalFramework, 'title' | 'organization' | 'description' | 'isPrivate' | 'createdByName' | 'createdAt'>
-type PartialFormType = PartialForm<FormType>;
-type FormSchema = ObjectSchema<PartialFormType>;
-type FormSchemaFields = ReturnType<FormSchema['fields']>;
-
-const defaultFormValues: PartialFormType = {};
-const schema: FormSchema = {
-    fields: (): FormSchemaFields => ({
-        title: [requiredCondition],
-        description: [],
-        organization: [],
-    }),
-};
-
 function FrameworkDetailsForm(props: Props) {
     const {
         frameworkId,
         className,
         analyticalFramework: analyticalFrameworkFromProps,
         frameworkGetPending,
+        onSuccess,
     } = props;
 
     const [
         organizationOptions,
         setOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
+
+    const initialValue = useMemo(
+        (): PartialFormType | undefined => {
+            if (!analyticalFrameworkFromProps) {
+                return undefined;
+            }
+            const { title, organization, description } = analyticalFrameworkFromProps;
+            return { title, organization, description };
+        },
+        [analyticalFrameworkFromProps],
+    );
 
     const {
         pristine,
@@ -66,17 +86,20 @@ function FrameworkDetailsForm(props: Props) {
         validate,
         onValueSet,
         onErrorSet,
-    } = useForm(analyticalFrameworkFromProps ?? defaultFormValues, schema);
+    } = useForm(initialValue ?? defaultFormValues, schema);
 
     const {
         pending: frameworkPatchPending,
         trigger: patchFramework,
     } = useLazyRequest<AnalyticalFramework, PartialFormType>({
         url: `server://analysis-frameworks/${frameworkId}/`,
+        formData: true,
         method: 'PATCH',
         body: ctx => ctx,
         onSuccess: (response) => {
-            onValueSet(response);
+            const { title, organization, description } = response;
+            onValueSet({ title, organization, description });
+            onSuccess(response);
         },
         failureHeader: _ts('analyticalFramework', 'title'),
     });
@@ -96,7 +119,22 @@ function FrameworkDetailsForm(props: Props) {
     const pending = frameworkPatchPending || frameworkGetPending;
 
     return (
-        <div className={_cs(styles.frameworkDetailsForm, className)}>
+        <Container
+            className={_cs(className, styles.frameworkDetailsForm)}
+            footerContent
+            footerClassName={styles.footer}
+            footerActions={
+                <Button
+                    name={undefined}
+                    variant="primary"
+                    disabled={pristine || pending}
+                    onClick={handleSubmit}
+                >
+                    {_ts('analyticalFramework', 'saveFramework')}
+                </Button>
+            }
+            contentClassName={styles.mainContent}
+        >
             {pending && <PendingMessage />}
             <div className={styles.content}>
                 <div className={styles.details}>
@@ -115,15 +153,14 @@ function FrameworkDetailsForm(props: Props) {
                         <TextInput
                             className={styles.createdBy}
                             name="createdBy"
-                            value={value.createdByName}
-                            error={error?.fields?.createdByName}
+                            value={analyticalFrameworkFromProps?.createdByName}
                             readOnly
                             label={_ts('analyticalFramework', 'createdBy')}
                         />
                         <DateInput
                             className={styles.createdOn}
                             name="createdAt"
-                            value={value.createdAt?.split('T')[0]}
+                            value={analyticalFrameworkFromProps?.createdAt?.split('T')[0]}
                             readOnly
                             label={_ts('analyticalFramework', 'createdOn')}
                         />
@@ -158,30 +195,25 @@ function FrameworkDetailsForm(props: Props) {
                         heading={_ts('analyticalFramework', 'frameworkVisibility')}
                     >
                         <Tag
-                            variant={value.isPrivate ? 'default' : 'complement1'}
+                            variant={analyticalFrameworkFromProps?.isPrivate ? 'default' : 'complement1'}
                         >
                             {_ts('analyticalFramework', 'publicFramework')}
                         </Tag>
-                        <Tag variant={value.isPrivate ? 'complement1' : 'default'}>
+                        <Tag variant={analyticalFrameworkFromProps?.isPrivate ? 'complement1' : 'default'}>
                             {_ts('analyticalFramework', 'privateFramework')}
                         </Tag>
                     </Container>
                 </div>
-                <div className={styles.imagePreview}>
-                    Image Preview
-                </div>
+                <UploadImage
+                    className={styles.imagePreview}
+                    alt={_ts('analyticalFramework', 'previewImage')}
+                    name="previewImage"
+                    value={value.previewImage}
+                    image={analyticalFrameworkFromProps?.previewImage}
+                    onChange={onValueChange}
+                />
             </div>
-            <div className={styles.footer}>
-                <Button
-                    name={undefined}
-                    variant="primary"
-                    disabled={pristine || pending}
-                    onClick={handleSubmit}
-                >
-                    {_ts('analyticalFramework', 'saveFramework')}
-                </Button>
-            </div>
-        </div>
+        </Container>
     );
 }
 

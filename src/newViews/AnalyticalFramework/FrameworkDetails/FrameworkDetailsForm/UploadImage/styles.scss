@@ -1,0 +1,31 @@
+.upload-image {
+    display: flex;
+    padding: 0;
+
+    .container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        .content {
+            display: flex;
+            position: relative;
+            align-items: center;
+            flex-direction: column;
+            flex-grow: 1;
+
+            .image-preview {
+                display: flex;
+                flex-grow: 1;
+            }
+
+            .input {
+                position: absolute;
+                right: var(--dui-spacing-small);
+                bottom: var(--dui-spacing-small);
+                margin-left: auto;
+            }
+        }
+    }
+}

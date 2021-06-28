@@ -7,6 +7,7 @@ export interface AnalyticalFramework {
     organization: number;
     description: string;
     isPrivate: boolean;
+    previewImage?: string;
     organizationDetails: {
         id: number;
         title: string;
