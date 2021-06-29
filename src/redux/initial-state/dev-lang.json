@@ -1423,7 +1423,13 @@
         "-1818191919": "Show all filters",
         "-181828381": "Tagging status",
         "-191848101": "All sources",
-        "-181810110": "Hide  filters"
+        "-181810110": "Hide  filters",
+        "-192383893": "Priority",
+        "-183810104": "Authoring Organization Type",
+        "-1019391010": "Confidentiality",
+        "-191018181": "EMM Risk Factors",
+        "-181101018": "EMM Entities",
+        "-103810910": "EMM Keywords"
     },
     "links": {
         "browserExtension": {
@@ -4121,7 +4127,16 @@
             "apply": 427,
             "clearAll": -91010810184,
             "showAll": -1818191919,
-            "hide": -181810110
+            "hide": -181810110,
+            "assessmentDoesNotExistsOptionLabel": -65776700,
+            "assessmentExistsOptionLabel": -38652666,
+            "exists": -28151161,
+            "priority": -192383893,
+            "authoringOrganizationTypes": -183810104,
+            "confidentiality": -1019391010,
+            "emmRiskFactors": -191018181,
+            "emmKeywords": -103810910,
+            "emmEntities": -181101018
         },
         "sourcesStats": {
             "totalSources": -818201101,
