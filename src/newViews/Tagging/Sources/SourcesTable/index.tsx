@@ -26,6 +26,7 @@ import { useRequest } from '#utils/request';
 import _ts from '#ts';
 
 import Actions, { Props as ActionsProps } from './Actions';
+import { FormType as Filters } from '../SourcesFilter';
 
 import styles from './styles.scss';
 
@@ -51,13 +52,15 @@ const maxItemsPerPage = 10;
 
 interface Props {
     className?: string;
-    activeProject: number;
+    projectId: number;
+    filters?: Filters;
 }
 
 function SourcesTable(props: Props) {
     const {
         className,
-        activeProject,
+        projectId,
+        filters,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -69,8 +72,9 @@ function SourcesTable(props: Props) {
     }), [activePage]);
 
     const leadsRequestBody = useMemo(() => ({
-        project: activeProject,
-    }), [activeProject]);
+        ...filters,
+        project: projectId,
+    }), [projectId, filters]);
 
     const {
         pending: leadsGetPending,

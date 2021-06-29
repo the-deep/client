@@ -1,0 +1,13 @@
+.sources-stats {
+    display: flex;
+
+    .container {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-around;
+        margin: var(--dui-spacing-small);
+        border: 1px solid var((--dui-color-grey5));
+        border-radius: var(--dui-border-radius-card);
+
+    }
+}

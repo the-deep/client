@@ -81,3 +81,10 @@ export interface LeadOptions {
     emmRiskFactors?: EmmEntity[];
     emmKeywords?: EmmEntity[];
 }
+
+export interface LeadSummary {
+    total: number;
+    totalEntries: number;
+    totalVerifiedEntries: number;
+    totalUnverifiedEntries: number;
+}

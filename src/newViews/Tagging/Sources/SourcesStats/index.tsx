@@ -1,65 +1,117 @@
-import React, { useMemo, useCallback } from 'react';
-import { mapToList } from '@togglecorp/fujs';
-import { EntrySummary } from '#typings';
+import React, { useMemo } from 'react';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { IoBookmarks, IoDocument } from 'react-icons/io5';
 import {
-    ListView,
+    Card,
     InformationCard,
 } from '@the-deep/deep-ui';
+
+import { LeadSummary, ProjectStat } from '#typings';
 import _ts from '#ts';
+import { useRequest } from '#utils/request';
+import ProgressLine from '#components/viz/ProgressLine';
 
-interface Stats {
-    key: string;
-    label: string;
-    value: number;
-}
-
-type SourcesStatsKeys = Omit<EntrySummary, 'orgTypeCount' | 'countPerTocItem'>;
-
-const entriesStatsLabelMap: { [ key in (keyof SourcesStatsKeys)]: string } = {
-    totalLeads: _ts('entriesStats', 'totalLeads'),
-    totalSources: _ts('entriesStats', 'totalSources'),
-    totalUnverifiedEntries: _ts('entriesStats', 'totalUnverifiedEntries'),
-    totalVerifiedEntries: _ts('entriesStats', 'totalVerifiedEntries'),
-};
-const statsKeySelector = (d: Stats) => d.key;
+import { FormType as Filters } from '../SourcesFilter';
+import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    stats?: EntrySummary;
+    projectId: number;
+    filters?: Filters;
 }
 
 function SourcesStats(props: Props) {
     const {
         className,
-        stats,
+        projectId,
+        filters,
     } = props;
 
-    const statsList: Stats[] = useMemo(() =>
-        mapToList(
-            entriesStatsLabelMap,
-            (e, k) => ({
-                key: k.toString(),
-                label: e,
-                value: stats ? stats[k as keyof SourcesStatsKeys] : 0,
-            }),
-        ),
-    [stats]);
+    const leadsRequestBody = useMemo(() => ({
+        ...filters,
+        project: projectId,
+    }), [projectId, filters]);
 
-    const statsRendererParams = useCallback((_: string, data: Stats) => ({
-        label: data.label,
-        value: data.value,
-        variant: 'complement1' as const, // FIXME change to matching variant when available
-        coloredBackground: true,
-    }), []);
+    const {
+        response: leadsSummary,
+    } = useRequest<LeadSummary>({
+        url: 'server://v2/leads/summary/',
+        skip: isNotDefined(projectId),
+        method: 'POST',
+        body: leadsRequestBody,
+        failureHeader: _ts('projectEdit', 'frameworkDetails'),
+    });
+
+    const {
+        response: projectStats,
+    } = useRequest<ProjectStat>({
+        skip: isNotDefined(projectId),
+        url: `server://projects-stat/${projectId}/`,
+        method: 'GET',
+        failureHeader: _ts('home', 'projectDetails'),
+    });
+
+    const {
+        total = 0,
+        totalEntries = 0,
+        totalVerifiedEntries = 0,
+        totalUnverifiedEntries = 0,
+    } = leadsSummary ?? {};
+
+    const {
+        numberOfLeads = 0,
+        numberOfLeadsTagged = 0,
+        numberOfLeadsTaggedAndVerified = 0,
+    } = projectStats ?? {};
 
     return (
-        <ListView
-            className={className}
-            data={statsList}
-            keySelector={statsKeySelector}
-            renderer={InformationCard}
-            rendererParams={statsRendererParams}
-        />
+        <div className={_cs(className, styles.sourcesStats)}>
+            <Card className={styles.container}>
+                <InformationCard
+                    icon={(
+                        <IoBookmarks />
+                    )}
+                    label={_ts('sourcesStats', 'totalSources')}
+                    value={total}
+                    variant="accent"
+                />
+                <ProgressLine
+                    progress={(numberOfLeadsTagged / numberOfLeads) * 100}
+                    title={_ts('sourcesStats', 'sourcesTaggedLabel')}
+                    variant="complement2"
+                />
+                <ProgressLine
+                    progress={(numberOfLeadsTaggedAndVerified / numberOfLeads) * 100}
+                    title={_ts('sourcesStats', 'sourcesTaggedValidatedLabel')}
+                    variant="complement1"
+                />
+                <ProgressLine
+                    progress={((numberOfLeads - numberOfLeadsTagged) / numberOfLeads) * 100}
+                    title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
+                    variant="complement3"
+                />
+            </Card>
+            <Card className={styles.container}>
+                <InformationCard
+                    icon={(
+                        <IoDocument />
+                    )}
+                    label={_ts('sourcesStats', 'totalEntries')}
+                    value={totalEntries}
+                    variant="accent"
+                />
+                <ProgressLine
+                    progress={(totalVerifiedEntries / totalEntries) * 100}
+                    title={_ts('sourcesStats', 'totalVerifiedEntries')}
+                    variant="complement1"
+                />
+                <ProgressLine
+                    progress={(totalUnverifiedEntries / totalEntries) * 100}
+                    title={_ts('sourcesStats', 'totalUnverifiedEntries')}
+                    variant="complement2"
+                />
+            </Card>
+        </div>
     );
 }
 

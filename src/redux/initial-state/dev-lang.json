@@ -1421,7 +1421,9 @@
         "-1894810190": "Original date",
         "-91010810184": "Clear all",
         "-1818191919": "Show all filters",
-        "-181828381": "Tagging status"
+        "-181828381": "Tagging status",
+        "-191848101": "All sources",
+        "-181810110": "Hide  filters"
     },
     "links": {
         "browserExtension": {
@@ -4110,7 +4112,7 @@
             "addSource": -1881010101
         },
         "sourcesFilter": {
-            "title": -987979871,
+            "title": -191848101,
             "status": -181828381,
             "originalDate": -1894810190,
             "addedOn": -12808201,
@@ -4118,13 +4120,16 @@
             "search": 9,
             "apply": 427,
             "clearAll": -91010810184,
-            "showAll": -1818191919
+            "showAll": -1818191919,
+            "hide": -181810110
         },
-        "entriesStats": {
-            "totalLeads": -987979879,
-            "totalSources": -987979871,
+        "sourcesStats": {
+            "totalSources": -818201101,
+            "totalEntries": 15,
             "totalUnverifiedEntries": -879879798,
-            "totalVerifiedEntries": -897879798
+            "totalVerifiedEntries": -897879798,
+            "sourcesTaggedLabel": -61653142,
+            "sourcesTaggedValidatedLabel": -16197909
         }
     }
 }

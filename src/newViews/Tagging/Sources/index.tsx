@@ -8,6 +8,9 @@ import { activeProjectIdFromStateSelector } from '#redux';
 import Navbar from '../Navbar';
 import SourcesStats from './SourcesStats';
 import SourcesFilter, { FormType as Filters } from './SourcesFilter';
+import SourcesTable from './SourcesTable';
+
+import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
@@ -17,18 +20,26 @@ interface Props {
 }
 function Sources(props: Props) {
     const { activeProject } = props;
-    const [sourcesFilters, setSourcesFilters] = useState<Filters>({});
-    console.warn('sources', sourcesFilters);
+    const [sourcesFilters, setSourcesFilters] = useState<Filters>();
 
     return (
-        <div>
+        <div className={styles.sources}>
             <Navbar />
-            <SourcesStats />
+            <SourcesStats
+                className={styles.stats}
+                filters={sourcesFilters}
+                projectId={activeProject}
+            />
             <SourcesFilter
+                className={styles.filter}
                 onFilterApply={setSourcesFilters}
                 projectId={activeProject}
             />
-            <div>This is sources tab</div>
+            <SourcesTable
+                className={styles.table}
+                filters={sourcesFilters}
+                projectId={activeProject}
+            />
         </div>
     );
 }
