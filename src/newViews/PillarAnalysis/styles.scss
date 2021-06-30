@@ -102,6 +102,10 @@
                 padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
                 overflow: auto;
 
+                .list {
+                    display: flex;
+                }
+
                 .analytical-statement {
                     flex-shrink: 0;
                     margin: var(--dui-spacing-medium);

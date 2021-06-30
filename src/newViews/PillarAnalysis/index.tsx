@@ -1,22 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-} from '@dnd-kit/core';
-import {
-    restrictToHorizontalAxis,
-} from '@dnd-kit/modifiers';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    horizontalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import produce from 'immer';
 import {
     isDefined,
@@ -56,6 +39,7 @@ import NonFieldError from '#components/ui/NonFieldError';
 import notify from '#notify';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
+import SortableList from '#components/ui/SortableList';
 
 import {
     GeoOptions,
@@ -146,6 +130,8 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 });
 
 type FormType = typeof defaultFormValues;
+
+const statementKeySelector = (d: PartialAnalyticalStatementType) => d.clientId;
 
 interface PropsFromState {
     pillarId: number;
@@ -523,42 +509,33 @@ function PillarAnalysis(props: Props) {
     || pendingPillarAnalysisSave
     || pendingDiscardedTags;
 
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        }),
-    );
+    const analyticalStatementRendererParams = useCallback((
+        key: string,
+        statement: PartialAnalyticalStatementType,
+        index: number,
+    ) => ({
+        className: styles.analyticalStatement,
+        index,
+        value: statement,
+        onChange: onAnalyticalStatementChange,
+        onRemove: onAnalyticalStatementRemove,
+        onEntryMove: handleEntryMove,
+        onEntryDrop: handleEntryDrop,
+        error: error?.fields?.analyticalStatements?.members?.[statement?.clientId],
+    }), [
+        onAnalyticalStatementChange,
+        onAnalyticalStatementRemove,
+        handleEntryMove,
+        handleEntryDrop,
+        error?.fields?.analyticalStatements?.members,
+    ]);
 
-    // NOTE: Sortable context requires list of items
-    const items = value?.analyticalStatements?.map(a => a.clientId);
-
-    const handleDragEnd = useCallback((event) => {
-        const { active, over } = event;
-
-        if (active.id !== over.id && items) {
-            const oldIndex = items.indexOf(active.id);
-            const newIndex = items.indexOf(over.id);
-
-            const newItems = arrayMove(items, oldIndex, newIndex);
-            onValueChange((oldStatements: FormType['analyticalStatements']) => {
-                if (isNotDefined(oldStatements)) {
-                    return oldStatements;
-                }
-                const statementsMap = listToMap(
-                    oldStatements,
-                    d => d.clientId,
-                    d => d,
-                );
-                const newAnalyticalStatements = newItems.map(item => statementsMap[item]);
-
-                // NOTE: After the newly added statements's order is set and
-                // placed in the desired index, we can change the order of
-                // whole list in bulk
-                return newAnalyticalStatements.map((v, i) => ({ ...v, order: i }));
-            }, 'analyticalStatements');
-        }
-    }, [items, onValueChange]);
+    const onOrderChange = useCallback((
+        newValues: PartialAnalyticalStatementType[],
+    ) => {
+        const orderedValues = [...newValues].map((v, i) => ({ ...v, order: i }));
+        onValueChange(orderedValues, 'analyticalStatements');
+    }, [onValueChange]);
 
     return (
         <div className={styles.pillarAnalysis}>
@@ -696,35 +673,16 @@ function PillarAnalysis(props: Props) {
                         }}
                     >
                         <div className={styles.rightContainer}>
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                                modifiers={[restrictToHorizontalAxis]}
-                            >
-                                <SortableContext
-                                    items={items ?? []}
-                                    strategy={horizontalListSortingStrategy}
-                                >
-                                    {value.analyticalStatements?.map((
-                                        analyticalStatement,
-                                        index,
-                                    ) => (
-                                        <AnalyticalStatementInput
-                                            className={styles.analyticalStatement}
-                                            key={analyticalStatement.clientId}
-                                            index={index}
-                                            value={analyticalStatement}
-                                            onChange={onAnalyticalStatementChange}
-                                            onRemove={onAnalyticalStatementRemove}
-                                            onEntryMove={handleEntryMove}
-                                            onEntryDrop={handleEntryDrop}
-                                            // eslint-disable-next-line max-len
-                                            error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.clientId]}
-                                        />
-                                    ))}
-                                </SortableContext>
-                            </DndContext>
+                            <SortableList
+                                className={styles.list}
+                                name="analyticalStatements"
+                                onChange={onOrderChange}
+                                data={value.analyticalStatements}
+                                keySelector={statementKeySelector}
+                                renderer={AnalyticalStatementInput}
+                                direction="horizontal"
+                                rendererParams={analyticalStatementRendererParams}
+                            />
                             <QuickActionButton
                                 className={styles.addStatementButton}
                                 name={undefined}
