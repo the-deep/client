@@ -68,6 +68,7 @@ function SourcesStats(props: Props) {
         <div className={_cs(className, styles.sourcesStats)}>
             <Card className={styles.container}>
                 <InformationCard
+                    className={styles.infoCard}
                     icon={(
                         <IoBookmarks />
                     )}
@@ -79,20 +80,24 @@ function SourcesStats(props: Props) {
                     progress={(numberOfLeadsTagged / numberOfLeads) * 100}
                     title={_ts('sourcesStats', 'sourcesTaggedLabel')}
                     variant="complement2"
+                    size="large"
                 />
                 <ProgressLine
                     progress={(numberOfLeadsTaggedAndVerified / numberOfLeads) * 100}
                     title={_ts('sourcesStats', 'sourcesTaggedValidatedLabel')}
                     variant="complement1"
+                    size="large"
                 />
                 <ProgressLine
                     progress={((numberOfLeads - numberOfLeadsTagged) / numberOfLeads) * 100}
                     title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
                     variant="complement3"
+                    size="large"
                 />
             </Card>
             <Card className={styles.container}>
                 <InformationCard
+                    className={styles.infoCard}
                     icon={(
                         <IoDocument />
                     )}
@@ -104,11 +109,13 @@ function SourcesStats(props: Props) {
                     progress={(totalVerifiedEntries / totalEntries) * 100}
                     title={_ts('sourcesStats', 'totalVerifiedEntries')}
                     variant="complement1"
+                    size="large"
                 />
                 <ProgressLine
                     progress={(totalUnverifiedEntries / totalEntries) * 100}
                     title={_ts('sourcesStats', 'totalUnverifiedEntries')}
                     variant="complement2"
+                    size="large"
                 />
             </Card>
         </div>

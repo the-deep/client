@@ -17,40 +17,30 @@
 
     .content {
         display: flex;
-        flex-direction: column;
         flex-grow: 1;
+        flex-wrap: wrap;
+        --width-input: 196px;
 
-        .container {
-            display: flex;
+        .input {
+            display: block;
+            margin: var(--dui-spacing-small);
+            width: var(--width-input);
 
-            .input-container {
-                display: flex;
-                flex-grow: 1;
-
-                .input {
-                    padding: var(--dui-spacing-small);
-                }
-            }
-
-            .actions {
-                display: flex;
-                align-items: flex-end;
-                flex-shrink: 0;
-                justify-content: space-between;
-
-                .button {
-                    padding: var(--dui-spacing-small);
-                }
+            &.hidden {
+                display: none;
             }
         }
 
-        .expanded {
-            display: none;
+        .actions {
+            display: flex;
+            align-items: flex-end;
+            flex-grow: 1;
+            justify-content: flex-end;
 
-            &.visible {
-                display: flex;
+            .button {
+                margin: var(--dui-spacing-small);
+                font-size: 0.8rem;
             }
         }
     }
-
 }

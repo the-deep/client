@@ -2,18 +2,26 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    background-color: var(--dui-color-background);
 
     .stats {
         display: flex;
-        flex-grow: 1;
+        flex-shrink: 0;
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
     }
 
     .filter {
         display: flex;
-        flex-grow: 1;
+        flex-shrink: 0;
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
     }
 
     .table {
         display: flex;
+        flex-grow: 1;
+        flex-shrink: 0;
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
     }
 }

@@ -86,6 +86,7 @@ function SourcesTable(props: Props) {
         method: 'POST',
         body: leadsRequestBody,
         failureHeader: _ts('sourcesTable', 'title'),
+        preserveResponse: true,
     });
 
     const handlePageChange = useCallback((page: number) => {
@@ -124,7 +125,9 @@ function SourcesTable(props: Props) {
             headerCellRenderer: Checkbox,
             headerCellRendererParams: {
                 value: selectedIds.length === leadsResponse?.results.length,
-                label: selectedIds.length > 0 ? _ts('sourcesTable', 'selectedNumberOfLeads', { noOfLeads: selectedIds.length }) : _ts('sourcesTable', 'selectAll'),
+                // label: selectedIds.length > 0
+                // ? _ts('sourcesTable', 'selectedNumberOfLeads',
+                // { noOfLeads: selectedIds.length }) : _ts('sourcesTable', 'selectAll'),
                 onChange: handleSelectAll,
                 indeterminate: !(selectedIds.length === leadsResponse?.results.length
                 || selectedIds.length === 0),
@@ -193,7 +196,7 @@ function SourcesTable(props: Props) {
             },
             cellRenderer: Link,
             cellRendererParams: (_, data) => ({
-                children: data.sourceDetail.title ?? data.sourceRaw,
+                children: data.sourceDetail?.title ?? data.sourceRaw,
                 to: '#', // TODO use provided url
             }),
         };
@@ -268,6 +271,7 @@ function SourcesTable(props: Props) {
         >
             {leadsGetPending && (<PendingMessage />)}
             <Table
+                className={styles.table}
                 data={leadsResponse?.results}
                 keySelector={leadsKeySelector}
                 columns={columns}

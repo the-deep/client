@@ -41,7 +41,6 @@ function Actions<T>(props: Props<T>) {
             </QuickActionButton>
             <ButtonLikeLink
                 className={styles.button}
-                iconsClassName={styles.icon}
                 variant="primary"
                 title="tag"
                 disabled={disabled}
@@ -52,7 +51,6 @@ function Actions<T>(props: Props<T>) {
             </ButtonLikeLink>
             <ButtonLikeLink
                 className={styles.button}
-                iconsClassName={styles.icon}
                 variant="secondary"
                 title="assessment"
                 disabled={disabled}

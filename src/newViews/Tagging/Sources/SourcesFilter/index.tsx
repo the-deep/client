@@ -165,192 +165,207 @@ function SourcesFilter(props: Props) {
                     </Button>
                 )}
             />
+            <NonFieldError error={error} />
             <div className={styles.content}>
-                <div className={styles.container}>
-                    <div className={styles.inputContainer}>
-                        <NonFieldError error={error} />
+                <MultiSelectInput
+                    className={styles.input}
+                    name="status"
+                    onChange={onValueChange}
+                    options={leadOptions?.status}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    value={value.status}
+                    error={error?.fields?.status?.$internal}
+                    label={_ts('sourcesFilter', 'status')}
+                    placeholder={_ts('sourcesFilter', 'status')}
+                />
+                <DateInput
+                    className={styles.input}
+                    name="publishedOn"
+                    onChange={onValueChange}
+                    value={value.publishedOn}
+                    error={error?.fields?.publishedOn}
+                    disabled={disabled}
+                    label={_ts('sourcesFilter', 'originalDate')}
+                    placeholder={_ts('sourcesFilter', 'originalDate')}
+                />
+                <DateInput
+                    className={styles.input}
+                    name="createdAt"
+                    onChange={onValueChange}
+                    value={value.createdAt}
+                    error={error?.fields?.createdAt}
+                    disabled={disabled}
+                    label={_ts('sourcesFilter', 'addedOn')}
+                    placeholder={_ts('sourcesFilter', 'addedOn')}
+                />
+                <MultiSelectInput
+                    className={styles.input}
+                    name="assignee"
+                    onChange={onValueChange}
+                    options={leadOptions?.assignee}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    value={value.assignee}
+                    error={error?.fields?.assignee?.$internal}
+                    label={_ts('sourcesFilter', 'assignee')}
+                    placeholder={_ts('sourcesFilter', 'assignee')}
+                />
+                <TextInput
+                    className={styles.input}
+                    icons={<IoSearch />}
+                    name="search"
+                    onChange={onValueChange}
+                    value={value.search}
+                    error={error?.fields?.search}
+                    disabled={disabled}
+                    label={_ts('sourcesFilter', 'search')}
+                    placeholder={_ts('sourcesFilter', 'search')}
+                />
+                <SelectInput
+                    className={_cs(
+                        styles.input,
+                        !showContent && styles.hidden,
+                    )}
+                    name="exists"
+                    onChange={onValueChange}
+                    options={existsFilterOptions}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    value={value.exists}
+                    error={error?.fields?.exists}
+                    label={_ts('sourcesFilter', 'exists')}
+                    placeholder={_ts('sourcesFilter', 'exists')}
+                />
+                <MultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        !showContent && styles.hidden,
+                    )}
+                    name="priority"
+                    onChange={onValueChange}
+                    options={leadOptions?.priority}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    value={value.priority}
+                    error={error?.fields?.priority?.$internal}
+                    label={_ts('sourcesFilter', 'priority')}
+                    placeholder={_ts('sourcesFilter', 'priority')}
+                />
+                <MultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        !showContent && styles.hidden,
+                    )}
+                    name="authoringOrganizationTypes"
+                    onChange={onValueChange}
+                    options={leadOptions?.organizationTypes}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
+                    value={value.authoringOrganizationTypes}
+                    error={error?.fields?.authoringOrganizationTypes?.$internal}
+                    label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
+                    placeholder={_ts('sourcesFilter', 'authoringOrganizationTypes')}
+                />
+                {!filterOnlyUnprotected && (
+                    <MultiSelectInput
+                        className={_cs(
+                            styles.input,
+                            !showContent && styles.hidden,
+                        )}
+                        name="confidentiality"
+                        onChange={onValueChange}
+                        options={leadOptions?.confidentiality}
+                        keySelector={keySelector}
+                        labelSelector={labelSelector}
+                        value={value.confidentiality}
+                        error={error?.fields?.confidentiality?.$internal}
+                        label={_ts('sourcesFilter', 'confidentiality')}
+                        placeholder={_ts('sourcesFilter', 'confidentiality')}
+                    />
+                )}
+                {leadOptions?.hasEmmLeads && (
+                    <>
                         <MultiSelectInput
-                            className={styles.input}
-                            name="status"
-                            onChange={onValueChange}
-                            options={leadOptions?.status}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            value={value.status}
-                            error={error?.fields?.status?.$internal}
-                            label={_ts('sourcesFilter', 'status')}
-                            placeholder={_ts('sourcesFilter', 'status')}
-                        />
-                        <DateInput
-                            className={styles.input}
-                            name="publishedOn"
-                            onChange={onValueChange}
-                            value={value.publishedOn}
-                            error={error?.fields?.publishedOn}
-                            disabled={disabled}
-                            label={_ts('sourcesFilter', 'originalDate')}
-                            placeholder={_ts('sourcesFilter', 'originalDate')}
-                        />
-                        <DateInput
-                            className={styles.input}
-                            name="createdAt"
-                            onChange={onValueChange}
-                            value={value.createdAt}
-                            error={error?.fields?.createdAt}
-                            disabled={disabled}
-                            label={_ts('sourcesFilter', 'addedOn')}
-                            placeholder={_ts('sourcesFilter', 'addedOn')}
-                        />
-                        <MultiSelectInput
-                            className={styles.input}
-                            name="assignee"
-                            onChange={onValueChange}
-                            options={leadOptions?.assignee}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            value={value.assignee}
-                            error={error?.fields?.assignee?.$internal}
-                            label={_ts('sourcesFilter', 'assignee')}
-                            placeholder={_ts('sourcesFilter', 'assignee')}
-                        />
-                        <TextInput
-                            className={styles.input}
-                            icons={<IoSearch />}
-                            name="search"
-                            onChange={onValueChange}
-                            value={value.search}
-                            error={error?.fields?.search}
-                            disabled={disabled}
-                            label={_ts('sourcesFilter', 'search')}
-                            placeholder={_ts('sourcesFilter', 'search')}
-                        />
-                    </div>
-                    <div className={styles.actions}>
-                        <Button
-                            className={styles.button}
-                            disabled={disabled || pristine}
-                            name="sourcesFilterSubmit"
-                            variant="action"
-                            onClick={handleApply}
-                        >
-                            {_ts('sourcesFilter', 'apply')}
-                        </Button>
-                        <Button
-                            className={styles.button}
-                            disabled={disabled || pristine}
-                            name="clearFilter"
-                            variant="action"
-                            actions={<IoClose />}
-                            onClick={handleClear}
-                        >
-                            {_ts('sourcesFilter', 'clearAll')}
-                        </Button>
-                        <Button
-                            className={styles.button}
-                            name="showAll"
-                            variant="action"
-                            actions={showContent ? (
-                                <IoChevronUpOutline />
-                            ) : (
-                                <IoChevronDownOutline />
+                            className={_cs(
+                                styles.input,
+                                !showContent && styles.hidden,
                             )}
-                            onClick={toggleContentVisibility}
-                        >
-                            {_ts('sourcesFilter', showContent ? 'hide' : 'showAll')}
-                        </Button>
-                    </div>
-                </div>
-                <div className={_cs(styles.expanded, showContent && styles.visible)}>
-                    <SelectInput
-                        className={styles.input}
-                        name="exists"
-                        onChange={onValueChange}
-                        options={existsFilterOptions}
-                        keySelector={keySelector}
-                        labelSelector={labelSelector}
-                        value={value.exists}
-                        error={error?.fields?.exists}
-                        label={_ts('sourcesFilter', 'exists')}
-                        placeholder={_ts('sourcesFilter', 'exists')}
-                    />
-                    <MultiSelectInput
-                        className={styles.input}
-                        name="priority"
-                        onChange={onValueChange}
-                        options={leadOptions?.priority}
-                        keySelector={keySelector}
-                        labelSelector={labelSelector}
-                        value={value.priority}
-                        error={error?.fields?.priority?.$internal}
-                        label={_ts('sourcesFilter', 'priority')}
-                        placeholder={_ts('sourcesFilter', 'priority')}
-                    />
-                    <MultiSelectInput
-                        className={styles.input}
-                        name="authoringOrganizationTypes"
-                        onChange={onValueChange}
-                        options={leadOptions?.organizationTypes}
-                        keySelector={keySelector}
-                        labelSelector={labelSelector}
-                        value={value.authoringOrganizationTypes}
-                        error={error?.fields?.authoringOrganizationTypes?.$internal}
-                        label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
-                        placeholder={_ts('sourcesFilter', 'authoringOrganizationTypes')}
-                    />
-                    {!filterOnlyUnprotected && (
-                        <MultiSelectInput
-                            className={styles.input}
-                            name="confidentiality"
+                            name="emmRiskFactors"
                             onChange={onValueChange}
-                            options={leadOptions?.confidentiality}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            value={value.confidentiality}
-                            error={error?.fields?.confidentiality?.$internal}
-                            label={_ts('sourcesFilter', 'confidentiality')}
-                            placeholder={_ts('sourcesFilter', 'confidentiality')}
+                            options={leadOptions?.emmRiskFactors}
+                            keySelector={emmKeySelector}
+                            labelSelector={emmLabelSelector}
+                            value={value.emmRiskFactors}
+                            error={error?.fields?.emmRiskFactors?.$internal}
+                            label={_ts('sourcesFilter', 'emmRiskFactors')}
+                            placeholder={_ts('sourcesFilter', 'emmRiskFactors')}
                         />
-                    )}
-                    {leadOptions?.hasEmmLeads && (
-                        <>
-                            <MultiSelectInput
-                                className={styles.input}
-                                name="emmRiskFactors"
-                                onChange={onValueChange}
-                                options={leadOptions?.emmRiskFactors}
-                                keySelector={emmKeySelector}
-                                labelSelector={emmLabelSelector}
-                                value={value.emmRiskFactors}
-                                error={error?.fields?.emmRiskFactors?.$internal}
-                                label={_ts('sourcesFilter', 'emmRiskFactors')}
-                                placeholder={_ts('sourcesFilter', 'emmRiskFactors')}
-                            />
-                            <MultiSelectInput
-                                className={styles.input}
-                                name="emmKeywords"
-                                onChange={onValueChange}
-                                options={leadOptions?.emmKeywords}
-                                keySelector={emmKeySelector}
-                                labelSelector={emmLabelSelector}
-                                value={value.emmKeywords}
-                                error={error?.fields?.emmKeywords?.$internal}
-                                label={_ts('sourcesFilter', 'emmKeywords')}
-                                placeholder={_ts('sourcesFilter', 'emmKeywords')}
-                            />
-                            <MultiSelectInput
-                                className={styles.input}
-                                name="emmEntities"
-                                onChange={onValueChange}
-                                options={leadOptions?.emmEntities}
-                                keySelector={emmKeySelector}
-                                labelSelector={emmLabelSelector}
-                                value={value.emmEntities}
-                                error={error?.fields?.emmEntities?.$internal}
-                                label={_ts('sourcesFilter', 'emmEntities')}
-                                placeholder={_ts('sourcesFilter', 'emmEntities')}
-                            />
-                        </>
-                    )}
+                        <MultiSelectInput
+                            className={_cs(
+                                styles.input,
+                                !showContent && styles.hidden,
+                            )}
+                            name="emmKeywords"
+                            onChange={onValueChange}
+                            options={leadOptions?.emmKeywords}
+                            keySelector={emmKeySelector}
+                            labelSelector={emmLabelSelector}
+                            value={value.emmKeywords}
+                            error={error?.fields?.emmKeywords?.$internal}
+                            label={_ts('sourcesFilter', 'emmKeywords')}
+                            placeholder={_ts('sourcesFilter', 'emmKeywords')}
+                        />
+                        <MultiSelectInput
+                            className={_cs(
+                                styles.input,
+                                !showContent && styles.hidden,
+                            )}
+                            name="emmEntities"
+                            onChange={onValueChange}
+                            options={leadOptions?.emmEntities}
+                            keySelector={emmKeySelector}
+                            labelSelector={emmLabelSelector}
+                            value={value.emmEntities}
+                            error={error?.fields?.emmEntities?.$internal}
+                            label={_ts('sourcesFilter', 'emmEntities')}
+                            placeholder={_ts('sourcesFilter', 'emmEntities')}
+                        />
+                    </>
+                )}
+                <div className={styles.actions}>
+                    <Button
+                        className={styles.button}
+                        disabled={disabled || pristine}
+                        name="sourcesFilterSubmit"
+                        variant="action"
+                        onClick={handleApply}
+                    >
+                        {_ts('sourcesFilter', 'apply')}
+                    </Button>
+                    <Button
+                        className={styles.button}
+                        disabled={disabled || pristine}
+                        name="clearFilter"
+                        variant="action"
+                        actions={<IoClose />}
+                        onClick={handleClear}
+                    >
+                        {_ts('sourcesFilter', 'clearAll')}
+                    </Button>
+                    <Button
+                        className={styles.button}
+                        name="showAll"
+                        variant="action"
+                        actions={showContent ? (
+                            <IoChevronUpOutline />
+                        ) : (
+                            <IoChevronDownOutline />
+                        )}
+                        onClick={toggleContentVisibility}
+                    >
+                        {_ts('sourcesFilter', showContent ? 'hide' : 'showAll')}
+                    </Button>
                 </div>
             </div>
         </div>

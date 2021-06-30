@@ -6,8 +6,12 @@
         flex-grow: 1;
         justify-content: space-around;
         margin: var(--dui-spacing-small);
-        border: 1px solid var((--dui-color-grey5));
+        border: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
         border-radius: var(--dui-border-radius-card);
 
+        .info-card {
+            border-right: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
+            border-radius: 0;
+        }
     }
 }
