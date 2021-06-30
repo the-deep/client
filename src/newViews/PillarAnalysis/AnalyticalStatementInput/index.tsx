@@ -1,5 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
-import { BiBarChartSquare } from 'react-icons/bi';
+import React, { useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
