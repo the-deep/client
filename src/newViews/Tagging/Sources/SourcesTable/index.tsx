@@ -85,7 +85,7 @@ function SourcesTable(props: Props) {
         query: leadsRequestQuery,
         method: 'POST',
         body: leadsRequestBody,
-        failureHeader: _ts('projectEdit', 'frameworkDetails'),
+        failureHeader: _ts('sourcesTable', 'title'),
     });
 
     const handlePageChange = useCallback((page: number) => {
@@ -112,7 +112,7 @@ function SourcesTable(props: Props) {
     }, []);
 
     const handleEdit = useCallback(() => {
-        console.warn('handleEdit', handleEdit);
+        console.warn('handleEdit', handleEdit); // TODO use leadEdit page when available
     }, []);
 
     const columns = useMemo(() => {
@@ -124,7 +124,7 @@ function SourcesTable(props: Props) {
             headerCellRenderer: Checkbox,
             headerCellRendererParams: {
                 value: selectedIds.length === leadsResponse?.results.length,
-                label: `${selectedIds.length > 0 ? `${selectedIds.length} selected` : 'Select all'}`,
+                label: selectedIds.length > 0 ? _ts('sourcesTable', 'selectedNumberOfLeads', { noOfLeads: selectedIds.length }) : _ts('sourcesTable', 'selectAll'),
                 onChange: handleSelectAll,
                 indeterminate: !(selectedIds.length === leadsResponse?.results.length
                 || selectedIds.length === 0),
@@ -141,7 +141,7 @@ function SourcesTable(props: Props) {
             Lead, number, TagProps, TableHeaderCellProps
         > = {
             id: 'status',
-            title: 'Status',
+            title: _ts('sourcesTable', 'status'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: false,
@@ -158,7 +158,7 @@ function SourcesTable(props: Props) {
             Lead, number, DateOutputProps, TableHeaderCellProps
         > = {
             id: 'createdAt',
-            title: 'Created At',
+            title: _ts('sourcesTable', 'createdAt'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: false,
@@ -172,7 +172,7 @@ function SourcesTable(props: Props) {
             Lead, number, DateOutputProps, TableHeaderCellProps
         > = {
             id: 'publishedOn',
-            title: 'Publishing Date',
+            title: _ts('sourcesTable', 'publishingDate'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: false,
@@ -186,14 +186,14 @@ function SourcesTable(props: Props) {
             Lead, number, LinkProps, TableHeaderCellProps
         > = {
             id: 'sourceDetail',
-            title: 'Publisher',
+            title: _ts('sourcesTable', 'publisher'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: false,
             },
             cellRenderer: Link,
             cellRendererParams: (_, data) => ({
-                children: data.sourceDetail.title,
+                children: data.sourceDetail.title ?? data.sourceRaw,
                 to: '#', // TODO use provided url
             }),
         };
@@ -218,34 +218,34 @@ function SourcesTable(props: Props) {
             createdAtColumn,
             createStringColumn<Lead, number>(
                 'title',
-                'Title',
+                _ts('sourcesTable', 'titleLabel'),
                 item => item?.title,
             ),
             createStringColumn<Lead, number>(
                 'pageCount',
-                'Pages',
+                _ts('sourcesTable', 'pages'),
                 item => `${item?.pageCount} ${item?.pageCount > 1 ? 'pages' : 'page'}`,
             ),
             publisherColumn,
             createStringColumn<Lead, number>(
                 'authorsDetail',
-                'Authors',
+                _ts('sourcesTable', 'authors'),
                 item => item?.authorsDetail.map(v => v.title).join(','),
             ),
             publishedOnColumn,
             createStringColumn<Lead, number>(
                 'createdByName',
-                'Added By',
+                _ts('sourcesTable', 'addedBy'),
                 item => item?.createdByName,
             ),
             createStringColumn<Lead, number>(
                 'assigneeDetails',
-                'Assignee',
+                _ts('sourcesTable', 'assignee'),
                 item => item?.assigneeDetails.displayName,
             ),
             createStringColumn<Lead, number>(
                 'priorityDisplay',
-                'Priority',
+                _ts('sourcesTable', 'priority'),
                 item => item?.priorityDisplay,
             ),
             actionsColumn,

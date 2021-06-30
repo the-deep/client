@@ -1429,7 +1429,20 @@
         "-1019391010": "Confidentiality",
         "-191018181": "EMM Risk Factors",
         "-181101018": "EMM Entities",
-        "-103810910": "EMM Keywords"
+        "-103810910": "EMM Keywords",
+        "-1819410191": "Sources",
+        "-1919202008": "{noOfLeads} selected",
+        "-19418384104": "Select all",
+        "-1831010101": "Status",
+        "-19818281010": "Created At",
+        "-18381018384": "Publishing Date",
+        "-18819118934": "Publisher",
+        "-18183823101": "Title",
+        "-1838111818": "Pages",
+        "-1818184757": "Authors",
+        "-1831811911": "Added By",
+        "-184813074847": "Assignee",
+        "-1848548493": "Priority"
     },
     "links": {
         "browserExtension": {
@@ -4145,6 +4158,21 @@
             "totalVerifiedEntries": -897879798,
             "sourcesTaggedLabel": -61653142,
             "sourcesTaggedValidatedLabel": -16197909
+        },
+        "sourcesTable": {
+            "title": -1819410191,
+            "selectedNumberOfLeads": -1919202008,
+            "selectAll": -19418384104,
+            "status": -1831010101,
+            "createdAt": -19818281010,
+            "publishingDate": -18381018384,
+            "publisher": -18819118934,
+            "titleLabel": -18183823101,
+            "pages": -1838111818,
+            "authors": -1818184757,
+            "addedBy": -1831811911,
+            "assignee": -184813074847,
+            "priority": -1848548493
         }
     }
 }
