@@ -4,7 +4,7 @@ import {
 } from './common';
 
 export type Confidentiality = 'confidential' | 'unprotected';
-export type LeadStatus = 'pending' | 'processed';
+export type LeadStatus = 'pending' | 'processed' | 'validated';
 export type LeadSourceType = 'Text' | 'Disk' | 'Website' |
     'Dropbox' | 'Google Drive' | 'RSS Feed' | 'EMM' | 'Web API' | 'Unknown';
 
@@ -69,15 +69,22 @@ export interface EmmEntity {
 }
 
 export interface LeadOptions {
-    status: KeyValueElement;
-    project: KeyValueElement;
-    assignee: KeyValueElement;
-    leadGroup: KeyValueElement;
-    priority: KeyValueElement;
-    confidentiality: KeyValueElement;
-    organizationTypes: KeyValueElement;
+    status: KeyValueElement[];
+    project: KeyValueElement[];
+    assignee: KeyValueElement[];
+    leadGroup: KeyValueElement[];
+    priority: KeyValueElement[];
+    confidentiality: KeyValueElement[];
+    organizationTypes: KeyValueElement[];
     hasEmmLeads: boolean;
-    emmEntities?: EmmEntity;
-    emmRiskFactors?: EmmEntity;
-    emmKeywords?: EmmEntity;
+    emmEntities?: EmmEntity[];
+    emmRiskFactors?: EmmEntity[];
+    emmKeywords?: EmmEntity[];
+}
+
+export interface LeadSummary {
+    total: number;
+    totalEntries: number;
+    totalVerifiedEntries: number;
+    totalUnverifiedEntries: number;
 }

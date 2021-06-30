@@ -1,14 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import {
+    AppState,
+} from '#typings';
+import { activeProjectIdFromStateSelector } from '#redux';
 
 import Navbar from '../Navbar';
+import SourcesStats from './SourcesStats';
+import SourcesFilter, { FormType as Filters } from './SourcesFilter';
+import SourcesTable from './SourcesTable';
 
-function Sources() {
+import styles from './styles.scss';
+
+const mapStateToProps = (state: AppState) => ({
+    activeProject: activeProjectIdFromStateSelector(state),
+});
+interface Props {
+    activeProject: number;
+}
+function Sources(props: Props) {
+    const { activeProject } = props;
+    const [sourcesFilters, setSourcesFilters] = useState<Filters>();
+
     return (
-        <div>
+        <div className={styles.sources}>
             <Navbar />
-            <div>This is sources tab</div>
+            <SourcesStats
+                className={styles.stats}
+                filters={sourcesFilters}
+                projectId={activeProject}
+            />
+            <SourcesFilter
+                className={styles.filter}
+                onFilterApply={setSourcesFilters}
+                projectId={activeProject}
+            />
+            <SourcesTable
+                className={styles.table}
+                filters={sourcesFilters}
+                projectId={activeProject}
+            />
         </div>
     );
 }
-
-export default Sources;
+export default connect(mapStateToProps)(Sources);

@@ -12,7 +12,7 @@ eslint css-modules/no-unused-class: [
     1,
     {
         markAsUsed: [
-            'complement1', 'complement2', 'complement3',
+            'complement1', 'complement2', 'complement3', 'small', 'large',
         ],
         camelCase: true
     }
@@ -26,6 +26,7 @@ interface Props {
     title?: string;
     progress: number;
     variant?: 'complement1' | 'complement2' | 'complement3';
+    size?: 'small' | 'large';
 }
 
 function ProgressLine(props: Props) {
@@ -35,6 +36,7 @@ function ProgressLine(props: Props) {
         progress,
         title,
         variant = 'complement1',
+        size = 'small',
     } = props;
 
     const progressWidth = `${bound(isDefined(progress) ? progress : 0, 0, 100)}%`;
@@ -52,7 +54,7 @@ function ProgressLine(props: Props) {
                 <div className={styles.title}>
                     {title}
                 </div>
-                <div className={styles.line}>
+                <div className={_cs(styles.line, styles[size])}>
                     <div
                         style={{
                             width: progressWidth,

@@ -1,5 +1,7 @@
 import viewsAcl from './viewsAcl';
 
+console.warn('here');
+
 // NOTE: This is done to only hide the button but it can be accessed through link
 const notClusteringViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
     !isLoggedIn || !leadPermissions.view || isBeta

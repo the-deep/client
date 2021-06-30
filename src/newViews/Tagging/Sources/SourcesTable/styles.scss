@@ -1,0 +1,21 @@
+.sources-table-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    min-height: 50vh;
+
+    .content {
+        display: flex;
+        align-items: flex-start;
+        flex-grow: 1;
+
+        .table {
+            flex-grow: 1;
+        }
+
+        .status {
+            margin: var(--dui-spacing-small);
+            height: var(--dui-font-size-large);
+        }
+    }
+}
