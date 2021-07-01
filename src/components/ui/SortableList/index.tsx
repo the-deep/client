@@ -11,7 +11,7 @@ import {
     useSensor,
     useSensors,
     DragEndEvent,
-    // DragStartEvent,
+    DragStartEvent,
 } from '@dnd-kit/core';
 import {
     restrictToHorizontalAxis,
@@ -46,6 +46,8 @@ type Props<
     keySelector: (val: D) => K,
     onChange: (newList: D[], name: N) => void,
     direction: 'vertical' | 'horizontal',
+    onDragEnd?: (key: K) => void;
+    onDragStart?: (key: K) => void;
 }
 
 function SortableList<
@@ -67,6 +69,8 @@ function SortableList<
         rendererParams,
         renderer: Renderer,
         direction,
+        onDragEnd,
+        onDragStart,
         ...otherProps
     } = props;
     // const [activeId, setActiveId] = useState<string | undefined>();
@@ -83,12 +87,17 @@ function SortableList<
         data?.map(d => String(keySelector(d)))
     ), [data, keySelector]);
 
-    /*
     const handleDragStart = useCallback((event: DragStartEvent) => {
         const { active } = event;
+        /*
         setActiveId(active.id);
-    }, []);
-    */
+        */
+        const selectedData = data?.find(d => keySelector(d) === active.id);
+
+        if (onDragStart && selectedData) {
+            onDragStart(keySelector(selectedData));
+        }
+    }, [onDragStart, data, keySelector]);
 
     const handleDragEnd = useCallback((event: DragEndEvent) => {
         const { active, over } = event;
@@ -96,6 +105,11 @@ function SortableList<
         if (active.id && over?.id && active.id !== over?.id && items) {
             const oldIndex = items.indexOf(active.id);
             const newIndex = items.indexOf(over.id);
+            const selectedData = data?.find(d => keySelector(d) === active.id);
+
+            if (onDragEnd && selectedData) {
+                onDragEnd(keySelector(selectedData));
+            }
 
             const newItems = arrayMove(items, oldIndex, newIndex);
             const dataMap = listToMap(
@@ -107,7 +121,7 @@ function SortableList<
             onChange(newData, name);
         }
         // setActiveId(undefined);
-    }, [keySelector, items, data, onChange, name]);
+    }, [onDragEnd, keySelector, items, data, onChange, name]);
 
     /*
     const DragItem = useMemo(() => {
@@ -138,7 +152,7 @@ function SortableList<
         <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            // onDragStart={handleDragStart}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             modifiers={[
                 direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
