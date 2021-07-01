@@ -1,9 +1,10 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     ListView,
     ListViewProps,
 } from '@the-deep/deep-ui';
 import {
+    DragOverlay,
     DndContext,
     closestCenter,
     KeyboardSensor,
@@ -11,7 +12,8 @@ import {
     useSensor,
     useSensors,
     DragEndEvent,
-    // DragStartEvent,
+    DragStartEvent,
+    DraggableSyntheticListeners,
 } from '@dnd-kit/core';
 import {
     restrictToHorizontalAxis,
@@ -34,10 +36,23 @@ interface GroupCommonProps {
     children: React.ReactNode;
 }
 
+export type Listeners = DraggableSyntheticListeners;
+
+export interface Attributes {
+    role: string;
+    tabIndex: number;
+    'aria-pressed': boolean | undefined;
+    'aria-roledescription': string;
+    'aria-describedby': string;
+}
+
 type Props<
     N extends string,
     D,
-    P,
+    P extends {
+        listeners: Listeners,
+        attributes: Attributes,
+    },
     K extends OptionKey,
     GP extends GroupCommonProps,
     GK extends OptionKey
@@ -51,7 +66,10 @@ type Props<
 function SortableList<
     N extends string,
     D,
-    P,
+    P extends {
+        listeners: Listeners,
+        attributes: Attributes,
+    },
     K extends OptionKey,
     GP extends GroupCommonProps,
     GK extends OptionKey
@@ -69,7 +87,7 @@ function SortableList<
         direction,
         ...otherProps
     } = props;
-    // const [activeId, setActiveId] = useState<string | undefined>();
+    const [activeId, setActiveId] = useState<string | undefined>();
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -83,15 +101,14 @@ function SortableList<
         data?.map(d => String(keySelector(d)))
     ), [data, keySelector]);
 
-    /*
     const handleDragStart = useCallback((event: DragStartEvent) => {
         const { active } = event;
         setActiveId(active.id);
     }, []);
-    */
 
     const handleDragEnd = useCallback((event: DragEndEvent) => {
         const { active, over } = event;
+        setActiveId(undefined);
 
         if (active.id && over?.id && active.id !== over?.id && items) {
             const oldIndex = items.indexOf(active.id);
@@ -106,22 +123,20 @@ function SortableList<
             const newData = newItems.map(item => dataMap[item]);
             onChange(newData, name);
         }
-        // setActiveId(undefined);
     }, [keySelector, items, data, onChange, name]);
 
-    /*
     const DragItem = useMemo(() => {
         if (!activeId || !data) {
             return null;
         }
         const activeIndex = data.findIndex(
-            (d, index) => String(keySelector(d, index)) === activeId,
+            d => String(keySelector(d)) === activeId,
         );
         if (!activeIndex) {
             return null;
         }
         const params = rendererParams(
-            keySelector(data[activeIndex], activeIndex),
+            keySelector(data[activeIndex]),
             data[activeIndex],
             activeIndex,
             data,
@@ -132,13 +147,12 @@ function SortableList<
             />
         );
     }, [activeId, Renderer, keySelector, rendererParams, data]);
-    */
 
     return (
         <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            // onDragStart={handleDragStart}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             modifiers={[
                 direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
@@ -158,6 +172,9 @@ function SortableList<
                     grouped={false}
                 />
             </SortableContext>
+            <DragOverlay>
+                {DragItem}
+            </DragOverlay>
         </DndContext>
     );
 }

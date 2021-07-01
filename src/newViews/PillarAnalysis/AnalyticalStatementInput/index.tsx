@@ -53,6 +53,7 @@ interface AnalyticalStatementInputProps {
     onEntryMove: (entryId: number, statementClientId: string) => void;
     onEntryDrop: (entryId: number) => void;
     index: number;
+    isBeingDragged?: boolean;
 }
 
 const defaultVal: AnalyticalStatementType = {
