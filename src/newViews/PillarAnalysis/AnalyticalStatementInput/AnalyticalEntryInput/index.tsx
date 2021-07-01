@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useContext } from 'react';
+import React, { memo, useMemo, useCallback, useContext } from 'react';
 import { IoClose } from 'react-icons/io5';
 import {
     DropContainer,
@@ -118,4 +118,4 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
     );
 }
 
-export default AnalyticalEntryInput;
+export default memo(AnalyticalEntryInput);

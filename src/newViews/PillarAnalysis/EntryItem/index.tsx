@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { TabularDataFields } from '#typings/entry';
 import ExcerptOutput from './ExcerptOutput';
@@ -40,4 +40,4 @@ function EntryItem(props: Props) {
     return null;
 }
 
-export default EntryItem;
+export default memo(EntryItem);

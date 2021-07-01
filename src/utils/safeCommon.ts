@@ -1,7 +1,11 @@
+import { memo } from 'react';
+
 import {
     isDefined,
     isTruthyString,
 } from '@togglecorp/fujs';
+
+export const genericMemo: (<T>(c: T) => T) = memo;
 
 export function breadcrumb(...args: (string | undefined)[]) {
     return args.filter(arg => isDefined(arg)).join(' › ');

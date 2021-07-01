@@ -1,6 +1,4 @@
 import React, { useCallback } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
@@ -28,6 +26,9 @@ import {
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/ui/NonFieldError';
+import { Attributes, Listeners, NodeRef } from '#components/ui/SortableList';
+import { genericMemo } from '#utils/safeCommon';
+
 import {
     AnalyticalStatementType,
     PartialAnalyticalEntryType,
@@ -54,6 +55,10 @@ interface AnalyticalStatementInputProps {
     onEntryDrop: (entryId: number) => void;
     index: number;
     isBeingDragged?: boolean;
+    setNodeRef?: NodeRef;
+    attributes?: Attributes;
+    listeners?: Listeners;
+    style?: React.CSSProperties;
 }
 
 const defaultVal: AnalyticalStatementType = {
@@ -71,6 +76,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onEntryMove,
         onEntryDrop,
         index,
+        setNodeRef,
+        attributes,
+        listeners,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
@@ -164,19 +173,6 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange((oldVal?: boolean) => !oldVal, 'includeInReport' as const);
     }, [onFieldChange]);
 
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-    } = useSortable({ id: value.clientId });
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-    };
-
     return (
         <div
             ref={setNodeRef}
@@ -263,4 +259,4 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     );
 }
 
-export default AnalyticalStatementInput;
+export default genericMemo(AnalyticalStatementInput);

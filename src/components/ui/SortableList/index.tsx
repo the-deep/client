@@ -3,6 +3,7 @@ import {
     ListView,
     ListViewProps,
 } from '@the-deep/deep-ui';
+import { createPortal } from 'react-dom';
 import {
     DragOverlay,
     DndContext,
@@ -15,20 +16,24 @@ import {
     DragStartEvent,
     DraggableSyntheticListeners,
 } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+/*
 import {
     restrictToHorizontalAxis,
     restrictToVerticalAxis,
 } from '@dnd-kit/modifiers';
+*/
 import {
+    useSortable,
     arrayMove,
     SortableContext,
     sortableKeyboardCoordinates,
     horizontalListSortingStrategy,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import {
-    listToMap,
-} from '@togglecorp/fujs';
+import { listToMap } from '@togglecorp/fujs';
+
+import { genericMemo } from '#utils/safeCommon';
 
 type OptionKey = string | number;
 interface GroupCommonProps {
@@ -37,6 +42,7 @@ interface GroupCommonProps {
 }
 
 export type Listeners = DraggableSyntheticListeners;
+export type NodeRef = (node: HTMLElement | null) => void;
 
 export interface Attributes {
     role: string;
@@ -46,30 +52,77 @@ export interface Attributes {
     'aria-describedby': string;
 }
 
+interface SortableItemProps<D, P, K extends OptionKey> {
+    keySelector: (data: D) => K;
+    datum: D;
+    renderer: (props: P & {
+        listeners?: Listeners;
+        attributes?: Attributes;
+        setNodeRef?: NodeRef;
+        style?: React.CSSProperties;
+    }) => JSX.Element;
+    params: P;
+}
+
+function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, K>) {
+    const {
+        keySelector,
+        renderer: Renderer,
+        datum,
+        params,
+    } = props;
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: String(keySelector(datum)) });
+
+    const style: React.CSSProperties = {
+        transform: CSS.Transform.toString(transform),
+        transition: transition ?? undefined,
+    };
+
+    return (
+        <Renderer
+            attributes={attributes}
+            listeners={listeners}
+            setNodeRef={setNodeRef}
+            style={style}
+            {...params}
+        />
+    );
+}
+
+const MemoizedSortableItem = genericMemo(SortableItem);
+
 type Props<
     N extends string,
     D,
-    P extends {
-        listeners: Listeners,
-        attributes: Attributes,
-    },
+    P,
     K extends OptionKey,
     GP extends GroupCommonProps,
     GK extends OptionKey
-> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector'> & {
-    name: N,
-    keySelector: (val: D) => K,
-    onChange: (newList: D[], name: N) => void,
-    direction: 'vertical' | 'horizontal',
+> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer'> & {
+    name: N;
+    keySelector: (val: D) => K;
+    renderer: (props: P & {
+        listeners?: Listeners;
+        attributes?: Attributes;
+        setNodeRef?: NodeRef;
+        style?: React.CSSProperties;
+    }) => JSX.Element;
+    onChange: (newList: D[], name: N) => void;
+    direction: 'vertical' | 'horizontal';
+    showDragOverlay?: boolean;
 }
 
 function SortableList<
     N extends string,
     D,
-    P extends {
-        listeners: Listeners,
-        attributes: Attributes,
-    },
+    P,
     K extends OptionKey,
     GP extends GroupCommonProps,
     GK extends OptionKey
@@ -85,6 +138,7 @@ function SortableList<
         rendererParams,
         renderer: Renderer,
         direction,
+        showDragOverlay,
         ...otherProps
     } = props;
     const [activeId, setActiveId] = useState<string | undefined>();
@@ -126,7 +180,7 @@ function SortableList<
     }, [keySelector, items, data, onChange, name]);
 
     const DragItem = useMemo(() => {
-        if (!activeId || !data) {
+        if (!activeId || !data || !showDragOverlay) {
             return null;
         }
         const activeIndex = data.findIndex(
@@ -146,7 +200,35 @@ function SortableList<
                 {...params}
             />
         );
-    }, [activeId, Renderer, keySelector, rendererParams, data]);
+    }, [
+        activeId,
+        Renderer,
+        keySelector,
+        rendererParams,
+        data,
+        showDragOverlay,
+    ]);
+
+    const modifiedRendererParams = useCallback((
+        key: K,
+        datum: D,
+        index: number,
+        dataFromArgs: D[],
+    ) => {
+        const params = rendererParams(
+            keySelector(datum),
+            datum,
+            index,
+            dataFromArgs,
+        );
+
+        return ({
+            params,
+            datum,
+            keySelector,
+            renderer: Renderer,
+        });
+    }, [keySelector, rendererParams, Renderer]);
 
     return (
         <DndContext
@@ -154,9 +236,9 @@ function SortableList<
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            modifiers={[
-                direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
-            ]}
+            // modifiers={[
+            //     direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
+            // ]}
         >
             <SortableContext
                 items={items ?? []}
@@ -166,17 +248,19 @@ function SortableList<
                     className={className}
                     data={data}
                     keySelector={keySelector}
-                    renderer={Renderer}
-                    rendererParams={rendererParams}
+                    renderer={MemoizedSortableItem}
+                    rendererParams={modifiedRendererParams}
                     {...otherProps}
                     grouped={false}
                 />
             </SortableContext>
-            <DragOverlay>
-                {DragItem}
-            </DragOverlay>
+            {showDragOverlay && createPortal((
+                <DragOverlay>
+                    {DragItem}
+                </DragOverlay>
+            ), document.body)}
         </DndContext>
     );
 }
 
-export default SortableList;
+export default genericMemo(SortableList);
