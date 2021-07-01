@@ -163,6 +163,7 @@ function Navbar(props) {
         if (confirm) {
             stopSiloTasks();
             logout();
+            localStorage.clear();
         }
         setShowLogoutConfirm(false);
     }, [logout, stopSiloTasks]);
