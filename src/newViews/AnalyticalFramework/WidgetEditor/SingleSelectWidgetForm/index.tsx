@@ -35,7 +35,7 @@ const OPTIONS_LIMIT = 100;
 type FormType = SingleSelectWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;

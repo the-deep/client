@@ -3,6 +3,7 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
+import { GrDrag } from 'react-icons/gr';
 import {
     Button,
     Container,
@@ -30,6 +31,7 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
+import SortableList, { NodeRef, Attributes, Listeners } from '#components/ui/SortableList';
 
 import { Section, PartialForm } from '../../types';
 import styles from './styles.scss';
@@ -41,7 +43,7 @@ type FormType = {
 };
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -50,7 +52,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 type SectionType = NonNullable<NonNullable<FormType['sections']>>[number];
 export type PartialSectionType = PartialForm<
     SectionType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 // type PartialWidgetType = NonNullable<PartialSectionType['widgets']>[number];
 
@@ -62,6 +64,7 @@ const sectionSchema: SectionSchema = {
         title: [requiredStringCondition],
         tooltip: [],
         widgets: [arrayCondition],
+        order: [],
     }),
 };
 
@@ -87,7 +90,11 @@ const schema: FormSchema = {
 
 const defaultVal: PartialSectionType = {
     clientId: 'random',
+    order: -1,
 };
+
+const sectionKeySelector = (d: PartialSectionType) => d.clientId;
+
 interface SectionInputProps {
     className?: string;
     value: PartialSectionType;
@@ -96,7 +103,12 @@ interface SectionInputProps {
     onRemove: (index: number) => void;
     index: number;
     autoFocus: boolean;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
+
 function SectionInput(props: SectionInputProps) {
     const {
         className,
@@ -106,6 +118,10 @@ function SectionInput(props: SectionInputProps) {
         onRemove,
         index,
         autoFocus,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
@@ -128,47 +144,63 @@ function SectionInput(props: SectionInputProps) {
     const heading = value.title ?? `Section ${index + 1}`;
 
     return (
-        <ExpandableContainer
-            containerElementProps={{
-                ref: divRef,
-            }}
-            heading={`${heading} ${errored ? '*' : ''}`}
-            headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Title"
-                >
-                    <IoTrash />
-                </QuickActionButton>
-            )}
-            className={_cs(
-                className,
-                autoFocus && styles.focus,
-            )}
-            horizontallyCompactContent
-            defaultVisibility={autoFocus}
+        <div
+            ref={setNodeRef}
+            style={style}
         >
-            <NonFieldError error={error} />
-            <TextInput
-                name="title"
-                label="Title"
-                value={value.title}
-                onChange={onFieldChange}
-                error={error?.fields?.title}
-                autoFocus={autoFocus}
-            />
-            <TextArea
-                // FIXME: use translation
-                label="Tooltip"
-                name="tooltip"
-                rows={4}
-                value={value.tooltip}
-                onChange={onFieldChange}
-                error={error?.fields?.tooltip}
-            />
-        </ExpandableContainer>
+            <ExpandableContainer
+                containerElementProps={{
+                    ref: divRef,
+                }}
+                heading={`${heading} ${errored ? '*' : ''}`}
+                headerActions={(
+                    <>
+                        <QuickActionButton
+                            name={index}
+                            onClick={onRemove}
+                            // FIXME: use translation
+                            title="Remove Title"
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
+                )}
+                className={_cs(
+                    className,
+                    autoFocus && styles.focus,
+                )}
+                horizontallyCompactContent
+                defaultVisibility={autoFocus}
+            >
+                <NonFieldError error={error} />
+                <TextInput
+                    name="title"
+                    label="Title"
+                    value={value.title}
+                    onChange={onFieldChange}
+                    error={error?.fields?.title}
+                    autoFocus={autoFocus}
+                />
+                <TextArea
+                    // FIXME: use translation
+                    label="Tooltip"
+                    name="tooltip"
+                    rows={4}
+                    value={value.tooltip}
+                    onChange={onFieldChange}
+                    error={error?.fields?.tooltip}
+                />
+            </ExpandableContainer>
+        </div>
     );
 }
 
@@ -225,17 +257,44 @@ function SectionsEditor(props: Props) {
             }
 
             const clientId = randomString();
+            const sortedItems = oldSections.map((v, i) => ({ ...v, order: i }));
             const newSection: PartialSectionType = {
                 clientId,
+                order: sortedItems.length,
             };
             onValueChange(
-                [...oldSections, newSection],
+                [...sortedItems, newSection],
                 'sections' as const,
             );
             onFocusChange(clientId);
         },
         [onValueChange, value.sections, onFocusChange],
     );
+
+    const handleOrderChange = useCallback((
+        newValues: PartialSectionType[],
+    ) => {
+        const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
+        onValueChange(orderedValues, 'sections');
+    }, [onValueChange]);
+
+    const sectionRendererParams = useCallback((
+        key: string,
+        section: PartialSectionType,
+        index: number,
+    ) => ({
+        onChange: onSectionsChange,
+        onRemove: onSectionsRemove,
+        error: error?.fields?.sections?.members?.[key],
+        value: section,
+        autoFocus: focusedSection === section.clientId,
+        index,
+    }), [
+        onSectionsChange,
+        focusedSection,
+        onSectionsRemove,
+        error?.fields?.sections?.members,
+    ]);
 
     const handleSubmit = useCallback(
         (values: PartialFormType) => {
@@ -293,18 +352,17 @@ function SectionsEditor(props: Props) {
                 >
                     <>
                         <NonFieldError error={error?.fields?.sections} />
-                        {value.sections?.map((section, index) => (
-                            <SectionInput
-                                className={styles.sectionInput}
-                                key={section.clientId}
-                                index={index}
-                                value={section}
-                                onChange={onSectionsChange}
-                                onRemove={onSectionsRemove}
-                                error={error?.fields?.sections?.members?.[section.clientId]}
-                                autoFocus={focusedSection === section.clientId}
-                            />
-                        ))}
+                        <SortableList
+                            name="analyticalStatements"
+                            onChange={handleOrderChange}
+                            data={value.sections}
+                            keySelector={sectionKeySelector}
+                            renderer={SectionInput}
+                            rendererClassName={styles.sectionInput}
+                            direction="vertical"
+                            rendererParams={sectionRendererParams}
+                            showDragOverlay
+                        />
                     </>
                 </Container>
             </Container>

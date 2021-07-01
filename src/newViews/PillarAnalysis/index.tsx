@@ -533,7 +533,7 @@ function PillarAnalysis(props: Props) {
     const onOrderChange = useCallback((
         newValues: PartialAnalyticalStatementType[],
     ) => {
-        const orderedValues = [...newValues].map((v, i) => ({ ...v, order: i }));
+        const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
         onValueChange(orderedValues, 'analyticalStatements');
     }, [onValueChange]);
 

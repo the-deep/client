@@ -19,7 +19,7 @@ import styles from './styles.scss';
 type FormType = TimeRangeWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;

@@ -17,12 +17,10 @@ import {
     DraggableSyntheticListeners,
 } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-/*
 import {
     restrictToHorizontalAxis,
     restrictToVerticalAxis,
 } from '@dnd-kit/modifiers';
-*/
 import {
     useSortable,
     arrayMove,
@@ -81,7 +79,12 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
     } = useSortable({ id: String(keySelector(datum)) });
 
     const style: React.CSSProperties = {
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Transform.toString({
+            x: transform?.x ?? 0,
+            y: transform?.y ?? 0,
+            scaleX: 1,
+            scaleY: 1,
+        }),
         transition: transition ?? undefined,
     };
 
@@ -210,7 +213,7 @@ function SortableList<
     ]);
 
     const modifiedRendererParams = useCallback((
-        key: K,
+        _: K,
         datum: D,
         index: number,
         dataFromArgs: D[],
@@ -236,9 +239,9 @@ function SortableList<
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            // modifiers={[
-            //     direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
-            // ]}
+            modifiers={[
+                direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
+            ]}
         >
             <SortableContext
                 items={items ?? []}

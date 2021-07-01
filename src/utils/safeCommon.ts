@@ -2,10 +2,15 @@ import { memo } from 'react';
 
 import {
     isDefined,
+    compareNumber,
     isTruthyString,
 } from '@togglecorp/fujs';
 
 export const genericMemo: (<T>(c: T) => T) = memo;
+
+export function compareOrder<T extends { order: number }>(a: T, b: T) {
+    return compareNumber(a.order, b.order);
+}
 
 export function breadcrumb(...args: (string | undefined)[]) {
     return args.filter(arg => isDefined(arg)).join(' › ');

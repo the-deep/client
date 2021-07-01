@@ -36,7 +36,7 @@ const CELLS_LIMIT = 30;
 type FormType = Matrix1dWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
