@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
@@ -16,6 +17,7 @@ interface Props<T> {
     onWidgetDelete: (widgetId: string, name: T) => void;
     onWidgetEdit: (widgetId: string, name: T) => void;
     editMode?: boolean;
+    isSecondary?: boolean;
 }
 
 function Canvas<T>(props: Props<T>) {
@@ -25,6 +27,7 @@ function Canvas<T>(props: Props<T>) {
         editMode,
         onWidgetDelete,
         onWidgetEdit,
+        isSecondary,
     } = props;
 
     const handleWidgetValueChange = useCallback(
@@ -49,10 +52,13 @@ function Canvas<T>(props: Props<T>) {
     );
 
     return (
-        <>
+        <div className={styles.canvas}>
             {widgets?.map(widget => (
                 <WidgetPreview
-                    className={styles.widget}
+                    className={_cs(
+                        styles.widget,
+                        isSecondary && widget?.width === 'half' && styles.halfWidget,
+                    )}
                     key={widget.clientId}
                     name={widget.clientId}
                     value={undefined}
@@ -83,7 +89,7 @@ function Canvas<T>(props: Props<T>) {
                     )}
                 />
             ))}
-        </>
+        </div>
     );
 }
 export default Canvas;

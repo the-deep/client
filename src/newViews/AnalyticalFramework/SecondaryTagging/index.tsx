@@ -161,6 +161,7 @@ function SecondaryTagging(props: Props) {
                         onWidgetDelete={handleWidgetDeleteClick}
                         onWidgetEdit={handleWidgetEditClick}
                         editMode={editMode}
+                        isSecondary
                     />
                 </div>
             </div>

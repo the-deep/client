@@ -16,56 +16,67 @@ const partialWidgets: PartialWidget[] = [
         type: 'text',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'number',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'date',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'date-range',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'time',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'time-range',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'matrix-1d',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'matrix-2d',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'scale',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'single-select',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
     {
         type: 'multi-select',
         clientId: 'random',
         order: -1,
+        width: 'full',
     },
 ];
 

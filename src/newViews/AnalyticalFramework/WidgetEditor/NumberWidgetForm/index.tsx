@@ -18,7 +18,9 @@ import { isTruthy } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
 
+import WidgetSizeInput from '../../WidgetSizeInput';
 import { NumberWidget, PartialForm } from '../../types';
+
 import styles from './styles.scss';
 
 type FormType = NumberWidget;
@@ -206,6 +208,13 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
                     value={value.data}
                     onChange={onValueChange}
                     error={error?.fields?.data}
+                />
+                <WidgetSizeInput
+                    name="width"
+                    className={styles.input}
+                    value={value.width}
+                    onChange={onValueChange}
+                    error={error?.fields?.width}
                 />
             </Container>
         </form>

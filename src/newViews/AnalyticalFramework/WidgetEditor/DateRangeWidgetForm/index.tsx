@@ -11,6 +11,8 @@ import {
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/ui/NonFieldError';
+
+import WidgetSizeInput from '../../WidgetSizeInput';
 import { DateRangeWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
 
@@ -115,6 +117,13 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
                     value={value?.title}
                     onChange={onValueChange}
                     error={error?.fields?.title}
+                />
+                <WidgetSizeInput
+                    name="width"
+                    className={styles.input}
+                    value={value.width}
+                    onChange={onValueChange}
+                    error={error?.fields?.width}
                 />
             </Container>
         </form>

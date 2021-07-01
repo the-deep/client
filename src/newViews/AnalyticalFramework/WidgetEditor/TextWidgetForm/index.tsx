@@ -16,6 +16,7 @@ import {
 
 import NonFieldError from '#components/ui/NonFieldError';
 
+import WidgetSizeInput from '../../WidgetSizeInput';
 import { TextWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
 
@@ -176,6 +177,13 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                     value={value.data}
                     onChange={onValueChange}
                     error={error?.fields?.data}
+                />
+                <WidgetSizeInput
+                    name="width"
+                    className={styles.input}
+                    value={value.width}
+                    onChange={onValueChange}
+                    error={error?.fields?.width}
                 />
             </Container>
         </form>
