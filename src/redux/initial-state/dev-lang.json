@@ -1445,7 +1445,11 @@
         "-1848548493": "Priority",
         "-1929391101": "Primary tagging",
         "-1920381013": "Secondary tagging",
-        "-46389656": "End date must be later than Start Date"
+        "-46389656": "End date must be later than Start Date",
+        "-1393010101": "Deep image input",
+        "-11018101832": "Uploading a file",
+        "-183103101891": "No file selected",
+        "-1941381010101": "?"
     },
     "links": {
         "browserExtension": {
@@ -4183,6 +4187,12 @@
             "addedBy": -1831811911,
             "assignee": -184813074847,
             "priority": -1848548493
+        },
+        "deepImageInput": {
+            "title": -1393010101,
+            "uploading": -11018101832,
+            "noFiles": -183103101891,
+            "questionMark": -1941381010101
         }
     }
 }
