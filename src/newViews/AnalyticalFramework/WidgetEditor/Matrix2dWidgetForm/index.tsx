@@ -38,7 +38,7 @@ const SUB_COLUMNS_LIMIT = 30;
 type FormType = Matrix2dWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;

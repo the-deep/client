@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { ImagePreview } from '@the-deep/deep-ui';
 
 import { TabularDataFields } from '#typings';
@@ -59,4 +59,4 @@ function ExcerptOutput(props: Props) {
     return null;
 }
 
-export default ExcerptOutput;
+export default memo(ExcerptOutput);

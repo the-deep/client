@@ -13,7 +13,6 @@ import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
 import {
     Heading,
-    DropContainer,
     Button,
     QuickActionButton,
     TextArea,
@@ -40,6 +39,7 @@ import NonFieldError from '#components/ui/NonFieldError';
 import notify from '#notify';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
+import SortableList from '#components/ui/SortableList';
 
 import {
     GeoOptions,
@@ -131,6 +131,8 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 
 type FormType = typeof defaultFormValues;
 
+const statementKeySelector = (d: PartialAnalyticalStatementType) => d.clientId;
+
 interface PropsFromState {
     pillarId: number;
     projectId: number;
@@ -169,8 +171,6 @@ function PillarAnalysis(props: Props) {
         pillarAnalysisFromProps?.data ?? defaultFormValues,
         schema,
     );
-
-    const [statementDraggedStatus, setStatementDraggedStatus] = useState(false);
 
     const {
         onValueChange: onAnalyticalStatementChange,
@@ -425,46 +425,6 @@ function PillarAnalysis(props: Props) {
         [entriesResponse?.results],
     );
 
-    const handleAnalyticalStatementDrop = useCallback((droppedId: string, dropOverId?: string) => {
-        onValueChange((oldStatements: FormType['analyticalStatements']) => {
-            if (isNotDefined(oldStatements)) {
-                return oldStatements;
-            }
-            const movedItemIndex = oldStatements.findIndex(item => item.clientId === droppedId);
-            if (
-                isNotDefined(movedItemIndex)
-                || movedItemIndex === -1
-            ) {
-                return oldStatements;
-            }
-            const newStatements = [...oldStatements];
-            newStatements.splice(movedItemIndex, 1);
-
-            const dropOverIndex = newStatements.findIndex(item => item.clientId === dropOverId);
-            if (dropOverIndex === -1) {
-                newStatements.push(oldStatements[movedItemIndex]);
-            } else {
-                newStatements.splice(dropOverIndex, 0, oldStatements[movedItemIndex]);
-            }
-
-            // NOTE: After the newly added statements's order is set and
-            // placed in the desired index, we can change the order of
-            // whole list in bulk
-            return newStatements.map((v, i) => ({ ...v, order: i }));
-        }, 'analyticalStatements');
-    }, [onValueChange]);
-
-    const handleAnalyticalStatementEndDrop = useCallback(
-        (val: Record<string, unknown> | undefined) => {
-            if (!val) {
-                return;
-            }
-            const typedVal = val as { statementClientId: string };
-            handleAnalyticalStatementDrop(typedVal.statementClientId);
-        },
-        [handleAnalyticalStatementDrop],
-    );
-
     const handleAnalyticalStatementAdd = useCallback(
         () => {
             // NOTE: Don't let users add more that certain items
@@ -548,6 +508,34 @@ function PillarAnalysis(props: Props) {
     || pendingEntriesInitialData
     || pendingPillarAnalysisSave
     || pendingDiscardedTags;
+
+    const analyticalStatementRendererParams = useCallback((
+        key: string,
+        statement: PartialAnalyticalStatementType,
+        index: number,
+    ) => ({
+        className: styles.analyticalStatement,
+        index,
+        value: statement,
+        onChange: onAnalyticalStatementChange,
+        onRemove: onAnalyticalStatementRemove,
+        onEntryMove: handleEntryMove,
+        onEntryDrop: handleEntryDrop,
+        error: error?.fields?.analyticalStatements?.members?.[statement?.clientId],
+    }), [
+        onAnalyticalStatementChange,
+        onAnalyticalStatementRemove,
+        handleEntryMove,
+        handleEntryDrop,
+        error?.fields?.analyticalStatements?.members,
+    ]);
+
+    const onOrderChange = useCallback((
+        newValues: PartialAnalyticalStatementType[],
+    ) => {
+        const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
+        onValueChange(orderedValues, 'analyticalStatements');
+    }, [onValueChange]);
 
     return (
         <div className={styles.pillarAnalysis}>
@@ -685,35 +673,16 @@ function PillarAnalysis(props: Props) {
                         }}
                     >
                         <div className={styles.rightContainer}>
-                            {value.analyticalStatements?.map((analyticalStatement, index) => (
-                                <AnalyticalStatementInput
-                                    className={styles.analyticalStatement}
-                                    key={analyticalStatement.clientId}
-                                    index={index}
-                                    value={analyticalStatement}
-                                    onChange={onAnalyticalStatementChange}
-                                    onRemove={onAnalyticalStatementRemove}
-                                    onEntryMove={handleEntryMove}
-                                    onEntryDrop={handleEntryDrop}
-                                    // eslint-disable-next-line max-len
-                                    error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.clientId]}
-                                    onStatementDraggedStatusChange={setStatementDraggedStatus}
-                                    statementDraggedStatus={statementDraggedStatus}
-                                    onAnalyticalStatementDrop={handleAnalyticalStatementDrop}
-                                />
-                            ))}
-                            {statementDraggedStatus && (
-                                <DropContainer
-                                    className={styles.dropContainer}
-                                    name="statement"
-                                    // NOTE: Disabled drop on the same entry which is being dragged
-                                    onDrop={handleAnalyticalStatementEndDrop}
-                                    dropOverlayContainerClassName={styles.overlay}
-                                    draggedOverClassName={styles.draggedOver}
-                                    contentClassName={styles.content}
-                                    disabled={!statementDraggedStatus}
-                                />
-                            )}
+                            <SortableList
+                                className={styles.list}
+                                name="analyticalStatements"
+                                onChange={onOrderChange}
+                                data={value.analyticalStatements}
+                                keySelector={statementKeySelector}
+                                renderer={AnalyticalStatementInput}
+                                direction="horizontal"
+                                rendererParams={analyticalStatementRendererParams}
+                            />
                             <QuickActionButton
                                 className={styles.addStatementButton}
                                 name={undefined}

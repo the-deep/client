@@ -215,6 +215,7 @@ export interface Section {
     title: string;
     tooltip?: string;
     widgets: Widget[];
+    order: number;
 }
 
 export interface AnalysisFramework extends BasicEntity {

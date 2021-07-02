@@ -18,6 +18,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { useModalState } from '#hooks/stateManagement';
 import useLocalStorage from '#hooks/useLocalStorage';
 import _ts from '#ts';
+import { compareOrder } from '#utils/safeCommon';
 
 import Canvas from '../Canvas';
 import WidgetEditor from '../WidgetEditor';
@@ -333,6 +334,7 @@ function PrimaryTagging(props: Props) {
                 clientId: randomString(),
                 title: 'Operational Environment',
                 widgets: [matrix1d, matrix2d],
+                order: 0,
             },
         ],
         [],
@@ -354,7 +356,10 @@ function PrimaryTagging(props: Props) {
             setSectionToEdit(newClientId);
             setTempSections([
                 ...sections,
-                { clientId: newClientId },
+                {
+                    clientId: newClientId,
+                    order: sections.length,
+                },
             ]);
         },
         [sections],
@@ -440,7 +445,7 @@ function PrimaryTagging(props: Props) {
 
     const appliedSections = useMemo(
         () => {
-            const mySections = tempSections ?? sections;
+            const mySections = [...(tempSections ?? sections)].sort(compareOrder);
             if (tempWidget) {
                 return injectWidget(mySections, tempWidget.sectionId, tempWidget.widget);
             }

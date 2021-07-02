@@ -102,32 +102,15 @@
                 padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
                 overflow: auto;
 
+                .list {
+                    display: flex;
+                }
+
                 .analytical-statement {
                     flex-shrink: 0;
                     margin: var(--dui-spacing-medium);
                 }
 
-                .drop-container {
-                    display: flex;
-                    overflow: unset;
-                    --width-analytical-statement: 320px;
-
-                    .overlay {
-                        position: relative;
-                        width: var(--width-analytical-statement);
-                        height: 100%;
-                    }
-
-                    &.dragged-over {
-                        outline: 0;
-
-                        .overlay {
-                            margin: var(--dui-spacing-medium);
-                            border: var(--dui-width-separator-thin) dashed var(--dui-color-separator);
-                        }
-                    }
-
-                }
                 .add-statement-button {
                     align-self: flex-start;
                     flex-shrink: 0;

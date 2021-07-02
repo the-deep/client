@@ -17,7 +17,7 @@ import styles from './styles.scss';
 type FormType = DateRangeWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;

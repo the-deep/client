@@ -23,7 +23,7 @@ import styles from './styles.scss';
 type FormType = DateWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;

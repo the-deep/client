@@ -40,7 +40,7 @@ const OPTIONS_LIMIT = 20;
 type FormType = ScaleWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;

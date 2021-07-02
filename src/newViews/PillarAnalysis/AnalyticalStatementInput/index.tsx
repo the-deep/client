@@ -1,9 +1,11 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
     IoClose,
     IoCheckmarkCircleSharp,
     IoEllipseOutline,
 } from 'react-icons/io5';
+import { GrDrag } from 'react-icons/gr';
+
 import {
     _cs,
     isDefined,
@@ -11,7 +13,7 @@ import {
     randomString,
 } from '@togglecorp/fujs';
 import {
-    DraggableContent,
+    Container,
     DropContainer,
     QuickActionButton,
     TextArea,
@@ -24,7 +26,9 @@ import {
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/ui/NonFieldError';
-import { useModalState } from '#hooks/stateManagement';
+import { Attributes, Listeners, NodeRef } from '#components/ui/SortableList';
+import { genericMemo } from '#utils/safeCommon';
+
 import {
     AnalyticalStatementType,
     PartialAnalyticalEntryType,
@@ -50,9 +54,11 @@ interface AnalyticalStatementInputProps {
     onEntryMove: (entryId: number, statementClientId: string) => void;
     onEntryDrop: (entryId: number) => void;
     index: number;
-    onStatementDraggedStatusChange: (newStatus: boolean) => void;
-    statementDraggedStatus: boolean;
-    onAnalyticalStatementDrop: (droppedStatement: string, currentStatement: string) => void;
+    isBeingDragged?: boolean;
+    setNodeRef?: NodeRef;
+    attributes?: Attributes;
+    listeners?: Listeners;
+    style?: React.CSSProperties;
 }
 
 const defaultVal: AnalyticalStatementType = {
@@ -70,18 +76,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onEntryMove,
         onEntryDrop,
         index,
-        onStatementDraggedStatusChange,
-        statementDraggedStatus,
-        onAnalyticalStatementDrop,
+        setNodeRef,
+        attributes,
+        listeners,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
-
-    const [
-        currentStatementDraggedStatus,
-        setDragStart,
-        setDragEnd,
-    ] = useModalState(false);
 
     const {
         // onValueChange: onAnalyticalEntryChange,
@@ -172,52 +173,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange((oldVal?: boolean) => !oldVal, 'includeInReport' as const);
     }, [onFieldChange]);
 
-    const dragValue = useMemo(() => ({
-        statementClientId: value.clientId,
-    }), [value.clientId]);
-
-    const handleAnalyticalStatementDrop = useCallback(
-        (val: Record<string, unknown> | undefined) => {
-            if (!val) {
-                return;
-            }
-            const typedVal = val as { statementClientId: string };
-            onAnalyticalStatementDrop(typedVal.statementClientId, value.clientId);
-        },
-        [value.clientId, onAnalyticalStatementDrop],
-    );
-
-    const handleStatementDragStart = useCallback(() => {
-        setDragStart();
-        onStatementDraggedStatusChange(true);
-    }, [setDragStart, onStatementDraggedStatusChange]);
-
-    const handleStatementDragEnd = useCallback(() => {
-        setDragEnd();
-        onStatementDraggedStatusChange(false);
-    }, [setDragEnd, onStatementDraggedStatusChange]);
-
     return (
-        <DropContainer
-            className={_cs(
-                styles.dropContainer,
-                currentStatementDraggedStatus && styles.hide,
-            )}
-            name="statement"
-            // NOTE: Disabled drop on the same entry which is being dragged
-            onDrop={!currentStatementDraggedStatus ? handleAnalyticalStatementDrop : undefined}
-            dropOverlayContainerClassName={styles.overlay}
-            draggedOverClassName={styles.draggedOver}
-            contentClassName={styles.content}
-            disabled={!statementDraggedStatus}
-            // TODO: disable this when entries count is greater than certain count
+        <div
+            ref={setNodeRef}
+            className={_cs(styles.analyticalStatementInput, className)}
+            style={style}
         >
-            <DraggableContent
-                name="statement"
-                dropEffect="move"
-                value={dragValue}
-                onDragStart={handleStatementDragStart}
-                onDragStop={handleStatementDragEnd}
+            <Container
                 className={styles.dragStatement}
                 contentClassName={styles.dragContent}
                 headerClassName={styles.header}
@@ -235,60 +197,66 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 )}
                 // actionsContainerClassName={styles.actionsContainer}
                 headerActions={(
-                    <QuickActionButton
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Analytical Statement"
-                    >
-                        <IoClose />
-                    </QuickActionButton>
+                    <>
+                        <QuickActionButton
+                            name={index}
+                            onClick={onRemove}
+                            // FIXME: use translation
+                            title="Remove Analytical Statement"
+                        >
+                            <IoClose />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
                 )}
             >
-                <div className={_cs(styles.analyticalStatement, className)}>
-                    <div className={styles.upperContent}>
-                        <NonFieldError error={error} />
-                        <TextArea
-                            className={styles.statement}
-                            // FIXME: use translation
-                            placeholder="Enter analytical statement"
-                            name="statement"
-                            rows={4}
-                            value={value.statement}
-                            onChange={onFieldChange}
-                            error={error?.fields?.statement}
-                        />
-                    </div>
-                    <div className={styles.bottomContainer}>
-                        <div className={styles.entryContainer}>
-                            {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
-                                <AnalyticalEntryInput
-                                    key={analyticalEntry.clientId}
-                                    index={myIndex}
-                                    statementClientId={value.clientId}
-                                    value={analyticalEntry}
-                                    // onChange={onAnalyticalEntryChange}
-                                    onRemove={onAnalyticalEntryRemove}
-                                    // eslint-disable-next-line max-len
-                                    error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.clientId]}
-                                    onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
-                                    dropDisabled={statementDraggedStatus}
-                                />
-                            ))}
-                        </div>
-                        <DropContainer
-                            className={styles.dropContainer}
-                            name="entry"
-                            draggedOverClassName={styles.draggedOver}
-                            onDrop={handleAnalyticalEntryAdd}
-                            disabled={statementDraggedStatus}
-                            // TODO: disable this when entries count is greater than certain count
-                        />
-                    </div>
+                <div className={styles.upperContent}>
+                    <NonFieldError error={error} />
+                    <TextArea
+                        className={styles.statement}
+                        // FIXME: use translation
+                        placeholder="Enter analytical statement"
+                        name="statement"
+                        rows={4}
+                        value={value.statement}
+                        onChange={onFieldChange}
+                        error={error?.fields?.statement}
+                    />
                 </div>
-            </DraggableContent>
-        </DropContainer>
+                <div className={styles.bottomContainer}>
+                    <div className={styles.entryContainer}>
+                        {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
+                            <AnalyticalEntryInput
+                                key={analyticalEntry.clientId}
+                                index={myIndex}
+                                statementClientId={value.clientId}
+                                value={analyticalEntry}
+                                // onChange={onAnalyticalEntryChange}
+                                onRemove={onAnalyticalEntryRemove}
+                                // eslint-disable-next-line max-len
+                                error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.clientId]}
+                                onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                            />
+                        ))}
+                    </div>
+                    <DropContainer
+                        className={styles.dropContainer}
+                        name="entry"
+                        draggedOverClassName={styles.draggedOver}
+                        onDrop={handleAnalyticalEntryAdd}
+                    />
+                </div>
+            </Container>
+        </div>
     );
 }
 
-export default AnalyticalStatementInput;
+export default genericMemo(AnalyticalStatementInput);
