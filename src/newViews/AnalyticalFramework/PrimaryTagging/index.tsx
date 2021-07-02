@@ -445,7 +445,7 @@ function PrimaryTagging(props: Props) {
 
     const appliedSections = useMemo(
         () => {
-            const mySections = (tempSections ?? sections).sort(compareOrder);
+            const mySections = [...(tempSections ?? sections)].sort(compareOrder);
             if (tempWidget) {
                 return injectWidget(mySections, tempWidget.sectionId, tempWidget.widget);
             }

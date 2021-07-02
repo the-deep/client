@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
+    Portal,
     ListView,
     ListViewProps,
 } from '@the-deep/deep-ui';
-import { createPortal } from 'react-dom';
 import {
     DragOverlay,
     DndContext,
@@ -59,7 +59,7 @@ interface SortableItemProps<D, P, K extends OptionKey> {
         setNodeRef?: NodeRef;
         style?: React.CSSProperties;
     }) => JSX.Element;
-    params: P;
+    rendererParams: P;
 }
 
 function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, K>) {
@@ -67,7 +67,7 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
         keySelector,
         renderer: Renderer,
         datum,
-        params,
+        rendererParams,
     } = props;
 
     const {
@@ -78,7 +78,7 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
         transition,
     } = useSortable({ id: String(keySelector(datum)) });
 
-    const style: React.CSSProperties = {
+    const style: React.CSSProperties = useMemo(() => ({
         transform: CSS.Transform.toString({
             x: transform?.x ?? 0,
             y: transform?.y ?? 0,
@@ -86,7 +86,7 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
             scaleY: 1,
         }),
         transition: transition ?? undefined,
-    };
+    }), [transition, transform]);
 
     return (
         <Renderer
@@ -94,7 +94,7 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
             listeners={listeners}
             setNodeRef={setNodeRef}
             style={style}
-            {...params}
+            {...rendererParams}
         />
     );
 }
@@ -155,7 +155,7 @@ function SortableList<
 
     // NOTE: Sortable context requires list of items
     const items = useMemo(() => (
-        data?.map(d => String(keySelector(d)))
+        data?.map(d => String(keySelector(d))) ?? []
     ), [data, keySelector]);
 
     const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -226,7 +226,7 @@ function SortableList<
         );
 
         return ({
-            params,
+            rendererParams: params,
             datum,
             keySelector,
             renderer: Renderer,
@@ -244,7 +244,7 @@ function SortableList<
             ]}
         >
             <SortableContext
-                items={items ?? []}
+                items={items}
                 strategy={direction === 'horizontal' ? horizontalListSortingStrategy : verticalListSortingStrategy}
             >
                 <ListView
@@ -257,11 +257,13 @@ function SortableList<
                     grouped={false}
                 />
             </SortableContext>
-            {showDragOverlay && createPortal((
-                <DragOverlay>
-                    {DragItem}
-                </DragOverlay>
-            ), document.body)}
+            {showDragOverlay && (
+                <Portal>
+                    <DragOverlay>
+                        {DragItem}
+                    </DragOverlay>
+                </Portal>
+            )}
         </DndContext>
     );
 }
