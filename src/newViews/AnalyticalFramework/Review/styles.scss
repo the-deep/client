@@ -1,10 +1,12 @@
 .review {
     display: flex;
     flex-direction: column;
+    padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-large))
+        var(--dui-spacing-super-large);
 
     .primary-tagging {
         display: flex;
-        margin: var(--dui-spacing-extra-large);
+        margin: var(--dui-spacing-large) 0;
 
         .canvas {
             flex-grow: 1;
@@ -29,8 +31,9 @@
             }
         }
     }
+
     .secondary-tagging {
         display: flex;
-        margin: var(--dui-spacing-extra-large);
+        margin: var(--dui-spacing-large) 0;
     }
 }

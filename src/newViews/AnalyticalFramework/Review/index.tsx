@@ -35,7 +35,6 @@ function Review(props: Props) {
             <ContainerCard
                 className={styles.primaryTagging}
                 heading={_ts('analyticalFramework.review', 'primaryTagging')}
-                horizontallyCompactContent
             >
                 <Tabs
                     value={selectedSection}
@@ -73,9 +72,7 @@ function Review(props: Props) {
             </ContainerCard>
             <ContainerCard
                 className={styles.secondaryTagging}
-                contentClassName={styles.content}
                 heading={_ts('analyticalFramework.review', 'secondaryTagging')}
-                horizontallyCompactContent
             >
                 <Canvas
                     name={undefined}
