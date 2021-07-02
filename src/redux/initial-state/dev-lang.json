@@ -1444,7 +1444,8 @@
         "-184813074847": "Assignee",
         "-1848548493": "Priority",
         "-1929391101": "Primary tagging",
-        "-1920381013": "Secondary tagging"
+        "-1920381013": "Secondary tagging",
+        "-46389656": "End date must be later than Start Date"
     },
     "links": {
         "browserExtension": {
@@ -3802,7 +3803,10 @@
             "anaylsisEditModal": -88197654,
             "editButtonLabel": 363,
             "editAnalysisModalHeading": -30091387,
-            "pillarAnalysisRequired": -91939891
+            "pillarAnalysisRequired": -91939891,
+            "endDateLabel": 334,
+            "startDateLabel": 185,
+            "endDateGreaterThanStartDate": -46389656
         },
         "pillarAnalysis": {
             "saveButtonLabel": 25,
