@@ -47,7 +47,7 @@ function SecondaryTagging(props: Props) {
         setShowPreviewModalFalse,
     ] = useModalState(false);
 
-    const [widgets, setWidgets] = useLocalStorage<Widget[]>(`${frameworkId}-secondaryTagging`, []);
+    const [widgets, setWidgets] = useLocalStorage<Widget[]>('secondaryTagging', []);
 
     const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
 

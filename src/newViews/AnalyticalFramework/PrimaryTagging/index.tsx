@@ -338,7 +338,7 @@ function PrimaryTagging(props: Props) {
         [],
     );
 
-    const [sections, setSections] = useLocalStorage<Section[]>(`${frameworkId}-primaryTagging`, initialSections);
+    const [sections, setSections] = useLocalStorage<Section[]>('primaryTagging', initialSections);
 
     const [selectedSection, setSelectedSection] = useState<string>(sections[0]?.clientId);
 

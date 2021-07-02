@@ -163,7 +163,8 @@ function Navbar(props) {
         if (confirm) {
             stopSiloTasks();
             logout();
-            localStorage.clear();
+            localStorage.removeItem('primaryTagging');
+            localStorage.removeItem('secondaryTagging');
         }
         setShowLogoutConfirm(false);
     }, [logout, stopSiloTasks]);
