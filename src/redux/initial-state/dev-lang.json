@@ -1442,7 +1442,9 @@
         "-1818184757": "Authors",
         "-1831811911": "Added By",
         "-184813074847": "Assignee",
-        "-1848548493": "Priority"
+        "-1848548493": "Priority",
+        "-1929391101": "Primary tagging",
+        "-1920381013": "Secondary tagging"
     },
     "links": {
         "browserExtension": {
@@ -3989,6 +3991,10 @@
             "buildingModulesHeading": -99661907,
             "nextButtonLabel": 23,
             "viewFrameworkImageButtonLabel": -38544197
+        },
+        "analyticalFramework.review": {
+            "primaryTagging": -1929391101,
+            "secondaryTagging": -1920381013
         },
         "analyticalFramework.addUser": {
             "addUserHeading": -96311582,

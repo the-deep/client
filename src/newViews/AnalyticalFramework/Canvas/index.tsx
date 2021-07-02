@@ -14,8 +14,8 @@ import styles from './styles.scss';
 interface Props<T> {
     name: T;
     widgets: PartialWidget[] | undefined;
-    onWidgetDelete: (widgetId: string, name: T) => void;
-    onWidgetEdit: (widgetId: string, name: T) => void;
+    onWidgetDelete?: (widgetId: string, name: T) => void;
+    onWidgetEdit?: (widgetId: string, name: T) => void;
     editMode?: boolean;
     isSecondary?: boolean;
 }
@@ -40,13 +40,17 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetDeleteClick = useCallback(
         (widgetId: string) => {
-            onWidgetDelete(widgetId, name);
+            if (onWidgetDelete) {
+                onWidgetDelete(widgetId, name);
+            }
         },
         [onWidgetDelete, name],
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
-            onWidgetEdit(widgetId, name);
+            if (onWidgetEdit) {
+                onWidgetEdit(widgetId, name);
+            }
         },
         [onWidgetEdit, name],
     );
@@ -67,24 +71,28 @@ function Canvas<T>(props: Props<T>) {
                     readOnly
                     actions={(
                         <>
-                            <QuickActionButton
-                                name={widget.clientId}
-                                onClick={handleWidgetEditClick}
-                                // FIXME: use translation
-                                title="Edit Widget"
-                                disabled={editMode}
-                            >
-                                <IoCreateOutline />
-                            </QuickActionButton>
-                            <QuickActionButton
-                                name={widget.clientId}
-                                onClick={handleWidgetDeleteClick}
-                                // FIXME: use translation
-                                title="Delete Widget"
-                                disabled={editMode}
-                            >
-                                <IoTrash />
-                            </QuickActionButton>
+                            {onWidgetEdit && (
+                                <QuickActionButton
+                                    name={widget.clientId}
+                                    onClick={handleWidgetEditClick}
+                                    // FIXME: use translation
+                                    title="Edit Widget"
+                                    disabled={editMode}
+                                >
+                                    <IoCreateOutline />
+                                </QuickActionButton>
+                            )}
+                            {onWidgetDelete && (
+                                <QuickActionButton
+                                    name={widget.clientId}
+                                    onClick={handleWidgetDeleteClick}
+                                    // FIXME: use translation
+                                    title="Delete Widget"
+                                    disabled={editMode}
+                                >
+                                    <IoTrash />
+                                </QuickActionButton>
+                            )}
                         </>
                     )}
                 />

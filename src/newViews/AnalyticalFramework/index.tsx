@@ -23,6 +23,7 @@ import {
 import FrameworkDetails from './FrameworkDetails';
 import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
+import Review from './Review';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -132,7 +133,9 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                     className={styles.tabPanel}
                     name="review"
                 >
-                    {_ts('analyticalFramework', 'review')}
+                    <Review
+                        className={styles.view}
+                    />
                 </TabPanel>
             </Tabs>
         </div>
