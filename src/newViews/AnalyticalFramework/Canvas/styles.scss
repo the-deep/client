@@ -1,3 +1,13 @@
-.widget {
-    padding: var(--dui-spacing-medium);
+.canvas {
+    display: flex;
+    flex-wrap: wrap;
+
+    .widget {
+        flex-basis: 100%;
+        padding: var(--dui-spacing-medium);
+
+        &.half-widget {
+            flex-basis: 50%;
+        }
+    }
 }

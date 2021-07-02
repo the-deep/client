@@ -385,7 +385,7 @@ function PrimaryTagging(props: Props) {
             setTempSections(undefined);
             setSections(value);
         },
-        [],
+        [setSections],
     );
 
     const handleWidgetAdd = useCallback(
@@ -402,7 +402,7 @@ function PrimaryTagging(props: Props) {
         (widgetId: string, sectionId: string) => {
             setSections(oldSections => deleteWidget(oldSections, sectionId, widgetId));
         },
-        [],
+        [setSections],
     );
 
     const handleWidgetEditClick = useCallback(
@@ -440,7 +440,7 @@ function PrimaryTagging(props: Props) {
             setTempWidget(undefined);
             setSections(oldSections => injectWidget(oldSections, sectionId, value));
         },
-        [],
+        [setSections],
     );
 
     const appliedSections = useMemo(
