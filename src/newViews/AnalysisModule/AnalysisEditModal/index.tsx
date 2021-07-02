@@ -4,6 +4,7 @@ import {
     randomString,
     isDefined,
     listToMap,
+    compareDate,
 } from '@togglecorp/fujs';
 import {
     useForm,
@@ -20,6 +21,7 @@ import {
     Modal,
     TextInput,
     SelectInput,
+    DateInput,
     List,
 } from '@the-deep/deep-ui';
 import { IoAdd } from 'react-icons/io5';
@@ -48,6 +50,8 @@ type AnalysisPillar = Partial<PillarAnalysisFields> & { key: string };
 type FormType = {
     title?: string;
     teamLead?: UserMini['id'];
+    startDate?: string;
+    endDate: string;
     analysisPillar?: AnalysisPillar[];
 }
 
@@ -80,13 +84,23 @@ const analysisFormSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
         title: [requiredCondition],
         teamLead: [requiredCondition],
+        startDate: [],
+        endDate: [requiredCondition],
         analysisPillar: analysisPillarListSchema,
     }),
     validation: (value) => {
+        const errors = [];
         if ((value?.analysisPillar?.length ?? 0) < 1) {
-            return _ts('analysis.editModal', 'pillarAnalysisRequired');
+            errors.push(_ts('analysis.editModal', 'pillarAnalysisRequired'));
         }
-        return undefined;
+        if (isDefined(value?.startDate)) {
+            if ((compareDate(value?.startDate, value?.endDate) > 0)) {
+                errors.push(_ts('analysis.editModal', 'endDateGreaterThanStartDate'));
+            }
+        }
+        return errors.length > 0
+            ? errors.join(' ')
+            : undefined;
     },
 };
 
@@ -137,6 +151,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             onValueSet({
                 teamLead: response.teamLead,
                 title: response.title,
+                startDate: response.startDate,
+                endDate: response.endDate,
                 analysisPillar: response.analysisPillar.map(ap => ({
                     key: String(ap.id),
                     assignee: ap.assignee,
@@ -312,6 +328,24 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 value={value.teamLead}
                 error={error?.fields?.teamLead}
                 onChange={onValueChange}
+                disabled={pending}
+            />
+            <DateInput
+                className={styles.input}
+                name="startDate"
+                label={_ts('analysis.editModal', 'startDateLabel')}
+                value={value.startDate}
+                onChange={onValueChange}
+                error={error?.fields?.startDate}
+                disabled={pending}
+            />
+            <DateInput
+                className={styles.input}
+                name="endDate"
+                label={_ts('analysis.editModal', 'endDateLabel')}
+                value={value.endDate}
+                onChange={onValueChange}
+                error={error?.fields?.endDate}
                 disabled={pending}
             />
             <div className={styles.analysisPillarListContainer}>
