@@ -10,6 +10,7 @@ import {
 import { _cs } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
+import useLocalStorage from '#hooks/useLocalStorage';
 
 import _ts from '#ts';
 
@@ -46,7 +47,7 @@ function SecondaryTagging(props: Props) {
         setShowPreviewModalFalse,
     ] = useModalState(false);
 
-    const [widgets, setWidgets] = useState<Widget[]>([]);
+    const [widgets, setWidgets] = useLocalStorage<Widget[]>('secondaryTagging', []);
 
     const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
 
@@ -61,7 +62,7 @@ function SecondaryTagging(props: Props) {
         (widgetId: string) => {
             setWidgets(oldWidgets => deleteWidget(oldWidgets, widgetId));
         },
-        [],
+        [setWidgets],
     );
 
     const handleWidgetEditClick = useCallback(
@@ -93,7 +94,7 @@ function SecondaryTagging(props: Props) {
             setTempWidget(undefined);
             setWidgets(oldWidgets => injectWidget(oldWidgets, value));
         },
-        [],
+        [setWidgets],
     );
 
     const appliedWidgets = useMemo(

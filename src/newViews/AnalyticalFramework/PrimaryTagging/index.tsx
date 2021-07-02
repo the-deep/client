@@ -16,6 +16,7 @@ import { _cs, randomString } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 
 import { useModalState } from '#hooks/stateManagement';
+import useLocalStorage from '#hooks/useLocalStorage';
 import _ts from '#ts';
 
 import Canvas from '../Canvas';
@@ -337,9 +338,9 @@ function PrimaryTagging(props: Props) {
         [],
     );
 
-    const [selectedSection, setSelectedSection] = useState<string>(initialSections[0].clientId);
+    const [sections, setSections] = useLocalStorage<Section[]>('primaryTagging', initialSections);
 
-    const [sections, setSections] = useState<Section[]>(initialSections);
+    const [selectedSection, setSelectedSection] = useState<string>(sections[0]?.clientId);
 
     const [tempSections, setTempSections] = useState<PartialSectionType[] | undefined>();
 
