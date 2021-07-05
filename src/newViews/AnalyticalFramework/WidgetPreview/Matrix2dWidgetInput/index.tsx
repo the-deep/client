@@ -6,6 +6,8 @@ import {
     List,
 } from '@the-deep/deep-ui';
 
+import { NodeRef } from '#components/ui/SortableList';
+
 import { Matrix2dValue, Matrix2dWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
@@ -227,6 +229,8 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 
     widget: PartialMatrix2dWidget,
+    nodeRef?: NodeRef;
+    rootStyle?: React.CSSProperties;
 }
 
 function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
@@ -240,6 +244,8 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        nodeRef,
+        rootStyle,
     } = props;
 
     const handleSubRowChange = useCallback(
@@ -283,6 +289,8 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             childrenContainerClassName={styles.matrix2d}
             title={title}
             actions={actions}
+            nodeRef={nodeRef}
+            rootStyle={rootStyle}
         >
             <List
                 data={widget?.data?.rows}

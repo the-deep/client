@@ -31,6 +31,7 @@ import {
     TempWidget,
     findWidget,
     injectWidget,
+    orderWidgets,
     deleteWidget,
 } from './utils';
 
@@ -418,6 +419,14 @@ function PrimaryTagging(props: Props) {
         [sections],
     );
 
+    const handleWidgetOrderChange = useCallback(
+        (newWidgets: PartialWidget[]) => {
+            const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i }));
+            setSections(oldSections => orderWidgets(oldSections, selectedSection, orderedWidgets));
+        },
+        [selectedSection, setSections],
+    );
+
     const handleWidgetEditCancel = useCallback(
         () => {
             setTempWidget(undefined);
@@ -563,6 +572,7 @@ function PrimaryTagging(props: Props) {
                                     widgets={section.widgets}
                                     onWidgetDelete={handleWidgetDeleteClick}
                                     onWidgetEdit={handleWidgetEditClick}
+                                    onWidgetOrderChange={handleWidgetOrderChange}
                                     editMode={editMode}
                                 />
                             </TabPanel>

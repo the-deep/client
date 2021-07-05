@@ -28,6 +28,7 @@ import {
     sortableKeyboardCoordinates,
     horizontalListSortingStrategy,
     verticalListSortingStrategy,
+    rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { listToMap } from '@togglecorp/fujs';
 
@@ -118,7 +119,7 @@ type Props<
         style?: React.CSSProperties;
     }) => JSX.Element;
     onChange: (newList: D[], name: N) => void;
-    direction: 'vertical' | 'horizontal';
+    direction: 'vertical' | 'horizontal' | 'rect';
     showDragOverlay?: boolean;
 }
 
@@ -233,19 +234,36 @@ function SortableList<
         });
     }, [keySelector, rendererParams, Renderer]);
 
+    const sortingStrategy = useMemo(() => {
+        if (direction === 'rect') {
+            return rectSortingStrategy;
+        }
+        if (direction === 'vertical') {
+            return verticalListSortingStrategy;
+        }
+        return horizontalListSortingStrategy;
+    }, [direction]);
+
+    const modifiers = useMemo(() => {
+        if (direction === 'rect') {
+            return undefined;
+        }
+        return [
+            direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
+        ];
+    }, [direction]);
+
     return (
         <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            modifiers={[
-                direction === 'horizontal' ? restrictToHorizontalAxis : restrictToVerticalAxis,
-            ]}
+            modifiers={modifiers}
         >
             <SortableContext
                 items={items}
-                strategy={direction === 'horizontal' ? horizontalListSortingStrategy : verticalListSortingStrategy}
+                strategy={sortingStrategy}
             >
                 <ListView
                     className={className}

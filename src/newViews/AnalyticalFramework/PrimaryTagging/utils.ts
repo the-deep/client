@@ -27,6 +27,23 @@ export function findWidget(
     );
 }
 
+export function orderWidgets(
+    sections: Section[],
+    sectionId: string,
+    widgets: Widget[],
+): Section[] {
+    const selectedSectionIndex = sections.findIndex(s => s.clientId === sectionId);
+    if (selectedSectionIndex === -1) {
+        console.error('The selected section does not exist:', sectionId);
+        return sections;
+    }
+
+    return produce(sections, (safeSections) => {
+        const selectedSection = safeSections[selectedSectionIndex];
+        selectedSection.widgets = widgets;
+    });
+}
+
 export function injectWidget(
     sections: Section[],
     sectionId: string,

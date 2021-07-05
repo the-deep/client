@@ -5,6 +5,8 @@ import {
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
+import { NodeRef } from '#components/ui/SortableList';
+
 import WidgetWrapper from '../../Widget';
 import { DateRangeValue } from '../../types';
 
@@ -21,6 +23,9 @@ export interface Props <N extends string>{
     actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
+
+    nodeRef?: NodeRef;
+    rootStyle?: React.CSSProperties;
 }
 
 function DateRangeWidgetInput<N extends string>(props: Props<N>) {
@@ -33,6 +38,8 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        nodeRef,
+        rootStyle,
     } = props;
 
     const handleToChange = useCallback(
@@ -61,6 +68,8 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            nodeRef={nodeRef}
+            rootStyle={rootStyle}
         >
             <DateInput
                 name="from"

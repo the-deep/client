@@ -75,6 +75,14 @@ function SecondaryTagging(props: Props) {
         [widgets],
     );
 
+    const handleWidgetOrderChange = useCallback(
+        (newWidgets: PartialWidget[]) => {
+            const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i }));
+            setWidgets(orderedWidgets);
+        },
+        [setWidgets],
+    );
+
     const handleWidgetEditCancel = useCallback(
         () => {
             setTempWidget(undefined);
@@ -160,6 +168,7 @@ function SecondaryTagging(props: Props) {
                         widgets={appliedWidgets}
                         onWidgetDelete={handleWidgetDeleteClick}
                         onWidgetEdit={handleWidgetEditClick}
+                        onWidgetOrderChange={handleWidgetOrderChange}
                         editMode={editMode}
                         isSecondary
                     />

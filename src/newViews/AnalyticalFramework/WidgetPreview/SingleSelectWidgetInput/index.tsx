@@ -3,6 +3,8 @@ import {
     SelectInput,
 } from '@the-deep/deep-ui';
 
+import { NodeRef } from '#components/ui/SortableList';
+
 import { SingleSelectValue, SingleSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
@@ -31,6 +33,9 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 
     widget: PartialSingleSelectWidget,
+
+    nodeRef?: NodeRef;
+    rootStyle?: React.CSSProperties;
 }
 
 function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
@@ -44,6 +49,8 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        nodeRef,
+        rootStyle,
     } = props;
 
     return (
@@ -51,6 +58,8 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            nodeRef={nodeRef}
+            rootStyle={rootStyle}
         >
             <SelectInput
                 name={name}
