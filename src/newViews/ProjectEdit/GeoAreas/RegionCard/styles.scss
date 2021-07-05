@@ -1,0 +1,15 @@
+.region {
+    display: flex;
+    background-color: var(--dui-color-background);
+    padding: var(--dui-spacing-small);
+
+    .button {
+        margin-left: auto;
+    }
+
+    .title {
+        padding: var(--dui-spacing-small);
+        font-size: var(--dui-font-weight-large);
+        font-weight: var(--dui-font-weight-bold);
+    }
+}

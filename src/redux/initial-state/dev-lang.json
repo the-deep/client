@@ -1449,7 +1449,11 @@
         "-1393010101": "Deep image input",
         "-11018101832": "Uploading a file",
         "-183103101891": "No file selected",
-        "-1941381010101": "?"
+        "-1941381010101": "?",
+        "-192931013": "Geo Areas",
+        "-1381310011": "Add a custom geo area",
+        "-1181081010": "Delete geo area",
+        "-1828391488": "Do you really want to remove this geo area from the project?"
     },
     "links": {
         "browserExtension": {
@@ -3950,7 +3954,8 @@
             "searchPlaceholder": 14,
             "noFrameworks": -20004833,
             "removeUserConfirmation": -13184074,
-            "removeUserGroupConfirmation": -1778933
+            "removeUserGroupConfirmation": -1778933,
+            "geoAreas": -192931013
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,
@@ -4193,6 +4198,12 @@
             "uploading": -11018101832,
             "noFiles": -183103101891,
             "questionMark": -1941381010101
+        },
+        "geoAreas": {
+            "title": -192931013,
+            "addCustom": -1381310011,
+            "deleteGeoArea": -1181081010,
+            "deleteGeoAreaConfirm": -1828391488
         }
     }
 }
