@@ -18,6 +18,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 
 import {
     afViewAnalysisFrameworkWidgetsSelector,
@@ -38,11 +39,15 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     widgets: PropTypes.array,
+    setAfViewStatsConfig: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    statsConfig: PropTypes.object,
 };
 const defaultProps = {
     className: '',
     closeModal: undefined,
     widgets: undefined,
+    statsConfig: undefined,
 };
 
 const keySelector = d => d.id;
@@ -67,10 +72,10 @@ export default class EditVizSettingsModal extends React.PureComponent {
             widget1d: [requiredCondition],
             widget2d: [requiredCondition],
             geoWidget: [requiredCondition],
-            severityWidget: [requiredCondition],
-            reliabilityWidget: [requiredCondition],
+            severityWidget: [],
+            reliabilityWidget: [],
             affectedGroupsWidget: [requiredCondition],
-            specificNeedsGroupsWidget: [requiredCondition],
+            specificNeedsGroupsWidget: [],
         },
     };
 
@@ -231,7 +236,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
                     <ModalHeader title={_ts('framework.editVizSettings', 'editVizSettingsModalTitle')} />
                     <ModalBody>
                         <NonFieldErrors faramElement />
-                        <SelectInput
+                        <MultiSelectInput
                             className={styles.input}
                             faramElementName="widget1d"
                             label={_ts('framework.editVizSettings', 'widget1dLabel')}
@@ -239,7 +244,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
-                        <SelectInput
+                        <MultiSelectInput
                             className={styles.input}
                             faramElementName="widget2d"
                             label={_ts('framework.editVizSettings', 'widget2dLabel')}
