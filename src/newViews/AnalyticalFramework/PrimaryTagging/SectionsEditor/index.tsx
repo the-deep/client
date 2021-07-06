@@ -153,6 +153,7 @@ function SectionInput(props: SectionInputProps) {
                     ref: divRef,
                 }}
                 heading={`${heading} ${errored ? '*' : ''}`}
+                expansionTriggerArea="arrow"
                 headerActions={(
                     <>
                         <QuickActionButton

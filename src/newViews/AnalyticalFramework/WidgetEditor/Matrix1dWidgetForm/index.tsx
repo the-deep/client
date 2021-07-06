@@ -43,18 +43,18 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['data']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'type'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'type' | 'order'>;
 
 type RowType = DataType['rows'][number];
 export type PartialRowType = PartialForm<
     RowType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type CellType = RowType['cells'][number];
 export type PartialCellType = PartialForm<
     CellType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type CellSchema = ObjectSchema<PartialCellType>;
@@ -64,6 +64,7 @@ const cellSchema: CellSchema = {
         clientId: [],
         label: [requiredStringCondition],
         tooltip: [],
+        order: [],
     }),
 };
 
@@ -89,6 +90,7 @@ const rowSchema: RowSchema = {
         tooltip: [],
         color: [],
         cells: cellsSchema,
+        order: [],
     }),
 };
 
@@ -129,6 +131,7 @@ const schema: FormSchema = {
 
 const defaultCellVal: PartialCellType = {
     clientId: 'random',
+    order: -1,
 };
 interface CellInputProps {
     className?: string;
@@ -195,6 +198,7 @@ function CellInput(props: CellInputProps) {
 
 const defaultRowVal: PartialRowType = {
     clientId: 'random',
+    order: -1,
 };
 interface RowInputProps {
     className?: string;
@@ -232,6 +236,7 @@ function RowInput(props: RowInputProps) {
             const clientId = randomString();
             const newCell: PartialCellType = {
                 clientId,
+                order: oldCells.length,
             };
             onFieldChange(
                 [...oldCells, newCell],
@@ -348,6 +353,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             const clientId = randomString();
             const newRow: PartialRowType = {
                 clientId,
+                order: oldRows.length,
             };
             onFieldChange(
                 [...oldRows, newRow],

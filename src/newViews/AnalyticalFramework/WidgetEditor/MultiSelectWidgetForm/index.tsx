@@ -43,12 +43,12 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['data']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'type'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'type' | 'order'>;
 
 type OptionType = DataType['options'][number];
 export type PartialOptionType = PartialForm<
     OptionType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type OptionSchema = ObjectSchema<PartialOptionType>;
@@ -58,6 +58,7 @@ const optionSchema: OptionSchema = {
         clientId: [],
         label: [requiredStringCondition],
         tooltip: [],
+        order: [],
     }),
 };
 
@@ -98,6 +99,7 @@ const schema: FormSchema = {
 
 const defaultOptionVal: PartialOptionType = {
     clientId: 'random',
+    order: -1,
 };
 interface OptionInputProps {
     className?: string;
@@ -198,6 +200,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             const clientId = randomString();
             const newOption: PartialOptionType = {
                 clientId,
+                order: oldOptions.length,
             };
             onFieldChange(
                 [...oldOptions, newOption],

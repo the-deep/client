@@ -18,7 +18,10 @@ import { FiEdit2 } from 'react-icons/fi';
 import { useModalState } from '#hooks/stateManagement';
 import useLocalStorage from '#hooks/useLocalStorage';
 import _ts from '#ts';
-import { compareOrder } from '#utils/safeCommon';
+import {
+    sortByOrder,
+    reorder,
+} from '#utils/safeCommon';
 
 import Canvas from '../Canvas';
 import WidgetEditor from '../WidgetEditor';
@@ -51,43 +54,53 @@ const matrix1d: Matrix1dWidget = {
                 clientId: '1',
                 label: 'Context',
                 color: 'white',
+                order: -1,
                 cells: [
                     {
                         clientId: '1-1',
                         label: 'Environment',
+                        order: -1,
                     },
                     {
                         clientId: '1-2',
                         label: 'Socio-cultural',
+                        order: -1,
                     },
                     {
                         clientId: '1-3',
                         label: 'Economy',
+                        order: -1,
                     },
                     {
                         clientId: '1-4',
                         label: 'Demography',
+                        order: -1,
                     },
                     {
                         clientId: '1-5',
                         label: 'Legal',
+                        order: -1,
                     },
                     {
                         clientId: '1-6',
                         label: 'Security',
+                        order: -1,
                     },
                 ],
             },
             {
                 clientId: '2',
                 label: 'Shock and Event',
+                order: -1,
                 color: 'white',
                 cells: [
                     {
+                        order: -1,
                         clientId: '2-1',
                         label: 'Aggravating factors',
                     },
                     {
+                        order: -1,
                         clientId: '2-2',
                         label: 'Type and characterstics',
                     },
@@ -96,71 +109,87 @@ const matrix1d: Matrix1dWidget = {
             {
                 clientId: '3',
                 label: 'Displacement Profile',
+                order: -1,
                 color: 'white',
                 cells: [
                     {
+                        order: -1,
                         clientId: '3-1',
                         label: 'Type/number',
                     },
                     {
+                        order: -1,
                         clientId: '3-2',
                         label: 'Movement',
                     },
                     {
+                        order: -1,
                         clientId: '3-3',
                         label: 'Push factors',
                     },
                     {
+                        order: -1,
                         clientId: '3-4',
                         label: 'Pull factors',
                     },
                     {
+                        order: -1,
                         clientId: '3-5',
                         label: 'Intentions',
                     },
                     {
+                        order: -1,
                         clientId: '3-6',
                         label: 'Local Integration',
                     },
                 ],
             },
             {
+                order: -1,
                 clientId: '4',
                 label: 'Casualties',
                 color: 'white',
                 cells: [
                     {
+                        order: -1,
                         clientId: '4-1',
                         label: 'Injured',
                     },
                     {
+                        order: -1,
                         clientId: '4-2',
                         label: 'Missing',
                     },
                     {
+                        order: -1,
                         clientId: '4-3',
                         label: 'Dead',
                     },
                 ],
             },
             {
+                order: -1,
                 clientId: '5',
                 label: 'Humanitarian Access',
                 color: 'white',
                 cells: [
                     {
+                        order: -1,
                         clientId: '5-1',
                         label: 'Relief to Beneficiaries',
                     },
                     {
+                        order: -1,
                         clientId: '5-2',
                         label: 'Beneficiaries to Relief',
                     },
                     {
+                        order: -1,
                         clientId: '5-3',
                         label: 'Physical Constraints',
                     },
                     {
+                        order: -1,
                         clientId: '5-4',
                         label: 'Humanitarian Access Gap',
                     },
@@ -170,20 +199,25 @@ const matrix1d: Matrix1dWidget = {
                 clientId: '6',
                 label: 'Information',
                 color: 'white',
+                order: -1,
                 cells: [
                     {
+                        order: -1,
                         clientId: '6-1',
                         label: 'Communication Means',
                     },
                     {
+                        order: -1,
                         clientId: '6-2',
                         label: 'Information Challenge',
                     },
                     {
+                        order: -1,
                         clientId: '6-3',
                         label: 'Information Needs',
                     },
                     {
+                        order: -1,
                         clientId: '6-4',
                         label: 'Information Gaps',
                     },
@@ -204,45 +238,55 @@ const matrix2d: Matrix2dWidget = {
         rows: [
             {
                 clientId: '1',
+                order: -1,
                 label: 'Scope and Scale',
                 color: 'white',
                 subRows: [
                     {
+                        order: -1,
                         clientId: '1-1',
                         label: 'Drivers/Aggravating Factors',
                     },
                     {
+                        order: -1,
                         clientId: '1-2',
                         label: 'System Disruption',
                     },
                     {
+                        order: -1,
                         clientId: '1-3',
                         label: 'Damages and Losses',
                     },
                     {
+                        order: -1,
                         clientId: '1-4',
                         label: 'People Affected',
                     },
                 ],
             },
             {
+                order: -1,
                 clientId: '2',
                 label: 'Humanitarian Conditions',
                 color: 'white',
                 subRows: [
                     {
+                        order: -1,
                         clientId: '2-1',
                         label: 'Pilots/Conciliating Factors',
                     },
                     {
+                        order: -1,
                         clientId: '2-2',
                         label: 'System Reconciliation',
                     },
                     {
+                        order: -1,
                         clientId: '2-3',
                         label: 'Improvements and Wins',
                     },
                     {
+                        order: -1,
                         clientId: '2-4',
                         label: 'Monkeys Affected',
                     },
@@ -252,55 +296,66 @@ const matrix2d: Matrix2dWidget = {
         columns: [
             {
                 clientId: '1',
+                order: -1,
                 label: 'Cross',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '2',
                 label: 'Food',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '3',
                 label: 'Livelihoods',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '4',
                 label: 'Health',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '5',
                 label: 'Nutrition',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '6',
                 label: 'WASH',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '7',
                 label: 'Protection',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '8',
                 label: 'Education',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '9',
                 label: 'Shelter',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '10',
                 label: 'Agriculture',
                 subColumns: [],
             },
             {
+                order: -1,
                 clientId: '11',
                 label: 'Logistics',
                 subColumns: [],
@@ -421,7 +476,7 @@ function PrimaryTagging(props: Props) {
 
     const handleWidgetOrderChange = useCallback(
         (newWidgets: Widget[]) => {
-            const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i }));
+            const orderedWidgets = reorder(newWidgets);
             setSections(oldSections => orderWidgets(oldSections, selectedSection, orderedWidgets));
         },
         [selectedSection, setSections],
@@ -463,7 +518,7 @@ function PrimaryTagging(props: Props) {
     const sectionsState = useMemo(
         (): AppliedSections => {
             if (tempSections) {
-                const mySections = [...tempSections].sort(compareOrder);
+                const mySections = sortByOrder(tempSections);
                 if (tempWidget) {
                     return {
                         editMode: true,
@@ -479,7 +534,7 @@ function PrimaryTagging(props: Props) {
                     appliedSections: mySections,
                 };
             }
-            const mySections = [...sections].sort(compareOrder);
+            const mySections = sortByOrder(sections);
             if (tempWidget) {
                 return {
                     editMode: true,

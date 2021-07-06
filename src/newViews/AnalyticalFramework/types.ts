@@ -68,6 +68,7 @@ interface KeyLabel {
     clientId: string;
     label: string;
     tooltip?: string;
+    order: number;
 }
 interface KeyLabelColor extends KeyLabel {
     color: string;
