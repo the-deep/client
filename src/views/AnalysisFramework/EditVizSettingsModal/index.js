@@ -9,6 +9,7 @@ import {
     isList,
     listToGroupList,
     listToMap,
+    isDefined,
 } from '@togglecorp/fujs';
 
 import Modal from '#rscv/Modal';
@@ -195,7 +196,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
                             widgetType: widgetId,
                             isConditionalWidget: true,
                         });
-                    });
+                    }).filter(isDefined);
                 }
 
                 const widget = mapping[d];

@@ -471,7 +471,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     }), [
         onRowsChange,
         onRowsRemove,
-        value?.defaultValue,
         arrayError,
     ]);
 
