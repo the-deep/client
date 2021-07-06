@@ -1,6 +1,8 @@
 import produce from 'immer';
 import { isNotDefined } from '@togglecorp/fujs';
 
+import { reorder } from '#utils/safeCommon';
+
 import { PartialSectionType } from './SectionsEditor';
 import { PartialWidget } from '../WidgetPreview';
 import { Section, Widget } from '../types';
@@ -40,7 +42,7 @@ export function orderWidgets(
 
     return produce(sections, (safeSections) => {
         const selectedSection = safeSections[selectedSectionIndex];
-        selectedSection.widgets = widgets;
+        selectedSection.widgets = reorder(widgets);
     });
 }
 

@@ -18,10 +18,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { useModalState } from '#hooks/stateManagement';
 import useLocalStorage from '#hooks/useLocalStorage';
 import _ts from '#ts';
-import {
-    sortByOrder,
-    reorder,
-} from '#utils/safeCommon';
+import { sortByOrder } from '#utils/safeCommon';
 
 import Canvas from '../Canvas';
 import WidgetEditor from '../WidgetEditor';
@@ -476,8 +473,7 @@ function PrimaryTagging(props: Props) {
 
     const handleWidgetOrderChange = useCallback(
         (newWidgets: Widget[]) => {
-            const orderedWidgets = reorder(newWidgets);
-            setSections(oldSections => orderWidgets(oldSections, selectedSection, orderedWidgets));
+            setSections(oldSections => orderWidgets(oldSections, selectedSection, newWidgets));
         },
         [selectedSection, setSections],
     );
