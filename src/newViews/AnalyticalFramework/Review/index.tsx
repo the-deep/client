@@ -64,6 +64,7 @@ function Review(props: Props) {
                                 <Canvas
                                     name={selectedSection}
                                     widgets={section.widgets}
+                                    editMode={false}
                                 />
                             </TabPanel>
                         ))}
@@ -77,6 +78,7 @@ function Review(props: Props) {
                 <Canvas
                     name={undefined}
                     widgets={widgets}
+                    editMode={false}
                 />
             </ContainerCard>
         </div>

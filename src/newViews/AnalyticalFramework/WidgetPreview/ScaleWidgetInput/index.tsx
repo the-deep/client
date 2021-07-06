@@ -3,6 +3,8 @@ import {
     ScaleInput,
 } from '@the-deep/deep-ui';
 
+import { NodeRef } from '#components/ui/SortableList';
+
 import { ScaleValue, ScaleWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
@@ -32,6 +34,9 @@ export interface Props<N extends string>{
     readOnly?: boolean;
 
     widget: PartialScaleWidget,
+
+    nodeRef?: NodeRef;
+    rootStyle?: React.CSSProperties;
 }
 
 function ScaleWidgetInput<N extends string>(props: Props<N>) {
@@ -45,6 +50,8 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        nodeRef,
+        rootStyle,
     } = props;
 
     return (
@@ -52,6 +59,8 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            nodeRef={nodeRef}
+            rootStyle={rootStyle}
         >
             <ScaleInput
                 name={name}

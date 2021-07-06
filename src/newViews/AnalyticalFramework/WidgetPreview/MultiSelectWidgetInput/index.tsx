@@ -3,6 +3,8 @@ import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
 
+import { NodeRef } from '#components/ui/SortableList';
+
 import { MultiSelectValue, MultiSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
 
@@ -31,6 +33,9 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 
     widget: PartialMultiSelectWidget,
+
+    nodeRef?: NodeRef;
+    rootStyle?: React.CSSProperties;
 }
 
 function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
@@ -44,6 +49,8 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        nodeRef,
+        rootStyle,
     } = props;
 
     return (
@@ -51,6 +58,8 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            nodeRef={nodeRef}
+            rootStyle={rootStyle}
         >
             <MultiSelectInput
                 name={name}

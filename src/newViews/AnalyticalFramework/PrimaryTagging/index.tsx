@@ -31,6 +31,7 @@ import {
     TempWidget,
     findWidget,
     injectWidget,
+    orderWidgets,
     deleteWidget,
 } from './utils';
 
@@ -418,6 +419,14 @@ function PrimaryTagging(props: Props) {
         [sections],
     );
 
+    const handleWidgetOrderChange = useCallback(
+        (newWidgets: Widget[]) => {
+            const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i }));
+            setSections(oldSections => orderWidgets(oldSections, selectedSection, orderedWidgets));
+        },
+        [selectedSection, setSections],
+    );
+
     const handleWidgetEditCancel = useCallback(
         () => {
             setTempWidget(undefined);
@@ -443,13 +452,48 @@ function PrimaryTagging(props: Props) {
         [setSections],
     );
 
-    const appliedSections = useMemo(
-        () => {
-            const mySections = [...(tempSections ?? sections)].sort(compareOrder);
-            if (tempWidget) {
-                return injectWidget(mySections, tempWidget.sectionId, tempWidget.widget);
+    type AppliedSections = {
+        editMode: false;
+        appliedSections: Section[];
+    } | {
+        editMode: true;
+        appliedSections: PartialSectionType[];
+    };
+
+    const sectionsState = useMemo(
+        (): AppliedSections => {
+            if (tempSections) {
+                const mySections = [...tempSections].sort(compareOrder);
+                if (tempWidget) {
+                    return {
+                        editMode: true,
+                        appliedSections: injectWidget(
+                            mySections,
+                            tempWidget.sectionId,
+                            tempWidget.widget,
+                        ),
+                    };
+                }
+                return {
+                    editMode: true,
+                    appliedSections: mySections,
+                };
             }
-            return mySections;
+            const mySections = [...sections].sort(compareOrder);
+            if (tempWidget) {
+                return {
+                    editMode: true,
+                    appliedSections: injectWidget(
+                        mySections,
+                        tempWidget.sectionId,
+                        tempWidget.widget,
+                    ),
+                };
+            }
+            return {
+                editMode: false,
+                appliedSections: mySections,
+            };
         },
         [sections, tempSections, tempWidget],
     );
@@ -467,8 +511,6 @@ function PrimaryTagging(props: Props) {
     const sectionEditMode = !!tempSections && !tempWidget;
     const widgetEditMode = !tempSections && !!tempWidget;
 
-    const editMode = sectionEditMode || widgetEditMode;
-
     return (
         <div className={_cs(styles.primaryTagging, className)}>
             <Container
@@ -477,7 +519,7 @@ function PrimaryTagging(props: Props) {
                 heading={_ts('analyticalFramework.primaryTagging', 'buildingModulesHeading')}
                 horizontallyCompactContent
             >
-                {!editMode && (
+                {!sectionsState.editMode && (
                     <WidgetList
                         onSectionsAdd={handleSectionsAdd}
                         onWidgetAdd={handleWidgetAdd}
@@ -531,42 +573,79 @@ function PrimaryTagging(props: Props) {
                     </div>
                     <div className={styles.canvas}>
                         <TabList className={styles.tabs}>
-                            {appliedSections.map(section => (
-                                <Tab
+                            {sectionsState.editMode
+                                ? sectionsState.appliedSections.map(section => (
+                                    <Tab
+                                        key={section.clientId}
+                                        name={section.clientId}
+                                        borderWrapperClassName={styles.borderWrapper}
+                                        className={styles.tab}
+                                        title={section.tooltip}
+                                        // FIXME: use strings
+                                    >
+                                        {section.title || 'Unnamed'}
+                                        <QuickActionButton
+                                            className={styles.sectionEditButton}
+                                            name={section.clientId}
+                                            onClick={handleSectionEditClick}
+                                            disabled
+                                        >
+                                            <FiEdit2 />
+                                        </QuickActionButton>
+                                    </Tab>
+                                ))
+                                : sectionsState.appliedSections.map(section => (
+                                    <Tab
+                                        key={section.clientId}
+                                        name={section.clientId}
+                                        borderWrapperClassName={styles.borderWrapper}
+                                        className={styles.tab}
+                                        title={section.tooltip}
+                                        // FIXME: use strings
+                                    >
+                                        {section.title}
+                                        <QuickActionButton
+                                            className={styles.sectionEditButton}
+                                            name={section.clientId}
+                                            onClick={handleSectionEditClick}
+                                        >
+                                            <FiEdit2 />
+                                        </QuickActionButton>
+                                    </Tab>
+                                ))
+                            }
+                        </TabList>
+                        {sectionsState.editMode
+                            ? sectionsState.appliedSections.map(section => (
+                                <TabPanel
                                     key={section.clientId}
                                     name={section.clientId}
-                                    borderWrapperClassName={styles.borderWrapper}
-                                    className={styles.tab}
-                                    title={section.tooltip}
-                                    // FIXME: use strings
+                                    className={styles.panel}
                                 >
-                                    {section.title || 'Unnamed'}
-                                    <QuickActionButton
-                                        className={styles.sectionEditButton}
-                                        name={section.clientId}
-                                        disabled={editMode}
-                                        onClick={handleSectionEditClick}
-                                    >
-                                        <FiEdit2 />
-                                    </QuickActionButton>
-                                </Tab>
-                            ))}
-                        </TabList>
-                        {appliedSections.map(section => (
-                            <TabPanel
-                                key={section.clientId}
-                                name={section.clientId}
-                                className={styles.panel}
-                            >
-                                <Canvas
-                                    name={selectedSection}
-                                    widgets={section.widgets}
-                                    onWidgetDelete={handleWidgetDeleteClick}
-                                    onWidgetEdit={handleWidgetEditClick}
-                                    editMode={editMode}
-                                />
-                            </TabPanel>
-                        ))}
+                                    <Canvas
+                                        name={selectedSection}
+                                        widgets={section.widgets}
+                                        editMode
+                                    />
+                                </TabPanel>
+                            ))
+                            : sectionsState.appliedSections.map(section => (
+                                <TabPanel
+                                    key={section.clientId}
+                                    name={section.clientId}
+                                    className={styles.panel}
+                                >
+                                    <Canvas
+                                        name={selectedSection}
+                                        widgets={section.widgets}
+                                        onWidgetDelete={handleWidgetDeleteClick}
+                                        onWidgetEdit={handleWidgetEditClick}
+                                        onWidgetOrderChange={handleWidgetOrderChange}
+                                        editMode={false}
+                                    />
+                                </TabPanel>
+                            ))
+                        }
                     </div>
                 </Tabs>
             </div>

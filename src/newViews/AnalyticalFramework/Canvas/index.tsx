@@ -3,31 +3,141 @@ import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
+import { GrDrag } from 'react-icons/gr';
 import {
     IoCreateOutline,
     IoTrash,
 } from 'react-icons/io5';
 
+import SortableList, {
+    NodeRef,
+    Attributes,
+    Listeners,
+} from '#components/ui/SortableList';
+
+import { Widget } from '../types';
 import WidgetPreview, { PartialWidget } from '../WidgetPreview';
 import styles from './styles.scss';
 
-interface Props<T> {
+interface WidgetProps {
+    isSecondary: boolean;
+    widget: PartialWidget;
+    clientId: string;
+    onWidgetValueChange: (value: unknown, widgetName: string) => void;
+    onWidgetEditClick: (widgetName: string) => void;
+    onWidgetDeleteClick: (widgetName: string) => void;
+    showWidgetEdit: boolean | undefined;
+    showWidgetDelete: boolean | undefined;
+    editMode: boolean | undefined;
+    setNodeRef?: NodeRef;
+    attributes?: Attributes;
+    listeners?: Listeners;
+    style?: React.CSSProperties;
+}
+
+function WidgetWrapper(props: WidgetProps) {
+    const {
+        isSecondary,
+        widget,
+        clientId,
+        onWidgetValueChange,
+        onWidgetEditClick,
+        showWidgetEdit,
+        showWidgetDelete,
+        editMode,
+        onWidgetDeleteClick,
+        setNodeRef,
+        attributes,
+        listeners,
+        style,
+    } = props;
+
+    return (
+        <WidgetPreview
+            className={_cs(
+                styles.widget,
+                isSecondary && widget?.width === 'half' && styles.halfWidget,
+            )}
+            key={clientId}
+            name={clientId}
+            value={undefined}
+            onChange={onWidgetValueChange}
+            widget={widget}
+            nodeRef={setNodeRef}
+            rootStyle={style}
+            readOnly
+            actions={(
+                <>
+                    {showWidgetEdit && (
+                        <QuickActionButton
+                            name={clientId}
+                            onClick={onWidgetEditClick}
+                            // FIXME: use translation
+                            title="Edit Widget"
+                            disabled={editMode}
+                        >
+                            <IoCreateOutline />
+                        </QuickActionButton>
+                    )}
+                    {showWidgetDelete && (
+                        <QuickActionButton
+                            name={clientId}
+                            onClick={onWidgetDeleteClick}
+                            // FIXME: use translation
+                            title="Delete Widget"
+                            disabled={editMode}
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                    )}
+                    {!editMode && (
+                        <QuickActionButton
+                            name={clientId}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    )}
+                </>
+            )}
+        />
+    );
+}
+
+const partialWidgetKeySelector = (d: PartialWidget) => d.clientId;
+const widgetKeySelector = (d: Widget) => d.clientId;
+
+type Props<T> = {
     name: T;
-    widgets: PartialWidget[] | undefined;
+    isSecondary?: boolean;
+} & ({
+    editMode?: false;
+    widgets: Widget[] | undefined;
+    onWidgetOrderChange?: (widgets: Widget[]) => void;
     onWidgetDelete?: (widgetId: string, name: T) => void;
     onWidgetEdit?: (widgetId: string, name: T) => void;
-    editMode?: boolean;
-    isSecondary?: boolean;
-}
+} | {
+    editMode: true;
+    widgets: PartialWidget[] | undefined;
+    onWidgetOrderChange?: never;
+    onWidgetDelete?: never;
+    onWidgetEdit?: never;
+})
 
 function Canvas<T>(props: Props<T>) {
     const {
         name,
+        /*
         widgets,
         editMode,
         onWidgetDelete,
         onWidgetEdit,
-        isSecondary,
+        onWidgetOrderChange,
+        */
+        isSecondary = false,
     } = props;
 
     const handleWidgetValueChange = useCallback(
@@ -40,64 +150,74 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetDeleteClick = useCallback(
         (widgetId: string) => {
-            if (onWidgetDelete) {
-                onWidgetDelete(widgetId, name);
+            if (!props.editMode && props.onWidgetDelete) {
+                props.onWidgetDelete(widgetId, name);
             }
         },
-        [onWidgetDelete, name],
+        [props.editMode, props.onWidgetDelete, name],
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
-            if (onWidgetEdit) {
-                onWidgetEdit(widgetId, name);
+            if (!props.editMode && props.onWidgetEdit) {
+                props.onWidgetEdit(widgetId, name);
             }
         },
-        [onWidgetEdit, name],
+        [props.editMode, props.onWidgetEdit, name],
     );
 
+    const handleWidgetOrderChange = useCallback(
+        (value: Widget[]) => {
+            if (!props.editMode && props.onWidgetOrderChange) {
+                props.onWidgetOrderChange(value);
+            }
+        },
+        [props.editMode, props.onWidgetOrderChange],
+    );
+
+    const widgetRendererParams = useCallback((key: string, data: Widget | PartialWidget) => ({
+        clientId: key,
+        isSecondary,
+        widget: data,
+        onWidgetValueChange: handleWidgetValueChange,
+        showWidgetEdit: props.editMode,
+        onWidgetEditClick: handleWidgetEditClick,
+        showWidgetDelete: props.editMode,
+        onWidgetDeleteClick: handleWidgetDeleteClick,
+        editMode: props.editMode,
+    }), [
+        isSecondary,
+        handleWidgetValueChange,
+        handleWidgetEditClick,
+        handleWidgetDeleteClick,
+        props.editMode,
+    ]);
+
+    if (props.editMode) {
+        return (
+            <SortableList
+                className={styles.canvas}
+                name="widgets"
+                data={props.widgets}
+                keySelector={partialWidgetKeySelector}
+                renderer={WidgetWrapper}
+                direction="rect"
+                rendererParams={widgetRendererParams}
+                showDragOverlay
+            />
+        );
+    }
     return (
-        <div className={styles.canvas}>
-            {widgets?.map(widget => (
-                <WidgetPreview
-                    className={_cs(
-                        styles.widget,
-                        isSecondary && widget?.width === 'half' && styles.halfWidget,
-                    )}
-                    key={widget.clientId}
-                    name={widget.clientId}
-                    value={undefined}
-                    onChange={handleWidgetValueChange}
-                    widget={widget}
-                    readOnly
-                    actions={(
-                        <>
-                            {onWidgetEdit && (
-                                <QuickActionButton
-                                    name={widget.clientId}
-                                    onClick={handleWidgetEditClick}
-                                    // FIXME: use translation
-                                    title="Edit Widget"
-                                    disabled={editMode}
-                                >
-                                    <IoCreateOutline />
-                                </QuickActionButton>
-                            )}
-                            {onWidgetDelete && (
-                                <QuickActionButton
-                                    name={widget.clientId}
-                                    onClick={handleWidgetDeleteClick}
-                                    // FIXME: use translation
-                                    title="Delete Widget"
-                                    disabled={editMode}
-                                >
-                                    <IoTrash />
-                                </QuickActionButton>
-                            )}
-                        </>
-                    )}
-                />
-            ))}
-        </div>
+        <SortableList
+            className={styles.canvas}
+            name="widgets"
+            onChange={handleWidgetOrderChange}
+            data={props.widgets}
+            keySelector={widgetKeySelector}
+            renderer={WidgetWrapper}
+            direction="rect"
+            rendererParams={widgetRendererParams}
+            showDragOverlay
+        />
     );
 }
 export default Canvas;

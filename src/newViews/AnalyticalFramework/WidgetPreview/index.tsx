@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { NodeRef } from '#components/ui/SortableList';
+
 import { Widget, PartialForm } from '../types';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
@@ -29,7 +31,10 @@ interface Props <N extends string, T>{
     actions?: React.ReactNode,
     readOnly?: boolean;
     disabled?: boolean;
+    nodeRef?: NodeRef;
+    rootStyle?: React.CSSProperties;
 }
+
 function WidgetPreview<N extends string, T>(props: Props<N, T>) {
     const {
         className,
@@ -40,6 +45,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
         readOnly,
         disabled,
         actions,
+        nodeRef,
+        rootStyle,
     } = props;
 
     if (widget.type === 'text') {
@@ -57,6 +64,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -75,6 +84,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -93,6 +104,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -111,6 +124,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -129,6 +144,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -146,6 +163,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -165,6 +184,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 disabled={disabled}
                 actions={actions}
                 widget={widget}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -184,6 +205,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 disabled={disabled}
                 actions={actions}
                 widget={widget}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -202,6 +225,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 disabled={disabled}
                 actions={actions}
                 widget={widget}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -221,6 +246,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 disabled={disabled}
                 actions={actions}
                 widget={widget}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -240,6 +267,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 disabled={disabled}
                 actions={actions}
                 widget={widget}
+                nodeRef={nodeRef}
+                rootStyle={rootStyle}
             />
         );
     }
@@ -248,6 +277,8 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             className={className}
             title={widget.title}
             actions={actions}
+            nodeRef={nodeRef}
+            rootStyle={rootStyle}
         />
     );
 }
