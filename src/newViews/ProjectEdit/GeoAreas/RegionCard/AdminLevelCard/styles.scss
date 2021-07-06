@@ -1,24 +1,23 @@
-.region {
+.admin-level {
     display: flex;
-    flex-direction: column;
     flex-grow: 1;
 
-    .header {
-        background-color: var(--dui-color-background);
+    .title {
         padding: var(--dui-spacing-small);
+        color: var(--dui-color-accent);
         font-size: var(--dui-font-size-large);
         font-weight: var(--dui-font-weight-bold);
     }
 
-    .admin-levels {
+    .content {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
 
-        .admin-level {
+        .row {
             display: flex;
             flex-grow: 1;
-            padding: 0 var(--dui-spacing-small);
+            justify-content: space-between;
         }
     }
 }

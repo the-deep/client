@@ -17,32 +17,40 @@
         flex-grow: 1;
         padding: var(--dui-spacing-medium);
 
-
         .add-custom {
+            display: flex;
+            flex-shrink: 0;
             margin-left: auto;
         }
 
         .geo-areas-dropdown {
             display: flex;
             margin: var(--dui-spacing-medium) 0 var(--dui-spacing-small) 0;
-            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-grey4);
-            background-color: var(--dui-color-white);
             padding: var(--dui-spacing-medium);
-            font-size: var(--dui-font-size-large);
             font-weight: var(--dui-font-weight-bold);
 
-            .button {
-                margin-left: auto;
+            .header {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-grey4);
             }
-        }
 
-        .regions {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-
-            .region {
+            .content {
                 display: flex;
+                flex-grow: 1;
+
+                .regions {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+
+                    .region {
+                        display: flex;
+                        flex-grow: 1;
+                        flex-shrink: 0;
+                        margin-bottom: var(--dui-spacing-small);
+                        background-color: var(--dui-color-background);
+                    }
+                }
             }
         }
     }

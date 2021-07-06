@@ -17,7 +17,7 @@ import _ts from '#ts';
 import RegionCard from './RegionCard';
 import styles from './styles.scss';
 
-const regionKeySelector = (d: BasicRegion): number => d.id;
+const regionKeySelector = (d: BasicRegion) => d.id;
 
 interface Props {
     className?: string;
@@ -50,6 +50,8 @@ function GeoAreas(props: Props) {
                 </Button>
                 <ExpandableContainer
                     className={styles.geoAreasDropdown}
+                    headerClassName={styles.header}
+                    contentClassName={styles.content}
                     sub
                     defaultVisibility
                     heading={_ts('geoAreas', 'title')}
