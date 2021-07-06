@@ -76,7 +76,7 @@ function SecondaryTagging(props: Props) {
     );
 
     const handleWidgetOrderChange = useCallback(
-        (newWidgets: PartialWidget[]) => {
+        (newWidgets: Widget[]) => {
             const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i }));
             setWidgets(orderedWidgets);
         },
@@ -105,17 +105,29 @@ function SecondaryTagging(props: Props) {
         [setWidgets],
     );
 
-    const appliedWidgets = useMemo(
+    type AppliedWidgets = {
+        editMode: false;
+        appliedWidgets: Widget[];
+    } | {
+        editMode: true;
+        appliedWidgets: PartialWidget[];
+    };
+
+    const widgetsState: AppliedWidgets = useMemo(
         () => {
             if (tempWidget) {
-                return injectWidget(widgets, tempWidget);
+                return {
+                    editMode: true,
+                    appliedWidgets: injectWidget(widgets, tempWidget),
+                };
             }
-            return widgets;
+            return {
+                editMode: false,
+                appliedWidgets: widgets,
+            };
         },
         [tempWidget, widgets],
     );
-
-    const editMode = !!tempWidget;
 
     return (
         <div className={_cs(styles.secondaryTagging, className)}>
@@ -125,13 +137,13 @@ function SecondaryTagging(props: Props) {
                 contentClassName={styles.content}
                 horizontallyCompactContent
             >
-                {!editMode && (
+                {!widgetsState.editMode && (
                     <WidgetList
                         sectionsDisabled
                         onWidgetAdd={handleWidgetAdd}
                     />
                 )}
-                {editMode && tempWidget && (
+                {widgetsState.editMode && tempWidget && (
                     <WidgetEditor
                         name={undefined}
                         initialValue={tempWidget}
@@ -163,15 +175,24 @@ function SecondaryTagging(props: Props) {
                     </ElementFragments>
                 </div>
                 <div className={styles.canvas}>
-                    <Canvas
-                        name={undefined}
-                        widgets={appliedWidgets}
-                        onWidgetDelete={handleWidgetDeleteClick}
-                        onWidgetEdit={handleWidgetEditClick}
-                        onWidgetOrderChange={handleWidgetOrderChange}
-                        editMode={editMode}
-                        isSecondary
-                    />
+                    {widgetsState.editMode ? (
+                        <Canvas
+                            name={undefined}
+                            widgets={widgetsState.appliedWidgets}
+                            editMode
+                            isSecondary
+                        />
+                    ) : (
+                        <Canvas
+                            name={undefined}
+                            widgets={widgetsState.appliedWidgets}
+                            onWidgetDelete={handleWidgetDeleteClick}
+                            onWidgetEdit={handleWidgetEditClick}
+                            onWidgetOrderChange={handleWidgetOrderChange}
+                            editMode={false}
+                            isSecondary
+                        />
+                    )}
                 </div>
             </div>
             {showPreviewModal && (

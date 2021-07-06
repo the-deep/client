@@ -118,7 +118,7 @@ type Props<
         setNodeRef?: NodeRef;
         style?: React.CSSProperties;
     }) => JSX.Element;
-    onChange: (newList: D[], name: N) => void;
+    onChange?: (newList: D[], name: N) => void;
     direction: 'vertical' | 'horizontal' | 'rect';
     showDragOverlay?: boolean;
 }
@@ -168,7 +168,7 @@ function SortableList<
         const { active, over } = event;
         setActiveId(undefined);
 
-        if (active.id && over?.id && active.id !== over?.id && items) {
+        if (active.id && over?.id && active.id !== over?.id && items && onChange) {
             const oldIndex = items.indexOf(active.id);
             const newIndex = items.indexOf(over.id);
 

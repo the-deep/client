@@ -15,6 +15,7 @@ import SortableList, {
     Listeners,
 } from '#components/ui/SortableList';
 
+import { Widget } from '../types';
 import WidgetPreview, { PartialWidget } from '../WidgetPreview';
 import styles from './styles.scss';
 
@@ -25,16 +26,16 @@ interface WidgetProps {
     onWidgetValueChange: (value: unknown, widgetName: string) => void;
     onWidgetEditClick: (widgetName: string) => void;
     onWidgetDeleteClick: (widgetName: string) => void;
-    showWidgetEdit: boolean;
-    showWidgetDelete: boolean;
-    editMode: boolean;
+    showWidgetEdit: boolean | undefined;
+    showWidgetDelete: boolean | undefined;
+    editMode: boolean | undefined;
     setNodeRef?: NodeRef;
     attributes?: Attributes;
     listeners?: Listeners;
     style?: React.CSSProperties;
 }
 
-function Widget(props: WidgetProps) {
+function WidgetWrapper(props: WidgetProps) {
     const {
         isSecondary,
         widget,
@@ -106,26 +107,36 @@ function Widget(props: WidgetProps) {
     );
 }
 
-const widgetKeySelector = (d: PartialWidget) => d.clientId;
+const partialWidgetKeySelector = (d: PartialWidget) => d.clientId;
+const widgetKeySelector = (d: Widget) => d.clientId;
 
-interface Props<T> {
+type Props<T> = {
     name: T;
-    widgets: PartialWidget[] | undefined;
+    isSecondary?: boolean;
+} & ({
+    editMode?: false;
+    widgets: Widget[] | undefined;
+    onWidgetOrderChange?: (widgets: Widget[]) => void;
     onWidgetDelete?: (widgetId: string, name: T) => void;
     onWidgetEdit?: (widgetId: string, name: T) => void;
-    onWidgetOrderChange: (widgets: PartialWidget[]) => void;
-    editMode?: boolean;
-    isSecondary?: boolean;
-}
+} | {
+    editMode: true;
+    widgets: PartialWidget[] | undefined;
+    onWidgetOrderChange?: never;
+    onWidgetDelete?: never;
+    onWidgetEdit?: never;
+})
 
 function Canvas<T>(props: Props<T>) {
     const {
         name,
+        /*
         widgets,
-        editMode = false,
+        editMode,
         onWidgetDelete,
         onWidgetEdit,
         onWidgetOrderChange,
+        */
         isSecondary = false,
     } = props;
 
@@ -139,49 +150,70 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetDeleteClick = useCallback(
         (widgetId: string) => {
-            if (onWidgetDelete) {
-                onWidgetDelete(widgetId, name);
+            if (!props.editMode && props.onWidgetDelete) {
+                props.onWidgetDelete(widgetId, name);
             }
         },
-        [onWidgetDelete, name],
+        [props.editMode, props.onWidgetDelete, name],
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
-            if (onWidgetEdit) {
-                onWidgetEdit(widgetId, name);
+            if (!props.editMode && props.onWidgetEdit) {
+                props.onWidgetEdit(widgetId, name);
             }
         },
-        [onWidgetEdit, name],
+        [props.editMode, props.onWidgetEdit, name],
     );
 
-    const widgetRendererParams = useCallback((key, data) => ({
+    const handleWidgetOrderChange = useCallback(
+        (value: Widget[]) => {
+            if (!props.editMode && props.onWidgetOrderChange) {
+                props.onWidgetOrderChange(value);
+            }
+        },
+        [props.editMode, props.onWidgetOrderChange],
+    );
+
+    const widgetRendererParams = useCallback((key: string, data: Widget | PartialWidget) => ({
         clientId: key,
         isSecondary,
         widget: data,
         onWidgetValueChange: handleWidgetValueChange,
-        showWidgetEdit: !!onWidgetEdit,
+        showWidgetEdit: props.editMode,
         onWidgetEditClick: handleWidgetEditClick,
-        showWidgetDelete: !!onWidgetDelete,
+        showWidgetDelete: props.editMode,
         onWidgetDeleteClick: handleWidgetDeleteClick,
-        editMode,
+        editMode: props.editMode,
     }), [
         isSecondary,
         handleWidgetValueChange,
         handleWidgetEditClick,
-        editMode,
-        onWidgetEdit,
-        onWidgetDelete,
         handleWidgetDeleteClick,
+        props.editMode,
     ]);
 
+    if (props.editMode) {
+        return (
+            <SortableList
+                className={styles.canvas}
+                name="widgets"
+                data={props.widgets}
+                keySelector={partialWidgetKeySelector}
+                renderer={WidgetWrapper}
+                direction="rect"
+                rendererParams={widgetRendererParams}
+                showDragOverlay
+            />
+        );
+    }
     return (
         <SortableList
             className={styles.canvas}
             name="widgets"
-            onChange={onWidgetOrderChange}
-            data={widgets}
+            onChange={handleWidgetOrderChange}
+            data={props.widgets}
             keySelector={widgetKeySelector}
-            renderer={Widget}
+            renderer={WidgetWrapper}
             direction="rect"
             rendererParams={widgetRendererParams}
             showDragOverlay
