@@ -6,6 +6,7 @@ import Faram, { requiredCondition } from '@togglecorp/faram';
 import {
     _cs,
     mapToMap,
+    isList,
     listToGroupList,
     listToMap,
 } from '@togglecorp/fujs';
@@ -87,7 +88,17 @@ export default class EditVizSettingsModal extends React.PureComponent {
         const faramValues = mapToMap(
             statsConfig,
             key => key,
-            v => (v.isConditionalWidget ? v.widgetKey : v.pk),
+            (v) => {
+                if (!v) {
+                    return undefined;
+                }
+                if (isList(v)) {
+                    return v.map(datum => (
+                        datum.isConditionalWidget ? datum.widgetKey : datum.pk
+                    ));
+                }
+                return v.isConditionalWidget ? v.widgetKey : v.pk;
+            },
         );
 
         this.state = {
@@ -158,6 +169,33 @@ export default class EditVizSettingsModal extends React.PureComponent {
             values,
             k => k,
             (d) => {
+                if (isList(d)) {
+                    return d.map((datum) => {
+                        const widget = mapping[datum];
+
+                        if (!widget) {
+                            return undefined;
+                        }
+
+                        if (!widget.isConditional) {
+                            return { pk: datum };
+                        }
+
+                        const {
+                            conditionalId,
+                            widgetId,
+                            key: widgetKey,
+                        } = widget;
+
+                        return ({
+                            pk: conditionalId,
+                            widgetKey,
+                            widgetType: widgetId,
+                            isConditionalWidget: true,
+                        });
+                    });
+                }
+
                 const widget = mapping[d];
                 if (!widget) {
                     return undefined;
