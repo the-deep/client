@@ -1,0 +1,17 @@
+.modal {
+    .body {
+        padding: calc(var(--dui-spacing-medium) - var(--spacing-small));
+
+        .title {
+            margin: 0 var(--spacing-small);
+        }
+        .inline {
+            display: flex;
+            margin-top: var(--spacing-medium);
+
+            .date {
+                margin: 0 var(--spacing-small);
+            }
+        }
+    }
+}

@@ -1459,7 +1459,11 @@
         "-1383841901": "ID property",
         "-14834810210": "Property Name",
         "-1948348191": "ID Parent",
-        "-1943910102": "Parent Name"
+        "-1943910102": "Parent Name",
+        "-77826051": "Failed To Clone Analysis",
+        "-94707190": "Clone Analysis",
+        "-48458934": "Analysis Clone",
+        "-53893586": "Successfully cloned selected Analysis"
     },
     "links": {
         "browserExtension": {
@@ -4216,6 +4220,20 @@
             "propertyName": -14834810210,
             "idParent": -1948348191,
             "parentName": -1943910102
+        },
+        "analysis.cloneModal": {
+            "analysisCloneEndDateLabel": 334,
+            "analysisCloneEndDatePlaceholder": 13,
+            "analysisCloneStartDateLabel": 185,
+            "analysisCloneStartDatePlaceholder": 185,
+            "analysisCloneTitleLabel": 13,
+            "analysisCloneTitlePlaceholder": 13,
+            "anaylsisCloneFailed": -77826051,
+            "cloneButtonLabel": 826,
+            "cloneModalHeading": -94707190,
+            "endDateGreaterThanStartDate": -46389656,
+            "analysisClone": -48458934,
+            "analysisCloneSuccessful": -53893586
         }
     }
 }
