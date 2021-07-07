@@ -13,10 +13,10 @@ import {
     createStringColumn,
 } from '@the-deep/deep-ui';
 
-import { createDateColumn } from '#dui/tableHelpers';
+import { createDateColumn } from '#newComponents/ui/tableHelpers';
 import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
-import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
+import ActionCell, { Props as ActionCellProps } from '#newComponents/ui/EditDeleteActionCell';
 import _ts from '#ts';
 
 import { useModalState } from '#hooks/stateManagement';

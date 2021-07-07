@@ -2,7 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Header } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import styles from './styles.scss';
 

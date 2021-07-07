@@ -27,7 +27,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import Cloak from '#components/general/Cloak';
 import styles from './styles.scss';
 

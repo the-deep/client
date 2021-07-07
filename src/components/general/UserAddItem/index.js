@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _cs from '#cs';
 

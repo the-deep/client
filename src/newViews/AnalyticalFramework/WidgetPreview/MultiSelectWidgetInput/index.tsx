@@ -3,7 +3,7 @@ import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import { MultiSelectValue, MultiSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';

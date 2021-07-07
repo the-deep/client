@@ -25,7 +25,6 @@ module.exports = {
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 alias: {
                     '#components': './src/components',
-                    '#dui': './src/components/ui',
                     '#config': './src/config',
                     '#constants': './src/constants',
                     '#cs': './src/cs',
@@ -50,6 +49,7 @@ module.exports = {
                     '#utils': './src/utils',
                     '#views': './src/views',
                     '#newViews': './src/newViews',
+                    '#newComponents': './src/newComponents',
                     '#widgetComponents': './src/widgetComponents',
                     '#widgets': './src/widgets',
                     '#typings': './src/typings',

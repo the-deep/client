@@ -9,7 +9,7 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import { getCombinedLeadFilters } from '#entities/lead';
-import ExpandableContainer from '#dui/ExpandableContainer';
+import ExpandableContainer from '#components/ui/ExpandableContainer';
 
 import { FaramValues } from '../ExportSelection';
 import LeadsSelection from '../LeadsSelection';

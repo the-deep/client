@@ -12,7 +12,7 @@ import Faram, {
 } from '@togglecorp/faram';
 import { parseUrlParams } from '@togglecorp/react-rest-request';
 
-import NewHCaptcha from '#components/ui/HCaptcha';
+import NewHCaptcha from '#newComponents/ui/HCaptcha';
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';

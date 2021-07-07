@@ -18,7 +18,7 @@ import {
 
 import { Card } from '@the-deep/deep-ui';
 
-import RechartsLegend from '#components/ui/RechartsLegend';
+import RechartsLegend from '#newComponents/ui/RechartsLegend';
 import { ProjectRecentActivity } from '#typings';
 import styles from './styles.scss';
 

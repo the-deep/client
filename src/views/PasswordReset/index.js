@@ -7,7 +7,7 @@ import Faram, {
 } from '@togglecorp/faram';
 import { reverseRoute } from '@togglecorp/fujs';
 
-import NewHCaptcha from '#components/ui/HCaptcha';
+import NewHCaptcha from '#newComponents/ui/HCaptcha';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';

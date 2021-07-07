@@ -25,8 +25,8 @@ import {
     Error,
 } from '@togglecorp/toggle-form';
 
-import NonFieldError from '#components/ui/NonFieldError';
-import { Attributes, Listeners, NodeRef } from '#components/ui/SortableList';
+import NonFieldError from '#newComponents/ui/NonFieldError';
+import { Attributes, Listeners, NodeRef } from '#newComponents/ui/SortableList';
 import { genericMemo } from '#utils/safeCommon';
 
 import {

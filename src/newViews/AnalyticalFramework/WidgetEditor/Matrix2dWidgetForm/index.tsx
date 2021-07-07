@@ -26,8 +26,8 @@ import {
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
-import NonFieldError from '#components/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#components/ui/SortableList';
+import NonFieldError from '#newComponents/ui/NonFieldError';
+import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { reorder } from '#utils/safeCommon';
 
 import { Matrix2dWidget, PartialForm } from '../../types';

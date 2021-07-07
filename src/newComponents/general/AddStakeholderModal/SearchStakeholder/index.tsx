@@ -10,7 +10,7 @@ import { Organization, MultiResponse } from '#typings';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import _ts from '#ts';
-import AddOrganizationButton from '#components/general/AddOrganizationButton';
+import AddOrganizationButton from '#newComponents/general/AddOrganizationButton';
 import Stakeholder from './Stakeholder';
 import styles from './styles.scss';
 

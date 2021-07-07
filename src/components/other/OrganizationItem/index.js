@@ -3,7 +3,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
-import HighlightableTextOutput from '#components/viewer/HighlightableTextOutput';
+import HighlightableTextOutput from '#newComponents/viewer/HighlightableTextOutput';
 
 import styles from './styles.scss';
 

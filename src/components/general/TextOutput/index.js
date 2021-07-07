@@ -6,7 +6,7 @@ import {
 import React from 'react';
 
 import Numeral from '#rscv/Numeral';
-import HighlightableText from '#components/viewer/HighlightableTextOutput';
+import HighlightableText from '#newComponents/viewer/HighlightableTextOutput';
 
 /*
 eslint css-modules/no-unused-class: [

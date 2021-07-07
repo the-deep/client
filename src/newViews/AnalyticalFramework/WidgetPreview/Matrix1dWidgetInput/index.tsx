@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import { Matrix1dValue, Matrix1dWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';

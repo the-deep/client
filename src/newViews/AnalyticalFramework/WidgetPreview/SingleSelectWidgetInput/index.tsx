@@ -3,7 +3,7 @@ import {
     SelectInput,
 } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import { SingleSelectValue, SingleSelectWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';

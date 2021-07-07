@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';

@@ -24,7 +24,7 @@ import {
 } from '#utils/framework';
 import { useRequest, useLazyRequest } from '#utils/request';
 
-import ExpandableContainer from '#dui/ExpandableContainer';
+import ExpandableContainer from '#components/ui/ExpandableContainer';
 import _ts from '#ts';
 import notify from '#notify';
 

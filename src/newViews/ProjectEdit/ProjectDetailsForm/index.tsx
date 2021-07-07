@@ -29,9 +29,9 @@ import {
     requiredCondition,
 } from '@togglecorp/toggle-form';
 
-import NonFieldError from '#components/ui/NonFieldError';
-import AddStakeholderButton from '#components/general/AddStakeholderButton';
-import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
+import NonFieldError from '#newComponents/ui/NonFieldError';
+import AddStakeholderButton from '#newComponents/general/AddStakeholderButton';
+import { BasicProjectOrganization } from '#newComponents/general/AddStakeholderModal';
 import {
     BasicOrganization,
     KeyValueElement,

@@ -10,7 +10,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 
 import {
     userInformationSelector,

@@ -26,8 +26,8 @@ import {
     Bar,
 } from 'recharts';
 
-import ProgressLine from '#components/viz/ProgressLine';
-import DateRangeOutput from '#dui/DateRangeOutput';
+import ProgressLine from '#newComponents/viz/ProgressLine';
+import DateRangeOutput from '#newComponents/ui/DateRangeOutput';
 
 import {
     AppState,

@@ -19,8 +19,8 @@ import {
     requiredCondition,
 } from '@togglecorp/toggle-form';
 
-import Avatar from '#components/ui/Avatar';
-import NonFieldError from '#components/ui/NonFieldError';
+import Avatar from '#newComponents/ui/Avatar';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import _ts from '#ts';
 import {
     activeUserSelector,
@@ -32,7 +32,7 @@ import {
     MultiResponse,
 } from '#typings';
 import { useRequest, useLazyRequest } from '#utils/request';
-import ChangePasswordButton from '#components/general/ChangePasswordButton';
+import ChangePasswordButton from '#newComponents/general/ChangePasswordButton';
 
 import styles from './styles.scss';
 

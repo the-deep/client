@@ -11,7 +11,7 @@ import {
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
 
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
 import { TimeRangeWidget, PartialForm } from '../../types';

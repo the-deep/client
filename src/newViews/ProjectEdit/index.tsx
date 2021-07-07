@@ -12,8 +12,8 @@ import {
 } from '@the-deep/deep-ui';
 
 import { pathNames } from '#constants';
-import FullPageHeader from '#dui/FullPageHeader';
-import BackLink from '#dui/BackLink';
+import FullPageHeader from '#newComponents/ui/FullPageHeader';
+import BackLink from '#newComponents/ui/BackLink';
 
 import {
     activeProjectFromStateSelector,

@@ -5,7 +5,7 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 
 import { pathNames } from '#constants';
 import _ts from '#ts';

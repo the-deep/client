@@ -3,8 +3,10 @@ import {
     _cs,
     compareNumber,
 } from '@togglecorp/fujs';
+import {
+    ListView,
+} from '@the-deep/deep-ui';
 
-import ListView from '#rsu/../v2/View/ListView';
 import styles from './styles.scss';
 
 export type MinMax = [number, number];
@@ -129,12 +131,12 @@ function Timeline<T>(props: TimelineProps<T>) {
         );
     }, [domain]);
 
-    const timeElementRendererParams = useCallback((key, datum) => ({
+    const timeElementRendererParams = useCallback((key: string | number, datum: T) => ({
         left: scale(domain, range, valueSelector(datum)),
         label: labelSelector(datum),
     }), [labelSelector, valueSelector, domain]);
 
-    const axisTickRendererParams = useCallback((key, datum) => ({
+    const axisTickRendererParams = useCallback((key: string | number, datum: number) => ({
         left: scale(domain, range, datum),
         tickLabel: tickLabelSelector(datum),
     }), [tickLabelSelector, domain]);

@@ -14,8 +14,8 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 
-import NonFieldError from '#components/ui/NonFieldError';
-import UserSelectInput from '#components/input/UserSelectInput';
+import NonFieldError from '#newComponents/ui/NonFieldError';
+import UserSelectInput from '#newComponents/input/UserSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
 import {

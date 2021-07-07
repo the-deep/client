@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { isNotDefined } from '@togglecorp/fujs';
-import FullPageHeader from '#dui/FullPageHeader';
+import FullPageHeader from '#newComponents/ui/FullPageHeader';
 import {
     Button,
     Tabs,

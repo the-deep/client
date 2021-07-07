@@ -1,7 +1,7 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 
-import HighlightableText from '#components/viewer/HighlightableTextOutput';
+import HighlightableText from '#newComponents/viewer/HighlightableTextOutput';
 
 import styles from './styles.scss';
 
@@ -20,7 +20,7 @@ const MetaOutput = ({
     titleClassName,
     searchValue,
 }: MetaOutputProps) => {
-    if (!value) {
+    if (isNotDefined(value)) {
         return null;
     }
 
@@ -32,7 +32,7 @@ const MetaOutput = ({
             <div className={_cs(styles.name, titleClassName)} >
                 <HighlightableText
                     highlightText={searchValue}
-                    text={value}
+                    text={String(value)}
                 />
             </div>
         </div>

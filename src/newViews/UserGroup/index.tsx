@@ -18,7 +18,7 @@ import {
     IoAdd,
 } from 'react-icons/io5';
 
-import { createDateColumn } from '#dui/tableHelpers';
+import { createDateColumn } from '#newComponents/ui/tableHelpers';
 import {
     activeUserSelector,
 } from '#redux';
