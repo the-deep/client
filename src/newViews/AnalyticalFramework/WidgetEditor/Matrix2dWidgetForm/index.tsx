@@ -3,6 +3,7 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
+import { GrDrag } from 'react-icons/gr';
 import {
     Button,
     TextInput,
@@ -26,6 +27,8 @@ import {
 import { randomString } from '@togglecorp/fujs';
 
 import NonFieldError from '#components/ui/NonFieldError';
+import SortableList, { NodeRef, Attributes, Listeners } from '#components/ui/SortableList';
+import { reorder } from '#utils/safeCommon';
 
 import { Matrix2dWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
@@ -45,19 +48,23 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['data']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'type'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'type' | 'order'>;
 
 type ColumnType = DataType['columns'][number];
 export type PartialColumnType = PartialForm<
     ColumnType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
+
+const columnKeySelector = (d: PartialColumnType) => d.clientId;
 
 type SubColumnType = ColumnType['subColumns'][number];
 export type PartialSubColumnType = PartialForm<
     SubColumnType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
+
+const subColumnKeySelector = (d: PartialSubColumnType) => d.clientId;
 
 type SubColumnSchema = ObjectSchema<PartialSubColumnType>;
 type SubColumnSchemaFields = ReturnType<SubColumnSchema['fields']>;
@@ -66,6 +73,7 @@ const subColumnSchema: SubColumnSchema = {
         clientId: [],
         label: [requiredStringCondition],
         tooltip: [],
+        order: [],
     }),
 };
 
@@ -90,6 +98,7 @@ const columnSchema: ColumnSchema = {
         label: [requiredStringCondition],
         tooltip: [],
         subColumns: subColumnsSchema,
+        order: [],
     }),
 };
 
@@ -111,14 +120,17 @@ const columnsSchema: ColumnsSchema = {
 type RowType = DataType['rows'][number];
 export type PartialRowType = PartialForm<
     RowType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type SubRowType = RowType['subRows'][number];
 export type PartialSubRowType = PartialForm<
     SubRowType,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
+
+const rowKeySelector = (d: PartialRowType) => d.clientId;
+const subRowKeySelector = (d: PartialSubRowType) => d.clientId;
 
 type SubRowSchema = ObjectSchema<PartialSubRowType>;
 type SubRowSchemaFields = ReturnType<SubRowSchema['fields']>;
@@ -127,6 +139,7 @@ const subRowSchema: SubRowSchema = {
         clientId: [],
         label: [requiredStringCondition],
         tooltip: [],
+        order: [],
     }),
 };
 
@@ -151,6 +164,7 @@ const rowSchema: RowSchema = {
         label: [requiredStringCondition],
         tooltip: [],
         color: [],
+        order: [],
         subRows: subRowsSchema,
     }),
 };
@@ -193,6 +207,7 @@ const schema: FormSchema = {
 
 const defaultSubRowVal: PartialSubRowType = {
     clientId: 'random',
+    order: -1,
 };
 interface SubRowInputProps {
     className?: string;
@@ -201,6 +216,10 @@ interface SubRowInputProps {
     onChange: (value: StateArg<PartialSubRowType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function SubRowInput(props: SubRowInputProps) {
     const {
@@ -210,6 +229,10 @@ function SubRowInput(props: SubRowInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubRowVal);
@@ -220,19 +243,35 @@ function SubRowInput(props: SubRowInputProps) {
     return (
         <ExpandableContainer
             className={className}
+            containerElementProps={{
+                ref: setNodeRef,
+                style,
+            }}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
+            expansionTriggerArea="arrow"
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Sub Row"
-                >
-                    <IoTrash />
-                </QuickActionButton>
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Sub Row"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
             )}
         >
             <NonFieldError error={error} />
@@ -259,6 +298,7 @@ function SubRowInput(props: SubRowInputProps) {
 
 const defaultRowVal: PartialRowType = {
     clientId: 'random',
+    order: -1,
 };
 interface RowInputProps {
     className?: string;
@@ -267,6 +307,10 @@ interface RowInputProps {
     onChange: (value: StateArg<PartialRowType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -276,6 +320,10 @@ function RowInput(props: RowInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultRowVal);
@@ -296,34 +344,70 @@ function RowInput(props: RowInputProps) {
             const clientId = randomString();
             const newSubRow: PartialSubRowType = {
                 clientId,
+                order: oldSubRows.length,
             };
             onFieldChange(
-                [...oldSubRows, newSubRow],
+                [...reorder(oldSubRows), newSubRow],
                 'subRows' as const,
             );
         },
         [onFieldChange, value.subRows],
     );
 
+    const handleSubRowsOrderChange = useCallback((newSubRows: PartialSubRowType[]) => {
+        onFieldChange(reorder(newSubRows), 'subRows');
+    }, [onFieldChange]);
+
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Row ${index + 1}`;
 
+    const subRowRendererParams = useCallback(
+        (
+            key: string,
+            data: PartialSubRowType,
+            subRowIndex: number,
+        ) => ({
+            index: subRowIndex,
+            value: data,
+            onChange: onSubRowsChange,
+            onRemove: onSubRowsRemove,
+            error: error?.fields?.subRows?.members?.[key],
+        }),
+        [onSubRowsChange, onSubRowsRemove, error?.fields?.subRows?.members],
+    );
+
     return (
         <ExpandableContainer
+            containerElementProps={{
+                ref: setNodeRef,
+                style,
+            }}
             className={className}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            expansionTriggerArea="arrow"
             headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Row"
-                >
-                    <IoTrash />
-                </QuickActionButton>
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Row"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
             )}
         >
             <NonFieldError error={error} />
@@ -361,16 +445,15 @@ function RowInput(props: RowInputProps) {
                 )}
             >
                 <NonFieldError error={error?.fields?.subRows} />
-                {value.subRows?.map((subRow, subRowIndex) => (
-                    <SubRowInput
-                        key={subRow.clientId}
-                        index={subRowIndex}
-                        value={subRow}
-                        onChange={onSubRowsChange}
-                        onRemove={onSubRowsRemove}
-                        error={error?.fields?.subRows?.members?.[subRow.clientId]}
-                    />
-                ))}
+                <SortableList
+                    name="subRows"
+                    onChange={handleSubRowsOrderChange}
+                    data={value.subRows}
+                    keySelector={subRowKeySelector}
+                    renderer={SubRowInput}
+                    rendererParams={subRowRendererParams}
+                    direction="vertical"
+                />
             </Container>
         </ExpandableContainer>
     );
@@ -378,6 +461,7 @@ function RowInput(props: RowInputProps) {
 
 const defaultSubColumnVal: PartialSubColumnType = {
     clientId: 'random',
+    order: -1,
 };
 interface SubColumnInputProps {
     className?: string;
@@ -386,6 +470,10 @@ interface SubColumnInputProps {
     onChange: (value: StateArg<PartialSubColumnType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function SubColumnInput(props: SubColumnInputProps) {
     const {
@@ -395,6 +483,10 @@ function SubColumnInput(props: SubColumnInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubColumnVal);
@@ -405,19 +497,35 @@ function SubColumnInput(props: SubColumnInputProps) {
     return (
         <ExpandableContainer
             className={className}
+            containerElementProps={{
+                ref: setNodeRef,
+                style,
+            }}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            expansionTriggerArea="arrow"
             headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Sub Column"
-                >
-                    <IoTrash />
-                </QuickActionButton>
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Sub Column"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
             )}
         >
             <NonFieldError error={error} />
@@ -444,6 +552,7 @@ function SubColumnInput(props: SubColumnInputProps) {
 
 const defaultColumnVal: PartialColumnType = {
     clientId: 'random',
+    order: -1,
 };
 interface ColumnInputProps {
     className?: string;
@@ -452,6 +561,10 @@ interface ColumnInputProps {
     onChange: (value: StateArg<PartialColumnType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function ColumnInput(props: ColumnInputProps) {
     const {
@@ -461,6 +574,10 @@ function ColumnInput(props: ColumnInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultColumnVal);
@@ -481,9 +598,10 @@ function ColumnInput(props: ColumnInputProps) {
             const clientId = randomString();
             const newSubColumn: PartialSubColumnType = {
                 clientId,
+                order: oldSubColumns.length,
             };
             onFieldChange(
-                [...oldSubColumns, newSubColumn],
+                [...reorder(oldSubColumns), newSubColumn],
                 'subColumns' as const,
             );
         },
@@ -493,22 +611,57 @@ function ColumnInput(props: ColumnInputProps) {
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Column ${index + 1}`;
 
+    const handleSubColumnOrderChange = useCallback((newSubColumns: PartialSubColumnType[]) => {
+        onFieldChange(reorder(newSubColumns), 'subColumns');
+    }, [onFieldChange]);
+
+    const subColumnRendererParams = useCallback(
+        (
+            key: string,
+            data: PartialSubColumnType,
+            subColumnIndex: number,
+        ) => ({
+            index: subColumnIndex,
+            value: data,
+            onChange: onSubColumnsChange,
+            onRemove: onSubColumnsRemove,
+            error: error?.fields?.subColumns?.members?.[key],
+        }),
+        [onSubColumnsChange, onSubColumnsRemove, error?.fields?.subColumns?.members],
+    );
+
     return (
         <ExpandableContainer
             className={className}
+            containerElementProps={{
+                ref: setNodeRef,
+                style,
+            }}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            expansionTriggerArea="arrow"
             headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Column"
-                >
-                    <IoTrash />
-                </QuickActionButton>
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Column"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
             )}
         >
             <NonFieldError error={error} />
@@ -546,16 +699,15 @@ function ColumnInput(props: ColumnInputProps) {
                 )}
             >
                 <NonFieldError error={error?.fields?.subColumns} />
-                {value.subColumns?.map((subColumn, subColumnIndex) => (
-                    <SubColumnInput
-                        key={subColumn.clientId}
-                        index={subColumnIndex}
-                        value={subColumn}
-                        onChange={onSubColumnsChange}
-                        onRemove={onSubColumnsRemove}
-                        error={error?.fields?.subColumns?.members?.[subColumn.clientId]}
-                    />
-                ))}
+                <SortableList
+                    name="subColumns"
+                    onChange={handleSubColumnOrderChange}
+                    data={value.subColumns}
+                    keySelector={subColumnKeySelector}
+                    renderer={SubColumnInput}
+                    rendererParams={subColumnRendererParams}
+                    direction="vertical"
+                />
             </Container>
         </ExpandableContainer>
     );
@@ -597,9 +749,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             const clientId = randomString();
             const newRow: PartialRowType = {
                 clientId,
+                order: oldRows.length,
             };
             onFieldChange(
-                [...oldRows, newRow],
+                [...reorder(oldRows), newRow],
                 'rows' as const,
             );
         },
@@ -610,6 +763,44 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onValueChange: onColumnsChange,
         onValueRemove: onColumnsRemove,
     } = useFormArray('columns', onFieldChange);
+
+    const columnRendererParams = useCallback(
+        (
+            key: string,
+            data: PartialColumnType,
+            index: number,
+        ) => ({
+            index,
+            value: data,
+            onChange: onColumnsChange,
+            onRemove: onColumnsRemove,
+            error: error?.fields?.columns?.members?.[key],
+        }),
+        [onColumnsChange, onColumnsRemove, error?.fields?.columns?.members],
+    );
+
+    const rowRendererParams = useCallback(
+        (
+            key: string,
+            data: PartialRowType,
+            index: number,
+        ) => ({
+            index,
+            value: data,
+            onChange: onRowsChange,
+            onRemove: onRowsRemove,
+            error: error?.fields?.rows?.members?.[key],
+        }),
+        [onRowsChange, onRowsRemove, error?.fields?.rows?.members],
+    );
+
+    const handleRowsOrderChange = useCallback((newRows: PartialRowType[]) => {
+        onFieldChange(reorder(newRows), 'rows');
+    }, [onFieldChange]);
+
+    const handleColumnsOrderChange = useCallback((newColumns: PartialColumnType[]) => {
+        onFieldChange(reorder(newColumns), 'columns');
+    }, [onFieldChange]);
 
     const handleColumnAdd = useCallback(
         () => {
@@ -622,9 +813,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             const clientId = randomString();
             const newColumn: PartialColumnType = {
                 clientId,
+                order: -1,
             };
             onFieldChange(
-                [...oldColumns, newColumn],
+                [...reorder(oldColumns), newColumn],
                 'columns' as const,
             );
         },
@@ -651,16 +843,15 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 )}
             >
                 <NonFieldError error={error?.fields?.rows} />
-                {value?.rows?.map((row, index) => (
-                    <RowInput
-                        key={row.clientId}
-                        index={index}
-                        value={row}
-                        onChange={onRowsChange}
-                        onRemove={onRowsRemove}
-                        error={error?.fields?.rows?.members?.[row.clientId]}
-                    />
-                ))}
+                <SortableList
+                    name="rows"
+                    onChange={handleRowsOrderChange}
+                    data={value?.rows}
+                    keySelector={rowKeySelector}
+                    renderer={RowInput}
+                    rendererParams={rowRendererParams}
+                    direction="vertical"
+                />
             </Container>
             <Container
                 className={className}
@@ -679,16 +870,15 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 )}
             >
                 <NonFieldError error={error?.fields?.columns} />
-                {value?.columns?.map((column, index) => (
-                    <ColumnInput
-                        key={column.clientId}
-                        index={index}
-                        value={column}
-                        onChange={onColumnsChange}
-                        onRemove={onColumnsRemove}
-                        error={error?.fields?.columns?.members?.[column.clientId]}
-                    />
-                ))}
+                <SortableList
+                    name="columns"
+                    onChange={handleColumnsOrderChange}
+                    data={value?.columns}
+                    keySelector={columnKeySelector}
+                    renderer={ColumnInput}
+                    rendererParams={columnRendererParams}
+                    direction="vertical"
+                />
             </Container>
         </>
     );

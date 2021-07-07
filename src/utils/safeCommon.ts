@@ -8,8 +8,18 @@ import {
 
 export const genericMemo: (<T>(c: T) => T) = memo;
 
-export function compareOrder<T extends { order: number }>(a: T, b: T) {
-    return compareNumber(a.order, b.order);
+export function sortByOrder<T extends { order: number }>(data: T[]): T[]
+export function sortByOrder(data: undefined): undefined
+export function sortByOrder<T extends { order: number }>(data: T[] | undefined): T[] | undefined
+export function sortByOrder<T extends { order: number }>(data: T[] | undefined) {
+    if (!data) {
+        return undefined;
+    }
+    return [...data].sort((a, b) => compareNumber(a.order, b.order));
+}
+
+export function reorder<T extends { order: number }>(data: T[]) {
+    return data.map((v, i) => ({ ...v, order: i }));
 }
 
 export function breadcrumb(...args: (string | undefined)[]) {

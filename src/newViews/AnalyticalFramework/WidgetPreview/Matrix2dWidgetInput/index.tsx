@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Checkbox,
@@ -7,6 +7,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { NodeRef } from '#components/ui/SortableList';
+import { sortByOrder } from '#utils/safeCommon';
 
 import { Matrix2dValue, Matrix2dWidget, PartialForm } from '../../types';
 import WidgetWrapper from '../../Widget';
@@ -15,7 +16,7 @@ import styles from './styles.scss';
 
 export type PartialMatrix2dWidget = PartialForm<
     Matrix2dWidget,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type Row = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['data']>['rows']>[number];
@@ -165,6 +166,10 @@ function Row(props: RowProps) {
         subRows,
     } = row;
 
+    const orderedSubRows = useMemo(() => (
+        sortByOrder(subRows)
+    ), [subRows]);
+
     const subRowKeySelector = useCallback(
         (subRow: SubRow) => subRow.clientId,
         [],
@@ -206,7 +211,7 @@ function Row(props: RowProps) {
                     ))}
                 </tr>
                 <List
-                    data={subRows}
+                    data={orderedSubRows}
                     keySelector={subRowKeySelector}
                     rendererParams={subRowRendererParams}
                     renderer={SubRow}
@@ -270,7 +275,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         [],
     );
 
-    const columns = widget?.data?.columns;
+    const columns = useMemo(() => (
+        sortByOrder(widget?.data?.columns)
+    ), [widget?.data?.columns]);
+
     const rowRendererParams = useCallback(
         (key: string, row: Row) => ({
             disabled,
@@ -283,6 +291,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         [disabled, readOnly, handleSubRowChange, value, columns],
     );
 
+    const orderedRows = useMemo(() => (
+        sortByOrder(widget?.data?.rows)
+    ), [widget?.data?.rows]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -293,7 +305,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             rootStyle={rootStyle}
         >
             <List
-                data={widget?.data?.rows}
+                data={orderedRows}
                 keySelector={rowKeySelector}
                 rendererParams={rowRendererParams}
                 renderer={Row}

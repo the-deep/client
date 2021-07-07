@@ -179,9 +179,9 @@ function Canvas<T>(props: Props<T>) {
         isSecondary,
         widget: data,
         onWidgetValueChange: handleWidgetValueChange,
-        showWidgetEdit: props.editMode,
+        showWidgetEdit: !props.editMode,
         onWidgetEditClick: handleWidgetEditClick,
-        showWidgetDelete: props.editMode,
+        showWidgetDelete: !props.editMode,
         onWidgetDeleteClick: handleWidgetDeleteClick,
         editMode: props.editMode,
     }), [
