@@ -1,9 +1,10 @@
 import React from 'react';
-
-import { useModalState } from '#hooks/stateManagement';
-import { MdEdit } from 'react-icons/md';
+import { IoAdd } from 'react-icons/io5';
 import { Button } from '@the-deep/deep-ui';
+
 import AddStakeholderModal, { Props as AddStakeholderModalProps } from '#newComponents/general/AddStakeholderModal';
+import { useModalState } from '#hooks/stateManagement';
+import _ts from '#ts';
 
 type Props<T> = Omit<AddStakeholderModalProps<T>, 'onModalClose'> & {
     className?: string;
@@ -33,8 +34,10 @@ function AddStakeholderButton<T extends string>(props: Props<T>) {
                 variant="tertiary"
                 onClick={toggleModalShow}
                 disabled={disabled}
-                icons={<MdEdit />}
-            />
+                icons={<IoAdd />}
+            >
+                {_ts('project.detail.stakeholders', 'addButtonLabel')}
+            </Button>
             {showModal && (
                 <AddStakeholderModal
                     {...stakeholderModalProps}

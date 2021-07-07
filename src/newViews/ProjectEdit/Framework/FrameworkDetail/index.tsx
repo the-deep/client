@@ -9,7 +9,7 @@ import {
     IoCheckmark,
     IoAdd,
 } from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     ConfirmButton,
     Button,
@@ -148,6 +148,7 @@ function FrameworkDetail(props: Props) {
                             icons={(<IoAdd />)}
                             disabled={disableAllButtons}
                             onClick={handleFrameworkAddClick}
+                            variant="tertiary"
                         >
                             {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
                         </Button>
@@ -159,7 +160,7 @@ function FrameworkDetail(props: Props) {
                 heading={frameworkDetails?.title ?? '-'}
                 sub
                 headerDescriptionClassName={styles.createdAtContainer}
-                headerDescription={(
+                headingDescription={(
                     <>
                         {_ts('projectEdit', 'createdAtLabel')}
                         {frameworkDetails?.createdAt && (
@@ -221,7 +222,7 @@ function FrameworkDetail(props: Props) {
                                 },
                             )}
                         >
-                            <MdModeEdit />
+                            <FiEdit2 />
                         </QuickActionLink>
                         <QuickActionButton
                             title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}

@@ -59,10 +59,6 @@ function StakeholderList(props: Props) {
         className,
     } = props;
 
-    if (!data || data.length === 0) {
-        return (<></>);
-    }
-
     return (
         <ContainerCard
             sub

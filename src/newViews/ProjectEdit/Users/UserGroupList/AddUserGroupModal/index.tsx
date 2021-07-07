@@ -188,8 +188,7 @@ function AddUserGroupModal(props: Props) {
             }
             onCloseButtonClick={onModalClose}
             bodyClassName={styles.modalBody}
-            footerClassName={styles.footer}
-            footer={(
+            footerActions={(
                 <Button
                     name="submit"
                     variant="primary"

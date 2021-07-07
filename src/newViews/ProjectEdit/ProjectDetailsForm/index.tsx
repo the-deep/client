@@ -286,7 +286,7 @@ function ProjectDetailsForm(props: Props) {
             {(pending || projectPatchPending) && <PendingMessage />}
             <NonFieldError error={error} />
             <div className={styles.content}>
-                <div className={styles.main}>
+                <div className={styles.left}>
                     <TextInput
                         className={styles.input}
                         name="title"
@@ -331,6 +331,33 @@ function ProjectDetailsForm(props: Props) {
                         placeholder={_ts('projectEdit', 'projectDescription')}
                         rows={4}
                     />
+                    <ContainerCard
+                        className={styles.stakeholders}
+                        headerClassName={styles.header}
+                        headingClassName={styles.heading}
+                        heading={_ts('projectEdit', 'projectStakeholders')}
+                        headerActions={(
+                            <AddStakeholderButton
+                                name="organizations"
+                                value={value?.organizations}
+                                onChange={setFieldValue}
+                                onOptionsChange={setStakeholderOptions}
+                                options={stakeholderOptions}
+                            />
+                        )}
+                        contentClassName={styles.content}
+                    >
+                        <ListView
+                            className={styles.items}
+                            data={stakeholderTypes}
+                            rendererParams={organizationListRendererParams}
+                            renderer={StakeholderList}
+                            rendererClassName={styles.organizations}
+                            keySelector={stakeholderTypeKeySelector}
+                        />
+                    </ContainerCard>
+                </div>
+                <div className={styles.right}>
                     <Container
                         className={styles.visibility}
                         headingClassName={styles.visibilityHeading}
@@ -368,56 +395,26 @@ function ProjectDetailsForm(props: Props) {
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />
                     </Container>
-                    <ContainerCard
-                        className={styles.stakeholders}
-                        headerClassName={styles.header}
-                        headingClassName={styles.heading}
-                        heading={_ts('projectEdit', 'projectStakeholders')}
-                        headerActions={(
-                            <AddStakeholderButton
-                                name="organizations"
-                                value={value?.organizations}
-                                onChange={setFieldValue}
-                                onOptionsChange={setStakeholderOptions}
-                                options={stakeholderOptions}
-                            />
-                        )}
-                        contentClassName={styles.content}
-                    >
-                        <ListView
-                            className={styles.items}
-                            data={stakeholderTypes}
-                            rendererParams={organizationListRendererParams}
-                            renderer={StakeholderList}
-                            rendererClassName={styles.organizations}
-                            keySelector={stakeholderTypeKeySelector}
-                        />
-                    </ContainerCard>
                     <div className={styles.createdByDetails}>
                         {projectDetails?.createdByName && (
                             <TextInput
                                 name="createdByName"
-                                disabled={disabled}
                                 className={styles.input}
                                 label={_ts('projectEdit', 'projectCreatedBy')}
                                 value={projectDetails.createdByName}
-                                readOnly
+                                disabled
                             />
                         )}
                         {projectDetails?.createdAt && (
                             <DateInput
                                 name="createdAt"
-                                disabled={disabled}
                                 className={styles.input}
                                 value={projectDetails.createdAt.split('T')[0]}
                                 label={_ts('projectEdit', 'projectCreatedOn')}
-                                readOnly
+                                disabled
                             />
                         )}
                     </div>
-                </div>
-                <div className={styles.map}>
-                    Map
                 </div>
             </div>
             <Footer
