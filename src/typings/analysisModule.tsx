@@ -55,10 +55,8 @@ export interface AnalysisSummary {
     id: number;
     title: string;
     pillars: PillarSummary[];
-    publicationDate?: {
-        startDate?: string;
-        endDate?: string;
-    };
+    startDate?: string;
+    endDate: string;
     createdAt: string;
     modifiedAt: string;
     teamLead: number;
@@ -82,7 +80,7 @@ export interface AnalysisElement {
     };
     analysisPillar: AnalysisPillars[];
     startDate?: string;
-    endDate?: string;
+    endDate: string;
     createdAt: string;
     modifiedAt: string;
 }

@@ -12,6 +12,7 @@ import {
     Button,
     ListView,
     QuickActionConfirmButton,
+    QuickActionButton,
     ExpandableContainer,
     TextOutput,
     PendingMessage,
@@ -28,6 +29,9 @@ import {
 
 import ProgressLine from '#newComponents/viz/ProgressLine';
 import DateRangeOutput from '#newComponents/ui/DateRangeOutput';
+import {
+    useModalState,
+} from '#hooks/stateManagement';
 
 import {
     AppState,
@@ -38,6 +42,7 @@ import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';
 import PillarAnalysisList from './PillarList';
 import PillarAssignment from './PillarAssignment';
+import AnalysisCloneModal from './AnalysisCloneModal';
 
 import styles from './styles.scss';
 
@@ -76,17 +81,16 @@ interface ComponentProps {
     className?: string;
     title: string;
     startDate?: string;
-    endDate?: string;
+    endDate: string;
     activeProject: number;
     onEdit: (analysisId: number) => void;
     onAnalysisPillarDelete: () => void;
+    triggerAnalysisList: () => void;
     teamLeadName: string;
     createdAt: string;
     modifiedAt: string;
     onDelete: (value: number) => void;
     pendingAnalysisDelete: boolean;
-    onClone: (value: number, title: string) => void;
-    pendingAnalysisClone: boolean;
     pillars: PillarSummary[];
     totalEntries: number;
     totalSources: number;
@@ -111,22 +115,23 @@ function Analysis(props: ComponentProps) {
         analysisId,
         teamLeadName,
         onAnalysisPillarDelete,
+        triggerAnalysisList,
         pillars,
         createdAt,
         onEdit,
         onDelete,
         pendingAnalysisDelete,
-        onClone,
         analyzedEntries,
         analyzedSources,
         totalEntries,
         totalSources,
-        pendingAnalysisClone,
     } = props;
 
-    const handleCloneAnalysis = useCallback(() => {
-        onClone(analysisId, title);
-    }, [analysisId, onClone, title]);
+    const [
+        showCloneModal,
+        setModalVisible,
+        setModalHidden,
+    ] = useModalState(false);
 
     const pillarAssignmentRendererParams = useCallback(
         (_: number, data: PillarSummary) => ({
@@ -151,7 +156,7 @@ function Analysis(props: ComponentProps) {
         }))
     ), [pillars, totalEntries]);
 
-    const disabled = pendingAnalysisDelete || pendingAnalysisClone;
+    const disabled = pendingAnalysisDelete;
 
     return (
         <ContainerCard
@@ -177,17 +182,15 @@ function Analysis(props: ComponentProps) {
                     >
                         {_ts('analysis', 'editAnalysisTitle')}
                     </Button>
-                    <QuickActionConfirmButton
+                    <QuickActionButton
                         name="clone"
-                        onConfirm={handleCloneAnalysis}
+                        onClick={setModalVisible}
                         disabled={disabled}
                         title={_ts('analysis', 'cloneAnalysisButtonTitle')}
-                        message={_ts('analysis', 'cloneAnalysisConfirmMessage')}
-                        showConfirmationInitially={false}
                         variant="secondary"
                     >
                         <IoCopyOutline />
-                    </QuickActionConfirmButton>
+                    </QuickActionButton>
                     <QuickActionConfirmButton
                         name="delete"
                         onConfirm={handleDeleteAnalysis}
@@ -311,6 +314,14 @@ function Analysis(props: ComponentProps) {
                     onAnalysisPillarDelete={onAnalysisPillarDelete}
                 />
             </ExpandableContainer>
+            {showCloneModal && (
+                <AnalysisCloneModal
+                    onClose={setModalHidden}
+                    projectId={activeProject}
+                    analysisId={analysisId}
+                    onClone={triggerAnalysisList}
+                />
+            )}
         </ContainerCard>
     );
 }
