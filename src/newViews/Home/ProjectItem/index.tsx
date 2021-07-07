@@ -1,11 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     _cs,
     compareDate,
     reverseRoute,
 } from '@togglecorp/fujs';
-import { IoBookmarkOutline } from 'react-icons/io5';
+import {
+    IoBookmarkOutline,
+    IoLockOpenOutline,
+} from 'react-icons/io5';
 
 import {
     ContainerCard,
@@ -19,8 +23,8 @@ import {
 import FormattedDate from '#rscv/FormattedDate';
 import DateRangeOutput from '#newComponents/ui/DateRangeOutput';
 import List from '#rscv/List';
-import Icon from '#rscg/Icon';
 import ProgressLine from '#newComponents/viz/ProgressLine';
+import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
 
 import {
     AreaChart,
@@ -79,6 +83,7 @@ interface RecentProjectItemProps {
     description?: string;
     projectOwnerName: string;
     analysisFrameworkTitle?: string;
+    analysisFramework?: number;
     totalUsers: number;
     totalSources: number;
     totalSourcesTagged: number;
@@ -98,6 +103,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
         projectId,
         projectOwnerName,
         analysisFrameworkTitle,
+        analysisFramework,
         totalUsers,
         totalSources = 0,
         totalSourcesTagged = 0,
@@ -149,10 +155,8 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                 <>
                     <div className={styles.privacyBadge}>
                         <ElementFragments
-                            actions={(
-                                <Icon
-                                    name={isPrivate ? 'locked' : 'unlocked'}
-                                />
+                            actions={isPrivate && (
+                                <IoLockOpenOutline />
                             )}
                         >
                             {isPrivate ? (
@@ -166,7 +170,9 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                         <ButtonLikeLink
                             variant="tertiary"
                             to={reverseRoute(pathNames.editProject, { projectId })}
-                            icons={<Icon name="edit" />}
+                            icons={(
+                                <FiEdit2 />
+                            )}
                         >
                             {_ts('home.recentProjects', 'editProjectButtonLabel')}
                         </ButtonLikeLink>
@@ -202,7 +208,12 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                         />
                         <TextOutput
                             label={_ts('home.recentProjects', 'analysisFrameworkLabel')}
-                            value={analysisFrameworkTitle}
+                            value={analysisFramework && (
+                                <FrameworkImageButton
+                                    frameworkId={analysisFramework}
+                                    label={analysisFrameworkTitle}
+                                />
+                            )}
                             hideLabelColon
                             block
                         />
@@ -264,6 +275,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                 <ContainerCard
                     className={styles.projectActivityContainer}
                     heading={_ts('home.recentProjects', 'projectActivityLabel')}
+                    headerClassName={styles.chartHeader}
                     contentClassName={styles.chartContainer}
                     sub
                 >

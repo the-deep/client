@@ -2,15 +2,13 @@ import React, { useCallback, useState, useMemo } from 'react';
 
 import {
     ElementFragments,
-    ImagePreview,
     Button,
     Container,
-    Modal,
 } from '@the-deep/deep-ui';
 import { _cs } from '@togglecorp/fujs';
 
-import { useModalState } from '#hooks/stateManagement';
 import useLocalStorage from '#hooks/useLocalStorage';
+import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
 
 import _ts from '#ts';
 
@@ -25,6 +23,7 @@ import {
     injectWidget,
     deleteWidget,
 } from './utils';
+
 import styles from './styles.scss';
 
 interface Props {
@@ -40,12 +39,6 @@ function SecondaryTagging(props: Props) {
 
     // NOTE: intentional console.info
     console.info('secondary tagging in the framework', frameworkId);
-
-    const [
-        showPreviewModal,
-        setShowPreviewModalTrue,
-        setShowPreviewModalFalse,
-    ] = useModalState(false);
 
     const [widgets, setWidgets] = useLocalStorage<Widget[]>('secondaryTagging', []);
 
@@ -165,13 +158,11 @@ function SecondaryTagging(props: Props) {
                             </Button>
                         )}
                     >
-                        <Button
-                            name={undefined}
+                        <FrameworkImageButton
+                            frameworkId={frameworkId}
+                            label={_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
                             variant="secondary"
-                            onClick={setShowPreviewModalTrue}
-                        >
-                            {_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
-                        </Button>
+                        />
                     </ElementFragments>
                 </div>
                 <div className={styles.canvas}>
@@ -195,19 +186,6 @@ function SecondaryTagging(props: Props) {
                     )}
                 </div>
             </div>
-            {showPreviewModal && (
-                <Modal
-                    className={styles.frameworkImagePreviewModal}
-                    onCloseButtonClick={setShowPreviewModalFalse}
-                    bodyClassName={styles.body}
-                >
-                    <ImagePreview
-                        className={styles.preview}
-                        src="https://i.imgur.com/3Zk4aNH.jpg"
-                        alt="Under construction"
-                    />
-                </Modal>
-            )}
         </div>
     );
 }

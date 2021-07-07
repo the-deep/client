@@ -91,6 +91,7 @@ const getRecentProjectStat = (projectStat: ProjectStat) => ({
     endDate: projectStat.endDate,
     projectOwnerName: projectStat.createdByName,
     analysisFrameworkTitle: projectStat.analysisFrameworkTitle,
+    analysisFramework: projectStat.analysisFramework,
     totalUsers: projectStat.numberOfUsers,
     totalSources: projectStat.numberOfLeads,
     totalSourcesTagged: projectStat.numberOfLeadsTagged,
@@ -234,6 +235,7 @@ function Home(props: ViewProps) {
                                     placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
                                     value={selectedProject}
                                     onChange={handleProjectChange}
+                                    variant="general"
                                 />
                                 <ButtonLikeLink
                                     variant="primary"
