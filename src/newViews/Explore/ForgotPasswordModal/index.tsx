@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, useMemo } from 'react';
 import {
     _cs,
     isDefined,
@@ -15,6 +15,8 @@ import {
     emailCondition,
     requiredCondition,
     requiredStringCondition,
+    internal,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
@@ -49,7 +51,7 @@ const schema: FormSchema = {
     }),
 };
 
-const initialValue: FormType = {};
+const defaultFormValue: FormType = {};
 
 function ForgotPasswordModal(props: Props) {
     const {
@@ -61,14 +63,23 @@ function ForgotPasswordModal(props: Props) {
     const elementRef = useRef<Captcha>(null);
     const [success, setSuccess] = useState(false);
 
+    const initialValue = useMemo(
+        (): FormType => ({
+            email,
+        } ?? defaultFormValue),
+        [email],
+    );
+
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(initialValue ?? { email }, schema);
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: resetPending,
@@ -82,17 +93,19 @@ function ForgotPasswordModal(props: Props) {
             setSuccess(true);
         },
         onFailure: ({ errorCode, value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
             if (errorCode === 4004) {
-                onErrorSet({
-                    fields: {
-                        ...errorValue.faramErrors,
-                    },
-                    $internal: _ts('explore.forgotPasswordModal', 'retryRecaptcha'),
+                setError({
+                    ...otherErrors,
+                    [internal]: _ts('explore.forgotPasswordModal', 'retryRecaptcha'),
                 });
             } else {
-                onErrorSet({
-                    fields: { ...errorValue.faramErrors },
-                    $internal: errorValue.faramErrors.$internal,
+                setError({
+                    ...otherErrors,
+                    [internal]: $internal,
                 });
             }
         },
@@ -102,13 +115,13 @@ function ForgotPasswordModal(props: Props) {
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 elementRef.current?.resetCaptcha();
                 triggerReset(val as ForgotPasswordFields);
             }
         },
-        [onErrorSet, validate, triggerReset],
+        [setError, validate, triggerReset],
     );
 
     return (
@@ -145,9 +158,9 @@ function ForgotPasswordModal(props: Props) {
                         <TextInput
                             name="email"
                             className={styles.input}
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             value={value?.email}
-                            error={error?.fields?.email}
+                            error={error?.email}
                             label={_ts('explore.passwordReset', 'emailLabel')}
                             placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}
                             disabled={resetPending}
@@ -158,8 +171,8 @@ function ForgotPasswordModal(props: Props) {
                             name="hcaptchaResponse"
                             elementRef={elementRef}
                             siteKey={HCaptchaSiteKey}
-                            onChange={onValueChange}
-                            error={error?.fields?.hcaptchaResponse}
+                            onChange={setFieldValue}
+                            error={error?.hcaptchaResponse}
                             disabled={resetPending}
                         />
                     </>

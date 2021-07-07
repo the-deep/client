@@ -20,6 +20,8 @@ import {
     lengthGreaterThanCondition,
     requiredStringCondition,
     lengthSmallerThanCondition,
+    internal,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 import { parseUrlParams } from '@togglecorp/react-rest-request';
@@ -135,11 +137,13 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(initialValue, mySchema);
+        setError,
+    } = useForm(mySchema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: loginPending,
@@ -154,20 +158,22 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
             authenticate();
         },
         onFailure: ({ errorCode, value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
             if (errorCode === 4004) {
-                onErrorSet({
-                    fields: {
-                        ...errorValue.faramErrors,
-                    },
-                    $internal: captchaRequired
+                setError({
+                    ...otherErrors,
+                    [internal]: captchaRequired
                         ? _ts('explore.login', 'retryRecaptcha')
                         : _ts('explore.login', 'enterRecaptcha'),
                 });
                 setCaptchaRequired(true);
             } else {
-                onErrorSet({
-                    fields: { ...errorValue.faramErrors },
-                    $internal: errorValue.faramErrors.$internal,
+                setError({
+                    ...otherErrors,
+                    [internal]: $internal,
                 });
             }
         },
@@ -187,20 +193,22 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
             authenticate();
         },
         onFailure: ({ errorCode, value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
             if (errorCode === 4004) {
-                onErrorSet({
-                    fields: {
-                        ...errorValue.faramErrors,
-                    },
-                    $internal: captchaRequired
+                setError({
+                    ...otherErrors,
+                    [internal]: captchaRequired
                         ? _ts('explore.login', 'retryRecaptcha')
                         : _ts('explore.login', 'enterRecaptcha'),
                 });
                 setCaptchaRequired(true);
             } else {
-                onErrorSet({
-                    fields: { ...errorValue.faramErrors },
-                    $internal: errorValue.faramErrors.$internal,
+                setError({
+                    ...otherErrors,
+                    [internal]: $internal,
                 });
             }
         },
@@ -235,7 +243,7 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
     return (
         <form
             className={_cs(styles.loginForm, className)}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             {pending && <PendingMessage />}
             <Container
@@ -247,8 +255,8 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                         name="hcaptchaResponse"
                         elementRef={elementRef}
                         siteKey={HCaptchaSiteKey}
-                        onChange={onValueChange}
-                        error={error?.fields?.hcaptchaResponse}
+                        onChange={setFieldValue}
+                        error={error?.hcaptchaResponse}
                     />
                 )}
                 footerActions={(
@@ -282,9 +290,9 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     <TextInput
                         name="username"
                         className={styles.input}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.username}
-                        error={error?.fields?.username}
+                        error={error?.username}
                         label={_ts('explore.login', 'emailLabel')}
                         placeholder={_ts('explore.login', 'emailPlaceholder')}
                         disabled={pending}
@@ -293,9 +301,9 @@ function LoginRegisterModal(props: Props & PropsFromDispatch) {
                     <PasswordInput
                         name="password"
                         className={styles.input}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.password}
-                        error={error?.fields?.password}
+                        error={error?.password}
                         label={_ts('explore.login', 'password')}
                         placeholder={_ts('explore.login', 'password')}
                         disabled={pending}

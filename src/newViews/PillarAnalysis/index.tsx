@@ -27,6 +27,7 @@ import {
 import {
     useForm,
     useFormArray,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import FullPageHeader from '#newComponents/ui/FullPageHeader';
@@ -159,23 +160,25 @@ function PillarAnalysis(props: Props) {
         setPillarAnalysisData,
     } = props;
 
+    const initialValue = pillarAnalysisFromProps?.data ?? defaultFormValues;
+
     const {
         pristine,
         value,
-        error,
-        onValueChange,
-        onValueSet,
+        error: riskyError,
+        setFieldValue,
+        setValue,
         validate,
-        onErrorSet,
-    } = useForm(
-        pillarAnalysisFromProps?.data ?? defaultFormValues,
-        schema,
-    );
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.analyticalStatements);
 
     const {
-        onValueChange: onAnalyticalStatementChange,
-        onValueRemove: onAnalyticalStatementRemove,
-    } = useFormArray('analyticalStatements', onValueChange);
+        setValue: onAnalyticalStatementChange,
+        removeValue: onAnalyticalStatementRemove,
+    } = useFormArray('analyticalStatements', setFieldValue);
 
     const [activeTab, setActiveTab] = useState<TabNames>('entries');
 
@@ -264,7 +267,7 @@ function PillarAnalysis(props: Props) {
 
             // FIXME: check set pristine value
             // FIXME: only set after checking version id
-            onValueSet((): FormType => ({
+            setValue((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
                 analyticalStatements,
@@ -281,7 +284,7 @@ function PillarAnalysis(props: Props) {
         body: ctx => ctx,
         method: 'PATCH',
         onSuccess: (response) => {
-            onValueSet((): FormType => ({
+            setValue((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
                 analyticalStatements: response.analyticalStatements,
@@ -440,19 +443,19 @@ function PillarAnalysis(props: Props) {
                 order: oldStatements.length,
                 includeInReport: false,
             };
-            onValueChange(
+            setFieldValue(
                 [...oldStatements, newAnalyticalStatement],
                 'analyticalStatements' as const,
             );
         },
-        [onValueChange, value.analyticalStatements],
+        [setFieldValue, value.analyticalStatements],
     );
 
     type AnalyticalStatements = typeof value.analyticalStatements;
 
     const handleEntryMove = useCallback(
         (entryId: number, statementClientId: string) => {
-            onValueChange(
+            setFieldValue(
                 (oldStatements: AnalyticalStatements) => (
                     produce(oldStatements ?? [], (safeStatements) => {
                         const selectedIndex = safeStatements
@@ -470,18 +473,18 @@ function PillarAnalysis(props: Props) {
                 'analyticalStatements' as const,
             );
         },
-        [onValueChange],
+        [setFieldValue],
     );
 
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 updateAnalysisPillars(val);
             }
         },
-        [onErrorSet, validate, updateAnalysisPillars],
+        [setError, validate, updateAnalysisPillars],
     );
 
     const entryCardRendererParams = useCallback((key: number, data: EntryFieldsMin) => ({
@@ -521,21 +524,21 @@ function PillarAnalysis(props: Props) {
         onRemove: onAnalyticalStatementRemove,
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
-        error: error?.fields?.analyticalStatements?.members?.[statement?.clientId],
+        error: arrayError?.[statement?.clientId],
     }), [
         onAnalyticalStatementChange,
         onAnalyticalStatementRemove,
         handleEntryMove,
         handleEntryDrop,
-        error?.fields?.analyticalStatements?.members,
+        arrayError,
     ]);
 
     const onOrderChange = useCallback((
         newValues: PartialAnalyticalStatementType[],
     ) => {
         const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
-        onValueChange(orderedValues, 'analyticalStatements');
-    }, [onValueChange]);
+        setFieldValue(orderedValues, 'analyticalStatements');
+    }, [setFieldValue]);
 
     return (
         <div className={styles.pillarAnalysis}>
@@ -580,9 +583,9 @@ function PillarAnalysis(props: Props) {
                         </Heading>
                         <TextArea
                             name="mainStatement"
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             value={value.mainStatement}
-                            error={error?.fields?.mainStatement}
+                            error={error?.mainStatement}
                             rows={4}
                             disabled={pending}
                         />
@@ -596,8 +599,8 @@ function PillarAnalysis(props: Props) {
                         <TextArea
                             name="informationGap"
                             value={value.informationGap}
-                            onChange={onValueChange}
-                            error={error?.fields?.informationGap}
+                            onChange={setFieldValue}
+                            error={error?.informationGap}
                             rows={4}
                             disabled={pending}
                         />

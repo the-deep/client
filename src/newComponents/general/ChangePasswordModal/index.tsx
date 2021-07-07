@@ -7,6 +7,8 @@ import {
     requiredCondition,
     lengthGreaterThanCondition,
     lengthSmallerThanCondition,
+    getErrorObject,
+    internal,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -83,11 +85,13 @@ function ChangePasswordModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(defaultFormValue, changePasswordSchema);
+        setError,
+    } = useForm(changePasswordSchema, defaultFormValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending,
@@ -99,19 +103,26 @@ function ChangePasswordModal(props: Props) {
         onSuccess: () => {
             onModalClose();
         },
-        onFailure: (err) => {
-            onErrorSet({ fields: { ...err.value.faramErrors } });
+        onFailure: ({ value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
+            setError({
+                ...otherErrors,
+                [internal]: $internal,
+            });
         },
         failureHeader: _ts('changePassword', 'title'),
     });
 
     const handleSubmitButtonClick = useCallback(() => {
         const { errored, error: err, value: val } = validate();
-        onErrorSet(err);
+        setError(err);
         if (!errored && isDefined(val)) {
             changePassword({ oldPassword: val.oldPassword, newPassword: val.newPassword });
         }
-    }, [onErrorSet, validate, changePassword]);
+    }, [setError, validate, changePassword]);
 
     return (
         <Modal
@@ -146,9 +157,9 @@ function ChangePasswordModal(props: Props) {
                 label={_ts('changePassword', 'currentPassword')}
                 placeholder={_ts('changePassword', 'currentPassword')}
                 value={value.oldPassword}
-                error={error?.fields?.oldPassword}
+                error={error?.oldPassword}
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
             />
             <PasswordInput
                 name="newPassword"
@@ -156,9 +167,9 @@ function ChangePasswordModal(props: Props) {
                 label={_ts('changePassword', 'newPassword')}
                 placeholder={_ts('changePassword', 'newPassword')}
                 value={value.newPassword}
-                error={error?.fields?.newPassword}
+                error={error?.newPassword}
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
             />
             <PasswordInput
                 name="confirmPassword"
@@ -166,9 +177,9 @@ function ChangePasswordModal(props: Props) {
                 label={_ts('changePassword', 'retypePassword')}
                 placeholder={_ts('changePassword', 'retypePassword')}
                 value={value.confirmPassword}
-                error={error?.fields?.confirmPassword}
+                error={error?.confirmPassword}
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
             />
         </Modal>
     );

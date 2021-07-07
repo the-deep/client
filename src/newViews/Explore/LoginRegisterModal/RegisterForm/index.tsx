@@ -13,6 +13,8 @@ import {
     createSubmitHandler,
     requiredCondition,
     requiredStringCondition,
+    internal,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 import { useLazyRequest } from '#utils/request';
@@ -61,11 +63,13 @@ function RegisterModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: registerPending,
@@ -79,17 +83,19 @@ function RegisterModal(props: Props) {
             setSuccess(true);
         },
         onFailure: ({ errorCode, value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
             if (errorCode === 4004) {
-                onErrorSet({
-                    fields: {
-                        ...errorValue.faramErrors,
-                    },
-                    $internal: _ts('explore.register', 'retryRecaptcha'),
+                setError({
+                    ...otherErrors,
+                    [internal]: _ts('explore.register', 'retryRecaptcha'),
                 });
             } else {
-                onErrorSet({
-                    fields: { ...errorValue.faramErrors },
-                    $internal: errorValue.faramErrors.$internal,
+                setError({
+                    ...otherErrors,
+                    [internal]: $internal,
                 });
             }
         },
@@ -104,7 +110,7 @@ function RegisterModal(props: Props) {
     return (
         <form
             className={_cs(styles.registerForm, className)}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             {registerPending && <PendingMessage />}
             {success ? (
@@ -122,8 +128,8 @@ function RegisterModal(props: Props) {
                             name="hcaptchaResponse"
                             elementRef={elementRef}
                             siteKey={HCaptchaSiteKey}
-                            onChange={onValueChange}
-                            error={error?.fields?.hcaptchaResponse}
+                            onChange={setFieldValue}
+                            error={error?.hcaptchaResponse}
                             disabled={registerPending}
                         />
                     )}
@@ -145,9 +151,9 @@ function RegisterModal(props: Props) {
                     <TextInput
                         name="firstName"
                         className={styles.input}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.firstName}
-                        error={error?.fields?.firstName}
+                        error={error?.firstName}
                         label={_ts('explore.register', 'firstNameLabel')}
                         placeholder={_ts('explore.register', 'firstNamePlaceholder')}
                         disabled={registerPending}
@@ -155,9 +161,9 @@ function RegisterModal(props: Props) {
                     <TextInput
                         name="lastName"
                         className={styles.input}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.lastName}
-                        error={error?.fields?.lastName}
+                        error={error?.lastName}
                         label={_ts('explore.register', 'lastNameLabel')}
                         placeholder={_ts('explore.register', 'lastNamePlaceholder')}
                         disabled={registerPending}
@@ -165,9 +171,9 @@ function RegisterModal(props: Props) {
                     <TextInput
                         name="organization"
                         className={styles.input}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.organization}
-                        error={error?.fields?.organization}
+                        error={error?.organization}
                         label={_ts('explore.register', 'organizationLabel')}
                         placeholder={_ts('explore.register', 'organizationPlaceholder')}
                         disabled={registerPending}
@@ -175,9 +181,9 @@ function RegisterModal(props: Props) {
                     <TextInput
                         name="username"
                         className={styles.input}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.username}
-                        error={error?.fields?.username}
+                        error={error?.username}
                         label={_ts('explore.register', 'emailLabel')}
                         placeholder={_ts('explore.register', 'emailPlaceholder')}
                         disabled={registerPending}

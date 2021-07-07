@@ -13,6 +13,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import _ts from '#ts';
@@ -93,11 +94,13 @@ function AddUserModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(formValue, schema);
+        setError,
+    } = useForm(schema, formValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: pendingAddMember,
@@ -119,11 +122,11 @@ function AddUserModal(props: Props) {
 
     const handleSubmit = useCallback(() => {
         const { errored, error: err, value: val } = validate();
-        onErrorSet(err);
+        setError(err);
         if (!errored && isDefined(val)) {
             triggerAddMember(val as FormType);
         }
-    }, [onErrorSet, validate, triggerAddMember]);
+    }, [setError, validate, triggerAddMember]);
 
     return (
         <Modal
@@ -150,13 +153,13 @@ function AddUserModal(props: Props) {
                 className={styles.input}
                 name="member"
                 value={value.member}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 options={isDefined(userToEdit)
                     ? memberOptions
                     : userOptions
                 }
                 onOptionsChange={setUserOptions}
-                error={error?.fields?.member}
+                error={error?.member}
                 disabled={pendingAddMember || isDefined(userToEdit)}
                 label={_ts('usergroup.memberEditModal', 'addMemberLabel')}
                 placeholder={_ts('usergroup.memberEditModal', 'addMemberPlaceholderLabel')}
@@ -168,9 +171,9 @@ function AddUserModal(props: Props) {
                 keySelector={keySelector}
                 options={roles}
                 placeholder={_ts('usergroup.memberEditModal', 'roleLabel')}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.role}
-                error={error?.fields?.role}
+                error={error?.role}
                 disabled={pendingAddMember}
             />
         </Modal>

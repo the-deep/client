@@ -10,15 +10,17 @@ import {
     useForm,
     useFormObject,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     Error,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
-import { DateWidget, PartialForm } from '../../types';
+import { DateWidget } from '../../types';
 
 import styles from './styles.scss';
 
@@ -62,16 +64,18 @@ interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
     error: Error<PartialDataType> | undefined;
-    onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
+    onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
 }
 
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        error,
+        error: riskyError,
         onChange,
         name,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
@@ -88,7 +92,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 name="defaultValue"
                 value={value?.defaultValue}
                 onChange={onFieldChange}
-                error={error?.fields?.defaultValue}
+                error={error?.defaultValue}
             />
         </>
     );
@@ -112,11 +116,13 @@ function DateWidgetForm(props: DateWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -135,7 +141,7 @@ function DateWidgetForm(props: DateWidgetFormProps) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value?.title ?? 'Unnamed'}
@@ -173,21 +179,21 @@ function DateWidgetForm(props: DateWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <DataInput
                     name="data"
                     value={value.data}
-                    onChange={onValueChange}
-                    error={error?.fields?.data}
+                    onChange={setFieldValue}
+                    error={error?.data}
                 />
                 <WidgetSizeInput
                     name="width"
                     className={styles.input}
                     value={value.width}
-                    onChange={onValueChange}
-                    error={error?.fields?.width}
+                    onChange={setFieldValue}
+                    error={error?.width}
                 />
             </Container>
         </form>

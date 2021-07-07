@@ -5,11 +5,12 @@ import {
     Heading,
     List,
 } from '@the-deep/deep-ui';
+import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 import { sortByOrder } from '#utils/safeCommon';
 
-import { Matrix2dValue, Matrix2dWidget, PartialForm } from '../../types';
+import { Matrix2dValue, Matrix2dWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 import styles from './styles.scss';

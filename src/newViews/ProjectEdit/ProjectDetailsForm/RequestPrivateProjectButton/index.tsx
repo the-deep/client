@@ -3,6 +3,7 @@ import { IoChevronForward } from 'react-icons/io5';
 import {
     useForm,
     ObjectSchema,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     ButtonLikeLink,
@@ -52,15 +53,17 @@ function RequestPrivateProjectButton(props: Props) {
 
     const {
         value,
-        error,
-        onValueSet,
-        onValueChange,
-    } = useForm(defaultFormValue, formSchema);
+        error: riskyError,
+        setValue,
+        setFieldValue,
+    } = useForm(formSchema, defaultFormValue);
+
+    const error = getErrorObject(riskyError);
 
     const handleClose = useCallback(() => {
-        onValueSet({});
+        setValue({});
         hideModal();
-    }, [onValueSet, hideModal]);
+    }, [setValue, hideModal]);
 
     return (
         <>
@@ -101,9 +104,9 @@ function RequestPrivateProjectButton(props: Props) {
                     <TextInput
                         className={styles.input}
                         name="description"
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value.description}
-                        error={error?.fields?.description}
+                        error={error?.description}
                         label={_ts('requestPrivateProject', 'description')}
                         placeholder={_ts('requestPrivateProject', 'descriptionPlaceholder')}
                         autoFocus
@@ -113,8 +116,8 @@ function RequestPrivateProjectButton(props: Props) {
                         name="justification"
                         rows={4}
                         value={value.justification}
-                        error={error?.fields?.justification}
-                        onChange={onValueChange}
+                        error={error?.justification}
+                        onChange={setFieldValue}
                         label={_ts('requestPrivateProject', 'justification')}
                         placeholder={_ts('requestPrivateProject', 'justificationPlaceholder')}
                     />

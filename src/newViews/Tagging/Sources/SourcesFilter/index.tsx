@@ -7,6 +7,8 @@ import {
 import {
     useForm,
     ObjectSchema,
+    getErrorString,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
@@ -122,25 +124,27 @@ function SourcesFilter(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-        onValueSet,
-    } = useForm(initialValue, schema);
+        setError,
+        setValue,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const handleApply = useCallback(() => {
         const { errored, error: err, value: val } = validate();
-        onErrorSet(err);
+        setError(err);
         if (!errored && isDefined(val)) {
             onFilterApply(val);
         }
-    }, [onErrorSet, validate, onFilterApply]);
+    }, [setError, validate, onFilterApply]);
 
     const handleClear = useCallback(() => {
-        onValueSet(initialValue);
+        setValue(initialValue);
         onFilterApply(initialValue);
-    }, [onValueSet, onFilterApply]);
+    }, [setValue, onFilterApply]);
 
     const [
         showContent,,,,
@@ -170,21 +174,21 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={styles.input}
                     name="status"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     options={leadOptions?.status}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     value={value.status}
-                    error={error?.fields?.status?.$internal}
+                    error={getErrorString(error?.status)}
                     label={_ts('sourcesFilter', 'status')}
                     placeholder={_ts('sourcesFilter', 'status')}
                 />
                 <DateInput
                     className={styles.input}
                     name="publishedOn"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     value={value.publishedOn}
-                    error={error?.fields?.publishedOn}
+                    error={error?.publishedOn}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'originalDate')}
                     placeholder={_ts('sourcesFilter', 'originalDate')}
@@ -192,9 +196,9 @@ function SourcesFilter(props: Props) {
                 <DateInput
                     className={styles.input}
                     name="createdAt"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     value={value.createdAt}
-                    error={error?.fields?.createdAt}
+                    error={error?.createdAt}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
                     placeholder={_ts('sourcesFilter', 'addedOn')}
@@ -202,12 +206,12 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={styles.input}
                     name="assignee"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     options={leadOptions?.assignee}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     value={value.assignee}
-                    error={error?.fields?.assignee?.$internal}
+                    error={getErrorString(error?.assignee)}
                     label={_ts('sourcesFilter', 'assignee')}
                     placeholder={_ts('sourcesFilter', 'assignee')}
                 />
@@ -215,9 +219,9 @@ function SourcesFilter(props: Props) {
                     className={styles.input}
                     icons={<IoSearch />}
                     name="search"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     value={value.search}
-                    error={error?.fields?.search}
+                    error={error?.search}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'search')}
                     placeholder={_ts('sourcesFilter', 'search')}
@@ -228,12 +232,12 @@ function SourcesFilter(props: Props) {
                         !showContent && styles.hidden,
                     )}
                     name="exists"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     options={existsFilterOptions}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     value={value.exists}
-                    error={error?.fields?.exists}
+                    error={error?.exists}
                     label={_ts('sourcesFilter', 'exists')}
                     placeholder={_ts('sourcesFilter', 'exists')}
                 />
@@ -243,12 +247,12 @@ function SourcesFilter(props: Props) {
                         !showContent && styles.hidden,
                     )}
                     name="priority"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     options={leadOptions?.priority}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     value={value.priority}
-                    error={error?.fields?.priority?.$internal}
+                    error={getErrorString(error?.priority)}
                     label={_ts('sourcesFilter', 'priority')}
                     placeholder={_ts('sourcesFilter', 'priority')}
                 />
@@ -258,12 +262,12 @@ function SourcesFilter(props: Props) {
                         !showContent && styles.hidden,
                     )}
                     name="authoringOrganizationTypes"
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     options={leadOptions?.organizationTypes}
                     keySelector={keySelector}
                     labelSelector={labelSelector}
                     value={value.authoringOrganizationTypes}
-                    error={error?.fields?.authoringOrganizationTypes?.$internal}
+                    error={getErrorString(error?.authoringOrganizationTypes)}
                     label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
                     placeholder={_ts('sourcesFilter', 'authoringOrganizationTypes')}
                 />
@@ -274,12 +278,12 @@ function SourcesFilter(props: Props) {
                             !showContent && styles.hidden,
                         )}
                         name="confidentiality"
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         options={leadOptions?.confidentiality}
                         keySelector={keySelector}
                         labelSelector={labelSelector}
                         value={value.confidentiality}
-                        error={error?.fields?.confidentiality?.$internal}
+                        error={getErrorString(error?.confidentiality)}
                         label={_ts('sourcesFilter', 'confidentiality')}
                         placeholder={_ts('sourcesFilter', 'confidentiality')}
                     />
@@ -292,12 +296,12 @@ function SourcesFilter(props: Props) {
                                 !showContent && styles.hidden,
                             )}
                             name="emmRiskFactors"
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             options={leadOptions?.emmRiskFactors}
                             keySelector={emmKeySelector}
                             labelSelector={emmLabelSelector}
                             value={value.emmRiskFactors}
-                            error={error?.fields?.emmRiskFactors?.$internal}
+                            error={getErrorString(error?.emmRiskFactors)}
                             label={_ts('sourcesFilter', 'emmRiskFactors')}
                             placeholder={_ts('sourcesFilter', 'emmRiskFactors')}
                         />
@@ -307,12 +311,12 @@ function SourcesFilter(props: Props) {
                                 !showContent && styles.hidden,
                             )}
                             name="emmKeywords"
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             options={leadOptions?.emmKeywords}
                             keySelector={emmKeySelector}
                             labelSelector={emmLabelSelector}
                             value={value.emmKeywords}
-                            error={error?.fields?.emmKeywords?.$internal}
+                            error={getErrorString(error?.emmKeywords)}
                             label={_ts('sourcesFilter', 'emmKeywords')}
                             placeholder={_ts('sourcesFilter', 'emmKeywords')}
                         />
@@ -322,12 +326,12 @@ function SourcesFilter(props: Props) {
                                 !showContent && styles.hidden,
                             )}
                             name="emmEntities"
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             options={leadOptions?.emmEntities}
                             keySelector={emmKeySelector}
                             labelSelector={emmLabelSelector}
                             value={value.emmEntities}
-                            error={error?.fields?.emmEntities?.$internal}
+                            error={getErrorString(error?.emmEntities)}
                             label={_ts('sourcesFilter', 'emmEntities')}
                             placeholder={_ts('sourcesFilter', 'emmEntities')}
                         />

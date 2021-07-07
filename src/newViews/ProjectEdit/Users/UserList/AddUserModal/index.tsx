@@ -7,6 +7,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -83,11 +84,13 @@ function AddUserModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(formValueFromProps, schema);
+        setError,
+    } = useForm(schema, formValueFromProps);
+
+    const error = getErrorObject(riskyError);
 
     const queryForUsers = useMemo(() => ({
         members_exclude_project: projectId,
@@ -128,12 +131,12 @@ function AddUserModal(props: Props) {
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 triggerAddProjectMember(val as ValueToSend);
             }
         },
-        [onErrorSet, validate, triggerAddProjectMember],
+        [setError, validate, triggerAddProjectMember],
     );
 
     const currentUser = useMemo(() => (userValue ?
@@ -178,10 +181,10 @@ function AddUserModal(props: Props) {
                 name="member"
                 readOnly={isDefined(userValue)}
                 value={value.member}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 options={userOptions ?? currentUser}
                 onOptionsChange={setUserOptions}
-                error={error?.fields?.member}
+                error={error?.member}
                 disabled={pendingRequests}
                 optionsPopupClassName={styles.optionsPopup}
                 label={_ts('projectEdit', 'userLabel')}
@@ -194,7 +197,7 @@ function AddUserModal(props: Props) {
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
                 optionsPopupClassName={styles.optionsPopup}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.role}
                 label={_ts('projectEdit', 'roleLabel')}
                 placeholder={_ts('projectEdit', 'selectRolePlaceholder')}

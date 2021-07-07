@@ -2,10 +2,11 @@ import React from 'react';
 import {
     ScaleInput,
 } from '@the-deep/deep-ui';
+import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 
-import { ScaleValue, ScaleWidget, PartialForm } from '../../types';
+import { ScaleValue, ScaleWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialScaleWidget = PartialForm<

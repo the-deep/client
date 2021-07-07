@@ -15,15 +15,17 @@ import {
 import {
     ObjectSchema,
     ArraySchema,
-    arrayCondition,
+    defaultEmptyArrayType,
     requiredStringCondition,
     useForm,
     useFormArray,
     useFormObject,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     Error,
     analyzeErrors,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     _cs,
@@ -33,7 +35,7 @@ import {
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
 
-import { Section, PartialForm } from '../../types';
+import { Section } from '../../types';
 import styles from './styles.scss';
 
 const SECTIONS_LIMIT = 10;
@@ -63,7 +65,7 @@ const sectionSchema: SectionSchema = {
         clientId: [],
         title: [requiredStringCondition],
         tooltip: [],
-        widgets: [arrayCondition],
+        widgets: [defaultEmptyArrayType],
         order: [],
     }),
 };
@@ -99,7 +101,7 @@ interface SectionInputProps {
     className?: string;
     value: PartialSectionType;
     error: Error<SectionType> | undefined;
-    onChange: (value: StateArg<PartialSectionType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialSectionType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
     autoFocus: boolean;
@@ -113,7 +115,7 @@ function SectionInput(props: SectionInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
@@ -123,6 +125,8 @@ function SectionInput(props: SectionInputProps) {
         setNodeRef,
         style,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
@@ -188,7 +192,7 @@ function SectionInput(props: SectionInputProps) {
                     label="Title"
                     value={value.title}
                     onChange={onFieldChange}
-                    error={error?.fields?.title}
+                    error={error?.title}
                     autoFocus={autoFocus}
                 />
                 <TextArea
@@ -198,7 +202,7 @@ function SectionInput(props: SectionInputProps) {
                     rows={4}
                     value={value.tooltip}
                     onChange={onFieldChange}
-                    error={error?.fields?.tooltip}
+                    error={error?.tooltip}
                 />
             </ExpandableContainer>
         </div>
@@ -231,11 +235,14 @@ function SectionsEditor(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(defaultFormValues, schema);
+        setError,
+    } = useForm(schema, defaultFormValues);
+
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.sections);
 
     useEffect(
         () => {
@@ -245,9 +252,9 @@ function SectionsEditor(props: Props) {
     );
 
     const {
-        onValueChange: onSectionsChange,
-        onValueRemove: onSectionsRemove,
-    } = useFormArray('sections', onValueChange);
+        setValue: onSectionsChange,
+        removeValue: onSectionsRemove,
+    } = useFormArray('sections', setFieldValue);
 
     const handleAdd = useCallback(
         () => {
@@ -263,21 +270,21 @@ function SectionsEditor(props: Props) {
                 clientId,
                 order: sortedItems.length,
             };
-            onValueChange(
+            setFieldValue(
                 [...sortedItems, newSection],
                 'sections' as const,
             );
             onFocusChange(clientId);
         },
-        [onValueChange, value.sections, onFocusChange],
+        [setFieldValue, value.sections, onFocusChange],
     );
 
     const handleOrderChange = useCallback((
         newValues: PartialSectionType[],
     ) => {
         const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
-        onValueChange(orderedValues, 'sections');
-    }, [onValueChange]);
+        setFieldValue(orderedValues, 'sections');
+    }, [setFieldValue]);
 
     const sectionRendererParams = useCallback((
         key: string,
@@ -286,7 +293,7 @@ function SectionsEditor(props: Props) {
     ) => ({
         onChange: onSectionsChange,
         onRemove: onSectionsRemove,
-        error: error?.fields?.sections?.members?.[key],
+        error: arrayError?.[key],
         value: section,
         autoFocus: focusedSection === section.clientId,
         index,
@@ -294,7 +301,7 @@ function SectionsEditor(props: Props) {
         onSectionsChange,
         focusedSection,
         onSectionsRemove,
-        error?.fields?.sections?.members,
+        arrayError,
     ]);
 
     const handleSubmit = useCallback(
@@ -308,7 +315,7 @@ function SectionsEditor(props: Props) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 headerActions={(
@@ -352,7 +359,7 @@ function SectionsEditor(props: Props) {
                     )}
                 >
                     <>
-                        <NonFieldError error={error?.fields?.sections} />
+                        <NonFieldError error={error?.sections} />
                         <SortableList
                             name="analyticalStatements"
                             onChange={handleOrderChange}

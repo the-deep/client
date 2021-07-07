@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
+import { PartialForm } from '@togglecorp/toggle-form';
 
-import { Widget, PartialForm } from '../types';
+import { Widget } from '../types';
 import TextWidgetForm from './TextWidgetForm';
 import NumberWidgetForm from './NumberWidgetForm';
 import DateWidgetForm from './DateWidgetForm';

@@ -19,6 +19,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -162,8 +163,8 @@ function ProjectFramework(props: Props) {
 
     const {
         value,
-        onValueChange,
-    } = useForm(defaultFormValue, schema);
+        setFieldValue,
+    } = useForm(schema, defaultFormValue);
 
     const delayedValue = useDebouncedValue(value);
 
@@ -217,7 +218,7 @@ function ProjectFramework(props: Props) {
                     <SelectInput
                         name="relatedToMe"
                         className={styles.filter}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         options={frameworkFilterOptions}
                         keySelector={relatedToMeKeySelector}
                         labelSelector={relatedToMeLabelSelector}
@@ -227,7 +228,7 @@ function ProjectFramework(props: Props) {
                     <TextInput
                         name="search"
                         className={styles.filter}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value.search}
                         label={_ts('projectEdit', 'searchLabel')}
                         placeholder={_ts('projectEdit', 'searchPlaceholder')}

@@ -9,12 +9,14 @@ import {
     useForm,
     createSubmitHandler,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
-import { TimeRangeWidget, PartialForm } from '../../types';
+import { TimeRangeWidget } from '../../types';
 import styles from './styles.scss';
 
 type FormType = TimeRangeWidget;
@@ -57,11 +59,13 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -80,7 +84,7 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value?.title ?? 'Unnamed'}
@@ -118,15 +122,15 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value?.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <WidgetSizeInput
                     name="width"
                     className={styles.input}
                     value={value.width}
-                    onChange={onValueChange}
-                    error={error?.fields?.width}
+                    onChange={setFieldValue}
+                    error={error?.width}
                 />
             </Container>
         </form>

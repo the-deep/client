@@ -11,6 +11,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#utils/request';
@@ -81,11 +82,13 @@ function AddUsergroupModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(initialFormValue, schema);
+        setError,
+    } = useForm(schema, initialFormValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: pendingAddUsergroup,
@@ -106,11 +109,11 @@ function AddUsergroupModal(props: Props) {
     });
     const handleSubmit = useCallback(() => {
         const { errored, error: err, value: val } = validate();
-        onErrorSet(err);
+        setError(err);
         if (!errored && isDefined(val)) {
             triggerAddUsergroup(val as UsergroupAdd);
         }
-    }, [onErrorSet, validate, triggerAddUsergroup]);
+    }, [setError, validate, triggerAddUsergroup]);
 
     return (
         <Modal
@@ -133,8 +136,8 @@ function AddUsergroupModal(props: Props) {
             <TextInput
                 name="title"
                 value={value.title}
-                error={error?.fields?.title}
-                onChange={onValueChange}
+                error={error?.title}
+                onChange={setFieldValue}
                 label={_ts('usergroup.editModal', 'usergroupTitleLabel')}
                 placeholder={_ts('usergroup.editModal', 'usergroupTitlePlaceholder')}
             />

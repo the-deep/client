@@ -15,8 +15,9 @@ import {
     requiredStringCondition,
     useForm,
     createSubmitHandler,
-    arrayCondition,
+    defaultEmptyArrayType,
     requiredCondition,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import Avatar from '#newComponents/ui/Avatar';
@@ -64,7 +65,7 @@ const schema: FormSchema = {
         lastName: [requiredStringCondition],
         organization: [],
         language: [requiredCondition],
-        emailOptOuts: [arrayCondition],
+        emailOptOuts: [defaultEmptyArrayType],
     }),
 };
 
@@ -107,12 +108,14 @@ function MyProfile(props: Props & PropsFromDispatch) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-        onValueSet,
-    } = useForm(initialValue, schema);
+        setError,
+        setValue,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: userGetPending,
@@ -120,8 +123,8 @@ function MyProfile(props: Props & PropsFromDispatch) {
         url: `server://users/${activeUser.userId}/`,
         method: 'GET',
         onSuccess: (response: User) => {
-            onValueSet(response);
-            onErrorSet({});
+            setValue(response);
+            setError({});
             setUserInformation({
                 userId: activeUser.userId,
                 information: response,
@@ -146,8 +149,8 @@ function MyProfile(props: Props & PropsFromDispatch) {
         method: 'PATCH',
         body: ctx => ctx,
         onSuccess: (response) => {
-            onValueSet(response);
-            onErrorSet({});
+            setValue(response);
+            setError({});
             setUserInformation({
                 userId: activeUser.userId,
                 information: response,
@@ -158,15 +161,15 @@ function MyProfile(props: Props & PropsFromDispatch) {
 
     const handleCheck = useCallback((checked: boolean, name: EmailOptOut) => {
         if (checked) {
-            onValueChange((oldValue: EmailOptOut[] | undefined) => ([
+            setFieldValue((oldValue: EmailOptOut[] | undefined) => ([
                 ...(oldValue ?? []),
                 name]), 'emailOptOuts' as const);
         } else {
-            onValueChange((oldValue: EmailOptOut[] | undefined) => ([
+            setFieldValue((oldValue: EmailOptOut[] | undefined) => ([
                 ...(oldValue ?? []).filter(v => v !== name),
             ]), 'emailOptOuts' as const);
         }
-    }, [onValueChange]);
+    }, [setFieldValue]);
 
     const rowRendererParams = useCallback((key: EmailOptOut, data: EmailOptOutOption) => ({
         name: key,
@@ -181,7 +184,7 @@ function MyProfile(props: Props & PropsFromDispatch) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 className={styles.myProfile}
@@ -220,9 +223,9 @@ function MyProfile(props: Props & PropsFromDispatch) {
                             <TextInput
                                 name="firstName"
                                 disabled={disabled}
-                                onChange={onValueChange}
+                                onChange={setFieldValue}
                                 value={value?.firstName}
-                                error={error?.fields?.firstName}
+                                error={error?.firstName}
                                 label={_ts('myProfile', 'firstName')}
                                 placeholder={_ts('myProfile', 'firstName')}
                                 autoFocus
@@ -230,18 +233,18 @@ function MyProfile(props: Props & PropsFromDispatch) {
                             <TextInput
                                 name="lastName"
                                 disabled={disabled}
-                                onChange={onValueChange}
+                                onChange={setFieldValue}
                                 value={value?.lastName}
-                                error={error?.fields?.lastName}
+                                error={error?.lastName}
                                 label={_ts('myProfile', 'lastName')}
                                 placeholder={_ts('myProfile', 'lastName')}
                             />
                             <TextInput
                                 name="organization"
                                 disabled={disabled}
-                                onChange={onValueChange}
+                                onChange={setFieldValue}
                                 value={value?.organization}
-                                error={error?.fields?.organization}
+                                error={error?.organization}
                                 label={_ts('myProfile', 'organization')}
                                 placeholder={_ts('myProfile', 'organization')}
                             />
@@ -257,9 +260,9 @@ function MyProfile(props: Props & PropsFromDispatch) {
                             <SelectInput
                                 name="language"
                                 disabled={disabled}
-                                onChange={onValueChange}
+                                onChange={setFieldValue}
                                 value={value?.language}
-                                error={error?.fields?.language}
+                                error={error?.language}
                                 label={_ts('myProfile', 'platformLanguage')}
                                 placeholder={_ts('myProfile', 'platformLanguage')}
                                 keySelector={langaugeKeySelector}

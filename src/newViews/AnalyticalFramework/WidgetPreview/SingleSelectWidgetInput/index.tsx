@@ -2,10 +2,11 @@ import React from 'react';
 import {
     SelectInput,
 } from '@the-deep/deep-ui';
+import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 
-import { SingleSelectValue, SingleSelectWidget, PartialForm } from '../../types';
+import { SingleSelectValue, SingleSelectWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialSingleSelectWidget = PartialForm<
