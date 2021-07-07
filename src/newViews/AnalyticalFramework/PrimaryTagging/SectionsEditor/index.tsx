@@ -361,7 +361,7 @@ function SectionsEditor(props: Props) {
                     <>
                         <NonFieldError error={error?.sections} />
                         <SortableList
-                            name="analyticalStatements"
+                            name="sections"
                             onChange={handleOrderChange}
                             data={value.sections}
                             keySelector={sectionKeySelector}

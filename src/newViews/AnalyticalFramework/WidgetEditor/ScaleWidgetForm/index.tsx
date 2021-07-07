@@ -3,6 +3,7 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
+import { GrDrag } from 'react-icons/gr';
 import {
     Button,
     Checkbox,
@@ -32,7 +33,8 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import { isValidColor } from '#utils/safeCommon';
+import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import { isValidColor, reorder } from '#utils/safeCommon';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
 import { ScaleWidget } from '../../types';
@@ -124,6 +126,10 @@ interface OptionInputProps {
     isDefault: boolean;
     clientId: string;
     onDefaultValueChange: (clientId: string | undefined) => void;
+    listeners?: Listeners,
+    attributes?: Attributes,
+    setNodeRef?: NodeRef,
+    style?: React.CSSProperties,
 }
 function OptionInput(props: OptionInputProps) {
     const {
@@ -136,6 +142,10 @@ function OptionInput(props: OptionInputProps) {
         isDefault,
         clientId,
         onDefaultValueChange,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
@@ -158,58 +168,72 @@ function OptionInput(props: OptionInputProps) {
     }, [onDefaultValueChange, clientId]);
 
     return (
-        <ExpandableContainer
-            className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
-            // FIXME: use strings
-            heading={`${heading} ${errored ? '*' : ''}`}
-            headerActions={(
-                <>
-                    <Checkbox
-                        value={isDefault}
-                        label="Default"
-                        name="default-checkbox"
-                        onChange={handleCheckboxChange}
-                    />
-                    <QuickActionButton
-                        name={index}
-                        onClick={handleRemove}
-                        // FIXME: use translation
-                        title="Remove Option"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
-            )}
+        <div
+            ref={setNodeRef}
+            style={style}
         >
-            <NonFieldError error={error} />
-            <TextInput
-                // FIXME: use translation
-                label="Label"
-                name="label"
-                value={value.label}
-                onChange={onFieldChange}
-                error={error?.label}
-            />
-            <TextInput
-                // FIXME: use translation
-                label="Color"
-                name="color"
-                value={value.color}
-                onChange={onFieldChange}
-                error={error?.color}
-            />
-            <TextArea
-                // FIXME: use translation
-                label="Tooltip"
-                name="tooltip"
-                rows={2}
-                value={value.tooltip}
-                onChange={onFieldChange}
-                error={error?.tooltip}
-            />
-        </ExpandableContainer>
+            <ExpandableContainer
+                className={className}
+                // NOTE: newly created elements should be open, else closed
+                defaultVisibility={!value.label}
+                // FIXME: use strings
+                heading={`${heading} ${errored ? '*' : ''}`}
+                headerActions={(
+                    <>
+                        <Checkbox
+                            value={isDefault}
+                            label="Default"
+                            name="default-checkbox"
+                            onChange={handleCheckboxChange}
+                        />
+                        <QuickActionButton
+                            name={index}
+                            onClick={handleRemove}
+                            // FIXME: use translation
+                            title="Remove Option"
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
+                )}
+            >
+                <NonFieldError error={error} />
+                <TextInput
+                    // FIXME: use translation
+                    label="Label"
+                    name="label"
+                    value={value.label}
+                    onChange={onFieldChange}
+                    error={error?.label}
+                />
+                <TextInput
+                    // FIXME: use translation
+                    label="Color"
+                    name="color"
+                    value={value.color}
+                    onChange={onFieldChange}
+                    error={error?.color}
+                />
+                <TextArea
+                    // FIXME: use translation
+                    label="Tooltip"
+                    name="tooltip"
+                    rows={2}
+                    value={value.tooltip}
+                    onChange={onFieldChange}
+                    error={error?.tooltip}
+                />
+            </ExpandableContainer>
+        </div>
     );
 }
 
@@ -265,12 +289,39 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 order: oldOptions.length,
             };
             onFieldChange(
-                [...oldOptions, newOption],
+                [...reorder(oldOptions), newOption],
                 'options' as const,
             );
         },
         [onFieldChange, value?.options],
     );
+
+    const handleOrderChange = useCallback((
+        newValues: PartialOptionType[],
+    ) => {
+        onFieldChange(reorder(newValues), 'options');
+    }, [onFieldChange]);
+
+    const optionRendererParams = useCallback((
+        key: string,
+        option: PartialOptionType,
+        index: number,
+    ) => ({
+        onChange: onOptionsChange,
+        onRemove: handleOptionRemove,
+        onDefaultValueChange: handleDefaultValueChange,
+        error: arrayError?.[key],
+        value: option,
+        clientId: key,
+        isDefault: value?.defaultValue === key,
+        index,
+    }), [
+        onOptionsChange,
+        handleOptionRemove,
+        handleDefaultValueChange,
+        value?.defaultValue,
+        arrayError,
+    ]);
 
     return (
         <>
@@ -308,19 +359,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 )}
             >
                 <NonFieldError error={error?.options} />
-                {value?.options?.map((option, index) => (
-                    <OptionInput
-                        clientId={option.clientId}
-                        key={option.clientId}
-                        index={index}
-                        value={option}
-                        onChange={onOptionsChange}
-                        onRemove={handleOptionRemove}
-                        error={arrayError?.[option.clientId]}
-                        isDefault={value?.defaultValue === option.clientId}
-                        onDefaultValueChange={handleDefaultValueChange}
-                    />
-                ))}
+                <SortableList
+                    name="options"
+                    onChange={handleOrderChange}
+                    data={value?.options}
+                    keySelector={optionKeySelector}
+                    renderer={OptionInput}
+                    direction="vertical"
+                    rendererParams={optionRendererParams}
+                    showDragOverlay
+                />
             </Container>
         </>
     );
