@@ -32,6 +32,7 @@ import {
 import ProjectDetailsForm from './ProjectDetailsForm';
 import Framework from './Framework';
 import Users from './Users';
+import GeoAreas from './GeoAreas';
 import styles from './styles.scss';
 
 interface PropsFromDispatch {
@@ -116,6 +117,13 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                             {_ts('projectEdit', 'projectDetailsLabel')}
                         </Tab>
                         <Tab
+                            name="geo-areas"
+                            className={styles.tab}
+                            disabled={isNotDefined(projectId)}
+                        >
+                            {_ts('projectEdit', 'geoAreas')}
+                        </Tab>
+                        <Tab
                             name="users"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
@@ -140,6 +148,14 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                             key={projectId}
                             projectId={projectId}
                             onCreate={handleCreate}
+                        />
+                    </TabPanel>
+                    <TabPanel
+                        className={styles.tabPanel}
+                        name="geo-areas"
+                    >
+                        <GeoAreas
+                            regions={activeProject.regions}
                         />
                     </TabPanel>
                     <TabPanel

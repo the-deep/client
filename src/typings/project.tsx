@@ -53,7 +53,7 @@ export interface ProjectDetails {
     title: string;
     isVisualizationEnabled: VisaulizationEnabledOptions;
     versionId: number;
-    regions: BasicElement[];
+    regions: BasicRegion[];
 
     memberStatus: 'admin' | 'member';
     role: number;
@@ -208,4 +208,32 @@ export interface ProjectMemberships {
 
 export interface ProjectRolesMap {
     [key: number]: ProjectRole;
+}
+
+export interface AdminLevel {
+    id: number;
+    title: string;
+    level: number;
+    nameProp: string;
+    codeProp: string;
+    parentNameProp: string;
+    parentCodeProp: string;
+}
+
+export interface BasicRegion {
+    id: number;
+    title: string;
+}
+export interface Region extends BasicRegion {
+    createdAt: string;
+    modifiedAt: string;
+    createdBy: number;
+    modifiedBy: number;
+    createdByName: string;
+    modifiedByName: string;
+    versionId: number;
+    adminLevels: AdminLevel[];
+    code: string;
+    title: string;
+    public: boolean;
 }

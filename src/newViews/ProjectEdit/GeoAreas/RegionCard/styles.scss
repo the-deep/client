@@ -1,0 +1,24 @@
+.region {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .header {
+        background-color: var(--dui-color-background);
+        padding: var(--dui-spacing-small);
+        font-size: var(--dui-font-size-large);
+        font-weight: var(--dui-font-weight-bold);
+    }
+
+    .admin-levels {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .admin-level {
+            display: flex;
+            flex-grow: 1;
+            padding: 0 var(--dui-spacing-small);
+        }
+    }
+}
