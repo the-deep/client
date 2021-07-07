@@ -30,7 +30,7 @@ import {
 } from '#utils/request';
 import _ts from '#ts';
 import { KeyValueElement, LeadOptions, EmmEntity } from '#typings';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import styles from './styles.scss';
 

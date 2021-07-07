@@ -29,17 +29,17 @@ import {
     useFormArray,
 } from '@togglecorp/toggle-form';
 
-import FullPageHeader from '#dui/FullPageHeader';
+import FullPageHeader from '#newComponents/ui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
-import BackLink from '#dui/BackLink';
+import BackLink from '#newComponents/ui/BackLink';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import notify from '#notify';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
-import SortableList from '#components/ui/SortableList';
+import SortableList from '#newComponents/ui/SortableList';
 
 import {
     GeoOptions,

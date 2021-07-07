@@ -29,7 +29,7 @@ import {
     randomString,
 } from '@togglecorp/fujs';
 
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import { isValidColor } from '#utils/safeCommon';
 
 import WidgetSizeInput from '../../WidgetSizeInput';

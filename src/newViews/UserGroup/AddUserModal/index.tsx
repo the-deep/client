@@ -17,7 +17,7 @@ import {
 
 import _ts from '#ts';
 import { useLazyRequest } from '#utils/request';
-import UserSelectInput from '#components/input/UserSelectInput';
+import UserSelectInput from '#newComponents/input/UserSelectInput';
 import {
     BasicUser,
 } from '#typings';

@@ -8,7 +8,7 @@ import Faram, {
 } from '@togglecorp/faram';
 import { reverseRoute } from '@togglecorp/fujs';
 
-import NewHCaptcha from '#components/ui/HCaptcha';
+import NewHCaptcha from '#newComponents/ui/HCaptcha';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';

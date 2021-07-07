@@ -5,7 +5,7 @@ import {
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import WidgetWrapper from '../../Widget';
 import { DateRangeValue } from '../../types';

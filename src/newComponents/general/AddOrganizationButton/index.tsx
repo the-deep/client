@@ -3,7 +3,7 @@ import { IoAdd } from 'react-icons/io5';
 import { Button } from '@the-deep/deep-ui';
 
 import { useModalState } from '#hooks/stateManagement';
-import AddOrganizationModal, { Props as AddOrganizationModalProps } from '#components/general/AddOrganizationModal';
+import AddOrganizationModal, { Props as AddOrganizationModalProps } from '#newComponents/general/AddOrganizationModal';
 import _ts from '#ts';
 
 type Props = Omit<AddOrganizationModalProps, 'onModalClose'> & {

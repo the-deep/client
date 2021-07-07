@@ -23,7 +23,7 @@ import {
 } from '#typings';
 import { ProjectRole } from '#typings/project';
 import _ts from '#ts';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import styles from './styles.scss';
 

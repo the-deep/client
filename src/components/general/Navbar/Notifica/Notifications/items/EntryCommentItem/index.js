@@ -6,7 +6,7 @@ import { reverseRoute, _cs } from '@togglecorp/fujs';
 import { currentUserProjectsSelector } from '#redux';
 import { pathNames } from '#constants';
 
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import _ts from '#ts';
 
 import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';

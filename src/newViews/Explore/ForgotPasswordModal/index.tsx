@@ -18,10 +18,10 @@ import {
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import HCaptchaSiteKey from '#config/hCaptcha';
 import { useLazyRequest } from '#utils/request';
-import HCaptcha from '#components/ui/HCaptcha';
+import HCaptcha from '#newComponents/ui/HCaptcha';
 
 import _ts from '#ts';
 

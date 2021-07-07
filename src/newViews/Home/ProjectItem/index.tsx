@@ -17,10 +17,10 @@ import {
 } from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
-import DateRangeOutput from '#dui/DateRangeOutput';
+import DateRangeOutput from '#newComponents/ui/DateRangeOutput';
 import List from '#rscv/List';
 import Icon from '#rscg/Icon';
-import ProgressLine from '#components/viz/ProgressLine';
+import ProgressLine from '#newComponents/viz/ProgressLine';
 
 import {
     AreaChart,

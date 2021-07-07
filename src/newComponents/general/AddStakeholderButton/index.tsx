@@ -3,7 +3,7 @@ import React from 'react';
 import { useModalState } from '#hooks/stateManagement';
 import { MdEdit } from 'react-icons/md';
 import { Button } from '@the-deep/deep-ui';
-import AddStakeholderModal, { Props as AddStakeholderModalProps } from '#components/general/AddStakeholderModal';
+import AddStakeholderModal, { Props as AddStakeholderModalProps } from '#newComponents/general/AddStakeholderModal';
 
 type Props<T> = Omit<AddStakeholderModalProps<T>, 'onModalClose'> & {
     className?: string;

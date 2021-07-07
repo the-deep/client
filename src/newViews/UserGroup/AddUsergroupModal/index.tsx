@@ -14,7 +14,7 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#utils/request';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import _ts from '#ts';
 
 interface UsergroupAdd {

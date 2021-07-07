@@ -13,7 +13,7 @@ import SortableList, {
     NodeRef,
     Attributes,
     Listeners,
-} from '#components/ui/SortableList';
+} from '#newComponents/ui/SortableList';
 
 import { Widget } from '../types';
 import WidgetPreview, { PartialWidget } from '../WidgetPreview';

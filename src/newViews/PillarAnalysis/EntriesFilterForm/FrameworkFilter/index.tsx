@@ -21,7 +21,7 @@ import {
     FilterOption,
     GeoOptions,
 } from '#typings';
-import GeoMultiSelectInput from '#components/input/GeoMultiSelectInput';
+import GeoMultiSelectInput from '#newComponents/input/GeoMultiSelectInput';
 import { FaramValues } from '../../';
 
 import styles from './styles.scss';

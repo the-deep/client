@@ -12,7 +12,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import EntryItem from '../../EntryItem';
 import EntryContext from '../../context';

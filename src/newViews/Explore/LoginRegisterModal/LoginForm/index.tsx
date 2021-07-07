@@ -25,9 +25,9 @@ import Captcha from '@hcaptcha/react-hcaptcha';
 import { parseUrlParams } from '@togglecorp/react-rest-request';
 
 import { useLazyRequest } from '#utils/request';
-import HCaptcha from '#components/ui/HCaptcha';
+import HCaptcha from '#newComponents/ui/HCaptcha';
 import { hidUrl } from '#config/hid';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import {
     loginAction,

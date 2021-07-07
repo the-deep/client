@@ -6,7 +6,7 @@ import {
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import FormattedDate from '#rscv/FormattedDate';
 import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';

@@ -27,7 +27,7 @@ import {
 
 import DropdownButton from '#components/general/DropdownButton';
 import TextOutput from '#components/general/TextOutput';
-import HighlightableText from '#components/viewer/HighlightableTextOutput';
+import HighlightableText from '#newComponents/viewer/HighlightableTextOutput';
 
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
 import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';

@@ -14,7 +14,7 @@ import {
     PasswordInput,
 } from '@the-deep/deep-ui';
 
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { User } from '#typings';

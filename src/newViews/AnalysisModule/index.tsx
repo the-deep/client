@@ -33,10 +33,10 @@ import {
 
 import Icon from '#rscg/Icon';
 import DateFilter from '#rsci/DateFilter';
-import Timeline from '#components/viz/Timeline';
+import Timeline from '#newComponents/viz/Timeline';
 
 import { useRequest, useLazyRequest } from '#utils/request';
-import RechartsLegend from '#components/ui/RechartsLegend';
+import RechartsLegend from '#newComponents/ui/RechartsLegend';
 import { SubNavbar } from '#components/general/Navbar';
 import { getDateWithTimezone } from '#utils/common';
 import { shortMonthNamesMap } from '#utils/safeCommon';

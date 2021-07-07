@@ -15,10 +15,10 @@ import {
 } from '@the-deep/deep-ui';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import { useRequest, useLazyRequest } from '#utils/request';
 import { MultiResponse, BasicUser, Membership } from '#typings';
-import UserSelectInput from '#components/input/UserSelectInput';
+import UserSelectInput from '#newComponents/input/UserSelectInput';
 import _ts from '#ts';
 
 import styles from './styles.scss';

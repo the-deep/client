@@ -30,7 +30,7 @@ import { useRequest, useLazyRequest } from '#utils/request';
 
 import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import {
     AnalysisElement,
     MatrixTocElement,

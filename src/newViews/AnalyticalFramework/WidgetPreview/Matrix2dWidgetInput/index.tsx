@@ -6,7 +6,7 @@ import {
     List,
 } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 import { sortByOrder } from '#utils/safeCommon';
 
 import { Matrix2dValue, Matrix2dWidget, PartialForm } from '../../types';

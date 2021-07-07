@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import WidgetWrapper from '../../Widget';
 

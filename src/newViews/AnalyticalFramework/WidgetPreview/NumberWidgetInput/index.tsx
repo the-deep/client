@@ -1,7 +1,7 @@
 import React from 'react';
 import { NumberInput } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#components/ui/SortableList';
+import { NodeRef } from '#newComponents/ui/SortableList';
 
 import WidgetWrapper from '../../Widget';
 import { NumberValue } from '../../types';

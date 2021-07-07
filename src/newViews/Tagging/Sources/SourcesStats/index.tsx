@@ -9,7 +9,7 @@ import {
 import { LeadSummary, ProjectStat } from '#typings';
 import _ts from '#ts';
 import { useRequest } from '#utils/request';
-import ProgressLine from '#components/viz/ProgressLine';
+import ProgressLine from '#newComponents/viz/ProgressLine';
 
 import { FormType as Filters } from '../SourcesFilter';
 import styles from './styles.scss';

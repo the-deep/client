@@ -3,10 +3,9 @@ import {
     _cs,
 } from '@togglecorp/fujs';
 
-import ListView from '#rscv/List/ListView';
 import { IoIosContacts } from 'react-icons/io';
 
-import { ContainerCard } from '@the-deep/deep-ui';
+import { ContainerCard, ListView } from '@the-deep/deep-ui';
 
 import { ProjectOrganization } from '#typings';
 import { organizationTitleSelector } from '#entities/organization';

@@ -4,7 +4,7 @@ import {
     Link,
 } from '@the-deep/deep-ui';
 
-import Avatar from '#dui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import FormattedDate from '#rscv/FormattedDate';
 
 import _ts from '#ts';

@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import Avatar from '#dui/Avatar';
-import HighlightableTextOutput from '#components/viewer/HighlightableTextOutput';
 import {
     ElementFragments,
     DraggableContent,
 } from '@the-deep/deep-ui';
 
+import Avatar from '#newComponents/ui/Avatar';
+import HighlightableTextOutput from '#newComponents/viewer/HighlightableTextOutput';
 import { Organization } from '#typings';
 
 import styles from './styles.scss';

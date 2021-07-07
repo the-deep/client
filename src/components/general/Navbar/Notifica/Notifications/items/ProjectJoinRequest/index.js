@@ -9,7 +9,7 @@ import {
 import { reverseRoute, _cs } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 

@@ -17,7 +17,6 @@
     "baseUrl": ".",
     "paths": {
         "#components/*": ["./src/components/*"],
-        "#dui/*": ["./src/components/ui/*"],
         "#config/*": ["./src/config/*"],
         "#constants": ["./src/constants"],
         "#constants/*": ["./src/constants/*"],
@@ -46,6 +45,7 @@
         "#utils/*": ["./src/utils/*"],
         "#views/*": ["./src/views/*"],
         "#newViews/*": ["./src/newViews/*"],
+        "#newComponents/*": ["./src/newComponents/*"],
         "#widgetComponents/*": ["./src/widgetComponents/*"],
         "#widgets": ["./src/widgets"],
         "#widgets/*": ["./src/widgets/*"],

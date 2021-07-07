@@ -30,8 +30,8 @@ import {
     randomString,
 } from '@togglecorp/fujs';
 
-import NonFieldError from '#components/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#components/ui/SortableList';
+import NonFieldError from '#newComponents/ui/NonFieldError';
+import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
 
 import { Section, PartialForm } from '../../types';
 import styles from './styles.scss';

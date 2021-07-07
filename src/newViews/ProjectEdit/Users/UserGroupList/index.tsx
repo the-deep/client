@@ -17,7 +17,7 @@ import {
     PendingMessage,
 } from '@the-deep/deep-ui';
 
-import { createDateColumn } from '#dui/tableHelpers';
+import { createDateColumn } from '#newComponents/ui/tableHelpers';
 import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
@@ -29,7 +29,7 @@ import {
     UserGroup,
 } from '#typings';
 
-import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
+import ActionCell, { Props as ActionCellProps } from '#newComponents/ui/EditDeleteActionCell';
 import AddUserGroupModal from './AddUserGroupModal';
 import styles from './styles.scss';
 

@@ -16,6 +16,7 @@
         "typecheck": "tsc --incremental",
         "test": "TZ=Asia/Katmandu jest",
         "lint": "eslint ./src --config .eslintrc-check.js --cache",
+        "lint:strict": "eslint ./src --config .eslintrc.js --cache",
         "test:watch": "jest --watch",
         "test:coverage": "TZ=Asia/Katmandu jest --coverage",
         "vendor:clone": "./scripts/vendor-clone.sh"

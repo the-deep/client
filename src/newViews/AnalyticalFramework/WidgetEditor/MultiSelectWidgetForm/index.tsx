@@ -25,7 +25,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
-import NonFieldError from '#components/ui/NonFieldError';
+import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
 import { MultiSelectWidget, PartialForm } from '../../types';

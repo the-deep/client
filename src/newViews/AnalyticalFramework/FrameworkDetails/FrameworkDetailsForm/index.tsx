@@ -20,7 +20,7 @@ import {
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { AnalyticalFramework, BasicOrganization } from '#typings';
-import OrganizationSelectInput from '#components/input/OrganizationSelectInput';
+import OrganizationSelectInput from '#newComponents/input/OrganizationSelectInput';
 
 import UploadImage from './UploadImage';
 import styles from './styles.scss';

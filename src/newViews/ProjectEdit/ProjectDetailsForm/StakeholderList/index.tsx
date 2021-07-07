@@ -4,7 +4,7 @@ import {
 } from '@togglecorp/fujs';
 
 import { IoIosContacts } from 'react-icons/io';
-import Avatar from '#components/ui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import {
     ContainerCard,
     ListView,
