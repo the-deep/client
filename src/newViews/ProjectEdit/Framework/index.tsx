@@ -19,7 +19,6 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
-    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import {

@@ -14,7 +14,6 @@ import {
     ObjectSchema,
     useForm,
     createSubmitHandler,
-    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import { useRequest } from '#utils/request';

@@ -158,6 +158,11 @@ function Analysis(props: ComponentProps) {
 
     const disabled = pendingAnalysisDelete;
 
+    const handleCloneSuccess = useCallback(() => {
+        triggerAnalysisList();
+        setModalHidden();
+    }, [triggerAnalysisList, setModalHidden]);
+
     return (
         <ContainerCard
             className={_cs(className, styles.analysisItem)}
@@ -319,7 +324,7 @@ function Analysis(props: ComponentProps) {
                     onClose={setModalHidden}
                     projectId={activeProject}
                     analysisId={analysisId}
-                    onClone={triggerAnalysisList}
+                    onClone={handleCloneSuccess}
                 />
             )}
         </ContainerCard>

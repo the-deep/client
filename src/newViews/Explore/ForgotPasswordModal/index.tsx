@@ -64,9 +64,7 @@ function ForgotPasswordModal(props: Props) {
     const [success, setSuccess] = useState(false);
 
     const initialValue = useMemo(
-        (): FormType => ({
-            email,
-        } ?? defaultFormValue),
+        (): FormType => (email ? { email } : defaultFormValue),
         [email],
     );
 

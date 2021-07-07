@@ -14,7 +14,8 @@ import {
     useForm,
     ObjectSchema,
     PartialForm,
-    requiredCondition,
+    getErrorObject,
+    requiredStringCondition,
 } from '@togglecorp/toggle-form';
 
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -36,15 +37,17 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        title: [requiredCondition],
-        startDate: [requiredCondition],
-        endDate: [requiredCondition],
+        title: [requiredStringCondition],
+        startDate: [requiredStringCondition],
+        endDate: [requiredStringCondition],
     }),
     validation: (value) => {
-        if (isDefined(value?.startDate) && isDefined(value?.endDate)) {
-            if ((compareDate(value?.startDate, value?.endDate) > 0)) {
-                return (_ts('analysis.cloneModal', 'endDateGreaterThanStartDate'));
-            }
+        if (
+            value?.startDate
+            && value?.endDate
+            && (compareDate(value.startDate, value.endDate) > 0)
+        ) {
+            return (_ts('analysis.cloneModal', 'endDateGreaterThanStartDate'));
         }
         return undefined;
     },
@@ -76,12 +79,14 @@ function AnalysisCloneModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-        onValueSet,
-    } = useForm(defaultFormValue, schema);
+        setError,
+        setValue,
+    } = useForm(schema, defaultFormValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: pendingAnalysisGet,
@@ -89,7 +94,7 @@ function AnalysisCloneModal(props: Props) {
         url: `server://projects/${projectId}/analysis/${analysisId}/`,
         method: 'GET',
         onSuccess: (response) => {
-            onValueSet({
+            setValue({
                 title: response.title,
                 startDate: response.startDate,
                 endDate: response.endDate,
@@ -107,25 +112,24 @@ function AnalysisCloneModal(props: Props) {
         method: 'POST',
         body: ctx => ctx,
         onSuccess: () => {
-            onClone();
-            onClose();
             notify.send({
                 title: _ts('analysis.cloneModal', 'analysisClone'),
                 type: notify.type.SUCCESS,
                 message: _ts('analysis.cloneModal', 'analysisCloneSuccessful'),
                 duration: notify.duration.MEDIUM,
             });
+            onClone();
         },
         failureHeader: _ts('analysis.cloneModal', 'anaylsisCloneFailed'),
     });
 
     const handleSubmitButtonClick = useCallback(() => {
         const { errored, error: err, value: val } = validate();
-        onErrorSet(err);
+        setError(err);
         if (!errored && isDefined(val)) {
             triggerAnalysisClone(val as FormType);
         }
-    }, [triggerAnalysisClone, onErrorSet, validate]);
+    }, [triggerAnalysisClone, setError, validate]);
 
     const pending = pendingAnalysisClone || pendingAnalysisGet;
 
@@ -154,8 +158,8 @@ function AnalysisCloneModal(props: Props) {
                 label={_ts('analysis.cloneModal', 'analysisCloneTitleLabel')}
                 placeholder={_ts('analysis.cloneModal', 'analysisCloneTitlePlaceholder')}
                 value={value.title}
-                error={error?.fields?.title}
-                onChange={onValueChange}
+                error={error?.title}
+                onChange={setFieldValue}
                 disabled={pending}
             />
             <div className={styles.inline}>
@@ -164,8 +168,8 @@ function AnalysisCloneModal(props: Props) {
                     className={styles.date}
                     label={_ts('analysis.cloneModal', 'analysisCloneStartDateLabel')}
                     value={value.startDate}
-                    error={error?.fields?.startDate}
-                    onChange={onValueChange}
+                    error={error?.startDate}
+                    onChange={setFieldValue}
                     disabled={pending}
                 />
                 <DateInput
@@ -173,8 +177,8 @@ function AnalysisCloneModal(props: Props) {
                     className={styles.date}
                     label={_ts('analysis.cloneModal', 'analysisCloneEndDateLabel')}
                     value={value.endDate}
-                    error={error?.fields?.endDate}
-                    onChange={onValueChange}
+                    error={error?.endDate}
+                    onChange={setFieldValue}
                     disabled={pending}
                 />
             </div>
