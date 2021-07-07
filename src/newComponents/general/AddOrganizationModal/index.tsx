@@ -6,6 +6,7 @@ import {
     urlCondition,
     ObjectSchema,
     requiredStringCondition,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     PendingMessage,
@@ -84,21 +85,23 @@ function AddOrganizationModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(defaultFormValue, organizationSchema);
+        setError,
+    } = useForm(organizationSchema, defaultFormValue);
+
+    const error = getErrorObject(riskyError);
 
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 createOrganization(val);
             }
         },
-        [onErrorSet, validate, createOrganization],
+        [setError, validate, createOrganization],
     );
     const pending = organizationTypesPending || organizationPostPending;
 
@@ -125,9 +128,9 @@ function AddOrganizationModal(props: Props) {
                 className={styles.input}
                 name="title"
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value?.title}
-                error={error?.fields?.title}
+                error={error?.title}
                 label={_ts('addOrganizationModal', 'titleLabel')}
                 placeholder={_ts('addOrganizationModal', 'titleLabel')}
                 autoFocus
@@ -136,9 +139,9 @@ function AddOrganizationModal(props: Props) {
                 className={styles.input}
                 name="shortName"
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value?.shortName}
-                error={error?.fields?.shortName}
+                error={error?.shortName}
                 label={_ts('addOrganizationModal', 'shortName')}
                 placeholder={_ts('addOrganizationModal', 'shortName')}
             />
@@ -146,19 +149,19 @@ function AddOrganizationModal(props: Props) {
                 className={styles.input}
                 name="url"
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value?.url}
-                error={error?.fields?.url}
+                error={error?.url}
                 label={_ts('addOrganizationModal', 'url')}
                 placeholder={_ts('addOrganizationModal', 'url')}
             />
             <SelectInput
                 className={styles.input}
                 name="organizationType"
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 options={organizatonTypesResponse?.results}
                 value={value?.organizationType}
-                error={error?.fields?.organizationType}
+                error={error?.organizationType}
                 keySelector={organizationTypeKeySelector}
                 labelSelector={organizationTypeLabelSelector}
                 label={_ts('addOrganizationModal', 'organizationType')}

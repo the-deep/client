@@ -2,10 +2,11 @@ import React from 'react';
 import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
+import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 
-import { MultiSelectValue, MultiSelectWidget, PartialForm } from '../../types';
+import { MultiSelectValue, MultiSelectWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialMultiSelectWidget = PartialForm<

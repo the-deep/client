@@ -7,6 +7,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -89,11 +90,13 @@ function AddUserModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(formValueFromProps, schema);
+        setError,
+    } = useForm(schema, formValueFromProps);
+
+    const error = getErrorObject(riskyError);
 
     const queryForRoles = useMemo(
         () => (isPrivateFramework ? ({ is_default_role: false }) : undefined),
@@ -137,12 +140,12 @@ function AddUserModal(props: Props) {
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 triggerAddFrameworkMember({ ...val, framework: frameworkId } as ValueToSend);
             }
         },
-        [onErrorSet, validate, triggerAddFrameworkMember, frameworkId],
+        [setError, validate, triggerAddFrameworkMember, frameworkId],
     );
 
     const currentUser = useMemo(() => (userValue ?
@@ -181,10 +184,10 @@ function AddUserModal(props: Props) {
                 name="member"
                 readOnly={isDefined(userValue)}
                 value={value.member}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 options={userOptions ?? currentUser}
                 onOptionsChange={setUserOptions}
-                error={error?.fields?.member}
+                error={error?.member}
                 disabled={pendingRequests}
                 optionsPopupClassName={styles.optionsPopup}
                 label={_ts('analyticalFramework.addUser', 'userLabel')}
@@ -197,11 +200,11 @@ function AddUserModal(props: Props) {
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
                 optionsPopupClassName={styles.optionsPopup}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.role}
                 label={_ts('analyticalFramework.addUser', 'roleLabel')}
                 placeholder={_ts('analyticalFramework.addUser', 'selectRolePlaceholder')}
-                error={error?.fields?.role}
+                error={error?.role}
                 disabled={pendingRequests}
             />
         </Modal>

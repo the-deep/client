@@ -20,10 +20,12 @@ import {
     useFormObject,
     useFormArray,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     analyzeErrors,
     Error,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     randomString,
@@ -33,7 +35,7 @@ import NonFieldError from '#newComponents/ui/NonFieldError';
 import { isValidColor } from '#utils/safeCommon';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
-import { ScaleWidget, PartialForm } from '../../types';
+import { ScaleWidget } from '../../types';
 import styles from './styles.scss';
 
 const OPTIONS_LIMIT = 20;
@@ -116,7 +118,7 @@ interface OptionInputProps {
     className?: string;
     value: PartialOptionType;
     error: Error<OptionType> | undefined;
-    onChange: (value: StateArg<PartialOptionType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialOptionType>, index: number) => void;
     onRemove: (index: number, isDefault: boolean) => void;
     index: number;
     isDefault: boolean;
@@ -127,7 +129,7 @@ function OptionInput(props: OptionInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
@@ -137,6 +139,8 @@ function OptionInput(props: OptionInputProps) {
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
+
+    const error = getErrorObject(riskyError);
 
     const handleRemove = useCallback(() => {
         onRemove(index, isDefault);
@@ -186,7 +190,7 @@ function OptionInput(props: OptionInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextInput
                 // FIXME: use translation
@@ -194,7 +198,7 @@ function OptionInput(props: OptionInputProps) {
                 name="color"
                 value={value.color}
                 onChange={onFieldChange}
-                error={error?.fields?.color}
+                error={error?.color}
             />
             <TextArea
                 // FIXME: use translation
@@ -203,7 +207,7 @@ function OptionInput(props: OptionInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
         </ExpandableContainer>
     );
@@ -215,23 +219,25 @@ interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
     error: Error<DataType> | undefined;
-    onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
+    onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
     className?: string;
 }
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        error,
+        error: riskyError,
         onChange,
         name,
         className,
     } = props;
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.options);
 
     const {
-        onValueChange: onOptionsChange,
-        onValueRemove: onOptionsRemove,
+        setValue: onOptionsChange,
+        removeValue: onOptionsRemove,
     } = useFormArray('options', onFieldChange);
 
     const handleDefaultValueChange = useCallback((newDefaultValue?: string) => {
@@ -282,7 +288,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 options={value?.options}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
-                error={error?.fields?.defaultValue}
+                error={error?.defaultValue}
                 readOnly
             />
             <Container
@@ -301,7 +307,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.options} />
+                <NonFieldError error={error?.options} />
                 {value?.options?.map((option, index) => (
                     <OptionInput
                         clientId={option.clientId}
@@ -310,7 +316,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         value={option}
                         onChange={onOptionsChange}
                         onRemove={handleOptionRemove}
-                        error={error?.fields?.options?.members?.[option.clientId]}
+                        error={arrayError?.[option.clientId]}
                         isDefault={value?.defaultValue === option.clientId}
                         onDefaultValueChange={handleDefaultValueChange}
                     />
@@ -338,11 +344,13 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -361,7 +369,7 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
@@ -396,21 +404,21 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <WidgetSizeInput
                     name="width"
                     className={styles.input}
                     value={value.width}
-                    onChange={onValueChange}
-                    error={error?.fields?.width}
+                    onChange={setFieldValue}
+                    error={error?.width}
                 />
                 <DataInput
                     name="data"
                     value={value.data}
-                    onChange={onValueChange}
-                    error={error?.fields?.data}
+                    onChange={setFieldValue}
+                    error={error?.data}
                 />
             </Container>
         </form>

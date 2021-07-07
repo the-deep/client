@@ -21,8 +21,9 @@ import {
 import {
     useFormArray,
     useFormObject,
-    StateArg,
+    SetValueArg,
     Error,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
@@ -49,7 +50,7 @@ interface AnalyticalStatementInputProps {
     className?: string;
     value: PartialAnalyticalStatementType;
     error: Error<AnalyticalStatementType> | undefined;
-    onChange: (value: StateArg<PartialAnalyticalStatementType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialAnalyticalStatementType>, index: number) => void;
     onRemove: (index: number) => void;
     onEntryMove: (entryId: number, statementClientId: string) => void;
     onEntryDrop: (entryId: number) => void;
@@ -70,7 +71,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         onEntryMove,
@@ -84,9 +85,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.analyticalEntries);
+
     const {
-        // onValueChange: onAnalyticalEntryChange,
-        onValueRemove: onAnalyticalEntryRemove,
+        // setValue: onAnalyticalEntryChange,
+        removeValue: onAnalyticalEntryRemove,
     } = useFormArray('analyticalEntries', onFieldChange);
 
     type AnalyticalEntry = typeof value.analyticalEntries;
@@ -228,7 +232,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         rows={4}
                         value={value.statement}
                         onChange={onFieldChange}
-                        error={error?.fields?.statement}
+                        error={error?.statement}
                     />
                 </div>
                 <div className={styles.bottomContainer}>
@@ -241,8 +245,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                                 value={analyticalEntry}
                                 // onChange={onAnalyticalEntryChange}
                                 onRemove={onAnalyticalEntryRemove}
-                                // eslint-disable-next-line max-len
-                                error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.clientId]}
+                                error={arrayError?.[analyticalEntry.clientId]}
                                 onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
                             />
                         ))}

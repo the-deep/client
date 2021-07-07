@@ -7,8 +7,8 @@ import {
 import {
     useForm,
     ObjectSchema,
-    arrayCondition,
-    StateArg,
+    defaultEmptyArrayType,
+    SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
     Heading,
@@ -33,11 +33,11 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const stakeholdersSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        lead_organization: [arrayCondition],
-        international_partner: [arrayCondition],
-        national_partner: [arrayCondition],
-        donor: [arrayCondition],
-        government: [arrayCondition],
+        lead_organization: [defaultEmptyArrayType],
+        international_partner: [defaultEmptyArrayType],
+        national_partner: [defaultEmptyArrayType],
+        donor: [defaultEmptyArrayType],
+        government: [defaultEmptyArrayType],
     }),
 };
 
@@ -45,7 +45,7 @@ export type BasicProjectOrganization = Pick<ProjectOrganization, 'organization' 
 
 export interface Props<T> {
     name: T;
-    onChange: (value: StateArg<BasicProjectOrganization[] | undefined>, name: T) => void;
+    onChange: (value: SetValueArg<BasicProjectOrganization[] | undefined>, name: T) => void;
     options: BasicOrganization[];
     onOptionsChange: (value: BasicOrganization[]) => void;
     value?: BasicProjectOrganization[];
@@ -80,15 +80,15 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
     const {
         pristine,
         value,
-        onValueChange,
-    } = useForm(initialFormValue, stakeholdersSchema);
+        setFieldValue,
+    } = useForm(stakeholdersSchema, initialFormValue);
 
     const handleChange = useCallback(
         (stakeholders: number[], organizationType) => {
-            onValueChange(() => (
+            setFieldValue(() => (
                 stakeholders
             ), organizationType);
-        }, [onValueChange],
+        }, [setFieldValue],
     );
     const handleSubmitButtonClick = () => {
         const organizations = mapToList(value, (v, key) => {

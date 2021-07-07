@@ -8,6 +8,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -96,11 +97,13 @@ function AddUserGroupModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(formValue, schema);
+        setError,
+    } = useForm(schema, formValue);
+
+    const error = getErrorObject(riskyError);
 
     const queryForUsergroups = useMemo(() => ({
         members_exclude_project: projectId,
@@ -146,12 +149,12 @@ function AddUserGroupModal(props: Props) {
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 triggerAddUserGroup(val as ValueToSend);
             }
         },
-        [onErrorSet, validate, triggerAddUserGroup],
+        [setError, validate, triggerAddUserGroup],
     );
 
     const usergroupList = useMemo(() => {
@@ -208,9 +211,9 @@ function AddUserGroupModal(props: Props) {
                 keySelector={usergroupKeySelector}
                 labelSelector={usergroupLabelSelector}
                 optionsPopupClassName={styles.optionsPopup}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.usergroup}
-                error={error?.fields?.usergroup}
+                error={error?.usergroup}
                 label={_ts('projectEdit', 'usergroupLabel')}
                 placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
             />
@@ -221,9 +224,9 @@ function AddUserGroupModal(props: Props) {
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
                 optionsPopupClassName={styles.optionsPopup}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.role}
-                error={error?.fields?.role}
+                error={error?.role}
                 label={_ts('projectEdit', 'roleLabel')}
                 placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
             />

@@ -135,15 +135,15 @@ function EntriesFilterForm(props: OwnProps) {
     const {
         pristine,
         validate,
-        onErrorSet,
+        setError,
         value,
-        onValueSet,
-        onValueChange,
-    } = useForm(initialValue, schema);
+        setValue,
+        setFieldValue,
+    } = useForm(schema, initialValue);
 
     useEffect(() => {
-        onValueSet(filtersValue ?? initialValue);
-    }, [filtersValue, onValueSet]);
+        setValue(filtersValue ?? initialValue);
+    }, [filtersValue, setValue]);
 
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])
@@ -171,13 +171,13 @@ function EntriesFilterForm(props: OwnProps) {
             regions,
             geoOptions,
             value,
-            onValueChange,
+            onChange: setFieldValue,
             className: _cs(
                 styles.filter,
                 isMatrixFilter && styles.showFilter,
             ),
         });
-    }, [regions, geoOptions, value, onValueChange]);
+    }, [regions, geoOptions, value, setFieldValue]);
 
     const handleClearFilters = useCallback(() => {
         onFiltersValueChange({});
@@ -196,7 +196,7 @@ function EntriesFilterForm(props: OwnProps) {
                 styles.entriesFilterForm,
                 allFiltersVisible && styles.showFilters,
             )}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <MultiSelectInput
                 className={styles.filter}
@@ -204,7 +204,7 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 value={value?.created_by as (string[] | undefined)}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 options={entryOptions?.createdBy}
                 label={_ts('pillarAnalysis', 'createdByFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
@@ -219,7 +219,7 @@ function EntriesFilterForm(props: OwnProps) {
                 className={styles.filter}
                 name="comment_assignee"
                 value={value?.comment_assignee as (string[] | undefined)}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
@@ -230,7 +230,7 @@ function EntriesFilterForm(props: OwnProps) {
                 className={styles.filter}
                 name="comment_created_by"
                 value={value?.comment_created_by as (string[] | undefined)}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
@@ -242,7 +242,7 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 value={value?.comment_status as (string | undefined)}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 name="comment_status"
                 options={commentStatusOptions}
                 label={_ts('pillarAnalysis', 'commentStatusOptionsFilterLabel')}
@@ -252,7 +252,7 @@ function EntriesFilterForm(props: OwnProps) {
                 className={styles.filter}
                 name="verified"
                 value={value?.verified as (string | undefined)}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={verificationStatusOptions}
@@ -263,7 +263,7 @@ function EntriesFilterForm(props: OwnProps) {
                 className={styles.filter}
                 name="entry_type"
                 value={value?.entry_type as (string[] | undefined)}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryTypeOptions}

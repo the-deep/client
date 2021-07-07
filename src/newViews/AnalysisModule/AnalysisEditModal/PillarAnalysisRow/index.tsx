@@ -12,7 +12,9 @@ import {
     useFormObject,
     PartialForm,
     Error,
-    StateArg,
+    SetValueArg,
+    getErrorObject,
+    getErrorString,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -46,7 +48,7 @@ export interface Props {
     error: Error<PillarAnalysisFields> | undefined;
     index: number;
     matrixPillars?: MatrixTocElement[];
-    onChange: (value: StateArg<Value>, index: number) => void;
+    onChange: (value: SetValueArg<Value>, index: number) => void;
     onRemove: (index: number) => void;
     usersList: UserMini[];
     value: Value;
@@ -56,7 +58,7 @@ export interface Props {
 function PillarAnalysisRow(props: Props) {
     const {
         className,
-        error,
+        error: riskyError,
         index,
         matrixPillars,
         onChange,
@@ -66,13 +68,15 @@ function PillarAnalysisRow(props: Props) {
         pending,
     } = props;
 
+    const error = getErrorObject(riskyError);
+
     const onFieldChange = useFormObject(index, onChange, defaultValue);
 
     return (
         <div className={_cs(className, styles.pillarAnalysisRow)}>
             <TextInput
                 className={styles.input}
-                error={error?.fields?.title}
+                error={error?.title}
                 label={_ts('analysis.editModal', 'pillarAnalysisTitleLabel')}
                 name="title"
                 onChange={onFieldChange}
@@ -82,7 +86,7 @@ function PillarAnalysisRow(props: Props) {
             />
             <SelectInput
                 className={styles.input}
-                error={error?.fields?.assignee}
+                error={error?.assignee}
                 keySelector={userKeySelector}
                 label={_ts('analysis.editModal', 'pillarAnalysisAssigneeLabel')}
                 labelSelector={userLabelSelector}
@@ -95,7 +99,7 @@ function PillarAnalysisRow(props: Props) {
             />
             <MultiSelectInput
                 className={styles.input}
-                error={error?.fields?.filters?.$internal}
+                error={getErrorString(error?.filters)}
                 keySelector={idSelector}
                 label={_ts('analysis.editModal', 'pillarAnalysisPillarTitle')}
                 labelSelector={labelSelector}

@@ -18,16 +18,18 @@ import {
     useFormObject,
     useFormArray,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     analyzeErrors,
     Error,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
-import { Matrix1dWidget, PartialForm } from '../../types';
+import { Matrix1dWidget } from '../../types';
 import styles from './styles.scss';
 
 const ROWS_LIMIT = 20;
@@ -137,7 +139,7 @@ interface CellInputProps {
     className?: string;
     value: PartialCellType;
     error: Error<CellType> | undefined;
-    onChange: (value: StateArg<PartialCellType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialCellType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
 }
@@ -145,11 +147,13 @@ function CellInput(props: CellInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onFieldChange = useFormObject(index, onChange, defaultCellVal);
 
@@ -181,7 +185,7 @@ function CellInput(props: CellInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -190,7 +194,7 @@ function CellInput(props: CellInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
         </ExpandableContainer>
     );
@@ -204,7 +208,7 @@ interface RowInputProps {
     className?: string;
     value: PartialRowType;
     error: Error<RowType> | undefined;
-    onChange: (value: StateArg<PartialRowType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialRowType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
 }
@@ -212,17 +216,20 @@ function RowInput(props: RowInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
     } = props;
 
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.cells);
+
     const onFieldChange = useFormObject(index, onChange, defaultRowVal);
 
     const {
-        onValueChange: onCellsChange,
-        onValueRemove: onCellsRemove,
+        setValue: onCellsChange,
+        removeValue: onCellsRemove,
     } = useFormArray('cells', onFieldChange);
 
     const handleAdd = useCallback(
@@ -274,7 +281,7 @@ function RowInput(props: RowInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -283,7 +290,7 @@ function RowInput(props: RowInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
             <Container
                 className={className}
@@ -301,7 +308,7 @@ function RowInput(props: RowInputProps) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.cells} />
+                <NonFieldError error={error?.cells} />
                 {value.cells?.map((cell, cellIndex) => (
                     <CellInput
                         key={cell.clientId}
@@ -309,7 +316,7 @@ function RowInput(props: RowInputProps) {
                         value={cell}
                         onChange={onCellsChange}
                         onRemove={onCellsRemove}
-                        error={error?.fields?.cells?.members?.[cell.clientId]}
+                        error={arrayError?.[cell.clientId]}
                     />
                 ))}
             </Container>
@@ -323,23 +330,26 @@ interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
     error: Error<PartialDataType> | undefined;
-    onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
+    onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
     className?: string;
 }
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        error,
+        error: riskyError,
         onChange,
         name,
         className,
     } = props;
 
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.rows);
+
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
     const {
-        onValueChange: onRowsChange,
-        onValueRemove: onRowsRemove,
+        setValue: onRowsChange,
+        removeValue: onRowsRemove,
     } = useFormArray('rows', onFieldChange);
 
     const handleAdd = useCallback(
@@ -383,7 +393,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.rows} />
+                <NonFieldError error={error?.rows} />
                 {value?.rows?.map((row, index) => (
                     <RowInput
                         key={row.clientId}
@@ -391,7 +401,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         value={row}
                         onChange={onRowsChange}
                         onRemove={onRowsRemove}
-                        error={error?.fields?.rows?.members?.[row.clientId]}
+                        error={arrayError?.[row.clientId]}
                     />
                 ))}
             </Container>
@@ -417,11 +427,13 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -440,7 +452,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
     return (
         <form
             className={styles.widgetEdit}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
@@ -474,14 +486,14 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <DataInput
                     name="data"
                     value={value.data}
-                    onChange={onValueChange}
-                    error={error?.fields?.data}
+                    onChange={setFieldValue}
+                    error={error?.data}
                 />
             </Container>
         </form>

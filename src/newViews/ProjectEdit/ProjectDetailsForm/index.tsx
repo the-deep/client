@@ -23,10 +23,11 @@ import {
     ArraySchema,
     ObjectSchema,
     requiredStringCondition,
-    idCondition,
+    defaultUndefinedType,
     useForm,
     createSubmitHandler,
     requiredCondition,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
@@ -131,7 +132,7 @@ const organizationListSchema: StakeholderListSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        id: [idCondition],
+        id: [defaultUndefinedType],
         title: [requiredStringCondition],
         startDate: [],
         endDate: [],
@@ -183,28 +184,30 @@ function ProjectDetailsForm(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-        onValueSet,
-    } = useForm(initialValue, schema);
+        setError,
+        setValue,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
     useEffect(
         () => {
-            onValueSet((): FormType => (
+            setValue((): FormType => (
                 projectDetails ? {
                     ...projectDetails,
                     isPrivate: projectDetails.isPrivate.toString(),
                     organizations: getOrganizationValues(projectDetails),
                 } : initialValue
             ));
-            onErrorSet({});
+            setError({});
         },
-        [projectDetails, onErrorSet, onValueSet],
+        [projectDetails, setError, setValue],
     );
 
     const {
@@ -217,7 +220,7 @@ function ProjectDetailsForm(props: Props) {
             setProjectDetails(response);
             const options = getOrganizationOptions(response);
             setStakeholderOptions(options);
-            onErrorSet({});
+            setError({});
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
@@ -278,7 +281,7 @@ function ProjectDetailsForm(props: Props) {
     return (
         <form
             className={styles.projectDetails}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             {(pending || projectPatchPending) && <PendingMessage />}
             <NonFieldError error={error} />
@@ -288,9 +291,9 @@ function ProjectDetailsForm(props: Props) {
                         className={styles.input}
                         name="title"
                         disabled={disabled}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.title}
-                        error={error?.fields?.title}
+                        error={error?.title}
                         label={_ts('projectEdit', 'projectTitle')}
                         placeholder={_ts('projectEdit', 'projectTitle')}
                         autoFocus
@@ -300,9 +303,9 @@ function ProjectDetailsForm(props: Props) {
                             className={styles.dateInput}
                             name="startDate"
                             disabled={disabled}
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             value={value?.startDate}
-                            error={error?.fields?.startDate}
+                            error={error?.startDate}
                             label={_ts('projectEdit', 'projectStartDate')}
                             placeholder={_ts('projectEdit', 'projectStartDate')}
                         />
@@ -310,9 +313,9 @@ function ProjectDetailsForm(props: Props) {
                             className={styles.dateInput}
                             name="endDate"
                             disabled={disabled}
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             value={value?.endDate}
-                            error={error?.fields?.endDate}
+                            error={error?.endDate}
                             label={_ts('projectEdit', 'projectEndDate')}
                             placeholder={_ts('projectEdit', 'projectEndDate')}
                         />
@@ -321,9 +324,9 @@ function ProjectDetailsForm(props: Props) {
                         className={styles.input}
                         name="description"
                         disabled={disabled}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value?.description}
-                        error={error?.fields?.description}
+                        error={error?.description}
                         label={_ts('projectEdit', 'projectDescription')}
                         placeholder={_ts('projectEdit', 'projectDescription')}
                         rows={4}
@@ -341,7 +344,7 @@ function ProjectDetailsForm(props: Props) {
                             options={projectVisibilityOptions}
                             keySelector={projectVisibilityKeySelector}
                             labelSelector={projectVisibilityLabelSelector}
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             disabled={isDefined(projectId) || !accessPrivateProject}
                         />
                         { !accessPrivateProject && !isDefined(projectId) && (
@@ -359,9 +362,9 @@ function ProjectDetailsForm(props: Props) {
                         <Checkbox
                             name="hasAssessments"
                             disabled={disabled}
-                            onChange={onValueChange}
+                            onChange={setFieldValue}
                             value={value?.hasAssessments}
-                            // error={error?.fields?.hasAssessments}
+                            // error={error?.hasAssessments}
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />
                     </Container>
@@ -374,7 +377,7 @@ function ProjectDetailsForm(props: Props) {
                             <AddStakeholderButton
                                 name="organizations"
                                 value={value?.organizations}
-                                onChange={onValueChange}
+                                onChange={setFieldValue}
                                 onOptionsChange={setStakeholderOptions}
                                 options={stakeholderOptions}
                             />

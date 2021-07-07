@@ -1,19 +1,3 @@
-type Intersects<A, B> = A extends B ? true : never;
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type PartialForm<T, J extends string> = T extends object ? (
-    T extends (infer K)[] ? (
-        PartialForm<K, J>[]
-    ) : (
-        Intersects<J, keyof T> extends true ? (
-            { [P in Exclude<keyof T, J>]?: PartialForm<T[P], J> }
-            & Pick<T, keyof T & J>
-        ) : (
-            { [P in keyof T]?: PartialForm<T[P], J> }
-        )
-    )
-) : T;
-
 export type NumberValue = number;
 export type TextValue = string;
 export type DateValue = string;

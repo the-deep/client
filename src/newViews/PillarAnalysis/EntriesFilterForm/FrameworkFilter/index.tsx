@@ -38,7 +38,7 @@ interface Props {
     geoOptions?: GeoOptions;
     className?: string;
     value: FaramValues;
-    onValueChange: (...entries: EntriesAsList<FaramValues>) => void;
+    onChange: (...entries: EntriesAsList<FaramValues>) => void;
 }
 
 function FrameworkFilter(props: Props) {
@@ -49,7 +49,7 @@ function FrameworkFilter(props: Props) {
         geoOptions = emptyGeoOptions,
         className,
         value,
-        onValueChange,
+        onChange: setFieldValue,
     } = props;
 
     if (!filter?.type) {
@@ -63,7 +63,7 @@ function FrameworkFilter(props: Props) {
                 <GeoMultiSelectInput
                     name={filterKey}
                     value={value?.[filterKey] as (string[] | undefined)}
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     className={_cs(styles.frameworkFilter, className)}
                     label={title}
                     options={options}
@@ -77,7 +77,7 @@ function FrameworkFilter(props: Props) {
                 <MultiSelectInput
                     name={filterKey}
                     value={value?.[filterKey] as (string[] | undefined)}
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     label={title}
                     options={filter.options}
                     keySelector={filterKeySelector}
@@ -111,7 +111,7 @@ function FrameworkFilter(props: Props) {
                 <TextInput
                     name={filterKey}
                     value={value?.[filterKey] as (string | undefined)}
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                     label={title}
                     placeholder={_ts('entries', 'textSearchPlaceholder')}
                     className={_cs(styles.frameworkFilter, className)}

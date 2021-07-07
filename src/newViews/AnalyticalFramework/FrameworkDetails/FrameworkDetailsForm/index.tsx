@@ -7,6 +7,7 @@ import {
     ObjectSchema,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -68,9 +69,9 @@ function FrameworkDetailsForm(props: Props) {
     ] = useState<BasicOrganization[] | undefined | null>();
 
     const initialValue = useMemo(
-        (): PartialFormType | undefined => {
+        (): PartialFormType => {
             if (!analyticalFrameworkFromProps) {
-                return undefined;
+                return defaultFormValues;
             }
             const { title, organization, description } = analyticalFrameworkFromProps;
             return { title, organization, description };
@@ -81,12 +82,14 @@ function FrameworkDetailsForm(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onValueSet,
-        onErrorSet,
-    } = useForm(initialValue ?? defaultFormValues, schema);
+        setValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: frameworkPatchPending,
@@ -98,7 +101,7 @@ function FrameworkDetailsForm(props: Props) {
         body: ctx => ctx,
         onSuccess: (response) => {
             const { title, organization, description } = response;
-            onValueSet({ title, organization, description });
+            setValue({ title, organization, description });
             onSuccess(response);
         },
         failureHeader: _ts('analyticalFramework', 'title'),
@@ -106,11 +109,11 @@ function FrameworkDetailsForm(props: Props) {
 
     const handleSubmit = useCallback(() => {
         const { errored, error: err, value: val } = validate();
-        onErrorSet(err);
+        setError(err);
         if (!errored && isDefined(val)) {
             patchFramework(val);
         }
-    }, [onErrorSet, validate, patchFramework]);
+    }, [setError, validate, patchFramework]);
 
     const projectOrganizations = useMemo(() => (analyticalFrameworkFromProps?.organizationDetails ?
         [analyticalFrameworkFromProps.organizationDetails] : []
@@ -140,9 +143,9 @@ function FrameworkDetailsForm(props: Props) {
                 <div className={styles.details}>
                     <TextInput
                         name="title"
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         value={value.title}
-                        error={error?.fields?.title}
+                        error={error?.title}
                         disabled={pending}
                         label={_ts('analyticalFramework', 'frameworkTitle')}
                         placeholder={_ts('analyticalFramework', 'frameworkTitle')}
@@ -169,10 +172,10 @@ function FrameworkDetailsForm(props: Props) {
                         className={styles.input}
                         name="organization"
                         value={value.organization}
-                        onChange={onValueChange}
+                        onChange={setFieldValue}
                         options={organizationOptions ?? projectOrganizations}
                         onOptionsChange={setOrganizationOptions}
-                        error={error?.fields?.organization}
+                        error={error?.organization}
                         disabled={pending}
                         label={_ts('analyticalFramework', 'associatedOrganization')}
                         placeholder={_ts('analyticalFramework', 'associatedOrganization')}
@@ -181,8 +184,8 @@ function FrameworkDetailsForm(props: Props) {
                         className={styles.input}
                         name="description"
                         value={value.description}
-                        onChange={onValueChange}
-                        error={error?.fields?.description}
+                        onChange={setFieldValue}
+                        error={error?.description}
                         rows={3}
                         disabled={pending}
                         label={_ts('analyticalFramework', 'description')}
@@ -210,7 +213,7 @@ function FrameworkDetailsForm(props: Props) {
                     name="previewImage"
                     value={value.previewImage}
                     image={analyticalFrameworkFromProps?.previewImage}
-                    onChange={onValueChange}
+                    onChange={setFieldValue}
                 />
             </div>
         </Container>

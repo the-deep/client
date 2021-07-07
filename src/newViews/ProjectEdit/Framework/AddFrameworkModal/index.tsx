@@ -15,6 +15,7 @@ import {
     PartialForm,
     requiredCondition,
     useForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#utils/request';
@@ -81,11 +82,13 @@ function AddFrameworkModal(props: Props) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-    } = useForm(formValueFromProps, schema);
+        setError,
+    } = useForm(schema, formValueFromProps);
+
+    const error = getErrorObject(riskyError);
 
     const {
         pending: pendingAddAction,
@@ -111,12 +114,12 @@ function AddFrameworkModal(props: Props) {
     const handleSubmit = useCallback(
         () => {
             const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
+            setError(err);
             if (!errored && isDefined(val)) {
                 triggerCreateFramework(val as ValueToSend);
             }
         },
-        [onErrorSet, validate, triggerCreateFramework],
+        [setError, validate, triggerCreateFramework],
     );
 
     const pendingRequests = pendingAddAction;
@@ -147,22 +150,22 @@ function AddFrameworkModal(props: Props) {
             <TextInput
                 name="title"
                 className={styles.input}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.title}
                 label={_ts('projectEdit', 'titleLabel')}
                 placeholder={_ts('projectEdit', 'titlePlaceholder')}
-                error={error?.fields?.title}
+                error={error?.title}
                 disabled={pendingRequests}
             />
             <TextArea
                 name="description"
                 rows={5}
                 className={styles.input}
-                onChange={onValueChange}
+                onChange={setFieldValue}
                 value={value.description}
                 label={_ts('projectEdit', 'descriptionLabel')}
                 placeholder={_ts('projectEdit', 'descriptionPlaceholder')}
-                error={error?.fields?.description}
+                error={error?.description}
                 disabled={pendingRequests}
             />
         </Modal>

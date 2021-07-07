@@ -19,18 +19,21 @@ import {
     useFormObject,
     useFormArray,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     analyzeErrors,
     Error,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
+
 import { randomString } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { reorder } from '#utils/safeCommon';
 
-import { Matrix2dWidget, PartialForm } from '../../types';
+import { Matrix2dWidget } from '../../types';
 import styles from './styles.scss';
 
 const ROWS_LIMIT = 20;
@@ -213,7 +216,7 @@ interface SubRowInputProps {
     className?: string;
     value: PartialSubRowType;
     error: Error<SubRowType> | undefined;
-    onChange: (value: StateArg<PartialSubRowType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialSubRowType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
     listeners?: Listeners;
@@ -225,7 +228,7 @@ function SubRowInput(props: SubRowInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
@@ -236,6 +239,8 @@ function SubRowInput(props: SubRowInputProps) {
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubRowVal);
+
+    const error = getErrorObject(riskyError);
 
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Sub Row ${index + 1}`;
@@ -281,7 +286,7 @@ function SubRowInput(props: SubRowInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -290,7 +295,7 @@ function SubRowInput(props: SubRowInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
         </ExpandableContainer>
     );
@@ -304,7 +309,7 @@ interface RowInputProps {
     className?: string;
     value: PartialRowType;
     error: Error<RowType> | undefined;
-    onChange: (value: StateArg<PartialRowType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialRowType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
     listeners?: Listeners;
@@ -316,7 +321,7 @@ function RowInput(props: RowInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
@@ -328,9 +333,12 @@ function RowInput(props: RowInputProps) {
 
     const onFieldChange = useFormObject(index, onChange, defaultRowVal);
 
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.subRows);
+
     const {
-        onValueChange: onSubRowsChange,
-        onValueRemove: onSubRowsRemove,
+        setValue: onSubRowsChange,
+        removeValue: onSubRowsRemove,
     } = useFormArray('subRows', onFieldChange);
 
     const handleAdd = useCallback(
@@ -371,9 +379,9 @@ function RowInput(props: RowInputProps) {
             value: data,
             onChange: onSubRowsChange,
             onRemove: onSubRowsRemove,
-            error: error?.fields?.subRows?.members?.[key],
+            error: arrayError?.[key],
         }),
-        [onSubRowsChange, onSubRowsRemove, error?.fields?.subRows?.members],
+        [onSubRowsChange, onSubRowsRemove, arrayError],
     );
 
     return (
@@ -417,7 +425,7 @@ function RowInput(props: RowInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -426,7 +434,7 @@ function RowInput(props: RowInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
             <Container
                 className={className}
@@ -444,7 +452,7 @@ function RowInput(props: RowInputProps) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.subRows} />
+                <NonFieldError error={error?.subRows} />
                 <SortableList
                     name="subRows"
                     onChange={handleSubRowsOrderChange}
@@ -467,7 +475,7 @@ interface SubColumnInputProps {
     className?: string;
     value: PartialSubColumnType;
     error: Error<SubColumnType> | undefined;
-    onChange: (value: StateArg<PartialSubColumnType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialSubColumnType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
     listeners?: Listeners;
@@ -479,7 +487,7 @@ function SubColumnInput(props: SubColumnInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
@@ -490,6 +498,8 @@ function SubColumnInput(props: SubColumnInputProps) {
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubColumnVal);
+
+    const error = getErrorObject(riskyError);
 
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Sub Column ${index + 1}`;
@@ -535,7 +545,7 @@ function SubColumnInput(props: SubColumnInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -544,7 +554,7 @@ function SubColumnInput(props: SubColumnInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
         </ExpandableContainer>
     );
@@ -558,7 +568,7 @@ interface ColumnInputProps {
     className?: string;
     value: PartialColumnType;
     error: Error<ColumnType> | undefined;
-    onChange: (value: StateArg<PartialColumnType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialColumnType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
     listeners?: Listeners;
@@ -570,7 +580,7 @@ function ColumnInput(props: ColumnInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
@@ -580,11 +590,14 @@ function ColumnInput(props: ColumnInputProps) {
         style,
     } = props;
 
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.subColumns);
+
     const onFieldChange = useFormObject(index, onChange, defaultColumnVal);
 
     const {
-        onValueChange: onSubColumnsChange,
-        onValueRemove: onSubColumnsRemove,
+        setValue: onSubColumnsChange,
+        removeValue: onSubColumnsRemove,
     } = useFormArray('subColumns', onFieldChange);
 
     const handleAdd = useCallback(
@@ -625,9 +638,9 @@ function ColumnInput(props: ColumnInputProps) {
             value: data,
             onChange: onSubColumnsChange,
             onRemove: onSubColumnsRemove,
-            error: error?.fields?.subColumns?.members?.[key],
+            error: arrayError?.[key],
         }),
-        [onSubColumnsChange, onSubColumnsRemove, error?.fields?.subColumns?.members],
+        [onSubColumnsChange, onSubColumnsRemove, arrayError],
     );
 
     return (
@@ -671,7 +684,7 @@ function ColumnInput(props: ColumnInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -680,7 +693,7 @@ function ColumnInput(props: ColumnInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
             <Container
                 className={className}
@@ -698,7 +711,7 @@ function ColumnInput(props: ColumnInputProps) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.subColumns} />
+                <NonFieldError error={error?.subColumns} />
                 <SortableList
                     name="subColumns"
                     onChange={handleSubColumnOrderChange}
@@ -719,23 +732,27 @@ interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
     error: Error<PartialDataType> | undefined;
-    onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
+    onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
     className?: string;
 }
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        error,
+        error: riskyError,
         onChange,
         name,
         className,
     } = props;
 
+    const error = getErrorObject(riskyError);
+    const rowError = getErrorObject(error?.rows);
+    const columnError = getErrorObject(error?.columns);
+
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
     const {
-        onValueChange: onRowsChange,
-        onValueRemove: onRowsRemove,
+        setValue: onRowsChange,
+        removeValue: onRowsRemove,
     } = useFormArray('rows', onFieldChange);
 
     const handleRowAdd = useCallback(
@@ -760,8 +777,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     );
 
     const {
-        onValueChange: onColumnsChange,
-        onValueRemove: onColumnsRemove,
+        setValue: onColumnsChange,
+        removeValue: onColumnsRemove,
     } = useFormArray('columns', onFieldChange);
 
     const columnRendererParams = useCallback(
@@ -774,9 +791,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             value: data,
             onChange: onColumnsChange,
             onRemove: onColumnsRemove,
-            error: error?.fields?.columns?.members?.[key],
+            error: rowError?.[key],
         }),
-        [onColumnsChange, onColumnsRemove, error?.fields?.columns?.members],
+        [onColumnsChange, onColumnsRemove, rowError],
     );
 
     const rowRendererParams = useCallback(
@@ -789,9 +806,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             value: data,
             onChange: onRowsChange,
             onRemove: onRowsRemove,
-            error: error?.fields?.rows?.members?.[key],
+            error: columnError?.[key],
         }),
-        [onRowsChange, onRowsRemove, error?.fields?.rows?.members],
+        [onRowsChange, onRowsRemove, columnError],
     );
 
     const handleRowsOrderChange = useCallback((newRows: PartialRowType[]) => {
@@ -842,7 +859,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.rows} />
+                <NonFieldError error={error?.rows} />
                 <SortableList
                     name="rows"
                     onChange={handleRowsOrderChange}
@@ -869,7 +886,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.columns} />
+                <NonFieldError error={error?.columns} />
                 <SortableList
                     name="columns"
                     onChange={handleColumnsOrderChange}
@@ -902,11 +919,13 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -925,7 +944,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
     return (
         <form
             className={styles.widgetEdit}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
@@ -959,14 +978,14 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <DataInput
                     name="data"
                     value={value.data}
-                    onChange={onValueChange}
-                    error={error?.fields?.data}
+                    onChange={setFieldValue}
+                    error={error?.data}
                 />
             </Container>
         </form>

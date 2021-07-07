@@ -1,8 +1,9 @@
 import React from 'react';
+import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 
-import { Widget, PartialForm } from '../types';
+import { Widget } from '../types';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';

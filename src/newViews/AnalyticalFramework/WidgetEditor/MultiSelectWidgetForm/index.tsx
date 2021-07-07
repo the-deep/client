@@ -18,17 +18,19 @@ import {
     useFormObject,
     useFormArray,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     analyzeErrors,
     Error,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
-import { MultiSelectWidget, PartialForm } from '../../types';
+import { MultiSelectWidget } from '../../types';
 import styles from './styles.scss';
 
 const OPTIONS_LIMIT = 100;
@@ -105,7 +107,7 @@ interface OptionInputProps {
     className?: string;
     value: PartialOptionType;
     error: Error<OptionType> | undefined;
-    onChange: (value: StateArg<PartialOptionType>, index: number) => void;
+    onChange: (value: SetValueArg<PartialOptionType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
 }
@@ -113,13 +115,15 @@ function OptionInput(props: OptionInputProps) {
     const {
         className,
         value,
-        error,
+        error: riskyError,
         onChange,
         onRemove,
         index,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
+
+    const error = getErrorObject(riskyError);
 
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Option ${index + 1}`;
@@ -149,7 +153,7 @@ function OptionInput(props: OptionInputProps) {
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
-                error={error?.fields?.label}
+                error={error?.label}
             />
             <TextArea
                 // FIXME: use translation
@@ -158,7 +162,7 @@ function OptionInput(props: OptionInputProps) {
                 rows={2}
                 value={value.tooltip}
                 onChange={onFieldChange}
-                error={error?.fields?.tooltip}
+                error={error?.tooltip}
             />
         </ExpandableContainer>
     );
@@ -170,13 +174,13 @@ interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
     error: Error<DataType> | undefined;
-    onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
+    onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
     className?: string;
 }
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        error,
+        error: riskyError,
         onChange,
         name,
         className,
@@ -184,9 +188,12 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
 
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.options);
+
     const {
-        onValueChange: onOptionsChange,
-        onValueRemove: onOptionsRemove,
+        setValue: onOptionsChange,
+        removeValue: onOptionsRemove,
     } = useFormArray('options', onFieldChange);
 
     const handleAdd = useCallback(
@@ -232,7 +239,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error?.fields?.options} />
+                <NonFieldError error={error?.options} />
                 {value?.options?.map((option, index) => (
                     <OptionInput
                         key={option.clientId}
@@ -240,7 +247,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         value={option}
                         onChange={onOptionsChange}
                         onRemove={onOptionsRemove}
-                        error={error?.fields?.options?.members?.[option.clientId]}
+                        error={arrayError?.[option.clientId]}
                     />
                 ))}
             </Container>
@@ -266,11 +273,13 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -289,7 +298,7 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
@@ -324,21 +333,21 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <WidgetSizeInput
                     name="width"
                     className={styles.input}
                     value={value.width}
-                    onChange={onValueChange}
-                    error={error?.fields?.width}
+                    onChange={setFieldValue}
+                    error={error?.width}
                 />
                 <DataInput
                     name="data"
                     value={value.data}
-                    onChange={onValueChange}
-                    error={error?.fields?.data}
+                    onChange={setFieldValue}
+                    error={error?.data}
                 />
             </Container>
         </form>

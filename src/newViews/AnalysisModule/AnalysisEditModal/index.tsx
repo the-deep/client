@@ -13,7 +13,8 @@ import {
     ObjectSchema,
     ArraySchema,
     requiredCondition,
-    arrayCondition,
+    defaultEmptyArrayType,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
     PendingMessage,
@@ -44,7 +45,7 @@ import _ts from '#ts';
 import PillarAnalysisRow, { PillarAnalysisFields, Props as PillarAnalysisProps } from './PillarAnalysisRow';
 import styles from './styles.scss';
 
-type PartialForm<T> = RawPartialForm<T, { key: string }>;
+type PartialForm<T> = RawPartialForm<T, 'key'>;
 type AnalysisPillar = Partial<PillarAnalysisFields> & { key: string };
 
 type FormType = {
@@ -69,7 +70,7 @@ const analysisPillarSchema: AnalysisPillarSchema = {
         key: [],
         title: [requiredCondition],
         assignee: [requiredCondition],
-        filters: [requiredCondition, arrayCondition],
+        filters: [requiredCondition, defaultEmptyArrayType],
     }),
 };
 
@@ -135,12 +136,15 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     const {
         pristine,
         value,
-        error,
-        onValueChange,
+        error: riskyError,
+        setFieldValue,
         validate,
-        onErrorSet,
-        onValueSet,
-    } = useForm(defaultAnalysisFormValues, analysisFormSchema);
+        setError,
+        setValue,
+    } = useForm(analysisFormSchema, defaultAnalysisFormValues);
+
+    const error = getErrorObject(riskyError);
+    const arrayError = getErrorObject(error?.analysisPillar);
 
     const {
         pending: analysisGetPending,
@@ -148,7 +152,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         skip: !analysisToEdit,
         url: `server://projects/${projectId}/analysis/${analysisToEdit}/`,
         onSuccess: (response) => {
-            onValueSet({
+            setValue({
                 teamLead: response.teamLead,
                 title: response.title,
                 startDate: response.startDate,
@@ -212,9 +216,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     const pending = pendingFramework || pendingUsersList || pendingAnalysisEdit;
 
     const {
-        onValueChange: onRowChange,
-        onValueRemove: onRowRemove,
-    } = useFormArray('analysisPillar', onValueChange);
+        setValue: onRowChange,
+        removeValue: onRowRemove,
+    } = useFormArray('analysisPillar', setFieldValue);
 
     const rowRendererParams: (
         key: string,
@@ -222,7 +226,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         index: number,
     ) => PillarAnalysisProps = React.useCallback(
         (key, data, index) => ({
-            error: error?.fields?.analysisPillar?.members?.[key],
+            error: arrayError?.[key],
             index,
             matrixPillars,
             onChange: onRowChange as PillarAnalysisProps['onChange'],
@@ -231,16 +235,16 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             usersList: usersListResponse?.results ?? [],
             value: data,
         }),
-        [usersListResponse, matrixPillars, error, onRowChange, onRowRemove, pending],
+        [usersListResponse, matrixPillars, arrayError, onRowChange, onRowRemove, pending],
     );
 
     type AnalysisPillarList = typeof value.analysisPillar;
     const handleAddRowButtonClick = React.useCallback(() => {
         const newRow: PartialForm<AnalysisPillarType> = { key: randomString(16) };
-        onValueChange((oldValue: PartialForm<AnalysisPillarList>) => (
+        setFieldValue((oldValue: PartialForm<AnalysisPillarList>) => (
             [...(oldValue ?? []), newRow]
         ), 'analysisPillar' as const);
-    }, [onValueChange]);
+    }, [setFieldValue]);
 
     const handleSubmitButtonClick = React.useCallback(() => {
         const {
@@ -249,7 +253,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             value: finalValue,
         } = validate();
 
-        onErrorSet(validationError);
+        setError(validationError);
 
         if (!errored) {
             const matrixMap = listToMap(
@@ -271,9 +275,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         } else {
             console.error(validationError);
         }
-    }, [validate, onErrorSet, matrixPillars, triggerAnalysisEdit]);
+    }, [validate, setError, matrixPillars, triggerAnalysisEdit]);
 
-    const apError = error?.fields?.analysisPillar;
+    const apError = error?.analysisPillar;
 
     return (
         <Modal
@@ -313,9 +317,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 name="title"
                 placeholder={_ts('analysis.editModal', 'analysisTitlePlaceholder')}
                 value={value.title}
-                error={error?.fields?.title}
+                error={error?.title}
                 disabled={pending}
-                onChange={onValueChange}
+                onChange={setFieldValue}
             />
             <SelectInput
                 className={styles.input}
@@ -326,8 +330,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 options={usersListResponse?.results}
                 placeholder={_ts('analysis.editModal', 'teamLeadPlaceholder')}
                 value={value.teamLead}
-                error={error?.fields?.teamLead}
-                onChange={onValueChange}
+                error={error?.teamLead}
+                onChange={setFieldValue}
                 disabled={pending}
             />
             <DateInput
@@ -335,8 +339,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 name="startDate"
                 label={_ts('analysis.editModal', 'startDateLabel')}
                 value={value.startDate}
-                onChange={onValueChange}
-                error={error?.fields?.startDate}
+                onChange={setFieldValue}
+                error={error?.startDate}
                 disabled={pending}
             />
             <DateInput
@@ -344,8 +348,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 name="endDate"
                 label={_ts('analysis.editModal', 'endDateLabel')}
                 value={value.endDate}
-                onChange={onValueChange}
-                error={error?.fields?.endDate}
+                onChange={setFieldValue}
+                error={error?.endDate}
                 disabled={pending}
             />
             <div className={styles.analysisPillarListContainer}>

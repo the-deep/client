@@ -1,12 +1,13 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { internal } from '@togglecorp/toggle-form';
 
 import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    error?: {
-        $internal?: string | string[];
+    error?: string | {
+        [internal]?: string | string[];
     };
 }
 
@@ -16,13 +17,27 @@ function NonFieldError(props: Props) {
         className,
     } = props;
 
-    if (!error?.$internal) {
+    if (isNotDefined(error)) {
         return null;
     }
 
-    const children: React.ReactNode = Array.isArray(error.$internal)
-        ? error.$internal.join(', ')
-        : error.$internal;
+    if (typeof error === 'string') {
+        return (
+            <div className={_cs(styles.nonFieldError, className)}>
+                {error}
+            </div>
+        );
+    }
+
+    const internalError = error?.[internal];
+
+    if (!internalError) {
+        return null;
+    }
+
+    const children: React.ReactNode = Array.isArray(internalError)
+        ? internalError.join(', ')
+        : internalError;
 
     return (
         <div className={_cs(styles.nonFieldError, className)}>

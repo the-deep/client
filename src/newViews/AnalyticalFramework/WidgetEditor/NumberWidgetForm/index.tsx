@@ -10,16 +10,18 @@ import {
     useForm,
     useFormObject,
     createSubmitHandler,
-    StateArg,
+    SetValueArg,
     Error,
     requiredStringCondition,
+    PartialForm,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import { isTruthy } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
-import { NumberWidget, PartialForm } from '../../types';
+import { NumberWidget } from '../../types';
 
 import styles from './styles.scss';
 
@@ -72,17 +74,19 @@ interface DataInputProps<K extends string>{
     name: K;
     value: PartialDataType | undefined;
     error: Error<PartialDataType> | undefined;
-    onChange: (value: StateArg<PartialDataType | undefined>, name: K) => void;
+    onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
 }
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        error,
+        error: riskyError,
         onChange,
         name,
     } = props;
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
+
+    const error = getErrorObject(riskyError);
 
     return (
         <>
@@ -97,7 +101,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 name="defaultValue"
                 value={value?.defaultValue}
                 onChange={onFieldChange}
-                error={error?.fields?.defaultValue}
+                error={error?.defaultValue}
             />
             <NumberInput
                 className={styles.input}
@@ -106,7 +110,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 name="minValue"
                 value={value?.minValue}
                 onChange={onFieldChange}
-                error={error?.fields?.minValue}
+                error={error?.minValue}
             />
             <NumberInput
                 className={styles.input}
@@ -115,7 +119,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 name="maxValue"
                 value={value?.maxValue}
                 onChange={onFieldChange}
-                error={error?.fields?.maxValue}
+                error={error?.maxValue}
             />
         </>
     );
@@ -139,11 +143,13 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
     const {
         pristine,
         value,
-        error,
+        error: riskyError,
         validate,
-        onValueChange,
-        onErrorSet,
-    } = useForm(initialValue, schema);
+        setFieldValue,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const error = getErrorObject(riskyError);
 
     useEffect(
         () => {
@@ -162,7 +168,7 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
     return (
         <form
             className={styles.form}
-            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
+            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
                 heading={value?.title ?? 'Unnamed'}
@@ -200,21 +206,21 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
                     name="title"
                     autoFocus
                     value={value.title}
-                    onChange={onValueChange}
-                    error={error?.fields?.title}
+                    onChange={setFieldValue}
+                    error={error?.title}
                 />
                 <DataInput
                     name="data"
                     value={value.data}
-                    onChange={onValueChange}
-                    error={error?.fields?.data}
+                    onChange={setFieldValue}
+                    error={error?.data}
                 />
                 <WidgetSizeInput
                     name="width"
                     className={styles.input}
                     value={value.width}
-                    onChange={onValueChange}
-                    error={error?.fields?.width}
+                    onChange={setFieldValue}
+                    error={error?.width}
                 />
             </Container>
         </form>

@@ -2,31 +2,31 @@ import {
     ObjectSchema,
     PartialForm,
     ArraySchema,
-    idCondition,
+    defaultUndefinedType,
     requiredCondition,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
 import { AnalysisPillars } from '#typings';
 
 export type FormType = Pick<AnalysisPillars, 'mainStatement' | 'informationGap' | 'analyticalStatements'>;
-export type PartialFormType = PartialForm<FormType, { clientId: string }>;
+export type PartialFormType = PartialForm<FormType, 'clientId'>;
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 export type AnalyticalStatementType = NonNullable<NonNullable<FormType['analyticalStatements']>>[number];
 export type PartialAnalyticalStatementType = PartialForm<
-    AnalyticalStatementType, { clientId: string }
+    AnalyticalStatementType, 'clientId'
 >;
 
 export type AnalyticalEntryType = NonNullable<NonNullable<AnalyticalStatementType['analyticalEntries']>>[number];
-export type PartialAnalyticalEntryType = PartialForm<AnalyticalEntryType, { clientId: string }>;
+export type PartialAnalyticalEntryType = PartialForm<AnalyticalEntryType, 'clientId'>;
 
 type AnalyticalEntrySchema = ObjectSchema<PartialAnalyticalEntryType>;
 type AnalyticalEntrySchemaFields = ReturnType<AnalyticalEntrySchema['fields']>;
 const analyticalEntrySchema: AnalyticalEntrySchema = {
     fields: (): AnalyticalEntrySchemaFields => ({
-        id: [idCondition],
+        id: [defaultUndefinedType],
         clientId: [],
         order: [],
         entry: [requiredCondition],
@@ -45,7 +45,7 @@ type AnalyticalStatementSchema = ObjectSchema<PartialAnalyticalStatementType>;
 type AnalyticalStatementSchemaFields = ReturnType<AnalyticalStatementSchema['fields']>;
 const analyticalStatementSchema: AnalyticalStatementSchema = {
     fields: (): AnalyticalStatementSchemaFields => ({
-        id: [idCondition],
+        id: [defaultUndefinedType],
         clientId: [],
         order: [],
         statement: [requiredStringCondition],

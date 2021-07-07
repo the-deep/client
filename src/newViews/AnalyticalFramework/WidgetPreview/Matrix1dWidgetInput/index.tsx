@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
+import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 
-import { Matrix1dValue, Matrix1dWidget, PartialForm } from '../../types';
+import { Matrix1dValue, Matrix1dWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 import styles from './styles.scss';
