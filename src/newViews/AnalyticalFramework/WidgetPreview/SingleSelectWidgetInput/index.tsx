@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     SelectInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
+import { sortByOrder } from '#utils/safeCommon';
 
 import { SingleSelectValue, SingleSelectWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
@@ -54,6 +55,10 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         rootStyle,
     } = props;
 
+    const sortedOptions = useMemo(() => (
+        sortByOrder(widget?.data?.options)
+    ), [widget?.data?.options]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -64,7 +69,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         >
             <SelectInput
                 name={name}
-                options={widget?.data?.options}
+                options={sortedOptions}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 onChange={onChange}

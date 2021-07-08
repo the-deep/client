@@ -15,6 +15,7 @@ import {
     requiredCondition,
     defaultEmptyArrayType,
     getErrorObject,
+    requiredStringCondition,
 } from '@togglecorp/toggle-form';
 import {
     PendingMessage,
