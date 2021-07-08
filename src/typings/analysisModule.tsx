@@ -20,6 +20,7 @@ export interface AnalyticalStatement {
 
 export interface AnalysisPillars {
     id: number;
+    versionId: number;
     assigneeName: string;
     analysisTitle: string;
     mainStatement?: string;
@@ -27,7 +28,6 @@ export interface AnalysisPillars {
     analyticalStatements?: AnalyticalStatement[];
     createdAt: string;
     modifiedAt: string;
-    versionId: number;
     analysis: number;
 
     title: string;
