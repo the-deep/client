@@ -11,7 +11,6 @@ import {
     useForm,
     emailCondition,
     createSubmitHandler,
-    requiredCondition,
     requiredStringCondition,
     internal,
     getErrorObject,
@@ -40,7 +39,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        username: [emailCondition, requiredCondition],
+        username: [emailCondition, requiredStringCondition],
         firstName: [requiredStringCondition],
         lastName: [requiredStringCondition],
         organization: [requiredStringCondition],

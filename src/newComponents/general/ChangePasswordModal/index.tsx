@@ -4,7 +4,7 @@ import {
     useForm,
     ObjectSchema,
     PartialForm,
-    requiredCondition,
+    requiredStringCondition,
     lengthGreaterThanCondition,
     lengthSmallerThanCondition,
     getErrorObject,
@@ -50,17 +50,17 @@ function sameWithPasswordCondition(
 const changePasswordSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
         oldPassword: [
-            requiredCondition,
+            requiredStringCondition,
             lengthGreaterThanCondition(4),
             lengthSmallerThanCondition(129),
         ],
         newPassword: [
-            requiredCondition,
+            requiredStringCondition,
             lengthGreaterThanCondition(4),
             lengthSmallerThanCondition(129),
         ],
         confirmPassword: [
-            requiredCondition,
+            requiredStringCondition,
             sameWithPasswordCondition,
             lengthGreaterThanCondition(4),
             lengthSmallerThanCondition(129),

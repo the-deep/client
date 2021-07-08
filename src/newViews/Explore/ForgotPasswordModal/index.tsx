@@ -13,7 +13,6 @@ import {
     ObjectSchema,
     useForm,
     emailCondition,
-    requiredCondition,
     requiredStringCondition,
     internal,
     getErrorObject,
@@ -46,7 +45,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        email: [emailCondition, requiredCondition],
+        email: [emailCondition, requiredStringCondition],
         hcaptchaResponse: [requiredStringCondition],
     }),
 };

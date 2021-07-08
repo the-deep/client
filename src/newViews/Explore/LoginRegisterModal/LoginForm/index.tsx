@@ -14,7 +14,6 @@ import {
 import {
     ObjectSchema,
     useForm,
-    requiredCondition,
     emailCondition,
     createSubmitHandler,
     lengthGreaterThanCondition,
@@ -77,9 +76,9 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema = (captchaRequired: boolean): FormSchema => ({
     fields: (): FormSchemaFields => {
         let basicFields: FormSchemaFields = {
-            username: [emailCondition, requiredCondition],
+            username: [emailCondition, requiredStringCondition],
             password: [
-                requiredCondition,
+                requiredStringCondition,
                 lengthGreaterThanCondition(4),
                 lengthSmallerThanCondition(129),
             ],
