@@ -14,6 +14,7 @@ import {
 } from '#typings';
 import _ts from '#ts';
 
+import RegionMapList from './RegionMapList';
 import RegionCard from './RegionCard';
 import styles from './styles.scss';
 
@@ -37,7 +38,10 @@ function GeoAreas(props: Props) {
     return (
         <div className={_cs(className, styles.geoAreas)}>
             <div className={styles.mapContainer}>
-                map
+                <RegionMapList
+                    className={styles.map}
+                    regions={regions}
+                />
             </div>
             <div className={styles.listContainer}>
                 <Button

@@ -1464,7 +1464,10 @@
         "-94707190": "Clone Analysis",
         "-48458934": "Analysis Clone",
         "-53893586": "Successfully cloned selected Analysis",
-        "-38205358": "The analytical framework reference image has not been uploaded by the admin."
+        "-38205358": "The analytical framework reference image has not been uploaded by the admin.",
+        "-1481401001": "There are no geo areas in this project.",
+        "-1948140101": "Project maps",
+        "-10834810483": "Map not available.Please define appropriate admin levels and include corresponding geojson files."
     },
     "links": {
         "browserExtension": {
@@ -4223,7 +4226,10 @@
             "idProperty": -1383841901,
             "propertyName": -14834810210,
             "idParent": -1948348191,
-            "parentName": -1943910102
+            "parentName": -1943910102,
+            "noGeoAreas": -1481401001,
+            "projectMaps": -1948140101,
+            "mapNotAvailable": -10834810483
         },
         "analysis.cloneModal": {
             "analysisCloneEndDateLabel": 334,

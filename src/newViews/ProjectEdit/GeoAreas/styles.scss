@@ -2,12 +2,18 @@
     display: flex;
     flex-grow: 1;
     margin: var(--dui-spacing-large) var(--dui-spacing-extra-large);
-    background-color: var(--dui-color-white);
 
     .map-container {
         display: flex;
         flex-basis: 60%;
         flex-grow: 1;
+        margin-right: var(--dui-spacing-medium);
+
+        .map {
+            display: flex;
+            flex-grow: 1;
+            background-color: var(--dui-color-white);
+        }
     }
 
     .list-container {
@@ -15,6 +21,7 @@
         flex-basis: 40%;
         flex-direction: column;
         flex-grow: 1;
+        background-color: var(--dui-color-white);
         padding: var(--dui-spacing-medium);
 
         .add-custom {

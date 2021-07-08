@@ -237,3 +237,26 @@ export interface Region extends BasicRegion {
     title: string;
     public: boolean;
 }
+
+export interface GeoShapeFile {
+    id: number;
+    title: string;
+    file: string;
+    mimeType: string;
+}
+export interface AdminLevelGeoArea extends AdminLevel {
+    geoShapeFileDetails: GeoShapeFile;
+    geojsonFile: string;
+    boundsFile: string;
+    tolerance: number;
+    staleGeoAreas: boolean;
+    region: number;
+    geoShapeFile: number;
+}
+
+export interface GeoAreaBounds {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+}
