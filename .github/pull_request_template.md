@@ -1,5 +1,5 @@
-- Addresses xxxxxx (eg: #1 the-deep/client#1)
-- Depends on xxxxxx (eg: #1 the-deep/client#1)
+- Addresses XXX
+- Depends on XXX
 
 ## Changes
 
@@ -16,6 +16,7 @@
 - [ ] `console.log` meant for debugging
 - [ ] typos
 - [ ] unwanted comments
+- [ ] conflict markers
 
 ## This PR contains valid:
 
