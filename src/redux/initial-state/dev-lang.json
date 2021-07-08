@@ -476,7 +476,7 @@
         "1211": "Open google chooser",
         "1214": "Map not available",
         "1217": "Anon",
-        "1219": "Select a project",
+        "1219": "Select Project",
         "1220": "Admin panel",
         "1221": "Logout",
         "1222": "Locating the required gigapixels to render ...",
@@ -1463,7 +1463,8 @@
         "-77826051": "Failed To Clone Analysis",
         "-94707190": "Clone Analysis",
         "-48458934": "Analysis Clone",
-        "-53893586": "Successfully cloned selected Analysis"
+        "-53893586": "Successfully cloned selected Analysis",
+        "-38205358": "The analytical framework reference image has not been uploaded by the admin."
     },
     "links": {
         "browserExtension": {
@@ -2476,7 +2477,8 @@
             "tagging": -183108101,
             "sources": -183108101,
             "taggingDashboard": -183108101,
-            "taggingExport": -183108101
+            "taggingExport": -183108101,
+            "newUserGroup": -70810293
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3711,7 +3713,8 @@
             "searchLabel": -91293882,
             "searching": -435034987,
             "typeToSearchOrganizationMessage": -41987822,
-            "noResultsFoundMessage": -95930063
+            "noResultsFoundMessage": -95930063,
+            "addButtonLabel": 301
         },
         "components.entryEditButton": {
             "cancelButtonLabel": 61,
@@ -4003,7 +4006,8 @@
             "uploadFrameworkImage": -1823418301,
             "previewImageHeading": -183810101,
             "uploadFrameworkImageText": -184814819,
-            "previewImage": -19123812
+            "previewImage": -19123812,
+            "noImageUploaded": -38205358
         },
         "analyticalFramework.primaryTagging": {
             "nextButtonLabel": 23,

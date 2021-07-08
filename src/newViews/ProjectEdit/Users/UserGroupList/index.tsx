@@ -1,5 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import {
+    _cs,
+    isNotDefined,
+    reverseRoute,
+} from '@togglecorp/fujs';
 import {
     IoChevronForward,
     IoAdd,
@@ -20,6 +24,7 @@ import {
 import { createDateColumn } from '#newComponents/ui/tableHelpers';
 import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import { useModalState } from '#hooks/stateManagement';
@@ -34,7 +39,6 @@ import AddUserGroupModal from './AddUserGroupModal';
 import styles from './styles.scss';
 
 const maxItemsPerPage = 10;
-const emptyLink = '#'; // TODO: Add link when made
 const usergroupKeySelector = (d: UserGroup) => d.id;
 
 interface Props{
@@ -167,7 +171,7 @@ function UserGroupList(props: Props) {
                     </span>
                     <Link
                         className={styles.link}
-                        to={emptyLink}
+                        to={reverseRoute(pathNames.newUserGroup, {})}
                         actions={(
                             <IoChevronForward />
                         )}

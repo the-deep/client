@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrash, IoAdd } from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
+import { IoTrashOutline, IoAdd } from 'react-icons/io5';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     QuickActionButton,
     QuickActionConfirmButton,
@@ -71,7 +71,7 @@ function UserGroupActionCell(props: Props) {
                 disabled={disabled}
                 title={editButtonTitle}
             >
-                <MdModeEdit />
+                <FiEdit2 />
             </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
@@ -82,7 +82,7 @@ function UserGroupActionCell(props: Props) {
                 showConfirmationInitially={false}
                 disabled={disabled}
             >
-                <IoTrash />
+                <IoTrashOutline />
             </QuickActionConfirmButton>
         </div>
     );

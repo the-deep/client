@@ -39,18 +39,3 @@
         }
     }
 }
-
-.framework-image-preview-modal {
-    width: 96vw;
-    height: 96vh;
-
-    .body {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        .preview {
-            flex-grow: 1;
-        }
-    }
-}

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrash } from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
+import { IoTrashOutline } from 'react-icons/io5';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     QuickActionButton,
     QuickActionConfirmButton,
@@ -63,7 +63,7 @@ function ActionCell(props: Props) {
                 disabled={disabled}
                 title={editButtonTitle}
             >
-                <MdModeEdit />
+                <FiEdit2 />
             </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
@@ -74,7 +74,7 @@ function ActionCell(props: Props) {
                 showConfirmationInitially={false}
                 disabled={disabled}
             >
-                <IoTrash />
+                <IoTrashOutline />
             </QuickActionConfirmButton>
         </div>
     );

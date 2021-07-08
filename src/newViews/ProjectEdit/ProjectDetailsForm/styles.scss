@@ -9,21 +9,29 @@
 
     .content {
         display: flex;
-        flex-grow: 1;
 
-        .main {
+        .input {
+            display: flex;
+            flex-direction: column;
+            padding: var(--dui-spacing-medium);
+        }
+
+        .created-by-details {
+            margin-top: var(--dui-spacing-small);
+
+            .input {
+                flex-grow: 1;
+                flex-shrink: 0;
+            }
+        }
+
+        .left {
             display: flex;
             align-self: flex-start;
             flex-basis: 50%;
             flex-direction: column;
             flex-shrink: 0;
             justify-content: space-between;
-
-            .input {
-                display: flex;
-                flex-direction: column;
-                padding: var(--dui-spacing-medium);
-            }
 
             .dates {
                 display: flex;
@@ -35,19 +43,6 @@
                     flex-grow: 1;
                     flex-shrink: 0;
                     padding: var(--dui-spacing-medium);
-                }
-            }
-
-            .features {
-                display: flex;
-                background-color: var(--dui-color-white);
-
-                .heading {
-                    font-size: var(--dui-font-size-heading-extra-small);
-                }
-
-                .items {
-                    display: flex;
                 }
             }
 
@@ -82,6 +77,28 @@
                     }
                 }
             }
+        }
+
+        .right {
+            display: flex;
+            align-self: flex-start;
+            flex-basis: 50%;
+            flex-direction: column;
+            flex-shrink: 0;
+            justify-content: space-between;
+
+            .features {
+                display: flex;
+                background-color: var(--dui-color-white);
+
+                .heading {
+                    font-size: var(--dui-font-size-heading-extra-small);
+                }
+
+                .items {
+                    display: flex;
+                }
+            }
 
             .visibility {
                 background-color: var(--dui-color-white);
@@ -105,25 +122,6 @@
                     margin-left: var(--dui-spacing-small);
                 }
             }
-
-            .createdByDetails {
-                display: flex;
-                justify-content: space-between;
-                margin-top: var(--dui-spacing-small);
-
-                .input {
-                    flex-grow: 1;
-                    flex-shrink: 0;
-                }
-            }
-        }
-
-        .map {
-            display: flex;
-            flex-grow: 1;
-            margin: var(--dui-spacing-large);
-            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-            padding: var(--dui-spacing-large);
         }
     }
 

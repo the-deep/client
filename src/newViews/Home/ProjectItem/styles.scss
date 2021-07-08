@@ -92,6 +92,11 @@
             .project-activity-container {
                 flex-basis: 100%;
                 margin: var(--dui-spacing-small);
+                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+                .chart-header {
+                    border: none;
+                }
 
                 .chart-container {
                     display: flex;

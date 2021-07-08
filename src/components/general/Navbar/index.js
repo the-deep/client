@@ -360,6 +360,7 @@ function Navbar(props) {
                                     options={userProjects}
                                     placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
                                     value={activeProject}
+                                    variant="general"
                                 />
                             }
                         />

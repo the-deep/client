@@ -1,10 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
     ElementFragments,
-    ImagePreview,
     Button,
     Container,
-    Modal,
     Tabs,
     Tab,
     TabList,
@@ -15,10 +13,10 @@ import {
 import { _cs, randomString } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 
-import { useModalState } from '#hooks/stateManagement';
 import useLocalStorage from '#hooks/useLocalStorage';
 import _ts from '#ts';
 import { sortByOrder } from '#utils/safeCommon';
+import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
 
 import Canvas from '../Canvas';
 import WidgetEditor from '../WidgetEditor';
@@ -375,12 +373,6 @@ function PrimaryTagging(props: Props) {
     // NOTE: intentional console.info
     console.info('primary tagging in the framework', frameworkId);
 
-    const [
-        showPreviewModal,
-        setShowPreviewModalTrue,
-        setShowPreviewModalFalse,
-    ] = useModalState(false);
-
     const initialSections = useMemo(
         (): Section[] => [
             {
@@ -613,13 +605,11 @@ function PrimaryTagging(props: Props) {
                                 </Button>
                             )}
                         >
-                            <Button
-                                name={undefined}
+                            <FrameworkImageButton
+                                frameworkId={frameworkId}
+                                label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
                                 variant="secondary"
-                                onClick={setShowPreviewModalTrue}
-                            >
-                                {_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
-                            </Button>
+                            />
                         </ElementFragments>
                     </div>
                     <div className={styles.canvas}>
@@ -700,19 +690,6 @@ function PrimaryTagging(props: Props) {
                     </div>
                 </Tabs>
             </div>
-            {showPreviewModal && (
-                <Modal
-                    className={styles.frameworkImagePreviewModal}
-                    onCloseButtonClick={setShowPreviewModalFalse}
-                    bodyClassName={styles.body}
-                >
-                    <ImagePreview
-                        className={styles.preview}
-                        src="https://i.imgur.com/3Zk4aNH.jpg"
-                        alt="Under construction"
-                    />
-                </Modal>
-            )}
         </div>
     );
 }

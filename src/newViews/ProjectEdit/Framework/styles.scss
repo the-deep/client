@@ -8,7 +8,7 @@
 
     .left-container {
         flex-shrink: 0;
-        background-color: var(--dui-color-white);
+        background-color: var(--dui-color-background-information);
         padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium))
             calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
         width: var(--width-left-container);
@@ -38,7 +38,6 @@
                 .item {
                     display: block;
                     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                    border-left: var(--dui-width-separator-medium) solid transparent;
                     background-color: var(--dui-color-background-information);
                     padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small))
                         calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
@@ -62,12 +61,7 @@
                     }
 
                     &.selected {
-                        border-left-color: var(--dui-color-accent);
                         background-color: var(--dui-color-surface-information);
-
-                        .title {
-                            color: var(--dui-color-accent);
-                        }
                     }
                 }
 

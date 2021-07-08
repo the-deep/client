@@ -9,10 +9,8 @@ import {
     IoCheckmark,
     IoAdd,
 } from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
+import { FiEdit2 } from 'react-icons/fi';
 import {
-    Modal,
-    ImagePreview,
     ConfirmButton,
     Button,
     Tag,
@@ -28,6 +26,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import TextOutput from '#components/general/TextOutput';
+import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
 import { pathNames } from '#constants';
 import { useLazyRequest, useRequest } from '#utils/request';
 import { useModalState } from '#hooks/stateManagement';
@@ -105,12 +104,6 @@ function FrameworkDetail(props: Props) {
         to: '',
     }), []);
 
-    const [
-        referenceImageShown,
-        showReferenceImage,
-        hideReferenceImage,
-    ] = useModalState(false);
-
     const [frameworkToClone, setFrameworkToClone] = useState<Framework | undefined>();
 
     const [
@@ -155,6 +148,7 @@ function FrameworkDetail(props: Props) {
                             icons={(<IoAdd />)}
                             disabled={disableAllButtons}
                             onClick={handleFrameworkAddClick}
+                            variant="tertiary"
                         >
                             {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
                         </Button>
@@ -166,7 +160,7 @@ function FrameworkDetail(props: Props) {
                 heading={frameworkDetails?.title ?? '-'}
                 sub
                 headerDescriptionClassName={styles.createdAtContainer}
-                headerDescription={(
+                headingDescription={(
                     <>
                         {_ts('projectEdit', 'createdAtLabel')}
                         {frameworkDetails?.createdAt && (
@@ -228,7 +222,7 @@ function FrameworkDetail(props: Props) {
                                 },
                             )}
                         >
-                            <MdModeEdit />
+                            <FiEdit2 />
                         </QuickActionLink>
                         <QuickActionButton
                             title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
@@ -257,13 +251,10 @@ function FrameworkDetail(props: Props) {
                         className={styles.block}
                         label={_ts('projectEdit', 'analyticalFrameworkTitle')}
                         value={(
-                            <Button
-                                variant="action"
-                                name="openImageButton"
-                                onClick={showReferenceImage}
-                            >
-                                {_ts('projectEdit', 'referenceFrameworkImageLabel')}
-                            </Button>
+                            <FrameworkImageButton
+                                frameworkId={frameworkId}
+                                label={_ts('projectEdit', 'referenceFrameworkImageLabel')}
+                            />
                         )}
                         type="small-block"
                     />
@@ -282,26 +273,9 @@ function FrameworkDetail(props: Props) {
                     />
                 </div>
                 <Card className={styles.rightContainer}>
-                    <ImagePreview
-                        alt={_ts('projectEdit', 'frameworkReferenceImageAlt')}
-                        hideTools
-                        src={frameworkDetails?.previewImage}
-                    />
+                    Preview
                 </Card>
             </ContainerCard>
-            {referenceImageShown && (
-                <Modal
-                    className={styles.referenceImageModal}
-                    heading={_ts('projectEdit', 'frameworkReferenceImageModalHeading')}
-                    onCloseButtonClick={hideReferenceImage}
-                >
-                    <ImagePreview
-                        alt={_ts('projectEdit', 'frameworkReferenceImageAlt')}
-                        hideTools
-                        src={frameworkDetails?.previewImage}
-                    />
-                </Modal>
-            )}
             {frameworkAddModalShown && (
                 <AddFrameworkModal
                     frameworkToClone={frameworkToClone}
