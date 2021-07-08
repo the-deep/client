@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     ScaleInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
+import { sortByOrder } from '#utils/safeCommon';
 
 import { ScaleValue, ScaleWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialScaleWidget = PartialForm<
     ScaleWidget,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
@@ -55,6 +56,10 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         rootStyle,
     } = props;
 
+    const sortedOptions = useMemo(() => (
+        sortByOrder(widget?.data?.options)
+    ), [widget?.data?.options]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -65,7 +70,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         >
             <ScaleInput
                 name={name}
-                options={widget?.data?.options}
+                options={sortedOptions}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 colorSelector={optionColorSelector}
