@@ -68,7 +68,7 @@ type AnalysisPillarSchemaFields = ReturnType<AnalysisPillarSchema['fields']>;
 const analysisPillarSchema: AnalysisPillarSchema = {
     fields: (): AnalysisPillarSchemaFields => ({
         key: [],
-        title: [requiredCondition],
+        title: [requiredStringCondition],
         assignee: [requiredCondition],
         filters: [requiredCondition, defaultEmptyArrayType],
     }),
@@ -83,7 +83,7 @@ const analysisPillarListSchema: AnalysisPillarListSchema = {
 
 const analysisFormSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        title: [requiredCondition],
+        title: [requiredStringCondition],
         teamLead: [requiredCondition],
         startDate: [],
         endDate: [requiredCondition],

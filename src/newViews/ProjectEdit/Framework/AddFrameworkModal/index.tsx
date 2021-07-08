@@ -13,7 +13,7 @@ import {
 import {
     ObjectSchema,
     PartialForm,
-    requiredCondition,
+    requiredStringCondition,
     useForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
@@ -38,7 +38,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        title: [requiredCondition],
+        title: [requiredStringCondition],
         description: [],
     }),
 };

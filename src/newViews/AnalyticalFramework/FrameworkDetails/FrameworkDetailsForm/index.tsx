@@ -5,7 +5,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
-    requiredCondition,
+    requiredStringCondition,
     useForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
@@ -40,7 +40,7 @@ const defaultFormValues: PartialFormType = {};
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        title: [requiredCondition],
+        title: [requiredStringCondition],
         description: [],
         organization: [],
         previewImage: [],
