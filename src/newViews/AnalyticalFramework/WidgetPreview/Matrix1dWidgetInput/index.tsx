@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
+import { sortByOrder } from '#utils/safeCommon';
 
 import { Matrix1dValue, Matrix1dWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
@@ -11,7 +12,7 @@ import styles from './styles.scss';
 
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type Row = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['data']>['rows']>[number];
@@ -85,6 +86,10 @@ function Row(props: RowProps) {
         cells,
     } = row;
 
+    const sortedCells = useMemo(() => (
+        sortByOrder(cells)
+    ), [cells]);
+
     const cellKeySelector = useCallback(
         (cell: Cell) => cell.clientId,
         [],
@@ -113,7 +118,7 @@ function Row(props: RowProps) {
             </div>
             <div className={styles.tags}>
                 <List
-                    data={cells}
+                    data={sortedCells}
                     keySelector={cellKeySelector}
                     rendererParams={cellRendererParams}
                     renderer={Cell}
@@ -155,6 +160,10 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         rootStyle,
     } = props;
 
+    const sortedRows = useMemo(() => (
+        sortByOrder(widget?.data?.rows)
+    ), [widget?.data?.rows]);
+
     const handleCellChange = useCallback(
         (rowId: string, cellId: string, state: boolean) => {
             const newValue = {
@@ -194,7 +203,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
             rootStyle={rootStyle}
         >
             <List
-                data={widget?.data?.rows}
+                data={sortedRows}
                 keySelector={rowKeySelector}
                 rendererParams={rowRendererParams}
                 renderer={Row}

@@ -3,6 +3,7 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
+import { GrDrag } from 'react-icons/gr';
 import {
     Button,
     TextInput,
@@ -28,6 +29,8 @@ import {
 import { randomString } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
+import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import { reorder } from '#utils/safeCommon';
 
 import { Matrix1dWidget } from '../../types';
 import styles from './styles.scss';
@@ -135,6 +138,10 @@ const defaultCellVal: PartialCellType = {
     clientId: 'random',
     order: -1,
 };
+
+const rowKeySelector = (row: PartialRowType) => row.clientId;
+const cellKeySelector = (cell: PartialCellType) => cell.clientId;
+
 interface CellInputProps {
     className?: string;
     value: PartialCellType;
@@ -142,6 +149,10 @@ interface CellInputProps {
     onChange: (value: SetValueArg<PartialCellType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function CellInput(props: CellInputProps) {
     const {
@@ -151,6 +162,10 @@ function CellInput(props: CellInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -161,42 +176,58 @@ function CellInput(props: CellInputProps) {
     const heading = value.label ?? `Cell ${index + 1}`;
 
     return (
-        <ExpandableContainer
-            className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
-            // FIXME: use strings
-            heading={`${heading} ${errored ? '*' : ''}`}
-            headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Cell"
-                >
-                    <IoTrash />
-                </QuickActionButton>
-            )}
+        <div
+            ref={setNodeRef}
+            style={style}
         >
-            <NonFieldError error={error} />
-            <TextInput
-                // FIXME: use translation
-                label="Label"
-                name="label"
-                value={value.label}
-                onChange={onFieldChange}
-                error={error?.label}
-            />
-            <TextArea
-                // FIXME: use translation
-                label="Tooltip"
-                name="tooltip"
-                rows={2}
-                value={value.tooltip}
-                onChange={onFieldChange}
-                error={error?.tooltip}
-            />
-        </ExpandableContainer>
+            <ExpandableContainer
+                className={className}
+                // NOTE: newly created elements should be open, else closed
+                defaultVisibility={!value.label}
+                // FIXME: use strings
+                heading={`${heading} ${errored ? '*' : ''}`}
+                headerActions={(
+                    <>
+                        <QuickActionButton
+                            name={index}
+                            onClick={onRemove}
+                            // FIXME: use translation
+                            title="Remove Cell"
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
+                )}
+            >
+                <NonFieldError error={error} />
+                <TextInput
+                    // FIXME: use translation
+                    label="Label"
+                    name="label"
+                    value={value.label}
+                    onChange={onFieldChange}
+                    error={error?.label}
+                />
+                <TextArea
+                    // FIXME: use translation
+                    label="Tooltip"
+                    name="tooltip"
+                    rows={2}
+                    value={value.tooltip}
+                    onChange={onFieldChange}
+                    error={error?.tooltip}
+                />
+            </ExpandableContainer>
+        </div>
     );
 }
 
@@ -211,6 +242,10 @@ interface RowInputProps {
     onChange: (value: SetValueArg<PartialRowType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -220,6 +255,10 @@ function RowInput(props: RowInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -253,74 +292,113 @@ function RowInput(props: RowInputProps) {
         [onFieldChange, value.cells],
     );
 
+    const handleOrderChange = useCallback((
+        newValues: PartialCellType[],
+    ) => {
+        onFieldChange(reorder(newValues), 'cells');
+    }, [onFieldChange]);
+
+    const cellRendererParams = useCallback((
+        key: string,
+        cell: PartialCellType,
+    ) => ({
+        onChange: onCellsChange,
+        onRemove: onCellsRemove,
+        error: arrayError?.[key],
+        value: cell,
+        clientId: key,
+        index,
+    }), [
+        onCellsChange,
+        onCellsRemove,
+        arrayError,
+        index,
+    ]);
+
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Row ${index + 1}`;
 
     return (
-        <ExpandableContainer
-            className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
-            // FIXME: use strings
-            heading={`${heading} ${errored ? '*' : ''}`}
-            headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Row"
-                >
-                    <IoTrash />
-                </QuickActionButton>
-            )}
+        <div
+            ref={setNodeRef}
+            style={style}
         >
-            <NonFieldError error={error} />
-            <TextInput
-                // FIXME: use translation
-                label="Label"
-                name="label"
-                value={value.label}
-                onChange={onFieldChange}
-                error={error?.label}
-            />
-            <TextArea
-                // FIXME: use translation
-                label="Tooltip"
-                name="tooltip"
-                rows={2}
-                value={value.tooltip}
-                onChange={onFieldChange}
-                error={error?.tooltip}
-            />
-            <Container
+            <ExpandableContainer
                 className={className}
-                sub
-                heading="Cells"
-                horizontallyCompactContent
-                headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={handleAdd}
-                        // FIXME: use strings
-                        title="Add Cell"
-                    >
-                        <IoAdd />
-                    </QuickActionButton>
+                // NOTE: newly created elements should be open, else closed
+                defaultVisibility={!value.label}
+                // FIXME: use strings
+                heading={`${heading} ${errored ? '*' : ''}`}
+                headerActions={(
+                    <>
+                        <QuickActionButton
+                            name={index}
+                            onClick={onRemove}
+                            // FIXME: use translation
+                            title="Remove Row"
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
                 )}
             >
-                <NonFieldError error={error?.cells} />
-                {value.cells?.map((cell, cellIndex) => (
-                    <CellInput
-                        key={cell.clientId}
-                        index={cellIndex}
-                        value={cell}
-                        onChange={onCellsChange}
-                        onRemove={onCellsRemove}
-                        error={arrayError?.[cell.clientId]}
+                <NonFieldError error={error} />
+                <TextInput
+                    // FIXME: use translation
+                    label="Label"
+                    name="label"
+                    value={value.label}
+                    onChange={onFieldChange}
+                    error={error?.label}
+                />
+                <TextArea
+                    // FIXME: use translation
+                    label="Tooltip"
+                    name="tooltip"
+                    rows={2}
+                    value={value.tooltip}
+                    onChange={onFieldChange}
+                    error={error?.tooltip}
+                />
+                <Container
+                    className={className}
+                    sub
+                    heading="Cells"
+                    horizontallyCompactContent
+                    headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleAdd}
+                            // FIXME: use strings
+                            title="Add Cell"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                >
+                    <NonFieldError error={error?.cells} />
+                    <SortableList
+                        name="cells"
+                        onChange={handleOrderChange}
+                        data={value?.cells}
+                        keySelector={cellKeySelector}
+                        renderer={CellInput}
+                        direction="vertical"
+                        rendererParams={cellRendererParams}
+                        showDragOverlay
                     />
-                ))}
-            </Container>
-        </ExpandableContainer>
+                </Container>
+            </ExpandableContainer>
+        </div>
     );
 }
 
@@ -373,6 +451,30 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         [onFieldChange, value?.rows],
     );
 
+    const handleOrderChange = useCallback((
+        newValues: PartialRowType[],
+    ) => {
+        onFieldChange(reorder(newValues), 'rows');
+    }, [onFieldChange]);
+
+    const rowRendererParams = useCallback((
+        key: string,
+        row: PartialRowType,
+        index: number,
+    ) => ({
+        onChange: onRowsChange,
+        onRemove: onRowsRemove,
+        error: arrayError?.[key],
+        value: row,
+        clientId: key,
+        index,
+    }), [
+        onRowsChange,
+        onRowsRemove,
+        value?.defaultValue,
+        arrayError,
+    ]);
+
     return (
         <>
             <NonFieldError error={error} />
@@ -394,16 +496,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 )}
             >
                 <NonFieldError error={error?.rows} />
-                {value?.rows?.map((row, index) => (
-                    <RowInput
-                        key={row.clientId}
-                        index={index}
-                        value={row}
-                        onChange={onRowsChange}
-                        onRemove={onRowsRemove}
-                        error={arrayError?.[row.clientId]}
-                    />
-                ))}
+                <SortableList
+                    name="options"
+                    onChange={handleOrderChange}
+                    data={value?.rows}
+                    keySelector={rowKeySelector}
+                    renderer={RowInput}
+                    direction="vertical"
+                    rendererParams={rowRendererParams}
+                    showDragOverlay
+                />
             </Container>
         </>
     );
