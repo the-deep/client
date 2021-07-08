@@ -3,6 +3,7 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
+import { GrDrag } from 'react-icons/gr';
 import {
     Button,
     TextInput,
@@ -28,6 +29,8 @@ import {
 import { randomString } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
+import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import { reorder } from '#utils/safeCommon';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
 import { MultiSelectWidget } from '../../types';
@@ -103,6 +106,9 @@ const defaultOptionVal: PartialOptionType = {
     clientId: 'random',
     order: -1,
 };
+
+const optionKeySelector = (o: PartialOptionType) => o.clientId;
+
 interface OptionInputProps {
     className?: string;
     value: PartialOptionType;
@@ -110,6 +116,10 @@ interface OptionInputProps {
     onChange: (value: SetValueArg<PartialOptionType>, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
+    listeners?: Listeners;
+    attributes?: Attributes;
+    setNodeRef?: NodeRef;
+    style?: React.CSSProperties;
 }
 function OptionInput(props: OptionInputProps) {
     const {
@@ -119,6 +129,10 @@ function OptionInput(props: OptionInputProps) {
         onChange,
         onRemove,
         index,
+        listeners,
+        attributes,
+        setNodeRef,
+        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
@@ -129,42 +143,58 @@ function OptionInput(props: OptionInputProps) {
     const heading = value.label ?? `Option ${index + 1}`;
 
     return (
-        <ExpandableContainer
-            className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
-            // FIXME: use strings
-            heading={`${heading} ${errored ? '*' : ''}`}
-            headerActions={(
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Option"
-                >
-                    <IoTrash />
-                </QuickActionButton>
-            )}
+        <div
+            ref={setNodeRef}
+            style={style}
         >
-            <NonFieldError error={error} />
-            <TextInput
-                // FIXME: use translation
-                label="Label"
-                name="label"
-                value={value.label}
-                onChange={onFieldChange}
-                error={error?.label}
-            />
-            <TextArea
-                // FIXME: use translation
-                label="Tooltip"
-                name="tooltip"
-                rows={2}
-                value={value.tooltip}
-                onChange={onFieldChange}
-                error={error?.tooltip}
-            />
-        </ExpandableContainer>
+            <ExpandableContainer
+                className={className}
+                // NOTE: newly created elements should be open, else closed
+                defaultVisibility={!value.label}
+                // FIXME: use strings
+                heading={`${heading} ${errored ? '*' : ''}`}
+                headerActions={(
+                    <>
+                        <QuickActionButton
+                            name={index}
+                            onClick={onRemove}
+                            // FIXME: use translation
+                            title="Remove Option"
+                        >
+                            <IoTrash />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            name={index}
+                            // FIXME: use translation
+                            title="Drag"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <GrDrag />
+                        </QuickActionButton>
+                    </>
+                )}
+            >
+                <NonFieldError error={error} />
+                <TextInput
+                    // FIXME: use translation
+                    label="Label"
+                    name="label"
+                    value={value.label}
+                    onChange={onFieldChange}
+                    error={error?.label}
+                />
+                <TextArea
+                    // FIXME: use translation
+                    label="Tooltip"
+                    name="tooltip"
+                    rows={2}
+                    value={value.tooltip}
+                    onChange={onFieldChange}
+                    error={error?.tooltip}
+                />
+            </ExpandableContainer>
+        </div>
     );
 }
 
@@ -210,13 +240,35 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 order: oldOptions.length,
             };
             onFieldChange(
-                [...oldOptions, newOption],
+                [...reorder(oldOptions), newOption],
                 'options' as const,
             );
         },
         [onFieldChange, value?.options],
     );
 
+    const handleOrderChange = useCallback((
+        newValues: PartialOptionType[],
+    ) => {
+        onFieldChange(reorder(newValues), 'options');
+    }, [onFieldChange]);
+
+    const optionRendererParams = useCallback((
+        key: string,
+        option: PartialOptionType,
+        index: number,
+    ) => ({
+        onChange: onOptionsChange,
+        onRemove: onOptionsRemove,
+        error: arrayError?.[key],
+        value: option,
+        clientId: key,
+        index,
+    }), [
+        onOptionsChange,
+        onOptionsRemove,
+        arrayError,
+    ]);
     return (
         <>
             <NonFieldError
@@ -240,16 +292,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 )}
             >
                 <NonFieldError error={error?.options} />
-                {value?.options?.map((option, index) => (
-                    <OptionInput
-                        key={option.clientId}
-                        index={index}
-                        value={option}
-                        onChange={onOptionsChange}
-                        onRemove={onOptionsRemove}
-                        error={arrayError?.[option.clientId]}
-                    />
-                ))}
+                <SortableList
+                    name="options"
+                    onChange={handleOrderChange}
+                    data={value?.options}
+                    keySelector={optionKeySelector}
+                    renderer={OptionInput}
+                    direction="vertical"
+                    rendererParams={optionRendererParams}
+                    showDragOverlay
+                />
             </Container>
         </>
     );

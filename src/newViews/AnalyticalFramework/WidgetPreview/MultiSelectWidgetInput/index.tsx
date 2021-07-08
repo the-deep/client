@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
+import { sortByOrder } from '#utils/safeCommon';
 
 import { MultiSelectValue, MultiSelectWidget } from '../../types';
 import WidgetWrapper from '../../Widget';
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
-    'clientId' | 'type'
+    'clientId' | 'type' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
@@ -54,6 +55,10 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         rootStyle,
     } = props;
 
+    const sortedOptions = useMemo(() => (
+        sortByOrder(widget?.data?.options)
+    ), [widget?.data?.options]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -64,7 +69,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         >
             <MultiSelectInput
                 name={name}
-                options={widget?.data?.options}
+                options={sortedOptions}
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 onChange={onChange}
