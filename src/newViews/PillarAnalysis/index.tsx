@@ -37,6 +37,7 @@ import BackLink from '#newComponents/ui/BackLink';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
 import NonFieldError from '#newComponents/ui/NonFieldError';
+import { transformErrorToToggleFormError } from '#rest';
 
 import notify from '#notify';
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -327,6 +328,11 @@ function PillarAnalysis(props: Props) {
                 message: _ts('pillarAnalysis', 'pillarAnalysisUpdateSuccess'),
                 duration: notify.duration.MEDIUM,
             });
+        },
+        onFailure: (response, ctx) => {
+            if (response.value.errors) {
+                setError(transformErrorToToggleFormError(schema, ctx, response.value.errors));
+            }
         },
         failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
     });

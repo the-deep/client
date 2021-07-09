@@ -7,6 +7,7 @@ import {
 } from '@the-deep/deep-ui';
 import {
     Error,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 
@@ -35,7 +36,7 @@ interface AnalyticalEntryInputProps {
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
     const {
         value,
-        error,
+        error: riskyError,
         // onChange,
         onRemove,
         index,
@@ -43,6 +44,8 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         onAnalyticalEntryDrop,
         dropDisabled,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const [
         entryDraggedStatus,
@@ -105,6 +108,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 )}
             >
                 <NonFieldError error={error} />
+                <NonFieldError error={error?.entry} />
                 {entry && (
                     <EntryItem
                         excerpt={entry.excerpt}

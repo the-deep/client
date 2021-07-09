@@ -32,9 +32,11 @@ export interface Error {
     reason: string;
     // exception: any;
     value: {
+        // FIXME: deprecate faramErrors as it doesn''t work with new form
         faramErrors: {
             [key: string]: string | undefined;
         },
+        errors: ErrorFromServer['errors'] | undefined,
         messageForNotification: string,
     };
     errorCode: number | undefined;
@@ -175,18 +177,19 @@ export const processDeepError: DeepContextInterface['transformError'] = (
                 faramErrors: {
                     $internal: 'Network error',
                 },
+                errors: undefined,
             },
             errorCode: undefined,
         };
     } else if (res === 'parse') {
         error = {
             reason: 'parse',
-            // exception: e,
             value: {
                 messageForNotification: 'Response parse error',
                 faramErrors: {
                     $internal: 'Response parse error',
                 },
+                errors: undefined,
             },
             errorCode: undefined,
         };
@@ -201,6 +204,7 @@ export const processDeepError: DeepContextInterface['transformError'] = (
         const requestError = {
             faramErrors,
             messageForNotification,
+            errors: res.errors,
         };
 
         error = {

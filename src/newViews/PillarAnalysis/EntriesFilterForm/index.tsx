@@ -13,7 +13,6 @@ import {
 import {
     ObjectSchema,
     useForm,
-    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import { useRequest } from '#utils/request';
@@ -134,8 +133,6 @@ function EntriesFilterForm(props: OwnProps) {
 
     const {
         pristine,
-        validate,
-        setError,
         value,
         setValue,
         setFieldValue,
@@ -185,7 +182,9 @@ function EntriesFilterForm(props: OwnProps) {
 
     const pending = entryOptionsPending;
 
-    const handleSubmit = useCallback(() => {
+    const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
         onFiltersValueChange(value);
     }, [onFiltersValueChange, value]);
 
@@ -196,7 +195,7 @@ function EntriesFilterForm(props: OwnProps) {
                 styles.entriesFilterForm,
                 allFiltersVisible && styles.showFilters,
             )}
-            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
+            onSubmit={handleSubmit}
         >
             <MultiSelectInput
                 className={styles.filter}
