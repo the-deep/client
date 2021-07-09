@@ -6,17 +6,17 @@ import {
 import {
     IoChevronForward,
     IoAdd,
+    IoSearch,
 } from 'react-icons/io5';
 import {
-    Card,
     Button,
     List,
-    DateOutput,
     PendingMessage,
     RawButton,
     TextInput,
     SelectInput,
     Header,
+    TextOutput,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -79,14 +79,12 @@ function Item<T>(props: ItemProps<T>) {
             <div className={styles.title}>
                 {title}
             </div>
-            <div className={styles.createdAtContainer}>
-                {_ts('projectEdit', 'createdOnLabel')}
-                <DateOutput
-                    format="dd MMM, yyyy"
-                    className={styles.createdDate}
-                    value={createdAt}
-                />
-            </div>
+            <TextOutput
+                className={styles.createdOn}
+                label={_ts('projectEdit', 'createdOnLabel')}
+                value={createdAt}
+                valueType="date"
+            />
         </RawButton>
     );
 }
@@ -142,15 +140,13 @@ function ProjectFramework(props: Props) {
         projectId,
     } = props;
 
-    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
-
-    useRequest<ProjectDetails>({
+    const {
+        response: projectDetails,
+        retrigger: retriggerProjectDetailsRequest,
+    } = useRequest<ProjectDetails>({
         skip: isNotDefined(projectId),
         url: `server://projects/${projectId}/`,
         method: 'GET',
-        onSuccess: (response) => {
-            setProjectDetails(response);
-        },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
@@ -196,6 +192,7 @@ function ProjectFramework(props: Props) {
     const {
         pending: frameworksGetPending,
         response: frameworksResponse,
+        retrigger: retriggerGetFrameworkListRequest,
     } = useRequest<MultiResponse<FrameworkMini>>({
         url: 'server://analysis-frameworks/',
         query: queryForFrameworks,
@@ -228,11 +225,13 @@ function ProjectFramework(props: Props) {
 
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
         setSelectedFramework(newFrameworkId);
+        retriggerGetFrameworkListRequest();
         hideFrameworkAddModal();
-    }, [setSelectedFramework, hideFrameworkAddModal]);
+    }, [setSelectedFramework, hideFrameworkAddModal, retriggerGetFrameworkListRequest]);
 
     return (
         <div className={_cs(styles.framework, className)}>
+            <div className={styles.leftPadding} />
             <div className={styles.leftContainer}>
                 <div className={styles.filters}>
                     <SelectInput
@@ -246,12 +245,12 @@ function ProjectFramework(props: Props) {
                         nonClearable
                     />
                     <TextInput
+                        icons={<IoSearch />}
                         name="search"
                         className={styles.filter}
                         onChange={setFieldValue}
                         value={value.search}
-                        label={_ts('projectEdit', 'searchLabel')}
-                        placeholder={_ts('projectEdit', 'searchPlaceholder')}
+                        placeholder={_ts('projectEdit', 'searchLabel')}
                     />
                 </div>
                 <div className={styles.frameworkList}>
@@ -280,19 +279,23 @@ function ProjectFramework(props: Props) {
                             )}
                         </>
                     ) : (
-                        !frameworksGetPending && _ts('projectEdit', 'noFrameworks')
+                        !frameworksGetPending && (
+                            <div className={styles.emptyContainer}>
+                                {_ts('projectEdit', 'noFrameworks')}
+                            </div>
+                        )
                     )}
                 </div>
             </div>
             <div className={styles.mainContainer}>
                 <Header
-                    icons={_ts('projectEdit', 'infoOnFrameworkLabel')}
+                    heading={_ts('projectEdit', 'infoOnFrameworkLabel')}
+                    headingSize="extraSmall"
                     actions={(
                         <Button
                             name="addNewFramework"
                             title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
                             icons={(<IoAdd />)}
-                            // disabled={disableAllButtons}
                             onClick={handleFrameworkAddClick}
                             variant="tertiary"
                         >
@@ -306,15 +309,20 @@ function ProjectFramework(props: Props) {
                         onModalClose={hideFrameworkAddModal}
                     />
                 )}
-                {selectedFramework && (
+                {selectedFramework ? (
                     <FrameworkDetail
                         projectFrameworkId={projectDetails?.analysisFramework}
                         projectId={projectId}
                         frameworkId={selectedFramework}
                         className={styles.selectedFrameworkDetails}
-                        onProjectChange={setProjectDetails}
+                        onProjectChange={retriggerProjectDetailsRequest}
                         onFrameworkChange={setSelectedFramework}
+                        onFrameworkCreate={retriggerGetFrameworkListRequest}
                     />
+                ) : (
+                    <div className={styles.noFrameworkSelected}>
+                        {_ts('projectEdit', 'noFrameworkSelectedMessage')}
+                    </div>
                 )}
             </div>
         </div>

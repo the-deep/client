@@ -17,7 +17,6 @@ import {
     QuickActionLink,
     QuickActionButton,
     ContainerCard,
-    Card,
     Link,
     DateOutput,
 } from '@the-deep/deep-ui';
@@ -58,6 +57,7 @@ interface Props {
     projectId: number;
     onProjectChange: (project: ProjectDetails) => void;
     onFrameworkChange: (newFrameworkSelected: number) => void;
+    onFrameworkCreate: () => void;
 }
 
 function FrameworkDetail(props: Props) {
@@ -68,6 +68,7 @@ function FrameworkDetail(props: Props) {
         projectId,
         onProjectChange,
         onFrameworkChange,
+        onFrameworkCreate,
     } = props;
 
     const {
@@ -116,8 +117,9 @@ function FrameworkDetail(props: Props) {
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
         setFrameworkToClone(undefined);
         onFrameworkChange(newFrameworkId);
+        onFrameworkCreate();
         hideFrameworkAddModal();
-    }, [onFrameworkChange, hideFrameworkAddModal]);
+    }, [onFrameworkChange, hideFrameworkAddModal, onFrameworkCreate]);
 
     const handleFrameworkCloneClick = useCallback(() => {
         setFrameworkToClone(frameworkDetails);
@@ -211,7 +213,7 @@ function FrameworkDetail(props: Props) {
                 )}
                 contentClassName={styles.content}
             >
-                <div className={styles.leftContainer}>
+                <div className={styles.metadataContainer}>
                     <div className={styles.frameworkDescription}>
                         {frameworkDetails?.description}
                     </div>
@@ -246,9 +248,9 @@ function FrameworkDetail(props: Props) {
                         )}
                     />
                 </div>
-                <Card className={styles.rightContainer}>
+                <div className={styles.preview}>
                     Preview
-                </Card>
+                </div>
             </ContainerCard>
             {frameworkAddModalShown && (
                 <AddFrameworkModal
