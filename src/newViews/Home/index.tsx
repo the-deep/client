@@ -239,7 +239,7 @@ function Home(props: ViewProps) {
                                 />
                                 <ButtonLikeLink
                                     variant="primary"
-                                    to={reverseRoute(pathNames.editProject, {})}
+                                    to={reverseRoute(pathNames.newProject, {})}
                                 >
                                     {_ts('home', 'setupNewProjectButtonLabel')}
                                 </ButtonLikeLink>

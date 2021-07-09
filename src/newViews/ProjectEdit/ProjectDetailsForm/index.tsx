@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import {
     Button,
     Container,
@@ -17,6 +18,7 @@ import {
     isDefined,
     isNotDefined,
     listToGroupList,
+    reverseRoute,
 } from '@togglecorp/fujs';
 
 import {
@@ -51,6 +53,7 @@ import {
     activeUserSelector,
 } from '#redux';
 import featuresMapping from '#constants/features';
+import { pathNames } from '#constants';
 
 import StakeholderList from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
@@ -181,6 +184,8 @@ function ProjectDetailsForm(props: Props) {
         },
     } = props;
 
+    const history = useHistory();
+
     const {
         pristine,
         value,
@@ -238,6 +243,12 @@ function ProjectDetailsForm(props: Props) {
             setStakeholderOptions(options);
             if (!projectId) {
                 onCreate(response);
+                history.push(
+                    reverseRoute(
+                        pathNames.editProject,
+                        { projectId: response.id },
+                    ),
+                );
             }
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),

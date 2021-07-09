@@ -7,16 +7,13 @@ import {
 import {
     IoCopyOutline,
     IoCheckmark,
-    IoAdd,
 } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     ConfirmButton,
-    Button,
     Tag,
     List,
     PendingMessage,
-    ElementFragments,
     QuickActionLink,
     QuickActionButton,
     ContainerCard,
@@ -116,11 +113,6 @@ function FrameworkDetail(props: Props) {
         projectPatch(null);
     }, [projectPatch]);
 
-    const handleFrameworkAddClick = useCallback(() => {
-        setFrameworkToClone(undefined);
-        showFrameworkAddModal();
-    }, [showFrameworkAddModal]);
-
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
         setFrameworkToClone(undefined);
         onFrameworkChange(newFrameworkId);
@@ -137,24 +129,6 @@ function FrameworkDetail(props: Props) {
     return (
         <div className={_cs(styles.frameworkDetail, className)}>
             {(projectPatchPending || frameworkGetPending) && <PendingMessage />}
-            <div className={styles.header}>
-                <ElementFragments
-                    iconsContainerClassName={styles.label}
-                    icons={_ts('projectEdit', 'infoOnFrameworkLabel')}
-                    actions={(
-                        <Button
-                            name="addNewFramework"
-                            title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                            icons={(<IoAdd />)}
-                            disabled={disableAllButtons}
-                            onClick={handleFrameworkAddClick}
-                            variant="tertiary"
-                        >
-                            {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                        </Button>
-                    )}
-                />
-            </div>
             <ContainerCard
                 className={styles.frameworkItem}
                 heading={frameworkDetails?.title ?? '-'}

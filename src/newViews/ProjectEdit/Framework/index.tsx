@@ -3,7 +3,10 @@ import {
     _cs,
     isNotDefined,
 } from '@togglecorp/fujs';
-import { IoChevronForward } from 'react-icons/io5';
+import {
+    IoChevronForward,
+    IoAdd,
+} from 'react-icons/io5';
 import {
     Card,
     Button,
@@ -13,6 +16,7 @@ import {
     RawButton,
     TextInput,
     SelectInput,
+    Header,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -27,8 +31,10 @@ import {
 } from '#typings';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
+import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
+import AddFrameworkModal from './AddFrameworkModal';
 import FrameworkDetail from './FrameworkDetail';
 import styles from './styles.scss';
 
@@ -167,6 +173,12 @@ function ProjectFramework(props: Props) {
 
     const delayedValue = useDebouncedValue(value);
 
+    const [
+        frameworkAddModalShown,
+        showFrameworkAddModal,
+        hideFrameworkAddModal,
+    ] = useModalState(false);
+
     useEffect(() => {
         setOffset(0);
         setFrameworkList([]);
@@ -198,6 +210,10 @@ function ProjectFramework(props: Props) {
         preserveResponse: true,
     });
 
+    const handleFrameworkAddClick = useCallback(() => {
+        showFrameworkAddModal();
+    }, [showFrameworkAddModal]);
+
     const frameworksRendererParams = useCallback((key, data) => ({
         itemKey: key,
         title: data.title,
@@ -209,6 +225,11 @@ function ProjectFramework(props: Props) {
     const handleShowMoreButtonClick = useCallback(() => {
         setOffset(frameworkList.length);
     }, [frameworkList.length]);
+
+    const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
+        setSelectedFramework(newFrameworkId);
+        hideFrameworkAddModal();
+    }, [setSelectedFramework, hideFrameworkAddModal]);
 
     return (
         <div className={_cs(styles.framework, className)}>
@@ -233,10 +254,10 @@ function ProjectFramework(props: Props) {
                         placeholder={_ts('projectEdit', 'searchPlaceholder')}
                     />
                 </div>
-                <div className={styles.bottomContainer}>
+                <div className={styles.frameworkList}>
                     {frameworksGetPending && <PendingMessage />}
                     {frameworkList.length > 0 ? (
-                        <Card className={styles.listContainer}>
+                        <>
                             <List
                                 data={frameworkList}
                                 keySelector={frameworkKeySelector}
@@ -257,24 +278,45 @@ function ProjectFramework(props: Props) {
                                     Show More
                                 </Button>
                             )}
-                        </Card>
+                        </>
                     ) : (
-                        <Card className={styles.emptyContainer}>
-                            {!frameworksGetPending && _ts('projectEdit', 'noFrameworks')}
-                        </Card>
+                        !frameworksGetPending && _ts('projectEdit', 'noFrameworks')
                     )}
                 </div>
             </div>
-            {selectedFramework && (
-                <FrameworkDetail
-                    projectFrameworkId={projectDetails?.analysisFramework}
-                    projectId={projectId}
-                    frameworkId={selectedFramework}
-                    className={styles.rightContainer}
-                    onProjectChange={setProjectDetails}
-                    onFrameworkChange={setSelectedFramework}
+            <div className={styles.mainContainer}>
+                <Header
+                    icons={_ts('projectEdit', 'infoOnFrameworkLabel')}
+                    actions={(
+                        <Button
+                            name="addNewFramework"
+                            title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
+                            icons={(<IoAdd />)}
+                            // disabled={disableAllButtons}
+                            onClick={handleFrameworkAddClick}
+                            variant="tertiary"
+                        >
+                            {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
+                        </Button>
+                    )}
                 />
-            )}
+                {frameworkAddModalShown && (
+                    <AddFrameworkModal
+                        onActionSuccess={handleNewFrameworkAddSuccess}
+                        onModalClose={hideFrameworkAddModal}
+                    />
+                )}
+                {selectedFramework && (
+                    <FrameworkDetail
+                        projectFrameworkId={projectDetails?.analysisFramework}
+                        projectId={projectId}
+                        frameworkId={selectedFramework}
+                        className={styles.selectedFrameworkDetails}
+                        onProjectChange={setProjectDetails}
+                        onFrameworkChange={setSelectedFramework}
+                    />
+                )}
+            </div>
         </div>
     );
 }
