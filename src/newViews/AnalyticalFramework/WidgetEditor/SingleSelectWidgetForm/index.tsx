@@ -120,6 +120,7 @@ interface OptionInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: boolean;
 }
 
 function OptionInput(props: OptionInputProps) {
@@ -134,6 +135,7 @@ function OptionInput(props: OptionInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
@@ -154,6 +156,7 @@ function OptionInput(props: OptionInputProps) {
                 defaultVisibility={!value.label}
                 // FIXME: use strings
                 heading={`${heading} ${errored ? '*' : ''}`}
+                autoFocus={autoFocus}
                 headerActions={(
                     <>
                         <QuickActionButton
@@ -178,12 +181,14 @@ function OptionInput(props: OptionInputProps) {
             >
                 <NonFieldError error={error} />
                 <TextInput
+                    autoFocus
                     // FIXME: use translation
                     label="Label"
                     name="label"
                     value={value.label}
                     onChange={onFieldChange}
                     error={error?.label}
+                    className={styles.optionInput}
                 />
                 <TextArea
                     // FIXME: use translation
@@ -193,6 +198,7 @@ function OptionInput(props: OptionInputProps) {
                     value={value.tooltip}
                     onChange={onFieldChange}
                     error={error?.tooltip}
+                    className={styles.optionInput}
                 />
             </ExpandableContainer>
         </div>
@@ -219,6 +225,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     } = props;
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.options);
@@ -237,6 +244,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newOption: PartialOptionType = {
                 clientId,
                 order: oldOptions.length,
@@ -260,18 +268,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         key: string,
         option: PartialOptionType,
         index: number,
-    ) => ({
+    ): OptionInputProps => ({
         onChange: onOptionsChange,
         onRemove: onOptionsRemove,
         error: arrayError?.[key],
         value: option,
-        clientId: key,
-        isDefault: value?.defaultValue === key,
+        autoFocus: newlyCreatedOptionIdRef.current === option.clientId,
         index,
     }), [
         onOptionsChange,
         onOptionsRemove,
-        value?.defaultValue,
         arrayError,
     ]);
     return (

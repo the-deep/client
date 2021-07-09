@@ -223,6 +223,7 @@ interface SubRowInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: boolean;
 }
 function SubRowInput(props: SubRowInputProps) {
     const {
@@ -236,6 +237,7 @@ function SubRowInput(props: SubRowInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubRowVal);
@@ -247,6 +249,7 @@ function SubRowInput(props: SubRowInputProps) {
 
     return (
         <ExpandableContainer
+            autoFocus={autoFocus}
             className={className}
             containerElementProps={{
                 ref: setNodeRef,
@@ -281,12 +284,14 @@ function SubRowInput(props: SubRowInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
+                autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
+                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -296,6 +301,7 @@ function SubRowInput(props: SubRowInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
+                className={styles.optionInput}
             />
         </ExpandableContainer>
     );
@@ -316,6 +322,7 @@ interface RowInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: autoFocus;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -329,9 +336,11 @@ function RowInput(props: RowInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultRowVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.subRows);
@@ -350,6 +359,7 @@ function RowInput(props: RowInputProps) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newSubRow: PartialSubRowType = {
                 clientId,
                 order: oldSubRows.length,
@@ -374,18 +384,20 @@ function RowInput(props: RowInputProps) {
             key: string,
             data: PartialSubRowType,
             subRowIndex: number,
-        ) => ({
+        ): SubRowInputProps => ({
             index: subRowIndex,
             value: data,
             onChange: onSubRowsChange,
             onRemove: onSubRowsRemove,
             error: arrayError?.[key],
+            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
         }),
         [onSubRowsChange, onSubRowsRemove, arrayError],
     );
 
     return (
         <ExpandableContainer
+            autoFocus={autoFocus}
             containerElementProps={{
                 ref: setNodeRef,
                 style,
@@ -420,12 +432,14 @@ function RowInput(props: RowInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
+                autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
+                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -435,9 +449,10 @@ function RowInput(props: RowInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
+                className={styles.optionInput}
             />
             <Container
-                className={className}
+                className={styles.optionInput}
                 sub
                 heading="Sub Rows"
                 horizontallyCompactContent
@@ -482,6 +497,7 @@ interface SubColumnInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: boolean;
 }
 function SubColumnInput(props: SubColumnInputProps) {
     const {
@@ -495,6 +511,7 @@ function SubColumnInput(props: SubColumnInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubColumnVal);
@@ -506,6 +523,7 @@ function SubColumnInput(props: SubColumnInputProps) {
 
     return (
         <ExpandableContainer
+            autoFocus={autoFocus}
             className={className}
             containerElementProps={{
                 ref: setNodeRef,
@@ -540,12 +558,14 @@ function SubColumnInput(props: SubColumnInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
+                autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
+                className={styles.options}
             />
             <TextArea
                 // FIXME: use translation
@@ -555,6 +575,7 @@ function SubColumnInput(props: SubColumnInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
+                className={styles.options}
             />
         </ExpandableContainer>
     );
@@ -575,6 +596,7 @@ interface ColumnInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: autoFocus;
 }
 function ColumnInput(props: ColumnInputProps) {
     const {
@@ -588,12 +610,14 @@ function ColumnInput(props: ColumnInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.subColumns);
 
     const onFieldChange = useFormObject(index, onChange, defaultColumnVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
     const {
         setValue: onSubColumnsChange,
@@ -609,6 +633,7 @@ function ColumnInput(props: ColumnInputProps) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newSubColumn: PartialSubColumnType = {
                 clientId,
                 order: oldSubColumns.length,
@@ -633,18 +658,20 @@ function ColumnInput(props: ColumnInputProps) {
             key: string,
             data: PartialSubColumnType,
             subColumnIndex: number,
-        ) => ({
+        ): SubColumnInputProps => ({
             index: subColumnIndex,
             value: data,
             onChange: onSubColumnsChange,
             onRemove: onSubColumnsRemove,
             error: arrayError?.[key],
+            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
         }),
         [onSubColumnsChange, onSubColumnsRemove, arrayError],
     );
 
     return (
         <ExpandableContainer
+            autoFocus={autoFocus}
             className={className}
             containerElementProps={{
                 ref: setNodeRef,
@@ -679,12 +706,14 @@ function ColumnInput(props: ColumnInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
+                autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
                 name="label"
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
+                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -694,9 +723,10 @@ function ColumnInput(props: ColumnInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
+                className={styles.optionInput}
             />
             <Container
-                className={className}
+                className={styles.optionInput}
                 sub
                 heading="Sub Columns"
                 horizontallyCompactContent
@@ -749,6 +779,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const columnError = getErrorObject(error?.columns);
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
     const {
         setValue: onRowsChange,
@@ -764,6 +795,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newRow: PartialRowType = {
                 clientId,
                 order: oldRows.length,
@@ -786,12 +818,13 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             key: string,
             data: PartialColumnType,
             index: number,
-        ) => ({
+        ): ColumnInputProps => ({
             index,
             value: data,
             onChange: onColumnsChange,
             onRemove: onColumnsRemove,
             error: rowError?.[key],
+            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
         }),
         [onColumnsChange, onColumnsRemove, rowError],
     );
@@ -801,12 +834,13 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             key: string,
             data: PartialRowType,
             index: number,
-        ) => ({
+        ): RowInputProps => ({
             index,
             value: data,
             onChange: onRowsChange,
             onRemove: onRowsRemove,
             error: columnError?.[key],
+            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
         }),
         [onRowsChange, onRowsRemove, columnError],
     );
@@ -828,6 +862,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newColumn: PartialColumnType = {
                 clientId,
                 order: -1,
@@ -843,60 +878,62 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     return (
         <>
             <NonFieldError error={error} />
-            <Container
-                className={className}
-                sub
-                heading="Rows"
-                horizontallyCompactContent
-                headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={handleRowAdd}
-                        // FIXME: use strings
-                        title="Add row"
-                    >
-                        <IoAdd />
-                    </QuickActionButton>
-                )}
-            >
-                <NonFieldError error={error?.rows} />
-                <SortableList
-                    name="rows"
-                    onChange={handleRowsOrderChange}
-                    data={value?.rows}
-                    keySelector={rowKeySelector}
-                    renderer={RowInput}
-                    rendererParams={rowRendererParams}
-                    direction="vertical"
-                />
-            </Container>
-            <Container
-                className={className}
-                sub
-                heading="Columns"
-                horizontallyCompactContent
-                headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={handleColumnAdd}
-                        // FIXME: use strings
-                        title="Add column"
-                    >
-                        <IoAdd />
-                    </QuickActionButton>
-                )}
-            >
-                <NonFieldError error={error?.columns} />
-                <SortableList
-                    name="columns"
-                    onChange={handleColumnsOrderChange}
-                    data={value?.columns}
-                    keySelector={columnKeySelector}
-                    renderer={ColumnInput}
-                    rendererParams={columnRendererParams}
-                    direction="vertical"
-                />
-            </Container>
+            <div className={styles.optionsList}>
+                <Container
+                    className={className}
+                    sub
+                    heading="Rows"
+                    horizontallyCompactContent
+                    headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleRowAdd}
+                            // FIXME: use strings
+                            title="Add row"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                >
+                    <NonFieldError error={error?.rows} />
+                    <SortableList
+                        name="rows"
+                        onChange={handleRowsOrderChange}
+                        data={value?.rows}
+                        keySelector={rowKeySelector}
+                        renderer={RowInput}
+                        rendererParams={rowRendererParams}
+                        direction="vertical"
+                    />
+                </Container>
+                <Container
+                    className={className}
+                    sub
+                    heading="Columns"
+                    horizontallyCompactContent
+                    headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleColumnAdd}
+                            // FIXME: use strings
+                            title="Add column"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                >
+                    <NonFieldError error={error?.columns} />
+                    <SortableList
+                        name="columns"
+                        onChange={handleColumnsOrderChange}
+                        data={value?.columns}
+                        keySelector={columnKeySelector}
+                        renderer={ColumnInput}
+                        rendererParams={columnRendererParams}
+                        direction="vertical"
+                    />
+                </Container>
+            </div>
         </>
     );
 }
@@ -949,6 +986,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
             <Container
                 heading={value.title ?? 'Unnamed'}
                 horizontallyCompactContent
+                contentClassName={styles.editorContent}
                 headerActions={(
                     <>
                         <Button

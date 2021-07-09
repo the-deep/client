@@ -5,6 +5,7 @@
     .widget-list-container {
         display: flex;
         flex-direction: column;
+        flex-shrink: 0;
         background-color: var(--dui-color-foreground);
         width: calc(240px + 10vw);
         overflow-y: auto;

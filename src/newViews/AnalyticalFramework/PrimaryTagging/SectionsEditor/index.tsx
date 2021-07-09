@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
     IoTrash,
     IoAdd,
@@ -130,20 +130,6 @@ function SectionInput(props: SectionInputProps) {
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
-    const divRef = useRef<HTMLDivElement>(null);
-
-    useEffect(
-        () => {
-            if (autoFocus && divRef.current) {
-                divRef.current.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                });
-            }
-        },
-        [autoFocus],
-    );
-
     const errored = analyzeErrors(error);
     const heading = value.title ?? `Section ${index + 1}`;
 
@@ -153,9 +139,7 @@ function SectionInput(props: SectionInputProps) {
             style={style}
         >
             <ExpandableContainer
-                containerElementProps={{
-                    ref: divRef,
-                }}
+                autoFocus={autoFocus}
                 heading={`${heading} ${errored ? '*' : ''}`}
                 expansionTriggerArea="arrow"
                 headerActions={(
