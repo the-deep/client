@@ -3,20 +3,9 @@
     flex-direction: column;
     overflow-y: auto;
 
-    .header {
-        display: flex;
-        flex-shrink: 0;
-        padding: var(--dui-spacing-large) 0;
-
-        .label {
-            flex-grow: 1;
-            color: var(--dui-color-accent);
-            font-weight: var(--font-weight-bold);
-        }
-    }
-
     .framework-item {
         flex-grow: 1;
+        border-radius: 0;
         overflow-y: auto;
 
         .created-at-container {
@@ -34,7 +23,7 @@
             overflow-y: auto;
             --width-left-container: 320px;
 
-            .left-container {
+            .metadata-container {
                 flex-shrink: 0;
                 padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
                 width: var(--width-left-container);
@@ -57,7 +46,7 @@
                 }
             }
 
-            .right-container {
+            .preview {
                 display: flex;
                 align-items: center;
                 flex-grow: 1;

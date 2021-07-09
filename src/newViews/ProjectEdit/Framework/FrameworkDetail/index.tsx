@@ -7,20 +7,16 @@ import {
 import {
     IoCopyOutline,
     IoCheckmark,
-    IoAdd,
 } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     ConfirmButton,
-    Button,
     Tag,
     List,
     PendingMessage,
-    ElementFragments,
     QuickActionLink,
     QuickActionButton,
     ContainerCard,
-    Card,
     Link,
     DateOutput,
 } from '@the-deep/deep-ui';
@@ -61,6 +57,7 @@ interface Props {
     projectId: number;
     onProjectChange: (project: ProjectDetails) => void;
     onFrameworkChange: (newFrameworkSelected: number) => void;
+    onFrameworkCreate: () => void;
 }
 
 function FrameworkDetail(props: Props) {
@@ -71,6 +68,7 @@ function FrameworkDetail(props: Props) {
         projectId,
         onProjectChange,
         onFrameworkChange,
+        onFrameworkCreate,
     } = props;
 
     const {
@@ -116,16 +114,12 @@ function FrameworkDetail(props: Props) {
         projectPatch(null);
     }, [projectPatch]);
 
-    const handleFrameworkAddClick = useCallback(() => {
-        setFrameworkToClone(undefined);
-        showFrameworkAddModal();
-    }, [showFrameworkAddModal]);
-
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
         setFrameworkToClone(undefined);
         onFrameworkChange(newFrameworkId);
+        onFrameworkCreate();
         hideFrameworkAddModal();
-    }, [onFrameworkChange, hideFrameworkAddModal]);
+    }, [onFrameworkChange, hideFrameworkAddModal, onFrameworkCreate]);
 
     const handleFrameworkCloneClick = useCallback(() => {
         setFrameworkToClone(frameworkDetails);
@@ -137,24 +131,6 @@ function FrameworkDetail(props: Props) {
     return (
         <div className={_cs(styles.frameworkDetail, className)}>
             {(projectPatchPending || frameworkGetPending) && <PendingMessage />}
-            <div className={styles.header}>
-                <ElementFragments
-                    iconsContainerClassName={styles.label}
-                    icons={_ts('projectEdit', 'infoOnFrameworkLabel')}
-                    actions={(
-                        <Button
-                            name="addNewFramework"
-                            title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                            icons={(<IoAdd />)}
-                            disabled={disableAllButtons}
-                            onClick={handleFrameworkAddClick}
-                            variant="tertiary"
-                        >
-                            {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                        </Button>
-                    )}
-                />
-            </div>
             <ContainerCard
                 className={styles.frameworkItem}
                 heading={frameworkDetails?.title ?? '-'}
@@ -237,7 +213,7 @@ function FrameworkDetail(props: Props) {
                 )}
                 contentClassName={styles.content}
             >
-                <div className={styles.leftContainer}>
+                <div className={styles.metadataContainer}>
                     <div className={styles.frameworkDescription}>
                         {frameworkDetails?.description}
                     </div>
@@ -272,9 +248,9 @@ function FrameworkDetail(props: Props) {
                         )}
                     />
                 </div>
-                <Card className={styles.rightContainer}>
+                <div className={styles.preview}>
                     Preview
-                </Card>
+                </div>
             </ContainerCard>
             {frameworkAddModalShown && (
                 <AddFrameworkModal

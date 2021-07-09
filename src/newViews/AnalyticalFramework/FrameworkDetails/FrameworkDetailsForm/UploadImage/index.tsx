@@ -35,7 +35,7 @@ function UploadImage<N extends string>(props: Props<N>) {
             heading={_ts('analyticalFramework', 'previewImageHeading')}
             contentClassName={styles.container}
         >
-            { isDefined(value) ? (
+            {(isDefined(value) || isDefined(image)) ? (
                 <div className={styles.content}>
                     <ImagePreview
                         className={styles.imagePreview}

@@ -85,6 +85,7 @@ const acl = {
 
     projects: { hide: notLoggedIn },
     editProject: { hide: notProjectAdmin },
+    newProject: { hide: notLoggedIn },
     connectors: { hide: notLoggedIn },
 
     leadsViz: { hide: notLeadVizViewable },
