@@ -6,8 +6,10 @@ import Faram, { requiredCondition } from '@togglecorp/faram';
 import {
     _cs,
     mapToMap,
+    isList,
     listToGroupList,
     listToMap,
+    isDefined,
 } from '@togglecorp/fujs';
 
 import Modal from '#rscv/Modal';
@@ -18,6 +20,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 
 import {
     afViewAnalysisFrameworkWidgetsSelector,
@@ -42,13 +45,13 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     statsConfig: PropTypes.object.isRequired,
 
-    // eslint-disable-next-line react/forbid-prop-types
     setAfViewStatsConfig: PropTypes.func.isRequired,
 };
 const defaultProps = {
     className: '',
     closeModal: undefined,
     widgets: undefined,
+    statsConfig: undefined,
 };
 
 const keySelector = d => d.id;
@@ -73,10 +76,10 @@ export default class EditVizSettingsModal extends React.PureComponent {
             widget1d: [requiredCondition],
             widget2d: [requiredCondition],
             geoWidget: [requiredCondition],
-            severityWidget: [requiredCondition],
-            reliabilityWidget: [requiredCondition],
+            severityWidget: [],
+            reliabilityWidget: [],
             affectedGroupsWidget: [requiredCondition],
-            specificNeedsGroupsWidget: [requiredCondition],
+            specificNeedsGroupsWidget: [],
         },
     };
 
@@ -88,7 +91,17 @@ export default class EditVizSettingsModal extends React.PureComponent {
         const faramValues = mapToMap(
             statsConfig,
             key => key,
-            v => (v.isConditionalWidget ? v.widgetKey : v.pk),
+            (v) => {
+                if (!v) {
+                    return undefined;
+                }
+                if (isList(v)) {
+                    return v.map(datum => (
+                        datum.isConditionalWidget ? datum.widgetKey : datum.pk
+                    ));
+                }
+                return v.isConditionalWidget ? v.widgetKey : v.pk;
+            },
         );
 
         this.state = {
@@ -159,6 +172,33 @@ export default class EditVizSettingsModal extends React.PureComponent {
             values,
             k => k,
             (d) => {
+                if (isList(d)) {
+                    return d.map((datum) => {
+                        const widget = mapping[datum];
+
+                        if (!widget) {
+                            return undefined;
+                        }
+
+                        if (!widget.isConditional) {
+                            return { pk: datum };
+                        }
+
+                        const {
+                            conditionalId,
+                            widgetId,
+                            key: widgetKey,
+                        } = widget;
+
+                        return ({
+                            pk: conditionalId,
+                            widgetKey,
+                            widgetType: widgetId,
+                            isConditionalWidget: true,
+                        });
+                    }).filter(isDefined);
+                }
+
                 const widget = mapping[d];
                 if (!widget) {
                     return undefined;
@@ -237,7 +277,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
                     <ModalHeader title={_ts('framework.editVizSettings', 'editVizSettingsModalTitle')} />
                     <ModalBody>
                         <NonFieldErrors faramElement />
-                        <SelectInput
+                        <MultiSelectInput
                             className={styles.input}
                             faramElementName="widget1d"
                             label={_ts('framework.editVizSettings', 'widget1dLabel')}
@@ -245,7 +285,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
-                        <SelectInput
+                        <MultiSelectInput
                             className={styles.input}
                             faramElementName="widget2d"
                             label={_ts('framework.editVizSettings', 'widget2dLabel')}
