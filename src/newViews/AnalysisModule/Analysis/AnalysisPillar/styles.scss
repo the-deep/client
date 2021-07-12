@@ -10,6 +10,16 @@
 
         .left-container {
             flex-shrink: 0;
+
+            .completion {
+                display: flex;
+
+                .label {
+                    padding: 0 var(--dui-spacing-medium);
+                    color: var(--dui-color-text-label);
+                    font-weight: var(--dui-font-weight-regular);
+                }
+            }
         }
 
         .right-container {

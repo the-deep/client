@@ -10,15 +10,15 @@ import { useRequest, useLazyRequest } from '#utils/request';
 
 import {
     MultiResponse,
-    AnalysisPillars,
+    PillarSummary,
 } from '#typings';
 
-import AnalysisPillar from '../AnalysisPillar';
+import AnalysisPillar, { Props as PillarComponentProps } from '../AnalysisPillar';
 
 import styles from './styles.scss';
 
 const MAX_ITEMS_PER_PAGE = 5;
-const keySelector = (item: AnalysisPillars) => item.id;
+const keySelector = (item: PillarSummary) => item.id;
 
 interface Props {
     className?: string;
@@ -27,6 +27,7 @@ interface Props {
     activeProject: number;
     onAnalysisPillarDelete: () => void;
     analysisId: number;
+    totalEntries: number;
 }
 
 function AnalysisDetails(props: Props) {
@@ -37,6 +38,7 @@ function AnalysisDetails(props: Props) {
         activeProject,
         onAnalysisPillarDelete,
         analysisId,
+        totalEntries,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
@@ -50,9 +52,9 @@ function AnalysisDetails(props: Props) {
         pending: pillarPending,
         response: pillarResponse,
         retrigger: pillarGetTrigger,
-    } = useRequest<MultiResponse<AnalysisPillars>>(
+    } = useRequest<MultiResponse<PillarSummary>>(
         {
-            url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/`,
+            url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/summary/`,
             method: 'GET',
             query: queryOptions,
         },
@@ -80,24 +82,30 @@ function AnalysisDetails(props: Props) {
         },
     );
 
-    const analysisPillarRendererParams = useCallback((_, data: AnalysisPillars) => ({
-        className: styles.pillar,
-        analysisId: data.analysis,
-        assigneeName: data.assigneeName,
-        createdAt,
-        onDelete: triggerPillarDelete,
-        statements: data.analyticalStatements,
-        pillarId: data.id,
-        projectId: activeProject,
-        title: data.title,
-        pendingPillarDelete: pendingPillarDelete && data.id === deletePillarId,
-    }), [
-        triggerPillarDelete,
-        createdAt,
-        activeProject,
-        pendingPillarDelete,
-        deletePillarId,
-    ]);
+    const analysisPillarRendererParams = useCallback(
+        (_, data: PillarSummary): PillarComponentProps => ({
+            className: styles.pillar,
+            analysisId,
+            assigneeName: data.assigneeDetails?.displayName,
+            createdAt,
+            onDelete: triggerPillarDelete,
+            statements: data.analyticalStatements,
+            pillarId: data.id,
+            analyzedEntries: data.analyzedEntries,
+            projectId: activeProject,
+            title: data.title,
+            pendingPillarDelete: pendingPillarDelete && data.id === deletePillarId,
+            totalEntries,
+        }), [
+            totalEntries,
+            triggerPillarDelete,
+            createdAt,
+            analysisId,
+            activeProject,
+            pendingPillarDelete,
+            deletePillarId,
+        ],
+    );
 
     return (
         <Container
