@@ -312,18 +312,18 @@ function RowInput(props: RowInputProps) {
     const cellRendererParams = useCallback((
         key: string,
         cell: PartialCellType,
+        cellIndex: number,
     ): CellInputProps => ({
         onChange: onCellsChange,
         onRemove: onCellsRemove,
         error: arrayError?.[key],
         value: cell,
         autoFocus: newlyCreatedOptionIdRef.current === cell.clientId,
-        index,
+        index: cellIndex,
     }), [
         onCellsChange,
         onCellsRemove,
         arrayError,
-        index,
     ]);
 
     const errored = analyzeErrors(error);

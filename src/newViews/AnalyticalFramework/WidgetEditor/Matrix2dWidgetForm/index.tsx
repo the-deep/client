@@ -322,7 +322,7 @@ interface RowInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
-    autoFocus?: autoFocus;
+    autoFocus?: boolean;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -565,7 +565,6 @@ function SubColumnInput(props: SubColumnInputProps) {
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
-                className={styles.options}
             />
             <TextArea
                 // FIXME: use translation
@@ -575,7 +574,6 @@ function SubColumnInput(props: SubColumnInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
-                className={styles.options}
             />
         </ExpandableContainer>
     );
@@ -596,7 +594,7 @@ interface ColumnInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
-    autoFocus?: autoFocus;
+    autoFocus?: boolean;
 }
 function ColumnInput(props: ColumnInputProps) {
     const {
