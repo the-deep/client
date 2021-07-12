@@ -153,7 +153,9 @@ interface CellInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: boolean;
 }
+
 function CellInput(props: CellInputProps) {
     const {
         className,
@@ -166,6 +168,7 @@ function CellInput(props: CellInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -186,6 +189,7 @@ function CellInput(props: CellInputProps) {
                 defaultVisibility={!value.label}
                 // FIXME: use strings
                 heading={`${heading} ${errored ? '*' : ''}`}
+                autoFocus={autoFocus}
                 headerActions={(
                     <>
                         <QuickActionButton
@@ -210,12 +214,14 @@ function CellInput(props: CellInputProps) {
             >
                 <NonFieldError error={error} />
                 <TextInput
+                    autoFocus={autoFocus}
                     // FIXME: use translation
                     label="Label"
                     name="label"
                     value={value.label}
                     onChange={onFieldChange}
                     error={error?.label}
+                    className={styles.optionInput}
                 />
                 <TextArea
                     // FIXME: use translation
@@ -225,6 +231,7 @@ function CellInput(props: CellInputProps) {
                     value={value.tooltip}
                     onChange={onFieldChange}
                     error={error?.tooltip}
+                    className={styles.optionInput}
                 />
             </ExpandableContainer>
         </div>
@@ -246,6 +253,7 @@ interface RowInputProps {
     attributes?: Attributes;
     setNodeRef?: NodeRef;
     style?: React.CSSProperties;
+    autoFocus?: boolean;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -259,12 +267,14 @@ function RowInput(props: RowInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.cells);
 
     const onFieldChange = useFormObject(index, onChange, defaultRowVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
     const {
         setValue: onCellsChange,
@@ -280,6 +290,7 @@ function RowInput(props: RowInputProps) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newCell: PartialCellType = {
                 clientId,
                 order: oldCells.length,
@@ -301,18 +312,18 @@ function RowInput(props: RowInputProps) {
     const cellRendererParams = useCallback((
         key: string,
         cell: PartialCellType,
-    ) => ({
+        cellIndex: number,
+    ): CellInputProps => ({
         onChange: onCellsChange,
         onRemove: onCellsRemove,
         error: arrayError?.[key],
         value: cell,
-        clientId: key,
-        index,
+        autoFocus: newlyCreatedOptionIdRef.current === cell.clientId,
+        index: cellIndex,
     }), [
         onCellsChange,
         onCellsRemove,
         arrayError,
-        index,
     ]);
 
     const errored = analyzeErrors(error);
@@ -324,6 +335,7 @@ function RowInput(props: RowInputProps) {
             style={style}
         >
             <ExpandableContainer
+                autoFocus={autoFocus}
                 className={className}
                 // NOTE: newly created elements should be open, else closed
                 defaultVisibility={!value.label}
@@ -353,12 +365,14 @@ function RowInput(props: RowInputProps) {
             >
                 <NonFieldError error={error} />
                 <TextInput
+                    autoFocus={autoFocus}
                     // FIXME: use translation
                     label="Label"
                     name="label"
                     value={value.label}
                     onChange={onFieldChange}
                     error={error?.label}
+                    className={styles.optionInput}
                 />
                 <TextArea
                     // FIXME: use translation
@@ -368,9 +382,10 @@ function RowInput(props: RowInputProps) {
                     value={value.tooltip}
                     onChange={onFieldChange}
                     error={error?.tooltip}
+                    className={styles.optionInput}
                 />
                 <Container
-                    className={className}
+                    className={styles.optionInput}
                     sub
                     heading="Cells"
                     horizontallyCompactContent
@@ -424,6 +439,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const arrayError = getErrorObject(error?.rows);
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
     const {
         setValue: onRowsChange,
@@ -439,6 +455,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newRow: PartialRowType = {
                 clientId,
                 order: oldRows.length,
@@ -461,12 +478,12 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         key: string,
         row: PartialRowType,
         index: number,
-    ) => ({
+    ): RowInputProps => ({
         onChange: onRowsChange,
         onRemove: onRowsRemove,
         error: arrayError?.[key],
         value: row,
-        clientId: key,
+        autoFocus: newlyCreatedOptionIdRef.current === row.clientId,
         index,
     }), [
         onRowsChange,
@@ -483,6 +500,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 // FIXME: Use translation
                 heading="Rows"
                 horizontallyCompactContent
+                contentClassName={styles.optionsList}
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -558,6 +576,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
             <Container
                 heading={value.title ?? 'Unnamed'}
                 horizontallyCompactContent
+                contentClassName={styles.editorContent}
                 headerActions={(
                     <>
                         <Button

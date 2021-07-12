@@ -134,7 +134,7 @@
         "@dnd-kit/utilities": "^2.0.0",
         "@hcaptcha/react-hcaptcha": "^0.3.6",
         "@mapbox/mapbox-gl-draw": "^1.2.0",
-        "@the-deep/deep-ui": "^1.4.3",
+        "@the-deep/deep-ui": "^1.4.4-beta.1",
         "@timilsinabishal/react-components": "https://github.com/the-deep/react-components",
         "@togglecorp/faram": "^1.2.1",
         "@togglecorp/fujs": "^1.9.2-beta.1",

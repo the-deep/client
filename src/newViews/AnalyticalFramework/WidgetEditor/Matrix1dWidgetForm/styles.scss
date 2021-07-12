@@ -1,9 +1,23 @@
 .widget-edit {
     display: flex;
     flex-direction: column;
-    padding: calc(var(--spacing-medium) - var(--spacing-small));
+    overflow-y: auto;
 
     .input {
         padding: var(--spacing-small);
+    }
+
+    .option-input {
+        margin: var(--dui-spacing-small) 0;
+    }
+
+    .editor-content {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .options-list {
+            overflow-y: auto;
+        }
     }
 }

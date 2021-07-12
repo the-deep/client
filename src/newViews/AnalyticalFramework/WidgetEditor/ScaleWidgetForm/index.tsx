@@ -130,11 +130,15 @@ interface OptionInputProps {
     attributes?: Attributes,
     setNodeRef?: NodeRef,
     style?: React.CSSProperties,
+    autoFocus?: boolean;
 }
+
 function OptionInput(props: OptionInputProps) {
     const {
         className,
         value,
+        // FIXME: use proper variable name
+        // suggestion: errorFromProps
         error: riskyError,
         onChange,
         onRemove,
@@ -146,6 +150,7 @@ function OptionInput(props: OptionInputProps) {
         attributes,
         setNodeRef,
         style,
+        autoFocus,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
@@ -167,6 +172,7 @@ function OptionInput(props: OptionInputProps) {
         }
     }, [onDefaultValueChange, clientId]);
 
+
     return (
         <div
             ref={setNodeRef}
@@ -178,6 +184,7 @@ function OptionInput(props: OptionInputProps) {
                 defaultVisibility={!value.label}
                 // FIXME: use strings
                 heading={`${heading} ${errored ? '*' : ''}`}
+                autoFocus={autoFocus}
                 headerActions={(
                     <>
                         <Checkbox
@@ -214,6 +221,8 @@ function OptionInput(props: OptionInputProps) {
                     value={value.label}
                     onChange={onFieldChange}
                     error={error?.label}
+                    autoFocus={autoFocus}
+                    className={styles.optionInput}
                 />
                 <TextInput
                     // FIXME: use translation
@@ -222,6 +231,7 @@ function OptionInput(props: OptionInputProps) {
                     value={value.color}
                     onChange={onFieldChange}
                     error={error?.color}
+                    className={styles.optionInput}
                 />
                 <TextArea
                     // FIXME: use translation
@@ -231,6 +241,7 @@ function OptionInput(props: OptionInputProps) {
                     value={value.tooltip}
                     onChange={onFieldChange}
                     error={error?.tooltip}
+                    className={styles.optionInput}
                 />
             </ExpandableContainer>
         </div>
@@ -249,6 +260,7 @@ interface DataInputProps<K extends string>{
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
+        // FIXME: use proper variable name
         error: riskyError,
         onChange,
         name,
@@ -256,6 +268,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     } = props;
 
     const onFieldChange = useFormObject(name, onChange, defaultVal);
+    const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
+
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.options);
 
@@ -284,6 +298,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             }
 
             const clientId = randomString();
+            newlyCreatedOptionIdRef.current = clientId;
             const newOption: PartialOptionType = {
                 clientId,
                 order: oldOptions.length,
@@ -306,7 +321,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         key: string,
         option: PartialOptionType,
         index: number,
-    ) => ({
+    ) : OptionInputProps => ({
         onChange: onOptionsChange,
         onRemove: handleOptionRemove,
         onDefaultValueChange: handleDefaultValueChange,
@@ -315,6 +330,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         clientId: key,
         isDefault: value?.defaultValue === key,
         index,
+        autoFocus: newlyCreatedOptionIdRef.current === option.clientId,
     }), [
         onOptionsChange,
         handleOptionRemove,

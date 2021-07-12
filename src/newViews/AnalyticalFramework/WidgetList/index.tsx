@@ -103,7 +103,7 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
             <Header
                 className={styles.header}
                 heading={label}
-                headingSize="small"
+                headingSize="extraSmall"
                 actions={(
                     <QuickActionButton
                         name={name}
