@@ -2,6 +2,7 @@ import { memo } from 'react';
 
 import {
     isDefined,
+    isNotDefined,
     compareNumber,
     isTruthyString,
 } from '@togglecorp/fujs';
@@ -53,3 +54,10 @@ export const shortMonthNamesMap: MonthNameMap = {
     10: 'Nov',
     11: 'Dec',
 };
+
+export function calcPercent(value?: number, total?: number) {
+    if (isNotDefined(value) || isNotDefined(total) || total === 0) {
+        return undefined;
+    }
+    return (value / total) * 100;
+}

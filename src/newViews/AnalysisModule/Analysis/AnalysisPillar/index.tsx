@@ -23,6 +23,7 @@ import {
     AnalyticalStatementSummary,
 } from '#typings';
 import { pathNames } from '#constants';
+import { calcPercent } from '#utils/safeCommon';
 
 import _ts from '#ts';
 import styles from './styles.scss';
@@ -152,7 +153,7 @@ function AnalysisPillar(props: Props) {
                     value={(
                         <div className={styles.completion}>
                             <NumberOutput
-                                value={(analyzedEntries / (totalEntries === 0 ? 1 : totalEntries))}
+                                value={calcPercent(analyzedEntries, totalEntries)}
                                 suffix="%"
                                 precision={2}
                             />
