@@ -4,6 +4,7 @@ import {
     _cs,
 } from '@togglecorp/fujs';
 import {
+    NumberOutput,
     Container,
     Tag,
     QuickActionConfirmButton,
@@ -18,30 +19,33 @@ import {
 } from 'react-icons/io5';
 
 import {
-    AnalysisPillars,
-    AnalyticalStatement,
+    PillarSummary,
+    AnalyticalStatementSummary,
 } from '#typings';
 import { pathNames } from '#constants';
+import { calcPercent } from '#utils/safeCommon';
 
 import _ts from '#ts';
 import styles from './styles.scss';
 
-const statementKeySelector = (d: AnalyticalStatement) => d.clientId;
+const statementKeySelector = (d: AnalyticalStatementSummary) => d.id;
 
-interface ComponentProps {
+export interface Props {
     analysisId: number;
     assigneeName?: string;
-    statements?: AnalyticalStatement[];
+    statements?: AnalyticalStatementSummary[];
     title: string;
     createdAt: string;
     onDelete: (value: number) => void;
-    pillarId: AnalysisPillars['id'];
+    pillarId: PillarSummary['id'];
     projectId: number;
     pendingPillarDelete: boolean;
     className?: string;
+    totalEntries: number;
+    analyzedEntries?: number;
 }
 
-function AnalysisPillar(props: ComponentProps) {
+function AnalysisPillar(props: Props) {
     const {
         pillarId,
         title,
@@ -53,6 +57,8 @@ function AnalysisPillar(props: ComponentProps) {
         pendingPillarDelete,
         statements,
         className,
+        totalEntries,
+        analyzedEntries = 0,
     } = props;
 
     const completed = false;
@@ -70,7 +76,7 @@ function AnalysisPillar(props: ComponentProps) {
         onDelete(pillarId);
     }, [onDelete, pillarId]);
 
-    const statementRendererParams = useCallback((key, data: AnalyticalStatement) => ({
+    const statementRendererParams = useCallback((key, data: AnalyticalStatementSummary) => ({
         className: styles.statement,
         valueContainerClassName: styles.statementText,
         descriptionContainerClassName: styles.description,
@@ -78,7 +84,7 @@ function AnalysisPillar(props: ComponentProps) {
             'analysis',
             'entriesCount',
             {
-                entriesCount: data.analyticalEntries.length,
+                entriesCount: data.entriesCount,
             },
         ),
         value: data.statement,
@@ -139,6 +145,30 @@ function AnalysisPillar(props: ComponentProps) {
                 <TextOutput
                     label={_ts('analysis', 'analyst')}
                     value={assigneeName}
+                    block
+                    hideLabelColon
+                />
+                <TextOutput
+                    label={_ts('analysis', 'entriesAnalyzed')}
+                    value={(
+                        <div className={styles.completion}>
+                            <NumberOutput
+                                value={calcPercent(analyzedEntries, totalEntries)}
+                                suffix="%"
+                                precision={2}
+                            />
+                            <div className={styles.label}>
+                                {_ts(
+                                    'analysis',
+                                    'analysisLabel',
+                                    {
+                                        totalEntries,
+                                        analyzedEntries,
+                                    },
+                                )}
+                            </div>
+                        </div>
+                    )}
                     block
                     hideLabelColon
                 />

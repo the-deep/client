@@ -21,6 +21,7 @@ import {
     Cell,
 } from 'recharts';
 import {
+    DateRangeInput,
     ContainerCard,
     Pager,
     Button,
@@ -32,7 +33,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
-import DateFilter from '#rsci/DateFilter';
 import Timeline from '#newComponents/viz/Timeline';
 
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -84,8 +84,8 @@ const colorScheme = [
 ];
 
 type Filter = {
-    startDate?: string;
-    endDate?: string;
+    startDate: string;
+    endDate: string;
 };
 interface AnalysisList {
     id: number;
@@ -370,10 +370,11 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 headingDescription={analysesResponse?.count}
                 inlineHeadingDescription
                 headerActions={(
-                    <DateFilter
-                        placeholder={_ts('analysis', 'selectAnalysisDate')}
+                    <DateRangeInput
+                        name="dateFilter"
                         value={filter}
                         onChange={setFilter}
+                        variant="general"
                     />
                 )}
                 footerActions={(

@@ -136,7 +136,7 @@ function Analysis(props: ComponentProps) {
     const pillarAssignmentRendererParams = useCallback(
         (_: number, data: PillarSummary) => ({
             assigneeName: data.assigneeDetails.displayName,
-            pillarTitle: data.pillarTitle,
+            pillarTitle: data.title,
             analyzedEntries: data.analyzedEntries,
             totalEntries,
         }),
@@ -317,6 +317,7 @@ function Analysis(props: ComponentProps) {
                     modifiedAt={modifiedAt}
                     activeProject={activeProject}
                     onAnalysisPillarDelete={onAnalysisPillarDelete}
+                    totalEntries={totalEntries}
                 />
             </ExpandableContainer>
             {showCloneModal && (

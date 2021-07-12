@@ -21,7 +21,10 @@ export interface AnalyticalStatement {
 export interface AnalysisPillars {
     id: number;
     versionId: number;
-    assigneeName: string;
+    assigneeDetails: {
+        id: number;
+        displayName: string;
+    };
     analysisTitle: string;
     mainStatement?: string;
     informationGap?: string;
@@ -43,7 +46,7 @@ export interface AnalyticalStatementSummary {
 
 export interface PillarSummary {
     id: number;
-    pillarTitle: string;
+    title: string;
     analyticalStatementCount: number;
     analyticalStatements: AnalyticalStatementSummary[];
     assigneeDetails: { displayName: string };
