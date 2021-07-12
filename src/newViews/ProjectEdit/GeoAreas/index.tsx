@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     ListView,
-    ExpandableContainer,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -14,6 +14,7 @@ import {
 } from '#typings';
 import _ts from '#ts';
 
+import RegionMapList from './RegionMapList';
 import RegionCard from './RegionCard';
 import styles from './styles.scss';
 
@@ -37,7 +38,10 @@ function GeoAreas(props: Props) {
     return (
         <div className={_cs(className, styles.geoAreas)}>
             <div className={styles.mapContainer}>
-                map
+                <RegionMapList
+                    className={styles.map}
+                    regions={regions}
+                />
             </div>
             <div className={styles.listContainer}>
                 <Button
@@ -48,12 +52,11 @@ function GeoAreas(props: Props) {
                 >
                     {_ts('geoAreas', 'addCustom')}
                 </Button>
-                <ExpandableContainer
+                <Container
                     className={styles.geoAreasDropdown}
                     headerClassName={styles.header}
                     contentClassName={styles.content}
                     sub
-                    defaultVisibility
                     heading={_ts('geoAreas', 'title')}
                 >
                     <ListView
@@ -64,7 +67,7 @@ function GeoAreas(props: Props) {
                         rendererClassName={styles.region}
                         keySelector={regionKeySelector}
                     />
-                </ExpandableContainer>
+                </Container>
             </div>
         </div>
     );
