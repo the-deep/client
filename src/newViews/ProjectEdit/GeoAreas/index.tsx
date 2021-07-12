@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     ListView,
-    ExpandableContainer,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -52,12 +52,11 @@ function GeoAreas(props: Props) {
                 >
                     {_ts('geoAreas', 'addCustom')}
                 </Button>
-                <ExpandableContainer
+                <Container
                     className={styles.geoAreasDropdown}
                     headerClassName={styles.header}
                     contentClassName={styles.content}
                     sub
-                    defaultVisibility
                     heading={_ts('geoAreas', 'title')}
                 >
                     <ListView
@@ -68,7 +67,7 @@ function GeoAreas(props: Props) {
                         rendererClassName={styles.region}
                         keySelector={regionKeySelector}
                     />
-                </ExpandableContainer>
+                </Container>
             </div>
         </div>
     );

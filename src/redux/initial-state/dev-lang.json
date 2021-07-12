@@ -1467,7 +1467,7 @@
         "-38205358": "The analytical framework reference image has not been uploaded by the admin.",
         "-1481401001": "There are no geo areas in this project.",
         "-1948140101": "Project maps",
-        "-10834810483": "Map not available.Please define appropriate admin levels and include corresponding geojson files."
+        "-10834810483": "Please define appropriate admin levels and include corresponding geojson files."
     },
     "links": {
         "browserExtension": {
