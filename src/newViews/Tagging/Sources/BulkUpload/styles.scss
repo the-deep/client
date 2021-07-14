@@ -1,0 +1,23 @@
+.bulk-upload {
+    display: flex;
+    flex-grow: 1;
+    background-color: var(--dui-color-white);
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+
+        .upload {
+            display: flex;
+            flex-basis: 30%;
+            flex-grow: 1;
+            margin-right: var(--dui-spacing-small);
+        }
+
+        .details {
+            display: flex;
+            flex-basis: 70%;
+            flex-grow: 1;
+        }
+    }
+}

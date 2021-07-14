@@ -26,12 +26,14 @@ const mapStateToProps = (state: AppState) => ({
 interface Props {
     activeProject: number;
     onAddSingleSourceClick?: () => void;
+    onBulkUploadClick?: () => void;
 }
 
 function Navbar(props: Props) {
     const {
         activeProject,
         onAddSingleSourceClick,
+        onBulkUploadClick,
     } = props;
 
     const sourcesRoute = reverseRoute(
@@ -85,6 +87,11 @@ function Navbar(props: Props) {
                         onClick={onAddSingleSourceClick}
                     >
                         {_ts('tagging', 'addSource')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={onBulkUploadClick}
+                    >
+                        {_ts('bulkUpload', 'title')}
                     </DropdownMenuItem>
                 </DropdownMenu>
             </div>
