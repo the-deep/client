@@ -244,7 +244,7 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, number>(
                 'assigneeDetails',
                 _ts('sourcesTable', 'assignee'),
-                item => item?.assigneeDetails.displayName,
+                item => item?.assigneeDetails?.displayName,
             ),
             createStringColumn<Lead, number>(
                 'priorityDisplay',

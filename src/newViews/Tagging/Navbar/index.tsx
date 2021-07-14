@@ -1,19 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-    withRouter,
     NavLink,
 } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
 import { pathNames } from '#constants';
 import { SubNavbar } from '#components/general/Navbar';
-import { IoChevronDown } from 'react-icons/io5';
 import {
     AppState,
 } from '#typings';
 import {
-    Button,
+    DropdownMenu,
+    DropdownMenuItem,
 } from '@the-deep/deep-ui';
+
 import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';
 
@@ -22,12 +22,16 @@ import styles from './styles.scss';
 const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
 });
+
 interface Props {
     activeProject: number;
+    onAddSingleSourceClick?: () => void;
 }
+
 function Navbar(props: Props) {
     const {
         activeProject,
+        onAddSingleSourceClick,
     } = props;
 
     const sourcesRoute = reverseRoute(
@@ -72,18 +76,20 @@ function Navbar(props: Props) {
                 </NavLink>
             </div>
             <div className={styles.actions}>
-                <Button
-                    className={styles.button}
+                <DropdownMenu
                     name={undefined}
+                    label={_ts('tagging', 'addSource')}
                     variant="secondary"
-                    actions={<IoChevronDown />}
-                    disabled
                 >
-                    {_ts('tagging', 'addSource')}
-                </Button>
+                    <DropdownMenuItem
+                        onClick={onAddSingleSourceClick}
+                    >
+                        {_ts('tagging', 'addSource')}
+                    </DropdownMenuItem>
+                </DropdownMenu>
             </div>
         </SubNavbar>
     );
 }
 
-export default withRouter(connect(mapStateToProps)(Navbar));
+export default connect(mapStateToProps)(Navbar);

@@ -4,6 +4,10 @@ import {
     AppState,
 } from '#typings';
 import { activeProjectIdFromStateSelector } from '#redux';
+import { useModalState } from '#hooks/stateManagement';
+import {
+    Modal,
+} from '@the-deep/deep-ui';
 
 import Navbar from '../Navbar';
 import SourcesStats from './SourcesStats';
@@ -21,10 +25,17 @@ interface Props {
 function Sources(props: Props) {
     const { activeProject } = props;
     const [sourcesFilters, setSourcesFilters] = useState<Filters>();
+    const [
+        isSingleSourceModalShown,
+        showSingleSourceAddModal,
+        hideSingleSourceAddModal,
+    ] = useModalState(false);
 
     return (
         <div className={styles.sources}>
-            <Navbar />
+            <Navbar
+                onAddSingleSourceClick={showSingleSourceAddModal}
+            />
             <SourcesStats
                 className={styles.stats}
                 filters={sourcesFilters}
@@ -40,6 +51,14 @@ function Sources(props: Props) {
                 filters={sourcesFilters}
                 projectId={activeProject}
             />
+            {isSingleSourceModalShown && (
+                <Modal
+                    onCloseButtonClick={hideSingleSourceAddModal}
+                    // FIXME: Use translation later
+                >
+                    Lead add modal
+                </Modal>
+            )}
         </div>
     );
 }
