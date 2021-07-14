@@ -1,0 +1,21 @@
+.lead-edit-modal {
+    width: 80vw;
+    height: 80vh;
+    --width-preview: 420px;
+
+    .modal-body {
+        display: flex;
+
+        .preview {
+            flex-basis: var(--width-preview);
+            margin: var(--dui-spacing-medium);
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        }
+
+        .form-container {
+            flex-grow: 1;
+            margin: var(--dui-spacing-medium);
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        }
+    }
+}

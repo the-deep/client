@@ -5,14 +5,12 @@ import {
 } from '#typings';
 import { activeProjectIdFromStateSelector } from '#redux';
 import { useModalState } from '#hooks/stateManagement';
-import {
-    Modal,
-} from '@the-deep/deep-ui';
 
 import Navbar from '../Navbar';
 import SourcesStats from './SourcesStats';
 import SourcesFilter, { FormType as Filters } from './SourcesFilter';
 import SourcesTable from './SourcesTable';
+import LeadEditModal from './LeadEditModal';
 
 import styles from './styles.scss';
 
@@ -29,7 +27,7 @@ function Sources(props: Props) {
         isSingleSourceModalShown,
         showSingleSourceAddModal,
         hideSingleSourceAddModal,
-    ] = useModalState(false);
+    ] = useModalState(true);
 
     const [
         isBulkModalShown,
@@ -59,12 +57,10 @@ function Sources(props: Props) {
                 projectId={activeProject}
             />
             {isSingleSourceModalShown && (
-                <Modal
-                    onCloseButtonClick={hideSingleSourceAddModal}
-                    // FIXME: Use translation later
-                >
-                    Lead add modal
-                </Modal>
+                <LeadEditModal
+                    projectId={activeProject}
+                    onClose={hideSingleSourceAddModal}
+                />
             )}
             {isBulkModalShown && (
                 <Modal
