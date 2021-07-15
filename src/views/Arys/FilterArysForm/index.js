@@ -64,7 +64,7 @@ const mapDispatchToProps = dispatch => ({
 const requestOptions = {
     filterOptionsRequest: {
         url: '/assessment-options/',
-        params: ({ props: { activeProject } }) => ({
+        query: ({ props: { activeProject } }) => ({
             project: activeProject,
         }),
         method: methods.GET,
