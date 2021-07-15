@@ -31,10 +31,17 @@ function Sources(props: Props) {
         hideSingleSourceAddModal,
     ] = useModalState(false);
 
+    const [
+        isBulkModalShown,
+        showBulkUploadModal,
+        hideBulkUploadModal,
+    ] = useModalState(false);
+
     return (
         <div className={styles.sources}>
             <Navbar
                 onAddSingleSourceClick={showSingleSourceAddModal}
+                onBulkUploadClick={showBulkUploadModal}
             />
             <SourcesStats
                 className={styles.stats}
@@ -57,6 +64,14 @@ function Sources(props: Props) {
                     // FIXME: Use translation later
                 >
                     Lead add modal
+                </Modal>
+            )}
+            {isBulkModalShown && (
+                <Modal
+                    onCloseButtonClick={hideBulkUploadModal}
+                    // FIXME: Use translation later
+                >
+                    Bulk upload modal
                 </Modal>
             )}
         </div>
