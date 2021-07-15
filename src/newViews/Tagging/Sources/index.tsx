@@ -27,7 +27,7 @@ function Sources(props: Props) {
         isSingleSourceModalShown,
         showSingleSourceAddModal,
         hideSingleSourceAddModal,
-    ] = useModalState(true);
+    ] = useModalState(false);
 
     const [
         isBulkModalShown,
@@ -60,6 +60,8 @@ function Sources(props: Props) {
                 <LeadEditModal
                     projectId={activeProject}
                     onClose={hideSingleSourceAddModal}
+                    // TODO: Refresh leads after new lead is created
+                    onLeadSaveSuccess={hideSingleSourceAddModal}
                 />
             )}
             {isBulkModalShown && (

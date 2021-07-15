@@ -24,9 +24,11 @@ import { VscLoading } from 'react-icons/vsc';
 import { MultiResponse, Lead } from '#typings';
 import { useRequest } from '#utils/request';
 import _ts from '#ts';
+import { useModalState } from '#hooks/stateManagement';
 
 import Actions, { Props as ActionsProps } from './Actions';
 import { FormType as Filters } from '../SourcesFilter';
+import LeadEditModal from '../LeadEditModal';
 
 import styles from './styles.scss';
 
@@ -74,6 +76,7 @@ function SourcesTable(props: Props) {
     const leadsRequestBody = useMemo(() => ({
         ...filters,
         project: projectId,
+        ordering: '-created_at',
     }), [projectId, filters]);
 
     const {
@@ -112,9 +115,18 @@ function SourcesTable(props: Props) {
         }
     }, []);
 
-    const handleEdit = useCallback(() => {
-        console.warn('handleEdit', handleEdit); // TODO use leadEdit page when available
-    }, []);
+    const [leadToEdit, setLeadToEdit] = useState<number | undefined>();
+
+    const [
+        isSingleSourceModalShown,
+        showSingleSourceAddModal,
+        hideSingleSourceAddModal,
+    ] = useModalState(false);
+
+    const handleEdit = useCallback((leadId: number) => {
+        setLeadToEdit(leadId);
+        showSingleSourceAddModal();
+    }, [showSingleSourceAddModal]);
 
     const columns = useMemo(() => {
         const selectColumn: TableColumn<
@@ -255,6 +267,11 @@ function SourcesTable(props: Props) {
         ]);
     }, [handleSelectAll, handleSelection, leadsResponse, selectedIds, handleEdit]);
 
+    const handleLeadSaveSuccess = useCallback(() => {
+        getLeads();
+        hideSingleSourceAddModal();
+    }, [getLeads, hideSingleSourceAddModal]);
+
     return (
         <Container
             className={_cs(styles.sourcesTableContainer, className)}
@@ -276,6 +293,14 @@ function SourcesTable(props: Props) {
                 keySelector={leadsKeySelector}
                 columns={columns}
             />
+            {isSingleSourceModalShown && (
+                <LeadEditModal
+                    leadId={leadToEdit}
+                    projectId={projectId}
+                    onClose={hideSingleSourceAddModal}
+                    onLeadSaveSuccess={handleLeadSaveSuccess}
+                />
+            )}
         </Container>
     );
 }

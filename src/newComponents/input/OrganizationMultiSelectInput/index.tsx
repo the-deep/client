@@ -15,7 +15,9 @@ type OrganizationSelectInputProps<K extends string> = SearchMultiSelectInputProp
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 >;
 const keySelector = (d: BasicOrganization) => d.id;
+// FIXME: Use merged as title as well
 const labelSelector = (d: BasicOrganization) => d.title;
+
 function OrganizationMultiSelectInput<K extends string>(props: OrganizationSelectInputProps<K>) {
     const {
         className,

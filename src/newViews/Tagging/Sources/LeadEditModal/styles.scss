@@ -1,13 +1,14 @@
 .lead-edit-modal {
-    width: 80vw;
-    height: 80vh;
-    --width-preview: 420px;
+    width: 90vw;
+    height: 90vh;
+    --width-preview: 560px;
 
     .modal-body {
         display: flex;
 
         .preview {
             flex-basis: var(--width-preview);
+            flex-shrink: 0;
             margin: var(--dui-spacing-medium);
             border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         }
@@ -16,6 +17,7 @@
             flex-grow: 1;
             margin: var(--dui-spacing-medium);
             border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            overflow-y: auto;
         }
     }
 }

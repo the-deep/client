@@ -1,0 +1,14 @@
+.body {
+    .content {
+        .list {
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            overflow-y: auto;
+
+            .tag {
+                margin: var(--dui-spacing-small);
+            }
+        }
+    }
+}
