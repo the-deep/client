@@ -74,6 +74,7 @@
         "@types/gapi": "^0.0.41",
         "@types/gapi.auth2": "^0.0.55",
         "@types/google.picker": "^0.0.39",
+        "@types/dropbox-chooser": "^1.0.3",
         "@types/mapbox-gl": "^2.1.1",
         "@types/memoize-one": "^5.1.2",
         "@types/react-redux": "^7.1.16",

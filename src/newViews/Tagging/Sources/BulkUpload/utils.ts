@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export const supportedGoogleDriveMimeTypes = [
     'application/json', 'application/xml', 'application/msword',
     'application/rtf', 'text/plain', 'font/otf', 'application/pdf',
@@ -12,4 +11,11 @@ export const supportedGoogleDriveMimeTypes = [
     'image/jpeg',
     'image/png',
     'text/csv',
+];
+
+export const supportedDropboxExtension = [
+    '.doc', '.docx', '.rtf', '.txt',
+    '.otf', '.pdf', '.ppt', '.pptx',
+    '.xls', '.xlsx', '.ods', '.csv', '.png',
+    '.jpg', '.gif', '.json', '.xml',
 ];
