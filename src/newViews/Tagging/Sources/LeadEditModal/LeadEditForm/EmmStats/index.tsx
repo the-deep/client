@@ -38,12 +38,12 @@ interface Props {
 function EmmStatsModal(props: Props) {
     const {
         className,
-        emmEntities = [],
-        emmTriggers = [],
+        emmEntities,
+        emmTriggers,
     } = props;
 
-    const showEntities = emmEntities.length > 0;
-    const showTriggers = emmTriggers.length > 0;
+    const showEntities = emmEntities && emmEntities?.length > 0;
+    const showTriggers = emmTriggers && emmTriggers?.length > 0;
 
     return (
         <div className={_cs(className, styles.body)}>

@@ -18,6 +18,8 @@ import {
     LinkProps,
     Checkbox,
     CheckboxProps,
+    SortContext,
+    useSortState,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -27,7 +29,7 @@ import _ts from '#ts';
 import { useModalState } from '#hooks/stateManagement';
 
 import Actions, { Props as ActionsProps } from './Actions';
-import { FormType as Filters } from '../SourcesFilter';
+import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
 import LeadEditModal from '../LeadEditModal';
 
 import styles from './styles.scss';
@@ -52,6 +54,11 @@ const statusLabelMap: Record<Lead['status'], string> = {
 
 const maxItemsPerPage = 10;
 
+const defaultSorting = {
+    name: 'created_at',
+    direction: 'asc',
+};
+
 interface Props {
     className?: string;
     projectId: number;
@@ -73,11 +80,18 @@ function SourcesTable(props: Props) {
         limit: maxItemsPerPage,
     }), [activePage]);
 
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = validSorting.direction === 'Ascending'
+        ? validSorting.name
+        : `-${validSorting.name}`;
+
     const leadsRequestBody = useMemo(() => ({
-        ...filters,
+        ...getFiltersForRequest(filters),
         project: projectId,
-        ordering: '-created_at',
-    }), [projectId, filters]);
+        ordering,
+    }), [projectId, filters, ordering]);
 
     const {
         pending: leadsGetPending,
@@ -172,11 +186,11 @@ function SourcesTable(props: Props) {
         const createdAtColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
         > = {
-            id: 'createdAt',
+            id: 'created_at',
             title: _ts('sourcesTable', 'createdAt'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
-                sortable: false,
+                sortable: true,
             },
             cellRenderer: DateOutput,
             cellRendererParams: (_, data) => ({
@@ -186,11 +200,11 @@ function SourcesTable(props: Props) {
         const publishedOnColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
         > = {
-            id: 'publishedOn',
+            id: 'published_on',
             title: _ts('sourcesTable', 'publishingDate'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
-                sortable: false,
+                sortable: true,
             },
             cellRenderer: DateOutput,
             cellRendererParams: (_, data) => ({
@@ -200,11 +214,11 @@ function SourcesTable(props: Props) {
         const publisherColumn: TableColumn<
             Lead, number, LinkProps, TableHeaderCellProps
         > = {
-            id: 'sourceDetail',
+            id: 'source',
             title: _ts('sourcesTable', 'publisher'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
-                sortable: false,
+                sortable: true,
             },
             cellRenderer: Link,
             cellRendererParams: (_, data) => ({
@@ -235,33 +249,51 @@ function SourcesTable(props: Props) {
                 'title',
                 _ts('sourcesTable', 'titleLabel'),
                 item => item?.title,
+                {
+                    sortable: true,
+                },
             ),
             createStringColumn<Lead, number>(
-                'pageCount',
+                'page_count',
                 _ts('sourcesTable', 'pages'),
                 item => `${item?.pageCount} ${item?.pageCount > 1 ? 'pages' : 'page'}`,
+                {
+                    sortable: true,
+                },
             ),
             publisherColumn,
             createStringColumn<Lead, number>(
                 'authorsDetail',
                 _ts('sourcesTable', 'authors'),
                 item => item?.authorsDetail.map(v => v.title).join(','),
+                {
+                    sortable: false,
+                },
             ),
             publishedOnColumn,
             createStringColumn<Lead, number>(
-                'createdByName',
+                'created_by',
                 _ts('sourcesTable', 'addedBy'),
                 item => item?.createdByName,
+                {
+                    sortable: true,
+                },
             ),
             createStringColumn<Lead, number>(
-                'assigneeDetails',
+                'assignee',
                 _ts('sourcesTable', 'assignee'),
                 item => item?.assigneeDetails?.displayName,
+                {
+                    sortable: true,
+                },
             ),
             createStringColumn<Lead, number>(
-                'priorityDisplay',
+                'priority',
                 _ts('sourcesTable', 'priority'),
                 item => item?.priorityDisplay,
+                {
+                    sortable: true,
+                },
             ),
             actionsColumn,
         ]);
@@ -287,12 +319,15 @@ function SourcesTable(props: Props) {
             )}
         >
             {leadsGetPending && (<PendingMessage />)}
-            <Table
-                className={styles.table}
-                data={leadsResponse?.results}
-                keySelector={leadsKeySelector}
-                columns={columns}
-            />
+            <SortContext.Provider value={sortState}>
+                <Table
+                    className={styles.table}
+                    data={leadsResponse?.results}
+                    keySelector={leadsKeySelector}
+                    columns={columns}
+                    variant="large"
+                />
+            </SortContext.Provider>
             {isSingleSourceModalShown && (
                 <LeadEditModal
                     leadId={leadToEdit}

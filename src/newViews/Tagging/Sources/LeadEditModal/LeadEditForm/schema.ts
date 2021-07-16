@@ -4,6 +4,9 @@ import {
     requiredCondition,
     PartialForm,
     urlCondition,
+    defaultUndefinedType,
+    defaultEmptyArrayType,
+    forceNullType,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -31,6 +34,7 @@ export interface EmmEntity {
 
 export interface Lead {
     // TODO: Handle case where assignee can be multiple
+    id?: number;
     assignee: number;
     authorRaw?: string;
     authors?: [number];
@@ -96,8 +100,9 @@ export interface LeadOptions {
 export const schema:FormSchema = {
     fields: (value): FormSchemaFields => {
         let baseSchema: FormSchemaFields = {
+            id: [defaultUndefinedType],
             assignee: [requiredCondition],
-            authors: [],
+            authors: [defaultEmptyArrayType],
             confidentiality: [requiredCondition],
             leadGroup: [],
             priority: [requiredCondition],
@@ -106,14 +111,19 @@ export const schema:FormSchema = {
             source: [requiredCondition],
             sourceType: [requiredCondition],
             title: [requiredStringCondition],
+            emmEntities: [defaultEmptyArrayType],
+            emmTriggers: [defaultEmptyArrayType],
+
+            url: [forceNullType],
+            website: [forceNullType],
+            text: [forceNullType],
+            attachment: [forceNullType],
         };
         if (value?.sourceType === 'website') {
             baseSchema = {
                 ...baseSchema,
                 url: [requiredCondition, urlCondition],
                 website: [requiredCondition],
-                emmEntities: [],
-                emmTriggers: [],
             };
         } else if (value?.sourceType === 'text') {
             baseSchema = {

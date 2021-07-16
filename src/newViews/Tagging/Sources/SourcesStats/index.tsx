@@ -11,7 +11,7 @@ import _ts from '#ts';
 import { useRequest } from '#utils/request';
 import ProgressLine from '#newComponents/viz/ProgressLine';
 
-import { FormType as Filters } from '../SourcesFilter';
+import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
 import styles from './styles.scss';
 
 interface Props {
@@ -28,7 +28,7 @@ function SourcesStats(props: Props) {
     } = props;
 
     const leadsRequestBody = useMemo(() => ({
-        ...filters,
+        ...getFiltersForRequest(filters),
         project: projectId,
     }), [projectId, filters]);
 

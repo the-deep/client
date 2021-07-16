@@ -18,6 +18,7 @@ import {
     EntriesAsList,
     Error,
     getErrorObject,
+    getErrorString,
 } from '@togglecorp/toggle-form';
 
 import { useRequest } from '#utils/request';
@@ -34,6 +35,8 @@ import ConfidentialityInput from './ConfidentialityInput';
 import EmmStats from './EmmStats';
 
 import styles from './styles.scss';
+
+// FIXME: Use translations throughout the page
 
 const idSelector = (item: { id: number }) => item.id;
 const titleSelector = (item: { title: string}) => item.title;
@@ -59,7 +62,6 @@ function LeadEditForm(props: Props) {
         setFieldValue,
     } = props;
     const error = getErrorObject(riskyError);
-    const arrayError = getErrorObject(error?.authors);
 
     const optionsRequestBody = useMemo(() => ({
         projects: [initialValue.project],
@@ -197,8 +199,7 @@ function LeadEditForm(props: Props) {
                     disabled={pending}
                     label="Authoring Organizations"
                     hint={isTruthyString(value?.authorRaw) && `Previous organization: ${value?.authorRaw}`}
-                    // FIXME: Talk with @tnagorra regarding appropriate use of error
-                    error={arrayError}
+                    error={getErrorString(error?.authors)}
                 />
             </div>
             <div className={styles.row}>

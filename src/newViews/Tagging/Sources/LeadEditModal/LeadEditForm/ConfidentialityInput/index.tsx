@@ -20,11 +20,7 @@ function ConfidentialityInput<N extends string>(props: Props<N>) {
     const modifiedValue = value === 'confidential';
 
     const handleCheckboxChange = useCallback((newVal: boolean) => {
-        if (newVal) {
-            onChange('confidential', name);
-        } else {
-            onChange('unprotected', name);
-        }
+        onChange(newVal ? 'confidential' : 'unprotected', name);
     }, [onChange, name]);
 
     return (

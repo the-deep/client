@@ -74,12 +74,7 @@ function LeadEditModal(props: Props) {
     } = useLazyRequest<Lead, PartialFormType>({
         url: leadId ? `server://v2/leads/${leadId}/` : 'server://v2/leads/',
         method: leadId ? 'PATCH' : 'POST',
-        body: ctx => ({
-            ...ctx,
-            authors: ctx.authors ?? [],
-            emmTriggers: ctx.emmTriggers ?? [],
-            emmEntities: ctx.emmEntities ?? [],
-        }),
+        body: ctx => ctx,
         onSuccess: () => {
             onLeadSaveSuccess();
         },
@@ -88,7 +83,7 @@ function LeadEditModal(props: Props) {
                 setError(transformErrorToToggleFormError(schema, ctx, response.value.errors));
             }
         },
-        failureHeader: 'Leads',
+        failureHeader: 'Lead',
     });
 
     const pending = leadGetPending || leadSavePending;

@@ -8,9 +8,10 @@ import { useModalState } from '#hooks/stateManagement';
 
 import Navbar from '../Navbar';
 import SourcesStats from './SourcesStats';
-import SourcesFilter, { FormType as Filters } from './SourcesFilter';
+import SourcesFilter from './SourcesFilter';
 import SourcesTable from './SourcesTable';
 import LeadEditModal from './LeadEditModal';
+import { FilterFormType as Filters } from './utils';
 
 import styles from './styles.scss';
 

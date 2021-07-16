@@ -12,7 +12,7 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
-    DateInput,
+    DateRangeInput,
     SelectInput,
     MultiSelectInput,
     useBooleanState,
@@ -33,25 +33,13 @@ import {
 import _ts from '#ts';
 import { KeyValueElement, LeadOptions, EmmEntity } from '#typings';
 import NonFieldError from '#newComponents/ui/NonFieldError';
+import { FilterFormType } from '../utils';
 
 import styles from './styles.scss';
 
-export type FormType = {
-    status?: string[];
-    createdAt?: string;
-    publishedOn?: string;
-    assignee?: string[];
-    search?: string;
-    exists?: string;
-    priority?: string[];
-    authoringOrganizationTypes?: string[];
-    confidentiality?: string[];
-    emmRiskFactors?: string[];
-    emmKeywords?: string[];
-    emmEntities?: string[];
-};
+// FIXME: Created at and published on are date ranges and not date inputs
 
-type FormSchema = ObjectSchema<FormType>;
+type FormSchema = ObjectSchema<FilterFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
@@ -71,7 +59,7 @@ const schema: FormSchema = {
     }),
 };
 
-const initialValue: FormType = {};
+const initialValue: FilterFormType = {};
 
 const keySelector = (d: KeyValueElement): string => d.key;
 const labelSelector = (d: KeyValueElement): string => d.value;
@@ -94,7 +82,7 @@ interface Props {
     disabled?: boolean;
     projectId: number;
     filterOnlyUnprotected?: boolean;
-    onFilterApply: (filters: FormType) => void;
+    onFilterApply: (filters: FilterFormType) => void;
 }
 
 function SourcesFilter(props: Props) {
@@ -183,25 +171,21 @@ function SourcesFilter(props: Props) {
                     label={_ts('sourcesFilter', 'status')}
                     placeholder={_ts('sourcesFilter', 'status')}
                 />
-                <DateInput
+                <DateRangeInput
                     className={styles.input}
                     name="publishedOn"
                     onChange={setFieldValue}
                     value={value.publishedOn}
-                    error={error?.publishedOn}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'originalDate')}
-                    placeholder={_ts('sourcesFilter', 'originalDate')}
                 />
-                <DateInput
+                <DateRangeInput
                     className={styles.input}
                     name="createdAt"
                     onChange={setFieldValue}
                     value={value.createdAt}
-                    error={error?.createdAt}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
-                    placeholder={_ts('sourcesFilter', 'addedOn')}
                 />
                 <MultiSelectInput
                     className={styles.input}
