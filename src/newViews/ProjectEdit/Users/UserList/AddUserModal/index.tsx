@@ -199,6 +199,7 @@ function AddUserModal(props: Props) {
                 optionsPopupClassName={styles.optionsPopup}
                 onChange={setFieldValue}
                 value={value.role}
+                error={error?.role}
                 label={_ts('projectEdit', 'roleLabel')}
                 placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
                 disabled={pendingRequests}

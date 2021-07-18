@@ -334,7 +334,7 @@ export const routes = {
         loader: () => import('../newViews/Tagging/Sources/BulkUpload'),
         links: allLinks,
         hideNavbar: false,
-    }, // _ts('pageTitle', 'myProfile');
+    }, // _ts('pageTitle', 'tagging');
     categoryEditor: {
         order: 110,
         type: ROUTE.private,
@@ -358,7 +358,7 @@ export const routes = {
         loader: () => import('../newViews/Tagging/Sources'),
         showSubNavbar: true,
         links: allLinks,
-    },
+    }, // _ts('pageTitle', 'sources');
     taggingDashboard: {
         order: 162,
         type: ROUTE.private,
@@ -366,7 +366,7 @@ export const routes = {
         loader: () => import('../newViews/Tagging/Dashboard'),
         showSubNavbar: true,
         links: allLinks,
-    },
+    }, // _ts('pageTitle', 'taggingDashboard');
     taggingExport: {
         order: 163,
         type: ROUTE.private,
@@ -375,7 +375,7 @@ export const routes = {
         loader: () => import('../newViews/Tagging/Export'),
         showSubNavbar: true,
         links: allLinks,
-    },
+    }, // _ts('pageTitle', 'taggingExport');
     stringManagement: {
         order: 150,
         type: ROUTE.public,

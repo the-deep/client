@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Prompt, useHistory } from 'react-router-dom';
+import {
+    IoTrashOutline,
+} from 'react-icons/io5';
 import {
     Button,
     Container,
@@ -13,14 +16,15 @@ import {
     Checkbox,
     ListView,
     SegmentInput,
+    Modal,
 } from '@the-deep/deep-ui';
 import {
     isDefined,
     isNotDefined,
     listToGroupList,
     reverseRoute,
+    compareDate,
 } from '@togglecorp/fujs';
-
 import {
     ArraySchema,
     ObjectSchema,
@@ -43,6 +47,7 @@ import {
     User,
 } from '#typings';
 import { organizationTitleSelector } from '#entities/organization';
+import { useModalState } from '#hooks/stateManagement';
 
 import _ts from '#ts';
 import {
@@ -144,6 +149,16 @@ const schema: FormSchema = {
         organizations: organizationListSchema,
         isPrivate: [],
     }),
+    validation: (value) => {
+        if (
+            value?.startDate
+            && value?.endDate
+            && (compareDate(value.startDate, value.endDate) > 0)
+        ) {
+            return (_ts('projectEdit', 'endDateGreaterThanStartDate'));
+        }
+        return undefined;
+    },
 };
 
 const getOrganizationValues = (project: ProjectDetails) =>
@@ -196,8 +211,15 @@ function ProjectDetailsForm(props: Props) {
         setValue,
     } = useForm(schema, initialValue);
 
+    const [
+        isDeleteModalVisible,
+        showDeleteProjectConfirmation,
+        hideDeleteProjectConfirmation,
+    ] = useModalState(false);
+
     const error = getErrorObject(riskyError);
 
+    const [projectTitleToDelete, setProjectTitleToDelete] = useState<string | undefined>();
     const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
@@ -216,7 +238,7 @@ function ProjectDetailsForm(props: Props) {
     );
 
     const {
-        pending,
+        pending: pendingProjectDetailsGet,
     } = useRequest<ProjectDetails>({
         skip: isNotDefined(projectId),
         url: `server://projects/${projectId}/`,
@@ -254,6 +276,32 @@ function ProjectDetailsForm(props: Props) {
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
+    const {
+        pending: projectDeletePending,
+        trigger: triggerProjectDelete,
+    } = useLazyRequest<ProjectDetails>({
+        url: `server://projects/${projectId}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            history.push(
+                reverseRoute(
+                    pathNames.home,
+                    {},
+                ),
+            );
+        },
+        failureHeader: _ts('projectEdit', 'deleteProject'),
+    });
+
+    const handleProjectDeleteConfirmCancel = useCallback(() => {
+        hideDeleteProjectConfirmation();
+        setProjectTitleToDelete(undefined);
+    }, [hideDeleteProjectConfirmation]);
+
+    const handleProjectDeleteConfirm = useCallback(() => {
+        triggerProjectDelete(null);
+    }, [triggerProjectDelete]);
+
     const handleSubmit = useCallback((values: FormType) => {
         projectPatch({
             ...values,
@@ -287,14 +335,15 @@ function ProjectDetailsForm(props: Props) {
         f => f.key === featuresMapping.privateProject,
     );
 
-    const disabled = pending || projectPatchPending;
+    const pending = pendingProjectDetailsGet || projectPatchPending || projectDeletePending;
+    const disabled = pending;
 
     return (
         <form
             className={styles.projectDetails}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
-            {(pending || projectPatchPending) && <PendingMessage />}
+            {pending && <PendingMessage />}
             <NonFieldError error={error} />
             <div className={styles.content}>
                 <div className={styles.left}>
@@ -426,6 +475,63 @@ function ProjectDetailsForm(props: Props) {
                             />
                         )}
                     </div>
+                    <div className={styles.buttonsContainer}>
+                        <Button
+                            className={styles.button}
+                            name="deleteProject"
+                            disabled={!projectId || projectDeletePending}
+                            onClick={showDeleteProjectConfirmation}
+                            icons={(
+                                <IoTrashOutline />
+                            )}
+                        >
+                            {_ts('projectEdit', 'deleteProjectButtonLabel')}
+                        </Button>
+                    </div>
+                    {isDeleteModalVisible && (
+                        <Modal
+                            onCloseButtonClick={handleProjectDeleteConfirmCancel}
+                            heading={_ts('projectEdit', 'deleteProject')}
+                            footerActions={(
+                                <>
+                                    <Button
+                                        name="cancel"
+                                        onClick={handleProjectDeleteConfirmCancel}
+                                        variant="secondary"
+                                    >
+                                        {_ts('projectEdit', 'cancelButtonLabel')}
+                                    </Button>
+                                    <Button
+                                        name="delete"
+                                        onClick={handleProjectDeleteConfirm}
+                                        disabled={projectDetails?.title !== projectTitleToDelete}
+                                    >
+                                        {_ts('projectEdit', 'deleteProjectButtonLabel')}
+                                    </Button>
+                                </>
+                            )}
+                        >
+                            <p>
+                                {_ts(
+                                    'projectEdit',
+                                    'deleteProjectConfirmationMessage',
+                                    { title: <strong>{projectDetails?.title}</strong> },
+                                )}
+                            </p>
+                            <p>{_ts('projectEdit', 'deleteConfirmLabel')}</p>
+                            <TextInput
+                                className={styles.input}
+                                name="projectTitle"
+                                disabled={disabled}
+                                onChange={setProjectTitleToDelete}
+                                value={projectTitleToDelete}
+                                error={error?.title}
+                                label={_ts('projectEdit', 'projectTitle')}
+                                placeholder={_ts('projectEdit', 'projectTitle')}
+                                autoFocus
+                            />
+                        </Modal>
+                    )}
                 </div>
             </div>
             <Footer
@@ -440,6 +546,10 @@ function ProjectDetailsForm(props: Props) {
                         {_ts('projectEdit', 'projectSave')}
                     </Button>
                 )}
+            />
+            <Prompt
+                when={!pristine}
+                message={_ts('common', 'youHaveUnsavedChanges')}
             />
         </form>
     );
