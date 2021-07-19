@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     unique,
@@ -14,6 +14,7 @@ import {
     SelectInput,
     Checkbox,
     TextArea,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
@@ -21,12 +22,19 @@ import {
     getErrorObject,
     getErrorString,
 } from '@togglecorp/toggle-form';
+import { IoAdd } from 'react-icons/io5';
 
 import { useRequest } from '#utils/request';
 import OrganizationSelectInput from '#newComponents/input/OrganizationSelectInput';
 import OrganizationMultiSelectInput from '#newComponents/input/OrganizationMultiSelectInput';
+import AddOrganizationModal from '#newComponents/general/AddOrganizationModal';
+import {
+    useModalState,
+} from '#hooks/stateManagement';
+import {
+    BasicOrganization,
+} from '#typings';
 
-import { BasicOrganization } from '#typings';
 import {
     PartialFormType,
     LeadOptions,
@@ -38,6 +46,7 @@ import EmmStats from './EmmStats';
 import styles from './styles.scss';
 
 // FIXME: Use translations throughout the page
+
 
 const idSelector = (item: { id: number }) => item.id;
 const titleSelector = (item: { title: string}) => item.title;
@@ -92,6 +101,14 @@ function LeadEditForm(props: Props) {
 
     // NOTE: the loading animation flashes when loading for
     // lead-options. this will be mitigated when using graphql
+    const [organizationAddType, setOrganizationAddType] = useState<'author' | 'publisher' | undefined>(undefined);
+
+    const [
+        showAddOrganizationModal,
+        setAddOrganizationModalVisible,
+        setAddOrganizationModalHidden,
+    ] = useModalState(false);
+
     const {
         pending,
         response: leadOptions,
@@ -106,6 +123,26 @@ function LeadEditForm(props: Props) {
     const sortedPriority = useMemo(() => (
         leadOptions?.priority?.sort((a, b) => compareNumber(a.key, b.key))
     ), [leadOptions?.priority]);
+
+    const handleAddPublishingOrganizationsClick = useCallback(() => {
+        setAddOrganizationModalVisible();
+        setOrganizationAddType('publisher');
+    }, [setAddOrganizationModalVisible]);
+
+    const handleAddAuthorOrganizationsClick = useCallback(() => {
+        setAddOrganizationModalVisible();
+        setOrganizationAddType('author');
+    }, [setAddOrganizationModalVisible]);
+
+    const handleOrganizationAdd = useCallback((val: BasicOrganization) => {
+        if (organizationAddType === 'publisher') {
+            setFieldValue(val.id, 'source');
+            setSourceOrganizationOptions(oldVal => [...oldVal ?? [], val]);
+        } else if (organizationAddType === 'author') {
+            setFieldValue((oldVal: number[] | undefined) => [...oldVal ?? [], val.id], 'authors');
+            setAuthorOrganizationOptions(oldVal => [...oldVal ?? [], val]);
+        }
+    }, [organizationAddType, setFieldValue]);
 
     return (
         <div className={_cs(styles.leadEditForm, className)}>
@@ -196,6 +233,16 @@ function LeadEditForm(props: Props) {
                     label="Publishing Organizations"
                     hint={isTruthyString(value.sourceRaw) && `Previous organization: ${value.sourceRaw}`}
                     error={error?.source}
+                    actions={(
+                        <QuickActionButton
+                            name="add organizations"
+                            variant="transparent"
+                            onClick={handleAddPublishingOrganizationsClick}
+                        >
+                            <IoAdd />
+
+                        </QuickActionButton>
+                    )}
                 />
                 <OrganizationMultiSelectInput
                     className={styles.input}
@@ -208,6 +255,16 @@ function LeadEditForm(props: Props) {
                     label="Authoring Organizations"
                     hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
                     error={getErrorString(error?.authors)}
+                    actions={(
+                        <QuickActionButton
+                            name="add organizations"
+                            variant="transparent"
+                            onClick={handleAddAuthorOrganizationsClick}
+                        >
+                            <IoAdd />
+
+                        </QuickActionButton>
+                    )}
                 />
             </div>
             <div className={styles.row}>
@@ -243,6 +300,12 @@ function LeadEditForm(props: Props) {
                 emmTriggers={value.emmTriggers}
                 emmEntities={value.emmEntities}
             />
+            {showAddOrganizationModal && (
+                <AddOrganizationModal
+                    onModalClose={setAddOrganizationModalHidden}
+                    onOrganizationAdd={handleOrganizationAdd}
+                />
+            )}
         </div>
     );
 }
