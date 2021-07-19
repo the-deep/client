@@ -21,6 +21,9 @@ import GoogleDrivePicker from './GoogleDrivePicker';
 import DropboxPicker from './DropboxPicker';
 import styles from './styles.scss';
 
+import FilesUpload from './FilesUpload';
+import styles from './styles.scss';
+
 interface Props {
     className?: string;
 }
@@ -41,8 +44,9 @@ function Upload(props: Props) {
 
     return (
         <Container
-            className={_cs(className, styles.upload)}
+            className={_cs(styles.upload, className)}
             heading={_ts('bulkUpload', 'uploadFilesTitle')}
+            contentClassName={styles.content}
             sub
             contentClassName={styles.content}
         >
@@ -69,6 +73,10 @@ function Upload(props: Props) {
             >
                 {_ts('addLeads.sourceButtons', 'dropboxLabel')}
             </DropboxPicker>
+        >
+            <FilesUpload
+                className={styles.item}
+            />
         </Container>
     );
 }
