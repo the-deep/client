@@ -106,7 +106,7 @@ function LeadEditForm(props: Props) {
             <SelectInput
                 label="Project"
                 name="project"
-                value={value?.project}
+                value={value.project}
                 className={styles.input}
                 onChange={setFieldValue}
                 keySelector={idSelector}
@@ -115,13 +115,13 @@ function LeadEditForm(props: Props) {
                 disabled
                 error={error?.project}
             />
-            {value?.sourceType === 'website' && (
+            {value.sourceType === 'website' && (
                 <>
                     <TextInput
                         className={styles.input}
                         label="URL"
                         name="url"
-                        value={value?.url}
+                        value={value.url}
                         onChange={setFieldValue}
                         error={error?.url}
                     />
@@ -129,19 +129,19 @@ function LeadEditForm(props: Props) {
                         className={styles.input}
                         label="Website"
                         name="website"
-                        value={value?.website}
+                        value={value.website}
                         onChange={setFieldValue}
                         error={error?.website}
                     />
                 </>
             )}
-            {value?.sourceType === 'text' && (
+            {value.sourceType === 'text' && (
                 <>
                     <TextArea
                         className={styles.input}
                         label="Text"
                         name="text"
-                        value={value?.text}
+                        value={value.text}
                         onChange={setFieldValue}
                         rows={10}
                         error={error?.text}
@@ -152,7 +152,7 @@ function LeadEditForm(props: Props) {
                 className={styles.input}
                 label="Title"
                 name="title"
-                value={value?.title}
+                value={value.title}
                 onChange={setFieldValue}
                 error={error?.title}
             />
@@ -161,7 +161,7 @@ function LeadEditForm(props: Props) {
                     className={styles.input}
                     label="Published On"
                     name="publishedOn"
-                    value={value?.publishedOn}
+                    value={value.publishedOn}
                     onChange={setFieldValue}
                     error={error?.publishedOn}
                 />
@@ -169,7 +169,7 @@ function LeadEditForm(props: Props) {
                     className={styles.input}
                     label="Assignee"
                     name="assignee"
-                    value={value?.assignee}
+                    value={value.assignee}
                     onChange={setFieldValue}
                     keySelector={idSelector}
                     labelSelector={displayNameSelector}
@@ -187,7 +187,7 @@ function LeadEditForm(props: Props) {
                     onOptionsChange={setSourceOrganizationOptions}
                     disabled={pending}
                     label="Publishing Organizations"
-                    hint={isTruthyString(value?.sourceRaw) && `Previous organization: ${value?.sourceRaw}`}
+                    hint={isTruthyString(value.sourceRaw) && `Previous organization: ${value.sourceRaw}`}
                     error={error?.source}
                 />
                 <OrganizationMultiSelectInput
@@ -199,7 +199,7 @@ function LeadEditForm(props: Props) {
                     onOptionsChange={setAuthorOrganizationOptions}
                     disabled={pending}
                     label="Authoring Organizations"
-                    hint={isTruthyString(value?.authorRaw) && `Previous organization: ${value?.authorRaw}`}
+                    hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
                     error={getErrorString(error?.authors)}
                 />
             </div>
@@ -207,7 +207,7 @@ function LeadEditForm(props: Props) {
                 <SegmentInput
                     name="priority"
                     label="Priority"
-                    value={value?.priority}
+                    value={value.priority}
                     onChange={setFieldValue}
                     options={sortedPriority}
                     keySelector={keySelector}
@@ -219,22 +219,22 @@ function LeadEditForm(props: Props) {
                     <ConfidentialityInput
                         name="confidentiality"
                         className={styles.nestedInput}
-                        value={value?.confidentiality}
+                        value={value.confidentiality}
                         onChange={setFieldValue}
                         label="Confidential"
                     />
                     <Checkbox
                         className={styles.nestedInput}
                         name="isAssessmentLead"
-                        value={value?.isAssessmentLead}
+                        value={value.isAssessmentLead}
                         onChange={setFieldValue}
                         label="Is Assessment"
                     />
                 </div>
             </div>
             <EmmStats
-                emmTriggers={value?.emmTriggers}
-                emmEntities={value?.emmEntities}
+                emmTriggers={value.emmTriggers}
+                emmEntities={value.emmEntities}
             />
         </div>
     );

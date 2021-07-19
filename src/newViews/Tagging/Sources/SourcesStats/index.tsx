@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { IoBookmarks, IoDocument } from 'react-icons/io5';
 import {
@@ -18,6 +18,7 @@ interface Props {
     className?: string;
     projectId: number;
     filters?: Filters;
+    refreshTimestamp: number;
 }
 
 function SourcesStats(props: Props) {
@@ -25,6 +26,7 @@ function SourcesStats(props: Props) {
         className,
         projectId,
         filters,
+        refreshTimestamp,
     } = props;
 
     const leadsRequestBody = useMemo(() => ({
@@ -34,6 +36,7 @@ function SourcesStats(props: Props) {
 
     const {
         response: leadsSummary,
+        retrigger: retriggerLeadsSummary,
     } = useRequest<LeadSummary>({
         url: 'server://v2/leads/summary/',
         skip: isNotDefined(projectId),
@@ -44,12 +47,18 @@ function SourcesStats(props: Props) {
 
     const {
         response: projectStats,
+        retrigger: retriggerProjectStats,
     } = useRequest<ProjectStat>({
         skip: isNotDefined(projectId),
         url: `server://projects-stat/${projectId}/`,
         method: 'GET',
         failureHeader: _ts('home', 'projectDetails'),
     });
+
+    useEffect(() => {
+        retriggerLeadsSummary();
+        retriggerProjectStats();
+    }, [retriggerLeadsSummary, retriggerProjectStats, refreshTimestamp]);
 
     const {
         total = 0,

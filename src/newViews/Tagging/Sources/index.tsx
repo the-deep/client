@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import {
     Modal,
@@ -28,6 +28,8 @@ interface Props {
 function Sources(props: Props) {
     const { activeProject } = props;
     const [sourcesFilters, setSourcesFilters] = useState<Filters>();
+    const [refreshTimestamp, setRefreshTimestamp] = useState(() => (new Date()).getTime());
+
     const [
         isSingleSourceModalShown,
         showSingleSourceAddModal,
@@ -40,6 +42,11 @@ function Sources(props: Props) {
         hideBulkUploadModal,
     ] = useModalState(false);
 
+    const handleSourceAdd = useCallback(() => {
+        hideSingleSourceAddModal();
+        setRefreshTimestamp(new Date().getTime());
+    }, [hideSingleSourceAddModal]);
+
     return (
         <div className={styles.sources}>
             <Navbar
@@ -50,6 +57,7 @@ function Sources(props: Props) {
                 className={styles.stats}
                 filters={sourcesFilters}
                 projectId={activeProject}
+                refreshTimestamp={refreshTimestamp}
             />
             <SourcesFilter
                 className={styles.filter}
@@ -60,19 +68,18 @@ function Sources(props: Props) {
                 className={styles.table}
                 filters={sourcesFilters}
                 projectId={activeProject}
+                refreshTimestamp={refreshTimestamp}
             />
             {isSingleSourceModalShown && (
                 <LeadEditModal
                     projectId={activeProject}
                     onClose={hideSingleSourceAddModal}
-                    // TODO: Refresh leads after new lead is created
-                    onLeadSaveSuccess={hideSingleSourceAddModal}
+                    onLeadSaveSuccess={handleSourceAdd}
                 />
             )}
             {isBulkModalShown && (
                 <Modal
                     onCloseButtonClick={hideBulkUploadModal}
-                    // FIXME: Use translation later
                 >
                     Bulk upload modal
                 </Modal>

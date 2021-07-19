@@ -5,8 +5,8 @@ import {
 } from '@the-deep/deep-ui';
 
 interface Props<N extends string> extends Omit<CheckboxProps<N>, 'value' | 'onChange'> {
-    value?: string;
-    onChange: (newValue: string | undefined, name: N) => void;
+    value: 'confidential' | 'unprotected';
+    onChange: (newValue: 'confidential' | 'unprotected', name: N) => void;
 }
 
 function ConfidentialityInput<N extends string>(props: Props<N>) {

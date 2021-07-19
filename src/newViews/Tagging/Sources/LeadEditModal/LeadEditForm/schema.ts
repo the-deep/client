@@ -37,7 +37,7 @@ export interface Lead {
     assignee: number;
     authorRaw?: string;
     authors?: [number];
-    confidentiality: string;
+    confidentiality: 'unprotected' | 'confidential';
     isAssessmentLead: boolean;
     emmEntities?: EmmEntity[];
     emmTriggers?: EmmTrigger[];
@@ -60,7 +60,7 @@ export interface Lead {
     };
 }
 
-export type PartialFormType = PartialForm<Lead, 'emmEntities' | 'emmTriggers'>;
+export type PartialFormType = PartialForm<Lead, 'emmEntities' | 'emmTriggers' | 'confidentiality'>;
 export type FormSchema = ObjectSchema<PartialFormType>;
 export type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -104,7 +104,7 @@ export const schema:FormSchema = {
             assignee: [requiredCondition],
             authors: [defaultEmptyArrayType],
             confidentiality: [requiredCondition],
-            isAssessmentLead: [requiredCondition],
+            isAssessmentLead: [],
             leadGroup: [],
             priority: [requiredCondition],
             project: [requiredCondition],

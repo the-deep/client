@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, ReactNode, useMemo, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import {
@@ -63,6 +63,7 @@ interface Props {
     className?: string;
     projectId: number;
     filters?: Filters;
+    refreshTimestamp: number;
 }
 
 function SourcesTable(props: Props) {
@@ -70,6 +71,7 @@ function SourcesTable(props: Props) {
         className,
         projectId,
         filters,
+        refreshTimestamp,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -105,6 +107,10 @@ function SourcesTable(props: Props) {
         failureHeader: _ts('sourcesTable', 'title'),
         preserveResponse: true,
     });
+
+    useEffect(() => {
+        getLeads();
+    }, [refreshTimestamp, getLeads]);
 
     const handlePageChange = useCallback((page: number) => {
         setActivePage(page);
@@ -256,7 +262,12 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, number>(
                 'page_count',
                 _ts('sourcesTable', 'pages'),
-                item => `${item?.pageCount} ${item?.pageCount > 1 ? 'pages' : 'page'}`,
+                (item) => {
+                    if (!item.pageCount) {
+                        return '-';
+                    }
+                    return `${item?.pageCount} ${item?.pageCount > 1 ? 'pages' : 'page'}`;
+                },
                 {
                     sortable: true,
                 },
