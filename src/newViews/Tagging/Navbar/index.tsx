@@ -79,9 +79,7 @@ function Navbar(props: Props) {
             </div>
             <div className={styles.actions}>
                 <DropdownMenu
-                    name={undefined}
                     label={_ts('tagging', 'addSource')}
-                    variant="secondary"
                 >
                     <DropdownMenuItem
                         onClick={onAddSingleSourceClick}

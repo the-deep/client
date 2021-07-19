@@ -24,7 +24,7 @@ import {
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
 import { MultiResponse, Lead } from '#typings';
-import { useRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { useModalState } from '#hooks/stateManagement';
 
@@ -108,6 +108,18 @@ function SourcesTable(props: Props) {
         preserveResponse: true,
     });
 
+    const {
+        pending: leadDeletePending,
+        trigger: deleteLead,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://leads/${ctx}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            getLeads();
+        },
+        failureHeader: _ts('sourcesTable', 'title'),
+    });
+
     useEffect(() => {
         getLeads();
     }, [refreshTimestamp, getLeads]);
@@ -142,6 +154,10 @@ function SourcesTable(props: Props) {
         showSingleSourceAddModal,
         hideSingleSourceAddModal,
     ] = useModalState(false);
+
+    const handleDelete = useCallback((leadId: number) => {
+        deleteLead(leadId);
+    }, [deleteLead]);
 
     const handleEdit = useCallback((leadId: number) => {
         setLeadToEdit(leadId);
@@ -249,6 +265,7 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 id: data.id,
                 onEditClick: handleEdit,
+                onDeleteClick: handleDelete,
             }),
             columnWidth: 196,
         };
@@ -319,12 +336,21 @@ function SourcesTable(props: Props) {
             ),
             actionsColumn,
         ]);
-    }, [handleSelectAll, handleSelection, leadsResponse, selectedIds, handleEdit]);
+    }, [
+        handleSelectAll,
+        handleSelection,
+        leadsResponse,
+        selectedIds,
+        handleEdit,
+        handleDelete,
+    ]);
 
     const handleLeadSaveSuccess = useCallback(() => {
         getLeads();
         hideSingleSourceAddModal();
     }, [getLeads, hideSingleSourceAddModal]);
+
+    const pending = leadsGetPending || leadDeletePending;
 
     return (
         <Container
@@ -340,7 +366,7 @@ function SourcesTable(props: Props) {
                 />
             )}
         >
-            {leadsGetPending && (<PendingMessage />)}
+            {pending && (<PendingMessage />)}
             <SortContext.Provider value={sortState}>
                 <Table
                     className={styles.table}
