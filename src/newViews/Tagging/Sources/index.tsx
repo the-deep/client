@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
+import {
+    Modal,
+} from '@the-deep/deep-ui';
+
 import {
     AppState,
 } from '#typings';
 import { activeProjectIdFromStateSelector } from '#redux';
 import { useModalState } from '#hooks/stateManagement';
-import {
-    Modal,
-} from '@the-deep/deep-ui';
 
 import Navbar from '../Navbar';
 import SourcesStats from './SourcesStats';
-import SourcesFilter, { FormType as Filters } from './SourcesFilter';
+import SourcesFilter from './SourcesFilter';
 import SourcesTable from './SourcesTable';
+import LeadEditModal from './LeadEditModal';
+import { FilterFormType as Filters } from './utils';
 
 import styles from './styles.scss';
 
@@ -25,6 +28,8 @@ interface Props {
 function Sources(props: Props) {
     const { activeProject } = props;
     const [sourcesFilters, setSourcesFilters] = useState<Filters>();
+    const [refreshTimestamp, setRefreshTimestamp] = useState(() => (new Date()).getTime());
+
     const [
         isSingleSourceModalShown,
         showSingleSourceAddModal,
@@ -37,6 +42,11 @@ function Sources(props: Props) {
         hideBulkUploadModal,
     ] = useModalState(false);
 
+    const handleSourceAdd = useCallback(() => {
+        hideSingleSourceAddModal();
+        setRefreshTimestamp(new Date().getTime());
+    }, [hideSingleSourceAddModal]);
+
     return (
         <div className={styles.sources}>
             <Navbar
@@ -47,6 +57,7 @@ function Sources(props: Props) {
                 className={styles.stats}
                 filters={sourcesFilters}
                 projectId={activeProject}
+                refreshTimestamp={refreshTimestamp}
             />
             <SourcesFilter
                 className={styles.filter}
@@ -57,19 +68,18 @@ function Sources(props: Props) {
                 className={styles.table}
                 filters={sourcesFilters}
                 projectId={activeProject}
+                refreshTimestamp={refreshTimestamp}
             />
             {isSingleSourceModalShown && (
-                <Modal
-                    onCloseButtonClick={hideSingleSourceAddModal}
-                    // FIXME: Use translation later
-                >
-                    Lead add modal
-                </Modal>
+                <LeadEditModal
+                    projectId={activeProject}
+                    onClose={hideSingleSourceAddModal}
+                    onLeadSaveSuccess={handleSourceAdd}
+                />
             )}
             {isBulkModalShown && (
                 <Modal
                     onCloseButtonClick={hideBulkUploadModal}
-                    // FIXME: Use translation later
                 >
                     Bulk upload modal
                 </Modal>
