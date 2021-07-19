@@ -14,6 +14,7 @@ export interface Props<T> {
     id: T;
     onEditClick: (key: T) => void;
     disabled?: boolean;
+    isAssessmentLead?: boolean;
 }
 
 function Actions<T>(props: Props<T>) {
@@ -22,6 +23,7 @@ function Actions<T>(props: Props<T>) {
         id,
         onEditClick,
         disabled,
+        isAssessmentLead,
     } = props;
 
     const handleEditButtonClick = useCallback(() => {
@@ -49,16 +51,18 @@ function Actions<T>(props: Props<T>) {
             >
                 Tag
             </ButtonLikeLink>
-            <ButtonLikeLink
-                className={styles.button}
-                variant="secondary"
-                title="assessment"
-                disabled={disabled}
-                to="#"
-                icons={<IoAdd />}
-            >
-                Assessment
-            </ButtonLikeLink>
+            {isAssessmentLead && (
+                <ButtonLikeLink
+                    className={styles.button}
+                    variant="secondary"
+                    title="assessment"
+                    disabled={disabled}
+                    to="#"
+                    icons={<IoAdd />}
+                >
+                    Assessment
+                </ButtonLikeLink>
+            )}
         </div>
     );
 }

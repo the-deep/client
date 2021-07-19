@@ -170,7 +170,7 @@ function SourcesTable(props: Props) {
                 value: selectedIds.some(v => v === data.id),
                 onChange: handleSelection,
             }),
-
+            columnWidth: 48,
         };
         const statusColumn: TableColumn<
             Lead, number, TagProps, TableHeaderCellProps
@@ -188,6 +188,7 @@ function SourcesTable(props: Props) {
                 variant: statusVariantMap[data.status],
                 children: statusLabelMap[data.status],
             }),
+            columnWidth: 160,
         };
         const createdAtColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
@@ -202,6 +203,7 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 value: data.createdAt,
             }),
+            columnWidth: 128,
         };
         const publishedOnColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
@@ -216,6 +218,7 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 value: data.publishedOn,
             }),
+            columnWidth: 144,
         };
         const publisherColumn: TableColumn<
             Lead, number, LinkProps, TableHeaderCellProps
@@ -231,6 +234,7 @@ function SourcesTable(props: Props) {
                 children: data.sourceDetail?.title ?? data.sourceRaw,
                 to: '#', // TODO use provided url
             }),
+            columnWidth: 160,
         };
         const actionsColumn: TableColumn<
             Lead, number, ActionsProps<number>, TableHeaderCellProps
@@ -246,6 +250,7 @@ function SourcesTable(props: Props) {
                 id: data.id,
                 onEditClick: handleEdit,
             }),
+            columnWidth: 196,
         };
         return ([
             selectColumn,
@@ -257,6 +262,7 @@ function SourcesTable(props: Props) {
                 item => item?.title,
                 {
                     sortable: true,
+                    columnClassName: styles.titleColumn,
                 },
             ),
             createStringColumn<Lead, number>(
@@ -270,6 +276,7 @@ function SourcesTable(props: Props) {
                 },
                 {
                     sortable: true,
+                    columnWidth: 96,
                 },
             ),
             publisherColumn,
@@ -279,6 +286,7 @@ function SourcesTable(props: Props) {
                 item => item?.authorsDetail.map(v => v.title).join(','),
                 {
                     sortable: false,
+                    columnWidth: 144,
                 },
             ),
             publishedOnColumn,
@@ -288,6 +296,7 @@ function SourcesTable(props: Props) {
                 item => item?.createdByName,
                 {
                     sortable: true,
+                    columnWidth: 144,
                 },
             ),
             createStringColumn<Lead, number>(
@@ -296,6 +305,7 @@ function SourcesTable(props: Props) {
                 item => item?.assigneeDetails?.displayName,
                 {
                     sortable: true,
+                    columnWidth: 144,
                 },
             ),
             createStringColumn<Lead, number>(
@@ -304,6 +314,7 @@ function SourcesTable(props: Props) {
                 item => item?.priorityDisplay,
                 {
                     sortable: true,
+                    columnWidth: 96,
                 },
             ),
             actionsColumn,
