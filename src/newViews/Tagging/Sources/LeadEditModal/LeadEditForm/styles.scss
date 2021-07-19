@@ -11,5 +11,14 @@
         .input {
             flex-basis: 50%;
         }
+
+        .nested-row {
+            display: flex;
+            flex-basis: 50%;
+
+            .nested-input {
+                flex-grow: 1;
+            }
+        }
     }
 }

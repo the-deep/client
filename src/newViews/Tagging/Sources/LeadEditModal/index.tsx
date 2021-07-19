@@ -44,6 +44,7 @@ function LeadEditModal(props: Props) {
         sourceType: 'website',
         priority: 100,
         confidentiality: 'unprotected',
+        isAssessmentLead: false,
     }));
 
     const {

@@ -6,7 +6,6 @@ import {
     urlCondition,
     defaultUndefinedType,
     defaultEmptyArrayType,
-    forceNullType,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -39,6 +38,7 @@ export interface Lead {
     authorRaw?: string;
     authors?: [number];
     confidentiality: string;
+    isAssessmentLead: boolean;
     emmEntities?: EmmEntity[];
     emmTriggers?: EmmTrigger[];
     leadGroup?: number;
@@ -104,6 +104,7 @@ export const schema:FormSchema = {
             assignee: [requiredCondition],
             authors: [defaultEmptyArrayType],
             confidentiality: [requiredCondition],
+            isAssessmentLead: [requiredCondition],
             leadGroup: [],
             priority: [requiredCondition],
             project: [requiredCondition],
@@ -114,10 +115,13 @@ export const schema:FormSchema = {
             emmEntities: [defaultEmptyArrayType],
             emmTriggers: [defaultEmptyArrayType],
 
+            // NOTE: We are not adding forceNullType here, as it is not the behavior in server
+            /*
             url: [forceNullType],
             website: [forceNullType],
             text: [forceNullType],
             attachment: [forceNullType],
+            */
         };
         if (value?.sourceType === 'website') {
             baseSchema = {

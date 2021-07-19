@@ -12,6 +12,7 @@ import {
     DateInput,
     SegmentInput,
     SelectInput,
+    Checkbox,
     TextArea,
 } from '@the-deep/deep-ui';
 import {
@@ -214,13 +215,22 @@ function LeadEditForm(props: Props) {
                     className={styles.input}
                     error={error?.priority}
                 />
-                <ConfidentialityInput
-                    name="confidentiality"
-                    className={styles.input}
-                    value={value?.confidentiality}
-                    onChange={setFieldValue}
-                    label="Confidential"
-                />
+                <div className={styles.nestedRow}>
+                    <ConfidentialityInput
+                        name="confidentiality"
+                        className={styles.nestedInput}
+                        value={value?.confidentiality}
+                        onChange={setFieldValue}
+                        label="Confidential"
+                    />
+                    <Checkbox
+                        className={styles.nestedInput}
+                        name="isAssessmentLead"
+                        value={value?.isAssessmentLead}
+                        onChange={setFieldValue}
+                        label="Is Assessment"
+                    />
+                </div>
             </div>
             <EmmStats
                 emmTriggers={value?.emmTriggers}

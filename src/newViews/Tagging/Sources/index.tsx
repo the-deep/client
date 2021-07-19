@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {
+    Modal,
+} from '@the-deep/deep-ui';
+
+import {
     AppState,
 } from '#typings';
 import { activeProjectIdFromStateSelector } from '#redux';
