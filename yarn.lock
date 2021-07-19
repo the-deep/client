@@ -1949,6 +1949,11 @@
   resolved "https://registry.yarnpkg.com/@types/d3/-/d3-3.5.42.tgz#6a782b44bb7f5c48165cb166886b5d53cb84455f"
   integrity sha512-jKnkXluwSAzkvR19zjCHvLYgsWuDqpeE79NrhWrqhKqrx3sgTRqqt4SKaxSy+N7mt1J04Xy4L0/cKdfIgnjzVQ==
 
+"@types/dropbox-chooser@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/dropbox-chooser/-/dropbox-chooser-1.0.3.tgz#e406b7b77ebb22c5572100766ad3c6cda26e42f4"
+  integrity sha512-goWhd+XdWmivpNPKabdZ3Vus6nohXbrVqbLU8tBjz1KOMvkR+K5yDLNurj/jHvVtqb3PgT+HK8RTJIGWMbkRvQ==
+
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
