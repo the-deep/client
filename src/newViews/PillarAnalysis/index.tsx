@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Prompt } from 'react-router-dom';
 import produce from 'immer';
 import {
     isDefined,
@@ -737,6 +738,10 @@ function PillarAnalysis(props: Props) {
                                 <IoAdd />
                             </QuickActionButton>
                         </div>
+                        <Prompt
+                            when={!pristine}
+                            message={_ts('common', 'youHaveUnsavedChanges')}
+                        />
                     </EntryContext.Provider>
                 </div>
             </div>
