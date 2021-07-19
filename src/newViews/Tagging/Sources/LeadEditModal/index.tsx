@@ -7,7 +7,6 @@ import {
     Card,
     Button,
     Modal,
-    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -39,6 +38,8 @@ function LeadEditModal(props: Props) {
         onLeadSaveSuccess,
     } = props;
 
+    const [ready, setReady] = useState(!leadId);
+
     const [initialValue, setInitialValue] = useState<PartialFormType>(() => ({
         project: projectId,
         sourceType: 'website',
@@ -65,6 +66,7 @@ function LeadEditModal(props: Props) {
         onSuccess: (response) => {
             setInitialValue(response);
             setValue(response);
+            setReady(true);
         },
         failureHeader: 'Leads',
     });
@@ -113,16 +115,17 @@ function LeadEditModal(props: Props) {
                 </Button>
             )}
         >
-            {pending && <PendingMessage />}
             <Card className={styles.preview}>
                 Preview
             </Card>
             <Card className={styles.formContainer}>
                 <LeadEditForm
+                    pending={pending}
                     value={value}
                     initialValue={initialValue}
                     setFieldValue={setFieldValue}
                     error={riskyError}
+                    ready={ready}
                 />
             </Card>
         </Modal>

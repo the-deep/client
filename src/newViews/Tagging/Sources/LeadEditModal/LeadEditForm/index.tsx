@@ -52,6 +52,8 @@ interface Props {
     value: PartialFormType;
     error: Error<PartialFormType> | undefined;
     initialValue: PartialFormType;
+    pending?: boolean;
+    ready?: boolean;
 }
 
 function LeadEditForm(props: Props) {
@@ -61,6 +63,8 @@ function LeadEditForm(props: Props) {
         initialValue,
         error: riskyError,
         setFieldValue,
+        pending: pendingFromProps,
+        ready,
     } = props;
     const error = getErrorObject(riskyError);
 
@@ -86,6 +90,8 @@ function LeadEditForm(props: Props) {
         setAuthorOrganizationOptions,
     ] = useState<BasicOrganization[] | undefined | null>();
 
+    // NOTE: the loading animation flashes when loading for
+    // lead-options. this will be mitigated when using graphql
     const {
         pending,
         response: leadOptions,
@@ -94,6 +100,7 @@ function LeadEditForm(props: Props) {
         url: 'server://lead-options/',
         body: optionsRequestBody,
         failureHeader: 'Lead Options',
+        skip: !ready,
     });
 
     const sortedPriority = useMemo(() => (
@@ -102,7 +109,7 @@ function LeadEditForm(props: Props) {
 
     return (
         <div className={_cs(styles.leadEditForm, className)}>
-            {pending && <PendingMessage />}
+            {(pending || pendingFromProps) && <PendingMessage />}
             <SelectInput
                 label="Project"
                 name="project"
