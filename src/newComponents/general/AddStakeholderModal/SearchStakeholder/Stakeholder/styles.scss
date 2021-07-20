@@ -4,6 +4,7 @@
     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     background-color: var(--dui-color-background-card);
     overflow: unset;
+    --height-icon: 48px;
 
     .header {
         padding: 0;
@@ -15,8 +16,8 @@
         overflow: unset;
 
         .icon {
-            width: var(--dui-height-navbar-icon);
-            height: var(--dui-height-navbar-icon);
+            width: var(--height-icon);
+            height: var(--height-icon);
         }
     }
 

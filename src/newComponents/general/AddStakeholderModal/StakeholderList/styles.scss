@@ -8,7 +8,9 @@
     background-color: var(--dui-color-foreground);
     padding: 0;
     min-width: 160px;
+    height: calc(50% - 2 * var(--dui-spacing-large));
     min-height: 240px;
+    overflow-y: auto;
 
     .header {
         border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);

@@ -25,6 +25,14 @@
             }
         }
 
+        .buttons-container {
+            margin-top: var(--dui-spacing-small);
+
+            .button {
+                margin: var(--dui-spacing-medium);
+            }
+        }
+
         .left {
             display: flex;
             align-self: flex-start;
