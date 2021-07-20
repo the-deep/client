@@ -19,6 +19,7 @@ interface Props {
     ready: boolean;
     leadInitialValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
+    projectId: number;
 }
 
 function SourceDetails(props: Props) {
@@ -30,6 +31,7 @@ function SourceDetails(props: Props) {
         setLeadFieldValue,
         leadFormError,
         pending,
+        projectId,
     } = props;
 
     return (
@@ -45,6 +47,7 @@ function SourceDetails(props: Props) {
                     setFieldValue={setLeadFieldValue}
                     error={leadFormError}
                     ready={ready}
+                    projectId={projectId}
                 />
             </Card>
         </div>

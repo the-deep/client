@@ -122,6 +122,7 @@ function LeadEditModal(props: Props) {
                 <LeadEditForm
                     pending={pending}
                     value={value}
+                    projectId={projectId}
                     initialValue={initialValue}
                     setFieldValue={setFieldValue}
                     error={riskyError}
