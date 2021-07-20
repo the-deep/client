@@ -113,6 +113,7 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                         <Tab
                             name="general"
                             className={styles.tab}
+                            activeClassName={styles.activeTab}
                         >
                             {_ts('projectEdit', 'projectDetailsLabel')}
                         </Tab>
@@ -120,6 +121,7 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                             name="geo-areas"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
+                            activeClassName={styles.activeTab}
                         >
                             {_ts('projectEdit', 'geoAreas')}
                         </Tab>
@@ -127,6 +129,7 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                             name="users"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
+                            activeClassName={styles.activeTab}
                         >
                             {_ts('projectEdit', 'usersLabel')}
                         </Tab>
@@ -134,6 +137,7 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                             name="framework"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
+                            activeClassName={styles.activeTab}
                         >
                             {_ts('projectEdit', 'frameworkLabel')}
                         </Tab>

@@ -376,6 +376,15 @@ export const routes = {
         showSubNavbar: true,
         links: allLinks,
     }, // _ts('pageTitle', 'taggingExport');
+    taggingFlow: {
+        order: 164,
+        type: ROUTE.private,
+        path: '/new-ui/projects/:projectId/tagging-flow/:leadId/',
+        loader: () => import('../newViews/TaggingFlow'),
+        showSubNavbar: false,
+        hideNavbar: true,
+        links: allLinks,
+    }, // _ts('pageTitle', 'taggingFlow');
     stringManagement: {
         order: 150,
         type: ROUTE.public,

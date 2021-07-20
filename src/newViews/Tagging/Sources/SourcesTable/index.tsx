@@ -285,6 +285,7 @@ function SourcesTable(props: Props) {
                 id: data.id,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
+                projectId,
             }),
             columnWidth: 196,
         };
@@ -362,6 +363,7 @@ function SourcesTable(props: Props) {
         selectedLeads,
         handleEdit,
         handleDelete,
+        projectId,
     ]);
 
     const handleLeadSaveSuccess = useCallback(() => {

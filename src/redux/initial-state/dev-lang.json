@@ -1457,7 +1457,8 @@
         "-189482011": "Choose Files",
         "-148284281": "Sources Uploaded",
         "-26439393": "Failed to fetch analysis details.",
-        "-13538555": "Save and next"
+        "-13538555": "Save and next",
+        "-49068653": "Tagging Flow"
     },
     "links": {
         "browserExtension": {
@@ -2466,7 +2467,8 @@
             "taggingDashboard": -183108101,
             "taggingExport": -183108101,
             "newUserGroup": -70810293,
-            "newProject": 303
+            "newProject": 303,
+            "taggingFlow": -49068653
         },
         "project.general": {
             "projectNameLabel": 103,

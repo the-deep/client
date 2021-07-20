@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
 } from 'react-icons/io5';
+import { _cs, reverseRoute } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
 import {
     QuickActionButton,
@@ -12,6 +12,8 @@ import {
     DropdownMenuItem,
     useConfirmation,
 } from '@the-deep/deep-ui';
+
+import { pathNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -22,6 +24,7 @@ export interface Props<T extends number> {
     onDeleteClick: (key: T) => void;
     disabled?: boolean;
     isAssessmentLead?: boolean;
+    projectId: number;
 }
 
 function Actions<T extends number>(props: Props<T>) {
@@ -32,6 +35,7 @@ function Actions<T extends number>(props: Props<T>) {
         disabled,
         isAssessmentLead,
         onDeleteClick,
+        projectId,
     } = props;
 
     const handleDeleteConfirm = useCallback(() => {
@@ -63,7 +67,7 @@ function Actions<T extends number>(props: Props<T>) {
                 variant="primary"
                 title="tag"
                 disabled={disabled}
-                to="#"
+                to={reverseRoute(pathNames.taggingFlow, { projectId, leadId: id })}
                 icons={<IoAdd />}
             >
                 Tag
