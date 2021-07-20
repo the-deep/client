@@ -57,14 +57,6 @@ import Analysis from './Analysis';
 import AnalysisEditModal from './AnalysisEditModal';
 import styles from './styles.scss';
 
-function EmptyAnalysisContainer() {
-    return (
-        <div className={styles.emptyContainer}>
-            {_ts('analysis', 'noAnalysisCreatedLabel')}
-        </div>
-    );
-}
-
 const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
 });
@@ -149,20 +141,22 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const [activePage, setActivePage] = useState(1);
     const [analysisToEdit, setAnalysisToEdit] = useState();
-    const [filter, setFilter] = useState<Filter | undefined>(undefined);
+    const [dateRangeFilter, setDateRangeFilter] = useState<Filter | undefined>(undefined);
 
     const analysisQueryOptions = useMemo(() => {
-        const endDate = filter?.endDate ? new Date(filter?.endDate) : new Date();
+        const endDate = dateRangeFilter?.endDate ? new Date(dateRangeFilter?.endDate) : new Date();
         endDate.setDate(endDate.getDate() + 1);
         // A day added to include 24 hours of endDate
 
         return ({
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
-            created_at__gte: filter?.startDate ? getDateWithTimezone(filter.startDate) : undefined,
-            created_at__lt: filter?.endDate ? getDateWithTimezone(encodeDate(endDate)) : undefined,
+            created_at__gte: dateRangeFilter?.startDate
+                ? getDateWithTimezone(dateRangeFilter.startDate) : undefined,
+            created_at__lt: dateRangeFilter?.endDate
+                ? getDateWithTimezone(encodeDate(endDate)) : undefined,
         });
-    }, [activePage, filter]);
+    }, [activePage, dateRangeFilter]);
 
     const {
         pending: pendingAnalyses,
@@ -372,8 +366,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 headerActions={(
                     <DateRangeInput
                         name="dateFilter"
-                        value={filter}
-                        onChange={setFilter}
+                        value={dateRangeFilter}
+                        onChange={setDateRangeFilter}
                         variant="general"
                     />
                 )}
@@ -394,7 +388,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     rendererParams={analysisRendererParams}
                     keySelector={analysisKeySelector}
                     pending={pendingAnalyses}
-                    emptyMessage={EmptyAnalysisContainer}
+                    filtered={!!dateRangeFilter}
+                    emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
                 />
             </Container>
             {showAnalysisAddModal && (
