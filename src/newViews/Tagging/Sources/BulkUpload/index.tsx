@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-
+import { produce } from 'immer';
 import {
     Container,
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
-
+import { FileLike } from './types';
 import Upload from './Upload';
-import Details from './Details';
+import UploadedList from './UploadedList';
 import styles from './styles.scss';
 
 interface Props {
@@ -19,6 +19,28 @@ function BulkUpload(props: Props) {
         className,
     } = props;
 
+    const [files, setFiles] = useState<FileLike[]>([]);
+
+    const handleFileUploadSuccess = useCallback((value: FileLike) => {
+        setFiles((oldState: FileLike[]) => {
+            const updatedState = produce(oldState, (safeState) => {
+                const index = safeState.findIndex((file: FileLike) => file.key === value.key);
+                if (index !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeState[index] = value;
+                }
+            });
+            return updatedState;
+        });
+    }, []);
+
+    const handleAddFiles = useCallback((values: FileLike[]) => {
+        setFiles((oldFiles: FileLike[]) => ([
+            ...values,
+            ...oldFiles,
+        ]));
+    }, []);
+
     return (
         <Container
             className={_cs(styles.bulkUpload, className)}
@@ -27,9 +49,12 @@ function BulkUpload(props: Props) {
         >
             <Upload
                 className={styles.upload}
+                onUploadSuccess={handleFileUploadSuccess}
+                onFilesAdd={handleAddFiles}
             />
-            <Details
+            <UploadedList
                 className={styles.details}
+                files={files}
             />
         </Container>
     );

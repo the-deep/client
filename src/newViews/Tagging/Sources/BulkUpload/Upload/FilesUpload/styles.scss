@@ -1,4 +1,4 @@
-.file-upload {
+.files-upload {
     display: flex;
     flex-direction: column;
 
@@ -14,21 +14,9 @@
             font-weight: var(--dui-font-weight-bold);
 
             .icon {
-                margin-right: var(--dui-spacing-small);
+                margin-right: var(--dui-spacing-medium);
                 font-size: var(--dui-font-size-super-large);
             }
-        }
-    }
-
-    .files {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        padding-top: var(--dui-spacing-medium);
-
-        .item {
-            display: flex;
-            padding: var(--dui-spacing-super-small) var(--dui-spacing-medium);
         }
     }
 }

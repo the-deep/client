@@ -1,0 +1,18 @@
+ .google-upload {
+    display: flex;
+
+    .google-picker {
+        display: flex;
+        flex-grow: 1;
+        justify-content: flex-start;
+        padding: var(--dui-spacing-small);
+
+        .icon {
+            margin-right: var(--dui-spacing-large);
+            font-size: var(--dui-font-size-super-large);
+        }
+    }
+    &:hover {
+        background-color: var(--dui-color-background-hover);
+    }
+}
