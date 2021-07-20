@@ -1,0 +1,23 @@
+.bulk-actions-bar {
+    display: flex;
+    position: absolute;
+    bottom: var(--dui-spacing-extra-small);
+    left: 50%;
+    align-items: center;
+    transform: translate(-50%, 0%);
+    z-index: 1;
+    border-radius: 5px;
+    background-color: #414141;
+    padding: var(--dui-spacing-medium) var(--dui-spacing-large);
+    min-width: 420px;
+    color: var(--dui-color-text-on-accent);
+
+    .text {
+        flex-grow: 1;
+    }
+
+    .button {
+        flex-shrink: 0;
+        margin: 0 var(--dui-spacing-extra-small);
+    }
+}

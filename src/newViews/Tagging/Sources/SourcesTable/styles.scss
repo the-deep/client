@@ -11,6 +11,10 @@
 
         .table {
             width: 100%;
+
+            .title-column {
+                min-width: 196px;
+            }
         }
 
         .status {

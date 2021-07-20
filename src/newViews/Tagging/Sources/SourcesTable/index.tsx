@@ -1,5 +1,9 @@
 import React, { useEffect, ReactNode, useMemo, useState, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    listToMap,
+    unique,
+} from '@togglecorp/fujs';
 
 import {
     Pager,
@@ -24,13 +28,14 @@ import {
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
 import { MultiResponse, Lead } from '#typings';
-import { useRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { useModalState } from '#hooks/stateManagement';
 
 import Actions, { Props as ActionsProps } from './Actions';
 import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
 import LeadEditModal from '../LeadEditModal';
+import BulkActions from './BulkActions';
 
 import styles from './styles.scss';
 
@@ -75,7 +80,7 @@ function SourcesTable(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
 
     const leadsRequestQuery = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
@@ -108,6 +113,19 @@ function SourcesTable(props: Props) {
         preserveResponse: true,
     });
 
+    const {
+        pending: leadDeletePending,
+        trigger: deleteLead,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://leads/${ctx}/`,
+        method: 'DELETE',
+        onSuccess: (_, ctx) => {
+            getLeads();
+            setSelectedLeads(oldLeads => oldLeads.filter(lead => lead.id !== ctx));
+        },
+        failureHeader: _ts('sourcesTable', 'title'),
+    });
+
     useEffect(() => {
         getLeads();
     }, [refreshTimestamp, getLeads]);
@@ -115,23 +133,33 @@ function SourcesTable(props: Props) {
     const handlePageChange = useCallback((page: number) => {
         setActivePage(page);
         getLeads();
-        setSelectedIds([]);
+    }, [getLeads]);
+
+    const clearSelection = useCallback(() => {
+        setSelectedLeads([]);
+    }, []);
+
+    const handleBulkLeadsRemoveSuccess = useCallback(() => {
+        setSelectedLeads([]);
+        getLeads();
     }, [getLeads]);
 
     const handleSelectAll = useCallback((value: boolean) => {
-        if (value) {
-            const ids = leadsResponse?.results.map(v => v.id) ?? [];
-            setSelectedIds(ids);
-        } else {
-            setSelectedIds([]);
-        }
+        setSelectedLeads((oldLeads) => {
+            const leads = leadsResponse?.results ?? [];
+            if (value) {
+                return unique([...oldLeads, ...leads], d => d.id);
+            }
+            const idMap = listToMap(leads, d => d.id, () => true);
+            return oldLeads.filter(d => !idMap[d.id]);
+        });
     }, [leadsResponse]);
 
-    const handleSelection = useCallback((value: boolean, name: number) => {
+    const handleSelection = useCallback((value: boolean, lead: Lead) => {
         if (value) {
-            setSelectedIds(ids => ([...ids, name]));
+            setSelectedLeads(leads => ([...leads, lead]));
         } else {
-            setSelectedIds(ids => ids.filter(v => v !== name));
+            setSelectedLeads(leads => leads.filter(v => v.id !== lead.id));
         }
     }, []);
 
@@ -143,12 +171,19 @@ function SourcesTable(props: Props) {
         hideSingleSourceAddModal,
     ] = useModalState(false);
 
+    const handleDelete = useCallback((leadId: number) => {
+        deleteLead(leadId);
+    }, [deleteLead]);
+
     const handleEdit = useCallback((leadId: number) => {
         setLeadToEdit(leadId);
         showSingleSourceAddModal();
     }, [showSingleSourceAddModal]);
 
     const columns = useMemo(() => {
+        const selectedLeadsMap = listToMap(selectedLeads, d => d.id, () => true);
+        const selectAllCheckValue = leadsResponse?.results?.some(d => selectedLeadsMap[d.id]);
+
         const selectColumn: TableColumn<
             Lead, number, CheckboxProps<number>, CheckboxProps<number>
         > = {
@@ -156,21 +191,21 @@ function SourcesTable(props: Props) {
             title: '',
             headerCellRenderer: Checkbox,
             headerCellRendererParams: {
-                value: selectedIds.length === leadsResponse?.results.length,
-                // label: selectedIds.length > 0
+                value: selectAllCheckValue,
+                // label: selectedLeads.length > 0
                 // ? _ts('sourcesTable', 'selectedNumberOfLeads',
-                // { noOfLeads: selectedIds.length }) : _ts('sourcesTable', 'selectAll'),
+                // { noOfLeads: selectedLeads.length }) : _ts('sourcesTable', 'selectAll'),
                 onChange: handleSelectAll,
-                indeterminate: !(selectedIds.length === leadsResponse?.results.length
-                || selectedIds.length === 0),
+                indeterminate: !(selectedLeads.length === leadsResponse?.results.length
+                || selectedLeads.length === 0),
             },
             cellRenderer: Checkbox,
             cellRendererParams: (_, data) => ({
                 name: data.id,
-                value: selectedIds.some(v => v === data.id),
-                onChange: handleSelection,
+                value: selectedLeads.some(v => v.id === data.id),
+                onChange: newVal => handleSelection(newVal, data),
             }),
-
+            columnWidth: 48,
         };
         const statusColumn: TableColumn<
             Lead, number, TagProps, TableHeaderCellProps
@@ -188,6 +223,7 @@ function SourcesTable(props: Props) {
                 variant: statusVariantMap[data.status],
                 children: statusLabelMap[data.status],
             }),
+            columnWidth: 160,
         };
         const createdAtColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
@@ -202,6 +238,7 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 value: data.createdAt,
             }),
+            columnWidth: 128,
         };
         const publishedOnColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
@@ -216,6 +253,7 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 value: data.publishedOn,
             }),
+            columnWidth: 144,
         };
         const publisherColumn: TableColumn<
             Lead, number, LinkProps, TableHeaderCellProps
@@ -231,6 +269,7 @@ function SourcesTable(props: Props) {
                 children: data.sourceDetail?.title ?? data.sourceRaw,
                 to: '#', // TODO use provided url
             }),
+            columnWidth: 160,
         };
         const actionsColumn: TableColumn<
             Lead, number, ActionsProps<number>, TableHeaderCellProps
@@ -245,7 +284,9 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 id: data.id,
                 onEditClick: handleEdit,
+                onDeleteClick: handleDelete,
             }),
+            columnWidth: 196,
         };
         return ([
             selectColumn,
@@ -257,6 +298,7 @@ function SourcesTable(props: Props) {
                 item => item?.title,
                 {
                     sortable: true,
+                    columnClassName: styles.titleColumn,
                 },
             ),
             createStringColumn<Lead, number>(
@@ -270,6 +312,7 @@ function SourcesTable(props: Props) {
                 },
                 {
                     sortable: true,
+                    columnWidth: 96,
                 },
             ),
             publisherColumn,
@@ -279,6 +322,7 @@ function SourcesTable(props: Props) {
                 item => item?.authorsDetail.map(v => v.title).join(','),
                 {
                     sortable: false,
+                    columnWidth: 144,
                 },
             ),
             publishedOnColumn,
@@ -288,6 +332,7 @@ function SourcesTable(props: Props) {
                 item => item?.createdByName,
                 {
                     sortable: true,
+                    columnWidth: 144,
                 },
             ),
             createStringColumn<Lead, number>(
@@ -296,6 +341,7 @@ function SourcesTable(props: Props) {
                 item => item?.assigneeDetails?.displayName,
                 {
                     sortable: true,
+                    columnWidth: 144,
                 },
             ),
             createStringColumn<Lead, number>(
@@ -304,50 +350,70 @@ function SourcesTable(props: Props) {
                 item => item?.priorityDisplay,
                 {
                     sortable: true,
+                    columnWidth: 96,
                 },
             ),
             actionsColumn,
         ]);
-    }, [handleSelectAll, handleSelection, leadsResponse, selectedIds, handleEdit]);
+    }, [
+        handleSelectAll,
+        handleSelection,
+        leadsResponse,
+        selectedLeads,
+        handleEdit,
+        handleDelete,
+    ]);
 
     const handleLeadSaveSuccess = useCallback(() => {
         getLeads();
         hideSingleSourceAddModal();
     }, [getLeads, hideSingleSourceAddModal]);
 
+    const pending = leadsGetPending || leadDeletePending;
+
     return (
-        <Container
-            className={_cs(styles.sourcesTableContainer, className)}
-            contentClassName={styles.content}
-            footerActions={(
-                <Pager
-                    activePage={activePage}
-                    itemsCount={leadsResponse?.count ?? 0}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onActivePageChange={handlePageChange}
-                    itemsPerPageControlHidden
+        <>
+            <Container
+                className={_cs(styles.sourcesTableContainer, className)}
+                contentClassName={styles.content}
+                footerActions={(
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={leadsResponse?.count ?? 0}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onActivePageChange={handlePageChange}
+                        itemsPerPageControlHidden
+                    />
+                )}
+            >
+                {pending && (<PendingMessage />)}
+                <SortContext.Provider value={sortState}>
+                    <Table
+                        className={styles.table}
+                        data={leadsResponse?.results}
+                        keySelector={leadsKeySelector}
+                        columns={columns}
+                        variant="large"
+                    />
+                </SortContext.Provider>
+                {isSingleSourceModalShown && (
+                    <LeadEditModal
+                        leadId={leadToEdit}
+                        projectId={projectId}
+                        onClose={hideSingleSourceAddModal}
+                        onLeadSaveSuccess={handleLeadSaveSuccess}
+                    />
+                )}
+            </Container>
+            {selectedLeads.length > 0 && (
+                <BulkActions
+                    selectedLeads={selectedLeads}
+                    activeProject={projectId}
+                    onRemoveSuccess={handleBulkLeadsRemoveSuccess}
+                    onClearSelection={clearSelection}
                 />
             )}
-        >
-            {leadsGetPending && (<PendingMessage />)}
-            <SortContext.Provider value={sortState}>
-                <Table
-                    className={styles.table}
-                    data={leadsResponse?.results}
-                    keySelector={leadsKeySelector}
-                    columns={columns}
-                    variant="large"
-                />
-            </SortContext.Provider>
-            {isSingleSourceModalShown && (
-                <LeadEditModal
-                    leadId={leadToEdit}
-                    projectId={projectId}
-                    onClose={hideSingleSourceAddModal}
-                    onLeadSaveSuccess={handleLeadSaveSuccess}
-                />
-            )}
-        </Container>
+        </>
     );
 }
 
