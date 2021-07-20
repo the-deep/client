@@ -1791,10 +1791,17 @@
     resolve-from "^5.0.0"
     ts-dedent "^2.0.0"
 
+<<<<<<< HEAD
 "@the-deep/deep-ui@1.4.8":
   version "1.4.8"
   resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.8.tgz#bf3925665685a47447d35b5c3834900860d57fc8"
   integrity sha512-z+IXt39h7SFt49HQrTZ59FDouo9OkCjUvmRiTKG7zlQt1oERG63G9xz5JFoGyQZv8eI6u5g17UJLb0pl9V/6PQ==
+=======
+"@the-deep/deep-ui@^1.4.9":
+  version "1.4.9"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.9.tgz#06281c8650f4300fe5c7e50ce780616e80d35d8b"
+  integrity sha512-dOCYkAd6MXbOjqoVMII/pEyjQP4DycCM40G1W+bybrv041vLDGqMGljlxxh9tTCoQvRxb22vFWR10dKoe5rl6w==
+>>>>>>> e887380eb (Add date range and time range inputs in analytical framework)
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"

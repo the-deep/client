@@ -3,12 +3,12 @@ export type TextValue = string;
 export type DateValue = string;
 export type TimeValue = string;
 export type DateRangeValue = {
-    to: string | undefined,
-    from: string | undefined,
+    startDate: string;
+    endDate: string;
 };
 export type TimeRangeValue = {
-    to: string | undefined,
-    from: string | undefined,
+    startTime: string;
+    endTime: string;
 };
 export type SingleSelectValue = string;
 export type MultiSelectValue = string[];

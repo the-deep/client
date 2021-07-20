@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import {
-    TextInput,
+    TimeRangeInput,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
@@ -9,6 +9,8 @@ import { NodeRef } from '#newComponents/ui/SortableList';
 
 import WidgetWrapper from '../../Widget';
 import { TimeRangeValue } from '../../types';
+
+import styles from './styles.scss';
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -42,23 +44,11 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         rootStyle,
     } = props;
 
-    const handleToChange = useCallback(
-        (to: string | undefined) => {
-            onChange({ to, from: value?.from }, name);
-        },
-        [onChange, value, name],
-    );
-
-    const handleFromChange = useCallback(
-        (from: string | undefined) => {
-            onChange({ to: value?.to, from }, name);
-        },
-        [onChange, value, name],
-    );
-
     const handleValueSwap = useCallback(
         () => {
-            onChange({ to: value?.from, from: value?.to }, name);
+            if (value) {
+                onChange({ startTime: value.endTime, endTime: value.startTime }, name);
+            }
         },
         [onChange, value, name],
     );
@@ -70,24 +60,18 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
             actions={actions}
             nodeRef={nodeRef}
             rootStyle={rootStyle}
+            childrenContainerClassName={styles.content}
         >
-            <TextInput // TODO use TimeRangeInput when added to deep-ui
-                name="from"
-                label="From" // FIXME use translations
-                onChange={handleFromChange}
-                value={value?.from}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
-            <TextInput // TODO use TimeRangeInput when added to deep-ui
-                name="to"
-                label="To" // FIXME use translations
-                onChange={handleToChange}
-                value={value?.to}
+            <TimeRangeInput
+                className={styles.input}
+                name={name}
+                onChange={onChange}
+                value={value}
                 readOnly={readOnly}
                 disabled={disabled}
             />
             <QuickActionButton
+                className={styles.button}
                 name={undefined}
                 onClick={handleValueSwap}
                 title="Swap Values" // FIXME: use translations
