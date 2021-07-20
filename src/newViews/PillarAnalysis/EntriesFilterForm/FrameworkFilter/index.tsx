@@ -6,22 +6,21 @@ import {
 import {
     MultiSelectInput,
     TextInput,
+    DateRangeInput,
+    TimeRangeInput,
 } from '@the-deep/deep-ui';
-
-import DateFilter from '#rsci/DateFilter';
-import TimeFilter from '#rsci/TimeFilter';
 import {
     EntriesAsList,
 } from '@togglecorp/toggle-form';
 
-import _ts from '#ts';
-
+import GeoMultiSelectInput from '#newComponents/input/GeoMultiSelectInput';
 import {
     FilterFields,
     FilterOption,
     GeoOptions,
 } from '#typings';
-import GeoMultiSelectInput from '#newComponents/input/GeoMultiSelectInput';
+import _ts from '#ts';
+
 import { FaramValues } from '../../';
 
 import styles from './styles.scss';
@@ -88,21 +87,25 @@ function FrameworkFilter(props: Props) {
             );
         case 'date':
             return (
-                <DateFilter
-                    faramElementName={filterKey}
+                <DateRangeInput
+                    name={filterKey}
                     label={title}
-                    showHintAndError={false}
-                    placeholder={_ts('entries', 'datePlaceholder')}
+                    value={value?.[filterKey] as (
+                        { startDate: string; endDate: string } | undefined)
+                    }
+                    onChange={setFieldValue}
                     className={_cs(styles.frameworkFilter, className)}
                 />
             );
         case 'time':
             return (
-                <TimeFilter
-                    faramElementName={filterKey}
+                <TimeRangeInput
+                    name={filterKey}
                     label={title}
-                    showHintAndError={false}
-                    placeholder={_ts('entries', 'timePlaceholder')}
+                    value={value?.[filterKey] as (
+                        { startTime: string; endTime: string } | undefined)
+                    }
+                    onChange={setFieldValue}
                     className={_cs(styles.frameworkFilter, className)}
                 />
             );
