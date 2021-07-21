@@ -26,7 +26,10 @@ import {
     PartialForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import {
+    randomString,
+    _cs,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
@@ -323,6 +326,7 @@ interface SingleSelectWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function SingleSelectWidgetForm(props: SingleSelectWidgetFormProps) {
@@ -331,6 +335,7 @@ function SingleSelectWidgetForm(props: SingleSelectWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -360,7 +365,7 @@ function SingleSelectWidgetForm(props: SingleSelectWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.singleSelectWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

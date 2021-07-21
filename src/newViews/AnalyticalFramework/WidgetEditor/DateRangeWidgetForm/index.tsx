@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     TextInput,
@@ -43,6 +44,7 @@ interface DateRangeWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
@@ -51,6 +53,7 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -80,7 +83,7 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.dateRangeWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

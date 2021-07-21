@@ -15,6 +15,7 @@ import {
     PartialForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
+import { _cs } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
@@ -102,6 +103,7 @@ interface TimeWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function TimeWidgetForm(props: TimeWidgetFormProps) {
@@ -110,6 +112,7 @@ function TimeWidgetForm(props: TimeWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -139,7 +142,7 @@ function TimeWidgetForm(props: TimeWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.timeWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

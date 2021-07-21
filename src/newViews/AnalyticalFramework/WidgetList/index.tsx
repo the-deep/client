@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { _cs, randomString } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
-    Header,
-    QuickActionButton,
+    Button,
     ExpandableContainer,
+    ElementFragments,
 } from '@the-deep/deep-ui';
 
 import { Types } from '../types';
@@ -85,8 +85,7 @@ interface AddItemProps<T extends string | number | undefined> {
     className?: string;
     label: string;
     onAddClick: (name: T) => void;
-    // NOTE: Send Icon/SVG of widget type in children
-    children?: React.ReactNode;
+    preview?: React.ReactNode;
 }
 
 function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) {
@@ -94,28 +93,29 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
         className,
         onAddClick,
         label,
-        children,
+        preview,
         name,
     } = props;
 
     return (
-        <div className={_cs(className)}>
-            <Header
-                className={styles.header}
-                heading={label}
-                headingSize="extraSmall"
-                actions={(
-                    <QuickActionButton
-                        name={name}
-                        variant="action"
-                        onClick={onAddClick}
-                    >
-                        <IoAdd />
-                    </QuickActionButton>
-                )}
-            />
-            <div>
-                {children}
+        <div className={_cs(styles.addItem, className)}>
+            <div className={styles.title}>
+                <ElementFragments
+                    actions={(
+                        <Button
+                            name={name}
+                            variant="action"
+                            onClick={onAddClick}
+                        >
+                            <IoAdd className={styles.addIcon} />
+                        </Button>
+                    )}
+                >
+                    {label}
+                </ElementFragments>
+            </div>
+            <div className={styles.preview}>
+                {preview}
             </div>
         </div>
     );
@@ -158,21 +158,18 @@ function WidgetList(props: Props) {
                         name="section"
                         // FIXME: use strings
                         label="Sections"
-                        className={styles.addMoreItem}
                         onAddClick={props.onSectionsAdd}
                     />
                     <AddItem
                         name="matrix-1d"
                         // FIXME: use strings
                         label="Matrix1d Widget"
-                        className={styles.addMoreItem}
                         onAddClick={handleAddClick}
                     />
                     <AddItem
                         name="matrix-2d"
                         // FIXME: use strings
                         label="Matrix2d Widget"
-                        className={styles.addMoreItem}
                         onAddClick={handleAddClick}
                     />
                 </>
@@ -182,68 +179,61 @@ function WidgetList(props: Props) {
                 heading="Widgets"
                 contentClassName={styles.children}
                 defaultVisibility={!!props.sectionsDisabled}
+                className={styles.widgets}
+                horizontallyCompactContent
             >
                 <AddItem
                     name="text"
                     // FIXME: use strings
                     label="Text Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="number"
                     // FIXME: use strings
                     label="Number Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="date"
                     // FIXME: use strings
                     label="Date Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="date-range"
                     // FIXME: use strings
                     label="Date Range Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="time"
                     // FIXME: use strings
                     label="Time Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="time-range"
                     // FIXME: use strings
                     label="Time Range Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="scale"
                     // FIXME: use strings
                     label="Scale Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="single-select"
                     // FIXME: use strings
                     label="Single Select Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
                 <AddItem
                     name="multi-select"
                     // FIXME: use strings
                     label="Multi Select Widget"
-                    className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
             </ExpandableContainer>

@@ -25,6 +25,7 @@ interface Props<T> {
     onChange: (value: PartialWidget, name: T) => void;
     onSave: (value: Widget, name: T) => void;
     onCancel: () => void;
+    className?: string;
 }
 function WidgetEditor<T>(props: Props<T>) {
     const {
@@ -33,6 +34,7 @@ function WidgetEditor<T>(props: Props<T>) {
         onChange,
         onSave,
         onCancel,
+        className,
     } = props;
 
     const handleChange = useCallback(
@@ -52,6 +54,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'text') {
         return (
             <TextWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -62,6 +65,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'number') {
         return (
             <NumberWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -72,6 +76,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'date') {
         return (
             <DateWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -82,6 +87,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'date-range') {
         return (
             <DateRangeWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -92,6 +98,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'time') {
         return (
             <TimeWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -102,6 +109,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'time-range') {
         return (
             <TimeRangeWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -112,6 +120,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'matrix-1d') {
         return (
             <Matrix1dWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -122,6 +131,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'matrix-2d') {
         return (
             <Matrix2dWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -132,6 +142,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'scale') {
         return (
             <ScaleWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -142,6 +153,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'single-select') {
         return (
             <SingleSelectWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}
@@ -152,6 +164,7 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'multi-select') {
         return (
             <MultiSelectWidgetForm
+                className={className}
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}

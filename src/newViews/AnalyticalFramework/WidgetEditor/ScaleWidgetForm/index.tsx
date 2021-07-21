@@ -29,6 +29,7 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
+    _cs,
     randomString,
 } from '@togglecorp/fujs';
 
@@ -395,6 +396,7 @@ interface ScaleWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function ScaleWidgetForm(props: ScaleWidgetFormProps) {
@@ -403,6 +405,7 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -432,7 +435,7 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.scaleWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

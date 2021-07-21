@@ -16,7 +16,10 @@ import {
     PartialForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { isTruthy } from '@togglecorp/fujs';
+import {
+    isTruthy,
+    _cs,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
@@ -130,6 +133,7 @@ interface NumberWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function NumberWidgetForm(props: NumberWidgetFormProps) {
@@ -138,6 +142,7 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -167,7 +172,7 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.numberWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

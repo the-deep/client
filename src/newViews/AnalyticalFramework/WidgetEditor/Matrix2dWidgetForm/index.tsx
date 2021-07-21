@@ -11,6 +11,10 @@ import {
     QuickActionButton,
     ExpandableContainer,
     Container,
+    Tabs,
+    Tab,
+    TabList,
+    TabPanel,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -27,7 +31,10 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
-import { randomString } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
@@ -763,6 +770,7 @@ interface DataInputProps<K extends string>{
     onChange: (value: SetValueArg<PartialDataType | undefined>, name: K) => void;
     className?: string;
 }
+
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
@@ -873,66 +881,84 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         [onFieldChange, value?.columns],
     );
 
+    const [activeTab, setActiveTab] = React.useState<'rows' | 'columns'>('rows');
+
     return (
-        <>
+        <Tabs
+            variant="primary"
+            value={activeTab}
+            onChange={setActiveTab}
+        >
             <NonFieldError error={error} />
+            <TabList className={styles.tabList}>
+                <Tab name="rows">
+                    Rows
+                </Tab>
+                <Tab name="columns">
+                    Columns
+                </Tab>
+            </TabList>
             <div className={styles.optionsList}>
-                <Container
-                    className={className}
-                    sub
-                    heading="Rows"
-                    horizontallyCompactContent
-                    headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
-                        <QuickActionButton
-                            name={undefined}
-                            onClick={handleRowAdd}
-                            // FIXME: use strings
-                            title="Add row"
-                        >
-                            <IoAdd />
-                        </QuickActionButton>
-                    )}
-                >
-                    <NonFieldError error={error?.rows} />
-                    <SortableList
-                        name="rows"
-                        onChange={handleRowsOrderChange}
-                        data={value?.rows}
-                        keySelector={rowKeySelector}
-                        renderer={RowInput}
-                        rendererParams={rowRendererParams}
-                        direction="vertical"
-                    />
-                </Container>
-                <Container
-                    className={className}
-                    sub
-                    heading="Columns"
-                    horizontallyCompactContent
-                    headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
-                        <QuickActionButton
-                            name={undefined}
-                            onClick={handleColumnAdd}
-                            // FIXME: use strings
-                            title="Add column"
-                        >
-                            <IoAdd />
-                        </QuickActionButton>
-                    )}
-                >
-                    <NonFieldError error={error?.columns} />
-                    <SortableList
-                        name="columns"
-                        onChange={handleColumnsOrderChange}
-                        data={value?.columns}
-                        keySelector={columnKeySelector}
-                        renderer={ColumnInput}
-                        rendererParams={columnRendererParams}
-                        direction="vertical"
-                    />
-                </Container>
+                <TabPanel name="rows">
+                    <Container
+                        className={className}
+                        sub
+                        heading="Rows"
+                        horizontallyCompactContent
+                        headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
+                            <QuickActionButton
+                                name={undefined}
+                                onClick={handleRowAdd}
+                                // FIXME: use strings
+                                title="Add row"
+                            >
+                                <IoAdd />
+                            </QuickActionButton>
+                        )}
+                    >
+                        <NonFieldError error={error?.rows} />
+                        <SortableList
+                            name="rows"
+                            onChange={handleRowsOrderChange}
+                            data={value?.rows}
+                            keySelector={rowKeySelector}
+                            renderer={RowInput}
+                            rendererParams={rowRendererParams}
+                            direction="vertical"
+                        />
+                    </Container>
+                </TabPanel>
+                <TabPanel name="columns">
+                    <Container
+                        className={className}
+                        sub
+                        heading="Columns"
+                        horizontallyCompactContent
+                        headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
+                            <QuickActionButton
+                                name={undefined}
+                                onClick={handleColumnAdd}
+                                // FIXME: use strings
+                                title="Add column"
+                            >
+                                <IoAdd />
+                            </QuickActionButton>
+                        )}
+                    >
+                        <NonFieldError error={error?.columns} />
+                        <SortableList
+                            name="columns"
+                            onChange={handleColumnsOrderChange}
+                            data={value?.columns}
+                            keySelector={columnKeySelector}
+                            renderer={ColumnInput}
+                            rendererParams={columnRendererParams}
+                            direction="vertical"
+                        />
+                    </Container>
+                </TabPanel>
             </div>
-        </>
+        </Tabs>
     );
 }
 
@@ -941,6 +967,7 @@ interface Matrix2dWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
@@ -949,6 +976,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -978,7 +1006,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
 
     return (
         <form
-            className={styles.widgetEdit}
+            className={_cs(styles.matrix2DWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
