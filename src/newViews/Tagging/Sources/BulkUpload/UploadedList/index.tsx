@@ -5,14 +5,14 @@ import {
     List,
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
-import { FileLike } from '../types';
+import { FileUploadResponse } from '../types';
 import UploadedItem from './UploadedItem';
 
-const keySelector = (d: FileLike): string => d.key;
+const keySelector = (d: FileUploadResponse): number => d.id;
 
 interface Props {
     className?: string;
-    files: FileLike[];
+    files: FileUploadResponse[];
 }
 
 function UploadedList(props: Props) {
@@ -21,9 +21,8 @@ function UploadedList(props: Props) {
         files,
     } = props;
 
-    const fileRendererParams = useCallback((_: string, value: FileLike) => ({
-        isUploaded: value.isUploaded,
-        name: value.name,
+    const fileRendererParams = useCallback((_: number, value: FileUploadResponse) => ({
+        name: value.title,
     }), []);
     return (
         <div

@@ -6,23 +6,18 @@ export interface FileUploadResponse {
     metadata?: unknown;
 }
 
-export interface FileLike {
+export type FileLike = {
     key: string;
     id: string;
     name: string;
-    isUploaded: boolean;
-    response?: FileUploadResponse;
-    file?: File;
-}
-
-export interface FileType extends FileLike {
+} & ({
+    fileType: 'file';
     file: File;
-}
-
-export type GoogleFile = Omit<FileLike, 'file'> & {
+} | {
+    fileType: 'google';
     mimeType: string;
-}
-
-export type DropboxFile = Omit<FileLike, 'file'> & {
+    accessToken: string;
+} | {
+    fileType: 'dropbox';
     link: string;
-}
+})
