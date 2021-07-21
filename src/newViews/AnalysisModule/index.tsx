@@ -320,7 +320,10 @@ function AnalysisModule(props: AnalysisModuleProps) {
                                     verticalAlign="bottom"
                                     content={<RechartsLegend className={styles.legend} />}
                                 />
-                                <Tooltip labelFormatter={tickFormatter} />
+                                <Tooltip
+                                    labelFormatter={tickFormatter}
+                                    isAnimationActive={false}
+                                />
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (

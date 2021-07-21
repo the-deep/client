@@ -296,7 +296,10 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                                 padding={{ left: 10, right: 10 }}
                             />
                             <YAxis hide />
-                            <Tooltip labelFormatter={tickFormatter} />
+                            <Tooltip
+                                labelFormatter={tickFormatter}
+                                isAnimationActive={false}
+                            />
                             <Area
                                 dataKey="count"
                                 stroke="var(--dui-color-accent)"

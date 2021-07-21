@@ -90,7 +90,10 @@ function Activity(props: Props) {
                             dataKey="value"
                             hide
                         />
-                        <Tooltip labelFormatter={dateFormatter} />
+                        <Tooltip
+                            labelFormatter={dateFormatter}
+                            isAnimationActive={false}
+                        />
                         <Legend
                             verticalAlign="top"
                             align="left"

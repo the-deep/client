@@ -118,7 +118,7 @@ function EntriesFilterForm(props: OwnProps) {
     ] = useModalState(false);
 
     const entryOptionsQueryParams = useMemo(() => ({
-        projects: [projectId],
+        project: projectId,
     }), [projectId]);
 
     const {
