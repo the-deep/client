@@ -5,7 +5,7 @@ import {
     Container,
     Button,
     Pager,
-    Table,
+    TableView,
     PendingMessage,
     TableColumn,
     TableHeaderCell,
@@ -14,7 +14,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { createDateColumn } from '#newComponents/ui/tableHelpers';
-import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
 import ActionCell, { Props as ActionCellProps } from '#newComponents/ui/EditDeleteActionCell';
 import _ts from '#ts';
@@ -181,22 +180,12 @@ function UserList(props: Props) {
             )}
         >
             {(usersPending || pending) && (<PendingMessage />)}
-            {(usersResponse && usersResponse?.count > 0)
-                ? (
-                    <Table
-                        data={usersResponse.results}
-                        keySelector={userKeySelector}
-                        columns={columns}
-                    />
-                )
-                : (
-                    <div className={styles.emptyTable}>
-                        <Message>
-                            {_ts('projectEdit', 'emptyUserTableMessage')}
-                        </Message>
-                    </div>
-                )
-            }
+            <TableView
+                data={usersResponse?.results}
+                keySelector={userKeySelector}
+                emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
+                columns={columns}
+            />
             <Pager
                 activePage={activePage}
                 className={styles.pager}

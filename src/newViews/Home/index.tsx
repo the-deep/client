@@ -10,13 +10,12 @@ import {
     Container,
     SelectInput,
     PendingMessage,
+    List,
 } from '@the-deep/deep-ui';
+import { IoLockClosedOutline } from 'react-icons/io5';
 import { GiShrug } from 'react-icons/gi';
 import { Redirect } from 'react-router-dom';
 
-import List from '#rscv/List';
-
-import Badge from '#components/viewer/Badge';
 import { pathNames } from '#constants';
 import { useRequest } from '#utils/request';
 import featuresMapping from '#constants/features';
@@ -118,16 +117,13 @@ function Home(props: ViewProps) {
         <div className={styles.selectOption}>
             {option.title}
             {option.isPrivate && (
-                <Badge
-                    icon="locked"
+                <IoLockClosedOutline
                     className={
                         _cs(
                             styles.badge,
                             selectedProject === option.id && styles.active,
                         )
                     }
-                    noBorder
-                    tooltip={_ts('home', 'privateProjectBadgeTooltip')}
                 />
             )}
         </div>

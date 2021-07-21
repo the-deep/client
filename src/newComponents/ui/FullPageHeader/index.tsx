@@ -5,7 +5,8 @@ import {
     ElementFragments,
 } from '@the-deep/deep-ui';
 
-import Icon from '#rscg/Icon';
+import Svg from '#newComponents/Svg';
+import newDeepLogo from '#resources/img/deep-logo-new.svg';
 
 import styles from './styles.scss';
 
@@ -34,9 +35,9 @@ function FullPageHeader(props: FullPageHeaderProps) {
                 icons={(
                     <>
                         <div className={styles.iconWrapper}>
-                            <Icon
+                            <Svg
                                 className={styles.icon}
-                                name="newDeepLogo"
+                                src={newDeepLogo}
                             />
                         </div>
                         <Heading

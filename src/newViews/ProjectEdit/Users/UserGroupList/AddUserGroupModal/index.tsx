@@ -14,9 +14,9 @@ import {
     Modal,
     SelectInput,
     Button,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
 import {
     UserGroup,
@@ -200,7 +200,7 @@ function AddUserGroupModal(props: Props) {
                 </Button>
             )}
         >
-            {pendingAddAction && (<LoadingAnimation />)}
+            {pendingAddAction && (<PendingMessage />)}
             <NonFieldError error={error} />
             <SelectInput
                 name="usergroup"

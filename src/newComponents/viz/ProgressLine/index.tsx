@@ -4,8 +4,9 @@ import {
     isDefined,
     bound,
 } from '@togglecorp/fujs';
-
-import Numeral from '#rscv/Numeral';
+import {
+    NumberOutput,
+} from '@the-deep/deep-ui';
 
 /*
 eslint css-modules/no-unused-class: [
@@ -44,7 +45,7 @@ function ProgressLine(props: Props) {
     return (
         <div className={_cs(styles.progressBar, className)}>
             <div className={_cs(styles.numberCircle, styles[variant])}>
-                <Numeral
+                <NumberOutput
                     value={progress}
                     precision={0}
                     suffix="%"

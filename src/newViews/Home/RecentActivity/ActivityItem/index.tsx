@@ -2,10 +2,10 @@ import React from 'react';
 import {
     ElementFragments,
     Link,
+    DateOutput,
 } from '@the-deep/deep-ui';
 
 import Avatar from '#newComponents/ui/Avatar';
-import FormattedDate from '#rscv/FormattedDate';
 
 import _ts from '#ts';
 
@@ -61,10 +61,10 @@ function ActivityItem(props: RecentActivityProps) {
                         {projectDisplayName}
                     </Link>
                 </div>
-                <FormattedDate
+                <DateOutput
                     className={styles.createdDate}
                     value={createdAt}
-                    mode="hh:mm aaa, MMM dd, yyyy"
+                    format="hh:mm aaa, MMM dd, yyyy"
                 />
             </ElementFragments>
         </div>

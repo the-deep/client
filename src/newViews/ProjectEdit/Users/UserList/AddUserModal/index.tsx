@@ -13,11 +13,11 @@ import {
     Modal,
     SelectInput,
     Button,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import UserSelectInput from '#newComponents/input/UserSelectInput';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
 import {
     MultiResponse,
@@ -173,7 +173,7 @@ function AddUserModal(props: Props) {
                 </Button>
             )}
         >
-            {pendingAddAction && (<LoadingAnimation />)}
+            {pendingAddAction && (<PendingMessage />)}
             <NonFieldError error={error} />
             <UserSelectInput
                 className={styles.input}

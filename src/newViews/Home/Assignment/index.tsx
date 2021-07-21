@@ -5,11 +5,10 @@ import {
     Pager,
     Card,
     PendingMessage,
+    List,
 } from '@the-deep/deep-ui';
 import { MdPlaylistAddCheck } from 'react-icons/md';
 import { IoCheckmarkDone } from 'react-icons/io5';
-
-import List from '#rsu/../v2/View/List';
 
 import { useRequest, useLazyRequest } from '#utils/request';
 

@@ -19,9 +19,9 @@ import {
     ContainerCard,
     Link,
     DateOutput,
+    TextOutput,
 } from '@the-deep/deep-ui';
 
-import TextOutput from '#components/general/TextOutput';
 import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
 import { pathNames } from '#constants';
 import { useLazyRequest, useRequest } from '#utils/request';
@@ -221,7 +221,7 @@ function FrameworkDetail(props: Props) {
                         className={styles.block}
                         label={_ts('projectEdit', 'frameworkCreatorTitle')}
                         value={frameworkDetails?.createdByName}
-                        type="small-block"
+                        hideLabelColon
                     />
                     <TextOutput
                         className={styles.block}
@@ -232,12 +232,11 @@ function FrameworkDetail(props: Props) {
                                 label={_ts('projectEdit', 'referenceFrameworkImageLabel')}
                             />
                         )}
-                        type="small-block"
+                        hideLabelColon
                     />
                     <TextOutput
                         className={styles.block}
                         label={_ts('projectEdit', 'recentlyUsedInProjectsTitle')}
-                        type="small-block"
                         value={(
                             <List
                                 data={frameworkDetails?.visibleProjects}
@@ -246,6 +245,7 @@ function FrameworkDetail(props: Props) {
                                 renderer={Link}
                             />
                         )}
+                        hideLabelColon
                     />
                 </div>
                 <div className={styles.preview}>

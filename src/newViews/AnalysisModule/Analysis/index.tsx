@@ -15,6 +15,7 @@ import {
     QuickActionButton,
     ExpandableContainer,
     TextOutput,
+    DateRangeOutput,
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
@@ -28,7 +29,6 @@ import {
 } from 'recharts';
 
 import ProgressLine from '#newComponents/viz/ProgressLine';
-import DateRangeOutput from '#newComponents/ui/DateRangeOutput';
 import {
     useModalState,
 } from '#hooks/stateManagement';
