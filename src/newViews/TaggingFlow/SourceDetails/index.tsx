@@ -4,6 +4,7 @@ import { Card } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
     Error,
+    SetValueArg,
 } from '@togglecorp/toggle-form';
 
 import LeadEditForm from '#newViews/Tagging/Sources/LeadEditModal/LeadEditForm';
@@ -19,6 +20,8 @@ interface Props {
     ready: boolean;
     leadInitialValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
+    setValue: (value: SetValueArg<PartialFormType>) => void;
+    setPristine: (val: boolean) => void;
     projectId: number;
 }
 
@@ -29,6 +32,8 @@ function SourceDetails(props: Props) {
         leadValue,
         leadInitialValue,
         setLeadFieldValue,
+        setValue,
+        setPristine,
         leadFormError,
         pending,
         projectId,
@@ -46,6 +51,8 @@ function SourceDetails(props: Props) {
                     initialValue={leadInitialValue}
                     setFieldValue={setLeadFieldValue}
                     error={leadFormError}
+                    setValue={setValue}
+                    setPristine={setPristine}
                     ready={ready}
                     projectId={projectId}
                 />

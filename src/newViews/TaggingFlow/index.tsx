@@ -60,6 +60,7 @@ function TaggingFlow(props: PropsFromState) {
         value: leadValue,
         setFieldValue: setLeadFieldValue,
         setValue: setLeadValue,
+        setPristine: setLeadPristine,
         error: leadFormError,
     } = useForm(leadSchema, leadInitialValue);
 
@@ -157,6 +158,8 @@ function TaggingFlow(props: PropsFromState) {
                     >
                         <SourceDetails
                             leadValue={leadValue}
+                            setValue={setLeadValue}
+                            setPristine={setLeadPristine}
                             setLeadFieldValue={setLeadFieldValue}
                             leadFormError={leadFormError}
                             ready={ready}
