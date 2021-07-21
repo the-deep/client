@@ -7,7 +7,7 @@ RUN apk update\
 
 WORKDIR /code
 
-COPY ./package.json /code/package.json
+COPY ./package.json ./yarn.lock /code/
 RUN yarn install --network-concurrency 1
 
 COPY . /code/
