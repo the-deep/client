@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_test:
-    name: 🚴 Build + Test 🚴  # Match the name below (8398a7/action-slack).
+    name: 🚴 Build + Lint + Test 🚴  # Match the name below (8398a7/action-slack).
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -55,12 +55,12 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
-      - name: 🤞 Run Build + Test 🧪
+      - name: 🤞 Run Build + Lint + Test 🧪
         env:
             DOCKER_IMAGE: ${{ steps.prep.outputs.tagged_image }}
         run: |
           python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)" && \
-          docker run --rm --workdir="/code/" -v $(pwd)/coverage:/code/coverage/ $DOCKER_IMAGE sh -c 'yarn build && CI=true yarn test'
+          docker run --rm --workdir="/code/" $DOCKER_IMAGE sh -c 'yarn lint'
 
         # Temp fix
         # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#github-cache
@@ -74,7 +74,7 @@ jobs:
       - uses: 8398a7/action-slack@v3
         with:
           status: custom
-          job_name: 🚴 Build + Test 🚴 # Match the name above.
+          job_name: 🚴 Build + Lint + Test 🚴 # Match the name above.
           icon_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
           fields: workflow,job,commit,repo,ref,author,took
           custom_payload: |
