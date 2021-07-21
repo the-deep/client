@@ -26,7 +26,10 @@ import {
     PartialForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import {
+    randomString,
+    _cs,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
@@ -321,6 +324,7 @@ interface MultiSelectWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
@@ -329,6 +333,7 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -358,7 +363,7 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.multiSelectWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

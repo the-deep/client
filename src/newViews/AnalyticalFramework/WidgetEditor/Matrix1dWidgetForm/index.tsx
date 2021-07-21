@@ -26,7 +26,10 @@ import {
     PartialForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
@@ -533,6 +536,7 @@ interface Matrix1dWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
@@ -541,6 +545,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -570,7 +575,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
 
     return (
         <form
-            className={styles.widgetEdit}
+            className={_cs(styles.matrix1DWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

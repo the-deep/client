@@ -200,10 +200,12 @@ interface Props {
     onChange: (value: PartialSectionType[]) => void;
     focusedSection?: string;
     onFocusChange: (value: string) => void;
+    className?: string;
 }
 
 function SectionsEditor(props: Props) {
     const {
+        className,
         initialValue,
         onChange,
         onSave,
@@ -298,7 +300,7 @@ function SectionsEditor(props: Props) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.form, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

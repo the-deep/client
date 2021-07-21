@@ -15,6 +15,7 @@ import {
     PartialForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
+import { _cs } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
 
@@ -100,6 +101,7 @@ interface TextWidgetFormProps {
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
+    className?: string;
 }
 
 function TextWidgetForm(props: TextWidgetFormProps) {
@@ -108,6 +110,7 @@ function TextWidgetForm(props: TextWidgetFormProps) {
         onSave,
         onCancel,
         initialValue,
+        className,
     } = props;
 
     const {
@@ -137,7 +140,7 @@ function TextWidgetForm(props: TextWidgetFormProps) {
 
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.textWidgetForm, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container

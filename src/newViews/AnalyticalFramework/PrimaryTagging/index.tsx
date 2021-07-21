@@ -580,6 +580,7 @@ function PrimaryTagging(props: Props) {
                 )}
                 {widgetEditMode && tempWidget && (
                     <WidgetEditor
+                        className={styles.widgetEditor}
                         name={tempWidget.sectionId}
                         initialValue={tempWidget.widget}
                         onChange={handleTempWidgetChange}

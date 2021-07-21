@@ -1,4 +1,4 @@
-.widget-edit {
+.matrix-2d-widget-form {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -18,6 +18,12 @@
 
         .options-list {
             overflow-y: auto;
+        }
+    }
+
+    .tab-list {
+        >* {
+            flex-grow: 1;
         }
     }
 }
