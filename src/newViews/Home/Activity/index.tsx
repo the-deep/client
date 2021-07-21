@@ -3,8 +3,7 @@ import { IoStatsChart } from 'react-icons/io5';
 import {
     _cs,
     compareDate,
-    getHexFromString,
-    listToMap,
+    listToGroupList,
 } from '@togglecorp/fujs';
 import {
     LineChart,
@@ -21,6 +20,12 @@ import { Card } from '@the-deep/deep-ui';
 import RechartsLegend from '#newComponents/ui/RechartsLegend';
 import { ProjectRecentActivity } from '#typings';
 import styles from './styles.scss';
+
+const colorScheme = [
+    '#a6aff4',
+    '#796ec6',
+    '#fb8a91',
+];
 
 interface Props {
     className?: string;
@@ -50,28 +55,26 @@ function Activity(props: Props) {
         data,
     } = props;
 
-    const projectMap = React.useMemo(() => listToMap(
-        data?.projects ?? [],
-        d => d.id,
-        d => ({
-            title: d.title,
-            color: getHexFromString(d.title),
-        }),
-    ), [data]);
-
-    const projectIdList = Object.keys(projectMap);
-    const renderData = useMemo(() => (
-        data?.activities.map(a => ({
+    const projectList = useMemo(() => {
+        const sortedActivities = data?.activities.map(a => ({
             date: new Date(a.date).getTime(),
             value: a.count,
-        })).sort((a, b) => compareDate(a.date, b.date)) ?? []
-    ), [data]);
+            project: a.project,
+        })).sort((a, b) => compareDate(a.date, b.date)) ?? [];
+
+        const groupedList = listToGroupList(sortedActivities, d => d.project, d => d);
+        return data?.projects.map(d => ({
+            id: d.id,
+            title: d.title,
+            data: groupedList[d.id],
+        })) ?? [];
+    }, [data]);
 
     return (
         <Card className={_cs(className, styles.activity)}>
-            { renderData.length > 0 ? (
+            { (data?.activities?.length ?? 0) > 0 ? (
                 <ResponsiveContainer className={styles.container}>
-                    <LineChart data={renderData}>
+                    <LineChart>
                         <XAxis
                             dataKey="date"
                             type="number"
@@ -93,12 +96,15 @@ function Activity(props: Props) {
                             align="left"
                             content={RechartsLegend}
                         />
-                        {projectIdList.map(p => (
+                        {projectList.map((p, index) => (
                             <Line
                                 dataKey="value"
-                                name={projectMap[p].title}
-                                key={projectMap[p].title}
-                                stroke={projectMap[p].color}
+                                data={p.data}
+                                name={p.title}
+                                key={p.id}
+                                stroke={colorScheme[
+                                    index % colorScheme.length
+                                ]}
                                 strokeWidth={2}
                                 connectNulls
                                 dot
