@@ -160,6 +160,7 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
                     >
                         <GeoAreas
                             regions={activeProject.regions}
+                            activeProject={projectId}
                         />
                     </TabPanel>
                     <TabPanel
