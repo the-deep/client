@@ -1,0 +1,89 @@
+name: Deep client GH Action
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build_test:
+    name: 🚴 Build + Test 🚴  # Match the name below (8398a7/action-slack).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout tools repo
+        uses: actions/checkout@v2
+        with:
+          repository: toggle-corp/react-store
+          ref: develop
+          path: src/vendor/react-store
+
+      - name: 🐳 Prepare Docker
+        id: prep
+        run: |
+          TAG=$(echo $GITHUB_SHA | head -c7)
+          IMAGE="docker.pkg.github.com/the-deep/client"
+          echo ::set-output name=tagged_image::${IMAGE}:${TAG}
+          echo ::set-output name=tag::${TAG}
+      - name: 🐳 Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+
+      # - name: Docker Login
+      #   run: |
+      #     # docker login
+      #     echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: 🐳 Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-single-buildx
+
+      - name: 🐳 Build image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: Dockerfile
+          push: false # This would be set to true in a real world deployment scenario.
+          load: true
+          tags: ${{ steps.prep.outputs.tagged_image }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: 🤞 Run Build + Test 🧪
+        env:
+            DOCKER_IMAGE: ${{ steps.prep.outputs.tagged_image }}
+        run: |
+          python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)" && \
+          docker run --rm --workdir="/code/" -v $(pwd)/coverage:/code/coverage/ $DOCKER_IMAGE sh -c 'yarn build && CI=true yarn test'
+
+        # Temp fix
+        # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#github-cache
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: 🐳 Move docker cache (🧙 Hack fix)
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          job_name: 🚴 Build + Test 🚴 # Match the name above.
+          icon_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }} in ${process.env.AS_TOOK}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        if: always() # Pick up events even if the job fails or is canceled.
