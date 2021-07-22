@@ -13,13 +13,13 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    onChange: (v: FileLike[]) => void;
+    onAdd: (v: FileLike[]) => void;
 }
 
 function GoogleDriveFilesUpload(props: Props) {
     const {
         className,
-        onChange,
+        onAdd,
     } = props;
 
     const handleDropboxSuccess = (results: Dropbox.ChooserFile[]) => {
@@ -31,7 +31,7 @@ function GoogleDriveFilesUpload(props: Props) {
             isUploaded: false,
             fileType: 'dropbox' as const,
         }));
-        onChange(values);
+        onAdd(values);
     };
 
     return (

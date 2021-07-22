@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { useRequest } from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import {
     QuickActionButton,
     ElementFragments,
@@ -16,6 +16,7 @@ import styles from './styles.scss';
 interface Props {
     className?: string;
     onSuccess: (key: string, v: FileUploadResponse) => void;
+    onRetry?: (key: string) => void;
     onFailure?: (key: string) => void;
     active: boolean;
     hasFailed?: boolean;
@@ -23,13 +24,13 @@ interface Props {
 }
 
 const iconMap = {
-    file: <IoDocumentOutline className={styles.icon} />,
-    google: <FaGoogleDrive className={styles.icon} />,
+    disk: <IoDocumentOutline className={styles.icon} />,
+    'google-drive': <FaGoogleDrive className={styles.icon} />,
     dropbox: <IoLogoDropbox className={styles.icon} />,
 };
 
 const getRequestParams = (data: FileLike) => {
-    if (data.fileType === 'file') {
+    if (data.fileType === 'disk') {
         return {
             url: 'server://files/',
             body: {
@@ -39,7 +40,7 @@ const getRequestParams = (data: FileLike) => {
             },
         };
     }
-    if (data.fileType === 'google') {
+    if (data.fileType === 'google-drive') {
         return {
             url: 'server://files-google-drive/',
             body: {
@@ -67,23 +68,21 @@ function UploadItem(props: Props) {
         className,
         onSuccess,
         onFailure,
+        onRetry,
         active,
         data,
         hasFailed = false,
     } = props;
 
-    const [isRetriggerEnabled, setIsTriggeredEnable] = useState(false);
-
     const params = getRequestParams(data);
 
     const {
         pending,
-        retrigger,
-    } = useRequest<FileUploadResponse>({
+        trigger,
+    } = useLazyRequest<FileUploadResponse, unknown>({
         url: params?.url,
-        skip: !active || (hasFailed && !isRetriggerEnabled),
         method: 'POST',
-        formData: data.fileType === 'file',
+        formData: data.fileType === 'disk',
         body: params?.body,
         onSuccess: (response) => {
             onSuccess(data.key, response);
@@ -95,10 +94,17 @@ function UploadItem(props: Props) {
         },
     });
 
+    useEffect(() => {
+        if (active) {
+            trigger(null);
+        }
+    }, [trigger, active]);
+
     const handleRetriggerClick = useCallback(() => {
-        setIsTriggeredEnable(true);
-        retrigger();
-    }, [retrigger]);
+        if (onRetry) {
+            onRetry(data.key);
+        }
+    }, [onRetry, data]);
 
     return (
         <div className={_cs(className, styles.uploadItem)}>

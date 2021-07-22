@@ -246,17 +246,16 @@ export function hasKey(data, key, keySelector, childrenSelector) {
     }
     return false;
 }
-export function formatBytes(bytes, decimals = 2) {
+export function formatBytes(bytes) {
     if (bytes === 0) return '0 B';
 
     const k = 1024;
-    const dm = Math.min(0, decimals);
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return {
-        value: parseFloat((bytes / (k ** i)).toFixed(dm)),
+        value: bytes / (k ** i),
         suffix: sizes[i],
     };
 }

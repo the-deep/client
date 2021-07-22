@@ -8,7 +8,7 @@
         align-items: center;
         justify-content: center;
         margin-right: var(--dui-spacing-small);
-        padding-left: var(--dui-spacing-medium);
+        padding-left: var(--dui-spacing-small);
         .icon {
             color: var(--dui-color-accent);
             font-size: var(--dui-font-size-extra-large);
@@ -16,10 +16,18 @@
     }
 
     .actions {
-        display: flex;
-        padding: 0;
+        visibility: hidden;
+        padding-right: var(--dui-spacing-small);
     }
+
     .content {
         display: flex;
+    }
+
+    &:hover {
+        background-color: var(--dui-color-grey4);
+        .actions {
+            visibility: visible;
+        }
     }
 }

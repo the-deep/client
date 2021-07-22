@@ -9,14 +9,14 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    onChange: (v: FileLike[]) => void;
+    onAdd: (v: FileLike[]) => void;
 }
 
 
 function FilesUpload(props: Props) {
     const {
         className,
-        onChange,
+        onAdd,
     } = props;
 
     const handleFileInputChange = useCallback((values: File[] | null | undefined) => {
@@ -25,12 +25,12 @@ function FilesUpload(props: Props) {
                 key: randomString(),
                 id: file.name,
                 name: file.name,
-                fileType: 'file' as const,
+                fileType: 'disk' as const,
                 file,
             }))
             : [];
-        onChange(basicFiles);
-    }, [onChange]);
+        onAdd(basicFiles);
+    }, [onAdd]);
 
     return (
         <div className={_cs(styles.filesUpload, className)}>

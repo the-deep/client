@@ -1,0 +1,13 @@
+.sources-uploaded-details {
+    display: flex;
+
+    .sources-container {
+        display: flex;
+        flex-grow: 1;
+
+        .sources {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}

@@ -5,7 +5,10 @@ import { produce } from 'immer';
 import {
     List,
     Container,
+    QuickActionButton,
+    Header,
 } from '@the-deep/deep-ui';
+import { AiOutlineRedo } from 'react-icons/ai';
 import _ts from '#ts';
 
 import FilesUpload from './FilesUpload';
@@ -78,7 +81,11 @@ function Upload(props: Props) {
         handleFailure,
     ]);
 
-    const handleFailedFileSuccess = useCallback((key: string, response: FileUploadResponse) => {
+    const handleRetry = useCallback((key: string) => {
+        const failedFile = failedFiles.find(v => v.key === key);
+        if (failedFile) {
+            handleAddFiles([failedFile]);
+        }
         setFailedFiles((oldState: FileLike[]) => {
             const updatedState = produce(oldState, (safeState) => {
                 const index = safeState.findIndex((file: FileLike) => file.key === key);
@@ -89,17 +96,24 @@ function Upload(props: Props) {
             });
             return updatedState;
         });
-        onSuccess(response);
-    }, [onSuccess]);
+    }, [handleAddFiles, failedFiles]);
 
     const failedFileRendererParams = useCallback((_: string, data: FileLike) => ({
         data,
         active: false,
         hasFailed: true,
-        onSuccess: handleFailedFileSuccess,
+        onRetry: handleRetry,
+        onSuccess: handleSuccess,
     }), [
-        handleFailedFileSuccess,
+        handleSuccess,
+        handleRetry,
     ]);
+
+    const handleRetryAll = useCallback(() => {
+        handleAddFiles(failedFiles);
+        setFailedFiles([]);
+    }, [failedFiles, handleAddFiles]);
+
     return (
         <Container
             className={_cs(styles.upload, className)}
@@ -108,16 +122,16 @@ function Upload(props: Props) {
             sub
         >
             <FilesUpload
-                onChange={handleAddFiles}
                 className={styles.uploadItem}
+                onAdd={handleAddFiles}
             />
             <GoogleDriveFilesUpload
-                onChange={handleAddFiles}
                 className={styles.uploadItem}
+                onAdd={handleAddFiles}
             />
             <DropboxFilesUpload
-                onChange={handleAddFiles}
                 className={styles.uploadItem}
+                onAdd={handleAddFiles}
             />
             <div className={styles.files}>
                 <List
@@ -127,6 +141,21 @@ function Upload(props: Props) {
                     keySelector={fileKeySelector}
                     rendererParams={fileRendererParams}
                 />
+                {failedFiles.length > 0 && (
+                    <Header
+                        heading="Failed uploads"
+                        headingSize="extraSmall"
+                        actions={
+                            <QuickActionButton
+                                name="retrigger"
+                                title="Retry failed uploads"
+                                onClick={handleRetryAll}
+                            >
+                                <AiOutlineRedo />
+                            </QuickActionButton>
+                        }
+                    />
+                )}
                 <List
                     data={failedFiles}
                     rendererClassName={styles.fileItem}

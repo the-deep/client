@@ -6,7 +6,7 @@ import {
 import _ts from '#ts';
 import { FileUploadResponse } from './types';
 import Upload from './Upload';
-import UploadedList from './UploadedList';
+import SourcesUploaded from './SourcesUploaded';
 import styles from './styles.scss';
 
 interface Props {
@@ -37,7 +37,7 @@ function BulkUpload(props: Props) {
                 className={styles.upload}
                 onSuccess={handleFileUploadSuccess}
             />
-            <UploadedList
+            <SourcesUploaded
                 className={styles.details}
                 files={uploadedFiles}
             />
