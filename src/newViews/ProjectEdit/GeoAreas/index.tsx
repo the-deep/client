@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Button,
@@ -10,32 +10,50 @@ import {
 } from 'react-icons/io5';
 
 import {
+    Region,
     BasicRegion,
 } from '#typings';
+import { useRequest } from '#utils/request';
 import _ts from '#ts';
 
 import RegionMapList from './RegionMapList';
 import RegionCard from './RegionCard';
+import CustomGeoAddForm from './CustomGeoAddForm';
 import styles from './styles.scss';
 
-const regionKeySelector = (d: BasicRegion) => d.id;
+const regionKeySelector = (d: Region) => d.id;
 
 interface Props {
     className?: string;
-    regions: BasicRegion[];
     activeProject: number;
 }
 
 function GeoAreas(props: Props) {
     const {
         className,
-        regions,
         activeProject,
     } = props;
+
+    const [addCustomVisibility, setAddCustomVisibility] = useState<boolean>(false);
+
+    const {
+        response: regionResponse,
+        retrigger: regionsGetTrigger,
+    } = useRequest<{ regions: Region[] }>({
+        url: `server://projects/${activeProject}/regions/`,
+        method: 'GET',
+        failureHeader: 'Regions List',
+    });
+
+    const regions = regionResponse?.regions;
 
     const regionRendererParams = useCallback((_: number, data: BasicRegion) => ({
         region: data,
     }), []);
+
+    const handleCustomGeoAddClick = useCallback(() => {
+        setAddCustomVisibility(true);
+    }, []);
 
     return (
         <div className={_cs(className, styles.geoAreas)}>
@@ -51,6 +69,7 @@ function GeoAreas(props: Props) {
                     variant="secondary"
                     name="addCustomGeo"
                     icons={<IoAdd />}
+                    onClick={handleCustomGeoAddClick}
                 >
                     {_ts('geoAreas', 'addCustom')}
                 </Button>
@@ -70,6 +89,12 @@ function GeoAreas(props: Props) {
                         keySelector={regionKeySelector}
                     />
                 </Container>
+                {addCustomVisibility && (
+                    <CustomGeoAddForm
+                        projectId={activeProject}
+                        onSuccess={regionsGetTrigger}
+                    />
+                )}
             </div>
         </div>
     );
