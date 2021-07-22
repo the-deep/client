@@ -39,7 +39,10 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import RechartsLegend from '#newComponents/ui/RechartsLegend';
 import { SubNavbar } from '#components/general/Navbar';
 import { getDateWithTimezone } from '#utils/common';
-import { shortMonthNamesMap } from '#utils/safeCommon';
+import {
+    shortMonthNamesMap,
+    calcPercent,
+} from '#utils/safeCommon';
 import {
     useModalState,
 } from '#hooks/stateManagement';
@@ -280,13 +283,19 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         variant="complement1"
                     />
                     <PercentageInformationCard
-                        value={overviewResponse?.analyzedSourceCount}
+                        value={calcPercent(
+                            overviewResponse?.analyzedSourceCount,
+                            overviewResponse?.sourcesTotal,
+                        )}
                         label={_ts('analysis', 'sourcesAnalyzedLabel')}
                         variant="complement1"
                         icon={<IoDocumentOutline />}
                     />
                     <PercentageInformationCard
-                        value={overviewResponse?.analyzedEntriesCount}
+                        value={calcPercent(
+                            overviewResponse?.analyzedEntriesCount,
+                            overviewResponse?.entriesTotal,
+                        )}
                         variant="complement2"
                         label={_ts('analysis', 'entriesAnalyzedLabel')}
                         icon={<IoCheckmarkCircle />}
