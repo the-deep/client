@@ -95,6 +95,7 @@ function Upload(props: Props) {
     const failedFileRendererParams = useCallback((_: string, data: FileLike) => ({
         data,
         active: false,
+        hasFailed: true,
         onSuccess: handleFailedFileSuccess,
     }), [
         handleFailedFileSuccess,
@@ -118,7 +119,7 @@ function Upload(props: Props) {
                 onChange={handleAddFiles}
                 className={styles.uploadItem}
             />
-            {files && files.length > 0 && (
+            <div className={styles.files}>
                 <List
                     data={files}
                     rendererClassName={styles.fileItem}
@@ -126,16 +127,14 @@ function Upload(props: Props) {
                     keySelector={fileKeySelector}
                     rendererParams={fileRendererParams}
                 />
-            )}
-            {failedFiles && failedFiles.length > 0 && (
                 <List
-                    data={files}
+                    data={failedFiles}
                     rendererClassName={styles.fileItem}
                     renderer={UploadItem}
                     keySelector={fileKeySelector}
                     rendererParams={failedFileRendererParams}
                 />
-            )}
+            </div>
         </Container>
     );
 }

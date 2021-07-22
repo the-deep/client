@@ -10,8 +10,25 @@
 
         .upload-item {
             display: flex;
-            flex-grow: 1;
             padding: var(--dui-spacing-medium) 0;
+
+            &:hover {
+                background-color: var(--dui-color-grey6);
+            }
+        }
+
+        .files {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding-top: var(--dui-spacing-medium);
+            overflow-y: auto;
+
+            .file-item {
+                display: flex;
+                background-color: var(--dui-color-grey6);
+                padding: var(--dui-spacing-small) 0;
+            }
         }
     }
 }

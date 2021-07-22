@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { _cs, randomString } from '@togglecorp/fujs';
 import { FaGoogleDrive } from 'react-icons/fa';
 import _ts from '#ts';
@@ -26,23 +26,27 @@ function GoogleDriveFilesUpload(props: Props) {
         onChange,
     } = props;
 
-    const [accessToken, setAccessToken] = useState<string>();
+    const accessToken = useRef<string>();
 
     const addFilesFromGoogleDrive = (response: google.picker.ResponseObject) => {
         const { docs, action } = response;
-        if (action === 'picked' && accessToken) {
+        if (action === 'picked' && accessToken.current) {
             const values = docs.map(v => ({
                 key: randomString(),
                 id: v.id,
                 name: v.name,
                 fileType: 'google' as const,
                 mimeType: v.mimeType,
-                accessToken,
+                accessToken: accessToken.current as string,
             }));
             onChange(values);
         }
     };
     const mimeTypes = supportedGoogleDriveMimeTypes.join(' ');
+
+    const setAccessToken = (token: string) => {
+        accessToken.current = token;
+    };
 
     return (
         <div className={_cs(styles.googleUpload, className)}>
