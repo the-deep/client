@@ -51,10 +51,15 @@ const notQuestionnaireViewable = ({ isLoggedIn, accessQuestionnaire }) => (
     !isLoggedIn || !accessQuestionnaire
 );
 
-const notAnalysisModuleViewable = ({ isLoggedIn, accessAnalysisModule }) => (
-    !isLoggedIn || !accessAnalysisModule
+const notAnalysisModuleViewable = ({ isLoggedIn, accessAnalysisModule, entryPermissions }) => (
+    !isLoggedIn || !accessAnalysisModule || !entryPermissions.view
 );
 
+const notAnalysisModuleEditable = ({ isLoggedIn, accessAnalysisModule, entryPermissions }) => (
+    !isLoggedIn || !accessAnalysisModule || !(
+        entryPermissions.create || entryPermissions.modify || entryPermissions.delete
+    )
+);
 
 const notQuestionnaireEditable = ({ isLoggedIn, accessQuestionnaire, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.modify || !accessQuestionnaire
@@ -126,7 +131,7 @@ const acl = {
 
     exploreDeep: {},
     analysisModule: { hide: notAnalysisModuleViewable },
-    pillarAnalysis: { hide: notAnalysisModuleViewable },
+    pillarAnalysis: { hide: notAnalysisModuleEditable },
 
     analyticalFramework: { hide: notLoggedIn },
     myProfile: { hide: notLoggedIn },

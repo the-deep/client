@@ -29,6 +29,7 @@ import {
 } from 'recharts';
 
 import ProgressLine from '#newComponents/viz/ProgressLine';
+import Cloak from '#components/general/Cloak';
 import {
     useModalState,
 } from '#hooks/stateManagement';
@@ -75,6 +76,20 @@ const barChartMargin = {
 };
 const BAR_TICK_COUNT = 5;
 const MAX_BAR_SIZE = 16;
+
+function shouldHideEdit({
+    hasAnalysisFramework,
+    entryPermissions,
+}: {
+    hasAnalysisFramework: boolean;
+    entryPermissions: {
+        create: boolean;
+        modify: boolean;
+    };
+}) {
+    return (!hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify));
+}
+
 
 interface ComponentProps {
     analysisId: number;
@@ -175,39 +190,44 @@ function Analysis(props: ComponentProps) {
                 />
             )}
             headerActions={(
-                <>
-                    <Button
-                        name={analysisId}
-                        onClick={onEdit}
-                        disabled={disabled}
-                        variant="tertiary"
-                        icons={(
-                            <FiEdit2 />
-                        )}
-                    >
-                        {_ts('analysis', 'editAnalysisTitle')}
-                    </Button>
-                    <QuickActionButton
-                        name="clone"
-                        onClick={setModalVisible}
-                        disabled={disabled}
-                        title={_ts('analysis', 'cloneAnalysisButtonTitle')}
-                        variant="secondary"
-                    >
-                        <IoCopyOutline />
-                    </QuickActionButton>
-                    <QuickActionConfirmButton
-                        name="delete"
-                        onConfirm={handleDeleteAnalysis}
-                        disabled={disabled}
-                        title={_ts('analysis', 'deleteAnalysisButtonTitle')}
-                        message={_ts('analysis', 'deleteAnalysisConfirmMessage')}
-                        variant="secondary"
-                        showConfirmationInitially={false}
-                    >
-                        <IoTrashOutline />
-                    </QuickActionConfirmButton>
-                </>
+                <Cloak
+                    hide={shouldHideEdit}
+                    render={(
+                        <>
+                            <Button
+                                name={analysisId}
+                                onClick={onEdit}
+                                disabled={disabled}
+                                variant="tertiary"
+                                icons={(
+                                    <FiEdit2 />
+                                )}
+                            >
+                                {_ts('analysis', 'editAnalysisTitle')}
+                            </Button>
+                            <QuickActionButton
+                                name="clone"
+                                onClick={setModalVisible}
+                                disabled={disabled}
+                                title={_ts('analysis', 'cloneAnalysisButtonTitle')}
+                                variant="secondary"
+                            >
+                                <IoCopyOutline />
+                            </QuickActionButton>
+                            <QuickActionConfirmButton
+                                name="delete"
+                                onConfirm={handleDeleteAnalysis}
+                                disabled={disabled}
+                                title={_ts('analysis', 'deleteAnalysisButtonTitle')}
+                                message={_ts('analysis', 'deleteAnalysisConfirmMessage')}
+                                variant="secondary"
+                                showConfirmationInitially={false}
+                            >
+                                <IoTrashOutline />
+                            </QuickActionConfirmButton>
+                        </>
+                    )}
+                />
             )}
             horizontallyCompactContent
             contentClassName={styles.content}

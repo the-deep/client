@@ -39,6 +39,7 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import RechartsLegend from '#newComponents/ui/RechartsLegend';
 import { SubNavbar } from '#components/general/Navbar';
 import { getDateWithTimezone } from '#utils/common';
+import Cloak from '#components/general/Cloak';
 import {
     shortMonthNamesMap,
     calcPercent,
@@ -115,6 +116,18 @@ const timelineTickSelector = (d: number) => {
 
     return `${year}-${shortMonthNamesMap[month]}`;
 };
+function shouldHideEdit({
+    hasAnalysisFramework,
+    entryPermissions,
+}: {
+    hasAnalysisFramework: boolean;
+    entryPermissions: {
+        create: boolean;
+        modify: boolean;
+    };
+}) {
+    return (!hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify));
+}
 
 interface AnalysisOverview {
     analysisList: AnalysisList[];
@@ -249,18 +262,23 @@ function AnalysisModule(props: AnalysisModuleProps) {
     return (
         <div className={_cs(styles.analysisModule, className)}>
             <SubNavbar>
-                <div className={styles.subNavbar}>
-                    <Button
-                        name={undefined}
-                        variant="primary"
-                        onClick={handleNewAnalysisCreateClick}
-                        icons={(
-                            <IoAdd />
-                        )}
-                    >
-                        {_ts('analysis', 'setupNewAnalysisButtonLabel')}
-                    </Button>
-                </div>
+                <Cloak
+                    hide={shouldHideEdit}
+                    render={(
+                        <div className={styles.subNavbar}>
+                            <Button
+                                name={undefined}
+                                variant="primary"
+                                onClick={handleNewAnalysisCreateClick}
+                                icons={(
+                                    <IoAdd />
+                                )}
+                            >
+                                {_ts('analysis', 'setupNewAnalysisButtonLabel')}
+                            </Button>
+                        </div>
+                    )}
+                />
             </SubNavbar>
             <Container
                 className={styles.summary}
