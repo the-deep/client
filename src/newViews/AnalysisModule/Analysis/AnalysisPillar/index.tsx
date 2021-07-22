@@ -14,6 +14,7 @@ import {
     List,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
+import Cloak from '#components/general/Cloak';
 import {
     IoTrashOutline,
 } from 'react-icons/io5';
@@ -27,6 +28,19 @@ import { calcPercent } from '#utils/safeCommon';
 
 import _ts from '#ts';
 import styles from './styles.scss';
+
+function shouldHideEdit({
+    hasAnalysisFramework,
+    entryPermissions,
+}: {
+    hasAnalysisFramework: boolean;
+    entryPermissions: {
+        create: boolean;
+        modify: boolean;
+    };
+}) {
+    return (!hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify));
+}
 
 const statementKeySelector = (d: AnalyticalStatementSummary) => d.id;
 
@@ -106,29 +120,34 @@ function AnalysisPillar(props: Props) {
             )}
             inlineHeadingDescription
             headerActions={(
-                <>
-                    <ButtonLikeLink
-                        to={editLink}
-                        disabled={disabled}
-                        variant="tertiary"
-                        icons={(
-                            <FiEdit2 />
-                        )}
-                    >
-                        {_ts('analysis', 'continueAnalysisButton')}
-                    </ButtonLikeLink>
-                    <QuickActionConfirmButton
-                        name={pillarId}
-                        onConfirm={onDeleteConfirmClick}
-                        title={_ts('analysis', 'deletePillarButtonTitle')}
-                        message={_ts('analysis', 'deletePillarConfirmMessage')}
-                        disabled={disabled}
-                        showConfirmationInitially={false}
-                        variant="secondary"
-                    >
-                        <IoTrashOutline />
-                    </QuickActionConfirmButton>
-                </>
+                <Cloak
+                    hide={shouldHideEdit}
+                    render={(
+                        <>
+                            <ButtonLikeLink
+                                to={editLink}
+                                disabled={disabled}
+                                variant="tertiary"
+                                icons={(
+                                    <FiEdit2 />
+                                )}
+                            >
+                                {_ts('analysis', 'continueAnalysisButton')}
+                            </ButtonLikeLink>
+                            <QuickActionConfirmButton
+                                name={pillarId}
+                                onConfirm={onDeleteConfirmClick}
+                                title={_ts('analysis', 'deletePillarButtonTitle')}
+                                message={_ts('analysis', 'deletePillarConfirmMessage')}
+                                disabled={disabled}
+                                showConfirmationInitially={false}
+                                variant="secondary"
+                            >
+                                <IoTrashOutline />
+                            </QuickActionConfirmButton>
+                        </>
+                    )}
+                />
             )}
             headerDescription={(
                 <TextOutput
