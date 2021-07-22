@@ -27,12 +27,15 @@ import { IoAdd } from 'react-icons/io5';
 import { useRequest } from '#utils/request';
 import OrganizationSelectInput from '#newComponents/input/OrganizationSelectInput';
 import OrganizationMultiSelectInput from '#newComponents/input/OrganizationMultiSelectInput';
+import LeadGroupSelectInput, { BasicLeadGroup } from '#newComponents/input/LeadGroupSelectInput';
 import AddOrganizationModal from '#newComponents/general/AddOrganizationModal';
+import AddLeadGroupModal from '#newComponents/general/AddLeadGroupModal';
 import {
     useModalState,
 } from '#hooks/stateManagement';
 import {
     BasicOrganization,
+    LeadGroup,
 } from '#typings';
 
 import {
@@ -63,6 +66,7 @@ interface Props {
     initialValue: PartialFormType;
     pending?: boolean;
     ready?: boolean;
+    projectId: number;
 }
 
 function LeadEditForm(props: Props) {
@@ -74,12 +78,13 @@ function LeadEditForm(props: Props) {
         setFieldValue,
         pending: pendingFromProps,
         ready,
+        projectId,
     } = props;
     const error = getErrorObject(riskyError);
 
     const optionsRequestBody = useMemo(() => ({
         projects: [initialValue.project],
-        leadGroups: [], // this will not fetch any leadGroups
+        leadGroups: [initialValue.leadGroup],
         organizations: unique(
             [
                 initialValue.source,
@@ -101,12 +106,26 @@ function LeadEditForm(props: Props) {
 
     // NOTE: the loading animation flashes when loading for
     // lead-options. this will be mitigated when using graphql
-    const [organizationAddType, setOrganizationAddType] = useState<'author' | 'publisher' | undefined>(undefined);
+    const [
+        organizationAddType,
+        setOrganizationAddType,
+    ] = useState<'author' | 'publisher' | undefined>(undefined);
+
+    const [
+        leadGroupOptions,
+        setLeadGroupOptions,
+    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const [
         showAddOrganizationModal,
         setAddOrganizationModalVisible,
         setAddOrganizationModalHidden,
+    ] = useModalState(false);
+
+    const [
+        showAddLeadGroupModal,
+        setAddLeadGroupModalVisible,
+        setAddLeadGroupModalHidden,
     ] = useModalState(false);
 
     const {
@@ -143,6 +162,15 @@ function LeadEditForm(props: Props) {
             setAuthorOrganizationOptions(oldVal => [...oldVal ?? [], val]);
         }
     }, [organizationAddType, setFieldValue]);
+
+    const handleAddLeadGroupClick = useCallback(() => {
+        setAddLeadGroupModalVisible();
+    }, [setAddLeadGroupModalVisible]);
+
+    const handleLeadGroupAdd = useCallback((val: LeadGroup) => {
+        setFieldValue(val.id, 'leadGroup');
+        setLeadGroupOptions(oldVal => [...oldVal ?? [], val]);
+    }, [setFieldValue]);
 
     return (
         <div className={_cs(styles.leadEditForm, className)}>
@@ -199,6 +227,29 @@ function LeadEditForm(props: Props) {
                 value={value.title}
                 onChange={setFieldValue}
                 error={error?.title}
+            />
+            <LeadGroupSelectInput
+                // FIXME: Filter this out based on if the project has assessment or not
+                name="leadGroup"
+                className={styles.input}
+                value={value.leadGroup}
+                onChange={setFieldValue}
+                options={leadGroupOptions ?? leadOptions?.leadGroups}
+                onOptionsChange={setLeadGroupOptions}
+                disabled={pending}
+                label="Lead Group"
+                error={error?.leadGroup}
+                projectId={projectId}
+                actions={(
+                    <QuickActionButton
+                        name="add-lead-group"
+                        variant="transparent"
+                        onClick={handleAddLeadGroupClick}
+                    >
+                        <IoAdd />
+
+                    </QuickActionButton>
+                )}
             />
             <div className={styles.row}>
                 <DateInput
@@ -304,6 +355,12 @@ function LeadEditForm(props: Props) {
                 <AddOrganizationModal
                     onModalClose={setAddOrganizationModalHidden}
                     onOrganizationAdd={handleOrganizationAdd}
+                />
+            )}
+            {showAddLeadGroupModal && (
+                <AddLeadGroupModal
+                    onModalClose={setAddLeadGroupModalHidden}
+                    onLeadGroupAdd={handleLeadGroupAdd}
                 />
             )}
         </div>

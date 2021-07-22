@@ -162,6 +162,7 @@ function TaggingFlow(props: PropsFromState) {
                             ready={ready}
                             pending={leadGetPending}
                             leadInitialValue={leadInitialValue}
+                            projectId={projectId}
                         />
                     </TabPanel>
                     <TabPanel

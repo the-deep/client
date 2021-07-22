@@ -79,7 +79,10 @@ export interface LeadOptions {
         id: number;
         displayName: string;
     }[];
-    leadGroup: KeyValueElement[];
+    leadGroups: {
+        id: number;
+        title: string;
+    }[];
     priority: Priority[];
     confidentiality: KeyValueElement[];
     organizations: {

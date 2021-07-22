@@ -10,7 +10,7 @@ import {
     MultiResponse,
 } from '#typings';
 
-interface BasicLeadGroup {
+export interface BasicLeadGroup {
     id: number;
     title: string;
 }
