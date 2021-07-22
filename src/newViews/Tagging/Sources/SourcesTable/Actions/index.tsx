@@ -8,7 +8,7 @@ import { MdModeEdit } from 'react-icons/md';
 import {
     QuickActionButton,
     ButtonLikeLink,
-    DropdownMenu,
+    QuickActionDropdownMenu,
     DropdownMenuItem,
     useConfirmation,
 } from '@the-deep/deep-ui';
@@ -72,12 +72,11 @@ function Actions<T extends number>(props: Props<T>) {
             >
                 Tag
             </ButtonLikeLink>
-            <DropdownMenu
+            <QuickActionDropdownMenu
                 label={(
                     <IoEllipsisVerticalSharp />
                 )}
                 variant="secondary"
-                hideDropdownIcon
             >
                 <DropdownMenuItem
                     name="delete"
@@ -85,7 +84,7 @@ function Actions<T extends number>(props: Props<T>) {
                 >
                     Delete
                 </DropdownMenuItem>
-            </DropdownMenu>
+            </QuickActionDropdownMenu>
             {isAssessmentLead && (
                 <ButtonLikeLink
                     className={styles.button}

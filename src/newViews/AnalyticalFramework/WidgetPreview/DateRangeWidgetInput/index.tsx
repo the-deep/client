@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import {
     QuickActionButton,
-    DateInput,
+    DateRangeInput,
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
@@ -9,6 +9,8 @@ import { NodeRef } from '#newComponents/ui/SortableList';
 
 import WidgetWrapper from '../../Widget';
 import { DateRangeValue } from '../../types';
+
+import styles from './styles.scss';
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -42,23 +44,11 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         rootStyle,
     } = props;
 
-    const handleToChange = useCallback(
-        (to: string | undefined) => {
-            onChange({ to, from: value?.from }, name);
-        },
-        [onChange, name, value],
-    );
-
-    const handleFromChange = useCallback(
-        (from: string | undefined) => {
-            onChange({ to: value?.to, from }, name);
-        },
-        [onChange, name, value],
-    );
-
     const handleValueSwap = useCallback(
         () => {
-            onChange({ to: value?.from, from: value?.to }, name);
+            if (value) {
+                onChange({ endDate: value.startDate, startDate: value.endDate }, name);
+            }
         },
         [onChange, value, name],
     );
@@ -70,24 +60,18 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             actions={actions}
             nodeRef={nodeRef}
             rootStyle={rootStyle}
+            childrenContainerClassName={styles.content}
         >
-            <DateInput
-                name="from"
-                label="From" // FIXME: use translations
-                onChange={handleFromChange}
-                value={value?.from}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
-            <DateInput // FIXME: use DateRangeInput if possible and available
-                name="to"
-                label="To" // FIXME: use translations
-                onChange={handleToChange}
-                value={value?.to}
+            <DateRangeInput
+                className={styles.input}
+                name={name}
+                onChange={onChange}
+                value={value}
                 readOnly={readOnly}
                 disabled={disabled}
             />
             <QuickActionButton
+                className={styles.button}
                 name={undefined}
                 onClick={handleValueSwap}
                 title="Swap Values" // FIXME: use translations

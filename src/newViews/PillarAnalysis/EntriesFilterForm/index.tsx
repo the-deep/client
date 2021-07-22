@@ -7,6 +7,7 @@ import {
 import {
     List,
     Button,
+    DateRangeInput,
     MultiSelectInput,
     SelectInput,
 } from '@the-deep/deep-ui';
@@ -16,7 +17,6 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { useRequest } from '#utils/request';
-import DateFilter from '#rsci/DateFilter';
 import { useModalState } from '#hooks/stateManagement';
 
 import {
@@ -118,7 +118,7 @@ function EntriesFilterForm(props: OwnProps) {
     ] = useModalState(false);
 
     const entryOptionsQueryParams = useMemo(() => ({
-        projects: [projectId],
+        project: projectId,
     }), [projectId]);
 
     const {
@@ -208,11 +208,14 @@ function EntriesFilterForm(props: OwnProps) {
                 label={_ts('pillarAnalysis', 'createdByFilterLabel')}
                 placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
             />
-            <DateFilter
+            <DateRangeInput
+                name="created_at"
                 className={styles.filter}
                 label={_ts('pillarAnalysis', 'createdAtFilterLabel')}
-                placeholder={_ts('leads', 'placeholderAnytime')}
-                showHintAndError={false}
+                value={value?.created_at as (
+                    { startDate: string; endDate: string } | undefined)
+                }
+                onChange={setFieldValue}
             />
             <MultiSelectInput
                 className={styles.filter}

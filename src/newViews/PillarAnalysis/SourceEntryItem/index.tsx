@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, memo } from 'react';
 import {
     _cs,
     compareDate,
@@ -7,12 +7,10 @@ import { IoTrash } from 'react-icons/io5';
 import {
     Tag,
     DraggableContent,
-    Button,
-    Popup,
-    QuickActionButton,
+    QuickActionDropdownMenu,
+    DropdownMenuItem,
 } from '@the-deep/deep-ui';
 
-import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
@@ -46,10 +44,8 @@ function SourceEntryItem(props: Props) {
     } = props;
 
     const value = useMemo(() => ({ entryId }), [entryId]);
-    const [popupShown,,,, togglePopupShown] = useModalState(false);
 
     const {
-        pending,
         trigger,
     } = useLazyRequest<unknown, { entry: number; tag: number }>({
         url: `server://analysis-pillar/${pillarId}/discarded-entries/`,
@@ -94,30 +90,19 @@ function SourceEntryItem(props: Props) {
                 </Tag>
             )}
             footerActions={(
-                <QuickActionButton
-                    name="popup"
-                    onClick={togglePopupShown}
+                <QuickActionDropdownMenu
+                    label={(<IoTrash />)}
                 >
-                    <IoTrash />
-                    <Popup
-                        show={popupShown}
-                        freeWidth
-                        contentClassName={styles.popupContainer}
-                    >
-                        {discardedTags && discardedTags.map(tag => (
-                            <Button
-                                key={tag.key}
-                                className={styles.popupButton}
-                                variant="action"
-                                name={tag.value}
-                                onClick={() => handleDiscardClick(tag.key)}
-                                disabled={pending}
-                            >
-                                {tag.value}
-                            </Button>
-                        ))}
-                    </Popup>
-                </QuickActionButton>
+                    {discardedTags && discardedTags.map(tag => (
+                        <DropdownMenuItem
+                            key={tag.key}
+                            name={tag.value}
+                            onClick={() => handleDiscardClick(tag.key)}
+                        >
+                            {tag.value}
+                        </DropdownMenuItem>
+                    ))}
+                </QuickActionDropdownMenu>
             )}
         >
             <EntryItem
@@ -128,4 +113,4 @@ function SourceEntryItem(props: Props) {
     );
 }
 
-export default SourceEntryItem;
+export default memo(SourceEntryItem);

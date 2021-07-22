@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput } from '@the-deep/deep-ui';
+import { TimeInput } from '@the-deep/deep-ui';
 
 import { NodeRef } from '#newComponents/ui/SortableList';
 
@@ -44,7 +44,7 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
             nodeRef={nodeRef}
             rootStyle={rootStyle}
         >
-            <TextInput // TODO: use TimeInput component when it is added
+            <TimeInput
                 name={name}
                 onChange={onChange}
                 value={value}

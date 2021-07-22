@@ -98,10 +98,20 @@ const analysisEntriesRequestQuery = {
 
 type TabNames = 'entries' | 'discarded';
 
+interface DateValue {
+    startDate: string;
+    endDate: string;
+}
+
+interface TimeValue {
+    startTime: string;
+    endTime: string;
+}
+
 // FIXME: remove this
 export interface FaramValues {
     // eslint-disable-next-line
-    [key: string]: string | string[] | FaramValues | boolean | undefined;
+    [key: string]: string | string[] | FaramValues | boolean | undefined | DateValue | TimeValue;
 }
 
 const frameworkQueryFields = {
