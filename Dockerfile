@@ -3,7 +3,7 @@ FROM node:12.18.2-alpine
 MAINTAINER togglecorp info@togglecorp.com
 
 RUN apk update\
-    && apk add --no-cache gawk git rsync bash findutils
+    && apk add --no-cache git bash
 
 WORKDIR /code
 
