@@ -89,15 +89,6 @@
                     margin: var(--dui-spacing-small) var(--dui-spacing-medium);
                 }
             }
-
-            .empty-container {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: var(--dui-color-white);
-                min-height: 320px;
-                font-weight: var(--dui-font-weight-bold);
-            }
         }
     }
 }

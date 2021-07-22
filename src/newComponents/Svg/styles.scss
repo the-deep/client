@@ -1,0 +1,10 @@
+.svg {
+    width: auto;
+    height: var(--font-size-medium);
+    color: inherit;
+
+    path {
+        color: inherit;
+        fill: currentColor;
+    }
+}

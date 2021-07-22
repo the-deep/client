@@ -14,6 +14,7 @@ import {
 import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
 import {
+    PendingMessage,
     Heading,
     Button,
     QuickActionButton,
@@ -35,7 +36,6 @@ import {
 import FullPageHeader from '#newComponents/ui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#newComponents/ui/BackLink';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import { transformErrorToToggleFormError } from '#rest';
@@ -611,7 +611,7 @@ function PillarAnalysis(props: Props) {
                 {breadcrumb(pillarAnalysis?.analysisTitle, pillarAnalysis?.title ?? '')}
             </FullPageHeader>
             <div className={styles.content}>
-                {pending && <LoadingAnimation />}
+                {pending && <PendingMessage />}
                 <NonFieldError error={error} />
                 <div className={styles.inputsContainer}>
                     <div className={styles.inputContainer}>

@@ -114,7 +114,7 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
                     {label}
                 </ElementFragments>
             </div>
-            <div className={styles.preview}>
+            <div>
                 {preview}
             </div>
         </div>

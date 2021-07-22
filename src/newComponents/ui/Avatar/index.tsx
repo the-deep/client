@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Icon from '#rscg/Icon';
+import { IoPersonOutline } from 'react-icons/io5';
 import {
     _cs,
     getHexFromString,
@@ -11,10 +11,7 @@ import styles from './styles.scss';
 function getInitials(name?: string) {
     if (!name || name.trim().length <= 0) {
         return (
-            <Icon
-                className={styles.defaultUser}
-                name="defaultUser"
-            />
+            <IoPersonOutline className={styles.defaultUser} />
         );
     }
     const letters = name.trim().split(/\s/).map(item => item[0]);

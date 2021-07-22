@@ -4,9 +4,8 @@ import {
     ElementFragments,
     Link,
     QuickActionButton,
+    DateOutput,
 } from '@the-deep/deep-ui';
-
-import FormattedDate from '#rscv/FormattedDate';
 
 import { Assignment } from '#typings';
 
@@ -74,10 +73,10 @@ function AssignmentItem(props: AssignmentRendererProps) {
                         {props.projectDetails?.title}
                     </Link>
                 </div>
-                <FormattedDate
+                <DateOutput
                     className={styles.createdDate}
                     value={props.createdAt}
-                    mode="hh:mm aaa, MMM dd, yyyy"
+                    format="hh:mm aaa, MMM dd, yyyy"
                 />
             </ElementFragments>
         </div>

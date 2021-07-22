@@ -2,10 +2,9 @@ import React, { useCallback } from 'react';
 import {
     Card,
     Container,
+    List,
 } from '@the-deep/deep-ui';
 import { GiShrug } from 'react-icons/gi';
-
-import List from '#rsu/../v2/View/List';
 
 import { useRequest } from '#utils/request';
 import { MultiResponse } from '#typings';

@@ -11,6 +11,7 @@ import {
     IoDocumentTextOutline,
     IoPieChart,
     IoStatsChart,
+    IoAdd,
 } from 'react-icons/io5';
 import {
     PieChart,
@@ -32,7 +33,6 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 
-import Icon from '#rscg/Icon';
 import Timeline from '#newComponents/viz/Timeline';
 
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -252,7 +252,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         variant="primary"
                         onClick={handleNewAnalysisCreateClick}
                         icons={(
-                            <Icon name="add" />
+                            <IoAdd />
                         )}
                     >
                         {_ts('analysis', 'setupNewAnalysisButtonLabel')}

@@ -17,12 +17,12 @@ import {
     ButtonLikeLink,
     InformationCard,
     ElementFragments,
+    List,
     TextOutput,
+    DateOutput,
+    DateRangeOutput,
 } from '@the-deep/deep-ui';
 
-import FormattedDate from '#rscv/FormattedDate';
-import DateRangeOutput from '#newComponents/ui/DateRangeOutput';
-import List from '#rscv/List';
 import ProgressLine from '#newComponents/viz/ProgressLine';
 import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
 
@@ -47,8 +47,6 @@ import { projectRolesSelector } from '#redux';
 import _ts from '#ts';
 
 import styles from './styles.scss';
-
-const emptyComponent = () => null;
 
 const tickFormatter = (value: number | string) => {
     const date = new Date(value);
@@ -120,12 +118,11 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
         labelContainerClassName: styles.recentlyActiveUserName,
         hideLabelColon: true,
         value: (
-            <FormattedDate
+            <DateOutput
                 className={styles.recentActivityDate}
                 // FIXME: Remove this fallback
                 value={data.date ?? Date.now()}
-                mode="hh:mmaaa, MMM dd, yyyy"
-                emptyComponent={emptyComponent}
+                format="hh:mmaaa, MMM dd, yyyy"
             />
         ),
     }), []);

@@ -5,8 +5,9 @@ import {
     Modal,
 } from '@the-deep/deep-ui';
 
-import Icon from '#rscg/Icon';
+import Svg from '#newComponents/Svg';
 import _ts from '#ts';
+import deepLogo from '#resources/img/deep-logo.svg';
 
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
@@ -34,9 +35,9 @@ function LoginRegisterModal(props: Props) {
             closeButtonClassName={styles.closeButton}
             heading={(
                 <div className={styles.headingContainer}>
-                    <Icon
+                    <Svg
                         className={styles.deepLogo}
-                        name="deepLogo"
+                        src={deepLogo}
                     />
                     <div className={styles.rightContainer}>
                         <Heading className={styles.topText}>

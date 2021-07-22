@@ -13,7 +13,7 @@ import {
     Button,
     Link,
     Pager,
-    Table,
+    TableView,
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
@@ -22,7 +22,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { createDateColumn } from '#newComponents/ui/tableHelpers';
-import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
 import { pathNames } from '#constants';
 import _ts from '#ts';
@@ -200,21 +199,12 @@ function UserGroupList(props: Props) {
             )}
         >
             {(usergroupPending || pending) && (<PendingMessage />)}
-            {(usergroupResponse && usergroupResponse?.count > 0)
-                ? (
-                    <Table
-                        data={usergroupResponse.results}
-                        keySelector={usergroupKeySelector}
-                        columns={columns}
-                    />
-                ) : (
-                    <div className={styles.emptyTable}>
-                        <Message>
-                            {_ts('projectEdit', 'emptyUsergroupTableMessage')}
-                        </Message>
-                    </div>
-                )
-            }
+            <TableView
+                data={usergroupResponse?.results}
+                keySelector={usergroupKeySelector}
+                columns={columns}
+                emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
+            />
             <Pager
                 activePage={activePage}
                 className={styles.pager}
