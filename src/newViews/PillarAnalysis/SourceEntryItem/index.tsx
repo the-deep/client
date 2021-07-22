@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, memo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     compareDate,
@@ -12,6 +12,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#utils/request';
+import { genericMemo } from '#utils/safeCommon';
 import _ts from '#ts';
 
 import EntryItem, { Props as EntryItemProps } from '../EntryItem';
@@ -113,4 +114,4 @@ function SourceEntryItem(props: Props) {
     );
 }
 
-export default memo(SourceEntryItem);
+export default genericMemo(SourceEntryItem);

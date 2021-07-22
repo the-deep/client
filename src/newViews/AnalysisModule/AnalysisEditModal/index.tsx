@@ -16,6 +16,7 @@ import {
     defaultEmptyArrayType,
     getErrorObject,
     requiredStringCondition,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 import {
     PendingMessage,
@@ -47,7 +48,7 @@ import PillarAnalysisRow, { PillarAnalysisFields, Props as PillarAnalysisProps }
 import styles from './styles.scss';
 
 type PartialForm<T> = RawPartialForm<T, 'key'>;
-type AnalysisPillar = Partial<PillarAnalysisFields> & { key: string };
+type AnalysisPillar = Partial<PillarAnalysisFields> & { key: string; id?: number };
 
 type FormType = {
     title?: string;
@@ -68,6 +69,7 @@ type AnalysisPillarSchema = ObjectSchema<PartialForm<AnalysisPillarType>>;
 type AnalysisPillarSchemaFields = ReturnType<AnalysisPillarSchema['fields']>;
 const analysisPillarSchema: AnalysisPillarSchema = {
     fields: (): AnalysisPillarSchemaFields => ({
+        id: [defaultUndefinedType],
         key: [],
         title: [requiredStringCondition],
         assignee: [requiredCondition],
@@ -159,6 +161,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 startDate: response.startDate,
                 endDate: response.endDate,
                 analysisPillar: response.analysisPillar.map(ap => ({
+                    id: ap.id,
                     key: String(ap.id),
                     assignee: ap.assignee,
                     filters: ap.filters?.map(f => f.uniqueId),
