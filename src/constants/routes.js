@@ -327,14 +327,6 @@ export const routes = {
         links: allLinks,
         hideNavbar: false,
     }, // _ts('pageTitle', 'myProfile');
-    bulkUpload: { // FIXME remove this route when bulkupload is moved to modal
-        order: 130,
-        type: ROUTE.private,
-        path: '/new-ui/bulk-upload/',
-        loader: () => import('../newViews/Tagging/Sources/BulkUpload'),
-        links: allLinks,
-        hideNavbar: false,
-    }, // _ts('pageTitle', 'tagging');
     categoryEditor: {
         order: 110,
         type: ROUTE.private,

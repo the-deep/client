@@ -97,7 +97,6 @@ function AddLeadGroupModal(props: Props) {
 
     return (
         <Modal
-            className={styles.modal}
             heading={_ts('addLeadGroup', 'addLeadGroupHeading')}
             onCloseButtonClick={onModalClose}
             footerActions={(
@@ -115,7 +114,6 @@ function AddLeadGroupModal(props: Props) {
             {leadGroupAddPending && <PendingMessage />}
             <TextInput
                 name="title"
-                className={styles.title}
                 value={value?.title}
                 error={error?.title}
                 onChange={setFieldValue}
