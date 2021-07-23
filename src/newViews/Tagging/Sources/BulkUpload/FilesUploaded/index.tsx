@@ -14,6 +14,7 @@ import _ts from '#ts';
 import { IoSearch } from 'react-icons/io5';
 
 import FileItem from './FileItem';
+import LeadEdit from './LeadEdit';
 import { FileUploadResponse } from '../types';
 import styles from './styles.scss';
 
@@ -32,15 +33,22 @@ function FilesUploaded(props: Props) {
         files = [],
     } = props;
 
+    const [selectedFileId, setSelectedFileId] = useState<number | undefined>();
+    const [searchText, setSearchText] = useState<string | undefined>();
+
+    const handleSelection = useCallback((id: number) => {
+        setSelectedFileId(id);
+    }, []);
+
     const fileRendererParams = useCallback((
         _: number,
         data: FileUploadResponse,
     ) => ({
         data,
+        isSelected: data.id === selectedFileId,
+        onSelect: handleSelection,
         onDeleteFile,
-    }), [onDeleteFile]);
-
-    const [searchText, setSearchText] = useState<string | undefined>();
+    }), [onDeleteFile, handleSelection, selectedFileId]);
 
     const searchedFiles = useMemo(() => {
         if (isTruthyString(searchText)) {
@@ -50,6 +58,14 @@ function FilesUploaded(props: Props) {
         }
         return files;
     }, [files, searchText]);
+
+    const handleTextChange = useCallback((value: string | undefined) => {
+        setSearchText(value);
+    }, []);
+
+    const selectedFile = useMemo(() => (
+        files.find(f => f.id === selectedFileId)
+    ), [files, selectedFileId]);
 
     return (
         <div
@@ -65,7 +81,7 @@ function FilesUploaded(props: Props) {
                     className={styles.search}
                     icons={<IoSearch className={styles.icon} />}
                     name="Search"
-                    onChange={setSearchText}
+                    onChange={handleTextChange}
                     value={searchText}
                     placeholder="Search"
                     autoFocus
@@ -79,6 +95,12 @@ function FilesUploaded(props: Props) {
                     />
                 </div>
             </Container>
+            {selectedFile && (
+                <LeadEdit
+                    className={styles.editLead}
+                    file={selectedFile}
+                />
+            )}
         </div>
     );
 }

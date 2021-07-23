@@ -33,7 +33,6 @@ const leadGroupSchema: FormSchema = {
     }),
 };
 
-
 export interface Props {
     onModalClose: () => void;
     onLeadGroupAdd?: (leadGroup: LeadGroup) => void;

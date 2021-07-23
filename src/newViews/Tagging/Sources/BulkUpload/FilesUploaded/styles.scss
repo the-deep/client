@@ -3,12 +3,12 @@
 
     .files-container {
         display: flex;
-        flex-grow: 1;
+        flex-basis: 40%;
+        margin-right: var(--dui-spacing-small);
 
         .files {
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
 
             .search {
                 display: flex;
@@ -27,5 +27,10 @@
                 overflow-y: auto;
             }
         }
+    }
+
+    .edit-lead {
+        display: flex;
+        flex-basis: 60%;
     }
 }

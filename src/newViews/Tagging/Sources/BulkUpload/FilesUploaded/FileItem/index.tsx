@@ -12,23 +12,31 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
+    isSelected: boolean;
     data: FileUploadResponse;
+    onSelect: (id: number) => void;
     onDeleteFile: (id: number) => void;
 }
 
 function FileItem(props: Props) {
     const {
         className,
+        isSelected,
         data,
         onDeleteFile,
+        onSelect,
     } = props;
 
     const handleDeleteClick = useCallback(() => {
         onDeleteFile(data.id);
     }, [onDeleteFile, data.id]);
 
+    const handleSelect = useCallback(() => {
+        onSelect(data.id);
+    }, [onSelect, data.id]);
+
     return (
-        <div className={_cs(className, styles.item)}>
+        <div className={_cs(className, styles.itemContainer, isSelected && styles.selected)}>
             <ElementFragments
                 actions={
                     <QuickActionButton
@@ -42,7 +50,15 @@ function FileItem(props: Props) {
                 actionsContainerClassName={styles.actions}
                 childrenContainerClassName={styles.content}
             >
-                {data.title}
+                <div
+                    className={_cs(styles.item)}
+                    onClick={handleSelect}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={handleSelect}
+                >
+                    {data.title}
+                </div>
             </ElementFragments>
         </div>
     );

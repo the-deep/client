@@ -1,4 +1,4 @@
-.item {
+.item-container {
     display: flex;
 
     .actions {
@@ -7,5 +7,23 @@
 
     .content {
         display: flex;
+        flex-grow: 1;
+        padding: 0;
+
+        .item {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            cursor: pointer;
+            padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+            height: 100%;
+        }
     }
+
+    &:hover {
+        background-color: var(--dui-color-grey6);
+    }
+}
+.selected {
+    background-color: var(--dui-color-grey6);
 }
