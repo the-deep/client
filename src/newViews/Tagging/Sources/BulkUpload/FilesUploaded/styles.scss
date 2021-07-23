@@ -1,0 +1,31 @@
+.files-uploaded-details {
+    display: flex;
+
+    .files-container {
+        display: flex;
+        flex-grow: 1;
+
+        .files {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+
+            .search {
+                display: flex;
+                flex-direction: column;
+                padding-bottom: var(--dui-spacing-large);
+
+                .icon {
+                    font-size: var(--dui-font-size-large);
+                }
+            }
+
+            .list {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                overflow-y: auto;
+            }
+        }
+    }
+}

@@ -1,74 +1,169 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { FaGoogleDrive } from 'react-icons/fa';
-import { IoLogoDropbox } from 'react-icons/io5';
+import { produce } from 'immer';
 
 import {
+    List,
     Container,
+    QuickActionButton,
+    Header,
 } from '@the-deep/deep-ui';
+import { AiOutlineRedo } from 'react-icons/ai';
 import _ts from '#ts';
-import {
-    googleDriveClientId,
-    googleDriveDeveloperKey,
-} from '#config/google-drive';
 
-import {
-    supportedGoogleDriveMimeTypes,
-    supportedDropboxExtension,
-} from '../utils';
-
-import GoogleDrivePicker from './GoogleDrivePicker';
-import DropboxPicker from './DropboxPicker';
+import FilesUpload from './FilesUpload';
+import GoogleDriveFilesUpload from './GoogleDriveFilesUpload';
+import DropboxFilesUpload from './DropboxFilesUpload';
+import UploadItem from './UploadItem';
+import { FileLike, FileUploadResponse } from '../types';
 import styles from './styles.scss';
 
 interface Props {
+    onSuccess: (item: FileUploadResponse) => void;
     className?: string;
 }
+
+const noOfParallelUploads = 3;
+const fileKeySelector = (d: FileLike): string => d.key;
 
 function Upload(props: Props) {
     const {
         className,
+        onSuccess,
     } = props;
 
-    const handleChange = (response: google.picker.ResponseObject) => {
-        console.warn('values', response.docs);
-    };
+    const [files, setFiles] = useState<FileLike[]>([]);
+    const [failedFiles, setFailedFiles] = useState<FileLike[]>([]);
 
-    const mimeTypes = supportedGoogleDriveMimeTypes.join(' ');
-    const handleDropboxSuccess = (files: Dropbox.ChooserFile[]) => {
-        console.warn('files', files); // FIXME this will be removed
-    };
+    const handleAddFiles = useCallback((values: FileLike[]) => {
+        setFiles((oldFiles: FileLike[]) => ([
+            ...oldFiles,
+            ...values,
+        ]));
+    }, []);
+
+    const removeFile = useCallback((key: string) => {
+        setFiles((oldState: FileLike[]) => {
+            const updatedState = produce(oldState, (safeState) => {
+                const index = safeState.findIndex((file: FileLike) => file.key === key);
+                if (index !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeState.splice(index, 1);
+                }
+            });
+            return updatedState;
+        });
+    }, []);
+
+    const handleFailure = useCallback((key: string) => {
+        const failedFile = files.find(v => v.key === key);
+        if (failedFile) {
+            setFailedFiles(oldFiles => ([
+                ...oldFiles,
+                failedFile,
+            ]));
+        }
+        removeFile(key);
+    }, [files, removeFile]);
+
+    const handleSuccess = useCallback((key: string, response: FileUploadResponse) => {
+        removeFile(key);
+        onSuccess(response);
+    }, [onSuccess, removeFile]);
+
+    const fileRendererParams = useCallback((_: string, data: FileLike, index: number) => ({
+        data,
+        active: index < noOfParallelUploads,
+        onSuccess: handleSuccess,
+        onFailure: handleFailure,
+    }), [
+        handleSuccess,
+        handleFailure,
+    ]);
+
+    const handleRetry = useCallback((key: string) => {
+        const failedFile = failedFiles.find(v => v.key === key);
+        if (failedFile) {
+            handleAddFiles([failedFile]);
+        }
+        setFailedFiles((oldState: FileLike[]) => {
+            const updatedState = produce(oldState, (safeState) => {
+                const index = safeState.findIndex((file: FileLike) => file.key === key);
+                if (index !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeState.splice(index, 1);
+                }
+            });
+            return updatedState;
+        });
+    }, [handleAddFiles, failedFiles]);
+
+    const failedFileRendererParams = useCallback((_: string, data: FileLike) => ({
+        data,
+        active: false,
+        hasFailed: true,
+        onRetry: handleRetry,
+        onSuccess: handleSuccess,
+    }), [
+        handleSuccess,
+        handleRetry,
+    ]);
+
+    const handleRetryAll = useCallback(() => {
+        handleAddFiles(failedFiles);
+        setFailedFiles([]);
+    }, [failedFiles, handleAddFiles]);
 
     return (
         <Container
-            className={_cs(className, styles.upload)}
+            className={_cs(styles.upload, className)}
             heading={_ts('bulkUpload', 'uploadFilesTitle')}
-            sub
             contentClassName={styles.content}
+            sub
         >
-            <GoogleDrivePicker
-                className={styles.googlePicker}
-                clientId={googleDriveClientId}
-                developerKey={googleDriveDeveloperKey}
-                onChange={handleChange}
-                mimeTypes={mimeTypes}
-                icons={<FaGoogleDrive />}
-                iconsClassName={styles.icon}
-                multiSelect
-                navHidden
-            >
-                {_ts('bulkUpload', 'googleDriveLabel')}
-            </GoogleDrivePicker>
-            <DropboxPicker
-                className={styles.dropboxPicker}
-                onSuccess={handleDropboxSuccess}
-                multiselect
-                extensions={supportedDropboxExtension}
-                icons={<IoLogoDropbox />}
-                iconsClassName={styles.icon}
-            >
-                {_ts('addLeads.sourceButtons', 'dropboxLabel')}
-            </DropboxPicker>
+            <FilesUpload
+                className={styles.uploadItem}
+                onAdd={handleAddFiles}
+            />
+            <GoogleDriveFilesUpload
+                className={styles.uploadItem}
+                onAdd={handleAddFiles}
+            />
+            <DropboxFilesUpload
+                className={styles.uploadItem}
+                onAdd={handleAddFiles}
+            />
+            <div className={styles.files}>
+                <List
+                    data={files}
+                    rendererClassName={styles.fileItem}
+                    renderer={UploadItem}
+                    keySelector={fileKeySelector}
+                    rendererParams={fileRendererParams}
+                />
+                {failedFiles.length > 0 && (
+                    <Header
+                        heading="Failed uploads"
+                        headingSize="extraSmall"
+                        actions={
+                            <QuickActionButton
+                                name="retrigger"
+                                title="Retry failed uploads"
+                                onClick={handleRetryAll}
+                            >
+                                <AiOutlineRedo />
+                            </QuickActionButton>
+                        }
+                    />
+                )}
+                <List
+                    data={failedFiles}
+                    rendererClassName={styles.fileItem}
+                    renderer={UploadItem}
+                    keySelector={fileKeySelector}
+                    rendererParams={failedFileRendererParams}
+                />
+            </div>
         </Container>
     );
 }

@@ -11,6 +11,7 @@ import { activeProjectIdFromStateSelector } from '#redux';
 import { useModalState } from '#hooks/stateManagement';
 
 import Navbar from '../Navbar';
+import BulkUpload from './BulkUpload';
 import SourcesStats from './SourcesStats';
 import SourcesFilter from './SourcesFilter';
 import SourcesTable from './SourcesTable';
@@ -81,7 +82,7 @@ function Sources(props: Props) {
                 <Modal
                     onCloseButtonClick={hideBulkUploadModal}
                 >
-                    Bulk upload modal
+                    <BulkUpload />
                 </Modal>
             )}
         </div>

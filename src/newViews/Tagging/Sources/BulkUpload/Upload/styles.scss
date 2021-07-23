@@ -1,24 +1,34 @@
 .upload {
     display: flex;
+    flex-grow: 1;
+    background-color: var(--dui-color-background);
 
     .content {
         display: flex;
+        flex-direction: column;
         flex-grow: 1;
 
-        .google-picker,
-        .dropbox-picker {
+        .upload-item {
             display: flex;
-            flex-grow: 1;
-            justify-content: flex-start;
-            padding: var(--dui-spacing-small);
+            padding: var(--dui-spacing-medium) 0;
 
-            .icon {
-                margin-right: var(--dui-spacing-large);
-                font-size: var(--dui-font-size-super-large);
+            &:hover {
+                background-color: var(--dui-color-grey6);
             }
         }
-        &:hover {
-            background-color: var(--dui-color-background-hover);
+
+        .files {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding-top: var(--dui-spacing-medium);
+            overflow-y: auto;
+
+            .file-item {
+                display: flex;
+                background-color: var(--dui-color-grey6);
+                padding: var(--dui-spacing-small) 0;
+            }
         }
     }
 }

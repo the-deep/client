@@ -1,0 +1,22 @@
+.files-upload {
+    display: flex;
+    flex-direction: column;
+
+    .file-input {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .label-container {
+            display: flex;
+            align-items: center;
+            font-size: var(--dui-font-size-large);
+            font-weight: var(--dui-font-weight-bold);
+
+            .icon {
+                margin-right: var(--dui-spacing-medium);
+                font-size: var(--dui-font-size-super-large);
+            }
+        }
+    }
+}
