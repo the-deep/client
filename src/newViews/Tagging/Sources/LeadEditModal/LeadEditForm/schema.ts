@@ -12,6 +12,8 @@ import {
     KeyValueElement,
 } from '#typings';
 
+import { MimeTypes } from '#newComponents/viewer/LeadPreview/Preview/mimeTypes';
+
 export type LeadSourceType = 'text' | 'disk' | 'website' |
     'dropbox' | 'google-drive' | 'rss-feed' | 'emm' | 'web-api' | 'unknown';
 
@@ -56,11 +58,11 @@ export interface Lead {
         id: number;
         title: string;
         file: string;
-        mimeType: string;
+        mimeType: MimeTypes;
     };
 }
 
-export type PartialFormType = PartialForm<Lead, 'emmEntities' | 'emmTriggers' | 'confidentiality'>;
+export type PartialFormType = PartialForm<Lead, 'emmEntities' | 'emmTriggers' | 'confidentiality' | 'attachment'>;
 export type FormSchema = ObjectSchema<PartialFormType>;
 export type FormSchemaFields = ReturnType<FormSchema['fields']>;
 

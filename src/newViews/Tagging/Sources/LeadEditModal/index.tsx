@@ -14,6 +14,7 @@ import {
 
 import { useRequest, useLazyRequest } from '#utils/request';
 import { transformErrorToToggleFormError } from '#rest';
+import LeadPreview from '#newComponents/viewer/LeadPreview';
 
 import LeadEditForm from './LeadEditForm';
 import { schema, PartialFormType, Lead } from './LeadEditForm/schema';
@@ -116,8 +117,13 @@ function LeadEditModal(props: Props) {
                 </Button>
             )}
         >
-            <Card className={styles.preview}>
-                Preview
+            <Card className={styles.previewContainer}>
+                <LeadPreview
+                    className={styles.preview}
+                    url={value?.url}
+                    attachment={value?.attachment}
+                    pending={pending}
+                />
             </Card>
             <Card className={styles.formContainer}>
                 <LeadEditForm

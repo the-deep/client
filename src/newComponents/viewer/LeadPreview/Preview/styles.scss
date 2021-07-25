@@ -1,0 +1,33 @@
+.viewer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dui-color-foreground);
+    overflow-y: auto;
+
+    .bar {
+        display: flex;
+        flex-shrink: 0;
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+        .url {
+            flex-grow: 1;
+            margin: var(--dui-spacing-small);
+        }
+
+        .link,
+        .button {
+            flex-shrink: 0;
+            margin: var(--dui-spacing-small);
+        }
+    }
+
+    .content {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+        outline: 0;
+        border: none;
+    }
+}
