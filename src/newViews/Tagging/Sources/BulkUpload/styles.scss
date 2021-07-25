@@ -1,23 +1,23 @@
-.bulk-upload {
-    display: flex;
-    flex-grow: 1;
-    background-color: var(--dui-color-white);
-    height: 100%;
+.bulk-upload-modal {
+    width: 90vw;
+    height: 90vh;
 
-    .content {
+    .modal-header {
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    }
+
+    .modal-body {
         display: flex;
-        flex-grow: 1;
+        padding: 0;
 
         .upload {
             display: flex;
-            flex-basis: 30%;
-            flex-grow: 1;
-            margin-right: var(--dui-spacing-small);
+            flex-shrink: 0;
+            border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
+            background-color: var(--dui-color-white);
         }
 
         .details {
-            display: flex;
-            flex-basis: 70%;
             flex-grow: 1;
         }
     }

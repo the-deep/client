@@ -2,8 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { produce } from 'immer';
 import {
-    Container,
+    Modal,
 } from '@the-deep/deep-ui';
+
 import _ts from '#ts';
 
 import Upload from './Upload';
@@ -13,11 +14,13 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
+    onClose: () => void;
 }
 
 function BulkUpload(props: Props) {
     const {
         className,
+        onClose,
     } = props;
 
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
@@ -43,10 +46,12 @@ function BulkUpload(props: Props) {
     }, []);
 
     return (
-        <Container
-            className={_cs(styles.bulkUpload, className)}
+        <Modal
+            className={_cs(className, styles.bulkUploadModal)}
             heading={_ts('bulkUpload', 'title')}
-            contentClassName={styles.content}
+            headerClassName={styles.modalHeader}
+            onCloseButtonClick={onClose}
+            bodyClassName={styles.modalBody}
         >
             <Upload
                 className={styles.upload}
@@ -57,7 +62,7 @@ function BulkUpload(props: Props) {
                 files={uploadedFiles}
                 onDeleteFile={handleDeleteFile}
             />
-        </Container>
+        </Modal>
     );
 }
 

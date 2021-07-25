@@ -51,12 +51,7 @@ function LeadEdit(props: Props) {
         confidentiality: 'unprotected',
         isAssessmentLead: false,
         priority: 100,
-        attachment: {
-            id: file?.id,
-            file: file?.file,
-            mimeType: file?.mimeType,
-            title: file?.title,
-        },
+        attachment: file,
     }), [activeProject, file, userId]);
 
     const {
@@ -71,16 +66,14 @@ function LeadEdit(props: Props) {
     }, [partialLead, setValue]);
 
     return (
-        <div className={_cs(className, styles.leadEdit)}>
-            <LeadEditForm
-                className={styles.form}
-                value={value}
-                projectId={activeProject}
-                initialValue={partialLead}
-                setFieldValue={setFieldValue}
-                error={riskyError}
-            />
-        </div>
+        <LeadEditForm
+            className={_cs(className, styles.leadEdit)}
+            value={value}
+            projectId={activeProject}
+            initialValue={partialLead}
+            setFieldValue={setFieldValue}
+            error={riskyError}
+        />
     );
 }
 

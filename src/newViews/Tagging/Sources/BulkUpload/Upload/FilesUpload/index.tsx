@@ -4,6 +4,7 @@ import {
     FileInput,
 } from '@the-deep/deep-ui';
 import { IoCloudUpload } from 'react-icons/io5';
+
 import { FileLike } from '../../types';
 import styles from './styles.scss';
 
@@ -11,7 +12,6 @@ interface Props {
     className?: string;
     onAdd: (v: FileLike[]) => void;
 }
-
 
 function FilesUpload(props: Props) {
     const {

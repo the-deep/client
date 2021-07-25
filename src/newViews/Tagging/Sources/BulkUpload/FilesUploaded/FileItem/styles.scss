@@ -23,7 +23,8 @@
     &:hover {
         background-color: var(--dui-color-grey6);
     }
-}
-.selected {
-    background-color: var(--dui-color-grey6);
+
+    &.selected {
+        background-color: var(--dui-color-surface-information);
+    }
 }

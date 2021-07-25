@@ -6,6 +6,8 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        border: none;
+        --height-border: 0;
 
         .label-container {
             display: flex;
