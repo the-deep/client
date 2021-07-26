@@ -10,28 +10,47 @@ import {
 } from 'react-icons/io5';
 
 import {
+    Region,
     BasicRegion,
 } from '#typings';
+import { useRequest } from '#utils/request';
+import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
 import RegionMapList from './RegionMapList';
 import RegionCard from './RegionCard';
+import CustomGeoAddForm from './CustomGeoAddForm';
 import styles from './styles.scss';
 
-const regionKeySelector = (d: BasicRegion) => d.id;
+const regionKeySelector = (d: Region) => d.id;
 
 interface Props {
     className?: string;
-    regions: BasicRegion[];
     activeProject: number;
 }
 
 function GeoAreas(props: Props) {
     const {
         className,
-        regions,
         activeProject,
     } = props;
+
+    const [
+        modalVisible,
+        showModal,
+        hideModal,
+    ] = useModalState(false);
+
+    const {
+        response: regionResponse,
+        retrigger: regionsGetTrigger,
+    } = useRequest<{ regions: Region[] }>({
+        url: `server://projects/${activeProject}/regions/`,
+        method: 'GET',
+        failureHeader: 'Regions List',
+    });
+
+    const regions = regionResponse?.regions;
 
     const regionRendererParams = useCallback((_: number, data: BasicRegion) => ({
         region: data,
@@ -42,7 +61,9 @@ function GeoAreas(props: Props) {
             <div className={styles.mapContainer}>
                 <RegionMapList
                     className={styles.map}
-                    activeProject={activeProject}
+                    projectId={activeProject}
+                    regions={regions}
+                    onRegionAdd={regionsGetTrigger}
                 />
             </div>
             <div className={styles.listContainer}>
@@ -51,6 +72,7 @@ function GeoAreas(props: Props) {
                     variant="secondary"
                     name="addCustomGeo"
                     icons={<IoAdd />}
+                    onClick={showModal}
                 >
                     {_ts('geoAreas', 'addCustom')}
                 </Button>
@@ -70,6 +92,13 @@ function GeoAreas(props: Props) {
                         keySelector={regionKeySelector}
                     />
                 </Container>
+                {modalVisible && (
+                    <CustomGeoAddForm
+                        projectId={activeProject}
+                        onSuccess={regionsGetTrigger}
+                        onModalClose={hideModal}
+                    />
+                )}
             </div>
         </div>
     );
