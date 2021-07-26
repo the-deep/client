@@ -23,8 +23,6 @@ import {
 } from '#typings';
 import _ts from '#ts';
 
-import styles from './styles.scss';
-
 type FormType = Partial<Pick<LeadGroup, 'title' | 'project'>>
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;

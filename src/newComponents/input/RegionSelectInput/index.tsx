@@ -39,7 +39,7 @@ function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
     const searchQueryParams = useMemo(() => ({
         search: debouncedSearchText,
         exclude_project: activeProject,
-    }), [debouncedSearchText]);
+    }), [debouncedSearchText, activeProject]);
 
     const {
         pending: organizationSearchPending,

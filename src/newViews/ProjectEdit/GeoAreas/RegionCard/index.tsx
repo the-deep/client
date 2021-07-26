@@ -64,7 +64,7 @@ function RegionCard(props: Props) {
                 </QuickActionConfirmButton>
             )}
         >
-            {(response && !response.public && response.adminLevels.length > 0) && (
+            {(response && !response.public && (response.adminLevels?.length ?? 0) > 0) && (
                 <ListView
                     className={styles.adminLevels}
                     data={response?.adminLevels}

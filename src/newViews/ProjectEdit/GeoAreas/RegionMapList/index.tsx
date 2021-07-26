@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import {
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 import { IoMapOutline } from 'react-icons/io5';
 import {
@@ -50,7 +49,9 @@ function RegionMapList(props: Props) {
     } = useRequest<{ regions: Region[] }>({
         url: `server://projects/${activeProject}/regions/`,
         method: 'GET',
-        onSuccess: response => setActiveTab(response.regions[0]?.id.toString()),
+        onSuccess: (response) => {
+            setActiveTab(response.regions[0]?.id.toString());
+        },
         failureHeader: 'Regions List',
     });
 
@@ -80,6 +81,7 @@ function RegionMapList(props: Props) {
                 ],
             });
         }
+        setSelectedRegion(undefined);
     }, [selectedRegion, regionPatchTrigger, regionResponse]);
 
     const [
@@ -91,9 +93,11 @@ function RegionMapList(props: Props) {
         message: 'Are you sure you want to add this region?',
     });
 
-    const handleRegionSelectChange = useCallback((val) => {
+    const handleRegionSelectChange = useCallback((val: number) => {
         setSelectedRegion(val);
-        onRegionSelect(); // NOTE: Type error from deep-ui
+        if (onRegionSelect) {
+            onRegionSelect(); // NOTE: Type error from deep-ui
+        }
     }, [onRegionSelect]);
 
     const tabRendererParams = useCallback((id: string, data: BasicRegion) => ({
@@ -108,10 +112,10 @@ function RegionMapList(props: Props) {
     return (
         <div className={_cs(styles.regionMapList, className)}>
             <RegionSelectInput
-                className={_cs(styles.input, styles.region)}
+                className={styles.region}
                 name="regions"
                 activeProject={activeProject}
-                value={selectedRegion}
+                value={undefined}
                 onChange={handleRegionSelectChange}
                 options={regionOptions}
                 onOptionsChange={setRegionOptions}
@@ -139,7 +143,7 @@ function RegionMapList(props: Props) {
                     </TabList>
                 </Header>
                 <div className={styles.tabPanelContainer}>
-                    {isDefined(regionResponse) && regionResponse?.regions.length < 1 && (
+                    {regionResponse && regionResponse.regions?.length < 1 && (
                         <div className={_cs(styles.message, className)}>
                             <IoMapOutline className={styles.icon} />
                             {_ts('geoAreas', 'noGeoAreas')}
