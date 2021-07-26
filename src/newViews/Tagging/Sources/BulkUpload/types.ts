@@ -1,3 +1,5 @@
+export type SourceFileType = 'disk' | 'google-drive' | 'dropbox';
+
 export interface FileUploadResponse {
     id: number;
     createdAt: string;
@@ -14,13 +16,14 @@ export interface FileUploadResponse {
     isPublic: boolean;
     projects: number[];
     metadata: unknown;
+    sourceType: SourceFileType;
 }
 
 export type FileLike = {
     key: string;
     id: string;
     name: string;
-    fileType: 'disk' | 'google-drive' | 'dropbox';
+    fileType: SourceFileType;
 } & ({
     fileType: 'disk';
     file: File;

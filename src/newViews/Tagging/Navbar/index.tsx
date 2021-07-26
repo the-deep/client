@@ -1,21 +1,23 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import {
     NavLink,
 } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
-import { pathNames } from '#constants';
-import { SubNavbar } from '#components/general/Navbar';
-import {
-    AppState,
-} from '#typings';
 import {
     DropdownMenu,
     DropdownMenuItem,
 } from '@the-deep/deep-ui';
 
-import _ts from '#ts';
+import { pathNames } from '#constants';
+import { SubNavbar } from '#components/general/Navbar';
+import { AppState } from '#typings';
 import { activeProjectIdFromStateSelector } from '#redux';
+import _ts from '#ts';
+
+import { useModalState } from '#hooks/stateManagement';
+import LeadEditModal from '../Sources/LeadEditModal';
+import BulkUpload from '../Sources/BulkUpload';
 
 import styles from './styles.scss';
 
@@ -25,15 +27,13 @@ const mapStateToProps = (state: AppState) => ({
 
 interface Props {
     activeProject: number;
-    onAddSingleSourceClick?: () => void;
-    onBulkUploadClick?: () => void;
+    onSourcesAdd?: () => void;
 }
 
 function Navbar(props: Props) {
     const {
         activeProject,
-        onAddSingleSourceClick,
-        onBulkUploadClick,
+        onSourcesAdd,
     } = props;
 
     const sourcesRoute = reverseRoute(
@@ -48,6 +48,24 @@ function Navbar(props: Props) {
         pathNames.taggingExport,
         { projectId: activeProject },
     );
+
+    const [
+        isSingleSourceModalShown,
+        showSingleSourceAddModal,
+        hideSingleSourceAddModal,
+    ] = useModalState(false);
+
+    const [
+        isBulkModalShown,
+        showBulkUploadModal,
+        hideBulkUploadModal,
+    ] = useModalState(false);
+
+    const handleSingleLeadSaveSuccess = useCallback(() => {
+        if (onSourcesAdd) {
+            onSourcesAdd();
+        }
+    }, [onSourcesAdd]);
 
     return (
         <SubNavbar>
@@ -82,17 +100,29 @@ function Navbar(props: Props) {
                     label={_ts('tagging', 'addSource')}
                 >
                     <DropdownMenuItem
-                        onClick={onAddSingleSourceClick}
+                        onClick={showSingleSourceAddModal}
                     >
                         {_ts('tagging', 'addSource')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        onClick={onBulkUploadClick}
+                        onClick={showBulkUploadModal}
                     >
                         {_ts('bulkUpload', 'title')}
                     </DropdownMenuItem>
                 </DropdownMenu>
             </div>
+            {isSingleSourceModalShown && (
+                <LeadEditModal
+                    projectId={activeProject}
+                    onClose={hideSingleSourceAddModal}
+                    onLeadSaveSuccess={handleSingleLeadSaveSuccess}
+                />
+            )}
+            {isBulkModalShown && (
+                <BulkUpload
+                    onClose={hideBulkUploadModal}
+                />
+            )}
         </SubNavbar>
     );
 }

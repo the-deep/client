@@ -4,17 +4,18 @@ import {
     caseInsensitiveSubmatch,
     isTruthyString,
 } from '@togglecorp/fujs';
-
 import {
     TextInput,
     Container,
-    List,
+    ListView,
 } from '@the-deep/deep-ui';
-import _ts from '#ts';
 import { IoSearch } from 'react-icons/io5';
 
-import FileItem from './FileItem';
+import _ts from '#ts';
+
 import { FileUploadResponse } from '../types';
+import FileItem from './FileItem';
+import LeadEdit from './LeadEdit';
 import styles from './styles.scss';
 
 const keySelector = (d: FileUploadResponse): number => d.id;
@@ -32,15 +33,18 @@ function FilesUploaded(props: Props) {
         files = [],
     } = props;
 
+    const [selectedFileId, setSelectedFileId] = useState<number | undefined>();
+    const [searchText, setSearchText] = useState<string | undefined>();
+
     const fileRendererParams = useCallback((
         _: number,
         data: FileUploadResponse,
     ) => ({
         data,
+        isSelected: data.id === selectedFileId,
+        onSelect: setSelectedFileId,
         onDeleteFile,
-    }), [onDeleteFile]);
-
-    const [searchText, setSearchText] = useState<string | undefined>();
+    }), [onDeleteFile, setSelectedFileId, selectedFileId]);
 
     const searchedFiles = useMemo(() => {
         if (isTruthyString(searchText)) {
@@ -51,34 +55,44 @@ function FilesUploaded(props: Props) {
         return files;
     }, [files, searchText]);
 
+    const selectedFile = useMemo(() => (
+        files.find(f => f.id === selectedFileId)
+    ), [files, selectedFileId]);
+
     return (
-        <div
-            className={_cs(className, styles.filesUploadedDetails)}
-        >
+        <div className={_cs(className, styles.filesUploadedDetails)}>
             <Container
                 className={styles.filesContainer}
                 heading={_ts('bulkUpload', 'sourcesUploadedTitle')}
+                headerDescription={(
+                    <TextInput
+                        className={styles.search}
+                        icons={<IoSearch className={styles.icon} />}
+                        name="Search"
+                        onChange={setSearchText}
+                        value={searchText}
+                        placeholder="Search"
+                        autoFocus
+                    />
+                )}
                 contentClassName={styles.files}
+                horizontallyCompactContent
                 sub
             >
-                <TextInput
-                    className={styles.search}
-                    icons={<IoSearch className={styles.icon} />}
-                    name="Search"
-                    onChange={setSearchText}
-                    value={searchText}
-                    placeholder="Search"
-                    autoFocus
+                <ListView
+                    className={styles.list}
+                    data={searchedFiles}
+                    renderer={FileItem}
+                    keySelector={keySelector}
+                    rendererParams={fileRendererParams}
                 />
-                <div className={styles.list}>
-                    <List
-                        data={searchedFiles}
-                        renderer={FileItem}
-                        keySelector={keySelector}
-                        rendererParams={fileRendererParams}
-                    />
-                </div>
             </Container>
+            {selectedFile && (
+                <LeadEdit
+                    className={styles.editLead}
+                    file={selectedFile}
+                />
+            )}
         </div>
     );
 }

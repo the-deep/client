@@ -85,7 +85,7 @@ function UploadItem(props: Props) {
         formData: data.fileType === 'disk',
         body: params?.body,
         onSuccess: (response) => {
-            onSuccess(data.key, response);
+            onSuccess(data.key, { ...response, sourceType: data.fileType });
         },
         onFailure: () => {
             if (onFailure) {
