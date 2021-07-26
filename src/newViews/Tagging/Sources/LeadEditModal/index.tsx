@@ -109,7 +109,7 @@ function LeadEditModal(props: Props) {
             footerActions={(
                 <Button
                     name="save"
-                    disabled={pristine}
+                    disabled={pristine || pending}
                     onClick={handleSubmit}
                 >
                     Save

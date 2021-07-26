@@ -65,7 +65,8 @@ function Navbar(props: Props) {
         if (onSourcesAdd) {
             onSourcesAdd();
         }
-    }, [onSourcesAdd]);
+        hideSingleSourceAddModal();
+    }, [onSourcesAdd, hideSingleSourceAddModal]);
 
     return (
         <SubNavbar>
