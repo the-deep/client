@@ -1,23 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
 import {
     _cs,
-    isNotDefined,
-    isDefined,
     isValidUrl,
 } from '@togglecorp/fujs';
 import {
-    AiOutlineShrink,
-    AiOutlineExpandAlt,
-} from 'react-icons/ai';
-import {
-    IoOpenOutline,
-} from 'react-icons/io5';
-import {
-    QuickActionButton,
-    QuickActionLink,
-    TextInput,
     ImagePreview,
 } from '@the-deep/deep-ui';
+
+import { isHttps } from '#utils/safeCommon';
 
 import {
     MimeTypes,
@@ -29,21 +19,14 @@ import {
 
 import styles from './styles.scss';
 
-function isHttps(text?: string) {
-    if (!text) {
-        return false;
-    }
-    return text.startsWith('https:');
-}
-
-interface FinalIframeProps {
+interface Props {
     className?: string;
     url: string;
     mimeType: MimeTypes;
     canShowIframe: boolean;
 }
 
-function FinalIframe(props: FinalIframeProps) {
+function Preview(props: Props) {
     const {
         className,
         url,
@@ -81,7 +64,7 @@ function FinalIframe(props: FinalIframeProps) {
             <iframe
                 title={url}
                 src={src}
-                className={className}
+                className={_cs(className, styles.viewer)}
                 sandbox={sandbox}
             />
         );
@@ -97,102 +80,18 @@ function FinalIframe(props: FinalIframeProps) {
             <iframe
                 sandbox="allow-scripts allow-same-origin"
                 title={url}
-                className={className}
+                className={_cs(className, styles.viewer)}
                 src={url}
             />
         );
     }
 
     return (
-        <div className={className}>
+        <div className={_cs(styles.viewer, className)}>
             {isValidUrl(url)
                 ? 'Failed to preview current URL.'
                 : 'The entered url is not valud.'
             }
-        </div>
-    );
-}
-
-interface Props {
-    url: string;
-    className?: string;
-    hideBar?: boolean;
-    mimeType: MimeTypes;
-    canShowIframe: boolean;
-}
-
-function Preview(props: Props) {
-    const {
-        url,
-        className,
-        hideBar,
-        mimeType,
-        canShowIframe,
-    } = props;
-
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    const [fullScreenMode, setFullScreenMode] = useState(false);
-
-    const handleFullScreenChange = useCallback(() => {
-        setFullScreenMode(isDefined(document.fullscreenElement));
-    }, []);
-
-    useEffect(() => {
-        document.addEventListener('fullscreenchange', handleFullScreenChange);
-
-        return (() => {
-            document.removeEventListener('fullscreenchange', handleFullScreenChange);
-        });
-    }, [handleFullScreenChange]);
-
-    const handleFullScreenToggleClick = useCallback(() => {
-        if (isNotDefined(containerRef.current)) {
-            return;
-        }
-        const { current: viewerContainer } = containerRef;
-        if (!fullScreenMode && isDefined(viewerContainer?.requestFullscreen)) {
-            viewerContainer?.requestFullscreen();
-        } else if (fullScreenMode && isDefined(document.exitFullscreen)) {
-            document.exitFullscreen();
-        }
-    }, [fullScreenMode]);
-
-    return (
-        <div
-            className={_cs(className, styles.viewer)}
-            ref={containerRef}
-        >
-            {!hideBar && (
-                <div className={styles.bar}>
-                    <TextInput
-                        className={styles.url}
-                        name="url"
-                        value={url}
-                        variant="general"
-                        readOnly
-                    />
-                    <QuickActionLink
-                        className={styles.link}
-                        to={url}
-                    >
-                        <IoOpenOutline />
-                    </QuickActionLink>
-                    <QuickActionButton
-                        className={styles.button}
-                        name={undefined}
-                        onClick={handleFullScreenToggleClick}
-                    >
-                        {fullScreenMode ? <AiOutlineShrink /> : <AiOutlineExpandAlt />}
-                    </QuickActionButton>
-                </div>
-            )}
-            <FinalIframe
-                canShowIframe={canShowIframe}
-                url={url}
-                mimeType={mimeType}
-                className={styles.content}
-            />
         </div>
     );
 }
