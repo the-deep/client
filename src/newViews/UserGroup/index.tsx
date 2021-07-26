@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import {
     Button,
     Container,
-    ContainerCard,
     Pager,
     PendingMessage,
     Table,
@@ -34,12 +33,12 @@ import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
 import AddUsergroupModal, {
-    Membership,
     Usergroup,
 } from './AddUsergroupModal';
 import AddUserModal from './AddUserModal';
+import Memberships from './Memberships';
 import UserGroupActionCell, { Props as UserGroupActionCellProps } from './UserGroupActionCell';
-import MembershipActionCell, { Props as MembershipActionCellProps } from './MembershipActionCell';
+
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -48,7 +47,6 @@ const mapStateToProps = (state: AppState) => ({
 
 const MAX_ITEMS_PER_PAGE = 10;
 const usergroupKeySelector = (d: Usergroup) => d.id;
-const membershipKeySelector = (d: Membership) => d.id;
 
 interface Props {
     activeUser: { userId: number };
@@ -64,17 +62,12 @@ function UserGroup(props: Props) {
     const [activeUsergroupId, setActiveUsergroupId] = useState<number | undefined>();
     const [usergroupToEdit, setUsergroupToEdit] = useState<number | undefined>();
 
-    const [userToEdit, setUserToEdit] = useState<{
-        id: number;
-        member: number;
-        role: 'admin' | 'normal';
-    } | undefined>();
-
     const [
         showAddUserGroupModal,
         setUsergroupModalShow,
         setUsergroupModalHidden,
     ] = useModalState(false);
+
     const [
         showAddUserModal,
         setUserModalShow,
@@ -109,17 +102,6 @@ function UserGroup(props: Props) {
         failureHeader: _ts('usergroup', 'usergroupDeleteFailed'),
     });
 
-    const {
-        trigger: memberDeleteTrigger,
-    } = useLazyRequest<unknown, number>({
-        url: ctx => `server://group-memberships/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            usergroupResponseTrigger();
-        },
-        failureHeader: _ts('usergroup', 'memberDeleteFailed'),
-    });
-
     const usergroupObjectToEdit = useMemo(() => (
         usergroupResponse?.results?.find(a => a.id === usergroupToEdit)
     ), [usergroupResponse?.results, usergroupToEdit]);
@@ -140,36 +122,9 @@ function UserGroup(props: Props) {
     }, [setUsergroupModalHidden, usergroupResponseTrigger]);
 
     const handleMemberAddClick = useCallback((value) => {
-        setUserToEdit(undefined);
         setActiveUsergroupId(value);
         setUserModalShow();
     }, [setUserModalShow]);
-
-    const handleEditMemberClick = useCallback((
-        value: {
-            id: number;
-            member: number;
-            role: 'admin' | 'normal';
-        },
-        group,
-    ) => {
-        setUserToEdit(value);
-        setActiveUsergroupId(group);
-        setUserModalShow();
-    }, [setUserModalShow]);
-
-    const usergroupMemberOptions = useMemo(() => {
-        const user = usergroupResponse
-            ?.results
-            ?.find(v => v.id === activeUsergroupId)
-            ?.memberships
-            .map(v => ({
-                id: v.member,
-                displayName: v.memberName,
-                role: v.role,
-            }));
-        return user;
-    }, [usergroupResponse, activeUsergroupId]);
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
@@ -224,77 +179,15 @@ function UserGroup(props: Props) {
         handleMemberAddClick,
     ]);
 
-    const membersColumns = useMemo(() => {
-        const actionColumn: TableColumn<
-            Membership & { canEdit: boolean },
-            number,
-            MembershipActionCellProps,
-            TableHeaderCellProps
-        > = {
-            id: 'action',
-            title: _ts('usergroup', 'actionLabel'),
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: false,
-            },
-            cellRenderer: MembershipActionCell,
-            cellRendererParams: (passedUserId, data) => ({
-                member: data.member,
-                memberRole: data.role,
-                groupKey: data.group,
-                itemKey: passedUserId,
-                onEditClick: handleEditMemberClick,
-                onDeleteClick: memberDeleteTrigger,
-                editButtonTitle: _ts('usergroup', 'editMemberLabel'),
-                deleteButtonTitle: _ts('usergroup', 'deleteMemberLabel'),
-                deleteConfirmationMessage: _ts('usergroup', 'deleteMemberConfirmMessage'),
-                disabled: !data.canEdit,
-            }),
-        };
-
-        return ([
-            createStringColumn<Membership, number>(
-                'name',
-                _ts('usergroup', 'nameLabel'),
-                item => item.memberName,
-            ),
-            createStringColumn<Membership, number>(
-                'email',
-                _ts('usergroup', 'emailLabel'),
-                item => item.memberEmail,
-            ),
-            createDateColumn<Membership, number>(
-                'joinedAt',
-                _ts('usergroup', 'addedOnLabel'),
-                item => item.joinedAt,
-            ),
-            createStringColumn<Membership, number>(
-                'role',
-                _ts('usergroup', 'roleLabel'),
-                item => item.role,
-            ),
-            actionColumn,
-        ]);
-    }, [handleEditMemberClick, memberDeleteTrigger]);
-
     const [rowModifier] = useRowExpansion<Usergroup, number>(
-        ({ datum }) => {
-            const canEdit = datum.role === 'admin';
-            const membershipsWithUserRole = datum.memberships.map(m => ({
-                ...m,
-                canEdit,
-            }));
-            return (
-                <ContainerCard>
-                    <Table
-                        className={styles.expandedTable}
-                        columns={membersColumns}
-                        keySelector={membershipKeySelector}
-                        data={membershipsWithUserRole}
-                    />
-                </ContainerCard>
-            );
-        },
+        ({ datum }) => (
+            <Memberships
+                userGroup={datum.id}
+                canEdit={datum.role === 'admin'}
+                activeUserId={activeUser.userId}
+                onUserDeleteSuccess={usergroupResponseTrigger}
+            />
+        ),
     );
 
     return (
@@ -341,8 +234,6 @@ function UserGroup(props: Props) {
                     onModalClose={setUserModalHidden}
                     group={activeUsergroupId}
                     onUserAddSuccess={usergroupResponseTrigger}
-                    userToEdit={userToEdit}
-                    memberOptions={usergroupMemberOptions}
                 />
             )}
         </Container>

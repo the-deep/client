@@ -71,7 +71,7 @@ interface Props {
         member: number;
         role: 'admin' | 'normal';
     };
-    memberOptions?: BasicUser[];
+    users?: BasicUser[];
 }
 
 function AddUserModal(props: Props) {
@@ -80,10 +80,10 @@ function AddUserModal(props: Props) {
         group,
         onUserAddSuccess,
         userToEdit,
-        memberOptions,
+        users,
     } = props;
 
-    const [userOptions, setUserOptions] = useState<BasicUser[] | null | undefined>();
+    const [userOptions, setUserOptions] = useState<BasicUser[] | null | undefined>(users);
 
     const formValue: PartialForm<FormType> = useMemo(() => ({
         group,
@@ -154,10 +154,7 @@ function AddUserModal(props: Props) {
                 name="member"
                 value={value.member}
                 onChange={setFieldValue}
-                options={isDefined(userToEdit)
-                    ? memberOptions
-                    : userOptions
-                }
+                options={userOptions}
                 onOptionsChange={setUserOptions}
                 error={error?.member}
                 disabled={pendingAddMember || isDefined(userToEdit)}
