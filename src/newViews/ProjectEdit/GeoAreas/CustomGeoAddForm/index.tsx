@@ -88,7 +88,6 @@ function CustomGeoAddForm(props: Props) {
 
     return (
         <Modal
-            className={styles.form}
             heading="Add Custom Geo Area"
             onCloseButtonClick={onModalClose}
             footerActions={(

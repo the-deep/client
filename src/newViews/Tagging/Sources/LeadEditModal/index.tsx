@@ -50,6 +50,7 @@ function LeadEditModal(props: Props) {
 
     const {
         pristine,
+        setPristine,
         value,
         setFieldValue,
         setValue,
@@ -108,7 +109,7 @@ function LeadEditModal(props: Props) {
             footerActions={(
                 <Button
                     name="save"
-                    disabled={pristine}
+                    disabled={pristine || pending}
                     onClick={handleSubmit}
                 >
                     Save
@@ -125,6 +126,8 @@ function LeadEditModal(props: Props) {
                     projectId={projectId}
                     initialValue={initialValue}
                     setFieldValue={setFieldValue}
+                    setValue={setValue}
+                    setPristine={setPristine}
                     error={riskyError}
                     ready={ready}
                 />
