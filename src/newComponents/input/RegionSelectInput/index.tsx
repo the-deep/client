@@ -23,12 +23,12 @@ type RegionSelectInputProps<K extends string> = SearchSelectInputProps<
     Region,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
-> & { activeProject: number };
+> & { projectId: number };
 
 function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
     const {
         className,
-        activeProject,
+        projectId,
         ...otherProps
     } = props;
 
@@ -38,8 +38,8 @@ function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
 
     const searchQueryParams = useMemo(() => ({
         search: debouncedSearchText,
-        exclude_project: activeProject,
-    }), [debouncedSearchText, activeProject]);
+        exclude_project: projectId,
+    }), [debouncedSearchText, projectId]);
 
     const {
         pending: organizationSearchPending,

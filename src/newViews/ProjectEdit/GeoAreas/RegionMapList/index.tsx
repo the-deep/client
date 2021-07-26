@@ -20,7 +20,7 @@ import {
 import _ts from '#ts';
 import RegionSelectInput from '#newComponents/input/RegionSelectInput';
 import notify from '#notify';
-import { useRequest, useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 
 import RegionTabPanel from './RegionTabPanel';
 
@@ -30,13 +30,17 @@ const regionKeySelector = (d: Region) => d.id.toString();
 
 interface Props {
     className?: string;
-    activeProject: number;
+    projectId: number;
+    regions?: Region[];
+    onRegionAdd: () => void;
 }
 
 function RegionMapList(props: Props) {
     const {
         className,
-        activeProject,
+        projectId,
+        regions,
+        onRegionAdd,
     } = props;
 
     const [selectedRegion, setSelectedRegion] = useState<number | undefined>(undefined);
@@ -44,21 +48,9 @@ function RegionMapList(props: Props) {
     const [activeTab, setActiveTab] = useState<string>('');
 
     const {
-        response: regionResponse,
-        retrigger: regionsGetTrigger,
-    } = useRequest<{ regions: Region[] }>({
-        url: `server://projects/${activeProject}/regions/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            setActiveTab(response.regions[0]?.id.toString());
-        },
-        failureHeader: 'Regions List',
-    });
-
-    const {
         trigger: regionPatchTrigger,
     } = useLazyRequest<ProjectDetails, { regions: { id: number | string }[]}>({
-        url: `server://projects/${activeProject}/`,
+        url: `server://projects/${projectId}/`,
         method: 'PATCH',
         body: ctx => ctx,
         onSuccess: () => {
@@ -68,21 +60,21 @@ function RegionMapList(props: Props) {
                 message: 'Successfully added regions',
                 duration: notify.duration.MEDIUM,
             });
-            regionsGetTrigger();
+            onRegionAdd();
         },
     });
 
     const handleAddRegionConfirm = useCallback(() => {
-        if (selectedRegion && regionResponse) {
+        if (selectedRegion && regions) {
             regionPatchTrigger({
                 regions: [
-                    ...regionResponse.regions.map(d => ({ id: d.id })),
+                    ...regions.map(d => ({ id: d.id })),
                     { id: selectedRegion },
                 ],
             });
         }
         setSelectedRegion(undefined);
-    }, [selectedRegion, regionPatchTrigger, regionResponse]);
+    }, [selectedRegion, regionPatchTrigger, regions]);
 
     const [
         modal,
@@ -114,7 +106,7 @@ function RegionMapList(props: Props) {
             <RegionSelectInput
                 className={styles.region}
                 name="regions"
-                activeProject={activeProject}
+                projectId={projectId}
                 value={undefined}
                 onChange={handleRegionSelectChange}
                 options={regionOptions}
@@ -135,7 +127,7 @@ function RegionMapList(props: Props) {
                 >
                     <TabList>
                         <List
-                            data={regionResponse?.regions}
+                            data={regions}
                             rendererParams={tabRendererParams}
                             renderer={Tab}
                             keySelector={regionKeySelector}
@@ -143,14 +135,14 @@ function RegionMapList(props: Props) {
                     </TabList>
                 </Header>
                 <div className={styles.tabPanelContainer}>
-                    {regionResponse && regionResponse.regions?.length < 1 && (
+                    {(regions?.length ?? 0) < 1 && (
                         <div className={_cs(styles.message, className)}>
                             <IoMapOutline className={styles.icon} />
                             {_ts('geoAreas', 'noGeoAreas')}
                         </div>
                     )}
                     <List
-                        data={regionResponse?.regions}
+                        data={regions}
                         rendererParams={regionTabPanelRendererParams}
                         renderer={RegionTabPanel}
                         rendererClassName={styles.tabPanel}

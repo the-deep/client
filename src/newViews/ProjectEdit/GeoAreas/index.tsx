@@ -56,16 +56,14 @@ function GeoAreas(props: Props) {
         region: data,
     }), []);
 
-    const handleCustomGeoAddClick = useCallback(() => {
-        showModal();
-    }, []);
-
     return (
         <div className={_cs(className, styles.geoAreas)}>
             <div className={styles.mapContainer}>
                 <RegionMapList
                     className={styles.map}
-                    activeProject={activeProject}
+                    projectId={activeProject}
+                    regions={regions}
+                    onRegionAdd={regionsGetTrigger}
                 />
             </div>
             <div className={styles.listContainer}>
@@ -74,7 +72,7 @@ function GeoAreas(props: Props) {
                     variant="secondary"
                     name="addCustomGeo"
                     icons={<IoAdd />}
-                    onClick={handleCustomGeoAddClick}
+                    onClick={showModal}
                 >
                     {_ts('geoAreas', 'addCustom')}
                 </Button>
