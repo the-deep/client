@@ -14,6 +14,7 @@
 
 .region-map-list {
     display: flex;
+    position: relative;
     flex-direction: column;
     flex-grow: 1;
 
@@ -28,6 +29,12 @@
             justify-content: center;
             padding: 0 var(--spacing-medium);
         }
+    }
+    .region {
+        position: absolute;
+        top: 60px;
+        left: 15px;
+        z-index: 1;
     }
 
     .tab-panel-container {

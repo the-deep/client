@@ -23,12 +23,14 @@ const regionKeySelector = (d: BasicRegion) => d.id;
 interface Props {
     className?: string;
     regions: BasicRegion[];
+    activeProject: number;
 }
 
 function GeoAreas(props: Props) {
     const {
         className,
         regions,
+        activeProject,
     } = props;
 
     const regionRendererParams = useCallback((_: number, data: BasicRegion) => ({
@@ -40,7 +42,7 @@ function GeoAreas(props: Props) {
             <div className={styles.mapContainer}>
                 <RegionMapList
                     className={styles.map}
-                    regions={regions}
+                    activeProject={activeProject}
                 />
             </div>
             <div className={styles.listContainer}>

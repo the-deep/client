@@ -214,16 +214,17 @@ export interface AdminLevel {
     id: number;
     title: string;
     level: number;
-    nameProp: string;
-    codeProp: string;
-    parentNameProp: string;
-    parentCodeProp: string;
+    nameProp?: string;
+    codeProp?: string;
+    parentNameProp?: string;
+    parentCodeProp?: string;
 }
 
 export interface BasicRegion {
     id: number;
     title: string;
 }
+
 export interface Region extends BasicRegion {
     createdAt: string;
     modifiedAt: string;
