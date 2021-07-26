@@ -10,41 +10,26 @@ import { _cs } from '@togglecorp/fujs';
 import { getScreenshot } from '#utils/browserExtension';
 import styles from './styles.scss';
 
-function cloneCanvas(oldCanvas: HTMLCanvasElement) {
-    const newCanvas = document.createElement('canvas');
-    const context = newCanvas.getContext('2d');
-
-    newCanvas.width = oldCanvas.width;
-    newCanvas.height = oldCanvas.height;
-
-    if (!context) {
-        return undefined;
-    }
-
-    context.drawImage(oldCanvas, 0, 0);
-
-    return newCanvas;
-}
-
 function getCroppedImage(
-    canvasFromProps: HTMLCanvasElement,
+    canvas: HTMLCanvasElement,
     image: HTMLImageElement,
     startX: number,
     startY: number,
     endX: number,
     endY: number,
 ) {
-    if (!canvasFromProps || !image) {
+    if (!canvas || !image) {
         return undefined;
     }
 
-    const canvas = cloneCanvas(canvasFromProps);
     if (!canvas) {
         return undefined;
     }
 
+    /* eslint-disable no-param-reassign */
     canvas.width = endX - startX;
     canvas.height = endY - startY;
+    /* eslint-enable no-param-reassign */
 
     const context = canvas.getContext('2d');
     if (!context) {
@@ -58,8 +43,11 @@ function getCroppedImage(
     );
 
     const croppedImage = canvas.toDataURL('image/jpeg');
+
+    /* eslint-disable no-param-reassign */
     canvas.width = 0;
     canvas.height = 0;
+    /* eslint-enable no-param-reassign */
 
     return croppedImage;
 }
@@ -79,7 +67,7 @@ function Screenshot(props: Props) {
         onCancel,
     } = props;
 
-    const firstResizeRef = React.useRef(false);
+    const firstResizeRef = React.useRef(true);
     const [imageProps, setImageProps] = React.useState<{
         image: HTMLImageElement | undefined;
         offsetX: number;
@@ -94,10 +82,12 @@ function Screenshot(props: Props) {
         height: 0,
     });
 
-    const handleResize = React.useCallback(() => {
-        if (!firstResizeRef.current && onCancel) {
+    const handleResize = React.useCallback((width = 0, height = 0) => {
+        if (!firstResizeRef.current && width > 0 && height > 0 && onCancel) {
             onCancel();
         }
+
+        firstResizeRef.current = false;
     }, [onCancel]);
 
     const brushContainerRef = React.useRef<SVGGElement>(null);
