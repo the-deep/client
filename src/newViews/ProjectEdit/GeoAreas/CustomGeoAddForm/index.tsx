@@ -9,9 +9,9 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
-    Container,
     Button,
     TextInput,
+    Modal,
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#utils/request';
@@ -40,12 +40,14 @@ const schema: FormSchema = {
 interface Props {
     projectId: number;
     onSuccess: () => void;
+    onModalClose: () => void;
 }
 
 function CustomGeoAddForm(props: Props) {
     const {
         projectId,
         onSuccess,
+        onModalClose,
     } = props;
 
     const defaultFormValue: PartialForm<FormType> = {
@@ -72,6 +74,7 @@ function CustomGeoAddForm(props: Props) {
         body: ctx => ctx,
         onSuccess: () => {
             onSuccess();
+            onModalClose();
         },
     });
 
@@ -84,9 +87,10 @@ function CustomGeoAddForm(props: Props) {
     }, [setError, validate, addRegionsTrigger]);
 
     return (
-        <Container
+        <Modal
             className={styles.form}
             heading="Add Custom Geo Area"
+            onCloseButtonClick={onModalClose}
             footerActions={(
                 <Button
                     name="submit"
@@ -94,7 +98,7 @@ function CustomGeoAddForm(props: Props) {
                     onClick={handleCustomGeoSubmitClick}
                     disabled={pristine || addRegionsPending}
                 >
-                    Publish Custom Geo Area
+                    Add
                 </Button>
             )}
         >
@@ -105,7 +109,7 @@ function CustomGeoAddForm(props: Props) {
                     value={value.title}
                     onChange={setFieldValue}
                     error={error?.title}
-                    label="Custom geo area title"
+                    label="Title"
                 />
                 <TextInput
                     className={styles.input}
@@ -113,10 +117,10 @@ function CustomGeoAddForm(props: Props) {
                     value={value.code}
                     onChange={setFieldValue}
                     error={error?.code}
-                    label="Custom geo area code"
+                    label="Code"
                 />
             </div>
-        </Container>
+        </Modal>
     );
 }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Button,
@@ -14,6 +14,7 @@ import {
     BasicRegion,
 } from '#typings';
 import { useRequest } from '#utils/request';
+import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
 import RegionMapList from './RegionMapList';
@@ -34,7 +35,11 @@ function GeoAreas(props: Props) {
         activeProject,
     } = props;
 
-    const [addCustomVisibility, setAddCustomVisibility] = useState<boolean>(false);
+    const [
+        modalVisible,
+        showModal,
+        hideModal,
+    ] = useModalState(false);
 
     const {
         response: regionResponse,
@@ -52,7 +57,7 @@ function GeoAreas(props: Props) {
     }), []);
 
     const handleCustomGeoAddClick = useCallback(() => {
-        setAddCustomVisibility(true);
+        showModal();
     }, []);
 
     return (
@@ -89,10 +94,11 @@ function GeoAreas(props: Props) {
                         keySelector={regionKeySelector}
                     />
                 </Container>
-                {addCustomVisibility && (
+                {modalVisible && (
                     <CustomGeoAddForm
                         projectId={activeProject}
                         onSuccess={regionsGetTrigger}
+                        onModalClose={hideModal}
                     />
                 )}
             </div>
