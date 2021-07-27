@@ -22,10 +22,6 @@ function getCroppedImage(
         return undefined;
     }
 
-    if (!canvas) {
-        return undefined;
-    }
-
     /* eslint-disable no-param-reassign */
     canvas.width = endX - startX;
     canvas.height = endY - startY;
