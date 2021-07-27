@@ -161,6 +161,7 @@ function Memberships(props: Props) {
 
     return (
         <Container
+            className={styles.membershipsContainer}
             footerActions={(
                 <Pager
                     activePage={activePage}
@@ -170,6 +171,8 @@ function Memberships(props: Props) {
                     itemsPerPageControlHidden
                 />
             )}
+            contentClassName={styles.content}
+            horizontallyCompactContent
         >
             {membershipsPending && <PendingMessage />}
             <TableView

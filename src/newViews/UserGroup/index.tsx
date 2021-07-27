@@ -5,19 +5,16 @@ import {
     Container,
     Pager,
     PendingMessage,
-    Table,
-    TableColumn,
-    TableHeaderCellProps,
-    TableHeaderCell,
-    createStringColumn,
-    createNumberColumn,
-    useRowExpansion,
+    ListView,
+    TextOutput,
+    NumberOutput,
+    DateOutput,
+    ExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
 } from 'react-icons/io5';
 
-import { createDateColumn } from '#newComponents/ui/tableHelpers';
 import {
     activeUserSelector,
 } from '#redux';
@@ -37,7 +34,7 @@ import AddUsergroupModal, {
 } from './AddUsergroupModal';
 import AddUserModal from './AddUserModal';
 import Memberships from './Memberships';
-import UserGroupActionCell, { Props as UserGroupActionCellProps } from './UserGroupActionCell';
+import UserGroupActionCell from './UserGroupActionCell';
 
 import styles from './styles.scss';
 
@@ -47,6 +44,89 @@ const mapStateToProps = (state: AppState) => ({
 
 const MAX_ITEMS_PER_PAGE = 10;
 const usergroupKeySelector = (d: Usergroup) => d.id;
+
+interface UserGroupItemProps {
+    userGroupId: number;
+    activeUserId: number;
+    onUserDeleteSuccess: () => void;
+    onEditClick: (id: number) => void;
+    onDeleteClick: (id: number) => void;
+    onAddClick: (id: number) => void;
+    data: Usergroup;
+}
+
+function UserGroupItem(props: UserGroupItemProps) {
+    const {
+        userGroupId,
+        onEditClick,
+        onDeleteClick,
+        onAddClick,
+        data,
+        activeUserId,
+        onUserDeleteSuccess,
+    } = props;
+
+    return (
+        <ExpandableContainer
+            sub
+            className={styles.userGroupItem}
+            horizontallyCompactContent
+            heading={data.title}
+            headerClassName={styles.userGroupHeader}
+            headingContainerClassName={styles.headingContainer}
+            headingClassName={styles.heading}
+            headerDescriptionClassName={styles.headingDescriptionContainer}
+            alwaysMountContent={false}
+            expansionTriggerArea="arrow"
+            contentClassName={styles.userGroupContent}
+            headingDescription={(
+                <>
+                    <TextOutput
+                        label="Created On"
+                        value={(
+                            <DateOutput
+                                value={data.createdAt}
+                                format="hh:mmaaa, MMM dd, yyyy"
+                            />
+                        )}
+                        hideLabelColon
+                    />
+                    <TextOutput
+                        label="Members"
+                        labelContainerClassName={styles.membersLabel}
+                        valueContainerClassName={styles.membersValue}
+                        value={(
+                            <NumberOutput
+                                value={data.membersCount ?? 0}
+                            />
+                        )}
+                        hideLabelColon
+                    />
+                </>
+            )}
+            headerActions={(
+                <UserGroupActionCell
+                    itemKey={userGroupId}
+                    onEditClick={onEditClick}
+                    onDeleteClick={onDeleteClick}
+                    onAddClick={onAddClick}
+                    addButtonTitle={_ts('usergroup', 'addMemberLabel')}
+                    editButtonTitle={_ts('usergroup', 'editUsergroupLabel')}
+                    deleteButtonTitle={_ts('usergroup', 'deleteUsergroupLabel')}
+                    deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
+                    disabled={data.role === 'normal'}
+                />
+            )}
+        >
+            <Memberships
+                userGroup={userGroupId}
+                canEdit={data.role === 'admin'}
+                activeUserId={activeUserId}
+                onUserDeleteSuccess={onUserDeleteSuccess}
+            />
+        </ExpandableContainer>
+    );
+}
 
 interface Props {
     activeUser: { userId: number };
@@ -78,6 +158,13 @@ function UserGroup(props: Props) {
         user: activeUser.userId,
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
         limit: MAX_ITEMS_PER_PAGE,
+        fields: [
+            'id',
+            'title',
+            'members_count',
+            'role',
+            'created_at',
+        ],
     }), [activeUser.userId, activePage]);
 
     const {
@@ -126,69 +213,21 @@ function UserGroup(props: Props) {
         setUserModalShow();
     }, [setUserModalShow]);
 
-    const columns = useMemo(() => {
-        const actionColumn: TableColumn<
-            Usergroup,
-            number,
-            UserGroupActionCellProps,
-            TableHeaderCellProps
-        > = {
-            id: 'action',
-            title: _ts('usergroup', 'actionLabel'),
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: false,
-            },
-            cellRenderer: UserGroupActionCell,
-            cellRendererParams: (passedUsergroupId, data) => ({
-                itemKey: passedUsergroupId,
-                onEditClick: handleEditUsergroupClick,
-                onDeleteClick: usergroupDeleteTrigger,
-                onAddClick: handleMemberAddClick,
-                addButtonTitle: _ts('usergroup', 'addMemberLabel'),
-                editButtonTitle: _ts('usergroup', 'editUsergroupLabel'),
-                deleteButtonTitle: _ts('usergroup', 'deleteUsergroupLabel'),
-                deleteConfirmationMessage: _ts('usergroup', 'deleteUsergroupConfirmMessage'),
-                disabled: data.role === 'normal',
-            }),
-        };
-
-        return ([
-            createStringColumn<Usergroup, number>(
-                'group',
-                _ts('usergroup', 'groupLabel'),
-                item => item.title,
-            ),
-            createNumberColumn<Usergroup, number>(
-                'members',
-                _ts('usergroup', 'membersLabel'),
-                item => item.memberships.length,
-                // to be fetched directly from API as membershipCount when done
-            ),
-            createDateColumn<Usergroup, number>(
-                'createdAt',
-                _ts('usergroup', 'createdOnLabel'),
-                item => item.createdAt,
-            ),
-            actionColumn,
-        ]);
-    },
-    [
-        handleEditUsergroupClick,
+    const userGroupRendererParams = useCallback((key: number, datum: Usergroup) => ({
+        userGroupId: key,
+        activeUserId: activeUser.userId,
+        onUserDeleteSuccess: usergroupResponseTrigger,
+        onDeleteClick: usergroupDeleteTrigger,
+        onEditClick: handleEditUsergroupClick,
+        onAddClick: handleMemberAddClick,
+        data: datum,
+    }), [
+        activeUser,
+        usergroupResponseTrigger,
         usergroupDeleteTrigger,
+        handleEditUsergroupClick,
         handleMemberAddClick,
     ]);
-
-    const [rowModifier] = useRowExpansion<Usergroup, number>(
-        ({ datum }) => (
-            <Memberships
-                userGroup={datum.id}
-                canEdit={datum.role === 'admin'}
-                activeUserId={activeUser.userId}
-                onUserDeleteSuccess={usergroupResponseTrigger}
-            />
-        ),
-    );
 
     return (
         <Container
@@ -213,14 +252,15 @@ function UserGroup(props: Props) {
                     itemsPerPageControlHidden
                 />
             }
+            contentClassName={styles.content}
         >
             {usergroupGetPending && <PendingMessage />}
-            <Table
-                className={styles.usergroupTable}
-                columns={columns}
+            <ListView
+                className={styles.userGroupList}
                 keySelector={usergroupKeySelector}
                 data={usergroupResponse?.results}
-                rowModifier={rowModifier}
+                renderer={UserGroupItem}
+                rendererParams={userGroupRendererParams}
             />
             {showAddUserGroupModal && (
                 <AddUsergroupModal
