@@ -1,0 +1,14 @@
+.page-content {
+    display: flex;
+    padding: var(--dui-spacing-medium);
+
+    .main-content {
+        flex-grow: 1;
+    }
+
+    .right-side-content {
+        flex-basis: 200px + 10vw;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+}

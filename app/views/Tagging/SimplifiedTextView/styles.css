@@ -1,0 +1,32 @@
+.simplified-text-view {
+    --padding: var(--dui-spacing-medium);
+
+    position: relative;
+    padding: var(--padding);
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    .actions-popup {
+        display: flex;
+        position: absolute;
+        align-items: center;
+        transform: translateY(-100%);
+        background-color: var(--dui-color-foreground);
+        user-select: none;
+
+        >* {
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .add-button {
+            font-size: var(--dui-font-size-extra-large);
+            user-select: none;
+
+            .add-icon {
+                color: var(--dui-color-accent);
+            }
+        }
+    }
+}
+
