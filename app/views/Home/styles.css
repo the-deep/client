@@ -1,0 +1,34 @@
+.home {
+    background-color: var(--dui-color-background);
+    padding: var(--dui-spacing-medium);
+
+    .main-content {
+        display: flex;
+        align-content: flex-start;
+        align-items: flex-start;
+        flex-wrap: wrap;
+
+        .summary {
+            flex-basis: 40%;
+
+            .content {
+                --gap: var(--dui-spacing-medium);
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--gap);
+
+                >* {
+                    flex-basis: calc(50% - var(--gap));
+                }
+            }
+        }
+
+        .project-tagging-activity {
+            flex-grow: 1;
+        }
+
+        .recent-projects {
+            flex-basis: 100%;
+        }
+    }
+}

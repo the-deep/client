@@ -13,6 +13,7 @@
 - [ ] build works
 - [ ] eslint issues
 - [ ] typescript issues
+- [ ] codegen errors
 - [ ] `console.log` meant for debugging
 - [ ] typos
 - [ ] unwanted comments
