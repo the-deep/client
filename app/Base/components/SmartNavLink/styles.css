@@ -1,0 +1,16 @@
+.smart-nav-link {
+    display: flex;
+    position: relative;
+    align-items: center;
+    outline: none;
+    border-bottom: var(--dui-width-separator-medium) solid transparent;
+    padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--dui-color-text);
+    font-weight: var(--dui-font-weight-bold);
+
+    &.active {
+        border-bottom-color: var(--dui-color-accent);
+    }
+}

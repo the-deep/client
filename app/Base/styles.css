@@ -1,0 +1,29 @@
+.base {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+
+    .navbar {
+        flex-shrink: 0;
+        height: 3.4rem;
+    }
+
+    /*
+     *  NOTE: styling for view is located in
+     *  `/configs/routes/styles.css`
+     */
+    .preload-message,
+    .init {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    .alert-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 1;
+        width: 20rem;
+    }
+}

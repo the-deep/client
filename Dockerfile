@@ -1,4 +1,4 @@
-FROM node:12.18.2-alpine
+FROM node:12.20-alpine
 
 MAINTAINER togglecorp info@togglecorp.com
 
