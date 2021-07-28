@@ -44,8 +44,8 @@ plugins:
         enabled: false
     config:
       config: .eslintrc
-  # add typescript
-  # add stylelint
+  # TODO: add typescript
+  # TODO: add stylelint
 plugins:
   fixme:
     enabled: true

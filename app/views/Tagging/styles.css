@@ -1,0 +1,19 @@
+.tagging {
+    padding: var(--dui-spacing-medium);
+
+    .main-content {
+        display: flex;
+
+        .simplified-view {
+            flex-basis: calc(240px + 10vw);
+            overflow: auto;
+        }
+
+        .tagging-playground {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
+    }
+}

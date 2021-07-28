@@ -1,0 +1,21 @@
+overwrite: true
+schema:
+  - ${GRAPHQL_CODEGEN_ENDPOINT}
+documents: "app/**/*.tsx"
+generates:
+  ./generated/types.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+    config:
+      # maybeValue: T | undefined
+      enumsAsTypes: true
+      scalars:
+        Date: 'string'
+        DateTime: 'string'
+        UUID: 'string'
+        CustomDate: 'string'
+        CustomDateTime: 'string'
+  ./generated/schema.json:
+    plugins:
+      - "introspection"
