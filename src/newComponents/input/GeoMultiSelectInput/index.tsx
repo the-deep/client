@@ -1,10 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import {
-    caseInsensitiveSubmatch,
-    isTruthyString,
-} from '@togglecorp/fujs';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
+import { useRequest } from '#utils/request';
 import {
+    MultiResponse,
     GeoOption,
 } from '#typings';
 
@@ -26,40 +24,38 @@ type GeoSelectInputProps<K extends string> = SearchMultiSelectInputProps<
     | 'labelSelector'
     | 'totalOptionsCount'
     | 'onShowDropdownChange'
-    | 'onOptionsChange'
->;
+> & {
+    projectId: number;
+};
 
 function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
     const {
         className,
         options,
+        projectId,
         ...otherProps
     } = props;
 
+    const [opened, setOpened] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
+    const geoOptionsRequestQueryParams = useMemo(() => ({
+        label: debouncedSearchText,
+        limit: 20,
+    }), [debouncedSearchText]);
+
     const {
-        searchOptions,
-        filteredOptionsLength,
-    } = useMemo(() => {
-        let filteredOptions = options;
-        if (isTruthyString(debouncedSearchText)) {
-            filteredOptions = options?.filter(option => (
-                caseInsensitiveSubmatch(option.label, debouncedSearchText)
-            ));
-        }
-        if (filteredOptions && (filteredOptions.length ?? 0 > 50)) {
-            return ({
-                searchOptions: filteredOptions.slice(0, 50),
-                filteredOptionsLength: filteredOptions.length,
-            });
-        }
-        return {
-            searchOptions: filteredOptions,
-            filteredOptionsLength: filteredOptions?.length,
-        };
-    }, [debouncedSearchText, options]);
+        pending: pendingGeoOptions,
+        response: geoOptions,
+    } = useRequest<MultiResponse<GeoOption>>({
+        skip: !opened,
+        url: `server://projects/${projectId}/geo-area/`,
+        method: 'GET',
+        query: geoOptionsRequestQueryParams,
+        schemaName: 'geoOptions',
+        failureHeader: 'Geo options',
+    });
 
     return (
         <SearchMultiSelectInput
@@ -69,9 +65,10 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
             labelSelector={labelSelector}
             onSearchValueChange={setSearchText}
             options={options}
-            searchOptions={searchOptions}
-            optionsPending={false}
-            totalOptionsCount={filteredOptionsLength}
+            searchOptions={geoOptions?.results}
+            optionsPending={pendingGeoOptions}
+            totalOptionsCount={geoOptions?.count}
+            onShowDropdownChange={setOpened}
         />
     );
 }

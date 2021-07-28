@@ -51,9 +51,9 @@
                 }
 
                 .label {
+                    display: none;
                     position: absolute;
-                    bottom: -.3em;
-                    left: calc(var(--radius-head) + var(--spacing-medium));
+                    bottom: -1.3em;
                     white-space: nowrap;
                     font-weight: var(--dui-font-weight-bold);
                 }
@@ -72,6 +72,12 @@
 
                     .label {
                         transform: rotateX(180deg);
+                    }
+                }
+
+                &:hover {
+                    .label {
+                        display: block;
                     }
                 }
             }

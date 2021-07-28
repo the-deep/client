@@ -13,8 +13,8 @@ import {
     ObjectSchema,
     ArraySchema,
     requiredCondition,
-    defaultEmptyArrayType,
     getErrorObject,
+    requiredListCondition,
     requiredStringCondition,
     defaultUndefinedType,
 } from '@togglecorp/toggle-form';
@@ -73,7 +73,7 @@ const analysisPillarSchema: AnalysisPillarSchema = {
         key: [],
         title: [requiredStringCondition],
         assignee: [requiredCondition],
-        filters: [requiredCondition, defaultEmptyArrayType],
+        filters: [requiredListCondition],
     }),
 };
 

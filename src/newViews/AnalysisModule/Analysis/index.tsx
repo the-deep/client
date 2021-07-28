@@ -100,7 +100,7 @@ interface ComponentProps {
     activeProject: number;
     onEdit: (analysisId: number) => void;
     onAnalysisPillarDelete: () => void;
-    triggerAnalysisList: () => void;
+    onAnalysisCloseSuccess: () => void;
     teamLeadName: string;
     createdAt: string;
     modifiedAt: string;
@@ -130,7 +130,7 @@ function Analysis(props: ComponentProps) {
         analysisId,
         teamLeadName,
         onAnalysisPillarDelete,
-        triggerAnalysisList,
+        onAnalysisCloseSuccess,
         pillars,
         createdAt,
         onEdit,
@@ -174,9 +174,9 @@ function Analysis(props: ComponentProps) {
     const disabled = pendingAnalysisDelete;
 
     const handleCloneSuccess = useCallback(() => {
-        triggerAnalysisList();
+        onAnalysisCloseSuccess();
         setModalHidden();
-    }, [triggerAnalysisList, setModalHidden]);
+    }, [onAnalysisCloseSuccess, setModalHidden]);
 
     return (
         <ContainerCard

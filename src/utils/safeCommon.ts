@@ -61,3 +61,7 @@ export function calcPercent(value?: number, total?: number) {
     }
     return (value / total) * 100;
 }
+
+export function currentHash() {
+    return window.location.hash.substr(2);
+}

@@ -20,7 +20,6 @@ import { useRequest } from '#utils/request';
 import { useModalState } from '#hooks/stateManagement';
 
 import {
-    GeoOptions,
     EntryOptions,
     KeyValueElement,
     WidgetElement,
@@ -90,7 +89,6 @@ interface OwnProps {
     className?: string;
     filters?: FilterFields[];
     filtersValue?: FaramValues;
-    geoOptions?: GeoOptions;
     regions?: ProjectDetails['regions'];
     onFiltersValueChange: (filters: FaramValues) => void;
     projectId: number;
@@ -105,7 +103,6 @@ function EntriesFilterForm(props: OwnProps) {
         className,
         widgets,
         filtersValue,
-        geoOptions,
         regions,
         onFiltersValueChange,
         disabled,
@@ -165,8 +162,8 @@ function EntriesFilterForm(props: OwnProps) {
             filterKey: key,
             title: data.title,
             filter: data.properties,
+            projectId,
             regions,
-            geoOptions,
             value,
             onChange: setFieldValue,
             className: _cs(
@@ -174,7 +171,7 @@ function EntriesFilterForm(props: OwnProps) {
                 isMatrixFilter && styles.showFilter,
             ),
         });
-    }, [regions, geoOptions, value, setFieldValue]);
+    }, [regions, value, setFieldValue, projectId]);
 
     const handleClearFilters = useCallback(() => {
         onFiltersValueChange({});
