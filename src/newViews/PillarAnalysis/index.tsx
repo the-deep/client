@@ -525,7 +525,7 @@ function PillarAnalysis(props: Props) {
         createdAt: data.createdAt,
         imageDetails: data.imageDetails,
         tabularFieldData: data.tabularFieldData,
-        type: data.entryType,
+        entryType: data.entryType,
         disabled: usedUpEntriesMap[key],
         pillarId,
         pillarModifiedDate: pillarAnalysis?.modifiedAt,

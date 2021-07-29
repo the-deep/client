@@ -64,31 +64,52 @@ interface ImageDetails {
     file: string;
 }
 
-export interface EntryFields extends DatabaseEntityBase {
+interface BaseEntryFields extends DatabaseEntityBase {
     attributes: {
         [key: string]: AttributeFields;
     };
     analysisFramework: number;
-    entryType: EntryType;
     project: number;
     projectLabels: string[];
     order: string;
     resolvedCommentCount: number;
     unresolvedCommentCount: number;
-    excerpt?: string;
-    droppedExcerpt?: string;
     clientId: string;
     highlightHidden: boolean;
-    image?: string;
-    imageRaw?: string;
-    imageDetails?: ImageDetails;
-    tabularField: number;
-    tabularFieldData: TabularDataFields;
     lead: Pick<Lead, EntryLeadType>;
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
 }
+
+export type EntryFields = BaseEntryFields & ({
+    entryType: 'excerpt';
+    excerpt?: string;
+    droppedExcerpt?: string;
+    imageDetails?: never;
+    tabularFieldData?: never;
+    tabularField?: never;
+    image?: never;
+    imageRaw?: never;
+} | {
+    entryType: 'image';
+    excerpt?: string;
+    droppedExcerpt?: never;
+    imageDetails?: ImageDetails;
+    image?: string;
+    imageRaw?: string;
+    tabularFieldData?: never;
+    tabularField?: never;
+} | {
+    entryType: 'dataSeries';
+    tabularFieldData?: TabularDataFields;
+    tabularField?: number;
+    excerpt?: never;
+    droppedExcerpt?: never;
+    imageDetails?: never;
+    image?: never;
+    imageRaw?: never;
+});
 
 export interface LeadWithGroupedEntriesFields {
     assigneeDetails: UserFields;

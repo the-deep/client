@@ -12,10 +12,10 @@ import {
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
-import EntryItem, { Props as EntryItemProps } from '../../EntryItem';
+import ExcerptOutput, { Props as ExcerptOutputProps } from '#newComponents/viewer/ExcerptOutput';
 import styles from './styles.scss';
 
-interface Props extends EntryItemProps {
+interface Props extends ExcerptOutputProps {
     className?: string;
     entryId: number;
     pillarId: number;
@@ -30,7 +30,7 @@ function DiscardedEntry(props: Props) {
         pillarId,
         onEntryUndiscard,
         tagDisplay,
-        type,
+        entryType,
         ...otherProps
     } = props;
 
@@ -57,7 +57,7 @@ function DiscardedEntry(props: Props) {
             className={_cs(className, styles.entryItem)}
             contentClassName={_cs(
                 styles.children,
-                type === 'image' && styles.image,
+                entryType === 'image' && styles.image,
             )}
             footerIcons={(
                 <Tag>
@@ -77,8 +77,8 @@ function DiscardedEntry(props: Props) {
             )}
         >
             {pending && (<PendingMessage />)}
-            <EntryItem
-                type={type}
+            <ExcerptOutput
+                entryType={entryType}
                 {...otherProps}
             />
         </Container>

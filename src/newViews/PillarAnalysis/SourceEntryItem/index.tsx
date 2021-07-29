@@ -11,15 +11,15 @@ import {
     DropdownMenuItem,
 } from '@the-deep/deep-ui';
 
+import ExcerptOutput, { Props as ExcerptOutputProps } from '#newComponents/viewer/ExcerptOutput';
+
 import { useLazyRequest } from '#utils/request';
 import { genericMemo } from '#utils/safeCommon';
 import _ts from '#ts';
-
-import EntryItem, { Props as EntryItemProps } from '../EntryItem';
 import { DiscardedTags } from '../index';
 import styles from './styles.scss';
 
-interface Props extends EntryItemProps {
+interface Props extends ExcerptOutputProps {
     className?: string;
     entryId: number;
     disabled?: boolean;
@@ -40,7 +40,7 @@ function SourceEntryItem(props: Props) {
         pillarId,
         onEntryDiscard,
         discardedTags,
-        type,
+        entryType,
         ...otherProps
     } = props;
 
@@ -81,7 +81,7 @@ function SourceEntryItem(props: Props) {
             value={value}
             contentClassName={_cs(
                 styles.children,
-                type === 'image' && styles.image,
+                entryType === 'image' && styles.image,
             )}
             footerIcons={isNewEntry && (
                 <Tag
@@ -106,8 +106,8 @@ function SourceEntryItem(props: Props) {
                 </QuickActionDropdownMenu>
             )}
         >
-            <EntryItem
-                type={type}
+            <ExcerptOutput
+                entryType={entryType}
                 {...otherProps}
             />
         </DraggableContent>

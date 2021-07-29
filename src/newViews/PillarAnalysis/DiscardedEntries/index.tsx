@@ -84,7 +84,7 @@ function DiscardedEntries(props: Props) {
         excerpt: data.entryDetails?.excerpt,
         imageDetails: data.entryDetails?.imageDetails,
         tabularFieldData: data.entryDetails?.tabularFieldData,
-        type: data.entryDetails?.entryType,
+        entryType: data.entryDetails?.entryType,
         pillarId,
         onEntryUndiscard: triggerEntriesPull,
     }), [pillarId, triggerEntriesPull]);
