@@ -186,18 +186,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
     });
 
     const {
-        pending: pendingAnalysisDelete,
-        trigger: deleteAnalysisTrigger,
-        context: analysisIdToDelete,
-    } = useLazyRequest<unknown, number>(
-        {
-            url: ctx => `server://projects/${activeProject}/analysis/${ctx}/`,
-            method: 'DELETE',
-            onSuccess: triggerGetAnalysis,
-        },
-    );
-
-    const {
         response: overviewResponse,
         retrigger: retriggerAnalaysisOverview,
     } = useRequest<AnalysisOverview>(
@@ -205,6 +193,23 @@ function AnalysisModule(props: AnalysisModuleProps) {
             url: `server://projects/${activeProject}/analysis-overview/`,
             method: 'GET',
             failureHeader: _ts('analysis', 'analysisModule'),
+        },
+    );
+
+    const handleRetriggers = useCallback(() => {
+        triggerGetAnalysis();
+        retriggerAnalaysisOverview();
+    }, [triggerGetAnalysis, retriggerAnalaysisOverview]);
+
+    const {
+        pending: pendingAnalysisDelete,
+        trigger: deleteAnalysisTrigger,
+        context: analysisIdToDelete,
+    } = useLazyRequest<unknown, number>(
+        {
+            url: ctx => `server://projects/${activeProject}/analysis/${ctx}/`,
+            method: 'DELETE',
+            onSuccess: handleRetriggers,
         },
     );
 
@@ -233,11 +238,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         setAnalysisToEdit(undefined);
         setModalVisible();
     }, [setModalVisible]);
-
-    const handleRetriggers = useCallback(() => {
-        triggerGetAnalysis();
-        retriggerAnalaysisOverview();
-    }, [triggerGetAnalysis, retriggerAnalaysisOverview]);
 
     const analysisRendererParams = useCallback((key: number, data: AnalysisSummary) => ({
         className: styles.analysis,
