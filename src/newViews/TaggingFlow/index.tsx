@@ -172,7 +172,7 @@ function TaggingFlow(props: PropsFromState) {
                         className={styles.tabPanel}
                         name="primary-tagging"
                     >
-                        <PrimaryTagging />
+                        <PrimaryTagging className={styles.primaryTagging} />
                     </TabPanel>
                     <TabPanel
                         name="secondary-tagging"

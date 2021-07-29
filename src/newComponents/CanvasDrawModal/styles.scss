@@ -1,0 +1,36 @@
+.canvas-draw-modal {
+    width: 86vw;
+    height: 86vh;
+
+    .canvas-draw {
+        display: flex;
+        flex-grow: 1;
+        background-color: var(--dui-color-background);
+
+        .canvas-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+
+            .canvas {
+                cursor: crosshair;
+            }
+        }
+
+        .toolbar {
+            .draw-tools {
+                flex-shrink: 0;
+                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                background-color: var(--dui-color-foreground);
+
+                .content {
+                    >* {
+                        margin: var(--dui-spacing-small);
+                    }
+                }
+            }
+        }
+    }
+
+}

@@ -1,3 +1,72 @@
-.primary-tagging {
-    display: block;
+.original-tab {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: var(--dui-color-background-information);
+    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small));
+
+    .actions {
+        display: flex;
+        flex-shrink: 0;
+        justify-content: flex-end;
+        padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+        >* {
+            margin: var(--dui-spacing-small);
+        }
+    }
+
+    .content {
+        display: flex;
+        position: relative;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+        margin: var(--dui-spacing-medium);
+        background-color: var(--dui-color-foreground);
+    }
 }
+
+.primary-tagging {
+    display: flex;
+
+    .source-preview {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        width: calc(16rem + 16vw);
+
+        .tab-list {
+            flex-shrink: 0;
+
+            >* {
+                flex-grow: 1;
+            }
+        }
+
+        .simplified-tab {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+            background-color: var(--dui-color-background-information);
+        }
+
+
+        .entry-list-tab {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+            background-color: var(--dui-color-background-information);
+        }
+    }
+
+    .tagging-playground {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+    }
+}
+
