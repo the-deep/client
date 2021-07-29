@@ -4,7 +4,7 @@ import { IoTrash } from 'react-icons/io5';
 
 import {
     Modal,
-    // ColorInput,
+    ColorInput,
     Button,
     SegmentInput,
     Container,
@@ -85,11 +85,17 @@ function useDraw(
     }, [handleMouseDown, handleMouseUp, handleMouseMove, canvasRef]);
 }
 
-const penSizeOptions = [
+interface PenSizeOption {
+    key: number;
+    label: string;
+}
+const penSizeOptions: PenSizeOption[] = [
     { key: 1, label: _ts('components.canvasDrawModal', 'penSizeOptionSmallLabel') },
     { key: 3, label: _ts('components.canvasDrawModal', 'penSizeOptionMediumLabel') },
     { key: 7, label: _ts('components.canvasDrawModal', 'penSizeOptionLargeLabel') },
 ];
+const penSizeOptionKeySelector = (o: PenSizeOption) => o.key;
+const penSizeOptionLabelSelector = (o: PenSizeOption) => o.label;
 const DEFAULT_PEN_SIZE = penSizeOptions[1].key;
 
 const drawImage = (
@@ -125,7 +131,7 @@ function CanvasDraw(props: Props) {
 
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = React.useRef<HTMLDivElement>(null);
-    const [color/* , setColor */] = React.useState(
+    const [color, setColor] = React.useState(
         () => getComputedStyle(document.body).getPropertyValue('--color-accent'),
     );
     const [penSize, setPenSize] = React.useState(DEFAULT_PEN_SIZE);
@@ -150,12 +156,10 @@ function CanvasDraw(props: Props) {
         }
     });
 
-    /*
     const handleColorInputChange = React.useCallback((newColor) => {
         colorRef.current = newColor;
         setColor(newColor);
     }, [setColor]);
-     */
 
     const handlePenSizeInputChange = React.useCallback((newPenSize) => {
         penSizeRef.current = newPenSize;
@@ -264,21 +268,19 @@ function CanvasDraw(props: Props) {
                     contentClassName={styles.content}
                     horizontallyCompactContent
                 >
-                    {/*
                     <ColorInput
                         label={_ts('components.canvasDrawModal', 'penColorInputLabel')}
                         value={color}
                         onChange={handleColorInputChange}
                     />
-                      */}
                     <SegmentInput
                         name="pensize-options"
                         label={_ts('components.canvasDrawModal', 'penSizeInputLabel')}
                         options={penSizeOptions}
                         value={penSize}
                         onChange={handlePenSizeInputChange}
-                        keySelector={d => d.key}
-                        labelSelector={d => d.label}
+                        keySelector={penSizeOptionKeySelector}
+                        labelSelector={penSizeOptionLabelSelector}
                     />
                     <Button
                         name="clear-canvas"
