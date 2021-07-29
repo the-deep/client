@@ -33,6 +33,7 @@ function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
     const searchQueryParams = useMemo(() => ({
         search: debouncedSearchText,
         fields: ['id', 'display_name', 'email'],
+        limit: 20,
         ...queryParams,
     }), [debouncedSearchText, queryParams]);
 

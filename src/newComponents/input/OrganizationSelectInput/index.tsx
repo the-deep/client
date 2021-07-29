@@ -27,6 +27,7 @@ function OrganizationSelectInput<K extends string>(props: OrganizationSelectInpu
     const debouncedSearchText = useDebouncedValue(searchText);
 
     const searchQueryParams = useMemo(() => ({
+        limit: 20,
         search: debouncedSearchText,
     }), [debouncedSearchText]);
 

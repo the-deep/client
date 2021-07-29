@@ -43,6 +43,7 @@ export interface Usergroup {
     title: string;
     description: string;
     role: 'admin' | 'normal';
+    membersCount: number;
     memberships: Membership[];
     globalCrisisMonitoring: boolean;
     createdAt: string;

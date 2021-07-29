@@ -30,6 +30,7 @@ function OrganizationMultiSelectInput<K extends string>(props: OrganizationSelec
 
     const searchQueryParams = useMemo(() => ({
         search: debouncedSearchText,
+        limit: 20,
     }), [debouncedSearchText]);
 
     const {

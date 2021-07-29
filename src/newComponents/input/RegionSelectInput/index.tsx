@@ -39,11 +39,12 @@ function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
     const searchQueryParams = useMemo(() => ({
         search: debouncedSearchText,
         exclude_project: projectId,
+        limit: 20,
     }), [debouncedSearchText, projectId]);
 
     const {
-        pending: organizationSearchPending,
-        response: organizations,
+        pending: regionSearchPending,
+        response: regions,
     } = useRequest<MultiResponse<Region>>(
         {
             url: 'server://regions/',
@@ -61,9 +62,9 @@ function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
             keySelector={keySelector}
             labelSelector={labelSelector}
             onSearchValueChange={setSearchText}
-            searchOptions={organizations?.results}
-            optionsPending={organizationSearchPending}
-            totalOptionsCount={organizations?.count}
+            searchOptions={regions?.results}
+            optionsPending={regionSearchPending}
+            totalOptionsCount={regions?.count}
             onShowDropdownChange={setOpened}
         />
     );

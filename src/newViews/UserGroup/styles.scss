@@ -1,16 +1,50 @@
 .user-group {
     display: flex;
     flex-direction: column;
+    padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+    height: 100%;
+    overflow-y: auto;
 
     .add-usergroup-button {
         display: flex;
     }
 
-    .usergroup-table {
-        width: 100%;
-    }
+    .content {
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-large);
 
-    .expanded-table {
-        width: 100%;
+        .user-group-list {
+            width: 100%;
+
+            .user-group-item {
+                .user-group-header {
+                    background-color: var(--dui-color-background);
+                    padding: var(--dui-spacing-small);
+
+                    .heading-container {
+                        .heading {
+                            width: auto;
+                            color: var(--dui-color-text);
+                        }
+                    }
+                }
+
+                .heading-description-container {
+                    display: flex;
+                    align-items: center;
+
+                    .members-value {
+                        order: 1;
+                    }
+                    .members-label {
+                        order: 2;
+                    }
+                }
+
+                .user-group-content {
+                    padding: 0;
+                }
+            }
+        }
     }
 }
