@@ -269,7 +269,8 @@ function CanvasDraw(props: Props) {
                     horizontallyCompactContent
                 >
                     <ColorInput
-                        label={_ts('components.canvasDrawModal', 'penColorInputLabel')}
+                        name="pen-color"
+                        // label={_ts('components.canvasDrawModal', 'penColorInputLabel')}
                         value={color}
                         onChange={handleColorInputChange}
                     />
