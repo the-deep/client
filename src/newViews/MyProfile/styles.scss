@@ -26,14 +26,38 @@
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+                justify-content: center;
                 background-color: var(--dui-color-foreground);
 
-                .display-picture {
+                .display-picture-container {
                     display: flex;
-                    align-self: center;
-                    margin: var(--dui-spacing-small) auto;
-                    width: calc(96px + 15vh);
-                    height: calc(96px + 15vh);
+                    position: relative;
+                    align-items: center;
+                    flex-direction: column;
+
+                    .display-picture {
+                        display: flex;
+                        flex-shrink: 0;
+                        width: calc(96px + 15vh);
+                        height: calc(96px + 15vh);
+                        --size: calc(96px + 15vh);
+                    }
+
+                    .change-display-picture {
+                        position: absolute;
+                        bottom: var(--dui-spacing-small);
+                        left: 54%;
+
+                        .label {
+                            width: 3em;
+                            height: 3em;
+                            font-size: 1.2em;
+                        }
+
+                        .file-input {
+                            --height-border: 0;
+                        }
+                    }
                 }
 
                 .user-info {

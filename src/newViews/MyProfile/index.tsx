@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     TextInput,
     SelectInput,
@@ -21,6 +22,7 @@ import {
 } from '@togglecorp/toggle-form';
 
 import Avatar from '#newComponents/ui/Avatar';
+import DeepImageInput from '#newComponents/DeepImageInput';
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import _ts from '#ts';
 import {
@@ -55,12 +57,13 @@ interface User {
     emailOptOuts: EmailOptOut[];
 }
 
-type FormType = Partial<Pick<User, 'firstName' | 'lastName' | 'organization' | 'language' | 'emailOptOuts' | 'displayPictureUrl'>>;
+type FormType = Partial<Pick<User, 'firstName' | 'lastName' | 'organization' | 'language' | 'emailOptOuts' | 'displayPicture' | 'displayPictureUrl'>>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        displayPicture: [],
         firstName: [requiredStringCondition],
         lastName: [requiredStringCondition],
         organization: [],
@@ -94,6 +97,12 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setUserInformation: params => dispatch(setUserInformationAction(params)),
 });
+
+interface Option {
+    id: number;
+    title: string;
+    file: string;
+}
 
 interface Props {
     activeUser: { userId: number };
@@ -173,12 +182,16 @@ function MyProfile(props: Props & PropsFromDispatch) {
 
     const rowRendererParams = useCallback((key: EmailOptOut, data: EmailOptOutOption) => ({
         name: key,
-        value: value?.emailOptOuts?.some(v => v === key),
+        value: value.emailOptOuts?.some(v => v === key),
         onChange: handleCheck,
         label: data.label,
     }), [value, handleCheck]);
 
     const handleSubmit = userPatch;
+
+    const handleDisplayPictureOptionChange = useCallback((option: Option) => {
+        setFieldValue(() => option.file, 'displayPictureUrl' as const);
+    }, [setFieldValue]);
 
     const disabled = userGetPending || userPatchPending || languagesPending;
     return (
@@ -206,11 +219,28 @@ function MyProfile(props: Props & PropsFromDispatch) {
                     className={styles.content}
                 >
                     {(userGetPending || languagesPending) && <PendingMessage />}
-                    <Avatar
-                        className={styles.displayPicture}
-                        src={value?.displayPictureUrl}
-                        name={`${value?.firstName} ${value?.lastName}`}
-                    />
+                    <div className={styles.displayPictureContainer}>
+                        <Avatar
+                            className={styles.displayPicture}
+                            src={value.displayPicture
+                                ? value.displayPictureUrl
+                                : undefined
+                            }
+                            name={`${value.firstName} ${value.lastName}`}
+                        />
+                        <DeepImageInput
+                            className={styles.changeDisplayPicture}
+                            name="displayPicture"
+                            value={value.displayPicture}
+                            onChange={setFieldValue}
+                            showStatus={false}
+                            onOptionChange={handleDisplayPictureOptionChange}
+                            labelClassName={styles.label}
+                            fileInputClassName={styles.fileInput}
+                        >
+                            <FiEdit2 />
+                        </DeepImageInput>
+                    </div>
                     <NonFieldError
                         error={error}
                     />
@@ -224,7 +254,7 @@ function MyProfile(props: Props & PropsFromDispatch) {
                                 name="firstName"
                                 disabled={disabled}
                                 onChange={setFieldValue}
-                                value={value?.firstName}
+                                value={value.firstName}
                                 error={error?.firstName}
                                 label={_ts('myProfile', 'firstName')}
                                 placeholder={_ts('myProfile', 'firstName')}
@@ -234,7 +264,7 @@ function MyProfile(props: Props & PropsFromDispatch) {
                                 name="lastName"
                                 disabled={disabled}
                                 onChange={setFieldValue}
-                                value={value?.lastName}
+                                value={value.lastName}
                                 error={error?.lastName}
                                 label={_ts('myProfile', 'lastName')}
                                 placeholder={_ts('myProfile', 'lastName')}
@@ -243,7 +273,7 @@ function MyProfile(props: Props & PropsFromDispatch) {
                                 name="organization"
                                 disabled={disabled}
                                 onChange={setFieldValue}
-                                value={value?.organization}
+                                value={value.organization}
                                 error={error?.organization}
                                 label={_ts('myProfile', 'organization')}
                                 placeholder={_ts('myProfile', 'organization')}
@@ -261,7 +291,7 @@ function MyProfile(props: Props & PropsFromDispatch) {
                                 name="language"
                                 disabled={disabled}
                                 onChange={setFieldValue}
-                                value={value?.language}
+                                value={value.language}
                                 error={error?.language}
                                 label={_ts('myProfile', 'platformLanguage')}
                                 placeholder={_ts('myProfile', 'platformLanguage')}
