@@ -58,6 +58,7 @@
         .workspace {
             display: flex;
             flex-grow: 1;
+            flex-shrink: 0;
             background-color: var(--dui-color-background);
             padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-extra-large));
             height: var(--height-analytical-statement);
@@ -86,6 +87,32 @@
                             >* {
                                 flex-grow: 1;
                             }
+                        }
+                    }
+                }
+
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    overflow-y: auto;
+
+                    .tab-panel {
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        overflow-y: auto;
+
+                        .entries-list {
+                            flex-grow: 1;
+                            overflow-y: auto;
+                        }
+
+                        .discarded-entries-container {
+                            flex-grow: 1;
+                        }
+
+                        .pager {
+                            flex-shrink: 0;
                         }
                     }
                 }

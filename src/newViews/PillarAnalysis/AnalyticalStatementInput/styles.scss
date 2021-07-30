@@ -51,6 +51,7 @@
 
                 .drop-container {
                     flex-grow: 1;
+                    flex-shrink: 0;
                     transition: .2s min-height ease-in-out;
                     margin: var(--dui-spacing-medium);
                     background-color: var(--dui-color-white);

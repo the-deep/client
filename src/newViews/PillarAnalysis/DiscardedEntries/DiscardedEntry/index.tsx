@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrash } from 'react-icons/io5';
+import { AiOutlineUndo } from 'react-icons/ai';
 
 import {
     Container,
@@ -72,7 +72,7 @@ function DiscardedEntry(props: Props) {
                     message={_ts('pillarAnalysis', 'confirmUndiscardEntryMessage')}
                     showConfirmationInitially={false}
                 >
-                    <IoTrash />
+                    <AiOutlineUndo />
                 </QuickActionConfirmButton>
             )}
         >
