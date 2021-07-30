@@ -18,6 +18,9 @@ import {
 } from '#typings';
 
 import {
+    currentHash,
+} from '#utils/safeCommon';
+import {
     analyticalFrameworkIdFromRouteSelector,
 } from '#redux';
 import FrameworkDetails from './FrameworkDetails';
@@ -56,13 +59,15 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                     contentClassName={styles.content}
                     actions={(
                         <>
-                            <Button
-                                name={undefined}
-                                variant="tertiary"
-                                disabled
-                            >
-                                {_ts('analyticalFramework', 'saveButtonLabel')}
-                            </Button>
+                            {currentHash() !== 'framework-details' && (
+                                <Button
+                                    name={undefined}
+                                    variant="tertiary"
+                                    disabled
+                                >
+                                    {_ts('analyticalFramework', 'saveButtonLabel')}
+                                </Button>
+                            )}
                             <ButtonLikeLink
                                 variant="tertiary"
                                 to="/"

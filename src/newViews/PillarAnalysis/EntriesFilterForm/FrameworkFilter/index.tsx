@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     _cs,
-    mapToList,
 } from '@togglecorp/fujs';
 import {
     MultiSelectInput,
@@ -17,7 +16,7 @@ import GeoMultiSelectInput from '#newComponents/input/GeoMultiSelectInput';
 import {
     FilterFields,
     FilterOption,
-    GeoOptions,
+    GeoOption,
 } from '#typings';
 import _ts from '#ts';
 
@@ -28,15 +27,13 @@ import styles from './styles.scss';
 const filterKeySelector = (d: FilterOption) => d.key;
 const filterLabelSelector = (d: FilterOption) => d.label;
 
-const emptyGeoOptions: GeoOptions = {};
-
 interface Props {
     title: string;
     filterKey: string;
     filter: FilterFields['properties'];
-    geoOptions?: GeoOptions;
     className?: string;
     value: FaramValues;
+    projectId: number;
     onChange: (...entries: EntriesAsList<FaramValues>) => void;
 }
 
@@ -45,11 +42,16 @@ function FrameworkFilter(props: Props) {
         title,
         filterKey,
         filter,
-        geoOptions = emptyGeoOptions,
         className,
         value,
+        projectId,
         onChange: setFieldValue,
     } = props;
+
+    const [
+        geoOptions,
+        setGeoOptions,
+    ] = useState<GeoOption[] | undefined | null>(undefined);
 
     if (!filter?.type) {
         return <div />;
@@ -57,7 +59,6 @@ function FrameworkFilter(props: Props) {
 
     switch (filter.type) {
         case 'geo': {
-            const options = mapToList(geoOptions, d => d).flat();
             return (
                 <GeoMultiSelectInput
                     name={filterKey}
@@ -65,7 +66,9 @@ function FrameworkFilter(props: Props) {
                     onChange={setFieldValue}
                     className={_cs(styles.frameworkFilter, className)}
                     label={title}
-                    options={options}
+                    projectId={projectId}
+                    options={geoOptions}
+                    onOptionsChange={setGeoOptions}
                     placeholder={_ts('entries', 'multiselectPlaceholder')}
                 />
             );

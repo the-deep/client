@@ -111,6 +111,8 @@ function PillarAnalysisRow(props: Props) {
                 placeholder={_ts('analysis.editModal', 'matrixPillarsPlaceholder')}
                 value={value.filters}
                 disabled={pending}
+                optionsPopupClassName={styles.optionsPopup}
+                optionsPopupContentClassName={styles.optionsPopup}
             />
             <QuickActionButton
                 className={styles.removeButton}

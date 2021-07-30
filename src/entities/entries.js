@@ -31,6 +31,21 @@ export const totMinutes = (time) => {
     return (parseInt(splits[0], 10) * 60) + parseInt(splits[1], 10);
 };
 
+function getGeoTree(geoOptions) {
+    if (!geoOptions) {
+        return undefined;
+    }
+    const flatGeoOptions = Object.entries(geoOptions)
+        .map(([, value]) => value)
+        .flat();
+
+    return generateRelation(
+        flatGeoOptions,
+        item => item.key,
+        item => item.parent,
+    );
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFilters = false) => {
     const { widgets } = framework;
@@ -41,15 +56,7 @@ export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFi
         widget => widget,
     );
 
-    const flatGeoOptions = Object.entries(geoOptions)
-        .map(([, value]) => value)
-        .flat();
-
-    const treeMap = generateRelation(
-        flatGeoOptions,
-        item => item.key,
-        item => item.parent,
-    );
+    const treeMap = getGeoTree(geoOptions);
 
     const result = [];
     Object.keys(filters).forEach((filterKey) => {
@@ -119,7 +126,7 @@ export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFi
                 `${filterKey}__lt`,
                 totMinutes(endTime),
             ]);
-        } else if (widgetId === 'geoWidget') {
+        } else if (widgetId === 'geoWidget' && treeMap) {
             const { areas, includeSubRegions } = filterOptions;
 
             let options = areas;

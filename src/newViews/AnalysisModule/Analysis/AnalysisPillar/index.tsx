@@ -75,8 +75,13 @@ function AnalysisPillar(props: Props) {
         analyzedEntries = 0,
     } = props;
 
-    const completed = false;
-    // setIsCompleted to be used when the status is passed by API
+    const isAnalysisCompleted = analyzedEntries === totalEntries && totalEntries > 0;
+    let statusLabel = _ts('analysis', 'inProgressTagLabel');
+    if (analyzedEntries === totalEntries && analyzedEntries > 0) {
+        statusLabel = _ts('analysis', 'analysisCompletedTagLabel');
+    } else if (totalEntries === 0) {
+        statusLabel = _ts('analysis', 'noAnalysisTagLabel');
+    }
 
     const editLink = reverseRoute(pathNames.pillarAnalysis, {
         projectId,
@@ -111,11 +116,8 @@ function AnalysisPillar(props: Props) {
             heading={title}
             headerClassName={styles.header}
             headingDescription={(
-                <Tag variant={completed ? 'accent' : 'gradient1'}>
-                    {completed
-                        ? _ts('analysis', 'completeLabel')
-                        : _ts('analysis', 'inProgressLabel')
-                    }
+                <Tag variant={isAnalysisCompleted ? 'accent' : 'gradient1'}>
+                    {statusLabel}
                 </Tag>
             )}
             inlineHeadingDescription

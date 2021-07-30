@@ -46,7 +46,6 @@ import _ts from '#ts';
 import SortableList from '#newComponents/ui/SortableList';
 
 import {
-    GeoOptions,
     MultiResponse,
     FrameworkFields,
     AnalysisPillars,
@@ -358,23 +357,8 @@ function PillarAnalysis(props: Props) {
         failureHeader: _ts('pillarAnalysis', 'frameworkTitle'),
     });
 
-    const geoOptionsRequestQueryParams = useMemo(() => ({
-        project: projectId,
-    }), [projectId]);
-
-    const {
-        pending: pendingGeoOptions,
-        response: geoOptions,
-    } = useRequest<GeoOptions>({
-        url: 'server://geo-options/',
-        method: 'GET',
-        query: geoOptionsRequestQueryParams,
-        schemaName: 'geoOptions',
-        failureHeader: _ts('pillarAnalysis', 'geoLabel'),
-    });
-
     const entriesRequestBody = useMemo(() => {
-        if (isNotDefined(framework) || isNotDefined(geoOptions)) {
+        if (isNotDefined(framework)) {
             return {};
         }
 
@@ -385,7 +369,6 @@ function PillarAnalysis(props: Props) {
         const processedFilters = processEntryFilters(
             filtersValue,
             framework,
-            geoOptions,
         );
 
         return ({
@@ -395,7 +378,7 @@ function PillarAnalysis(props: Props) {
             ],
             discarded: false,
         });
-    }, [geoOptions, filtersValue, framework, projectId]);
+    }, [filtersValue, framework, projectId]);
 
     const entriesRequestQuery = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
@@ -658,13 +641,12 @@ function PillarAnalysis(props: Props) {
                 <EntriesFilterForm
                     className={styles.entriesFilter}
                     filtersValue={filtersValue}
-                    geoOptions={geoOptions}
                     regions={activeProject?.regions}
                     onFiltersValueChange={setFiltersValue}
                     filters={framework?.filters}
                     widgets={framework?.widgets}
                     projectId={projectId}
-                    disabled={pendingFramework || pendingGeoOptions}
+                    disabled={pendingFramework}
                 />
                 <div className={styles.workspace}>
                     <Tabs
@@ -734,6 +716,8 @@ function PillarAnalysis(props: Props) {
                                 renderer={AnalyticalStatementInput}
                                 direction="horizontal"
                                 rendererParams={analyticalStatementRendererParams}
+                                emptyMessage={null}
+                                emptyIcon={null}
                             />
                             <QuickActionButton
                                 className={styles.addStatementButton}

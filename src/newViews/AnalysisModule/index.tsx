@@ -186,6 +186,22 @@ function AnalysisModule(props: AnalysisModuleProps) {
     });
 
     const {
+        response: overviewResponse,
+        retrigger: retriggerAnalaysisOverview,
+    } = useRequest<AnalysisOverview>(
+        {
+            url: `server://projects/${activeProject}/analysis-overview/`,
+            method: 'GET',
+            failureHeader: _ts('analysis', 'analysisModule'),
+        },
+    );
+
+    const handleRetriggers = useCallback(() => {
+        triggerGetAnalysis();
+        retriggerAnalaysisOverview();
+    }, [triggerGetAnalysis, retriggerAnalaysisOverview]);
+
+    const {
         pending: pendingAnalysisDelete,
         trigger: deleteAnalysisTrigger,
         context: analysisIdToDelete,
@@ -193,17 +209,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         {
             url: ctx => `server://projects/${activeProject}/analysis/${ctx}/`,
             method: 'DELETE',
-            onSuccess: triggerGetAnalysis,
-        },
-    );
-
-    const {
-        response: overviewResponse,
-    } = useRequest<AnalysisOverview>(
-        {
-            url: `server://projects/${activeProject}/analysis-overview/`,
-            method: 'GET',
-            failureHeader: _ts('analysis', 'analysisModule'),
+            onSuccess: handleRetriggers,
         },
     );
 
@@ -219,8 +225,9 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const handleAnalysisEditSuccess = useCallback(() => {
         triggerGetAnalysis();
+        retriggerAnalaysisOverview();
         setModalHidden();
-    }, [setModalHidden, triggerGetAnalysis]);
+    }, [setModalHidden, triggerGetAnalysis, retriggerAnalaysisOverview]);
 
     const handleAnalysisEditClick = useCallback((analysisId) => {
         setAnalysisToEdit(analysisId);
@@ -248,13 +255,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
         analyzedEntries: data.analyzedEntries,
         totalSources: data.totalSources,
         totalEntries: data.totalEntries,
-        triggerAnalysisList: triggerGetAnalysis,
-        onAnalysisPillarDelete: triggerGetAnalysis,
+        onAnalysisCloseSuccess: handleRetriggers,
+        onAnalysisPillarDelete: handleRetriggers,
         pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
     }), [
+        handleRetriggers,
         handleAnalysisEditClick,
         handleAnalysisToDeleteClick,
-        triggerGetAnalysis,
         pendingAnalysisDelete,
         analysisIdToDelete,
     ]);
@@ -392,6 +399,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 contentClassName={styles.analysesContainer}
                 heading={_ts('analysis', 'allAnalyses')}
                 headingDescription={analysesResponse?.count}
+                headerDescriptionClassName={styles.headingDescription}
                 inlineHeadingDescription
                 headerActions={(
                     <DateRangeInput

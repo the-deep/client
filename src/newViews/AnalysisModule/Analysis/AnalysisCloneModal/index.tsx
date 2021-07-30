@@ -38,7 +38,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         title: [requiredStringCondition],
-        startDate: [requiredStringCondition],
+        startDate: [],
         endDate: [requiredStringCondition],
     }),
     validation: (value) => {
