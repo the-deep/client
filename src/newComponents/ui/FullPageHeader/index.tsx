@@ -30,6 +30,8 @@ function FullPageHeader(props: FullPageHeaderProps) {
         <Header
             className={_cs(styles.fullPageHeader, className)}
             descriptionClassName={_cs(styles.content, contentClassName)}
+            headingClassName={styles.heading}
+            headingSectionClassName={styles.headingSection}
             headingContainerClassName={styles.headingContainer}
             actionsContainerClassName={actionsClassName}
             inlineDescription
