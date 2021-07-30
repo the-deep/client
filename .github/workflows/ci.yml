@@ -11,6 +11,7 @@ jobs:
     name: 🚴 Build + Lint + Test 🚴  # Match the name below (8398a7/action-slack).
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: 🐳 Prepare Docker
         id: prep
         run: |
