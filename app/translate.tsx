@@ -20,7 +20,7 @@ function insertBetweenItems<T, Q>(list: T[] | undefined, obj: Q) {
     return newList;
 }
 
-// eslint-disable-next-line @typescript/eslint-no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasReactElement(list: any[]): boolean {
     return isDefined(list.find((p) => React.isValidElement(p)));
 }
