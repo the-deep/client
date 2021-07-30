@@ -1791,17 +1791,10 @@
     resolve-from "^5.0.0"
     ts-dedent "^2.0.0"
 
-<<<<<<< HEAD
 "@the-deep/deep-ui@^1.4.13":
   version "1.4.13"
   resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.13.tgz#a091dc2ada3a34de1611bdf696e7336b597388fe"
   integrity sha512-SJE+sO9OgPRRlE0DsCcfppB3ziORIRgp1q4Xo9xLxuRxRJ+olPmarRWOeWVNF/RwWxeoqAAaoMZznR1fvMggLw==
-=======
-"@the-deep/deep-ui@^1.4.12":
-  version "1.4.12"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.12.tgz#39bd937885b43142ecfcd2b975d13e6a613296da"
-  integrity sha512-4Ys83ayUmUsuyhhJn0U+DMQZytib2WOBAO8z5lR/iKSyUDwX3MuJYNKbEedMn/UOYQIC96IGSUHQZfHvHMSN9w==
->>>>>>> c2c634479 (Add all entries section in primary tagging source details)
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
