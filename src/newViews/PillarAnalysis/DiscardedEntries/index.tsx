@@ -123,6 +123,7 @@ function DiscardedEntries(props: Props) {
                 maxItemsPerPage={maxItemsPerPage}
                 onActivePageChange={setActivePage}
                 itemsPerPageControlHidden
+                hideInfo
             />
         </div>
     );

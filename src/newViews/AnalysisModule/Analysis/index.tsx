@@ -24,6 +24,7 @@ import {
     XAxis,
     YAxis,
     ResponsiveContainer,
+    Tooltip,
     LabelList,
     Bar,
 } from 'recharts';
@@ -303,8 +304,12 @@ function Analysis(props: ComponentProps) {
                                 tickCount={BAR_TICK_COUNT}
                                 tickLine={false}
                             />
+                            <Tooltip
+                                isAnimationActive={false}
+                            />
                             <Bar
                                 dataKey="percent"
+                                name="Completion Percentage"
                                 fill="var(--dui-color-accent)"
                                 background={{
                                     fill: 'var(--dui-color-background-information)',

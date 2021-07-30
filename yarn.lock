@@ -1791,16 +1791,18 @@
     resolve-from "^5.0.0"
     ts-dedent "^2.0.0"
 
-"@the-deep/deep-ui@^1.4.10":
-  version "1.4.10"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.10.tgz#d40056af4d5805bc1805aeb31bb62595b19b2b39"
-  integrity sha512-JELADJvJFcLmKxa6cyirWNTpy/uI6Z9HhBebWlVHqtvsoiQyg+NHFCCBhe6iGd3aP5mV6NBO6P/LFR5RdSYnYw==
+"@the-deep/deep-ui@^1.4.13":
+  version "1.4.13"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.13.tgz#a091dc2ada3a34de1611bdf696e7336b597388fe"
+  integrity sha512-SJE+sO9OgPRRlE0DsCcfppB3ziORIRgp1q4Xo9xLxuRxRJ+olPmarRWOeWVNF/RwWxeoqAAaoMZznR1fvMggLw==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
     "@togglecorp/fujs" "^1.9.2-beta.0"
+    "@types/react-color" "^3.0.5"
     "@types/requestidlecallback" "^0.3.1"
     d3-shape "^2.1.0"
+    react-color "^2.19.3"
     react-icons "^4.2.0"
     react-zoom-pan-pinch "^1.6.1"
     resize-observer-polyfill "^1.5.1"
@@ -2101,6 +2103,14 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-color@^3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-3.0.5.tgz#b8bdf8df7085bd1577658fb37d9a18d7ba3963bb"
+  integrity sha512-0VZy8Uq5x04cW5QFz24Qw8MMMlsMi8Bb+XG5h59ATqPnWVq6OheHtrwv5LeakdTRDaECQnExJNSFOsSe4Eo/zQ==
+  dependencies:
+    "@types/react" "*"
+    "@types/reactcss" "*"
+
 "@types/react-dom@^17.0.3":
   version "17.0.3"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.3.tgz#7fdf37b8af9d6d40127137865bb3fff8871d7ee1"
@@ -2151,6 +2161,13 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
+
+"@types/reactcss@*":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@types/reactcss/-/reactcss-1.2.4.tgz#66c5f6afe123ffa1a50dbe724aa1fe68eb9fab00"
+  integrity sha512-1rhVqteMSD6KQjO+dPBObE1OkKadw00HVJkG5WCYsyvMwGgdTZ530wF7Bkrg/4TWxB2AtINIzFotjW51eViw+w==
+  dependencies:
+    "@types/react" "*"
 
 "@types/recharts@^1.8.19":
   version "1.8.19"
@@ -9120,6 +9137,11 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
+lodash-es@^4.17.15:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
+
 lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
@@ -11644,6 +11666,19 @@ react-color@^2.17.3:
   dependencies:
     "@icons/material" "^0.2.4"
     lodash "^4.17.11"
+    material-colors "^1.2.1"
+    prop-types "^15.5.10"
+    reactcss "^1.2.0"
+    tinycolor2 "^1.4.1"
+
+react-color@^2.19.3:
+  version "2.19.3"
+  resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.19.3.tgz#ec6c6b4568312a3c6a18420ab0472e146aa5683d"
+  integrity sha512-LEeGE/ZzNLIsFWa1TMe8y5VYqr7bibneWmvJwm1pCn/eNmrabWDh659JSPn9BuaMpEfU83WTOJfnCcjDZwNQTA==
+  dependencies:
+    "@icons/material" "^0.2.4"
+    lodash "^4.17.15"
+    lodash-es "^4.17.15"
     material-colors "^1.2.1"
     prop-types "^15.5.10"
     reactcss "^1.2.0"

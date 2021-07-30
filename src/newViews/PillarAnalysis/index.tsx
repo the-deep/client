@@ -117,7 +117,7 @@ const frameworkQueryFields = {
     fields: ['widgets', 'filters', 'id'],
 };
 
-const maxItemsPerPage = 5;
+const maxItemsPerPage = 25;
 
 const entryKeySelector = (d: EntryFieldsMin) => d.id;
 
@@ -660,6 +660,7 @@ function PillarAnalysis(props: Props) {
                             headerClassName={styles.entryListHeader}
                             headingClassName={styles.tabListHeading}
                             headingSize="small"
+                            contentClassName={styles.content}
                             heading={(
                                 <TabList className={styles.tabList}>
                                     <Tab name="entries">
@@ -675,8 +676,12 @@ function PillarAnalysis(props: Props) {
                                 </TabList>
                             )}
                         >
-                            <TabPanel name="entries">
+                            <TabPanel
+                                name="entries"
+                                className={styles.tabPanel}
+                            >
                                 <ListView
+                                    className={styles.entriesList}
                                     data={entriesResponse?.results}
                                     keySelector={entryKeySelector}
                                     renderer={SourceEntryItem}
@@ -684,6 +689,7 @@ function PillarAnalysis(props: Props) {
                                     pending={pendingEntries}
                                 />
                                 <Pager
+                                    className={styles.pager}
                                     activePage={activePage}
                                     itemsCount={entriesResponse?.count ?? 0}
                                     maxItemsPerPage={maxItemsPerPage}
@@ -692,8 +698,12 @@ function PillarAnalysis(props: Props) {
                                     hideInfo
                                 />
                             </TabPanel>
-                            <TabPanel name="discarded">
+                            <TabPanel
+                                name="discarded"
+                                className={styles.tabPanel}
+                            >
                                 <DiscardedEntries
+                                    className={styles.discardedEntriesContainer}
                                     pillarId={pillarId}
                                     discardedTags={discardedTags}
                                 />
