@@ -1,3 +1,16 @@
 .primary-tagging {
-    display: block;
+    display: flex;
+
+    .source-preview {
+        flex-shrink: 0;
+        width: calc(16rem + 16vw);
+    }
+
+    .tagging-playground {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+    }
 }
+

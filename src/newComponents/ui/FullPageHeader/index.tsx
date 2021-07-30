@@ -1,9 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import {
-    Heading,
-    ElementFragments,
-} from '@the-deep/deep-ui';
+import { Header } from '@the-deep/deep-ui';
 
 import Svg from '#newComponents/Svg';
 import newDeepLogo from '#resources/img/deep-logo-new.svg';
@@ -30,32 +27,26 @@ function FullPageHeader(props: FullPageHeaderProps) {
     } = props;
 
     return (
-        <div className={_cs(styles.fullPageHeader, className)}>
-            <ElementFragments
-                icons={(
-                    <>
-                        <div className={styles.iconWrapper}>
-                            <Svg
-                                className={styles.icon}
-                                src={newDeepLogo}
-                            />
-                        </div>
-                        <Heading
-                            size="medium"
-                            className={styles.projectTitleContainer}
-                        >
-                            {heading}
-                        </Heading>
-                    </>
-                )}
-                iconsContainerClassName={styles.projectDetailsContainer}
-                actions={actions}
-                actionsContainerClassName={_cs(styles.actions, actionsClassName)}
-                childrenContainerClassName={_cs(styles.content, contentClassName)}
-            >
-                {children}
-            </ElementFragments>
-        </div>
+        <Header
+            className={_cs(styles.fullPageHeader, className)}
+            descriptionClassName={_cs(styles.content, contentClassName)}
+            headingClassName={styles.heading}
+            headingSectionClassName={styles.headingSection}
+            headingContainerClassName={styles.headingContainer}
+            actionsContainerClassName={actionsClassName}
+            inlineDescription
+            icons={(
+                <div className={styles.iconWrapper}>
+                    <Svg
+                        className={styles.icon}
+                        src={newDeepLogo}
+                    />
+                </div>
+            )}
+            heading={heading}
+            description={children}
+            actions={actions}
+        />
     );
 }
 

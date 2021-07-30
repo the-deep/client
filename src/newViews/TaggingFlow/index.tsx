@@ -122,6 +122,7 @@ function TaggingFlow(props: PropsFromState) {
                             name="source-details"
                             className={styles.tab}
                             activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             Source Details
                         </Tab>
@@ -130,6 +131,7 @@ function TaggingFlow(props: PropsFromState) {
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
                             activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             Primary Tagging
                         </Tab>
@@ -138,6 +140,7 @@ function TaggingFlow(props: PropsFromState) {
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
                             activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             Secondary Tagging
                         </Tab>
@@ -146,6 +149,7 @@ function TaggingFlow(props: PropsFromState) {
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
                             activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             Review
                         </Tab>
@@ -172,7 +176,7 @@ function TaggingFlow(props: PropsFromState) {
                         className={styles.tabPanel}
                         name="primary-tagging"
                     >
-                        <PrimaryTagging />
+                        <PrimaryTagging className={styles.primaryTagging} />
                     </TabPanel>
                     <TabPanel
                         name="secondary-tagging"
