@@ -16,6 +16,7 @@ import {
 } from '../AnalyticalFramework/types';
 
 interface BaseWidgetValue {
+    id: string;
     type: Types;
 }
 
@@ -102,7 +103,7 @@ export type WidgetValue = TextWidgetValue
     | Matrix1dWidgetValue
     | Matrix2dWidgetValue
 
-export type EntryType = 'excerpt' | 'image'
+export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
 export interface Entity {
     id: number;
@@ -114,17 +115,47 @@ export interface Entity {
     clientId: string;
     versionId: number;
 }
+
+export interface TabularDataFields {
+    cache: {
+        healthStatus: {
+            empty: number;
+            total: number;
+            invalid: number;
+        };
+        imageStatus: string;
+        images: {
+            id: number;
+            format: string;
+            chartType: string;
+        }[];
+        status: string;
+        series: {
+            value: string | number;
+            count: number;
+        };
+    };
+}
+
 export type Entry = Entity & {
     project: number;
     lead: number;
     analyticalFramework: number;
-    entryType: EntryType;
     attributes: WidgetValue[];
-} | {
+    entryType: EntryType;
+} & ({
     entryType: 'excerpt';
     excerpt: string;
-}| {
+} | {
     entryType: 'image';
     image: string;
     imageRaw: string;
-}
+    imageDetails?: {
+        id: number;
+        file: string;
+    };
+} | {
+    entryType: 'dataSeries';
+    tabularField: number;
+    tabularFieldData: TabularDataFields;
+})
