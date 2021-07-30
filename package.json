@@ -3,9 +3,12 @@
     "version": "1.0.0",
     "description": "Base React Application",
     "scripts": {
+        "get-hostname": "ip route | awk '/default/ { print $3 }'",
+        "replace-localhost": "awk \"{sub(/localhost/, \\\"$(yarn -s get-hostname)\\\")}1\"",
+        "generate": "GRAPHQL_CODEGEN_ENDPOINT=$(echo $GRAPHQL_CODEGEN_ENDPOINT | yarn -s replace-localhost) graphql-codegen --config codegen.yml",
+
         "lint": "eslint ./app",
         "typecheck": "tsc",
-        "generate": "graphql-codegen --config codegen.yml",
         "build": "webpack --mode=production --node-env=production",
         "build:dev": "webpack --mode=development",
         "build:prod": "webpack --mode=production --node-env=production",
@@ -67,7 +70,7 @@
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@sentry/react": "^6.9.0",
         "@sentry/tracing": "^6.9.0",
-        "@the-deep/deep-ui": "^1.4.11",
+        "@the-deep/deep-ui": "^1.4.12",
         "@types/apollo-upload-client": "^14.1.0",
         "@types/react": "^17.0.14",
         "@types/react-dom": "^17.0.9",
