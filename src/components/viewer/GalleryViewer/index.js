@@ -399,8 +399,8 @@ export default class GalleryViewer extends React.PureComponent {
                         url={url}
                         mimeType={mimeType}
                         canShowIframe={canShowIframe}
-                        previewError={previewError}
                         isHttps={isHttps}
+                        previewError={previewError}
                         invalidUrlMessage={invalidUrlMessage}
                         cannotPreviewUrlMessage={cannotPreviewUrlMessage}
                         {...otherProps}

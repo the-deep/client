@@ -65,3 +65,7 @@ export function calcPercent(value?: number, total?: number) {
 export function currentHash() {
     return window.location.hash.substr(2);
 }
+
+export function isHttps(text?: string) {
+    return text && text.startsWith('https:');
+}
