@@ -328,6 +328,10 @@ const matrix2d: Matrix2dWidget = {
 };
 
 export const dataAf: AnalysisFramework = {
+    id: 21,
+    createdAt: '2021-07-19T10:45:08.705794Z',
+    createdBy: 24,
+    createdByName: 'Iva Barbara',
     title: 'Sign of the Painted Pearls',
     members: [24, 34],
     organization: 901,
@@ -373,12 +377,12 @@ export const dataAf: AnalysisFramework = {
                     {
                         clientId: '15',
                         order: 1,
-                        label: "Black"
+                        label: 'Black',
                     },
                     {
                         clientId: '19',
                         order: 2,
-                        label: "White"
+                        label: 'White',
                     },
                 ]
             },
@@ -464,7 +468,7 @@ export const dataAf: AnalysisFramework = {
             width: 'half',
             type: 'scale',
             condition: [],
-            data:{
+            data: {
                 options: [
                     {
                         clientId: '331',
