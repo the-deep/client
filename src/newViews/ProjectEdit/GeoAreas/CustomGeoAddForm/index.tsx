@@ -25,6 +25,7 @@ type FormType = {
     title: string;
     project: number;
     code?: string;
+    public?: boolean;
 };
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
@@ -34,6 +35,7 @@ const schema: FormSchema = {
         title: [requiredStringCondition],
         code: [requiredStringCondition],
         project: [requiredCondition],
+        public: [],
     }),
 };
 
@@ -52,6 +54,7 @@ function CustomGeoAddForm(props: Props) {
 
     const defaultFormValue: PartialForm<FormType> = {
         project: projectId,
+        public: false,
     };
 
     const {
