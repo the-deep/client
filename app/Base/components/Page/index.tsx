@@ -3,8 +3,10 @@ import { Redirect } from 'react-router-dom';
 
 import PreloadMessage from '#base/components/PreloadMessage';
 import { UserContext } from '#base/context/UserContext';
+import { NavbarContext } from '#base/context/NavbarContext';
+import { ProjectContext } from '#base/context/ProjectContext';
 import PageTitle from '#base/components/PageTitle';
-import { User } from '#base/types/user';
+import { Project } from '#base/types/project';
 
 import styles from './styles.css';
 
@@ -16,7 +18,7 @@ export interface Props<T extends { className?: string }> {
     component: React.LazyExoticComponent<(props: T) => React.ReactElement<any, any> | null>;
     componentProps: React.PropsWithRef<T>;
     visibility: Visibility,
-    checkPermissions?: (permissions: NonNullable<User['permissions']>) => boolean | undefined,
+    checkPermissions?: (project: Project | undefined) => boolean | undefined,
     navbarVisibility: boolean;
 
     loginPage?: string;
@@ -38,9 +40,13 @@ function Page<T extends { className?: string }>(props: Props<T>) {
 
     const {
         authenticated,
-        setNavbarState,
-        user,
     } = useContext(UserContext);
+    const {
+        setNavbarState,
+    } = useContext(NavbarContext);
+    const {
+        project,
+    } = useContext(ProjectContext);
 
     const redirectToSignIn = visibility === 'is-authenticated' && !authenticated;
     const redirectToHome = visibility === 'is-not-authenticated' && authenticated;
@@ -73,13 +79,13 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         );
     }
 
-    if (checkPermissions && (!user?.permissions || !checkPermissions(user.permissions))) {
+    if (checkPermissions && !checkPermissions(project)) {
         return (
             <>
                 <PageTitle value={`403 - ${title}`} />
                 <PreloadMessage
-                    heading="403"
-                    content="Unauthorized"
+                    heading="Oh no!"
+                    content="The project does not exist or you do not have permissions to view the project."
                 />
             </>
         );

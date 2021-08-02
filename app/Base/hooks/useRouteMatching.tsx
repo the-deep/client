@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import UserContext from '#base/context/UserContext';
+import ProjectContext from '#base/context/ProjectContext';
 import { wrap } from '#base/utils/routes';
 
 export interface Attrs {
@@ -18,9 +19,11 @@ export type RouteData = ReturnType<typeof wrap>;
 
 function useRouteMatching(route: RouteData, attrs?: Attrs) {
     const {
-        user,
         authenticated,
     } = useContext(UserContext);
+    const {
+        project,
+    } = useContext(ProjectContext);
 
     const {
         checkPermissions,
@@ -37,7 +40,7 @@ function useRouteMatching(route: RouteData, attrs?: Attrs) {
         return undefined;
     }
 
-    if (visibility === 'is-authenticated' && authenticated && checkPermissions && (!user?.permissions || !checkPermissions(user.permissions))) {
+    if (visibility === 'is-authenticated' && authenticated && checkPermissions && !checkPermissions(project)) {
         return undefined;
     }
 

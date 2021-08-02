@@ -2,7 +2,7 @@ import {
     isBeta,
     isAlpha,
     isNightly,
-} from './env';
+} from '#base/configs/env';
 
 // eslint-disable-next-line import/prefer-default-export
 export const siteKey = isBeta || isAlpha || isNightly

@@ -13,21 +13,10 @@ function Routes() {
             />
             <Route
                 exact
-                path={routes.tagging.path}
-                render={routes.tagging.load}
-            />
-            <Route
-                exact
-                path={routes.analysis.path}
-                render={routes.analysis.load}
-            />
-            <Route
-                exact
                 path={routes.explore.path}
                 render={routes.explore.load}
             />
             <Route
-                exact
                 path={routes.project.path}
                 render={routes.project.load}
             />
