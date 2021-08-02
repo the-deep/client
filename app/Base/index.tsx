@@ -54,8 +54,6 @@ const apolloClient = new ApolloClient(apolloConfig);
 
 function Base() {
     const [user, setUser] = useState<User | undefined>();
-    const [ready, setReady] = useState(false);
-    const [errored, setErrored] = useState(false);
 
     const [navbarState, setNavbarState] = useState(false);
 
@@ -88,10 +86,6 @@ function Base() {
             authenticated,
             user,
             setUser: setUserWithSentry,
-            ready,
-            setReady,
-            errored,
-            setErrored,
             navbarState,
             setNavbarState,
         }),
@@ -99,11 +93,8 @@ function Base() {
             authenticated,
             user,
             setUserWithSentry,
-            ready,
             navbarState,
             setNavbarState,
-            errored,
-            setErrored,
         ],
     );
 
@@ -168,50 +159,13 @@ function Base() {
         [alerts, addAlert, updateAlertContent, removeAlert],
     );
 
-    let children;
-
-    if (!ready) {
-        children = (
-            <Init className={styles.init} />
-        );
-    } else if (errored) {
-        children = (
-            <PreloadMessage
-                className={styles.init}
-                content="Some error occurred"
-            />
-        );
-    } else {
-        children = (
-            <Router history={browserHistory}>
-                {navbarState && (
-                    <Navbar className={styles.navbar} />
-                )}
-                <Suspense
-                    fallback={(
-                        <PreloadMessage
-                            className={styles.preloadMessage}
-                            content="Loading page..."
-                        />
-                    )}
-                >
-                    {/*
-                      * NOTE: styling for view is located in
-                      * `/configs/routes/styles.css`
-                      */}
-                    <Routes />
-                </Suspense>
-            </Router>
-        );
-    }
-
     return (
         <div className={styles.base}>
             <ErrorBoundary
                 showDialog
                 fallback={(
                     <PreloadMessage
-                        heading="Oops"
+                        heading="Oh no!"
                         content="Some error occurred!"
                     />
                 )}
@@ -221,7 +175,29 @@ function Base() {
                         <AlertContext.Provider value={alertContext}>
                             <AuthPopup />
                             <AlertContainer className={styles.alertContainer} />
-                            {children}
+                            <Router history={browserHistory}>
+                                <Init
+                                    className={styles.init}
+                                >
+                                    {navbarState && (
+                                        <Navbar className={styles.navbar} />
+                                    )}
+                                    <Suspense
+                                        fallback={(
+                                            <PreloadMessage
+                                                className={styles.preloadMessage}
+                                                content="Loading page..."
+                                            />
+                                        )}
+                                    >
+                                        {/*
+                                          * NOTE: styling for view is located in
+                                          * `/configs/routes/styles.css`
+                                          */}
+                                        <Routes />
+                                    </Suspense>
+                                </Init>
+                            </Router>
                         </AlertContext.Provider>
                     </UserContext.Provider>
                 </ApolloProvider>

@@ -15,6 +15,7 @@ function MessagePage(props: ErrorProps) {
         heading,
         content,
     } = props;
+
     return (
         <div className={_cs(className, styles.container)}>
             {heading && (
