@@ -1,9 +1,9 @@
 import React from 'react';
 import { Obj } from '@togglecorp/fujs';
-import { EntryFields } from '#typings';
+import { Entry } from '#newViews/Tagging/types';
 
 export type EntryFieldsMin = Pick<
-    EntryFields,
+    Entry,
     'id' | 'excerpt' | 'droppedExcerpt' | 'imageDetails' | 'entryType' | 'tabularFieldData' | 'createdAt'
 >;
 

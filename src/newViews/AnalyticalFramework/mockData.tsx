@@ -327,7 +327,7 @@ const matrix2d: Matrix2dWidget = {
     },
 };
 
-export const dataAf: AnalysisFramework = {
+const dataAf: AnalysisFramework = {
     id: 21,
     createdAt: '2021-07-19T10:45:08.705794Z',
     createdBy: 24,
@@ -384,7 +384,7 @@ export const dataAf: AnalysisFramework = {
                         order: 2,
                         label: 'White',
                     },
-                ]
+                ],
             },
         },
         {
@@ -508,3 +508,5 @@ export const dataAf: AnalysisFramework = {
 
     ],
 };
+
+export default dataAf;

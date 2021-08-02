@@ -58,6 +58,7 @@ function LeadEdit(props: Props) {
         value,
         setValue,
         setFieldValue,
+        setPristine,
         error: riskyError,
     } = useForm(schema, partialLead);
 
@@ -72,6 +73,8 @@ function LeadEdit(props: Props) {
             projectId={activeProject}
             initialValue={partialLead}
             setFieldValue={setFieldValue}
+            setPristine={setPristine}
+            setValue={setValue}
             error={riskyError}
         />
     );

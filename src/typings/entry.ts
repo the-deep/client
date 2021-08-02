@@ -64,7 +64,7 @@ interface ImageDetails {
     file: string;
 }
 
-interface BaseEntryFields extends DatabaseEntityBase {
+export interface EntryFields extends DatabaseEntityBase {
     attributes: {
         [key: string]: AttributeFields;
     };
@@ -80,36 +80,15 @@ interface BaseEntryFields extends DatabaseEntityBase {
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
-}
-
-export type EntryFields = BaseEntryFields & ({
     entryType: 'excerpt';
     excerpt?: string;
     droppedExcerpt?: string;
-    imageDetails?: never;
-    tabularFieldData?: never;
-    tabularField?: never;
-    image?: never;
-    imageRaw?: never;
-} | {
-    entryType: 'image';
-    excerpt?: string;
-    droppedExcerpt?: never;
     imageDetails?: ImageDetails;
-    image?: string;
-    imageRaw?: string;
-    tabularFieldData?: never;
-    tabularField?: never;
-} | {
-    entryType: 'dataSeries';
     tabularFieldData?: TabularDataFields;
     tabularField?: number;
-    excerpt?: never;
-    droppedExcerpt?: never;
-    imageDetails?: never;
-    image?: never;
-    imageRaw?: never;
-});
+    image?: number;
+    imageRaw?: string;
+}
 
 export interface LeadWithGroupedEntriesFields {
     assigneeDetails: UserFields;
