@@ -219,6 +219,6 @@ export interface AnalysisFramework extends BasicEntity {
         shortName: string;
     };
 
-    primaryTagging: Widget[];
-    secondaryTagging: Section[];
+    primaryTagging: Section[];
+    secondaryTagging: Widget[];
 }
