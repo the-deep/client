@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
 
@@ -12,24 +12,29 @@ import {
 
 const ME = gql`
     query Me {
-      me {
-          id
-          displayName
-          displayPictureUrl
-          lastActiveProject
-      }
+        me {
+            id
+            displayName
+            displayPictureUrl
+            lastActiveProject
+        }
     }
 `;
 
 interface Props {
     className?: string;
+    children: React.ReactNode;
 }
 function Init(props: Props) {
-    const { className } = props;
+    const {
+        className,
+        children,
+    } = props;
+
+    const [ready, setReady] = useState(false);
+    const [errored, setErrored] = useState(false);
 
     const {
-        setReady,
-        setErrored,
         setUser,
     } = useContext(UserContext);
 
@@ -64,11 +69,25 @@ function Init(props: Props) {
         },
     });
 
-    return (
-        <PreloadMessage
-            className={className}
-            content="Checking user session..."
-        />
-    );
+    if (errored) {
+        return (
+            <PreloadMessage
+                className={className}
+                heading="Oh no!"
+                content="Some error occurred"
+            />
+        );
+    }
+    if (!ready) {
+        return (
+            <PreloadMessage
+                className={className}
+                content="Checking user session..."
+            />
+        );
+    }
+
+    // NOTE: wrapping in fragment to avoid typing error
+    return <>{children}</>;
 }
 export default Init;
