@@ -34,48 +34,41 @@ function Preview(props: Props) {
         canShowIframe,
     } = props;
 
+    if (!isValidUrl(url)) {
+        return (
+            <div className={_cs(styles.viewer, className)}>
+                The url is invalid.
+            </div>
+        );
+    }
+
     const isRunningInHTTP = window.location.protocol === 'http:';
-    const isCurrentUrlHTTPs = isHttps(url);
+    const isCurrentUrlHTTPS = isHttps(url);
 
-    // NOTE: We are checking if current URL is https or the system is running in
-    // http mode because http url shouldn't be embedded under http env
-    if (isImageMimeType(mimeType) && (isCurrentUrlHTTPs || isRunningInHTTP)) {
-        return (
-            <ImagePreview
-                alt=""
-                src={url}
-                className={className}
-            />
-        );
-    } else if (isDocMimeType(mimeType)) {
-        // FIXME: We need to confirm this logic
-        const useGoogle = mimeType !== 'application/pdf'
-            || !(isCurrentUrlHTTPs || isRunningInHTTP)
-            || !canShowIframe;
+    const cannotPreviewHttps = !isCurrentUrlHTTPS && !isRunningInHTTP;
 
-        const src = useGoogle
-            ? createUrlForGoogleViewer(url)
-            : url;
-        const sandbox = useGoogle
-            ? 'allow-scripts allow-same-origin allow-popups'
-            : undefined;
+    // NOTE: When hosted in http, we cannot use iframe or image to preview
+    const httpsError = (
+        <div className={_cs(styles.viewer, className)}>
+            Cannot preview https content.
+        </div>
+    );
 
-        return (
-            <iframe
-                title={url}
-                src={src}
-                className={_cs(className, styles.viewer)}
-                sandbox={sandbox}
-            />
-        );
-    } else if (
-        (isHTMLMimeType(mimeType) || url.endsWith('txt'))
-        && canShowIframe
-        && (isCurrentUrlHTTPs || isRunningInHTTP)
-    ) {
-        // NOTE: Error can occur if
-        // 1. We cannot show iframe
-        // 2. If there is no alternative https url and current url is http
+    // NOTE: Generally check for X-Frame-Options or CSP to identify if content
+    // can be embedded
+    const iframeError = (
+        <div className={_cs(styles.viewer, className)}>
+            Cannot preview in iframe.
+        </div>
+    );
+
+    if (url.endsWith('txt')) {
+        if (cannotPreviewHttps) {
+            return httpsError;
+        }
+        if (!canShowIframe) {
+            return iframeError;
+        }
         return (
             <iframe
                 sandbox="allow-scripts allow-same-origin"
@@ -85,13 +78,58 @@ function Preview(props: Props) {
             />
         );
     }
+    if (isImageMimeType(mimeType)) {
+        if (cannotPreviewHttps) {
+            return httpsError;
+        }
+        return (
+            <ImagePreview
+                alt=""
+                src={url}
+                className={className}
+            />
+        );
+    }
+    if (isDocMimeType(mimeType)) {
+        // NOTE: try to show pdf in iframe
+        if (mimeType === 'application/pdf' && !cannotPreviewHttps && canShowIframe) {
+            return (
+                <iframe
+                    title={url}
+                    src={url}
+                    className={_cs(className, styles.viewer)}
+                />
+            );
+        }
 
+        return (
+            <iframe
+                title={url}
+                src={createUrlForGoogleViewer(url)}
+                className={_cs(className, styles.viewer)}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+            />
+        );
+    }
+    if (isHTMLMimeType(mimeType)) {
+        if (cannotPreviewHttps) {
+            return httpsError;
+        }
+        if (!canShowIframe) {
+            return iframeError;
+        }
+        return (
+            <iframe
+                sandbox="allow-scripts allow-same-origin"
+                title={url}
+                className={_cs(className, styles.viewer)}
+                src={url}
+            />
+        );
+    }
     return (
         <div className={_cs(styles.viewer, className)}>
-            {isValidUrl(url)
-                ? 'Failed to preview current URL.'
-                : 'The entered url is not valud.'
-            }
+            Cannot preview for this filetype.
         </div>
     );
 }
