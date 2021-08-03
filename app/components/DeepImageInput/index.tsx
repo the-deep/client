@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#base/utils/restRequest';
 import { FileInput, FileInputProps, ImagePreview } from '@the-deep/deep-ui';
 import _ts from '#ts';
 

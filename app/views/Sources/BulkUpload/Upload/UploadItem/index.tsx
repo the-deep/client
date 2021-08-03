@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#base/utils/restRequest';
 import {
     QuickActionButton,
     ElementFragments,
