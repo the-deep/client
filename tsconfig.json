@@ -19,6 +19,10 @@
             "#components/*": ["./app/components/*"],
             "#views/*": ["./app/views/*"],
             "#base/*": ["./app/Base/*"],
+            "#ts": ["./app/translate"],
+            "#utils/*": ["./app/utils/*"],
+            "#hooks/*": ["./app/hooks/*"],
+            "#types": ["./app/types"],
         },
 
         "noFallthroughCasesInSwitch": true,
