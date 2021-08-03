@@ -81,8 +81,7 @@ function alterResponse(errors: ErrorFromServer['errors']): Error['value']['faram
 
 export interface OptionBase {
     formData?: boolean;
-    // schemaName?: string;
-    // failureHeader?: string;
+    failureHeader?: React.ReactNode;
 }
 
 type DeepContextInterface = ContextInterface<
@@ -181,11 +180,9 @@ export const processDeepResponse: DeepContextInterface['transformResponse'] = as
 
 export const processDeepError: DeepContextInterface['transformError'] = (
     res,
-    /*
     url,
     options,
     ctx,
-    */
 ) => {
     let error: Error;
     if (res === 'network') {
@@ -234,17 +231,14 @@ export const processDeepError: DeepContextInterface['transformError'] = (
         };
     }
 
-    /*
     const { failureHeader } = ctx;
+
     if (failureHeader) {
-        notify.send({
-            title: failureHeader,
-            type: notify.type.ERROR,
-            message: error.value.messageForNotification,
-            duration: notify.duration.SLOW,
-        });
+        console.error(
+            failureHeader,
+            error.value.messageForNotification,
+        );
     }
-    */
 
     return error;
 };
