@@ -16,6 +16,7 @@ interface Props {
     title?: string;
     progress: number;
     variant?: 'complement1' | 'complement2' | 'complement3';
+    // FIXME: add eslint rule that styles.small and styles.large are used
     size?: 'small' | 'large';
 }
 

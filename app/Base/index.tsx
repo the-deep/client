@@ -21,6 +21,13 @@ import Routes from '#base/components/Routes';
 import { User } from '#base/types/user';
 import apolloConfig from '#base/configs/apollo';
 import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
+import {
+    processDeepUrls,
+    processDeepOptions,
+    processDeepResponse,
+    processDeepError,
+    RequestContext,
+} from '#base/utils/restRequest';
 
 import styles from './styles.css';
 
@@ -36,6 +43,13 @@ browserHistory.listen((location) => {
 });
 
 const apolloClient = new ApolloClient(apolloConfig);
+
+const requestContextValue = {
+    transformUrl: processDeepUrls,
+    transformOptions: processDeepOptions,
+    transformResponse: processDeepResponse,
+    transformError: processDeepError,
+};
 
 function Base() {
     const [user, setUser] = useState<User | undefined>();
@@ -163,39 +177,41 @@ function Base() {
                     />
                 )}
             >
-                <ApolloProvider client={apolloClient}>
-                    <UserContext.Provider value={userContext}>
-                        <NavbarContext.Provider value={navbarContext}>
-                            <AlertContext.Provider value={alertContext}>
-                                <AuthPopup />
-                                <AlertContainer className={styles.alertContainer} />
-                                <Router history={browserHistory}>
-                                    <Init
-                                        className={styles.init}
-                                    >
-                                        {navbarState && (
-                                            <Navbar className={styles.navbar} />
-                                        )}
-                                        <Suspense
-                                            fallback={(
-                                                <PreloadMessage
-                                                    className={styles.preloadMessage}
-                                                    content="Loading page..."
-                                                />
-                                            )}
+                <RequestContext.Provider value={requestContextValue}>
+                    <ApolloProvider client={apolloClient}>
+                        <UserContext.Provider value={userContext}>
+                            <NavbarContext.Provider value={navbarContext}>
+                                <AlertContext.Provider value={alertContext}>
+                                    <AuthPopup />
+                                    <AlertContainer className={styles.alertContainer} />
+                                    <Router history={browserHistory}>
+                                        <Init
+                                            className={styles.init}
                                         >
-                                            {/*
-                                              * NOTE: styling for view is located in
-                                              * `/configs/routes/styles.css`
-                                              */}
-                                            <Routes />
-                                        </Suspense>
-                                    </Init>
-                                </Router>
-                            </AlertContext.Provider>
-                        </NavbarContext.Provider>
-                    </UserContext.Provider>
-                </ApolloProvider>
+                                            {navbarState && (
+                                                <Navbar className={styles.navbar} />
+                                            )}
+                                            <Suspense
+                                                fallback={(
+                                                    <PreloadMessage
+                                                        className={styles.preloadMessage}
+                                                        content="Loading page..."
+                                                    />
+                                                )}
+                                            >
+                                                {/*
+                                                  * NOTE: styling for view is located in
+                                                  * `/configs/routes/styles.css`
+                                                  */}
+                                                <Routes />
+                                            </Suspense>
+                                        </Init>
+                                    </Router>
+                                </AlertContext.Provider>
+                            </NavbarContext.Provider>
+                        </UserContext.Provider>
+                    </ApolloProvider>
+                </RequestContext.Provider>
             </ErrorBoundary>
         </div>
     );

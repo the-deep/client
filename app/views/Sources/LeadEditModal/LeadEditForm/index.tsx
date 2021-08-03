@@ -30,7 +30,7 @@ import {
     IoEye,
 } from 'react-icons/io5';
 
-import { useRequest, useLazyRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import OrganizationSelectInput from '#components/OrganizationSelectInput';
 import OrganizationMultiSelectInput from '#components/OrganizationMultiSelectInput';
 import LeadGroupSelectInput, { BasicLeadGroup } from '#components/LeadGroupSelectInput';

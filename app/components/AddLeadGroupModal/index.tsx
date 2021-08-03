@@ -15,7 +15,7 @@ import {
     PendingMessage,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#base/utils/restRequest';
 import { LeadGroup } from '#types';
 import _ts from '#ts';
 

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { PendingMessage } from '@the-deep/deep-ui';
 
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import {
     MimeTypes,
 } from '../Preview/mimeTypes';

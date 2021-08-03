@@ -14,7 +14,7 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#base/utils/restRequest';
 import { Lead } from '#types';
 import _ts from '#ts';
 

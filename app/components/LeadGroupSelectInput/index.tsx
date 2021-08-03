@@ -4,7 +4,7 @@ import {
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
 
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import { MultiResponse } from '#types';
 

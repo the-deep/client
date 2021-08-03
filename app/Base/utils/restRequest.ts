@@ -95,6 +95,7 @@ type DeepContextInterface = ContextInterface<
 const serverPrefix = 'server://';
 const serverlessPrefix = 'serverless://';
 export const processDeepUrls: DeepContextInterface['transformUrl'] = (url) => {
+    console.log(url);
     if (url.startsWith(serverPrefix)) {
         // NOTE: -1 to leave out the starting slash
         const cleanedUrl = url.slice(serverPrefix.length - 1);
@@ -130,8 +131,8 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                include: 'credentials',
                 ...headers,
+                credentials: 'include',
             },
             body: requestBody,
             ...otherOptions,
@@ -143,9 +144,9 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         method: 'GET',
         headers: {
             Accept: 'application/json',
-            include: 'credentials',
             'Content-Type': 'application/json; charset=utf-8',
             ...headers,
+            credentials: 'include',
         },
         body: requestBody,
         ...otherOptions,
@@ -180,8 +181,8 @@ export const processDeepResponse: DeepContextInterface['transformResponse'] = as
 
 export const processDeepError: DeepContextInterface['transformError'] = (
     res,
-    url,
-    options,
+    _,
+    __,
     ctx,
 ) => {
     let error: Error;
