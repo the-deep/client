@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Switch, Route, useParams } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
 
 import PreloadMessage from '#base/components/PreloadMessage';
-import { ProjectContext, ProjectContextInterface } from '#base/context/ProjectContext';
+import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
 
 import {
     CurrentProjectQuery,
     CurrentProjectQueryVariables,
+    SetLastActiveProjectMutation,
+    SetLastActiveProjectMutationVariables,
 } from '#generated/types';
 
 const CURRENT_PROJECT = gql`
@@ -23,17 +25,24 @@ const CURRENT_PROJECT = gql`
     }
 `;
 
+const SET_LAST_ACTIVE_PROJECT = gql`
+    mutation SetLastActiveProject($id: ID!){
+        updateMe(data: {lastActiveProject: $id}) {
+            ok
+            errors
+        }
+    }
+`;
+
 interface Props {
     className?: string;
 }
 
-// TODO:
-// 1. Set currently active project
-// 2. Get currently active project or top user project at root
-// 3. Move project context to Init
 function Project(props: Props) {
     const { className } = props;
     const { projectId } = useParams<{ projectId: string }>();
+
+    const { setProject } = useContext(ProjectContext);
 
     const variables = useMemo(
         (): CurrentProjectQueryVariables => ({
@@ -42,19 +51,25 @@ function Project(props: Props) {
         [projectId],
     );
 
-    const { data, loading, error } = useQuery<CurrentProjectQuery, CurrentProjectQueryVariables>(
-        CURRENT_PROJECT,
-        { variables },
+    // eslint-disable-next-line max-len
+    const [setLastActiveProject] = useMutation<SetLastActiveProjectMutation, SetLastActiveProjectMutationVariables>(
+        SET_LAST_ACTIVE_PROJECT,
     );
 
-    const project = data?.project;
+    const { loading, error } = useQuery<CurrentProjectQuery, CurrentProjectQueryVariables>(
+        CURRENT_PROJECT,
+        {
+            variables,
+            onCompleted: (data) => {
+                if (data.project) {
+                    setProject(data.project);
 
-    const projectContext: ProjectContextInterface = useMemo(
-        () => ({
-            project: project ?? undefined,
-            // create a map of user permissions
-        }),
-        [project],
+                    setLastActiveProject({
+                        variables: { id: data.project.id },
+                    });
+                }
+            },
+        },
     );
 
     if (error) {
@@ -81,25 +96,23 @@ function Project(props: Props) {
      * `/configs/routes/styles.css`
      */
     return (
-        <ProjectContext.Provider value={projectContext}>
-            <Switch>
-                <Route
-                    exact
-                    path={routes.tagging.path}
-                    render={routes.tagging.load}
-                />
-                <Route
-                    exact
-                    path={routes.analysis.path}
-                    render={routes.analysis.load}
-                />
-                <Route
-                    exact
-                    path={routes.fourHundredFour.path}
-                    render={routes.fourHundredFour.load}
-                />
-            </Switch>
-        </ProjectContext.Provider>
+        <Switch>
+            <Route
+                exact
+                path={routes.tagging.path}
+                render={routes.tagging.load}
+            />
+            <Route
+                exact
+                path={routes.analysis.path}
+                render={routes.analysis.load}
+            />
+            <Route
+                exact
+                path={routes.fourHundredFour.path}
+                render={routes.fourHundredFour.load}
+            />
+        </Switch>
     );
 }
 

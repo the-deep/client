@@ -45,7 +45,9 @@ function useRouteMatching(route: RouteData, attrs?: Attrs) {
     }
 
     return {
-        to: reverseRoute(path, attrs),
+        // NOTE: we just pass projectId here so that the permission check and
+        // projectId param is in sync
+        to: reverseRoute(path, { ...attrs, projectId: project?.id }),
         children: title,
     };
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { removeNull } from '@togglecorp/toggle-form';
 
@@ -6,6 +6,13 @@ import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import { checkErrorCode } from '#base/utils/apollo';
 
+import {
+    ProjectContext,
+    ProjectContextInterface,
+} from '#base/context/ProjectContext';
+import {
+    Project,
+} from '#base/types/project';
 import {
     MeQuery,
 } from '#generated/types';
@@ -16,7 +23,13 @@ const ME = gql`
             id
             displayName
             displayPictureUrl
-            lastActiveProject
+            lastActiveProject {
+                allowedPermissions
+                currentUserRole
+                id
+                isPrivate
+                title
+            }
         }
     }
 `;
@@ -33,6 +46,7 @@ function Init(props: Props) {
 
     const [ready, setReady] = useState(false);
     const [errored, setErrored] = useState(false);
+    const [project, setProject] = useState<Project | undefined>(undefined);
 
     const {
         setUser,
@@ -44,8 +58,10 @@ function Init(props: Props) {
             const safeMe = removeNull(data.me);
             if (safeMe) {
                 setUser({ ...safeMe, permissions: [] });
+                setProject(safeMe.lastActiveProject ?? undefined);
             } else {
                 setUser(undefined);
+                setProject(undefined);
             }
             setReady(true);
         },
@@ -69,6 +85,14 @@ function Init(props: Props) {
         },
     });
 
+    const projectContext: ProjectContextInterface = useMemo(
+        () => ({
+            project,
+            setProject,
+        }),
+        [project],
+    );
+
     if (errored) {
         return (
             <PreloadMessage
@@ -88,6 +112,10 @@ function Init(props: Props) {
     }
 
     // NOTE: wrapping in fragment to avoid typing error
-    return <>{children}</>;
+    return (
+        <ProjectContext.Provider value={projectContext}>
+            {children}
+        </ProjectContext.Provider>
+    );
 }
 export default Init;
