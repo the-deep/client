@@ -32,7 +32,7 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import SortableList, { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { reorder } from '#utils/safeCommon';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
@@ -121,8 +121,6 @@ interface OptionInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 
@@ -136,8 +134,6 @@ function OptionInput(props: OptionInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -149,62 +145,57 @@ function OptionInput(props: OptionInputProps) {
     const heading = value.label ?? `Option ${index + 1}`;
 
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
+        <ExpandableContainer
+            autoFocus={autoFocus}
+            className={className}
+            // NOTE: newly created elements should be open, else closed
+            defaultVisibility={!value.label}
+            // FIXME: use strings
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Option"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
+            )}
         >
-            <ExpandableContainer
+            <NonFieldError error={error} />
+            <TextInput
                 autoFocus={autoFocus}
-                className={className}
-                // NOTE: newly created elements should be open, else closed
-                defaultVisibility={!value.label}
-                // FIXME: use strings
-                heading={`${heading} ${errored ? '*' : ''}`}
-                headerActions={(
-                    <>
-                        <QuickActionButton
-                            name={index}
-                            onClick={onRemove}
-                            // FIXME: use translation
-                            title="Remove Option"
-                        >
-                            <IoTrash />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={index}
-                            // FIXME: use translation
-                            title="Drag"
-                            {...attributes}
-                            {...listeners}
-                        >
-                            <GrDrag />
-                        </QuickActionButton>
-                    </>
-                )}
-            >
-                <NonFieldError error={error} />
-                <TextInput
-                    autoFocus={autoFocus}
-                    // FIXME: use translation
-                    label="Label"
-                    name="label"
-                    value={value.label}
-                    onChange={onFieldChange}
-                    error={error?.label}
-                    className={styles.optionInput}
-                />
-                <TextArea
-                    // FIXME: use translation
-                    label="Tooltip"
-                    name="tooltip"
-                    rows={2}
-                    value={value.tooltip}
-                    onChange={onFieldChange}
-                    error={error?.tooltip}
-                    className={styles.optionInput}
-                />
-            </ExpandableContainer>
-        </div>
+                // FIXME: use translation
+                label="Label"
+                name="label"
+                value={value.label}
+                onChange={onFieldChange}
+                error={error?.label}
+                className={styles.optionInput}
+            />
+            <TextArea
+                // FIXME: use translation
+                label="Tooltip"
+                name="tooltip"
+                rows={2}
+                value={value.tooltip}
+                onChange={onFieldChange}
+                error={error?.tooltip}
+                className={styles.optionInput}
+            />
+        </ExpandableContainer>
     );
 }
 

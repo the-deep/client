@@ -65,8 +65,8 @@ function SortableNode(props: SortableNodeProps) {
     } = props;
 
     const selectedNodesLength = nodes?.filter(n => n.selected)?.length ?? 0;
-    const totalNodes = nodes?.length ?? 0;
-    const indeterminate = selectedNodesLength !== 0 && selectedNodesLength !== totalNodes;
+    const totalNodesLength = nodes?.length ?? 0;
+    const indeterminate = selectedNodesLength !== 0 && selectedNodesLength !== totalNodesLength;
 
     return (
         <ExpandableContainer
@@ -95,6 +95,7 @@ function SortableNode(props: SortableNodeProps) {
             )}
             heading={title}
             headingSize="extraSmall"
+            contentClassName={styles.sortableContent}
             sub
             expansionTriggerArea="arrow"
             disabled={!nodes || nodes.length === 0}
@@ -130,42 +131,42 @@ function TreeSelection<N extends string>(props: Props<N>) {
     } = props;
 
     // Handle toggling the state of checkbox including its children
-    const handleCheckBox = useCallback((newValue: boolean, key: string) => {
+    const handleCheckboxChange = useCallback((newValue: boolean, key: string) => {
+        if (!onChange) {
+            return;
+        }
         const tempValue = [...value];
 
         const index = tempValue.findIndex(v => v.key === key);
         tempValue[index] = setChildrenSelectionStatus(tempValue[index], newValue);
 
-        if (onChange) {
-            onChange(tempValue, name);
-        }
+        onChange(tempValue, name);
     }, [onChange, value, name]);
 
     const handleChildrenChange = useCallback((nodes: Node[], key: string) => {
+        if (!onChange) {
+            return;
+        }
+
         const tempValue = [...value];
         const index = tempValue.findIndex(v => v.key === key);
         const selected = nodes.some(n => n.selected);
 
-        // Create new nodeValue and replace
-        const nodeValue = {
+        tempValue[index] = {
             ...tempValue[index],
             selected,
             nodes,
         };
 
-        tempValue[index] = nodeValue;
-
-        if (onChange) {
-            onChange(tempValue, name);
-        }
+        onChange(tempValue, name);
     }, [onChange, value, name]);
 
     const sortableNodeParams = useCallback((key: string, data, index) => ({
         index,
-        onCheckboxClick: handleCheckBox,
+        onCheckboxClick: handleCheckboxChange,
         onChildrenChange: handleChildrenChange,
         node: data,
-    }), [handleCheckBox, handleChildrenChange]);
+    }), [handleCheckboxChange, handleChildrenChange]);
 
     return (
         <SortableList

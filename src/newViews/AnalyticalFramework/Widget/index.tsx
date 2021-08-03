@@ -2,17 +2,12 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Header } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#newComponents/ui/SortableList';
-
 import styles from './styles.scss';
 
 export interface Props {
     title: string | undefined;
     className?: string;
     headerClassName?: string;
-
-    nodeRef?: NodeRef;
-    rootStyle?: React.CSSProperties;
 
     actions?: React.ReactNode,
     actionsContainerClassName?: string;
@@ -34,16 +29,12 @@ function WidgetWrapper(props: Props) {
         headerClassName,
         actionsContainerClassName,
         childrenContainerClassName,
-        nodeRef,
-        rootStyle,
     } = props;
 
     return (
         <div
             // FIXME: Component name and style name should match
             className={_cs(className, styles.widget)}
-            style={rootStyle}
-            ref={nodeRef}
         >
             <Header
                 // FIXME: use strings

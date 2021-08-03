@@ -10,7 +10,6 @@ import {
 } from 'react-icons/io5';
 
 import SortableList, {
-    NodeRef,
     Attributes,
     Listeners,
 } from '#newComponents/ui/SortableList';
@@ -29,15 +28,12 @@ interface WidgetProps {
     showWidgetEdit: boolean | undefined;
     showWidgetDelete: boolean | undefined;
     editMode: boolean | undefined;
-    setNodeRef?: NodeRef;
     attributes?: Attributes;
     listeners?: Listeners;
-    style?: React.CSSProperties;
 }
 
 function WidgetWrapper(props: WidgetProps) {
     const {
-        isSecondary,
         widget,
         clientId,
         onWidgetValueChange,
@@ -46,25 +42,17 @@ function WidgetWrapper(props: WidgetProps) {
         showWidgetDelete,
         editMode,
         onWidgetDeleteClick,
-        setNodeRef,
         attributes,
         listeners,
-        style,
     } = props;
 
     return (
         <WidgetPreview
-            className={_cs(
-                styles.widget,
-                isSecondary && widget?.width === 'half' && styles.halfWidget,
-            )}
             key={clientId}
             name={clientId}
             value={undefined}
             onChange={onWidgetValueChange}
             widget={widget}
-            nodeRef={setNodeRef}
-            rootStyle={style}
             readOnly
             actions={(
                 <>
@@ -179,6 +167,10 @@ function Canvas<T>(props: Props<T>) {
         isSecondary,
         widget: data,
         onWidgetValueChange: handleWidgetValueChange,
+        containerClassName: _cs(
+            styles.widgetContainer,
+            (isSecondary && data?.width === 'half') && styles.halfWidget,
+        ),
         showWidgetEdit: !props.editMode,
         onWidgetEditClick: handleWidgetEditClick,
         showWidgetDelete: !props.editMode,
@@ -192,6 +184,15 @@ function Canvas<T>(props: Props<T>) {
         props.editMode,
     ]);
 
+    const itemContainerParams = useCallback((key: string, data: Widget | PartialWidget) => ({
+        className: _cs(
+            styles.widgetContainer,
+            (isSecondary && data?.width === 'half') && styles.halfWidget,
+        ),
+    }), [
+        isSecondary,
+    ]);
+
     if (props.editMode) {
         return (
             <SortableList
@@ -202,6 +203,7 @@ function Canvas<T>(props: Props<T>) {
                 renderer={WidgetWrapper}
                 direction="rect"
                 rendererParams={widgetRendererParams}
+                itemContainerParams={itemContainerParams}
                 showDragOverlay
             />
         );
@@ -216,6 +218,7 @@ function Canvas<T>(props: Props<T>) {
             renderer={WidgetWrapper}
             direction="rect"
             rendererParams={widgetRendererParams}
+            itemContainerParams={itemContainerParams}
             showDragOverlay
         />
     );

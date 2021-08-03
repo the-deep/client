@@ -51,24 +51,34 @@ export interface Attributes {
     'aria-describedby': string;
 }
 
-interface SortableItemProps<D, P, K extends OptionKey> {
+interface SortableItemProps<
+    D,
+    P,
+    K extends OptionKey,
+    ItemContainerParams,
+> {
     keySelector: (data: D) => K;
     datum: D;
     renderer: (props: P & {
         listeners?: Listeners;
         attributes?: Attributes;
-        setNodeRef?: NodeRef;
-        style?: React.CSSProperties;
     }) => JSX.Element;
     rendererParams: P;
+    itemContainerParams?: ItemContainerParams;
 }
 
-function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, K>) {
+function SortableItem<
+    D,
+    P,
+    K extends OptionKey,
+    ItemContainerParams,
+>(props: SortableItemProps<D, P, K, ItemContainerParams>) {
     const {
         keySelector,
         renderer: Renderer,
         datum,
         rendererParams,
+        itemContainerParams,
     } = props;
 
     const {
@@ -93,6 +103,7 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
         <div
             ref={setNodeRef}
             style={style}
+            {...itemContainerParams ?? {}}
         >
             <Renderer
                 attributes={attributes}
@@ -111,7 +122,8 @@ export type Props<
     P,
     K extends OptionKey,
     GP extends GroupCommonProps,
-    GK extends OptionKey
+    GK extends OptionKey,
+    ItemContainerParams,
 > = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer'> & {
     name: N;
     keySelector: (val: D) => K;
@@ -124,6 +136,7 @@ export type Props<
     onChange?: (newList: D[], name: N) => void;
     direction: 'vertical' | 'horizontal' | 'rect';
     showDragOverlay?: boolean;
+    itemContainerParams?: (key: K, datum: D, index: number, data: D[]) => ItemContainerParams;
 }
 
 function SortableList<
@@ -132,9 +145,10 @@ function SortableList<
     P,
     K extends OptionKey,
     GP extends GroupCommonProps,
-    GK extends OptionKey
+    GK extends OptionKey,
+    ItemContainerParams,
 >(
-    props: Props<N, D, P, K, GP, GK>,
+    props: Props<N, D, P, K, GP, GK, ItemContainerParams>,
 ) {
     const {
         className,
@@ -146,6 +160,7 @@ function SortableList<
         renderer: Renderer,
         direction,
         showDragOverlay,
+        itemContainerParams,
         ...otherProps
     } = props;
     const [activeId, setActiveId] = useState<string | undefined>();
@@ -229,13 +244,21 @@ function SortableList<
             dataFromArgs,
         );
 
+        const containerParams = itemContainerParams && itemContainerParams(
+            keySelector(datum),
+            datum,
+            index,
+            dataFromArgs,
+        );
+
         return ({
             rendererParams: params,
+            itemContainerParams: containerParams,
             datum,
             keySelector,
             renderer: Renderer,
         });
-    }, [keySelector, rendererParams, Renderer]);
+    }, [keySelector, rendererParams, Renderer, itemContainerParams]);
 
     const sortingStrategy = useMemo(() => {
         if (direction === 'rect') {
