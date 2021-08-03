@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, useParams } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
 
 import SmartNavLink from '#base/components/SmartNavLink';
@@ -13,12 +13,7 @@ interface Props {
 
 function Tagging(props: Props) {
     const { className } = props;
-    const { projectId } = useParams<{ projectId: string }>();
 
-    /*
-     * NOTE: styling for view is located in
-     * `/configs/routes/styles.css`
-     */
     return (
         <div className={_cs(styles.tagging, className)}>
             <nav className={styles.subNavbar}>
