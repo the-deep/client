@@ -29,7 +29,7 @@ import {
 
 import {
     useRequest,
-} from '#utils/request';
+} from '#base/utils/restRequest';
 import _ts from '#ts';
 import { KeyValueElement, LeadOptions, EmmEntity } from '#types';
 import NonFieldError from '#components/NonFieldError';

@@ -8,7 +8,7 @@ import {
 
 import { LeadSummary, ProjectStat } from '#types';
 import _ts from '#ts';
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import ProgressLine from '#components/ProgressLine';
 
 import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
