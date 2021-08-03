@@ -10,13 +10,11 @@
         display: flex;
         position: absolute;
         align-items: center;
-        transform: translateY(-100%);
+        margin: var(--dui-spacing-extra-small);
         background-color: var(--dui-color-foreground);
-        user-select: none;
 
         >* {
             flex-shrink: 0;
-            user-select: none;
         }
 
         .add-button {
@@ -28,5 +26,6 @@
             }
         }
     }
+
 }
 

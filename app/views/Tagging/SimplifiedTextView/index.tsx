@@ -1,9 +1,9 @@
 import React from 'react';
 import { IoAddCircle } from 'react-icons/io5';
-import { useTextSelection } from 'use-text-selection';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import { Button } from '@the-deep/deep-ui';
 
+import useTextSelection from './useTextSelection';
 import TaggedExcerpt from './TaggedExcerpt';
 import styles from './styles.css';
 
@@ -135,23 +135,10 @@ function SimplifiedTextView(props: Props) {
 
         const parentRect = parent.getBoundingClientRect();
 
-        const pos: {
-            left?: number;
-            right?: number;
-            top: number;
-        } = {
-            left: undefined,
-            right: undefined,
-            top: clientRect.top - parentRect.top + parent.scrollTop,
+        const pos = {
+            top: clientRect.top - parentRect.top + parent.scrollTop + clientRect.height,
+            right: parentRect.width - clientRect.width - clientRect.left,
         };
-
-        if (!containerRef.current || !clientRect) {
-            pos.left = clientRect.left - parentRect.left;
-        } else if (clientRect.x > (parent.offsetWidth / 2)) {
-            pos.right = (parentRect.width + parentRect.left) - (clientRect.left + clientRect.width);
-        } else {
-            pos.left = clientRect.left - parentRect.left;
-        }
 
         return pos;
     }, [clientRect]);
