@@ -25,11 +25,12 @@ import {
     SortContext,
     useSortState,
     useBooleanState,
+    Spinner,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
-import { VscLoading } from 'react-icons/vsc';
+
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { MultiResponse, Lead } from '#types';
-import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
 import Actions, { Props as ActionsProps } from './Actions';
@@ -42,7 +43,7 @@ import styles from './styles.css';
 const leadsKeySelector: (d: Lead) => number = (d) => d.id;
 
 const statusIconMap: Record<Lead['status'], ReactNode> = {
-    pending: <VscLoading />,
+    pending: <Spinner inheritColor />,
     validated: <IoCheckmarkCircleOutline />,
     processed: null,
 };
