@@ -1,4 +1,4 @@
-import { prepareUrlParams } from '#utils/request/utils';
+import { prepareUrlParams } from '@togglecorp/toggle-request';
 
 export const createUrlForGoogleViewer = (url: string) => (
     `https://drive.google.com/viewerng/viewer?${prepareUrlParams({

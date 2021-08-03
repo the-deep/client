@@ -12,7 +12,7 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
-import { useRequest, useLazyRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { transformErrorToToggleFormError } from '#utils/rest';
 import LeadPreview from '#components/LeadPreview';
 

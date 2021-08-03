@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { SearchSelectInput, SearchSelectInputProps } from '@the-deep/deep-ui';
 import { BasicOrganization, MultiResponse } from '#types';
 
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import _ts from '#ts';
 

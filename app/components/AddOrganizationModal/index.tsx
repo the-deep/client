@@ -20,7 +20,7 @@ import _ts from '#ts';
 import {
     useRequest,
     useLazyRequest,
-} from '#utils/request';
+} from '#base/utils/restRequest';
 import {
     MultiResponse,
     Organization,
