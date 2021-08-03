@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, Suspense } from 'react';
 import { Router } from 'react-router-dom';
 import { init, ErrorBoundary, setUser as setUserOnSentry } from '@sentry/react';
-import { isNotDefined, unique } from '@togglecorp/fujs';
+import { unique } from '@togglecorp/fujs';
 import { AlertContainer, AlertContext, AlertOptions } from '@the-deep/deep-ui';
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import ReactGA from 'react-ga';
@@ -23,22 +23,6 @@ import apolloConfig from '#base/configs/apollo';
 import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
 
 import styles from './styles.css';
-
-function transformUser(user: User | undefined) {
-    if (isNotDefined(user)) {
-        return null;
-    }
-
-    // TODO: this requires
-    // id: userId,
-    // isSuperuser
-    // email: username
-    // name: displayName
-    return {
-        ...user,
-        id: String(user.id),
-    };
-}
 
 if (sentryConfig) {
     init(sentryConfig);
@@ -66,16 +50,16 @@ function Base() {
                 setUser((oldUser) => {
                     const newUser = u(oldUser);
 
-                    const sanitizedUser = transformUser(newUser);
+                    const sanitizedUser = newUser;
                     sync(!!sanitizedUser, sanitizedUser?.id);
-                    setUserOnSentry(sanitizedUser);
+                    setUserOnSentry(sanitizedUser ?? null);
 
                     return newUser;
                 });
             } else {
-                const sanitizedUser = transformUser(u);
+                const sanitizedUser = u;
                 sync(!!sanitizedUser, sanitizedUser?.id);
-                setUserOnSentry(sanitizedUser);
+                setUserOnSentry(sanitizedUser ?? null);
                 setUser(u);
             }
         },

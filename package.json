@@ -1,7 +1,7 @@
 {
-    "name": "base-react-app",
-    "version": "1.0.0",
-    "description": "Base React Application",
+    "name": "deep",
+    "version": "2.0.0",
+    "description": "Deep",
     "scripts": {
         "get-hostname": "ip route | awk '/default/ { print $3 }'",
         "replace-localhost": "awk \"{sub(/localhost/, \\\"$(yarn -s get-hostname)\\\")}1\"",
@@ -23,15 +23,15 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/togglecorp/base-react-app.git"
+        "url": "git+https://github.com/the-deep/client.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/togglecorp/base-react-app/issues"
+        "url": "https://github.com/the-deep/client/issues"
     },
-    "homepage": "https://github.com/togglecorp/base-react-app#readme",
+    "homepage": "https://github.com/the-deep/client#readme",
     "dependencies": {
         "@apollo/client": "^3.3.21",
         "@hcaptcha/react-hcaptcha": "^0.3.6",
