@@ -45,17 +45,11 @@ function Navbar(props: Props) {
                         exact
                         route={route.tagging}
                         className={styles.link}
-                        attrs={{
-                            projectId: 1,
-                        }}
                     />
                     <SmartNavLink
                         exact
                         route={route.analysis}
                         className={styles.link}
-                        attrs={{
-                            projectId: 1,
-                        }}
                     />
                 </div>
                 <div className={styles.actions}>
