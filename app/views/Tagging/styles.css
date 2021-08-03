@@ -1,19 +1,16 @@
 .tagging {
     padding: var(--dui-spacing-medium);
 
-    .main-content {
+    .sub-navbar {
         display: flex;
+        justify-content: center;
 
-        .simplified-view {
-            flex-basis: calc(240px + 10vw);
-            overflow: auto;
-        }
-
-        .tagging-playground {
+        .nav-links {
             display: flex;
-            align-items: center;
-            flex-grow: 1;
-            justify-content: center;
+
+            .link {
+                padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+            }
         }
     }
 }

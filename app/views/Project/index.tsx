@@ -91,14 +91,9 @@ function Project(props: Props) {
         );
     }
 
-    /*
-     * NOTE: styling for view is located in
-     * `/configs/routes/styles.css`
-     */
     return (
         <Switch>
             <Route
-                exact
                 path={routes.tagging.path}
                 render={routes.tagging.load}
             />

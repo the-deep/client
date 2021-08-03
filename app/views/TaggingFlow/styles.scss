@@ -1,0 +1,56 @@
+.project-edit {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+
+        .content {
+            display: flex;
+            align-items: stretch;
+            align-self: stretch;
+            padding: 0 var(--spacing-medium);
+
+            .tab-list {
+                .active-tab,
+                .tab {
+                    font-size: var(--font-size-large);
+
+                    &:not(.active-tab) {
+                        border-bottom-color: transparent;
+                    }
+                }
+            }
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+            .button {
+                margin: var(--dui-spacing-small);
+            }
+        }
+    }
+
+    .tab-panel-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .tab-panel {
+            display: flex;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .primary-tagging {
+                flex-grow: 1;
+                overflow: auto;
+            }
+        }
+    }
+}
