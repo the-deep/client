@@ -90,19 +90,22 @@ function SortableItem<D, P, K extends OptionKey>(props: SortableItemProps<D, P, 
     }), [transition, transform]);
 
     return (
-        <Renderer
-            attributes={attributes}
-            listeners={listeners}
-            setNodeRef={setNodeRef}
+        <div
+            ref={setNodeRef}
             style={style}
-            {...rendererParams}
-        />
+        >
+            <Renderer
+                attributes={attributes}
+                listeners={listeners}
+                {...rendererParams}
+            />
+        </div>
     );
 }
 
 const MemoizedSortableItem = genericMemo(SortableItem);
 
-type Props<
+export type Props<
     N extends string,
     D,
     P,

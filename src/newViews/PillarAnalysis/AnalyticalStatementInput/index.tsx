@@ -180,8 +180,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     return (
         <div
             ref={setNodeRef}
-            className={_cs(styles.analyticalStatementInput, className)}
             style={style}
+            className={_cs(styles.analyticalStatementInput, className)}
         >
             <Container
                 className={styles.dragStatement}

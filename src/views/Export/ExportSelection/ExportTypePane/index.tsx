@@ -145,6 +145,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
     const showEntryGroupsSelection =
         entryFilterOptions?.projectEntryLabel &&
         entryFilterOptions?.projectEntryLabel.length > 0;
+    console.warn('here', reportStructure);
 
     return (
         <>

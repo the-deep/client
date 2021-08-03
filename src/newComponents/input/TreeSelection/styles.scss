@@ -1,0 +1,14 @@
+.tree-selection {
+    .sortable-node {
+        background-color: var(--dui-color-foreground);
+
+        .drag-handle {
+            padding: var(--dui-spacing-extra-small);
+            font-size: var(--dui-font-size-extra-small);
+        }
+
+        .checkbox {
+            padding: var(--dui-spacing-extra-small);
+        }
+    }
+}
