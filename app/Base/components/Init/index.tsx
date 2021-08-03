@@ -57,7 +57,7 @@ function Init(props: Props) {
         onCompleted: (data) => {
             const safeMe = removeNull(data.me);
             if (safeMe) {
-                setUser({ ...safeMe, permissions: [] });
+                setUser(safeMe);
                 setProject(safeMe.lastActiveProject ?? undefined);
             } else {
                 setUser(undefined);
@@ -74,13 +74,6 @@ function Init(props: Props) {
             );
 
             setErrored(!authError);
-            /*
-            setUser({
-                id: '12',
-                displayName: 'Ram',
-                permissions: [],
-            });
-            */
             setReady(true);
         },
     });
@@ -111,7 +104,6 @@ function Init(props: Props) {
         );
     }
 
-    // NOTE: wrapping in fragment to avoid typing error
     return (
         <ProjectContext.Provider value={projectContext}>
             {children}
