@@ -1,0 +1,20 @@
+.leads-selection {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .source-entry-filter {
+        display: flex;
+        flex-grow: 1;
+        margin: var(--dui-spacing-small);
+    }
+
+    .table-container {
+        margin: var(--dui-spacing-small);
+        overflow-x: auto;
+
+        .title-column {
+            min-width: 120px;
+        }
+    }
+}

@@ -324,7 +324,7 @@ function CombinedSourceEntryFilterForm(props: Props) {
                         )}
                         onClick={allFiltersVisible ? hideAllFilters : showAllFilters}
                     >
-                        { allFiltersVisible ? 'Hide Filters' : 'Show Filters' }
+                        { allFiltersVisible ? 'Hide filters' : 'Show all filters' }
                     </Button>
                     <Button
                         className={styles.button}
