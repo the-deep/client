@@ -12,7 +12,7 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import FullPageHeader from '#newComponents/ui/FullPageHeader';
 import BackLink from '#newComponents/ui/BackLink';
 
