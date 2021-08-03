@@ -122,6 +122,7 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
                                 label={<IoPencil />}
                                 popupClassName={styles.editExcerptPopup}
                                 popupContentClassName={styles.content}
+                                persistent
                             >
                                 <Heading size="small">
                                     Modify Excerpt
