@@ -42,12 +42,10 @@ function Navbar(props: Props) {
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={route.tagging}
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={route.analysis}
                         className={styles.link}
                     />
