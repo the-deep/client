@@ -237,6 +237,7 @@ export interface Region extends BasicRegion {
     code: string;
     title: string;
     public: boolean;
+    isPublished: boolean;
 }
 
 export interface GeoShapeFile {

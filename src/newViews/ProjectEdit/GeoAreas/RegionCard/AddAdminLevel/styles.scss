@@ -1,0 +1,15 @@
+.form-container {
+    display: flex;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+
+        .submit {
+            align-self: flex-end;
+        }
+    }
+}
+.row {
+    display: flex;
+}

@@ -18,6 +18,7 @@ import {
 } from '#typings';
 
 import AdminLevelCard from './AdminLevelCard';
+import AddAdminLevel from './AddAdminLevel';
 import styles from './styles.scss';
 
 const adminLevelKeySelector = (d: AdminLevel) => d.id;
@@ -25,12 +26,14 @@ const adminLevelKeySelector = (d: AdminLevel) => d.id;
 interface Props {
     region: BasicRegion;
     className?: string;
+    regionsGetTrigger: () => void;
 }
 
 function RegionCard(props: Props) {
     const {
         className,
         region,
+        regionsGetTrigger,
     } = props;
 
     const {
@@ -40,6 +43,7 @@ function RegionCard(props: Props) {
         method: 'GET',
         failureHeader: _ts('geoAreas', 'title'),
     });
+
     const handleDeleteRegionClick = () => {}; // FIXME  this will be added later
 
     const adminLevelRendererParams = useCallback((_: number, data: AdminLevel) => ({
@@ -72,6 +76,12 @@ function RegionCard(props: Props) {
                     renderer={AdminLevelCard}
                     rendererClassName={styles.adminLevel}
                     keySelector={adminLevelKeySelector}
+                />
+            )}
+            {response && !response.isPublished && (
+                <AddAdminLevel
+                    onSuccess={regionsGetTrigger}
+                    activeRegion={region.id}
                 />
             )}
         </ExpandableContainer>
