@@ -13,6 +13,7 @@ import PreloadMessage from '#base/components/PreloadMessage';
 import browserHistory from '#base/configs/history';
 import sentryConfig from '#base/configs/sentry';
 import { UserContext, UserContextInterface } from '#base/context/UserContext';
+import { NavbarContext, NavbarContextInterface } from '#base/context/NavbarContext';
 import AuthPopup from '#base/components/AuthPopup';
 import { sync } from '#base/hooks/useAuthSync';
 import Navbar from '#base/components/Navbar';
@@ -98,6 +99,14 @@ function Base() {
         ],
     );
 
+    const navbarContext: NavbarContextInterface = useMemo(
+        () => ({
+            navbarState,
+            setNavbarState,
+        }),
+        [navbarState, setNavbarState],
+    );
+
     const [alerts, setAlerts] = React.useState<AlertOptions[]>([]);
 
     const addAlert = React.useCallback(
@@ -172,33 +181,35 @@ function Base() {
             >
                 <ApolloProvider client={apolloClient}>
                     <UserContext.Provider value={userContext}>
-                        <AlertContext.Provider value={alertContext}>
-                            <AuthPopup />
-                            <AlertContainer className={styles.alertContainer} />
-                            <Router history={browserHistory}>
-                                <Init
-                                    className={styles.init}
-                                >
-                                    {navbarState && (
-                                        <Navbar className={styles.navbar} />
-                                    )}
-                                    <Suspense
-                                        fallback={(
-                                            <PreloadMessage
-                                                className={styles.preloadMessage}
-                                                content="Loading page..."
-                                            />
-                                        )}
+                        <NavbarContext.Provider value={navbarContext}>
+                            <AlertContext.Provider value={alertContext}>
+                                <AuthPopup />
+                                <AlertContainer className={styles.alertContainer} />
+                                <Router history={browserHistory}>
+                                    <Init
+                                        className={styles.init}
                                     >
-                                        {/*
-                                          * NOTE: styling for view is located in
-                                          * `/configs/routes/styles.css`
-                                          */}
-                                        <Routes />
-                                    </Suspense>
-                                </Init>
-                            </Router>
-                        </AlertContext.Provider>
+                                        {navbarState && (
+                                            <Navbar className={styles.navbar} />
+                                        )}
+                                        <Suspense
+                                            fallback={(
+                                                <PreloadMessage
+                                                    className={styles.preloadMessage}
+                                                    content="Loading page..."
+                                                />
+                                            )}
+                                        >
+                                            {/*
+                                              * NOTE: styling for view is located in
+                                              * `/configs/routes/styles.css`
+                                              */}
+                                            <Routes />
+                                        </Suspense>
+                                    </Init>
+                                </Router>
+                            </AlertContext.Provider>
+                        </NavbarContext.Provider>
                     </UserContext.Provider>
                 </ApolloProvider>
             </ErrorBoundary>
