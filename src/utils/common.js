@@ -10,7 +10,7 @@ import {
 import {
     requiredCondition,
     urlCondition,
-} from '@togglecorp/faram';
+} from '@togglecorp/toggle-form';
 
 export const mapObjectToObject = (obj, fn) => {
     const newObj = {};
@@ -28,7 +28,6 @@ export const mapObjectToArray = (obj, fn) => {
     });
     return newArray;
 };
-
 
 export const pick = (obj, keys) => keys.reduce(
     (acc, key) => ({ ...acc, [key]: obj[key] }),

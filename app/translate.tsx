@@ -112,16 +112,39 @@ const getString = (
 type DevLang = typeof devLang;
 
 // eslint-disable-next-line no-underscore-dangle
-function _ts(namespace: keyof DevLang['links'], identifier: string, params: Record<string, string>) {
-    const str = getString(devLang.strings, devLang.links, namespace, identifier);
-    // If string is not in dev language, show identifiers
+function _ts(
+    namespace: keyof DevLang['links'],
+    identifier: string,
+): string;
+// eslint-disable-next-line no-underscore-dangle
+function _ts(
+    namespace: keyof DevLang['links'],
+    identifier: string,
+    params: Record<string, React.ReactNode>,
+): React.ReactNode;
+// eslint-disable-next-line no-underscore-dangle
+function _ts(
+    namespace: keyof DevLang['links'],
+    identifier: string,
+    params?: Record<string, React.ReactNode>,
+) {
+    const str = getString(
+        devLang.strings,
+        devLang.links,
+        namespace,
+        identifier,
+    );
+
     if (!str) {
+        // If string is not in dev language, show identifiers
         return `{${namespace}:${identifier}}`;
     }
-    if (params) {
-        return format(str, params);
+
+    if (!params) {
+        return str;
     }
-    return str;
+
+    return format(str, params);
 }
 
 export default _ts;
