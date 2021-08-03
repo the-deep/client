@@ -18,9 +18,8 @@ export const commitHash = process.env.REACT_APP_DEEP_COMMIT_SHA;
 // _ts('home', 'nightlyLabel')
 // _ts('home', 'devLabel')
 export const envText = (
-    (isBeta && 'betaLabel') ||
-    (isAlpha && 'alphaLabel') ||
-    (isNightly && 'nightlyLabel') ||
-    'devLabel'
+    (isBeta && 'betaLabel')
+    || (isAlpha && 'alphaLabel')
+    || (isNightly && 'nightlyLabel')
+    || 'devLabel'
 );
-

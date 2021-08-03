@@ -10,12 +10,8 @@ import {
     ProjectContext,
     ProjectContextInterface,
 } from '#base/context/ProjectContext';
-import {
-    Project,
-} from '#base/types/project';
-import {
-    MeQuery,
-} from '#generated/types';
+import { Project } from '#base/types/project';
+import { MeQuery } from '#generated/types';
 
 const ME = gql`
     query Me {

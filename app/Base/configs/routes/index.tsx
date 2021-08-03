@@ -91,8 +91,8 @@ const projectRoute = wrap({
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
 });
-const tagging = wrap({
-    parent: projectRoute,
+const taggingRoute = wrap({
+    parent: { path: projectRoute.path },
     path: '/tagging/',
     title: 'Tagging',
     navbarVisibility: true,
@@ -111,6 +111,40 @@ const tagging = wrap({
         );
     },
 });
+const sources = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/sources/',
+    title: 'Sources',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Sources')),
+    componentProps: {
+        className: styles.view,
+    },
+    visibility: 'is-authenticated',
+});
+const dashboard = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/dashboard/',
+    title: 'Dashboard',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Dashboard')),
+    componentProps: {
+        className: styles.view,
+    },
+    visibility: 'is-authenticated',
+});
+const exportRoute = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/export/',
+    title: 'Export',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Export')),
+    componentProps: {
+        className: styles.view,
+    },
+    visibility: 'is-authenticated',
+});
+
 const analysis = wrap({
     parent: projectRoute,
     path: '/analysis/',
@@ -138,10 +172,13 @@ const routes = {
     forgetPassword,
     resetPassword,
     home,
-    tagging,
+    tagging: taggingRoute,
     analysis,
     explore,
     project: projectRoute,
+    sources,
     fourHundredFour,
+    dashboard,
+    export: exportRoute,
 };
 export default routes;
