@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoGridSharp,
@@ -10,6 +9,7 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 
+import ProjectContext from '#base/context/ProjectContext';
 import SourcesStats from './SourcesStats';
 import SourcesFilter from './SourcesFilter';
 import SourcesTable from './SourcesTable';
@@ -25,8 +25,8 @@ interface Props {
 
 function Sources(props: Props) {
     const { className } = props;
-    const { projectId } = useParams<{ projectId: string }>();
-    const activeProject = +projectId;
+    const { project } = React.useContext(ProjectContext);
+    const activeProject = project ? +project.id : undefined;
     const [sourcesFilters, setSourcesFilters] = useState<Filters>();
     const [refreshTimestamp] = useState(() => (new Date()).getTime());
 
@@ -43,12 +43,14 @@ function Sources(props: Props) {
     return (
         <div className={_cs(styles.sources, className)}>
             <div className={styles.topSection}>
-                <SourcesStats
-                    className={styles.stats}
-                    filters={sourcesFilters}
-                    projectId={activeProject}
-                    refreshTimestamp={refreshTimestamp}
-                />
+                {activeProject && (
+                    <SourcesStats
+                        className={styles.stats}
+                        filters={sourcesFilters}
+                        projectId={activeProject}
+                        refreshTimestamp={refreshTimestamp}
+                    />
+                )}
                 <Header
                     heading={_ts('sourcesFilter', 'title')}
                     headingSize="medium"
@@ -73,14 +75,16 @@ function Sources(props: Props) {
                         </>
                     )}
                 />
-                <SourcesFilter
-                    className={styles.filter}
-                    onFilterApply={setSourcesFilters}
-                    projectId={activeProject}
-                />
+                {activeProject && (
+                    <SourcesFilter
+                        className={styles.filter}
+                        onFilterApply={setSourcesFilters}
+                        projectId={activeProject}
+                    />
+                )}
             </div>
             <div className={styles.leads}>
-                {activeView === 'table' && (
+                {activeView === 'table' && activeProject && (
                     <SourcesTable
                         className={styles.table}
                         filters={sourcesFilters}
@@ -95,4 +99,5 @@ function Sources(props: Props) {
         </div>
     );
 }
+
 export default Sources;
