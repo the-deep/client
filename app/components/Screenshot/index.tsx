@@ -1,24 +1,11 @@
 import React from 'react';
 import ReactResizeDetector from 'react-resize-detector';
 import { brush as d3Brush } from 'd3-brush';
-import {
-    select,
-    event,
-} from 'd3-selection';
+import { select } from 'd3-selection';
 import { _cs } from '@togglecorp/fujs';
 
-// import { getScreenshot } from '#utils/browserExtension';
+import { getScreenshot } from '#utils/browserExtension';
 import styles from './styles.css';
-
-function getScreenshot() {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve({
-                image: '',
-            });
-        }, 100);
-    });
-}
 
 function getCroppedImage(
     canvas: HTMLCanvasElement,
@@ -99,7 +86,7 @@ function Screenshot(props: Props) {
     const brushContainerRef = React.useRef<SVGGElement>(null);
     const svgRef = React.useRef<SVGSVGElement>(null);
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
-    const handleBrush = React.useCallback(() => {
+    const handleBrush = React.useCallback((event) => {
         if (!onCapture) {
             return;
         }
@@ -122,9 +109,7 @@ function Screenshot(props: Props) {
     }, [onCapture, imageProps.image]);
 
     React.useEffect(() => {
-        getScreenshot().then((
-            result: { image: string },
-        ) => {
+        getScreenshot().then((result) => {
             if (svgRef.current) {
                 const scale = window.devicePixelRatio;
 
