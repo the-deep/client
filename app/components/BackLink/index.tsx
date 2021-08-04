@@ -29,7 +29,6 @@ function BackLink(props: Props) {
         <Link
             className={className}
             to={defaultLink || '/'}
-            // onClick={isFirstPage ? undefined : handleBackLinkClick}
             onClick={handleBackLinkClick}
             {...otherProps}
         >
