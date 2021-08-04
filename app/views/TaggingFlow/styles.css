@@ -11,34 +11,6 @@
 
     .header {
         flex-shrink: 0;
-
-        .content {
-            display: flex;
-            align-items: stretch;
-            align-self: stretch;
-            padding: 0 var(--spacing-medium);
-
-            .tab-list {
-                .active-tab,
-                .tab {
-                    font-size: var(--font-size-large);
-
-                    &:not(.active-tab) {
-                        border-bottom-color: transparent;
-                    }
-                }
-            }
-        }
-
-        .actions {
-            display: flex;
-            align-items: center;
-            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
-
-            .button {
-                margin: var(--dui-spacing-small);
-            }
-        }
     }
 
     .tab-panel-container {

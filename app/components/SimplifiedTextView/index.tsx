@@ -91,7 +91,7 @@ function SimplifiedTextView(props: Props) {
                     </span>
                 )}
                 {splits.map((split, i) => (
-                    <React.Fragment key={split.startIndex}>
+                    <React.Fragment key={split.entryId}>
                         {i > 0 && splits[i - 1].endIndex < split.startIndex && (
                             <span>
                                 {text.substring(splits[i - 1].endIndex, split.startIndex)}
@@ -147,6 +147,14 @@ function SimplifiedTextView(props: Props) {
         return pos;
     }, [clientRect]);
 
+    const handleAddButtonClick = React.useCallback((selectedText: string) => {
+        window.getSelection()?.removeAllRanges();
+
+        if (onAddButtonClick) {
+            onAddButtonClick(selectedText);
+        }
+    }, [onAddButtonClick]);
+
     return (
         <div
             ref={containerRef}
@@ -162,7 +170,7 @@ function SimplifiedTextView(props: Props) {
                         name={textContent}
                         variant="action"
                         className={styles.addButton}
-                        onClick={onAddButtonClick}
+                        onClick={handleAddButtonClick}
                     >
                         <IoAddCircle className={styles.addIcon} />
                     </Button>
