@@ -21,7 +21,7 @@ import { useLazyRequest } from '#utils/request';
 import UserSelectInput from '#newComponents/input/UserSelectInput';
 import {
     BasicUser,
-} from '#typings';
+} from '#types';
 
 import { Membership } from '../AddUsergroupModal';
 import styles from './styles.scss';

@@ -29,7 +29,7 @@ import {
     FilterFields,
     ProjectDetails,
     GeoOptions,
-} from '#typings';
+} from '#types';
 
 import FrameworkFilter from '#components/other/FrameworkFilter';
 

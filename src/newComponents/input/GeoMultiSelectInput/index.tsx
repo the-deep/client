@@ -4,7 +4,7 @@ import { useRequest } from '#utils/request';
 import {
     MultiResponse,
     GeoOption,
-} from '#typings';
+} from '#types';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
 

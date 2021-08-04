@@ -23,8 +23,8 @@ import {
     MultiResponse,
     BasicUser,
     Membership,
-} from '#typings';
-import { ProjectRole } from '#typings/project';
+} from '#types';
+import { ProjectRole } from '#types/project';
 import _ts from '#ts';
 
 import styles from './styles.scss';

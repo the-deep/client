@@ -20,7 +20,7 @@ import {
 import {
     UserMini,
     MatrixTocElement,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 

@@ -28,7 +28,7 @@ import {
 import {
     ProjectDetails,
     MultiResponse,
-} from '#typings';
+} from '#types';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import { useModalState } from '#hooks/stateManagement';

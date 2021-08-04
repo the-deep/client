@@ -6,7 +6,7 @@ import {
 
 import Avatar from '#newComponents/ui/Avatar';
 import HighlightableTextOutput from '#newComponents/viewer/HighlightableTextOutput';
-import { Organization } from '#typings';
+import { Organization } from '#types';
 
 import styles from './styles.scss';
 

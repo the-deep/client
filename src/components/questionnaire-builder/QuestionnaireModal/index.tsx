@@ -35,7 +35,7 @@ import {
     BaseQuestionElement,
     BasicElement,
     QuestionnaireOptions,
-} from '#typings';
+} from '#types';
 
 import {
     defaultKeySelector,

@@ -10,7 +10,7 @@ import {
 
 import { useRequest } from '#utils/request';
 import { useModalState } from '#hooks/stateManagement';
-import { AnalyticalFramework } from '#typings';
+import { AnalyticalFramework } from '#types';
 import _ts from '#ts';
 
 import styles from './styles.scss';

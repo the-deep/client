@@ -1,6 +1,6 @@
 import { listToMap } from '@togglecorp/fujs';
 
-import { KeyValueElement } from '#typings';
+import { KeyValueElement } from '#types';
 
 export const defaultKeySelector = (d: KeyValueElement) => d.key;
 export const defaultLabelSelector = (d: KeyValueElement) => d.value;

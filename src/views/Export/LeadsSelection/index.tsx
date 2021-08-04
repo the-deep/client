@@ -17,7 +17,7 @@ import {
     WidgetElement,
     GeoOptions,
     ProjectDetails,
-} from '#typings';
+} from '#types';
 import { Header } from '#rscv/Table';
 
 import { FaramValues } from '../ExportSelection';

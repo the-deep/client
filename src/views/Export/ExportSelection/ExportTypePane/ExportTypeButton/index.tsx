@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import {
     ExportType,
-} from '#typings';
+} from '#types';
 
 import styles from './styles.scss';
 

@@ -17,7 +17,7 @@ import {
 import { useLazyRequest } from '#utils/request';
 import {
     Region,
-} from '#typings';
+} from '#types';
 
 import styles from './styles.scss';
 

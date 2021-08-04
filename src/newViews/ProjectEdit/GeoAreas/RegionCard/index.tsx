@@ -15,7 +15,7 @@ import {
     AdminLevel,
     BasicRegion,
     Region,
-} from '#typings';
+} from '#types';
 
 import AdminLevelCard from './AdminLevelCard';
 import styles from './styles.scss';

@@ -31,7 +31,7 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     MultiResponse,
     UserGroup,
-} from '#typings';
+} from '#types';
 
 import ActionCell, { Props as ActionCellProps } from '#newComponents/ui/EditDeleteActionCell';
 import AddUserGroupModal from './AddUserGroupModal';

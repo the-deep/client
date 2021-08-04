@@ -17,7 +17,7 @@ import styles from './styles.scss';
 interface Props {
     className?: string;
     widgetKey?: string;
-    // FIXME: the typings are wrong
+    // FIXME: the types are wrong
     keySelector: (d: Record<string, unknown>) => number | string;
     titleSelector: (d: Record<string, unknown>) => unknown;
     dataModifier: (d: Record<string, unknown>) => unknown;

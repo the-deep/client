@@ -6,7 +6,7 @@ import {
     requiredCondition,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
-import { AnalysisPillars } from '#typings';
+import { AnalysisPillars } from '#types';
 
 export type FormType = Pick<AnalysisPillars, 'mainStatement' | 'informationGap' | 'analyticalStatements'>;
 export type PartialFormType = PartialForm<FormType, 'clientId'>;

@@ -27,7 +27,7 @@ import { pathNames } from '#constants';
 import { useLazyRequest, useRequest } from '#utils/request';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
-import { ProjectDetails } from '#typings';
+import { ProjectDetails } from '#types';
 
 import AddFrameworkModal from '../AddFrameworkModal';
 import styles from './styles.scss';

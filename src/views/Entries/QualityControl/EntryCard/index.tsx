@@ -29,16 +29,16 @@ import {
     EntryType,
     Entry,
     EntryLeadType,
-} from '#typings/entry';
+} from '#types/entry';
 import {
     Lead,
-} from '#typings/lead';
+} from '#types/lead';
 import {
     Permission,
-} from '#typings/common';
+} from '#types/common';
 import {
     FrameworkFields,
-} from '#typings/framework';
+} from '#types/framework';
 import _ts from '#ts';
 
 import styles from './styles.scss';

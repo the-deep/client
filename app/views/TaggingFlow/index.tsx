@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { isNotDefined } from '@togglecorp/fujs';
+import { useParams } from 'react-router-dom';
+import {
+    isNotDefined,
+    _cs,
+} from '@togglecorp/fujs';
 import {
     Button,
     Tabs,
@@ -8,25 +11,16 @@ import {
     TabList,
     TabPanel,
 } from '@the-deep/deep-ui';
-import {
-    useForm,
-} from '@togglecorp/toggle-form';
+import { useForm } from '@togglecorp/toggle-form';
 
 import { useRequest } from '#base/utils/restRequest';
-import FullPageHeader from '#newComponents/ui/FullPageHeader';
-import BackLink from '#newComponents/ui/BackLink';
-
-import {
-    projectIdFromRouteSelector,
-    leadIdFromRouteSelector,
-} from '#redux';
-
-import { AppState } from '#types';
+import FullPageHeader from '#components/FullPageHeader';
+import BackLink from '#components/BackLink';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
     Lead,
-} from '#newViews/Tagging/Sources/LeadEditModal/LeadEditForm/schema';
+} from '#views/Sources/LeadEditModal/LeadEditForm/schema';
 
 import SourceDetails from './SourceDetails';
 import PrimaryTagging from './PrimaryTagging';
@@ -35,21 +29,23 @@ import Review from './Review';
 
 import styles from './styles.css';
 
-interface PropsFromState {
-    projectId: number;
-    leadId: number;
+interface Props {
+    className?: string;
 }
 
-function TaggingFlow(props: PropsFromState) {
+function TaggingFlow(props: Props) {
+    const { className } = props;
     const {
         projectId,
         leadId,
-    } = props;
+    } = useParams<{
+        projectId: string;
+        leadId: string;
+    }>();
 
     const [ready, setReady] = useState(!leadId);
-
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
-        project: projectId,
+        project: +projectId,
         sourceType: 'website',
         priority: 100,
         confidentiality: 'unprotected',
@@ -79,7 +75,7 @@ function TaggingFlow(props: PropsFromState) {
     });
 
     return (
-        <div className={styles.projectEdit}>
+        <div className={_cs(styles.projectEdit, className)}>
             <Tabs
                 useHash
                 defaultHash="source-details"
@@ -169,7 +165,7 @@ function TaggingFlow(props: PropsFromState) {
                             ready={ready}
                             pending={leadGetPending}
                             leadInitialValue={leadInitialValue}
-                            projectId={projectId}
+                            projectId={+projectId}
                         />
                     </TabPanel>
                     <TabPanel
@@ -196,9 +192,4 @@ function TaggingFlow(props: PropsFromState) {
     );
 }
 
-const mapStateToProps = (state: AppState) => ({
-    projectId: projectIdFromRouteSelector(state),
-    leadId: leadIdFromRouteSelector(state),
-});
-
-export default connect(mapStateToProps, null)(TaggingFlow);
+export default TaggingFlow;

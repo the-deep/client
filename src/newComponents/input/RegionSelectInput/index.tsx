@@ -9,7 +9,7 @@ import useDebouncedValue from '#hooks/useDebouncedValue';
 import {
     Region,
     MultiResponse,
-} from '#typings';
+} from '#types';
 import { useRequest } from '#utils/request';
 import _ts from '#ts';
 

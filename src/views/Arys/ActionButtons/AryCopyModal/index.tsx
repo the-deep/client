@@ -33,7 +33,7 @@ import {
     AddRequestProps,
     Requests,
     AppState,
-} from '#typings';
+} from '#types';
 
 import styles from './styles.scss';
 

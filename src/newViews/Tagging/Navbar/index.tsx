@@ -11,7 +11,7 @@ import {
 
 import { pathNames } from '#constants';
 import { SubNavbar } from '#components/general/Navbar';
-import { AppState } from '#typings';
+import { AppState } from '#types';
 import { activeProjectIdFromStateSelector } from '#redux';
 import _ts from '#ts';
 

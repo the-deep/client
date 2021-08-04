@@ -17,7 +17,7 @@ import QuestionnairePreviewModal from '#qbc/QuestionnairePreviewModal';
 import { generateDurationLabel } from '#entities/questionnaire';
 
 import { pathNames } from '#constants';
-import { MiniQuestionnaireElement, Permissions } from '#typings';
+import { MiniQuestionnaireElement, Permissions } from '#types';
 
 import MetaOutput from '../MetaOutput';
 

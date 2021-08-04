@@ -39,7 +39,7 @@ import {
     WidgetElement,
     ConditionalWidget,
     ProjectDetails,
-} from '#typings';
+} from '#types';
 
 import { getCombinedLeadFilters } from '#entities/lead';
 

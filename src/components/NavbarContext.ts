@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavbarContextProps } from '#typings';
+import { NavbarContextProps } from '#types';
 
 const domainContext = React.createContext<NavbarContextProps>({
     parentNode: null,
