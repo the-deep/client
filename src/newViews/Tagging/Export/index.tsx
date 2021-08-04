@@ -78,12 +78,12 @@ function Export() {
                         This is Export Assessment History
                     </TabPanel>
                 </Tabs>
+                {isCreateNewExportModalShown && (
+                    <NewExport
+                        onClose={hideCreateNewExportModal}
+                    />
+                )}
             </div>
-            {isCreateNewExportModalShown && (
-                <NewExport
-                    onClose={hideCreateNewExportModal}
-                />
-            )}
         </Container>
     );
 }
