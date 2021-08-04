@@ -2325,6 +2325,26 @@
     "@types/extract-files" "*"
     graphql "^15.3.0"
 
+"@types/chrome@^0.0.153":
+  version "0.0.153"
+  resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.153.tgz#6c3009eb7be1d0fbace82be159122fd99e4a6465"
+  integrity sha512-J8VrwjuJLh6BPmUTmZQd41zJJjVpRnnMZ/E9uHfQZ3RRAESVqYxin8YeCdZUak7+5dUI6wr8Sr6UfR3dehLIdQ==
+  dependencies:
+    "@types/filesystem" "*"
+    "@types/har-format" "*"
+
+"@types/d3-brush@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-brush/-/d3-brush-3.0.1.tgz#ae5f17ce391935ca88b29000e60ee20452c6357c"
+  integrity sha512-B532DozsiTuQMHu2YChdZU0qsFJSio3Q6jmBYGYNp3gMDzBmuFFgPt9qKA4VYuLZMp4qc6eX7IUFUEsvHiXZAw==
+  dependencies:
+    "@types/d3-selection" "*"
+
+"@types/d3-selection@*":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-selection/-/d3-selection-3.0.0.tgz#2c6333b4e20ff3dc72f1cf5ffaca3a21c36a40f0"
+  integrity sha512-SZsDWFG1dLV9ivX2wGDPFWgLUf71tF4aupfEMTYMrbArHwEMLhmv3TS1CZECLQgoTttdpM1g5Z6JwRP7zoInWg==
+
 "@types/dropbox-chooser@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@types/dropbox-chooser/-/dropbox-chooser-1.0.3.tgz#e406b7b77ebb22c5572100766ad3c6cda26e42f4"
@@ -2361,6 +2381,18 @@
   resolved "https://registry.yarnpkg.com/@types/extract-files/-/extract-files-8.1.1.tgz#11b67e795ad2c8b483431e8d4f190db2fd22944b"
   integrity sha512-dMJJqBqyhsfJKuK7p7HyyNmki7qj1AlwhUKWx6KrU7i1K2T2SPsUsSUTWFmr/sEM1q8rfR8j5IyUmYrDbrhfjQ==
 
+"@types/filesystem@*":
+  version "0.0.32"
+  resolved "https://registry.yarnpkg.com/@types/filesystem/-/filesystem-0.0.32.tgz#307df7cc084a2293c3c1a31151b178063e0a8edf"
+  integrity sha512-Yuf4jR5YYMR2DVgwuCiP11s0xuVRyPKmz8vo6HBY3CGdeMj8af93CFZX+T82+VD1+UqHOxTq31lO7MI7lepBtQ==
+  dependencies:
+    "@types/filewriter" "*"
+
+"@types/filewriter@*":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/filewriter/-/filewriter-0.0.29.tgz#a48795ecadf957f6c0d10e0c34af86c098fa5bee"
+  integrity sha512-BsPXH/irW0ht0Ji6iw/jJaK8Lj3FJemon2gvEqHKpCdDCeemHa+rI3WBGq5z7cDMZgoLjY40oninGxqk+8NzNQ==
+
 "@types/gapi.auth2@^0.0.55":
   version "0.0.55"
   resolved "https://registry.yarnpkg.com/@types/gapi.auth2/-/gapi.auth2-0.0.55.tgz#88523c1b8d4866ea64ec9cbecb9ecc90b80b88aa"
@@ -2385,6 +2417,11 @@
   version "0.0.39"
   resolved "https://registry.yarnpkg.com/@types/google.picker/-/google.picker-0.0.39.tgz#bb205ffb9736e8ec4a1af7cc87811d0fc5dc30fa"
   integrity sha512-VnyuwmxPkipUPlTA6PmUeeIne7pSYSlq1xqoiyBCSTs47efEMhIlYaYHrzqW0DIvRa8HnkCDI40ltFzgke846Q==
+
+"@types/har-format@*":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@types/har-format/-/har-format-1.2.7.tgz#debfe36378f26c4fc2abca1df99f00a8ff94fd29"
+  integrity sha512-/TPzUG0tJn5x1TUcVLlDx2LqbE58hyOzDVAc9kf8SpOEmguHjU6bKUyfqb211AdqLOmU/SNyXvLKPNP5qTlfRw==
 
 "@types/history@*":
   version "4.7.9"
