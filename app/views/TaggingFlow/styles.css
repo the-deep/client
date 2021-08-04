@@ -1,8 +1,12 @@
 .project-edit {
     display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
     flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
 
     .header {
         flex-shrink: 0;
