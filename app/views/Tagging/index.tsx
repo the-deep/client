@@ -60,6 +60,10 @@ function Tagging(props: Props) {
                     path={routes.export.path}
                     render={routes.export.load}
                 />
+                <Route
+                    path={routes.taggingFlow.path}
+                    render={routes.taggingFlow.load}
+                />
             </Switch>
         </div>
     );
