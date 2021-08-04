@@ -14,14 +14,14 @@ import { EmmTrigger, EmmEntity } from '../schema';
 
 import styles from './styles.css';
 
-const emmTriggerRendererParams = (key: string, data: EmmTrigger) => ({
+const emmTriggerRendererParams = (_: string, data: EmmTrigger) => ({
     className: styles.tag,
     children: isTruthyString(data.emmRiskFactor)
         ? `${data.emmRiskFactor}: ${data.emmKeyword} (${data.count})`
         : `${data.emmKeyword} (${data.count})`,
 });
 
-const emmEntitiesRendererParams = (key: string, data: EmmEntity) => ({
+const emmEntitiesRendererParams = (_: string, data: EmmEntity) => ({
     className: styles.tag,
     children: data.name,
 });

@@ -25,20 +25,23 @@ function LeadEdit(props: Props) {
         file,
     } = props;
 
-    const { project: activeProject } = React.useContext(ProjectContext);
+    const { project } = React.useContext(ProjectContext);
     const { user } = React.useContext(UserContext);
+
+    const activeProject = project ? +project.id : undefined;
+    const userId = user ? +user.id : undefined;
 
     const partialLead: PartialFormType = useMemo(() => ({
         title: file?.title,
-        project: activeProject ? +activeProject : undefined,
-        assignee: user?.id ? +user.id : undefined,
+        project: activeProject,
+        assignee: userId,
         sourceType: file?.sourceType ?? 'website',
         publishedOn: formatDateToString(new Date(), 'yyyy-MM-dd'),
         confidentiality: 'unprotected',
         isAssessmentLead: false,
         priority: 100,
         attachment: file,
-    }), [activeProject, file, user]);
+    }), [activeProject, file, userId]);
 
     const {
         value,
@@ -51,6 +54,10 @@ function LeadEdit(props: Props) {
     useEffect(() => {
         setValue(partialLead);
     }, [partialLead, setValue]);
+
+    if (!activeProject) {
+        return null;
+    }
 
     return (
         <LeadEditForm
@@ -66,4 +73,4 @@ function LeadEdit(props: Props) {
     );
 }
 
-export default connect(mapStateToProps)(LeadEdit);
+export default LeadEdit;
