@@ -9,7 +9,6 @@ import { IoTrashOutline } from 'react-icons/io5';
 import { FileUploadResponse } from '../../types';
 import styles from './styles.css';
 
-
 interface Props {
     className?: string;
     isSelected: boolean;
@@ -38,7 +37,7 @@ function FileItem(props: Props) {
     return (
         <div className={_cs(className, styles.itemContainer, isSelected && styles.selected)}>
             <ElementFragments
-                actions={
+                actions={(
                     <QuickActionButton
                         name="remove"
                         title="Remove File"
@@ -46,7 +45,7 @@ function FileItem(props: Props) {
                     >
                         <IoTrashOutline />
                     </QuickActionButton>
-                }
+                )}
                 actionsContainerClassName={styles.actions}
                 childrenContainerClassName={styles.content}
             >
@@ -63,6 +62,5 @@ function FileItem(props: Props) {
         </div>
     );
 }
-
 
 export default FileItem;

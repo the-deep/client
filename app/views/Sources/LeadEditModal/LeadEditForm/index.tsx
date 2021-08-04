@@ -301,6 +301,7 @@ function LeadEditForm(props: Props) {
                 });
             }
             // FIXME: Use string
+            // eslint-disable-next-line no-console
             console.error('No attachment or URL found in lead to be extracted');
         },
         failureHeader: 'User Access Token',

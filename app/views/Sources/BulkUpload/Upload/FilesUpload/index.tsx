@@ -21,7 +21,7 @@ function FilesUpload(props: Props) {
 
     const handleFileInputChange = useCallback((values: File[] | null | undefined) => {
         const basicFiles = values
-            ? values.map(file => ({
+            ? values.map((file) => ({
                 key: randomString(),
                 id: file.name,
                 name: file.name,

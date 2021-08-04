@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { useLazyRequest } from '#base/utils/restRequest';
 import {
     QuickActionButton,
     ElementFragments,
@@ -8,6 +7,7 @@ import {
 import { AiOutlineRedo } from 'react-icons/ai';
 import { IoDocumentOutline, IoLogoDropbox } from 'react-icons/io5';
 import { FaGoogleDrive } from 'react-icons/fa';
+import { useLazyRequest } from '#base/utils/restRequest';
 
 import { FileLike, FileUploadResponse } from '../../types';
 

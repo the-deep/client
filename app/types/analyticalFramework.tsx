@@ -1,4 +1,3 @@
-
 export interface AnalyticalFramework {
     title: string;
     createdBy: number;
