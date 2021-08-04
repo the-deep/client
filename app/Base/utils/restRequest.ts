@@ -12,6 +12,17 @@ import {
     wsEndpoint,
 } from '#base/configs/restRequest';
 
+function getCookie(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+
+    if (parts.length === 2) {
+        const part = parts.pop();
+        return part && part.split(';').shift();
+    }
+    return undefined;
+}
+
 function getVersionedUrl(endpoint: string, url: string) {
     const versionString = '/v2';
     if (!url.startsWith(versionString)) {
@@ -95,7 +106,6 @@ type DeepContextInterface = ContextInterface<
 const serverPrefix = 'server://';
 const serverlessPrefix = 'serverless://';
 export const processDeepUrls: DeepContextInterface['transformUrl'] = (url) => {
-    console.log(url);
     if (url.startsWith(serverPrefix)) {
         // NOTE: -1 to leave out the starting slash
         const cleanedUrl = url.slice(serverPrefix.length - 1);
@@ -125,17 +135,22 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         ...otherOptions
     } = options;
 
+    // FIXME: only insert if it's for our server
+    // FIXME: get this cookie name from env
+    const csrftoken = getCookie('deep-development-nav-csrftoken');
+
     if (requestOptions.formData) {
         const requestBody = getFormData(body as FormDataCompatibleObj);
         return {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
+                'X-CSRFToken': csrftoken,
                 ...headers,
-                credentials: 'include',
             },
             body: requestBody,
             ...otherOptions,
+            credentials: 'include',
         };
     }
 
@@ -145,11 +160,12 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json; charset=utf-8',
+            'X-CSRFToken': csrftoken,
             ...headers,
-            credentials: 'include',
         },
         body: requestBody,
         ...otherOptions,
+        credentials: 'include',
     };
 };
 
