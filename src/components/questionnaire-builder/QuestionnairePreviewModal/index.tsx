@@ -25,7 +25,7 @@ import {
     QuestionnaireElement,
     AddRequestProps,
     Requests,
-} from '#typings';
+} from '#types';
 
 import { generateXLSForm } from '#entities/questionnaire';
 

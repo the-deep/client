@@ -15,6 +15,7 @@ import {
     Modal,
     Button,
     ListView,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -25,10 +26,9 @@ import {
     IoCheckmark,
 } from 'react-icons/io5';
 
-import CanvasDrawModal from '#newComponents/CanvasDrawModal';
-import Screenshot from '#newComponents/Screenshot';
-import FullScreen from '#newComponents/FullScreen';
-import notify from '#notify';
+import CanvasDrawModal from '#components/CanvasDrawModal';
+import Screenshot from '#components/Screenshot';
+import FullScreen from '#components/FullScreen';
 import _ts from '#ts';
 
 import styles from './styles.css';
@@ -101,6 +101,8 @@ function PrimaryTagging(props: Props) {
         onEntryClick,
     } = props;
 
+    const alert = useAlert();
+
     const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
     const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries'>('simplified');
     const [excerpt, setExcerpt] = useInputState<string | undefined>(undefined);
@@ -125,12 +127,10 @@ function PrimaryTagging(props: Props) {
     ] = useBooleanState(false);
 
     const handleScreenshotCaptureError = React.useCallback((message) => {
-        notify.send({
-            title: _ts('components.galleryViewer', 'errorTitle'), // screenshot
-            type: notify.type.ERROR,
+        alert.show(
             message,
-            duration: notify.duration.SLOW,
-        });
+            { variant: 'error' },
+        );
 
         setShowScreenshotFalse();
     }, [setShowScreenshotFalse]);

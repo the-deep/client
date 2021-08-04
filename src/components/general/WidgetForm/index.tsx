@@ -5,11 +5,11 @@ import Faram, { FaramGroup, Schema, ComputeSchema } from '@togglecorp/faram';
 import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
 
-import { Entry } from '#typings/entry';
+import { Entry } from '#types/entry';
 import {
     FrameworkFields,
     WidgetElement as WidgetFields,
-} from '#typings/framework';
+} from '#types/framework';
 
 import {
     levelOneWidgets,

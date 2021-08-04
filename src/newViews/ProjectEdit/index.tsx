@@ -27,7 +27,7 @@ import _ts from '#ts';
 import {
     ProjectDetails,
     AppState,
-} from '#typings';
+} from '#types';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
 import Framework from './Framework';

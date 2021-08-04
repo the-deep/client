@@ -25,7 +25,7 @@ import {
     AddRequestProps,
     Requests,
     Lead as LeadFaramValues,
-} from '#typings';
+} from '#types';
 
 import {
     RequestClient,

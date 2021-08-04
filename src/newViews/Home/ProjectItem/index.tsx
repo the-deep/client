@@ -40,7 +40,7 @@ import {
     CountTimeSeries,
     AppState,
     ProjectRolesMap,
-} from '#typings';
+} from '#types';
 import { pathNames } from '#constants';
 import { projectRolesSelector } from '#redux';
 

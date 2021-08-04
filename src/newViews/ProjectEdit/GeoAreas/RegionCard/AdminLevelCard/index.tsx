@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import { AdminLevel } from '#typings';
+import { AdminLevel } from '#types';
 import {
     TextInput,
     Container,

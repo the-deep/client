@@ -52,7 +52,7 @@ import {
     AppState,
     AnalysisSummary,
     MultiResponse,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';

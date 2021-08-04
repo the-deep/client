@@ -14,7 +14,7 @@ import List from '#rscv/List';
 import {
     QuestionResponseOptionElement,
     LanguageTitle,
-} from '#typings';
+} from '#types';
 import {
     isChoicedQuestionType,
     languageOptionsMap,

@@ -11,7 +11,7 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import {
     MultiResponse,
     PillarSummary,
-} from '#typings';
+} from '#types';
 
 import AnalysisPillar, { Props as PillarComponentProps } from '../AnalysisPillar';
 

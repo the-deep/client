@@ -22,7 +22,7 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     Membership,
     MultiResponse,
-} from '#typings';
+} from '#types';
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.scss';

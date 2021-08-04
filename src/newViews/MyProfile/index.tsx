@@ -33,7 +33,7 @@ import {
     AppState,
     LanguagePreference,
     MultiResponse,
-} from '#typings';
+} from '#types';
 import { useRequest, useLazyRequest } from '#utils/request';
 import ChangePasswordButton from '#newComponents/general/ChangePasswordButton';
 

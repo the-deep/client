@@ -18,7 +18,7 @@ import {
 import { Card } from '@the-deep/deep-ui';
 
 import RechartsLegend from '#newComponents/ui/RechartsLegend';
-import { ProjectRecentActivity } from '#typings';
+import { ProjectRecentActivity } from '#types';
 import styles from './styles.scss';
 
 const colorScheme = [
