@@ -32,7 +32,7 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import SortableList, { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { reorder } from '#utils/safeCommon';
 
 import { Matrix1dWidget } from '../../types';
@@ -154,8 +154,6 @@ interface CellInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 
@@ -169,8 +167,6 @@ function CellInput(props: CellInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -182,62 +178,58 @@ function CellInput(props: CellInputProps) {
     const heading = value.label ?? `Cell ${index + 1}`;
 
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
+        <ExpandableContainer
+            className={className}
+            // NOTE: newly created elements should be open, else closed
+            defaultVisibility={!value.label}
+            // FIXME: use strings
+            heading={`${heading} ${errored ? '*' : ''}`}
+            autoFocus={autoFocus}
+            expansionTriggerArea="arrow"
+            headerActions={(
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Cell"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
+            )}
         >
-            <ExpandableContainer
-                className={className}
-                // NOTE: newly created elements should be open, else closed
-                defaultVisibility={!value.label}
-                // FIXME: use strings
-                heading={`${heading} ${errored ? '*' : ''}`}
+            <NonFieldError error={error} />
+            <TextInput
                 autoFocus={autoFocus}
-                headerActions={(
-                    <>
-                        <QuickActionButton
-                            name={index}
-                            onClick={onRemove}
-                            // FIXME: use translation
-                            title="Remove Cell"
-                        >
-                            <IoTrash />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={index}
-                            // FIXME: use translation
-                            title="Drag"
-                            {...attributes}
-                            {...listeners}
-                        >
-                            <GrDrag />
-                        </QuickActionButton>
-                    </>
-                )}
-            >
-                <NonFieldError error={error} />
-                <TextInput
-                    autoFocus={autoFocus}
-                    // FIXME: use translation
-                    label="Label"
-                    name="label"
-                    value={value.label}
-                    onChange={onFieldChange}
-                    error={error?.label}
-                    className={styles.optionInput}
-                />
-                <TextArea
-                    // FIXME: use translation
-                    label="Tooltip"
-                    name="tooltip"
-                    rows={2}
-                    value={value.tooltip}
-                    onChange={onFieldChange}
-                    error={error?.tooltip}
-                    className={styles.optionInput}
-                />
-            </ExpandableContainer>
-        </div>
+                // FIXME: use translation
+                label="Label"
+                name="label"
+                value={value.label}
+                onChange={onFieldChange}
+                error={error?.label}
+                className={styles.optionInput}
+            />
+            <TextArea
+                // FIXME: use translation
+                label="Tooltip"
+                name="tooltip"
+                rows={2}
+                value={value.tooltip}
+                onChange={onFieldChange}
+                error={error?.tooltip}
+                className={styles.optionInput}
+            />
+        </ExpandableContainer>
     );
 }
 
@@ -254,8 +246,6 @@ interface RowInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 function RowInput(props: RowInputProps) {
@@ -268,8 +258,6 @@ function RowInput(props: RowInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -333,90 +321,86 @@ function RowInput(props: RowInputProps) {
     const heading = value.label ?? `Row ${index + 1}`;
 
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
+        <ExpandableContainer
+            autoFocus={autoFocus}
+            className={className}
+            // NOTE: newly created elements should be open, else closed
+            defaultVisibility={!value.label}
+            expansionTriggerArea="arrow"
+            // FIXME: use strings
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Row"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
+            )}
         >
-            <ExpandableContainer
+            <NonFieldError error={error} />
+            <TextInput
                 autoFocus={autoFocus}
-                className={className}
-                // NOTE: newly created elements should be open, else closed
-                defaultVisibility={!value.label}
-                // FIXME: use strings
-                heading={`${heading} ${errored ? '*' : ''}`}
-                headerActions={(
-                    <>
-                        <QuickActionButton
-                            name={index}
-                            onClick={onRemove}
-                            // FIXME: use translation
-                            title="Remove Row"
-                        >
-                            <IoTrash />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={index}
-                            // FIXME: use translation
-                            title="Drag"
-                            {...attributes}
-                            {...listeners}
-                        >
-                            <GrDrag />
-                        </QuickActionButton>
-                    </>
+                // FIXME: use translation
+                label="Label"
+                name="label"
+                value={value.label}
+                onChange={onFieldChange}
+                error={error?.label}
+                className={styles.optionInput}
+            />
+            <TextArea
+                // FIXME: use translation
+                label="Tooltip"
+                name="tooltip"
+                rows={2}
+                value={value.tooltip}
+                onChange={onFieldChange}
+                error={error?.tooltip}
+                className={styles.optionInput}
+            />
+            <Container
+                className={styles.optionInput}
+                sub
+                heading="Cells"
+                horizontallyCompactContent
+                headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
+                    <QuickActionButton
+                        name={undefined}
+                        onClick={handleAdd}
+                        // FIXME: use strings
+                        title="Add Cell"
+                    >
+                        <IoAdd />
+                    </QuickActionButton>
                 )}
             >
-                <NonFieldError error={error} />
-                <TextInput
-                    autoFocus={autoFocus}
-                    // FIXME: use translation
-                    label="Label"
-                    name="label"
-                    value={value.label}
-                    onChange={onFieldChange}
-                    error={error?.label}
-                    className={styles.optionInput}
+                <NonFieldError error={error?.cells} />
+                <SortableList
+                    name="cells"
+                    onChange={handleOrderChange}
+                    data={value?.cells}
+                    keySelector={cellKeySelector}
+                    renderer={CellInput}
+                    direction="vertical"
+                    rendererParams={cellRendererParams}
+                    showDragOverlay
                 />
-                <TextArea
-                    // FIXME: use translation
-                    label="Tooltip"
-                    name="tooltip"
-                    rows={2}
-                    value={value.tooltip}
-                    onChange={onFieldChange}
-                    error={error?.tooltip}
-                    className={styles.optionInput}
-                />
-                <Container
-                    className={styles.optionInput}
-                    sub
-                    heading="Cells"
-                    horizontallyCompactContent
-                    headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
-                        <QuickActionButton
-                            name={undefined}
-                            onClick={handleAdd}
-                            // FIXME: use strings
-                            title="Add Cell"
-                        >
-                            <IoAdd />
-                        </QuickActionButton>
-                    )}
-                >
-                    <NonFieldError error={error?.cells} />
-                    <SortableList
-                        name="cells"
-                        onChange={handleOrderChange}
-                        data={value?.cells}
-                        keySelector={cellKeySelector}
-                        renderer={CellInput}
-                        direction="vertical"
-                        rendererParams={cellRendererParams}
-                        showDragOverlay
-                    />
-                </Container>
-            </ExpandableContainer>
-        </div>
+            </Container>
+        </ExpandableContainer>
     );
 }
 

@@ -37,7 +37,7 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import SortableList, { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { reorder } from '#utils/safeCommon';
 
 import { Matrix2dWidget } from '../../types';
@@ -228,8 +228,6 @@ interface SubRowInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 function SubRowInput(props: SubRowInputProps) {
@@ -242,8 +240,6 @@ function SubRowInput(props: SubRowInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -258,10 +254,6 @@ function SubRowInput(props: SubRowInputProps) {
         <ExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            containerElementProps={{
-                ref: setNodeRef,
-                style,
-            }}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             expansionTriggerArea="arrow"
@@ -327,8 +319,6 @@ interface RowInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 function RowInput(props: RowInputProps) {
@@ -341,8 +331,6 @@ function RowInput(props: RowInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -405,10 +393,6 @@ function RowInput(props: RowInputProps) {
     return (
         <ExpandableContainer
             autoFocus={autoFocus}
-            containerElementProps={{
-                ref: setNodeRef,
-                style,
-            }}
             className={className}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
@@ -502,8 +486,6 @@ interface SubColumnInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 function SubColumnInput(props: SubColumnInputProps) {
@@ -516,8 +498,6 @@ function SubColumnInput(props: SubColumnInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -532,10 +512,6 @@ function SubColumnInput(props: SubColumnInputProps) {
         <ExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            containerElementProps={{
-                ref: setNodeRef,
-                style,
-            }}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
@@ -599,8 +575,6 @@ interface ColumnInputProps {
     index: number;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
     autoFocus?: boolean;
 }
 function ColumnInput(props: ColumnInputProps) {
@@ -613,8 +587,6 @@ function ColumnInput(props: ColumnInputProps) {
         index,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -678,10 +650,6 @@ function ColumnInput(props: ColumnInputProps) {
         <ExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            containerElementProps={{
-                ref: setNodeRef,
-                style,
-            }}
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings

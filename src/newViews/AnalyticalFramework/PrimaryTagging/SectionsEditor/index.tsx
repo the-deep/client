@@ -33,7 +33,7 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import SortableList, { Attributes, Listeners } from '#newComponents/ui/SortableList';
 
 import { Section } from '../../types';
 import styles from './styles.scss';
@@ -107,8 +107,6 @@ interface SectionInputProps {
     autoFocus: boolean;
     listeners?: Listeners;
     attributes?: Attributes;
-    setNodeRef?: NodeRef;
-    style?: React.CSSProperties;
 }
 
 function SectionInput(props: SectionInputProps) {
@@ -122,8 +120,6 @@ function SectionInput(props: SectionInputProps) {
         autoFocus,
         listeners,
         attributes,
-        setNodeRef,
-        style,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -134,62 +130,57 @@ function SectionInput(props: SectionInputProps) {
     const heading = value.title ?? `Section ${index + 1}`;
 
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
+        <ExpandableContainer
+            autoFocus={autoFocus}
+            heading={`${heading} ${errored ? '*' : ''}`}
+            expansionTriggerArea="arrow"
+            headerActions={(
+                <>
+                    <QuickActionButton
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Title"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
+            )}
+            className={_cs(
+                className,
+                autoFocus && styles.focus,
+            )}
+            horizontallyCompactContent
+            defaultVisibility={autoFocus}
         >
-            <ExpandableContainer
+            <NonFieldError error={error} />
+            <TextInput
+                name="title"
+                label="Title"
+                value={value.title}
+                onChange={onFieldChange}
+                error={error?.title}
                 autoFocus={autoFocus}
-                heading={`${heading} ${errored ? '*' : ''}`}
-                expansionTriggerArea="arrow"
-                headerActions={(
-                    <>
-                        <QuickActionButton
-                            name={index}
-                            onClick={onRemove}
-                            // FIXME: use translation
-                            title="Remove Title"
-                        >
-                            <IoTrash />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={index}
-                            // FIXME: use translation
-                            title="Drag"
-                            {...attributes}
-                            {...listeners}
-                        >
-                            <GrDrag />
-                        </QuickActionButton>
-                    </>
-                )}
-                className={_cs(
-                    className,
-                    autoFocus && styles.focus,
-                )}
-                horizontallyCompactContent
-                defaultVisibility={autoFocus}
-            >
-                <NonFieldError error={error} />
-                <TextInput
-                    name="title"
-                    label="Title"
-                    value={value.title}
-                    onChange={onFieldChange}
-                    error={error?.title}
-                    autoFocus={autoFocus}
-                />
-                <TextArea
-                    // FIXME: use translation
-                    label="Tooltip"
-                    name="tooltip"
-                    rows={4}
-                    value={value.tooltip}
-                    onChange={onFieldChange}
-                    error={error?.tooltip}
-                />
-            </ExpandableContainer>
-        </div>
+            />
+            <TextArea
+                // FIXME: use translation
+                label="Tooltip"
+                name="tooltip"
+                rows={4}
+                value={value.tooltip}
+                onChange={onFieldChange}
+                error={error?.tooltip}
+            />
+        </ExpandableContainer>
     );
 }
 

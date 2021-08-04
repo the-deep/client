@@ -4,7 +4,6 @@ import {
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
-import { NodeRef } from '#newComponents/ui/SortableList';
 import { sortByOrder } from '#utils/safeCommon';
 
 import { ScaleValue, ScaleWidget } from '../../types';
@@ -36,9 +35,6 @@ export interface Props<N extends string>{
     readOnly?: boolean;
 
     widget: PartialScaleWidget,
-
-    nodeRef?: NodeRef;
-    rootStyle?: React.CSSProperties;
 }
 
 function ScaleWidgetInput<N extends string>(props: Props<N>) {
@@ -52,8 +48,6 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
-        nodeRef,
-        rootStyle,
     } = props;
 
     const sortedOptions = useMemo(() => (
@@ -65,8 +59,6 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
-            nodeRef={nodeRef}
-            rootStyle={rootStyle}
         >
             <ScaleInput
                 name={name}

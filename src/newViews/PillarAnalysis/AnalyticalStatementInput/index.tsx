@@ -27,7 +27,7 @@ import {
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import { Attributes, Listeners, NodeRef } from '#newComponents/ui/SortableList';
+import { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { genericMemo } from '#utils/safeCommon';
 
 import {
@@ -56,10 +56,8 @@ interface AnalyticalStatementInputProps {
     onEntryDrop: (entryId: number) => void;
     index: number;
     isBeingDragged?: boolean;
-    setNodeRef?: NodeRef;
     attributes?: Attributes;
     listeners?: Listeners;
-    style?: React.CSSProperties;
 }
 
 const defaultVal: AnalyticalStatementType = {
@@ -77,10 +75,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onEntryMove,
         onEntryDrop,
         index,
-        setNodeRef,
         attributes,
         listeners,
-        style,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
@@ -178,87 +174,81 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     }, [onFieldChange]);
 
     return (
-        <div
-            ref={setNodeRef}
+        <Container
             className={_cs(styles.analyticalStatementInput, className)}
-            style={style}
-        >
-            <Container
-                className={styles.dragStatement}
-                contentClassName={styles.dragContent}
-                headerClassName={styles.header}
-                headerIcons={(
+            contentClassName={styles.dragContent}
+            headerClassName={styles.header}
+            headerIcons={(
+                <QuickActionButton
+                    name="includeInReport"
+                    onClick={handleIncludeInReportChange}
+                    big
+                >
+                    {value.includeInReport
+                        ? <IoCheckmarkCircleSharp />
+                        : <IoEllipseOutline />
+                    }
+                </QuickActionButton>
+            )}
+            // actionsContainerClassName={styles.actionsContainer}
+            headerActions={(
+                <>
                     <QuickActionButton
-                        name="includeInReport"
-                        onClick={handleIncludeInReportChange}
-                        big
-                    >
-                        {value.includeInReport
-                            ? <IoCheckmarkCircleSharp />
-                            : <IoEllipseOutline />
-                        }
-                    </QuickActionButton>
-                )}
-                // actionsContainerClassName={styles.actionsContainer}
-                headerActions={(
-                    <>
-                        <QuickActionButton
-                            name={index}
-                            onClick={onRemove}
-                            // FIXME: use translation
-                            title="Remove Analytical Statement"
-                        >
-                            <IoClose />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={index}
-                            // FIXME: use translation
-                            title="Drag"
-                            {...attributes}
-                            {...listeners}
-                        >
-                            <GrDrag />
-                        </QuickActionButton>
-                    </>
-                )}
-            >
-                <div className={styles.upperContent}>
-                    <NonFieldError error={error} />
-                    <TextArea
-                        className={styles.statement}
+                        name={index}
+                        onClick={onRemove}
                         // FIXME: use translation
-                        placeholder="Enter analytical statement"
-                        name="statement"
-                        rows={4}
-                        value={value.statement}
-                        onChange={onFieldChange}
-                        error={error?.statement}
-                    />
+                        title="Remove Analytical Statement"
+                    >
+                        <IoClose />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
+            )}
+        >
+            <div className={styles.upperContent}>
+                <NonFieldError error={error} />
+                <TextArea
+                    className={styles.statement}
+                    // FIXME: use translation
+                    placeholder="Enter analytical statement"
+                    name="statement"
+                    rows={4}
+                    value={value.statement}
+                    onChange={onFieldChange}
+                    error={error?.statement}
+                />
+            </div>
+            <div className={styles.bottomContainer}>
+                <div className={styles.entryContainer}>
+                    {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
+                        <AnalyticalEntryInput
+                            key={analyticalEntry.clientId}
+                            index={myIndex}
+                            statementClientId={value.clientId}
+                            value={analyticalEntry}
+                            // onChange={onAnalyticalEntryChange}
+                            onRemove={onAnalyticalEntryRemove}
+                            error={arrayError?.[analyticalEntry.clientId]}
+                            onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                        />
+                    ))}
                 </div>
-                <div className={styles.bottomContainer}>
-                    <div className={styles.entryContainer}>
-                        {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
-                            <AnalyticalEntryInput
-                                key={analyticalEntry.clientId}
-                                index={myIndex}
-                                statementClientId={value.clientId}
-                                value={analyticalEntry}
-                                // onChange={onAnalyticalEntryChange}
-                                onRemove={onAnalyticalEntryRemove}
-                                error={arrayError?.[analyticalEntry.clientId]}
-                                onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
-                            />
-                        ))}
-                    </div>
-                    <DropContainer
-                        className={styles.dropContainer}
-                        name="entry"
-                        draggedOverClassName={styles.draggedOver}
-                        onDrop={handleAnalyticalEntryAdd}
-                    />
-                </div>
-            </Container>
-        </div>
+                <DropContainer
+                    className={styles.dropContainer}
+                    name="entry"
+                    draggedOverClassName={styles.draggedOver}
+                    onDrop={handleAnalyticalEntryAdd}
+                />
+            </div>
+        </Container>
     );
 }
 

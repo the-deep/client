@@ -34,7 +34,7 @@ import {
 } from '@togglecorp/fujs';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
-import SortableList, { NodeRef, Attributes, Listeners } from '#newComponents/ui/SortableList';
+import SortableList, { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { isValidColor, reorder } from '#utils/safeCommon';
 
 import WidgetSizeInput from '../../WidgetSizeInput';
@@ -129,8 +129,6 @@ interface OptionInputProps {
     onDefaultValueChange: (clientId: string | undefined) => void;
     listeners?: Listeners,
     attributes?: Attributes,
-    setNodeRef?: NodeRef,
-    style?: React.CSSProperties,
     autoFocus?: boolean;
 }
 
@@ -149,8 +147,6 @@ function OptionInput(props: OptionInputProps) {
         onDefaultValueChange,
         listeners,
         attributes,
-        setNodeRef,
-        style,
         autoFocus,
     } = props;
 
@@ -175,77 +171,72 @@ function OptionInput(props: OptionInputProps) {
 
 
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
+        <ExpandableContainer
+            className={className}
+            // NOTE: newly created elements should be open, else closed
+            defaultVisibility={!value.label}
+            // FIXME: use strings
+            heading={`${heading} ${errored ? '*' : ''}`}
+            autoFocus={autoFocus}
+            headerActions={(
+                <>
+                    <Checkbox
+                        value={isDefault}
+                        label="Default"
+                        name="default-checkbox"
+                        onChange={handleCheckboxChange}
+                    />
+                    <QuickActionButton
+                        name={index}
+                        onClick={handleRemove}
+                        // FIXME: use translation
+                        title="Remove Option"
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={index}
+                        // FIXME: use translation
+                        title="Drag"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <GrDrag />
+                    </QuickActionButton>
+                </>
+            )}
         >
-            <ExpandableContainer
-                className={className}
-                // NOTE: newly created elements should be open, else closed
-                defaultVisibility={!value.label}
-                // FIXME: use strings
-                heading={`${heading} ${errored ? '*' : ''}`}
+            <NonFieldError error={error} />
+            <TextInput
+                // FIXME: use translation
+                label="Label"
+                name="label"
+                value={value.label}
+                onChange={onFieldChange}
+                error={error?.label}
                 autoFocus={autoFocus}
-                headerActions={(
-                    <>
-                        <Checkbox
-                            value={isDefault}
-                            label="Default"
-                            name="default-checkbox"
-                            onChange={handleCheckboxChange}
-                        />
-                        <QuickActionButton
-                            name={index}
-                            onClick={handleRemove}
-                            // FIXME: use translation
-                            title="Remove Option"
-                        >
-                            <IoTrash />
-                        </QuickActionButton>
-                        <QuickActionButton
-                            name={index}
-                            // FIXME: use translation
-                            title="Drag"
-                            {...attributes}
-                            {...listeners}
-                        >
-                            <GrDrag />
-                        </QuickActionButton>
-                    </>
-                )}
-            >
-                <NonFieldError error={error} />
-                <TextInput
-                    // FIXME: use translation
-                    label="Label"
-                    name="label"
-                    value={value.label}
-                    onChange={onFieldChange}
-                    error={error?.label}
-                    autoFocus={autoFocus}
-                    className={styles.optionInput}
-                />
-                <TextInput
-                    // FIXME: use translation
-                    label="Color"
-                    name="color"
-                    value={value.color}
-                    onChange={onFieldChange}
-                    error={error?.color}
-                    className={styles.optionInput}
-                />
-                <TextArea
-                    // FIXME: use translation
-                    label="Tooltip"
-                    name="tooltip"
-                    rows={2}
-                    value={value.tooltip}
-                    onChange={onFieldChange}
-                    error={error?.tooltip}
-                    className={styles.optionInput}
-                />
-            </ExpandableContainer>
-        </div>
+                className={styles.optionInput}
+            />
+            <TextInput
+                // FIXME: use translation
+                label="Color"
+                name="color"
+                value={value.color}
+                onChange={onFieldChange}
+                error={error?.color}
+                className={styles.optionInput}
+            />
+            <TextArea
+                // FIXME: use translation
+                label="Tooltip"
+                name="tooltip"
+                rows={2}
+                value={value.tooltip}
+                onChange={onFieldChange}
+                error={error?.tooltip}
+                className={styles.optionInput}
+            />
+        </ExpandableContainer>
     );
 }
 

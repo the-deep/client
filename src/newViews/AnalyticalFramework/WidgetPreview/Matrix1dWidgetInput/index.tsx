@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
-import { NodeRef } from '#newComponents/ui/SortableList';
 import { sortByOrder } from '#utils/safeCommon';
 
 import { Matrix1dValue, Matrix1dWidget } from '../../types';
@@ -141,8 +140,6 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 
     widget: PartialMatrix1dWidget,
-    nodeRef?: NodeRef;
-    rootStyle?: React.CSSProperties;
 }
 
 function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
@@ -156,8 +153,6 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
-        nodeRef,
-        rootStyle,
     } = props;
 
     const sortedRows = useMemo(() => (
@@ -199,8 +194,6 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
             childrenContainerClassName={styles.matrix1d}
             title={title}
             actions={actions}
-            nodeRef={nodeRef}
-            rootStyle={rootStyle}
         >
             <List
                 data={sortedRows}

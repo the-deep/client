@@ -1,8 +1,6 @@
 import React from 'react';
 import { DateInput } from '@the-deep/deep-ui';
 
-import { NodeRef } from '#newComponents/ui/SortableList';
-
 import WidgetWrapper from '../../Widget';
 import { DateValue } from '../../types';
 
@@ -17,9 +15,6 @@ export interface Props <N extends string>{
     actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
-
-    nodeRef?: NodeRef;
-    rootStyle?: React.CSSProperties;
 }
 
 function DateWidgetInput<N extends string>(props: Props<N>) {
@@ -32,8 +27,6 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
-        nodeRef,
-        rootStyle,
     } = props;
 
     return (
@@ -41,8 +34,6 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
-            nodeRef={nodeRef}
-            rootStyle={rootStyle}
         >
             <DateInput
                 name={name}
