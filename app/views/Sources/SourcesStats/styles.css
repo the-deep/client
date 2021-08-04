@@ -1,17 +1,34 @@
 .sources-stats {
+    --spacing: var(--dui-spacing-small);
     display: flex;
+    flex-wrap: wrap;
+    padding: calc(var(--dui-spacing-medium) - var(--spacing));
 
-    .container {
+    .entry-stats-card,
+    .lead-stats-card {
         display: flex;
         flex-grow: 1;
-        justify-content: space-around;
-        margin: var(--dui-spacing-small);
+        margin: var(--spacing);
         border: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
         border-radius: var(--dui-border-radius-card);
 
+        >* {
+            flex-basis: 0;
+            flex-grow: 1;
+        }
+
         .info-card {
+            flex-grow: unset;
             border-right: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
             border-radius: 0;
         }
+    }
+
+    .entry-stats-card {
+        flex-basis: calc(40% - 2 * var(--spacing));
+    }
+
+    .lead-stats-card {
+        flex-basis: calc(60% - 2 * var(--spacing));
     }
 }
