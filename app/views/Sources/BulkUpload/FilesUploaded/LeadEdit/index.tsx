@@ -1,18 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
-import { connect } from 'react-redux';
 import {
     _cs,
     formatDateToString,
 } from '@togglecorp/fujs';
-import {
-    useForm,
-} from '@togglecorp/toggle-form';
+import { useForm } from '@togglecorp/toggle-form';
 
-import { AppState } from '#types';
-import {
-    activeUserSelector,
-    activeProjectIdFromStateSelector,
-} from '#redux';
+import UserContext from '#base/context/UserContext';
+import ProjectContext from '#base/context/ProjectContext';
 
 import { FileUploadResponse } from '../../types';
 import { schema, PartialFormType } from '../../../LeadEditModal/LeadEditForm/schema';
@@ -20,39 +14,31 @@ import LeadEditForm from '../../../LeadEditModal/LeadEditForm';
 
 import styles from './styles.css';
 
-const mapStateToProps = (state: AppState) => ({
-    activeUser: activeUserSelector(state),
-    activeProject: activeProjectIdFromStateSelector(state),
-});
-
 interface Props {
     className?: string;
-    activeProject: number;
-    activeUser: { userId: number };
     file?: FileUploadResponse;
 }
 
 function LeadEdit(props: Props) {
     const {
         className,
-        activeProject,
         file,
-        activeUser: {
-            userId,
-        },
     } = props;
+
+    const { project: activeProject } = React.useContext(ProjectContext);
+    const { user } = React.useContext(UserContext);
 
     const partialLead: PartialFormType = useMemo(() => ({
         title: file?.title,
-        project: activeProject,
-        assignee: userId,
+        project: activeProject ? +activeProject : undefined,
+        assignee: user?.id ? +user.id : undefined,
         sourceType: file?.sourceType ?? 'website',
         publishedOn: formatDateToString(new Date(), 'yyyy-MM-dd'),
         confidentiality: 'unprotected',
         isAssessmentLead: false,
         priority: 100,
         attachment: file,
-    }), [activeProject, file, userId]);
+    }), [activeProject, file, user]);
 
     const {
         value,
