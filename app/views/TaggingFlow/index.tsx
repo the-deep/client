@@ -81,20 +81,15 @@ function TaggingFlow(props: Props) {
                 >
                     <FullPageHeader
                         className={styles.header}
-                        actionsClassName={styles.actions}
-                        heading={`Source ${lead?.title}`}
-                        contentClassName={styles.content}
+                        heading="Source"
+                        description={lead?.title}
                         actions={(
                             <>
-                                <BackLink
-                                    className={styles.button}
-                                    defaultLink="/"
-                                >
+                                <BackLink defaultLink="/">
                                     Close
                                 </BackLink>
                                 <Button
                                     name={undefined}
-                                    className={styles.button}
                                     variant="secondary"
                                     // NOTE: To be fixed later
                                     disabled
@@ -103,7 +98,6 @@ function TaggingFlow(props: Props) {
                                 </Button>
                                 <Button
                                     name={undefined}
-                                    className={styles.button}
                                     // NOTE: To be fixed later
                                     disabled
                                 >
@@ -112,38 +106,30 @@ function TaggingFlow(props: Props) {
                             </>
                         )}
                     >
-                        <TabList className={styles.tabList}>
+                        <TabList>
                             <Tab
                                 name="source-details"
-                                className={styles.tab}
-                                activeClassName={styles.activeTab}
                                 transparentBorder
                             >
                                 Source Details
                             </Tab>
                             <Tab
                                 name="primary-tagging"
-                                className={styles.tab}
                                 disabled={isNotDefined(projectId)}
-                                activeClassName={styles.activeTab}
                                 transparentBorder
                             >
                                 Primary Tagging
                             </Tab>
                             <Tab
                                 name="secondary-tagging"
-                                className={styles.tab}
                                 disabled={isNotDefined(projectId)}
-                                activeClassName={styles.activeTab}
                                 transparentBorder
                             >
                                 Secondary Tagging
                             </Tab>
                             <Tab
                                 name="review"
-                                className={styles.tab}
                                 disabled={isNotDefined(projectId)}
-                                activeClassName={styles.activeTab}
                                 transparentBorder
                             >
                                 Review
@@ -173,7 +159,10 @@ function TaggingFlow(props: Props) {
                             className={styles.tabPanel}
                             name="primary-tagging"
                         >
-                            <PrimaryTagging className={styles.primaryTagging} />
+                            <PrimaryTagging
+                                lead={lead}
+                                className={styles.primaryTagging}
+                            />
                         </TabPanel>
                         <TabPanel
                             name="secondary-tagging"

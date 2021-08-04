@@ -5,11 +5,8 @@ import {
     isNotDefined,
 } from '@togglecorp/fujs';
 import {
-    AiOutlineShrink,
-    AiOutlineExpandAlt,
-} from 'react-icons/ai';
-import {
     IoOpenOutline,
+    IoExpand,
 } from 'react-icons/io5';
 import {
     QuickActionButton,
@@ -103,7 +100,7 @@ function LeadPreview(props: Props) {
                                     name={undefined}
                                     onClick={handleFullScreenToggleClick}
                                 >
-                                    {fullScreenMode ? <AiOutlineShrink /> : <AiOutlineExpandAlt />}
+                                    <IoExpand />
                                 </QuickActionButton>
                             </>
                         )}

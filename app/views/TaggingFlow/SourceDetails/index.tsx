@@ -7,6 +7,7 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 
+import LeadPreview from '#components/LeadPreview';
 import LeadEditForm from '#views/Sources/LeadEditModal/LeadEditForm';
 import { PartialFormType } from '#views/Sources/LeadEditModal/LeadEditForm/schema';
 
@@ -41,8 +42,12 @@ function SourceDetails(props: Props) {
 
     return (
         <div className={_cs(className, styles.sourceDetails)}>
-            <Card className={styles.preview}>
-                Preview
+            <Card className={styles.previewContainer}>
+                <LeadPreview
+                    className={styles.preview}
+                    url={leadValue.url}
+                    attachment={leadValue.attachment}
+                />
             </Card>
             <Card className={styles.formContainer}>
                 <LeadEditForm

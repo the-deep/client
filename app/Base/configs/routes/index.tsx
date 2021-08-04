@@ -146,7 +146,7 @@ const exportRoute = wrap({
 });
 const taggingFlow = wrap({
     parent: { path: taggingRoute.path },
-    path: '/:leadId/',
+    path: '/:leadId(\\d+)/',
     title: 'Tagging Flow',
     navbarVisibility: true,
     component: lazy(() => import('#views/TaggingFlow')),

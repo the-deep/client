@@ -2,13 +2,20 @@
     display: flex;
     flex-grow: 1;
     padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
-    --width-preview: 560px;
+    --width-preview: calc(20rem + 10vw);
 
-    .preview {
+    .preview-container {
+        display: flex;
         flex-basis: var(--width-preview);
+        flex-direction: column;
         flex-shrink: 0;
         margin: var(--dui-spacing-medium);
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        overflow: auto;
+
+        .preview {
+            flex-grow: 1;
+        }
     }
 
     .form-container {
