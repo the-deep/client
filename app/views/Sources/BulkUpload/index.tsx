@@ -26,7 +26,7 @@ function BulkUpload(props: Props) {
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
 
     const handleFileUploadSuccess = useCallback((value: FileUploadResponse) => {
-        setUploadedFiles(oldUploadedFiles => ([
+        setUploadedFiles((oldUploadedFiles) => ([
             value,
             ...oldUploadedFiles,
         ]));

@@ -16,7 +16,6 @@ interface Props {
     title?: string;
     progress: number;
     variant?: 'complement1' | 'complement2' | 'complement3';
-    // FIXME: add eslint rule that styles.small and styles.large are used
     size?: 'small' | 'large';
 }
 
@@ -52,7 +51,13 @@ function ProgressLine(props: Props) {
                 <div className={styles.title}>
                     {title}
                 </div>
-                <div className={_cs(styles.line, styles[size])}>
+                <div
+                    className={_cs(
+                        styles.line,
+                        size === 'small' && styles.small,
+                        size === 'large' && styles.large,
+                    )}
+                >
                     <div
                         style={{
                             width: progressWidth,

@@ -251,6 +251,8 @@ export const processDeepError: DeepContextInterface['transformError'] = (
     const { failureHeader } = ctx;
 
     if (failureHeader) {
+        // FIXME: use notify
+        // eslint-disable-next-line no-console
         console.error(
             failureHeader,
             error.value.messageForNotification,
