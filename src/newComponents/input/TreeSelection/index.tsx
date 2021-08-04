@@ -19,7 +19,7 @@ interface Node {
     selected: boolean;
     key: string;
     title: string;
-    nodes?: Node[];
+    nodes: Node[] | undefined;
 }
 
 const keySelector = (d: Node) => d.key;
@@ -27,16 +27,10 @@ const keySelector = (d: Node) => d.key;
 // Set selected state for a particular node where selected = true/false
 // and do it for all the children.
 function setChildrenSelectionStatus(node: Node, selected: boolean): Node {
-    if (node.nodes) {
-        return ({
-            ...node,
-            nodes: node.nodes.map(n => setChildrenSelectionStatus(n, selected)),
-            selected,
-        });
-    }
     return ({
         ...node,
         selected,
+        nodes: node.nodes?.map(n => setChildrenSelectionStatus(n, selected)),
     });
 }
 
@@ -100,13 +94,11 @@ function SortableNode(props: SortableNodeProps) {
             expansionTriggerArea="arrow"
             disabled={!nodes || nodes.length === 0}
         >
-            {nodes && (
-                <TreeSelection
-                    name={key}
-                    value={nodes}
-                    onChange={onChildrenChange}
-                />
-            )}
+            <TreeSelection
+                name={key}
+                value={nodes}
+                onChange={onChildrenChange}
+            />
         </ExpandableContainer>
     );
 }
@@ -116,15 +108,17 @@ const MemoizedSortableNode = genericMemo(SortableNode);
 interface Props<N extends string> {
     className?: string;
     name: N;
-    value: Node[];
+    value: Node[] | undefined;
     onChange: (newVal: Node[], name: N) => void;
     direction?: 'vertical' | 'horizontal';
 }
 
+const emptyArray: unknown[] = [];
+
 function TreeSelection<N extends string>(props: Props<N>) {
     const {
         name,
-        value,
+        value = emptyArray as Node[],
         onChange,
         className,
         direction = 'vertical',
@@ -178,6 +172,8 @@ function TreeSelection<N extends string>(props: Props<N>) {
             renderer={MemoizedSortableNode}
             direction={direction}
             rendererParams={sortableNodeParams}
+            emptyMessage={null}
+            emptyIcon={null}
         />
     );
 }
