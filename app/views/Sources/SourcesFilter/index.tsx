@@ -307,7 +307,7 @@ function SourcesFilter(props: Props) {
                         className={styles.button}
                         disabled={disabled || pristine}
                         name="sourcesFilterSubmit"
-                        variant="action"
+                        variant="transparent"
                         onClick={handleApply}
                     >
                         {_ts('sourcesFilter', 'apply')}
@@ -316,7 +316,7 @@ function SourcesFilter(props: Props) {
                         className={styles.button}
                         disabled={disabled || pristine}
                         name="clearFilter"
-                        variant="action"
+                        variant="transparent"
                         actions={<IoClose />}
                         onClick={handleClear}
                     >
@@ -325,7 +325,7 @@ function SourcesFilter(props: Props) {
                     <Button
                         className={styles.button}
                         name="showAll"
-                        variant="action"
+                        variant="transparent"
                         actions={showContent ? (
                             <IoChevronUpOutline />
                         ) : (
@@ -333,7 +333,7 @@ function SourcesFilter(props: Props) {
                         )}
                         onClick={toggleContentVisibility}
                     >
-                        {_ts('sourcesFilter', showContent ? 'hide' : 'showAll')}
+                        {showContent ? 'Show Less' : 'Show All'}
                     </Button>
                 </div>
             </div>

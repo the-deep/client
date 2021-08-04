@@ -11,6 +11,7 @@
         margin: var(--spacing);
         border: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
         border-radius: var(--dui-border-radius-card);
+        box-shadow: 0 1px 7px -1px rgba(0, 0, 0, .2);
 
         >* {
             flex-basis: 0;
