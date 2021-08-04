@@ -5,7 +5,7 @@ import {
     DropContainer,
 } from '@the-deep/deep-ui';
 
-import { BasicOrganization } from '#typings';
+import { BasicOrganization } from '#types';
 
 import StakeholderRow from './StakeholderRow';
 

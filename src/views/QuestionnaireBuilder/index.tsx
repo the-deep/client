@@ -34,7 +34,7 @@ import {
     OrderAction,
 
     NullableField,
-} from '#typings';
+} from '#types';
 
 import {
     notifyOnFailure,

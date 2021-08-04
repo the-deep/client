@@ -10,7 +10,7 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 
-import { BasicOrganization } from '#typings';
+import { BasicOrganization } from '#types';
 
 import styles from './styles.scss';
 

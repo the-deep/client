@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { _cs, isNotDefined } from '@togglecorp/fujs';
 
-import { EntrySummary } from '#typings/entry';
+import { EntrySummary } from '#types/entry';
 import Numeral from '#rscv/Numeral';
 import ListView from '#rscv/List/ListView';
 import Icon from '#rscg/Icon';

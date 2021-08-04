@@ -51,7 +51,7 @@ import {
     AnalysisPillars,
     ProjectDetails,
     AppState,
-} from '#typings';
+} from '#types';
 
 import {
     projectIdFromRouteSelector,

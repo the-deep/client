@@ -45,7 +45,7 @@ import {
     ProjectDetails,
     AppState,
     User,
-} from '#typings';
+} from '#types';
 import { organizationTitleSelector } from '#entities/organization';
 import { useModalState } from '#hooks/stateManagement';
 

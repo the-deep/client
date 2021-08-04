@@ -10,7 +10,7 @@ import {
     ProjectDetails,
     GeoOptions,
     GeoOption,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 

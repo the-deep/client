@@ -17,7 +17,7 @@ function PrimaryTagging(props: Props) {
     const [activeEntry, setActiveEntry] = React.useState<Entry['clientId'] | undefined>();
 
     const handleEntryCreate = React.useCallback((newEntry: Entry) => {
-        setEntries(oldEntries => ([
+        setEntries((oldEntries) => ([
             ...oldEntries,
             newEntry,
         ]));

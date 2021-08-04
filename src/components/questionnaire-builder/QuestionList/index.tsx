@@ -15,7 +15,7 @@ import {
     MiniFrameworkElement,
     BaseQuestionElement,
     BulkActionId,
-} from '#typings';
+} from '#types';
 
 import { getMatrix2dStructures } from '#utils/framework';
 import { getQuestionAttributeTitle, getFilteredQuestions } from '#entities/questionnaire';

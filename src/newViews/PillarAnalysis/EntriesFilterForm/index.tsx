@@ -26,7 +26,7 @@ import {
     WidgetElement,
     ProjectDetails,
     FilterFields,
-} from '#typings';
+} from '#types';
 import _ts from '#ts';
 
 import FrameworkFilter from './FrameworkFilter';

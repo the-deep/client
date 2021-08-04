@@ -17,7 +17,7 @@ import {
 
 import _ts from '#ts';
 
-import { ProjectsSummary } from '#typings';
+import { ProjectsSummary } from '#types';
 
 import styles from './styles.scss';
 

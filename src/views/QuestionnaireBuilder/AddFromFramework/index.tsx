@@ -16,7 +16,7 @@ import {
     FrameworkQuestionElement,
     BaseQuestionElement,
     MiniFrameworkElement,
-} from '#typings';
+} from '#types';
 
 import {
     getFrameworkMatrices,

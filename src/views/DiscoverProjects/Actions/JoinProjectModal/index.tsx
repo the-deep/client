@@ -18,7 +18,7 @@ import _ts from '#ts';
 
 import {
     ProjectElement,
-} from '#typings';
+} from '#types';
 
 import styles from './styles.scss';
 

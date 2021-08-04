@@ -144,6 +144,17 @@ const exportRoute = wrap({
     },
     visibility: 'is-authenticated',
 });
+const taggingFlow = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/:leadId/flow/',
+    title: 'Tagging Flow',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/TaggingFlow')),
+    componentProps: {
+        className: styles.view,
+    },
+    visibility: 'is-authenticated',
+});
 
 const analysis = wrap({
     parent: projectRoute,
@@ -180,5 +191,6 @@ const routes = {
     fourHundredFour,
     dashboard,
     export: exportRoute,
+    taggingFlow,
 };
 export default routes;

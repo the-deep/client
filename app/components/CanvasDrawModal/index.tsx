@@ -12,7 +12,7 @@ import {
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Coordinate {
     x: number;

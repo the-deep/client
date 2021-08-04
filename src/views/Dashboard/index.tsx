@@ -13,7 +13,7 @@ import {
 import {
     User,
     AppState,
-} from '#typings';
+} from '#types';
 
 import { envText } from '#config/env';
 import _ts from '#ts';

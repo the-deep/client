@@ -25,7 +25,7 @@ import {
     QuestionnaireQuestionElement,
 
     Permissions,
-} from '#typings';
+} from '#types';
 
 import { generateXLSForm, readXLSForm } from '#entities/questionnaire';
 

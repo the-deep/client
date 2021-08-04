@@ -13,7 +13,7 @@ import Cloak from '#components/general/Cloak';
 import ConfirmButton from '#rsca/ConfirmButton';
 
 import { useLazyRequest } from '#utils/request';
-import { Permission } from '#typings/common';
+import { Permission } from '#types/common';
 
 import _ts from '#ts';
 import notify from '#notify';

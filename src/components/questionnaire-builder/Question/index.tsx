@@ -18,7 +18,7 @@ import {
     BaseQuestionElement,
     LanguageTitle,
     QuestionType,
-} from '#typings';
+} from '#types';
 import {
     isChoicedQuestionType,
     generateDurationLabel,

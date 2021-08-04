@@ -41,7 +41,7 @@ import {
     MultiResponse,
     FrameworkFields,
     UserMini,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 

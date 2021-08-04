@@ -34,7 +34,7 @@ import {
     BulkActionId,
     OrderAction,
     NullableField,
-} from '#typings';
+} from '#types';
 import { afIdFromRouteSelector } from '#redux';
 
 import {

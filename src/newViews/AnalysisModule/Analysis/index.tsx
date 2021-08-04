@@ -38,7 +38,7 @@ import {
 import {
     AppState,
     PillarSummary,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';

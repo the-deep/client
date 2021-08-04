@@ -28,8 +28,7 @@ import {
     AddRequestProps,
     Requests,
     Lead as LeadFaramValues,
-    AppState,
-} from '#typings';
+} from '#types';
 
 import {
     RequestClient,

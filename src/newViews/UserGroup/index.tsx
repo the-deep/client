@@ -25,7 +25,7 @@ import {
 import {
     AppState,
     MultiResponse,
-} from '#typings';
+} from '#types';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 

@@ -8,7 +8,7 @@ import {
     AddRequestProps,
     Requests,
     Entry,
-} from '#typings';
+} from '#types';
 
 import {
     RequestClient,

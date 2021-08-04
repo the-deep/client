@@ -1,22 +1,10 @@
 import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
 import {
     Link,
     LinkProps,
 } from '@the-deep/deep-ui';
 
-import { routeIsFirstPageSelector } from '#redux';
-
-import {
-    AppState,
-} from '#typings';
-
-const mapStateToProps = (state: AppState) => ({
-    isFirstPage: routeIsFirstPageSelector(state),
-});
-
 interface Props extends Omit<LinkProps, 'to'> {
-    isFirstPage: boolean;
     defaultLink?: string;
     children?: React.ReactNode;
 }
@@ -24,7 +12,6 @@ interface Props extends Omit<LinkProps, 'to'> {
 function BackLink(props: Props) {
     const {
         className,
-        isFirstPage,
         defaultLink,
         children,
         ...otherProps
@@ -42,7 +29,8 @@ function BackLink(props: Props) {
         <Link
             className={className}
             to={defaultLink || '/'}
-            onClick={isFirstPage ? undefined : handleBackLinkClick}
+            // onClick={isFirstPage ? undefined : handleBackLinkClick}
+            onClick={handleBackLinkClick}
             {...otherProps}
         >
             {children}
@@ -50,4 +38,4 @@ function BackLink(props: Props) {
     );
 }
 
-export default connect(mapStateToProps)(BackLink);
+export default BackLink;

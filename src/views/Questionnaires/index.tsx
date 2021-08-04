@@ -23,7 +23,7 @@ import {
     AddRequestProps,
     AppState,
     Requests,
-} from '#typings';
+} from '#types';
 
 import {
     notifyOnFailure,

@@ -22,7 +22,7 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import _ts from '#ts';
 import notify from '#notify';
-import { AnalysisElement } from '#typings/analysisModule';
+import { AnalysisElement } from '#types/analysisModule';
 
 import styles from './styles.scss';
 

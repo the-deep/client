@@ -9,11 +9,11 @@ import {
 import { useRequest } from '#utils/request';
 import {
     MultiResponse,
-} from '#typings';
+} from '#types';
 import {
     EntryType,
     TabularDataFields,
-} from '#typings/entry';
+} from '#types/entry';
 
 import _ts from '#ts';
 

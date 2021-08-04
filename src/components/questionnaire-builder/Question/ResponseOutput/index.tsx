@@ -10,7 +10,7 @@ import TextOutput from '#components/general/TextOutput';
 import {
     QuestionResponseOptionElement,
     LanguageTitle,
-} from '#typings';
+} from '#types';
 import {
     isChoicedQuestionType,
     languageOptionsMap,

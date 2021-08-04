@@ -7,7 +7,7 @@ import { IoIosContacts } from 'react-icons/io';
 
 import { ContainerCard, ListView } from '@the-deep/deep-ui';
 
-import { ProjectOrganization } from '#typings';
+import { ProjectOrganization } from '#types';
 import { organizationTitleSelector } from '#entities/organization';
 
 import styles from './styles.scss';
