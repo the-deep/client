@@ -22,25 +22,16 @@ function Tagging(props: Props) {
                         exact
                         route={routes.sources}
                         className={styles.link}
-                        attrs={{
-                            projectId: 1,
-                        }}
                     />
                     <SmartNavLink
                         exact
                         route={routes.dashboard}
                         className={styles.link}
-                        attrs={{
-                            projectId: 1,
-                        }}
                     />
                     <SmartNavLink
                         exact
                         route={routes.export}
                         className={styles.link}
-                        attrs={{
-                            projectId: 1,
-                        }}
                     />
                 </div>
             </nav>
