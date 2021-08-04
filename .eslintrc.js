@@ -8,6 +8,9 @@ const config = {
     env: {
         browser: true,
     },
+    globals: {
+        chrome: true,
+    },
     plugins: [
         'graphql',
         '@typescript-eslint',

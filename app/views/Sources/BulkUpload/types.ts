@@ -1,4 +1,4 @@
-import { MimeTypes } from '#newComponents/viewer/LeadPreview/Preview/mimeTypes';
+import { MimeTypes } from '#components/LeadPreview/Preview/mimeTypes';
 
 export type SourceFileType = 'disk' | 'google-drive' | 'dropbox';
 
