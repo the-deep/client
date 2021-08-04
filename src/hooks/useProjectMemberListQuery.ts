@@ -1,5 +1,4 @@
 import { useRequest } from '#utils/request';
-import { notifyError } from '#utils/requestNotify';
 import {
     MultiResponse,
     DatabaseEntityBase,
@@ -25,7 +24,7 @@ function useProjectMemberListQuery(projectId: DatabaseEntityBase['id']): [
         url: `server://v2/projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: memberFieldQuery,
-        onFailure: notifyError(_ts('entryReview', 'projectMemberList')),
+        failureHeader: _ts('entryReview', 'projectMemberList'),
     });
 
     return [

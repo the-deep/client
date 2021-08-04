@@ -38,10 +38,6 @@
                 padding: 0 var(--spacing-medium);
             }
 
-            .entry-verify {
-                padding: 0 var(--spacing-small);
-            }
-
             .link {
                 padding: var(--spacing-small) var(--spacing-medium);
             }
@@ -49,15 +45,6 @@
             .button {
                 display: flex;
                 align-items: center;
-
-                .comment-count {
-                    padding-left: var(--spacing-small);
-                }
-
-                &.accented {
-                    border-color: var(--color-danger)!important;
-                    color: var(--color-danger);
-                }
             }
         }
     }

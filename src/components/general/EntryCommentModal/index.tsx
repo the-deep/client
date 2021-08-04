@@ -14,7 +14,6 @@ import ListView from '#rsu/../v2/View/ListView';
 
 import { useRequest } from '#utils/request';
 import { MultiResponse, EntryComment, EntryReviewSummary, AppState } from '#typings';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 import useDragMove from '#hooks/useDragMove';
 
@@ -80,9 +79,7 @@ function EntryCommentModal(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
-        },
+        failureHeader: _ts('entryReview', 'commentHeading'),
     });
 
     const containerRef = useRef<HTMLDivElement>(null);

@@ -8,7 +8,6 @@ import DangerButton from '#rsca/Button/DangerButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
 import { useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import {
@@ -63,9 +62,7 @@ function EditCommentForm(props: Props) {
             setFaramValues(undefined);
             onEditSuccess(response);
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
-        },
+        failureHeader: _ts('entryReview', 'commentHeading'),
     });
 
     const handleFaramChange = useCallback((newFaramValues, newFaramErrors) => {

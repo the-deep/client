@@ -60,21 +60,6 @@
                 button {
                     margin: 0 var(--spacing-extra-small);
                 }
-
-                .entry-comment-button {
-                    display: flex;
-                    align-items: center;
-                    padding: var(--spacing-extra-small) var(--spacing-small);
-
-                    .comment-count {
-                        padding-left: var(--spacing-small);
-                    }
-
-                    &.accented {
-                        border-color: var(--color-danger);
-                        color: var(--color-danger);
-                    }
-                }
             }
         }
 

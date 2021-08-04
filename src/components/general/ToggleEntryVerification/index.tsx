@@ -11,7 +11,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import EntryCommentFormForModal from '#components/general/EntryCommentFormForModal';
 
 import { useModalState } from '#hooks/stateManagement';
-import { notifyOnFailure } from '#utils/requestNotify';
 import notify from '#notify';
 import { useLazyRequest } from '#utils/request';
 
@@ -57,7 +56,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
-    } = useLazyRequest({
+    } = useLazyRequest<unknown, { commentType: number }>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: ctx => ctx,
@@ -73,8 +72,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('editEntry', 'entryVerificationStatusChange'))({ error: errorBody }),
+        failureHeader: _ts('editEntry', 'entryVerificationStatusChange'),
     });
 
     React.useEffect(() => {

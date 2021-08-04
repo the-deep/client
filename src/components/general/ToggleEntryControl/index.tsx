@@ -26,7 +26,6 @@ import EntryCommentFormForModal from '#components/general/EntryCommentFormForMod
 import { useModalState } from '#hooks/stateManagement';
 import notify from '#notify';
 import { useLazyRequest } from '#utils/request';
-import { notifyError } from '#utils/requestNotify';
 
 import _ts from '#ts';
 
@@ -85,7 +84,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
-    } = useLazyRequest({
+    } = useLazyRequest<unknown, { commentType: number }>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: ctx => ctx,
@@ -100,7 +99,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: notifyError(_ts('entryReview', 'entryControlFailure')),
+        failureHeader: _ts('entryReview', 'entryControlFailure'),
     });
 
     React.useEffect(() => {

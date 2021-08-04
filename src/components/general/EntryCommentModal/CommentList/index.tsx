@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import ReactMarkdown from 'react-markdown';
 
 import FormattedDate from '#rscv/FormattedDate';
-import Avatar from '#dui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 

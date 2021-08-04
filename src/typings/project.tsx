@@ -112,6 +112,7 @@ export interface ProjectStat {
     numberOfLeads: number;
     numberOfLeadsTagged: number;
     numberOfLeadsTaggedAndControlled: number;
+    numberOfLeadsTaggedAndVerified: number;
     numberOfUsers: number;
     role: number;
     startDate?: string;
@@ -185,7 +186,7 @@ export interface ProjectRole {
     level: number;
     isCreatorRole: boolean;
     isDefaultRole: boolean;
-    qualityController: boolean; //TODO: fix this later
+    qualityController: boolean; // TODO: fix this later
 }
 
 export interface ProjectMemberships {

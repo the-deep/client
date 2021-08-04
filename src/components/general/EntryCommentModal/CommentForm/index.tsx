@@ -12,7 +12,6 @@ import useProjectMemberListQuery, {
 } from '#hooks/useProjectMemberListQuery';
 
 import { useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import { FaramErrors } from '#typings';
@@ -70,9 +69,7 @@ function CommentForm(props: Props) {
             setFaramValues(undefined);
             onSuccess();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
-        },
+        failureHeader: _ts('entryReview', 'commentHeading'),
     });
 
     const [

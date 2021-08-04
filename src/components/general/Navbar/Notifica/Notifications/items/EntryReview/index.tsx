@@ -1,7 +1,7 @@
 import React from 'react';
 import { reverseRoute } from '@togglecorp/fujs';
 
-import Avatar from '#dui/Avatar';
+import Avatar from '#newComponents/ui/Avatar';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 import {
