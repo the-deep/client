@@ -14,6 +14,7 @@ import {
 } from '@the-deep/deep-ui';
 import { useForm } from '@togglecorp/toggle-form';
 
+import ProjectContext from '#base/context/ProjectContext';
 import { useRequest } from '#base/utils/restRequest';
 import FullPageHeader from '#components/FullPageHeader';
 import BackLink from '#components/BackLink';
@@ -36,17 +37,13 @@ interface Props {
 
 function TaggingFlow(props: Props) {
     const { className } = props;
-    const {
-        projectId,
-        leadId,
-    } = useParams<{
-        projectId: string;
-        leadId: string;
-    }>();
+    const { project } = React.useContext(ProjectContext);
+    const { leadId } = useParams<{ leadId: string }>();
+    const projectId = project ? +project.id : undefined;
 
     const [ready, setReady] = useState(!leadId);
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
-        project: +projectId,
+        project: projectId,
         sourceType: 'website',
         priority: 100,
         confidentiality: 'unprotected',
@@ -158,17 +155,19 @@ function TaggingFlow(props: Props) {
                             className={styles.tabPanel}
                             name="source-details"
                         >
-                            <SourceDetails
-                                leadValue={leadValue}
-                                setValue={setLeadValue}
-                                setPristine={setLeadPristine}
-                                setLeadFieldValue={setLeadFieldValue}
-                                leadFormError={leadFormError}
-                                ready={ready}
-                                pending={leadGetPending}
-                                leadInitialValue={leadInitialValue}
-                                projectId={+projectId}
-                            />
+                            {projectId && (
+                                <SourceDetails
+                                    leadValue={leadValue}
+                                    setValue={setLeadValue}
+                                    setPristine={setLeadPristine}
+                                    setLeadFieldValue={setLeadFieldValue}
+                                    leadFormError={leadFormError}
+                                    ready={ready}
+                                    pending={leadGetPending}
+                                    leadInitialValue={leadInitialValue}
+                                    projectId={projectId}
+                                />
+                            )}
                         </TabPanel>
                         <TabPanel
                             className={styles.tabPanel}

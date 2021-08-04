@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { isDefined } from '@togglecorp/fujs';
-import { useParams } from 'react-router-dom';
 import {
     useForm,
     requiredCondition,
@@ -15,6 +14,7 @@ import {
     PendingMessage,
 } from '@the-deep/deep-ui';
 
+import ProjectContext from '#base/context/ProjectContext';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { LeadGroup } from '#types';
 import _ts from '#ts';
@@ -40,8 +40,8 @@ function AddLeadGroupModal(props: Props) {
         onLeadGroupAdd,
     } = props;
 
-    const { projectId } = useParams<{ projectId: string }>();
-    const activeProject = +projectId;
+    const { project } = React.useContext(ProjectContext);
+    const activeProject = project ? +project.id : undefined;
 
     const {
         trigger: leadGroupAddTrigger,
