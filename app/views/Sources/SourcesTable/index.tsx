@@ -6,28 +6,28 @@ import {
 } from '@togglecorp/fujs';
 
 import {
-    Pager,
-    Table,
-    TableColumn,
+    Checkbox,
+    CheckboxProps,
     Container,
-    PendingMessage,
-    TableHeaderCell,
-    TableHeaderCellProps,
-    createStringColumn,
-    Tag,
-    TagProps,
     DateOutput,
     DateOutputProps,
     Link,
     LinkProps,
-    Checkbox,
-    CheckboxProps,
+    Pager,
+    PendingMessage,
     SortContext,
-    useSortState,
+    Table,
+    TableColumn,
+    TableHeaderCell,
+    TableHeaderCellProps,
+    Tag,
+    TagProps,
+    createStringColumn,
     useBooleanState,
-    Spinner,
+    useSortState,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { VscLoading } from 'react-icons/vsc';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { MultiResponse, Lead } from '#types';
@@ -43,7 +43,7 @@ import styles from './styles.css';
 const leadsKeySelector: (d: Lead) => number = (d) => d.id;
 
 const statusIconMap: Record<Lead['status'], ReactNode> = {
-    pending: <Spinner inheritColor />,
+    pending: <VscLoading />,
     validated: <IoCheckmarkCircleOutline />,
     processed: null,
 };

@@ -13,7 +13,7 @@ import {
     useConfirmation,
 } from '@the-deep/deep-ui';
 
-import { reverseRoute } from '#base/hooks/useRouteMatching';
+import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
 
 import styles from './styles.css';
@@ -38,6 +38,15 @@ function Actions<T extends number>(props: Props<T>) {
         onDeleteClick,
         projectId,
     } = props;
+
+    const route = useRouteMatching(
+        routes.taggingFlow,
+        {
+            projectId,
+            leadId: id,
+        },
+    );
+    const taggingFlowLink = route?.to ?? '';
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
@@ -68,7 +77,7 @@ function Actions<T extends number>(props: Props<T>) {
                 variant="primary"
                 title="tag"
                 disabled={disabled}
-                to={reverseRoute(routes.taggingFlow, { projectId, leadId: id })}
+                to={taggingFlowLink}
                 icons={<IoAdd />}
             >
                 Tag
