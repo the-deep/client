@@ -21,10 +21,10 @@
             align-items: flex-end;
             flex-grow: 1;
             justify-content: flex-end;
+            padding: var(--dui-spacing-small) 0;
 
             .button {
                 margin: var(--dui-spacing-small);
-                font-size: 0.8rem;
             }
         }
     }

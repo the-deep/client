@@ -10,7 +10,13 @@
     color: var(--dui-color-text);
     font-weight: var(--dui-font-weight-bold);
 
+    .border {
+        opacity: 0;
+    }
+
     &.active {
-        border-bottom-color: var(--dui-color-accent);
+        .border {
+            opacity: 1;
+        }
     }
 }

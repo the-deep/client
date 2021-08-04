@@ -1,8 +1,7 @@
 .tagging {
-    padding: var(--dui-spacing-medium);
-
     .sub-navbar {
         display: flex;
+        position: relative;
         justify-content: center;
 
         .nav-links {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
+import { Border } from '@the-deep/deep-ui';
 
 import SmartNavLink from '#base/components/SmartNavLink';
 import routes from '#base/configs/routes';
@@ -18,6 +19,7 @@ function Tagging(props: Props) {
         <div className={_cs(styles.tagging, className)}>
             <nav className={styles.subNavbar}>
                 <div className={styles.navLinks}>
+                    <Border />
                     <SmartNavLink
                         exact
                         route={routes.sources}
