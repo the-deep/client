@@ -7,6 +7,8 @@ import {
     googleDriveClientId,
     googleDriveDeveloperKey,
 } from '#config/google-drive';
+import { MimeTypes } from '#newComponents/viewer/LeadPreview/Preview/mimeTypes';
+
 import {
     supportedGoogleDriveMimeTypes,
 } from '../../utils';
@@ -36,7 +38,7 @@ function GoogleDriveFilesUpload(props: Props) {
                 id: v.id,
                 name: v.name,
                 fileType: 'google-drive' as const,
-                mimeType: v.mimeType,
+                mimeType: v.mimeType as MimeTypes,
                 accessToken: accessToken.current as string,
             }));
             onAdd(values);

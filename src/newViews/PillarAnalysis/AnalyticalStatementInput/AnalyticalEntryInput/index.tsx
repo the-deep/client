@@ -14,8 +14,8 @@ import { _cs } from '@togglecorp/fujs';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 import NonFieldError from '#newComponents/ui/NonFieldError';
+import ExcerptOutput from '#newComponents/viewer/ExcerptOutput';
 
-import EntryItem from '../../EntryItem';
 import EntryContext from '../../context';
 import { AnalyticalEntryType, PartialAnalyticalEntryType } from '../../schema';
 import { DroppedValue } from '../';
@@ -110,11 +110,11 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 <NonFieldError error={error} />
                 <NonFieldError error={error?.entry} />
                 {entry && (
-                    <EntryItem
+                    <ExcerptOutput
                         excerpt={entry.excerpt}
                         imageDetails={entry.imageDetails}
                         tabularFieldData={entry.tabularFieldData}
-                        type={entry.entryType}
+                        entryType={entry.entryType}
                     />
                 )}
             </DraggableContent>

@@ -69,25 +69,25 @@ export interface EntryFields extends DatabaseEntityBase {
         [key: string]: AttributeFields;
     };
     analysisFramework: number;
-    entryType: EntryType;
     project: number;
     projectLabels: string[];
     order: string;
     resolvedCommentCount: number;
     unresolvedCommentCount: number;
-    excerpt?: string;
-    droppedExcerpt?: string;
     clientId: string;
     highlightHidden: boolean;
-    image?: string;
-    imageRaw?: string;
-    imageDetails?: ImageDetails;
-    tabularField: number;
-    tabularFieldData: TabularDataFields;
     lead: Pick<Lead, EntryLeadType>;
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
+    entryType: 'excerpt';
+    excerpt?: string;
+    droppedExcerpt?: string;
+    imageDetails?: ImageDetails;
+    tabularFieldData?: TabularDataFields;
+    tabularField?: number;
+    image?: number;
+    imageRaw?: string;
 }
 
 export interface LeadWithGroupedEntriesFields {

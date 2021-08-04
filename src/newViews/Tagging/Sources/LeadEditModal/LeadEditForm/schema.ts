@@ -62,7 +62,10 @@ export interface Lead {
     };
 }
 
-export type PartialFormType = PartialForm<Lead, 'emmEntities' | 'emmTriggers' | 'confidentiality' | 'attachment'>;
+export type PartialFormType = PartialForm<
+    Lead,
+    'emmEntities' | 'emmTriggers' | 'confidentiality' | 'attachment' | 'mimeType'
+>;
 export type FormSchema = ObjectSchema<PartialFormType>;
 export type FormSchemaFields = ReturnType<FormSchema['fields']>;
 

@@ -137,25 +137,38 @@ export interface TabularDataFields {
     };
 }
 
-export type Entry = Entity & {
+export interface UserFields {
+    id: number;
+    displayName: string;
+    email: string;
+}
+
+export interface Entry extends Entity {
     project: number;
     lead: number;
+    entryType: EntryType;
+
     analyticalFramework: number;
     attributes: WidgetValue[];
-    entryType: EntryType;
-} & ({
-    entryType: 'excerpt';
-    excerpt: string;
-} | {
-    entryType: 'image';
-    image: string;
-    imageRaw: string;
+
+    verified: boolean;
+    verificationLastChangedByDetails?: UserFields;
+
+    excerpt?: string;
+    droppedExcerpt?: string;
+
+    // Labels for entry groups
+    projectLabels?: string[];
+
+    // Data for image type entry
+    image?: number;
+    imageRaw?: string;
     imageDetails?: {
         id: number;
         file: string;
     };
-} | {
-    entryType: 'dataSeries';
-    tabularField: number;
-    tabularFieldData: TabularDataFields;
-})
+
+    // Data for dataSeries type entry
+    tabularField?: number;
+    tabularFieldData?: TabularDataFields;
+}

@@ -1,3 +1,5 @@
+import { MimeTypes } from '#newComponents/viewer/LeadPreview/Preview/mimeTypes';
+
 export type SourceFileType = 'disk' | 'google-drive' | 'dropbox';
 
 export interface FileUploadResponse {
@@ -12,7 +14,7 @@ export interface FileUploadResponse {
     file: string;
     uuid: string;
     title: string;
-    mimeType: string;
+    mimeType: MimeTypes;
     isPublic: boolean;
     projects: number[];
     metadata: unknown;
@@ -29,7 +31,7 @@ export type FileLike = {
     file: File;
 } | {
     fileType: 'google-drive';
-    mimeType: string;
+    mimeType: MimeTypes;
     accessToken: string;
 } | {
     fileType: 'dropbox';

@@ -122,7 +122,6 @@ function LeadEditModal(props: Props) {
                     className={styles.preview}
                     url={value?.url}
                     attachment={value?.attachment}
-                    pending={pending}
                 />
             </Card>
             <Card className={styles.formContainer}>
