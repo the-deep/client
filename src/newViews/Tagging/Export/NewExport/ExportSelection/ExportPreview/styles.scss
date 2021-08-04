@@ -1,0 +1,17 @@
+.export-preview {
+    display: flex;
+    flex-direction: column;
+
+    .main-content {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+
+        .label {
+            display: flex;
+            color: var(--dui-color-text-label);
+            font-size: var(--dui-font-size-medium);
+        }
+    }
+}

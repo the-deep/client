@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import {
     Button,
     ExpandableContainer,
     TextInput,
 } from '@the-deep/deep-ui';
-
-import ExportPreview from '#components/other/ExportPreview';
 
 import {
     SECTOR_FIRST,
@@ -31,6 +29,7 @@ import {
 } from '#typings';
 
 import { SourceEntryFilter } from './types';
+import ExportPreview from './ExportPreview';
 import LeadsSelection from './LeadsSelection';
 import ExportTypePane from './ExportTypePane';
 
@@ -91,6 +90,7 @@ export interface SelectedLead extends Lead {
     selected: boolean;
 }
 interface Props {
+    className?: string;
     projectRole: {
         exportPermissions?: {
             'create_only_unprotected'?: boolean;
@@ -101,6 +101,7 @@ interface Props {
 
 function EntriesExportSelection(props: Props) {
     const {
+        className,
         projectId,
         projectRole,
     } = props;
@@ -335,7 +336,7 @@ function EntriesExportSelection(props: Props) {
     const handleSaveAndExport = () => {}; // TODO add this feature later
 
     return (
-        <div className={styles.export}>
+        <div className={_cs(className, styles.export)}>
             <div className={styles.left}>
                 <ExpandableContainer
                     className={styles.section}
