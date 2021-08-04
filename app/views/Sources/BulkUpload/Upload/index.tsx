@@ -56,9 +56,9 @@ function Upload(props: Props) {
     }, []);
 
     const handleFailure = useCallback((key: string) => {
-        const failedFile = files.find(v => v.key === key);
+        const failedFile = files.find((v) => v.key === key);
         if (failedFile) {
-            setFailedFiles(oldFiles => ([
+            setFailedFiles((oldFiles) => ([
                 ...oldFiles,
                 failedFile,
             ]));
@@ -82,7 +82,7 @@ function Upload(props: Props) {
     ]);
 
     const handleRetry = useCallback((key: string) => {
-        const failedFile = failedFiles.find(v => v.key === key);
+        const failedFile = failedFiles.find((v) => v.key === key);
         if (failedFile) {
             handleAddFiles([failedFile]);
         }
@@ -147,7 +147,7 @@ function Upload(props: Props) {
                     <Header
                         heading="Failed uploads"
                         headingSize="extraSmall"
-                        actions={
+                        actions={(
                             <QuickActionButton
                                 name="retrigger"
                                 title="Retry failed uploads"
@@ -155,7 +155,7 @@ function Upload(props: Props) {
                             >
                                 <AiOutlineRedo />
                             </QuickActionButton>
-                        }
+                        )}
                     />
                 )}
                 <List

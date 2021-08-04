@@ -134,7 +134,6 @@ export interface MiniQuestionnaireElement extends DbEntity {
     activeQuestionsCount: number;
 }
 
-
 export interface QuestionnaireElement extends DbEntity {
     project: number;
     title: string;
@@ -172,7 +171,6 @@ export interface LanguageTitle {
 
 // FRAMEWORK
 export type MiniFrameworkElement = Pick<FrameworkElement, 'id' | 'widgets' | 'questions' | 'title'>
-
 
 export interface QuestionnaireOptions {
     enumeratorSkillOptions?: unknown[];

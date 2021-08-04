@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { useLazyRequest } from '#base/utils/restRequest';
 import { FileInput, FileInputProps, ImagePreview } from '@the-deep/deep-ui';
+import { useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 
 interface Option {
@@ -49,7 +49,7 @@ function DeepImageInput<T extends string>(props: Props<T>) {
         formData: true,
         url: 'server://files/',
         method: 'POST',
-        body: ctx => ({
+        body: (ctx) => ({
             file: ctx,
             title: ctx.name,
             isPublic: !isPrivate,
