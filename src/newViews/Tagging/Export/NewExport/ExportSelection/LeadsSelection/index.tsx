@@ -28,6 +28,7 @@ import {
     MultiResponse,
     WidgetElement,
     GeoOptions,
+    EntryOptions,
 } from '#typings';
 
 import { SourceEntryFilter } from '../types';
@@ -50,6 +51,7 @@ interface Props {
     entriesFilters?: FilterFields[];
     entriesWidgets?: WidgetElement<unknown>[];
     entriesGeoOptions?: GeoOptions;
+    entryOptions?: EntryOptions;
     hasAssessment?: boolean;
     onSelectLeadChange: (values: number[]) => void;
     selectedLeads: number[];
@@ -67,6 +69,7 @@ function LeadsSelection(props: Props) {
         filterOnlyUnprotected,
         entriesFilters,
         entriesWidgets,
+        entryOptions,
         entriesGeoOptions,
         hasAssessment,
         selectedLeads,
@@ -286,8 +289,8 @@ function LeadsSelection(props: Props) {
                 onFilterApply={onFilterApply}
                 filters={entriesFilters}
                 widgets={entriesWidgets}
+                entryOptions={entryOptions}
                 projectId={projectId}
-                disabled={pending}
             />
             <div className={styles.tableContainer}>
                 {leadsPending && (<PendingMessage />)}

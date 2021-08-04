@@ -14,8 +14,6 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 
-import { useRequest } from '#utils/request';
-
 import {
     EntryOptions,
     KeyValueElement,
@@ -75,6 +73,7 @@ interface Props<K extends string> {
     value: EntryFilterValueType | undefined;
     onChange: (value: SetValueArg<EntryFilterValueType> | undefined, name: K) => void;
     projectId: number;
+    entryOptions?: EntryOptions;
     filters?: FilterFields[];
     widgets?: WidgetElement<unknown>[];
     className?: string;
@@ -90,22 +89,9 @@ function EntryFilter<K extends string>(props: Props<K>) {
         projectId,
         widgets,
         filters,
+        entryOptions,
         className,
     } = props;
-
-    const entryOptionsQueryParams = useMemo(() => ({
-        project: projectId,
-    }), [projectId]);
-
-    const {
-        pending: entryOptionsPending,
-        response: entryOptions,
-    } = useRequest<EntryOptions>({
-        url: 'server://entry-options/',
-        query: entryOptionsQueryParams,
-        method: 'GET',
-        failureHeader: 'Entry Options',
-    });
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
 
@@ -139,7 +125,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 options={entryOptions?.createdBy}
                 label="Created by"
                 placeholder="Created by"
-                disabled={entryOptionsPending}
+                disabled={!entryOptions}
             />
             <DateRangeInput
                 name="created_at"
@@ -160,7 +146,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 options={entryOptions?.createdBy}
                 label="Comment Assigned To"
                 placeholder="Comment Assigned To"
-                disabled={entryOptionsPending}
+                disabled={!entryOptions}
             />
             <MultiSelectInput
                 className={styles.input}
@@ -172,7 +158,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 options={entryOptions?.createdBy}
                 label="Comment created by"
                 placeholder="Comment created by"
-                disabled={entryOptionsPending}
+                disabled={!entryOptions}
             />
             <SelectInput
                 className={styles.input}

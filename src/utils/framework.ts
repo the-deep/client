@@ -161,9 +161,9 @@ export function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
 }
 
 export const createReportStructure = (
-    analysisFramework: FrameworkFields,
     reportStructureVariant: string = SECTOR_FIRST,
     includeSubSector: boolean,
+    analysisFramework?: FrameworkFields,
 ) => {
     if (!analysisFramework) {
         return [];

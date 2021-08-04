@@ -33,6 +33,7 @@ import {
     EmmEntity,
     WidgetElement,
     FilterFields,
+    EntryOptions,
 } from '#typings';
 
 import NonFieldError from '#newComponents/ui/NonFieldError';
@@ -82,10 +83,10 @@ const existsFilterOptions: KeyValueElement[] = [
 
 interface Props {
     className?: string;
+    entryOptions?: EntryOptions;
     filters?: FilterFields[];
     widgets?: WidgetElement<unknown>[];
     projectId: number;
-    disabled?: boolean;
     filterOnlyUnprotected?: boolean;
     onFilterApply: (values: SourceEntryFilter) => void;
 }
@@ -97,8 +98,8 @@ function CombinedSourceEntryFilterForm(props: Props) {
         projectId,
         filters,
         widgets,
+        entryOptions,
         filterOnlyUnprotected,
-        disabled: disabledFromProps,
     } = props;
 
     const [
@@ -146,8 +147,6 @@ function CombinedSourceEntryFilterForm(props: Props) {
         setValue(initialValue);
         onFilterApply(initialValue);
     }, [setValue, onFilterApply]);
-
-    const disabled = disabledFromProps || pending;
 
     return (
         <div className={_cs(styles.sourceEntryFilterForm, className)}>
@@ -310,6 +309,7 @@ function CombinedSourceEntryFilterForm(props: Props) {
                         projectId={projectId}
                         filters={filters}
                         widgets={widgets}
+                        entryOptions={entryOptions}
                     />
                 )}
                 <div className={styles.actions}>
@@ -328,7 +328,7 @@ function CombinedSourceEntryFilterForm(props: Props) {
                     </Button>
                     <Button
                         className={styles.button}
-                        disabled={disabled || pristine}
+                        disabled={pristine}
                         name="filterSubmit"
                         variant="action"
                         onClick={handleApply}
@@ -337,7 +337,7 @@ function CombinedSourceEntryFilterForm(props: Props) {
                     </Button>
                     <Button
                         className={styles.button}
-                        disabled={disabled || pristine}
+                        disabled={pristine}
                         name="clearFilter"
                         variant="action"
                         actions={<IoClose />}

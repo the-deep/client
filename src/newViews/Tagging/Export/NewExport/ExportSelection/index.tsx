@@ -1,20 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { isNotDefined } from '@togglecorp/fujs';
-
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import TreeSelection from '#rsci/TreeSelection';
-import ExportPreview from '#components/other/ExportPreview';
-
 import {
-    projectDetailsSelector,
-    analysisFrameworkForProjectSelector,
-    setAnalysisFrameworkAction,
-    setGeoOptionsAction,
-    geoOptionsForProjectSelector,
-    entryFilterOptionsForProjectSelector,
-} from '#redux';
+    Button,
+    ExpandableContainer,
+    TextInput,
+} from '@the-deep/deep-ui';
+
+import ExportPreview from '#components/other/ExportPreview';
 
 import {
     SECTOR_FIRST,
@@ -22,14 +14,11 @@ import {
     getContextualWidgetsFromFramework,
     getTextWidgetsFromFramework,
 } from '#utils/framework';
+import { getCombinedLeadFilters } from '#entities/lead';
 import { useRequest, useLazyRequest } from '#utils/request';
-
-import ExpandableContainer from '#components/ui/ExpandableContainer';
 import _ts from '#ts';
 import notify from '#notify';
-
 import {
-    AppState,
     FrameworkFields,
     Lead,
     ExportType,
@@ -38,16 +27,14 @@ import {
     GeoOptions,
     WidgetElement,
     ConditionalWidget,
-    ProjectDetails,
+    EntryOptions,
 } from '#typings';
 
-import { getCombinedLeadFilters } from '#entities/lead';
-
-import LeadsSelection from '../LeadsSelection';
+import { SourceEntryFilter } from './types';
+import LeadsSelection from './LeadsSelection';
 import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.scss';
-
 
 interface ExportReportStructure {
     id: string;
@@ -96,47 +83,14 @@ const createWidgetIds = (widgets: TreeSelectableWidget<string | number>[]) => (
         })
 );
 
-interface PropsFromDispatch {
-    setAnalysisFramework: typeof setAnalysisFrameworkAction;
-    setGeoOptions: typeof setGeoOptionsAction;
-}
-
 interface ExportTriggerResponse {
     exportTriggered: number;
 }
 
-const mapStateToProps = (state: AppState) => ({
-    analysisFramework: analysisFrameworkForProjectSelector(state),
-    entryFilterOptions: entryFilterOptionsForProjectSelector(state),
-    geoOptions: geoOptionsForProjectSelector(state),
-    projectDetails: projectDetailsSelector(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
-    setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
-    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
-});
-
 export interface SelectedLead extends Lead {
     selected: boolean;
 }
-
-export interface FaramValues {
-    [key: string]: string | string[] | FaramValues;
-}
-
-interface PropsFromState {
-    analysisFramework: FrameworkFields;
-    entryFilterOptions: {
-        projectEntryLabel: [];
-    };
-    geoOptions: GeoOptions;
-    projectDetails: {
-        regions: ProjectDetails['regions'];
-    };
-}
-
-interface OwnProps {
+interface Props {
     projectRole: {
         exportPermissions?: {
             'create_only_unprotected'?: boolean;
@@ -145,26 +99,14 @@ interface OwnProps {
     projectId: number;
 }
 
-type Props = OwnProps & PropsFromState & PropsFromDispatch;
-
 function EntriesExportSelection(props: Props) {
     const {
-        analysisFramework,
         projectId,
-        geoOptions,
-        entryFilterOptions,
         projectRole,
-        setAnalysisFramework,
-        setGeoOptions,
-        projectDetails,
     } = props;
 
-    const {
-        filters,
-        widgets,
-    } = analysisFramework;
-
     const filterOnlyUnprotected = !!projectRole?.exportPermissions?.create_only_unprotected;
+    const [queryTitle, setQueryTitle] = useState<string>();
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
@@ -178,7 +120,7 @@ function EntriesExportSelection(props: Props) {
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
-    const [filterValues, onFilterChange] = useState<FaramValues>({});
+    const [filterValues, setFilterValues] = useState<SourceEntryFilter>({});
 
     const [
         reportStructureVariant,
@@ -191,12 +133,16 @@ function EntriesExportSelection(props: Props) {
 
     const {
         pending: analysisFrameworkPending,
-    } = useRequest<unknown>({
+        response: analysisFramework,
+    } = useRequest<FrameworkFields>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         schemaName: 'analysisFramework',
         onSuccess: (response) => {
-            setAnalysisFramework({ analysisFramework: response });
+            const textWidgetList = getTextWidgetsFromFramework(response);
+            const contextualWidgetList = getContextualWidgetsFromFramework(response);
+            setTextWidgets(textWidgetList);
+            setContextualWidgets(contextualWidgetList);
         },
         failureHeader: _ts('export', 'afLabel'),
     });
@@ -207,15 +153,27 @@ function EntriesExportSelection(props: Props) {
 
     const {
         pending: geoOptionsPending,
-    } = useRequest<unknown>({
+        response: geoOptions,
+    } = useRequest<GeoOptions>({
         url: 'server://geo-options/',
         method: 'GET',
         query: geoOptionsRequestQueryParams,
         schemaName: 'geoOptions',
-        onSuccess: (response) => {
-            setGeoOptions({ projectId, locations: response });
-        },
         failureHeader: _ts('export', 'geoLabel'),
+    });
+
+    const entryOptionsQueryParams = useMemo(() => ({
+        project: projectId,
+    }), [projectId]);
+
+    const {
+        pending: entryOptionsPending,
+        response: entryOptions,
+    } = useRequest<EntryOptions>({
+        url: 'server://entry-options/',
+        query: entryOptionsQueryParams,
+        method: 'GET',
+        failureHeader: 'Entry Options',
     });
 
     useEffect(() => {
@@ -224,13 +182,6 @@ function EntriesExportSelection(props: Props) {
         setReportStructure([]);
         setDecoupledEntries(false);
     }, [projectId, setPreviewId]);
-
-    useEffect(() => {
-        const textWidgetList = getTextWidgetsFromFramework(analysisFramework);
-        const contextualWidgetList = getContextualWidgetsFromFramework(analysisFramework);
-        setTextWidgets(textWidgetList);
-        setContextualWidgets(contextualWidgetList);
-    }, [analysisFramework]);
 
     useEffect(() => {
         const structure = createReportStructure(
@@ -321,7 +272,7 @@ function EntriesExportSelection(props: Props) {
 
         const processedFilters = getCombinedLeadFilters(
             filterValues,
-            widgets,
+            analysisFramework?.widgets,
             geoOptions,
         );
 
@@ -331,7 +282,6 @@ function EntriesExportSelection(props: Props) {
         ];
 
         setIsPreview(preview);
-
         getExport(newFilters);
     }, [
         selectAll,
@@ -349,7 +299,7 @@ function EntriesExportSelection(props: Props) {
         textWidgets,
         getExport,
         filterValues,
-        widgets,
+        analysisFramework?.widgets,
     ]);
 
     const handleEntryExport = useCallback(() => {
@@ -361,16 +311,13 @@ function EntriesExportSelection(props: Props) {
         startExport(true);
     }, [setPreviewId, startExport]);
 
-    const pending = analysisFrameworkPending || geoOptionsPending;
-    const showTextWidgetSelection = textWidgets.length > 0;
-    const showContextualWidgetSelection = contextualWidgets.length > 0;
-
+    const requestsPending = analysisFrameworkPending || geoOptionsPending || entryOptionsPending;
     const showMatrix2dOptions = useMemo(
         () => {
-            if (pending || isNotDefined(widgets)) {
+            if (requestsPending || !analysisFramework || isNotDefined(analysisFramework?.widgets)) {
                 return false;
             }
-            return widgets.some((widget: WidgetElement<unknown>) => {
+            return analysisFramework.widgets.some((widget: WidgetElement<unknown>) => {
                 if (widget.widgetId === 'matrix2dWidget') {
                     return true;
                 }
@@ -383,50 +330,54 @@ function EntriesExportSelection(props: Props) {
                 return false;
             });
         },
-        [widgets, pending],
+        [analysisFramework, requestsPending],
     );
-
+    const handleSaveAndExport = () => {}; // TODO add this feature later
 
     return (
         <div className={styles.export}>
-            <div className={styles.left} >
+            <div className={styles.left}>
                 <ExpandableContainer
                     className={styles.section}
+                    headingSize="small"
+                    sub
                     heading={(
-                        <h3 className={styles.heading}>
+                        <div className={styles.heading}>
                             {_ts('export', 'selectSourcesStepHeading')}
                             <span className={styles.subHeading}>
                                 {_ts('export', 'selectSourcesHeading')}
                             </span>
-                        </h3>
+                        </div>
                     )}
                     defaultVisibility
                 >
                     <LeadsSelection
                         projectId={projectId}
                         filterOnlyUnprotected={filterOnlyUnprotected}
-                        projectRegions={projectDetails.regions}
-                        entriesFilters={filters}
-                        entriesWidgets={widgets}
+                        entriesFilters={analysisFramework?.filters}
+                        entriesWidgets={analysisFramework?.widgets}
                         entriesGeoOptions={geoOptions}
-                        pending={analysisFrameworkPending || geoOptionsPending}
+                        entryOptions={entryOptions}
+                        pending={requestsPending}
                         selectedLeads={selectedLeads}
                         onSelectLeadChange={setSelectedLeads}
                         selectAll={selectAll}
                         onSelectAllChange={setSelectAll}
                         filterValues={filterValues}
-                        handleFilterValuesChange={onFilterChange}
+                        onFilterApply={setFilterValues}
                     />
                 </ExpandableContainer>
                 <ExpandableContainer
                     className={styles.section}
+                    sub
+                    headingSize="small"
                     heading={(
-                        <h3 className={styles.heading}>
+                        <div className={styles.heading}>
                             {_ts('export', 'selectFormatStylingStepHeading')}
                             <span className={styles.subHeading}>
                                 {_ts('export', 'selectFormatStylingHeading')}
                             </span>
-                        </h3>
+                        </div>
                     )}
                 >
                     <ExportTypePane
@@ -440,7 +391,7 @@ function EntriesExportSelection(props: Props) {
                         showAdditionalMetadata={showAdditionalMetadata}
                         onExportTypeChange={setActiveExportTypeKey}
                         onReportStructureChange={setReportStructure}
-                        entryFilterOptions={entryFilterOptions}
+                        entryFilterOptions={entryOptions}
                         onShowGroupsChange={setShowGroups}
                         onShowEntryIdChange={setShowEntryId}
                         onShowAryDetailsChange={setShowAryDetails}
@@ -450,36 +401,53 @@ function EntriesExportSelection(props: Props) {
                         onIncludeSubSectorChange={setIncludeSubSector}
                         includeSubSector={includeSubSector}
                         showMatrix2dOptions={showMatrix2dOptions}
+                        contextualWidgets={contextualWidgets}
+                        onSetContextualWidgets={setContextualWidgets}
+                        textWidgets={textWidgets}
+                        onSetTextWidgets={setTextWidgets}
                     />
-                    {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf') && (
-                        <div>
-                            {showContextualWidgetSelection && showAdditionalMetadata && (
-                                <TreeSelection
-                                    label={_ts('export', 'contextualWidgetLabel')}
-                                    value={contextualWidgets}
-                                    onChange={setContextualWidgets}
-                                    direction="horizontal"
-                                />
-                            )}
-                            {showTextWidgetSelection && (
-                                <TreeSelection
-                                    label={_ts('export', 'textWidgetLabel')}
-                                    value={textWidgets}
-                                    onChange={setTextWidgets}
-                                    direction="horizontal"
-                                />
-                            )}
+                </ExpandableContainer>
+                <ExpandableContainer
+                    className={styles.section}
+                    sub
+                    headingSize="small"
+                    heading={(
+                        <div className={styles.heading}>
+                            Step 3.
+                            <span className={styles.subHeading}>
+                                (Optional) Save your query
+                            </span>
                         </div>
                     )}
+                >
+                    <div className={styles.content}>
+                        <TextInput
+                            name="queryTitle"
+                            value={queryTitle}
+                            onChange={setQueryTitle}
+                            label="Query title"
+                            placeholder="Query title"
+                            className={styles.queryInput}
+                        />
+                        <Button
+                            name="startExport"
+                            variant="tertiary"
+                            onClick={handleSaveAndExport}
+                            className={styles.saveAndExport}
+                        >
+                            Save & Export
+                        </Button>
+                    </div>
                 </ExpandableContainer>
-                <PrimaryButton
+                <Button
+                    name="startExport"
+                    variant="primary"
                     className={styles.exportButton}
                     onClick={handleEntryExport}
-                    disabled={pending}
-                    pending={exportPending}
+                    disabled={requestsPending || exportPending}
                 >
-                    {_ts('export', 'startExportButtonLabel')}
-                </PrimaryButton>
+                    Export
+                </Button>
             </div>
             <ExportPreview
                 className={styles.preview}
@@ -490,4 +458,4 @@ function EntriesExportSelection(props: Props) {
     );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EntriesExportSelection);
+export default EntriesExportSelection;
