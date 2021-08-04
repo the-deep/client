@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
+import { Border } from '@the-deep/deep-ui';
 
 import useRouteMatching, {
     RouteData,
@@ -38,6 +39,11 @@ function SmartNavLink(props: Props) {
             activeClassName={_cs(styles.active, activeClassName)}
         >
             {children ?? routeData.children}
+            <Border
+                active
+                className={styles.border}
+                transparent
+            />
         </NavLink>
     );
 }

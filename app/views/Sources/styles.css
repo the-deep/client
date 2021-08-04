@@ -2,23 +2,31 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    background-color: var(--dui-color-background);
-    padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
 
-    .stats {
-        display: flex;
-        flex-shrink: 0;
-    }
-
-    .filter {
-        display: flex;
-        flex-shrink: 0;
+    .top-section {
         background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+
+        .stats {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .filter {
+            display: flex;
+            flex-shrink: 0;
+            background-color: var(--dui-color-foreground);
+        }
     }
 
-    .table {
-        display: flex;
-        flex-grow: 1;
-        flex-shrink: 0;
+    .leads {
+        background-color: var(--dui-color-background);
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+
+        .table {
+            display: flex;
+            flex-grow: 1;
+            flex-shrink: 0;
+        }
     }
 }
