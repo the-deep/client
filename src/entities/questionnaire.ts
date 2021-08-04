@@ -18,7 +18,7 @@ import {
     QuestionElementFrameworkAttribute,
     Language,
     QuestionResponseOptionElement,
-} from '#typings';
+} from '#types';
 
 interface Row {
     values: string[];

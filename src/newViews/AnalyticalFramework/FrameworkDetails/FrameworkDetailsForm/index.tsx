@@ -20,7 +20,7 @@ import {
 } from '@the-deep/deep-ui';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
-import { AnalyticalFramework, BasicOrganization } from '#typings';
+import { AnalyticalFramework, BasicOrganization } from '#types';
 import OrganizationSelectInput from '#newComponents/input/OrganizationSelectInput';
 
 import UploadImage from './UploadImage';

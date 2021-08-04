@@ -19,7 +19,7 @@ import {
     MultiResponse,
     AdminLevelGeoArea,
     GeoAreaBounds,
-} from '#typings';
+} from '#types';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 

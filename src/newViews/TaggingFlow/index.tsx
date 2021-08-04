@@ -21,7 +21,7 @@ import {
     leadIdFromRouteSelector,
 } from '#redux';
 
-import { AppState } from '#typings';
+import { AppState } from '#types';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,

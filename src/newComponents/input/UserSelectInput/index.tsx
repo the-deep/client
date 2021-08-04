@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { SearchSelectInput, SearchSelectInputProps } from '@the-deep/deep-ui';
-import { MultiResponse, BasicUser } from '#typings';
+import { MultiResponse, BasicUser } from '#types';
 
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';

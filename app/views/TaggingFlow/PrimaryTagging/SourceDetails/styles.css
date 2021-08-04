@@ -26,8 +26,10 @@
     }
 }
 
-// NOTE: styling for original tab is moved outside to make it work
-// for fullscreen mode
+/*
+ NOTE: styling for original tab is moved outside to make it work
+ for fullscreen mode
+ */
 .original-tab {
     display: flex;
     flex-direction: column;

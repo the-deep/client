@@ -24,7 +24,7 @@ import {
     AppState,
     AnalyticalFramework,
     MultiResponse,
-} from '#typings';
+} from '#types';
 import _ts from '#ts';
 import { activeUserSelector } from '#redux';
 

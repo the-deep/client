@@ -12,7 +12,7 @@ import {
     Matrix2dFlatDimensionElement,
     Matrix2dFlatSubdimensionElement,
     Matrix2dFlatCellElement,
-} from '#typings';
+} from '#types';
 
 import {
     frameworkAttributeTypeOptionList,

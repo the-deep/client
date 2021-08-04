@@ -58,7 +58,7 @@ import {
     QuestionnaireOptions,
     LanguageTitle,
     QuestionResponseOptionElement,
-} from '#typings';
+} from '#types';
 
 import FrameworkAttributeInput from './FrameworkAttributeInput';
 import MoreTitleRow from './MoreTitleRow';

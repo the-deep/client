@@ -15,7 +15,7 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import {
     Assignment,
     MultiResponse,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 

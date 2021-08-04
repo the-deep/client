@@ -21,8 +21,8 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import {
     UserGroup,
     MultiResponse,
-} from '#typings';
-import { ProjectRole } from '#typings/project';
+} from '#types';
+import { ProjectRole } from '#types/project';
 import _ts from '#ts';
 import NonFieldError from '#newComponents/ui/NonFieldError';
 

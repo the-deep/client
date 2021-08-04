@@ -13,7 +13,7 @@ import _ts from '#ts';
 import {
     BasicRegion,
     Region,
-} from '#typings';
+} from '#types';
 
 import AddAdminLevel from './AddAdminLevel';
 import styles from './styles.scss';

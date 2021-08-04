@@ -17,7 +17,7 @@ import {
     TocCountMap,
     Level,
     ReportStructure,
-} from '#typings';
+} from '#types';
 
 import { breadcrumb } from '#utils/safeCommon';
 

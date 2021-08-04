@@ -20,7 +20,7 @@ import {
     BasicOrganization,
     ProjectOrganization,
     OrganizationTypes,
-} from '#typings';
+} from '#types';
 
 import SearchStakeholder from './SearchStakeholder';
 import StakeholderList from './StakeholderList';

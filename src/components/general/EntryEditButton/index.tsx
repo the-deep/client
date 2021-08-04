@@ -4,8 +4,8 @@ import Button from '#rsca/Button';
 
 import EditEntryFormModal from '#components/general/EditEntryFormModal';
 
-import { Entry } from '#typings/entry';
-import { FrameworkFields } from '#typings/framework';
+import { Entry } from '#types/entry';
+import { FrameworkFields } from '#types/framework';
 
 interface EntryEditButtonProps {
     className?: string;

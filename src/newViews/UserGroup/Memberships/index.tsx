@@ -17,7 +17,7 @@ import {
 import { createDateColumn } from '#newComponents/ui/tableHelpers';
 
 import { useModalState } from '#hooks/stateManagement';
-import { MultiResponse } from '#typings';
+import { MultiResponse } from '#types';
 import _ts from '#ts';
 
 import AddUserModal from '../AddUserModal';

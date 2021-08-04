@@ -12,7 +12,7 @@ import {
 import {
     Region,
     BasicRegion,
-} from '#typings';
+} from '#types';
 import { useRequest } from '#utils/request';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';

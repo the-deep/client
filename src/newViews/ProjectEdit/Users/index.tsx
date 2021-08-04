@@ -3,8 +3,8 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { useRequest } from '#utils/request';
 import {
     MultiResponse,
-} from '#typings';
-import { ProjectMemberships } from '#typings/project';
+} from '#types';
+import { ProjectMemberships } from '#types/project';
 import _ts from '#ts';
 
 import UserList from './UserList';

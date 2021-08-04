@@ -8,7 +8,7 @@ import ListView from '#rscv/List/ListView';
 import {
     ExportType,
     ReportStructure,
-} from '#typings';
+} from '#types';
 
 import _ts from '#ts';
 import {

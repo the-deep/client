@@ -9,7 +9,7 @@ import {
     MultiResponse,
     Export,
     ExportStatus,
-} from '#typings';
+} from '#types';
 import notify from '#notify';
 import _ts from '#ts';
 import ExportPreview from '#components/other/ExportPreview';
