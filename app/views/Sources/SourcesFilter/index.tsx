@@ -16,7 +16,6 @@ import {
     SelectInput,
     MultiSelectInput,
     useBooleanState,
-    Header,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -24,12 +23,9 @@ import {
     IoClose,
     IoChevronUpOutline,
     IoChevronDownOutline,
-    IoApps,
 } from 'react-icons/io5';
 
-import {
-    useRequest,
-} from '#base/utils/restRequest';
+import { useRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 import { KeyValueElement, LeadOptions, EmmEntity } from '#types';
 import NonFieldError from '#components/NonFieldError';
@@ -142,21 +138,6 @@ function SourcesFilter(props: Props) {
     const disabled = disabledFromProps || pending;
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
-            <Header
-                className={styles.header}
-                heading={_ts('sourcesFilter', 'title')}
-                headingSectionClassName={styles.heading}
-                headingSize="medium"
-                actionsContainerClassName={styles.actions}
-                actions={(
-                    <Button
-                        name="switch"
-                        variant="action"
-                    >
-                        <IoApps />
-                    </Button>
-                )}
-            />
             <NonFieldError error={error} />
             <div className={styles.content}>
                 <MultiSelectInput

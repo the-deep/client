@@ -74,8 +74,8 @@ function SourcesStats(props: Props) {
     } = projectStats ?? {};
 
     return (
-        <div className={_cs(className, styles.sourcesStats)}>
-            <Card className={styles.container}>
+        <div className={_cs(styles.sourcesStats, className)}>
+            <Card className={styles.leadStatsCard}>
                 <InformationCard
                     className={styles.infoCard}
                     icon={(
@@ -104,7 +104,7 @@ function SourcesStats(props: Props) {
                     size="large"
                 />
             </Card>
-            <Card className={styles.container}>
+            <Card className={styles.entryStatsCard}>
                 <InformationCard
                     className={styles.infoCard}
                     icon={(
