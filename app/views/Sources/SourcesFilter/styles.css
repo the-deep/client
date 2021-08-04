@@ -2,19 +2,6 @@
     display: flex;
     flex-direction: column;
 
-    .header {
-        display: flex;
-        flex-grow: 1;
-
-        .heading {
-            flex-grow: 1;
-        }
-
-        .actions {
-            margin-left: auto;
-        }
-    }
-
     .content {
         display: flex;
         flex-grow: 1;
