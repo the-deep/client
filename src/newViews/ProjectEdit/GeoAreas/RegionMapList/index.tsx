@@ -16,7 +16,7 @@ import {
     BasicRegion,
     Region,
     ProjectDetails,
-} from '#typings';
+} from '#types';
 import _ts from '#ts';
 import RegionSelectInput from '#newComponents/input/RegionSelectInput';
 import notify from '#notify';

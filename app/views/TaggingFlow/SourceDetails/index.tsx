@@ -7,8 +7,8 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 
-import LeadEditForm from '#newViews/Tagging/Sources/LeadEditModal/LeadEditForm';
-import { PartialFormType } from '#newViews/Tagging/Sources/LeadEditModal/LeadEditForm/schema';
+import LeadEditForm from '#views/Sources/LeadEditModal/LeadEditForm';
+import { PartialFormType } from '#views/Sources/LeadEditModal/LeadEditForm/schema';
 
 import styles from './styles.css';
 

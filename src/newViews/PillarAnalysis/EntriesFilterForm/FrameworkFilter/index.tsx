@@ -17,7 +17,7 @@ import {
     FilterFields,
     FilterOption,
     GeoOption,
-} from '#typings';
+} from '#types';
 import _ts from '#ts';
 
 import { FaramValues } from '../../';

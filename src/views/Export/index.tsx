@@ -14,7 +14,7 @@ import {
 
 import {
     AppState,
-} from '#typings';
+} from '#types';
 
 import ExportedFiles from './ExportedFiles';
 import ExportSelection from './ExportSelection';

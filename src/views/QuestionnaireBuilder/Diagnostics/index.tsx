@@ -13,7 +13,7 @@ import ProgressBar from '#rsu/../v2/View/ProgressBar';
 import {
     IdTitle,
     QuestionnaireQuestionElement,
-} from '#typings';
+} from '#types';
 import { generateDurationLabel } from '#entities/questionnaire';
 
 import styles from './styles.scss';

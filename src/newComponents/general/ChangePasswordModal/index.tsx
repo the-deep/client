@@ -19,7 +19,7 @@ import {
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
-import { User } from '#typings';
+import { User } from '#types';
 
 type FormType = {
     oldPassword?: string;

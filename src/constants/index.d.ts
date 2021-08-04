@@ -1,4 +1,4 @@
-import { Permission } from '../typings/common';
+import { Permission } from '../types/common';
 
 declare const pathNames: { [key: string]: string };
 declare const viewsAcl: { [key: string]: {

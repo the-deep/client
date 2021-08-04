@@ -13,7 +13,7 @@ import {
     MiniFrameworkElement,
     OrderAction,
     NullableField,
-} from '#typings';
+} from '#types';
 
 import QuestionModal, {
     FaramValues,

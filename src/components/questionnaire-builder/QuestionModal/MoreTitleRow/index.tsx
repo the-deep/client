@@ -9,7 +9,7 @@ import { languageOptions } from '#entities/questionnaire';
 import {
     Language,
     LanguageTitle,
-} from '#typings';
+} from '#types';
 
 import styles from './styles.scss';
 

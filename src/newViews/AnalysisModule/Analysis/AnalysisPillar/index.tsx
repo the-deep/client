@@ -22,7 +22,7 @@ import {
 import {
     PillarSummary,
     AnalyticalStatementSummary,
-} from '#typings';
+} from '#types';
 import { pathNames } from '#constants';
 import { calcPercent } from '#utils/safeCommon';
 

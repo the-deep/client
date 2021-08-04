@@ -21,9 +21,9 @@ import SelectInput from '#rsci/SelectInput';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
-import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
-import { FrameworkFields } from '#typings/framework';
-import { MatrixTocElement, MultiResponse, AppState } from '#typings';
+import { EntryFields, EntrySummary, TocCountMap } from '#types/entry';
+import { FrameworkFields } from '#types/framework';
+import { MatrixTocElement, MultiResponse, AppState } from '#types';
 
 import { processEntryFilters } from '#entities/entries';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';

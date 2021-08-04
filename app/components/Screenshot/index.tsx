@@ -7,8 +7,18 @@ import {
 } from 'd3-selection';
 import { _cs } from '@togglecorp/fujs';
 
-import { getScreenshot } from '#utils/browserExtension';
-import styles from './styles.scss';
+// import { getScreenshot } from '#utils/browserExtension';
+import styles from './styles.css';
+
+function getScreenshot() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve({
+                image: '',
+            });
+        }, 100);
+    });
+}
 
 function getCroppedImage(
     canvas: HTMLCanvasElement,
@@ -112,7 +122,9 @@ function Screenshot(props: Props) {
     }, [onCapture, imageProps.image]);
 
     React.useEffect(() => {
-        getScreenshot().then((result) => {
+        getScreenshot().then((
+            result: { image: string },
+        ) => {
             if (svgRef.current) {
                 const scale = window.devicePixelRatio;
 
@@ -138,7 +150,7 @@ function Screenshot(props: Props) {
         }).catch(() => {
             // FIXME: use strings
             const captureError = (
-                <React.Fragment>
+                <>
                     In order to use the screenshot functionality,
                     you must have the Chrome extension installed.
                     You can download it from the Chrome store
@@ -150,7 +162,7 @@ function Screenshot(props: Props) {
                     >
                         here.
                     </a>
-                </React.Fragment>
+                </>
             );
             if (onCaptureError) {
                 onCaptureError(captureError);
@@ -188,7 +200,6 @@ function Screenshot(props: Props) {
         width,
         height,
     } = imageProps;
-
 
     return (
         <div className={_cs(styles.screenshot, className)}>

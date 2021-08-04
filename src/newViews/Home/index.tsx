@@ -28,7 +28,7 @@ import {
     ProjectStat,
     ProjectsSummary,
     User,
-} from '#typings';
+} from '#types';
 
 import {
     activeUserSelector,

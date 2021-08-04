@@ -13,7 +13,7 @@ import {
     FilterFields,
     ProjectDetails,
     GeoOptions,
-} from '#typings';
+} from '#types';
 
 import GeoFilter from './GeoFilter';
 

@@ -11,7 +11,7 @@ import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 import { mimeTypeToIconMap } from '#entities/lead';
 import _ts from '#ts';
 
-import { Export } from '#typings';
+import { Export } from '#types';
 import { Header } from '#rscv/Table';
 
 import styles from './styles.scss';

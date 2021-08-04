@@ -7,10 +7,10 @@ import {
 import { GiShrug } from 'react-icons/gi';
 
 import { useRequest } from '#utils/request';
-import { MultiResponse } from '#typings';
+import { MultiResponse } from '#types';
 import {
     RecentActivityItem,
-} from '#typings/user';
+} from '#types/user';
 import _ts from '#ts';
 
 import ActivityItem from './ActivityItem';

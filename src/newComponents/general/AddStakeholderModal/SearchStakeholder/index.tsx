@@ -5,7 +5,7 @@ import {
     TextInput,
     Header,
 } from '@the-deep/deep-ui';
-import { Organization, MultiResponse } from '#typings';
+import { Organization, MultiResponse } from '#types';
 
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';

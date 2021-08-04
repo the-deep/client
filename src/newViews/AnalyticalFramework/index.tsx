@@ -15,7 +15,7 @@ import _ts from '#ts';
 import {
     FrameworkFields,
     AppState,
-} from '#typings';
+} from '#types';
 
 import {
     currentHash,

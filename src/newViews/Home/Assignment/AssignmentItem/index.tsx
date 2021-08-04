@@ -7,7 +7,7 @@ import {
     DateOutput,
 } from '@the-deep/deep-ui';
 
-import { Assignment } from '#typings';
+import { Assignment } from '#types';
 
 import _ts from '#ts';
 

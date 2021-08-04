@@ -10,8 +10,8 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import WidgetForm from '#components/general/WidgetForm';
 
-import { FrameworkFields } from '#typings/framework';
-import { Entry } from '#typings/entry';
+import { FrameworkFields } from '#types/framework';
+import { Entry } from '#types/entry';
 
 import { FgRestBuilder } from '#rsu/rest';
 import {
