@@ -1,3 +1,16 @@
+.edit-excerpt-popup {
+    width: 20rem;
+    max-width: unset!important;
+
+    .content {
+        padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+        .excerpt-text-area {
+            margin: var(--dui-spacing-small);
+        }
+    }
+}
+
 .source-preview {
     display: flex;
     flex-direction: column;
@@ -12,10 +25,17 @@
 
     .simplified-tab {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         flex-grow: 1;
-        justify-content: center;
         background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-extra-large);
+        overflow: auto;
+
+        .simplified-text-view {
+            flex-grow: 1;
+            background-color: var(--dui-color-foreground);
+            overflow: auto;
+        }
     }
 
     .entry-list-tab {
@@ -51,15 +71,20 @@
     .content {
         display: flex;
         position: relative;
-        align-items: center;
+        flex-direction: column;
         flex-grow: 1;
-        justify-content: center;
         margin: var(--dui-spacing-medium);
         background-color: var(--dui-color-foreground);
+
+        .preview {
+            flex-grow: 1;
+        }
     }
 }
 
 .entry {
+    position: relative;
+    transition: var(--dui-duration-transition-medium) background-color ease-in-out;
     margin: var(--dui-spacing-medium);
     border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
     background-color: var(--dui-color-foreground);
@@ -74,8 +99,31 @@
         max-width: 100%;
     }
 
+    .vertical-border {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+        width: var(--dui-width-separator-thick);
+        height: 100%;
+    }
+
     &.active {
-        border-right: var(--dui-width-separator-thick) solid var(--dui-color-accent);
         background-color: var(--dui-color-background-information);
+
+
+        .vertical-border {
+            background-color: var(--dui-color-accent);
+            animation: grow var(--dui-duration-transition-medium) ease-in forwards;
+        }
+    }
+}
+
+@keyframes grow {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
     }
 }

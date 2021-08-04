@@ -11,6 +11,7 @@ import {
     QuickActionButton,
     QuickActionButtonProps,
     QuickActionDropdownMenu,
+    QuickActionDropdownMenuProps,
     Heading,
     TextArea,
     useInputState,
@@ -48,6 +49,7 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
         disableDiscardButton,
     } = props;
 
+    const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
     const [excerpt, setExcerpt] = useInputState(excerptFromProps);
 
     const handleClick = React.useCallback(() => {
@@ -59,6 +61,10 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
     const handleExcerptChange = React.useCallback((modifiedExcerpt) => {
         if (onExcerptChange) {
             onExcerptChange(entryId, modifiedExcerpt);
+        }
+
+        if (editExcerptDropdownRef?.current) {
+            editExcerptDropdownRef.current.setShowPopup(false);
         }
     }, [entryId, onExcerptChange]);
 
@@ -123,6 +129,7 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
                                 popupClassName={styles.editExcerptPopup}
                                 popupContentClassName={styles.content}
                                 persistent
+                                componentRef={editExcerptDropdownRef}
                             >
                                 <Heading size="small">
                                     Modify Excerpt
