@@ -1,4 +1,4 @@
-import { BasicElement } from './';
+import { BasicElement } from '.';
 
 export interface BasicOrganization {
     id: number;

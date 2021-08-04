@@ -23,7 +23,7 @@ function GoogleDriveFilesUpload(props: Props) {
     } = props;
 
     const handleDropboxSuccess = (results: Dropbox.ChooserFile[]) => {
-        const values = results.map(v => ({
+        const values = results.map((v) => ({
             key: randomString(),
             id: v.id,
             name: v.name,

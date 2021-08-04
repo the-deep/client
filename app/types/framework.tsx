@@ -18,7 +18,6 @@ type WidgetType = 'excerptWidget'
     | 'multiselectWidget'
     | 'conditionalWidget';
 
-
 export interface GridLayoutElement {
     top: number;
     right: number;
@@ -90,7 +89,6 @@ export type Matrix2dWidgetElement = WidgetElement<{
     sectors: Matrix2dSectorElement[];
     dimensions: Matrix2dDimensionElement[];
 }>;
-
 
 export interface ExportableFields {
     id: number;

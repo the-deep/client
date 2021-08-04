@@ -29,7 +29,6 @@ import {
 import CanvasDrawModal from '#components/CanvasDrawModal';
 import Screenshot from '#components/Screenshot';
 import FullScreen from '#components/FullScreen';
-import _ts from '#ts';
 
 import styles from './styles.css';
 
@@ -133,7 +132,7 @@ function PrimaryTagging(props: Props) {
         );
 
         setShowScreenshotFalse();
-    }, [setShowScreenshotFalse]);
+    }, [setShowScreenshotFalse, alert]);
 
     const handleScreenshotCancel = React.useCallback(() => {
         setCapturedImageUrl(undefined);

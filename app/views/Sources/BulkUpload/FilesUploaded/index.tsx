@@ -48,7 +48,7 @@ function FilesUploaded(props: Props) {
 
     const searchedFiles = useMemo(() => {
         if (isTruthyString(searchText)) {
-            return files.filter(file => (
+            return files.filter((file) => (
                 caseInsensitiveSubmatch(file.title, searchText)
             ));
         }
@@ -56,7 +56,7 @@ function FilesUploaded(props: Props) {
     }, [files, searchText]);
 
     const selectedFile = useMemo(() => (
-        files.find(f => f.id === selectedFileId)
+        files.find((f) => f.id === selectedFileId)
     ), [files, selectedFileId]);
 
     return (
