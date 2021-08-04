@@ -16,25 +16,38 @@ import {
     Button,
     ListView,
     useAlert,
+    QuickActionDropdownMenu,
+    QuickActionDropdownMenuProps,
+    Footer,
+    Heading,
+    QuickActionConfirmButton,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
+    IoPencil,
     IoAdd,
     IoCameraOutline,
     IoExpand,
     IoClose,
     IoBrush,
     IoCheckmark,
+    IoTrash,
 } from 'react-icons/io5';
 
 import CanvasDrawModal from '#components/CanvasDrawModal';
+import SimplifiedTextView from '#components/SimplifiedTextView';
+import LeadPreview from '#components/LeadPreview';
 import Screenshot from '#components/Screenshot';
 import FullScreen from '#components/FullScreen';
+import { Lead } from '#views/Sources/LeadEditModal/LeadEditForm/schema';
+import { useRequest } from '#base/utils/restRequest';
 
 import styles from './styles.css';
 
 export interface Entry {
     clientId: string;
     excerpt: string;
+    droppedExcerpt: string;
     image?: string;
 }
 
@@ -43,22 +56,45 @@ const entryKeySelector = (e: Entry) => e.clientId;
 interface EntryItemProps extends Entry {
     isActive?: boolean;
     onClick?: (entryId: Entry['clientId']) => void;
+    onExcerptChange?: (entryId: Entry['clientId'], modifiedExcerpt: string) => void;
+    onEntryDelete?: (entryId: Entry['clientId']) => void;
 }
 
 function EntryItem(props: EntryItemProps) {
     const {
         clientId,
-        excerpt,
+        droppedExcerpt,
+        excerpt: excerptFromProps,
         image,
         isActive,
         onClick,
+        onExcerptChange,
+        onEntryDelete,
     } = props;
 
+    const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
+    const [excerpt, setExcerpt] = useInputState<string | undefined>(excerptFromProps);
     const handleClick = React.useCallback(() => {
         if (onClick) {
             onClick(clientId);
         }
     }, [clientId, onClick]);
+
+    const handleExcerptChange = React.useCallback((modifiedExcerpt) => {
+        if (onExcerptChange) {
+            onExcerptChange(clientId, modifiedExcerpt);
+        }
+
+        if (editExcerptDropdownRef?.current) {
+            editExcerptDropdownRef.current.setShowPopup(false);
+        }
+    }, [clientId, onExcerptChange]);
+
+    const handleDeleteConfirm = React.useCallback(() => {
+        if (onEntryDelete) {
+            onEntryDelete(clientId);
+        }
+    }, [clientId, onEntryDelete]);
 
     return (
         <div
@@ -70,7 +106,7 @@ function EntryItem(props: EntryItemProps) {
             onClick={handleClick}
         >
             <div className={styles.excerpt}>
-                {excerpt}
+                {droppedExcerpt}
             </div>
             {image && (
                 <img
@@ -79,8 +115,61 @@ function EntryItem(props: EntryItemProps) {
                     src={image}
                 />
             )}
+            {isActive && (
+                <Footer
+                    quickActions={(
+                        <>
+                            <QuickActionDropdownMenu
+                                label={<IoPencil />}
+                                popupClassName={styles.editExcerptPopup}
+                                popupContentClassName={styles.content}
+                                persistent
+                                componentRef={editExcerptDropdownRef}
+                            >
+                                <Heading size="small">
+                                    Modify Excerpt
+                                </Heading>
+                                <TextArea
+                                    className={styles.excerptTextArea}
+                                    name="modified-excerpt"
+                                    value={excerpt}
+                                    onChange={setExcerpt}
+                                    rows={4}
+                                />
+                                <Footer
+                                    actions={(
+                                        <Button
+                                            name={excerpt}
+                                            onClick={handleExcerptChange}
+                                        >
+                                            Done
+                                        </Button>
+                                    )}
+                                />
+                            </QuickActionDropdownMenu>
+                            <QuickActionConfirmButton
+                                name={undefined}
+                                onConfirm={handleDeleteConfirm}
+                            >
+                                <IoTrash />
+                            </QuickActionConfirmButton>
+                        </>
+                    )}
+                />
+            )}
+            <div className={styles.verticalBorder} />
         </div>
     );
+}
+
+interface LeadPreview {
+    id: number;
+    previewId: number;
+    text?: string;
+    images: {
+        id: number;
+        file: string;
+    }[];
 }
 
 interface Props {
@@ -89,15 +178,21 @@ interface Props {
     entries?: Entry[];
     activeEntry?: Entry['clientId'];
     onEntryClick?: EntryItemProps['onClick'];
+    onExcerptChange?: (entryClientId: Entry['clientId'], newExcerpt: string) => void;
+    onEntryDelete?: (entryClientId: Entry['clientId']) => void;
+    lead?: Lead;
 }
 
-function PrimaryTagging(props: Props) {
+function SourceDetails(props: Props) {
     const {
         className,
         onEntryCreate,
         entries,
         activeEntry,
         onEntryClick,
+        lead,
+        onExcerptChange,
+        onEntryDelete,
     } = props;
 
     const alert = useAlert();
@@ -124,6 +219,14 @@ function PrimaryTagging(props: Props) {
         setShowAddExcerptModalTrue,
         setShowAddExcerptModalFalse,
     ] = useBooleanState(false);
+
+    const {
+        pending: leadPreviewPending,
+        response: leadPreview,
+    } = useRequest<LeadPreview>({
+        skip: !lead,
+        url: `server://lead-previews/${lead?.id}/`,
+    });
 
     const handleScreenshotCaptureError = React.useCallback((message) => {
         alert.show(
@@ -165,6 +268,7 @@ function PrimaryTagging(props: Props) {
                 onEntryCreate({
                     clientId: randomString(16),
                     excerpt,
+                    droppedExcerpt: excerpt,
                     image: capturedImageUrl,
                 });
             }
@@ -232,7 +336,11 @@ function PrimaryTagging(props: Props) {
                 </QuickActionButton>
             </div>
             <div className={styles.content}>
-                Original
+                <LeadPreview
+                    className={styles.preview}
+                    url={lead?.url}
+                    attachment={lead?.attachment}
+                />
                 {showScreenshot && (
                     <Screenshot
                         onCapture={setCapturedImageUrl}
@@ -255,7 +363,19 @@ function PrimaryTagging(props: Props) {
         ...entry,
         isActive: activeEntry === entry.clientId,
         onClick: onEntryClick,
-    }), [activeEntry, onEntryClick]);
+        onExcerptChange,
+        onEntryDelete,
+    }), [activeEntry, onEntryClick, onExcerptChange, onEntryDelete]);
+
+    const handleSimplifiedViewAddButtonClick = React.useCallback((selectedText: string) => {
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(8),
+                excerpt: selectedText,
+                droppedExcerpt: selectedText,
+            });
+        }
+    }, [onEntryCreate]);
 
     return (
         <div className={_cs(styles.sourcePreview, className)}>
@@ -279,12 +399,31 @@ function PrimaryTagging(props: Props) {
                     name="simplified"
                     className={styles.simplifiedTab}
                 >
-                    Simplified lead view
+                    {leadPreviewPending ? (
+                        <PendingMessage
+                            message="Fetching simplified text"
+                        />
+                    ) : (
+                        <SimplifiedTextView
+                            className={styles.simplifiedTextView}
+                            activeEntryClientId={activeEntry}
+                            onExcerptClick={onEntryClick}
+                            entries={entries}
+                            onAddButtonClick={handleSimplifiedViewAddButtonClick}
+                            text={leadPreview?.text}
+                            onExcerptChange={onExcerptChange}
+                        />
+                    )}
                 </TabPanel>
                 <TabPanel
                     name="original"
                     className={styles.originalTab}
                 >
+                    {leadPreviewPending && (
+                        <PendingMessage
+                            message="Fetching simplified text"
+                        />
+                    )}
                     {originalTabContent}
                 </TabPanel>
                 {showSourcePreviewInFullScreen && (
@@ -332,4 +471,4 @@ function PrimaryTagging(props: Props) {
     );
 }
 
-export default PrimaryTagging;
+export default SourceDetails;
