@@ -1,4 +1,4 @@
-import { BasicElement } from './';
+import { BasicElement } from '.';
 import { OrganizationDetails } from './organization';
 
 export interface ProjectElement {

@@ -1,4 +1,7 @@
 import {
+    internal,
+} from '@togglecorp/toggle-form';
+import {
     listToMap,
     mapToMap,
     doesObjectHaveNoData,
@@ -6,7 +9,8 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 
-function transform(formSchema, responseValue, responseError) {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+function transform(formSchema: any, responseValue: any, responseError: any) {
     if (!formSchema || !responseError) {
         return undefined;
     }
@@ -21,7 +25,7 @@ function transform(formSchema, responseValue, responseError) {
     if (formSchema.member && formSchema.keySelector) {
         // FIXME: there may be a case where the error can be similar to leaf
 
-        const errorList = responseError.map((error, i) => {
+        const errorList = responseError.map((error: any, i: any) => {
             if (!error) {
                 return undefined;
             }
@@ -44,8 +48,8 @@ function transform(formSchema, responseValue, responseError) {
 
         const errorMap = listToMap(
             errorList,
-            (error) => error.key,
-            (error) => error.transformedValue,
+            (error: any) => error.key,
+            (error: any) => error.transformedValue,
         );
 
         return doesObjectHaveNoData(errorMap)
@@ -63,14 +67,14 @@ function transform(formSchema, responseValue, responseError) {
         } = responseError;
 
         // FIXME: there may be a case where the error can be similar to leaf
-        const errorMap = mapToMap(
+        const errorMap: any = mapToMap(
             otherErrors,
             (key) => key,
             (err, key) => {
                 const localSchema = objectSchema?.[key];
                 const valueItem = responseValue?.[key];
 
-                const transformedValue = transform(
+                const transformedValue: any = transform(
                     localSchema,
                     valueItem,
                     err,
@@ -89,11 +93,13 @@ function transform(formSchema, responseValue, responseError) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function transformErrorToToggleFormError(formSchema, obj, responseError) {
+export function transformErrorToToggleFormError(formSchema: any, obj: any, responseError: any) {
     try {
         return transform(formSchema, obj, responseError);
     } catch {
+        // eslint-disable-next-line no-console
         console.error('Error while transforming server response');
         return undefined;
     }
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
