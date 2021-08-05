@@ -1,0 +1,11 @@
+.sub-navbar {
+    display: flex;
+    position: relative;
+
+    .children {
+        display: flex;
+        justify-content: center;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
