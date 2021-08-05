@@ -105,7 +105,8 @@ function GoogleDrivePicker(props: Props) {
         if (result.access_token) {
             createPicker(result.access_token);
         } else {
-            console.warn('google auth response', result.error);
+            // eslint-disable-next-line no-console
+            console.error('google auth response', result.error);
         }
     }, [createPicker]);
 

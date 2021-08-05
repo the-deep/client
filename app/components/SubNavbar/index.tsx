@@ -76,6 +76,9 @@ function SubNavbar(props: SubNavbarProps) {
         <nav className={_cs(className, styles.subNavbar)}>
             <Border />
             <ElementFragments
+                iconsContainerClassName={styles.icons}
+                actionsContainerClassName={styles.actions}
+                childrenContainerClassName={styles.children}
                 icons={(
                     <div
                         ref={iconsRef}
@@ -86,7 +89,6 @@ function SubNavbar(props: SubNavbarProps) {
                         ref={actionsRef}
                     />
                 )}
-                childrenContainerClassName={styles.children}
             >
                 {children}
             </ElementFragments>
