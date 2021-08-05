@@ -19,14 +19,14 @@ interface Node {
     selected: boolean;
     key: string;
     title: string;
-    nodes: Node[] | undefined;
+    nodes?: this[] | undefined;
 }
 
 const keySelector = (d: Node) => d.key;
 
 // Set selected state for a particular node where selected = true/false
 // and do it for all the children.
-function setChildrenSelectionStatus(node: Node, selected: boolean): Node {
+function setChildrenSelectionStatus<T extends Node>(node: T, selected: boolean): T {
     return ({
         ...node,
         selected,
@@ -34,16 +34,16 @@ function setChildrenSelectionStatus(node: Node, selected: boolean): Node {
     });
 }
 
-interface SortableNodeProps {
+interface SortableNodeProps<T extends Node> {
     attributes?: Attributes;
     listeners?: Listeners;
     index: number;
-    node: Node;
+    node: T;
     onCheckboxClick: (newVal: boolean, key: string) => void;
-    onChildrenChange: (children: Node[], key: string) => void;
+    onChildrenChange: (children: T[], key: string) => void;
 }
 
-function SortableNode(props: SortableNodeProps) {
+function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
     const {
         index,
         node: {
@@ -105,20 +105,20 @@ function SortableNode(props: SortableNodeProps) {
 
 const MemoizedSortableNode = genericMemo(SortableNode);
 
-interface Props<N extends string> {
+interface Props<N extends string, T extends Node> {
     className?: string;
     name: N;
-    value: Node[] | undefined;
-    onChange: (newVal: Node[], name: N) => void;
+    value?: T[] | undefined;
+    onChange: (newVal: T[], name: N) => void;
     direction?: 'vertical' | 'horizontal';
 }
 
 const emptyArray: unknown[] = [];
 
-function TreeSelection<N extends string>(props: Props<N>) {
+function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
     const {
         name,
-        value = emptyArray as Node[],
+        value = emptyArray as T[],
         onChange,
         className,
         direction = 'vertical',
@@ -137,7 +137,7 @@ function TreeSelection<N extends string>(props: Props<N>) {
         onChange(tempValue, name);
     }, [onChange, value, name]);
 
-    const handleChildrenChange = useCallback((nodes: Node[], key: string) => {
+    const handleChildrenChange = useCallback((nodes: T[], key: string) => {
         if (!onChange) {
             return;
         }
@@ -155,7 +155,7 @@ function TreeSelection<N extends string>(props: Props<N>) {
         onChange(tempValue, name);
     }, [onChange, value, name]);
 
-    const sortableNodeParams = useCallback((key: string, data, index) => ({
+    const sortableNodeParams = useCallback((_: string, data, index) => ({
         index,
         onCheckboxClick: handleCheckboxChange,
         onChildrenChange: handleChildrenChange,

@@ -51,11 +51,12 @@
 
             .content {
                 display: flex;
+                flex-direction: column;
                 margin: 0 var(--dui-spacing-small);
 
                 .widget-selection {
                     display: flex;
-                    flex-direction: column;
+                    flex-wrap: wrap;
                 }
             }
         }

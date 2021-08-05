@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import {
     _cs,
     isDefined,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     Button,
@@ -77,16 +76,14 @@ function ExportPreview(props: OwnProps) {
             contentClassName={styles.mainContent}
         >
             {pending && <PendingMessage />}
-            {isDefined(exportResponse) && !error && !pending && (
+            {isDefined(exportResponse) ? (
                 <LeadPreview
                     url={exportResponse?.file}
                 />
-            )}
-            {isNotDefined(exportResponse) && !pending && (
+            ) : (
                 <div className={styles.label}>
-                    {isDefined(error)
-                        ? error
-                        : 'Select your desired export settings on the left and click the preview button to see the preview of your document.'
+                    {
+                        error ?? 'Select your desired export settings on the left and click the preview button to see the preview of your document'
                     }
                 </div>
             )}

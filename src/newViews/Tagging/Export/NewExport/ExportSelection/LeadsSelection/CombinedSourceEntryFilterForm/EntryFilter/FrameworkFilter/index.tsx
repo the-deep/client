@@ -52,7 +52,7 @@ function FrameworkFilter<K extends string>(props: Props<K>) {
     ] = useState<GeoOption[] | undefined | null>(undefined);
 
     if (!filter?.type) {
-        return <div />;
+        return null;
     }
 
     switch (filter.type) {
@@ -122,7 +122,7 @@ function FrameworkFilter<K extends string>(props: Props<K>) {
                 />
             );
         default:
-            return <div />;
+            return null;
     }
 }
 

@@ -104,14 +104,17 @@ function EntryFilter<K extends string>(props: Props<K>) {
         return filtersWithId ?? [];
     }, [widgets, filters]);
 
-    const frameworkFilterRendererParams = useCallback((key, data) => ({
-        name: key,
-        title: data.title,
-        filter: data.properties,
-        projectId,
-        value,
-        onChange: setFieldValue,
-    }), [value, setFieldValue, projectId]);
+    const frameworkFilterRendererParams = useCallback(
+        (key: string, data: FilterFields) => ({
+            name: key,
+            title: data.title,
+            filter: data.properties,
+            projectId,
+            value,
+            onChange: setFieldValue,
+        }),
+        [value, setFieldValue, projectId],
+    );
 
     return (
         <div className={_cs(className, styles.entryFilter)}>
@@ -193,15 +196,13 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Entry type"
                 placeholder="Entry type"
             />
-            { filteredFrameworkFilters.length > 0 && (
-                <List
-                    data={filteredFrameworkFilters}
-                    keySelector={filterKeySelector}
-                    renderer={FrameworkFilter}
-                    rendererClassName={styles.input}
-                    rendererParams={frameworkFilterRendererParams}
-                />
-            )}
+            <List
+                data={filteredFrameworkFilters}
+                keySelector={filterKeySelector}
+                renderer={FrameworkFilter}
+                rendererClassName={styles.input}
+                rendererParams={frameworkFilterRendererParams}
+            />
         </div>
     );
 }

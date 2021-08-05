@@ -11,15 +11,12 @@ import {
     createStringColumn,
     createNumberColumn,
     DateOutputProps,
-    Link,
-    LinkProps,
     SortContext,
     useSortState,
     Checkbox,
     CheckboxProps,
 } from '@the-deep/deep-ui';
 
-import { getCombinedLeadFilters } from '#entities/lead';
 import { useRequest } from '#utils/request';
 import _ts from '#ts';
 import {
@@ -27,7 +24,6 @@ import {
     Lead,
     MultiResponse,
     WidgetElement,
-    GeoOptions,
     EntryOptions,
 } from '#typings';
 
@@ -50,7 +46,6 @@ interface Props {
     filterOnlyUnprotected: boolean;
     entriesFilters?: FilterFields[];
     entriesWidgets?: WidgetElement<unknown>[];
-    entriesGeoOptions?: GeoOptions;
     entryOptions?: EntryOptions;
     hasAssessment?: boolean;
     onSelectLeadChange: (values: number[]) => void;
@@ -70,7 +65,6 @@ function LeadsSelection(props: Props) {
         entriesFilters,
         entriesWidgets,
         entryOptions,
-        entriesGeoOptions,
         hasAssessment,
         selectedLeads,
         onSelectLeadChange,
@@ -90,44 +84,19 @@ function LeadsSelection(props: Props) {
 
     const [activePage, setActivePage] = useState<number>(1);
 
-    const sanitizedFilters = useMemo(() => {
-        interface ProcessedFilters {
-            'entries_filter': ([string] | string)[];
-            [key: string]: [string] | string | ([string] | string)[];
-        }
-        const processedFilters: ProcessedFilters = getCombinedLeadFilters(
-            filterValues,
-            entriesWidgets,
-            entriesGeoOptions,
-        );
-        // Unprotected filter is sent to request to fetch leads
-        // if user cannot create export for confidential documents
-        if (hasAssessment) {
-            processedFilters.exists = 'assessment_exists';
-        }
-        if (filterOnlyUnprotected) {
-            processedFilters.confidentiality = ['unprotected'];
-        }
-
-        return processedFilters;
-    }, [
-        filterOnlyUnprotected,
-        filterValues,
-        hasAssessment,
-        entriesGeoOptions,
-        entriesWidgets,
-    ]);
-
     const leadsRequestBody = useMemo(() => ({
         custom_filters: !hasAssessment ? 'exclude_empty_filtered_entries' : '',
         ordering,
         project: [projectId],
-        ...sanitizedFilters,
+        ...filterValues,
+        exits: hasAssessment ? 'assessment_exists' : undefined,
+        confidentiality: filterOnlyUnprotected ? ['unprotected'] : undefined,
     }), [
         ordering,
         projectId,
-        sanitizedFilters,
+        filterValues,
         hasAssessment,
+        filterOnlyUnprotected,
     ]);
 
     const leadsRequestQuery = useMemo(
@@ -166,11 +135,12 @@ function LeadsSelection(props: Props) {
         onSelectLeadChange([]);
     }, [onSelectAllChange, onSelectLeadChange]);
 
-    const handleSelection = useCallback((value: boolean, lead: Lead) => {
-        if (value) {
-            onSelectLeadChange([...selectedLeads, lead.id]);
+    const handleSelection = useCallback((_: boolean, id: number) => {
+        const isSelected = selectedLeads.includes(id);
+        if (isSelected) {
+            onSelectLeadChange(selectedLeads.filter(v => v !== id));
         } else {
-            onSelectLeadChange(selectedLeads.filter(v => v !== lead.id));
+            onSelectLeadChange([...selectedLeads, id]);
         }
     }, [onSelectLeadChange, selectedLeads]);
 
@@ -191,7 +161,7 @@ function LeadsSelection(props: Props) {
                 return {
                     name: data.id,
                     value: selectAll ? !isSelected : isSelected,
-                    onChange: () => handleSelection(!isSelected, data),
+                    onChange: handleSelection,
                 };
             },
             columnWidth: 48,
@@ -210,22 +180,6 @@ function LeadsSelection(props: Props) {
                 value: data.createdAt,
             }),
             columnWidth: 128,
-        };
-        const publisherColumn: TableColumn<
-        Lead, number, LinkProps, TableHeaderCellProps
-        > = {
-            id: 'source',
-            title: 'Publisher',
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: true,
-            },
-            cellRenderer: Link,
-            cellRendererParams: (_, data) => ({
-                children: data.sourceDetail?.title ?? data.sourceRaw,
-                to: '#', // TODO use provided url
-            }),
-            columnWidth: 160,
         };
         const publishedOnColumn: TableColumn<
         Lead, number, DateOutputProps, TableHeaderCellProps
@@ -255,7 +209,15 @@ function LeadsSelection(props: Props) {
                     columnClassName: styles.titleColumn,
                 },
             ),
-            publisherColumn,
+            createStringColumn<Lead, number>(
+                'source',
+                'Publisher',
+                item => item?.sourceDetail?.title ?? item?.sourceRaw,
+                {
+                    sortable: true,
+                    columnWidth: 160,
+                },
+            ),
             createStringColumn<Lead, number>(
                 'authorsDetail',
                 'Authors',

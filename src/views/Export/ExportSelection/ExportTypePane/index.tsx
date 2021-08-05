@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
@@ -122,16 +122,10 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         showMatrix2dOptions,
     } = props;
 
-    const swapOrderValue = useMemo(() => (
-        reportStructureVariant === DIMENSION_FIRST
-    ), [reportStructureVariant]);
+    const swapOrderValue = reportStructureVariant === DIMENSION_FIRST;
 
     const handleSwapOrderValueChange = useCallback((newValue) => {
-        if (newValue) {
-            onReportStructureVariantChange(DIMENSION_FIRST);
-        } else {
-            onReportStructureVariantChange(SECTOR_FIRST);
-        }
+        onReportStructureVariantChange(newValue ? DIMENSION_FIRST : SECTOR_FIRST);
     }, [onReportStructureVariantChange]);
 
     if (!reportStructure) {

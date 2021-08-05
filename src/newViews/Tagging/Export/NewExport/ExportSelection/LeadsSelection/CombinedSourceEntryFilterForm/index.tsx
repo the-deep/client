@@ -9,6 +9,7 @@ import {
     ObjectSchema,
     getErrorString,
     getErrorObject,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
@@ -47,19 +48,19 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        status: [],
-        createdAt: [],
-        publishedOn: [],
-        assignee: [],
-        search: [],
-        exists: [],
-        priority: [],
-        authoringOrganizationTypes: [],
-        confidentiality: [],
-        emmRiskFactors: [],
-        emmKeywords: [],
-        emmEntities: [],
-        entriesFilter: [],
+        status: [defaultUndefinedType],
+        createdAt: [defaultUndefinedType],
+        publishedOn: [defaultUndefinedType],
+        assignee: [defaultUndefinedType],
+        search: [defaultUndefinedType],
+        exists: [defaultUndefinedType],
+        priority: [defaultUndefinedType],
+        authoringOrganizationTypes: [defaultUndefinedType],
+        confidentiality: [defaultUndefinedType],
+        emmRiskFactors: [defaultUndefinedType],
+        emmKeywords: [defaultUndefinedType],
+        emmEntities: [defaultUndefinedType],
+        entriesFilter: [defaultUndefinedType],
     }),
 };
 

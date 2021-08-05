@@ -38,7 +38,7 @@ export interface Node {
     selected: boolean;
     key: string;
     title: string;
-    nodes: Node[] | undefined;
+    nodes?: this[];
 }
 
 export interface TreeSelectableWidget<T extends string | number> extends Node {

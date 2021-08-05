@@ -12,7 +12,6 @@ import {
     getContextualWidgetsFromFramework,
     getTextWidgetsFromFramework,
 } from '#utils/framework';
-import { getCombinedLeadFilters } from '#entities/lead';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import notify from '#notify';
@@ -20,15 +19,16 @@ import {
     FrameworkFields,
     Lead,
     ExportType,
-    TreeSelectableWidget,
-    ReportStructure,
-    GeoOptions,
     WidgetElement,
     ConditionalWidget,
     EntryOptions,
 } from '#typings';
 
-import { SourceEntryFilter } from './types';
+import {
+    SourceEntryFilter,
+    Node,
+    TreeSelectableWidget,
+} from './types';
 import ExportPreview from './ExportPreview';
 import LeadsSelection from './LeadsSelection';
 import ExportTypePane from './ExportTypePane';
@@ -46,7 +46,7 @@ interface ReportStructureLevel {
     sublevels?: ReportStructureLevel[];
 }
 
-const createReportStructureForExport = (nodes: ReportStructure[]): ExportReportStructure[] =>
+const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] =>
     nodes
         .filter(node => node.selected)
         .map(node => ({
@@ -56,7 +56,7 @@ const createReportStructureForExport = (nodes: ReportStructure[]): ExportReportS
                 : undefined,
         }));
 
-const createReportStructureLevelForExport = (nodes: ReportStructure[]): ReportStructureLevel[] =>
+const createReportStructureLevelForExport = (nodes: Node[]): ReportStructureLevel[] =>
     nodes
         .filter(node => node.selected)
         .map(node => ({
@@ -116,7 +116,7 @@ function EntriesExportSelection(props: Props) {
     const [showEntryId, setShowEntryId] = useState<boolean>(true);
     const [showAryDetails, setShowAryDetails] = useState<boolean>(true);
     const [showAdditionalMetadata, setShowAdditionalMetadata] = useState<boolean>(true);
-    const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
+    const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
@@ -146,21 +146,6 @@ function EntriesExportSelection(props: Props) {
             setContextualWidgets(contextualWidgetList);
         },
         failureHeader: _ts('export', 'afLabel'),
-    });
-
-    const geoOptionsRequestQueryParams = useMemo(() => ({
-        project: projectId,
-    }), [projectId]);
-
-    const {
-        pending: geoOptionsPending,
-        response: geoOptions,
-    } = useRequest<GeoOptions>({
-        url: 'server://geo-options/',
-        method: 'GET',
-        query: geoOptionsRequestQueryParams,
-        schemaName: 'geoOptions',
-        failureHeader: _ts('export', 'geoLabel'),
     });
 
     const entryOptionsQueryParams = useMemo(() => ({
@@ -212,7 +197,7 @@ function EntriesExportSelection(props: Props) {
                     title: _ts('export', 'headerExport'),
                     type: notify.type.SUCCESS,
                     message: _ts('export', 'exportStartedNotifyMessage'),
-                    duration: 15000,
+                    duration: 3000,
                 });
             }
         },
@@ -240,7 +225,7 @@ function EntriesExportSelection(props: Props) {
             contextualWidgetIds = createWidgetIds(contextualWidgets);
         }
 
-        const otherFilters = {
+        const filters = {
             project: projectId,
             include_leads: !selectAll,
             lead: selectedLeads,
@@ -269,27 +254,16 @@ function EntriesExportSelection(props: Props) {
 
             // for word
             exporting_widgets: contextualWidgetIds,
+            ...filterValues,
         };
 
-        const processedFilters = getCombinedLeadFilters(
-            filterValues,
-            analysisFramework?.widgets,
-            geoOptions,
-        );
-
-        const newFilters = [
-            ...Object.entries(otherFilters),
-            ...Object.entries(processedFilters),
-        ];
-
         setIsPreview(preview);
-        getExport(newFilters);
+        getExport(filters);
     }, [
         selectAll,
         activeExportTypeKey,
         contextualWidgets,
         decoupledEntries,
-        geoOptions,
         projectId,
         reportStructure,
         selectedLeads,
@@ -300,7 +274,6 @@ function EntriesExportSelection(props: Props) {
         textWidgets,
         getExport,
         filterValues,
-        analysisFramework?.widgets,
     ]);
 
     const handleEntryExport = useCallback(() => {
@@ -312,10 +285,10 @@ function EntriesExportSelection(props: Props) {
         startExport(true);
     }, [setPreviewId, startExport]);
 
-    const requestsPending = analysisFrameworkPending || geoOptionsPending || entryOptionsPending;
+    const requestsPending = analysisFrameworkPending || entryOptionsPending;
     const showMatrix2dOptions = useMemo(
         () => {
-            if (requestsPending || !analysisFramework || isNotDefined(analysisFramework?.widgets)) {
+            if (requestsPending || !analysisFramework || isNotDefined(analysisFramework.widgets)) {
                 return false;
             }
             return analysisFramework.widgets.some((widget: WidgetElement<unknown>) => {
@@ -357,7 +330,6 @@ function EntriesExportSelection(props: Props) {
                         filterOnlyUnprotected={filterOnlyUnprotected}
                         entriesFilters={analysisFramework?.filters}
                         entriesWidgets={analysisFramework?.widgets}
-                        entriesGeoOptions={geoOptions}
                         entryOptions={entryOptions}
                         pending={requestsPending}
                         selectedLeads={selectedLeads}

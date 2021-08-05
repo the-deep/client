@@ -55,7 +55,6 @@ function Export() {
                                 onClick={showCreateNewExportModal}
                                 icons={<IoAdd />}
                                 variant="secondary"
-                                disabled
                             >
                                 New Export
                             </Button>

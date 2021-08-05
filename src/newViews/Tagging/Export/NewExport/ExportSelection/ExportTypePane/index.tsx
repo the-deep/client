@@ -5,6 +5,7 @@ import {
     List,
     ExpandableContainer,
     Container,
+    Heading,
 } from '@the-deep/deep-ui';
 
 import {
@@ -25,7 +26,7 @@ import jsonIcon from '#resources/img/json.svg';
 
 import TreeSelection from '#newComponents/input/TreeSelection';
 
-import { Node } from '../types';
+import { Node, TreeSelectableWidget } from '../types';
 import ExportTypePaneButton from './ExportTypeButton';
 
 import styles from './styles.scss';
@@ -57,10 +58,10 @@ interface Props {
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    contextualWidgets: Node[];
-    onSetContextualWidgets: (value: Node[]) => void;
-    textWidgets: Node[];
-    onSetTextWidgets: (value: Node[]) => void;
+    contextualWidgets: TreeSelectableWidget<string | number>[];
+    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    textWidgets: TreeSelectableWidget<string | number>[];
+    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
 }
 
 const exportTypes: ExportTypeItem[] = [
@@ -105,10 +106,10 @@ interface RenderWordProps {
     showEntryId: boolean;
     showAryDetails: boolean;
     showAdditionalMetadata: boolean;
-    contextualWidgets: Node[];
-    onSetContextualWidgets: (value: Node[]) => void;
-    textWidgets: Node[];
-    onSetTextWidgets: (value: Node[]) => void;
+    contextualWidgets: TreeSelectableWidget<string | number>[];
+    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    textWidgets: TreeSelectableWidget<string | number>[];
+    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -237,22 +238,36 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 contentClassName={styles.content}
             >
                 {contextualWidgets.length > 0 && showAdditionalMetadata && (
-                    <TreeSelection
-                        className={styles.widgetSelection}
-                        name="contextualWidgets"
-                        value={contextualWidgets}
-                        onChange={onSetContextualWidgets}
-                        direction="vertical"
-                    />
+                    <>
+                        <Heading
+                            size="extraSmall"
+                        >
+                            Contextual Widgets
+                        </Heading>
+                        <TreeSelection
+                            className={styles.widgetSelection}
+                            name="contextualWidgets"
+                            value={contextualWidgets}
+                            onChange={onSetContextualWidgets}
+                            direction="horizontal"
+                        />
+                    </>
                 )}
                 {textWidgets.length > 0 && (
-                    <TreeSelection
-                        className={styles.widgetSelection}
-                        name="freeTextWidgets"
-                        value={textWidgets}
-                        onChange={onSetTextWidgets}
-                        direction="vertical"
-                    />
+                    <>
+                        <Heading
+                            size="extraSmall"
+                        >
+                            Free Text Widgets
+                        </Heading>
+                        <TreeSelection
+                            className={styles.widgetSelection}
+                            name="freeTextWidgets"
+                            value={textWidgets}
+                            onChange={onSetTextWidgets}
+                            direction="horizontal"
+                        />
+                    </>
                 )}
             </Container>
         </>
