@@ -176,7 +176,7 @@ function WidgetForm(props: WidgetFormProps) {
         );
 
         return (
-            <WidgetContentWrapper>
+            <WidgetContentWrapper className={styles.content}>
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
                         <Widget
