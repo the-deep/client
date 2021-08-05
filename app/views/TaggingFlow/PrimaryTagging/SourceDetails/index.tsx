@@ -166,7 +166,7 @@ interface LeadPreview {
     id: number;
     previewId: number;
     text?: string;
-    images: {
+    images?: {
         id: number;
         file: string;
     }[];
