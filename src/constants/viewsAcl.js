@@ -9,9 +9,6 @@ const notDev = ({ isLoggedIn, isDevMode }) => (
 );
 */
 const notLoggedIn = ({ isLoggedIn }) => !isLoggedIn;
-const notProjectAdmin = ({ isLoggedIn, setupPermissions }) => (
-    !isLoggedIn || !setupPermissions.modify
-);
 const notAdmin = ({ isLoggedIn, isAdmin }) => (
     !isLoggedIn || !isAdmin
 );
@@ -65,6 +62,31 @@ const notQuestionnaireEditable = ({ isLoggedIn, accessQuestionnaire, setupPermis
     !isLoggedIn || !setupPermissions.modify || !accessQuestionnaire
 );
 
+const notNewUiViewable = ({ accessNewUi }) => (
+    !accessNewUi
+);
+
+const notNewUiViewableAndProjectAdmin = ({ isLoggedIn, setupPermissions, accessNewUi }) => (
+    !accessNewUi || !isLoggedIn || !setupPermissions.modify
+);
+
+const notNewUiViewableAndLoggedIn = ({ isLoggedIn, accessNewUi }) => (
+    !accessNewUi || !isLoggedIn
+);
+
+const notNewUiViewableAndLeadViewable = ({ accessNewUi, isLoggedIn, leadPermissions }) => (
+    !accessNewUi || !isLoggedIn || !leadPermissions.view
+);
+
+const notNewUiViewableAndExportable = ({
+    accessNewUi, isLoggedIn, hasAnalysisFramework, exportPermissions,
+}) => (
+    !isLoggedIn
+    || !accessNewUi
+    || !hasAnalysisFramework
+    || !(exportPermissions.create || exportPermissions.create_only_unprotected)
+);
+
 const notExportCreatable = ({ isLoggedIn, hasAnalysisFramework, exportPermissions }) => (
     !isLoggedIn
     || !hasAnalysisFramework
@@ -89,8 +111,8 @@ const acl = {
     dashboard: { hide: notLoggedIn },
 
     projects: { hide: notLoggedIn },
-    editProject: { hide: notProjectAdmin },
-    newProject: { hide: notLoggedIn },
+    editProject: { hide: notNewUiViewableAndProjectAdmin },
+    newProject: { hide: notNewUiViewableAndLoggedIn },
     connectors: { hide: notLoggedIn },
 
     leadsViz: { hide: notLeadVizViewable },
@@ -125,16 +147,17 @@ const acl = {
     questionnaireBuilder: { hide: notQuestionnaireEditable },
     frameworkQuestions: { hide: notQuestionnaireViewable },
 
-    tagging: { hide: notLeadViewable },
-    taggingDashboard: { hide: notLeadViewable },
-    taggingExport: { hide: notExportCreatable },
+    tagging: { hide: notNewUiViewableAndLeadViewable },
+    taggingDashboard: { hide: notNewUiViewableAndLoggedIn },
+    taggingExport: { hide: notNewUiViewableAndExportable },
 
-    exploreDeep: {},
+    exploreDeep: { notNewUiViewable },
     analysisModule: { hide: notAnalysisModuleViewable },
     pillarAnalysis: { hide: notAnalysisModuleEditable },
 
-    analyticalFramework: { hide: notLoggedIn },
-    myProfile: { hide: notLoggedIn },
+    analyticalFramework: { hide: notNewUiViewableAndLoggedIn },
+    myProfile: { hide: notNewUiViewableAndLoggedIn },
+    newUserGroup: { hide: notNewUiViewableAndLoggedIn },
 };
 
 export default acl;
