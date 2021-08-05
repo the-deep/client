@@ -23,42 +23,42 @@ const values: Entry[] = [
                 },
             },
             {
-                id: 'widget2',
+                id: 'number-widget-random',
                 type: 'number',
                 data: {
                     value: 10,
                 },
             },
             {
-                id: 'widget4',
+                id: 'single-select-random',
                 type: 'single-select',
                 data: {
-                    value: 'apple',
+                    value: '15',
                 },
             },
             {
-                id: 'widget5',
+                id: 'multi-select-random',
                 type: 'multi-select',
                 data: {
-                    value: ['apple', 'ball'],
+                    value: ['31', '23'],
                 },
             },
             {
-                id: 'widget6',
+                id: 'date-random',
                 type: 'date',
                 data: {
                     value: '2021-01-13',
                 },
             },
             {
-                id: 'widget7',
+                id: 'time-random',
                 type: 'time',
                 data: {
                     value: '13:03:00',
                 },
             },
             {
-                id: 'widget8',
+                id: 'date-range-random',
                 type: 'date-range',
                 data: {
                     value: {
@@ -68,7 +68,7 @@ const values: Entry[] = [
                 },
             },
             {
-                id: 'widget9',
+                id: 'time-range-random',
                 type: 'time-range',
                 data: {
                     value: {
@@ -78,27 +78,27 @@ const values: Entry[] = [
                 },
             },
             {
-                id: 'widget10',
+                id: 'matrix-1d-random',
                 type: 'matrix-1d',
                 data: {
                     value: {
-                        fruits: {
-                            apple: true,
+                        1: {
+                            '1-1': true,
                         },
                     },
                 },
             },
             {
-                id: 'widget11',
+                id: 'matrix-2d-random',
                 type: 'matrix-2d',
                 data: {
                     value: {
-                        fruits: {
-                            hilly: {
-                                apple: ['green', 'sweet'],
+                        1: {
+                            '1-1': {
+                                'column-2': [],
                             },
-                            terai: {
-                                mango: ['yellow', 'sweet'],
+                            '1-2': {
+                                'column-1': ['sub-column-2', 'sub-column-1'],
                             },
                         },
                     },
@@ -119,10 +119,10 @@ const values: Entry[] = [
                 },
             },
             {
-                id: 'widget15',
+                id: 'scale-random',
                 type: 'scale',
                 data: {
-                    value: 'good',
+                    value: '331',
                 },
             },
         ],

@@ -5,7 +5,7 @@ import {
 } from './types';
 
 const matrix1d: Matrix1dWidget = {
-    clientId: 'just-some-random-thing',
+    clientId: 'matrix-1d-random',
     type: 'matrix-1d',
     title: 'Matrix 1d',
     order: 1,
@@ -191,7 +191,7 @@ const matrix1d: Matrix1dWidget = {
 };
 
 const matrix2d: Matrix2dWidget = {
-    clientId: 'just-and-random-thing',
+    clientId: 'matrix-2d-random',
     type: 'matrix-2d',
     title: 'Matrix 2d',
     order: 2,
@@ -258,14 +258,25 @@ const matrix2d: Matrix2dWidget = {
         ],
         columns: [
             {
-                clientId: '1',
+                clientId: 'column-1',
                 order: -1,
                 label: 'Cross',
-                subColumns: [],
+                subColumns: [
+                    {
+                        clientId: 'sub-column-1',
+                        order: -1,
+                        label: 'Sub Crossed',
+                    },
+                    {
+                        clientId: 'sub-column-2',
+                        order: -1,
+                        label: 'Sub Crossed 2',
+                    },
+                ],
             },
             {
                 order: -1,
-                clientId: '2',
+                clientId: 'column-2',
                 label: 'Food',
                 subColumns: [],
             },
