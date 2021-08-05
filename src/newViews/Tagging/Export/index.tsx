@@ -13,10 +13,10 @@ import {
 import Navbar from '../Navbar';
 import styles from './styles.scss';
 
-type ExportType = 'export-history' | 'export-assessment-history';
+type ExportType = 'export-entry-history' | 'export-assessment-history';
 
 function Export() {
-    const [activeTab, setActiveTab] = useState<ExportType>('export-history');
+    const [activeTab, setActiveTab] = useState<ExportType>('export-entry-history');
 
     const handleExportEntryClick = useCallback(() => {}, []);
     const handleExportAssessmentClick = useCallback(() => {}, []);
@@ -35,7 +35,7 @@ function Export() {
                         <TabList
                             className={styles.tabList}
                         >
-                            <Tab name="export-history">
+                            <Tab name="export-entry-history">
                                 Export History
                             </Tab>
                             <Tab name="export-assessment-history">
@@ -50,6 +50,7 @@ function Export() {
                                 onClick={handleExportEntryClick}
                                 icons={<IoAdd />}
                                 variant="secondary"
+                                disabled
                             >
                                 New Export
                             </Button>
@@ -59,13 +60,14 @@ function Export() {
                                 onClick={handleExportAssessmentClick}
                                 icons={<IoAdd />}
                                 variant="tertiary"
+                                disabled
                             >
                                 New Assessment Export
                             </Button>
                         </div>
                     </div>
 
-                    <TabPanel name="export-history">
+                    <TabPanel name="export-entry-history">
                         This is export history
                     </TabPanel>
                     <TabPanel name="export-assessment-history">
