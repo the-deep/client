@@ -31,6 +31,8 @@ function PrimaryTagging(props: Props) {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
             if (i === -1) {
+                // eslint-disable-next-line no-console
+                console.error('Cannot find entry for deletion', entryId);
                 return oldEntries;
             }
 
@@ -46,11 +48,14 @@ function PrimaryTagging(props: Props) {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
             if (i === -1) {
+                // eslint-disable-next-line no-console
+                console.error('Cannot find entry for excerpt change', entryId);
                 return oldEntries;
             }
 
             const newEntries = [...oldEntries];
             const newEntry = {
+                // FIXME: add pristine/non-pristine value
                 ...(newEntries[i]),
                 excerpt: modifiedExcerpt,
             };
