@@ -1,6 +1,8 @@
 .tagged-excerpt {
     --padding: var(--dui-spacing-medium);
 
+    /* NOTE: when user select tagged excerpt, the add button will be visible */
+    user-select: none;
     margin: 0 calc(-1 * var(--padding));
     border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
     cursor: pointer;
