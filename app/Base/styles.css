@@ -9,10 +9,7 @@
         height: 3.4rem;
     }
 
-    /*
-     *  NOTE: styling for view is located in
-     *  `/configs/routes/styles.css`
-     */
+    .view,
     .preload-message,
     .init {
         flex-grow: 1;

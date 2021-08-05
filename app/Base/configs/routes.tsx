@@ -1,13 +1,11 @@
 import { lazy } from 'react';
 import { wrap } from '#base/utils/routes';
-import styles from './styles.css';
 
 const fourHundredFour = wrap({
     path: '*',
     title: '404',
     component: lazy(() => import('#base/components/PreloadMessage')),
     componentProps: {
-        className: styles.view,
         heading: '404',
         content: 'What you are looking for does not exist.',
     },
@@ -21,7 +19,6 @@ const signIn = wrap({
     component: lazy(() => import('#base/components/PreloadMessage')),
     componentProps: {
         content: 'Login',
-        className: styles.view,
     },
     visibility: 'is-not-authenticated',
 });
@@ -32,7 +29,6 @@ const signUp = wrap({
     component: lazy(() => import('#base/components/PreloadMessage')),
     componentProps: {
         content: 'Register',
-        className: styles.view,
     },
     visibility: 'is-not-authenticated',
 });
@@ -43,7 +39,6 @@ const forgetPassword = wrap({
     component: lazy(() => import('#base/components/PreloadMessage')),
     componentProps: {
         content: 'Forgot Password',
-        className: styles.view,
     },
     visibility: 'is-not-authenticated',
 });
@@ -54,7 +49,6 @@ const resetPassword = wrap({
     component: lazy(() => import('#base/components/PreloadMessage')),
     componentProps: {
         content: 'Reset Password',
-        className: styles.view,
     },
     visibility: 'is-not-authenticated',
 });
@@ -64,7 +58,6 @@ const home = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/Home')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
 });
@@ -74,7 +67,6 @@ const explore = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/ExploreDeep')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
 });
@@ -83,10 +75,7 @@ const projectRoute = wrap({
     title: 'Project',
     navbarVisibility: true,
     component: lazy(() => import('#views/Project')),
-    componentProps: {
-        className: styles.view,
-        content: 'Project',
-    },
+    componentProps: { },
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
@@ -98,7 +87,6 @@ const taggingRoute = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/Tagging')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
     checkPermissions: (project) => {
@@ -118,7 +106,6 @@ const sources = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/Sources')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
 });
@@ -129,7 +116,6 @@ const dashboard = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/Dashboard')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
 });
@@ -140,7 +126,6 @@ const exportRoute = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/Export')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
 });
@@ -151,7 +136,6 @@ const taggingFlow = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/TaggingFlow')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
 });
@@ -163,7 +147,6 @@ const analysis = wrap({
     navbarVisibility: true,
     component: lazy(() => import('#views/Analysis')),
     componentProps: {
-        className: styles.view,
     },
     visibility: 'is-authenticated',
     checkPermissions: (project) => {

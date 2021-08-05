@@ -96,19 +96,19 @@ function Project(props: Props) {
             <Route
                 path={routes.tagging.path}
             >
-                {routes.tagging.load({})}
+                {routes.tagging.load({ className })}
             </Route>
             <Route
                 exact
                 path={routes.analysis.path}
             >
-                {routes.analysis.load({})}
+                {routes.analysis.load({ className })}
             </Route>
             <Route
                 exact
                 path={routes.fourHundredFour.path}
             >
-                {routes.fourHundredFour.load({})}
+                {routes.fourHundredFour.load({ className })}
             </Route>
         </Switch>
     );

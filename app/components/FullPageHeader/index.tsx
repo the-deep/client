@@ -38,7 +38,7 @@ function FullPageHeader(props: FullPageHeaderProps) {
                 childrenContainerClassName={styles.content}
                 icons={(
                     <>
-                        <Heading>
+                        <Heading size="medium">
                             {heading}
                         </Heading>
                         <div className={styles.descriptionContainer}>
