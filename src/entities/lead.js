@@ -123,6 +123,7 @@ const getEntryFilters = (filter, widgets, geoOptions) => {
         const widget = widgetsMapping[widgetFilterKey];
         const widgetId = widget?.widgetId;
         switch (widgetId) {
+            case 'dateRangeWidget':
             case 'dateWidget': {
                 const { startDate, endDate } = entryFilterOptions;
                 entriesFilter.push([
@@ -135,6 +136,7 @@ const getEntryFilters = (filter, widgets, geoOptions) => {
                 ]);
                 break;
             }
+            case 'timeRangeWidget':
             case 'timeWidget': {
                 const { startTime, endTime } = entryFilterOptions;
                 entriesFilter.push([
