@@ -4,19 +4,10 @@
     overflow: auto;
 
     .sub-navbar {
-        display: flex;
-        position: relative;
-        flex-shrink: 0;
-        justify-content: center;
-
-        .nav-links {
-            display: flex;
-
-            .link {
-                padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
-                text-transform: capitalize;
-                font-size: var(--dui-font-size-medium);
-            }
+        .link {
+            padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+            text-transform: capitalize;
+            font-size: var(--dui-font-size-medium);
         }
     }
 
