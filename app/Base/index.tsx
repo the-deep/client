@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, Suspense } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Router } from 'react-router-dom';
 import { init, ErrorBoundary, setUser as setUserOnSentry } from '@sentry/react';
 import { unique } from '@togglecorp/fujs';
@@ -191,18 +191,9 @@ function Base() {
                                             {navbarState && (
                                                 <Navbar className={styles.navbar} />
                                             )}
-                                            <Suspense
-                                                fallback={(
-                                                    <PreloadMessage
-                                                        className={styles.preloadMessage}
-                                                        content="Loading page..."
-                                                    />
-                                                )}
-                                            >
-                                                <Routes
-                                                    className={styles.view}
-                                                />
-                                            </Suspense>
+                                            <Routes
+                                                className={styles.view}
+                                            />
                                         </Init>
                                     </Router>
                                 </AlertContext.Provider>

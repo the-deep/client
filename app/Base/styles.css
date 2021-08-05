@@ -10,7 +10,6 @@
     }
 
     .view,
-    .preload-message,
     .init {
         flex-grow: 1;
         overflow: auto;
