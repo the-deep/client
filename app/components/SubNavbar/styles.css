@@ -4,8 +4,15 @@
 
     .children {
         display: flex;
+        flex-basis: calc(100% / 3);
+        flex-shrink: 0;
         justify-content: center;
         padding-top: 0;
         padding-bottom: 0;
+    }
+
+    .icons,
+    .actions {
+        flex-basis: calc(100% / 3);
     }
 }
