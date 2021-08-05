@@ -1,3 +1,7 @@
 .entry-card {
     padding: var(--dui-spacing-medium);
+
+    .excerpt {
+        padding: var(--dui-spacing-medium);
+    }
 }

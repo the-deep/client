@@ -1,4 +1,4 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo, useContext, Suspense } from 'react';
 import { Switch, Route, useParams } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
 
@@ -92,25 +92,34 @@ function Project(props: Props) {
     }
 
     return (
-        <Switch>
-            <Route
-                path={routes.tagging.path}
-            >
-                {routes.tagging.load({ className })}
-            </Route>
-            <Route
-                exact
-                path={routes.analysis.path}
-            >
-                {routes.analysis.load({ className })}
-            </Route>
-            <Route
-                exact
-                path={routes.fourHundredFour.path}
-            >
-                {routes.fourHundredFour.load({ className })}
-            </Route>
-        </Switch>
+        <Suspense
+            fallback={(
+                <PreloadMessage
+                    className={className}
+                    content="Loading page..."
+                />
+            )}
+        >
+            <Switch>
+                <Route
+                    path={routes.tagging.path}
+                >
+                    {routes.tagging.load({ className })}
+                </Route>
+                <Route
+                    exact
+                    path={routes.analysis.path}
+                >
+                    {routes.analysis.load({ className })}
+                </Route>
+                <Route
+                    exact
+                    path={routes.fourHundredFour.path}
+                >
+                    {routes.fourHundredFour.load({ className })}
+                </Route>
+            </Switch>
+        </Suspense>
     );
 }
 
