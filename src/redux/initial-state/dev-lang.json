@@ -1459,7 +1459,11 @@
         "-26439393": "Failed to fetch analysis details.",
         "-13538555": "Save and next",
         "-49068653": "Tagging Flow",
-        "-53188551": "Add Leadgroup"
+        "-53188551": "Add Leadgroup",
+        "-23690221": "Create new Analysis",
+        "-25519176": "Successfully created Analysis ",
+        "-47459866": "Analysis successfully edited.",
+        "-82264498": "Analysis successfully deleted."
     },
     "links": {
         "browserExtension": {
@@ -3792,7 +3796,9 @@
             "analysisCompletedTagLabel": -90582895,
             "sourcesByTypeLabel": -93108581,
             "entriesAnalyzed": -65511645,
-            "analysisLabel": -91480400
+            "analysisLabel": -91480400,
+            "analysisDeleteSuccessful": -82264498,
+            "analysis": -55670188
         },
         "analysis.editModal": {
             "addAnalysisModalHeading": -90678740,
@@ -3816,7 +3822,11 @@
             "pillarAnalysisRequired": -91939891,
             "endDateLabel": 334,
             "startDateLabel": 185,
-            "endDateGreaterThanStartDate": -46389656
+            "endDateGreaterThanStartDate": -46389656,
+            "analysisCreate": -23690221,
+            "analysisCreateSuccessful": -25519176,
+            "analysisEdit": -30091387,
+            "analysisEditSuccessful": -47459866
         },
         "pillarAnalysis": {
             "saveButtonLabel": 25,

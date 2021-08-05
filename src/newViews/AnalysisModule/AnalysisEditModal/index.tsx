@@ -214,15 +214,13 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 onSuccess(response, isDefined(analysisToEdit));
             }
             notify.send({
-                title: _ts('analysis.editModal', isDefined(analysisToEdit)
-                    ? 'analysisEdit'
-                    : 'analysisCreate',
-                ),
+                title: isDefined(analysisToEdit)
+                    ? _ts('analysis.editModal', 'analysisEdit')
+                    : _ts('analysis.editModal', 'analysisCreate'),
                 type: notify.type.SUCCESS,
-                message: _ts('analysis.editModal', isDefined(analysisToEdit)
-                    ? 'analysisEditSuccessful'
-                    : 'analysisCreateSuccessful',
-                ),
+                message: isDefined(analysisToEdit)
+                    ? _ts('analysis.editModal', 'analysisEditSuccessful')
+                    : _ts('analysis.editModal', 'analysisCreateSuccessful'),
                 duration: notify.duration.MEDIUM,
             });
             onModalClose();
