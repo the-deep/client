@@ -11,7 +11,7 @@ function joinUrlPart(foo: string, bar: string) {
 
 // eslint-disable-next-line import/prefer-default-export
 export function wrap<T extends string, K extends { className?: string }>(
-    props: PageProps<K> & { path: T, parent?: { path: string } },
+    props: Omit<PageProps<K>, 'overrideProps'> & { path: T, parent?: { path: string } },
 ) {
     const {
         path,
@@ -29,8 +29,8 @@ export function wrap<T extends string, K extends { className?: string }>(
             <Page
                 component={component}
                 componentProps={componentProps}
+                overrideProps={overrideProps}
                 {...otherProps}
-                {...overrideProps}
             />
         ),
     };

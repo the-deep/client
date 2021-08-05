@@ -1,7 +1,7 @@
 .source-details {
     display: flex;
     flex-grow: 1;
-    padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
+    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small)) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
     --width-preview: calc(20rem + 10vw);
 
     .preview-container {
@@ -9,7 +9,7 @@
         flex-basis: var(--width-preview);
         flex-direction: column;
         flex-shrink: 0;
-        margin: var(--dui-spacing-medium);
+        margin: var(--dui-spacing-small);
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         overflow: auto;
 
@@ -20,7 +20,7 @@
 
     .form-container {
         flex-grow: 1;
-        margin: var(--dui-spacing-medium);
+        margin: var(--dui-spacing-small);
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         overflow-y: auto;
     }

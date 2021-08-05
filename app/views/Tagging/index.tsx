@@ -56,31 +56,31 @@ function Tagging(props: Props) {
                     exact
                     path={routes.sources.path}
                 >
-                    {routes.sources.load({})}
+                    {routes.sources.load({ className: styles.childView })}
                 </Route>
                 <Route
                     exact
                     path={routes.dashboard.path}
                 >
-                    {routes.dashboard.load({ className })}
+                    {routes.dashboard.load({ className: styles.childView })}
                 </Route>
                 <Route
                     exact
                     path={routes.export.path}
                 >
-                    {routes.export.load({})}
+                    {routes.export.load({ className: styles.childView })}
                 </Route>
                 <Route
                     exact
                     path={routes.taggingFlow.path}
                 >
-                    {routes.taggingFlow.load({})}
+                    {routes.taggingFlow.load({ className: styles.childView })}
                 </Route>
                 <Route
                     exact
                     path={routes.fourHundredFour.path}
                 >
-                    {routes.fourHundredFour.load({})}
+                    {routes.fourHundredFour.load({ className: styles.childView })}
                 </Route>
             </Switch>
         </div>

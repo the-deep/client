@@ -1,7 +1,12 @@
 .tagging {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
     .sub-navbar {
         display: flex;
         position: relative;
+        flex-shrink: 0;
         justify-content: center;
 
         .nav-links {
@@ -13,5 +18,10 @@
                 font-size: var(--dui-font-size-medium);
             }
         }
+    }
+
+    .child-view {
+        flex-grow: 1;
+        overflow: auto;
     }
 }

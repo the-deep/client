@@ -199,11 +199,9 @@ function Base() {
                                                     />
                                                 )}
                                             >
-                                                {/*
-                                                  * NOTE: styling for view is located in
-                                                  * `/configs/routes/styles.css`
-                                                  */}
-                                                <Routes />
+                                                <Routes
+                                                    className={styles.view}
+                                                />
                                             </Suspense>
                                         </Init>
                                     </Router>

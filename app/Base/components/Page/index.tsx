@@ -17,6 +17,7 @@ export interface Props<T extends { className?: string }> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component: React.LazyExoticComponent<(props: T) => React.ReactElement<any, any> | null>;
     componentProps: React.PropsWithRef<T>;
+    overrideProps: Partial<React.PropsWithRef<T>>;
     visibility: Visibility,
     checkPermissions?: (project: Project | undefined) => boolean | undefined,
     navbarVisibility: boolean;
@@ -29,6 +30,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
     const {
         component: Comp,
         componentProps,
+        overrideProps,
         title,
         navbarVisibility,
         visibility,
@@ -97,6 +99,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
             <Comp
                 className={styles.page}
                 {...componentProps}
+                {...overrideProps}
             />
         </>
     );
