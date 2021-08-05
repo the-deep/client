@@ -1,7 +1,6 @@
 .sources {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 
     .top-section {
         background-color: var(--dui-color-foreground);

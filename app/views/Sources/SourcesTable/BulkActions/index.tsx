@@ -69,9 +69,9 @@ function BulkActions(props: Props) {
     return (
         <div className={styles.bulkActionsBar}>
             {bulkDeletePending && <PendingMessage />}
-            <span className={styles.text}>
+            <div className={styles.text}>
                 {_ts('leads', 'selectedLeadsCount', { count: selectedLeads.length })}
-            </span>
+            </div>
             <Button
                 name="clear"
                 title={_ts('leads', 'clearSelectedLeadsTitle')}
