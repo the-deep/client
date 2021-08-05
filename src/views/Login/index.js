@@ -80,7 +80,6 @@ function Login(props) {
     const [faramValues, setFaramValues] = useState({});
     const [faramErrors, setFaramErrors] = useState({});
     const [pending, setPending] = useState(false);
-    const [loginUrl, setLoginUrl] = useState(false);
     const [finalSchema, setFinalSchema] = useState(schema);
 
     const [captchaRequired, setCaptchaRequired] = useState(false);
@@ -90,7 +89,39 @@ function Login(props) {
         pending: loginPending,
         trigger: loginTrigger,
     } = useLazyRequest({
-        url: loginUrl,
+        url: 'server://token/',
+        method: 'POST',
+        body: ctx => ctx,
+        onSuccess: (response) => {
+            const { refresh, access } = response;
+            login({ refresh, access });
+            startSiloTasks(() => console.log('Silo tasks started'));
+            authenticate();
+        },
+        onFailure: ({ errorCode, value: { faramErrors: newFaramErrors } }) => {
+            if (errorCode === 4004) {
+                setFaramErrors({
+                    ...newFaramErrors,
+                    $internal: [
+                        captchaRequired ? _ts('login', 'retryRecaptcha') : _ts('login', 'enterRecaptcha'),
+                    ],
+                });
+                setPending(false);
+                setCaptchaRequired(true);
+                setFinalSchema(schemaWithCaptcha);
+            } else {
+                setFaramErrors(newFaramErrors);
+                setPending(false);
+            }
+        },
+        schemaName: 'tokenGetResponse',
+    });
+
+    const {
+        pending: hidLoginPending,
+        trigger: hidLoginTrigger,
+    } = useLazyRequest({
+        url: 'server://token/hid/',
         method: 'POST',
         body: ctx => ctx,
         onSuccess: (response) => {
@@ -119,8 +150,8 @@ function Login(props) {
     });
 
     useEffect(() => {
-        setPending(loginPending);
-    }, [loginPending]);
+        setPending(loginPending || hidLoginPending);
+    }, [hidLoginPending, loginPending]);
 
     const onHidLoginClick = useCallback(() => {
         // Just set it to pending
@@ -140,10 +171,9 @@ function Login(props) {
                 state: query.state,
                 tokenType: query.token_type,
             };
-            setLoginUrl('server://token/hid/');
-            loginTrigger(params);
+            hidLoginTrigger(params);
         }
-    }, [loginTrigger, location]);
+    }, [hidLoginTrigger, location]);
 
     useEffect(() => {
         checkParamsFromHid();
@@ -171,7 +201,6 @@ function Login(props) {
             password,
             hcaptchaResponse,
         };
-        setLoginUrl('server://token/');
         elementRef.current?.resetCaptcha();
         loginTrigger(params);
     }, [loginTrigger]);
