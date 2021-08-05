@@ -9,18 +9,19 @@ import {
     NumberInput,
     TextInput,
     SelectInput,
-    FileInput,
     ContainerCard,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
     PartialForm,
     requiredStringCondition,
+    requiredCondition,
     useForm,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
 import notify from '#notify';
+import DeepFileInput from '#newComponents/DeepFileInput';
 import { useRequest, useLazyRequest } from '#utils/request';
 import {
     AdminLevelGeoArea,
@@ -45,10 +46,10 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         title: [requiredStringCondition],
-        level: [],
+        level: [requiredCondition],
         nameProp: [],
         codeProp: [],
-        region: [],
+        region: [requiredCondition],
         parent: [],
         geoShapeFile: [],
     }),
@@ -138,13 +139,15 @@ function AddAdminLevelForm(props: Props) {
                 </Button>
             )}
         >
-            <FileInput
+            <DeepFileInput
                 name="geoShapeFile"
                 className={styles.input}
                 label="Upload a file and select the corresponding field names from your file"
+                onChange={setFieldValue}
+                value={value.geoShapeFile}
             >
                 <MdFileUpload />
-            </FileInput>
+            </DeepFileInput>
             <div className={styles.row}>
                 <NumberInput
                     name="level"
@@ -153,7 +156,6 @@ function AddAdminLevelForm(props: Props) {
                     error={error?.level}
                     onChange={setFieldValue}
                     label="Admin Level"
-                    placeholder="level"
                 />
                 <TextInput
                     name="title"

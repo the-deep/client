@@ -27,7 +27,7 @@ interface TabDetails {
 const defaultTab: TabDetails[] = [
     {
         name: 'adminLevel1',
-        children: 'Admin Level1',
+        children: 'Admin Level 1',
     },
 ];
 
@@ -82,18 +82,18 @@ function AddAdminLevel(props: Props) {
             activeRegion={activeRegion}
             onSuccess={onSuccess}
         />,
-    }), []);
+    }), [activeRegion, onSuccess]);
 
     const handleAdminLevelAdd = useCallback(() => {
         setTab(oldTab => ([...oldTab, {
             name: _cs('adminLevel', (oldTab.length + 1).toString()),
-            children: _cs('Admin Level', (oldTab.length + 1).toString()),
+            children: _cs('Admin Level ', (oldTab.length + 1).toString()),
         }]));
     }, [setTab]);
 
 
     const handlePublishGeoArea = useCallback(() => {
-        publishAdminLevelTrigger();
+        publishAdminLevelTrigger(null);
     }, [publishAdminLevelTrigger]);
 
 

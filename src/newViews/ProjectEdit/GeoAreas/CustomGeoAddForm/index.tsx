@@ -36,8 +36,8 @@ const schema: FormSchema = {
         title: [requiredStringCondition],
         code: [requiredStringCondition],
         project: [requiredCondition],
-        public: [requiredCondition],
-        isPublished: [requiredCondition],
+        public: [],
+        isPublished: [],
     }),
 };
 
