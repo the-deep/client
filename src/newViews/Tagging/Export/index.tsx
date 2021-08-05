@@ -11,6 +11,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import Navbar from '../Navbar';
+import ExportEntriesHistory from './ExportEntriesHistory';
 import styles from './styles.scss';
 
 type ExportType = 'export-entry-history' | 'export-assessment-history';
@@ -68,7 +69,7 @@ function Export() {
                     </div>
 
                     <TabPanel name="export-entry-history">
-                        This is export history
+                        <ExportEntriesHistory />
                     </TabPanel>
                     <TabPanel name="export-assessment-history">
                         This is Export Assessment History
