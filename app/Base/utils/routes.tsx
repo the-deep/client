@@ -25,11 +25,12 @@ export function wrap<T extends string, K extends { className?: string }>(
         ...otherProps,
         path: parent ? joinUrlPart(parent.path, path) : path,
         originalPath: path,
-        load: () => (
+        load: (overrideProps: Partial<typeof componentProps>) => (
             <Page
                 component={component}
                 componentProps={componentProps}
                 {...otherProps}
+                {...overrideProps}
             />
         ),
     };

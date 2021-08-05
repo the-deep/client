@@ -9,42 +9,50 @@ function Routes() {
             <Route
                 exact
                 path={routes.home.path}
-                render={routes.home.load}
-            />
+            >
+                {routes.home.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.explore.path}
-                render={routes.explore.load}
-            />
+            >
+                {routes.explore.load({})}
+            </Route>
             <Route
                 path={routes.project.path}
-                render={routes.project.load}
-            />
+            >
+                {routes.project.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.signIn.path}
-                render={routes.signIn.load}
-            />
+            >
+                {routes.signIn.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.signUp.path}
-                render={routes.signUp.load}
-            />
+            >
+                {routes.signUp.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.forgetPassword.path}
-                render={routes.forgetPassword.load}
-            />
+            >
+                {routes.forgetPassword.load}
+            </Route>
             <Route
                 exact
                 path={routes.resetPassword.path}
-                render={routes.resetPassword.load}
-            />
+            >
+                {routes.resetPassword.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.fourHundredFour.path}
-                render={routes.fourHundredFour.load}
-            />
+            >
+                {routes.fourHundredFour.load({})}
+            </Route>
         </Switch>
     );
 }

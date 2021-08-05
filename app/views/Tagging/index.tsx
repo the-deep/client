@@ -55,28 +55,33 @@ function Tagging(props: Props) {
                 <Route
                     exact
                     path={routes.sources.path}
-                    render={routes.sources.load}
-                />
+                >
+                    {routes.sources.load({})}
+                </Route>
                 <Route
                     exact
                     path={routes.dashboard.path}
-                    render={routes.dashboard.load}
-                />
+                >
+                    {routes.dashboard.load({ className })}
+                </Route>
                 <Route
                     exact
                     path={routes.export.path}
-                    render={routes.export.load}
-                />
+                >
+                    {routes.export.load({})}
+                </Route>
                 <Route
                     exact
                     path={routes.taggingFlow.path}
-                    render={routes.taggingFlow.load}
-                />
+                >
+                    {routes.taggingFlow.load({})}
+                </Route>
                 <Route
                     exact
                     path={routes.fourHundredFour.path}
-                    render={routes.fourHundredFour.load}
-                />
+                >
+                    {routes.fourHundredFour.load({})}
+                </Route>
             </Switch>
         </div>
     );

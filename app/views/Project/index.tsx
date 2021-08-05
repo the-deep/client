@@ -95,18 +95,21 @@ function Project(props: Props) {
         <Switch>
             <Route
                 path={routes.tagging.path}
-                render={routes.tagging.load}
-            />
+            >
+                {routes.tagging.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.analysis.path}
-                render={routes.analysis.load}
-            />
+            >
+                {routes.analysis.load({})}
+            </Route>
             <Route
                 exact
                 path={routes.fourHundredFour.path}
-                render={routes.fourHundredFour.load}
-            />
+            >
+                {routes.fourHundredFour.load({})}
+            </Route>
         </Switch>
     );
 }
