@@ -48,7 +48,7 @@ function NewExport(props: Props) {
 
     return (
         <Modal
-            className={_cs(className, styles.bulkUploadModal)}
+            className={_cs(className, styles.newExportModal)}
             heading="Setup new export file"
             onCloseButtonClick={onClose}
         >

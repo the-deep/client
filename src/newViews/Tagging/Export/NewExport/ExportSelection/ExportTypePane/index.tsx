@@ -10,8 +10,6 @@ import {
 import {
     EntryOptions,
     ExportType,
-    ReportStructure,
-    TreeSelectableWidget,
 } from '#typings';
 
 import _ts from '#ts';
@@ -25,8 +23,9 @@ import excelIcon from '#resources/img/excel.svg';
 import pdfIcon from '#resources/img/pdf.svg';
 import jsonIcon from '#resources/img/json.svg';
 
-import TreeSelection from '#rsci/TreeSelection';
+import TreeSelection from '#newComponents/input/TreeSelection';
 
+import { Node } from '../types';
 import ExportTypePaneButton from './ExportTypeButton';
 
 import styles from './styles.scss';
@@ -38,7 +37,7 @@ interface ExportTypeItem {
 }
 
 interface Props {
-    reportStructure?: ReportStructure[];
+    reportStructure?: Node[];
     entryFilterOptions?: EntryOptions;
     activeExportTypeKey: ExportType;
     reportStructureVariant: string;
@@ -52,16 +51,16 @@ interface Props {
     onShowAryDetailsChange: (show: boolean) => void;
     onShowAdditionalMetadataChange: (show: boolean) => void;
     onExportTypeChange: (type: ExportType) => void;
-    onReportStructureChange: (reports: ReportStructure[]) => void;
+    onReportStructureChange: (reports: Node[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onDecoupledEntriesChange: (value: boolean) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
-    textWidgets: TreeSelectableWidget<string | number>[];
-    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    contextualWidgets: Node[];
+    onSetContextualWidgets: (value: Node[]) => void;
+    textWidgets: Node[];
+    onSetTextWidgets: (value: Node[]) => void;
 }
 
 const exportTypes: ExportTypeItem[] = [
@@ -94,22 +93,22 @@ interface RenderWordProps {
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    onReportStructureChange: (reports: ReportStructure[]) => void;
+    onReportStructureChange: (reports: Node[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onShowGroupsChange: (show: boolean) => void;
     onShowEntryIdChange: (show: boolean) => void;
     onShowAryDetailsChange: (show: boolean) => void;
     onShowAdditionalMetadataChange: (show: boolean) => void;
-    reportStructure?: ReportStructure[];
+    reportStructure?: Node[];
     reportStructureVariant: string;
     showGroups: boolean;
     showEntryId: boolean;
     showAryDetails: boolean;
     showAdditionalMetadata: boolean;
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
-    textWidgets: TreeSelectableWidget<string | number>[];
-    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    contextualWidgets: Node[];
+    onSetContextualWidgets: (value: Node[]) => void;
+    textWidgets: Node[];
+    onSetTextWidgets: (value: Node[]) => void;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -207,7 +206,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 contentClassName={styles.content}
             >
                 <TreeSelection
-                    showLabel={false}
+                    name="treeSelection"
                     value={reportStructure}
                     onChange={onReportStructureChange}
                 />
@@ -231,7 +230,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 )}
             </Container>
             <Container
-                className={styles.reportStructure}
+                className={styles.additional}
                 headingSize="extraSmall"
                 heading="Additional Metadata"
                 sub
@@ -239,18 +238,20 @@ function RenderWordPdfOptions(props: RenderWordProps) {
             >
                 {contextualWidgets.length > 0 && showAdditionalMetadata && (
                     <TreeSelection
-                        label="Contextual widgets"
+                        className={styles.widgetSelection}
+                        name="contextualWidgets"
                         value={contextualWidgets}
                         onChange={onSetContextualWidgets}
-                        direction="horizontal"
+                        direction="vertical"
                     />
                 )}
                 {textWidgets.length > 0 && (
                     <TreeSelection
-                        label="Free text widgets"
+                        className={styles.widgetSelection}
+                        name="freeTextWidgets"
                         value={textWidgets}
                         onChange={onSetTextWidgets}
-                        direction="horizontal"
+                        direction="vertical"
                     />
                 )}
             </Container>

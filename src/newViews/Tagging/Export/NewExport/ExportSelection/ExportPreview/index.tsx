@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
     _cs,
     isDefined,
@@ -10,7 +10,7 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 
-import GalleryViewer from '#components/viewer/GalleryViewer';
+import LeadPreview from '#newComponents/viewer/LeadPreview';
 
 import { useRequest } from '#utils/request';
 import _ts from '#ts';
@@ -19,7 +19,6 @@ import styles from './styles.scss';
 
 interface ExportObj {
     file?: string;
-    mimeType?: string;
     pending?: boolean;
 }
 
@@ -36,10 +35,12 @@ function ExportPreview(props: OwnProps) {
         onPreviewClick,
     } = props;
 
-    const [error, setError] = useState<string | undefined>(undefined);
-    const [exportObj, setExportObj] = useState<ExportObj | undefined>(undefined);
-
-    const { pending } = useRequest<ExportObj>({
+    const {
+        pending,
+        response: exportResponse,
+        error,
+        retrigger,
+    } = useRequest<ExportObj>({
         skip: !exportId,
         url: exportId ? `server://exports/${exportId}/` : undefined,
         method: 'GET',
@@ -47,21 +48,15 @@ function ExportPreview(props: OwnProps) {
             const isPending = response?.pending;
             return isPending ? 2000 : -1;
         },
-        onSuccess: (response) => {
-            setExportObj(response);
-        },
-        onFailure: () => {
-            setError(_ts('components.exportPreview', 'serverErrorText'));
-        },
+        failureHeader: 'Export Preview',
     });
 
     const handlePreviewClick = useCallback(() => {
-        setError(undefined);
-        setExportObj(undefined);
+        retrigger();
         if (onPreviewClick) {
             onPreviewClick();
         }
-    }, [onPreviewClick]);
+    }, [onPreviewClick, retrigger]);
 
     return (
         <Container
@@ -82,17 +77,12 @@ function ExportPreview(props: OwnProps) {
             contentClassName={styles.mainContent}
         >
             {pending && <PendingMessage />}
-            {isDefined(exportObj) && !error && !pending && (
-                <GalleryViewer
-                    url={exportObj.file}
-                    mimeType={exportObj.mimeType}
-                    // NOTE: should not this be true
-                    canShowIframe={false}
-                    invalidUrlMessage={_ts('components.exportPreview', 'previewNotAvailableLabel')}
-                    showUrl
+            {isDefined(exportResponse) && !error && !pending && (
+                <LeadPreview
+                    url={exportResponse?.file}
                 />
             )}
-            {isNotDefined(exportObj) && !pending && (
+            {isNotDefined(exportResponse) && !pending && (
                 <div className={styles.label}>
                     {isDefined(error)
                         ? error

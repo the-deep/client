@@ -142,7 +142,6 @@ function LeadsSelection(props: ComponentProps) {
     const isDisabled = leadsResponse?.results.length === 0;
 
     const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
-        console.warn('handleSelectLeadChange', key, value);
         if (value) {
             onSelectLeadChange([...selectedLeads, key]);
         } else {
@@ -151,7 +150,6 @@ function LeadsSelection(props: ComponentProps) {
     }, [onSelectLeadChange, selectedLeads]);
 
     const handleSelectAllChange = useCallback(() => {
-        // console.warn('handleSelectLeadChange', key, value);
         onSelectAllChange(!selectAll);
         onSelectLeadChange([]);
     }, [onSelectAllChange, onSelectLeadChange, selectAll]);

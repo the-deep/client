@@ -44,5 +44,20 @@
                 }
             }
         }
+
+        .additional {
+            display: flex;
+            background-color: var(--dui-color-foreground);
+
+            .content {
+                display: flex;
+                margin: 0 var(--dui-spacing-small);
+
+                .widget-selection {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+        }
     }
 }

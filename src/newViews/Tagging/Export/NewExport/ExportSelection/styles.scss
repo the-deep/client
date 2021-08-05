@@ -35,6 +35,7 @@
         }
 
         .export-button {
+            display: flex;
             align-self: flex-end;
             margin: var(--dui-spacing-medium);
         }

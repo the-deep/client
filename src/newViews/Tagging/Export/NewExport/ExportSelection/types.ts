@@ -33,3 +33,17 @@ export interface SourceEntryFilter {
     emmEntities?: string[];
     entriesFilter?: EntryFilterType;
 }
+
+export interface Node {
+    selected: boolean;
+    key: string;
+    title: string;
+    nodes: Node[] | undefined;
+}
+
+export interface TreeSelectableWidget<T extends string | number> extends Node {
+    id: T;
+    actualTitle?: string;
+    conditionalId?: number;
+    isConditional?: boolean;
+}

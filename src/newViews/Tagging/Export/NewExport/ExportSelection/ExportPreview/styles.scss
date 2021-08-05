@@ -4,12 +4,12 @@
 
     .main-content {
         display: flex;
-        align-items: center;
         flex-grow: 1;
-        justify-content: center;
+        justify-content: flex-start;
 
         .label {
             display: flex;
+            align-self: center;
             color: var(--dui-color-text-label);
             font-size: var(--dui-font-size-medium);
         }
