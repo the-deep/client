@@ -1,0 +1,24 @@
+.multi-select-widget-form {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .error,
+    .input {
+        padding: var(--dui-spacing-small);
+    }
+
+    .editor-content {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .options-list {
+            overflow-y: auto;
+        }
+    }
+
+    .option-input {
+        margin: var(--dui-spacing-small) 0;
+    }
+}

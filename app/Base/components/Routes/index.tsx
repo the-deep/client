@@ -39,6 +39,11 @@ function Routes(props: Props) {
                     {routes.project.load({ className })}
                 </Route>
                 <Route
+                    path={routes.analyticalFramework.path}
+                >
+                    {routes.analyticalFramework.load({ className })}
+                </Route>
+                <Route
                     exact
                     path={routes.signIn.path}
                 >
