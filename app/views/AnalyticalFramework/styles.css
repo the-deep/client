@@ -1,0 +1,21 @@
+.analytical-framework {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .tab-panel {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .view {
+            flex-grow: 1;
+        }
+    }
+}

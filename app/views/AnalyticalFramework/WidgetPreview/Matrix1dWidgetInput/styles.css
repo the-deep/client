@@ -1,0 +1,25 @@
+.matrix {
+    display: flex;
+    flex-direction: column;
+    margin: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+    .row {
+        display: flex;
+        flex-direction: column;
+        padding: var(--dui-spacing-small);
+
+        .title {
+            font-size: var(--dui-font-size-medium);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+
+            >* {
+                margin: var(--dui-spacing-small);
+            }
+        }
+    }
+}

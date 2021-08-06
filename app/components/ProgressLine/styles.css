@@ -13,7 +13,7 @@
         width: 2.6rem;
         height: 2.6rem;
         font-size: var(--dui-font-size-large);
-        font-weight: var(--font-weight-bold);
+        font-weight: var(--dui-font-weight-bold);
 
         &.complement1 {
             background-color: var(--dui-color-complement1);
@@ -45,8 +45,8 @@
             height: var(--height-bar);
 
             .progress {
-                transition: var(--duration-transition-slow) width ease-in-out;
-                background-color: var(--color-accent);
+                transition: var(--dui-duration-transition-slow) width ease-in-out;
+                background-color: var(--dui-color-accent);
                 height: 100%;
 
                 &.complement1 {

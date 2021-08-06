@@ -1,7 +1,7 @@
 .link {
-    padding: 0 var(--spacing-extra-small-alt);
+    padding: 0 var(--dui-spacing-extra-small);
     text-transform: none;
-    color: var(--color-accent);
+    color: var(--dui-color-accent);
 }
 
 .screenshot {
