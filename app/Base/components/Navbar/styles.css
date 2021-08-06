@@ -45,15 +45,16 @@
         }
     }
 
-    .user-menu {
+    .user-display {
         display: flex;
-        align-items: center;
+        align-items: stretch;
         flex-shrink: 0;
         padding: 0 var(--dui-spacing-large);
+        color: var(--dui-color-text-message);
+        font-weight: var(--dui-font-weight-bold);
 
-        .user-display-name {
-            color: var(--dui-color-text-message);
-            font-weight: var(--dui-font-weight-bold);
+        .avatar {
+            --size: 1.8rem;
         }
     }
 }
