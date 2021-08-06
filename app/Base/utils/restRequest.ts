@@ -125,7 +125,7 @@ export const processDeepUrls: DeepContextInterface['transformUrl'] = (url) => {
 };
 
 export const processDeepOptions: DeepContextInterface['transformOptions'] = (
-    _,
+    url,
     options,
     requestOptions,
 ) => {
@@ -135,38 +135,43 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         ...otherOptions
     } = options;
 
-    // FIXME: only insert if it's for our server
-    // FIXME: get this cookie name from env
-    const csrftoken = getCookie('deep-development-nav-csrftoken');
-
+    let finalOptions: RequestInit;
     if (requestOptions.formData) {
         const requestBody = getFormData(body as FormDataCompatibleObj);
-        return {
+        finalOptions = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                'X-CSRFToken': csrftoken,
                 ...headers,
             },
             body: requestBody,
             ...otherOptions,
-            credentials: 'include',
         };
     }
 
     const requestBody = body ? JSON.stringify(body) : undefined;
-    return {
+    finalOptions = {
         method: 'GET',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json; charset=utf-8',
-            'X-CSRFToken': csrftoken,
             ...headers,
         },
         body: requestBody,
         ...otherOptions,
-        credentials: 'include',
     };
+
+    const isInternalRequest = url.startsWith(serverPrefix);
+    if (isInternalRequest) {
+        // FIXME: get this cookie name from env
+        const csrftoken = getCookie('deep-development-nav-csrftoken');
+        finalOptions.credentials = 'include';
+        if (finalOptions.headers) {
+            finalOptions.headers['X-CSRFToken'] = csrftoken;
+        }
+    }
+
+    return finalOptions;
 };
 
 export const processDeepResponse: DeepContextInterface['transformResponse'] = async (
