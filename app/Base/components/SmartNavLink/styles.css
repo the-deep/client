@@ -3,20 +3,16 @@
     position: relative;
     align-items: center;
     outline: none;
-    border-bottom: var(--dui-width-separator-medium) solid transparent;
+    /* border-bottom: var(--dui-width-separator-medium) solid transparent; */
     padding: var(--dui-spacing-small) var(--dui-spacing-medium);
     text-transform: uppercase;
     text-decoration: none;
     color: var(--dui-color-text);
     font-weight: var(--dui-font-weight-bold);
 
-    .border {
-        opacity: 0;
-    }
-
-    &.active {
+    &:not(.active) {
         .border {
-            opacity: 1;
+            display: none;
         }
     }
 }
