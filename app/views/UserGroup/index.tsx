@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useContext, useMemo, useState, useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     Container,
@@ -16,17 +16,14 @@ import {
 } from 'react-icons/io5';
 
 import {
-    activeUserSelector,
-} from '#redux';
-import {
     useRequest,
     useLazyRequest,
-} from '#utils/request';
+} from '#base/utils/restRequest';
 import {
-    AppState,
     MultiResponse,
 } from '#types';
 import { useModalState } from '#hooks/stateManagement';
+import UserContext from '#base/context/UserContext';
 import _ts from '#ts';
 
 import AddUsergroupModal, {
@@ -36,18 +33,14 @@ import AddUserModal from './AddUserModal';
 import Memberships from './Memberships';
 import UserGroupActionCell from './UserGroupActionCell';
 
-import styles from './styles.scss';
-
-const mapStateToProps = (state: AppState) => ({
-    activeUser: activeUserSelector(state),
-});
+import styles from './styles.css';
 
 const MAX_ITEMS_PER_PAGE = 10;
 const usergroupKeySelector = (d: Usergroup) => d.id;
 
 interface UserGroupItemProps {
     userGroupId: number;
-    activeUserId: number;
+    activeUserId?: number;
     onUserDeleteSuccess: () => void;
     onEditClick: (id: number) => void;
     onDeleteClick: (id: number) => void;
@@ -129,13 +122,19 @@ function UserGroupItem(props: UserGroupItemProps) {
 }
 
 interface Props {
-    activeUser: { userId: number };
+    className?: string;
 }
 
 function UserGroup(props: Props) {
     const {
-        activeUser,
+        className,
     } = props;
+
+    const {
+        user,
+    } = useContext(UserContext);
+
+    const userId = user ? +user?.id : undefined;
 
     const [activePage, setActivePage] = useState<number>(1);
 
@@ -155,7 +154,7 @@ function UserGroup(props: Props) {
     ] = useModalState(false);
 
     const usergroupQuery = useMemo(() => ({
-        user: activeUser.userId,
+        user: user?.id,
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
         limit: MAX_ITEMS_PER_PAGE,
         fields: [
@@ -165,7 +164,7 @@ function UserGroup(props: Props) {
             'role',
             'created_at',
         ],
-    }), [activeUser.userId, activePage]);
+    }), [user?.id, activePage]);
 
     const {
         pending: usergroupGetPending,
@@ -181,7 +180,7 @@ function UserGroup(props: Props) {
     const {
         trigger: usergroupDeleteTrigger,
     } = useLazyRequest<unknown, number>({
-        url: ctx => `server://user-groups/${ctx}/`,
+        url: (ctx) => `server://user-groups/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
             usergroupResponseTrigger();
@@ -190,7 +189,7 @@ function UserGroup(props: Props) {
     });
 
     const usergroupObjectToEdit = useMemo(() => (
-        usergroupResponse?.results?.find(a => a.id === usergroupToEdit)
+        usergroupResponse?.results?.find((a) => a.id === usergroupToEdit)
     ), [usergroupResponse?.results, usergroupToEdit]);
 
     const handleAddUsergroupClick = useCallback(() => {
@@ -215,14 +214,14 @@ function UserGroup(props: Props) {
 
     const userGroupRendererParams = useCallback((key: number, datum: Usergroup) => ({
         userGroupId: key,
-        activeUserId: activeUser.userId,
+        activeUserId: userId,
         onUserDeleteSuccess: usergroupResponseTrigger,
         onDeleteClick: usergroupDeleteTrigger,
         onEditClick: handleEditUsergroupClick,
         onAddClick: handleMemberAddClick,
         data: datum,
     }), [
-        activeUser,
+        userId,
         usergroupResponseTrigger,
         usergroupDeleteTrigger,
         handleEditUsergroupClick,
@@ -231,9 +230,9 @@ function UserGroup(props: Props) {
 
     return (
         <Container
-            className={styles.userGroup}
+            className={_cs(styles.userGroup, className)}
             heading={_ts('usergroup', 'usergroupPageTitle')}
-            headerActions={
+            headerActions={(
                 <Button
                     name="addUsergroup"
                     className={styles.addUsergroupButton}
@@ -242,8 +241,8 @@ function UserGroup(props: Props) {
                 >
                     {_ts('usergroup', 'addUsergroupButtonLabel')}
                 </Button>
-            }
-            footerActions={
+            )}
+            footerActions={(
                 <Pager
                     activePage={activePage}
                     itemsCount={usergroupResponse?.count ?? 0}
@@ -251,7 +250,7 @@ function UserGroup(props: Props) {
                     maxItemsPerPage={MAX_ITEMS_PER_PAGE}
                     itemsPerPageControlHidden
                 />
-            }
+            )}
             contentClassName={styles.content}
         >
             {usergroupGetPending && <PendingMessage />}
@@ -280,4 +279,4 @@ function UserGroup(props: Props) {
     );
 }
 
-export default connect(mapStateToProps)(UserGroup);
+export default UserGroup;

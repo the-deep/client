@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import React, { useContext, useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     TextInput,
@@ -21,23 +20,20 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
-import Avatar from '#newComponents/ui/Avatar';
-import DeepImageInput from '#newComponents/DeepImageInput';
-import NonFieldError from '#newComponents/ui/NonFieldError';
+import Avatar from '#components/Avatar';
+import DeepImageInput from '#components/DeepImageInput';
+import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 import {
-    activeUserSelector,
-    setUserInformationAction,
-} from '#redux';
-import {
-    AppState,
     LanguagePreference,
     MultiResponse,
 } from '#types';
-import { useRequest, useLazyRequest } from '#utils/request';
-import ChangePasswordButton from '#newComponents/general/ChangePasswordButton';
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import UserContext from '#base/context/UserContext';
 
-import styles from './styles.scss';
+import ChangePasswordButton from './ChangePasswordButton';
+
+import styles from './styles.css';
 
 type EmailOptOut = 'news_and_updates' | 'join_requests' | 'email_comment';
 
@@ -87,17 +83,6 @@ const languageLabelSelector = (d: LanguagePreference) => d.title;
 
 const initialValue: FormType = {};
 
-interface PropsFromDispatch {
-    setUserInformation: typeof setUserInformationAction;
-}
-const mapStateToProps = (state: AppState) => ({
-    activeUser: activeUserSelector(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
-    setUserInformation: params => dispatch(setUserInformationAction(params)),
-});
-
 interface Option {
     id: number;
     title: string;
@@ -105,14 +90,18 @@ interface Option {
 }
 
 interface Props {
-    activeUser: { userId: number };
+    className?: string;
 }
 
-function MyProfile(props: Props & PropsFromDispatch) {
+function MyProfile(props: Props) {
     const {
-        activeUser,
-        setUserInformation,
+        className,
     } = props;
+
+    const {
+        user,
+        setUser,
+    } = useContext(UserContext);
 
     const {
         pristine,
@@ -129,14 +118,15 @@ function MyProfile(props: Props & PropsFromDispatch) {
     const {
         pending: userGetPending,
     } = useRequest<User>({
-        url: `server://users/${activeUser.userId}/`,
+        url: user ? `server://users/${user.id}/` : undefined,
         method: 'GET',
         onSuccess: (response: User) => {
             setValue(response);
             setError({});
-            setUserInformation({
-                userId: activeUser.userId,
-                information: response,
+            setUser({
+                id: String(response.id),
+                displayName: response.displayName,
+                displayPictureUrl: response.displayPictureUrl,
             });
         },
         failureHeader: _ts('myProfile', 'myProfileTitle'),
@@ -154,15 +144,16 @@ function MyProfile(props: Props & PropsFromDispatch) {
         pending: userPatchPending,
         trigger: userPatch,
     } = useLazyRequest<User, FormType>({
-        url: `server://users/${activeUser.userId}/`,
+        url: user ? `server://users/${user.id}/` : undefined,
         method: 'PATCH',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: (response) => {
             setValue(response);
             setError({});
-            setUserInformation({
-                userId: activeUser.userId,
-                information: response,
+            setUser({
+                id: String(response.id),
+                displayName: response.displayName,
+                displayPictureUrl: response.displayPictureUrl,
             });
         },
         failureHeader: _ts('myProfile', 'myProfileTitle'),
@@ -175,14 +166,14 @@ function MyProfile(props: Props & PropsFromDispatch) {
                 name]), 'emailOptOuts' as const);
         } else {
             setFieldValue((oldValue: EmailOptOut[] | undefined) => ([
-                ...(oldValue ?? []).filter(v => v !== name),
+                ...(oldValue ?? []).filter((v) => v !== name),
             ]), 'emailOptOuts' as const);
         }
     }, [setFieldValue]);
 
     const rowRendererParams = useCallback((key: EmailOptOut, data: EmailOptOutOption) => ({
         name: key,
-        value: value.emailOptOuts?.some(v => v === key),
+        value: value.emailOptOuts?.some((v) => v === key),
         onChange: handleCheck,
         label: data.label,
     }), [value, handleCheck]);
@@ -196,7 +187,7 @@ function MyProfile(props: Props & PropsFromDispatch) {
     const disabled = userGetPending || userPatchPending || languagesPending;
     return (
         <form
-            className={styles.form}
+            className={_cs(styles.form, className)}
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
@@ -222,10 +213,10 @@ function MyProfile(props: Props & PropsFromDispatch) {
                     <div className={styles.displayPictureContainer}>
                         <Avatar
                             className={styles.displayPicture}
-                            src={value.displayPicture
+                            src={(value.displayPicture
                                 ? value.displayPictureUrl
                                 : undefined
-                            }
+                            )}
                             name={`${value.firstName} ${value.lastName}`}
                         />
                         <DeepImageInput
@@ -313,4 +304,4 @@ function MyProfile(props: Props & PropsFromDispatch) {
     );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
+export default MyProfile;
