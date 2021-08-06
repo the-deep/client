@@ -16,8 +16,8 @@ import {
     PasswordInput,
 } from '@the-deep/deep-ui';
 
-import NonFieldError from '#newComponents/ui/NonFieldError';
-import { useLazyRequest } from '#utils/request';
+import NonFieldError from '#components/NonFieldError';
+import { useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 import { User } from '#types';
 
@@ -30,7 +30,6 @@ type FormType = {
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 type FormSchemaFieldDepenencies = ReturnType<NonNullable<FormSchema['fieldDependencies']>>;
-
 
 function sameWithPasswordCondition(
     password: string | undefined,
@@ -99,7 +98,7 @@ function ChangePasswordModal(props: Props) {
     } = useLazyRequest<User, Pick<FormType, 'oldPassword' | 'newPassword'>>({
         url: 'server://users/me/change-password/',
         method: 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: () => {
             onModalClose();
         },

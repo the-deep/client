@@ -61,6 +61,24 @@ const home = wrap({
     },
     visibility: 'is-authenticated',
 });
+const myProfile = wrap({
+    path: '/my-profile/',
+    title: 'My Profile',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/MyProfile')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+});
+const userGroups = wrap({
+    path: '/user-groups/',
+    title: 'User Groups',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/UserGroup')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+});
 const explore = wrap({
     path: '/explore/',
     title: 'Explore DEEP',
@@ -176,6 +194,8 @@ const routes = {
     forgetPassword,
     resetPassword,
     home,
+    myProfile,
+    userGroups,
     tagging: taggingRoute,
     analysis,
     explore,

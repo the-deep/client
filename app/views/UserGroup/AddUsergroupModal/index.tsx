@@ -14,8 +14,8 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
-import { useLazyRequest } from '#utils/request';
-import NonFieldError from '#newComponents/ui/NonFieldError';
+import { useLazyRequest } from '#base/utils/restRequest';
+import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 
 interface UsergroupAdd {
@@ -61,7 +61,6 @@ const schema: FormSchema = {
 
 const defaultFormValue: PartialForm<FormType> = {};
 
-
 interface Props {
     onModalClose: () => void;
     onSuccess: () => void;
@@ -101,7 +100,7 @@ function AddUsergroupModal(props: Props) {
         method: isDefined(initialValue?.id)
             ? 'PATCH'
             : 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: () => {
             onSuccess();
             onModalClose();
