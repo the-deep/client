@@ -17,14 +17,14 @@ import {
 } from '@togglecorp/toggle-form';
 
 import _ts from '#ts';
-import { useLazyRequest } from '#utils/request';
-import UserSelectInput from '#newComponents/input/UserSelectInput';
+import { useLazyRequest } from '#base/utils/restRequest';
+import UserSelectInput from '#components/UserSelectInput';
 import {
     BasicUser,
 } from '#types';
 
 import { Membership } from '../AddUsergroupModal';
-import styles from './styles.scss';
+import styles from './styles.css';
 
 type FormType = {
     member: number;
@@ -112,7 +112,7 @@ function AddUserModal(props: Props) {
         method: isDefined(userToEdit?.id)
             ? 'PATCH'
             : 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: () => {
             onUserAddSuccess();
             onModalClose();
@@ -130,10 +130,10 @@ function AddUserModal(props: Props) {
 
     return (
         <Modal
-            heading={isDefined(userToEdit)
+            heading={(isDefined(userToEdit)
                 ? _ts('usergroup.memberEditModal', 'editMemberLabel')
                 : _ts('usergroup.memberEditModal', 'addMemberLabel')
-            }
+            )}
             onCloseButtonClick={onModalClose}
             className={styles.modal}
             bodyClassName={styles.modalBody}

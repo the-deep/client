@@ -13,8 +13,8 @@ import {
 import {
     useLazyRequest,
     useRequest,
-} from '#utils/request';
-import { createDateColumn } from '#newComponents/ui/tableHelpers';
+} from '#base/utils/restRequest';
+import { createDateColumn } from '#components/tableHelpers';
 
 import { useModalState } from '#hooks/stateManagement';
 import { MultiResponse } from '#types';
@@ -24,7 +24,7 @@ import AddUserModal from '../AddUserModal';
 import { Membership } from '../AddUsergroupModal';
 import MembershipActionCell, { Props as MembershipActionCellProps } from '../MembershipActionCell';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 const MAX_ITEMS_PER_PAGE = 20;
 const membershipKeySelector = (d: Membership) => d.id;
@@ -38,7 +38,7 @@ interface User {
 interface Props {
     userGroup?: number;
     canEdit: boolean;
-    activeUserId: number;
+    activeUserId?: number;
     onUserDeleteSuccess: () => void;
 }
 
@@ -72,7 +72,7 @@ function Memberships(props: Props) {
     const {
         trigger: memberDeleteTrigger,
     } = useLazyRequest<unknown, number>({
-        url: ctx => `server://group-memberships/${ctx}/`,
+        url: (ctx) => `server://group-memberships/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
             usersGetTrigger();
@@ -80,7 +80,6 @@ function Memberships(props: Props) {
         },
         failureHeader: _ts('usergroup', 'memberDeleteFailed'),
     });
-
 
     const [
         showAddUserModal,
@@ -131,29 +130,29 @@ function Memberships(props: Props) {
             createStringColumn<Membership, number>(
                 'name',
                 _ts('usergroup', 'nameLabel'),
-                item => item.memberName,
+                (item) => item.memberName,
             ),
             createStringColumn<Membership, number>(
                 'email',
                 _ts('usergroup', 'emailLabel'),
-                item => item.memberEmail,
+                (item) => item.memberEmail,
             ),
             createDateColumn<Membership, number>(
                 'joinedAt',
                 _ts('usergroup', 'addedOnLabel'),
-                item => item.joinedAt,
+                (item) => item.joinedAt,
             ),
             createStringColumn<Membership, number>(
                 'role',
                 _ts('usergroup', 'roleLabel'),
-                item => item.role,
+                (item) => item.role,
             ),
             actionColumn,
         ]);
     }, [activeUserId, canEdit, handleEditMemberClick, memberDeleteTrigger]);
 
     const users = useMemo(() => (
-        memberships?.results.map(d => ({
+        memberships?.results.map((d) => ({
             id: d.member,
             displayName: d.memberName,
         }))
