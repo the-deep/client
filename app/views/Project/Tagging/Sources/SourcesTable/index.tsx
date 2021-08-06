@@ -69,7 +69,7 @@ interface Props {
     className?: string;
     projectId: number;
     filters?: Filters;
-    refreshTimestamp: number;
+    refreshTimestamp: number | undefined;
 }
 
 function SourcesTable(props: Props) {

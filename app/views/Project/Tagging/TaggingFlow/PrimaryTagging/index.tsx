@@ -2,7 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import SourceDetails, { Entry } from './SourceDetails';
-import { Lead } from '#views/Sources/LeadEditModal/LeadEditForm/schema';
+import { Lead } from '#components/LeadEditForm/schema';
 import styles from './styles.css';
 
 interface Props {

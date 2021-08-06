@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from 'react';
+import React, { Suspense, useMemo, useState, useCallback } from 'react';
 import {
     Switch,
     Route,
@@ -6,14 +6,23 @@ import {
     generatePath,
 } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
+import {
+    DropdownMenu,
+    DropdownMenuItem,
+} from '@the-deep/deep-ui';
 
+import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/ProjectSwitcher';
 import PreloadMessage from '#base/components/PreloadMessage';
 import NavbarContext from '#components/SubNavbar/context';
-import SubNavbar, { Icons } from '#components/SubNavbar';
+import SubNavbar, { Icons, Actions } from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import SmartNavLink from '#base/components/SmartNavLink';
 import routes from '#base/configs/routes';
+import _ts from '#ts';
+
+import LeadEditModal from './Sources/LeadEditModal';
+import BulkUpload from './Sources/BulkUpload';
 
 import styles from './styles.css';
 
@@ -29,6 +38,19 @@ function Tagging(props: Props) {
 
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
+    const [refreshTimestamp, setRefreshTimestamp] = useState<number | undefined>();
+
+    const [
+        isSingleSourceModalShown,
+        showSingleSourceAddModal,
+        hideSingleSourceAddModal,
+    ] = useModalState(false);
+
+    const [
+        isBulkModalShown,
+        showBulkUploadModal,
+        hideBulkUploadModal,
+    ] = useModalState(false);
 
     const navbarContextValue = useMemo(
         () => ({
@@ -38,6 +60,35 @@ function Tagging(props: Props) {
             setActionsNode,
         }),
         [iconsNode, actionsNode],
+    );
+
+    const handleSingleLeadSaveSuccess = useCallback(() => {
+        setRefreshTimestamp(new Date().getTime());
+        hideSingleSourceAddModal();
+    }, [hideSingleSourceAddModal]);
+
+    const subNavbarComponents = (
+        <>
+            <Icons>
+                <ProjectSwitcher />
+            </Icons>
+            <Actions>
+                <DropdownMenu
+                    label={_ts('tagging', 'addSource')}
+                >
+                    <DropdownMenuItem
+                        onClick={showSingleSourceAddModal}
+                    >
+                        {_ts('tagging', 'addSource')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={showBulkUploadModal}
+                    >
+                        {_ts('bulkUpload', 'title')}
+                    </DropdownMenuItem>
+                </DropdownMenu>
+            </Actions>
+        </>
     );
 
     return (
@@ -67,25 +118,19 @@ function Tagging(props: Props) {
                         exact
                         path={routes.sources.path}
                     >
-                        <Icons>
-                            <ProjectSwitcher />
-                        </Icons>
+                        {subNavbarComponents}
                     </Route>
                     <Route
                         exact
                         path={routes.dashboard.path}
                     >
-                        <Icons>
-                            <ProjectSwitcher />
-                        </Icons>
+                        {subNavbarComponents}
                     </Route>
                     <Route
                         exact
                         path={routes.export.path}
                     >
-                        <Icons>
-                            <ProjectSwitcher />
-                        </Icons>
+                        {subNavbarComponents}
                     </Route>
                 </Switch>
                 <Suspense
@@ -107,7 +152,7 @@ function Tagging(props: Props) {
                             exact
                             path={routes.sources.path}
                         >
-                            {routes.sources.load({ className: styles.childView })}
+                            {routes.sources.load({ className: styles.childView, refreshTimestamp })}
                         </Route>
                         <Route
                             exact
@@ -136,6 +181,18 @@ function Tagging(props: Props) {
                     </Switch>
                 </Suspense>
             </div>
+            {isSingleSourceModalShown && project?.id && (
+                <LeadEditModal
+                    projectId={+project.id}
+                    onClose={hideSingleSourceAddModal}
+                    onLeadSaveSuccess={handleSingleLeadSaveSuccess}
+                />
+            )}
+            {isBulkModalShown && (
+                <BulkUpload
+                    onClose={hideBulkUploadModal}
+                />
+            )}
         </NavbarContext.Provider>
     );
 }
