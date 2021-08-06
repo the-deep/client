@@ -16,8 +16,8 @@ import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { transformErrorToToggleFormError } from '#utils/rest';
 import LeadPreview from '#components/LeadPreview';
 
-import LeadEditForm from './LeadEditForm';
-import { schema, PartialFormType, Lead } from './LeadEditForm/schema';
+import { schema, PartialFormType, Lead } from '#components/LeadEditForm/schema';
+import LeadEditForm from '#components/LeadEditForm';
 import styles from './styles.css';
 
 // TODO: Show attachment's title and link if lead is attachment type

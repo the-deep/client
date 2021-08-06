@@ -47,11 +47,15 @@ export function Actions(props: ActionsProps) {
 interface SubNavbarProps {
     className?: string;
     children: React.ReactNode;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 }
 function SubNavbar(props: SubNavbarProps) {
     const {
         children,
         className,
+        actions,
+        icons,
     } = props;
 
     const { setActionsNode, setIconsNode } = useContext(NavbarContext);
@@ -79,16 +83,8 @@ function SubNavbar(props: SubNavbarProps) {
                 iconsContainerClassName={styles.icons}
                 actionsContainerClassName={styles.actions}
                 childrenContainerClassName={styles.children}
-                icons={(
-                    <div
-                        ref={iconsRef}
-                    />
-                )}
-                actions={(
-                    <div
-                        ref={actionsRef}
-                    />
-                )}
+                icons={icons === undefined ? <div ref={iconsRef} /> : icons}
+                actions={actions === undefined ? <div ref={actionsRef} /> : actions}
             >
                 {children}
             </ElementFragments>

@@ -113,7 +113,7 @@ const taggingRoute = wrap({
     path: '/tagging/',
     title: 'Tagging',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Tagging')),
+    component: lazy(() => import('#views/Project/Tagging')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -132,7 +132,7 @@ const sources = wrap({
     path: '/sources/',
     title: 'Sources',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Sources')),
+    component: lazy(() => import('#views/Project/Tagging/Sources')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -142,7 +142,7 @@ const dashboard = wrap({
     path: '/dashboard/',
     title: 'Dashboard',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Dashboard')),
+    component: lazy(() => import('#views/Project/Tagging/Dashboard')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -152,7 +152,7 @@ const exportRoute = wrap({
     path: '/export/',
     title: 'Export',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Export')),
+    component: lazy(() => import('#views/Project/Tagging/Export')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -162,7 +162,7 @@ const taggingFlow = wrap({
     path: '/:leadId(\\d+)/',
     title: 'Tagging Flow',
     navbarVisibility: true,
-    component: lazy(() => import('#views/TaggingFlow')),
+    component: lazy(() => import('#views/Project/Tagging/TaggingFlow')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -173,7 +173,7 @@ const analysis = wrap({
     path: '/analysis/',
     title: 'Analysis',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Analysis')),
+    component: lazy(() => import('#views/Project/Analysis')),
     componentProps: {
     },
     visibility: 'is-authenticated',
