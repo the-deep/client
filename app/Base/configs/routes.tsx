@@ -80,6 +80,16 @@ const projectRoute = wrap({
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
 });
+const analyticalFrameworkRoute = wrap({
+    path: '/frameworks/:frameworkId(\\d+)/',
+    title: 'Analytical Framework',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/AnalyticalFramework')),
+    componentProps: { },
+    visibility: 'is-authenticated',
+    // NOTE: we cannot use permission check related to project on this route
+    // as this route manages all the data load
+});
 const taggingRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/tagging/',
@@ -170,6 +180,7 @@ const routes = {
     analysis,
     explore,
     project: projectRoute,
+    analyticalFramework: analyticalFrameworkRoute,
     sources,
     fourHundredFour,
     dashboard,
