@@ -25,8 +25,8 @@ type FormType = {
     title: string;
     project: number;
     code?: string;
-    public: boolean;
-    isPublished: boolean;
+    public?: boolean;
+    isPublished?: boolean;
 };
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;

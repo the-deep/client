@@ -61,17 +61,19 @@ const adminLevelLabelSelector = (d: AdminLevelGeoArea) => d.title;
 interface Props {
     activeRegion: number;
     onSuccess: () => void;
+    value?: AdminLevelGeoArea;
 }
 
 function AddAdminLevelForm(props: Props) {
     const {
         activeRegion,
         onSuccess,
+        value: valueFromProps,
     } = props;
 
     const formValue: PartialForm<FormType> = useMemo(() => ({
-        region: activeRegion,
-    }), [activeRegion]);
+        ...valueFromProps,
+    }), [valueFromProps]);
 
     const {
         pristine,
@@ -92,26 +94,31 @@ function AddAdminLevelForm(props: Props) {
         pending: addAdminLevelPending,
         trigger: addAdminLevelTrigger,
     } = useLazyRequest({
-        url: 'server://admin-levels/',
-        method: 'POST',
+        url: isDefined(valueFromProps?.id)
+            ? `server://admin-levels/${valueFromProps?.id}/`
+            : 'server://admin-levels/',
+        method: isDefined(valueFromProps?.id)
+            ? 'PATCH'
+            : 'POST',
         query: adminLevelQuery,
         body: ctx => ctx,
         onSuccess: () => {
             onSuccess();
             notify.send({
-                title: 'Post Admin Levels',
+                title: 'Add Admin Level',
                 type: notify.type.SUCCESS,
-                message: 'Successfully posted admin levels',
+                message: 'Successfully added admin level',
                 duration: notify.duration.MEDIUM,
             });
         },
-        failureHeader: 'Failed to Post admin levels',
+        failureHeader: 'Failed to Post admin level',
     });
 
     const {
         response: adminLevelOptions,
     } = useRequest<MultiResponse<AdminLevelGeoArea>>({
         url: 'server://admin-levels/',
+        query: adminLevelQuery,
         method: 'GET',
         failureHeader: 'Failed to fetch admin levels',
     });
@@ -173,7 +180,7 @@ function AddAdminLevelForm(props: Props) {
                     value={value.codeProp}
                     error={error?.codeProp}
                     onChange={setFieldValue}
-                    label="ID property"
+                    label="Pcode Property"
                 />
                 <TextInput
                     name="nameProp"
@@ -181,7 +188,7 @@ function AddAdminLevelForm(props: Props) {
                     value={value.nameProp}
                     error={error?.nameProp}
                     onChange={setFieldValue}
-                    label="Property Name"
+                    label="Name Property"
                 />
             </div>
             <div className={styles.row}>

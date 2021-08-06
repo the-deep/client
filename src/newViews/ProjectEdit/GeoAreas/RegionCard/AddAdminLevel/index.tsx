@@ -14,8 +14,12 @@ import {
     List,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import notify from '#notify';
+import {
+    AdminLevelGeoArea,
+    MultiResponse,
+} from '#typings';
 
 import AddAdminLevelForm from './AddAdminLevelForm';
 import styles from './styles.scss';
@@ -23,6 +27,7 @@ import styles from './styles.scss';
 interface TabDetails {
     name: string;
     children: string;
+    data?: AdminLevelGeoArea,
 }
 const defaultTab: TabDetails[] = [
     {
@@ -35,21 +40,38 @@ const tabKeySelector = (d: TabDetails) => d.name;
 
 interface Props {
     activeRegion: number;
-    onSuccess: () => void;
 }
 
 function AddAdminLevel(props: Props) {
     const {
         activeRegion,
-        onSuccess,
     } = props;
 
     const [activeTab, setActiveTab] = useState('adminLevel1');
-    const [tab, setTab] = useState(defaultTab);
+    const [tab, setTab] = useState<TabDetails[]>(defaultTab);
 
     const adminLevelQuery = useMemo(() => ({
         region: activeRegion,
     }), [activeRegion]);
+
+    const {
+        retrigger: adminLevelTrigger,
+    } = useRequest<MultiResponse<AdminLevelGeoArea>>({
+        url: 'server://admin-levels/',
+        query: adminLevelQuery,
+        method: 'GET',
+        onSuccess: (response) => {
+            if (response.count > 0) {
+                setTab(response.results.map(d => ({
+                    name: d.id.toString(),
+                    children: d.title,
+                    data: d,
+                })));
+                setActiveTab(response?.results[0].id.toString());
+            }
+        },
+        failureHeader: 'Failed to fetch admin levels',
+    });
 
     const {
         pending: publishAdminLevelPending,
@@ -60,29 +82,31 @@ function AddAdminLevel(props: Props) {
         query: adminLevelQuery,
         body: { isPublished: true },
         onSuccess: () => {
-            onSuccess();
             notify.send({
                 title: 'Publish Geo Areas',
                 type: notify.type.SUCCESS,
                 message: 'Successfully published Geo Area',
                 duration: notify.duration.MEDIUM,
             });
+            adminLevelTrigger();
         },
         failureHeader: 'Failed to publish Geo Area',
     });
+
 
     const tabListRendererParams = useCallback((key, data) => ({
         name: data.name,
         children: data.children,
     }), []);
 
-    const tabPanelRendererParams = useCallback((_, data) => ({
-        name: data.name,
+    const tabPanelRendererParams = useCallback((_: string, value: TabDetails) => ({
+        name: value.name,
         children: <AddAdminLevelForm
             activeRegion={activeRegion}
-            onSuccess={onSuccess}
+            value={value?.data}
+            onSuccess={adminLevelTrigger}
         />,
-    }), [activeRegion, onSuccess]);
+    }), [activeRegion]);
 
     const handleAdminLevelAdd = useCallback(() => {
         setTab(oldTab => ([...oldTab, {
