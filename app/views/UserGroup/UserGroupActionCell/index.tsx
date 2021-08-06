@@ -1,54 +1,51 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrashOutline } from 'react-icons/io5';
+import { IoTrashOutline, IoAdd } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     QuickActionButton,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 export interface Props {
     className?: string;
     itemKey: number;
-    groupKey: number;
-    member: number;
-    memberRole: 'admin' | 'normal';
+    member?: number;
     onAddClick?: (key: number) => void;
-    onEditClick: (
-        user: { id: number; member: number; role: 'admin' | 'normal' },
-        group: number,
-    ) => void;
+    onEditClick: (group: number) => void;
     onDeleteClick: (key: number) => void;
     disabled?: boolean;
+    addButtonTitle?: string;
     editButtonTitle?: string;
     deleteButtonTitle?: string;
     deleteConfirmationMessage?: string;
 }
 
-function ActionCell(props: Props) {
+function UserGroupActionCell(props: Props) {
     const {
         className,
         itemKey,
-        groupKey,
-        member,
+        onAddClick,
         onEditClick,
         onDeleteClick,
         disabled,
+        addButtonTitle,
         editButtonTitle,
         deleteButtonTitle,
         deleteConfirmationMessage,
-        memberRole,
     } = props;
 
+    const handleAddButtonClick = useCallback(() => {
+        if (onAddClick) {
+            onAddClick(itemKey);
+        }
+    }, [itemKey, onAddClick]);
+
     const handleEditButtonClick = useCallback(() => {
-        onEditClick({
-            id: itemKey,
-            member,
-            role: memberRole,
-        }, groupKey);
-    }, [itemKey, onEditClick, groupKey, member, memberRole]);
+        onEditClick(itemKey);
+    }, [itemKey, onEditClick]);
 
     const handleDeleteUserGroupClick = useCallback(() => {
         onDeleteClick(itemKey);
@@ -56,6 +53,17 @@ function ActionCell(props: Props) {
 
     return (
         <div className={_cs(styles.actionCell, className)}>
+            {onAddClick && (
+                <QuickActionButton
+                    className={styles.button}
+                    name="addButton"
+                    onClick={handleAddButtonClick}
+                    disabled={disabled}
+                    title={addButtonTitle}
+                >
+                    <IoAdd />
+                </QuickActionButton>
+            )}
             <QuickActionButton
                 className={styles.button}
                 name="editButton"
@@ -80,4 +88,4 @@ function ActionCell(props: Props) {
     );
 }
 
-export default ActionCell;
+export default UserGroupActionCell;

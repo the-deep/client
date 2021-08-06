@@ -6,7 +6,7 @@ import {
     getColorOnBgColor,
 } from '@togglecorp/fujs';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 function getInitials(name?: string) {
     if (!name || name.trim().length <= 0) {
@@ -14,7 +14,7 @@ function getInitials(name?: string) {
             <IoPersonOutline className={styles.defaultUser} />
         );
     }
-    const letters = name.trim().split(/\s/).map(item => item[0]);
+    const letters = name.trim().split(/\s/).map((item) => item[0]);
     return (
         letters.length <= 1
             ? letters[0]
