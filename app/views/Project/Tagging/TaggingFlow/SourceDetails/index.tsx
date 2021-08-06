@@ -8,8 +8,8 @@ import {
 } from '@togglecorp/toggle-form';
 
 import LeadPreview from '#components/LeadPreview';
-import LeadEditForm from '#views/Sources/LeadEditModal/LeadEditForm';
-import { PartialFormType } from '#views/Sources/LeadEditModal/LeadEditForm/schema';
+import LeadEditForm from '#components/LeadEditForm';
+import { PartialFormType } from '#components/LeadEditForm/schema';
 
 import styles from './styles.css';
 

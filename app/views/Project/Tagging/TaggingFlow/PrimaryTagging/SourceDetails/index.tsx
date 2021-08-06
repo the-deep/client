@@ -39,7 +39,7 @@ import SimplifiedTextView from '#components/SimplifiedTextView';
 import LeadPreview from '#components/LeadPreview';
 import Screenshot from '#components/Screenshot';
 import FullScreen from '#components/FullScreen';
-import { Lead } from '#views/Sources/LeadEditModal/LeadEditForm/schema';
+import { Lead } from '#components/LeadEditForm/schema';
 import { useRequest } from '#base/utils/restRequest';
 
 import styles from './styles.css';

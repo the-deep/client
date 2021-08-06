@@ -11,8 +11,12 @@
         padding-bottom: 0;
     }
 
-    .icons,
+    .icons {
+        flex-basis: calc(100% / 3);
+    }
+
     .actions {
         flex-basis: calc(100% / 3);
+        justify-content: flex-end;
     }
 }
