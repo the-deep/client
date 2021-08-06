@@ -4,6 +4,8 @@ import {
     ButtonLikeLink,
     QuickActionLink,
     QuickActionDropdownMenu,
+    DropdownMenu,
+    DropdownMenuItem,
     Border,
 } from '@the-deep/deep-ui';
 import {
@@ -13,6 +15,7 @@ import {
 } from 'react-icons/io5';
 
 import SmartNavLink from '#base/components/SmartNavLink';
+import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
 
@@ -73,13 +76,31 @@ function Navbar(props: Props) {
                     </QuickActionDropdownMenu>
                 </div>
             </div>
-            <div className={styles.userMenu}>
-                {authenticated && user && (
-                    <div className={styles.userDisplayName}>
-                        {user.displayName ?? 'Anon'}
-                    </div>
-                )}
-            </div>
+            {authenticated && user && (
+                <DropdownMenu
+                    icons={(
+                        <Avatar
+                            className={styles.avatar}
+                            src={user.displayPictureUrl}
+                            name={user.displayName ?? 'Anon'}
+                        />
+                    )}
+                    label={user.displayName ?? 'Anon'}
+                    className={styles.userDisplay}
+                    variant="transparent"
+                >
+                    <DropdownMenuItem
+                        href={route.myProfile.path}
+                    >
+                        My Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        href={route.userGroups.path}
+                    >
+                        User groups
+                    </DropdownMenuItem>
+                </DropdownMenu>
+            )}
         </nav>
     );
 }
