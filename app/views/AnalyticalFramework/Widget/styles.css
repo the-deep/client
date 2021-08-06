@@ -1,0 +1,20 @@
+.widget {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dui-color-foreground);
+    overflow-y: auto;
+
+    .header {
+        align-items: center;
+
+        .actions {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+
+            >* {
+                margin: 0 var(--dui-spacing-extra-small);
+            }
+        }
+    }
+}

@@ -2,10 +2,10 @@
     .modal-body {
         display: flex;
         flex-direction: column;
-        padding: calc(var(--spacing-large) - var(--spacing-medium));
+        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
 
         .input {
-            margin: var(--spacing-medium);
+            margin: var(--dui-spacing-medium);
         }
     }
 }
