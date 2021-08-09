@@ -1,0 +1,13 @@
+.list-widget-wrapper {
+    display: flex;
+    margin: var(--dui-spacing-small);
+
+    .header {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .children {
+        margin-left: var(--dui-spacing-medium);
+    }
+}

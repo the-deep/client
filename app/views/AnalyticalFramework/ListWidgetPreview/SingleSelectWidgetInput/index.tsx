@@ -7,7 +7,7 @@ import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
 import { SingleSelectValue, SingleSelectWidget } from '#types/newAnalyticalFramework';
-import WidgetWrapper from '../../WidgetWrapper';
+import ListWidgetWrapper from '../../ListWidgetWrapper';
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
@@ -29,7 +29,6 @@ export interface Props <N extends string>{
     value: SingleSelectValue | null | undefined,
     onChange: (value: SingleSelectValue | undefined, name: N) => void,
 
-    actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -43,7 +42,6 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         name,
         value,
         onChange,
-        actions,
         widget,
         disabled,
         readOnly,
@@ -54,10 +52,9 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [widget?.data?.options]);
 
     return (
-        <WidgetWrapper
+        <ListWidgetWrapper
             className={className}
             title={title}
-            actions={actions}
         >
             <SelectInput
                 name={name}
@@ -69,7 +66,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
             />
-        </WidgetWrapper>
+        </ListWidgetWrapper>
     );
 }
 

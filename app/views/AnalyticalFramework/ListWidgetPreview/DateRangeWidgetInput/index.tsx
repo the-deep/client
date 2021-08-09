@@ -5,7 +5,7 @@ import {
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
-import WidgetWrapper from '../../WidgetWrapper';
+import ListWidgetWrapper from '../../ListWidgetWrapper';
 import { DateRangeValue } from '#types/newAnalyticalFramework';
 
 import styles from './styles.css';
@@ -20,7 +20,6 @@ export interface Props <N extends string>{
         value: DateRangeValue | undefined,
         name: N,
     ) => void,
-    actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 }
@@ -34,7 +33,6 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         onChange,
         disabled,
         readOnly,
-        actions,
     } = props;
 
     const handleValueSwap = useCallback(
@@ -47,10 +45,9 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
     );
 
     return (
-        <WidgetWrapper
+        <ListWidgetWrapper
             className={className}
             title={title}
-            actions={actions}
             childrenContainerClassName={styles.content}
         >
             <DateRangeInput
@@ -70,7 +67,7 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             >
                 <IoSwapHorizontal />
             </QuickActionButton>
-        </WidgetWrapper>
+        </ListWidgetWrapper>
     );
 }
 

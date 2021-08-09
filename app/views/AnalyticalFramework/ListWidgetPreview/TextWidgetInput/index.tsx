@@ -1,23 +1,22 @@
 import React from 'react';
-import { TimeInput } from '@the-deep/deep-ui';
+import { TextArea } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../WidgetWrapper';
-import { TimeValue } from '#types/newAnalyticalFramework';
+import { TextValue } from '#types/newAnalyticalFramework';
+import ListWidgetWrapper from '../../ListWidgetWrapper';
 
 export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
 
     name: N,
-    value: TimeValue | null | undefined,
-    onChange: (value: TimeValue | undefined, name: N) => void,
+    value: TextValue | null | undefined,
+    onChange: (value: TextValue | undefined, name: N) => void,
 
-    actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 }
 
-function TimeWidgetInput<N extends string>(props: Props<N>) {
+function TextWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
         title,
@@ -26,24 +25,23 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
         onChange,
         disabled,
         readOnly,
-        actions,
     } = props;
 
     return (
-        <WidgetWrapper
+        <ListWidgetWrapper
             className={className}
             title={title}
-            actions={actions}
         >
-            <TimeInput
+            <TextArea
                 name={name}
                 onChange={onChange}
                 value={value}
+                rows={3}
                 readOnly={readOnly}
                 disabled={disabled}
             />
-        </WidgetWrapper>
+        </ListWidgetWrapper>
     );
 }
 
-export default TimeWidgetInput;
+export default TextWidgetInput;
