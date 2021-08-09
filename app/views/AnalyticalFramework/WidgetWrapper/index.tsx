@@ -19,7 +19,6 @@ export interface Props {
     readOnly?: boolean;
 }
 
-// FIXME: Component name and file name should match
 function WidgetWrapper(props: Props) {
     const {
         className,
@@ -32,10 +31,7 @@ function WidgetWrapper(props: Props) {
     } = props;
 
     return (
-        <div
-            // FIXME: Component name and style name should match
-            className={_cs(className, styles.widget)}
-        >
+        <div className={_cs(className, styles.widgetWrapper)}>
             <Header
                 // FIXME: use strings
                 heading={title ?? 'Unnamed'}

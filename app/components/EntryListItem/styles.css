@@ -1,0 +1,22 @@
+.entry-list-item {
+    display: flex;
+    background-color: var(--dui-color-foreground);
+    height: var(--height-entry-item);
+    overflow-y: auto;
+    --height-entry-item: 360px;
+
+    .excerpt {
+        background-color: var(--dui-color-foreground);
+        width: 25%;
+    }
+
+    .section {
+        background-color: var(--dui-color-foreground);
+        width: 25%;
+    }
+
+    .secondary-tagging {
+        background-color: var(--dui-color-foreground);
+        width: 25%;
+    }
+}

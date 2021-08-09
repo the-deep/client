@@ -1,21 +1,21 @@
 import React, { useMemo } from 'react';
 import {
-    SelectInput,
+    MultiSelectInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 
 import { sortByOrder } from '#utils/common';
 
-import { SingleSelectValue, SingleSelectWidget } from '#types/newAnalyticalFramework';
-import WidgetWrapper from '../../WidgetWrapper';
+import { MultiSelectValue, MultiSelectWidget } from '#types/newAnalyticalFramework';
+import ListWidgetWrapper from '../../ListWidgetWrapper';
 
-export type PartialSingleSelectWidget = PartialForm<
-    SingleSelectWidget,
+export type PartialMultiSelectWidget = PartialForm<
+    MultiSelectWidget,
     'clientId' | 'type' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
-    NonNullable<PartialSingleSelectWidget>['data']
+    NonNullable<PartialMultiSelectWidget>['data']
 >['options']>[number];
 
 const optionKeySelector = (option: Option) => option.clientId;
@@ -26,24 +26,22 @@ export interface Props <N extends string>{
     className?: string;
 
     name: N,
-    value: SingleSelectValue | null | undefined,
-    onChange: (value: SingleSelectValue | undefined, name: N) => void,
+    value: MultiSelectValue | null | undefined,
+    onChange: (value: MultiSelectValue | undefined, name: N) => void,
 
-    actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 
-    widget: PartialSingleSelectWidget,
+    widget: PartialMultiSelectWidget,
 }
 
-function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
+function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
         title,
         name,
         value,
         onChange,
-        actions,
         widget,
         disabled,
         readOnly,
@@ -54,12 +52,11 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [widget?.data?.options]);
 
     return (
-        <WidgetWrapper
+        <ListWidgetWrapper
             className={className}
             title={title}
-            actions={actions}
         >
-            <SelectInput
+            <MultiSelectInput
                 name={name}
                 options={sortedOptions}
                 keySelector={optionKeySelector}
@@ -69,8 +66,8 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
             />
-        </WidgetWrapper>
+        </ListWidgetWrapper>
     );
 }
 
-export default SingleSelectWidgetInput;
+export default MultiSelectWidgetInput;
