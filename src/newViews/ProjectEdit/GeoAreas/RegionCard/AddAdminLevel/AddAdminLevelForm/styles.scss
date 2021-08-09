@@ -1,7 +1,10 @@
-.row {
-    display: flex;
+.form {
+    .row {
+        display: flex;
 
-    .input {
-        margin: var(--dui-spacing-small);
+        .input {
+            margin: var(--dui-spacing-small);
+        }
     }
 }
+

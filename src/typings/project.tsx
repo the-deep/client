@@ -254,6 +254,7 @@ export interface AdminLevelGeoArea extends AdminLevel {
     staleGeoAreas: boolean;
     region: number;
     geoShapeFile: number;
+    parent?: number;
 }
 
 export interface GeoAreaBounds {

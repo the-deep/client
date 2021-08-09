@@ -12,13 +12,6 @@
 
     .admin-levels {
         display: flex;
-        flex-direction: column;
         flex-grow: 1;
-
-        .admin-level {
-            display: flex;
-            flex-grow: 1;
-            padding: 0 var(--dui-spacing-small);
-        }
     }
 }

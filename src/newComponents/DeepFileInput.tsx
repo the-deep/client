@@ -39,7 +39,7 @@ function DeepFileInput<T extends string>(props: Props<T>) {
         trigger,
     } = useLazyRequest<Option, File>({
         formData: true,
-        url: '/files/',
+        url: 'server://files/',
         method: 'POST',
         body: ctx => ({
             file: ctx,

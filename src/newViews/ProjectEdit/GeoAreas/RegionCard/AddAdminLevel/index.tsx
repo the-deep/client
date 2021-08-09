@@ -1,7 +1,5 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     ContainerCard,
@@ -14,156 +12,156 @@ import {
     List,
 } from '@the-deep/deep-ui';
 
-import { useRequest, useLazyRequest } from '#utils/request';
-import notify from '#notify';
+import { useRequest } from '#utils/request';
 import {
-    AdminLevelGeoArea,
     MultiResponse,
+    AdminLevelGeoArea,
+    AdminLevel,
 } from '#typings';
 
 import AddAdminLevelForm from './AddAdminLevelForm';
 import styles from './styles.scss';
 
-interface TabDetails {
-    name: string;
-    children: string;
-    data?: AdminLevelGeoArea,
-}
-const defaultTab: TabDetails[] = [
-    {
-        name: 'adminLevel1',
-        children: 'Admin Level 1',
-    },
-];
-
-const tabKeySelector = (d: TabDetails) => d.name;
+const tabKeySelector = (d: AdminLevelGeoArea) => d.id.toString();
 
 interface Props {
+    className?: string;
     activeRegion: number;
+    adminLevels: AdminLevel[];
+    isPublished: boolean;
 }
 
 function AddAdminLevel(props: Props) {
     const {
+        className,
         activeRegion,
+        adminLevels: adminLevelFromProps,
+        isPublished,
     } = props;
 
-    const [activeTab, setActiveTab] = useState('adminLevel1');
-    const [tab, setTab] = useState<TabDetails[]>(defaultTab);
+    const [activeTab, setActiveTab] = useState<string>();
+    const [
+        adminLevels,
+        setAdminLevels,
+    ] = useState<Partial<AdminLevelGeoArea>[]>(adminLevelFromProps);
+
+    const handleAdminLevelAdd = useCallback(() => {
+        setAdminLevels((oldAdminLevels) => {
+            const newAdminLevel: Pick<AdminLevelGeoArea, 'id' | 'title' | 'region'> = {
+                id: new Date().getUTCMilliseconds(),
+                title: `Admin Level ${oldAdminLevels.length + 1}`,
+                region: activeRegion,
+
+            };
+            setActiveTab(newAdminLevel.id.toString());
+            return [
+                newAdminLevel,
+                ...oldAdminLevels,
+            ];
+        });
+    }, [activeRegion]);
 
     const adminLevelQuery = useMemo(() => ({
         region: activeRegion,
     }), [activeRegion]);
 
     const {
+        response: adminLevelOptions,
         retrigger: adminLevelTrigger,
     } = useRequest<MultiResponse<AdminLevelGeoArea>>({
         url: 'server://admin-levels/',
         query: adminLevelQuery,
         method: 'GET',
         onSuccess: (response) => {
-            if (response.count > 0) {
-                setTab(response.results.map(d => ({
-                    name: d.id.toString(),
-                    children: d.title,
-                    data: d,
-                })));
-                setActiveTab(response?.results[0].id.toString());
+            if (response.results.length > 0) {
+                setAdminLevels(response.results);
+                if (!activeTab) {
+                    const [first] = response.results;
+                    setActiveTab(first.id.toString());
+                }
             }
         },
         failureHeader: 'Failed to fetch admin levels',
     });
 
-    const {
-        pending: publishAdminLevelPending,
-        trigger: publishAdminLevelTrigger,
-    } = useLazyRequest({
-        url: 'server://admin-levels/',
-        method: 'PUT',
-        query: adminLevelQuery,
-        body: { isPublished: true },
-        onSuccess: () => {
-            notify.send({
-                title: 'Publish Geo Areas',
-                type: notify.type.SUCCESS,
-                message: 'Successfully published Geo Area',
-                duration: notify.duration.MEDIUM,
-            });
-            adminLevelTrigger();
-        },
-        failureHeader: 'Failed to publish Geo Area',
-    });
+    const handleAdminLevelSave = useCallback((id: number) => {
+        setActiveTab(id.toString());
+        adminLevelTrigger();
+    }, [adminLevelTrigger]);
 
-
-    const tabListRendererParams = useCallback((key, data) => ({
-        name: data.name,
-        children: data.children,
+    const tabListRendererParams = useCallback((id: string, data: Partial<AdminLevelGeoArea>) => ({
+        name: id,
+        children: data.title,
     }), []);
 
-    const tabPanelRendererParams = useCallback((_: string, value: TabDetails) => ({
-        name: value.name,
-        children: <AddAdminLevelForm
-            activeRegion={activeRegion}
-            value={value?.data}
-            onSuccess={adminLevelTrigger}
-        />,
-    }), [activeRegion]);
+    const tabPanelRendererParams = useCallback((id: string, value: Partial<AdminLevelGeoArea>) => ({
+        name: id,
+        children: (
+            <AddAdminLevelForm
+                value={value}
+                onSuccess={handleAdminLevelSave}
+                isPublished={isPublished}
+                adminLevelOptions={adminLevelOptions?.results}
+            />
+        ),
+    }), [
+        handleAdminLevelSave,
+        isPublished,
+        adminLevelOptions,
+    ]);
 
-    const handleAdminLevelAdd = useCallback(() => {
-        setTab(oldTab => ([...oldTab, {
-            name: _cs('adminLevel', (oldTab.length + 1).toString()),
-            children: _cs('Admin Level ', (oldTab.length + 1).toString()),
-        }]));
-    }, [setTab]);
-
-
-    const handlePublishGeoArea = useCallback(() => {
-        publishAdminLevelTrigger(null);
-    }, [publishAdminLevelTrigger]);
-
+    const handlePublishGeoArea = useCallback(() => { // TODO add this later
+    }, []);
 
     return (
         <ContainerCard
-            className={styles.formContainer}
+            className={_cs(className, styles.addAdminLevel)}
             heading="Custom Admin Levels"
             contentClassName={styles.content}
-            footerActions={(
+            footerActions={!isPublished && (
                 <ConfirmButton
                     name="submit"
                     onClick={handlePublishGeoArea}
-                    disabled={publishAdminLevelPending}
+                    disabled
                 >
                     Publish Geo Area
                 </ConfirmButton>
             )}
         >
-            <Button
-                name="addAdminLevel"
-                className={styles.submit}
-                onClick={handleAdminLevelAdd}
-                variant="tertiary"
-                icons={<IoAdd />}
-            >
-                Add Admin Level
-            </Button>
-            <Tabs
-                onChange={setActiveTab}
-                value={activeTab}
-            >
-                <TabList>
+            {!isPublished && (
+                <Button
+                    name="addAdminLevel"
+                    className={styles.submit}
+                    onClick={handleAdminLevelAdd}
+                    variant="tertiary"
+                    icons={<IoAdd />}
+                >
+                    Add Admin Level
+                </Button>
+            )}
+            {activeTab && (
+                <Tabs
+                    onChange={setActiveTab}
+                    value={activeTab}
+                >
+                    <TabList
+                        className={styles.tabs}
+                    >
+                        <List
+                            data={adminLevels}
+                            keySelector={tabKeySelector}
+                            rendererParams={tabListRendererParams}
+                            renderer={Tab}
+                        />
+                    </TabList>
                     <List
-                        data={tab}
+                        data={adminLevels}
                         keySelector={tabKeySelector}
-                        rendererParams={tabListRendererParams}
-                        renderer={Tab}
+                        rendererParams={tabPanelRendererParams}
+                        renderer={TabPanel}
                     />
-                </TabList>
-                <List
-                    data={tab}
-                    keySelector={tabKeySelector}
-                    rendererParams={tabPanelRendererParams}
-                    renderer={TabPanel}
-                />
-            </Tabs>
+                </Tabs>
+            )}
         </ContainerCard>
     );
 }
