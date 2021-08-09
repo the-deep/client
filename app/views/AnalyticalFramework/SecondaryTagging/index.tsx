@@ -28,7 +28,7 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    frameworkId: number;
+    frameworkId: number | undefined;
 }
 
 function SecondaryTagging(props: Props) {
@@ -36,10 +36,6 @@ function SecondaryTagging(props: Props) {
         className,
         frameworkId,
     } = props;
-
-    // NOTE: intentional console.info
-    // eslint-disable-next-line no-console
-    console.info('secondary tagging in the framework', frameworkId);
 
     const [widgets, setWidgets] = useLocalStorage<Widget[]>('secondaryTagging', []);
 
@@ -159,11 +155,13 @@ function SecondaryTagging(props: Props) {
                             </Button>
                         )}
                     >
-                        <FrameworkImageButton
-                            frameworkId={frameworkId}
-                            label={_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
-                            variant="secondary"
-                        />
+                        {frameworkId && (
+                            <FrameworkImageButton
+                                frameworkId={frameworkId}
+                                label={_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
+                                variant="secondary"
+                            />
+                        )}
                     </ElementFragments>
                 </div>
                 <div className={styles.canvas}>
