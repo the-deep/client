@@ -42,7 +42,7 @@ function Project(props: Props) {
     const { className } = props;
     const { projectId } = useParams<{ projectId: string }>();
 
-    const { setProject } = useContext(ProjectContext);
+    const { project, setProject } = useContext(ProjectContext);
 
     const variables = useMemo(
         (): CurrentProjectQueryVariables => ({
@@ -82,7 +82,9 @@ function Project(props: Props) {
         );
     }
 
-    if (loading) {
+    const inconsistent = project && projectId !== project.id;
+
+    if (loading || inconsistent) {
         return (
             <PreloadMessage
                 className={className}

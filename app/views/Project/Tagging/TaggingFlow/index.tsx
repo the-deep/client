@@ -22,7 +22,7 @@ import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
     Lead,
-} from '#views/Sources/LeadEditModal/LeadEditForm/schema';
+} from '#components/LeadEditForm/schema';
 
 import SourceDetails from './SourceDetails';
 import PrimaryTagging from './PrimaryTagging';

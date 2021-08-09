@@ -1,4 +1,4 @@
 #! /bin/bash -xe
 
-yarn install
+yarn install --frozen-lockfile
 yarn start

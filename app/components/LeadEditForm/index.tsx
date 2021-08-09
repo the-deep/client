@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useLazyQuery, gql } from '@apollo/client';
 import {
     _cs,
     unique,
@@ -41,6 +42,9 @@ import {
     LeadGroup,
     OrganizationDetails,
 } from '#types';
+import {
+    TokenQuery,
+} from '#generated/types';
 
 import {
     PartialFormType,
@@ -54,9 +58,17 @@ import styles from './styles.css';
 
 // FIXME: Use translations throughout the page
 
-interface Token {
-    refresh: string;
-}
+const TOKEN = gql`
+    query Token {
+        me {
+            id
+            jwtToken {
+                accessToken
+                expiresIn
+            }
+        }
+    }
+`;
 
 interface RawWebInfo {
     title?: string;
@@ -258,10 +270,15 @@ function LeadEditForm(props: Props) {
     const {
         pending: rawWebInfoPending,
         trigger: getRawWebInfo,
-    } = useLazyRequest<RawWebInfo, { url: string; isFile: boolean }>({
+    } = useLazyRequest<RawWebInfo, { url: string; isFile: boolean, token: string }>({
         method: 'GET',
         url: 'serverless://web-info-extract/',
         query: (ctx) => ({ url: ctx.url }),
+        other: (ctx) => ({
+            headers: {
+                Authorization: `Bearer ${ctx.token}`,
+            },
+        }),
         onSuccess: (response, ctx) => {
             if (ctx.isFile) {
                 handleInfoAutoFill({
@@ -282,36 +299,38 @@ function LeadEditForm(props: Props) {
         failureHeader: 'Raw Web Info Extract',
     });
 
-    const {
-        pending: pendingUserToken,
-        trigger: getUserToken,
-    } = useLazyRequest<Token, { isFile: boolean }>({
-        method: 'GET',
-        url: 'server://token/',
-        onSuccess: (_, ctx) => {
-            if (ctx.isFile && value.attachment?.file) {
-                getRawWebInfo({
-                    url: value.attachment.file,
-                    isFile: true,
-                });
-            } else if (value.url) {
-                getRawWebInfo({
-                    url: value.url,
-                    isFile: false,
-                });
-            }
-            // FIXME: Use string
-            // eslint-disable-next-line no-console
-            console.error('No attachment or URL found in lead to be extracted');
+    const [getUserToken, { loading: pendingUserToken }] = useLazyQuery<TokenQuery>(
+        TOKEN,
+        {
+            fetchPolicy: 'network-only',
+            onCompleted: (data) => {
+                const token = data.me?.jwtToken?.accessToken;
+                if (!token) {
+                    return;
+                }
+
+                if (value.sourceType === 'website' && value.url) {
+                    getRawWebInfo({
+                        url: value.url,
+                        isFile: false,
+                        token,
+                    });
+                } else if (value.attachment?.file) {
+                    getRawWebInfo({
+                        url: value.attachment.file,
+                        isFile: true,
+                        token,
+                    });
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.error('No attachment or URL found in lead to be extracted');
+                }
+            },
         },
-        failureHeader: 'User Access Token',
-        mockResponse: ({
-            // FIXME: Remove mock response, Use GraphQL
-            refresh: 'asdasd',
-        }),
-    });
+    );
 
     const sortedPriority = useMemo(() => (
+        // FIXME: sort mutates original array
         leadOptions?.priority?.sort((a, b) => compareNumber(a.key, b.key))
     ), [leadOptions?.priority]);
 
@@ -326,11 +345,11 @@ function LeadEditForm(props: Props) {
     }, [setShowAddOrganizationModalTrue]);
 
     const handleLeadDataExtract = useCallback(() => {
-        getUserToken({ isFile: false });
+        getUserToken();
     }, [getUserToken]);
 
     const handleFileExtractClick = useCallback(() => {
-        getUserToken({ isFile: true });
+        getUserToken();
     }, [getUserToken]);
 
     const handleOrganizationAdd = useCallback((val: BasicOrganization) => {
@@ -423,7 +442,7 @@ function LeadEditForm(props: Props) {
                         value.sourceType === 'disk'
                         || value.sourceType === 'dropbox'
                         || value.sourceType === 'google-drive'
-                    ) && (
+                    ) && value.attachment?.file && (
                         <>
                             <QuickActionButton
                                 name="fileExtract"

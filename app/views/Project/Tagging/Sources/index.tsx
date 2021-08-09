@@ -21,14 +21,14 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
+    refreshTimestamp?: number;
 }
 
 function Sources(props: Props) {
-    const { className } = props;
+    const { className, refreshTimestamp } = props;
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? +project.id : undefined;
     const [sourcesFilters, setSourcesFilters] = useState<Filters>();
-    const [refreshTimestamp] = useState(() => (new Date()).getTime());
 
     const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
 
