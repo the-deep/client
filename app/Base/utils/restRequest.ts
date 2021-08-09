@@ -135,8 +135,11 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         ...otherOptions
     } = options;
 
-    let finalOptions: RequestInit;
-
+    let finalOptions: RequestInit & {
+        headers: {
+            'X-CSRFToken'?: string;
+        },
+    };
     if (requestOptions.formData) {
         const requestBody = getFormData(body as FormDataCompatibleObj);
         finalOptions = {

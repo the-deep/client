@@ -361,7 +361,7 @@ const matrix2d: Matrix2dWidget = {
 
 interface Props {
     className?: string;
-    frameworkId: number;
+    frameworkId: number | undefined;
 }
 
 function PrimaryTagging(props: Props) {
@@ -369,10 +369,6 @@ function PrimaryTagging(props: Props) {
         className,
         frameworkId,
     } = props;
-
-    // NOTE: intentional console.info
-    // eslint-disable-next-line no-console
-    console.info('primary tagging in the framework', frameworkId);
 
     const initialSections = useMemo(
         (): Section[] => [
@@ -607,11 +603,13 @@ function PrimaryTagging(props: Props) {
                                 </Button>
                             )}
                         >
-                            <FrameworkImageButton
-                                frameworkId={frameworkId}
-                                label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
-                                variant="secondary"
-                            />
+                            {frameworkId && (
+                                <FrameworkImageButton
+                                    frameworkId={frameworkId}
+                                    label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                                    variant="secondary"
+                                />
+                            )}
                         </ElementFragments>
                     </div>
                     <div className={styles.canvas}>

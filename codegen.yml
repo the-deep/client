@@ -1,7 +1,9 @@
 overwrite: true
 schema:
   - ${GRAPHQL_CODEGEN_ENDPOINT}
-documents: "app/**/*.tsx"
+documents:
+  - "app/**/*.tsx"
+  - "app/**/*.ts"
 generates:
   ./generated/types.tsx:
     plugins:

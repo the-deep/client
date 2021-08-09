@@ -87,21 +87,32 @@ const explore = wrap({
     },
     visibility: 'is-authenticated',
 });
-const projectRoute = wrap({
-    path: '/projects/:projectId(\\d+)/',
-    title: 'Project',
-    navbarVisibility: true,
-    component: lazy(() => import('#views/Project')),
+const analyticalFrameworkCreateRoute = wrap({
+    path: '/frameworks/new/',
+    title: 'Analytical Framework',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/AnalyticalFramework')),
     componentProps: { },
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
 });
-const analyticalFrameworkRoute = wrap({
+const analyticalFrameworkEditRoute = wrap({
     path: '/frameworks/:frameworkId(\\d+)/',
     title: 'Analytical Framework',
     navbarVisibility: false,
     component: lazy(() => import('#views/AnalyticalFramework')),
+    componentProps: { },
+    visibility: 'is-authenticated',
+    // NOTE: we cannot use permission check related to project on this route
+    // as this route manages all the data load
+});
+
+const projectRoute = wrap({
+    path: '/projects/:projectId(\\d+)/',
+    title: 'Project',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project')),
     componentProps: { },
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
@@ -199,7 +210,8 @@ const routes = {
     analysis,
     explore,
     project: projectRoute,
-    analyticalFramework: analyticalFrameworkRoute,
+    analyticalFrameworkEdit: analyticalFrameworkEditRoute,
+    analyticalFrameworkCreate: analyticalFrameworkCreateRoute,
     sources,
     fourHundredFour,
     dashboard,
