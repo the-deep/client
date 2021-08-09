@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextArea } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../Widget';
+import WidgetWrapper from '../../WidgetWrapper';
 import { TextValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

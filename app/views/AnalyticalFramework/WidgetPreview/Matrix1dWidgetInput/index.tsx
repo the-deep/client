@@ -5,7 +5,7 @@ import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
 import { Matrix1dValue, Matrix1dWidget } from '#types/newAnalyticalFramework';
-import WidgetWrapper from '../../Widget';
+import WidgetWrapper from '../../WidgetWrapper';
 
 import styles from './styles.css';
 

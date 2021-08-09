@@ -1,4 +1,4 @@
-import { Entry } from './types';
+import { Entry } from '#types/newEntry';
 
 const values: Entry[] = [
     {
@@ -141,7 +141,6 @@ const values: Entry[] = [
         versionId: 1784,
         project: 93490,
         lead: 69365,
-        attributes: [],
         analyticalFramework: 92024,
         entryType: 'image',
         image: 1123,
@@ -149,6 +148,43 @@ const values: Entry[] = [
             id: 1,
             file: 'https://i.imgur.com/blcysR7.png',
         },
+        attributes: [
+            {
+                id: 'number-widget-random',
+                type: 'number',
+                data: {
+                    value: 10,
+                },
+            },
+            {
+                id: 'single-select-random',
+                type: 'single-select',
+                data: {
+                    value: '15',
+                },
+            },
+            {
+                id: 'multi-select-random',
+                type: 'multi-select',
+                data: {
+                    value: ['31', '23'],
+                },
+            },
+            {
+                id: 'widget13',
+                type: 'geo-location',
+                data: {
+                    value: ['nepal', 'pradesh1', 'ilam'],
+                },
+            },
+            {
+                id: 'scale-random',
+                type: 'scale',
+                data: {
+                    value: '331',
+                },
+            },
+        ],
     },
 ];
 

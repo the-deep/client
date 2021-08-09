@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 import {
+    TimeRangeInput,
     QuickActionButton,
-    DateRangeInput,
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
-import WidgetWrapper from '../../WidgetWrapper';
-import { DateRangeValue } from '#types/newAnalyticalFramework';
+import ListWidgetWrapper from '../../ListWidgetWrapper';
+import { TimeRangeValue } from '#types/newAnalyticalFramework';
 
 import styles from './styles.css';
 
@@ -15,17 +15,16 @@ export interface Props <N extends string>{
     className?: string;
 
     name: N,
-    value: DateRangeValue | null | undefined,
+    value: TimeRangeValue | null | undefined,
     onChange: (
-        value: DateRangeValue | undefined,
+        value: TimeRangeValue | undefined,
         name: N,
     ) => void,
-    actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 }
 
-function DateRangeWidgetInput<N extends string>(props: Props<N>) {
+function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
         title,
@@ -34,26 +33,24 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         onChange,
         disabled,
         readOnly,
-        actions,
     } = props;
 
     const handleValueSwap = useCallback(
         () => {
             if (value) {
-                onChange({ endDate: value.startDate, startDate: value.endDate }, name);
+                onChange({ startTime: value.endTime, endTime: value.startTime }, name);
             }
         },
         [onChange, value, name],
     );
 
     return (
-        <WidgetWrapper
+        <ListWidgetWrapper
             className={className}
             title={title}
-            actions={actions}
             childrenContainerClassName={styles.content}
         >
-            <DateRangeInput
+            <TimeRangeInput
                 className={styles.input}
                 name={name}
                 onChange={onChange}
@@ -70,8 +67,8 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             >
                 <IoSwapHorizontal />
             </QuickActionButton>
-        </WidgetWrapper>
+        </ListWidgetWrapper>
     );
 }
 
-export default DateRangeWidgetInput;
+export default TimeRangeWidgetInput;
