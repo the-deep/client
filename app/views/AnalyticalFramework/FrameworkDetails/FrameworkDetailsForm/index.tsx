@@ -47,7 +47,7 @@ const schema: FormSchema = {
 };
 
 interface Props {
-    frameworkId: number;
+    frameworkId: number | undefined;
     className?: string;
     analyticalFramework?: AnalyticalFramework;
     frameworkGetPending: boolean;
@@ -90,6 +90,8 @@ function FrameworkDetailsForm(props: Props) {
 
     const error = getErrorObject(riskyError);
 
+    // FIXME: this may be problematic.
+    // How do we create analytical frameworks
     const {
         pending: frameworkPatchPending,
         trigger: patchFramework,

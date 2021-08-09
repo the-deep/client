@@ -61,7 +61,7 @@ const userKeySelector = (user: User) => user.id;
 const maxItemsPerPage = 10;
 
 interface Props {
-    frameworkId: number;
+    frameworkId: number | undefined;
 }
 
 function FrameworkDetails(props: Props) {
