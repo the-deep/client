@@ -1,4 +1,4 @@
-.widget {
+.widget-wrapper {
     display: flex;
     flex-direction: column;
     background-color: var(--dui-color-foreground);

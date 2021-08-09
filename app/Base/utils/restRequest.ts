@@ -136,6 +136,7 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
     } = options;
 
     let finalOptions: RequestInit;
+
     if (requestOptions.formData) {
         const requestBody = getFormData(body as FormDataCompatibleObj);
         finalOptions = {
@@ -163,8 +164,7 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
 
     const isInternalRequest = url.startsWith(serverPrefix);
     if (isInternalRequest) {
-        // FIXME: get this cookie name from env
-        const csrftoken = getCookie('deep-development-nav-csrftoken');
+        const csrftoken = getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
         finalOptions.credentials = 'include';
         if (finalOptions.headers) {
             finalOptions.headers['X-CSRFToken'] = csrftoken;

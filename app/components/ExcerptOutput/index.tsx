@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { ImagePreview } from '@the-deep/deep-ui';
 
-import { TabularDataFields } from '#typings/entry';
+import { TabularDataFields } from '#types/newEntry';
 import _ts from '#ts';
 
 export interface Props {
@@ -20,12 +20,13 @@ export interface Props {
 function ExcerptOutput(props: Props) {
     const {
         className,
-        droppedValue, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-        tabularFieldData,
+        // droppedValue,
+        // tabularFieldData,
         imageClassName,
         excerptForImageClassName,
     } = props;
 
+    // eslint-disable-next-line react/destructuring-assignment
     if (props.entryType === 'image') {
         return (
             <div className={className}>
@@ -42,6 +43,7 @@ function ExcerptOutput(props: Props) {
             </div>
         );
     }
+    // eslint-disable-next-line react/destructuring-assignment
     if (props.entryType === 'excerpt') {
         return (
             <p className={className}>
@@ -49,8 +51,8 @@ function ExcerptOutput(props: Props) {
             </p>
         );
     }
+    // eslint-disable-next-line react/destructuring-assignment
     if (props.entryType === 'dataSeries') {
-        console.error('Tabular data used here', tabularFieldData);
         return (
             <p className={className}>
                 {_ts('components.excerptOutput', 'quantitativeDataNotSupportedLabel')}

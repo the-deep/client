@@ -1,7 +1,7 @@
 import React from 'react';
 import { DateInput } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../Widget';
+import WidgetWrapper from '../../WidgetWrapper';
 import { DateValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

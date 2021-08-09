@@ -362,6 +362,13 @@ const dataAf: AnalysisFramework = {
             order: 1,
             widgets: [matrix1d, matrix2d],
         },
+        {
+            clientId: 'primary-tagging-random-2',
+            title: 'Found Wave',
+            tooltip: 'On on produce colonel pointed. Just four sold need over how any wow.',
+            order: 1,
+            widgets: [matrix1d],
+        },
     ],
     secondaryTagging: [
         {
