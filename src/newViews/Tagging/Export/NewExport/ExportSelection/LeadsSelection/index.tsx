@@ -266,6 +266,7 @@ function LeadsSelection(props: Props) {
                 </SortContext.Provider>
             </div>
             <Pager
+                className={styles.footer}
                 activePage={activePage}
                 itemsCount={leadsResponse?.count ?? 0}
                 maxItemsPerPage={maxItemsPerPage}

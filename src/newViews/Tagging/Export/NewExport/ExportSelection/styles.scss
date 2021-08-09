@@ -1,42 +1,58 @@
 .export {
     display: flex;
+    overflow-y: auto;
 
     .left {
         display: flex;
         flex-basis: 70%;
         flex-direction: column;
+        overflow-y: auto;
 
-        .section {
-            margin-bottom: var(--dui-spacing-medium);
-            .heading {
-                text-transform: none;
+        .left-controls {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
 
-                .sub-heading {
-                    margin-left: var(--dui-spacing-medium);
-                    color: var(--dui-color-text-label);
+            .section {
+                flex-shrink: 0;
+                margin-bottom: var(--dui-spacing-medium);
+
+                .heading {
+                    text-transform: none;
+
+                    .sub-heading {
+                        margin-left: var(--dui-spacing-medium);
+                        color: var(--dui-color-text-label);
+                    }
+                }
+
+                .content {
+                    display: flex;
+                    justify-content: space-between;
+
+                    .query-input {
+                        display: flex;
+                        flex-basis: 50%;
+                        flex-direction: column;
+                    }
+
+                    .save-and-export {
+                        display: flex;
+                        align-self: flex-end;
+                    }
                 }
             }
 
-            .content {
+            .lead-table-container {
                 display: flex;
-                justify-content: space-between;
-
-                .query-input {
-                    display: flex;
-                    flex-basis: 50%;
-                    flex-direction: column;
-                }
-
-                .save-and-export {
-                    display: flex;
-                    align-self: flex-end;
-                }
+                flex-direction: column;
             }
         }
 
         .export-button {
             display: flex;
             align-self: flex-end;
+            flex-shrink: 0;
             margin: var(--dui-spacing-medium);
         }
     }

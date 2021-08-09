@@ -51,8 +51,10 @@ function NewExport(props: Props) {
             className={_cs(className, styles.newExportModal)}
             heading="Setup new export file"
             onCloseButtonClick={onClose}
+            bodyClassName={styles.body}
         >
             <ExportSelection
+                className={styles.exportSelection}
                 projectRole={projectRole}
                 projectId={activeProject}
             />
