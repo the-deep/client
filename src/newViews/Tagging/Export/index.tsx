@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { IoAdd } from 'react-icons/io5';
-
 import {
     Tabs,
     Tab,
@@ -9,8 +8,10 @@ import {
     Container,
     Button,
 } from '@the-deep/deep-ui';
+import { useModalState } from '#hooks/stateManagement';
 
 import Navbar from '../Navbar';
+import NewExport from './NewExport';
 import styles from './styles.scss';
 
 type ExportType = 'export-entry-history' | 'export-assessment-history';
@@ -18,8 +19,12 @@ type ExportType = 'export-entry-history' | 'export-assessment-history';
 function Export() {
     const [activeTab, setActiveTab] = useState<ExportType>('export-entry-history');
 
-    const handleExportEntryClick = useCallback(() => {}, []);
     const handleExportAssessmentClick = useCallback(() => {}, []);
+    const [
+        isCreateNewExportModalShown,
+        showCreateNewExportModal,
+        hideCreateNewExportModal,
+    ] = useModalState(false);
 
     return (
         <Container
@@ -47,10 +52,9 @@ function Export() {
                             <Button
                                 name="export-entry"
                                 className={styles.button}
-                                onClick={handleExportEntryClick}
+                                onClick={showCreateNewExportModal}
                                 icons={<IoAdd />}
                                 variant="secondary"
-                                disabled
                             >
                                 New Export
                             </Button>
@@ -66,7 +70,6 @@ function Export() {
                             </Button>
                         </div>
                     </div>
-
                     <TabPanel name="export-entry-history">
                         This is export history
                     </TabPanel>
@@ -74,6 +77,11 @@ function Export() {
                         This is Export Assessment History
                     </TabPanel>
                 </Tabs>
+                {isCreateNewExportModalShown && (
+                    <NewExport
+                        onClose={hideCreateNewExportModal}
+                    />
+                )}
             </div>
         </Container>
     );

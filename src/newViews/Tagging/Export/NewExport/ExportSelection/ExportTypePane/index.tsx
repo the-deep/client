@@ -1,13 +1,16 @@
-import React, { useCallback } from 'react';
-
-import Icon from '#rscg/Icon';
-import Checkbox from '#rsci/Checkbox';
-import TreeSelection from '#rsci/TreeSelection';
-import ListView from '#rscv/List/ListView';
+import React, { useMemo, useCallback } from 'react';
+import { IoInformationCircleOutline } from 'react-icons/io5';
+import {
+    Checkbox,
+    List,
+    ExpandableContainer,
+    Container,
+    Heading,
+} from '@the-deep/deep-ui';
 
 import {
+    EntryOptions,
     ExportType,
-    ReportStructure,
 } from '#typings';
 
 import _ts from '#ts';
@@ -21,6 +24,9 @@ import excelIcon from '#resources/img/excel.svg';
 import pdfIcon from '#resources/img/pdf.svg';
 import jsonIcon from '#resources/img/json.svg';
 
+import TreeSelection from '#newComponents/input/TreeSelection';
+
+import { Node, TreeSelectableWidget } from '../types';
 import ExportTypePaneButton from './ExportTypeButton';
 
 import styles from './styles.scss';
@@ -32,10 +38,8 @@ interface ExportTypeItem {
 }
 
 interface Props {
-    reportStructure?: ReportStructure[];
-    entryFilterOptions: {
-        projectEntryLabel: [];
-    };
+    reportStructure?: Node[];
+    entryFilterOptions?: EntryOptions;
     activeExportTypeKey: ExportType;
     reportStructureVariant: string;
     decoupledEntries: boolean;
@@ -48,12 +52,16 @@ interface Props {
     onShowAryDetailsChange: (show: boolean) => void;
     onShowAdditionalMetadataChange: (show: boolean) => void;
     onExportTypeChange: (type: ExportType) => void;
-    onReportStructureChange: (reports: ReportStructure[]) => void;
+    onReportStructureChange: (reports: Node[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onDecoupledEntriesChange: (value: boolean) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
+    contextualWidgets: TreeSelectableWidget<string | number>[];
+    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    textWidgets: TreeSelectableWidget<string | number>[];
+    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
 }
 
 const exportTypes: ExportTypeItem[] = [
@@ -82,24 +90,26 @@ const exportTypes: ExportTypeItem[] = [
 const exportTypeKeyExtractor = (d: ExportTypeItem) => d.key;
 
 interface RenderWordProps {
-    entryFilterOptions: {
-        projectEntryLabel: [];
-    };
+    entryFilterOptions?: EntryOptions;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    onReportStructureChange: (reports: ReportStructure[]) => void;
+    onReportStructureChange: (reports: Node[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onShowGroupsChange: (show: boolean) => void;
     onShowEntryIdChange: (show: boolean) => void;
     onShowAryDetailsChange: (show: boolean) => void;
     onShowAdditionalMetadataChange: (show: boolean) => void;
-    reportStructure?: ReportStructure[];
+    reportStructure?: Node[];
     reportStructureVariant: string;
     showGroups: boolean;
     showEntryId: boolean;
     showAryDetails: boolean;
     showAdditionalMetadata: boolean;
+    contextualWidgets: TreeSelectableWidget<string | number>[];
+    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    textWidgets: TreeSelectableWidget<string | number>[];
+    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -120,12 +130,22 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         includeSubSector,
         onIncludeSubSectorChange,
         showMatrix2dOptions,
+        contextualWidgets,
+        onSetContextualWidgets,
+        textWidgets,
+        onSetTextWidgets,
     } = props;
 
-    const swapOrderValue = reportStructureVariant === DIMENSION_FIRST;
+    const swapOrderValue = useMemo(() => (
+        reportStructureVariant === DIMENSION_FIRST
+    ), [reportStructureVariant]);
 
     const handleSwapOrderValueChange = useCallback((newValue) => {
-        onReportStructureVariantChange(newValue ? DIMENSION_FIRST : SECTOR_FIRST);
+        if (newValue) {
+            onReportStructureVariantChange(DIMENSION_FIRST);
+        } else {
+            onReportStructureVariantChange(SECTOR_FIRST);
+        }
     }, [onReportStructureVariantChange]);
 
     if (!reportStructure) {
@@ -142,66 +162,114 @@ function RenderWordPdfOptions(props: RenderWordProps) {
 
     return (
         <>
-            <div className={styles.reportStructure}>
-                <h4 className={styles.heading}>
-                    { _ts('export', 'reportStructureLabel')}
-                </h4>
-                <div className={styles.bottomContainer}>
-                    <TreeSelection
-                        showLabel={false}
-                        value={reportStructure}
-                        onChange={onReportStructureChange}
-                    />
-                    {showMatrix2dOptions && (
-                        <div>
-                            <Checkbox
-                                className={styles.includeSubSector}
-                                key="checkbox"
-                                label={_ts('export', 'includeSubSector')}
-                                value={includeSubSector}
-                                onChange={onIncludeSubSectorChange}
-                            />
-                            <Checkbox
-                                className={styles.includeSubSector}
-                                key="swap-checkbox"
-                                label={_ts('export', 'swapColumnRowsLabel')}
-                                value={swapOrderValue}
-                                onChange={handleSwapOrderValueChange}
-                            />
-                        </div>
-                    )}
-                </div>
-            </div>
-            <div className={styles.contentSettings}>
-                <h4 className={styles.heading}>
-                    { _ts('export', 'contentSettingsText')}
-                </h4>
+            <Container
+                className={styles.contentSettings}
+                headingSize="extraSmall"
+                heading={_ts('export', 'contentSettingsText')}
+                sub
+            >
                 {showEntryGroupsSelection && (
                     <Checkbox
+                        name="showGroups"
                         label={_ts('export', 'showEntryGroupsLabel')}
                         value={showGroups}
-                        className={styles.showGroupCheckbox}
                         onChange={onShowGroupsChange}
+                        className={styles.checkbox}
                     />
                 )}
                 <Checkbox
+                    name="showEntryId"
                     label={_ts('export', 'showEntryIdLabel')}
                     value={showEntryId}
-                    className={styles.showEntryIdCheckbox}
                     onChange={onShowEntryIdChange}
+                    className={styles.checkbox}
                 />
                 <Checkbox
+                    name="showAryDetails"
                     label={_ts('export', 'showAryDetailLabel')}
                     value={showAryDetails}
-                    className={styles.showAryDetailsCheckbox}
                     onChange={onShowAryDetailsChange}
+                    className={styles.checkbox}
                 />
                 <Checkbox
+                    name="showAdditionalMetaData"
                     label={_ts('export', 'showAdditionalMetadataLabel')}
                     value={showAdditionalMetadata}
                     onChange={onShowAdditionalMetadataChange}
+                    className={styles.checkbox}
                 />
-            </div>
+            </Container>
+            <Container
+                className={styles.reportStructure}
+                headingSize="extraSmall"
+                heading={_ts('export', 'reportStructureLabel')}
+                sub
+                contentClassName={styles.content}
+            >
+                <TreeSelection
+                    name="treeSelection"
+                    value={reportStructure}
+                    onChange={onReportStructureChange}
+                />
+                {showMatrix2dOptions && (
+                    <div>
+                        <Checkbox
+                            name="checkbox"
+                            label={_ts('export', 'includeSubSector')}
+                            value={includeSubSector}
+                            onChange={onIncludeSubSectorChange}
+                            className={styles.checkbox}
+                        />
+                        <Checkbox
+                            name="swap-checkbox"
+                            label={_ts('export', 'swapColumnRowsLabel')}
+                            value={swapOrderValue}
+                            onChange={handleSwapOrderValueChange}
+                            className={styles.checkbox}
+                        />
+                    </div>
+                )}
+            </Container>
+            <Container
+                className={styles.additional}
+                headingSize="extraSmall"
+                heading="Additional Metadata"
+                sub
+                contentClassName={styles.content}
+            >
+                {contextualWidgets.length > 0 && showAdditionalMetadata && (
+                    <>
+                        <Heading
+                            size="extraSmall"
+                        >
+                            Contextual Widgets
+                        </Heading>
+                        <TreeSelection
+                            className={styles.widgetSelection}
+                            name="contextualWidgets"
+                            value={contextualWidgets}
+                            onChange={onSetContextualWidgets}
+                            direction="horizontal"
+                        />
+                    </>
+                )}
+                {textWidgets.length > 0 && (
+                    <>
+                        <Heading
+                            size="extraSmall"
+                        >
+                            Free Text Widgets
+                        </Heading>
+                        <TreeSelection
+                            className={styles.widgetSelection}
+                            name="freeTextWidgets"
+                            value={textWidgets}
+                            onChange={onSetTextWidgets}
+                            direction="horizontal"
+                        />
+                    </>
+                )}
+            </Container>
         </>
     );
 }
@@ -220,7 +288,7 @@ function RenderExcelOptions(props: RenderExcelProps) {
     return (
         <>
             <Checkbox
-                key="checkbox"
+                name="decoupledEntries"
                 label={_ts('export', 'decoupledEntriesLabel')}
                 value={decoupledEntries}
                 onChange={onDecoupledEntriesChange}
@@ -228,9 +296,7 @@ function RenderExcelOptions(props: RenderExcelProps) {
             <div
                 key="info"
             >
-                <Icon
-                    name="info"
-                />
+                <IoInformationCircleOutline />
                 <div>
                     <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
                     <p>{_ts('export', 'decoupledEntriesTitle')}</p>
@@ -261,6 +327,10 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
         includeSubSector,
         onIncludeSubSectorChange,
         showMatrix2dOptions,
+        contextualWidgets,
+        onSetContextualWidgets,
+        textWidgets,
+        onSetTextWidgets,
     } = props;
 
     switch (activeExportTypeKey) {
@@ -284,6 +354,10 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
                     showEntryId={showEntryId}
                     showAryDetails={showAryDetails}
                     showAdditionalMetadata={showAdditionalMetadata}
+                    contextualWidgets={contextualWidgets}
+                    onSetContextualWidgets={onSetContextualWidgets}
+                    textWidgets={textWidgets}
+                    onSetTextWidgets={onSetTextWidgets}
                 />
             );
         case 'excel':
@@ -324,6 +398,10 @@ function ExportTypePane(props: Props) {
         includeSubSector,
         onIncludeSubSectorChange,
         showMatrix2dOptions,
+        contextualWidgets,
+        onSetContextualWidgets,
+        textWidgets,
+        onSetTextWidgets,
     } = props;
 
     const exportTypeRendererParams = useCallback((key: ExportType, data: ExportTypeItem) => {
@@ -334,7 +412,7 @@ function ExportTypePane(props: Props) {
 
         return ({
             buttonKey: key,
-            className: styles.exportTypeSelect,
+            className: styles.exportType,
             title,
             img,
             isActive: activeExportTypeKey === key,
@@ -343,40 +421,55 @@ function ExportTypePane(props: Props) {
     }, [activeExportTypeKey, onExportTypeChange]);
 
     return (
-        <section className={styles.exportTypes}>
-            <div className={styles.exportTypeContainer}>
-                <h4>
-                    {_ts('export', 'fileFormatSelectionLabel')}
-                </h4>
-                <ListView
-                    className={styles.exportTypeSelectList}
+        <section className={styles.exportTypePane}>
+            <Container
+                className={styles.exportTypesContainer}
+                headingSize="extraSmall"
+                heading={_ts('export', 'fileFormatSelectionLabel')}
+                sub
+                inlineHeadingDescription
+                contentClassName={styles.content}
+            >
+                <List
                     data={exportTypes}
                     rendererParams={exportTypeRendererParams}
                     renderer={ExportTypePaneButton}
                     keySelector={exportTypeKeyExtractor}
                 />
-            </div>
-            <RenderOptions
-                activeExportTypeKey={activeExportTypeKey}
-                entryFilterOptions={entryFilterOptions}
-                reportStructure={reportStructure}
-                reportStructureVariant={reportStructureVariant}
-                onReportStructureChange={onReportStructureChange}
-                onReportStructureVariantChange={onReportStructureVariantChange}
-                showGroups={showGroups}
-                showEntryId={showEntryId}
-                showAryDetails={showAryDetails}
-                showAdditionalMetadata={showAdditionalMetadata}
-                onShowGroupsChange={onShowGroupsChange}
-                onShowEntryIdChange={onShowEntryIdChange}
-                onShowAryDetailsChange={onShowAryDetailsChange}
-                onShowAdditionalMetadataChange={onShowAdditionalMetadataChange}
-                decoupledEntries={decoupledEntries}
-                onDecoupledEntriesChange={onDecoupledEntriesChange}
-                includeSubSector={includeSubSector}
-                onIncludeSubSectorChange={onIncludeSubSectorChange}
-                showMatrix2dOptions={showMatrix2dOptions}
-            />
+            </Container>
+            <ExpandableContainer
+                className={styles.advanced}
+                headingSize="extraSmall"
+                sub
+                heading="Advanced"
+                defaultVisibility
+            >
+                <RenderOptions
+                    activeExportTypeKey={activeExportTypeKey}
+                    entryFilterOptions={entryFilterOptions}
+                    reportStructure={reportStructure}
+                    reportStructureVariant={reportStructureVariant}
+                    onReportStructureChange={onReportStructureChange}
+                    onReportStructureVariantChange={onReportStructureVariantChange}
+                    showGroups={showGroups}
+                    showEntryId={showEntryId}
+                    showAryDetails={showAryDetails}
+                    showAdditionalMetadata={showAdditionalMetadata}
+                    onShowGroupsChange={onShowGroupsChange}
+                    onShowEntryIdChange={onShowEntryIdChange}
+                    onShowAryDetailsChange={onShowAryDetailsChange}
+                    onShowAdditionalMetadataChange={onShowAdditionalMetadataChange}
+                    decoupledEntries={decoupledEntries}
+                    onDecoupledEntriesChange={onDecoupledEntriesChange}
+                    includeSubSector={includeSubSector}
+                    onIncludeSubSectorChange={onIncludeSubSectorChange}
+                    showMatrix2dOptions={showMatrix2dOptions}
+                    contextualWidgets={contextualWidgets}
+                    onSetContextualWidgets={onSetContextualWidgets}
+                    textWidgets={textWidgets}
+                    onSetTextWidgets={onSetTextWidgets}
+                />
+            </ExpandableContainer>
         </section>
     );
 }

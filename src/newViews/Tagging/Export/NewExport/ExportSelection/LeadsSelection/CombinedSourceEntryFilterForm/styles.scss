@@ -1,0 +1,29 @@
+.source-entry-filter-form {
+    display: flex;
+
+    .content {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .input {
+            margin: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+        }
+
+        .entry-filter {
+            display: flex;
+        }
+
+        .actions {
+            display: flex;
+            align-items: flex-end;
+            flex-grow: 1;
+            justify-content: flex-end;
+
+            .button {
+                margin: var(--dui-spacing-small);
+                font-size: 0.8rem;
+            }
+        }
+    }
+}

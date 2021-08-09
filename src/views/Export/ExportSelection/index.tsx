@@ -234,16 +234,12 @@ function EntriesExportSelection(props: Props) {
 
     useEffect(() => {
         const structure = createReportStructure(
-            analysisFramework,
             reportStructureVariant,
             includeSubSector,
+            analysisFramework,
         );
         setReportStructure(structure);
     }, [analysisFramework, reportStructureVariant, includeSubSector]);
-
-    const handleReportStructureVariantChange = useCallback((value: string) => {
-        setReportStructureVariant(value);
-    }, []);
 
     const {
         pending: exportPending,
@@ -271,7 +267,7 @@ function EntriesExportSelection(props: Props) {
         const isWord = activeExportTypeKey === 'word';
         const isPdf = activeExportTypeKey === 'pdf';
 
-        const exportType = ((isWord || isPdf) && 'report') || activeExportTypeKey;
+        const exportType = (isWord || isPdf) ? 'report' : activeExportTypeKey;
         // NOTE: structure and level depict the same thing but are different in structure
         // levels require the sublevels to be named sublevels whereas structure requires
         // sublevels to be names levels
@@ -445,7 +441,7 @@ function EntriesExportSelection(props: Props) {
                         onShowEntryIdChange={setShowEntryId}
                         onShowAryDetailsChange={setShowAryDetails}
                         onShowAdditionalMetadataChange={setShowAdditionalMetadata}
-                        onReportStructureVariantChange={handleReportStructureVariantChange}
+                        onReportStructureVariantChange={setReportStructureVariant}
                         onDecoupledEntriesChange={setDecoupledEntries}
                         onIncludeSubSectorChange={setIncludeSubSector}
                         includeSubSector={includeSubSector}
