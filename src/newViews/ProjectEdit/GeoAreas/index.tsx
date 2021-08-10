@@ -54,7 +54,9 @@ function GeoAreas(props: Props) {
 
     const regionRendererParams = useCallback((_: number, data: BasicRegion) => ({
         region: data,
-    }), []);
+        activeProject,
+        regionsGetTrigger,
+    }), [activeProject, regionsGetTrigger]);
 
     return (
         <div className={_cs(className, styles.geoAreas)}>

@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoTrash,
 } from 'react-icons/io5';
 import {
-    ListView,
     ExpandableContainer,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
@@ -12,15 +11,12 @@ import { useRequest } from '#utils/request';
 
 import _ts from '#ts';
 import {
-    AdminLevel,
     BasicRegion,
     Region,
 } from '#typings';
 
-import AdminLevelCard from './AdminLevelCard';
+import AddAdminLevel from './AddAdminLevel';
 import styles from './styles.scss';
-
-const adminLevelKeySelector = (d: AdminLevel) => d.id;
 
 interface Props {
     region: BasicRegion;
@@ -40,18 +36,15 @@ function RegionCard(props: Props) {
         method: 'GET',
         failureHeader: _ts('geoAreas', 'title'),
     });
-    const handleDeleteRegionClick = () => {}; // FIXME  this will be added later
 
-    const adminLevelRendererParams = useCallback((_: number, data: AdminLevel) => ({
-        adminLevel: data,
-    }), []);
+    const handleDeleteRegionClick = () => {}; // FIXME  this will be added later
 
     return (
         <ExpandableContainer
             className={_cs(className, styles.region)}
-            headerClassName={styles.header}
             heading={region.title}
             sub
+            disabled={response?.isPublished || response?.public}
             headerActions={(
                 <QuickActionConfirmButton
                     name="deleteButton"
@@ -64,14 +57,11 @@ function RegionCard(props: Props) {
                 </QuickActionConfirmButton>
             )}
         >
-            {(response && !response.public && (response.adminLevels?.length ?? 0) > 0) && (
-                <ListView
-                    className={styles.adminLevels}
-                    data={response?.adminLevels}
-                    rendererParams={adminLevelRendererParams}
-                    renderer={AdminLevelCard}
-                    rendererClassName={styles.adminLevel}
-                    keySelector={adminLevelKeySelector}
+            {response && !response.public && (
+                <AddAdminLevel
+                    activeRegion={region.id}
+                    adminLevels={response.adminLevels}
+                    isPublished={response.isPublished}
                 />
             )}
         </ExpandableContainer>

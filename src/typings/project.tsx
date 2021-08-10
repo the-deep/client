@@ -213,6 +213,7 @@ export interface ProjectRolesMap {
 export interface AdminLevel {
     id: number;
     title: string;
+    clientId: string;
     level: number;
     nameProp?: string;
     codeProp?: string;
@@ -237,6 +238,7 @@ export interface Region extends BasicRegion {
     code: string;
     title: string;
     public: boolean;
+    isPublished: boolean;
 }
 
 export interface GeoShapeFile {
@@ -253,6 +255,7 @@ export interface AdminLevelGeoArea extends AdminLevel {
     staleGeoAreas: boolean;
     region: number;
     geoShapeFile: number;
+    parent?: number;
 }
 
 export interface GeoAreaBounds {
