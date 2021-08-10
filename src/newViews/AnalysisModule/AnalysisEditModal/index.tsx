@@ -30,6 +30,7 @@ import {
 import { IoAdd } from 'react-icons/io5';
 
 import { useRequest, useLazyRequest } from '#utils/request';
+import notify from '#notify';
 
 import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
@@ -212,6 +213,16 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             if (response) {
                 onSuccess(response, isDefined(analysisToEdit));
             }
+            notify.send({
+                title: isDefined(analysisToEdit)
+                    ? _ts('analysis.editModal', 'analysisEdit')
+                    : _ts('analysis.editModal', 'analysisCreate'),
+                type: notify.type.SUCCESS,
+                message: isDefined(analysisToEdit)
+                    ? _ts('analysis.editModal', 'analysisEditSuccessful')
+                    : _ts('analysis.editModal', 'analysisCreateSuccessful'),
+                duration: notify.duration.MEDIUM,
+            });
             onModalClose();
         },
         failureHeader: _ts('analysis.editModal', 'anaylsisEditModal'),

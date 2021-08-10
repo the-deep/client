@@ -47,6 +47,7 @@ import {
 import {
     useModalState,
 } from '#hooks/stateManagement';
+import notify from '#notify';
 
 import {
     AppState,
@@ -209,7 +210,15 @@ function AnalysisModule(props: AnalysisModuleProps) {
         {
             url: ctx => `server://projects/${activeProject}/analysis/${ctx}/`,
             method: 'DELETE',
-            onSuccess: handleRetriggers,
+            onSuccess: () => {
+                handleRetriggers();
+                notify.send({
+                    title: _ts('analysis', 'analysis'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('analysis', 'analysisDeleteSuccessful'),
+                    duration: notify.duration.MEDIUM,
+                });
+            },
         },
     );
 
