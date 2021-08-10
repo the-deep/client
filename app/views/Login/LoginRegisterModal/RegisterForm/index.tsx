@@ -16,14 +16,14 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
-import { useLazyRequest } from '#utils/request';
-import HCaptcha from '#newComponents/ui/HCaptcha';
-import NonFieldError from '#newComponents/ui/NonFieldError';
-import HCaptchaSiteKey from '#config/hCaptcha';
+import { useLazyRequest } from '#base/utils/restRequest';
+import HCaptcha from '#components/HCaptcha';
+import NonFieldError from '#components/NonFieldError';
+import HCaptchaSiteKey from '#base/configs/hCaptcha';
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface RegisterFields {
     username: string;
@@ -77,7 +77,7 @@ function RegisterModal(props: Props) {
     } = useLazyRequest<unknown, RegisterFields>({
         url: 'server://users/',
         method: 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: () => {
             setSuccess(true);
         },
@@ -98,7 +98,6 @@ function RegisterModal(props: Props) {
                 });
             }
         },
-        schemaName: 'userCreateResponse',
     });
 
     const handleSubmit = useCallback((finalValue) => {
