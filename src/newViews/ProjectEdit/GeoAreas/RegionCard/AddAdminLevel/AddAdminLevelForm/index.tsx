@@ -108,6 +108,10 @@ function AddAdminLevelForm(props: Props) {
             : 'Failed to create admin level',
     });
 
+    const handleDelete = useCallback(() => {
+        // TODO: handle this appropriately
+    }, []);
+
     const handleSubmit = useCallback(() => {
         const { errored, error: err, value: val } = validate();
         setError(err);
@@ -121,15 +125,27 @@ function AddAdminLevelForm(props: Props) {
     return (
         <ContainerCard
             className={styles.form}
-            footerActions={!isPublished && (
-                <Button
-                    name="submit"
-                    onClick={handleSubmit}
-                    disabled={pristine || pending}
-                    variant="transparent"
-                >
-                    Save
-                </Button>
+            footerActions={(
+                <>
+                    <Button
+                        name="delete"
+                        onClick={handleDelete}
+                        disabled={pending}
+                        variant="transparent"
+                    >
+                        Delete
+                    </Button>
+                    {!isPublished && (
+                        <Button
+                            name="submit"
+                            onClick={handleSubmit}
+                            disabled={pristine || pending}
+                            variant="transparent"
+                        >
+                            Save
+                        </Button>
+                    )}
+                </>
             )}
         >
             <NonFieldError error={error} />

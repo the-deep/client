@@ -1,5 +1,8 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     ContainerCard,
@@ -22,7 +25,7 @@ import {
 import AddAdminLevelForm from './AddAdminLevelForm';
 import styles from './styles.scss';
 
-const tabKeySelector = (d: AdminLevelGeoArea) => d.id.toString();
+const tabKeySelector = (d: AdminLevelGeoArea) => d.clientId;
 
 interface Props {
     className?: string;
@@ -47,16 +50,16 @@ function AddAdminLevel(props: Props) {
 
     const handleAdminLevelAdd = useCallback(() => {
         setAdminLevels((oldAdminLevels) => {
-            const newAdminLevel: Pick<AdminLevelGeoArea, 'id' | 'title' | 'region'> = {
-                id: new Date().getUTCMilliseconds(),
+            const clientId = randomString();
+            const newAdminLevel: Pick<AdminLevelGeoArea, 'title' | 'region' | 'clientId'> = {
+                clientId,
                 title: `Admin Level ${oldAdminLevels.length + 1}`,
                 region: activeRegion,
-
             };
-            setActiveTab(newAdminLevel.id.toString());
+            setActiveTab(clientId);
             return [
-                newAdminLevel,
                 ...oldAdminLevels,
+                newAdminLevel,
             ];
         });
     }, [activeRegion]);
@@ -74,31 +77,34 @@ function AddAdminLevel(props: Props) {
         method: 'GET',
         onSuccess: (response) => {
             if (response.results.length > 0) {
-                setAdminLevels(response.results);
+                const adminLevelsWithClientId = response.results.map(al => ({
+                    ...al,
+                    clientId: randomString(),
+                }));
+                setAdminLevels(adminLevelsWithClientId);
                 if (!activeTab) {
-                    const [first] = response.results;
-                    setActiveTab(first.id.toString());
+                    const [first] = adminLevelsWithClientId;
+                    setActiveTab(first.clientId);
                 }
             }
         },
         failureHeader: 'Failed to fetch admin levels',
     });
 
-    const handleAdminLevelSave = useCallback((id: number) => {
-        setActiveTab(id.toString());
+    const handleAdminLevelSave = useCallback(() => {
         adminLevelTrigger();
     }, [adminLevelTrigger]);
 
-    const tabListRendererParams = useCallback((id: string, data: Partial<AdminLevelGeoArea>) => ({
-        name: id,
+    const tabListRendererParams = useCallback((key: string, data: Partial<AdminLevelGeoArea>) => ({
+        name: key,
         children: data.title,
     }), []);
 
-    const tabPanelRendererParams = useCallback((id: string, value: Partial<AdminLevelGeoArea>) => ({
-        name: id,
+    const tabPanelRendererParams = useCallback((key: string, data: Partial<AdminLevelGeoArea>) => ({
+        name: key,
         children: (
             <AddAdminLevelForm
-                value={value}
+                value={data}
                 onSuccess={handleAdminLevelSave}
                 isPublished={isPublished}
                 adminLevelOptions={adminLevelOptions?.results}

@@ -213,6 +213,7 @@ export interface ProjectRolesMap {
 export interface AdminLevel {
     id: number;
     title: string;
+    clientId: string;
     level: number;
     nameProp?: string;
     codeProp?: string;

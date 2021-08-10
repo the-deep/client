@@ -42,9 +42,9 @@ function RegionCard(props: Props) {
     return (
         <ExpandableContainer
             className={_cs(className, styles.region)}
-            headerClassName={styles.header}
             heading={region.title}
             sub
+            disabled={response?.isPublished || response?.public}
             headerActions={(
                 <QuickActionConfirmButton
                     name="deleteButton"
@@ -59,7 +59,6 @@ function RegionCard(props: Props) {
         >
             {response && !response.public && (
                 <AddAdminLevel
-                    className={styles.adminLevels}
                     activeRegion={region.id}
                     adminLevels={response.adminLevels}
                     isPublished={response.isPublished}
