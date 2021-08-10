@@ -5,14 +5,14 @@ import {
     Modal,
 } from '@the-deep/deep-ui';
 
-import Svg from '#newComponents/Svg';
+import Svg from '#components/Svg';
 import _ts from '#ts';
-import deepLogo from '#resources/img/deep-logo.svg';
+import deepLogo from '#resources/img/deep-logo-new.svg';
 
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Props {
     className?: string;

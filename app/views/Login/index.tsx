@@ -9,13 +9,13 @@ import _ts from '#ts';
 
 import LoginRegisterModal from './LoginRegisterModal';
 import ForgotPasswordModal from './ForgotPasswordModal';
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Props {
     className?: string;
 }
 
-function ExploreDeep(props: Props) {
+function Login(props: Props) {
     const {
         className,
     } = props;
@@ -64,4 +64,4 @@ function ExploreDeep(props: Props) {
     );
 }
 
-export default ExploreDeep;
+export default Login;

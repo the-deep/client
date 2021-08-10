@@ -15,10 +15,9 @@ const fourHundredFour = wrap({
 const signIn = wrap({
     path: '/login/',
     title: 'Login',
-    navbarVisibility: true,
-    component: lazy(() => import('#base/components/PreloadMessage')),
+    navbarVisibility: false,
+    component: lazy(() => import('#views/Login')),
     componentProps: {
-        content: 'Login',
     },
     visibility: 'is-not-authenticated',
 });

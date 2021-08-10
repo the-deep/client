@@ -17,7 +17,6 @@
         }
 
         * {
-            // FIXME: To be removed after appropriate props are exposed
             color: var(--dui-color-text-on-accent)!important;
         }
 

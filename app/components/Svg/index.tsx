@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { randomString, _cs } from '@togglecorp/fujs';
 import SVGInjector from 'svg-injector';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Props extends React.SVGProps<SVGSVGElement> {
     className?: string;

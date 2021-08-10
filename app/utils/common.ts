@@ -83,3 +83,16 @@ export const getDateWithTimezone = (date: string) => {
 
     return `${date}${timezoneOffsetString}`;
 };
+
+export function parseUrlParams(stringParams: string) {
+    const params = decodeURIComponent(stringParams).split('&');
+    let paramsJson = {};
+    params.forEach((param) => {
+        const split = param.split('=');
+        paramsJson = {
+            ...paramsJson,
+            [split[0]]: split[1],
+        };
+    });
+    return paramsJson;
+}
