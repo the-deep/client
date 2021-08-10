@@ -1,5 +1,3 @@
-// import { p } from '#rest';
-
 const responseType = 'token';
 const scope = 'profile';
 const state = '12345';
