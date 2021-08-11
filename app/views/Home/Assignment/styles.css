@@ -15,7 +15,6 @@
         flex-direction: column;
         flex-grow: 1;
         justify-content: center;
-        // color: var(--dui-color-text-watermark);
         color: var(--dui-color-text-disabled);
 
         .icon {

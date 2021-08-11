@@ -6,7 +6,7 @@ import {
 } from '@the-deep/deep-ui';
 import { GiShrug } from 'react-icons/gi';
 
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import { MultiResponse } from '#types';
 import {
     RecentActivityItem,
@@ -14,7 +14,7 @@ import {
 import _ts from '#ts';
 
 import ActivityItem from './ActivityItem';
-import styles from './styles.scss';
+import styles from './styles.css';
 
 const keySelector = (d: RecentActivityItem) => `${d.type}-${d.id}`;
 
@@ -35,7 +35,6 @@ function RecentActivities() {
         createdByDisplayPicture: info.createdByDisplayPicture,
         type: info.type,
     }), []);
-
 
     return (
         <Container

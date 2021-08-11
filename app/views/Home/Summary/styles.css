@@ -1,0 +1,12 @@
+.summary {
+    .content {
+        --gap: var(--dui-spacing-medium);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--gap);
+
+        >* {
+            flex-basis: calc(50% - var(--gap));
+        }
+    }
+}

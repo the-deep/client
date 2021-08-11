@@ -10,7 +10,7 @@ import {
 import { MdPlaylistAddCheck } from 'react-icons/md';
 import { IoCheckmarkDone } from 'react-icons/io5';
 
-import { useRequest, useLazyRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 
 import {
     Assignment,
@@ -20,7 +20,7 @@ import {
 import _ts from '#ts';
 
 import AssignmentItem from './AssignmentItem';
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface BulkResponse {
     assignmentUpdated: number;
@@ -59,7 +59,7 @@ function Assignments() {
         trigger: triggerMarkAsDone,
     } = useLazyRequest<MultiResponse<Assignment>, number>(
         {
-            url: ctx => `server://assignments/${ctx}/`,
+            url: (ctx) => `server://assignments/${ctx}/`,
             method: 'PUT',
             body: { is_done: true },
             onSuccess: () => {
