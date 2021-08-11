@@ -4,7 +4,7 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Props {
     className?: string;
@@ -52,7 +52,7 @@ function RechartsLegend(props: Props) {
                                 className={styles.color}
                             />
                         </div>
-                        <div className={styles.value} >
+                        <div className={styles.value}>
                             { value }
                         </div>
                         {isDefined(percent) && (

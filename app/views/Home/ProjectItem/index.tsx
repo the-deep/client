@@ -1,15 +1,21 @@
 import React, { useCallback, useMemo } from 'react';
-import { connect } from 'react-redux';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     _cs,
     compareDate,
-    reverseRoute,
 } from '@togglecorp/fujs';
 import {
     IoBookmarkOutline,
     IoLockOpenOutline,
 } from 'react-icons/io5';
+import {
+    AreaChart,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Area,
+    ResponsiveContainer,
+} from 'recharts';
 
 import {
     ContainerCard,
@@ -23,30 +29,19 @@ import {
     DateRangeOutput,
 } from '@the-deep/deep-ui';
 
-import ProgressLine from '#newComponents/viz/ProgressLine';
-import FrameworkImageButton from '#newComponents/viewer/FrameworkImageButton';
-
-import {
-    AreaChart,
-    XAxis,
-    YAxis,
-    Tooltip,
-    Area,
-    ResponsiveContainer,
-} from 'recharts';
+import useRouteMatching from '#base/hooks/useRouteMatching';
+import ProgressLine from '#components/ProgressLine';
+import FrameworkImageButton from '#components/FrameworkImageButton';
+import routes from '#base/configs/routes';
 
 import {
     UserActivityStat,
     CountTimeSeries,
-    AppState,
-    ProjectRolesMap,
 } from '#types';
-import { pathNames } from '#constants';
-import { projectRolesSelector } from '#redux';
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 const tickFormatter = (value: number | string) => {
     const date = new Date(value);
@@ -63,16 +58,8 @@ const minTickFormatter = (value: number | string) => {
 
 const recentlyActiveKeySelector = (d: UserActivityStat) => d.id;
 
-const mapStateToProps = (state: AppState) => ({
-    projectRoles: projectRolesSelector(state),
-});
-interface PropsFromState {
-    projectRoles: ProjectRolesMap;
-}
-
 interface RecentProjectItemProps {
     className?: string;
-    role: number;
     projectId: number;
     title: string;
     isPrivate: boolean;
@@ -90,7 +77,7 @@ interface RecentProjectItemProps {
     recentlyActive: UserActivityStat[];
 }
 
-function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
+function ProjectItem(props: RecentProjectItemProps) {
     const {
         className,
         title,
@@ -108,11 +95,9 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
         totalSourcesValidated = 0,
         recentlyActive,
         projectActivity,
-        projectRoles,
-        role,
     } = props;
 
-    const recentlyActiveRendererParams = useCallback((key, data) => ({
+    const recentlyActiveRendererParams = useCallback((_, data) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
         labelContainerClassName: styles.recentlyActiveUserName,
@@ -128,14 +113,23 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
     }), []);
 
     const convertedProjectActivity = useMemo(() => (
-        projectActivity?.map(pa => ({
+        projectActivity?.map((pa) => ({
             count: pa.count,
             date: (new Date(pa.date)).getTime(),
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [projectActivity]);
 
-    const canEditProject = projectRoles[role]?.setupPermissions?.modify;
-    const canAddEntries = projectRoles[role]?.entryPermissions?.modify;
+    // const canEditProject = projectRoles[role]?.setupPermissions?.modify;
+    // const canAddEntries = projectRoles[role]?.entryPermissions?.modify;
+    const canEditProject = true;
+    const canAddEntries = true;
+
+    const routeToTagging = useRouteMatching(
+        routes.tagging,
+        {
+            projectId,
+        },
+    );
 
     return (
         <ContainerCard
@@ -166,7 +160,8 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                     {canEditProject && (
                         <ButtonLikeLink
                             variant="tertiary"
-                            to={reverseRoute(pathNames.editProject, { projectId })}
+                            // FIXME: Add route to new project edit later
+                            to=""
                             icons={(
                                 <FiEdit2 />
                             )}
@@ -180,21 +175,21 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
             horizontallyCompactContent
             footerActions={(
                 <ButtonLikeLink
-                    to={reverseRoute(pathNames.leads, { projectId })}
+                    to={routeToTagging?.to ?? ''}
                 >
-                    {canAddEntries
+                    {(canAddEntries
                         ? _ts('home', 'continueTaggingButton')
                         : _ts('home', 'viewTaggingButton')
-                    }
+                    )}
                 </ButtonLikeLink>
             )}
         >
             <div className={styles.info}>
-                <div className={styles.basicDetails}>
-                    <div className={styles.description}>
+                {(description?.length ?? 0) > 0 && (
+                    <div className={styles.basicDetails}>
                         {description}
                     </div>
-                </div>
+                )}
                 <div className={styles.metadata}>
                     <div className={styles.column}>
                         <TextOutput
@@ -277,7 +272,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
                     sub
                 >
                     <ResponsiveContainer className={styles.responsiveContainer}>
-                        <AreaChart data={convertedProjectActivity} >
+                        <AreaChart data={convertedProjectActivity}>
                             <defs>
                                 <linearGradient id="projectActivity" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.1} />
@@ -313,4 +308,4 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
     );
 }
 
-export default connect(mapStateToProps)(ProjectItem);
+export default ProjectItem;
