@@ -19,13 +19,11 @@ import {
     lengthGreaterThanCondition,
     requiredStringCondition,
     lengthSmallerThanCondition,
-    internal,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
 import { parseUrlParams } from '#utils/common';
-import { useLazyRequest } from '#base/utils/restRequest';
 import { UserContext } from '#base/context/UserContext';
 import { ProjectContext } from '#base/context/ProjectContext';
 import HCaptcha from '#components/HCaptcha';
@@ -37,6 +35,8 @@ import _ts from '#ts';
 import {
     LoginMutation,
     LoginMutationVariables,
+    LoginWithHidMutation,
+    LoginWithHidMutationVariables,
 } from '#generated/types';
 import HCaptchaSiteKey from '#base/configs/hCaptcha';
 
@@ -46,22 +46,10 @@ interface HidQuery {
     // eslint-disable-next-line camelcase
     access_token: string;
     // eslint-disable-next-line camelcase
-    expires_in: string;
-    state: string;
+    expires_in: number;
+    state: number;
     // eslint-disable-next-line camelcase
     token_type: string;
-}
-
-interface HidParams {
-    accessToken: string;
-    expiresIn: string;
-    state: string;
-    tokenType: string;
-}
-
-interface LoginResponse {
-    access: string;
-    refresh: string;
 }
 
 interface LoginFields {
@@ -88,6 +76,28 @@ const LOGIN = gql`
                 }
             }
             captchaRequired
+            errors
+            ok
+        }
+    }
+`;
+
+const LOGIN_WITH_HID = gql`
+    mutation LoginWithHid($input: HIDLoginInputType!) {
+        loginWithHid(data: $input) {
+            result {
+                email
+                id
+                displayName
+                displayPictureUrl
+                lastActiveProject {
+                    allowedPermissions
+                    currentUserRole
+                    id
+                    isPrivate
+                    title
+                }
+            }
             errors
             ok
         }
@@ -190,38 +200,39 @@ function LoginRegisterModal(props: Props) {
         },
     );
 
-    const {
-        pending: hidLoginPending,
-        trigger: hidLoginTrigger,
-    } = useLazyRequest<LoginResponse, HidParams>({
-        url: 'server://token/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        // onSuccess: ({ refresh, access }) => {
-        //     login({ refresh, access });
-        //     authenticate();
-        // },
-        onFailure: ({ errorCode, value: errorValue }) => {
-            const {
-                $internal,
-                ...otherErrors
-            } = errorValue.faramErrors;
-            if (errorCode === 4004) {
-                setError({
-                    ...otherErrors,
-                    [internal]: captchaRequired
-                        ? _ts('explore.login', 'retryRecaptcha')
-                        : _ts('explore.login', 'enterRecaptcha'),
-                });
-                setCaptchaRequired(true);
-            } else {
-                setError({
-                    ...otherErrors,
-                    [internal]: $internal,
-                });
-            }
+    const [
+        loginWithHid,
+        { loading: hidLoginPending },
+    ] = useMutation<LoginWithHidMutation, LoginWithHidMutationVariables>(
+        LOGIN_WITH_HID,
+        {
+            onCompleted: (response) => {
+                const { loginWithHid: loginRes } = response;
+                if (!loginRes) {
+                    return;
+                }
+                const {
+                    errors,
+                    result,
+                    ok,
+                } = loginRes;
+
+                if (errors) {
+                    console.error('Errors are here', errors);
+                    // const formError = transformToFormError(removeNull(errors));
+                    // notifyGQLError(errors);
+                    // setError(formError);
+                } else if (ok) {
+                    const safeUser = removeNull(result);
+                    setUser(safeUser);
+                    setProject(safeUser.lastActiveProject);
+                }
+            },
+            onError: (errors) => {
+                console.error('Errors are here', errors);
+            },
         },
-    });
+    );
 
     useEffect(() => {
         // Get params from the current url
@@ -237,9 +248,13 @@ function LoginRegisterModal(props: Props) {
                 state: hidQuery.state,
                 tokenType: hidQuery.token_type,
             };
-            hidLoginTrigger(params);
+            loginWithHid({
+                variables: {
+                    input: params,
+                },
+            });
         }
-    }, [hidLoginTrigger]);
+    }, [loginWithHid]);
 
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
