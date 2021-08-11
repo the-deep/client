@@ -7,7 +7,7 @@
     }
 
     .right-side-content {
-        flex-basis: 200px + 10vw;
+        flex-basis: calc(200px + 10vw);
         flex-grow: 0;
         flex-shrink: 0;
     }

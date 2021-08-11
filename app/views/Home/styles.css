@@ -1,6 +1,9 @@
 .home {
+    display: flex;
     background-color: var(--dui-color-background);
-    padding: var(--dui-spacing-medium);
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     .main-content {
         display: flex;
@@ -9,18 +12,8 @@
         flex-wrap: wrap;
 
         .summary {
+            align-self: stretch;
             flex-basis: 40%;
-
-            .content {
-                --gap: var(--dui-spacing-medium);
-                display: flex;
-                flex-wrap: wrap;
-                gap: var(--gap);
-
-                >* {
-                    flex-basis: calc(50% - var(--gap));
-                }
-            }
         }
 
         .project-tagging-activity {
@@ -29,6 +22,35 @@
 
         .recent-projects {
             flex-basis: 100%;
+
+            .project-item {
+                margin: var(--dui-spacing-medium) 0;
+            }
+
+            .empty-recent-project {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                flex-grow: 1;
+                justify-content: center;
+                margin: var(--dui-spacing-large) 0;
+                background-color: var(--dui-color-foreground);
+                padding: var(--dui-spacing-extra-large) var(--dui-spacing-large);
+                min-height: 30vh;
+                color: var(--dui-color-text-disabled);
+
+                .icon {
+                    flex-shrink: 0;
+                    padding: var(--dui-spacing-small);
+                    font-size: 10em;
+                }
+
+                .text {
+                    padding: var(--dui-spacing-small);
+                    text-align: center;
+                    font-size: var(--dui-font-size-large);
+                }
+            }
         }
     }
 }

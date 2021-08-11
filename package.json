@@ -49,6 +49,7 @@
         "@types/gapi.auth2": "^0.0.55",
         "@types/google.picker": "^0.0.39",
         "@types/svg-injector": "^0.0.29",
+        "@types/recharts": "^2.0.0",
         "abort-controller": "^3.0.0",
         "apollo-link": "^1.2.14",
         "apollo-link-batch-http": "^1.2.14",
@@ -66,7 +67,8 @@
         "react-ga": "^3.3.0",
         "react-icons": "^4.2.0",
         "react-resize-detector": "^6.7.4",
-        "svg-injector": "^1.1.3"
+        "svg-injector": "^1.1.3",
+        "recharts": "^2.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.13.10",
