@@ -1,25 +1,37 @@
 import React, { useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { gql, useMutation } from '@apollo/client';
 import {
     ButtonLikeLink,
     QuickActionLink,
     QuickActionDropdownMenu,
     DropdownMenu,
     DropdownMenuItem,
+    useConfirmation,
     Border,
 } from '@the-deep/deep-ui';
 import {
     IoHelp,
     IoCompassOutline,
     IoNotificationsOutline,
+    IoLogOutOutline,
 } from 'react-icons/io5';
 
 import SmartNavLink from '#base/components/SmartNavLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
+import { LogoutMutation } from '#generated/types';
 
 import styles from './styles.css';
+
+const LOGOUT = gql`
+    mutation Logout {
+        logout {
+            ok
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -31,7 +43,28 @@ function Navbar(props: Props) {
     const {
         authenticated,
         user,
+        setUser,
     } = useContext(UserContext);
+
+    const [logout] = useMutation<LogoutMutation>(
+        LOGOUT,
+        {
+            onCompleted: (data) => {
+                if (data.logout?.ok) {
+                    setUser(undefined);
+                }
+            },
+        },
+    );
+
+    const [
+        modal,
+        onLogoutClick,
+    ] = useConfirmation({
+        showConfirmationInitially: false,
+        onConfirm: logout,
+        message: 'Are you sure you want to logout?',
+    });
 
     return (
         <nav className={_cs(className, styles.navbar)}>
@@ -92,15 +125,24 @@ function Navbar(props: Props) {
                     <DropdownMenuItem
                         href={route.myProfile.path}
                     >
-                        My Profile
+                        User Profile
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         href={route.userGroups.path}
                     >
-                        User groups
+                        User Groups
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={onLogoutClick}
+                        actions={(
+                            <IoLogOutOutline />
+                        )}
+                    >
+                        Logout
                     </DropdownMenuItem>
                 </DropdownMenu>
             )}
+            {modal}
         </nav>
     );
 }
