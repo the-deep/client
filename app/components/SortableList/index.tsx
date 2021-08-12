@@ -192,7 +192,7 @@ function SortableList<
 
             const newItems = arrayMove(items, oldIndex, newIndex);
             const dataMap = listToMap(
-                data,
+                data ?? [],
                 (d) => String(keySelector(d)),
                 (d) => d,
             );

@@ -7,7 +7,7 @@ interface Option {
     id: number;
     title: string;
     file: string; // this is a url
-    mimeType?: string;
+    mimeType: string;
     metadata?: unknown;
 }
 

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { isDefined } from '@togglecorp/fujs';
 import {
     ObjectSchema,
@@ -14,6 +14,7 @@ import {
     Modal,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#newComponents/ui/NonFieldError';
 import { useLazyRequest } from '#utils/request';
 import {
     Region,
@@ -43,22 +44,25 @@ const schema: FormSchema = {
 
 interface Props {
     projectId: number;
-    onSuccess: () => void;
+    onSuccess: (value: Region) => void;
     onModalClose: () => void;
 }
 
-function CustomGeoAddForm(props: Props) {
+function CustomGeoAddModal(props: Props) {
     const {
         projectId,
         onSuccess,
         onModalClose,
     } = props;
 
-    const defaultFormValue: PartialForm<FormType> = {
-        project: projectId,
-        public: false,
-        isPublished: false,
-    };
+    const defaultFormValue = useMemo(
+        (): PartialForm<FormType> => ({
+            project: projectId,
+            public: false,
+            isPublished: false,
+        }),
+        [projectId],
+    );
 
     const {
         pristine,
@@ -74,23 +78,27 @@ function CustomGeoAddForm(props: Props) {
     const {
         trigger: addRegionsTrigger,
         pending: addRegionsPending,
-    } = useLazyRequest<unknown, Region>({
+    } = useLazyRequest<Region, Region>({
         url: 'server://regions/',
         method: 'POST',
         body: ctx => ctx,
-        onSuccess: () => {
-            onSuccess();
+        onSuccess: (response) => {
+            onSuccess(response);
             onModalClose();
         },
+        // TODO: add error handling
     });
 
-    const handleCustomGeoSubmitClick = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            addRegionsTrigger(val as Region);
-        }
-    }, [setError, validate, addRegionsTrigger]);
+    const handleCustomGeoSubmitClick = useCallback(
+        () => {
+            const { errored, error: err, value: val } = validate();
+            setError(err);
+            if (!errored && isDefined(val)) {
+                addRegionsTrigger(val as Region);
+            }
+        },
+        [setError, validate, addRegionsTrigger],
+    );
 
     return (
         <Modal
@@ -107,6 +115,9 @@ function CustomGeoAddForm(props: Props) {
                 </Button>
             )}
         >
+            <NonFieldError
+                error={error}
+            />
             <div className={styles.row}>
                 <TextInput
                     className={styles.input}
@@ -115,6 +126,7 @@ function CustomGeoAddForm(props: Props) {
                     onChange={setFieldValue}
                     error={error?.title}
                     label="Title"
+                    disabled={addRegionsPending}
                 />
                 <TextInput
                     className={styles.input}
@@ -123,10 +135,11 @@ function CustomGeoAddForm(props: Props) {
                     onChange={setFieldValue}
                     error={error?.code}
                     label="Code"
+                    disabled={addRegionsPending}
                 />
             </div>
         </Modal>
     );
 }
 
-export default CustomGeoAddForm;
+export default CustomGeoAddModal;
