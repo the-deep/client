@@ -214,7 +214,7 @@ export interface ProjectRolesMap {
 export interface AdminLevel {
     id: number;
     title: string;
-    clientId: string;
+    // clientId: string;
     level: number;
     nameProp?: string;
     codeProp?: string;
@@ -249,9 +249,9 @@ export interface GeoShapeFile {
     mimeType: string;
 }
 export interface AdminLevelGeoArea extends AdminLevel {
-    geoShapeFileDetails: GeoShapeFile;
-    geojsonFile: string;
-    boundsFile: string;
+    geoShapeFileDetails?: GeoShapeFile;
+    geojsonFile?: string;
+    boundsFile?: string;
     tolerance: number;
     staleGeoAreas: boolean;
     region: number;

@@ -57,7 +57,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(widgetOptions, (d) => d.clientId, (d) => d.label);
-        return value?.map((v) => optionsMap[v])?.join(', ');
+        return value?.map((v) => optionsMap?.[v])?.join(', ');
     }, [widgetOptions, value]);
 
     return (
