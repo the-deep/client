@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react';
 import {
+    listToMap,
+} from '@togglecorp/fujs';
+import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
@@ -51,21 +54,32 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         sortByOrder(widget?.data?.options)
     ), [widget?.data?.options]);
 
+    const selectedValues = useMemo(() => {
+        const optionsMap = listToMap(widget?.data?.options, (d) => d.clientId, (d) => d.label);
+        return value?.map((v) => optionsMap[v])?.join(', ');
+    }, [widget?.data?.options, value]);
+
     return (
         <ListWidgetWrapper
             className={className}
             title={title}
         >
-            <MultiSelectInput
-                name={name}
-                options={sortedOptions}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <div>
+                    {selectedValues}
+                </div>
+            ) : (
+                <MultiSelectInput
+                    name={name}
+                    options={sortedOptions}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
+                    onChange={onChange}
+                    value={value}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }

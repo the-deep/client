@@ -5,9 +5,15 @@
     .header {
         display: flex;
         align-items: flex-end;
+        text-transform: capitalize;
     }
 
     .children {
         margin-left: var(--dui-spacing-medium);
+
+        >* {
+            color: var(--dui-color-accent);
+            font-weight: var(--dui-font-weight-bold);
+        }
     }
 }
