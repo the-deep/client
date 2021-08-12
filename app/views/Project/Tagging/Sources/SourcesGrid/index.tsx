@@ -1,59 +1,57 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { ListView } from '@the-deep/deep-ui';
+
+import { Entry } from '#types/newEntry';
+import frameworkMockData from '#views/AnalyticalFramework/mockData';
+import { entry1, entry2 } from '#views/Project/Tagging/mockData';
 
 import EntryCard from './EntryCard';
+
 import styles from './styles.css';
 
-const entries = [
+export interface EntryWithLead extends Entry {
+    leadDetails: {
+        id: number;
+        title: string;
+        createdOn: string;
+        publishedOn: string;
+        createdByName: string;
+        authors: {
+            title: string;
+        }[];
+        source: {
+            title: string;
+        };
+    };
+}
+
+const entryKeySelector = (entry: EntryWithLead) => entry.id;
+
+const entries: EntryWithLead[] = [
     {
-        id: '1',
-        sourceTitle: 'The standard Lorem Ipsum passage, used since the 1500s',
-        sourceCreatedOn: '2020-10-12',
-        excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        sourcePublishedOn: '2020-09-31',
-        sourceCreatedByDisplay: 'Aditya Katri',
-        sourceAuthor: 'ReliefWeb',
-        sourcePublisher: 'ReliefWeb',
+        ...entry1,
+        leadDetails: {
+            id: 1,
+            title: 'The standard Lorem Ipsum passage, used since the 1500s',
+            createdOn: '2020-10-12',
+            publishedOn: '2020-09-31',
+            createdByName: 'Aditya Katri',
+            authors: [{ title: 'ReliefWeb' }],
+            source: { title: 'ReliefWeb' },
+        },
     },
     {
-        id: '2',
-        sourceTitle: 'The standard Lorem Ipsum passage, used since the 1500s',
-        sourceCreatedOn: '2020-10-12',
-        excerpt: 'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful.',
-        sourcePublishedOn: '2020-09-31',
-        sourceCreatedByDisplay: 'Aditya Katri',
-        sourceAuthor: 'ReliefWeb',
-        sourcePublisher: 'ReliefWeb',
-    },
-    {
-        id: '3',
-        sourceTitle: 'The standard Lorem Ipsum passage, used since the 1500s',
-        sourceCreatedOn: '2020-10-12',
-        excerpt: 'Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?',
-        sourcePublishedOn: '2020-09-31',
-        sourceCreatedByDisplay: 'Aditya Katri',
-        sourceAuthor: 'ReliefWeb',
-        sourcePublisher: 'ReliefWeb',
-    },
-    {
-        id: '4',
-        sourceTitle: 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
-        sourceCreatedOn: '2021-03-11',
-        excerpt: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?',
-        sourcePublishedOn: '2021-02-22',
-        sourceCreatedByDisplay: 'Safar Ligal',
-        sourceAuthor: 'ReliefWeb',
-        sourcePublisher: 'ReliefWeb',
-    },
-    {
-        id: '5',
-        sourceTitle: 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
-        sourceCreatedOn: '2021-03-11',
-        excerpt: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?',
-        sourcePublishedOn: '2021-02-22',
-        sourceCreatedByDisplay: 'Safar Ligal',
-        sourceAuthor: 'ReliefWeb',
-        sourcePublisher: 'ReliefWeb',
+        ...entry2,
+        leadDetails: {
+            id: 2,
+            title: 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
+            createdOn: '2020-10-12',
+            publishedOn: '2020-09-31',
+            createdByName: 'Aditya Katri',
+            authors: [{ title: 'ReliefWeb' }],
+            source: { title: 'ReliefWeb' },
+        },
     },
 ];
 
@@ -63,27 +61,32 @@ interface Props {
 
 function SourcesGrid(props: Props) {
     const { className } = props;
-    const [expandedEntry, setExpandedEntry] = React.useState<string | undefined>();
-    const handleHideTagsButtonClick = React.useCallback(() => {
+    const [expandedEntry, setExpandedEntry] = React.useState<number | undefined>();
+    const handleHideTagsButtonClick = useCallback(() => {
         setExpandedEntry(undefined);
     }, []);
 
+    const entryRendererParams = useCallback((key: number, entry: EntryWithLead) => ({
+        entry,
+        framework: frameworkMockData,
+        viewTags: expandedEntry === key,
+        leadDetails: entry.leadDetails,
+        onViewTagsButtonClick: setExpandedEntry,
+        onHideTagsButtonClick: handleHideTagsButtonClick,
+        className: _cs(styles.entry, expandedEntry === key && styles.expanded),
+    }), [
+        expandedEntry,
+        handleHideTagsButtonClick,
+    ]);
+
     return (
-        <div className={_cs(styles.sourcesGrid, className)}>
-            {entries.map((entry) => (
-                <EntryCard
-                    className={_cs(
-                        styles.entry,
-                        expandedEntry === entry.id && styles.expanded,
-                    )}
-                    key={entry.id}
-                    entry={entry}
-                    onViewTagsButtonClick={setExpandedEntry}
-                    onHideTagsButtonClick={handleHideTagsButtonClick}
-                    viewTags={expandedEntry === entry.id}
-                />
-            ))}
-        </div>
+        <ListView
+            className={_cs(styles.sourcesGrid, className)}
+            data={entries}
+            renderer={EntryCard}
+            rendererParams={entryRendererParams}
+            keySelector={entryKeySelector}
+        />
     );
 }
 

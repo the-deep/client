@@ -50,6 +50,8 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             childrenContainerClassName={styles.content}
+            disabled={disabled}
+            readOnly={readOnly}
         >
             {!readOnly ? (
                 <>
