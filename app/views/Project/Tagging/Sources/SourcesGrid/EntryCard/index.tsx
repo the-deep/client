@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
@@ -15,35 +15,46 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 
-import styles from './styles.css';
+import { useModalState } from '#hooks/stateManagement';
+import ExcerptOutput from '#components/ExcerptOutput';
+import EntryListItem from '#components/EntryListItem';
+import {
+    AnalysisFramework,
+} from '#types/newAnalyticalFramework';
 
-interface Entry {
-    id: string;
-    sourceTitle?: string;
-    sourceCreatedOn?: string;
-    excerpt?: string;
-    sourcePublishedOn?: string;
-    sourceCreatedByDisplay?: string;
-    sourceAuthor?: string;
-    sourcePublisher?: string;
-}
+import { EntryWithLead } from '../index';
+import styles from './styles.css';
 
 interface Props {
     className?: string;
-    entry: Entry
+    entry: EntryWithLead;
+    leadDetails: EntryWithLead['leadDetails'];
+    framework: AnalysisFramework;
     viewTags?: boolean;
-    onViewTagsButtonClick?: (entryId: string) => void;
-    onHideTagsButtonClick?: (entryId: string) => void;
+    onViewTagsButtonClick?: (entryId: number) => void;
+    onHideTagsButtonClick?: (entryId: number) => void;
 }
 
-function EntyrCard(props: Props) {
+function EntryCard(props: Props) {
     const {
         className,
         entry,
+        leadDetails,
+        framework,
         viewTags,
         onViewTagsButtonClick,
         onHideTagsButtonClick,
     } = props;
+
+    const [
+        editEntryMode,
+        setEditEntryMode,
+        unsetEditEntryMode,
+    ] = useModalState(false);
+
+    const authorsText = useMemo(() => (
+        leadDetails?.authors?.map((a) => a.title)?.join(', ')
+    ), [leadDetails?.authors]);
 
     return (
         <div
@@ -55,11 +66,11 @@ function EntyrCard(props: Props) {
         >
             <Container
                 className={styles.sourceDetails}
-                heading={entry.sourceTitle}
+                heading={leadDetails.title}
                 headingSize="small"
-                headerDescription={entry.sourcePublishedOn && (
+                headerDescription={(
                     <DateOutput
-                        value={entry.sourcePublishedOn}
+                        value={leadDetails.publishedOn}
                     />
                 )}
                 footerQuickActions={(
@@ -82,26 +93,29 @@ function EntyrCard(props: Props) {
                     </Button>
                 )}
             >
-                <div>
-                    {entry.excerpt}
-                </div>
+                <ExcerptOutput
+                    entryType={entry.entryType}
+                    excerpt={entry.excerpt}
+                    imageDetails={entry.imageDetails}
+                    tabularFieldData={entry.tabularFieldData}
+                />
                 <div className={styles.metaSection}>
                     <TextOutput
                         label="Added on"
-                        value={entry.sourceCreatedOn}
+                        value={leadDetails.createdOn}
                         valueType="date"
                     />
                     <TextOutput
                         label="Publisher"
-                        value={entry.sourcePublisher}
+                        value={leadDetails.source?.title}
                     />
                     <TextOutput
                         label="Added by"
-                        value={entry.sourceCreatedByDisplay}
+                        value={leadDetails.createdByName}
                     />
                     <TextOutput
                         label="Author"
-                        value={entry.sourceAuthor}
+                        value={authorsText}
                     />
                 </div>
             </Container>
@@ -119,11 +133,29 @@ function EntyrCard(props: Props) {
                                 <IoClose />
                             </Button>
                         )}
-                        footerActions={(
+                        footerActions={editEntryMode ? (
                             <>
                                 <Button
                                     name={entry.id}
                                     variant="secondary"
+                                    onClick={unsetEditEntryMode}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    name={entry.id}
+                                    variant="secondary"
+                                    onClick={unsetEditEntryMode}
+                                >
+                                    Save
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    name={entry.id}
+                                    variant="secondary"
+                                    onClick={setEditEntryMode}
                                     icons={(
                                         <IoPencil />
                                     )}
@@ -157,7 +189,15 @@ function EntyrCard(props: Props) {
                             </>
                         )}
                     >
-                        Tags
+                        <EntryListItem
+                            entry={entry}
+                            hideExcerpt
+                            framework={framework}
+                            className={styles.entryTags}
+                            sectionContainerClassName={styles.section}
+                            secondaryTaggingContainerClassName={styles.section}
+                            readOnly={!editEntryMode}
+                        />
                     </Container>
                 </>
             )}
@@ -165,4 +205,4 @@ function EntyrCard(props: Props) {
     );
 }
 
-export default EntyrCard;
+export default EntryCard;

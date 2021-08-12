@@ -50,19 +50,22 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         readOnly,
     } = props;
 
+    const widgetOptions = widget?.data?.options;
     const sortedOptions = useMemo(() => (
-        sortByOrder(widget?.data?.options)
-    ), [widget?.data?.options]);
+        sortByOrder(widgetOptions)
+    ), [widgetOptions]);
 
     const selectedValues = useMemo(() => {
-        const optionsMap = listToMap(widget?.data?.options, (d) => d.clientId, (d) => d.label);
+        const optionsMap = listToMap(widgetOptions, (d) => d.clientId, (d) => d.label);
         return value?.map((v) => optionsMap[v])?.join(', ');
-    }, [widget?.data?.options, value]);
+    }, [widgetOptions, value]);
 
     return (
         <ListWidgetWrapper
             className={className}
             title={title}
+            disabled={disabled}
+            readOnly={readOnly}
         >
             {readOnly ? (
                 <div>

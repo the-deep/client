@@ -489,22 +489,22 @@ const dataAf: AnalysisFramework = {
             data: {
                 options: [
                     {
-                        clientId: '331',
-                        label: 'High',
+                        clientId: '333',
+                        label: 'Low',
                         order: 1,
-                        color: '#fffff1',
+                        color: '#e7e1ef',
                     },
                     {
                         clientId: '332',
                         label: 'Medium',
                         order: 2,
-                        color: '#12ff34c',
+                        color: '#c994c7',
                     },
                     {
-                        clientId: '333',
-                        label: 'Low',
+                        clientId: '331',
+                        label: 'High',
                         order: 3,
-                        color: '#aa44ee',
+                        color: '#dd1c77',
                     },
                 ],
             },

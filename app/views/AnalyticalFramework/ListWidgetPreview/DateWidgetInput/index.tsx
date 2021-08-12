@@ -34,6 +34,8 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
         <ListWidgetWrapper
             className={className}
             title={title}
+            disabled={disabled}
+            readOnly={readOnly}
         >
             {readOnly ? (
                 <DateOutput
