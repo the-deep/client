@@ -51,21 +51,31 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         sortByOrder(widget?.data?.options)
     ), [widget?.data?.options]);
 
+    const selectedValue = useMemo(() => (
+        widget?.data?.options?.find((o) => o.clientId === value)?.label
+    ), [widget?.data?.options, value]);
+
     return (
         <ListWidgetWrapper
             className={className}
             title={title}
         >
-            <SelectInput
-                name={name}
-                options={sortedOptions}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <div>
+                    {selectedValue}
+                </div>
+            ) : (
+                <SelectInput
+                    name={name}
+                    options={sortedOptions}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
+                    onChange={onChange}
+                    value={value}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }

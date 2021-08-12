@@ -1,5 +1,8 @@
 import React from 'react';
-import { DateInput } from '@the-deep/deep-ui';
+import {
+    DateInput,
+    DateOutput,
+} from '@the-deep/deep-ui';
 
 import ListWidgetWrapper from '../../ListWidgetWrapper';
 import { DateValue } from '#types/newAnalyticalFramework';
@@ -32,13 +35,20 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
         >
-            <DateInput
-                name={name}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <DateOutput
+                    value={value}
+                    format="dd, MMM yyyy"
+                />
+            ) : (
+                <DateInput
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }
