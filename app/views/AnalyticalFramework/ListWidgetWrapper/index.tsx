@@ -22,6 +22,7 @@ function ListWidgetWrapper(props: Props) {
         children,
         headerClassName,
         childrenContainerClassName,
+        readOnly,
     } = props;
 
     return (
@@ -34,7 +35,13 @@ function ListWidgetWrapper(props: Props) {
             >
                 {title ?? 'Unnamed'}
             </div>
-            <div className={_cs(childrenContainerClassName, styles.children)}>
+            <div
+                className={_cs(
+                    childrenContainerClassName,
+                    styles.children,
+                    readOnly && styles.readOnly,
+                )}
+            >
                 {children}
             </div>
         </div>

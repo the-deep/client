@@ -27,6 +27,7 @@ interface Props {
     title?: string;
     onChange: (newVal: unknown, widgetName: string) => void;
     attributesMap: Obj<WidgetValue>;
+    readOnly?: boolean;
 }
 
 function SectionItem(props: Props) {
@@ -36,6 +37,7 @@ function SectionItem(props: Props) {
         onChange,
         widgets,
         attributesMap,
+        readOnly,
     } = props;
 
     const widgetsWithValue = useMemo(() => (
@@ -50,7 +52,8 @@ function SectionItem(props: Props) {
         value: attributesMap[key]?.data?.value,
         widget: data,
         onChange,
-    }), [onChange, attributesMap]);
+        readOnly,
+    }), [onChange, attributesMap, readOnly]);
 
     return (
         <Container

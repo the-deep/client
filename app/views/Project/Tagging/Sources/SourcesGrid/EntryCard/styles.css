@@ -31,6 +31,18 @@
         .tags-container {
             flex-basis: 50%;
             background-color: transparent;
+
+            .entry-tags {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                --height-entry-item: unset;
+
+                .section {
+                    flex-basis: unset;
+                    width: unset;
+                }
+            }
         }
 
         .verify-actions {
