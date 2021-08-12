@@ -1,5 +1,8 @@
 import React from 'react';
-import { TimeInput } from '@the-deep/deep-ui';
+import {
+    TimeInput,
+    TimeOutput,
+} from '@the-deep/deep-ui';
 
 import ListWidgetWrapper from '../../ListWidgetWrapper';
 import { TimeValue } from '#types/newAnalyticalFramework';
@@ -32,13 +35,19 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
         >
-            <TimeInput
-                name={name}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <TimeOutput
+                    value={value}
+                />
+            ) : (
+                <TimeInput
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }

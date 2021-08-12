@@ -32,14 +32,20 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
         >
-            <TextArea
-                name={name}
-                onChange={onChange}
-                value={value}
-                rows={3}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <div>
+                    {value}
+                </div>
+            ) : (
+                <TextArea
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    rows={3}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }
