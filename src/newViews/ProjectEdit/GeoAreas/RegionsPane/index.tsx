@@ -31,93 +31,128 @@ const regionKeySelector = (d: Region) => d.id.toString();
 interface Props {
     className?: string;
     projectId: number;
+
     regions?: Region[];
     onRegionAdd: () => void;
+    regionsPending?: boolean;
+
+    activeAdminLevel: string | undefined;
+    onActiveAdminLevelChange: (val: string | undefined) => void;
+
+    activeRegion: string | undefined;
+    onActiveRegionChange: (val: string | undefined) => void;
+
+    navigationDisabled?: boolean;
+    triggerId?: number;
 }
 
-function RegionMapList(props: Props) {
+function RegionsPane(props: Props) {
     const {
         className,
         projectId,
-        regions,
+        regions = [],
         onRegionAdd,
+        activeAdminLevel,
+        onActiveAdminLevelChange,
+        activeRegion,
+        onActiveRegionChange,
+        navigationDisabled,
+        triggerId,
+        regionsPending,
     } = props;
 
-    const [selectedRegion, setSelectedRegion] = useState<number | undefined>(undefined);
+    // NOTE: idk if this is required
     const [regionOptions, setRegionOptions] = useState<Region[] | null | undefined>(undefined);
-    const [activeTab, setActiveTab] = useState<string>('');
+
+    interface RegionPatchCtx {
+        newRegion: number,
+        body: {
+            regions: { id: number | string }[],
+        },
+    }
 
     const {
         trigger: regionPatchTrigger,
-    } = useLazyRequest<ProjectDetails, { regions: { id: number | string }[]}>({
+    } = useLazyRequest<ProjectDetails, RegionPatchCtx>({
         url: `server://projects/${projectId}/`,
         method: 'PATCH',
-        body: ctx => ctx,
-        onSuccess: () => {
+        body: ctx => ctx.body,
+        onSuccess: (_, ctx) => {
             notify.send({
                 title: 'Add Regions',
                 type: notify.type.SUCCESS,
                 message: 'Successfully added regions',
                 duration: notify.duration.MEDIUM,
             });
+            onActiveRegionChange(ctx.newRegion.toString());
             onRegionAdd();
         },
     });
 
-    const handleAddRegionConfirm = useCallback(() => {
-        if (selectedRegion && regions) {
-            regionPatchTrigger({
-                regions: [
-                    ...regions.map(d => ({ id: d.id })),
-                    { id: selectedRegion },
-                ],
-            });
-        }
-        setSelectedRegion(undefined);
-    }, [selectedRegion, regionPatchTrigger, regions]);
+    const handleAddRegionConfirm = useCallback(
+        (value: number | undefined) => {
+            if (regions && value) {
+                regionPatchTrigger({
+                    newRegion: value,
+                    body: {
+                        regions: [
+                            ...regions.map(d => ({ id: d.id })),
+                            { id: value },
+                        ],
+                    },
+                });
+            }
+        },
+        [regionPatchTrigger, regions],
+    );
 
     const [
         modal,
         onRegionSelect,
-    ] = useConfirmation({
+    ] = useConfirmation<number>({
         showConfirmationInitially: false,
         onConfirm: handleAddRegionConfirm,
         message: 'Are you sure you want to add this region?',
     });
 
-    const handleRegionSelectChange = useCallback((val: number) => {
-        setSelectedRegion(val);
-        if (onRegionSelect) {
-            onRegionSelect(); // NOTE: Type error from deep-ui
-        }
-    }, [onRegionSelect]);
+    const tabRendererParams = useCallback(
+        (id: string, data: BasicRegion) => ({
+            name: id,
+            children: data.title,
+        }),
+        [],
+    );
 
-    const tabRendererParams = useCallback((id: string, data: BasicRegion) => ({
-        name: id,
-        children: data.title,
-    }), []);
-
-    const regionTabPanelRendererParams = useCallback((id: string) => ({
-        id,
-    }), []);
+    const regionTabPanelRendererParams = useCallback(
+        (id: string) => ({
+            id,
+            activeAdminLevel,
+            onActiveAdminLevelChange,
+            navigationDisabled,
+            triggerId,
+        }),
+        [activeAdminLevel, onActiveAdminLevelChange, navigationDisabled, triggerId],
+    );
 
     return (
-        <div className={_cs(styles.regionMapList, className)}>
+        <div className={_cs(styles.regionsPane, className)}>
             <RegionSelectInput
                 className={styles.region}
                 name="regions"
                 projectId={projectId}
                 value={undefined}
-                onChange={handleRegionSelectChange}
+                onChange={onRegionSelect}
                 options={regionOptions}
                 onOptionsChange={setRegionOptions}
                 placeholder="Add Geo area"
                 variant="general"
                 nonClearable
+                disabled={navigationDisabled}
             />
             <Tabs
-                value={activeTab}
-                onChange={setActiveTab}
+                value={activeRegion}
+                onChange={onActiveRegionChange}
+                disabled={navigationDisabled}
             >
                 <Header
                     className={styles.header}
@@ -135,10 +170,18 @@ function RegionMapList(props: Props) {
                     </TabList>
                 </Header>
                 <div className={styles.tabPanelContainer}>
-                    {(regions?.length ?? 0) < 1 && (
+                    {/* FIXME: show pending message */}
+                    {!regionsPending && (regions.length ?? 0) < 1 && (
                         <div className={_cs(styles.message, className)}>
                             <IoMapOutline className={styles.icon} />
                             {_ts('geoAreas', 'noGeoAreas')}
+                        </div>
+                    )}
+                    {/* FIXME: show pending message */}
+                    {!regionsPending && (regions.length ?? 0) > 0 && !activeRegion && (
+                        <div className={_cs(styles.message, className)}>
+                            <IoMapOutline className={styles.icon} />
+                            No region selected
                         </div>
                     )}
                     <List
@@ -155,4 +198,4 @@ function RegionMapList(props: Props) {
     );
 }
 
-export default RegionMapList;
+export default RegionsPane;
