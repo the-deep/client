@@ -184,6 +184,7 @@ function LoginRegisterModal(props: Props) {
                 setCaptchaRequired(captchaRequiredFromResponse);
 
                 if (errors) {
+                    // FIXME: handle this later
                     console.error('Errors are here', errors);
                     // const formError = transformToFormError(removeNull(errors));
                     // notifyGQLError(errors);
@@ -195,6 +196,7 @@ function LoginRegisterModal(props: Props) {
                 }
             },
             onError: (errors) => {
+                // FIXME: handle this later
                 console.error('Errors are here', errors);
             },
         },
@@ -218,6 +220,7 @@ function LoginRegisterModal(props: Props) {
                 } = loginRes;
 
                 if (errors) {
+                    // FIXME: handle this later
                     console.error('Errors are here', errors);
                     // const formError = transformToFormError(removeNull(errors));
                     // notifyGQLError(errors);
@@ -229,6 +232,7 @@ function LoginRegisterModal(props: Props) {
                 }
             },
             onError: (errors) => {
+                // FIXME: handle this later
                 console.error('Errors are here', errors);
             },
         },
