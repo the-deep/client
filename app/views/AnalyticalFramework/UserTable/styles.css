@@ -1,0 +1,12 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
+    min-height: clamp(320px, 30vh, 50%);
+
+    .pager-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

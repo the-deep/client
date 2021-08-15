@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import {
