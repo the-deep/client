@@ -99,7 +99,7 @@ const partialWidgetKeySelector = (d: PartialWidget) => d.clientId;
 const widgetKeySelector = (d: Widget) => d.clientId;
 
 type Props<T> = {
-    name: T;
+    name: T | undefined;
     isSecondary?: boolean;
 } & ({
     editMode?: false;
@@ -139,7 +139,7 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetDeleteClick = useCallback(
         (widgetId: string) => {
-            if (!props.editMode && props.onWidgetDelete) {
+            if (!props.editMode && props.onWidgetDelete && name) {
                 props.onWidgetDelete(widgetId, name);
             }
         },
@@ -148,7 +148,7 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
-            if (!props.editMode && props.onWidgetEdit) {
+            if (!props.editMode && props.onWidgetEdit && name) {
                 props.onWidgetEdit(widgetId, name);
             }
         },
