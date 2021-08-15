@@ -19,14 +19,14 @@ import {
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
-import NonFieldError from '#newComponents/ui/NonFieldError';
-import HCaptchaSiteKey from '#config/hCaptcha';
-import { useLazyRequest } from '#utils/request';
-import HCaptcha from '#newComponents/ui/HCaptcha';
+import NonFieldError from '#components/NonFieldError';
+import HCaptchaSiteKey from '#base/configs/hCaptcha';
+import { useLazyRequest } from '#base/utils/restRequest';
+import HCaptcha from '#components/HCaptcha';
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Props {
     className?: string;
@@ -85,7 +85,7 @@ function ForgotPasswordModal(props: Props) {
     } = useLazyRequest<unknown, ForgotPasswordFields>({
         url: 'server://password/reset/',
         method: 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: () => {
             setSuccess(true);
         },
@@ -106,7 +106,6 @@ function ForgotPasswordModal(props: Props) {
                 });
             }
         },
-        schemaName: 'userPasswordResetResponse',
     });
 
     const handleSubmit = useCallback(

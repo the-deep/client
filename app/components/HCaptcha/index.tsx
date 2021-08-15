@@ -45,6 +45,7 @@ function HCaptchaInput<T extends string>(props: HCaptchaProps<T>) {
     );
     const handleError = useCallback(
         (err: string) => {
+            // eslint-disable-next-line no-console
             console.error(err);
             onChange(undefined, name);
         },
