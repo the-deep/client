@@ -21,14 +21,13 @@ import {
 import { useModalState } from '#hooks/stateManagement';
 import ActionCell, { Props as ActionCellProps } from '#components/EditDeleteActionCell';
 import {
-    AnalyticalFramework,
     MultiResponse,
 } from '#types';
 import _ts from '#ts';
 import UserContext from '#base/context/UserContext';
 
-import FrameworkDetailsForm from './FrameworkDetailsForm';
-import AddUserModal from '../AddUserModal';
+import { Framework } from '../types';
+import AddUserModal from './AddUserModal';
 import styles from './styles.css';
 
 interface User {
@@ -61,18 +60,13 @@ const userKeySelector = (user: User) => user.id;
 const maxItemsPerPage = 10;
 
 interface Props {
-    frameworkId: number | undefined;
+    framework: Framework;
 }
 
-function FrameworkDetails(props: Props) {
+function UserTable(props: Props) {
     const {
-        frameworkId,
+        framework,
     } = props;
-
-    const [
-        analyticalFramework,
-        setFramework,
-    ] = useState<AnalyticalFramework | undefined>(undefined);
 
     const {
         user,
@@ -80,27 +74,14 @@ function FrameworkDetails(props: Props) {
 
     const activeUserId = user ? +user.id : undefined;
 
-    const {
-        pending: frameworkGetPending,
-    } = useRequest<AnalyticalFramework>({
-        skip: isNotDefined(frameworkId),
-        url: `server://analysis-frameworks/${frameworkId}/`,
-        method: 'GET',
-        failureHeader: _ts('analyticalFramework', 'title'),
-        onSuccess: (response) => {
-            setFramework(response);
-        },
-        onFailure: () => {
-            setFramework(undefined);
-        },
-    });
-
     const [activePage, setActivePage] = useState(1);
 
     const frameworkUsersQuery = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
     }), [activePage]);
+
+    const frameworkId = +framework.id;
 
     const {
         pending: frameworkUsersGetPending,
@@ -210,59 +191,47 @@ function FrameworkDetails(props: Props) {
     );
 
     return (
-        <div className={styles.frameworkDetails}>
-            <FrameworkDetailsForm
-                className={styles.frameworkForm}
-                frameworkId={frameworkId}
-                key={analyticalFramework?.title}
-                analyticalFramework={analyticalFramework}
-                onSuccess={setFramework}
-                frameworkGetPending={frameworkGetPending}
-            />
-            {frameworkId && (
-                <>
-                    <div className={styles.tableContainer}>
-                        {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
-                        <Header
-                            heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
-                            actions={(
-                                <Button
-                                    name="userAdd"
-                                    onClick={handleUserAddClick}
-                                    icons={(<IoAdd />)}
-                                >
-                                    {_ts('analyticalFramework', 'addUserButtonLabel')}
-                                </Button>
-                            )}
-                        />
-                        <Table
-                            data={frameworkUsers?.results}
-                            keySelector={userKeySelector}
-                            columns={columns}
-                        />
-                        <div className={styles.pagerContainer}>
-                            <Pager
-                                activePage={activePage}
-                                itemsCount={frameworkUsers?.count ?? 0}
-                                maxItemsPerPage={maxItemsPerPage}
-                                onActivePageChange={setActivePage}
-                                itemsPerPageControlHidden
-                            />
-                        </div>
-                    </div>
-                    {analyticalFramework && addUserModalShown && (
-                        <AddUserModal
-                            frameworkId={frameworkId}
-                            onModalClose={hideUserAddModal}
-                            onTableReload={triggerMembersList}
-                            isPrivateFramework={analyticalFramework?.isPrivate}
-                            userValue={userToEdit}
-                        />
+        <>
+            <div className={styles.tableContainer}>
+                {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
+                <Header
+                    heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
+                    actions={(
+                        <Button
+                            name="userAdd"
+                            onClick={handleUserAddClick}
+                            icons={(<IoAdd />)}
+                        >
+                            {_ts('analyticalFramework', 'addUserButtonLabel')}
+                        </Button>
                     )}
-                </>
+                />
+                <Table
+                    data={frameworkUsers?.results}
+                    keySelector={userKeySelector}
+                    columns={columns}
+                />
+                <div className={styles.pagerContainer}>
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={frameworkUsers?.count ?? 0}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
+                    />
+                </div>
+            </div>
+            {addUserModalShown && (
+                <AddUserModal
+                    frameworkId={frameworkId}
+                    onModalClose={hideUserAddModal}
+                    onTableReload={triggerMembersList}
+                    isPrivateFramework={framework.isPrivate}
+                    userValue={userToEdit}
+                />
             )}
-        </div>
+        </>
     );
 }
 
-export default FrameworkDetails;
+export default UserTable;

@@ -117,14 +117,15 @@ interface Matrix2Data extends BaseData<undefined> {
 
 interface BaseWidget {
     clientId: string;
-    title: string;
+    id?: string;
     order: number;
+    title: string;
 
+    // what is key
+    // what is properties
     width: 'full' | 'half';
-
     parent?: string;
     condition: Condition[];
-
     type: Types;
 }
 
@@ -196,6 +197,7 @@ export type Widget = NumberWidget
     | ScaleWidget;
 
 export interface Section {
+    id?: string;
     clientId: string;
     title: string;
     tooltip?: string;
