@@ -68,7 +68,9 @@ function Project(props: Props) {
                         variables: { id: data.project.id },
                     });
                 }
+                // FIXME: handle failure
             },
+            // FIXME: handle failure
         },
     );
 
