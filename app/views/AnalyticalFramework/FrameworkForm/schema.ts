@@ -28,12 +28,14 @@ type FormType = PurgeNull<AnalysisFrameworkInputType>;
 export type WidgetsType = NonNullable<FormType['secondaryTagging']>;
 export type SectionsType = NonNullable<FormType['primaryTagging']>;
 
-export type PartialFormType = PartialForm<FormType, 'clientId' | 'widget_id'>;
-export type PartialWidgetsType = PartialForm<WidgetsType, 'clientId' | 'widget_id'>;
-export type PartialSectionsType = PartialForm<SectionsType, 'clientId' | 'widget_id'>;
+// NOTE: making primaryTagging and secondaryTagging non partial as it will be handled internally
+export type PartialFormType = PartialForm<FormType, 'clientId' | 'widget_id' | 'primaryTagging' | 'secondaryTagging'>;
 
-type PartialWidgetType = PartialForm<WidgetsType[number], 'clientId' | 'widget_id'>;
-type PartialSectionType = PartialForm<SectionsType[number], 'clientId' | 'widget_id'>;
+export type PartialWidgetsType = WidgetsType;
+export type PartialSectionsType = SectionsType;
+
+type PartialWidgetType = WidgetsType[number];
+type PartialSectionType = SectionsType[number];
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
@@ -55,7 +57,8 @@ const widgetSchema: WidgetSchema = {
 type WidgetsSchema = ArraySchema<PartialWidgetType>;
 type WidgetsSchemaMember = ReturnType<WidgetsSchema['member']>;
 const widgetsSchema: WidgetsSchema = {
-    keySelector: (col) => col.clientId,
+    // FIXME: this will be mandatory
+    keySelector: (col) => col.clientId ?? '',
     member: (): WidgetsSchemaMember => widgetSchema,
 };
 
@@ -75,11 +78,14 @@ const sectionSchema: SectionSchema = {
 type SectionsSchema = ArraySchema<PartialSectionType>;
 type SectionsSchemaMember = ReturnType<SectionsSchema['member']>;
 const sectionsSchema: SectionsSchema = {
-    keySelector: (col) => col.clientId,
+    // FIXME: this will be mandatory
+    keySelector: (col) => col.clientId ?? '',
     member: (): SectionsSchemaMember => sectionSchema,
 };
 
 export const defaultFormValues: PartialFormType = {
+    primaryTagging: [],
+    secondaryTagging: [],
 };
 
 const schema: FormSchema = {
