@@ -7,7 +7,7 @@ import {
     ButtonLikeLink,
     Container,
     PendingMessage,
-    List,
+    ListView,
 } from '@the-deep/deep-ui';
 import { GiShrug } from 'react-icons/gi';
 
@@ -46,7 +46,7 @@ interface RecentProjectItemProps {
     totalSources: number;
     totalSourcesTagged: number;
     totalSourcesValidated: number;
-    projectActivity: CountTimeSeries[];
+    entriesActivity: CountTimeSeries[];
     recentlyActive: UserActivityStat[];
 }
 
@@ -70,7 +70,7 @@ const getRecentProjectStat = (projectStat: ProjectStat) => ({
     totalSources: projectStat.numberOfLeads,
     totalSourcesTagged: projectStat.numberOfLeadsTagged,
     totalSourcesValidated: projectStat.numberOfLeadsTaggedAndVerified,
-    projectActivity: projectStat.entriesActivity,
+    entriesActivity: projectStat.entriesActivity,
     role: projectStat.role,
     // TODO: Use better activity after API is ready
     recentlyActive: projectStat.topTaggers,
@@ -180,31 +180,28 @@ function Home(props: ViewProps) {
                         <ButtonLikeLink
                             variant="primary"
                             // FIXME: Add route to new project edit later
-                            to=""
+                            to="#"
                         >
                             {_ts('home', 'setupNewProjectButtonLabel')}
                         </ButtonLikeLink>
                     </>
                 )}
             >
-                {finalRecentProjects.length > 0 ? (
-                    <List
-                        data={finalRecentProjects}
-                        rendererParams={recentProjectsRendererParams}
-                        renderer={ProjectItem}
-                        keySelector={recentProjectKeySelector}
-                    />
-                ) : (
-                    <div className={styles.emptyRecentProject}>
-                        <GiShrug className={styles.icon} />
+                <ListView
+                    data={finalRecentProjects}
+                    rendererParams={recentProjectsRendererParams}
+                    renderer={ProjectItem}
+                    keySelector={recentProjectKeySelector}
+                    emptyIcon={(<GiShrug />)}
+                    emptyMessage={(
                         <div className={styles.text}>
                             {/* FIXME: use strings with appropriate wording */}
                             Looks like you do not have any recent project,
                             <br />
                             please select a project to view it&apos;s details
                         </div>
-                    </div>
-                )}
+                    )}
+                />
             </Container>
         </PageContent>
     );
