@@ -1,16 +1,10 @@
+import { internal } from '@togglecorp/toggle-form';
 import { listToMap, isDefined, isNotDefined } from '@togglecorp/fujs';
 
-type BaseError = {
-    $internal: string | undefined;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    fields: object;
-};
-
-type ArrayBaseError = {
-    $internal: string | undefined;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    members: object;
-};
+interface Error {
+    [internal]?: string | undefined;
+    [key: string]: string | Error | undefined;
+}
 
 export interface ObjectError {
     field: string;
@@ -25,42 +19,45 @@ interface ArrayError {
     objectErrors?: ObjectError[];
 }
 
-function transformObject(errors: ObjectError[] | undefined): BaseError | undefined {
+function transformObject(errors: ObjectError[] | undefined): Error | undefined {
     if (isNotDefined(errors)) {
         return undefined;
     }
 
     const topLevelError = errors.find((error) => error.field === 'nonFieldErrors');
+    const finalNonFieldErrors = topLevelError?.messages;
+
     const fieldErrors = errors.filter((error) => error.field !== 'nonFieldErrors');
+    const finalFieldErrors: Error = listToMap(
+        fieldErrors,
+        (error) => error.field,
+        (error) => {
+            if (isDefined(error.messages)) {
+                return error.messages;
+            }
+            const objectErrors = isDefined(error.objectErrors)
+                ? transformObject(error.objectErrors)
+                : undefined;
+
+            const arrayErrors = isDefined(isDefined(error.arrayErrors))
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                ? transformArray(error.arrayErrors)
+                : undefined;
+
+            if (!objectErrors && !arrayErrors) {
+                return undefined;
+            }
+            return { ...objectErrors, ...arrayErrors };
+        },
+    );
 
     return {
-        $internal: topLevelError?.messages,
-        fields: listToMap(
-            fieldErrors,
-            (error) => error.field,
-            (error) => {
-                if (isDefined(error.messages)) {
-                    return error.messages;
-                }
-                let objectErrors;
-                if (isDefined(error.objectErrors)) {
-                    objectErrors = transformObject(error.objectErrors);
-                }
-                let arrayErrors;
-                if (isDefined(error.arrayErrors)) {
-                    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                    arrayErrors = transformArray(error.arrayErrors);
-                }
-                if (!objectErrors && !arrayErrors) {
-                    return undefined;
-                }
-                return { ...objectErrors, ...arrayErrors };
-            },
-        ),
+        [internal]: finalNonFieldErrors,
+        ...finalFieldErrors,
     };
 }
 
-function transformArray(errors: ArrayError[] | undefined): ArrayBaseError | undefined {
+function transformArray(errors: ArrayError[] | undefined): Error | undefined {
     if (isNotDefined(errors)) {
         return undefined;
     }
@@ -69,8 +66,8 @@ function transformArray(errors: ArrayError[] | undefined): ArrayBaseError | unde
     const memberErrors = errors.filter((error) => error.key !== 'nonMemberErrors');
 
     return {
-        $internal: topLevelError?.messages,
-        members: listToMap(
+        [internal]: topLevelError?.messages,
+        ...listToMap(
             memberErrors,
             (error) => error.key,
             (error) => transformObject(error.objectErrors),
@@ -79,5 +76,3 @@ function transformArray(errors: ArrayError[] | undefined): ArrayBaseError | unde
 }
 
 export const transformToFormError = transformObject;
-
-// const errors: ObjectError[] = <get_from_server>;

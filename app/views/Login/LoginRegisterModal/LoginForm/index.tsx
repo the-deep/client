@@ -11,6 +11,7 @@ import {
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
 import {
+    internal,
     ObjectSchema,
     useForm,
     emailCondition,
@@ -29,7 +30,7 @@ import { ProjectContext } from '#base/context/ProjectContext';
 import HCaptcha from '#components/HCaptcha';
 import { hidUrl } from '#base/configs/hid';
 import NonFieldError from '#components/NonFieldError';
-// import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError } from '#base/utils/errorTransform';
 
 import _ts from '#ts';
 import {
@@ -184,11 +185,8 @@ function LoginRegisterModal(props: Props) {
                 setCaptchaRequired(captchaRequiredFromResponse);
 
                 if (errors) {
-                    // FIXME: handle this later
-                    console.error('Errors are here', errors);
-                    // const formError = transformToFormError(removeNull(errors));
-                    // notifyGQLError(errors);
-                    // setError(formError);
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
                 } else if (ok) {
                     const safeUser = removeNull(result);
                     setUser(safeUser);
@@ -196,8 +194,9 @@ function LoginRegisterModal(props: Props) {
                 }
             },
             onError: (errors) => {
-                // FIXME: handle this later
-                console.error('Errors are here', errors);
+                setError({
+                    [internal]: errors.message,
+                });
             },
         },
     );
@@ -220,11 +219,8 @@ function LoginRegisterModal(props: Props) {
                 } = loginRes;
 
                 if (errors) {
-                    // FIXME: handle this later
-                    console.error('Errors are here', errors);
-                    // const formError = transformToFormError(removeNull(errors));
-                    // notifyGQLError(errors);
-                    // setError(formError);
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
                 } else if (ok) {
                     const safeUser = removeNull(result);
                     setUser(safeUser);
@@ -232,8 +228,9 @@ function LoginRegisterModal(props: Props) {
                 }
             },
             onError: (errors) => {
-                // FIXME: handle this later
-                console.error('Errors are here', errors);
+                setError({
+                    [internal]: errors.message,
+                });
             },
         },
     );

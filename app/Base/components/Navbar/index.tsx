@@ -53,7 +53,9 @@ function Navbar(props: Props) {
                 if (data.logout?.ok) {
                     setUser(undefined);
                 }
+                // FIXME: handle failure
             },
+            // FIXME: handle failure
         },
     );
 

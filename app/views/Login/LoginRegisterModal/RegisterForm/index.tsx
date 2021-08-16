@@ -86,6 +86,7 @@ function RegisterModal(props: Props) {
                 $internal,
                 ...otherErrors
             } = errorValue.faramErrors;
+
             if (errorCode === 4004) {
                 setError({
                     ...otherErrors,
