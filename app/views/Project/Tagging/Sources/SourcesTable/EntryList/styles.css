@@ -1,0 +1,15 @@
+.entry-list-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid red;
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+
+        .entry-list {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
