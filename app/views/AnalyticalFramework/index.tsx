@@ -68,7 +68,9 @@ function AnalyticalFramework(props: Props) {
                 if (data.analysisFramework) {
                     setFramework(data.analysisFramework);
                 }
+                // FIXME: handle failure
             },
+            // FIXME: handle failure
         },
     );
 
