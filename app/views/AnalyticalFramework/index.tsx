@@ -35,7 +35,6 @@ function AnalyticalFramework(props: Props) {
     const { frameworkId: frameworkIdFromParams } = useParams<{ frameworkId: string }>();
 
     const frameworkId = !frameworkIdFromParams ? undefined : +frameworkIdFromParams;
-    console.warn(frameworkIdFromParams, frameworkId);
     const createMode = !frameworkIdFromParams;
 
     const [framework, setFramework] = useState<Framework | undefined>();

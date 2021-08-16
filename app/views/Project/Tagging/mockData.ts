@@ -16,49 +16,49 @@ export const entry1: Entry = {
     attributes: [
         {
             id: 'widget1',
-            type: 'text',
+            type: 'TEXTWIDGET',
             data: {
                 value: 'ram',
             },
         },
         {
             id: 'number-widget-random',
-            type: 'number',
+            type: 'NUMBERWIDGET',
             data: {
                 value: 10,
             },
         },
         {
             id: 'single-select-random',
-            type: 'single-select',
+            type: 'SELECTWIDGET',
             data: {
                 value: '15',
             },
         },
         {
             id: 'multi-select-random',
-            type: 'multi-select',
+            type: 'MULTISELECTWIDGET',
             data: {
                 value: ['31', '23'],
             },
         },
         {
             id: 'date-random',
-            type: 'date',
+            type: 'DATEWIDGET',
             data: {
                 value: '2021-01-13',
             },
         },
         {
             id: 'time-random',
-            type: 'time',
+            type: 'TIMEWIDGET',
             data: {
                 value: '13:03:00',
             },
         },
         {
             id: 'date-range-random',
-            type: 'date-range',
+            type: 'DATERANGEWIDGET',
             data: {
                 value: {
                     startDate: '2021-01-12',
@@ -68,7 +68,7 @@ export const entry1: Entry = {
         },
         {
             id: 'time-range-random',
-            type: 'time-range',
+            type: 'TIMERANGEWIDGET',
             data: {
                 value: {
                     startTime: '13:05:00',
@@ -78,7 +78,7 @@ export const entry1: Entry = {
         },
         {
             id: 'matrix-1d-random',
-            type: 'matrix-1d',
+            type: 'MATRIX1DWIDGET',
             data: {
                 value: {
                     1: {
@@ -89,7 +89,7 @@ export const entry1: Entry = {
         },
         {
             id: 'matrix-2d-random',
-            type: 'matrix-2d',
+            type: 'MATRIX2DWIDGET',
             data: {
                 value: {
                     1: {
@@ -105,21 +105,21 @@ export const entry1: Entry = {
         },
         {
             id: 'widget12',
-            type: 'organigram',
+            type: 'ORGANIGRAMWIDGET',
             data: {
                 value: ['nepal', 'pradesh', 'municipality'],
             },
         },
         {
             id: 'widget13',
-            type: 'geo-location',
+            type: 'GEOWIDGET',
             data: {
                 value: ['nepal', 'pradesh1', 'ilam'],
             },
         },
         {
             id: 'scale-random',
-            type: 'scale',
+            type: 'SCALEWIDGET',
             data: {
                 value: '331',
             },
@@ -151,35 +151,35 @@ export const entry2: Entry = {
     attributes: [
         {
             id: 'number-widget-random',
-            type: 'number',
+            type: 'NUMBERWIDGET',
             data: {
                 value: 10,
             },
         },
         {
             id: 'single-select-random',
-            type: 'single-select',
+            type: 'SELECTWIDGET',
             data: {
                 value: '15',
             },
         },
         {
             id: 'multi-select-random',
-            type: 'multi-select',
+            type: 'MULTISELECTWIDGET',
             data: {
                 value: ['31', '23'],
             },
         },
         {
             id: 'widget13',
-            type: 'geo-location',
+            type: 'GEOWIDGET',
             data: {
                 value: ['nepal', 'pradesh1', 'ilam'],
             },
         },
         {
             id: 'scale-random',
-            type: 'scale',
+            type: 'SCALEWIDGET',
             data: {
                 value: '331',
             },

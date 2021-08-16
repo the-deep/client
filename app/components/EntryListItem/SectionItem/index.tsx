@@ -15,7 +15,7 @@ import {
 import {
     WidgetValue,
 } from '#types/newEntry';
-import ListWidgetPreview from '#views/AnalyticalFramework/ListWidgetPreview';
+import ListWidgetPreview from '#views/AnalyticalFramework/FrameworkForm/components/ListCanvas/ListWidgetPreview';
 
 import styles from './styles.css';
 
