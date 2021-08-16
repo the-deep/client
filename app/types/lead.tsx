@@ -53,6 +53,7 @@ export interface Lead extends DatabaseEntityBase {
     pageCount: number;
     wordCount?: number;
     confidentialityDisplay?: string;
+    isAssessmentLead?: boolean;
 
     attachment?: {
         id: number;
