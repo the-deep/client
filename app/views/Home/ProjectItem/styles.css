@@ -1,27 +1,19 @@
 .project-item {
     display: flex;
     flex-direction: column;
-    border: var(--width-separator-thin) solid var(--dui-border-color-card);
+    border: var(--dui-width-separator-thin) solid var(--dui-border-color-card);
     border-radius: var(--dui-border-radius-card);
-    background-color: var(--color-foreground);
 
     .content {
         display: flex;
-        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small))!important;
 
         .info {
             flex-basis: 0;
             flex-grow: 0.55;
 
             .basic-details {
-                display: flex;
-
-                .description {
-                    // flex-basis: 50%;
-                    flex-grow: 0;
-                    padding: var(--dui-spacing-small) 0;
-                    line-height: 1.8;
-                }
+                padding: var(--dui-spacing-small) 0;
+                line-height: 1.8;
             }
 
             .metadata {
@@ -89,7 +81,7 @@
                 padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small)) calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
             }
 
-            .project-activity-container {
+            .entries-activity-container {
                 flex-basis: 100%;
                 margin: var(--dui-spacing-small);
                 border: var(--dui-width-separator-thin) solid var(--dui-color-separator);

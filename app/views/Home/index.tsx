@@ -1,122 +1,207 @@
-import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
-    IoDocumentTextOutline,
-    IoBookmarkOutline,
-    IoDocumentOutline,
-    IoCheckmarkCircle,
-} from 'react-icons/io5';
+    _cs,
+    isNotDefined,
+} from '@togglecorp/fujs';
 import {
-    InformationCard,
-    PercentageInformationCard,
-    Container,
     ButtonLikeLink,
-    SelectInput,
-    useInputState,
+    Container,
+    PendingMessage,
+    ListView,
 } from '@the-deep/deep-ui';
+import { GiShrug } from 'react-icons/gi';
 
+import { useRequest } from '#base/utils/restRequest';
+
+import {
+    UserActivityStat,
+    CountTimeSeries,
+    ProjectStat,
+    ProjectsSummary,
+} from '#types';
+import { Project } from '#base/types/project';
 import PageContent from '#components/PageContent';
+import ProjectSelectInput from '#components/ProjectSelectInput';
+
+import _ts from '#ts';
+
+import ProjectItem from './ProjectItem';
+import Summary from './Summary';
+import Activity from './Activity';
+import Assignment from './Assignment';
+import RecentActivity from './RecentActivity';
 
 import styles from './styles.css';
 
-interface Project {
-    id: number;
+interface RecentProjectItemProps {
+    projectId: number;
     title: string;
+    isPrivate: boolean;
+    description?: string;
+    projectOwnerName: string;
+    analysisFrameworkTitle?: string;
+    startDate?: string;
+    endDate?: string;
+    totalUsers: number;
+    totalSources: number;
+    totalSourcesTagged: number;
+    totalSourcesValidated: number;
+    entriesActivity: CountTimeSeries[];
+    recentlyActive: UserActivityStat[];
 }
 
-const emptyProjectList: Project[] = [];
-const projectKeySelector = (p: Project) => p.id;
-const projectLabelSelector = (p: Project) => p.title;
+const recentProjectKeySelector = (option: RecentProjectItemProps) => option.projectId;
 
-interface Props {
+interface ViewProps {
     className?: string;
 }
 
-function Home(props: Props) {
-    const { className } = props;
-    const [project, setProject] = useInputState<number | undefined>(undefined);
+const getRecentProjectStat = (projectStat: ProjectStat) => ({
+    projectId: projectStat.id,
+    title: projectStat.title,
+    isPrivate: projectStat.isPrivate,
+    description: projectStat.description,
+    startDate: projectStat.startDate,
+    endDate: projectStat.endDate,
+    projectOwnerName: projectStat.createdByName,
+    analysisFrameworkTitle: projectStat.analysisFrameworkTitle,
+    analysisFramework: projectStat.analysisFramework,
+    totalUsers: projectStat.numberOfUsers,
+    totalSources: projectStat.numberOfLeads,
+    totalSourcesTagged: projectStat.numberOfLeadsTagged,
+    totalSourcesValidated: projectStat.numberOfLeadsTaggedAndVerified,
+    entriesActivity: projectStat.entriesActivity,
+    role: projectStat.role,
+    // TODO: Use better activity after API is ready
+    recentlyActive: projectStat.topTaggers,
+});
+
+function Home(props: ViewProps) {
+    const {
+        className,
+    } = props;
+
+    const [selectedProject, setSelectedProject] = useState<string | undefined>(undefined);
+    const [projects, setProjects] = useState<
+        Pick<Project, 'id' | 'title' | 'isPrivate'>[] | undefined | null
+    >(undefined);
+
+    const {
+        pending: recentProjectsPending,
+        response: recentProjectsResponse,
+    } = useRequest<ProjectStat[]>({
+        url: 'server://projects-stat/recent/',
+        method: 'GET',
+        failureHeader: _ts('home', 'recentProjectsTitle'),
+    });
+
+    const {
+        pending: summaryPending,
+        response: summaryResponse,
+    } = useRequest<ProjectsSummary>({
+        url: 'server://projects-stat/summary/',
+        method: 'GET',
+        failureHeader: _ts('home', 'summaryOfMyProjectsHeading'),
+    });
+
+    const {
+        pending: projectStatsPending,
+        response: projectStats,
+    } = useRequest<ProjectStat>({
+        skip: isNotDefined(selectedProject),
+        url: `server://projects-stat/${selectedProject}/`,
+        method: 'GET',
+        failureHeader: _ts('home', 'projectDetails'),
+    });
+
+    const projectDashboardData = useMemo(() => {
+        if (!selectedProject || !projectStats) {
+            return undefined;
+        }
+        return getRecentProjectStat(projectStats);
+    }, [projectStats, selectedProject]);
+
+    const recentProjectsRendererParams = useCallback((_, data) => ({
+        className: styles.projectItem,
+        ...data,
+    }), []);
+
+    const finalRecentProjects: RecentProjectItemProps[] = useMemo(() => {
+        if (selectedProject && projectDashboardData) {
+            return [projectDashboardData];
+        }
+        return (recentProjectsResponse ?? []).map(
+            (recentProject) => getRecentProjectStat(recentProject),
+        );
+    }, [projectDashboardData, selectedProject, recentProjectsResponse]);
+
+    const pageDataPending = summaryPending || recentProjectsPending || projectStatsPending;
 
     return (
         <PageContent
             className={_cs(styles.home, className)}
             rightSideContent={(
                 <>
-                    <Container
-                        heading="My Assignments"
-                    >
-                        You do not have any assignments
-                    </Container>
-                    <Container
-                        heading="Recent Activity"
-                    >
-                        You do not have any recent activity
-                    </Container>
+                    <Assignment />
+                    <RecentActivity />
                 </>
             )}
             mainContentClassName={styles.mainContent}
         >
-            <Container
+            { pageDataPending && <PendingMessage /> }
+            <Summary
                 className={styles.summary}
-                heading="Summary of my Projects"
-                contentClassName={styles.content}
-            >
-                <InformationCard
-                    icon={<IoDocumentTextOutline />}
-                    value={8}
-                    label="Projects"
-                    variant="complement1"
-                    coloredBackground
-                />
-                <InformationCard
-                    icon={<IoBookmarkOutline />}
-                    label="Total Added Sources"
-                    value={250}
-                    variant="accent"
-                    coloredBackground
-                />
-                <PercentageInformationCard
-                    icon={<IoDocumentOutline />}
-                    value={78}
-                    variant="complement2"
-                    label="Sources Tagged"
-                />
-                <PercentageInformationCard
-                    icon={<IoCheckmarkCircle />}
-                    value={54}
-                    label="Sources Tagged & Validated"
-                    variant="complement1"
-                />
-            </Container>
+                summaryResponse={summaryResponse}
+            />
             <Container
                 className={styles.projectTaggingActivity}
                 heading="Projects Tagging Activity"
                 headingDescription="Last 3 months"
                 inlineHeadingDescription
             >
-                Not enough data to populate the chart
+                <Activity
+                    data={summaryResponse?.recentEntriesActivity}
+                />
             </Container>
             <Container
                 className={styles.recentProjects}
-                heading="Recent Projects"
+                heading={_ts('home', 'recentProjectsHeading')}
                 headerActions={(
                     <>
-                        <SelectInput
-                            placeholder="Select Project"
-                            name="project-list"
-                            options={emptyProjectList}
-                            keySelector={projectKeySelector}
-                            labelSelector={projectLabelSelector}
+                        <ProjectSelectInput
+                            name=""
+                            options={projects}
+                            onOptionsChange={setProjects}
+                            placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                            value={selectedProject}
+                            onChange={setSelectedProject}
                             variant="general"
-                            value={project}
-                            onChange={setProject}
                         />
-                        <ButtonLikeLink to="#">
-                            Set up a new Project
+                        <ButtonLikeLink
+                            variant="primary"
+                            // FIXME: Add route to new project edit later
+                            to="#"
+                        >
+                            {_ts('home', 'setupNewProjectButtonLabel')}
                         </ButtonLikeLink>
                     </>
                 )}
             >
-                You do not have any recent projects
+                <ListView
+                    data={finalRecentProjects}
+                    rendererParams={recentProjectsRendererParams}
+                    renderer={ProjectItem}
+                    keySelector={recentProjectKeySelector}
+                    emptyIcon={(<GiShrug />)}
+                    emptyMessage={(
+                        <div className={styles.text}>
+                            {/* FIXME: use strings with appropriate wording */}
+                            Looks like you do not have any recent project,
+                            <br />
+                            please select a project to view it&apos;s details
+                        </div>
+                    )}
+                />
             </Container>
         </PageContent>
     );

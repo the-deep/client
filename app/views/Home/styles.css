@@ -1,6 +1,9 @@
 .home {
+    display: flex;
     background-color: var(--dui-color-background);
-    padding: var(--dui-spacing-medium);
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     .main-content {
         display: flex;
@@ -9,18 +12,8 @@
         flex-wrap: wrap;
 
         .summary {
+            align-self: stretch;
             flex-basis: 40%;
-
-            .content {
-                --gap: var(--dui-spacing-medium);
-                display: flex;
-                flex-wrap: wrap;
-                gap: var(--gap);
-
-                >* {
-                    flex-basis: calc(50% - var(--gap));
-                }
-            }
         }
 
         .project-tagging-activity {
@@ -29,6 +22,15 @@
 
         .recent-projects {
             flex-basis: 100%;
+
+            .project-item {
+                margin: var(--dui-spacing-medium) 0;
+            }
+
+            .text {
+                text-align: center;
+                font-size: var(--dui-font-size-large);
+            }
         }
     }
 }

@@ -10,7 +10,6 @@ import {
 
 import {
     Container,
-    ContainerProps,
     InformationCard,
     PercentageInformationCard,
 } from '@the-deep/deep-ui';
@@ -19,9 +18,9 @@ import _ts from '#ts';
 
 import { ProjectsSummary } from '#types';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
-interface Props extends ContainerProps {
+interface Props {
     className?: string;
     summaryResponse?: ProjectsSummary;
 }
@@ -30,8 +29,6 @@ function Summary(props: Props) {
     const {
         className,
         summaryResponse,
-        contentClassName,
-        ...otherProps
     } = props;
 
     const {
@@ -46,8 +43,8 @@ function Summary(props: Props) {
     return (
         <Container
             className={_cs(className, styles.summary)}
-            contentClassName={_cs(contentClassName, styles.content)}
-            {...otherProps}
+            heading="Summary of my Projects"
+            contentClassName={styles.content}
         >
             <InformationCard
                 icon={<IoDocumentTextOutline />}
@@ -64,14 +61,12 @@ function Summary(props: Props) {
                 coloredBackground
             />
             <PercentageInformationCard
-                className={styles.percentageInfoCard}
                 value={taggedPercent}
                 variant="complement2"
                 label={_ts('home', 'sourcesTagged')}
                 icon={<IoDocumentOutline />}
             />
             <PercentageInformationCard
-                className={styles.percentageInfoCard}
                 value={verifiedPercent}
                 label={_ts('home', 'sourcesTaggedValidated')}
                 variant="complement1"

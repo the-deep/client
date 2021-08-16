@@ -11,7 +11,7 @@ import { Assignment } from '#types';
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface AssignmentRendererProps extends Assignment {
     handleClick: (id: number) => void;

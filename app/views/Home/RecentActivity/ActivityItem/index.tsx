@@ -5,11 +5,11 @@ import {
     DateOutput,
 } from '@the-deep/deep-ui';
 
-import Avatar from '#newComponents/ui/Avatar';
+import Avatar from '#components/Avatar';
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 const emptyLink = '#'; // TODO: Add link when made
 
@@ -49,10 +49,10 @@ function ActivityItem(props: RecentActivityProps) {
                         {createdByDisplayName}
                     </Link>
                     &nbsp;
-                    {type === 'lead'
+                    {(type === 'lead'
                         ? _ts('recentActivity', 'leadAdded')
                         : _ts('recentActivity', 'entryCommentAdded')
-                    }
+                    )}
                     &nbsp;
                     <Link
                         to={emptyLink}

@@ -17,9 +17,9 @@ import {
 
 import { Card } from '@the-deep/deep-ui';
 
-import RechartsLegend from '#newComponents/ui/RechartsLegend';
+import RechartsLegend from '#components/RechartsLegend';
 import { ProjectRecentActivity } from '#types';
-import styles from './styles.scss';
+import styles from './styles.css';
 
 const colorScheme = [
     '#a6aff4',
@@ -56,14 +56,14 @@ function Activity(props: Props) {
     } = props;
 
     const projectList = useMemo(() => {
-        const sortedActivities = data?.activities.map(a => ({
+        const sortedActivities = data?.activities.map((a) => ({
             date: new Date(a.date).getTime(),
             value: a.count,
             project: a.project,
         })).sort((a, b) => compareDate(a.date, b.date)) ?? [];
 
-        const groupedList = listToGroupList(sortedActivities, d => d.project, d => d);
-        return data?.projects.map(d => ({
+        const groupedList = listToGroupList(sortedActivities, (d) => d.project, (d) => d);
+        return data?.projects.map((d) => ({
             id: d.id,
             title: d.title,
             data: groupedList[d.id],
