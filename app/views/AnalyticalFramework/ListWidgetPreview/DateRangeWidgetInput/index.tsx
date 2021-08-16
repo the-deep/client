@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import {
     QuickActionButton,
     DateRangeInput,
+    DateRangeOutput,
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
@@ -49,24 +50,36 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             childrenContainerClassName={styles.content}
+            disabled={disabled}
+            readOnly={readOnly}
         >
-            <DateRangeInput
-                className={styles.input}
-                name={name}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
-            <QuickActionButton
-                className={styles.button}
-                name={undefined}
-                onClick={handleValueSwap}
-                title="Swap Values" // FIXME: use translations
-                variant="action"
-            >
-                <IoSwapHorizontal />
-            </QuickActionButton>
+            {!readOnly ? (
+                <>
+                    <DateRangeInput
+                        className={styles.input}
+                        name={name}
+                        onChange={onChange}
+                        value={value}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                    />
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        onClick={handleValueSwap}
+                        title="Swap Values" // FIXME: use translations
+                        variant="action"
+                    >
+                        <IoSwapHorizontal />
+                    </QuickActionButton>
+                </>
+            ) : (
+                <DateRangeOutput
+                    className={styles.input}
+                    startDate={value?.startDate}
+                    endDate={value?.endDate}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }

@@ -1,5 +1,8 @@
 import React from 'react';
-import { NumberInput } from '@the-deep/deep-ui';
+import {
+    NumberInput,
+    NumberOutput,
+} from '@the-deep/deep-ui';
 
 import ListWidgetWrapper from '../../ListWidgetWrapper';
 import { NumberValue } from '#types/newAnalyticalFramework';
@@ -31,14 +34,22 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         <ListWidgetWrapper
             className={className}
             title={title}
+            disabled={disabled}
+            readOnly={readOnly}
         >
-            <NumberInput
-                name={name}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <NumberOutput
+                    value={value}
+                />
+            ) : (
+                <NumberInput
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }

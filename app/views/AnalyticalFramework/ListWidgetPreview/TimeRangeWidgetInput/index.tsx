@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import {
     TimeRangeInput,
+    TimeRangeOutput,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
@@ -49,24 +50,35 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             childrenContainerClassName={styles.content}
+            disabled={disabled}
+            readOnly={readOnly}
         >
-            <TimeRangeInput
-                className={styles.input}
-                name={name}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
-            <QuickActionButton
-                className={styles.button}
-                name={undefined}
-                onClick={handleValueSwap}
-                title="Swap Values" // FIXME: use translations
-                variant="action"
-            >
-                <IoSwapHorizontal />
-            </QuickActionButton>
+            {readOnly ? (
+                <TimeRangeOutput
+                    startTime={value?.startTime}
+                    endTime={value?.startTime}
+                />
+            ) : (
+                <>
+                    <TimeRangeInput
+                        className={styles.input}
+                        name={name}
+                        onChange={onChange}
+                        value={value}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                    />
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        onClick={handleValueSwap}
+                        title="Swap Values" // FIXME: use translations
+                        variant="action"
+                    >
+                        <IoSwapHorizontal />
+                    </QuickActionButton>
+                </>
+            )}
         </ListWidgetWrapper>
     );
 }

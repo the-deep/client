@@ -47,25 +47,38 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         readOnly,
     } = props;
 
+    const widgetOptions = widget?.data?.options;
     const sortedOptions = useMemo(() => (
-        sortByOrder(widget?.data?.options)
-    ), [widget?.data?.options]);
+        sortByOrder(widgetOptions)
+    ), [widgetOptions]);
+
+    const selectedValue = useMemo(() => (
+        widgetOptions?.find((o) => o.clientId === value)?.label
+    ), [widgetOptions, value]);
 
     return (
         <ListWidgetWrapper
             className={className}
             title={title}
+            disabled={disabled}
+            readOnly={readOnly}
         >
-            <SelectInput
-                name={name}
-                options={sortedOptions}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-                onChange={onChange}
-                value={value}
-                readOnly={readOnly}
-                disabled={disabled}
-            />
+            {readOnly ? (
+                <div>
+                    {selectedValue}
+                </div>
+            ) : (
+                <SelectInput
+                    name={name}
+                    options={sortedOptions}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
+                    onChange={onChange}
+                    value={value}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                />
+            )}
         </ListWidgetWrapper>
     );
 }

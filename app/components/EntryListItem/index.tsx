@@ -29,7 +29,11 @@ interface Props {
     className?: string;
     entry: Entry;
     framework: AnalysisFramework;
-    index: number
+    index?: number;
+    hideExcerpt?: boolean;
+    sectionContainerClassName?: string;
+    secondaryTaggingContainerClassName?: string;
+    readOnly?: boolean;
 }
 
 function EntryListItem(props: Props) {
@@ -43,7 +47,11 @@ function EntryListItem(props: Props) {
             tabularFieldData,
             attributes,
         },
+        hideExcerpt = false,
         framework,
+        sectionContainerClassName,
+        secondaryTaggingContainerClassName,
+        readOnly,
     } = props;
 
     const attributesMap = useMemo(() => (
@@ -64,7 +72,8 @@ function EntryListItem(props: Props) {
         widgets: sectionItem.widgets,
         onChange: handleWidgetValueChange,
         attributesMap,
-    }), [handleWidgetValueChange, attributesMap]);
+        readOnly,
+    }), [handleWidgetValueChange, attributesMap, readOnly]);
 
     const secondaryWidgetsWithValue = useMemo(() => (
         framework.secondaryTagging.filter(
@@ -78,32 +87,39 @@ function EntryListItem(props: Props) {
         value: attributesMap[key]?.data?.value,
         widget: data,
         onChange: handleWidgetValueChange,
-    }), [handleWidgetValueChange, attributesMap]);
+        readOnly,
+    }), [handleWidgetValueChange, attributesMap, readOnly]);
 
     return (
         <div className={_cs(className, styles.entryListItem)}>
-            <Container
-                className={_cs(className, styles.excerpt)}
-                heading={`Entry ${index + 1}`}
-                headingSize="extraSmall"
-                horizontallyCompactContent
-            >
-                <ExcerptOutput
-                    entryType={entryType}
-                    excerpt={excerpt}
-                    imageDetails={imageDetails}
-                    tabularFieldData={tabularFieldData}
-                />
-            </Container>
+            {!hideExcerpt && (
+                <Container
+                    className={_cs(className, styles.excerpt)}
+                    heading={index ? `Entry ${index + 1}` : undefined}
+                    headingSize="extraSmall"
+                    horizontallyCompactContent
+                >
+                    <ExcerptOutput
+                        entryType={entryType}
+                        excerpt={excerpt}
+                        imageDetails={imageDetails}
+                        tabularFieldData={tabularFieldData}
+                    />
+                </Container>
+            )}
             <List
                 data={framework.primaryTagging}
                 rendererParams={sectionRendererParams}
-                rendererClassName={styles.section}
+                rendererClassName={_cs(styles.section, sectionContainerClassName)}
                 renderer={SectionItem}
                 keySelector={sectionKeySelector}
             />
             <Container
-                className={_cs(className, styles.secondaryTagging)}
+                className={_cs(
+                    className,
+                    styles.secondaryTagging,
+                    secondaryTaggingContainerClassName,
+                )}
                 heading="Secondary Tagging"
                 headingSize="extraSmall"
                 horizontallyCompactContent

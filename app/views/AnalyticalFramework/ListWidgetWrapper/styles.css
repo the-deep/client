@@ -1,13 +1,22 @@
 .list-widget-wrapper {
     display: flex;
+    flex-wrap: wrap;
     margin: var(--dui-spacing-small);
 
     .header {
         display: flex;
         align-items: flex-end;
+        text-transform: capitalize;
     }
 
     .children {
-        margin-left: var(--dui-spacing-medium);
+        margin: 0 var(--dui-spacing-small);
+
+        &.read-only {
+            >* {
+                color: var(--dui-color-accent);
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
     }
 }
