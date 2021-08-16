@@ -19,11 +19,11 @@ import {
 } from '@apollo/client';
 
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/NewOrganizationSelectInput';
+import UserTable from './UserTable';
 // import UploadImage from './UploadImage';
-import UserTable from '../UserTable';
-import PrimaryTagging from '../PrimaryTagging';
-import SecondaryTagging from '../SecondaryTagging';
-import Review from '../Review';
+import PrimaryTagging from './PrimaryTagging';
+import SecondaryTagging from './SecondaryTagging';
+import Review from './Review';
 import { Framework } from '../types';
 import {
     UpdateFrameworkMutation,
@@ -40,7 +40,6 @@ import {
 
 import schema, { defaultFormValues, PartialFormType } from './schema';
 import styles from './styles.css';
-
 
 interface FrameworkFormProps {
     frameworkId: number | undefined;
@@ -72,8 +71,9 @@ function FrameworkForm(props: FrameworkFormProps) {
                 description,
                 isPrivate,
                 organization: organization?.id,
-                primaryTagging,
-                secondaryTagging,
+                // FIXME: these empty array are side-effects of new PartialForm
+                primaryTagging: primaryTagging ?? [],
+                secondaryTagging: secondaryTagging ?? [],
             });
         },
         [framework],
@@ -233,6 +233,9 @@ function FrameworkForm(props: FrameworkFormProps) {
                 name="primary-tagging"
             >
                 <PrimaryTagging
+                    name="primaryTagging"
+                    value={value.primaryTagging}
+                    onChange={setFieldValue}
                     className={styles.view}
                     // FIXME: remove this later
                     frameworkId={frameworkId}
@@ -243,6 +246,9 @@ function FrameworkForm(props: FrameworkFormProps) {
                 name="secondary-tagging"
             >
                 <SecondaryTagging
+                    name="secondaryTagging"
+                    value={value.secondaryTagging}
+                    onChange={setFieldValue}
                     className={styles.view}
                     // FIXME: remove this later
                     frameworkId={frameworkId}
@@ -254,6 +260,8 @@ function FrameworkForm(props: FrameworkFormProps) {
             >
                 <Review
                     className={styles.view}
+                    primaryTagging={value.primaryTagging}
+                    secondaryTagging={value.secondaryTagging}
                 />
             </TabPanel>
         </>

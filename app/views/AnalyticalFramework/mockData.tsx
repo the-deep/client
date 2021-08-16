@@ -5,13 +5,14 @@ import {
 } from '#types/newAnalyticalFramework';
 
 const matrix1d: Matrix1dWidget = {
+    id: '1',
     clientId: 'matrix-1d-random',
-    type: 'matrix-1d',
+    widgetId: 'MATRIX1DWIDGET',
     title: 'Matrix 1d',
     order: 1,
     width: 'full',
     condition: [],
-    data: {
+    properties: {
         rows: [
             {
                 clientId: '1',
@@ -191,13 +192,14 @@ const matrix1d: Matrix1dWidget = {
 };
 
 const matrix2d: Matrix2dWidget = {
+    id: '2',
     clientId: 'matrix-2d-random',
-    type: 'matrix-2d',
+    widgetId: 'MATRIX2DWIDGET',
     title: 'Matrix 2d',
     order: 2,
     width: 'full',
     condition: [],
-    data: {
+    properties: {
         rows: [
             {
                 clientId: '1',
@@ -356,6 +358,7 @@ const dataAf: AnalysisFramework = {
 
     primaryTagging: [
         {
+            id: '100',
             clientId: 'primary-tagging-random',
             title: 'Missing Wave',
             tooltip: 'On on produce colonel pointed. Just four sold need over how any.',
@@ -363,6 +366,7 @@ const dataAf: AnalysisFramework = {
             widgets: [matrix1d, matrix2d],
         },
         {
+            id: '101',
             clientId: 'primary-tagging-random-2',
             title: 'Found Wave',
             tooltip: 'On on produce colonel pointed. Just four sold need over how any wow.',
@@ -372,25 +376,27 @@ const dataAf: AnalysisFramework = {
     ],
     secondaryTagging: [
         {
+            id: '3',
             clientId: 'number-widget-random',
             title: 'Number Widget',
             order: 1,
             width: 'full',
             condition: [],
-            type: 'number',
-            data: {
+            widgetId: 'NUMBERWIDGET',
+            properties: {
                 maxValue: 10000,
                 minValue: 1,
             },
         },
         {
+            id: '4',
             clientId: 'single-select-random',
             title: 'Single Select Value',
             order: 2,
             width: 'half',
             condition: [],
-            type: 'single-select',
-            data: {
+            widgetId: 'SELECTWIDGET',
+            properties: {
                 options: [
                     {
                         clientId: '15',
@@ -406,13 +412,14 @@ const dataAf: AnalysisFramework = {
             },
         },
         {
+            id: '5',
             clientId: 'multi-select-random',
             title: 'Multi Select Value',
             order: 3,
             width: 'half',
             condition: [],
-            type: 'multi-select',
-            data: {
+            widgetId: 'MULTISELECTWIDGET',
+            properties: {
                 options: [
                     {
                         clientId: '31',
@@ -433,46 +440,50 @@ const dataAf: AnalysisFramework = {
             },
         },
         {
+            id: '6',
             clientId: 'date-random',
             title: 'Date',
             order: 4,
             width: 'half',
             condition: [],
-            type: 'date',
-            data: {
+            widgetId: 'DATEWIDGET',
+            properties: {
                 defaultValue: '2021-07-19T10:45:08.705794Z',
             },
         },
         {
+            id: '7',
             clientId: 'text-random',
             title: 'Text',
             order: 5,
             width: 'half',
-            type: 'text',
+            widgetId: 'TEXTWIDGET',
             condition: [],
-            data: {
+            properties: {
                 defaultValue: 'Hi, I am a text',
             },
         },
         {
+            id: '8',
             clientId: 'time-random',
             title: 'time',
             order: 6,
             width: 'half',
-            type: 'time',
+            widgetId: 'TIMEWIDGET',
             condition: [],
-            data: {
+            properties: {
                 defaultValue: '20:19:26.977084Z',
             },
         },
         {
+            id: '9',
             clientId: 'time-range-random',
             title: 'Time Range',
             order: 7,
             width: 'half',
             condition: [],
-            type: 'time-range',
-            data: {
+            widgetId: 'TIMERANGEWIDGET',
+            properties: {
                 defaultValue: {
                     startTime: '00:00:00.00',
                     endTime: '22:30:00.00',
@@ -480,13 +491,14 @@ const dataAf: AnalysisFramework = {
             },
         },
         {
+            id: '10',
             clientId: 'scale-random',
             title: 'Scale',
             order: 8,
             width: 'half',
-            type: 'scale',
+            widgetId: 'SCALEWIDGET',
             condition: [],
-            data: {
+            properties: {
                 options: [
                     {
                         clientId: '333',
@@ -510,13 +522,14 @@ const dataAf: AnalysisFramework = {
             },
         },
         {
+            id: '11',
             clientId: 'date-range-random',
             title: 'Date Range',
             order: 9,
             width: 'half',
             condition: [],
-            type: 'date-range',
-            data: {
+            widgetId: 'DATERANGEWIDGET',
+            properties: {
                 defaultValue: {
                     startDate: '2021-07-01T00:00:00.00Z',
                     endDate: '2021-07-30T00:00:00.00Z',
