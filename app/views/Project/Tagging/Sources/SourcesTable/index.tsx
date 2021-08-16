@@ -306,6 +306,7 @@ function SourcesTable(props: Props) {
                 onDeleteClick: handleDelete,
                 entriesCount: data.entriesCount,
                 projectId,
+                isAssessmentLead: data.isAssessmentLead,
             }),
             columnWidth: 196,
         };
