@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import {
+    generatePath,
+} from 'react-router-dom';
+import {
     _cs,
     compareDate,
 } from '@togglecorp/fujs';
@@ -29,7 +32,6 @@ import {
     DateRangeOutput,
 } from '@the-deep/deep-ui';
 
-import useRouteMatching from '#base/hooks/useRouteMatching';
 import ProgressLine from '#components/ProgressLine';
 import FrameworkImageButton from '#components/FrameworkImageButton';
 import routes from '#base/configs/routes';
@@ -73,7 +75,7 @@ interface RecentProjectItemProps {
     totalSources: number;
     totalSourcesTagged: number;
     totalSourcesValidated: number;
-    projectActivity: CountTimeSeries[];
+    entriesActivity: CountTimeSeries[];
     recentlyActive: UserActivityStat[];
 }
 
@@ -94,7 +96,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         totalSourcesTagged = 0,
         totalSourcesValidated = 0,
         recentlyActive,
-        projectActivity,
+        entriesActivity,
     } = props;
 
     const recentlyActiveRendererParams = useCallback((_, data) => ({
@@ -113,19 +115,18 @@ function ProjectItem(props: RecentProjectItemProps) {
     }), []);
 
     const convertedProjectActivity = useMemo(() => (
-        projectActivity?.map((pa) => ({
+        entriesActivity?.map((pa) => ({
             count: pa.count,
             date: (new Date(pa.date)).getTime(),
         })).sort((a, b) => compareDate(a.date, b.date))
-    ), [projectActivity]);
+    ), [entriesActivity]);
 
-    // const canEditProject = projectRoles[role]?.setupPermissions?.modify;
-    // const canAddEntries = projectRoles[role]?.entryPermissions?.modify;
+    // TODO: get these from server later on
     const canEditProject = true;
     const canAddEntries = true;
 
-    const routeToTagging = useRouteMatching(
-        routes.tagging,
+    const routeToTagging = generatePath(
+        routes.tagging.path,
         {
             projectId,
         },
@@ -161,7 +162,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                         <ButtonLikeLink
                             variant="tertiary"
                             // FIXME: Add route to new project edit later
-                            to=""
+                            to="#"
                             icons={(
                                 <FiEdit2 />
                             )}
@@ -175,7 +176,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             horizontallyCompactContent
             footerActions={(
                 <ButtonLikeLink
-                    to={routeToTagging?.to ?? ''}
+                    to={routeToTagging ?? ''}
                 >
                     {(canAddEntries
                         ? _ts('home', 'continueTaggingButton')
@@ -185,7 +186,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             )}
         >
             <div className={styles.info}>
-                {(description?.length ?? 0) > 0 && (
+                {description && (
                     <div className={styles.basicDetails}>
                         {description}
                     </div>
@@ -265,7 +266,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     />
                 </Card>
                 <ContainerCard
-                    className={styles.projectActivityContainer}
+                    className={styles.entriesActivityContainer}
                     heading={_ts('home.recentProjects', 'projectActivityLabel')}
                     headerClassName={styles.chartHeader}
                     contentClassName={styles.chartContainer}
@@ -274,7 +275,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     <ResponsiveContainer className={styles.responsiveContainer}>
                         <AreaChart data={convertedProjectActivity}>
                             <defs>
-                                <linearGradient id="projectActivity" x1="0" y1="0" x2="0" y2="1">
+                                <linearGradient id="entriesActivity" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.1} />
                                     <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
                                 </linearGradient>
@@ -296,7 +297,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                 dataKey="count"
                                 stroke="var(--dui-color-accent)"
                                 fillOpacity={1}
-                                fill="url(#projectActivity)"
+                                fill="url(#entriesActivity)"
                                 strokeWidth={2}
                                 dot
                             />
