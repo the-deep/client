@@ -17,6 +17,20 @@
             .title-column {
                 min-width: 196px;
             }
+
+            .expanded-row {
+                padding: var(--dui-spacing-large);
+
+                .expanded-cell {
+                    border-bottom: 0;
+                }
+            }
+
+            .expansion-row {
+                .expansion-cell {
+                    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                }
+            }
         }
 
         .status {

@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
+    IoChevronUpOutline,
+    IoChevronDownOutline,
 } from 'react-icons/io5';
 import { _cs } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
@@ -11,6 +13,8 @@ import {
     QuickActionDropdownMenu,
     DropdownMenuItem,
     useConfirmation,
+    Button,
+    useBooleanState,
 } from '@the-deep/deep-ui';
 
 import useRouteMatching from '#base/hooks/useRouteMatching';
@@ -53,6 +57,11 @@ function Actions<T extends number>(props: Props<T>) {
     }, [onDeleteClick, id]);
 
     const [
+        isExpanded,,,,
+        toggleExpansion,
+    ] = useBooleanState(false);
+
+    const [
         modal,
         onDeleteLeadClick,
     ] = useConfirmation({
@@ -63,50 +72,69 @@ function Actions<T extends number>(props: Props<T>) {
 
     return (
         <div className={_cs(styles.actions, className)}>
-            <QuickActionButton
-                className={styles.button}
-                name={id}
-                onClick={onEditClick}
-                disabled={disabled}
-                title="edit"
-            >
-                <MdModeEdit />
-            </QuickActionButton>
-            <ButtonLikeLink
-                className={styles.button}
-                variant="primary"
-                title="tag"
-                disabled={disabled}
-                to={taggingFlowLink}
-                icons={<IoAdd />}
-            >
-                Tag
-            </ButtonLikeLink>
-            <QuickActionDropdownMenu
-                label={(
-                    <IoEllipsisVerticalSharp />
-                )}
-                variant="secondary"
-            >
-                <DropdownMenuItem
-                    name="delete"
-                    onClick={onDeleteLeadClick}
+            <div className={styles.row}>
+                <QuickActionButton
+                    className={styles.button}
+                    name={id}
+                    onClick={onEditClick}
+                    disabled={disabled}
+                    title="edit"
                 >
-                    Delete
-                </DropdownMenuItem>
-            </QuickActionDropdownMenu>
-            {isAssessmentLead && (
+                    <MdModeEdit />
+                </QuickActionButton>
                 <ButtonLikeLink
                     className={styles.button}
-                    variant="secondary"
-                    title="assessment"
+                    variant="primary"
+                    title="tag"
                     disabled={disabled}
-                    to="#"
+                    to={taggingFlowLink}
                     icons={<IoAdd />}
                 >
-                    Assessment
+                    Tag
                 </ButtonLikeLink>
-            )}
+                <QuickActionDropdownMenu
+                    label={(
+                        <IoEllipsisVerticalSharp />
+                    )}
+                    variant="secondary"
+                >
+                    <DropdownMenuItem
+                        name="delete"
+                        onClick={onDeleteLeadClick}
+                    >
+                        Delete
+                    </DropdownMenuItem>
+                </QuickActionDropdownMenu>
+                {isAssessmentLead && (
+                    <ButtonLikeLink
+                        className={styles.button}
+                        variant="secondary"
+                        title="assessment"
+                        disabled={disabled}
+                        to="#"
+                        icons={<IoAdd />}
+                    >
+                        Assessment
+                    </ButtonLikeLink>
+                )}
+            </div>
+            <div className={styles.row}>
+                <Button
+                    name={undefined}
+                    onClick={toggleExpansion}
+                    className={styles.actionButton}
+                    variant="primary"
+                    actions={isExpanded ? (
+                        <IoChevronUpOutline />
+                    ) : (
+                        <IoChevronDownOutline />
+                    )}
+                    autoFocus
+                >
+                    Entries
+                </Button>
+
+            </div>
             {modal}
         </div>
     );
