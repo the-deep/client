@@ -13,18 +13,23 @@ import _ts from '#ts';
 
 import styles from './styles.css';
 
-interface AssignmentRendererProps extends Assignment {
+// TODO add link when made
+const emptyLink = '#';
+
+interface AssignmentItemProps extends Assignment {
     handleClick: (id: number) => void;
     markAsDonePending: boolean;
 }
 
-const emptyLink = '#'; // TODO add link when made
-
-function AssignmentItem(props: AssignmentRendererProps) {
+function AssignmentItem(props: AssignmentItemProps) {
     const {
         id,
         handleClick: handleClickFromProps,
         markAsDonePending,
+        createdByDetails,
+        contentObjectDetails,
+        projectDetails,
+        createdAt,
     } = props;
 
     const handleClick = useCallback(() => {
@@ -52,7 +57,7 @@ function AssignmentItem(props: AssignmentRendererProps) {
                         to={emptyLink}
                         className={styles.link}
                     >
-                        {props.createdByDetails.displayName}
+                        {createdByDetails.displayName}
                     </Link>
                     &nbsp;
                     {_ts('assignment', 'assignedYou')}
@@ -61,7 +66,7 @@ function AssignmentItem(props: AssignmentRendererProps) {
                         to={emptyLink}
                         className={styles.link}
                     >
-                        {props.contentObjectDetails?.title}
+                        {contentObjectDetails?.title}
                     </Link>
                     &nbsp;
                     {_ts('assignment', 'in')}
@@ -70,12 +75,12 @@ function AssignmentItem(props: AssignmentRendererProps) {
                         to={emptyLink}
                         className={styles.link}
                     >
-                        {props.projectDetails?.title}
+                        {projectDetails?.title}
                     </Link>
                 </div>
                 <DateOutput
                     className={styles.createdDate}
-                    value={props.createdAt}
+                    value={createdAt}
                     format="hh:mm aaa, MMM dd, yyyy"
                 />
             </ElementFragments>
