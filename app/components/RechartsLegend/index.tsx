@@ -10,11 +10,8 @@ interface Props {
     className?: string;
     payload?: {
         value: string | number;
-        color: string;
-        payload: {
-            strokeDasharray: React.ReactText;
-            // percent?: number;
-        }
+        color?: string;
+        payload?: unknown;
     }[];
 }
 
