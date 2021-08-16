@@ -25,6 +25,7 @@ import {
     createStringColumn,
     useBooleanState,
     useSortState,
+    useRowExpansion,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -37,6 +38,7 @@ import Actions, { Props as ActionsProps } from './Actions';
 import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
 import LeadEditModal from '../LeadEditModal';
 import BulkActions from './BulkActions';
+import EntryList from './EntryList';
 
 import styles from './styles.css';
 
@@ -166,6 +168,17 @@ function SourcesTable(props: Props) {
 
     const [leadToEdit, setLeadToEdit] = useState<number | undefined>();
 
+    const [rowModifier] = useRowExpansion<Lead, number>(
+        ({ datum }) => (
+            <EntryList leadId={datum.id} />
+        ),
+        {
+            expandedRowClassName: styles.expandedRow,
+            expandedCellClassName: styles.expandedCell,
+            expansionCellClassName: styles.expansionCell,
+            expansionRowClassName: styles.expansionRow,
+        },
+    );
     const [
         showSingleSourceModal,
         setShowSingleSourceModalTrue,
@@ -396,6 +409,7 @@ function SourcesTable(props: Props) {
                         data={leadsResponse?.results}
                         keySelector={leadsKeySelector}
                         columns={columns}
+                        rowModifier={rowModifier}
                         variant="large"
                     />
                 </SortContext.Provider>
