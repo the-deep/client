@@ -11,7 +11,7 @@ import {
     ButtonProps,
 } from '@the-deep/deep-ui';
 import {
-    // Error,
+    Error,
     SetValueArg,
 } from '@togglecorp/toggle-form';
 import { _cs, randomString } from '@togglecorp/fujs';
@@ -45,7 +45,7 @@ interface PrimaryTaggingInput<K extends string> {
 
     name: K;
     value: SectionsType | undefined;
-    // error: Error<SectionsType> | undefined;
+    error: Error<SectionsType> | undefined;
     onChange: (value: SetValueArg<SectionsType>, name: K) => void;
     disabled?: boolean;
 }
@@ -58,7 +58,13 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         value: sectionsFromProps = [],
         onChange: setSectionsFromProps,
         disabled,
+        error,
     } = props;
+
+    if (error) {
+        // TODO: show this on section and primary tagging
+        console.error('primary tagging', error);
+    }
 
     const sections = sectionsFromProps as Section[];
     const setSections = setSectionsFromProps as (value: SetValueArg<Section[]>, name: K) => void;

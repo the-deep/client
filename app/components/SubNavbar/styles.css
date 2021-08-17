@@ -2,22 +2,43 @@
     display: flex;
     position: relative;
     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    padding: 0 var(--dui-spacing-super-large);
 
     .children {
         display: flex;
-        flex-basis: calc(100% / 3);
-        flex-shrink: 0;
+        flex-grow: 1;
         justify-content: center;
-        padding-top: 0;
-        padding-bottom: 0;
+    }
+
+    .heading {
+        align-self: center;
+        flex-shrink: unset;
+    }
+
+    .description-container {
+        flex-shrink: unset;
+        overflow: auto;
+
+        .description {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .icons {
-        flex-basis: calc(100% / 3);
+        display: flex;
+        align-self: center;
+        flex-shrink: 0;
     }
 
     .actions {
-        flex-basis: calc(100% / 3);
-        justify-content: flex-end;
+        display: flex;
+        align-self: center;
+        flex-shrink: 0;
+
+        >* {
+            margin: 0 var(--dui-spacing-extra-small);
+        }
     }
 }

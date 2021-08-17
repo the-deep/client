@@ -1,10 +1,31 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { ElementFragments } from '@the-deep/deep-ui';
+import {
+    Heading,
+} from '@the-deep/deep-ui';
 import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
 
 import NavbarContext from './context';
 import styles from './styles.css';
+
+interface ChildrenProps {
+    children: React.ReactNode;
+}
+export function Children(props: ChildrenProps) {
+    const {
+        children,
+    } = props;
+    const {
+        childrenNode,
+    } = useContext(NavbarContext);
+    if (!childrenNode) {
+        return null;
+    }
+    return ReactDOM.createPortal(
+        children,
+        childrenNode,
+    );
+}
 
 interface IconsProps {
     children: React.ReactNode;
@@ -46,47 +67,90 @@ export function Actions(props: ActionsProps) {
 
 interface SubNavbarProps {
     className?: string;
-    children: React.ReactNode;
-    actions?: React.ReactNode;
-    icons?: React.ReactNode;
+    children?: React.ReactNode;
+
+    defaultActions?: React.ReactNode;
+    defaultIcons?: React.ReactNode;
+
+    heading?: string;
+    description?: string;
 }
 function SubNavbar(props: SubNavbarProps) {
     const {
         children,
         className,
-        actions,
-        icons,
+        defaultActions,
+        defaultIcons,
+        heading,
+        description,
     } = props;
 
-    const { setActionsNode, setIconsNode } = useContext(NavbarContext);
+    const { setActionsNode, setIconsNode, setChildrenNode } = useContext(NavbarContext);
 
     const actionsRef = useRef(null);
     const iconsRef = useRef(null);
+    const childrenRef = useRef(null);
 
     useEffect(
         () => {
-            setActionsNode(actionsRef.current);
+            if (setActionsNode) {
+                setActionsNode(actionsRef.current);
+            }
         },
         [setActionsNode],
     );
     useEffect(
         () => {
-            setIconsNode(iconsRef.current);
+            if (setIconsNode) {
+                setIconsNode(iconsRef.current);
+            }
         },
         [setIconsNode],
+    );
+    useEffect(
+        () => {
+            if (setChildrenNode) {
+                setChildrenNode(childrenRef.current);
+            }
+        },
+        [setChildrenNode],
     );
 
     return (
         <nav className={_cs(className, styles.subNavbar)}>
-            <ElementFragments
-                iconsContainerClassName={styles.icons}
-                actionsContainerClassName={styles.actions}
-                childrenContainerClassName={styles.children}
-                icons={icons === undefined ? <div ref={iconsRef} /> : icons}
-                actions={actions === undefined ? <div ref={actionsRef} /> : actions}
+            <div
+                ref={iconsRef}
+                className={styles.icons}
+            >
+                {defaultIcons}
+            </div>
+            {heading && (
+                <Heading
+                    size="medium"
+                    className={styles.heading}
+                >
+                    {heading}
+                </Heading>
+            )}
+            {description && (
+                <div className={styles.descriptionContainer}>
+                    <div className={styles.description}>
+                        {description}
+                    </div>
+                </div>
+            )}
+            <div
+                ref={childrenRef}
+                className={styles.children}
             >
                 {children}
-            </ElementFragments>
+            </div>
+            <div
+                ref={actionsRef}
+                className={styles.actions}
+            >
+                {defaultActions}
+            </div>
         </nav>
     );
 }
