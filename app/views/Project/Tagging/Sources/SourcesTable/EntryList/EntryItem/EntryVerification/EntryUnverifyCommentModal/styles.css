@@ -1,0 +1,11 @@
+.entry-comment-form {
+    display: flex;
+
+    .entry-comment-modal {
+        display: flex;
+
+        .input {
+            display: flex;
+        }
+    }
+}
