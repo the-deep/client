@@ -10,7 +10,7 @@ export interface ObjectError {
     field: string;
     messages?: string;
     objectErrors?: ObjectError[];
-    arrayErrors?: ArrayError[];
+    arrayErrors?: (ArrayError | null)[];
 }
 
 interface ArrayError {
@@ -57,13 +57,14 @@ function transformObject(errors: ObjectError[] | undefined): Error | undefined {
     };
 }
 
-function transformArray(errors: ArrayError[] | undefined): Error | undefined {
+function transformArray(errors: (ArrayError | null)[] | undefined): Error | undefined {
     if (isNotDefined(errors)) {
         return undefined;
     }
+    const filteredErrors = errors.filter(isDefined);
 
-    const topLevelError = errors.find((error) => error.key === 'nonMemberErrors');
-    const memberErrors = errors.filter((error) => error.key !== 'nonMemberErrors');
+    const topLevelError = filteredErrors.find((error) => error.key === 'nonMemberErrors');
+    const memberErrors = filteredErrors.filter((error) => error.key !== 'nonMemberErrors');
 
     return {
         [internal]: topLevelError?.messages,
