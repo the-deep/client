@@ -60,7 +60,7 @@ function EntryList(props: Props) {
         <Container
             className={_cs(className, styles.entryListContainer)}
             contentClassName={styles.content}
-            footerActions={((entryListResponse?.count ?? 0) > maxItemsPerPage) && (
+            footerActions={(
                 <Pager
                     activePage={activePage}
                     itemsCount={entryListResponse?.count ?? 0}
@@ -77,6 +77,7 @@ function EntryList(props: Props) {
                 renderer={EntryItem}
                 data={entryListResponse?.results}
                 rendererParams={entryDataRendererParams}
+                rendererClassName={styles.entryItem}
                 pending={entryListPending}
             />
         </Container>
