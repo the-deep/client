@@ -4,13 +4,12 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import {
     Tabs,
-    Tab,
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
 
 import PreloadMessage from '#base/components/PreloadMessage';
 import SubNavbar from '#components/SubNavbar';
-import NavbarContext from '#components/SubNavbar/context';
+import SubNavbarContext from '#components/SubNavbar/context';
 import _ts from '#ts';
 import {
     CurrentFrameworkQuery,
@@ -91,7 +90,7 @@ function AnalyticalFramework(props: Props) {
 
     return (
         <div className={_cs(styles.analyticalFramework, className)}>
-            <NavbarContext.Provider value={navbarContextValue}>
+            <SubNavbarContext.Provider value={navbarContextValue}>
                 <Tabs
                     useHash
                     defaultHash="framework-details"
@@ -124,7 +123,7 @@ function AnalyticalFramework(props: Props) {
                         />
                     )}
                 </Tabs>
-            </NavbarContext.Provider>
+            </SubNavbarContext.Provider>
         </div>
     );
 }

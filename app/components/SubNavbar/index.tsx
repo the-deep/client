@@ -8,10 +8,10 @@ import { _cs } from '@togglecorp/fujs';
 import NavbarContext from './context';
 import styles from './styles.css';
 
-interface ChildrenProps {
+interface SubNavbarChildrenProps {
     children: React.ReactNode;
 }
-export function Children(props: ChildrenProps) {
+export function SubNavbarChildren(props: SubNavbarChildrenProps) {
     const {
         children,
     } = props;
@@ -27,10 +27,10 @@ export function Children(props: ChildrenProps) {
     );
 }
 
-interface IconsProps {
+interface SubNavbarIconsProps {
     children: React.ReactNode;
 }
-export function Icons(props: IconsProps) {
+export function SubNavbarIcons(props: SubNavbarIconsProps) {
     const {
         children,
     } = props;
@@ -46,10 +46,10 @@ export function Icons(props: IconsProps) {
     );
 }
 
-interface ActionsProps {
+interface SubNavbarActionsProps {
     children: React.ReactNode;
 }
-export function Actions(props: ActionsProps) {
+export function SubNavbarActions(props: SubNavbarActionsProps) {
     const {
         children,
     } = props;

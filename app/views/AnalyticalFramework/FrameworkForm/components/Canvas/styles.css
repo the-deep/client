@@ -1,6 +1,3 @@
-.errored {
-    border: var(--dui-width-separator) solid var(--dui-color-danger);
-}
 
 .canvas {
     display: flex;
@@ -12,6 +9,10 @@
 
         &.half-widget {
             flex-basis: 50%;
+        }
+
+        &.errored {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-danger);
         }
     }
 }
