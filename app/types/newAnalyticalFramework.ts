@@ -1,5 +1,6 @@
 import {
     Widget_Id as WidgetTypes,
+    WidgetWidth,
 } from '#generated/types';
 
 export type NumberValue = number;
@@ -50,6 +51,7 @@ interface KeyLabelColor extends KeyLabel {
     color: string;
 }
 
+/*
 interface Condition {
     clientId: string;
     type: unknown;
@@ -58,6 +60,7 @@ interface Condition {
     order: number;
     conjunction: 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
 }
+*/
 
 interface BaseData<T> {
     defaultValue?: T;
@@ -109,20 +112,23 @@ interface Matrix2Data extends BaseData<undefined> {
 
 interface BaseWidget {
     clientId: string;
+    // TODO: clientId should always sync with key
+    key: string;
+
     id: string;
     order: number;
     title: string;
 
-    // unknown properties:
-    // key: unknown;
-    // NEW properties:
-    parent?: string;
-    width?: 'full' | 'half';
-    condition?: Condition[];
+    width?: WidgetWidth;
 
     widgetId: Types;
     // eslint-disable-next-line @typescript-eslint/ban-types
     properties: object;
+
+    /*
+    parent?: string;
+    condition?: Condition[];
+    */
 }
 
 export interface NumberWidget extends BaseWidget {

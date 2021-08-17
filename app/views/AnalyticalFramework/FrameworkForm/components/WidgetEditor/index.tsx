@@ -17,7 +17,7 @@ import SingleSelectWidgetForm from './SingleSelectWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
-    'widgetId' | 'clientId' | 'order'
+    'key' | 'widgetId' | 'clientId' | 'order'
 >;
 
 interface Props<T> {

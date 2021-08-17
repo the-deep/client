@@ -3,6 +3,7 @@ import {
     ArraySchema,
     requiredStringCondition,
     PurgeNull,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 import {
     AnalysisFrameworkInputType,
@@ -45,7 +46,7 @@ type WidgetSchemaFields = ReturnType<WidgetSchema['fields']>;
 const widgetSchema: WidgetSchema = {
     fields: (): WidgetSchemaFields => ({
         clientId: [],
-        id: [],
+        id: [defaultUndefinedType],
         key: [],
         order: [],
         properties: [],
@@ -67,7 +68,7 @@ type SectionSchemaFields = ReturnType<SectionSchema['fields']>;
 const sectionSchema: SectionSchema = {
     fields: (): SectionSchemaFields => ({
         clientId: [],
-        id: [],
+        id: [defaultUndefinedType],
         order: [],
         title: [],
         tooltip: [],
@@ -84,6 +85,7 @@ const sectionsSchema: SectionsSchema = {
 };
 
 export const defaultFormValues: PartialFormType = {
+    isPrivate: false,
     primaryTagging: [],
     secondaryTagging: [],
 };

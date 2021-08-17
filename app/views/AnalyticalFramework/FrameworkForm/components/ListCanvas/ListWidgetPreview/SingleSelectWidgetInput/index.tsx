@@ -11,7 +11,7 @@ import ListWidgetWrapper from '../../ListWidgetWrapper';
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<

@@ -11,7 +11,7 @@ import WidgetWrapper from '../../WidgetWrapper';
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<

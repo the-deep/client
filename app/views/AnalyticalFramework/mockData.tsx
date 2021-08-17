@@ -6,12 +6,12 @@ import {
 
 const matrix1d: Matrix1dWidget = {
     id: '1',
+    key: 'matrix-1d-random',
     clientId: 'matrix-1d-random',
     widgetId: 'MATRIX1DWIDGET',
     title: 'Matrix 1d',
     order: 1,
-    width: 'full',
-    condition: [],
+    width: 'FULL',
     properties: {
         rows: [
             {
@@ -193,12 +193,12 @@ const matrix1d: Matrix1dWidget = {
 
 const matrix2d: Matrix2dWidget = {
     id: '2',
+    key: 'matrix-2d-random',
     clientId: 'matrix-2d-random',
     widgetId: 'MATRIX2DWIDGET',
     title: 'Matrix 2d',
     order: 2,
-    width: 'full',
-    condition: [],
+    width: 'FULL',
     properties: {
         rows: [
             {
@@ -377,11 +377,11 @@ const dataAf: AnalysisFramework = {
     secondaryTagging: [
         {
             id: '3',
+            key: 'number-widget-random',
             clientId: 'number-widget-random',
             title: 'Number Widget',
             order: 1,
-            width: 'full',
-            condition: [],
+            width: 'FULL',
             widgetId: 'NUMBERWIDGET',
             properties: {
                 maxValue: 10000,
@@ -390,11 +390,11 @@ const dataAf: AnalysisFramework = {
         },
         {
             id: '4',
+            key: 'single-select-random',
             clientId: 'single-select-random',
             title: 'Single Select Value',
             order: 2,
-            width: 'half',
-            condition: [],
+            width: 'HALF',
             widgetId: 'SELECTWIDGET',
             properties: {
                 options: [
@@ -413,11 +413,11 @@ const dataAf: AnalysisFramework = {
         },
         {
             id: '5',
+            key: 'multi-select-random',
             clientId: 'multi-select-random',
             title: 'Multi Select Value',
             order: 3,
-            width: 'half',
-            condition: [],
+            width: 'HALF',
             widgetId: 'MULTISELECTWIDGET',
             properties: {
                 options: [
@@ -441,11 +441,11 @@ const dataAf: AnalysisFramework = {
         },
         {
             id: '6',
+            key: 'date-random',
             clientId: 'date-random',
             title: 'Date',
             order: 4,
-            width: 'half',
-            condition: [],
+            width: 'HALF',
             widgetId: 'DATEWIDGET',
             properties: {
                 defaultValue: '2021-07-19T10:45:08.705794Z',
@@ -453,35 +453,35 @@ const dataAf: AnalysisFramework = {
         },
         {
             id: '7',
+            key: 'text-random',
             clientId: 'text-random',
             title: 'Text',
             order: 5,
-            width: 'half',
+            width: 'HALF',
             widgetId: 'TEXTWIDGET',
-            condition: [],
             properties: {
                 defaultValue: 'Hi, I am a text',
             },
         },
         {
             id: '8',
+            key: 'time-random',
             clientId: 'time-random',
             title: 'time',
             order: 6,
-            width: 'half',
+            width: 'HALF',
             widgetId: 'TIMEWIDGET',
-            condition: [],
             properties: {
                 defaultValue: '20:19:26.977084Z',
             },
         },
         {
             id: '9',
+            key: 'time-range-random',
             clientId: 'time-range-random',
             title: 'Time Range',
             order: 7,
-            width: 'half',
-            condition: [],
+            width: 'HALF',
             widgetId: 'TIMERANGEWIDGET',
             properties: {
                 defaultValue: {
@@ -492,12 +492,12 @@ const dataAf: AnalysisFramework = {
         },
         {
             id: '10',
+            key: 'scale-random',
             clientId: 'scale-random',
             title: 'Scale',
             order: 8,
-            width: 'half',
+            width: 'HALF',
             widgetId: 'SCALEWIDGET',
-            condition: [],
             properties: {
                 options: [
                     {
@@ -523,11 +523,11 @@ const dataAf: AnalysisFramework = {
         },
         {
             id: '11',
+            key: 'date-range-random',
             clientId: 'date-range-random',
             title: 'Date Range',
             order: 9,
-            width: 'half',
-            condition: [],
+            width: 'HALF',
             widgetId: 'DATERANGEWIDGET',
             properties: {
                 defaultValue: {

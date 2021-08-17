@@ -25,6 +25,7 @@ import {
     requiredStringCondition,
     PartialForm,
     getErrorObject,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 import {
     _cs,
@@ -44,25 +45,25 @@ const CELLS_LIMIT = 30;
 type FormType = Matrix1dWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
 
 type RowType = DataType['rows'][number];
 export type PartialRowType = PartialForm<
     RowType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type CellType = RowType['cells'][number];
 export type PartialCellType = PartialForm<
     CellType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type CellSchema = ObjectSchema<PartialCellType>;
@@ -125,13 +126,13 @@ const dataSchema: DataSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        id: [defaultUndefinedType],
+        key: [],
         clientId: [],
         title: [requiredStringCondition],
         widgetId: [],
         order: [],
         width: [],
-        parent: [],
-        condition: [],
 
         properties: dataSchema,
     }),

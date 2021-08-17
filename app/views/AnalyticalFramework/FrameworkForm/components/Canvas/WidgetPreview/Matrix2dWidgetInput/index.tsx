@@ -15,7 +15,7 @@ import styles from './styles.css';
 
 export type PartialMatrix2dWidget = PartialForm<
     Matrix2dWidget,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type Row = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];

@@ -16,7 +16,7 @@ import BaseWidgetInput from './BaseWidgetInput';
 
 export type PartialWidget = PartialForm<
     Widget,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 interface Props <N extends string, T>{

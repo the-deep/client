@@ -27,6 +27,7 @@ import {
     requiredStringCondition,
     PartialForm,
     getErrorObject,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 import {
     _cs,
@@ -46,19 +47,19 @@ const OPTIONS_LIMIT = 20;
 type FormType = ScaleWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
 
 type OptionType = DataType['options'][number];
 export type PartialOptionType = PartialForm<
     OptionType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type OptionSchema = ObjectSchema<PartialOptionType>;
@@ -97,13 +98,13 @@ const dataSchema: DataSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        id: [defaultUndefinedType],
+        key: [],
         clientId: [],
         title: [requiredStringCondition],
         widgetId: [],
         order: [],
         width: [],
-        parent: [],
-        condition: [],
 
         properties: dataSchema,
     }),
