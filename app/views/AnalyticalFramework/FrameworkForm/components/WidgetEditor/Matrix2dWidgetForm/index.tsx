@@ -29,6 +29,7 @@ import {
     requiredStringCondition,
     PartialForm,
     getErrorObject,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -51,19 +52,19 @@ const SUB_COLUMNS_LIMIT = 30;
 type FormType = Matrix2dWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
 
 type ColumnType = DataType['columns'][number];
 export type PartialColumnType = PartialForm<
     ColumnType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 const columnKeySelector = (d: PartialColumnType) => d.clientId;
@@ -71,7 +72,7 @@ const columnKeySelector = (d: PartialColumnType) => d.clientId;
 type SubColumnType = ColumnType['subColumns'][number];
 export type PartialSubColumnType = PartialForm<
     SubColumnType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 const subColumnKeySelector = (d: PartialSubColumnType) => d.clientId;
@@ -130,13 +131,13 @@ const columnsSchema: ColumnsSchema = {
 type RowType = DataType['rows'][number];
 export type PartialRowType = PartialForm<
     RowType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type SubRowType = RowType['subRows'][number];
 export type PartialSubRowType = PartialForm<
     SubRowType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 const rowKeySelector = (d: PartialRowType) => d.clientId;
@@ -203,13 +204,13 @@ const dataSchema: DataSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        id: [defaultUndefinedType],
+        key: [],
         clientId: [],
         title: [requiredStringCondition],
         widgetId: [],
         order: [],
         width: [],
-        parent: [],
-        condition: [],
 
         properties: dataSchema,
     }),

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { ElementFragments, Border } from '@the-deep/deep-ui';
+import { ElementFragments } from '@the-deep/deep-ui';
 import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
 
@@ -78,7 +78,6 @@ function SubNavbar(props: SubNavbarProps) {
 
     return (
         <nav className={_cs(className, styles.subNavbar)}>
-            <Border />
             <ElementFragments
                 iconsContainerClassName={styles.icons}
                 actionsContainerClassName={styles.actions}

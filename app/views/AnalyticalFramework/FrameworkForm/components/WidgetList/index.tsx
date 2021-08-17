@@ -14,69 +14,80 @@ import styles from './styles.css';
 const partialWidgets: PartialWidget[] = [
     {
         widgetId: 'TEXTWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'NUMBERWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'DATEWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'DATERANGEWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'TIMEWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'TIMERANGEWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'MATRIX1DWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'MATRIX2DWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'SCALEWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'SELECTWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
     {
         widgetId: 'MULTISELECTWIDGET',
+        key: 'random',
         clientId: 'random',
         order: -1,
-        width: 'full',
+        width: 'FULL',
     },
 ];
 
@@ -146,9 +157,11 @@ function WidgetList(props: Props) {
         (name: Types) => {
             const widget = partialWidgets.find((item) => item.widgetId === name);
             if (widget) {
+                const key = randomString();
                 onWidgetAdd({
                     ...widget,
-                    clientId: randomString(),
+                    clientId: key,
+                    key,
                 });
             }
         },
