@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
     TextArea,
     TextInput,
@@ -6,6 +6,7 @@ import {
     Container,
     Tag,
     TabPanel,
+    Button,
 } from '@the-deep/deep-ui';
 import { isDefined } from '@togglecorp/fujs';
 import {
@@ -13,6 +14,7 @@ import {
     removeNull,
     getErrorObject,
     // PartialForm,
+    SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
     useMutation,
@@ -25,11 +27,14 @@ import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
 import { Framework } from '../types';
+
+import NonFieldError from '#components/NonFieldError';
 import {
     UpdateFrameworkMutation,
     UpdateFrameworkMutationVariables,
     CreateFrameworkMutation,
     CreateFrameworkMutationVariables,
+    AnalysisFrameworkInputType,
 } from '#generated/types';
 import _ts from '#ts';
 
@@ -38,7 +43,7 @@ import {
     CREATE_FRAMEWORK,
 } from '../queries';
 
-import schema, { defaultFormValues, PartialFormType } from './schema';
+import schema, { defaultFormValues, PartialFormType, SectionsType, WidgetsType } from './schema';
 import styles from './styles.css';
 
 interface FrameworkFormProps {
@@ -86,13 +91,21 @@ function FrameworkForm(props: FrameworkFormProps) {
         [framework?.organization].filter(isDefined),
     );
 
+    const [
+        primaryTaggingPristine,
+        setPrimaryTaggingPristine,
+    ] = useState(true);
+    const [
+        secondaryTaggingPristine,
+        setSecondaryTaggingPristine,
+    ] = useState(true);
+
     const {
         pristine,
         value,
         error: riskyError,
         setFieldValue,
         validate,
-        setValue,
         setError,
     } = useForm(schema, initialValue);
 
@@ -126,24 +139,81 @@ function FrameworkForm(props: FrameworkFormProps) {
         },
     );
 
-    const pending = false;
-
-    console.log(
-        pristine, value, riskyError, setFieldValue, validate, setValue, setError,
-        updateAnalysisFramework, updatingAnalysisFramework,
-        createAnalysisFramework, creatingAnalysisFramework,
-    );
+    const pending = creatingAnalysisFramework || updatingAnalysisFramework;
 
     const error = getErrorObject(riskyError);
 
+    const handlePrimaryTaggingChange = useCallback(
+        (val: SetValueArg<SectionsType>, key: 'primaryTagging') => {
+            setPrimaryTaggingPristine(false);
+            setFieldValue(val, key);
+        },
+        [setFieldValue],
+    );
+
+    const handleSecondaryTaggingChange = useCallback(
+        (val: SetValueArg<WidgetsType>, key: 'secondaryTagging') => {
+            setSecondaryTaggingPristine(false);
+            setFieldValue(val, key);
+        },
+        [setFieldValue],
+    );
+
+    const handleSubmit = useCallback(
+        () => {
+            const { errored, error: err, value: val } = validate();
+            setError(err);
+            if (!errored && isDefined(val)) {
+                // NOTE: clearing out these data so they don't override
+                const data = { ...value } as AnalysisFrameworkInputType;
+                if (primaryTaggingPristine) {
+                    delete data.primaryTagging;
+                }
+                if (secondaryTaggingPristine) {
+                    delete data.secondaryTagging;
+                }
+
+                if (frameworkId) {
+                    updateAnalysisFramework({
+                        variables: {
+                            id: String(frameworkId),
+                            data,
+                        },
+                    });
+                } else {
+                    createAnalysisFramework({
+                        variables: {
+                            data,
+                        },
+                    });
+                }
+            }
+        },
+        [
+            setError, validate, value, frameworkId,
+            primaryTaggingPristine, secondaryTaggingPristine,
+            updateAnalysisFramework, createAnalysisFramework,
+        ],
+    );
+
     return (
         <>
+            <Button
+                disabled={pristine || pending}
+                name="login"
+                onClick={handleSubmit}
+            >
+                Submit
+            </Button>
             <TabPanel
                 className={styles.tabPanel}
                 name="framework-details"
             >
                 <div className={styles.content}>
                     <div className={styles.details}>
+                        <NonFieldError
+                            error={error}
+                        />
                         <TextInput
                             name="title"
                             onChange={setFieldValue}
@@ -161,6 +231,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                                 name="createdBy"
                                 value={framework?.createdBy?.displayName}
                                 readOnly
+                                disabled={pending}
                                 label={_ts('analyticalFramework', 'createdBy')}
                             />
                             <DateInput
@@ -168,6 +239,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                                 name="createdAt"
                                 value={framework?.createdAt?.split('T')[0]}
                                 readOnly
+                                disabled={pending}
                                 label={_ts('analyticalFramework', 'createdOn')}
                             />
                         </div>
@@ -219,6 +291,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                         value={value.previewImage}
                         image={framework?.previewImage}
                         onChange={setFieldValue}
+                        disabled={pending}
                     />
                     */}
                 </div>
@@ -235,10 +308,10 @@ function FrameworkForm(props: FrameworkFormProps) {
                 <PrimaryTagging
                     name="primaryTagging"
                     value={value.primaryTagging}
-                    onChange={setFieldValue}
+                    onChange={handlePrimaryTaggingChange}
                     className={styles.view}
-                    // FIXME: remove this later
                     frameworkId={frameworkId}
+                    disabled={pending}
                 />
             </TabPanel>
             <TabPanel
@@ -248,10 +321,10 @@ function FrameworkForm(props: FrameworkFormProps) {
                 <SecondaryTagging
                     name="secondaryTagging"
                     value={value.secondaryTagging}
-                    onChange={setFieldValue}
+                    onChange={handleSecondaryTaggingChange}
                     className={styles.view}
-                    // FIXME: remove this later
                     frameworkId={frameworkId}
+                    disabled={pending}
                 />
             </TabPanel>
             <TabPanel
