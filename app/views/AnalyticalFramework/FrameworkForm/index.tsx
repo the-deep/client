@@ -27,7 +27,7 @@ import {
     useMutation,
 } from '@apollo/client';
 
-import { Actions, Children } from '#components/SubNavbar';
+import { SubNavbarActions, SubNavbarChildren } from '#components/SubNavbar';
 import routes from '#base/configs/routes';
 import { transformToFormError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/NewOrganizationSelectInput';
@@ -156,7 +156,6 @@ function FrameworkForm(props: FrameworkFormProps) {
                 }
             },
             onError: (error) => {
-                console.error(error);
                 setError({
                     [internal]: error.message,
                 });
@@ -189,7 +188,6 @@ function FrameworkForm(props: FrameworkFormProps) {
                 }
             },
             onError: (error) => {
-                console.warn(error);
                 setError({
                     [internal]: error.message,
                 });
@@ -254,13 +252,24 @@ function FrameworkForm(props: FrameworkFormProps) {
         ],
     );
 
-    const errorWithoutTaggings = { ...error };
-    delete errorWithoutTaggings.primaryTagging;
-    delete errorWithoutTaggings.secondaryTagging;
+    const [
+        detailsErrored,
+        primaryTaggingErrored,
+        secondaryTaggingErrored,
+    ] = useMemo(
+        () => {
+            const errorWithoutTaggings = { ...error };
+            delete errorWithoutTaggings.primaryTagging;
+            delete errorWithoutTaggings.secondaryTagging;
 
-    const detailsErrored = analyzeErrors(error);
-    const primaryTaggingErrored = analyzeErrors(error?.primaryTagging);
-    const secondaryTaggingErrored = analyzeErrors(error?.secondaryTagging);
+            return [
+                analyzeErrors(errorWithoutTaggings),
+                analyzeErrors(error?.primaryTagging),
+                analyzeErrors(error?.secondaryTagging),
+            ];
+        },
+        [error],
+    );
 
     return (
         <>
@@ -272,7 +281,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     return true;
                 }}
             />
-            <Actions>
+            <SubNavbarActions>
                 <Button
                     disabled={pristine || pending}
                     name="login"
@@ -280,8 +289,8 @@ function FrameworkForm(props: FrameworkFormProps) {
                 >
                     Submit
                 </Button>
-            </Actions>
-            <Children>
+            </SubNavbarActions>
+            <SubNavbarChildren>
                 <Tab
                     name="framework-details"
                     transparentBorder
@@ -309,7 +318,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 >
                     {_ts('analyticalFramework', 'review')}
                 </Tab>
-            </Children>
+            </SubNavbarChildren>
             <TabPanel
                 className={styles.tabPanel}
                 name="framework-details"
@@ -425,7 +434,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     className={styles.view}
                     frameworkId={frameworkId}
                     disabled={pending}
-                    error={error?.primaryTagging}
+                    error={error?.secondaryTagging}
                 />
             </TabPanel>
             <TabPanel

@@ -13,6 +13,8 @@ import {
 import {
     Error,
     SetValueArg,
+    getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { _cs, randomString } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
@@ -21,6 +23,7 @@ import _ts from '#ts';
 import { sortByOrder } from '#utils/common';
 import FrameworkImageButton from '#components/FrameworkImageButton';
 import { Section, Widget } from '#types/newAnalyticalFramework';
+import NonFieldError from '#components/NonFieldError';
 
 import { SectionsType } from '../schema';
 import Canvas from '../components/Canvas';
@@ -58,16 +61,15 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         value: sectionsFromProps = [],
         onChange: setSectionsFromProps,
         disabled,
-        error,
+        error: errorFromProps,
     } = props;
-
-    if (error) {
-        // TODO: show this on section and primary tagging
-        console.error('primary tagging', error);
-    }
 
     const sections = sectionsFromProps as Section[];
     const setSections = setSectionsFromProps as (value: SetValueArg<Section[]>, name: K) => void;
+    const riskyError = errorFromProps as (Error<Section[]> | undefined);
+
+    // NOTE: typescript couldn't infer the type here
+    const error = getErrorObject<Section>(riskyError);
 
     const [selectedSection, setSelectedSection] = useState<string | undefined>(
         sections[0]?.clientId,
@@ -309,6 +311,9 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         </ElementFragments>
                     </div>
                     <div className={styles.canvas}>
+                        <NonFieldError
+                            error={error}
+                        />
                         <TabList className={styles.tabs}>
                             {sectionsState.editMode ? (
                                 sectionsState.appliedSections.map((section) => (
@@ -316,9 +321,14 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                         key={section.clientId}
                                         name={section.clientId}
                                         borderWrapperClassName={styles.borderWrapper}
-                                        className={styles.tab}
+                                        className={_cs(
+                                            styles.tab,
+                                            // eslint-disable-next-line max-len
+                                            analyzeErrors(error?.[section.clientId]) && styles.errored,
+                                        )}
                                         title={section.tooltip}
                                         // FIXME: use strings
+                                        // FIXME: set errored color
                                     >
                                         {section.title || 'Unnamed'}
                                         <QuickActionButton
@@ -337,9 +347,14 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                         key={section.clientId}
                                         name={section.clientId}
                                         borderWrapperClassName={styles.borderWrapper}
-                                        className={styles.tab}
+                                        className={_cs(
+                                            styles.tab,
+                                            // eslint-disable-next-line max-len
+                                            analyzeErrors(error?.[section.clientId]) && styles.errored,
+                                        )}
                                         title={section.tooltip}
                                         // FIXME: use strings
+                                        // FIXME: set errored color
                                     >
                                         {section.title}
                                         <QuickActionButton
@@ -366,6 +381,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                         widgets={section.widgets}
                                         editMode
                                         disabled={disabled}
+                                        error={getErrorObject(error?.[section.clientId])?.widgets}
                                     />
                                 </TabPanel>
                             ))
@@ -384,6 +400,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                         onWidgetOrderChange={handleWidgetOrderChange}
                                         editMode={false}
                                         disabled={disabled}
+                                        error={getErrorObject(error?.[section.clientId])?.widgets}
                                     />
                                 </TabPanel>
                             ))

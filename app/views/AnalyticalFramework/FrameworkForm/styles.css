@@ -37,20 +37,6 @@
                     padding: var(--dui-spacing-medium);
                 }
             }
-
-            .framework-visibility {
-                display: flex;
-                background-color: var(--dui-color-white);
-                padding-left: 0;
-
-                .heading {
-                    font-size: var(--dui-font-size-heading-extra-small);
-                }
-
-                .items {
-                    display: flex;
-                }
-            }
         }
 
         .image-preview {

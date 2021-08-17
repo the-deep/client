@@ -14,8 +14,8 @@ import {
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/ProjectSwitcher';
 import PreloadMessage from '#base/components/PreloadMessage';
-import NavbarContext from '#components/SubNavbar/context';
-import SubNavbar, { Icons, Actions } from '#components/SubNavbar';
+import SubNavbarContext from '#components/SubNavbar/context';
+import SubNavbar, { SubNavbarIcons, SubNavbarActions } from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 import SmartNavLink from '#base/components/SmartNavLink';
 import routes from '#base/configs/routes';
@@ -69,10 +69,10 @@ function Tagging(props: Props) {
 
     const subNavbarComponents = (
         <>
-            <Icons>
+            <SubNavbarIcons>
                 <ProjectSwitcher />
-            </Icons>
-            <Actions>
+            </SubNavbarIcons>
+            <SubNavbarActions>
                 <DropdownMenu
                     label={_ts('tagging', 'addSource')}
                 >
@@ -87,12 +87,12 @@ function Tagging(props: Props) {
                         {_ts('bulkUpload', 'title')}
                     </DropdownMenuItem>
                 </DropdownMenu>
-            </Actions>
+            </SubNavbarActions>
         </>
     );
 
     return (
-        <NavbarContext.Provider value={navbarContextValue}>
+        <SubNavbarContext.Provider value={navbarContextValue}>
             <div className={_cs(styles.tagging, className)}>
                 <SubNavbar
                     className={styles.subNavbar}
@@ -193,7 +193,7 @@ function Tagging(props: Props) {
                     onClose={hideBulkUploadModal}
                 />
             )}
-        </NavbarContext.Provider>
+        </SubNavbarContext.Provider>
     );
 }
 

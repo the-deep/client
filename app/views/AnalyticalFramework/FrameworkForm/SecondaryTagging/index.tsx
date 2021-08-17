@@ -51,12 +51,13 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         onChange: setWidgetsFromProps,
         name,
         disabled,
-        error,
+        error: errorFromProps,
     } = props;
 
     // NOTE: we are casting to a more stricter version of Widget
     const widgets = widgetsFromProps as Widget[];
     const setWidgets = setWidgetsFromProps as (value: SetValueArg<Widget[]>, name: K) => void;
+    const error = errorFromProps as Error<Widget[]>;
 
     const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
 
@@ -193,6 +194,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                             editMode
                             isSecondary
                             disabled={disabled}
+                            error={error}
                         />
                     ) : (
                         <Canvas
@@ -204,6 +206,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                             editMode={false}
                             isSecondary
                             disabled={disabled}
+                            error={error}
                         />
                     )}
                 </div>

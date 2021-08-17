@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-interface NavbarContextInterface {
+interface SubNavbarContextInterface {
     iconsNode?: Element | null | undefined;
     actionsNode?: Element | null | undefined;
     childrenNode?: Element | null | undefined;
@@ -10,7 +10,7 @@ interface NavbarContextInterface {
     setChildrenNode?: React.Dispatch<React.SetStateAction<Element | null | undefined>>;
 }
 
-const NavbarContext = createContext<NavbarContextInterface>({
+const SubNavbarContext = createContext<SubNavbarContextInterface>({
     iconsNode: null,
     setIconsNode: (node: unknown) => {
         // eslint-disable-next-line no-console
@@ -28,4 +28,4 @@ const NavbarContext = createContext<NavbarContextInterface>({
     },
 });
 
-export default NavbarContext;
+export default SubNavbarContext;

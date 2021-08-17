@@ -51,7 +51,7 @@ function PrivacyInput<N extends string>(props: Props<N>) {
         (newVal: 'public' | 'private') => {
             onChange(newVal === 'private', name);
         },
-        [name],
+        [name, onChange],
     );
 
     return (
