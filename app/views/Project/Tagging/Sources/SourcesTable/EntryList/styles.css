@@ -1,15 +1,19 @@
 .entry-list-container {
     display: flex;
     flex-direction: column;
-    border: 1px solid red;
+    background-color: var(--dui-color-white);
 
     .content {
         display: flex;
-        flex-grow: 1;
 
         .entry-list {
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
+
+            .entry-item {
+                display: flex;
+            }
         }
     }
 }

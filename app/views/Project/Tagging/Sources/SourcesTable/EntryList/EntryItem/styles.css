@@ -1,0 +1,16 @@
+.entry-item-container {
+    display: flex;
+    flex-grow: 1;
+    background-color: var(--dui-color-white);
+
+    .header {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+}
