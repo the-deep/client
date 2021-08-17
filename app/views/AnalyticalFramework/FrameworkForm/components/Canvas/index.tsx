@@ -34,7 +34,6 @@ interface WidgetProps {
     attributes?: Attributes;
     listeners?: Listeners;
     disabled?: boolean;
-    errored?: boolean;
 }
 
 function WidgetWrapper(props: WidgetProps) {
@@ -50,12 +49,10 @@ function WidgetWrapper(props: WidgetProps) {
         attributes,
         listeners,
         disabled,
-        errored,
     } = props;
 
     return (
         <WidgetPreview
-            className={_cs(errored && styles.errored)}
             key={clientId}
             name={clientId}
             value={undefined}
@@ -186,17 +183,12 @@ function Canvas<T>(props: Props<T>) {
         isSecondary,
         widget: data,
         onWidgetValueChange: handleWidgetValueChange,
-        containerClassName: _cs(
-            styles.widgetContainer,
-            (isSecondary && data?.width === 'HALF') && styles.halfWidget,
-        ),
         showWidgetEdit: !props.editMode,
         onWidgetEditClick: handleWidgetEditClick,
         showWidgetDelete: !props.editMode,
         onWidgetDeleteClick: handleWidgetDeleteClick,
         editMode: props.editMode,
         disabled,
-        errored: analyzeErrors(error?.[key]),
     }), [
         isSecondary,
         handleWidgetValueChange,
@@ -207,13 +199,15 @@ function Canvas<T>(props: Props<T>) {
         disabled,
     ]);
 
-    const itemContainerParams = useCallback((_: string, data: Widget | PartialWidget) => ({
+    const itemContainerParams = useCallback((key: string, data: Widget | PartialWidget) => ({
         className: _cs(
             styles.widgetContainer,
+            analyzeErrors(error?.[key]) && styles.errored,
             (isSecondary && data?.width === 'HALF') && styles.halfWidget,
         ),
     }), [
         isSecondary,
+        error,
     ]);
 
     // eslint-disable-next-line react/destructuring-assignment

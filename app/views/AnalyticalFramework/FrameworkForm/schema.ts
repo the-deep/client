@@ -52,6 +52,8 @@ const widgetSchema: WidgetSchema = {
         properties: [],
         title: [],
         widgetId: [],
+        // FIXME: the width should be accepted by the server later on
+        // width: [],
     }),
 };
 

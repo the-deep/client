@@ -58,6 +58,10 @@
                         opacity: 0;
                     }
 
+                    &.errored {
+                        color: var(--dui-color-danger);
+                    }
+
                     &:hover {
                         .section-edit-button {
                             opacity: 1;

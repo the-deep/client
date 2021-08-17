@@ -7,7 +7,6 @@ import {
 } from '#generated/types';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import _ts from '#ts';
 
 const ORGANIZATIONS = gql`
     query OrganizationOptions($search: String) {
