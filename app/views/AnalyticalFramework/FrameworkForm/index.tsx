@@ -9,6 +9,8 @@ import {
 import {
     generatePath,
     useHistory,
+    useLocation,
+    Prompt,
 } from 'react-router-dom';
 import { isDefined } from '@togglecorp/fujs';
 import {
@@ -85,6 +87,8 @@ function FrameworkForm(props: FrameworkFormProps) {
     } = props;
 
     const { replace: replacePath } = useHistory();
+
+    const location = useLocation();
 
     const initialValue = useMemo(
         (): PartialFormType => {
@@ -177,6 +181,8 @@ function FrameworkForm(props: FrameworkFormProps) {
                     setError(formError);
                 } else if (ok && result) {
                     setValue(transformFramework(result));
+                    setPrimaryTaggingPristine(true);
+                    setSecondaryTaggingPristine(true);
                 }
             },
             onError: (error) => {
@@ -247,6 +253,14 @@ function FrameworkForm(props: FrameworkFormProps) {
 
     return (
         <>
+            <Prompt
+                message={(newLocation) => {
+                    if (newLocation.pathname !== location.pathname && !pristine) {
+                        return _ts('common', 'youHaveUnsavedChanges');
+                    }
+                    return true;
+                }}
+            />
             <Button
                 disabled={pristine || pending}
                 name="login"
