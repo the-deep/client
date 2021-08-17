@@ -179,7 +179,7 @@ function Canvas<T>(props: Props<T>) {
         onWidgetValueChange: handleWidgetValueChange,
         containerClassName: _cs(
             styles.widgetContainer,
-            (isSecondary && data?.width === 'half') && styles.halfWidget,
+            (isSecondary && data?.width === 'HALF') && styles.halfWidget,
         ),
         showWidgetEdit: !props.editMode,
         onWidgetEditClick: handleWidgetEditClick,
@@ -200,7 +200,7 @@ function Canvas<T>(props: Props<T>) {
     const itemContainerParams = useCallback((_: string, data: Widget | PartialWidget) => ({
         className: _cs(
             styles.widgetContainer,
-            (isSecondary && data?.width === 'half') && styles.halfWidget,
+            (isSecondary && data?.width === 'HALF') && styles.halfWidget,
         ),
     }), [
         isSecondary,

@@ -12,6 +12,7 @@ import {
     requiredStringCondition,
     PartialForm,
     getErrorObject,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 
@@ -22,20 +23,20 @@ import styles from './styles.css';
 type FormType = DateRangeWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        id: [defaultUndefinedType],
+        key: [],
         clientId: [],
         title: [requiredStringCondition],
         widgetId: [],
         order: [],
         width: [],
-        parent: [],
-        condition: [],
     }),
 };
 

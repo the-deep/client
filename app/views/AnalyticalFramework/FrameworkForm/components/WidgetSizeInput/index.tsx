@@ -2,8 +2,9 @@ import React from 'react';
 import {
     SegmentInput,
 } from '@the-deep/deep-ui';
-
-type WidgetWidth = 'full' | 'half';
+import {
+    WidgetWidth,
+} from '#generated/types';
 
 interface WidgetWidthOption {
     key: WidgetWidth;
@@ -12,12 +13,12 @@ interface WidgetWidthOption {
 
 const widgetWidthOptions: WidgetWidthOption[] = [
     {
-        key: 'full',
+        key: 'FULL',
         // FIXME: Use translations
         label: 'Full',
     },
     {
-        key: 'half',
+        key: 'HALF',
         // FIXME: Use translations
         label: 'Half',
     },
@@ -39,7 +40,7 @@ function WidgetSizeInput<N extends string>(props: Props<N>) {
         name,
         className,
         onChange,
-        value = 'full',
+        value = 'FULL',
         error,
     } = props;
 

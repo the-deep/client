@@ -1,6 +1,7 @@
 .sub-navbar {
     display: flex;
     position: relative;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .children {
         display: flex;

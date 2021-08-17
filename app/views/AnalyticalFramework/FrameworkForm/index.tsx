@@ -3,11 +3,13 @@ import {
     TextArea,
     TextInput,
     DateInput,
-    Container,
-    Tag,
     TabPanel,
     Button,
 } from '@the-deep/deep-ui';
+import {
+    generatePath,
+    useHistory,
+} from 'react-router-dom';
 import { isDefined } from '@togglecorp/fujs';
 import {
     useForm,
@@ -15,12 +17,16 @@ import {
     getErrorObject,
     // PartialForm,
     SetValueArg,
+    internal,
 } from '@togglecorp/toggle-form';
 import {
     useMutation,
 } from '@apollo/client';
 
+import routes from '#base/configs/routes';
+import { transformToFormError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/NewOrganizationSelectInput';
+import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
 // import UploadImage from './UploadImage';
 import PrimaryTagging from './PrimaryTagging';
@@ -51,35 +57,41 @@ interface FrameworkFormProps {
     framework: Framework | undefined;
 }
 
+function transformFramework(framework: Framework) {
+    const {
+        title,
+        description,
+        isPrivate,
+        organization,
+        primaryTagging,
+        secondaryTagging,
+    } = framework;
+
+    return removeNull({
+        title,
+        description,
+        isPrivate,
+        organization: organization?.id,
+        // FIXME: these empty array are side-effects of new PartialForm
+        primaryTagging: primaryTagging ?? [],
+        secondaryTagging: secondaryTagging ?? [],
+    });
+}
+
 function FrameworkForm(props: FrameworkFormProps) {
     const {
         frameworkId,
         framework,
     } = props;
 
+    const { replace: replacePath } = useHistory();
+
     const initialValue = useMemo(
         (): PartialFormType => {
             if (!framework) {
                 return defaultFormValues;
             }
-            const {
-                title,
-                description,
-                isPrivate,
-                organization,
-                primaryTagging,
-                secondaryTagging,
-            } = framework;
-
-            return removeNull({
-                title,
-                description,
-                isPrivate,
-                organization: organization?.id,
-                // FIXME: these empty array are side-effects of new PartialForm
-                primaryTagging: primaryTagging ?? [],
-                secondaryTagging: secondaryTagging ?? [],
-            });
+            return transformFramework(framework);
         },
         [framework],
     );
@@ -107,6 +119,7 @@ function FrameworkForm(props: FrameworkFormProps) {
         setFieldValue,
         validate,
         setError,
+        setValue,
     } = useForm(schema, initialValue);
 
     const [
@@ -116,10 +129,30 @@ function FrameworkForm(props: FrameworkFormProps) {
         CREATE_FRAMEWORK,
         {
             onCompleted: (response) => {
-                console.log(response);
+                if (!response?.analysisFrameworkCreate) {
+                    return;
+                }
+                const {
+                    errors,
+                    ok,
+                    result,
+                } = response.analysisFrameworkCreate;
+                if (!ok && errors) {
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
+                } else if (ok && result) {
+                    const path = generatePath(
+                        routes.analyticalFrameworkEdit.path,
+                        { frameworkId: result.id },
+                    );
+                    replacePath(path);
+                }
             },
             onError: (error) => {
                 console.error(error);
+                setError({
+                    [internal]: error.message,
+                });
             },
         },
     );
@@ -131,10 +164,26 @@ function FrameworkForm(props: FrameworkFormProps) {
         UPDATE_FRAMEWORK,
         {
             onCompleted: (response) => {
-                console.log(response);
+                if (!response?.analysisFramework?.analysisFrameworkUpdate) {
+                    return;
+                }
+                const {
+                    errors,
+                    ok,
+                    result,
+                } = response.analysisFramework.analysisFrameworkUpdate;
+                if (!ok && errors) {
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
+                } else if (ok && result) {
+                    setValue(transformFramework(result));
+                }
             },
             onError: (error) => {
-                console.error(error);
+                console.warn(error);
+                setError({
+                    [internal]: error.message,
+                });
             },
         },
     );
@@ -165,7 +214,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             setError(err);
             if (!errored && isDefined(val)) {
                 // NOTE: clearing out these data so they don't override
-                const data = { ...value } as AnalysisFrameworkInputType;
+                const data = { ...val } as AnalysisFrameworkInputType;
                 if (primaryTaggingPristine) {
                     delete data.primaryTagging;
                 }
@@ -190,7 +239,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             }
         },
         [
-            setError, validate, value, frameworkId,
+            setError, validate, frameworkId,
             primaryTaggingPristine, secondaryTaggingPristine,
             updateAnalysisFramework, createAnalysisFramework,
         ],
@@ -266,21 +315,15 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label={_ts('analyticalFramework', 'description')}
                             placeholder={_ts('analyticalFramework', 'description')}
                         />
-                        <Container
-                            className={styles.frameworkVisibility}
-                            headingClassName={styles.heading}
-                            contentClassName={styles.items}
-                            heading={_ts('analyticalFramework', 'frameworkVisibility')}
-                        >
-                            <Tag
-                                variant={value?.isPrivate ? 'default' : 'complement1'}
-                            >
-                                {_ts('analyticalFramework', 'publicFramework')}
-                            </Tag>
-                            <Tag variant={value?.isPrivate ? 'complement1' : 'default'}>
-                                {_ts('analyticalFramework', 'privateFramework')}
-                            </Tag>
-                        </Container>
+                        <PrivacyInput
+                            className={styles.input}
+                            name="isPrivate"
+                            value={value.isPrivate}
+                            onChange={setFieldValue}
+                            error={error?.isPrivate}
+                            disabled={pending}
+                            label={_ts('analyticalFramework', 'frameworkVisibility')}
+                        />
                     </div>
                     <div className={styles.imagePreview} />
                     {/*
