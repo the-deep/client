@@ -8,6 +8,7 @@ import {
 import {
     // Error,
     SetValueArg,
+    Error,
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 
@@ -37,8 +38,7 @@ interface Props<K extends string> {
     name: K;
     value: WidgetsType | undefined;
     onChange: (value: SetValueArg<WidgetsType>, name: K) => void;
-    // TODO: implement error after checking with server implementation
-    // error: Error<WidgetsType> | undefined;
+    error: Error<WidgetsType> | undefined;
     disabled?: boolean;
 }
 
@@ -51,6 +51,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         onChange: setWidgetsFromProps,
         name,
         disabled,
+        error,
     } = props;
 
     // NOTE: we are casting to a more stricter version of Widget

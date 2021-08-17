@@ -1,3 +1,7 @@
+.errored {
+    border: var(--dui-width-separator) solid var(--dui-color-danger);
+}
+
 .canvas {
     display: flex;
     flex-wrap: wrap;

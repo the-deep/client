@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import {
+    Tab,
     TextArea,
     TextInput,
     DateInput,
@@ -12,7 +13,7 @@ import {
     useLocation,
     Prompt,
 } from 'react-router-dom';
-import { isDefined } from '@togglecorp/fujs';
+import { isDefined, _cs } from '@togglecorp/fujs';
 import {
     useForm,
     removeNull,
@@ -20,11 +21,13 @@ import {
     // PartialForm,
     SetValueArg,
     internal,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
     useMutation,
 } from '@apollo/client';
 
+import { Actions, Children } from '#components/SubNavbar';
 import routes from '#base/configs/routes';
 import { transformToFormError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/NewOrganizationSelectInput';
@@ -251,6 +254,14 @@ function FrameworkForm(props: FrameworkFormProps) {
         ],
     );
 
+    const errorWithoutTaggings = { ...error };
+    delete errorWithoutTaggings.primaryTagging;
+    delete errorWithoutTaggings.secondaryTagging;
+
+    const detailsErrored = analyzeErrors(error);
+    const primaryTaggingErrored = analyzeErrors(error?.primaryTagging);
+    const secondaryTaggingErrored = analyzeErrors(error?.secondaryTagging);
+
     return (
         <>
             <Prompt
@@ -261,13 +272,44 @@ function FrameworkForm(props: FrameworkFormProps) {
                     return true;
                 }}
             />
-            <Button
-                disabled={pristine || pending}
-                name="login"
-                onClick={handleSubmit}
-            >
-                Submit
-            </Button>
+            <Actions>
+                <Button
+                    disabled={pristine || pending}
+                    name="login"
+                    onClick={handleSubmit}
+                >
+                    Submit
+                </Button>
+            </Actions>
+            <Children>
+                <Tab
+                    name="framework-details"
+                    transparentBorder
+                    className={_cs(detailsErrored && styles.erroredTab)}
+                >
+                    {_ts('analyticalFramework', 'frameworkDetails')}
+                </Tab>
+                <Tab
+                    name="primary-tagging"
+                    transparentBorder
+                    className={_cs(primaryTaggingErrored && styles.erroredTab)}
+                >
+                    {_ts('analyticalFramework', 'primaryTagging')}
+                </Tab>
+                <Tab
+                    name="secondary-tagging"
+                    transparentBorder
+                    className={_cs(secondaryTaggingErrored && styles.erroredTab)}
+                >
+                    {_ts('analyticalFramework', 'secondaryTagging')}
+                </Tab>
+                <Tab
+                    name="review"
+                    transparentBorder
+                >
+                    {_ts('analyticalFramework', 'review')}
+                </Tab>
+            </Children>
             <TabPanel
                 className={styles.tabPanel}
                 name="framework-details"
@@ -369,6 +411,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     className={styles.view}
                     frameworkId={frameworkId}
                     disabled={pending}
+                    error={error?.primaryTagging}
                 />
             </TabPanel>
             <TabPanel
@@ -382,6 +425,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     className={styles.view}
                     frameworkId={frameworkId}
                     disabled={pending}
+                    error={error?.primaryTagging}
                 />
             </TabPanel>
             <TabPanel

@@ -8,11 +8,13 @@ import {
     IoCreateOutline,
     IoTrash,
 } from 'react-icons/io5';
+import { Error, getErrorObject, analyzeErrors } from '@togglecorp/toggle-form';
 
 import SortableList, {
     Attributes,
     Listeners,
 } from '#components/SortableList';
+import NonFieldError from '#components/NonFieldError';
 
 import { Widget } from '#types/newAnalyticalFramework';
 
@@ -32,6 +34,7 @@ interface WidgetProps {
     attributes?: Attributes;
     listeners?: Listeners;
     disabled?: boolean;
+    errored?: boolean;
 }
 
 function WidgetWrapper(props: WidgetProps) {
@@ -47,10 +50,12 @@ function WidgetWrapper(props: WidgetProps) {
         attributes,
         listeners,
         disabled,
+        errored,
     } = props;
 
     return (
         <WidgetPreview
+            className={_cs(errored && styles.errored)}
             key={clientId}
             name={clientId}
             value={undefined}
@@ -106,6 +111,7 @@ type Props<T> = {
     name: T;
     isSecondary?: boolean;
     disabled?: boolean;
+    error?: Error<Widget[]> | undefined;
 } & ({
     editMode?: false;
     widgets: Widget[] | undefined;
@@ -132,7 +138,10 @@ function Canvas<T>(props: Props<T>) {
         */
         disabled,
         isSecondary = false,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const handleWidgetValueChange = useCallback(
         (_: unknown, widgetName: string) => {
@@ -187,6 +196,7 @@ function Canvas<T>(props: Props<T>) {
         onWidgetDeleteClick: handleWidgetDeleteClick,
         editMode: props.editMode,
         disabled,
+        errored: analyzeErrors(error?.[key]),
     }), [
         isSecondary,
         handleWidgetValueChange,
@@ -209,33 +219,43 @@ function Canvas<T>(props: Props<T>) {
     // eslint-disable-next-line react/destructuring-assignment
     if (props.editMode) {
         return (
+            <>
+                <NonFieldError
+                    error={error}
+                />
+                <SortableList
+                    className={styles.canvas}
+                    name="widgets"
+                    data={props.widgets}
+                    keySelector={partialWidgetKeySelector}
+                    renderer={WidgetWrapper}
+                    direction="rect"
+                    rendererParams={widgetRendererParams}
+                    itemContainerParams={itemContainerParams}
+                    showDragOverlay
+                />
+            </>
+        );
+    }
+    return (
+        <>
+            <NonFieldError
+                error={error}
+            />
             <SortableList
                 className={styles.canvas}
                 name="widgets"
+                onChange={handleWidgetOrderChange}
+                // eslint-disable-next-line react/destructuring-assignment
                 data={props.widgets}
-                keySelector={partialWidgetKeySelector}
+                keySelector={widgetKeySelector}
                 renderer={WidgetWrapper}
                 direction="rect"
                 rendererParams={widgetRendererParams}
                 itemContainerParams={itemContainerParams}
                 showDragOverlay
             />
-        );
-    }
-    return (
-        <SortableList
-            className={styles.canvas}
-            name="widgets"
-            onChange={handleWidgetOrderChange}
-            // eslint-disable-next-line react/destructuring-assignment
-            data={props.widgets}
-            keySelector={widgetKeySelector}
-            renderer={WidgetWrapper}
-            direction="rect"
-            rendererParams={widgetRendererParams}
-            itemContainerParams={itemContainerParams}
-            showDragOverlay
-        />
+        </>
     );
 }
 export default Canvas;

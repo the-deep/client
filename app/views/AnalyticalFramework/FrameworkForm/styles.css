@@ -1,3 +1,7 @@
+.errored-tab {
+    color: var(--dui-color-danger);
+}
+
 .tab-panel {
     display: flex;
     flex-direction: column;
