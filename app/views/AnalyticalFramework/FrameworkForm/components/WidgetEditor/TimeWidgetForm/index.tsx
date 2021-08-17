@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import {
     Button,
     TextInput,
+    TimeInput,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -85,7 +86,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 className={styles.error}
                 error={error}
             />
-            <TextInput // FIXME: use TimeInput when added through deep-ui
+            <TimeInput
                 // FIXME: use translation
                 label="Default Value"
                 className={styles.input}
