@@ -1,0 +1,38 @@
+.matrix {
+    display: flex;
+    flex-direction: column;
+
+    .matrix-row {
+        margin: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+        .column {
+            display: flex;
+
+            .sub-row-label {
+                flex-basis: 50%;
+                padding: 0 var(--dui-spacing-small);
+            }
+
+            .column-details {
+                display: flex;
+                flex-basis: 50%;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 0 var(--dui-spacing-small);
+
+                .sub-row-label {
+                    font-weight: var(--dui-font-weight-bold);
+                }
+
+                .column-label {
+                    font-weight: var(--dui-font-weight-bold);
+                }
+
+                .selected-values {
+                    color: var(--dui-color-accent);
+                    font-weight: var(--dui-font-weight-bold);
+                }
+            }
+        }
+    }
+}
