@@ -1,0 +1,21 @@
+.matrix {
+    display: flex;
+    flex-direction: column;
+    margin: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+    .row {
+        display: flex;
+        align-items: center;
+        padding: var(--dui-spacing-small);
+
+        .title {
+            text-transform: capitalize;
+        }
+
+        .selected-values {
+            margin: 0 var(--dui-spacing-small);
+            color: var(--dui-color-accent);
+            font-weight: var(--dui-font-weight-bold);
+        }
+    }
+}
