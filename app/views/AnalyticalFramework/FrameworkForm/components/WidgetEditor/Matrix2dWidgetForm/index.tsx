@@ -93,12 +93,6 @@ type SubColumnsSchemaMember = ReturnType<SubColumnsSchema['member']>;
 const subColumnsSchema: SubColumnsSchema = {
     keySelector: (col) => col.clientId,
     member: (): SubColumnsSchemaMember => subColumnSchema,
-    validation: (subColumns) => {
-        if ((subColumns?.length ?? 0) <= 0) {
-            return 'At least one sub column is required.';
-        }
-        return undefined;
-    },
 };
 
 type ColumnSchema = ObjectSchema<PartialColumnType>;
@@ -798,10 +792,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             value: data,
             onChange: onColumnsChange,
             onRemove: onColumnsRemove,
-            error: rowError?.[key],
+            error: columnError?.[key],
             autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
         }),
-        [onColumnsChange, onColumnsRemove, rowError],
+        [onColumnsChange, onColumnsRemove, columnError],
     );
 
     const rowRendererParams = useCallback(
@@ -814,10 +808,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             value: data,
             onChange: onRowsChange,
             onRemove: onRowsRemove,
-            error: columnError?.[key],
+            error: rowError?.[key],
             autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
         }),
-        [onRowsChange, onRowsRemove, columnError],
+        [onRowsChange, onRowsRemove, rowError],
     );
 
     const handleRowsOrderChange = useCallback((newRows: PartialRowType[]) => {
@@ -860,10 +854,22 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         >
             <NonFieldError error={error} />
             <TabList className={styles.tabList}>
-                <Tab name="rows">
+                <Tab
+                    name="rows"
+                    className={_cs(
+                        styles.tab,
+                        analyzeErrors(rowError) && styles.errored,
+                    )}
+                >
                     Rows
                 </Tab>
-                <Tab name="columns">
+                <Tab
+                    name="columns"
+                    className={_cs(
+                        styles.tab,
+                        analyzeErrors(columnError) && styles.errored,
+                    )}
+                >
                     Columns
                 </Tab>
             </TabList>
