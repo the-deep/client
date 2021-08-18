@@ -1,3 +1,8 @@
+import {
+    Widget_Id as WidgetTypes,
+    WidgetWidth,
+} from '#generated/types';
+
 export type NumberValue = number;
 export type TextValue = string;
 export type DateValue = string;
@@ -28,19 +33,7 @@ export type Matrix2dValue = {
     } | undefined,
 };
 
-export type Types = 'number'
-    | 'text'
-    | 'single-select'
-    | 'multi-select'
-    | 'date'
-    | 'time'
-    | 'time-range'
-    | 'date-range'
-    | 'matrix-2d'
-    | 'matrix-1d'
-    | 'organigram'
-    | 'geo-location'
-    | 'scale';
+export type Types = WidgetTypes;
 
 interface BasicEntity {
     id: number;
@@ -58,6 +51,7 @@ interface KeyLabelColor extends KeyLabel {
     color: string;
 }
 
+/*
 interface Condition {
     clientId: string;
     type: unknown;
@@ -66,6 +60,7 @@ interface Condition {
     order: number;
     conjunction: 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
 }
+*/
 
 interface BaseData<T> {
     defaultValue?: T;
@@ -117,68 +112,76 @@ interface Matrix2Data extends BaseData<undefined> {
 
 interface BaseWidget {
     clientId: string;
-    title: string;
+    // TODO: clientId should always sync with key
+    key: string;
+
+    id: string;
     order: number;
+    title: string;
 
-    width: 'full' | 'half';
+    width?: WidgetWidth;
 
+    widgetId: Types;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    properties: object;
+
+    /*
     parent?: string;
-    condition: Condition[];
-
-    type: Types;
+    condition?: Condition[];
+    */
 }
 
 export interface NumberWidget extends BaseWidget {
-    type: 'number';
-    data: NumberData;
+    widgetId: 'NUMBERWIDGET';
+    properties: NumberData;
 }
 export interface TextWidget extends BaseWidget {
-    type: 'text';
-    data: BaseData<TextValue>;
+    widgetId: 'TEXTWIDGET';
+    properties: BaseData<TextValue>;
 }
 export interface SingleSelectWidget extends BaseWidget {
-    type: 'single-select';
-    data: SingleSelectData;
+    widgetId: 'SELECTWIDGET';
+    properties: SingleSelectData;
 }
 export interface MultiSelectWidget extends BaseWidget {
-    type: 'multi-select';
-    data: MultiSelectData;
+    widgetId: 'MULTISELECTWIDGET';
+    properties: MultiSelectData;
 }
 export interface DateWidget extends BaseWidget {
-    type: 'date';
-    data: BaseData<DateValue>;
+    widgetId: 'DATEWIDGET';
+    properties: BaseData<DateValue>;
 }
 export interface TimeWidget extends BaseWidget {
-    type: 'time';
-    data: BaseData<TimeValue>;
+    widgetId: 'TIMEWIDGET';
+    properties: BaseData<TimeValue>;
 }
 export interface TimeRangeWidget extends BaseWidget {
-    type: 'time-range';
-    data: BaseData<TimeRangeValue>;
+    widgetId: 'TIMERANGEWIDGET';
+    properties: BaseData<TimeRangeValue>;
 }
 export interface DateRangeWidget extends BaseWidget {
-    type: 'date-range';
-    data: BaseData<DateRangeValue>;
+    widgetId: 'DATERANGEWIDGET';
+    properties: BaseData<DateRangeValue>;
 }
 export interface Matrix1dWidget extends BaseWidget {
-    type: 'matrix-1d';
-    data: Matrix1dData;
+    widgetId: 'MATRIX1DWIDGET';
+    properties: Matrix1dData;
 }
 export interface Matrix2dWidget extends BaseWidget {
-    type: 'matrix-2d';
-    data: Matrix2Data;
+    widgetId: 'MATRIX2DWIDGET';
+    properties: Matrix2Data;
 }
 interface OrganigramWidget extends BaseWidget {
-    type: 'organigram';
-    data: OrganigramData;
+    widgetId: 'ORGANIGRAMWIDGET';
+    properties: OrganigramData;
 }
 export interface ScaleWidget extends BaseWidget {
-    type: 'scale';
-    data: ScaleData;
+    widgetId: 'SCALEWIDGET';
+    properties: ScaleData;
 }
 interface GeoLocationWidget extends BaseWidget {
-    type: 'geo-location';
-    data: GeoLocationData;
+    widgetId: 'GEOWIDGET';
+    properties: GeoLocationData;
 }
 
 export type Widget = NumberWidget
@@ -197,10 +200,11 @@ export type Widget = NumberWidget
 
 export interface Section {
     clientId: string;
+    id: string;
+    order: number;
     title: string;
     tooltip?: string;
     widgets: Widget[];
-    order: number;
 }
 
 export interface AnalysisFramework extends BasicEntity {

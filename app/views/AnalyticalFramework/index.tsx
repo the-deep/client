@@ -1,46 +1,24 @@
-import React, { useState, useMemo } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import React, { useMemo, useState } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
-    Button,
     Tabs,
-    Tab,
-    TabList,
-    TabPanel,
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
 
 import PreloadMessage from '#base/components/PreloadMessage';
-import FullPageHeader from '#components/FullPageHeader';
+import SubNavbar from '#components/SubNavbar';
+import SubNavbarContext from '#components/SubNavbar/context';
 import _ts from '#ts';
-
-import {
-    currentHash,
-} from '#utils/common';
 import {
     CurrentFrameworkQuery,
     CurrentFrameworkQueryVariables,
 } from '#generated/types';
 
-import FrameworkDetails from './FrameworkDetails';
-import PrimaryTagging from './PrimaryTagging';
-import SecondaryTagging from './SecondaryTagging';
-import Review from './Review';
-
+import FrameworkForm from './FrameworkForm';
+import { CURRENT_FRAMEWORK } from './queries';
 import styles from './styles.css';
-
-const CURRENT_FRAMEWORK = gql`
-    query CurrentFramework($id: ID!) {
-        analysisFramework(id: $id) {
-            id
-            title
-            allowedPermissions
-        }
-    }
-`;
-
-export type Framework = Omit<NonNullable<CurrentFrameworkQuery['analysisFramework']>, '__typename'>;
 
 interface Props {
     className?: string;
@@ -50,9 +28,23 @@ function AnalyticalFramework(props: Props) {
     const {
         className,
     } = props;
-    const [framework, setFramework] = useState<Framework | undefined>();
+
+    const [childrenNode, setChildrenNode] = useState<Element | null | undefined>();
+    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
+    const navbarContextValue = useMemo(
+        () => ({
+            childrenNode,
+            actionsNode,
+            setChildrenNode,
+            setActionsNode,
+        }),
+        [childrenNode, actionsNode],
+    );
+
     const { frameworkId: frameworkIdFromParams } = useParams<{ frameworkId: string }>();
-    const frameworkId = +frameworkIdFromParams;
+
+    const frameworkId = !frameworkIdFromParams ? undefined : +frameworkIdFromParams;
+    const createMode = !frameworkIdFromParams;
 
     const variables = useMemo(
         (): CurrentFrameworkQueryVariables => ({
@@ -60,17 +52,15 @@ function AnalyticalFramework(props: Props) {
         }),
         [frameworkIdFromParams],
     );
-    const { loading, error } = useQuery<CurrentFrameworkQuery, CurrentFrameworkQueryVariables>(
+    const {
+        loading,
+        error,
+        data,
+    } = useQuery<CurrentFrameworkQuery, CurrentFrameworkQueryVariables>(
         CURRENT_FRAMEWORK,
         {
+            skip: createMode,
             variables,
-            onCompleted: (data) => {
-                if (data.analysisFramework) {
-                    setFramework(data.analysisFramework);
-                }
-                // FIXME: handle failure
-            },
-            // FIXME: handle failure
         },
     );
 
@@ -93,109 +83,47 @@ function AnalyticalFramework(props: Props) {
         );
     }
 
-    const hasEditPermission = framework?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
+    const framework = data?.analysisFramework ?? undefined;
+    const hasPermission = createMode
+        ? true
+        : framework?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
 
     return (
         <div className={_cs(styles.analyticalFramework, className)}>
-            <Tabs
-                useHash
-                defaultHash="framework-details"
-            >
-                <FullPageHeader
-                    className={styles.header}
-                    heading={frameworkId ? framework?.title : _ts('analyticalFramework', 'addNewAnalyticalFramework')}
-                    actions={(
-                        <>
-                            {currentHash() !== 'framework-details' && (
-                                <Button
-                                    name={undefined}
-                                    variant="tertiary"
-                                    disabled
-                                >
-                                    {_ts('analyticalFramework', 'saveButtonLabel')}
-                                </Button>
-                            )}
+            <SubNavbarContext.Provider value={navbarContextValue}>
+                <Tabs
+                    useHash
+                    defaultHash="framework-details"
+                >
+                    <SubNavbar
+                        className={styles.header}
+                        heading={(
+                            createMode
+                                ? _ts('analyticalFramework', 'addNewAnalyticalFramework')
+                                : framework?.title
+                        )}
+                        defaultActions={(
                             <ButtonLikeLink
                                 variant="tertiary"
                                 to="/"
                             >
                                 {_ts('analyticalFramework', 'closeButtonLabel')}
                             </ButtonLikeLink>
-                        </>
-                    )}
-                >
-                    <TabList>
-                        <Tab
-                            name="framework-details"
-                            disabled={!hasEditPermission}
-                        >
-                            {_ts('analyticalFramework', 'frameworkDetails')}
-                        </Tab>
-                        <Tab
-                            name="primary-tagging"
-                            disabled={isNotDefined(frameworkId) || !hasEditPermission}
-                        >
-                            {_ts('analyticalFramework', 'primaryTagging')}
-                        </Tab>
-                        <Tab
-                            name="secondary-tagging"
-                            disabled={isNotDefined(frameworkId) || !hasEditPermission}
-                        >
-                            {_ts('analyticalFramework', 'secondaryTagging')}
-                        </Tab>
-                        <Tab
-                            name="review"
-                            disabled={isNotDefined(frameworkId) || !hasEditPermission}
-                        >
-                            {_ts('analyticalFramework', 'review')}
-                        </Tab>
-                    </TabList>
-                </FullPageHeader>
-                {hasEditPermission ? (
-                    <>
-                        <TabPanel
-                            className={styles.tabPanel}
-                            name="framework-details"
-                        >
-                            <FrameworkDetails
-                                // className={styles.view}
-                                frameworkId={frameworkId}
-                            />
-                        </TabPanel>
-                        <TabPanel
-                            className={styles.tabPanel}
-                            name="primary-tagging"
-                        >
-                            <PrimaryTagging
-                                className={styles.view}
-                                frameworkId={frameworkId}
-                            />
-                        </TabPanel>
-                        <TabPanel
-                            className={styles.tabPanel}
-                            name="secondary-tagging"
-                        >
-                            <SecondaryTagging
-                                className={styles.view}
-                                frameworkId={frameworkId}
-                            />
-                        </TabPanel>
-                        <TabPanel
-                            className={styles.tabPanel}
-                            name="review"
-                        >
-                            <Review
-                                className={styles.view}
-                            />
-                        </TabPanel>
-                    </>
-                ) : (
-                    <PreloadMessage
-                        heading="Oh no!"
-                        content="The framework does not exist or you do not have permissions to edit the framework."
+                        )}
                     />
-                )}
-            </Tabs>
+                    {!hasPermission ? (
+                        <PreloadMessage
+                            heading="Oh no!"
+                            content="The framework does not exist or you do not have permissions to edit the framework."
+                        />
+                    ) : (
+                        <FrameworkForm
+                            framework={framework}
+                            frameworkId={frameworkId}
+                        />
+                    )}
+                </Tabs>
+            </SubNavbarContext.Provider>
         </div>
     );
 }

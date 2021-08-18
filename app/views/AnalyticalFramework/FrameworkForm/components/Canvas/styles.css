@@ -1,0 +1,18 @@
+
+.canvas {
+    display: flex;
+    flex-wrap: wrap;
+
+    .widget-container {
+        flex-basis: 100%;
+        padding: var(--dui-spacing-medium);
+
+        &.half-widget {
+            flex-basis: 50%;
+        }
+
+        &.errored {
+            border: var(--dui-width-separator-thin) solid var(--dui-color-danger);
+        }
+    }
+}

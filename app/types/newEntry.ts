@@ -25,67 +25,67 @@ interface BaseValue<T> {
 }
 
 export interface TextWidgetValue extends BaseWidgetValue {
-    type: 'text';
+    type: 'TEXTWIDGET';
     data: BaseValue<TextValue>;
 }
 
 export interface NumberWidgetValue extends BaseWidgetValue {
-    type: 'number';
+    type: 'NUMBERWIDGET';
     data: BaseValue<NumberValue>;
 }
 
 export interface TimeWidgetValue extends BaseWidgetValue {
-    type: 'time';
+    type: 'TIMEWIDGET';
     data: BaseValue<TimeValue>;
 }
 
 export interface DateWidgetValue extends BaseWidgetValue {
-    type: 'date';
+    type: 'DATEWIDGET';
     data: BaseValue<DateValue>;
 }
 
 export interface TimeRangeWidgetValue extends BaseWidgetValue {
-    type: 'time-range';
+    type: 'TIMERANGEWIDGET';
     data: BaseValue<TimeRangeValue>;
 }
 
 export interface DateRangeWidgetValue extends BaseWidgetValue {
-    type: 'date-range';
+    type: 'DATERANGEWIDGET';
     data: BaseValue<DateRangeValue>;
 }
 
 export interface SingleSelectWidgetValue extends BaseWidgetValue {
-    type: 'single-select';
+    type: 'SELECTWIDGET';
     data: BaseValue<SingleSelectValue>;
 }
 
 export interface MultiSelectWidgetValue extends BaseWidgetValue {
-    type: 'multi-select';
+    type: 'MULTISELECTWIDGET';
     data: BaseValue<MultiSelectValue>;
 }
 
 export interface ScaleWidgetValue extends BaseWidgetValue {
-    type: 'scale';
+    type: 'SCALEWIDGET';
     data: BaseValue<ScaleValue>;
 }
 
 export interface OrganigramWidgetValue extends BaseWidgetValue {
-    type: 'organigram';
+    type: 'ORGANIGRAMWIDGET';
     data: BaseValue<OrganigramValue>;
 }
 
 export interface GeoLocationWidgetValue extends BaseWidgetValue {
-    type: 'geo-location';
+    type: 'GEOWIDGET';
     data: BaseValue<GeoLocationValue>;
 }
 
 export interface Matrix1dWidgetValue extends BaseWidgetValue {
-    type: 'matrix-1d';
+    type: 'MATRIX1DWIDGET';
     data: BaseValue<Matrix1dValue>;
 }
 
 export interface Matrix2dWidgetValue extends BaseWidgetValue {
-    type: 'matrix-2d';
+    type: 'MATRIX2DWIDGET';
     data: BaseValue<Matrix2dValue>;
 }
 

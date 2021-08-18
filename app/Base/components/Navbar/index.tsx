@@ -8,7 +8,6 @@ import {
     DropdownMenu,
     DropdownMenuItem,
     useConfirmation,
-    Border,
 } from '@the-deep/deep-ui';
 import {
     IoHelp,
@@ -70,7 +69,6 @@ function Navbar(props: Props) {
 
     return (
         <nav className={_cs(className, styles.navbar)}>
-            <Border />
             <div className={styles.appBrand}>
                 DEEP
             </div>

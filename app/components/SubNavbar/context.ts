@@ -1,13 +1,16 @@
 import { createContext } from 'react';
 
-interface NavbarContextInterface {
-    iconsNode: Element | null | undefined;
-    actionsNode: Element | null | undefined;
-    setIconsNode: React.Dispatch<React.SetStateAction<Element | null | undefined>>;
-    setActionsNode: React.Dispatch<React.SetStateAction<Element | null | undefined>>;
+interface SubNavbarContextInterface {
+    iconsNode?: Element | null | undefined;
+    actionsNode?: Element | null | undefined;
+    childrenNode?: Element | null | undefined;
+
+    setIconsNode?: React.Dispatch<React.SetStateAction<Element | null | undefined>>;
+    setActionsNode?: React.Dispatch<React.SetStateAction<Element | null | undefined>>;
+    setChildrenNode?: React.Dispatch<React.SetStateAction<Element | null | undefined>>;
 }
 
-const NavbarContext = createContext<NavbarContextInterface>({
+const SubNavbarContext = createContext<SubNavbarContextInterface>({
     iconsNode: null,
     setIconsNode: (node: unknown) => {
         // eslint-disable-next-line no-console
@@ -18,6 +21,11 @@ const NavbarContext = createContext<NavbarContextInterface>({
         // eslint-disable-next-line no-console
         console.warn('Trying to set actions node', node);
     },
+    childrenNode: null,
+    setChildrenNode: (node: unknown) => {
+        // eslint-disable-next-line no-console
+        console.warn('Trying to set children node', node);
+    },
 });
 
-export default NavbarContext;
+export default SubNavbarContext;

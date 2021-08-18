@@ -16,7 +16,7 @@ import {
     Widget,
     Section,
 } from '#types/newAnalyticalFramework';
-import ListWidgetPreview from '#views/AnalyticalFramework/ListWidgetPreview';
+import ListWidgetPreview from '#views/AnalyticalFramework/FrameworkForm/components/ListCanvas/ListWidgetPreview';
 
 import SectionItem from './SectionItem';
 

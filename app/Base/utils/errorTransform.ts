@@ -7,14 +7,15 @@ interface Error {
 }
 
 export interface ObjectError {
+    // clientId: string;
     field: string;
     messages?: string;
     objectErrors?: ObjectError[];
-    arrayErrors?: ArrayError[];
+    arrayErrors?: (ArrayError | null)[];
 }
 
 interface ArrayError {
-    key: string;
+    clientId: string;
     messages?: string;
     objectErrors?: ObjectError[];
 }
@@ -57,19 +58,20 @@ function transformObject(errors: ObjectError[] | undefined): Error | undefined {
     };
 }
 
-function transformArray(errors: ArrayError[] | undefined): Error | undefined {
+function transformArray(errors: (ArrayError | null)[] | undefined): Error | undefined {
     if (isNotDefined(errors)) {
         return undefined;
     }
+    const filteredErrors = errors.filter(isDefined);
 
-    const topLevelError = errors.find((error) => error.key === 'nonMemberErrors');
-    const memberErrors = errors.filter((error) => error.key !== 'nonMemberErrors');
+    const topLevelError = filteredErrors.find((error) => error.clientId === 'nonMemberErrors');
+    const memberErrors = filteredErrors.filter((error) => error.clientId !== 'nonMemberErrors');
 
     return {
         [internal]: topLevelError?.messages,
         ...listToMap(
             memberErrors,
-            (error) => error.key,
+            (error) => error.clientId,
             (error) => transformObject(error.objectErrors),
         ),
     };
