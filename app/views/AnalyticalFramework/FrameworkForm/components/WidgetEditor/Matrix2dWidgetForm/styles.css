@@ -22,6 +22,11 @@
     }
 
     .tab-list {
+        .tab {
+            &.errored {
+                color: var(--dui-color-danger);
+            }
+        }
         >* {
             flex-grow: 1;
         }
