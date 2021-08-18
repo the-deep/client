@@ -125,7 +125,7 @@ function UserTable(props: Props) {
         setUserToEdit({
             id: selectedUser.id,
             member: selectedUser.member,
-            memberName: selectedUser?.memberDetails?.displayName,
+            memberName: selectedUser.memberDetails?.displayName,
             role: selectedUser.role,
         });
         showUserAddModal();

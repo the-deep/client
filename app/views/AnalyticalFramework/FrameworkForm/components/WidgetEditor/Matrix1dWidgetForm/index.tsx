@@ -393,7 +393,7 @@ function RowInput(props: RowInputProps) {
                 <SortableList
                     name="cells"
                     onChange={handleOrderChange}
-                    data={value?.cells}
+                    data={value.cells}
                     keySelector={cellKeySelector}
                     renderer={CellInput}
                     direction="vertical"

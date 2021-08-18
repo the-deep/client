@@ -195,21 +195,23 @@ function Row(props: RowProps) {
                 {label ?? 'Unnamed'}
             </Heading>
             <table className={styles.table}>
-                <tr className={_cs(styles.tableRow, styles.tableHead)}>
-                    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                    <th
-                        className={styles.tableHeader}
-                    />
-                    {columns?.map((column) => (
+                <thead>
+                    <tr className={_cs(styles.tableRow, styles.tableHead)}>
+                        {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
                         <th
                             className={styles.tableHeader}
-                            key={column.clientId}
-                            title={column.tooltip}
-                        >
-                            {column.label}
-                        </th>
-                    ))}
-                </tr>
+                        />
+                        {columns?.map((column) => (
+                            <th
+                                className={styles.tableHeader}
+                                key={column.clientId}
+                                title={column.tooltip}
+                            >
+                                {column.label}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
                 <List
                     data={orderedSubRows}
                     keySelector={subRowKeySelector}
