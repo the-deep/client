@@ -247,6 +247,14 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
     const sectionEditMode = !!tempSections && !tempWidget;
     const widgetEditMode = !tempSections && !!tempWidget;
 
+    const validSectionSelected = useMemo(
+        () => (
+            !!selectedSection
+            && !!sections.find((section) => section.clientId === selectedSection)
+        ),
+        [sections, selectedSection],
+    );
+
     return (
         <div className={_cs(styles.primaryTagging, className)}>
             <Container
@@ -260,6 +268,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         onSectionsAdd={handleSectionsAdd}
                         onWidgetAdd={handleWidgetAdd}
                         disabled={disabled}
+                        widgetsDisabled={!validSectionSelected}
                     />
                 )}
                 {sectionEditMode && tempSections && (

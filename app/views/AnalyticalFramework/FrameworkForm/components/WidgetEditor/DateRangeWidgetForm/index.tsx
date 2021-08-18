@@ -88,7 +88,7 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
-                heading={value?.title ?? 'Unnamed'}
+                heading={value.title ?? 'Unnamed'}
                 headerActions={(
                     <>
                         <Button
@@ -122,7 +122,7 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
                     label="Title"
                     name="title"
                     autoFocus
-                    value={value?.title}
+                    value={value.title}
                     onChange={setFieldValue}
                     error={error?.title}
                 />
