@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { connect } from 'react-redux';
 import { IoAdd } from 'react-icons/io5';
 import {
     Tabs,
@@ -9,14 +10,26 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 import { useModalState } from '#hooks/stateManagement';
+import {
+    AppState,
+} from '#typings';
+import { activeProjectIdFromStateSelector } from '#redux';
 
+import ExportHistory from './ExportHistory';
 import Navbar from '../Navbar';
 import NewExport from './NewExport';
 import styles from './styles.scss';
 
+const mapStateToProps = (state: AppState) => ({
+    activeProject: activeProjectIdFromStateSelector(state),
+});
+interface Props {
+    activeProject: number;
+}
 type ExportType = 'export-entry-history' | 'export-assessment-history';
 
-function Export() {
+function Export(props: Props) {
+    const { activeProject } = props;
     const [activeTab, setActiveTab] = useState<ExportType>('export-entry-history');
 
     const handleExportAssessmentClick = useCallback(() => {}, []);
@@ -71,7 +84,9 @@ function Export() {
                         </div>
                     </div>
                     <TabPanel name="export-entry-history">
-                        This is export history
+                        <ExportHistory
+                            projectId={activeProject}
+                        />
                     </TabPanel>
                     <TabPanel name="export-assessment-history">
                         This is Export Assessment History
@@ -87,5 +102,5 @@ function Export() {
     );
 }
 
-export default Export;
+export default connect(mapStateToProps)(Export);
 

@@ -1,0 +1,12 @@
+.export-filter {
+    display: flex;
+
+    .input {
+        margin-left: var(--dui-spacing-small);
+    }
+
+    .button {
+        align-self: flex-end;
+        margin-left: var(--dui-spacing-small);
+    }
+}
