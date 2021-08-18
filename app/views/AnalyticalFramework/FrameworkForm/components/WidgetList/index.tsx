@@ -139,6 +139,7 @@ type Props = {
     className?: string;
     onWidgetAdd: (widget: PartialWidget) => void;
     disabled?: boolean;
+    widgetsDisabled?: boolean;
 } & ({
     sectionsDisabled: true;
 } | {
@@ -151,6 +152,7 @@ function WidgetList(props: Props) {
         className,
         onWidgetAdd,
         disabled,
+        widgetsDisabled,
     } = props;
 
     const handleAddClick = useCallback(
@@ -186,14 +188,14 @@ function WidgetList(props: Props) {
                         // FIXME: use strings
                         label="Matrix1d"
                         onAddClick={handleAddClick}
-                        disabled={disabled}
+                        disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
                         name="MATRIX2DWIDGET"
                         // FIXME: use strings
                         label="Matrix2d"
                         onAddClick={handleAddClick}
-                        disabled={disabled}
+                        disabled={disabled || widgetsDisabled}
                     />
                 </>
             )}
@@ -211,63 +213,63 @@ function WidgetList(props: Props) {
                     // FIXME: use strings
                     label="Text"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="NUMBERWIDGET"
                     // FIXME: use strings
                     label="Number"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="DATEWIDGET"
                     // FIXME: use strings
                     label="Date"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="DATERANGEWIDGET"
                     // FIXME: use strings
                     label="Date Range"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="TIMEWIDGET"
                     // FIXME: use strings
                     label="Time"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="TIMERANGEWIDGET"
                     // FIXME: use strings
                     label="Time Range"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="SCALEWIDGET"
                     // FIXME: use strings
                     label="Scale"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="SELECTWIDGET"
                     // FIXME: use strings
                     label="Single Select"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
                 <AddItem
                     name="MULTISELECTWIDGET"
                     // FIXME: use strings
                     label="Multi Select"
                     onAddClick={handleAddClick}
-                    disabled={disabled}
+                    disabled={disabled || widgetsDisabled}
                 />
             </ExpandableContainer>
         </div>

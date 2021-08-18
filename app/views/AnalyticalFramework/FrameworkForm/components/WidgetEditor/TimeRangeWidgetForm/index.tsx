@@ -90,7 +90,7 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
-                heading={value?.title ?? 'Unnamed'}
+                heading={value.title ?? 'Unnamed'}
                 headerActions={(
                     <>
                         <Button
@@ -124,7 +124,7 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
                     label="Title"
                     name="title"
                     autoFocus
-                    value={value?.title}
+                    value={value.title}
                     onChange={setFieldValue}
                     error={error?.title}
                 />
