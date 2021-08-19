@@ -21,8 +21,8 @@ import SmartNavLink from '#base/components/SmartNavLink';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
 
-import LeadEditModal from './Sources/LeadEditModal';
-import BulkUpload from './Sources/BulkUpload';
+import SourceEditModal from '#components/SourceEditModal';
+import BulkUploadModal from '#components//BulkUploadModal';
 
 import styles from './styles.css';
 
@@ -62,7 +62,7 @@ function Tagging(props: Props) {
         [iconsNode, actionsNode],
     );
 
-    const handleSingleLeadSaveSuccess = useCallback(() => {
+    const handleSingleSourceSaveSuccess = useCallback(() => {
         setRefreshTimestamp(new Date().getTime());
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
@@ -182,14 +182,14 @@ function Tagging(props: Props) {
                 </Suspense>
             </div>
             {isSingleSourceModalShown && project?.id && (
-                <LeadEditModal
+                <SourceEditModal
                     projectId={+project.id}
                     onClose={hideSingleSourceAddModal}
-                    onLeadSaveSuccess={handleSingleLeadSaveSuccess}
+                    onSourceSaveSuccess={handleSingleSourceSaveSuccess}
                 />
             )}
             {isBulkModalShown && (
-                <BulkUpload
+                <BulkUploadModal
                     onClose={hideBulkUploadModal}
                 />
             )}

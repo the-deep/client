@@ -7,12 +7,14 @@ import { MimeTypes } from '#components/LeadPreview/Preview/mimeTypes';
 
 import { supportedGoogleDriveMimeTypes } from '../../utils';
 import GoogleDrivePicker from './GoogleDrivePicker';
-import { FileLike } from '../../types';
+import { RawSource } from '../../types';
 
 import styles from './styles.css';
 
 // TODO: Move to config
 export const isDevelopment = process.env.NODE_ENV === 'development';
+
+// TODO: Move to config
 const getDeveloperKey = () => {
     if (isDevelopment) {
         return 'AIzaSyDINvjHwIS_HHsb3qCgFm_2GFHKqEUwucE';
@@ -20,6 +22,7 @@ const getDeveloperKey = () => {
     return 'AIzaSyAcaVOYWk0zGL9TVQfKXdziFI-5pEkw6X4';
 };
 
+// TODO: Move to config
 const getClientId = () => {
     if (isDevelopment) {
         return '642927279233-98drcidvhmudgv9dh70m7k66730n9rjr.apps.googleusercontent.com';
@@ -31,7 +34,7 @@ export const googleDriveDeveloperKey = getDeveloperKey();
 export const googleDriveClientId = getClientId();
 interface Props {
     className?: string;
-    onAdd: (v: FileLike[]) => void;
+    onAdd: (v: RawSource[]) => void;
 }
 
 function GoogleDriveFilesUpload(props: Props) {
@@ -42,25 +45,32 @@ function GoogleDriveFilesUpload(props: Props) {
 
     const accessToken = useRef<string | undefined>();
 
-    const addFilesFromGoogleDrive = (response: google.picker.ResponseObject) => {
-        const { docs, action } = response;
-        if (action === 'picked' && accessToken.current) {
-            const values = docs.map((v) => ({
-                key: randomString(),
-                id: v.id,
-                name: v.name,
-                fileType: 'google-drive' as const,
-                mimeType: v.mimeType as MimeTypes,
-                accessToken: accessToken.current as string,
-            }));
-            onAdd(values);
-        }
-    };
-    const mimeTypes = supportedGoogleDriveMimeTypes.join(' ');
+    const handleFilesFromGoogleDrive = useCallback(
+        (response: google.picker.ResponseObject) => {
+            const { docs, action } = response;
+            if (action === 'picked' && accessToken.current) {
+                const values = docs.map((v) => ({
+                    key: randomString(),
+                    id: v.id,
+                    name: v.name,
+                    fileType: 'google-drive' as const,
+                    mimeType: v.mimeType as MimeTypes,
+                    accessToken: accessToken.current as string,
+                }));
+                onAdd(values);
+            }
+        },
+        [],
+    );
 
-    const setAccessToken = useCallback((token: string) => {
-        accessToken.current = token;
-    }, []);
+    const handleAccessTokenChange = useCallback(
+        (token: string) => {
+            accessToken.current = token;
+        },
+        [],
+    );
+
+    const mimeTypes = supportedGoogleDriveMimeTypes.join(' ');
 
     return (
         <div className={_cs(styles.googleUpload, className)}>
@@ -68,8 +78,8 @@ function GoogleDriveFilesUpload(props: Props) {
                 className={styles.googlePicker}
                 clientId={googleDriveClientId}
                 developerKey={googleDriveDeveloperKey}
-                onAuthenticateSuccess={setAccessToken}
-                onChange={addFilesFromGoogleDrive}
+                onAuthenticateSuccess={handleAccessTokenChange}
+                onChange={handleFilesFromGoogleDrive}
                 mimeTypes={mimeTypes}
                 icons={<FaGoogleDrive />}
                 iconsClassName={styles.icon}

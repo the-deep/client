@@ -16,7 +16,7 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    file?: FileUploadResponse;
+    file: FileUploadResponse;
 }
 
 function LeadEdit(props: Props) {
@@ -51,6 +51,7 @@ function LeadEdit(props: Props) {
         error: riskyError,
     } = useForm(schema, partialLead);
 
+    // FIXME: why add this useEffect?
     useEffect(() => {
         setValue(partialLead);
     }, [partialLead, setValue]);

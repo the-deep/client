@@ -28,7 +28,7 @@ export interface Props<T extends number> {
     projectId: number;
 }
 
-function Actions<T extends number>(props: Props<T>) {
+function TableActions<T extends number>(props: Props<T>) {
     const {
         className,
         id,
@@ -112,4 +112,4 @@ function Actions<T extends number>(props: Props<T>) {
     );
 }
 
-export default Actions;
+export default TableActions;

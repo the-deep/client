@@ -14,21 +14,21 @@ interface Props {
     isSelected: boolean;
     data: FileUploadResponse;
     onSelect: (id: number) => void;
-    onDeleteFile: (id: number) => void;
+    onDelete: (id: number) => void;
 }
 
-function FileItem(props: Props) {
+function SourceItem(props: Props) {
     const {
         className,
         isSelected,
         data,
-        onDeleteFile,
+        onDelete,
         onSelect,
     } = props;
 
     const handleDeleteClick = useCallback(() => {
-        onDeleteFile(data.id);
-    }, [onDeleteFile, data.id]);
+        onDelete(data.id);
+    }, [onDelete, data.id]);
 
     const handleSelect = useCallback(() => {
         onSelect(data.id);
@@ -40,7 +40,7 @@ function FileItem(props: Props) {
                 actions={(
                     <QuickActionButton
                         name="remove"
-                        title="Remove File"
+                        title="Remove Source"
                         onClick={handleDeleteClick}
                     >
                         <IoTrashOutline />
@@ -56,11 +56,11 @@ function FileItem(props: Props) {
                     tabIndex={0}
                     onKeyDown={handleSelect}
                 >
-                    {data.title}
+                    {data.title ?? 'Unnamed'}
                 </div>
             </ElementFragments>
         </div>
     );
 }
 
-export default FileItem;
+export default SourceItem;

@@ -167,6 +167,7 @@ const exportRoute = wrap({
     },
     visibility: 'is-authenticated',
 });
+// FIXME: this could be moved outside the taggingRoute
 const taggingFlow = wrap({
     parent: { path: taggingRoute.path },
     path: '/:leadId(\\d+)/',

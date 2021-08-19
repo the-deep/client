@@ -25,21 +25,21 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     onClose: () => void;
-    leadId?: number;
+    sourceId?: number;
     projectId: number;
-    onLeadSaveSuccess: () => void;
+    onSourceSaveSuccess: () => void;
 }
 
-function LeadEditModal(props: Props) {
+function SourceEditModal(props: Props) {
     const {
         className,
         onClose,
         projectId,
-        leadId,
-        onLeadSaveSuccess,
+        sourceId,
+        onSourceSaveSuccess,
     } = props;
 
-    const [ready, setReady] = useState(!leadId);
+    const [ready, setReady] = useState(!sourceId);
 
     const [initialValue, setInitialValue] = useState<PartialFormType>(() => ({
         project: projectId,
@@ -63,8 +63,8 @@ function LeadEditModal(props: Props) {
     const {
         pending: leadGetPending,
     } = useRequest<Lead>({
-        skip: !leadId,
-        url: `server://v2/leads/${leadId}/`,
+        skip: !sourceId,
+        url: `server://v2/leads/${sourceId}/`,
         onSuccess: (response) => {
             setInitialValue(response);
             setValue(response);
@@ -77,11 +77,11 @@ function LeadEditModal(props: Props) {
         pending: leadSavePending,
         trigger: triggerLeadSave,
     } = useLazyRequest<Lead, PartialFormType>({
-        url: leadId ? `server://v2/leads/${leadId}/` : 'server://v2/leads/',
-        method: leadId ? 'PATCH' : 'POST',
+        url: sourceId ? `server://v2/leads/${sourceId}/` : 'server://v2/leads/',
+        method: sourceId ? 'PATCH' : 'POST',
         body: (ctx) => ctx,
         onSuccess: () => {
-            onLeadSaveSuccess();
+            onSourceSaveSuccess();
         },
         onFailure: (response, ctx) => {
             if (response.value.errors) {
@@ -105,7 +105,7 @@ function LeadEditModal(props: Props) {
         <Modal
             className={_cs(className, styles.leadEditModal)}
             onCloseButtonClick={onClose}
-            heading={leadId ? 'Edit source' : 'Add a source'}
+            heading={sourceId ? 'Edit source' : 'Add a source'}
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button
@@ -141,4 +141,4 @@ function LeadEditModal(props: Props) {
     );
 }
 
-export default LeadEditModal;
+export default SourceEditModal;

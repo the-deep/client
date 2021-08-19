@@ -4,6 +4,7 @@ import {
     Matrix2dWidget,
 } from '#types/newAnalyticalFramework';
 
+// TODO: remove this
 const matrix1d: Matrix1dWidget = {
     id: '1',
     key: 'matrix-1d-random',

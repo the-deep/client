@@ -11,6 +11,7 @@ type Props = Omit<ChangePasswordModalProps, 'onModalClose'> & {
     disabled?: boolean;
 }
 
+// FIXME: remove this component
 function ChangePasswordButton(props: Props) {
     const {
         className,

@@ -32,10 +32,10 @@ import { VscLoading } from 'react-icons/vsc';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { MultiResponse, Lead } from '#types';
 import _ts from '#ts';
+import SourceEditModal from '#components/SourceEditModal';
 
-import Actions, { Props as ActionsProps } from './Actions';
+import TableActions, { Props as ActionsProps } from './TableActions';
 import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
-import LeadEditModal from '../LeadEditModal';
 import BulkActions from './BulkActions';
 
 import styles from './styles.css';
@@ -281,7 +281,7 @@ function SourcesTable(props: Props) {
             headerCellRendererParams: {
                 sortable: false,
             },
-            cellRenderer: Actions,
+            cellRenderer: TableActions,
             cellRendererParams: (_, data) => ({
                 id: data.id,
                 onEditClick: handleEdit,
@@ -400,11 +400,11 @@ function SourcesTable(props: Props) {
                     />
                 </SortContext.Provider>
                 {showSingleSourceModal && (
-                    <LeadEditModal
-                        leadId={leadToEdit}
+                    <SourceEditModal
+                        sourceId={leadToEdit}
                         projectId={projectId}
                         onClose={setShowSingleSourceModalFalse}
-                        onLeadSaveSuccess={handleLeadSaveSuccess}
+                        onSourceSaveSuccess={handleLeadSaveSuccess}
                     />
                 )}
             </Container>

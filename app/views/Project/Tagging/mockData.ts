@@ -1,5 +1,6 @@
 import { Entry } from '#types/newEntry';
 
+// FIXME: remove this
 export const entry1: Entry = {
     id: 1,
     createdAt: 'Fri Feb 26 2021 20:14:55 GMT+0545 (Nepal Time)',

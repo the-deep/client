@@ -7,8 +7,8 @@ import {
 
 import _ts from '#ts';
 
-import Upload from './Upload';
-import FilesUploaded from './FilesUploaded';
+import UploadPane from './UploadPane';
+import Sources from './Sources';
 import { FileUploadResponse } from './types';
 import styles from './styles.css';
 
@@ -23,19 +23,19 @@ function BulkUpload(props: Props) {
         onClose,
     } = props;
 
-    const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
+    const [uploadedSources, setUploadedSources] = useState<FileUploadResponse[]>([]);
 
-    const handleFileUploadSuccess = useCallback((value: FileUploadResponse) => {
-        setUploadedFiles((oldUploadedFiles) => ([
+    const handleUploadSuccess = useCallback((value: FileUploadResponse) => {
+        setUploadedSources((oldUploadedSources) => ([
             value,
-            ...oldUploadedFiles,
+            ...oldUploadedSources,
         ]));
     }, []);
 
-    const handleDeleteFile = useCallback((id: number) => {
-        setUploadedFiles((oldState: FileUploadResponse[]) => {
+    const handleDeleteSource = useCallback((id: number) => {
+        setUploadedSources((oldState: FileUploadResponse[]) => {
             const updatedState = produce(oldState, (safeState) => {
-                const index = safeState.findIndex((file: FileUploadResponse) => file.id === id);
+                const index = safeState.findIndex((source: FileUploadResponse) => source.id === id);
                 if (index !== -1) {
                     // eslint-disable-next-line no-param-reassign
                     safeState.splice(index, 1);
@@ -53,14 +53,14 @@ function BulkUpload(props: Props) {
             onCloseButtonClick={onClose}
             bodyClassName={styles.modalBody}
         >
-            <Upload
+            <UploadPane
                 className={styles.upload}
-                onSuccess={handleFileUploadSuccess}
+                onSuccess={handleUploadSuccess}
             />
-            <FilesUploaded
+            <Sources
                 className={styles.details}
-                files={uploadedFiles}
-                onDeleteFile={handleDeleteFile}
+                sources={uploadedSources}
+                onDeleteSource={handleDeleteSource}
             />
         </Modal>
     );

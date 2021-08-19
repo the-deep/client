@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs, randomString } from '@togglecorp/fujs';
 import { IoLogoDropbox } from 'react-icons/io5';
 import _ts from '#ts';
@@ -7,13 +7,13 @@ import {
     supportedDropboxExtension,
 } from '../../utils';
 import DropboxPicker from './DropboxPicker';
-import { FileLike } from '../../types';
+import { RawSource } from '../../types';
 
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    onAdd: (v: FileLike[]) => void;
+    onAdd: (v: RawSource[]) => void;
 }
 
 function GoogleDriveFilesUpload(props: Props) {
@@ -22,17 +22,20 @@ function GoogleDriveFilesUpload(props: Props) {
         onAdd,
     } = props;
 
-    const handleDropboxSuccess = (results: Dropbox.ChooserFile[]) => {
-        const values = results.map((v) => ({
-            key: randomString(),
-            id: v.id,
-            name: v.name,
-            link: v.link,
-            isUploaded: false,
-            fileType: 'dropbox' as const,
-        }));
-        onAdd(values);
-    };
+    const handleDropboxSuccess = useCallback(
+        (results: Dropbox.ChooserFile[]) => {
+            const values = results.map((v) => ({
+                key: randomString(),
+                id: v.id,
+                name: v.name,
+                link: v.link,
+                isUploaded: false,
+                fileType: 'dropbox' as const,
+            }));
+            onAdd(values);
+        },
+        [],
+    );
 
     return (
         <div className={_cs(styles.dropboxUpload, className)}>

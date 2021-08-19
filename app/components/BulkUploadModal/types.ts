@@ -21,8 +21,9 @@ export interface FileUploadResponse {
     sourceType: SourceFileType;
 }
 
-export type FileLike = {
+export type RawSource = {
     key: string;
+    // FIXME: remove this id
     id: string;
     name: string;
     fileType: SourceFileType;

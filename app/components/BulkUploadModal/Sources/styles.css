@@ -1,14 +1,14 @@
-.files-uploaded-details {
+.sources-uploaded-details {
     display: flex;
 
-    .files-container {
+    .sources-container {
         display: flex;
         flex-basis: 40%;
         margin-right: var(--dui-spacing-small);
         border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
         background-color: var(--dui-color-white);
 
-        .files {
+        .sources {
             display: flex;
             flex-direction: column;
 
@@ -31,7 +31,7 @@
         }
     }
 
-    .edit-lead {
+    .source-edit-form {
         flex-basis: 60%;
     }
 }

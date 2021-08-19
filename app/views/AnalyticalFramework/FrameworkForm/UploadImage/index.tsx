@@ -13,9 +13,10 @@ interface Props<N> {
     className?: string;
     alt: string;
     name: N;
-    image: string | undefined;
     value: File | null | undefined;
     onChange: (files: File | undefined, name: N) => void;
+
+    image: string | undefined;
 }
 
 function UploadImage<N extends string>(props: Props<N>) {
