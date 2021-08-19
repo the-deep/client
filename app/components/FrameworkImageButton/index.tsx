@@ -19,7 +19,7 @@ const query = {
     fields: ['title', 'preview_image', 'id'],
 };
 
-interface Props {
+export interface Props {
     frameworkId: number;
     label?: string;
     className?: string;
@@ -33,6 +33,7 @@ function FrameworkImageButton(props: Props) {
         label,
         variant,
     } = props;
+    console.warn('here', props);
 
     const [
         isModalVisible,
