@@ -5,6 +5,8 @@ import { Widget } from '#types/newAnalyticalFramework';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidgetInput';
+import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
+import Matrix2dWidgetInput, { Props as Matrix2dWidgetInputProps } from './Matrix2dWidgetInput';
 import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInput';
 import DateRangeWidgetInput, { Props as DateRangeWidgetInputProps } from './DateRangeWidgetInput';
 import TimeRangeWidgetInput, { Props as TimeRangeWidgetInputProps } from './TimeRangeWidgetInput';
@@ -195,8 +197,42 @@ function ListWidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'MATRIX1DWIDGET':
-        case 'MATRIX2DWIDGET':
+        case 'MATRIX1DWIDGET': {
+            // NOTE: we are casting this value
+            const onChangeForMatrix1d = onChange as Matrix1dWidgetInputProps<string>['onChange'];
+            const valueForMatrix1d = value as Matrix1dWidgetInputProps<string>['value'];
+
+            return (
+                <Matrix1dWidgetInput
+                    className={className}
+                    title={widget.title}
+                    name={name}
+                    onChange={onChangeForMatrix1d}
+                    value={valueForMatrix1d}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    widget={widget}
+                />
+            );
+        }
+        case 'MATRIX2DWIDGET': {
+            // NOTE: we are casting this value
+            const onChangeForMatrix2d = onChange as Matrix2dWidgetInputProps<string>['onChange'];
+            const valueForMatrix2d = value as Matrix2dWidgetInputProps<string>['value'];
+
+            return (
+                <Matrix2dWidgetInput
+                    className={className}
+                    title={widget.title}
+                    name={name}
+                    onChange={onChangeForMatrix2d}
+                    value={valueForMatrix2d}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    widget={widget}
+                />
+            );
+        }
         default: {
             return (
                 <BaseWidgetInput
