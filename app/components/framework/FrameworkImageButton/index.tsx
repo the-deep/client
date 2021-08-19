@@ -19,7 +19,7 @@ const query = {
     fields: ['title', 'preview_image', 'id'],
 };
 
-interface Props {
+export interface Props {
     frameworkId: number | string;
     label?: string;
     className?: string;
