@@ -253,6 +253,7 @@ function LeadsSelection(props: Props) {
                 widgets={entriesWidgets}
                 entryOptions={entryOptions}
                 projectId={projectId}
+                hasAssessment={hasAssessment}
             />
             <div className={styles.tableContainer}>
                 {leadsPending && (<PendingMessage />)}

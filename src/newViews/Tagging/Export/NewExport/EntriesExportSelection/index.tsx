@@ -28,9 +28,9 @@ import {
     SourceEntryFilter,
     Node,
     TreeSelectableWidget,
-} from './types';
-import ExportPreview from './ExportPreview';
-import LeadsSelection from './LeadsSelection';
+} from '../../types';
+import ExportPreview from '../../ExportPreview';
+import LeadsSelection from '../../LeadsSelection';
 import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.scss';
@@ -161,13 +161,6 @@ function EntriesExportSelection(props: Props) {
         method: 'GET',
         failureHeader: 'Entry Options',
     });
-
-    useEffect(() => {
-        setActiveExportTypeKey('word');
-        setPreviewId(undefined);
-        setReportStructure([]);
-        setDecoupledEntries(false);
-    }, [projectId, setPreviewId]);
 
     useEffect(() => {
         const structure = createReportStructure(
@@ -327,7 +320,7 @@ function EntriesExportSelection(props: Props) {
                         defaultVisibility
                     >
                         <LeadsSelection
-                            className={styles.leadTableContainer}
+                            className={styles.leadsTableContainer}
                             projectId={projectId}
                             filterOnlyUnprotected={filterOnlyUnprotected}
                             entriesFilters={analysisFramework?.filters}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { IoAdd } from 'react-icons/io5';
 import {
@@ -17,6 +17,7 @@ import { activeProjectIdFromStateSelector } from '#redux';
 
 import ExportHistory from './ExportHistory';
 import Navbar from '../Navbar';
+import NewAssessmentExport from './NewAssessmentExport';
 import NewExport from './NewExport';
 import styles from './styles.scss';
 
@@ -32,11 +33,16 @@ function Export(props: Props) {
     const { activeProject } = props;
     const [activeTab, setActiveTab] = useState<ExportType>('export-entry-history');
 
-    const handleExportAssessmentClick = useCallback(() => {}, []);
     const [
         isCreateNewExportModalShown,
         showCreateNewExportModal,
         hideCreateNewExportModal,
+    ] = useModalState(false);
+
+    const [
+        isNewAssessmentModalShown,
+        showNewAssessmentModal,
+        hideNewAssessmentModal,
     ] = useModalState(false);
 
     return (
@@ -71,13 +77,12 @@ function Export(props: Props) {
                             >
                                 New Export
                             </Button>
-                            <Button
+                            <Button // TODO: properly check permissions
                                 name="export-assessment"
                                 className={styles.button}
-                                onClick={handleExportAssessmentClick}
+                                onClick={showNewAssessmentModal}
                                 icons={<IoAdd />}
-                                variant="tertiary"
-                                disabled
+                                variant="secondary"
                             >
                                 New Assessment Export
                             </Button>
@@ -101,10 +106,14 @@ function Export(props: Props) {
                         onClose={hideCreateNewExportModal}
                     />
                 )}
+                {isNewAssessmentModalShown && (
+                    <NewAssessmentExport
+                        onClose={hideNewAssessmentModal}
+                    />
+                )}
             </div>
         </Container>
     );
 }
 
 export default connect(mapStateToProps)(Export);
-

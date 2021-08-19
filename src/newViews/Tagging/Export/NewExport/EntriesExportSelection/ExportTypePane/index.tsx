@@ -26,7 +26,7 @@ import jsonIcon from '#resources/img/json.svg';
 
 import TreeSelection from '#newComponents/input/TreeSelection';
 
-import { Node, TreeSelectableWidget } from '../types';
+import { Node, TreeSelectableWidget } from '../../../types';
 import ExportTypePaneButton from './ExportTypeButton';
 
 import styles from './styles.scss';

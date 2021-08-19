@@ -90,6 +90,7 @@ interface Props {
     projectId: number;
     filterOnlyUnprotected?: boolean;
     onFilterApply: (values: SourceEntryFilter) => void;
+    hasAssessment?: boolean;
 }
 
 function CombinedSourceEntryFilterForm(props: Props) {
@@ -101,6 +102,7 @@ function CombinedSourceEntryFilterForm(props: Props) {
         widgets,
         entryOptions,
         filterOnlyUnprotected,
+        hasAssessment,
     } = props;
 
     const [
@@ -204,18 +206,20 @@ function CombinedSourceEntryFilterForm(props: Props) {
                     label="Assignee"
                     placeholder="Assignee"
                 />
-                <SelectInput
-                    className={styles.input}
-                    name="exists"
-                    onChange={setFieldValue}
-                    options={existsFilterOptions}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.exists}
-                    error={error?.exists}
-                    label="Has assessment"
-                    placeholder="Has assessment"
-                />
+                {!hasAssessment && (
+                    <SelectInput
+                        className={styles.input}
+                        name="exists"
+                        onChange={setFieldValue}
+                        options={existsFilterOptions}
+                        keySelector={keySelector}
+                        labelSelector={labelSelector}
+                        value={value.exists}
+                        error={error?.exists}
+                        label="Has assessment"
+                        placeholder="Has assessment"
+                    />
+                )}
                 <MultiSelectInput
                     className={styles.input}
                     name="priority"
@@ -301,7 +305,7 @@ function CombinedSourceEntryFilterForm(props: Props) {
                         />
                     </>
                 )}
-                {allFiltersVisible && (
+                {allFiltersVisible && !hasAssessment && (
                     <EntryFilter
                         className={styles.entryFilter}
                         name="entriesFilter"
@@ -314,19 +318,21 @@ function CombinedSourceEntryFilterForm(props: Props) {
                     />
                 )}
                 <div className={styles.actions}>
-                    <Button
-                        className={styles.button}
-                        name="showAll"
-                        variant="action"
-                        actions={allFiltersVisible ? (
-                            <IoChevronUpOutline />
-                        ) : (
-                            <IoChevronDownOutline />
-                        )}
-                        onClick={allFiltersVisible ? hideAllFilters : showAllFilters}
-                    >
-                        { allFiltersVisible ? 'Hide filters' : 'Show all filters' }
-                    </Button>
+                    {!hasAssessment && (
+                        <Button
+                            className={styles.button}
+                            name="showAll"
+                            variant="action"
+                            actions={allFiltersVisible ? (
+                                <IoChevronUpOutline />
+                            ) : (
+                                <IoChevronDownOutline />
+                            )}
+                            onClick={allFiltersVisible ? hideAllFilters : showAllFilters}
+                        >
+                            { allFiltersVisible ? 'Hide filters' : 'Show all filters' }
+                        </Button>
+                    )}
                     <Button
                         className={styles.button}
                         disabled={pristine}
