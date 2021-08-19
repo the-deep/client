@@ -1,10 +1,10 @@
 import React, { useState, useMemo, ReactElement, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
-import { IoDownloadOutline, IoClose } from 'react-icons/io5';
+import { IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
 import {
     Pager,
-    Table,
+    TableView,
     TableColumn,
     Container,
     PendingMessage,
@@ -13,26 +13,27 @@ import {
     createStringColumn,
     Tag,
     TagProps,
-    DateOutput,
-    DateOutputProps,
     SortContext,
     useSortState,
     IconsProps,
     Icons,
+    TextInput,
+    DateRangeInput,
 } from '@the-deep/deep-ui';
 import {
     MultiResponse,
     Export,
 } from '#typings';
 import { useRequest } from '#utils/request';
+import { getDateWithTimezone } from '#utils/common';
+import useDebouncedValue from '#hooks/useDebouncedValue';
+import { createDateColumn } from '#newComponents/ui/tableHelpers';
 
 import wordIcon from '#resources/img/word.svg';
 import excelIcon from '#resources/img/excel.svg';
-import pdfIcon from '#resources/img/pdf.svg';
 import jsonIcon from '#resources/img/json.svg';
 
 import Actions, { Props as ActionsProps } from './Actions';
-import Filter, { FormType } from './Filter';
 import styles from './styles.scss';
 
 const statusIconMap: Record<Export['status'], ReactElement> = {
@@ -55,9 +56,8 @@ const statusLabelMap: Record<Export['status'], string> = {
     failure: 'Failed',
 };
 const exportTypeIconMap: Record<Export['exportType'], string> = {
-    word: wordIcon,
+    report: wordIcon, // TODO: report can be pdf or word (use specify icon)
     excel: excelIcon,
-    pdf: pdfIcon,
     json: jsonIcon,
 };
 const maxItemsPerPage = 25;
@@ -66,6 +66,10 @@ const defaultSorting = {
     name: 'exported_at',
     direction: 'asc',
 };
+interface DateRangeValue {
+    startDate: string;
+    endDate: string;
+}
 
 interface Props {
     projectId: number;
@@ -79,14 +83,18 @@ function ExportHistory(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState(1);
-    const [, setFilters] = useState<FormType | undefined>(); // TODO: add filters when availabe
+    const [exportedAt, setExportedAt] = useState<DateRangeValue>();
+    const [searchText, setSearchText] = useState<string>();
 
+    const debouncedSearchText = useDebouncedValue(searchText);
     const sortState = useSortState();
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
-    const ordering = validSorting.direction === 'Ascending'
-        ? validSorting.name
-        : `-${validSorting.name}`;
+    const ordering = useMemo(() => (
+        validSorting.direction === 'Ascending'
+            ? validSorting.name
+            : `-${validSorting.name}`
+    ), [validSorting]);
 
     const {
         pending,
@@ -98,6 +106,9 @@ function ExportHistory(props: Props) {
             ordering,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
+            title: debouncedSearchText, // FIXME: filter by search text is unsupported in server
+            exported_at__gte: exportedAt?.startDate && getDateWithTimezone(exportedAt.startDate),
+            exported_at__lt: exportedAt?.endDate && getDateWithTimezone(exportedAt.endDate),
         },
         method: 'GET',
         schemaName: 'userExportsGetResponse',
@@ -111,15 +122,11 @@ function ExportHistory(props: Props) {
         console.warn('handleDelete', exportId);
     }, []);
 
-    const handleClone = useCallback((exportId: number) => { // TODO: add implementation later
-        console.warn('handleClone', exportId);
-    }, []);
-
     const columns = useMemo(() => {
         const exportTypeColumn: TableColumn<
-            Export, number, IconsProps, TableHeaderCellProps
+        Export, number, IconsProps, TableHeaderCellProps
         > = {
-            id: 'exportType',
+            id: 'export_type',
             title: 'Export Type',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -136,31 +143,16 @@ function ExportHistory(props: Props) {
                     />),
             }),
         };
-        const exportedAtColumn: TableColumn<
-            Export, number, DateOutputProps, TableHeaderCellProps
-        > = {
-            id: 'exportedAt',
-            title: 'Exported At',
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: true,
-            },
-            cellRenderer: DateOutput,
-            cellRendererParams: (_, data) => ({
-                value: data.exportedAt,
-            }),
-        };
         const statusColumn: TableColumn<
-            Export, number, TagProps, TableHeaderCellProps
+        Export, number, TagProps, TableHeaderCellProps
         > = {
             id: 'status',
             title: 'Status',
             cellRendererClassName: styles.status,
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
-                sortable: false,
+                sortable: true,
             },
-
             cellRenderer: Tag,
             cellRendererParams: (_, data) => ({
                 actions: statusIconMap[data.status],
@@ -169,7 +161,7 @@ function ExportHistory(props: Props) {
             }),
         };
         const actionsColumn: TableColumn<
-            Export, number, ActionsProps<number>, TableHeaderCellProps
+        Export, number, ActionsProps, TableHeaderCellProps
         > = {
             id: 'actions',
             title: '',
@@ -180,13 +172,16 @@ function ExportHistory(props: Props) {
             cellRenderer: Actions,
             cellRendererParams: (_, data) => ({
                 id: data.id,
-                onCloneClick: handleClone,
                 onDeleteClick: handleDelete,
             }),
         };
         return ([
             exportTypeColumn,
-            exportedAtColumn,
+            createDateColumn<Export, number>(
+                'exported_at',
+                'Exported At',
+                item => item.exportedAt,
+            ),
             createStringColumn<Export, number>(
                 'title',
                 'Title',
@@ -199,7 +194,7 @@ function ExportHistory(props: Props) {
             statusColumn,
             actionsColumn,
         ]);
-    }, [handleClone, handleDelete]);
+    }, [handleDelete]);
 
     return (
         <Container
@@ -208,10 +203,24 @@ function ExportHistory(props: Props) {
             sub
             headerClassName={styles.header}
             headerActions={(
-                <Filter
-                    disabled={pending}
-                    onFilterApply={setFilters}
-                />
+                <>
+                    <DateRangeInput
+                        name="exportedAt"
+                        label="Exported At"
+                        value={exportedAt}
+                        onChange={setExportedAt}
+                        disabled={pending}
+                    />
+                    <TextInput
+                        name="searchText"
+                        icons={<IoSearch />}
+                        label="Search"
+                        placeholder="Search"
+                        value={searchText}
+                        onChange={setSearchText}
+                        disabled={pending}
+                    />
+                </>
             )}
             footerActions={(
                 <Pager
@@ -225,12 +234,11 @@ function ExportHistory(props: Props) {
         >
             {pending && (<PendingMessage />)}
             <SortContext.Provider value={sortState}>
-                <Table
+                <TableView
                     className={styles.table}
                     data={exportListResponse?.results}
                     keySelector={exportKeySelector}
                     columns={columns}
-                    variant="large"
                 />
             </SortContext.Provider>
         </Container>

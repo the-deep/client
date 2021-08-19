@@ -1,30 +1,26 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    IoCopyOutline,
     IoTrashOutline,
 } from 'react-icons/io5';
 import {
-    QuickActionButton,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 
 import styles from './styles.scss';
 
-export interface Props<T extends number> {
+export interface Props {
     className?: string;
-    id: T;
-    onCloneClick: (key: T) => void;
-    onDeleteClick: (key: T) => void;
+    id: number;
+    onDeleteClick: (key: number) => void;
     disabled?: boolean;
 }
 
-function Actions<T extends number>(props: Props<T>) {
+function Actions(props: Props) {
     const {
         className,
         id,
         disabled,
-        onCloneClick,
         onDeleteClick,
     } = props;
 
@@ -34,15 +30,6 @@ function Actions<T extends number>(props: Props<T>) {
 
     return (
         <div className={_cs(styles.actions, className)}>
-            <QuickActionButton
-                className={styles.button}
-                name={id}
-                onClick={onCloneClick}
-                disabled={disabled}
-                title="Copy export"
-            >
-                <IoCopyOutline />
-            </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"

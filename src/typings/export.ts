@@ -1,5 +1,4 @@
 export type ExportType = 'word' | 'pdf' | 'excel' | 'json';
-
 export type ExportStatus = 'pending' | 'started' | 'success' | 'failure';
 export interface Export {
     id: number;
@@ -7,7 +6,7 @@ export interface Export {
     isPreview: boolean;
     format: string;
     type: string;
-    exportType: ExportType;
+    exportType: 'excel' | 'report' | 'json';
     mimeType: string;
     file?: string;
     exportedAt: string;
