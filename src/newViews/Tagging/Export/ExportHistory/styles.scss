@@ -17,17 +17,11 @@
 
             .icons {
                 display: flex;
-
-                .image {
-                    width: var(--dui-font-size-extra-large);
-                    height: auto;
-                    filter: grayscale(80%);
-                }
+                font-size: var(--dui-font-size-super-large);
             }
 
             .status {
-                margin: var(--dui-spacing-small);
-                height: var(--dui-font-size-large);
+                display: flex;
             }
         }
     }

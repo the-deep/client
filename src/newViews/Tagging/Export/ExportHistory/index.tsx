@@ -1,7 +1,8 @@
 import React, { useState, useMemo, ReactElement, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
-import { IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
+import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
+import { RiFileExcel2Fill, RiFileWord2Fill } from 'react-icons/ri';
 import {
     Pager,
     TableView,
@@ -11,8 +12,6 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
     createStringColumn,
-    Tag,
-    TagProps,
     SortContext,
     useSortState,
     IconsProps,
@@ -29,11 +28,8 @@ import { getDateWithTimezone } from '#utils/common';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import { createDateColumn } from '#newComponents/ui/tableHelpers';
 
-import wordIcon from '#resources/img/word.svg';
-import excelIcon from '#resources/img/excel.svg';
-import jsonIcon from '#resources/img/json.svg';
-
 import Actions, { Props as ActionsProps } from './Actions';
+import Status, { Props as StatusProps } from './Status';
 import styles from './styles.scss';
 
 const statusIconMap: Record<Export['status'], ReactElement> = {
@@ -55,10 +51,10 @@ const statusLabelMap: Record<Export['status'], string> = {
     success: 'Download',
     failure: 'Failed',
 };
-const exportTypeIconMap: Record<Export['exportType'], string> = {
-    report: wordIcon, // TODO: report can be pdf or word (use specify icon)
-    excel: excelIcon,
-    json: jsonIcon,
+const exportTypeIconMap: Record<Export['exportType'], ReactElement> = {
+    report: <RiFileWord2Fill />, // TODO: report can be pdf or word (use specify icon)
+    excel: <RiFileExcel2Fill />,
+    json: <IoDocument />,
 };
 const maxItemsPerPage = 25;
 const exportKeySelector = (d: Export) => d.id;
@@ -136,15 +132,12 @@ function ExportHistory(props: Props) {
             cellRendererClassName: styles.icons,
             cellRendererParams: (_, data) => ({
                 children: (
-                    <img
-                        className={styles.image}
-                        src={exportTypeIconMap[data.exportType]}
-                        alt={data.exportType}
-                    />),
+                    exportTypeIconMap[data.exportType]
+                ),
             }),
         };
         const statusColumn: TableColumn<
-        Export, number, TagProps, TableHeaderCellProps
+        Export, number, StatusProps, TableHeaderCellProps
         > = {
             id: 'status',
             title: 'Status',
@@ -153,11 +146,12 @@ function ExportHistory(props: Props) {
             headerCellRendererParams: {
                 sortable: true,
             },
-            cellRenderer: Tag,
+            cellRenderer: Status,
             cellRendererParams: (_, data) => ({
-                actions: statusIconMap[data.status],
-                variant: statusVariantMap[data.status],
-                children: statusLabelMap[data.status],
+                icon: statusIconMap[data.status],
+                tagVariant: statusVariantMap[data.status],
+                status: statusLabelMap[data.status],
+                file: data.file,
             }),
         };
         const actionsColumn: TableColumn<
