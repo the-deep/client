@@ -16,7 +16,7 @@ export interface Props {
     disabled?: boolean;
 }
 
-function Actions(props: Props) {
+function TableActions(props: Props) {
     const {
         className,
         id,
@@ -46,4 +46,4 @@ function Actions(props: Props) {
 }
 
 
-export default Actions;
+export default TableActions;

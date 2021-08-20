@@ -1,4 +1,4 @@
-import React, { useState, useMemo, ReactElement, useCallback } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
@@ -23,12 +23,14 @@ import {
     MultiResponse,
     Export,
 } from '#typings';
-import { useRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import { getDateWithTimezone } from '#utils/common';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import { createDateColumn } from '#newComponents/ui/tableHelpers';
+import notify from '#notify';
+import _ts from '#ts';
 
-import Actions, { Props as ActionsProps } from './Actions';
+import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.scss';
 
@@ -94,21 +96,31 @@ function ExportHistory(props: Props) {
             : `-${validSorting.name}`
     ), [validSorting]);
 
+    const queryOptions = useMemo(() => ({
+        projects: projectId,
+        ordering,
+        offset: (activePage - 1) * maxItemsPerPage,
+        limit: maxItemsPerPage,
+        type: type === 'entries' ? 'entries' : 'assessments,planned_assessments',
+        title: debouncedSearchText, // FIXME: filter by search text is unsupported in server
+        exported_at__gte: exportedAt?.startDate && getDateWithTimezone(exportedAt.startDate),
+        exported_at__lt: exportedAt?.endDate && getDateWithTimezone(exportedAt.endDate),
+    }), [
+        projectId,
+        activePage,
+        ordering,
+        debouncedSearchText,
+        exportedAt,
+        type,
+    ]);
+
     const {
-        pending,
+        pending: getExportPending,
         response: exportListResponse,
+        retrigger: getExportList,
     } = useRequest<MultiResponse<Export>>({
         url: 'server://exports/',
-        query: {
-            project: projectId,
-            ordering,
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-            type: type === 'entries' ? 'entries' : 'assessments,planned_assessments',
-            title: debouncedSearchText, // FIXME: filter by search text is unsupported in server
-            exported_at__gte: exportedAt?.startDate && getDateWithTimezone(exportedAt.startDate),
-            exported_at__lt: exportedAt?.endDate && getDateWithTimezone(exportedAt.endDate),
-        },
+        query: queryOptions,
         method: 'GET',
         schemaName: 'userExportsGetResponse',
         shouldPoll: response => (
@@ -117,9 +129,23 @@ function ExportHistory(props: Props) {
         failureHeader: 'Export History',
     });
 
-    const handleDelete = useCallback((exportId: number) => { // TODO: add implementation later
-        console.warn('handleDelete', exportId);
-    }, []);
+    const {
+        pending: deleteExportPending,
+        trigger: deleteExport,
+    } = useLazyRequest<Export, number>({
+        url: ctx => `server://exports/${ctx}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            getExportList();
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'deleteExportSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        failureHeader: _ts('export', 'userExportsTitle'),
+    });
 
     const columns = useMemo(() => {
         const exportTypeColumn: TableColumn<
@@ -158,7 +184,7 @@ function ExportHistory(props: Props) {
             }),
         };
         const actionsColumn: TableColumn<
-        Export, number, ActionsProps, TableHeaderCellProps
+        Export, number, TableActionsProps, TableHeaderCellProps
         > = {
             id: 'actions',
             title: '',
@@ -166,10 +192,10 @@ function ExportHistory(props: Props) {
             headerCellRendererParams: {
                 sortable: false,
             },
-            cellRenderer: Actions,
+            cellRenderer: TableActions,
             cellRendererParams: (_, data) => ({
                 id: data.id,
-                onDeleteClick: handleDelete,
+                onDeleteClick: deleteExport,
             }),
         };
         return ([
@@ -178,6 +204,9 @@ function ExportHistory(props: Props) {
                 'exported_at',
                 'Exported At',
                 item => item.exportedAt,
+                {
+                    sortable: true,
+                },
             ),
             createStringColumn<Export, number>(
                 'title',
@@ -191,7 +220,9 @@ function ExportHistory(props: Props) {
             statusColumn,
             actionsColumn,
         ]);
-    }, [handleDelete]);
+    }, [deleteExport]);
+
+    const pending = getExportPending || deleteExportPending;
 
     return (
         <Container
