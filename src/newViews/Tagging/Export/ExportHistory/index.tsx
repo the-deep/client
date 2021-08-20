@@ -70,12 +70,14 @@ interface DateRangeValue {
 interface Props {
     projectId: number;
     className?: string;
+    type: 'entries' | 'assessments';
 }
 
 function ExportHistory(props: Props) {
     const {
         className,
         projectId,
+        type,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
@@ -102,6 +104,7 @@ function ExportHistory(props: Props) {
             ordering,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
+            type: type === 'entries' ? 'entries' : 'assessments,planned_assessments',
             title: debouncedSearchText, // FIXME: filter by search text is unsupported in server
             exported_at__gte: exportedAt?.startDate && getDateWithTimezone(exportedAt.startDate),
             exported_at__lt: exportedAt?.endDate && getDateWithTimezone(exportedAt.endDate),

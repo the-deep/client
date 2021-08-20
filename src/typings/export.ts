@@ -5,7 +5,7 @@ export interface Export {
     title: string;
     isPreview: boolean;
     format: string;
-    type: string;
+    type: 'entries' | 'assessments' | 'planned_assessments';
     exportType: 'excel' | 'report' | 'json';
     mimeType: string;
     file?: string;

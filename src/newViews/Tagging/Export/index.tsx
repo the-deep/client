@@ -86,10 +86,14 @@ function Export(props: Props) {
                     <TabPanel name="export-entry-history">
                         <ExportHistory
                             projectId={activeProject}
+                            type="entries"
                         />
                     </TabPanel>
                     <TabPanel name="export-assessment-history">
-                        This is Export Assessment History
+                        <ExportHistory
+                            projectId={activeProject}
+                            type="assessments"
+                        />
                     </TabPanel>
                 </Tabs>
                 {isCreateNewExportModalShown && (
