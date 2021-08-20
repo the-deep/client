@@ -15,12 +15,6 @@ import ExportPreview from '../../ExportPreview';
 import LeadsSelection from '../../LeadsSelection';
 import styles from './styles.scss';
 
-const EXPORT_CLASS = {
-    assessmentExport: 'assessment-export',
-    plannedAryExport: 'entries-export',
-    assessmentPreview: 'entries-preview',
-};
-
 interface ExportItem {
     assessment: string;
     plannedAssessment: string;
@@ -53,11 +47,8 @@ function AssessmentsExportSelection(props: Props) {
     } = props;
 
     const filterOnlyUnprotected = !!projectRole?.exportPermissions?.create_only_unprotected;
-    const [exportClass, setExportClass] = useState<string>();
     const [queryTitle, setQueryTitle] = useState<string>();
-    const [exportItem, setExportItem] = useState<string>();
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-    const [isPreview, setIsPreview] = useState<boolean>(false);
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, setFilterValues] = useState<SourceEntryFilter>({});
@@ -65,77 +56,47 @@ function AssessmentsExportSelection(props: Props) {
     const {
         pending: exportPending,
         trigger: getExport,
-    } = useLazyRequest<ExportTriggerResponse, unknown>({
+    } = useLazyRequest<ExportTriggerResponse, { preview: boolean, type: string }>({
         url: 'server://export-trigger/',
         method: 'POST',
-        body: ctx => ({ filters: ctx }),
-        onSuccess: (response) => {
-            if (isPreview) {
+        body: ctx => ({
+            filters: {
+                project: projectId,
+                include_leads: !selectAll,
+                export_type: 'excel',
+                pdf: false,
+                export_item: ctx.type,
+                is_preview: ctx.preview,
+                lead: selectedLeads,
+                ...filterValues,
+            },
+        }),
+        onSuccess: (response, ctx) => {
+            if (ctx.preview) {
                 setPreviewId(response.exportTriggered);
-            } else if (exportItem === exportItems.assessment) {
-                notify.send({
-                    title: _ts('export', 'headerExport'),
-                    type: notify.type.SUCCESS,
-                    message: _ts('export', 'exportStartedNotifyMessage'),
-                    duration: 15000,
-                });
             }
-
-            setExportClass(undefined);
+            notify.send({
+                title: _ts('export', 'headerExport'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'exportStartedNotifyMessage'),
+                duration: 15000,
+            });
         },
         failureHeader: _ts('export', 'headerExport'),
     });
 
-    const startExport = useCallback((preview: boolean, item: string) => {
-        const filters = {
-            project: projectId,
-            include_leads: !selectAll,
-            lead: selectedLeads,
-
-
-            export_type: 'excel',
-            // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
-            pdf: false,
-
-            // entry or assessment
-            export_item: item,
-
-            // temporary or permanent
-            is_preview: preview,
-            ...filterValues,
-        };
-
-        setIsPreview(preview);
-        setExportItem(item);
-
-        const newExportClass = (
-            (preview && EXPORT_CLASS.assessmentPreview)
-            || (item === exportItems.plannedAssessment && EXPORT_CLASS.plannedAryExport)
-            || (item === exportItems.assessment && EXPORT_CLASS.assessmentExport)
-            || undefined
-        );
-        setExportClass(newExportClass);
-        getExport(filters);
-    }, [
-        selectAll,
-        selectedLeads,
-        projectId,
-        getExport,
-        filterValues,
-    ]);
-
     const handleAssessmentExportClick = useCallback(() => {
-        startExport(false, exportItems.assessment);
-    }, [startExport]);
+        getExport({ preview: false, type: exportItems.assessment });
+    }, [getExport]);
 
     const handlePlannedAssessmentExportClick = useCallback(() => {
-        startExport(false, exportItems.plannedAssessment);
-    }, [startExport]);
+        getExport({ preview: false, type: exportItems.plannedAssessment });
+    }, [getExport]);
 
     const handlePreviewClick = useCallback(() => {
         setPreviewId(undefined);
-        startExport(true, exportItems.assessment);
-    }, [startExport]);
+        getExport({ preview: true, type: exportItems.assessment });
+    }, [getExport]);
 
     const handleSaveAndExport = () => {}; // TODO add this feature later
 
@@ -196,6 +157,7 @@ function AssessmentsExportSelection(props: Props) {
                             variant="tertiary"
                             onClick={handleSaveAndExport}
                             className={styles.saveAndExport}
+                            disabled
                         >
                             Save & Export
                         </Button>
@@ -208,18 +170,14 @@ function AssessmentsExportSelection(props: Props) {
                             <Button
                                 name="startAssessmentExport"
                                 onClick={handleAssessmentExportClick}
-                                disabled={
-                                    exportPending || exportClass === EXPORT_CLASS.assessmentExport
-                                }
+                                disabled={exportPending}
                             >
                                 {_ts('export', 'startAssessmentExportButtonLabel')}
                             </Button>
                             <Button
                                 name="startPlannedAssessmentExport"
                                 onClick={handlePlannedAssessmentExportClick}
-                                disabled={
-                                    exportPending || exportClass === EXPORT_CLASS.assessmentExport
-                                }
+                                disabled={exportPending}
                             >
                                 {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
                             </Button>

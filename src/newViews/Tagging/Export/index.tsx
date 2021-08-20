@@ -34,13 +34,13 @@ function Export(props: Props) {
     const [activeTab, setActiveTab] = useState<ExportType>('export-entry-history');
 
     const [
-        isCreateNewExportModalShown,
+        newExportModalShown,
         showCreateNewExportModal,
         hideCreateNewExportModal,
     ] = useModalState(false);
 
     const [
-        isNewAssessmentModalShown,
+        newAssessmentModalShown,
         showNewAssessmentModal,
         hideNewAssessmentModal,
     ] = useModalState(false);
@@ -101,12 +101,12 @@ function Export(props: Props) {
                         />
                     </TabPanel>
                 </Tabs>
-                {isCreateNewExportModalShown && (
+                {newExportModalShown && (
                     <NewExport
                         onClose={hideCreateNewExportModal}
                     />
                 )}
-                {isNewAssessmentModalShown && (
+                {newAssessmentModalShown && (
                     <NewAssessmentExport
                         onClose={hideNewAssessmentModal}
                     />
