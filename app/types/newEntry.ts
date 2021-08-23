@@ -146,6 +146,7 @@ export interface UserFields {
 export interface Entry extends Entity {
     project: number;
     lead: number;
+    controlled: boolean;
     entryType: EntryType;
 
     analyticalFramework: number;

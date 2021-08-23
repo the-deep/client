@@ -10,6 +10,7 @@ import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
 import EntryVerification from './EntryVerification';
+import EntryControl from './EntryControl';
 import styles from './styles.css';
 
 export interface EntryWithLead extends Entry {
@@ -59,13 +60,23 @@ function EntryItem(props: Props) {
             headerClassName={styles.header}
             contentClassName={styles.content}
             headerActions={(
-                <EntryVerification
-                    entryId={entry.id}
-                    projectId={entry.project}
-                    verifiedBy={entry.verifiedBy}
-                    onVerificationChange={getEntry}
-                    disabled={pending}
-                />
+                <div className={styles.actions}>
+                    <EntryVerification
+                        className={styles.verificationAction}
+                        entryId={entry.id}
+                        projectId={entry.project}
+                        verifiedBy={entry.verifiedBy}
+                        onVerificationChange={getEntry}
+                        disabled={pending}
+                    />
+                    <EntryControl
+                        entryId={entry.id}
+                        projectId={entry.project}
+                        value={entry.controlled}
+                        onChange={getEntry}
+                        disabled={pending}
+                    />
+                </div>
             )}
         >
             <EntryListItem
