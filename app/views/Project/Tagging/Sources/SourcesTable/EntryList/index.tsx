@@ -27,7 +27,6 @@ function EntryList(props: Props) {
         className,
     } = props;
 
-    console.warn('lead', leadId, projectId);
     const [activePage, setActivePage] = useState(1);
 
     const entriesQuery = useMemo(
@@ -39,7 +38,7 @@ function EntryList(props: Props) {
         }),
         [activePage, leadId, projectId],
     );
-    console.warn('entriesQuery', entriesQuery);
+
     const {
         pending: entryListPending,
         response: entryListResponse,

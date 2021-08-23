@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
@@ -6,9 +6,10 @@ import {
     Tag,
 } from '@the-deep/deep-ui';
 
-import { Entry } from '#types/newEntry';
+import { EntryReviewComment } from '#types/newEntry';
 import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
+import UserContext from '#base/context/UserContext';
 
 import EntryUnverifyCommentModal from './EntryUnverifyCommentModal';
 import styles from './styles.css';
@@ -23,25 +24,30 @@ interface Props {
     className?: string;
     entryId: number;
     projectId: number;
-    value: boolean;
     disabled?: boolean;
-    onSuccess?: (value: Entry) => void;
-    verifiedByCount: number;
+    verifiedBy: number[];
+    onVerificationChange: (entryId: number) => void;
 }
 
 const VERIFY = 1;
-export const UNVERIFY = 2;
 
 function EntryVerification(props: Props) {
     const {
         className,
         projectId,
         entryId,
-        value,
-        onSuccess,
+        verifiedBy,
         disabled,
-        verifiedByCount,
+        onVerificationChange,
     } = props;
+
+    const {
+        user,
+    } = useContext(UserContext);
+
+    const isVerifiedByUser = useMemo(() => (
+        verifiedBy.some((v) => v.toString() === user?.id)
+    ), [verifiedBy, user?.id]);
 
     const [
         commentModalShown,
@@ -52,26 +58,23 @@ function EntryVerification(props: Props) {
     const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
-    } = useLazyRequest<Entry, EntryVerificationFormData>({
+    } = useLazyRequest<EntryReviewComment, EntryVerificationFormData>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            if (onSuccess) {
-                onSuccess(response);
-            }
-            setCommentModalHidden();
+            onVerificationChange(response.entry);
         },
         failureHeader: 'Entry Verification',
     });
 
     const handleClick = useCallback(() => {
-        if (value) {
+        if (isVerifiedByUser) {
             setCommentModalVisible();
         } else {
             triggerReviewRequest({ commentType: VERIFY });
         }
-    }, [value, triggerReviewRequest, setCommentModalVisible]);
+    }, [isVerifiedByUser, triggerReviewRequest, setCommentModalVisible]);
 
     return (
         <div
@@ -79,31 +82,31 @@ function EntryVerification(props: Props) {
         >
             <Button
                 name="entryVerification"
-                className={_cs(className, styles.toggleVerificationButton)}
+                className={styles.verificationButton}
                 variant={(
-                    value ? 'primary' : 'secondary'
+                    isVerifiedByUser ? 'primary' : 'secondary'
                 )}
                 actions={(
                     <Tag
                         actions={(
-                            value
+                            verifiedBy.length > 0
                                 ? <IoCheckmark />
                                 : <IoClose />
                         )}
                     >
-                        {verifiedByCount}
+                        {verifiedBy.length}
                     </Tag>
                 )}
                 onClick={handleClick}
                 disabled={reviewRequestPending || disabled}
             >
-                Verify
+                {isVerifiedByUser ? 'Unverify' : 'Verify'}
             </Button>
             {commentModalShown && (
                 <EntryUnverifyCommentModal
                     entryId={entryId}
                     projectId={projectId}
-                    onSuccess={onSuccess}
+                    onVerificationChange={onVerificationChange}
                     onModalClose={setCommentModalHidden}
                 />
             )}

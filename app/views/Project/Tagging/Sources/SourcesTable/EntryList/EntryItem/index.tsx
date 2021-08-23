@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Container,
 } from '@the-deep/deep-ui';
 
+import { useLazyRequest } from '#base/utils/restRequest';
 import { Entry } from '#types/newEntry';
 import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
@@ -35,8 +36,22 @@ interface Props {
 function EntryItem(props: Props) {
     const {
         className,
-        entry,
+        entry: entryFromProps,
     } = props;
+
+    const [entry, setEntry] = useState<Entry>(entryFromProps);
+
+    const {
+        pending,
+        trigger: getEntry,
+    } = useLazyRequest<Entry, number>({
+        url: (ctx) => `server://v2/entries/${ctx}/`,
+        method: 'GET',
+        onSuccess: (response) => {
+            setEntry(response);
+        },
+        failureHeader: 'Entry',
+    });
 
     return (
         <Container
@@ -47,9 +62,9 @@ function EntryItem(props: Props) {
                 <EntryVerification
                     entryId={entry.id}
                     projectId={entry.project}
-                    value={entry.verified}
-                    disabled
-                    verifiedByCount={entry.verifiedByCount}
+                    verifiedBy={entry.verifiedBy}
+                    onVerificationChange={getEntry}
+                    disabled={pending}
                 />
             )}
         >
