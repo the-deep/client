@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Container,
@@ -38,10 +38,6 @@ function EntryItem(props: Props) {
         entry,
     } = props;
 
-    const handleChange = useCallback((value: Entry) => {
-        console.warn('handleChange', value); // TODO handle entry verification later
-    }, []);
-
     return (
         <Container
             className={_cs(className, styles.entryItemContainer)}
@@ -51,8 +47,8 @@ function EntryItem(props: Props) {
                 <EntryVerification
                     entryId={entry.id}
                     projectId={entry.project}
-                    onSuccess={handleChange}
                     value={entry.verified}
+                    disabled
                     verifiedByCount={entry.verifiedByCount}
                 />
             )}
@@ -61,6 +57,7 @@ function EntryItem(props: Props) {
                 className={styles.entry}
                 entry={entry1} // TODO remove mock entry usage when actual usable entry is available
                 framework={frameworkMockData}
+                readOnly
             />
         </Container>
     );
