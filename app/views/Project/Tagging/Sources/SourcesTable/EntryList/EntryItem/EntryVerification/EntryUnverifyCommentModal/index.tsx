@@ -1,13 +1,12 @@
 import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     requiredStringCondition,
     requiredListCondition,
     ObjectSchema,
-    PartialForm,
     getErrorObject,
-    createSubmitHandler,
     useForm,
+    requiredCondition,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -17,42 +16,52 @@ import {
 } from '@the-deep/deep-ui';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
-import { Entry } from '#types/newEntry';
+import { EntryReviewComment } from '#types/newEntry';
 import {
     MultiResponse,
     Membership,
 } from '#types';
 
-import { EntryVerificationFormData, UNVERIFY } from '../index';
 import styles from './styles.css';
 
 const memberFieldQuery = {
     fields: ['member', 'member_name'],
 };
+const UNVERIFY = 2;
 
 export const memberKeySelector = (d: Membership) => d.member;
 export const memberNameSelector = (d:Membership) => d.memberName;
 
-type FormType = {
+interface EntryVerificationFormData {
+    commentType: number;
     text?: string;
     mentionedUsers?: number[];
 }
-type FormSchema = ObjectSchema<PartialForm<FormType>>;
+
+type FormType = {
+    commentType: number,
+    text?: string;
+    mentionedUsers?: number[];
+}
+type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        commentType: [requiredCondition],
         text: [requiredStringCondition],
         mentionedUsers: [requiredListCondition],
     }),
 };
 
-const defaultFormValue: FormType = {};
+const defaultFormValue: FormType = {
+    commentType: UNVERIFY,
+};
 
 export interface Props {
     onModalClose: () => void;
-    onSuccess?: (value: Entry) => void;
     entryId: number;
     projectId: number;
+    onVerificationChange: (entryId: number) => void;
     className?: string;
 }
 
@@ -60,7 +69,7 @@ function EntryUnverifyCommentModal(props: Props) {
     const {
         className,
         onModalClose,
-        onSuccess,
+        onVerificationChange,
         projectId,
         entryId,
     } = props;
@@ -68,22 +77,16 @@ function EntryUnverifyCommentModal(props: Props) {
     const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
-    } = useLazyRequest<Entry, EntryVerificationFormData>({
+    } = useLazyRequest<EntryReviewComment, EntryVerificationFormData>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            if (onSuccess) {
-                onSuccess(response);
-            }
+            onVerificationChange(response.entry);
             onModalClose();
         },
         failureHeader: 'Entry Verification',
     });
-
-    const handleUnverifyEntry = useCallback((formValues: Omit<EntryVerificationFormData, 'commentType'>) => {
-        triggerReviewRequest({ commentType: UNVERIFY, ...formValues });
-    }, [triggerReviewRequest]);
 
     const {
         pristine,
@@ -106,51 +109,56 @@ function EntryUnverifyCommentModal(props: Props) {
         failureHeader: 'Project Membership',
     });
 
+    const handleSubmit = useCallback(() => {
+        const { errored, error: err, value: val } = validate();
+        setError(err);
+        if (!errored && isDefined(val)) {
+            triggerReviewRequest(val);
+        }
+    }, [setError, validate, triggerReviewRequest]);
+
     return (
-        <form
-            className={_cs(className, styles.entryCommentForm)}
-            onSubmit={createSubmitHandler(validate, setError, handleUnverifyEntry)}
+        <Modal
+            onCloseButtonClick={onModalClose}
+            className={_cs(styles.entryCommentModal, className)}
+            heading="Unverify Entry"
+            bodyClassName={styles.entryCommentForm}
+            footerActions={(
+                <Button
+                    disabled={pristine || reviewRequestPending || projectMembersPending}
+                    type="submit"
+                    variant="primary"
+                    name="unverifyEntry"
+                    onClick={handleSubmit}
+                >
+                    Submit
+                </Button>
+            )}
         >
             <NonFieldError
                 error={error}
             />
-            <Modal
-                onCloseButtonClick={onModalClose}
-                className={styles.entryCommentModal}
-                heading="Unverify Entry"
-                footerActions={(
-                    <Button
-                        disabled={pristine || reviewRequestPending || projectMembersPending}
-                        type="submit"
-                        variant="primary"
-                        name="unverifyEntry"
-                    >
-                        Submit
-                    </Button>
-                )}
-            >
-                <TextArea
-                    className={styles.input}
-                    name="text"
-                    label="Comment"
-                    value={value.text}
-                    onChange={setFieldValue}
-                    rows={3}
-                    autoFocus
-                />
-                <MultiSelectInput
-                    className={styles.input}
-                    name="mentionedUsers"
-                    label="Assignees"
-                    value={value.mentionedUsers}
-                    onChange={setFieldValue}
-                    options={projectMembersResponse?.results}
-                    keySelector={memberKeySelector}
-                    labelSelector={memberNameSelector}
-                    disabled={projectMembersPending}
-                />
-            </Modal>
-        </form>
+            <TextArea
+                className={styles.input}
+                name="text"
+                label="Comment"
+                value={value.text}
+                onChange={setFieldValue}
+                rows={3}
+                autoFocus
+            />
+            <MultiSelectInput
+                className={styles.input}
+                name="mentionedUsers"
+                label="Assignees"
+                value={value.mentionedUsers}
+                onChange={setFieldValue}
+                options={projectMembersResponse?.results}
+                keySelector={memberKeySelector}
+                labelSelector={memberNameSelector}
+                disabled={projectMembersPending}
+            />
+        </Modal>
     );
 }
 
