@@ -15,7 +15,7 @@ import {
     LinkProps,
     Pager,
     PendingMessage,
-    SortContext,
+    // SortContext,
     Table,
     TableColumn,
     TableHeaderCell,
@@ -26,6 +26,7 @@ import {
     useBooleanState,
     useSortState,
     useRowExpansion,
+    RowExpansionContext,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -168,9 +169,13 @@ function SourcesTable(props: Props) {
 
     const [leadToEdit, setLeadToEdit] = useState<number | undefined>();
 
-    const [rowModifier] = useRowExpansion<Lead, number>(
+    const [
+        rowModifier,
+        expandedRowKey,
+        setExpandedRowKey,
+    ] = useRowExpansion<Lead, number>(
         ({ datum }) => (
-            <EntryList leadId={datum.id} />
+            <EntryList leadId={datum.id} projectId={datum.project} />
         ),
         {
             expandedRowClassName: styles.expandedRow,
@@ -299,6 +304,7 @@ function SourcesTable(props: Props) {
                 id: data.id,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
+                entriesCount: data.entriesCount,
                 projectId,
             }),
             columnWidth: 196,
@@ -403,7 +409,9 @@ function SourcesTable(props: Props) {
                 )}
             >
                 {pending && (<PendingMessage />)}
-                <SortContext.Provider value={sortState}>
+                <RowExpansionContext.Provider
+                    value={{ expandedRowKey, setExpandedRowKey }}
+                >
                     <Table
                         className={styles.table}
                         data={leadsResponse?.results}
@@ -412,7 +420,7 @@ function SourcesTable(props: Props) {
                         rowModifier={rowModifier}
                         variant="large"
                     />
-                </SortContext.Provider>
+                </RowExpansionContext.Provider>
                 {showSingleSourceModal && (
                     <LeadEditModal
                         leadId={leadToEdit}

@@ -13,7 +13,7 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import EntryUnverifyCommentModal from './EntryUnverifyCommentModal';
 import styles from './styles.css';
 
-interface EntryVerificationFormData {
+export interface EntryVerificationFormData {
     commentType: number;
     text?: string;
     mentionedUsers?: number[];
@@ -30,7 +30,7 @@ interface Props {
 }
 
 const VERIFY = 1;
-const UNVERIFY = 2;
+export const UNVERIFY = 2;
 
 function EntryVerification(props: Props) {
     const {
@@ -73,10 +73,6 @@ function EntryVerification(props: Props) {
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
-    const handleUnverifyEntry = useCallback((formValues: Omit<EntryVerificationFormData, 'commentType'>) => {
-        triggerReviewRequest({ commentType: UNVERIFY, ...formValues });
-    }, [triggerReviewRequest]);
-
     return (
         <div
             className={_cs(className, styles.toggleEntryVerification)}
@@ -105,8 +101,9 @@ function EntryVerification(props: Props) {
             </Button>
             {commentModalShown && (
                 <EntryUnverifyCommentModal
+                    entryId={entryId}
                     projectId={projectId}
-                    onValidationSuccess={handleUnverifyEntry}
+                    onSuccess={onSuccess}
                     onModalClose={setCommentModalHidden}
                 />
             )}

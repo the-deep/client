@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
@@ -14,7 +14,7 @@ import {
     DropdownMenuItem,
     useConfirmation,
     Button,
-    useBooleanState,
+    RowExpansionContext,
 } from '@the-deep/deep-ui';
 
 import useRouteMatching from '#base/hooks/useRouteMatching';
@@ -30,6 +30,7 @@ export interface Props<T extends number> {
     disabled?: boolean;
     isAssessmentLead?: boolean;
     projectId: number;
+    entriesCount: number;
 }
 
 function Actions<T extends number>(props: Props<T>) {
@@ -41,6 +42,7 @@ function Actions<T extends number>(props: Props<T>) {
         isAssessmentLead,
         onDeleteClick,
         projectId,
+        entriesCount,
     } = props;
 
     const route = useRouteMatching(
@@ -56,10 +58,20 @@ function Actions<T extends number>(props: Props<T>) {
         onDeleteClick(id);
     }, [onDeleteClick, id]);
 
-    const [
-        isExpanded,,,,
-        toggleExpansion,
-    ] = useBooleanState(false);
+    const {
+        expandedRowKey,
+        setExpandedRowKey,
+    } = useContext(RowExpansionContext);
+
+    const handleClick = useCallback(
+        () => {
+            const rowKey = id as string | number | undefined;
+            setExpandedRowKey(
+                (oldValue) => (oldValue === rowKey ? undefined : rowKey),
+            );
+        },
+        [setExpandedRowKey, id],
+    );
 
     const [
         modal,
@@ -69,6 +81,9 @@ function Actions<T extends number>(props: Props<T>) {
         onConfirm: handleDeleteConfirm,
         message: 'Are you sure you want to delete this lead?',
     });
+
+    const isExpanded = id === expandedRowKey;
+    const isDisabled = entriesCount < 1;
 
     return (
         <div className={_cs(styles.actions, className)}>
@@ -121,17 +136,17 @@ function Actions<T extends number>(props: Props<T>) {
             <div className={styles.row}>
                 <Button
                     name={undefined}
-                    onClick={toggleExpansion}
-                    className={styles.actionButton}
+                    onClick={handleClick}
+                    className={styles.button}
                     variant="primary"
+                    disabled={isDisabled}
                     actions={isExpanded ? (
                         <IoChevronUpOutline />
                     ) : (
                         <IoChevronDownOutline />
                     )}
-                    autoFocus
                 >
-                    Entries
+                    {`${entriesCount} ${entriesCount === 1 ? 'Entry' : 'Entries'}`}
                 </Button>
 
             </div>

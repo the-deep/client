@@ -35,7 +35,7 @@
 
         .status {
             margin: var(--dui-spacing-small);
-            height: var(--dui-font-size-large);
+            height: var(--dui-font-size-super-large);
         }
     }
 }
