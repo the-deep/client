@@ -1,0 +1,28 @@
+.export-history-container {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .content {
+        display: flex;
+        align-items: flex-start;
+        flex-grow: 1;
+
+        .table {
+            width: 100%;
+
+            .icons {
+                display: flex;
+                font-size: var(--dui-font-size-super-large);
+            }
+
+            .status {
+                display: flex;
+            }
+        }
+    }
+}

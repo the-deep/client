@@ -1,0 +1,9 @@
+.actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .button {
+        margin: var(--dui-spacing-extra-small);
+    }
+}
