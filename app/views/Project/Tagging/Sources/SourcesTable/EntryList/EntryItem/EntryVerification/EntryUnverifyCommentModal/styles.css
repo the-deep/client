@@ -1,11 +1,13 @@
-.entry-comment-form {
+.entry-comment-modal {
     display: flex;
 
-    .entry-comment-modal {
+    .entry-comment-form {
         display: flex;
+        flex-direction: column;
+        flex-grow: 1;
 
         .input {
-            display: flex;
+            margin: var(--dui-spacing-small);
         }
     }
 }
