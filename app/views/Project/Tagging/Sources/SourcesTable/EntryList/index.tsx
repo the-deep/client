@@ -17,38 +17,36 @@ const entryKeySelector = (e: Entry) => e.clientId;
 interface Props {
     className?: string;
     leadId: number;
+    projectId: number;
 }
 
 function EntryList(props: Props) {
     const {
         leadId,
+        projectId,
         className,
     } = props;
 
+    console.warn('lead', leadId, projectId);
     const [activePage, setActivePage] = useState(1);
 
     const entriesQuery = useMemo(
         () => ({
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
+            lead: leadId,
+            project: projectId,
         }),
-        [activePage, maxItemsPerPage],
+        [activePage, leadId, projectId],
     );
-
-    const entriesFilters = useMemo(() => ({
-        filters: [
-            ['lead', leadId],
-        ],
-    }), [leadId]);
-
+    console.warn('entriesQuery', entriesQuery);
     const {
         pending: entryListPending,
         response: entryListResponse,
     } = useRequest<MultiResponse<Entry>>({
-        url: 'server://entries/filter/',
+        url: 'server://entries/',
         query: entriesQuery,
-        body: entriesFilters,
-        method: 'POST',
+        method: 'GET',
         failureHeader: 'Entries',
     });
 
