@@ -9,8 +9,8 @@ import {
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
 const MY_PROJECTS = gql`
-    query MyProjects($title: String) {
-        projects(title: $title, isCurrentUserMember: true) {
+    query MyProjects($search: String) {
+        projects(search: $search, isCurrentUserMember: true) {
             results {
                 id
                 title
@@ -47,7 +47,7 @@ function ProjectSelectInput<K extends string>(props: ProjectSelectInputProps<K>)
 
     const variables = useMemo(
         (): MyProjectsQueryVariables => ({
-            title: debouncedSearchText,
+            search: debouncedSearchText,
         }),
         [debouncedSearchText],
     );
