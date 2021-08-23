@@ -4,7 +4,6 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Modal,
 } from '@the-deep/deep-ui';
-
 import {
     AppState,
 } from '#typings';
@@ -13,7 +12,7 @@ import {
     activeProjectIdFromStateSelector,
 } from '#redux';
 
-import EntriesExportSelection from './EntriesExportSelection';
+import AssessmentsExportSelection from './AssessmentsExportSelection';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -38,7 +37,7 @@ interface Props {
     onClose: () => void;
 }
 
-function NewExport(props: Props) {
+function NewAssessmentExport(props: Props) {
     const {
         className,
         activeProject,
@@ -48,18 +47,17 @@ function NewExport(props: Props) {
 
     return (
         <Modal
-            className={_cs(className, styles.newExportModal)}
-            heading="Setup new export file"
+            className={_cs(className, styles.newAssessmentExportModal)}
+            heading="Setup new assessment export file"
             onCloseButtonClick={onClose}
             bodyClassName={styles.body}
         >
-            <EntriesExportSelection
-                className={styles.exportSelection}
+            <AssessmentsExportSelection
+                className={styles.assessmentExportSelection}
                 projectRole={projectRole}
                 projectId={activeProject}
             />
         </Modal>
     );
 }
-
-export default connect(mapStateToProps)(NewExport);
+export default connect(mapStateToProps)(NewAssessmentExport);
