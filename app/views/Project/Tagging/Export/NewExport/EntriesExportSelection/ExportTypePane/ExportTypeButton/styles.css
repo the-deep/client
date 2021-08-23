@@ -1,0 +1,12 @@
+.export-type-select {
+    display: block;
+    outline: 0;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    padding: var(--dui-spacing-medium);
+
+    &.active {
+        background-color: var(--dui-color-background-accent-hint);
+    }
+}
