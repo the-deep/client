@@ -3,7 +3,6 @@ import { _cs } from '@togglecorp/fujs';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
     Button,
-    Tag,
 } from '@the-deep/deep-ui';
 
 import { EntryReviewComment } from '#types/newEntry';
@@ -14,10 +13,8 @@ import UserContext from '#base/context/UserContext';
 import EntryUnverifyCommentModal from './EntryUnverifyCommentModal';
 import styles from './styles.css';
 
-export interface EntryVerificationFormData {
+interface EntryVerificationFormData {
     commentType: number;
-    text?: string;
-    mentionedUsers?: number[];
 }
 
 interface Props {
@@ -82,20 +79,21 @@ function EntryVerification(props: Props) {
         >
             <Button
                 name="entryVerification"
-                className={styles.verificationButton}
                 variant={(
                     isVerifiedByUser ? 'primary' : 'secondary'
                 )}
+                actionsClassName={styles.verifyActions}
                 actions={(
-                    <Tag
-                        actions={(
+                    <>
+                        <div>
+                            {verifiedBy.length}
+                        </div>
+                        {
                             verifiedBy.length > 0
                                 ? <IoCheckmark />
                                 : <IoClose />
-                        )}
-                    >
-                        {verifiedBy.length}
-                    </Tag>
+                        }
+                    </>
                 )}
                 onClick={handleClick}
                 disabled={reviewRequestPending || disabled}

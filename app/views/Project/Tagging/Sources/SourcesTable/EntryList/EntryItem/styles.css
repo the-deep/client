@@ -6,6 +6,14 @@
     .header {
         display: flex;
         align-items: flex-start;
+
+        .actions {
+            display: flex;
+
+            .verification-action {
+                margin-right: var(--dui-spacing-small);
+            }
+        }
     }
 
     .content {
