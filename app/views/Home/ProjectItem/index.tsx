@@ -173,7 +173,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                 </>
             )}
             contentClassName={styles.content}
-            horizontallyCompactContent
+            spacing="comfortable"
             footerActions={(
                 <ButtonLikeLink
                     to={routeToTagging ?? ''}
@@ -270,7 +270,6 @@ function ProjectItem(props: RecentProjectItemProps) {
                     heading={_ts('home.recentProjects', 'projectActivityLabel')}
                     headerClassName={styles.chartHeader}
                     contentClassName={styles.chartContainer}
-                    sub
                 >
                     <ResponsiveContainer className={styles.responsiveContainer}>
                         <AreaChart data={convertedProjectActivity}>

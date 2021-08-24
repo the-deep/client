@@ -152,7 +152,7 @@ function Actions<T extends number>(props: Props<T>) {
                     name={undefined}
                     onClick={handleClick}
                     className={styles.button}
-                    variant="primary"
+                    variant="secondary"
                     disabled={isDisabled}
                     actions={isExpanded ? (
                         <IoChevronUpOutline />

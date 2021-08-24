@@ -22,7 +22,7 @@ interface Props {
     multiSelect?: boolean;
     navHidden?: boolean;
     icons?: React.ReactNode;
-    iconsClassName?: string;
+    iconsContainerClassName?: string;
 }
 
 function GoogleDrivePicker(props: Props) {
@@ -33,7 +33,7 @@ function GoogleDrivePicker(props: Props) {
         scope = 'https://www.googleapis.com/auth/drive.readonly',
         disabled,
         icons,
-        iconsClassName,
+        iconsContainerClassName,
         children,
         onChange,
         onAuthenticateSuccess,
@@ -128,7 +128,7 @@ function GoogleDrivePicker(props: Props) {
             className={_cs(className, styles.googlePicker)}
             onClick={handleClick}
             icons={icons}
-            iconsClassName={iconsClassName}
+            iconsContainerClassName={iconsContainerClassName}
             disabled={disabled || !(authApiLoaded && pickerApiLoaded)}
         >
             {children || _ts('components.googlePicker', 'openGoogleChooserText')}

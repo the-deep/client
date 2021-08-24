@@ -174,7 +174,7 @@ function EntryCard(props: Props) {
                                 <Button
                                     name={entry.id}
                                     variant="primary"
-                                    actionsClassName={styles.verifyActions}
+                                    actionsContainerClassName={styles.verifyActions}
                                     actions={(
                                         <>
                                             <div>

@@ -198,7 +198,7 @@ function SourceDetails(props: Props) {
     const alert = useAlert();
 
     const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
-    const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries'>('simplified');
+    const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries' | undefined>('simplified');
     const [excerpt, setExcerpt] = useInputState<string | undefined>(undefined);
     const [
         showScreenshot,

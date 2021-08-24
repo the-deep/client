@@ -261,7 +261,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                 className={styles.widgetListContainer}
                 contentClassName={styles.widgetListContent}
                 heading={_ts('analyticalFramework.primaryTagging', 'buildingModulesHeading')}
-                horizontallyCompactContent
             >
                 {!sectionsState.editMode && (
                     <WidgetList

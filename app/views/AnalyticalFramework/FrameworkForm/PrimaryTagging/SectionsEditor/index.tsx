@@ -159,7 +159,6 @@ function SectionInput(props: SectionInputProps) {
                 className,
                 autoFocus && styles.focus,
             )}
-            horizontallyCompactContent
             defaultVisibility={autoFocus}
         >
             <NonFieldError error={error} />
@@ -317,14 +316,11 @@ function SectionsEditor(props: Props) {
                     </>
                 )}
                 contentClassName={styles.content}
-                sub
             >
                 <NonFieldError error={error} />
                 <Container
-                    sub
                     // FIXME: Use translation
                     heading="Sections"
-                    horizontallyCompactContent
                     headerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
                         <QuickActionButton
                             name={undefined}

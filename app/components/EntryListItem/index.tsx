@@ -94,10 +94,9 @@ function EntryListItem(props: Props) {
         <div className={_cs(className, styles.entryListItem)}>
             {!hideExcerpt && (
                 <Container
-                    className={_cs(className, styles.excerpt)}
+                    className={styles.excerpt}
                     heading={index ? `Entry ${index + 1}` : undefined}
                     headingSize="extraSmall"
-                    horizontallyCompactContent
                 >
                     <ExcerptOutput
                         entryType={entryType}
@@ -116,13 +115,11 @@ function EntryListItem(props: Props) {
             />
             <Container
                 className={_cs(
-                    className,
                     styles.secondaryTagging,
                     secondaryTaggingContainerClassName,
                 )}
                 heading="Secondary Tagging"
                 headingSize="extraSmall"
-                horizontallyCompactContent
             >
                 <List
                     data={secondaryWidgetsWithValue}

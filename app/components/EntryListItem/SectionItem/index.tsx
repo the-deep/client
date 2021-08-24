@@ -60,7 +60,6 @@ function SectionItem(props: Props) {
             className={_cs(className, styles.sectionItem)}
             heading={title}
             headingSize="extraSmall"
-            horizontallyCompactContent
         >
             <ListView
                 data={widgetsWithValue}

@@ -4,9 +4,6 @@
     background-color: var(--dui-color-white);
 
     .header {
-        display: flex;
-        align-items: flex-start;
-
         .actions {
             display: flex;
 
@@ -23,6 +20,7 @@
 
         .entry {
             display: flex;
+            border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         }
     }
 }
