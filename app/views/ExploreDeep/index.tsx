@@ -32,6 +32,7 @@ const PROJECT_LIST = gql`
             results {
                 id
                 title
+                currentUserRole
                 analysisFramework {
                     id
                     title
@@ -39,6 +40,15 @@ const PROJECT_LIST = gql`
                 stats {
                     numberOfLeads
                     numberOfUsers
+                }
+                membershipPending
+                organizations {
+                    id
+                    title
+                    mergedAs {
+                        id
+                        title
+                    }
                 }
             }
             totalCount
@@ -99,9 +109,10 @@ function ExploreDeep(props: Props) {
                 sortable: false,
             },
             cellRenderer: ActionCell,
-            cellRendererParams: (projectId) => ({
+            cellRendererParams: (projectId, project) => ({
                 projectId,
-                memberStatus: 'pending',
+                membershipPending: project?.membershipPending,
+                isMember: !!project?.currentUserRole,
             }),
         };
 
