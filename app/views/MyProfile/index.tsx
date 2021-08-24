@@ -239,7 +239,6 @@ function MyProfile(props: Props) {
                         <Container
                             className={styles.personalInfo}
                             heading={_ts('myProfile', 'personalInfo')}
-                            sub
                         >
                             <TextInput
                                 name="firstName"
@@ -275,7 +274,6 @@ function MyProfile(props: Props) {
                         </Container>
                         <Container
                             className={styles.preferences}
-                            sub
                             heading={_ts('myProfile', 'preferences')}
                         >
                             <SelectInput

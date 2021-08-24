@@ -87,7 +87,7 @@
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@sentry/react": "^6.9.0",
         "@sentry/tracing": "^6.9.0",
-        "@the-deep/deep-ui": "1.4.14",
+        "@the-deep/deep-ui": "^1.5.1",
         "@types/apollo-upload-client": "^14.1.0",
         "@types/react": "^17.0.14",
         "@types/react-dom": "^17.0.9",

@@ -413,11 +413,11 @@ function SourcesTable(props: Props) {
                     value={{ expandedRowKey, setExpandedRowKey }}
                 >
                     <SortContext.Provider value={sortState}>
-
                         <Table
                             className={styles.table}
                             data={leadsResponse?.results}
                             keySelector={leadsKeySelector}
+                            rowClassName={styles.tableRow}
                             columns={columns}
                             rowModifier={rowModifier}
                             variant="large"

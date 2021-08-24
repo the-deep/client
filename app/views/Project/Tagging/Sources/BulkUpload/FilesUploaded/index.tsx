@@ -76,8 +76,6 @@ function FilesUploaded(props: Props) {
                     />
                 )}
                 contentClassName={styles.files}
-                horizontallyCompactContent
-                sub
             >
                 <ListView
                     className={styles.list}

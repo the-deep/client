@@ -61,9 +61,7 @@ function UserGroupItem(props: UserGroupItemProps) {
 
     return (
         <ExpandableContainer
-            sub
             className={styles.userGroupItem}
-            horizontallyCompactContent
             heading={data.title}
             headerClassName={styles.userGroupHeader}
             headingContainerClassName={styles.headingContainer}

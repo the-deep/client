@@ -22,7 +22,7 @@ interface Props {
     folderselect?: boolean;
     sizeLimit?: number;
     icons?: React.ReactNode;
-    iconsClassName?: string;
+    iconsContainerClassName?: string;
 }
 
 function DropboxPicker(props: Props) {
@@ -37,7 +37,7 @@ function DropboxPicker(props: Props) {
         children,
         disabled,
         icons,
-        iconsClassName,
+        iconsContainerClassName,
     } = props;
 
     const [loaded, setLoaded] = useState(!!window.Dropbox);
@@ -89,7 +89,7 @@ function DropboxPicker(props: Props) {
             onClick={handleClick}
             disabled={disabled || !loaded || isOpened}
             icons={icons}
-            iconsClassName={iconsClassName}
+            iconsContainerClassName={iconsContainerClassName}
         >
             {children || _ts('components.dropboxChooser', 'openDropboxChooserText') }
         </Button>

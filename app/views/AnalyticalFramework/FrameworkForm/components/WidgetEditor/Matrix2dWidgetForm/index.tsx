@@ -439,9 +439,7 @@ function RowInput(props: RowInputProps) {
             />
             <Container
                 className={styles.optionInput}
-                sub
                 heading="Sub Rows"
-                horizontallyCompactContent
                 headerActions={(value.subRows?.length ?? 0) < SUB_ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -695,9 +693,7 @@ function ColumnInput(props: ColumnInputProps) {
             />
             <Container
                 className={styles.optionInput}
-                sub
                 heading="Sub Columns"
-                horizontallyCompactContent
                 headerActions={(value.subColumns?.length ?? 0) < SUB_COLUMNS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -844,7 +840,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         [onFieldChange, value?.columns],
     );
 
-    const [activeTab, setActiveTab] = React.useState<'rows' | 'columns'>('rows');
+    const [activeTab, setActiveTab] = React.useState<'rows' | 'columns' | undefined>('rows');
 
     return (
         <Tabs
@@ -877,9 +873,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <TabPanel name="rows">
                     <Container
                         className={className}
-                        sub
                         heading="Rows"
-                        horizontallyCompactContent
                         headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
                             <QuickActionButton
                                 name={undefined}
@@ -906,9 +900,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <TabPanel name="columns">
                     <Container
                         className={className}
-                        sub
                         heading="Columns"
-                        horizontallyCompactContent
                         headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
                             <QuickActionButton
                                 name={undefined}
@@ -986,7 +978,6 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
-                horizontallyCompactContent
                 contentClassName={styles.editorContent}
                 headerActions={(
                     <>

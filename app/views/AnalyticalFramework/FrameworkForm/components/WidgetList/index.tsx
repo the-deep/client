@@ -206,7 +206,6 @@ function WidgetList(props: Props) {
                 // eslint-disable-next-line react/destructuring-assignment
                 defaultVisibility={!!props.sectionsDisabled}
                 className={styles.widgets}
-                horizontallyCompactContent
             >
                 <AddItem
                     name="TEXTWIDGET"

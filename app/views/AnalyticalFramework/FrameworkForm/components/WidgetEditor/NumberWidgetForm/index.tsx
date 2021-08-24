@@ -198,8 +198,6 @@ function NumberWidgetForm(props: NumberWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                horizontallyCompactContent
-                sub
             >
                 <NonFieldError
                     className={styles.error}

@@ -81,7 +81,7 @@ function EntryVerification(props: Props) {
                 variant={(
                     isVerifiedByUser ? 'primary' : 'secondary'
                 )}
-                actionsClassName={styles.verifyActions}
+                actionsContainerClassName={styles.verifyActions}
                 actions={(
                     <>
                         <div>

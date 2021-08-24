@@ -69,7 +69,7 @@ function EntryItem(props: Props) {
             className={_cs(className, styles.entryItemContainer)}
             headerClassName={styles.header}
             contentClassName={styles.content}
-            headerActions={(
+            headerIcons={(
                 <div className={styles.actions}>
                     {canEditEntry && (
                         <>
