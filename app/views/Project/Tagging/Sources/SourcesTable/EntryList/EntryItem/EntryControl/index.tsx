@@ -1,18 +1,13 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
     Button,
 } from '@the-deep/deep-ui';
 
-import {
-    MultiResponse,
-    Membership,
-} from '#types';
-
 import { EntryReviewComment } from '#types/newEntry';
 import { useModalState } from '#hooks/stateManagement';
-import { useLazyRequest, useRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import { ProjectContext } from '#base/context/ProjectContext';
 
 import { EntryAction } from '../constants';
@@ -43,14 +38,6 @@ function EntryControl(props: Props) {
     } = props;
 
     const { project } = useContext(ProjectContext);
-    const {
-        pending: projectMembersPending,
-        response: projectMembersResponse,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://v2/projects/${projectId}/project-memberships/`,
-        method: 'GET',
-        failureHeader: 'Project Membership',
-    });
 
     const isQualityController = project?.allowedPermissions.includes('CAN_QUALITY_CONTROL');
 
@@ -81,12 +68,6 @@ function EntryControl(props: Props) {
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
-    const controlStatusLabel = useMemo(() => (
-        value
-            ? 'Controlled'
-            : 'Control'
-    ), [value]);
-
     return (
         <div
             className={_cs(className, styles.toggleEntryControl)}
@@ -103,19 +84,17 @@ function EntryControl(props: Props) {
                 disabled={
                     reviewRequestPending
                     || disabled
-                    || projectMembersPending
                     || !isQualityController
                 }
             >
-                { controlStatusLabel }
+                {value ? 'Controlled' : 'Control'}
             </Button>
             { commentModalShown && (
                 <EntryUncontrolCommentModal
                     onModalClose={setCommentModalHidden}
                     entryId={entryId}
                     onControlStatusChange={onChange}
-                    projectMembers={projectMembersResponse?.results}
-                    projectMembersPending={projectMembersPending}
+                    projectId={projectId}
                 />
             )}
         </div>

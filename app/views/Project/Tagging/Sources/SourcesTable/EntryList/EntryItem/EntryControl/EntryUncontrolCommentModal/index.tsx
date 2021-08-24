@@ -14,10 +14,12 @@ import {
     MultiSelectInput,
     Button,
 } from '@the-deep/deep-ui';
-import { useLazyRequest } from '#base/utils/restRequest';
+
+import { useLazyRequest, useRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import { EntryReviewComment } from '#types/newEntry';
 import {
+    MultiResponse,
     Membership,
 } from '#types';
 
@@ -50,9 +52,8 @@ export interface Props {
     onModalClose: () => void;
     entryId: number;
     onControlStatusChange: (entryId: number) => void;
-    projectMembers?: Membership[];
     className?: string;
-    projectMembersPending: boolean;
+    projectId: number;
 }
 
 function EntryUncontrolCommentModal(props: Props) {
@@ -60,10 +61,18 @@ function EntryUncontrolCommentModal(props: Props) {
         className,
         onModalClose,
         onControlStatusChange,
-        projectMembersPending,
-        projectMembers,
         entryId,
+        projectId,
     } = props;
+
+    const {
+        pending: projectMembersPending,
+        response: projectMembersResponse,
+    } = useRequest<MultiResponse<Membership>>({
+        url: `server://v2/projects/${projectId}/project-memberships/`,
+        method: 'GET',
+        failureHeader: 'Project Membership',
+    });
 
     const {
         pending: reviewRequestPending,
@@ -134,7 +143,7 @@ function EntryUncontrolCommentModal(props: Props) {
                 label="Assignees"
                 value={value.mentionedUsers}
                 onChange={setFieldValue}
-                options={projectMembers}
+                options={projectMembersResponse?.results}
                 keySelector={memberKeySelector}
                 labelSelector={memberNameSelector}
                 disabled={projectMembersPending}
