@@ -185,7 +185,7 @@ export interface EntryReviewComment {
         organization: string;
         displayPictureUrl: string;
     };
-    mentionedusersDetails: {
+    mentionedUsersDetails: {
         id: number;
         name: string;
         email: string;
