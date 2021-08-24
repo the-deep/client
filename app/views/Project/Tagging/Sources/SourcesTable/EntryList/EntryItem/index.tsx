@@ -10,6 +10,8 @@ import { FiEdit2 } from 'react-icons/fi';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { Entry } from '#types/newEntry';
 import ProjectContext from '#base/context/ProjectContext';
+import useRouteMatching from '#base/hooks/useRouteMatching';
+import routes from '#base/configs/routes';
 import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
@@ -20,18 +22,32 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     entry: Entry;
+    projectId: number;
+    leadId: number;
 }
 
 function EntryItem(props: Props) {
     const {
         className,
+        projectId,
+        leadId,
         entry: entryFromProps,
     } = props;
 
     const { project } = useContext(ProjectContext);
     const [entry, setEntry] = useState<Entry>(entryFromProps);
 
-    const isEntryEditable = project?.allowedPermissions.includes('UPDATE_ENTRY');
+    const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
+
+    const route = useRouteMatching(
+        routes.taggingFlow,
+        {
+            projectId,
+            leadId,
+        },
+    );
+
+    const taggingFlowLink = route?.to ?? '';
 
     const {
         pending,
@@ -53,35 +69,39 @@ function EntryItem(props: Props) {
             className={_cs(className, styles.entryItemContainer)}
             headerClassName={styles.header}
             contentClassName={styles.content}
-            headerActions={isEntryEditable && (
+            headerActions={(
                 <div className={styles.actions}>
-                    <ButtonLikeLink
-                        className={styles.button}
-                        variant="secondary"
-                        to="#" // TODO: use appropriate link
-                        icons={(
-                            <FiEdit2 />
-                        )}
-                    >
-                        Edit Tags
-                    </ButtonLikeLink>
-                    <QuickActionButton
-                        className={styles.button}
-                        variant="secondary"
-                        name="showComments"
-                        disabled
-                        onClick={handleClick}
-                    >
-                        <FaRegCommentAlt />
-                    </QuickActionButton>
-                    <EntryVerification
-                        className={styles.button}
-                        entryId={entry.id}
-                        projectId={entry.project}
-                        verifiedBy={entry.verifiedBy}
-                        onVerificationChange={getEntry}
-                        disabled={pending}
-                    />
+                    {canEditEntry && (
+                        <>
+                            <ButtonLikeLink
+                                className={styles.button}
+                                variant="secondary"
+                                to={taggingFlowLink}
+                                icons={(
+                                    <FiEdit2 />
+                                )}
+                            >
+                                Edit Tags
+                            </ButtonLikeLink>
+                            <QuickActionButton
+                                className={styles.button}
+                                variant="secondary"
+                                name="showComments"
+                                disabled
+                                onClick={handleClick}
+                            >
+                                <FaRegCommentAlt />
+                            </QuickActionButton>
+                            <EntryVerification
+                                className={styles.button}
+                                entryId={entry.id}
+                                projectId={entry.project}
+                                verifiedBy={entry.verifiedBy}
+                                onVerificationChange={getEntry}
+                                disabled={pending}
+                            />
+                        </>
+                    )}
                     <EntryControl
                         entryId={entry.id}
                         projectId={entry.project}

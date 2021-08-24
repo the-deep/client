@@ -51,7 +51,9 @@ function EntryList(props: Props) {
 
     const entryDataRendererParams = useCallback((_: string, data: Entry) => ({
         entry: data,
-    }), []);
+        leadId,
+        projectId,
+    }), [leadId, projectId]);
 
     return (
         <Container

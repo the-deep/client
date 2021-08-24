@@ -17,6 +17,7 @@ import {
     RowExpansionContext,
 } from '@the-deep/deep-ui';
 
+import { ProjectContext } from '#base/context/ProjectContext';
 import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
 
@@ -45,6 +46,12 @@ function Actions<T extends number>(props: Props<T>) {
         entriesCount,
     } = props;
 
+    const { project } = useContext(ProjectContext);
+
+    const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
+    const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
+    const canViewEntry = project?.allowedPermissions.includes('VIEW_ENTRY');
+
     const route = useRouteMatching(
         routes.taggingFlow,
         {
@@ -52,6 +59,7 @@ function Actions<T extends number>(props: Props<T>) {
             leadId: id,
         },
     );
+
     const taggingFlowLink = route?.to ?? '';
 
     const handleDeleteConfirm = useCallback(() => {
@@ -88,39 +96,45 @@ function Actions<T extends number>(props: Props<T>) {
     return (
         <div className={_cs(styles.actions, className)}>
             <div className={styles.row}>
-                <QuickActionButton
-                    className={styles.button}
-                    name={id}
-                    onClick={onEditClick}
-                    disabled={disabled}
-                    title="edit"
-                >
-                    <MdModeEdit />
-                </QuickActionButton>
-                <ButtonLikeLink
-                    className={styles.button}
-                    variant="primary"
-                    title="tag"
-                    disabled={disabled}
-                    to={taggingFlowLink}
-                    icons={<IoAdd />}
-                >
-                    Tag
-                </ButtonLikeLink>
-                <QuickActionDropdownMenu
-                    label={(
-                        <IoEllipsisVerticalSharp />
-                    )}
-                    variant="secondary"
-                >
-                    <DropdownMenuItem
-                        name="delete"
-                        onClick={onDeleteLeadClick}
+                {canEditSource && (
+                    <QuickActionButton
+                        className={styles.button}
+                        name={id}
+                        onClick={onEditClick}
+                        disabled={disabled}
+                        title="edit"
                     >
-                        Delete
-                    </DropdownMenuItem>
-                </QuickActionDropdownMenu>
-                {isAssessmentLead && (
+                        <MdModeEdit />
+                    </QuickActionButton>
+                )}
+                {canViewEntry && (
+                    <ButtonLikeLink
+                        className={styles.button}
+                        variant="primary"
+                        title="tag"
+                        disabled={disabled}
+                        to={taggingFlowLink}
+                        icons={<IoAdd />}
+                    >
+                        Tag
+                    </ButtonLikeLink>
+                )}
+                {canDeleteSource && (
+                    <QuickActionDropdownMenu
+                        label={(
+                            <IoEllipsisVerticalSharp />
+                        )}
+                        variant="secondary"
+                    >
+                        <DropdownMenuItem
+                            name="delete"
+                            onClick={onDeleteLeadClick}
+                        >
+                            Delete
+                        </DropdownMenuItem>
+                    </QuickActionDropdownMenu>
+                )}
+                {isAssessmentLead && ( // TODO: use permission and appropriate link
                     <ButtonLikeLink
                         className={styles.button}
                         variant="secondary"
