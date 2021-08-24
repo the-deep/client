@@ -15,7 +15,7 @@ import {
     LinkProps,
     Pager,
     PendingMessage,
-    // SortContext,
+    SortContext,
     Table,
     TableColumn,
     TableHeaderCell,
@@ -412,14 +412,17 @@ function SourcesTable(props: Props) {
                 <RowExpansionContext.Provider
                     value={{ expandedRowKey, setExpandedRowKey }}
                 >
-                    <Table
-                        className={styles.table}
-                        data={leadsResponse?.results}
-                        keySelector={leadsKeySelector}
-                        columns={columns}
-                        rowModifier={rowModifier}
-                        variant="large"
-                    />
+                    <SortContext.Provider value={sortState}>
+
+                        <Table
+                            className={styles.table}
+                            data={leadsResponse?.results}
+                            keySelector={leadsKeySelector}
+                            columns={columns}
+                            rowModifier={rowModifier}
+                            variant="large"
+                        />
+                    </SortContext.Provider>
                 </RowExpansionContext.Provider>
                 {showSingleSourceModal && (
                     <LeadEditModal

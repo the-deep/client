@@ -14,6 +14,7 @@ import {
     MultiSelectInput,
     Button,
 } from '@the-deep/deep-ui';
+
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import { EntryReviewComment } from '#types/newEntry';
@@ -22,12 +23,12 @@ import {
     Membership,
 } from '#types';
 
+import { EntryAction } from '../../constants';
 import styles from './styles.css';
 
 const memberFieldQuery = {
     fields: ['member', 'member_name'],
 };
-const UNVERIFY = 2;
 
 export const memberKeySelector = (d: Membership) => d.member;
 export const memberNameSelector = (d:Membership) => d.memberName;
@@ -54,7 +55,7 @@ const schema: FormSchema = {
 };
 
 const defaultFormValue: FormType = {
-    commentType: UNVERIFY,
+    commentType: EntryAction.UNVERIFY,
 };
 
 export interface Props {

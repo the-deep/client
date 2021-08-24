@@ -10,7 +10,7 @@
         .actions {
             display: flex;
 
-            .verification-action {
+            .button {
                 margin-right: var(--dui-spacing-small);
             }
         }

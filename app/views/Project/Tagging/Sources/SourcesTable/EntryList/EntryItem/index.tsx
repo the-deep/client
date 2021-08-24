@@ -1,33 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
+    QuickActionButton,
+    ButtonLikeLink,
     Container,
 } from '@the-deep/deep-ui';
-
+import { FaRegCommentAlt } from 'react-icons/fa';
+import { FiEdit2 } from 'react-icons/fi';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { Entry } from '#types/newEntry';
+import ProjectContext from '#base/context/ProjectContext';
 import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
 import EntryVerification from './EntryVerification';
 import EntryControl from './EntryControl';
 import styles from './styles.css';
-
-export interface EntryWithLead extends Entry {
-    leadDetails: {
-        id: number;
-        title: string;
-        createdOn: string;
-        publishedOn: string;
-        createdByName: string;
-        authors: {
-            title: string;
-        }[];
-        source: {
-            title: string;
-        };
-    };
-}
 
 interface Props {
     className?: string;
@@ -40,7 +28,10 @@ function EntryItem(props: Props) {
         entry: entryFromProps,
     } = props;
 
+    const { project } = useContext(ProjectContext);
     const [entry, setEntry] = useState<Entry>(entryFromProps);
+
+    const isEntryEditable = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     const {
         pending,
@@ -54,15 +45,37 @@ function EntryItem(props: Props) {
         failureHeader: 'Entry',
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const handleClick = () => {}; // TODO: implement later
+
     return (
         <Container
             className={_cs(className, styles.entryItemContainer)}
             headerClassName={styles.header}
             contentClassName={styles.content}
-            headerActions={(
+            headerActions={isEntryEditable && (
                 <div className={styles.actions}>
+                    <ButtonLikeLink
+                        className={styles.button}
+                        variant="secondary"
+                        to="#" // TODO: use appropriate link
+                        icons={(
+                            <FiEdit2 />
+                        )}
+                    >
+                        Edit Tags
+                    </ButtonLikeLink>
+                    <QuickActionButton
+                        className={styles.button}
+                        variant="secondary"
+                        name="showComments"
+                        disabled
+                        onClick={handleClick}
+                    >
+                        <FaRegCommentAlt />
+                    </QuickActionButton>
                     <EntryVerification
-                        className={styles.verificationAction}
+                        className={styles.button}
                         entryId={entry.id}
                         projectId={entry.project}
                         verifiedBy={entry.verifiedBy}
