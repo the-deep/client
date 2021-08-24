@@ -10,6 +10,7 @@ import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import UserContext from '#base/context/UserContext';
 
+import { EntryAction } from '../constants';
 import EntryUnverifyCommentModal from './EntryUnverifyCommentModal';
 import styles from './styles.css';
 
@@ -25,8 +26,6 @@ interface Props {
     verifiedBy: number[];
     onVerificationChange: (entryId: number) => void;
 }
-
-const VERIFY = 1;
 
 function EntryVerification(props: Props) {
     const {
@@ -69,7 +68,7 @@ function EntryVerification(props: Props) {
         if (isVerifiedByUser) {
             setCommentModalVisible();
         } else {
-            triggerReviewRequest({ commentType: VERIFY });
+            triggerReviewRequest({ commentType: EntryAction.VERIFY });
         }
     }, [isVerifiedByUser, triggerReviewRequest, setCommentModalVisible]);
 

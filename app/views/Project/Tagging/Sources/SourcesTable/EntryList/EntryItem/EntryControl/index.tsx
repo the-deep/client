@@ -13,8 +13,9 @@ import {
 import { EntryReviewComment } from '#types/newEntry';
 import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest, useRequest } from '#base/utils/restRequest';
-import UserContext from '#base/context/UserContext';
+import { ProjectContext } from '#base/context/ProjectContext';
 
+import { EntryAction } from '../constants';
 import EntryUncontrolCommentModal from './EntryUncontrolCommentModal';
 import styles from './styles.css';
 
@@ -31,9 +32,6 @@ interface EntryControlFormData {
     commentType: number;
 }
 
-const CONTROL = 3;
-const QUALITY_CONTROLLER = 0;
-
 function EntryControl(props: Props) {
     const {
         className,
@@ -44,10 +42,7 @@ function EntryControl(props: Props) {
         disabled,
     } = props;
 
-    const {
-        user,
-    } = useContext(UserContext);
-
+    const { project } = useContext(ProjectContext);
     const {
         pending: projectMembersPending,
         response: projectMembersResponse,
@@ -57,11 +52,7 @@ function EntryControl(props: Props) {
         failureHeader: 'Project Membership',
     });
 
-    const isQualityController = useMemo(() => (
-        projectMembersResponse?.results.find((v) => v.member.toString() === user?.id)
-            ?.badges.some((v) => (v === QUALITY_CONTROLLER))
-    ),
-    [projectMembersResponse?.results, user?.id]);
+    const isQualityController = project?.allowedPermissions.includes('CAN_QUALITY_CONTROL');
 
     const [
         commentModalShown,
@@ -86,20 +77,15 @@ function EntryControl(props: Props) {
         if (value) {
             setCommentModalVisible();
         } else {
-            triggerReviewRequest({ commentType: CONTROL });
+            triggerReviewRequest({ commentType: EntryAction.CONTROL });
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
-    const controlStatusLabel = useMemo(() => {
-        if (isQualityController) {
-            return value
-                ? 'Uncontrol'
-                : 'Control';
-        }
-        return value
+    const controlStatusLabel = useMemo(() => (
+        value
             ? 'Controlled'
-            : 'Uncontrolled';
-    }, [value, isQualityController]);
+            : 'Control'
+    ), [value]);
 
     return (
         <div

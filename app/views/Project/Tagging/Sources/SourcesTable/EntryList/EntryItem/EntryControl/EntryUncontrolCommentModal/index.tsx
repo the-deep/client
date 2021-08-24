@@ -21,9 +21,8 @@ import {
     Membership,
 } from '#types';
 
+import { EntryAction } from '../../constants';
 import styles from './styles.css';
-
-const UNCONTROL = 4;
 
 export const memberKeySelector = (d: Membership) => d.member;
 export const memberNameSelector = (d:Membership) => d.memberName;
@@ -44,7 +43,7 @@ const schema: FormSchema = {
 };
 
 const defaultFormValue: FormType = {
-    commentType: UNCONTROL,
+    commentType: EntryAction.UNCONTROL,
 };
 
 export interface Props {
