@@ -5,13 +5,18 @@ import {
     ConfirmButton,
 } from '@the-deep/deep-ui';
 
+import { useModalState } from '#hooks/stateManagement';
+
+import ProjectJoinModal from './ProjectJoinModal';
+
 import styles from './styles.css';
 
 export interface Props {
     className?: string;
     projectId: string;
     disabled?: boolean;
-    memberStatus: 'member' | 'non-member' | 'pending',
+    membershipPending: boolean;
+    isMember: boolean;
 }
 
 function ActionCell(props: Props) {
@@ -19,31 +24,37 @@ function ActionCell(props: Props) {
         className,
         projectId,
         disabled,
-        memberStatus,
+        membershipPending,
+        isMember,
     } = props;
 
-    const handleJoinProjectClick = useCallback(() => {
-        console.warn('Joining project', projectId);
-    }, [projectId]);
+    const [
+        projectJoinModalShown,
+        showJoinModal,
+        hideJoinModal,
+    ] = useModalState(false);
 
     const handleCancelJoinProjectClick = useCallback(() => {
         console.warn('Canceling project join request', projectId);
     }, [projectId]);
 
+    if (isMember) {
+        return null;
+    }
+
     return (
         <div className={_cs(styles.actionCell, className)}>
-            {memberStatus === 'non-member' && (
+            {!membershipPending ? (
                 <Button
                     name="join"
-                    onClick={handleJoinProjectClick}
+                    onClick={showJoinModal}
                     variant="secondary"
                     disabled={disabled}
                     title="Join Project"
                 >
                     Join
                 </Button>
-            )}
-            {memberStatus === 'pending' && (
+            ) : (
                 <ConfirmButton
                     name="cancel-join"
                     onConfirm={handleCancelJoinProjectClick}
@@ -53,6 +64,12 @@ function ActionCell(props: Props) {
                 >
                     Cancel Join
                 </ConfirmButton>
+            )}
+            {projectJoinModalShown && (
+                <ProjectJoinModal
+                    projectId={projectId}
+                    onModalClose={hideJoinModal}
+                />
             )}
         </div>
     );
