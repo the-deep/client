@@ -20,7 +20,7 @@ const query = {
 };
 
 export interface Props {
-    frameworkId: number;
+    frameworkId?: number;
     label?: string;
     className?: string;
     variant?: ButtonProps<string>['variant'];
@@ -33,7 +33,6 @@ function FrameworkImageButton(props: Props) {
         label,
         variant,
     } = props;
-    console.warn('here', props);
 
     const [
         isModalVisible,
@@ -45,7 +44,7 @@ function FrameworkImageButton(props: Props) {
         pending,
         response: frameworkDetails,
     } = useRequest<AnalyticalFramework>({
-        skip: !isModalVisible,
+        skip: !isModalVisible || !frameworkId,
         url: `server://analysis-frameworks/${frameworkId}/`,
         query,
         method: 'GET',

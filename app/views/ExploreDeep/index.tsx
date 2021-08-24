@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     TableView,
+    PendingMessage,
     TableColumn,
     TableHeaderCellProps,
     TableHeaderCell,
@@ -32,6 +33,12 @@ const PROJECT_LIST = gql`
             results {
                 id
                 title
+                currentUserRole
+                createdAt
+                regions {
+                    id
+                    title
+                }
                 analysisFramework {
                     id
                     title
@@ -39,6 +46,15 @@ const PROJECT_LIST = gql`
                 stats {
                     numberOfLeads
                     numberOfUsers
+                }
+                membershipPending
+                organizations {
+                    id
+                    title
+                    mergedAs {
+                        id
+                        title
+                    }
                 }
             }
             totalCount
@@ -74,7 +90,7 @@ function ExploreDeep(props: Props) {
 
     const columns = useMemo(() => {
         const frameworkColumn: TableColumn<
-            Project, number, FrameworkImageButtonProps, TableHeaderCellProps
+            Project, string, FrameworkImageButtonProps, TableHeaderCellProps
         > = {
             id: 'framework',
             title: 'Framework',
@@ -84,7 +100,7 @@ function ExploreDeep(props: Props) {
             },
             cellRenderer: FrameworkImageButton,
             cellRendererParams: (_, project) => ({
-                frameworkId: project?.analysisFramework?.id,
+                frameworkId: project?.analysisFramework ? +project.analysisFramework.id : undefined,
                 label: project?.analysisFramework?.title,
             }),
         };
@@ -99,9 +115,10 @@ function ExploreDeep(props: Props) {
                 sortable: false,
             },
             cellRenderer: ActionCell,
-            cellRendererParams: (projectId) => ({
+            cellRendererParams: (projectId, project) => ({
                 projectId,
-                memberStatus: 'pending',
+                membershipPending: project?.membershipPending,
+                isMember: !!project?.currentUserRole,
             }),
         };
 
@@ -141,10 +158,9 @@ function ExploreDeep(props: Props) {
         ]);
     }, []);
 
-    console.warn('here', loading, data);
-
     return (
         <PageContent className={_cs(styles.exploreDeep, className)}>
+            {loading && <PendingMessage />}
             <TableView
                 columns={columns}
                 keySelector={projectKeySelector}
