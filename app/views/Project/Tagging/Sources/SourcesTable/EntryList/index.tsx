@@ -47,6 +47,7 @@ function EntryList(props: Props) {
         query: entriesQuery,
         method: 'GET',
         failureHeader: 'Entries',
+        preserveResponse: true,
     });
 
     const entryDataRendererParams = useCallback((_: string, data: Entry) => ({
@@ -59,6 +60,7 @@ function EntryList(props: Props) {
         <Container
             className={_cs(className, styles.entryListContainer)}
             contentClassName={styles.content}
+            spacing="compact"
             footerActions={(
                 <Pager
                     activePage={activePage}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
     ContainerCard,
     Tabs,
@@ -34,10 +34,6 @@ function Review(props: Props) {
         primaryTagging[0]?.clientId,
     );
 
-    const handleTabChange = useCallback((newSelection: string) => {
-        setSelectedSection(newSelection);
-    }, []);
-
     return (
         <div className={_cs(styles.review, className)}>
             <ContainerCard
@@ -46,7 +42,7 @@ function Review(props: Props) {
             >
                 <Tabs
                     value={selectedSection}
-                    onChange={handleTabChange}
+                    onChange={setSelectedSection}
                     variant="step"
                 >
                     <div className={styles.canvas}>

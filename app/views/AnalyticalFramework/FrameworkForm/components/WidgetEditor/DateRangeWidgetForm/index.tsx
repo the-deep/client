@@ -109,8 +109,6 @@ function DateRangeWidgetForm(props: DateRangeWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                horizontallyCompactContent
-                sub
             >
                 <NonFieldError
                     className={styles.error}

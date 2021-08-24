@@ -169,8 +169,6 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                 footerContent={(
                     <NonFieldError error={error} />
                 )}
-                horizontallyCompactContent
-                sub
             >
                 <TextInput
                     className={styles.input}

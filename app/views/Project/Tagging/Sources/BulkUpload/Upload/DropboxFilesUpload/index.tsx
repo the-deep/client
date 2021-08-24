@@ -42,7 +42,7 @@ function GoogleDriveFilesUpload(props: Props) {
                 multiselect
                 extensions={supportedDropboxExtension}
                 icons={<IoLogoDropbox />}
-                iconsClassName={styles.icon}
+                iconsContainerClassName={styles.icon}
             >
                 {_ts('addLeads.sourceButtons', 'dropboxLabel')}
             </DropboxPicker>

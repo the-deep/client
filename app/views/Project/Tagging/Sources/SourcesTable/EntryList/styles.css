@@ -1,6 +1,4 @@
 .entry-list-container {
-    display: flex;
-    flex-direction: column;
     background-color: var(--dui-color-white);
 
     .content {
@@ -13,6 +11,7 @@
 
             .entry-item {
                 display: flex;
+                border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             }
         }
     }

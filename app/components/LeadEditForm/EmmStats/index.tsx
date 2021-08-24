@@ -52,7 +52,6 @@ function EmmStatsModal(props: Props) {
                     heading={_ts('emmStatsModal', 'emmTriggersTitle')}
                     headingSize="small"
                     className={styles.content}
-                    sub
                 >
                     <ListView
                         className={styles.list}
@@ -67,7 +66,6 @@ function EmmStatsModal(props: Props) {
                 <ContainerCard
                     heading={_ts('emmStatsModal', 'emmEntitiesTitle')}
                     headingSize="small"
-                    sub
                     className={styles.content}
                 >
                     <ListView

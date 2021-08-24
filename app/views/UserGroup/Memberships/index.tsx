@@ -171,7 +171,6 @@ function Memberships(props: Props) {
                 />
             )}
             contentClassName={styles.content}
-            horizontallyCompactContent
         >
             {membershipsPending && <PendingMessage />}
             <TableView
