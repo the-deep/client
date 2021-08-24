@@ -146,12 +146,12 @@ export interface UserFields {
 export interface Entry extends Entity {
     project: number;
     lead: number;
+    controlled: boolean;
     entryType: EntryType;
 
     analyticalFramework: number;
     attributes: WidgetValue[];
 
-    verified: boolean;
     verificationLastChangedByDetails?: UserFields;
 
     excerpt?: string;
@@ -171,4 +171,31 @@ export interface Entry extends Entity {
     // Data for dataSeries type entry
     tabularField?: number;
     tabularFieldData?: TabularDataFields;
+    verifiedBy: number[];
+}
+
+export interface EntryReviewComment {
+    id: number;
+    textHistory: string[];
+    lead: number;
+    createdByDetails: {
+        id: number;
+        name: string;
+        email: string;
+        organization: string;
+        displayPictureUrl: string;
+    };
+    mentionedUsersDetails: {
+        id: number;
+        name: string;
+        email: string;
+        organization: string;
+        displayPictureUrl: string;
+    }[];
+    commentTypeDisplay: string;
+    createdAt: string;
+    commentType: number;
+    createdBy: number;
+    entry: number;
+    mentionedUsers: number[];
 }

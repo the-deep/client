@@ -2304,10 +2304,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@the-deep/deep-ui@^1.4.14-beta.3":
-  version "1.4.14-beta.3"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.4.14-beta.3.tgz#28a3c9cb42923773cf8d95bc3a43dba1ef94fbe2"
-  integrity sha512-TKRaXdeUlH8iAmPaAD/OBjLBtkUDIH7uejsR6iKXMn5dJdeu0DA9Un0kfQuEojf0ZKJA1Zf8fBlq5jRvwzttWQ==
+"@the-deep/deep-ui@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.1.tgz#fa801b3f55876aae298d97669c482d001a2f4b1e"
+  integrity sha512-ivxqBqP93l62qgTbc5zIUGq2hrQMZxKedhRgFMoXjmAt1zNkPfA6EisBiUeFHlRPxjlmZuadDfSQsyF0bIgXLw==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"

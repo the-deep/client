@@ -25,6 +25,8 @@ import {
     createStringColumn,
     useBooleanState,
     useSortState,
+    useRowExpansion,
+    RowExpansionContext,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
@@ -37,6 +39,7 @@ import Actions, { Props as ActionsProps } from './Actions';
 import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
 import LeadEditModal from '../LeadEditModal';
 import BulkActions from './BulkActions';
+import EntryList from './EntryList';
 
 import styles from './styles.css';
 
@@ -167,6 +170,21 @@ function SourcesTable(props: Props) {
     const [leadToEdit, setLeadToEdit] = useState<number | undefined>();
 
     const [
+        rowModifier,
+        expandedRowKey,
+        setExpandedRowKey,
+    ] = useRowExpansion<Lead, number>(
+        ({ datum }) => (
+            <EntryList leadId={datum.id} projectId={datum.project} />
+        ),
+        {
+            expandedRowClassName: styles.expandedRow,
+            expandedCellClassName: styles.expandedCell,
+            expansionCellClassName: styles.expansionCell,
+            expansionRowClassName: styles.expansionRow,
+        },
+    );
+    const [
         showSingleSourceModal,
         setShowSingleSourceModalTrue,
         setShowSingleSourceModalFalse,
@@ -286,6 +304,7 @@ function SourcesTable(props: Props) {
                 id: data.id,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
+                entriesCount: data.entriesCount,
                 projectId,
             }),
             columnWidth: 196,
@@ -390,15 +409,21 @@ function SourcesTable(props: Props) {
                 )}
             >
                 {pending && (<PendingMessage />)}
-                <SortContext.Provider value={sortState}>
-                    <Table
-                        className={styles.table}
-                        data={leadsResponse?.results}
-                        keySelector={leadsKeySelector}
-                        columns={columns}
-                        variant="large"
-                    />
-                </SortContext.Provider>
+                <RowExpansionContext.Provider
+                    value={{ expandedRowKey, setExpandedRowKey }}
+                >
+                    <SortContext.Provider value={sortState}>
+                        <Table
+                            className={styles.table}
+                            data={leadsResponse?.results}
+                            keySelector={leadsKeySelector}
+                            rowClassName={styles.tableRow}
+                            columns={columns}
+                            rowModifier={rowModifier}
+                            variant="large"
+                        />
+                    </SortContext.Provider>
+                </RowExpansionContext.Provider>
                 {showSingleSourceModal && (
                     <LeadEditModal
                         leadId={leadToEdit}

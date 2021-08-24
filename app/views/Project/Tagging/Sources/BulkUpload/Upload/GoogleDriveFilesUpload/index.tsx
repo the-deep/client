@@ -72,7 +72,7 @@ function GoogleDriveFilesUpload(props: Props) {
                 onChange={addFilesFromGoogleDrive}
                 mimeTypes={mimeTypes}
                 icons={<FaGoogleDrive />}
-                iconsClassName={styles.icon}
+                iconsContainerClassName={styles.icon}
                 multiSelect
                 navHidden
             >

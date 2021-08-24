@@ -375,9 +375,7 @@ function RowInput(props: RowInputProps) {
             />
             <Container
                 className={styles.optionInput}
-                sub
                 heading="Cells"
-                horizontallyCompactContent
                 headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -484,10 +482,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             <NonFieldError error={error} />
             <Container
                 className={className}
-                sub
                 // FIXME: Use translation
                 heading="Rows"
-                horizontallyCompactContent
                 contentClassName={styles.optionsList}
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
                     <QuickActionButton
@@ -565,7 +561,6 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
-                horizontallyCompactContent
                 contentClassName={styles.editorContent}
                 headerActions={(
                     <>

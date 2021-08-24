@@ -266,7 +266,6 @@ function CanvasDraw(props: Props) {
                     headingSize="small"
                     className={styles.drawTools}
                     contentClassName={styles.content}
-                    horizontallyCompactContent
                 >
                     <ColorInput
                         name="pen-color"

@@ -169,8 +169,6 @@ function TimeWidgetForm(props: TimeWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                horizontallyCompactContent
-                sub
             >
                 <NonFieldError
                     className={styles.error}

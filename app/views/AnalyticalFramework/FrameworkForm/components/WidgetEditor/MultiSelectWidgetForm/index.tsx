@@ -281,7 +281,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             />
             <Container
                 className={className}
-                sub
                 heading="Options"
                 contentClassName={styles.optionsList}
                 headerActions={(value?.options?.length ?? 0) < OPTIONS_LIMIT && (
@@ -360,7 +359,6 @@ function MultiSelectWidgetForm(props: MultiSelectWidgetFormProps) {
         >
             <Container
                 heading={value.title ?? 'Unnamed'}
-                horizontallyCompactContent
                 contentClassName={styles.editorContent}
                 headerActions={(
                     <>

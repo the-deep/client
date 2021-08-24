@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
+    IoChevronUpOutline,
+    IoChevronDownOutline,
 } from 'react-icons/io5';
 import { _cs } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
@@ -11,8 +13,11 @@ import {
     QuickActionDropdownMenu,
     DropdownMenuItem,
     useConfirmation,
+    Button,
+    RowExpansionContext,
 } from '@the-deep/deep-ui';
 
+import { ProjectContext } from '#base/context/ProjectContext';
 import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
 
@@ -26,6 +31,7 @@ export interface Props<T extends number> {
     disabled?: boolean;
     isAssessmentLead?: boolean;
     projectId: number;
+    entriesCount: number;
 }
 
 function Actions<T extends number>(props: Props<T>) {
@@ -37,7 +43,14 @@ function Actions<T extends number>(props: Props<T>) {
         isAssessmentLead,
         onDeleteClick,
         projectId,
+        entriesCount,
     } = props;
+
+    const { project } = useContext(ProjectContext);
+
+    const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
+    const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
+    const canViewEntry = project?.allowedPermissions.includes('VIEW_ENTRY');
 
     const route = useRouteMatching(
         routes.taggingFlow,
@@ -46,11 +59,27 @@ function Actions<T extends number>(props: Props<T>) {
             leadId: id,
         },
     );
+
     const taggingFlowLink = route?.to ?? '';
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
     }, [onDeleteClick, id]);
+
+    const {
+        expandedRowKey,
+        setExpandedRowKey,
+    } = useContext(RowExpansionContext);
+
+    const handleClick = useCallback(
+        () => {
+            const rowKey = id as string | number | undefined;
+            setExpandedRowKey(
+                (oldValue) => (oldValue === rowKey ? undefined : rowKey),
+            );
+        },
+        [setExpandedRowKey, id],
+    );
 
     const [
         modal,
@@ -61,52 +90,80 @@ function Actions<T extends number>(props: Props<T>) {
         message: 'Are you sure you want to delete this lead?',
     });
 
+    const isExpanded = id === expandedRowKey;
+    const isDisabled = entriesCount < 1;
+
     return (
         <div className={_cs(styles.actions, className)}>
-            <QuickActionButton
-                className={styles.button}
-                name={id}
-                onClick={onEditClick}
-                disabled={disabled}
-                title="edit"
-            >
-                <MdModeEdit />
-            </QuickActionButton>
-            <ButtonLikeLink
-                className={styles.button}
-                variant="primary"
-                title="tag"
-                disabled={disabled}
-                to={taggingFlowLink}
-                icons={<IoAdd />}
-            >
-                Tag
-            </ButtonLikeLink>
-            <QuickActionDropdownMenu
-                label={(
-                    <IoEllipsisVerticalSharp />
+            <div className={styles.row}>
+                {canEditSource && (
+                    <QuickActionButton
+                        className={styles.button}
+                        name={id}
+                        onClick={onEditClick}
+                        disabled={disabled}
+                        title="edit"
+                    >
+                        <MdModeEdit />
+                    </QuickActionButton>
                 )}
-                variant="secondary"
-            >
-                <DropdownMenuItem
-                    name="delete"
-                    onClick={onDeleteLeadClick}
-                >
-                    Delete
-                </DropdownMenuItem>
-            </QuickActionDropdownMenu>
-            {isAssessmentLead && (
-                <ButtonLikeLink
+                {canViewEntry && (
+                    <ButtonLikeLink
+                        className={styles.button}
+                        variant="primary"
+                        title="tag"
+                        disabled={disabled}
+                        to={taggingFlowLink}
+                        icons={<IoAdd />}
+                    >
+                        Tag
+                    </ButtonLikeLink>
+                )}
+                {canDeleteSource && (
+                    <QuickActionDropdownMenu
+                        label={(
+                            <IoEllipsisVerticalSharp />
+                        )}
+                        variant="secondary"
+                    >
+                        <DropdownMenuItem
+                            name="delete"
+                            onClick={onDeleteLeadClick}
+                        >
+                            Delete
+                        </DropdownMenuItem>
+                    </QuickActionDropdownMenu>
+                )}
+                {isAssessmentLead && ( // TODO: use permission and appropriate link
+                    <ButtonLikeLink
+                        className={styles.button}
+                        variant="secondary"
+                        title="assessment"
+                        disabled={disabled}
+                        to="#"
+                        icons={<IoAdd />}
+                    >
+                        Assessment
+                    </ButtonLikeLink>
+                )}
+            </div>
+            <div className={styles.row}>
+                <Button
+                    name={undefined}
+                    onClick={handleClick}
                     className={styles.button}
                     variant="secondary"
-                    title="assessment"
-                    disabled={disabled}
-                    to="#"
-                    icons={<IoAdd />}
+                    disabled={isDisabled}
+                    actions={isExpanded ? (
+                        <IoChevronUpOutline />
+                    ) : (
+                        <IoChevronDownOutline />
+                    )}
                 >
-                    Assessment
-                </ButtonLikeLink>
-            )}
+                    {`${entriesCount} ${entriesCount === 1 ? 'Entry' : 'Entries'}`}
+                </Button>
+
+            </div>
             {modal}
         </div>
     );

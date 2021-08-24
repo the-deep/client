@@ -145,7 +145,6 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                 className={styles.widgetListContainer}
                 heading={_ts('analyticalFramework.secondaryTagging', 'buildingModulesHeading')}
                 contentClassName={styles.content}
-                horizontallyCompactContent
             >
                 {!widgetsState.editMode && (
                     <WidgetList

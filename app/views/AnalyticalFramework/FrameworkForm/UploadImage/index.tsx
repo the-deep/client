@@ -31,7 +31,6 @@ function UploadImage<N extends string>(props: Props<N>) {
     return (
         <Container
             className={_cs(className, styles.uploadImage)}
-            sub
             heading={_ts('analyticalFramework', 'previewImageHeading')}
             contentClassName={styles.container}
         >

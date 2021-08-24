@@ -3,7 +3,16 @@
     align-items: center;
     flex-wrap: wrap;
 
-    .button {
-        margin: var(--dui-spacing-extra-small);
+    .row {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: flex-end;
+        padding-top: var(--dui-spacing-extra-small);
+
+        .button {
+            flex-shrink: 0;
+            margin: var(--dui-spacing-extra-small);
+        }
     }
 }

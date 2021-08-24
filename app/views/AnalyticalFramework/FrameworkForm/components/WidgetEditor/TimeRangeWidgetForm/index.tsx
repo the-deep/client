@@ -111,8 +111,6 @@ function TimeRangeWidgetForm(props: TimeRangeWidgetFormProps) {
                         </Button>
                     </>
                 )}
-                horizontallyCompactContent
-                sub
             >
                 <NonFieldError
                     className={styles.error}

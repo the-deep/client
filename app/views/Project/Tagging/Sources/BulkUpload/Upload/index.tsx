@@ -120,8 +120,6 @@ function Upload(props: Props) {
             heading={_ts('bulkUpload', 'uploadFilesTitle')}
             contentClassName={styles.content}
             headingSize="small"
-            sub
-            horizontallyCompactContent
         >
             <FilesUpload
                 className={styles.uploadItem}

@@ -1,0 +1,26 @@
+.entry-item-container {
+    display: flex;
+    flex-grow: 1;
+    background-color: var(--dui-color-white);
+
+    .header {
+        .actions {
+            display: flex;
+
+            .button {
+                margin-right: var(--dui-spacing-small);
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .entry {
+            display: flex;
+            border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        }
+    }
+}
