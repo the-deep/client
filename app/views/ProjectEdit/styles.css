@@ -1,0 +1,38 @@
+.project-edit {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+
+        .tab-list {
+            .active-tab,
+            .tab {
+                font-size: var(--dui-font-size-large);
+
+                &:not(.active-tab) {
+                    border-bottom-color: transparent;
+                }
+            }
+        }
+
+        .button {
+            margin: var(--dui-spacing-small);
+        }
+    }
+
+    .tab-panel-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .tab-panel {
+            display: flex;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+    }
+}

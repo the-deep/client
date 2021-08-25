@@ -46,6 +46,11 @@ function Routes(props: Props) {
                     {routes.explore.load({ className })}
                 </Route>
                 <Route
+                    path={routes.projectCreate.path}
+                >
+                    {routes.projectCreate.load({ className })}
+                </Route>
+                <Route
                     path={routes.project.path}
                 >
                     {routes.project.load({ className })}

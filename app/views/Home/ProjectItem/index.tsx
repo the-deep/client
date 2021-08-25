@@ -161,8 +161,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     {canEditProject && (
                         <ButtonLikeLink
                             variant="tertiary"
-                            // FIXME: Add route to new project edit later
-                            to="#"
+                            to={generatePath(routes.projectEdit.path, { projectId })}
                             icons={(
                                 <FiEdit2 />
                             )}
