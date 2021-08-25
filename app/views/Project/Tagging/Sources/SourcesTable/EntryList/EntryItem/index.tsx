@@ -7,14 +7,19 @@ import {
 } from '@the-deep/deep-ui';
 import { FaRegCommentAlt } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
+
+import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { Entry } from '#types/newEntry';
 import ProjectContext from '#base/context/ProjectContext';
 import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
-import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
+
+import EntryListItem from '#components/EntryListItem';
+import EntryCommentModal from '#components/EntryCommentModal';
+
 import EntryVerification from './EntryVerification';
 import EntryControl from './EntryControl';
 import styles from './styles.css';
@@ -36,6 +41,11 @@ function EntryItem(props: Props) {
 
     const { project } = useContext(ProjectContext);
     const [entry, setEntry] = useState<Entry>(entryFromProps);
+    const [
+        isCommentModalShown,
+        showCommentModal,
+        hideCommentModal,
+    ] = useModalState(false);
 
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
@@ -61,9 +71,6 @@ function EntryItem(props: Props) {
         failureHeader: 'Entry',
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const handleClick = () => {}; // TODO: implement later
-
     return (
         <Container
             className={_cs(className, styles.entryItemContainer)}
@@ -87,8 +94,7 @@ function EntryItem(props: Props) {
                                 className={styles.button}
                                 variant="secondary"
                                 name="showComments"
-                                disabled
-                                onClick={handleClick}
+                                onClick={showCommentModal}
                             >
                                 <FaRegCommentAlt />
                             </QuickActionButton>
@@ -112,12 +118,21 @@ function EntryItem(props: Props) {
                 </div>
             )}
         >
-            <EntryListItem
-                className={styles.entry}
-                entry={entry1} // TODO remove mock entry usage when actual usable entry is available
-                framework={frameworkMockData}
-                readOnly
-            />
+            <>
+                <EntryListItem
+                    className={styles.entry}
+                    entry={entry1} // TODO remove mock entry usage appropriate
+                    framework={frameworkMockData}
+                    readOnly
+                />
+                {isCommentModalShown && (
+                    <EntryCommentModal
+                        onModalClose={hideCommentModal}
+                        entryId={entry.id}
+                        projectId={projectId}
+                    />
+                )}
+            </>
         </Container>
     );
 }
