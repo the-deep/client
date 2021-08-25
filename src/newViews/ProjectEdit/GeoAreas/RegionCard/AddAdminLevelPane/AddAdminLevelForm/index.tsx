@@ -28,19 +28,22 @@ import {
 
 import styles from './styles.scss';
 
-type FormType = Partial<AdminLevelGeoArea>;
+type AdminLevel = AdminLevelGeoArea & { clientId: string };
+type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetails'>;
 
 export interface FileUploadResponse {
     id: number;
     title: string;
     file: string;
+    mimeType: string;
 }
 
-type FormSchema = ObjectSchema<PartialForm<FormType>>;
+type FormSchema = ObjectSchema<PartialAdminLevel>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
+        clientId: [],
         title: [requiredStringCondition],
         level: [requiredCondition],
         nameProp: [],
@@ -54,11 +57,10 @@ const schema: FormSchema = {
 const adminLevelKeySelector = (d: AdminLevelGeoArea) => d.id;
 const adminLevelLabelSelector = (d: AdminLevelGeoArea) => d.title;
 
-const defaultFormValue: PartialForm<FormType> = {};
-
 interface Props {
-    onSuccess: (id: number) => void;
-    value?: Partial<AdminLevelGeoArea>;
+    onSave: (adminLevel: AdminLevelGeoArea) => void;
+    onDelete: (id: number | undefined) => void;
+    value: PartialAdminLevel;
     isPublished?: boolean;
     adminLevelOptions?: AdminLevelGeoArea[];
 }
@@ -66,61 +68,61 @@ interface Props {
 function AddAdminLevelForm(props: Props) {
     const {
         adminLevelOptions,
-        onSuccess,
+        onSave,
         value: valueFromProps,
         isPublished,
+        onDelete,
     } = props;
 
     const [
         fileUploadOption,
         setFileUploadOption,
-    ] = useState<FileUploadResponse | undefined>(valueFromProps?.geoShapeFileDetails);
+    ] = useState<FileUploadResponse | undefined>(valueFromProps.geoShapeFileDetails);
 
     const {
         pristine,
         value,
         error: riskyError,
         setFieldValue,
-        setValue,
         validate,
         setError,
-    } = useForm(schema, valueFromProps ?? defaultFormValue);
+    } = useForm(schema, valueFromProps);
 
     const error = getErrorObject(riskyError);
 
     const {
         pending,
         trigger: addAdminLevelTrigger,
-    } = useLazyRequest<AdminLevelGeoArea, FormType>({
-        url: isDefined(valueFromProps?.level)
-            ? `server://admin-levels/${valueFromProps?.id}/`
+    } = useLazyRequest<AdminLevelGeoArea, PartialAdminLevel>({
+        url: isDefined(valueFromProps.id)
+            ? `server://admin-levels/${valueFromProps.id}/`
             : 'server://admin-levels/',
-        method: isDefined(valueFromProps?.level)
+        method: isDefined(valueFromProps.id)
             ? 'PATCH'
             : 'POST',
         body: ctx => ctx,
         onSuccess: (response) => {
-            onSuccess(response.id);
-            setValue(response);
+            onSave(response);
         },
-        failureHeader: isDefined(valueFromProps?.level)
+        failureHeader: isDefined(valueFromProps.id)
             ? 'Failed to  update admin level'
             : 'Failed to create admin level',
     });
 
     const handleDelete = useCallback(() => {
-        // TODO: handle this appropriately
-    }, []);
+        // NOTE: if no id is defined, just remove the temporary form
+        onDelete(valueFromProps.id);
+    }, [onDelete, valueFromProps.id]);
 
     const handleSubmit = useCallback(() => {
         const { errored, error: err, value: val } = validate();
         setError(err);
         if (!errored && isDefined(val)) {
-            addAdminLevelTrigger(val as FormType);
+            addAdminLevelTrigger(val as PartialAdminLevel);
         }
     }, [setError, validate, addAdminLevelTrigger]);
 
-    const parentOptions = adminLevelOptions?.filter(v => v.id !== valueFromProps?.id);
+    const parentOptions = adminLevelOptions?.filter(v => v.id !== valueFromProps.id);
 
     return (
         <ContainerCard
@@ -133,7 +135,7 @@ function AddAdminLevelForm(props: Props) {
                         disabled={pending}
                         variant="transparent"
                     >
-                        Delete
+                        {value.id ? 'Delete' : 'Cancel'}
                     </Button>
                     {!isPublished && (
                         <Button
@@ -157,8 +159,8 @@ function AddAdminLevelForm(props: Props) {
                 option={fileUploadOption}
                 setOption={setFileUploadOption}
                 value={value.geoShapeFile}
-                // error={error?.geoShapeFile}
                 readOnly={isPublished}
+                disabled={pending}
             >
                 <MdFileUpload />
             </DeepFileInput>
@@ -171,6 +173,7 @@ function AddAdminLevelForm(props: Props) {
                     onChange={setFieldValue}
                     label="Admin Level"
                     readOnly={isPublished}
+                    disabled={pending}
                 />
                 <TextInput
                     name="title"
@@ -180,6 +183,7 @@ function AddAdminLevelForm(props: Props) {
                     onChange={setFieldValue}
                     label="Admin Level Name"
                     readOnly={isPublished}
+                    disabled={pending}
                 />
             </div>
             <div className={styles.row}>
@@ -191,6 +195,7 @@ function AddAdminLevelForm(props: Props) {
                     onChange={setFieldValue}
                     label="Pcode Property"
                     readOnly={isPublished}
+                    disabled={pending}
                 />
                 <TextInput
                     name="nameProp"
@@ -199,7 +204,30 @@ function AddAdminLevelForm(props: Props) {
                     error={error?.nameProp}
                     onChange={setFieldValue}
                     label="Name Property"
-                    disabled={isPublished}
+                    readOnly={isPublished}
+                    disabled={pending}
+                />
+            </div>
+            <div className={styles.row}>
+                <TextInput
+                    name="parentCodeProp"
+                    className={styles.input}
+                    value={value.parentCodeProp}
+                    error={error?.parentCodeProp}
+                    onChange={setFieldValue}
+                    label="Parent Pcode Property"
+                    readOnly={isPublished}
+                    disabled={pending}
+                />
+                <TextInput
+                    name="parentNameProp"
+                    className={styles.input}
+                    value={value.parentNameProp}
+                    error={error?.parentNameProp}
+                    onChange={setFieldValue}
+                    label="Parent Name Property"
+                    readOnly={isPublished}
+                    disabled={pending}
                 />
             </div>
             <div className={styles.row}>
@@ -214,6 +242,7 @@ function AddAdminLevelForm(props: Props) {
                     labelSelector={adminLevelLabelSelector}
                     label="Parent Name"
                     readOnly={isPublished}
+                    disabled={pending}
                 />
             </div>
         </ContainerCard>

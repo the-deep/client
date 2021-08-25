@@ -47,7 +47,7 @@ function Row(props: RowProps) {
 
     const transformedValue = useMemo(() => (
         // FIXME: Remove the cast below later on
-        mapToList(value, (d, k) => (d ? k as string : undefined)).filter(isDefined)
+        mapToList(value, (d, k) => (d ? k as string : undefined))?.filter(isDefined)
     ), [value]);
 
     const {
@@ -67,7 +67,7 @@ function Row(props: RowProps) {
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(sortedCells, (d) => d.clientId, (d) => d.label);
-        return transformedValue?.map((v) => optionsMap[v])?.join(', ');
+        return transformedValue?.map((v) => optionsMap?.[v])?.join(', ');
     }, [sortedCells, transformedValue]);
 
     return (

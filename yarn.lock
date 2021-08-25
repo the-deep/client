@@ -2320,12 +2320,35 @@
     react-zoom-pan-pinch "^1.6.1"
     resize-observer-polyfill "^1.5.1"
 
+"@togglecorp/fujs@^1.8.0":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.9.1.tgz#8e52cb2605b1b453e673a00f509438cb77c377f2"
+  integrity sha512-iUPfN0/2PdIY20lLl7dxSRi7dZgMMT5Q+7+fa7MdDVclFWda8jBuDDxMxQpGlUyMXm33Bf/mP2SHP3+/rF05fA==
+  dependencies:
+    "@babel/runtime" "^7.7.7"
+
 "@togglecorp/fujs@^1.9.2-beta.0":
   version "1.9.2-beta.0"
   resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.9.2-beta.0.tgz#f2a63a35e463f8f8b3b6b64ca3e9e290f9787b3f"
   integrity sha512-Zdo3XBkJftTJ0GUESbONeHlFDLxZe29eMdIU5J6SIedOSD1LLgYu3mCw/tvmncikw0z4uhW7sMs+X3+L0FqeSw==
   dependencies:
     "@babel/runtime" "^7.7.7"
+
+"@togglecorp/fujs@^1.9.2-beta.2":
+  version "1.9.2-beta.2"
+  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.9.2-beta.2.tgz#bddf7c10dd134aa1c4f486aa02758bfca0b924a9"
+  integrity sha512-1CLqi/4UGv7zqHh6X++A9YJ5Vy9Lf5XU2SB4039G9VLkNBsqNvrPkJnu29NTq8/BU8kM4Ahrez683AJ17p1AyQ==
+  dependencies:
+    "@babel/runtime" "^7.7.7"
+
+"@togglecorp/re-map@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@togglecorp/re-map/-/re-map-0.1.1.tgz#6dc8fbef9a3f129a5db063b5fbbe4c68b0cd8327"
+  integrity sha512-3NKol/wiQKL5T9loWyAH2ddt3QMZuZ6nOQ8pdJ1WqMnGulMu+kkDYmvltNidKKaK/9bttZFND/orCF1HAfhIZA==
+  dependencies:
+    "@togglecorp/fujs" "^1.8.0"
+    immer "^7.0.5"
+    resize-observer-polyfill "^1.5.1"
 
 "@togglecorp/toggle-form@^1.0.0":
   version "1.0.0"
@@ -6470,6 +6493,11 @@ image-q@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/image-q/-/image-q-1.1.1.tgz#fc84099664460b90ca862d9300b6bfbbbfbf8056"
   integrity sha1-/IQJlmRGC5DKhi2TALa/u7+/gFY=
+
+immer@^7.0.5:
+  version "7.0.15"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-7.0.15.tgz#dc3bc6db87401659d2e737c67a21b227c484a4ad"
+  integrity sha512-yM7jo9+hvYgvdCQdqvhCNRRio0SCXc8xDPzA25SvKWa7b1WVPjLwQs1VYU5JPXjcJPTqAa5NP5dqpORGYBQ2AA==
 
 immer@^9.0.5:
   version "9.0.5"

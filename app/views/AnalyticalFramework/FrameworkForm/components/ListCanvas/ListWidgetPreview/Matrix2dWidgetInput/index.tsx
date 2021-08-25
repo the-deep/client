@@ -74,7 +74,7 @@ function Column(props: ColumnProps) {
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(subColumns, (d) => d.clientId, (d) => d.label);
-        return value?.[columnId]?.map((v) => optionsMap[v])?.join(', ');
+        return value?.[columnId]?.map((v) => optionsMap?.[v])?.join(', ');
     }, [subColumns, value, columnId]);
 
     return (
