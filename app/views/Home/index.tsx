@@ -3,6 +3,7 @@ import {
     _cs,
     isNotDefined,
 } from '@togglecorp/fujs';
+import { generatePath } from 'react-router-dom';
 import {
     ButtonLikeLink,
     Container,
@@ -22,6 +23,7 @@ import {
 import { Project } from '#base/types/project';
 import PageContent from '#components/PageContent';
 import ProjectSelectInput from '#components/ProjectSelectInput';
+import routes from '#base/configs/routes';
 
 import _ts from '#ts';
 
@@ -179,8 +181,7 @@ function Home(props: ViewProps) {
                         />
                         <ButtonLikeLink
                             variant="primary"
-                            // FIXME: Add route to new project edit later
-                            to="#"
+                            to={generatePath(routes.projectCreate.path, {})}
                         >
                             {_ts('home', 'setupNewProjectButtonLabel')}
                         </ButtonLikeLink>

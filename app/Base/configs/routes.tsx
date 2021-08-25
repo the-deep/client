@@ -108,6 +108,16 @@ const analyticalFrameworkEditRoute = wrap({
     // as this route manages all the data load
 });
 
+const projectCreateRoute = wrap({
+    path: '/projects/new/',
+    title: 'New Project',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/ProjectEdit')),
+    componentProps: { },
+    visibility: 'is-authenticated',
+    // NOTE: we cannot use permission check related to project on this route
+    // as this route manages all the data load
+});
 const projectRoute = wrap({
     path: '/projects/:projectId(\\d+)/',
     title: 'Project',
@@ -118,6 +128,7 @@ const projectRoute = wrap({
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
 });
+
 const taggingRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/tagging/',
@@ -137,6 +148,23 @@ const taggingRoute = wrap({
         );
     },
 });
+
+const projectEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/edit/',
+    title: 'Edit Project',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/ProjectEdit')),
+    componentProps: { },
+    visibility: 'is-authenticated',
+    checkPermissions: (project) => {
+        if (!project || project.allowedPermissions.length <= 0) {
+            return false;
+        }
+        return project.allowedPermissions.includes('UPDATE_PROJECT');
+    },
+});
+
 const sources = wrap({
     parent: { path: taggingRoute.path },
     path: '/sources/',
@@ -212,6 +240,8 @@ const routes = {
     project: projectRoute,
     analyticalFrameworkEdit: analyticalFrameworkEditRoute,
     analyticalFrameworkCreate: analyticalFrameworkCreateRoute,
+    projectCreate: projectCreateRoute,
+    projectEdit: projectEditRoute,
     sources,
     fourHundredFour,
     dashboard,
