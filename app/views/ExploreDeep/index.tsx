@@ -19,6 +19,7 @@ import {
 } from '#generated/types';
 
 import ActionCell, { Props as ActionCellProps } from './ActionCell';
+import ProjectFilterForm from './ProjectFilterForm';
 
 import styles from './styles.css';
 
@@ -156,6 +157,7 @@ function ExploreDeep(props: Props) {
 
     return (
         <PageContent className={_cs(styles.exploreDeep, className)}>
+            <ProjectFilterForm />
             <TableView
                 columns={columns}
                 keySelector={projectKeySelector}
