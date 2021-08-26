@@ -137,6 +137,7 @@ function RegionCard(props: Props) {
     const handleDeleteRegionClick = useCallback(
         () => {
             // TODO: this will be added later
+            // eslint-disable-next-line no-console
             console.warn('to be implemented');
         },
         [],
@@ -223,6 +224,7 @@ function RegionCard(props: Props) {
     const handlePublishGeoArea = useCallback(
         () => {
             // TODO add this later
+            // eslint-disable-next-line no-console
             console.warn('to be implemented');
         },
         [],

@@ -19,7 +19,10 @@ export interface Props<T extends { className?: string }> {
     componentProps: React.PropsWithRef<T>;
     overrideProps: Partial<React.PropsWithRef<T>>;
     visibility: Visibility,
-    checkPermissions?: (project: Project | undefined) => boolean | undefined,
+    checkPermissions?: (
+        project: Project | undefined,
+        skipProjectPermissionCheck: boolean,
+    ) => boolean | undefined,
     navbarVisibility: boolean;
 
     loginPage?: string;
@@ -81,7 +84,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         );
     }
 
-    if (checkPermissions && !checkPermissions(project)) {
+    if (checkPermissions && !checkPermissions(project, false)) {
         return (
             <>
                 <PageTitle value={`403 - ${title}`} />

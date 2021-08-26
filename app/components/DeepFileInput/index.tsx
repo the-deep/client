@@ -51,6 +51,8 @@ function DeepFileInput<T extends string>(props: Props<T>) {
             setOption(response);
         },
         onFailure: () => {
+            // FIXME: handle error
+            // eslint-disable-next-line no-console
             console.error('Could not upload file!');
         },
     });
