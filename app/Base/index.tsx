@@ -5,6 +5,7 @@ import { unique } from '@togglecorp/fujs';
 import { AlertContainer, AlertContext, AlertOptions } from '@the-deep/deep-ui';
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import ReactGA from 'react-ga';
+import { setMapboxToken } from '@togglecorp/re-map';
 
 import '@the-deep/deep-ui/build/index.css';
 
@@ -30,6 +31,8 @@ import {
 } from '#base/utils/restRequest';
 
 import styles from './styles.css';
+
+setMapboxToken(process.env.REACT_APP_MAPBOX_ACCESS_TOKEN as string);
 
 if (sentryConfig) {
     init(sentryConfig);

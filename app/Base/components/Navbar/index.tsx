@@ -61,7 +61,7 @@ function Navbar(props: Props) {
     const [
         modal,
         onLogoutClick,
-    ] = useConfirmation({
+    ] = useConfirmation<undefined>({
         showConfirmationInitially: false,
         onConfirm: logout,
         message: 'Are you sure you want to logout?',
@@ -133,6 +133,7 @@ function Navbar(props: Props) {
                         User Groups
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                        name={undefined}
                         onClick={onLogoutClick}
                         actions={(
                             <IoLogOutOutline />

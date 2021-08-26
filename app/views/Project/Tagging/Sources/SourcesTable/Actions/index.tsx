@@ -84,7 +84,7 @@ function Actions<T extends number>(props: Props<T>) {
     const [
         modal,
         onDeleteLeadClick,
-    ] = useConfirmation({
+    ] = useConfirmation<undefined>({
         showConfirmationInitially: false,
         onConfirm: handleDeleteConfirm,
         message: 'Are you sure you want to delete this lead?',
@@ -127,8 +127,8 @@ function Actions<T extends number>(props: Props<T>) {
                         variant="secondary"
                     >
                         <DropdownMenuItem
-                            name="delete"
                             onClick={onDeleteLeadClick}
+                            name={undefined}
                         >
                             Delete
                         </DropdownMenuItem>
