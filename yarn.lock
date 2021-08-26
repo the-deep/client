@@ -2402,10 +2402,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@the-deep/deep-ui@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.1.tgz#fa801b3f55876aae298d97669c482d001a2f4b1e"
-  integrity sha512-ivxqBqP93l62qgTbc5zIUGq2hrQMZxKedhRgFMoXjmAt1zNkPfA6EisBiUeFHlRPxjlmZuadDfSQsyF0bIgXLw==
+"@the-deep/deep-ui@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.3.tgz#e89e6047852b34914cc9716b99e565b090c97ce1"
+  integrity sha512-3ctlkx0rg2JKgPNZbD2pw4ZeurQuKfgXDhTB4ts/pGYZpHEuwlL02kgwcexlMoMiUJdczPPIYOGYMyRIhT7Kew==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
@@ -2439,10 +2439,10 @@
   dependencies:
     "@babel/runtime" "^7.7.7"
 
-"@togglecorp/re-map@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@togglecorp/re-map/-/re-map-0.1.1.tgz#6dc8fbef9a3f129a5db063b5fbbe4c68b0cd8327"
-  integrity sha512-3NKol/wiQKL5T9loWyAH2ddt3QMZuZ6nOQ8pdJ1WqMnGulMu+kkDYmvltNidKKaK/9bttZFND/orCF1HAfhIZA==
+"@togglecorp/re-map@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@togglecorp/re-map/-/re-map-0.1.2.tgz#88dc0709ce5bd35ec5082470b3b0fdc3bae36a5e"
+  integrity sha512-4x1cwxoMsakwKg8t9NvoS6iLKZIekXnL+YS8KgE2i4Nj8vZv2R0EBQsGiOFLzXNl2K1IGXLVnCjUWmRLsV3vtA==
   dependencies:
     "@togglecorp/fujs" "^1.8.0"
     immer "^7.0.5"
@@ -2589,6 +2589,11 @@
   resolved "https://registry.yarnpkg.com/@types/gapi/-/gapi-0.0.41.tgz#c477ee4f0951c005869219fd10b456ae2bba437e"
   integrity sha512-tmHO66z/f91JZCDqinj/nNvQEszsz/hBT4+MvCSKT5sDzl5Ld/oXZ8WaecCBjRLw2uWKUInUHM9MhEXWkOiNjw==
 
+"@types/geojson@*":
+  version "7946.0.8"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"
+  integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
+
 "@types/glob@^7.1.1":
   version "7.1.4"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.4.tgz#ea59e21d2ee5c517914cb4bc8e4153b99e566672"
@@ -2650,6 +2655,13 @@
   integrity sha512-4L8msWK31oXwdtC81RmRBAULd0ShnAHjBuKT9MRQpjP0piNrZdXyTRcKY9/UIfhGeKIT4PvF5amOOUbbT/9Wpg==
   dependencies:
     "@types/node" "*"
+
+"@types/mapbox-gl@^1.10.1":
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-1.13.2.tgz#d20959d02b9ca17a2a3244387f1da763992ed11d"
+  integrity sha512-sv69WkijddNCIdLLyUsG90+X3Lh67a26lKsqaL8WbmXMkWITDrshe+sc9BI8oUV7sh+XD0jraI3qBe0NtJs7dw==
+  dependencies:
+    "@types/geojson" "*"
 
 "@types/mdast@^3.0.0":
   version "3.0.4"

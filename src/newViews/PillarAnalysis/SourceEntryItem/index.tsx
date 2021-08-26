@@ -97,8 +97,8 @@ function SourceEntryItem(props: Props) {
                     {discardedTags && discardedTags.map(tag => (
                         <DropdownMenuItem
                             key={tag.key}
-                            name={tag.value}
-                            onClick={() => handleDiscardClick(tag.key)}
+                            name={tag.key}
+                            onClick={handleDiscardClick}
                         >
                             {tag.value}
                         </DropdownMenuItem>

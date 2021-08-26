@@ -84,13 +84,16 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         );
     }
 
+    // FIXME: custom error message from checkPermissions
+    // FIXME: add a "back to home" or somewhere page
+    // FIXME: only hide page if page is successfully mounted
     if (checkPermissions && !checkPermissions(project, false)) {
         return (
             <>
                 <PageTitle value={`403 - ${title}`} />
                 <PreloadMessage
                     heading="Oh no!"
-                    content="The project does not exist or you do not have permissions to view the project."
+                    content="The page does not exist or you do not have permissions to view this page."
                 />
             </>
         );
