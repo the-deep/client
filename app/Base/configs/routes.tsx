@@ -118,6 +118,7 @@ const projectCreateRoute = wrap({
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
 });
+
 const projectRoute = wrap({
     path: '/projects/:projectId(\\d+)/',
     title: 'Project',
@@ -138,7 +139,10 @@ const taggingRoute = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project) => {
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
         if (!project || project.allowedPermissions.length <= 0) {
             return false;
         }
@@ -157,7 +161,10 @@ const projectEditRoute = wrap({
     component: lazy(() => import('#views/ProjectEdit')),
     componentProps: { },
     visibility: 'is-authenticated',
-    checkPermissions: (project) => {
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
         if (!project || project.allowedPermissions.length <= 0) {
             return false;
         }
@@ -215,7 +222,10 @@ const analysis = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project) => {
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
         if (!project || project.allowedPermissions.length <= 0) {
             return false;
         }

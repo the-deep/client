@@ -3,6 +3,7 @@ import { isNotDefined } from '@togglecorp/fujs';
 import {
     useHistory,
     generatePath,
+    useParams,
 } from 'react-router-dom';
 import {
     Button,
@@ -30,9 +31,12 @@ import styles from './styles.css';
 function ProjectEdit() {
     const { user } = useContext(UserContext);
     const { project } = useContext(ProjectContext);
+
     const history = useHistory();
 
-    const projectId = project ? +project.id : undefined;
+    const { projectId: projectIdFromRoute } = useParams<{ projectId: string | undefined }>();
+
+    const projectId = projectIdFromRoute ? +projectIdFromRoute : undefined;
     const userId = user ? +user.id : undefined;
 
     const handleCreate = useCallback(
@@ -45,6 +49,10 @@ function ProjectEdit() {
         [history],
     );
 
+    const heading = project && project.id === projectIdFromRoute
+        ? project.title
+        : _ts('projectEdit', 'createProjectLabel');
+
     return (
         <div className={styles.projectEdit}>
             <Tabs
@@ -53,7 +61,7 @@ function ProjectEdit() {
             >
                 <FullPageHeader
                     className={styles.header}
-                    heading={projectId ? project?.title : _ts('projectEdit', 'createProjectLabel')}
+                    heading={heading}
                     actions={(
                         <>
                             <BackLink
@@ -113,13 +121,11 @@ function ProjectEdit() {
                         className={styles.tabPanel}
                         name="general"
                     >
-                        {projectId && (
-                            <ProjectDetailsForm
-                                key={projectId}
-                                projectId={projectId}
-                                onCreate={handleCreate}
-                            />
-                        )}
+                        <ProjectDetailsForm
+                            key={projectId}
+                            projectId={projectId}
+                            onCreate={handleCreate}
+                        />
                     </TabPanel>
                     <TabPanel
                         className={styles.tabPanel}

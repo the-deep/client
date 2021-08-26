@@ -178,7 +178,7 @@ const initialValue: FormType = {
 };
 
 interface Props {
-    projectId: number;
+    projectId: number | undefined;
     onCreate: (value: ProjectDetails) => void;
 }
 
@@ -192,6 +192,7 @@ function ProjectDetailsForm(props: Props) {
 
     const {
         pristine,
+        setPristine,
         value,
         error: riskyError,
         setFieldValue,
@@ -212,6 +213,7 @@ function ProjectDetailsForm(props: Props) {
     const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
+    // FIXME: we may not need this use effect
     useEffect(
         () => {
             setValue((): FormType => (
@@ -249,15 +251,15 @@ function ProjectDetailsForm(props: Props) {
         method: projectId ? 'PATCH' : 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            setProjectDetails(response);
-            const options = getOrganizationOptions(response);
-            setStakeholderOptions(options);
+            // FIXME: better to use context instead of mutable props
             if (!projectId) {
+                // Set this as pristine so the prompt will not be trigger
+                setPristine(true);
                 onCreate(response);
-                const projectEditPath = generatePath(routes.projectEdit.path, {
-                    projectId,
-                });
-                history.replace(projectEditPath);
+            } else {
+                setProjectDetails(response);
+                const options = getOrganizationOptions(response);
+                setStakeholderOptions(options);
             }
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
@@ -267,7 +269,7 @@ function ProjectDetailsForm(props: Props) {
         pending: projectDeletePending,
         trigger: triggerProjectDelete,
     } = useLazyRequest<ProjectDetails>({
-        url: `server://projects/${projectId}/`,
+        url: projectId ? `server://projects/${projectId}/` : undefined,
         method: 'DELETE',
         onSuccess: () => {
             const homePath = generatePath(routes.home.path, {});

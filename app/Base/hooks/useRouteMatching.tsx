@@ -34,14 +34,25 @@ function useRouteMatching(route: RouteData, attrs?: Attrs) {
         return undefined;
     }
 
-    if (visibility === 'is-authenticated' && authenticated && checkPermissions && !checkPermissions(project)) {
+    const skipProjectPermissionCheck = (
+        !!project
+        && !!attrs?.projectId
+        && project.id !== attrs.projectId
+    );
+
+    if (
+        visibility === 'is-authenticated'
+            && authenticated
+            && checkPermissions
+            && !checkPermissions(project, skipProjectPermissionCheck)
+    ) {
         return undefined;
     }
 
     return {
         // NOTE: we just pass projectId here so that the permission check and
         // projectId param is in sync
-        to: generatePath(path, { ...attrs, projectId: project?.id }),
+        to: generatePath(path, { projectId: project?.id, ...attrs }),
         children: title,
     };
 }
