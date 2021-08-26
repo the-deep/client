@@ -1,9 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import {
-    generatePath,
-} from 'react-router-dom';
-import {
     _cs,
     compareDate,
 } from '@togglecorp/fujs';
@@ -23,7 +20,6 @@ import {
 import {
     ContainerCard,
     Card,
-    ButtonLikeLink,
     InformationCard,
     ElementFragments,
     List,
@@ -32,6 +28,7 @@ import {
     DateRangeOutput,
 } from '@the-deep/deep-ui';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import ProgressLine from '#components/ProgressLine';
 import FrameworkImageButton from '#components/FrameworkImageButton';
 import routes from '#base/configs/routes';
@@ -125,13 +122,6 @@ function ProjectItem(props: RecentProjectItemProps) {
     const canEditProject = true;
     const canAddEntries = true;
 
-    const routeToTagging = generatePath(
-        routes.tagging.path,
-        {
-            projectId,
-        },
-    );
-
     return (
         <ContainerCard
             className={_cs(className, styles.projectItem)}
@@ -159,30 +149,33 @@ function ProjectItem(props: RecentProjectItemProps) {
                         </ElementFragments>
                     </div>
                     {canEditProject && (
-                        <ButtonLikeLink
+                        <SmartButtonLikeLink
                             variant="tertiary"
-                            // FIXME: Add route to new project edit later
-                            to="#"
+                            route={routes.projectEdit}
+                            attrs={{
+                                projectId,
+                            }}
                             icons={(
                                 <FiEdit2 />
                             )}
                         >
                             {_ts('home.recentProjects', 'editProjectButtonLabel')}
-                        </ButtonLikeLink>
+                        </SmartButtonLikeLink>
                     )}
                 </>
             )}
             contentClassName={styles.content}
             spacing="comfortable"
-            footerActions={(
-                <ButtonLikeLink
-                    to={routeToTagging ?? ''}
+            // TODO: there should be two different urls for editing and viewing entry
+            footerActions={canAddEntries && (
+                <SmartButtonLikeLink
+                    route={routes.tagging}
+                    attrs={{
+                        projectId,
+                    }}
                 >
-                    {(canAddEntries
-                        ? _ts('home', 'continueTaggingButton')
-                        : _ts('home', 'viewTaggingButton')
-                    )}
-                </ButtonLikeLink>
+                    {_ts('home', 'continueTaggingButton')}
+                </SmartButtonLikeLink>
             )}
         >
             <div className={styles.info}>

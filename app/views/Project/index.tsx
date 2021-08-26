@@ -117,6 +117,11 @@ function Project(props: Props) {
                     {routes.analysis.load({ className })}
                 </Route>
                 <Route
+                    path={routes.projectEdit.path}
+                >
+                    {routes.projectEdit.load({ className })}
+                </Route>
+                <Route
                     exact
                     path={routes.fourHundredFour.path}
                 >

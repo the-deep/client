@@ -98,7 +98,7 @@ export interface OptionBase {
 type DeepContextInterface = ContextInterface<
     // eslint-disable-next-line @typescript-eslint/ban-types
     object,
-    ErrorFromServer,
+    ErrorFromServer | undefined,
     Error,
     OptionBase
 >;
@@ -235,7 +235,7 @@ export const processDeepError: DeepContextInterface['transformError'] = (
             },
             errorCode: undefined,
         };
-    } else {
+    } else if (res) {
         const faramErrors = alterResponse(res.errors);
 
         const messageForNotification = (
@@ -253,6 +253,20 @@ export const processDeepError: DeepContextInterface['transformError'] = (
             reason: 'server',
             value: requestError,
             errorCode: res.errorCode,
+        };
+    } else {
+        const requestError = {
+            messageForNotification: 'Server error',
+            faramErrors: {
+                $internal: 'Server error',
+            },
+            errors: undefined,
+        };
+
+        error = {
+            reason: 'server',
+            value: requestError,
+            errorCode: undefined,
         };
     }
 
