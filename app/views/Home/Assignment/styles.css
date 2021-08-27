@@ -3,11 +3,12 @@
     padding: 0;
 
     .content {
+        display: flex;
         position: relative;
+        flex-direction: column;
         background-color: var(--dui-color-background-information);
-        padding: calc(var(--spacing-large) - var(--spacing-medium));
         max-height: calc(10em + 25vh);
-        overflow-y: auto;
+        gap: var(--dui-spacing-medium);
     }
 
     .empty-message {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    IoGridSharp,
-    IoReorderFour,
+    IoGridOutline,
+    IoList,
 } from 'react-icons/io5';
 import {
     Header,
@@ -62,7 +62,7 @@ function Sources(props: Props) {
                                 big
                                 onClick={handleTableButtonClick}
                             >
-                                <IoReorderFour />
+                                <IoList />
                             </Button>
                             <Button
                                 name="switch"
@@ -70,7 +70,7 @@ function Sources(props: Props) {
                                 onClick={handleGridButtonClick}
                                 big
                             >
-                                <IoGridSharp />
+                                <IoGridOutline />
                             </Button>
                         </>
                     )}

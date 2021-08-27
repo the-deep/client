@@ -3,8 +3,11 @@
     flex-direction: column;
 
     .top-section {
+        display: flex;
+        flex-direction: column;
         background-color: var(--dui-color-foreground);
-        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-medium);
 
         .stats {
             display: flex;
@@ -14,13 +17,12 @@
         .filter {
             display: flex;
             flex-shrink: 0;
-            background-color: var(--dui-color-foreground);
         }
     }
 
     .leads {
         background-color: var(--dui-color-background);
-        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 
         .table {
             display: flex;

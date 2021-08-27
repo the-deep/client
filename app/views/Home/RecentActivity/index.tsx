@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import {
     Card,
     Container,
+    PendingMessage,
     List,
 } from '@the-deep/deep-ui';
-import { GiShrug } from 'react-icons/gi';
 
 import { useRequest } from '#base/utils/restRequest';
 import { MultiResponse } from '#types';
@@ -20,6 +20,7 @@ const keySelector = (d: RecentActivityItem) => `${d.type}-${d.id}`;
 
 function RecentActivities() {
     const {
+        pending,
         response: recentActivitiesResponse,
     } = useRequest<MultiResponse<RecentActivityItem>>({
         url: 'server://projects/recent-activities/',
@@ -41,6 +42,7 @@ function RecentActivities() {
             className={styles.recentActivity}
             heading={_ts('recentActivity', 'recentActivitiesHeading')}
         >
+            {pending && <PendingMessage />}
             <Card className={styles.content}>
                 {(recentActivitiesResponse?.results ?? []).length > 0 ? (
                     <List
