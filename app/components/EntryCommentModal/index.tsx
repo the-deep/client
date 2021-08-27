@@ -81,7 +81,6 @@ function EntryCommentModal(props: Props) {
             )}
         >
             <ListView
-                className={styles.comments}
                 data={commentsResponse?.results}
                 keySelector={commentKeySelector}
                 rendererParams={commentRendererParams}

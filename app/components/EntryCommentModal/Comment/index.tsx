@@ -10,10 +10,9 @@ import {
 
 import UserContext from '#base/context/UserContext';
 import CommaSeparateItems from '#components/CommaSeparateItems';
-import _ts from '#ts';
 
 import { EntryComment } from '#types';
-//  import EditCommentForm from './EditCommentForm';
+import EditCommentForm from './EditCommentForm';
 import styles from './styles.css';
 
 interface Props {
@@ -36,7 +35,7 @@ function Comment(props: Props) {
     } = props;
 
     const { user } = useContext(UserContext);
-    const [comment] = useState<EntryComment>(commentFromProps);
+    const [comment, setComment] = useState<EntryComment>(commentFromProps);
     const [editMode, setEditMode] = useState<boolean>(false);
 
     const {
@@ -56,14 +55,14 @@ function Comment(props: Props) {
         setEditMode(true);
     }, []);
 
-    /* const handleCancel = useCallback(() => {
-     *     setEditMode(false);
-     * }, []);
+    const handleCancel = useCallback(() => {
+        setEditMode(false);
+    }, []);
 
-     * const handleSuccess = useCallback((value: EntryComment) => {
-     *     setComment(value);
-     *     setEditMode(false);
-     * }, []); */
+    const handleSuccess = useCallback((value: EntryComment) => {
+        setComment(value);
+        setEditMode(false);
+    }, []);
 
     return (
         <Container
@@ -109,6 +108,7 @@ function Comment(props: Props) {
                     />
                 </>
             )}
+            footerActionsContainerClassName={styles.footerActions}
             footerActions={textHistory.length > 1 && (
                 <span className={styles.modified}>
                     &nbsp;
@@ -121,9 +121,12 @@ function Comment(props: Props) {
             )}
         >
             {editMode ? (
-                <div className={styles.textContainer}>
-                    {latest?.text}
-                </div>
+                <EditCommentForm
+                    className={styles.comment}
+                    comment={comment}
+                    onEditSuccess={handleSuccess}
+                    onEditCancel={handleCancel}
+                />
             ) : (latest?.text && (
                 <Card
                     className={styles.comment}

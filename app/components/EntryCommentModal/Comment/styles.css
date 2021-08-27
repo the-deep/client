@@ -34,6 +34,12 @@
         }
     }
 
+    .footer-actions {
+        .modified {
+            display: flex;
+        }
+    }
+
     .comment {
         background-color: var(--dui-color-background-information);
         color: var(--dui-color-text);
