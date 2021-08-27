@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     requiredStringCondition,
@@ -11,27 +11,19 @@ import {
 import {
     Modal,
     TextArea,
-    MultiSelectInput,
     Button,
 } from '@the-deep/deep-ui';
 
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import { EntryReviewComment } from '#types/newEntry';
+import ProjectMembersMultiSelectInput from '#components/ProjectMembersSelectInput';
 import {
-    MultiResponse,
     Membership,
 } from '#types';
 
 import { EntryAction } from '../../constants';
 import styles from './styles.css';
-
-const memberFieldQuery = {
-    fields: ['member', 'member_name'],
-};
-
-export const memberKeySelector = (d: Membership) => d.member;
-export const memberNameSelector = (d:Membership) => d.memberName;
 
 interface EntryVerificationFormData {
     commentType: number;
@@ -75,6 +67,8 @@ function EntryUnverifyCommentModal(props: Props) {
         entryId,
     } = props;
 
+    const [members, setMembers] = useState<Membership[] | undefined | null>();
+
     const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
@@ -100,16 +94,6 @@ function EntryUnverifyCommentModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: projectMembersPending,
-        response: projectMembersResponse,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://v2/projects/${projectId}/project-memberships/`,
-        method: 'GET',
-        query: memberFieldQuery,
-        failureHeader: 'Project Membership',
-    });
-
     const handleSubmit = useCallback(() => {
         const { errored, error: err, value: val } = validate();
         setError(err);
@@ -126,7 +110,7 @@ function EntryUnverifyCommentModal(props: Props) {
             bodyClassName={styles.entryCommentForm}
             footerActions={(
                 <Button
-                    disabled={pristine || reviewRequestPending || projectMembersPending}
+                    disabled={pristine || reviewRequestPending}
                     type="submit"
                     variant="primary"
                     name="unverifyEntry"
@@ -145,19 +129,19 @@ function EntryUnverifyCommentModal(props: Props) {
                 label="Comment"
                 value={value.text}
                 onChange={setFieldValue}
+                error={error?.text}
                 rows={3}
                 autoFocus
             />
-            <MultiSelectInput
-                className={styles.input}
+            <ProjectMembersMultiSelectInput
                 name="mentionedUsers"
                 label="Assignees"
                 value={value.mentionedUsers}
+                projectId={projectId}
                 onChange={setFieldValue}
-                options={projectMembersResponse?.results}
-                keySelector={memberKeySelector}
-                labelSelector={memberNameSelector}
-                disabled={projectMembersPending}
+                options={members}
+                onOptionsChange={setMembers}
+                error={error?.mentionedUsers?.toString()}
             />
         </Modal>
     );

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     requiredStringCondition,
@@ -11,23 +11,19 @@ import {
 import {
     Modal,
     TextArea,
-    MultiSelectInput,
     Button,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest, useRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
+import ProjectMembersMultiSelectInput from '#components/ProjectMembersSelectInput';
 import { EntryReviewComment } from '#types/newEntry';
 import {
-    MultiResponse,
     Membership,
 } from '#types';
 
 import { EntryAction } from '../../constants';
 import styles from './styles.css';
-
-export const memberKeySelector = (d: Membership) => d.member;
-export const memberNameSelector = (d:Membership) => d.memberName;
 
 type FormType = {
     commentType: number,
@@ -65,14 +61,7 @@ function EntryUncontrolCommentModal(props: Props) {
         projectId,
     } = props;
 
-    const {
-        pending: projectMembersPending,
-        response: projectMembersResponse,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://v2/projects/${projectId}/project-memberships/`,
-        method: 'GET',
-        failureHeader: 'Project Membership',
-    });
+    const [members, setMembers] = useState<Membership[] | undefined | null>();
 
     const {
         pending: reviewRequestPending,
@@ -134,19 +123,19 @@ function EntryUncontrolCommentModal(props: Props) {
                 label="Comment"
                 value={value.text}
                 onChange={setFieldValue}
+                error={error?.text}
                 rows={3}
                 autoFocus
             />
-            <MultiSelectInput
-                className={styles.input}
+            <ProjectMembersMultiSelectInput
                 name="mentionedUsers"
                 label="Assignees"
                 value={value.mentionedUsers}
+                projectId={projectId}
                 onChange={setFieldValue}
-                options={projectMembersResponse?.results}
-                keySelector={memberKeySelector}
-                labelSelector={memberNameSelector}
-                disabled={projectMembersPending}
+                options={members}
+                onOptionsChange={setMembers}
+                error={error?.mentionedUsers?.toString()}
             />
         </Modal>
     );

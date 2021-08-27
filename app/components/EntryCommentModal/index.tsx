@@ -17,7 +17,7 @@ import {
 import { useRequest } from '#base/utils/restRequest';
 
 import Comment from './Comment';
-// import CommentForm from './CommentForm';
+import CommentForm from './CommentForm';
 import styles from './styles.css';
 
 interface Props {
@@ -42,14 +42,15 @@ function EntryCommentModal(props: Props) {
         projectId,
     } = props;
 
-    console.warn('projectid', projectId);
     const [activePage, setActivePage] = useState<number>(1);
     const {
         pending: commentsPending,
         response: commentsResponse,
+        retrigger: getComments,
     } = useRequest<MultiResponseWithSummary<EntryComment>>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'GET',
+        preserveResponse: true,
         query: {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
@@ -80,6 +81,11 @@ function EntryCommentModal(props: Props) {
                 />
             )}
         >
+            <CommentForm
+                entryId={entryId}
+                projectId={projectId}
+                onSave={getComments}
+            />
             <ListView
                 data={commentsResponse?.results}
                 keySelector={commentKeySelector}
