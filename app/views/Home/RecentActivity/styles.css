@@ -4,11 +4,11 @@
 
     .content {
         display: flex;
+        position: relative;
         flex-direction: column;
-        gap: var(--dui-spacing-medium);
         background-color: var(--dui-color-background-information);
-        max-height: calc(100px + 25vh);
-        overflow-y: auto;
+        max-height: calc(10em + 25vh);
+        gap: var(--dui-spacing-medium);
     }
 
     .empty-message {

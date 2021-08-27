@@ -4,6 +4,10 @@
     border: var(--dui-width-separator-thin) solid var(--dui-border-color-card);
     border-radius: var(--dui-border-radius-card);
 
+    .project-date-range {
+        color: var(--dui-color-label);
+    }
+
     .content {
         display: flex;
 

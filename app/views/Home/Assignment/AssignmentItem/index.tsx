@@ -46,6 +46,7 @@ function AssignmentItem(props: AssignmentItemProps) {
                     onClick={handleClick}
                     disabled={markAsDonePending}
                     big
+                    title="Mark as done"
                 >
                     <IoCheckmarkCircle />
                 </QuickActionButton>

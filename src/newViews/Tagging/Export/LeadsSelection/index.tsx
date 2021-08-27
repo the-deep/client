@@ -221,7 +221,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, number>(
                 'authorsDetail',
                 'Authors',
-                item => item?.authorsDetail.map(v => v.title).join(','),
+                item => item?.authorsDetail.map(v => v.title).join(', '),
                 {
                     sortable: false,
                     columnWidth: 144,

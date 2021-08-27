@@ -341,7 +341,7 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, number>(
                 'authorsDetail',
                 _ts('sourcesTable', 'authors'),
-                (item) => item?.authorsDetail.map((v) => v.title).join(','),
+                (item) => item?.authorsDetail.map((v) => v.title).join(', '),
                 {
                     sortable: false,
                     columnWidth: 144,

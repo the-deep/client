@@ -130,6 +130,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             headingSize="small"
             headerDescription={(
                 <DateRangeOutput
+                    className={styles.projectDateRange}
                     startDate={startDate}
                     endDate={endDate}
                 />
