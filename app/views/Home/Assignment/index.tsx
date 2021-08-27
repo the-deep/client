@@ -7,7 +7,6 @@ import {
     PendingMessage,
     List,
 } from '@the-deep/deep-ui';
-import { MdPlaylistAddCheck } from 'react-icons/md';
 import { IoCheckmarkDone } from 'react-icons/io5';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -138,7 +137,6 @@ function Assignments() {
                     />
                 ) : (
                     <div className={styles.emptyMessage}>
-                        <MdPlaylistAddCheck className={styles.icon} />
                         <div className={styles.text}>
                             {/* FIXME: use strings with appropriate wording */}
                             You do not have any assignments

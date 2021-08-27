@@ -10,6 +10,9 @@
         align-content: flex-start;
         align-items: flex-start;
         flex-wrap: wrap;
+        gap: var(--dui-spacing-extra-large);
+        padding: var(--dui-spacing-large) 0;
+        padding-left: var(--dui-spacing-super-large);
 
         .summary {
             align-self: stretch;
@@ -18,19 +21,31 @@
 
         .project-tagging-activity {
             flex-grow: 1;
+            padding: 0;
         }
 
         .recent-projects {
             flex-basis: 100%;
+            padding: 0;
 
-            .project-item {
-                margin: var(--dui-spacing-medium) 0;
+            .project-list {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-medium);
             }
 
-            .text {
-                text-align: center;
+            .empty-text {
                 font-size: var(--dui-font-size-large);
             }
         }
+    }
+
+    .right-content {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-large) var(--dui-spacing-extra-large);
+        padding-right: var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-extra-large);
     }
 }

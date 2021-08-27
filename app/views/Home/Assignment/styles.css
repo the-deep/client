@@ -1,5 +1,6 @@
 .assignments {
     background-color: var(--dui-color-white);
+    padding: 0;
 
     .content {
         position: relative;
@@ -15,12 +16,12 @@
         flex-direction: column;
         flex-grow: 1;
         justify-content: center;
+        padding: var(--dui-spacing-large);
         color: var(--dui-color-text-disabled);
 
         .icon {
             flex-shrink: 0;
-            padding: var(--dui-spacing-small);
-            font-size: 10em;
+            font-size: 8em;
         }
 
         .text {

@@ -51,7 +51,6 @@ function RecentActivities() {
                     />
                 ) : (
                     <div className={styles.emptyMessage}>
-                        <GiShrug className={styles.icon} />
                         <div className={styles.text}>
                             {/* FIXME: use strings with appropriate wording */}
                             You do not have any recent activities

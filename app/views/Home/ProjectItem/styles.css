@@ -9,11 +9,10 @@
 
         .info {
             flex-basis: 0;
-            flex-grow: 0.55;
+            flex-grow: 0.5;
 
             .basic-details {
                 padding: var(--dui-spacing-small) 0;
-                line-height: 1.8;
             }
 
             .metadata {
@@ -29,16 +28,14 @@
                 }
 
                 .recently-active-list {
-                    padding-top: calc(var(--dui-spacing-small) - var(--dui-spacing-super-small));
-                    padding-bottom: calc(var(--dui-spacing-small) - var(--dui-spacing-super-small));
+                    display: flex;
+                    flex-direction: column;
                     font-weight: var(--dui-font-weight-medium);
+                    gap: var(--dui-spacing-small);
 
                     .recently-active-item {
                         display: flex;
                         flex-wrap: wrap;
-                        margin: 0 calc(-1 * var(--dui-spacing-medium));
-                        padding-top: var(--dui-spacing-super-small);
-                        padding-bottom: var(--dui-spacing-super-small);
 
                         .recently-active-user-name {
                             font-weight: var(--dui-font-weight-bold);
@@ -56,8 +53,9 @@
 
         .charts {
             display: flex;
+            gap: var(--dui-spacing-large);
             flex-basis: 0;
-            flex-grow: 0.45;
+            flex-grow: 0.5;
             flex-wrap: wrap;
             overflow: auto;
 
@@ -65,7 +63,6 @@
                 align-content: flex-start;
                 align-items: flex-start;
                 flex-wrap: wrap;
-                margin: var(--dui-spacing-small);
                 background-color: var(--dui-color-background-information);
                 width: 7.8rem;
 
@@ -75,20 +72,17 @@
             }
 
             .progress-lines {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-medium);
                 flex-grow: 1;
-                margin: var(--dui-spacing-small);
                 background-color: var(--dui-color-background-information);
-                padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small)) calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
+                padding: var(--dui-spacing-medium);
             }
 
             .entries-activity-container {
                 flex-basis: 100%;
-                margin: var(--dui-spacing-small);
                 border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-
-                .chart-header {
-                    border: none;
-                }
 
                 .chart-container {
                     display: flex;
@@ -97,6 +91,8 @@
 
                     .responsive-container {
                         flex-grow: 1;
+                        width: 100%;
+                        overflow: auto;
                     }
                 }
             }
@@ -104,8 +100,6 @@
     }
 
     .privacy-badge {
-        display: flex;
-        padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
         text-transform: uppercase;
         color: var(--dui-color-text-label);
         font-size: var(--dui-font-size-small);
