@@ -1,7 +1,4 @@
 .activity-item {
-    display: flex;
-    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-extra-small)) 0;
-
     &:not(:last-child) {
         border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
     }
@@ -9,18 +6,18 @@
     .display-picture {
         align-self: flex-start;
         flex-shrink: 0;
-        margin: var(--dui-spacing-small) var(--dui-spacing-extra-small);
         background: var(--color-foreground);
-        width: 3em;
-        height: 3em;
+        --size: 1.8rem;
     }
 
     .main-content {
-        display: block;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
 
         .description {
             display: inline-block;
-            padding: var(--dui-spacing-extra-small) 0;
 
             >* {
                 display: inline;
@@ -35,7 +32,6 @@
 
         .created-date {
             display: block;
-            padding: var(--dui-spacing-extra-small) 0;
             color: var(--dui-color-text-label);
             font-size: var(--dui-font-size-small);
         }

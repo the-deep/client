@@ -1,6 +1,6 @@
 .page-content {
     display: flex;
-    padding: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-extra-large);
 
     .main-content {
         flex-grow: 1;

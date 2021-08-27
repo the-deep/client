@@ -1,9 +1,12 @@
 .recent-activity {
     background-color: var(--dui-color-white);
+    padding: 0;
 
     .content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
         background-color: var(--dui-color-background-information);
-        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
         max-height: calc(100px + 25vh);
         overflow-y: auto;
     }
@@ -18,12 +21,12 @@
 
         .icon {
             flex-shrink: 0;
-            padding: var(--dui-spacing-small);
-            font-size: 10em;
+            font-size: 8em;
         }
 
         .text {
             padding: var(--dui-spacing-small);
+            text-align: center;
             font-size: var(--dui-font-size-large);
         }
     }

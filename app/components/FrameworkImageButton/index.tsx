@@ -60,7 +60,7 @@ function FrameworkImageButton(props: Props) {
                     className,
                 )}
                 onClick={showModal}
-                variant={variant ?? 'action'}
+                variant={variant ?? 'transparent'}
             >
                 {label}
             </Button>

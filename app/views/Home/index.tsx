@@ -142,6 +142,7 @@ function Home(props: ViewProps) {
     return (
         <PageContent
             className={_cs(styles.home, className)}
+            rightSideContentClassName={styles.rightContent}
             rightSideContent={(
                 <>
                     <Assignment />
@@ -160,12 +161,14 @@ function Home(props: ViewProps) {
                 heading="Projects Tagging Activity"
                 headingDescription="Last 3 months"
                 inlineHeadingDescription
+                spacing="loose"
             >
                 <Activity
                     data={summaryResponse?.recentEntriesActivity}
                 />
             </Container>
             <Container
+                spacing="loose"
                 className={styles.recentProjects}
                 heading={_ts('home', 'recentProjectsHeading')}
                 headerActions={(
@@ -189,13 +192,14 @@ function Home(props: ViewProps) {
                 )}
             >
                 <ListView
+                    className={styles.projectList}
                     data={finalRecentProjects}
                     rendererParams={recentProjectsRendererParams}
                     renderer={ProjectItem}
                     keySelector={recentProjectKeySelector}
                     emptyIcon={(<GiShrug />)}
                     emptyMessage={(
-                        <div className={styles.text}>
+                        <div className={styles.emptyText}>
                             {/* FIXME: use strings with appropriate wording */}
                             Looks like you do not have any recent project,
                             <br />

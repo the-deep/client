@@ -1,9 +1,12 @@
 .framework-image-button {
     border-radius: 0;
+    padding: 0;
     text-align: left;
-    text-decoration: underline;
     color: var(--dui-color-brand);
-    font-size: var(--dui-font-size-small);
+
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
 .modal {
