@@ -1,14 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    QuickActionButton,
     ButtonLikeLink,
     Container,
 } from '@the-deep/deep-ui';
-import { FaRegCommentAlt } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
 
-import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { Entry } from '#types/newEntry';
 import ProjectContext from '#base/context/ProjectContext';
@@ -19,9 +16,9 @@ import { entry1 } from '#views/Project/Tagging/mockData';
 
 import EntryListItem from '#components/EntryListItem';
 import EntryCommentModal from '#components/EntryCommentModal';
+import EntryVerification from '#components/EntryVerification';
+import EntryControl from '#components/EntryControl';
 
-import EntryVerification from './EntryVerification';
-import EntryControl from './EntryControl';
 import styles from './styles.css';
 
 interface Props {
@@ -41,11 +38,6 @@ function EntryItem(props: Props) {
 
     const { project } = useContext(ProjectContext);
     const [entry, setEntry] = useState<Entry>(entryFromProps);
-    const [
-        isCommentModalShown,
-        showCommentModal,
-        hideCommentModal,
-    ] = useModalState(false);
 
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
@@ -90,14 +82,11 @@ function EntryItem(props: Props) {
                             >
                                 Edit Tags
                             </ButtonLikeLink>
-                            <QuickActionButton
+                            <EntryCommentModal
                                 className={styles.button}
-                                variant="secondary"
-                                name="showComments"
-                                onClick={showCommentModal}
-                            >
-                                <FaRegCommentAlt />
-                            </QuickActionButton>
+                                entryId={entry.id}
+                                projectId={projectId}
+                            />
                             <EntryVerification
                                 className={styles.button}
                                 entryId={entry.id}
@@ -125,13 +114,6 @@ function EntryItem(props: Props) {
                     framework={frameworkMockData}
                     readOnly
                 />
-                {isCommentModalShown && (
-                    <EntryCommentModal
-                        onModalClose={hideCommentModal}
-                        entryId={entry.id}
-                        projectId={projectId}
-                    />
-                )}
             </>
         </Container>
     );

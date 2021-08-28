@@ -145,7 +145,19 @@ export interface UserFields {
 
 export interface Entry extends Entity {
     project: number;
-    lead: number;
+    lead: {
+        id: number;
+        title: string;
+        createdAt: string;
+        publishedOn: string;
+        createdByName: string;
+        authorsDetail: {
+            title: string;
+        }[];
+        sourceDetail: {
+            title: string;
+        };
+    };
     controlled: boolean;
     entryType: EntryType;
 

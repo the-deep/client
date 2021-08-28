@@ -2,18 +2,22 @@ import React, { useCallback, useState } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
-
 import {
     Pager,
+    QuickActionButton,
     ListView,
     Modal,
 } from '@the-deep/deep-ui';
+import {
+    IoChatboxOutline,
+} from 'react-icons/io5';
 
 import {
     MultiResponse,
     EntryComment,
     EntryReviewSummary,
 } from '#types';
+import { useModalState } from '#hooks/stateManagement';
 import { useRequest } from '#base/utils/restRequest';
 
 import Comment from './Comment';
@@ -22,7 +26,7 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    onModalClose: () => void;
+    activityCount?: number;
     entryId: number;
     projectId: number;
 }
@@ -37,17 +41,24 @@ const maxItemsPerPage = 50;
 function EntryCommentModal(props: Props) {
     const {
         className,
-        onModalClose,
         entryId,
         projectId,
+        activityCount = 0,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [
+        isCommentModalShown,
+        showCommentModal,
+        hideCommentModal,
+    ] = useModalState(false);
+
     const {
         pending: commentsPending,
         response: commentsResponse,
         retrigger: getComments,
     } = useRequest<MultiResponseWithSummary<EntryComment>>({
+        skip: !isCommentModalShown,
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'GET',
         preserveResponse: true,
@@ -63,37 +74,53 @@ function EntryCommentModal(props: Props) {
     }), []);
 
     return (
-        <Modal
-            className={_cs(className, styles.entryCommentModal)}
-            heading="Entry Comments"
-            onCloseButtonClick={onModalClose}
-            bodyClassName={styles.modalBody}
-            footerActions={((commentsResponse?.count ?? 0) > maxItemsPerPage) && (
-                <Pager
-                    activePage={activePage}
-                    itemsCount={commentsResponse?.count ?? 0}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onActivePageChange={setActivePage}
-                    itemsPerPageControlHidden
-                    hidePageNumberLabel
-                    hideInfo
-                    hidePrevAndNext
-                />
+        <>
+            <QuickActionButton
+                className={_cs(styles.commentButton, className)}
+                onClick={showCommentModal}
+                name={entryId}
+            >
+                <IoChatboxOutline />
+                {activityCount > 0 && (
+                    <div className={styles.commentCount}>
+                        {activityCount}
+                    </div>
+                )}
+            </QuickActionButton>
+            {isCommentModalShown && (
+                <Modal
+                    className={styles.entryCommentModal}
+                    heading="Entry Comments"
+                    onCloseButtonClick={hideCommentModal}
+                    bodyClassName={styles.modalBody}
+                    footerActions={((commentsResponse?.count ?? 0) > maxItemsPerPage) && (
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={commentsResponse?.count ?? 0}
+                            maxItemsPerPage={maxItemsPerPage}
+                            onActivePageChange={setActivePage}
+                            itemsPerPageControlHidden
+                            hidePageNumberLabel
+                            hideInfo
+                            hidePrevAndNext
+                        />
+                    )}
+                >
+                    <CommentForm
+                        entryId={entryId}
+                        projectId={projectId}
+                        onSave={getComments}
+                    />
+                    <ListView
+                        data={commentsResponse?.results}
+                        keySelector={commentKeySelector}
+                        rendererParams={commentRendererParams}
+                        renderer={Comment}
+                        pending={commentsPending}
+                    />
+                </Modal>
             )}
-        >
-            <CommentForm
-                entryId={entryId}
-                projectId={projectId}
-                onSave={getComments}
-            />
-            <ListView
-                data={commentsResponse?.results}
-                keySelector={commentKeySelector}
-                rendererParams={commentRendererParams}
-                renderer={Comment}
-                pending={commentsPending}
-            />
-        </Modal>
+        </>
     );
 }
 

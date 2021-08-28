@@ -10,7 +10,7 @@ import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import UserContext from '#base/context/UserContext';
 
-import { EntryAction } from '../constants';
+import { EntryAction } from '#components/commentConstants';
 import EntryUnverifyCommentModal from './EntryUnverifyCommentModal';
 import styles from './styles.css';
 
