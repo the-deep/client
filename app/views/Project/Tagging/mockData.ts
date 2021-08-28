@@ -12,7 +12,15 @@ export const entry1: Entry = {
     verifiedBy: [],
     versionId: 74123,
     project: 9839,
-    lead: 64415,
+    lead: {
+        id: 1,
+        title: 'The standard Lorem Ipsum passage, used since the 1500s',
+        createdAt: '2020-10-12',
+        publishedOn: '2020-09-31',
+        createdByName: 'Aditya Katri',
+        authorsDetail: [{ title: 'ReliefWeb' }],
+        sourceDetail: { title: 'ReliefWeb' },
+    },
     analyticalFramework: 96021,
     attributes: [
         {
@@ -142,7 +150,15 @@ export const entry2: Entry = {
     clientId: 'saepe mollitia atque',
     versionId: 1784,
     project: 93490,
-    lead: 69365,
+    lead: {
+        id: 2,
+        title: 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
+        createdAt: '2020-10-12',
+        publishedOn: '2020-09-31',
+        createdByName: 'Aditya Katri',
+        authorsDetail: [{ title: 'ReliefWeb' }],
+        sourceDetail: { title: 'ReliefWeb' },
+    },
     analyticalFramework: 92024,
     entryType: 'image',
     image: 1123,

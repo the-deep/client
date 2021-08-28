@@ -7,7 +7,6 @@
         background-color: transparent;
 
         .meta-section {
-            margin: 0 calc(-1 * var(--dui-spacing-medium));
             padding: var(--dui-spacing-medium) 0;
         }
     }
@@ -42,31 +41,6 @@
                     flex-basis: unset;
                     width: unset;
                 }
-            }
-        }
-
-        .verify-actions {
-            border-radius: 1em;
-            background-color: var(--dui-color-foreground);
-            color: var(--dui-color-accent);
-
-            >* {
-                margin: 0 var(--dui-spacing-extra-small);
-            }
-        }
-
-        .comment-button {
-            overflow: visible;
-
-            .comment-count {
-                position: absolute;
-                top: 0;
-                right: 0;
-                border-radius: 1em;
-                background-color: var(--dui-color-danger);
-                padding: 0 var(--dui-spacing-extra-small);
-                color: var(--dui-color-text-on-dark);
-                font-size: var(--dui-font-size-extra-small);
             }
         }
     }

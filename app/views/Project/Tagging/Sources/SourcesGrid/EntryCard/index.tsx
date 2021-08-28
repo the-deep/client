@@ -1,11 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
     IoTrash,
     IoClose,
-    IoChatboxOutline,
-    IoCheckmark,
 } from 'react-icons/io5';
 import {
     DateOutput,
@@ -16,19 +14,25 @@ import {
 } from '@the-deep/deep-ui';
 
 import { useModalState } from '#hooks/stateManagement';
+import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptOutput from '#components/ExcerptOutput';
 import EntryListItem from '#components/EntryListItem';
+import EntryVerification from '#components/EntryVerification';
+import EntryCommentModal from '#components/EntryCommentModal';
+import EntryControl from '#components/EntryControl';
 import {
     AnalysisFramework,
 } from '#types/newAnalyticalFramework';
+import { Entry } from '#types/newEntry';
+import { entry1 } from '#views/Project/Tagging/mockData';
 
-import { EntryWithLead } from '../index';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    entry: EntryWithLead;
-    leadDetails: EntryWithLead['leadDetails'];
+    entry: Entry;
+    leadDetails: Entry['lead'];
+    projectId: number;
     framework: AnalysisFramework;
     viewTags?: boolean;
     onViewTagsButtonClick?: (entryId: number) => void;
@@ -38,13 +42,16 @@ interface Props {
 function EntryCard(props: Props) {
     const {
         className,
-        entry,
+        entry: entryFromProps,
         leadDetails,
         framework,
+        projectId,
         viewTags,
         onViewTagsButtonClick,
         onHideTagsButtonClick,
     } = props;
+
+    const [entry, setEntry] = useState<Entry>(entryFromProps);
 
     const [
         editEntryMode,
@@ -52,9 +59,21 @@ function EntryCard(props: Props) {
         unsetEditEntryMode,
     ] = useModalState(false);
 
-    const authorsText = useMemo(() => (
-        leadDetails?.authors?.map((a) => a.title)?.join(', ')
-    ), [leadDetails?.authors]);
+    const {
+        pending,
+        trigger: getEntry,
+    } = useLazyRequest<Entry, number>({
+        url: (ctx) => `server://v2/entries/${ctx}/`,
+        method: 'GET',
+        onSuccess: (response) => {
+            setEntry(response);
+        },
+        failureHeader: 'Entry',
+    });
+
+    const authorsDetailText = useMemo(() => (
+        leadDetails?.authorsDetail?.map((a) => a.title)?.join(', ')
+    ), [leadDetails?.authorsDetail]);
 
     return (
         <div
@@ -102,12 +121,12 @@ function EntryCard(props: Props) {
                 <div className={styles.metaSection}>
                     <TextOutput
                         label="Added on"
-                        value={leadDetails.createdOn}
+                        value={leadDetails.createdAt}
                         valueType="date"
                     />
                     <TextOutput
                         label="Publisher"
-                        value={leadDetails.source?.title}
+                        value={leadDetails.sourceDetail?.title}
                     />
                     <TextOutput
                         label="Added by"
@@ -115,7 +134,7 @@ function EntryCard(props: Props) {
                     />
                     <TextOutput
                         label="Author"
-                        value={authorsText}
+                        value={authorsDetailText}
                     />
                 </div>
             </Container>
@@ -133,64 +152,62 @@ function EntryCard(props: Props) {
                                 <IoClose />
                             </Button>
                         )}
-                        footerActions={editEntryMode ? (
+                        footerActions={(
                             <>
-                                <Button
-                                    name={entry.id}
-                                    variant="secondary"
-                                    onClick={unsetEditEntryMode}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    name={entry.id}
-                                    variant="secondary"
-                                    onClick={unsetEditEntryMode}
-                                >
-                                    Save
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button
-                                    name={entry.id}
-                                    variant="secondary"
-                                    onClick={setEditEntryMode}
-                                    icons={(
-                                        <IoPencil />
-                                    )}
-                                >
-                                    Edit Tags
-                                </Button>
-                                <QuickActionButton
-                                    className={styles.commentButton}
-                                    name={entry.id}
-                                >
-                                    <IoChatboxOutline />
-                                    <div className={styles.commentCount}>
-                                        {3}
-                                    </div>
-                                </QuickActionButton>
-                                <Button
-                                    name={entry.id}
-                                    variant="primary"
-                                    actionsContainerClassName={styles.verifyActions}
-                                    actions={(
-                                        <>
-                                            <div>
-                                                {1}
-                                            </div>
-                                            <IoCheckmark />
-                                        </>
-                                    )}
-                                >
-                                    Verify
-                                </Button>
+                                {editEntryMode ? (
+                                    <>
+                                        <Button
+                                            name={entry.id}
+                                            variant="secondary"
+                                            onClick={unsetEditEntryMode}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            name={entry.id}
+                                            variant="secondary"
+                                            onClick={unsetEditEntryMode}
+                                        >
+                                            Save
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            name={entry.id}
+                                            variant="secondary"
+                                            onClick={setEditEntryMode}
+                                            icons={(
+                                                <IoPencil />
+                                            )}
+                                        >
+                                            Edit Tags
+                                        </Button>
+                                        <EntryCommentModal
+                                            entryId={entry.id}
+                                            projectId={projectId}
+                                        />
+                                        <EntryVerification
+                                            entryId={entry.id}
+                                            projectId={entry.project}
+                                            verifiedBy={entry.verifiedBy}
+                                            onVerificationChange={getEntry}
+                                            disabled={pending}
+                                        />
+                                    </>
+                                )}
+                                <EntryControl
+                                    entryId={entry.id}
+                                    projectId={entry.project}
+                                    value={entry.controlled}
+                                    onChange={getEntry}
+                                    disabled={pending}
+                                />
                             </>
                         )}
                     >
                         <EntryListItem
-                            entry={entry}
+                            entry={entry1}
                             hideExcerpt
                             framework={framework}
                             className={styles.entryTags}

@@ -1,92 +1,100 @@
-import React, { useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { ListView } from '@the-deep/deep-ui';
+import {
+    ListView,
+    Pager,
+    Container,
+} from '@the-deep/deep-ui';
 
 import { Entry } from '#types/newEntry';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
-import { entry1, entry2 } from '#views/Project/Tagging/mockData';
+import { MultiResponse } from '#types';
+import { useRequest } from '#base/utils/restRequest';
 
 import EntryCard from './EntryCard';
 
 import styles from './styles.css';
 
-export interface EntryWithLead extends Entry {
-    leadDetails: {
-        id: number;
-        title: string;
-        createdOn: string;
-        publishedOn: string;
-        createdByName: string;
-        authors: {
-            title: string;
-        }[];
-        source: {
-            title: string;
-        };
-    };
-}
+const maxItemsPerPage = 50;
 
-const entryKeySelector = (entry: EntryWithLead) => entry.id;
-
-const entries: EntryWithLead[] = [
-    {
-        ...entry1,
-        leadDetails: {
-            id: 1,
-            title: 'The standard Lorem Ipsum passage, used since the 1500s',
-            createdOn: '2020-10-12',
-            publishedOn: '2020-09-31',
-            createdByName: 'Aditya Katri',
-            authors: [{ title: 'ReliefWeb' }],
-            source: { title: 'ReliefWeb' },
-        },
-    },
-    {
-        ...entry2,
-        leadDetails: {
-            id: 2,
-            title: 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
-            createdOn: '2020-10-12',
-            publishedOn: '2020-09-31',
-            createdByName: 'Aditya Katri',
-            authors: [{ title: 'ReliefWeb' }],
-            source: { title: 'ReliefWeb' },
-        },
-    },
-];
+const entryKeySelector = (entry: Entry) => entry.id;
 
 interface Props {
     className?: string;
+    projectId: number;
 }
 
 function SourcesGrid(props: Props) {
-    const { className } = props;
+    const {
+        className,
+        projectId,
+    } = props;
+
     const [expandedEntry, setExpandedEntry] = React.useState<number | undefined>();
     const handleHideTagsButtonClick = useCallback(() => {
         setExpandedEntry(undefined);
     }, []);
 
-    const entryRendererParams = useCallback((key: number, entry: EntryWithLead) => ({
+    const [activePage, setActivePage] = useState(1);
+
+    const entriesQuery = useMemo(
+        () => ({
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+            project: projectId,
+        }),
+        [activePage, projectId],
+    );
+
+    const {
+        pending: entryListPending,
+        response: entryListResponse,
+    } = useRequest<MultiResponse<Entry>>({
+        url: 'server://entries/',
+        query: entriesQuery,
+        method: 'GET',
+        failureHeader: 'Entries',
+        preserveResponse: true,
+    });
+
+    const entryRendererParams = useCallback((key: number, entry: Entry) => ({
         entry,
         framework: frameworkMockData,
         viewTags: expandedEntry === key,
-        leadDetails: entry.leadDetails,
+        leadDetails: entry.lead,
+        projectId,
         onViewTagsButtonClick: setExpandedEntry,
         onHideTagsButtonClick: handleHideTagsButtonClick,
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
     }), [
         expandedEntry,
+        projectId,
         handleHideTagsButtonClick,
     ]);
 
     return (
-        <ListView
-            className={_cs(styles.sourcesGrid, className)}
-            data={entries}
-            renderer={EntryCard}
-            rendererParams={entryRendererParams}
-            keySelector={entryKeySelector}
-        />
+        <Container
+            spacing="compact"
+            footerActions={(
+                <Pager
+                    activePage={activePage}
+                    itemsCount={entryListResponse?.count ?? 0}
+                    maxItemsPerPage={maxItemsPerPage}
+                    onActivePageChange={setActivePage}
+                    itemsPerPageControlHidden
+                    hideInfo
+                />
+            )}
+        >
+            <ListView
+                className={_cs(styles.sourcesGrid, className)}
+                data={entryListResponse?.results}
+                renderer={EntryCard}
+                rendererParams={entryRendererParams}
+                keySelector={entryKeySelector}
+                pending={entryListPending}
+            />
+        </Container>
     );
 }
 

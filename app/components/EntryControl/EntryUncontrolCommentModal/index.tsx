@@ -16,20 +16,14 @@ import {
 
 import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
-import { EntryReviewComment } from '#types/newEntry';
 import ProjectMembersMultiSelectInput from '#components/ProjectMembersSelectInput';
+import { EntryReviewComment } from '#types/newEntry';
 import {
     Membership,
 } from '#types';
 
-import { EntryAction } from '../../constants';
+import { EntryAction } from '#components/commentConstants';
 import styles from './styles.css';
-
-interface EntryVerificationFormData {
-    commentType: number;
-    text?: string;
-    mentionedUsers?: number[];
-}
 
 type FormType = {
     commentType: number,
@@ -47,24 +41,24 @@ const schema: FormSchema = {
 };
 
 const defaultFormValue: FormType = {
-    commentType: EntryAction.UNVERIFY,
+    commentType: EntryAction.UNCONTROL,
 };
 
 export interface Props {
     onModalClose: () => void;
     entryId: number;
-    projectId: number;
-    onVerificationChange: (entryId: number) => void;
+    onControlStatusChange: (entryId: number) => void;
     className?: string;
+    projectId: number;
 }
 
-function EntryUnverifyCommentModal(props: Props) {
+function EntryUncontrolCommentModal(props: Props) {
     const {
         className,
         onModalClose,
-        onVerificationChange,
-        projectId,
+        onControlStatusChange,
         entryId,
+        projectId,
     } = props;
 
     const [members, setMembers] = useState<Membership[] | undefined | null>();
@@ -72,15 +66,15 @@ function EntryUnverifyCommentModal(props: Props) {
     const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
-    } = useLazyRequest<EntryReviewComment, EntryVerificationFormData>({
+    } = useLazyRequest<EntryReviewComment, FormType>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            onVerificationChange(response.entry);
+            onControlStatusChange(response.entry);
             onModalClose();
         },
-        failureHeader: 'Entry Verification',
+        failureHeader: 'Entry Control',
     });
 
     const {
@@ -106,14 +100,14 @@ function EntryUnverifyCommentModal(props: Props) {
         <Modal
             onCloseButtonClick={onModalClose}
             className={_cs(styles.entryCommentModal, className)}
-            heading="Unverify Entry"
+            heading="Uncontrol Entry"
             bodyClassName={styles.entryCommentForm}
             footerActions={(
                 <Button
                     disabled={pristine || reviewRequestPending}
                     type="submit"
                     variant="primary"
-                    name="unverifyEntry"
+                    name="uncontrolEntry"
                     onClick={handleSubmit}
                 >
                     Submit
@@ -147,4 +141,4 @@ function EntryUnverifyCommentModal(props: Props) {
     );
 }
 
-export default EntryUnverifyCommentModal;
+export default EntryUncontrolCommentModal;
