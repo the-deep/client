@@ -150,7 +150,6 @@ function SourcesFilter(props: Props) {
                     value={value.status}
                     error={getErrorString(error?.status)}
                     label={_ts('sourcesFilter', 'status')}
-                    placeholder={_ts('sourcesFilter', 'status')}
                 />
                 <DateRangeInput
                     className={styles.input}
@@ -178,7 +177,6 @@ function SourcesFilter(props: Props) {
                     value={value.assignee}
                     error={getErrorString(error?.assignee)}
                     label={_ts('sourcesFilter', 'assignee')}
-                    placeholder={_ts('sourcesFilter', 'assignee')}
                 />
                 <TextInput
                     className={styles.input}
@@ -189,7 +187,6 @@ function SourcesFilter(props: Props) {
                     error={error?.search}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'search')}
-                    placeholder={_ts('sourcesFilter', 'search')}
                 />
                 <SelectInput
                     className={_cs(
@@ -204,7 +201,6 @@ function SourcesFilter(props: Props) {
                     value={value.exists}
                     error={error?.exists}
                     label={_ts('sourcesFilter', 'exists')}
-                    placeholder={_ts('sourcesFilter', 'exists')}
                 />
                 <MultiSelectInput
                     className={_cs(
@@ -219,7 +215,6 @@ function SourcesFilter(props: Props) {
                     value={value.priority}
                     error={getErrorString(error?.priority)}
                     label={_ts('sourcesFilter', 'priority')}
-                    placeholder={_ts('sourcesFilter', 'priority')}
                 />
                 <MultiSelectInput
                     className={_cs(
@@ -234,7 +229,6 @@ function SourcesFilter(props: Props) {
                     value={value.authoringOrganizationTypes}
                     error={getErrorString(error?.authoringOrganizationTypes)}
                     label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
-                    placeholder={_ts('sourcesFilter', 'authoringOrganizationTypes')}
                 />
                 {!filterOnlyUnprotected && (
                     <MultiSelectInput
@@ -250,7 +244,6 @@ function SourcesFilter(props: Props) {
                         value={value.confidentiality}
                         error={getErrorString(error?.confidentiality)}
                         label={_ts('sourcesFilter', 'confidentiality')}
-                        placeholder={_ts('sourcesFilter', 'confidentiality')}
                     />
                 )}
                 {leadOptions?.hasEmmLeads && (
@@ -268,7 +261,6 @@ function SourcesFilter(props: Props) {
                             value={value.emmRiskFactors}
                             error={getErrorString(error?.emmRiskFactors)}
                             label={_ts('sourcesFilter', 'emmRiskFactors')}
-                            placeholder={_ts('sourcesFilter', 'emmRiskFactors')}
                         />
                         <MultiSelectInput
                             className={_cs(
@@ -283,7 +275,6 @@ function SourcesFilter(props: Props) {
                             value={value.emmKeywords}
                             error={getErrorString(error?.emmKeywords)}
                             label={_ts('sourcesFilter', 'emmKeywords')}
-                            placeholder={_ts('sourcesFilter', 'emmKeywords')}
                         />
                         <MultiSelectInput
                             className={_cs(
@@ -298,13 +289,11 @@ function SourcesFilter(props: Props) {
                             value={value.emmEntities}
                             error={getErrorString(error?.emmEntities)}
                             label={_ts('sourcesFilter', 'emmEntities')}
-                            placeholder={_ts('sourcesFilter', 'emmEntities')}
                         />
                     </>
                 )}
                 <div className={styles.actions}>
                     <Button
-                        className={styles.button}
                         disabled={disabled || pristine}
                         name="sourcesFilterSubmit"
                         variant="transparent"
@@ -313,7 +302,6 @@ function SourcesFilter(props: Props) {
                         {_ts('sourcesFilter', 'apply')}
                     </Button>
                     <Button
-                        className={styles.button}
                         disabled={disabled || pristine}
                         name="clearFilter"
                         variant="transparent"
@@ -323,7 +311,6 @@ function SourcesFilter(props: Props) {
                         {_ts('sourcesFilter', 'clearAll')}
                     </Button>
                     <Button
-                        className={styles.button}
                         name="showAll"
                         variant="transparent"
                         actions={showContent ? (

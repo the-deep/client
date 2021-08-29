@@ -1,30 +1,16 @@
 .recent-activity {
     background-color: var(--dui-color-white);
+    padding: 0;
 
     .content {
         background-color: var(--dui-color-background-information);
-        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
-        max-height: calc(100px + 25vh);
-        overflow-y: auto;
-    }
+        max-height: calc(10em + 25vh);
 
-    .empty-message {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: center;
-        color: var(--dui-color-text-disabled);
-
-        .icon {
-            flex-shrink: 0;
-            padding: var(--dui-spacing-small);
-            font-size: 10em;
-        }
-
-        .text {
-            padding: var(--dui-spacing-small);
-            font-size: var(--dui-font-size-large);
+        .activities {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            gap: var(--dui-spacing-medium);
         }
     }
 }

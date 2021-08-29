@@ -48,7 +48,7 @@ function ProgressLine(props: Props) {
                 />
             </div>
             <div className={styles.right}>
-                <div className={styles.title}>
+                <div>
                     {title}
                 </div>
                 <div

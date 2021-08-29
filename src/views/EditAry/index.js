@@ -298,7 +298,7 @@ export default class EditAry extends React.PureComponent {
     getLeadTitle = memoize((activeLeadId, response = {}) => (
         activeLeadId
             ? response.title
-            : (response.leads || []).map(lead => lead.title).join(',')
+            : (response.leads || []).map(lead => lead.title).join(', ')
     ))
 
     shouldHideSaveButton = ({ assessmentPermissions }) => (

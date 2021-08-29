@@ -1,17 +1,16 @@
 .progress-bar {
     display: flex;
     align-items: center;
-    padding: var(--dui-spacing-small) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+    gap: var(--dui-spacing-medium);
 
     .number-circle {
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: center;
-        margin: 0 var(--dui-spacing-small);
         border-radius: 50%;
-        width: 2.6rem;
-        height: 2.6rem;
+        width: 2.7rem;
+        height: 2.7rem;
         font-size: var(--dui-font-size-large);
         font-weight: var(--dui-font-weight-bold);
 
@@ -32,13 +31,10 @@
     }
 
     .right {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
-        padding: 0 var(--dui-spacing-small);
-
-        .title {
-            padding: var(--dui-spacing-extra-small) 0;
-            font-size: var(--dui-font-size-small);
-        }
+        gap: var(--dui-spacing-small);
 
         .line {
             background-color: var(--dui-color-grey6);
@@ -63,7 +59,7 @@
             }
 
             &.small {
-                --height-bar: 0.5em;
+                --height-bar: 0.6em;
                 border-radius: calc(var(--height-bar) / 2);
 
                 .progress {

@@ -4,13 +4,12 @@
 
     .content {
         display: flex;
+        align-items: flex-end;
         flex-grow: 1;
         flex-wrap: wrap;
+        gap: var(--dui-spacing-medium);
 
         .input {
-            display: block;
-            margin: var(--dui-spacing-small);
-
             &.hidden {
                 display: none;
             }
@@ -21,11 +20,7 @@
             align-items: flex-end;
             flex-grow: 1;
             justify-content: flex-end;
-            padding: var(--dui-spacing-small) 0;
-
-            .button {
-                margin: var(--dui-spacing-small);
-            }
+            gap: var(--dui-spacing-small);
         }
     }
 }

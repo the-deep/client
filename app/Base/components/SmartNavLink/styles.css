@@ -10,6 +10,14 @@
     color: var(--dui-color-text);
     font-weight: var(--dui-font-weight-bold);
 
+    &.active {
+        color: var(--dui-color-accent);
+    }
+
+    &:hover {
+        background-color: var(--dui-color-background-hover);
+    }
+
     &:not(.active) {
         .border {
             display: none;

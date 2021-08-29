@@ -45,6 +45,7 @@ function Summary(props: Props) {
             className={_cs(className, styles.summary)}
             heading="Summary of my Projects"
             contentClassName={styles.content}
+            spacing="loose"
         >
             <InformationCard
                 icon={<IoDocumentTextOutline />}

@@ -21,7 +21,7 @@ import {
     ContainerCard,
     Card,
     InformationCard,
-    ElementFragments,
+    Element,
     List,
     TextOutput,
     DateOutput,
@@ -124,30 +124,31 @@ function ProjectItem(props: RecentProjectItemProps) {
 
     return (
         <ContainerCard
+            spacing="loose"
             className={_cs(className, styles.projectItem)}
             heading={title}
             headingSize="small"
-            headerDescription={(
+            headingDescription={(
                 <DateRangeOutput
+                    className={styles.projectDateRange}
                     startDate={startDate}
                     endDate={endDate}
                 />
             )}
             headerActions={(
                 <>
-                    <div className={styles.privacyBadge}>
-                        <ElementFragments
-                            actions={isPrivate && (
-                                <IoLockOpenOutline />
-                            )}
-                        >
-                            {isPrivate ? (
-                                _ts('home.recentProjects', 'privateProjectLabel')
-                            ) : (
-                                _ts('home.recentProjects', 'publicProjectLabel')
-                            )}
-                        </ElementFragments>
-                    </div>
+                    <Element
+                        className={styles.privacyBadge}
+                        actions={isPrivate && (
+                            <IoLockOpenOutline />
+                        )}
+                    >
+                        {isPrivate ? (
+                            _ts('home.recentProjects', 'privateProjectLabel')
+                        ) : (
+                            _ts('home.recentProjects', 'publicProjectLabel')
+                        )}
+                    </Element>
                     {canEditProject && (
                         <SmartButtonLikeLink
                             variant="tertiary"
@@ -165,7 +166,6 @@ function ProjectItem(props: RecentProjectItemProps) {
                 </>
             )}
             contentClassName={styles.content}
-            spacing="comfortable"
             // TODO: there should be two different urls for editing and viewing entry
             footerActions={canAddEntries && (
                 <SmartButtonLikeLink
@@ -261,8 +261,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                 <ContainerCard
                     className={styles.entriesActivityContainer}
                     heading={_ts('home.recentProjects', 'projectActivityLabel')}
-                    headerClassName={styles.chartHeader}
                     contentClassName={styles.chartContainer}
+                    headingSize="extraSmall"
                 >
                     <ResponsiveContainer className={styles.responsiveContainer}>
                         <AreaChart data={convertedProjectActivity}>

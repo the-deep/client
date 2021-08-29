@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    ElementFragments,
+    Element,
     Link,
     DateOutput,
 } from '@the-deep/deep-ui';
@@ -31,43 +31,42 @@ function ActivityItem(props: RecentActivityProps) {
     } = props;
 
     return (
-        <div className={styles.activityItem}>
-            <ElementFragments
-                icons={(
-                    <Avatar
-                        className={styles.displayPicture}
-                        src={createdByDisplayPicture}
-                    />
-                )}
-                childrenContainerClassName={styles.mainContent}
-            >
-                <div className={styles.description}>
-                    <Link
-                        to={emptyLink}
-                        className={styles.link}
-                    >
-                        {createdByDisplayName}
-                    </Link>
-                    &nbsp;
-                    {(type === 'lead'
-                        ? _ts('recentActivity', 'leadAdded')
-                        : _ts('recentActivity', 'entryCommentAdded')
-                    )}
-                    &nbsp;
-                    <Link
-                        to={emptyLink}
-                        className={styles.link}
-                    >
-                        {projectDisplayName}
-                    </Link>
-                </div>
-                <DateOutput
-                    className={styles.createdDate}
-                    value={createdAt}
-                    format="hh:mm aaa, MMM dd, yyyy"
+        <Element
+            className={styles.activityItem}
+            icons={(
+                <Avatar
+                    className={styles.displayPicture}
+                    src={createdByDisplayPicture}
                 />
-            </ElementFragments>
-        </div>
+            )}
+            childrenContainerClassName={styles.mainContent}
+        >
+            <div className={styles.description}>
+                <Link
+                    to={emptyLink}
+                    className={styles.link}
+                >
+                    {createdByDisplayName}
+                </Link>
+                &nbsp;
+                {(type === 'lead'
+                    ? _ts('recentActivity', 'leadAdded')
+                    : _ts('recentActivity', 'entryCommentAdded')
+                )}
+                &nbsp;
+                <Link
+                    to={emptyLink}
+                    className={styles.link}
+                >
+                    {projectDisplayName}
+                </Link>
+            </div>
+            <DateOutput
+                className={styles.createdDate}
+                value={createdAt}
+                format="hh:mm aaa, MMM dd, yyyy"
+            />
+        </Element>
     );
 }
 export default ActivityItem;

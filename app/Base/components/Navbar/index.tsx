@@ -16,11 +16,13 @@ import {
     IoLogOutOutline,
 } from 'react-icons/io5';
 
+import Svg from '#components/Svg';
 import SmartNavLink from '#base/components/SmartNavLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
 import { LogoutMutation } from '#generated/types';
+import deepLogo from '#resources/img/deep-logo-new.svg';
 
 import styles from './styles.css';
 
@@ -70,7 +72,10 @@ function Navbar(props: Props) {
     return (
         <nav className={_cs(className, styles.navbar)}>
             <div className={styles.appBrand}>
-                DEEP
+                <Svg
+                    className={styles.logo}
+                    src={deepLogo}
+                />
             </div>
             <div className={styles.main}>
                 <div className={styles.navLinks}>
@@ -111,7 +116,7 @@ function Navbar(props: Props) {
             </div>
             {authenticated && user && (
                 <DropdownMenu
-                    icons={(
+                    actions={(
                         <Avatar
                             className={styles.avatar}
                             src={user.displayPictureUrl}

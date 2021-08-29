@@ -1,17 +1,16 @@
 .sources-stats {
-    --spacing: var(--dui-spacing-small);
+    --spacing: var(--dui-spacing-medium);
     display: flex;
     flex-wrap: wrap;
-    padding: calc(var(--dui-spacing-medium) - var(--spacing));
+    gap: var(--spacing);
 
     .entry-stats-card,
     .lead-stats-card {
         display: flex;
         flex-grow: 1;
-        margin: var(--spacing);
-        border: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
+        gap: var(--dui-spacing-medium);
         border-radius: var(--dui-border-radius-card);
-        box-shadow: 0 1px 7px -1px rgba(0, 0, 0, .2);
+        background-color: var(--dui-color-background-information);
 
         >* {
             flex-basis: 0;
@@ -20,16 +19,17 @@
 
         .info-card {
             flex-grow: unset;
-            border-right: var(--dui-width-separator-thin) solid var((--dui-color-grey5));
+            border-right: var(--dui-width-separator-thin) solid var(--dui-color-grey5);
             border-radius: 0;
+            background-color: inherit;
         }
     }
 
     .entry-stats-card {
-        flex-basis: calc(40% - 2 * var(--spacing));
+        flex-basis: calc(40% - var(--spacing));
     }
 
     .lead-stats-card {
-        flex-basis: calc(60% - 2 * var(--spacing));
+        flex-basis: calc(60% - var(--spacing));
     }
 }

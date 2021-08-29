@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import {
-    ElementFragments,
+    Element,
     Link,
     QuickActionButton,
     DateOutput,
@@ -37,54 +37,54 @@ function AssignmentItem(props: AssignmentItemProps) {
     }, [id, handleClickFromProps]);
 
     return (
-        <div className={styles.assignmentItem}>
-            <ElementFragments
-                actions={(
-                    <QuickActionButton
-                        name={undefined}
-                        className={styles.markAsDoneButton}
-                        onClick={handleClick}
-                        disabled={markAsDonePending}
-                        big
-                    >
-                        <IoCheckmarkCircle />
-                    </QuickActionButton>
-                )}
-                childrenContainerClassName={styles.mainContent}
-            >
-                <div className={styles.description}>
-                    <Link
-                        to={emptyLink}
-                        className={styles.link}
-                    >
-                        {createdByDetails.displayName}
-                    </Link>
-                    &nbsp;
-                    {_ts('assignment', 'assignedYou')}
-                    &nbsp;
-                    <Link
-                        to={emptyLink}
-                        className={styles.link}
-                    >
-                        {contentObjectDetails?.title}
-                    </Link>
-                    &nbsp;
-                    {_ts('assignment', 'in')}
-                    &nbsp;
-                    <Link
-                        to={emptyLink}
-                        className={styles.link}
-                    >
-                        {projectDetails?.title}
-                    </Link>
-                </div>
-                <DateOutput
-                    className={styles.createdDate}
-                    value={createdAt}
-                    format="hh:mm aaa, MMM dd, yyyy"
-                />
-            </ElementFragments>
-        </div>
+        <Element
+            className={styles.assignmentItem}
+            actions={(
+                <QuickActionButton
+                    name={undefined}
+                    className={styles.markAsDoneButton}
+                    onClick={handleClick}
+                    disabled={markAsDonePending}
+                    big
+                    title="Mark as done"
+                >
+                    <IoCheckmarkCircle />
+                </QuickActionButton>
+            )}
+            childrenContainerClassName={styles.mainContent}
+        >
+            <div className={styles.description}>
+                <Link
+                    to={emptyLink}
+                    className={styles.link}
+                >
+                    {createdByDetails.displayName}
+                </Link>
+                &nbsp;
+                {_ts('assignment', 'assignedYou')}
+                &nbsp;
+                <Link
+                    to={emptyLink}
+                    className={styles.link}
+                >
+                    {contentObjectDetails?.title}
+                </Link>
+                &nbsp;
+                {_ts('assignment', 'in')}
+                &nbsp;
+                <Link
+                    to={emptyLink}
+                    className={styles.link}
+                >
+                    {projectDetails?.title}
+                </Link>
+            </div>
+            <DateOutput
+                className={styles.createdDate}
+                value={createdAt}
+                format="hh:mm aaa, MMM dd, yyyy"
+            />
+        </Element>
     );
 }
 export default AssignmentItem;

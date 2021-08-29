@@ -4,10 +4,8 @@ import {
     Button,
     Pager,
     Card,
-    PendingMessage,
-    List,
+    ListView,
 } from '@the-deep/deep-ui';
-import { MdPlaylistAddCheck } from 'react-icons/md';
 import { IoCheckmarkDone } from 'react-icons/io5';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -128,23 +126,14 @@ function Assignments() {
             )}
         >
             <Card className={styles.content}>
-                {pending && <PendingMessage />}
-                {(assignmentsResponse?.results ?? []).length > 0 ? (
-                    <List
-                        data={assignmentsResponse?.results}
-                        keySelector={keySelector}
-                        renderer={AssignmentItem}
-                        rendererParams={rendererParams}
-                    />
-                ) : (
-                    <div className={styles.emptyMessage}>
-                        <MdPlaylistAddCheck className={styles.icon} />
-                        <div className={styles.text}>
-                            {/* FIXME: use strings with appropriate wording */}
-                            You do not have any assignments
-                        </div>
-                    </div>
-                )}
+                <ListView
+                    data={assignmentsResponse?.results}
+                    keySelector={keySelector}
+                    renderer={AssignmentItem}
+                    rendererParams={rendererParams}
+                    emptyMessage="You do not have any assignments."
+                    pending={pending}
+                />
             </Card>
         </Container>
     );
