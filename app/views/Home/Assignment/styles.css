@@ -10,25 +10,4 @@
         max-height: calc(10em + 25vh);
         gap: var(--dui-spacing-medium);
     }
-
-    .empty-message {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: center;
-        padding: var(--dui-spacing-large);
-        color: var(--dui-color-text-disabled);
-
-        .icon {
-            flex-shrink: 0;
-            font-size: 8em;
-        }
-
-        .text {
-            padding: var(--dui-spacing-small);
-            text-align: center;
-            font-size: var(--dui-font-size-large);
-        }
-    }
 }

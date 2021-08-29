@@ -124,7 +124,6 @@ function Home(props: ViewProps) {
     }, [projectStats, selectedProject]);
 
     const recentProjectsRendererParams = useCallback((_, data) => ({
-        className: styles.projectItem,
         ...data,
     }), []);
 

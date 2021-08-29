@@ -21,6 +21,7 @@
             flex-grow: unset;
             border-right: var(--dui-width-separator-thin) solid var(--dui-color-grey5);
             border-radius: 0;
+            background-color: inherit;
         }
     }
 
