@@ -128,7 +128,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             className={_cs(className, styles.projectItem)}
             heading={title}
             headingSize="small"
-            headerDescription={(
+            headingDescription={(
                 <DateRangeOutput
                     className={styles.projectDateRange}
                     startDate={startDate}
@@ -261,7 +261,6 @@ function ProjectItem(props: RecentProjectItemProps) {
                 <ContainerCard
                     className={styles.entriesActivityContainer}
                     heading={_ts('home.recentProjects', 'projectActivityLabel')}
-                    headerClassName={styles.chartHeader}
                     contentClassName={styles.chartContainer}
                     headingSize="extraSmall"
                 >

@@ -294,7 +294,6 @@ function SourcesFilter(props: Props) {
                 )}
                 <div className={styles.actions}>
                     <Button
-                        className={styles.button}
                         disabled={disabled || pristine}
                         name="sourcesFilterSubmit"
                         variant="transparent"
@@ -303,7 +302,6 @@ function SourcesFilter(props: Props) {
                         {_ts('sourcesFilter', 'apply')}
                     </Button>
                     <Button
-                        className={styles.button}
                         disabled={disabled || pristine}
                         name="clearFilter"
                         variant="transparent"
@@ -313,7 +311,6 @@ function SourcesFilter(props: Props) {
                         {_ts('sourcesFilter', 'clearAll')}
                     </Button>
                     <Button
-                        className={styles.button}
                         name="showAll"
                         variant="transparent"
                         actions={showContent ? (

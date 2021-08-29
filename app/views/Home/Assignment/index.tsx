@@ -4,8 +4,7 @@ import {
     Button,
     Pager,
     Card,
-    PendingMessage,
-    List,
+    ListView,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkDone } from 'react-icons/io5';
 
@@ -127,22 +126,14 @@ function Assignments() {
             )}
         >
             <Card className={styles.content}>
-                {pending && <PendingMessage />}
-                {(assignmentsResponse?.results ?? []).length > 0 ? (
-                    <List
-                        data={assignmentsResponse?.results}
-                        keySelector={keySelector}
-                        renderer={AssignmentItem}
-                        rendererParams={rendererParams}
-                    />
-                ) : (
-                    <div className={styles.emptyMessage}>
-                        <div className={styles.text}>
-                            {/* FIXME: use strings with appropriate wording */}
-                            You do not have any assignments
-                        </div>
-                    </div>
-                )}
+                <ListView
+                    data={assignmentsResponse?.results}
+                    keySelector={keySelector}
+                    renderer={AssignmentItem}
+                    rendererParams={rendererParams}
+                    emptyMessage="You do not have any assignments."
+                    pending={pending}
+                />
             </Card>
         </Container>
     );

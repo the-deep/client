@@ -3,31 +3,14 @@
     padding: 0;
 
     .content {
-        display: flex;
-        position: relative;
-        flex-direction: column;
         background-color: var(--dui-color-background-information);
         max-height: calc(10em + 25vh);
-        gap: var(--dui-spacing-medium);
-    }
 
-    .empty-message {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: center;
-        color: var(--dui-color-text-disabled);
-
-        .icon {
-            flex-shrink: 0;
-            font-size: 8em;
-        }
-
-        .text {
-            padding: var(--dui-spacing-small);
-            text-align: center;
-            font-size: var(--dui-font-size-large);
+        .activities {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            gap: var(--dui-spacing-medium);
         }
     }
 }

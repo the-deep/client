@@ -2,8 +2,7 @@ import React, { useCallback } from 'react';
 import {
     Card,
     Container,
-    PendingMessage,
-    List,
+    ListView,
 } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
@@ -42,23 +41,16 @@ function RecentActivities() {
             className={styles.recentActivity}
             heading={_ts('recentActivity', 'recentActivitiesHeading')}
         >
-            {pending && <PendingMessage />}
             <Card className={styles.content}>
-                {(recentActivitiesResponse?.results ?? []).length > 0 ? (
-                    <List
-                        data={recentActivitiesResponse?.results}
-                        renderer={ActivityItem}
-                        keySelector={keySelector}
-                        rendererParams={activityRendererParams}
-                    />
-                ) : (
-                    <div className={styles.emptyMessage}>
-                        <div className={styles.text}>
-                            {/* FIXME: use strings with appropriate wording */}
-                            You do not have any recent activities
-                        </div>
-                    </div>
-                )}
+                <ListView
+                    className={styles.activities}
+                    data={recentActivitiesResponse?.results}
+                    renderer={ActivityItem}
+                    keySelector={keySelector}
+                    rendererParams={activityRendererParams}
+                    pending={pending}
+                    emptyMessage="You do not have any recent activity"
+                />
             </Card>
         </Container>
     );
