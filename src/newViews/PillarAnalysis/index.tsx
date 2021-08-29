@@ -540,9 +540,9 @@ function PillarAnalysis(props: Props) {
     ]);
 
     const pending = pendingPillarAnalysis
-    || pendingEntriesInitialData
-    || pendingPillarAnalysisSave
-    || pendingDiscardedTags;
+        || pendingEntriesInitialData
+        || pendingPillarAnalysisSave
+        || pendingDiscardedTags;
 
     const analyticalStatementRendererParams = useCallback((
         key: string,

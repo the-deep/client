@@ -3,6 +3,7 @@ import {
     IoClose,
     IoCheckmarkCircleSharp,
     IoEllipseOutline,
+    IoBarChartSharp,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
 
@@ -29,6 +30,7 @@ import {
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { genericMemo } from '#utils/safeCommon';
+import { useModalState } from '#hooks/stateManagement';
 
 import {
     AnalyticalStatementType,
@@ -38,6 +40,7 @@ import {
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
+import AnalyticalNGramsModal from './AnalyticalNGramsModal';
 
 export const ENTRIES_LIMIT = 50;
 
@@ -83,6 +86,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.analyticalEntries);
+    const [
+        showAnalysisChart,
+        ,
+        hideAnalysisChart,
+        ,
+        toggleAnalysisChart,
+    ] = useModalState(false);
 
     const {
         // setValue: onAnalyticalEntryChange,
@@ -179,16 +189,25 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             contentClassName={styles.dragContent}
             headerClassName={styles.header}
             headerIcons={(
-                <QuickActionButton
-                    name="includeInReport"
-                    onClick={handleIncludeInReportChange}
-                    big
-                >
-                    {value.includeInReport
-                        ? <IoCheckmarkCircleSharp />
-                        : <IoEllipseOutline />
-                    }
-                </QuickActionButton>
+                <>
+                    <QuickActionButton
+                        name="includeInReport"
+                        onClick={handleIncludeInReportChange}
+                        big
+                    >
+                        {value.includeInReport
+                            ? <IoCheckmarkCircleSharp />
+                            : <IoEllipseOutline />
+                        }
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name="includeInReport"
+                        onClick={toggleAnalysisChart}
+                        big
+                    >
+                        <IoBarChartSharp />
+                    </QuickActionButton>
+                </>
             )}
             // actionsContainerClassName={styles.actionsContainer}
             headerActions={(
@@ -248,6 +267,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     onDrop={handleAnalyticalEntryAdd}
                 />
             </div>
+            {showAnalysisChart && (
+                <AnalyticalNGramsModal
+                    onModalClose={hideAnalysisChart}
+                    mainStatement={value.statement}
+                    analyticalEntries={value.analyticalEntries}
+                />
+            )}
         </Container>
     );
 }
