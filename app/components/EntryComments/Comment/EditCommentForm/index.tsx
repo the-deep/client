@@ -9,23 +9,17 @@ import {
     useForm,
     ObjectSchema,
     requiredStringCondition,
-    requiredCondition,
     createSubmitHandler,
+    internal,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 import { useLazyRequest } from '#base/utils/restRequest';
-import ProjectMembersMultiSelectInput from '#components/ProjectMembersSelectInput';
-import {
-    EntryComment,
-    Membership,
-} from '#types';
+import { EntryComment } from '#types';
 import styles from './styles.css';
 
 interface Comment {
     text: string;
-    commentType: number,
-    mentionedUsers: number[],
 }
 
 type FormType = Partial<Comment>;
@@ -34,41 +28,35 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         text: [requiredStringCondition],
-        commentType: [requiredCondition],
-        mentionedUsers: [requiredCondition],
     }),
-};
-
-const defaultValue: FormType = {
-    commentType: 0,
 };
 
 interface Props {
     className?: string;
-    onSave: (response: EntryComment) => void;
-    entryId: number;
-    projectId: number;
+    onEditSuccess: (response: EntryComment) => void;
+    onEditCancel: () => void;
+    comment: EntryComment;
 }
 
-function CommentForm(props: Props) {
+function EditCommentForm(props: Props) {
     const {
         className,
-        onSave,
-        entryId,
-        projectId,
+        comment,
+        onEditSuccess,
+        onEditCancel,
     } = props;
 
-    const [members, setMembers] = useState<Membership[] | undefined | null>();
-
+    const [initialFormValue] = useState<FormType>({
+        text: comment.textHistory[0]?.text ?? '',
+    });
     const {
         pristine,
         value,
         error: riskyError,
         setFieldValue,
-        setValue,
         validate,
         setError,
-    } = useForm(schema, defaultValue);
+    } = useForm(schema, initialFormValue);
 
     const error = getErrorObject(riskyError);
 
@@ -76,19 +64,29 @@ function CommentForm(props: Props) {
         pending,
         trigger: editComment,
     } = useLazyRequest<EntryComment, FormType>({
-        url: `server://v2/entries/${entryId}/review-comments/`,
-        method: 'POST',
+        url: `server://v2/entries/${comment.entry}/review-comments/${comment.id}/`,
+        method: 'PATCH',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            setValue(defaultValue);
-            onSave(response);
+            onEditSuccess(response);
+        },
+        onFailure: ({ value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
+
+            setError({
+                ...otherErrors,
+                [internal]: $internal,
+            });
         },
         failureHeader: 'Entry comment edit',
     });
 
     return (
         <form
-            className={_cs(styles.commentForm, className)}
+            className={_cs(styles.editCommentForm, className)}
             onSubmit={createSubmitHandler(validate, setError, editComment)}
         >
             <NonFieldError
@@ -100,10 +98,17 @@ function CommentForm(props: Props) {
                     <>
                         <Button
                             name={undefined}
+                            onClick={onEditCancel}
+                            variant="tertiary"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            name={undefined}
                             type="submit"
                             disabled={pristine || pending}
                         >
-                            Comment
+                            Save
                         </Button>
                     </>
                 )}
@@ -114,21 +119,10 @@ function CommentForm(props: Props) {
                     value={value.text}
                     onChange={setFieldValue}
                     error={error?.text}
-                    autoFocus
-                />
-                <ProjectMembersMultiSelectInput
-                    name="mentionedUsers"
-                    label="Assignees"
-                    value={value.mentionedUsers}
-                    projectId={projectId}
-                    onChange={setFieldValue}
-                    options={members}
-                    onOptionsChange={setMembers}
-                    error={error?.mentionedUsers?.toString()}
                 />
             </Container>
         </form>
     );
 }
 
-export default CommentForm;
+export default EditCommentForm;

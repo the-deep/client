@@ -7,6 +7,7 @@ import {
     getErrorObject,
     useForm,
     requiredCondition,
+    getErrorString,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -139,7 +140,7 @@ function EntryUnverifyCommentModal(props: Props) {
                 onChange={setFieldValue}
                 options={members}
                 onOptionsChange={setMembers}
-                error={error?.mentionedUsers?.toString()}
+                error={getErrorString(error?.mentionedUsers)}
             />
         </Modal>
     );

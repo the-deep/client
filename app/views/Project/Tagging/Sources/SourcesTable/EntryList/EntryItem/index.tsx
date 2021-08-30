@@ -15,7 +15,7 @@ import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
 
 import EntryListItem from '#components/EntryListItem';
-import EntryCommentModal from '#components/EntryCommentModal';
+import EntryComments from '#components/EntryComments';
 import EntryVerification from '#components/EntryVerification';
 import EntryControl from '#components/EntryControl';
 
@@ -82,7 +82,7 @@ function EntryItem(props: Props) {
                             >
                                 Edit Tags
                             </ButtonLikeLink>
-                            <EntryCommentModal
+                            <EntryComments
                                 className={styles.button}
                                 entryId={entry.id}
                                 projectId={projectId}
@@ -107,14 +107,12 @@ function EntryItem(props: Props) {
                 </div>
             )}
         >
-            <>
-                <EntryListItem
-                    className={styles.entry}
-                    entry={entry1} // TODO remove mock entry usage appropriate
-                    framework={frameworkMockData}
-                    readOnly
-                />
-            </>
+            <EntryListItem
+                className={styles.entry}
+                entry={entry1} // TODO remove mock entry usage appropriate
+                framework={frameworkMockData}
+                readOnly
+            />
         </Container>
     );
 }

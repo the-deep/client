@@ -8,9 +8,10 @@ import {
     Card,
 } from '@the-deep/deep-ui';
 
+import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
 import CommaSeparateItems from '#components/CommaSeparateItems';
-
+import { commentTypeToTextMap } from '#components/commentConstants';
 import { EntryComment } from '#types';
 import EditCommentForm from './EditCommentForm';
 import styles from './styles.css';
@@ -20,14 +21,6 @@ interface Props {
     comment: EntryComment;
 }
 
-const commentTypeToTextMap: { [id: number]: string } = {
-    0: 'commented',
-    1: 'verified',
-    2: 'unverified',
-    3: 'controlled',
-    4: 'uncontrolled',
-};
-
 function Comment(props: Props) {
     const {
         className,
@@ -36,7 +29,11 @@ function Comment(props: Props) {
 
     const { user } = useContext(UserContext);
     const [comment, setComment] = useState<EntryComment>(commentFromProps);
-    const [editMode, setEditMode] = useState<boolean>(false);
+    const [
+        isEditModalVisible,
+        showEditModal,
+        hideEditModal,
+    ] = useModalState(false);
 
     const {
         textHistory,
@@ -48,21 +45,13 @@ function Comment(props: Props) {
     const [latest] = textHistory;
 
     const isEditable = useMemo(() => (
-        user?.id === createdByDetails?.id.toString() && latest && !editMode
-    ), [user, createdByDetails, latest, editMode]);
-
-    const handleEditClick = useCallback(() => {
-        setEditMode(true);
-    }, []);
-
-    const handleCancel = useCallback(() => {
-        setEditMode(false);
-    }, []);
+        user?.id === createdByDetails?.id.toString() && latest
+    ), [user, createdByDetails, latest]);
 
     const handleSuccess = useCallback((value: EntryComment) => {
         setComment(value);
-        setEditMode(false);
-    }, []);
+        hideEditModal();
+    }, [hideEditModal]);
 
     return (
         <Container
@@ -89,7 +78,7 @@ function Comment(props: Props) {
                         <QuickActionButton
                             className={styles.button}
                             name="editButton"
-                            onClick={handleEditClick}
+                            onClick={showEditModal}
                             title="Edit comment"
                         >
                             <FiEdit2 />
@@ -120,12 +109,12 @@ function Comment(props: Props) {
                 </span>
             )}
         >
-            {editMode ? (
+            {isEditModalVisible ? (
                 <EditCommentForm
                     className={styles.comment}
                     comment={comment}
                     onEditSuccess={handleSuccess}
-                    onEditCancel={handleCancel}
+                    onEditCancel={hideEditModal}
                 />
             ) : (latest?.text && (
                 <Card
