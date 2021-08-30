@@ -54,10 +54,10 @@ function AnalysisFrameworkSearchMultiSelectInput<K extends string>(
         search: debouncedSearchText,
     }), [debouncedSearchText]);
 
-    const {
-        data,
-        loading,
-    } = useQuery<AnalysisFrameworkOptionsQuery, AnalysisFrameworkOptionsQueryVariables>(
+    const { data, loading } = useQuery<
+        AnalysisFrameworkOptionsQuery,
+        AnalysisFrameworkOptionsQueryVariables
+    >(
         ANALYSIS_FRAMEWORKS,
         {
             variables,
