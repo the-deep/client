@@ -1,53 +1,49 @@
-.analytical-modal{
-    width: 80vw;
-    height: 90vh;
-}
+.analytical-modal {
+    width: 96vw;
+    height: 96vh;
 
-.analytical-container {
-    display: flex;
-    flex-shrink: 0;
-    padding-bottom: var(--dui-spacing-medium);
-
-    .statement-container {
-        flex-basis: 60%;
-        padding: 0 var(--dui-spacing-large);
-
-        .analytical-label {
-            font-size: x-small;
-        }
-        .statement-area {
-            border: 1px #41a1f0;
-        }
-        .complete-button {
-            align-self: center;
-            justify-self: end;
-            float: right;
-            font-size: xx-small;
-            background-color: #41a1f0;
-            border: none;
-            margin-top: var(--dui-spacing-small);
-            padding: var(--dui-spacing-small) var(--dui-spacing-small);
-        }
-    }
-}
-
-.details-container {
-    display: flex;
-    flex-shrink: 0;
-
-    .entries-container {
+    .modal-body {
         display: flex;
         flex-direction: column;
-        flex: 1;
-        background-color: var(--dui-color-foreground);
+        overflow-y: auto;
 
-        .entries-header {
-            font-size: x-small;
+        .top-container {
+            flex-shrink: 0;
+            background-color: var(--dui-color-foreground);
         }
-    }
 
-    .chart-container {
-        display: flex;
-        flex: 4;
+        .bottom-container {
+            display: flex;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .entries-container {
+                display: flex;
+                flex-basis: 30%;
+                flex-direction: column;
+                background-color: var(--dui-color-foreground);
+                overflow-y: auto;
+
+                .list {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+                    gap: var(--dui-spacing-medium);
+
+                    .excerpt {
+                        margin: 0;
+                        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                        padding: var(--dui-spacing-small);
+                    }
+                }
+            }
+
+            .chart-container {
+                display: flex;
+                flex-basis: 70%;
+                overflow-y: auto;
+            }
+        }
     }
 }

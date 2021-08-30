@@ -183,6 +183,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange((oldVal?: boolean) => !oldVal, 'includeInReport' as const);
     }, [onFieldChange]);
 
+    const handleStatementChange = useCallback((newStatementVal: string | undefined) => {
+        onFieldChange(newStatementVal, 'statement');
+    }, [onFieldChange]);
+
     return (
         <Container
             className={_cs(styles.analyticalStatementInput, className)}
@@ -271,6 +275,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 <AnalyticalNGramsModal
                     onModalClose={hideAnalysisChart}
                     mainStatement={value.statement}
+                    onStatementChange={handleStatementChange}
+                    statementId={value.clientId}
                     analyticalEntries={value.analyticalEntries}
                 />
             )}

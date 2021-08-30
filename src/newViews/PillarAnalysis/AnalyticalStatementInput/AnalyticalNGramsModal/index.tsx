@@ -1,46 +1,64 @@
-import React, { useContext } from 'react';
+import React, { useState, useCallback, useMemo, useContext } from 'react';
+import {
+    isDefined,
+    mapToList,
+} from '@togglecorp/fujs';
 import {
     TextArea,
+    PendingMessage,
     Modal,
     Button,
     ListView,
-    Header,
+    Container,
 } from '@the-deep/deep-ui';
 import {
-    ComposedChart,
+    ResponsiveContainer,
+    BarChart,
     Bar,
     XAxis,
     YAxis,
-    CartesianGrid,
     Tooltip,
     Legend,
-    ResponsiveContainer,
 } from 'recharts';
-// import ExcerptOutput from '#newComponents/viewer/ExcerptOutput';
-import EntriesItem from '#components/other/EntriesItem';
+
 import { useRequest } from '#utils/request';
+import ExcerptOutput from '#newComponents/viewer/ExcerptOutput';
 
 import {
     PartialAnalyticalStatementType,
 } from '../../schema';
-import EntryContext from '../../context';
+import EntryContext, { EntryFieldsMin } from '../../context';
+
 import styles from './styles.scss';
 
-interface PostNgrams {
-    key: number;
-    value: string;
+const chartMargins = {
+    top: 0,
+    bottom: 0,
+    right: 10,
+    left: 10,
+};
+
+interface NgramsResponse {
+    ngrams: {
+        unigrams: {
+            [key in string]: number;
+        };
+        bigrams: {
+            [key in string]: number;
+        };
+        trigrams: {
+            [key in string]: number;
+        };
+    }
 }
 
-interface ExcerptTest {
-    droppedExcerpt?: string;
-    entryType?: string;
-    excerpt?: string | undefined;
-    id: number;
-}
+const keySelector = (item: EntryFieldsMin) => item.id;
 
 interface Props {
     onModalClose: () => void,
+    statementId: string;
     mainStatement: string | undefined,
+    onStatementChange: (newVal: string | undefined) => void;
     analyticalEntries: PartialAnalyticalStatementType['analyticalEntries']
 }
 
@@ -48,41 +66,42 @@ function AnalyticalNGramsModal(props: Props) {
     const {
         onModalClose,
         mainStatement,
+        onStatementChange,
+        statementId,
         analyticalEntries,
     } = props;
 
     const { entries } = useContext(EntryContext);
+    const [tempMainStatement, setTempMainStatement] = useState<string | undefined>(mainStatement);
+    const [pristine, setPristine] = useState(true);
 
-    const excerptList: ExcerptTest[] = [];
+    const entriesForNgrams = useMemo(() => (
+        analyticalEntries?.map(
+            ae => (ae.entry ? entries?.[ae.entry] : undefined),
+        ).filter(isDefined) ?? []
+    ), [entries, analyticalEntries]);
 
-    if (entries) {
-        Object.values(entries).forEach(
-            value => excerptList.push(value.excerpt),
-        );
-    }
-    console.log('check ExcerptList::>>', excerptList);
+    const entryPayload = useMemo(() => {
+        const excerptTexts = entriesForNgrams.map(ae => ae.excerpt);
 
-    const entryPayload = {
-        entries: excerptList,
-        ngrams: {
-            unigrams: true,
-            bigrams: true,
-            trigrams: true,
-        },
-        enable_stopwords: true,
-        enable_stemming: false,
-        enable_case_sensitive: true,
-        max_ngrams_items: 10,
-    };
-
-    const keySelector = (item: ExcerptTest) => item.id;
-
-    console.log('check entries:>>', analyticalEntries);
-    console.log('From EntryContext::>>', entries);
+        return ({
+            entries: excerptTexts.filter(ae => ae && ae.length > 3).filter(isDefined),
+            ngrams: {
+                unigrams: true,
+                bigrams: true,
+                trigrams: true,
+            },
+            enable_stopwords: true,
+            enable_stemming: false,
+            enable_case_sensitive: true,
+            max_ngrams_items: 10,
+        });
+    }, [entriesForNgrams]);
 
     const {
-        pending: statementPending,
-    } = useRequest<PostNgrams>({
+        pending,
+        response: ngramsResponse,
+    } = useRequest<NgramsResponse>({
         url: 'serverless://ngram-process/',
         method: 'POST',
         body: entryPayload,
@@ -91,172 +110,150 @@ function AnalyticalNGramsModal(props: Props) {
         },
         failureHeader: 'Failed response of STATEMENT !!',
     });
-    console.log('Checking POST response::>>', statementPending);
 
-    const chartData = [
-        {
-            name: 'Word A',
-            uv: 590,
-            pv: 800,
-            amt: 1400,
-        },
-        {
-            name: 'Word B',
-            uv: 868,
-            pv: 967,
-            amt: 1506,
-        },
-        {
-            name: 'Word C',
-            uv: 1397,
-            pv: 1098,
-            amt: 989,
-        },
-        {
-            name: 'Word D',
-            uv: 1480,
-            pv: 1200,
-            amt: 1228,
-        },
-    ];
+    const {
+        unigrams,
+        bigrams,
+        trigrams,
+    } = useMemo(() => {
+        const ngrams = ngramsResponse?.ngrams;
+        return ({
+            unigrams: mapToList(ngrams?.unigrams ?? {}, (d, k) => ({ count: d, name: k })),
+            bigrams: mapToList(ngrams?.bigrams ?? {}, (d, k) => ({ count: d, name: k })),
+            trigrams: mapToList(ngrams?.trigrams ?? {}, (d, k) => ({ count: d, name: k })),
+        });
+    }, [ngramsResponse]);
 
-    const handleCompleteStatement = () => {
-        console.log('handled complete statement ######');
-    };
+    const handleCompleteStatement = useCallback(() => {
+        onStatementChange(tempMainStatement);
+        setPristine(true);
+    }, [tempMainStatement, onStatementChange]);
 
-    const entriesRendererParams = (_: number, data: ExcerptTest) => ({
+    const handleStatementChange = useCallback((newVal: string | undefined) => {
+        setPristine(false);
+        setTempMainStatement(newVal);
+    }, []);
+
+    const entriesRendererParams = useCallback((_: number, data: EntryFieldsMin) => ({
+        className: styles.excerpt,
         excerpt: data.excerpt,
+        imageDetails: data.imageDetails,
+        tabularFieldData: data.tabularFieldData,
         entryType: data.entryType,
-    });
+    }), []);
 
     return (
-        <>
-            <Modal
-                className={styles.analyticalModal}
-                heading="Data Aggregation Column"
-                onCloseButtonClick={onModalClose}
-            >
-                <div className={styles.analyticalContainer}>
-                    <form
-                        className={styles.statementContainer}
-                        onSubmit={handleCompleteStatement}
+        <Modal
+            className={styles.analyticalModal}
+            heading="Data Aggregation Column"
+            onCloseButtonClick={onModalClose}
+            bodyClassName={styles.modalBody}
+        >
+            {pending && <PendingMessage />}
+            <Container
+                className={styles.topContainer}
+                footerActions={(
+                    <Button
+                        name={statementId}
+                        disabled={pristine}
+                        onClick={handleCompleteStatement}
                     >
-                        <TextArea
-                            className={styles.statementArea}
-                            label="Analytical Statement"
-                            labelContainerClassName={styles.analyticalLabel}
-                            name="mainStatement"
-                            // onChange={setFieldValue}
-                            value={mainStatement}
-                            // error={error?.mainStatement}
-                            rows={5}
-                        />
-                        <Button
-                            className={styles.completeButton}
-                            name="default"
-                            type="submit"
+                        Complete Statement
+                    </Button>
+                )}
+            >
+                <TextArea
+                    name="mainStatement"
+                    label="Analytical Statement"
+                    onChange={handleStatementChange}
+                    value={tempMainStatement}
+                    rows={5}
+                />
+            </Container>
+            <div className={styles.bottomContainer}>
+                <Container
+                    className={styles.entriesContainer}
+                    heading={`Selected Entries ${analyticalEntries?.length ?? 0}`}
+                    sub
+                >
+                    <ListView
+                        className={styles.list}
+                        data={entriesForNgrams}
+                        keySelector={keySelector}
+                        renderer={ExcerptOutput}
+                        rendererParams={entriesRendererParams}
+                    />
+                </Container>
+                <div className={styles.chartContainer}>
+                    <ResponsiveContainer>
+                        <BarChart
+                            layout="vertical"
+                            data={unigrams}
+                            margin={chartMargins}
                         >
-                            Complete Statement
-                        </Button>
-                    </form>
-                </div>
-                <div className={styles.detailsContainer}>
-                    <div className={styles.entriesContainer}>
-                        <div className={styles.entriesHeader}>
-                            <Header
-                                description="Selected Entries"
+                            <XAxis type="number" />
+                            <YAxis dataKey="name" type="category" scale="band" />
+                            <Tooltip />
+                            <Legend />
+                            <Bar
+                                name="Unigrams"
+                                dataKey="count"
+                                barSize={15}
+                                fill="#796ec6"
                             />
-                        </div>
-                        <ListView
-                            data={analyticalEntries}
-                            keySelector={keySelector}
-                            renderer={EntriesItem}
-                            rendererParams={entriesRendererParams}
-                        />
-
-                    </div>
-                    <div className={styles.chartContainer}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart
-                                layout="vertical"
-                                width={400}
-                                height={300}
-                                data={chartData}
-                                margin={{
-                                    top: 20,
-                                    right: 20,
-                                    bottom: 20,
-                                    left: 20,
-                                }}
-                            >
-                                <CartesianGrid stroke="#f5f5f5" />
-                                <XAxis type="number" />
-                                <YAxis dataKey="name" type="category" scale="band" />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="pv" barSize={15} fill="#8181e6" />
-                            </ComposedChart>
-                        </ResponsiveContainer>
-
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart
-                                layout="vertical"
-                                width={400}
-                                height={300}
-                                data={chartData}
-                                margin={{
-                                    top: 20,
-                                    right: 20,
-                                    bottom: 20,
-                                    left: 20,
-                                }}
-                            >
-                                <CartesianGrid stroke="#f5f5f5" />
-                                <XAxis type="number" />
-                                <YAxis dataKey="name" type="category" scale="band" />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="pv" barSize={15} fill="#8181e6" />
-                            </ComposedChart>
-                        </ResponsiveContainer>
-
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart
-                                layout="vertical"
-                                width={400}
-                                height={300}
-                                data={chartData}
-                                margin={{
-                                    top: 20,
-                                    right: 20,
-                                    bottom: 20,
-                                    left: 20,
-                                }}
-                            >
-                                <CartesianGrid stroke="#f5f5f5" />
-                                <XAxis type="number" />
-                                <YAxis
-                                    dataKey="name"
-                                    type="category"
-                                    scale="band"
-                                    label={
-                                        <Button
-                                            variant="transparent"
-                                            name="transparent"
-                                        >
-                                            country
-                                        </Button>
-                                    }
-                                />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="pv" barSize={15} fill="#8181e6" />
-                            </ComposedChart>
-                        </ResponsiveContainer>
-                    </div>
+                        </BarChart>
+                    </ResponsiveContainer>
+                    <ResponsiveContainer>
+                        <BarChart
+                            layout="vertical"
+                            data={bigrams}
+                            margin={chartMargins}
+                        >
+                            <XAxis type="number" />
+                            <YAxis dataKey="name" type="category" scale="band" />
+                            <Tooltip />
+                            <Legend />
+                            <Bar
+                                name="Bigrams"
+                                dataKey="count"
+                                barSize={15}
+                                fill="#fb8a91"
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                    <ResponsiveContainer>
+                        <BarChart
+                            layout="vertical"
+                            data={trigrams}
+                            margin={chartMargins}
+                        >
+                            <XAxis type="number" />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                scale="band"
+                                label={
+                                    <Button
+                                        variant="transparent"
+                                        name="transparent"
+                                    >
+                                        country
+                                    </Button>
+                                }
+                            />
+                            <Tooltip />
+                            <Legend />
+                            <Bar
+                                name="Trigrams"
+                                dataKey="count"
+                                barSize={15}
+                                fill="#4cc1b7"
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </div>
-            </Modal>
-        </>
+            </div>
+        </Modal>
     );
 }
 
