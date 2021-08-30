@@ -60,6 +60,7 @@ interface Props {
     mainStatement: string | undefined,
     onStatementChange: (newVal: string | undefined) => void;
     analyticalEntries: PartialAnalyticalStatementType['analyticalEntries']
+    onNgramClick: (item: string) => void;
 }
 
 function AnalyticalNGramsModal(props: Props) {
@@ -69,11 +70,18 @@ function AnalyticalNGramsModal(props: Props) {
         onStatementChange,
         statementId,
         analyticalEntries,
+        onNgramClick,
     } = props;
 
     const { entries } = useContext(EntryContext);
     const [tempMainStatement, setTempMainStatement] = useState<string | undefined>(mainStatement);
     const [pristine, setPristine] = useState(true);
+
+    const handleNgramClick = useCallback((item) => {
+        const typedItem = item as { name: string };
+        onNgramClick(typedItem?.name);
+        onModalClose();
+    }, [onNgramClick, onModalClose]);
 
     const entriesForNgrams = useMemo(() => (
         analyticalEntries?.map(
@@ -105,10 +113,7 @@ function AnalyticalNGramsModal(props: Props) {
         url: 'serverless://ngram-process/',
         method: 'POST',
         body: entryPayload,
-        onSuccess: (response) => {
-            console.log('Response of Analytical statement::>>', response);
-        },
-        failureHeader: 'Failed response of STATEMENT !!',
+        failureHeader: 'Failed to get ngrams',
     });
 
     const {
@@ -197,6 +202,7 @@ function AnalyticalNGramsModal(props: Props) {
                             <Legend />
                             <Bar
                                 name="Unigrams"
+                                onClick={handleNgramClick}
                                 dataKey="count"
                                 barSize={15}
                                 fill="#796ec6"
@@ -215,6 +221,7 @@ function AnalyticalNGramsModal(props: Props) {
                             <Legend />
                             <Bar
                                 name="Bigrams"
+                                onClick={handleNgramClick}
                                 dataKey="count"
                                 barSize={15}
                                 fill="#fb8a91"
@@ -245,6 +252,7 @@ function AnalyticalNGramsModal(props: Props) {
                             <Legend />
                             <Bar
                                 name="Trigrams"
+                                onClick={handleNgramClick}
                                 dataKey="count"
                                 barSize={15}
                                 fill="#4cc1b7"

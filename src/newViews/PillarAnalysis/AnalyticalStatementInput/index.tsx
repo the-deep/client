@@ -61,6 +61,7 @@ interface AnalyticalStatementInputProps {
     isBeingDragged?: boolean;
     attributes?: Attributes;
     listeners?: Listeners;
+    onSelectedNgramChange: (item: string | undefined) => void;
 }
 
 const defaultVal: AnalyticalStatementType = {
@@ -80,6 +81,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         index,
         attributes,
         listeners,
+        onSelectedNgramChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
@@ -278,6 +280,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     onStatementChange={handleStatementChange}
                     statementId={value.clientId}
                     analyticalEntries={value.analyticalEntries}
+                    onNgramClick={onSelectedNgramChange}
                 />
             )}
         </Container>

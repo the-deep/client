@@ -9,6 +9,7 @@ import {
     Button,
     DateRangeInput,
     MultiSelectInput,
+    TextInput,
     SelectInput,
 } from '@the-deep/deep-ui';
 import {
@@ -94,6 +95,7 @@ interface OwnProps {
     projectId: number;
     widgets?: WidgetElement<unknown>[];
     disabled?: boolean;
+    selectedNgram?: string;
 }
 
 function EntriesFilterForm(props: OwnProps) {
@@ -106,6 +108,7 @@ function EntriesFilterForm(props: OwnProps) {
         regions,
         onFiltersValueChange,
         disabled,
+        selectedNgram,
     } = props;
 
     const [
@@ -138,6 +141,13 @@ function EntriesFilterForm(props: OwnProps) {
     useEffect(() => {
         setValue(filtersValue ?? initialValue);
     }, [filtersValue, setValue]);
+
+    useEffect(() => {
+        setFieldValue(selectedNgram, 'search');
+    }, [
+        selectedNgram,
+        setFieldValue,
+    ]);
 
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])
@@ -194,6 +204,13 @@ function EntriesFilterForm(props: OwnProps) {
             )}
             onSubmit={handleSubmit}
         >
+            <TextInput
+                className={_cs(styles.filter, styles.showFilter)}
+                name="search"
+                value={value?.search as (string | undefined)}
+                onChange={setFieldValue}
+                label="Search"
+            />
             <MultiSelectInput
                 className={styles.filter}
                 name="created_by"

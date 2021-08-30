@@ -177,6 +177,7 @@ function PillarAnalysis(props: Props) {
     const initialValue = pillarAnalysisFromProps?.data ?? defaultFormValues;
 
     const [versionId, setVersionId] = useState(pillarAnalysisFromProps?.versionId);
+    const [selectedNgram, setSelectedNgram] = useState<string | undefined>();
 
     const {
         pristine,
@@ -556,6 +557,7 @@ function PillarAnalysis(props: Props) {
         onRemove: onAnalyticalStatementRemove,
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
+        onSelectedNgramChange: setSelectedNgram,
         error: arrayError?.[statement?.clientId],
     }), [
         onAnalyticalStatementChange,
@@ -647,6 +649,7 @@ function PillarAnalysis(props: Props) {
                     widgets={framework?.widgets}
                     projectId={projectId}
                     disabled={pendingFramework}
+                    selectedNgram={selectedNgram}
                 />
                 <div className={styles.workspace}>
                     <Tabs
