@@ -26,9 +26,20 @@ import styles from './styles.css';
 const PROJECT_LIST = gql`
     query ProjectList(
         $search: String,
+        $organizations: [ID!],
+        $startDate: Date,
+        $endDate: Date,
+        $page: Int,
+        $pageSize: Int,
+
     ) {
         projects(
             search: $search,
+            organizations: $organizations,
+            createdAt_Lt: $endDate,
+            createdAt_Gte: $startDate,
+            page: $page,
+            pageSize: $pageSize,
         ) {
             results {
                 id
@@ -70,7 +81,10 @@ function ExploreDeep(props: Props) {
     } = props;
 
     const variables = useMemo(() => ({
-        search: '',
+        search,
+        organizations,
+        page: 1,
+        pageSize: 25,
     }), []);
 
     const {
@@ -157,7 +171,9 @@ function ExploreDeep(props: Props) {
 
     return (
         <PageContent className={_cs(styles.exploreDeep, className)}>
-            <ProjectFilterForm />
+            <ProjectFilterForm
+                filters={variables}
+            />
             <TableView
                 columns={columns}
                 keySelector={projectKeySelector}
