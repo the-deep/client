@@ -38,7 +38,7 @@ interface MultiResponseWithSummary<T> extends MultiResponse<T> {
 const commentKeySelector = (d: EntryComment) => d.id;
 const maxItemsPerPage = 50;
 
-function EntryCommentModal(props: Props) {
+function EntryComments(props: Props) {
     const {
         className,
         entryId,
@@ -93,7 +93,7 @@ function EntryCommentModal(props: Props) {
                     heading="Entry Comments"
                     onCloseButtonClick={hideCommentModal}
                     bodyClassName={styles.modalBody}
-                    footerActions={((commentsResponse?.count ?? 0) > maxItemsPerPage) && (
+                    footerActions={(
                         <Pager
                             activePage={activePage}
                             itemsCount={commentsResponse?.count ?? 0}
@@ -124,4 +124,4 @@ function EntryCommentModal(props: Props) {
     );
 }
 
-export default EntryCommentModal;
+export default EntryComments;

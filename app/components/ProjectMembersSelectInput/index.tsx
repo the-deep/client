@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import { Membership, MultiResponse } from '#types';
 
@@ -19,6 +19,7 @@ const labelSelector = (d: Membership) => d.memberName;
 
 const memberFieldQuery = {
     fields: ['member', 'member_name'],
+    limit: 50,
 };
 
 function ProjectMembersMultiSelectInput<K extends string>(props: Props<K>) {
@@ -28,6 +29,8 @@ function ProjectMembersMultiSelectInput<K extends string>(props: Props<K>) {
         ...otherProps
     } = props;
 
+    const [opened, setOpened] = useState(false);
+
     const {
         pending,
         response,
@@ -35,6 +38,7 @@ function ProjectMembersMultiSelectInput<K extends string>(props: Props<K>) {
         {
             url: `server://v2/projects/${projectId}/project-memberships/`,
             method: 'GET',
+            skip: !opened,
             query: memberFieldQuery,
             failureHeader: 'Project Membership',
         },
@@ -48,6 +52,7 @@ function ProjectMembersMultiSelectInput<K extends string>(props: Props<K>) {
             keySelector={keySelector}
             labelSelector={labelSelector}
             optionsPending={pending}
+            onShowDropdownChange={setOpened}
         />
     );
 }

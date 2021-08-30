@@ -18,7 +18,7 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptOutput from '#components/ExcerptOutput';
 import EntryListItem from '#components/EntryListItem';
 import EntryVerification from '#components/EntryVerification';
-import EntryCommentModal from '#components/EntryCommentModal';
+import EntryComments from '#components/EntryComments';
 import EntryControl from '#components/EntryControl';
 import {
     AnalysisFramework,
@@ -183,7 +183,7 @@ function EntryCard(props: Props) {
                                         >
                                             Edit Tags
                                         </Button>
-                                        <EntryCommentModal
+                                        <EntryComments
                                             entryId={entry.id}
                                             projectId={projectId}
                                         />

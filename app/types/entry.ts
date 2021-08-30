@@ -142,8 +142,6 @@ export interface EntryOptions {
     projectEntryLabel: BasicElement[];
 }
 
-
-
 export interface EntryComment {
     id: number;
     textHistory: {

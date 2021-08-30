@@ -7,6 +7,8 @@ import {
     getErrorObject,
     useForm,
     requiredCondition,
+    internal,
+    getErrorString,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -64,6 +66,15 @@ function EntryUncontrolCommentModal(props: Props) {
     const [members, setMembers] = useState<Membership[] | undefined | null>();
 
     const {
+        pristine,
+        value,
+        error: riskyError,
+        setFieldValue,
+        validate,
+        setError,
+    } = useForm(schema, defaultFormValue);
+
+    const {
         pending: reviewRequestPending,
         trigger: triggerReviewRequest,
     } = useLazyRequest<EntryReviewComment, FormType>({
@@ -74,17 +85,19 @@ function EntryUncontrolCommentModal(props: Props) {
             onControlStatusChange(response.entry);
             onModalClose();
         },
+        onFailure: ({ value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
+
+            setError({
+                ...otherErrors,
+                [internal]: $internal,
+            });
+        },
         failureHeader: 'Entry Control',
     });
-
-    const {
-        pristine,
-        value,
-        error: riskyError,
-        setFieldValue,
-        validate,
-        setError,
-    } = useForm(schema, defaultFormValue);
 
     const error = getErrorObject(riskyError);
 
@@ -135,7 +148,7 @@ function EntryUncontrolCommentModal(props: Props) {
                 onChange={setFieldValue}
                 options={members}
                 onOptionsChange={setMembers}
-                error={error?.mentionedUsers?.toString()}
+                error={getErrorString(error?.mentionedUsers)}
             />
         </Modal>
     );
