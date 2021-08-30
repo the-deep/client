@@ -1,5 +1,7 @@
-import React, { useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+    _cs,
+} from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     TableView,
@@ -8,6 +10,7 @@ import {
     TableHeaderCell,
     createStringColumn,
     createNumberColumn,
+    Pager,
 } from '@the-deep/deep-ui';
 
 import PageContent from '#components/PageContent';
@@ -27,6 +30,7 @@ const PROJECT_LIST = gql`
     query ProjectList(
         $search: String,
         $organizations: [ID!],
+        $analysisFrameworks: [ID!],
         $startDate: Date,
         $endDate: Date,
         $page: Int,
@@ -36,6 +40,7 @@ const PROJECT_LIST = gql`
         projects(
             search: $search,
             organizations: $organizations,
+            analysisFrameworks: $analysisFrameworks,
             createdAt_Lt: $endDate,
             createdAt_Gte: $startDate,
             page: $page,
@@ -80,12 +85,15 @@ function ExploreDeep(props: Props) {
         className,
     } = props;
 
+    const [filters, setFilters] = useState<ProjectListQueryVariables | undefined>(undefined);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(25);
+
     const variables = useMemo(() => ({
-        search,
-        organizations,
-        page: 1,
-        pageSize: 25,
-    }), []);
+        ...filters,
+        page,
+        pageSize,
+    }), [page, pageSize, filters]);
 
     const {
         data,
@@ -167,17 +175,28 @@ function ExploreDeep(props: Props) {
         ]);
     }, []);
 
-    console.warn('here', loading, data);
+    const handleFilterChange = useCallback((value: ProjectListQueryVariables | undefined) => {
+        setFilters(value);
+        setPage(1);
+    }, []);
 
     return (
         <PageContent className={_cs(styles.exploreDeep, className)}>
             <ProjectFilterForm
-                filters={variables}
+                filters={filters}
+                onFiltersChange={handleFilterChange}
             />
             <TableView
                 columns={columns}
                 keySelector={projectKeySelector}
                 data={data?.projects?.results}
+            />
+            <Pager
+                activePage={page}
+                itemsCount={(data?.projects?.totalCount) ?? 0}
+                maxItemsPerPage={pageSize}
+                onActivePageChange={setPage}
+                onItemsPerPageChange={setPageSize}
             />
         </PageContent>
     );
