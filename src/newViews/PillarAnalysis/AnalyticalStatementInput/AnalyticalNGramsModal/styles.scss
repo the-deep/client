@@ -10,6 +10,7 @@
         .top-container {
             flex-shrink: 0;
             background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-medium);
         }
 
         .bottom-container {
@@ -19,7 +20,7 @@
 
             .entries-container {
                 display: flex;
-                flex-basis: 30%;
+                flex-basis: 25%;
                 flex-direction: column;
                 background-color: var(--dui-color-foreground);
                 overflow-y: auto;
@@ -41,7 +42,7 @@
 
             .chart-container {
                 display: flex;
-                flex-basis: 70%;
+                flex-basis: 75%;
                 overflow-y: auto;
             }
         }

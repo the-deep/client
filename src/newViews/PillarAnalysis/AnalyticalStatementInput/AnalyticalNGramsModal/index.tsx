@@ -196,16 +196,30 @@ function AnalyticalNGramsModal(props: Props) {
                             data={unigrams}
                             margin={chartMargins}
                         >
-                            <XAxis type="number" />
-                            <YAxis dataKey="name" type="category" scale="band" />
+                            <XAxis
+                                type="number"
+                                width={10}
+                            />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                scale="band"
+                                mirror
+                                style={{
+                                    fontSize: '0.6rem',
+                                }}
+                            />
                             <Tooltip />
-                            <Legend />
+                            <Legend
+                                verticalAlign="top"
+                            />
                             <Bar
                                 name="Unigrams"
                                 onClick={handleNgramClick}
                                 dataKey="count"
                                 barSize={15}
                                 fill="#796ec6"
+                                opacity="0.4"
                             />
                         </BarChart>
                     </ResponsiveContainer>
@@ -215,16 +229,30 @@ function AnalyticalNGramsModal(props: Props) {
                             data={bigrams}
                             margin={chartMargins}
                         >
-                            <XAxis type="number" />
-                            <YAxis dataKey="name" type="category" scale="band" />
+                            <XAxis
+                                type="number"
+                                width={10}
+                            />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                scale="band"
+                                mirror
+                                style={{
+                                    fontSize: '0.5rem',
+                                }}
+                            />
                             <Tooltip />
-                            <Legend />
+                            <Legend
+                                verticalAlign="top"
+                            />
                             <Bar
                                 name="Bigrams"
                                 onClick={handleNgramClick}
                                 dataKey="count"
                                 barSize={15}
-                                fill="#fb8a91"
+                                fill="#FB8A91"
+                                opacity="0.4"
                             />
                         </BarChart>
                     </ResponsiveContainer>
@@ -234,28 +262,30 @@ function AnalyticalNGramsModal(props: Props) {
                             data={trigrams}
                             margin={chartMargins}
                         >
-                            <XAxis type="number" />
+                            <XAxis
+                                type="number"
+                                width={10}
+                            />
                             <YAxis
                                 dataKey="name"
                                 type="category"
                                 scale="band"
-                                label={
-                                    <Button
-                                        variant="transparent"
-                                        name="transparent"
-                                    >
-                                        country
-                                    </Button>
-                                }
+                                mirror
+                                style={{
+                                    fontSize: '0.5rem',
+                                }}
                             />
                             <Tooltip />
-                            <Legend />
+                            <Legend
+                                verticalAlign="top"
+                            />
                             <Bar
                                 name="Trigrams"
                                 onClick={handleNgramClick}
                                 dataKey="count"
                                 barSize={15}
-                                fill="#4cc1b7"
+                                fill="#4CC1B7"
+                                opacity="0.4"
                             />
                         </BarChart>
                     </ResponsiveContainer>
