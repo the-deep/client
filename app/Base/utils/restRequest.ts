@@ -10,6 +10,7 @@ import { mapToMap, isDefined } from '@togglecorp/fujs';
 import {
     serverlessEndpoint,
     wsEndpoint,
+    // reactAppApiHttps,
 } from '#base/configs/restRequest';
 
 function getCookie(name: string) {
@@ -167,7 +168,14 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
 
     const isInternalRequest = url.startsWith(serverPrefix);
     if (isInternalRequest) {
+        /*
+        // TODO: enable this after the feature is enabled in server
+        const csrftoken = reactAppApiHttps === 'https'
+            ? getCookie(`__Secure-deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`)
+            : getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
+       */
         const csrftoken = getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
+
         finalOptions.credentials = 'include';
         if (finalOptions.headers) {
             finalOptions.headers['X-CSRFToken'] = csrftoken;

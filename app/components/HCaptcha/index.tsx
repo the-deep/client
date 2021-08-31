@@ -8,7 +8,7 @@ import {
 
 export type HCaptchaProps<T> = Omit<InputContainerProps, 'input'> & {
     name: T,
-    siteKey: string;
+    siteKey: string | undefined;
     onChange: (value: string | undefined, name: T) => void;
     elementRef?: React.RefObject<HCaptcha>;
 };
@@ -75,7 +75,7 @@ function HCaptchaInput<T extends string>(props: HCaptchaProps<T>) {
             labelContainerClassName={labelContainerClassName}
             readOnly={readOnly}
             uiMode={uiMode}
-            input={(
+            input={siteKey && (
                 <HCaptcha
                     ref={elementRef}
                     // disabled={disabled || readOnly}
