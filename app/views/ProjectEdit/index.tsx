@@ -86,7 +86,7 @@ function ProjectEdit() {
                         <Tab
                             name="general"
                             className={styles.tab}
-                            activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             {_ts('projectEdit', 'projectDetailsLabel')}
                         </Tab>
@@ -94,7 +94,7 @@ function ProjectEdit() {
                             name="geo-areas"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
-                            activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             {_ts('projectEdit', 'geoAreas')}
                         </Tab>
@@ -102,7 +102,7 @@ function ProjectEdit() {
                             name="users"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
-                            activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             {_ts('projectEdit', 'usersLabel')}
                         </Tab>
@@ -110,7 +110,7 @@ function ProjectEdit() {
                             name="framework"
                             className={styles.tab}
                             disabled={isNotDefined(projectId)}
-                            activeClassName={styles.activeTab}
+                            transparentBorder
                         >
                             {_ts('projectEdit', 'frameworkLabel')}
                         </Tab>

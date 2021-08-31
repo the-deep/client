@@ -242,7 +242,7 @@ function SourcesTable(props: Props) {
                 variant: statusVariantMap[data.status],
                 children: statusLabelMap[data.status],
             }),
-            columnWidth: 172,
+            columnWidth: 190,
         };
         const createdAtColumn: TableColumn<
             Lead, number, DateOutputProps, TableHeaderCellProps
