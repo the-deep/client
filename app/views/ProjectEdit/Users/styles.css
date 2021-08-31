@@ -2,7 +2,8 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
+    background-color: var(--dui-color-background);
+    padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
     overflow-y: auto;
 
     .user-list {

@@ -8,13 +8,8 @@
         flex-shrink: 0;
 
         .tab-list {
-            .active-tab,
             .tab {
                 font-size: var(--dui-font-size-large);
-
-                &:not(.active-tab) {
-                    border-bottom-color: transparent;
-                }
             }
         }
 
