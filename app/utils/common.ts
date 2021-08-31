@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, ReactElement } from 'react';
 
 import {
     isDefined,
@@ -95,4 +95,28 @@ export function parseUrlParams(stringParams: string) {
         };
     });
     return paramsJson;
+}
+
+export function joinList(
+    list: ReactElement[],
+    separator = ', ',
+    finalSeparator = ' and ',
+) {
+    const ll = list.length;
+
+    return list.map(
+        (item, index) => {
+            if (index === ll - 1) {
+                return [item];
+            }
+            if (index === ll - 2) {
+                return [item, finalSeparator];
+            }
+
+            return [
+                item,
+                separator,
+            ];
+        },
+    ).flat();
 }

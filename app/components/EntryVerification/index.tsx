@@ -10,7 +10,7 @@ import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import UserContext from '#base/context/UserContext';
 
-import { EntryAction } from '../constants';
+import { EntryAction } from '#components/commentConstants';
 import EntryUnverifyCommentModal from './EntryUnverifyCommentModal';
 import styles from './styles.css';
 
@@ -73,14 +73,11 @@ function EntryVerification(props: Props) {
     }, [isVerifiedByUser, triggerReviewRequest, setCommentModalVisible]);
 
     return (
-        <div
-            className={_cs(className, styles.toggleEntryVerification)}
-        >
+        <>
             <Button
+                className={_cs(className, styles.toggleEntryVerification)}
                 name="entryVerification"
-                variant={(
-                    isVerifiedByUser ? 'primary' : 'secondary'
-                )}
+                variant="secondary"
                 actionsContainerClassName={styles.verifyActions}
                 actions={(
                     <>
@@ -107,7 +104,7 @@ function EntryVerification(props: Props) {
                     onModalClose={setCommentModalHidden}
                 />
             )}
-        </div>
+        </>
     );
 }
 

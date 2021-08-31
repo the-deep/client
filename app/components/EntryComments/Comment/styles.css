@@ -1,0 +1,47 @@
+.comment-container {
+    display: flex;
+    margin: var(--dui-spacing-medium);
+    background-color: var(--dui-color-white);
+
+    .header {
+        display: flex;
+
+        .heading-container {
+            display: flex;
+            align-self: stretch;
+            justify-content: center;
+
+            .heading {
+                display: flex;
+                align-items: center;
+
+                .details {
+                    color: var(--dui-color-text);
+                    font-weight: var(--dui-font-weight-medium);
+                }
+            }
+        }
+
+        .button {
+            margin-left: var(--dui-spacing-small);
+        }
+    }
+
+    .footer-content {
+        color: var(--dui-color-text);
+        .users {
+            color: var(--dui-color-black);
+        }
+    }
+
+    .footer-actions {
+        .modified {
+            display: flex;
+        }
+    }
+
+    .comment {
+        background-color: var(--dui-color-background-information);
+        color: var(--dui-color-text);
+    }
+}

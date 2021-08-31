@@ -1,0 +1,21 @@
+.comment-button {
+    overflow: visible;
+
+    .comment-count {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-radius: 1em;
+        background-color: var(--dui-color-danger);
+        padding: 0 var(--dui-spacing-extra-small);
+        color: var(--dui-color-text-on-dark);
+        font-size: var(--dui-font-size-extra-small);
+    }
+}
+.entry-comment-modal {
+    display: flex;
+
+    .modal-body {
+        background-color: var(--dui-color-background);
+    }
+}

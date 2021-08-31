@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     requiredStringCondition,
@@ -7,27 +7,25 @@ import {
     getErrorObject,
     useForm,
     requiredCondition,
+    internal,
+    getErrorString,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
     TextArea,
-    MultiSelectInput,
     Button,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest, useRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
+import ProjectMembersMultiSelectInput from '#components/ProjectMembersSelectInput';
 import { EntryReviewComment } from '#types/newEntry';
 import {
-    MultiResponse,
     Membership,
 } from '#types';
 
-import { EntryAction } from '../../constants';
+import { EntryAction } from '#components/commentConstants';
 import styles from './styles.css';
-
-export const memberKeySelector = (d: Membership) => d.member;
-export const memberNameSelector = (d:Membership) => d.memberName;
 
 type FormType = {
     commentType: number,
@@ -65,14 +63,16 @@ function EntryUncontrolCommentModal(props: Props) {
         projectId,
     } = props;
 
+    const [members, setMembers] = useState<Membership[] | undefined | null>();
+
     const {
-        pending: projectMembersPending,
-        response: projectMembersResponse,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://v2/projects/${projectId}/project-memberships/`,
-        method: 'GET',
-        failureHeader: 'Project Membership',
-    });
+        pristine,
+        value,
+        error: riskyError,
+        setFieldValue,
+        validate,
+        setError,
+    } = useForm(schema, defaultFormValue);
 
     const {
         pending: reviewRequestPending,
@@ -85,17 +85,19 @@ function EntryUncontrolCommentModal(props: Props) {
             onControlStatusChange(response.entry);
             onModalClose();
         },
+        onFailure: ({ value: errorValue }) => {
+            const {
+                $internal,
+                ...otherErrors
+            } = errorValue.faramErrors;
+
+            setError({
+                ...otherErrors,
+                [internal]: $internal,
+            });
+        },
         failureHeader: 'Entry Control',
     });
-
-    const {
-        pristine,
-        value,
-        error: riskyError,
-        setFieldValue,
-        validate,
-        setError,
-    } = useForm(schema, defaultFormValue);
 
     const error = getErrorObject(riskyError);
 
@@ -110,9 +112,21 @@ function EntryUncontrolCommentModal(props: Props) {
     return (
         <Modal
             onCloseButtonClick={onModalClose}
-            className={_cs(styles.entryCommentModal, className)}
-            heading="Uncontrol Entry"
-            bodyClassName={styles.entryCommentForm}
+            className={_cs(styles.modal, className)}
+            heading="Reason to uncontrol entry"
+            bodyClassName={styles.modalBody}
+            footerIcons={(
+                <ProjectMembersMultiSelectInput
+                    name="mentionedUsers"
+                    label="Flag to"
+                    value={value.mentionedUsers}
+                    projectId={projectId}
+                    onChange={setFieldValue}
+                    options={members}
+                    onOptionsChange={setMembers}
+                    error={getErrorString(error?.mentionedUsers)}
+                />
+            )}
             footerActions={(
                 <Button
                     disabled={pristine || reviewRequestPending}
@@ -125,28 +139,15 @@ function EntryUncontrolCommentModal(props: Props) {
                 </Button>
             )}
         >
-            <NonFieldError
-                error={error}
-            />
+            <NonFieldError error={error} />
             <TextArea
-                className={styles.input}
                 name="text"
                 label="Comment"
                 value={value.text}
                 onChange={setFieldValue}
+                error={error?.text}
                 rows={3}
                 autoFocus
-            />
-            <MultiSelectInput
-                className={styles.input}
-                name="mentionedUsers"
-                label="Assignees"
-                value={value.mentionedUsers}
-                onChange={setFieldValue}
-                options={projectMembersResponse?.results}
-                keySelector={memberKeySelector}
-                labelSelector={memberNameSelector}
-                disabled={projectMembersPending}
             />
         </Modal>
     );

@@ -1,22 +1,24 @@
 import React, { useState, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    QuickActionButton,
     ButtonLikeLink,
     Container,
 } from '@the-deep/deep-ui';
-import { FaRegCommentAlt } from 'react-icons/fa';
 import { FiEdit2 } from 'react-icons/fi';
+
 import { useLazyRequest } from '#base/utils/restRequest';
 import { Entry } from '#types/newEntry';
 import ProjectContext from '#base/context/ProjectContext';
 import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
-import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
-import EntryVerification from './EntryVerification';
-import EntryControl from './EntryControl';
+
+import EntryListItem from '#components/EntryListItem';
+import EntryComments from '#components/EntryComments';
+import EntryVerification from '#components/EntryVerification';
+import EntryControl from '#components/EntryControl';
+
 import styles from './styles.css';
 
 interface Props {
@@ -61,9 +63,6 @@ function EntryItem(props: Props) {
         failureHeader: 'Entry',
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const handleClick = () => {}; // TODO: implement later
-
     return (
         <Container
             className={_cs(className, styles.entryItemContainer)}
@@ -83,15 +82,11 @@ function EntryItem(props: Props) {
                             >
                                 Edit Tags
                             </ButtonLikeLink>
-                            <QuickActionButton
+                            <EntryComments
                                 className={styles.button}
-                                variant="secondary"
-                                name="showComments"
-                                disabled
-                                onClick={handleClick}
-                            >
-                                <FaRegCommentAlt />
-                            </QuickActionButton>
+                                entryId={entry.id}
+                                projectId={projectId}
+                            />
                             <EntryVerification
                                 className={styles.button}
                                 entryId={entry.id}
@@ -114,7 +109,7 @@ function EntryItem(props: Props) {
         >
             <EntryListItem
                 className={styles.entry}
-                entry={entry1} // TODO remove mock entry usage when actual usable entry is available
+                entry={entry1} // TODO remove mock entry usage appropriate
                 framework={frameworkMockData}
                 readOnly
             />

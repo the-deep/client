@@ -1,0 +1,10 @@
+.toggle-entry-verification {
+    .verify-actions {
+        display: flex;
+        border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+        border-radius: 1em;
+        padding: 0 var(--dui-spacing-small);
+        color: var(--dui-color-accent);
+        gap: var(--dui-spacing-small);
+    }
+}

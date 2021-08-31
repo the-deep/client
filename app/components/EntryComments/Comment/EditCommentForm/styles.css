@@ -1,0 +1,8 @@
+.edit-comment-form {
+    display: flex;
+
+    .container {
+        display: flex;
+        flex-grow: 1;
+    }
+}

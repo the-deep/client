@@ -92,8 +92,10 @@ function Sources(props: Props) {
                         refreshTimestamp={refreshTimestamp}
                     />
                 )}
-                {activeView === 'grid' && (
-                    <SourcesGrid />
+                {activeView === 'grid' && activeProject && (
+                    <SourcesGrid
+                        projectId={activeProject}
+                    />
                 )}
             </div>
         </div>
