@@ -10,6 +10,8 @@
         flex-shrink: 0;
 
         .breadcrumb {
+            display: flex;
+            align-items: center;
             font-size: var(--dui-font-size-large);
             font-weight: var(--dui-font-weight-bold);
         }

@@ -540,9 +540,16 @@ function PillarAnalysis(props: Props) {
     ]);
 
     const pending = pendingPillarAnalysis
-    || pendingEntriesInitialData
-    || pendingPillarAnalysisSave
-    || pendingDiscardedTags;
+        || pendingEntriesInitialData
+        || pendingPillarAnalysisSave
+        || pendingDiscardedTags;
+
+    const handleNgramChange = useCallback((val: string | undefined) => {
+        setFiltersValue(filterVal => ({
+            ...filterVal,
+            search: val,
+        }));
+    }, []);
 
     const analyticalStatementRendererParams = useCallback((
         key: string,
@@ -556,8 +563,10 @@ function PillarAnalysis(props: Props) {
         onRemove: onAnalyticalStatementRemove,
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
+        onSelectedNgramChange: handleNgramChange,
         error: arrayError?.[statement?.clientId],
     }), [
+        handleNgramChange,
         onAnalyticalStatementChange,
         onAnalyticalStatementRemove,
         handleEntryMove,
