@@ -4,13 +4,40 @@
     align-items: center;
     background-color: var(--dui-color-foreground);
     padding: 0 var(--dui-spacing-super-large);
+    overflow: auto;
+    --gap: var(--dui-spacing-large);
+    gap: var(--gap);
 
-    .icons {
-        flex-shrink: unset!important;
+    .heading-section {
+        display: flex;
+        align-items: center;
+        padding: var(--dui-spacing-medium) 0;
         overflow: auto;
+        gap: var(--gap);
+
+        .app-brand {
+            flex-shrink: 0;
+            overflow: auto;
+            color: var(--dui-color-brand);
+
+            .logo {
+                height: var(--dui-font-size-super-large);
+            }
+        }
+
+        .heading-container {
+            flex-grow: 1;
+            overflow: auto;
+
+            .heading {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
 
         .description-container {
-            flex-shrink: unset;
+            flex-grow: 0.5;
             overflow: auto;
 
             .description {
@@ -21,25 +48,15 @@
         }
     }
 
-    .content {
+    .menu-section {
         display: flex;
-        align-items: stretch;
         align-self: stretch;
+        flex-grow: 1;
         justify-content: center;
-        padding-top: 0;
-        padding-bottom: 0;
     }
 
-    /*
-    .icon-wrapper {
-    display: flex;
-    align-items: center;
-    padding: var(--dui-spacing-small) var(--dui-spacing-medium);
-
-    .icon {
-    height: 2rem;
-    color: var(--dui-color-brand);
+    .actions-section {
+        display: flex;
+        flex-shrink: 0;
     }
-    }
-     */
 }

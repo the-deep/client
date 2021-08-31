@@ -1,13 +1,12 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    ElementFragments,
     Heading,
     Border,
 } from '@the-deep/deep-ui';
 
-// import Svg from '#newComponents/Svg';
-// import newDeepLogo from '#resources/img/deep-logo-new.svg';
+import Svg from '#components/Svg';
+import deepLogo from '#resources/img/deep-logo-new.svg';
 
 import styles from './styles.css';
 
@@ -29,36 +28,36 @@ function FullPageHeader(props: FullPageHeaderProps) {
     } = props;
 
     return (
-        <div
-            className={_cs(styles.fullPageHeader, className)}
-        >
-            <ElementFragments
-                actions={actions}
-                iconsContainerClassName={styles.icons}
-                childrenContainerClassName={styles.content}
-                icons={(
-                    <>
-                        <Heading size="medium">
-                            {heading}
-                        </Heading>
-                        <div className={styles.descriptionContainer}>
-                            <div className={styles.description}>
-                                {description}
-                            </div>
+        <div className={_cs(styles.fullPageHeader, className)}>
+            <div className={styles.headingSection}>
+                <div className={styles.appBrand}>
+                    <Svg
+                        className={styles.logo}
+                        src={deepLogo}
+                    />
+                </div>
+                <div className={styles.headingContainer}>
+                    <Heading
+                        size="medium"
+                        className={styles.heading}
+                    >
+                        {heading}
+                    </Heading>
+                </div>
+                {description && (
+                    <div className={styles.descriptionContainer}>
+                        <div className={styles.description}>
+                            {description}
                         </div>
-                    </>
-                /*
-                    <div className={styles.iconWrapper}>
-                        <Svg
-                            className={styles.icon}
-                            src={newDeepLogo}
-                        />
                     </div>
-                 */
                 )}
-            >
+            </div>
+            <div className={styles.menuSection}>
                 {children}
-            </ElementFragments>
+            </div>
+            <div className={styles.actionsSection}>
+                {actions}
+            </div>
             <Border />
         </div>
     );
