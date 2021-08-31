@@ -104,9 +104,21 @@ function EntryUnverifyCommentModal(props: Props) {
     return (
         <Modal
             onCloseButtonClick={onModalClose}
-            className={_cs(styles.entryCommentModal, className)}
-            heading="Unverify Entry"
-            bodyClassName={styles.entryCommentForm}
+            className={_cs(styles.modal, className)}
+            heading="Reason for unverify"
+            bodyClassName={styles.modalBody}
+            footerIcons={(
+                <ProjectMembersMultiSelectInput
+                    name="mentionedUsers"
+                    label="Flag to"
+                    value={value.mentionedUsers}
+                    projectId={projectId}
+                    onChange={setFieldValue}
+                    options={members}
+                    onOptionsChange={setMembers}
+                    error={getErrorString(error?.mentionedUsers)}
+                />
+            )}
             footerActions={(
                 <Button
                     disabled={pristine || reviewRequestPending}
@@ -115,15 +127,12 @@ function EntryUnverifyCommentModal(props: Props) {
                     name="unverifyEntry"
                     onClick={handleSubmit}
                 >
-                    Submit
+                    Save
                 </Button>
             )}
         >
-            <NonFieldError
-                error={error}
-            />
+            <NonFieldError error={error} />
             <TextArea
-                className={styles.input}
                 name="text"
                 label="Comment"
                 value={value.text}
@@ -131,16 +140,6 @@ function EntryUnverifyCommentModal(props: Props) {
                 error={error?.text}
                 rows={3}
                 autoFocus
-            />
-            <ProjectMembersMultiSelectInput
-                name="mentionedUsers"
-                label="Assignees"
-                value={value.mentionedUsers}
-                projectId={projectId}
-                onChange={setFieldValue}
-                options={members}
-                onOptionsChange={setMembers}
-                error={getErrorString(error?.mentionedUsers)}
             />
         </Modal>
     );

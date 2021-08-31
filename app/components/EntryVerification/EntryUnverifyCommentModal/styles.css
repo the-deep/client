@@ -1,13 +1,7 @@
-.entry-comment-modal {
-    display: flex;
+.modal {
+    width: clamp(480px, 60vw, 720px);
 
-    .entry-comment-form {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        .input {
-            margin: var(--dui-spacing-small);
-        }
+    .modal-body {
+        padding: var(--dui-spacing-large) 0;
     }
 }
