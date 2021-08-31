@@ -95,7 +95,6 @@ interface OwnProps {
     projectId: number;
     widgets?: WidgetElement<unknown>[];
     disabled?: boolean;
-    selectedNgram?: string;
 }
 
 function EntriesFilterForm(props: OwnProps) {
@@ -108,7 +107,6 @@ function EntriesFilterForm(props: OwnProps) {
         regions,
         onFiltersValueChange,
         disabled,
-        selectedNgram,
     } = props;
 
     const [
@@ -141,13 +139,6 @@ function EntriesFilterForm(props: OwnProps) {
     useEffect(() => {
         setValue(filtersValue ?? initialValue);
     }, [filtersValue, setValue]);
-
-    useEffect(() => {
-        setFieldValue(selectedNgram, 'search');
-    }, [
-        selectedNgram,
-        setFieldValue,
-    ]);
 
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(value, [''])

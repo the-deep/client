@@ -87,7 +87,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             draggedOverClassName={styles.draggedOver}
             contentClassName={styles.content}
             disabled={dropDisabled}
-        // TODO: disable this when entries count is greater than certain count
+            // TODO: disable this when entries count is greater than certain count
         >
             <DraggableContent
                 className={styles.entry}

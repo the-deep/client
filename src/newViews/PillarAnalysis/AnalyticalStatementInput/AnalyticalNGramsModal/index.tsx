@@ -18,6 +18,7 @@ import {
     XAxis,
     YAxis,
     Tooltip,
+    LabelList,
     Legend,
 } from 'recharts';
 
@@ -37,6 +38,8 @@ const chartMargins = {
     right: 10,
     left: 10,
 };
+
+const emptyTickFormatter = () => '';
 
 interface NgramsResponse {
     ngrams: {
@@ -77,10 +80,13 @@ function AnalyticalNGramsModal(props: Props) {
     const [tempMainStatement, setTempMainStatement] = useState<string | undefined>(mainStatement);
     const [pristine, setPristine] = useState(true);
 
-    const handleNgramClick = useCallback((item) => {
-        const typedItem = item as { name: string };
-        onNgramClick(typedItem?.name);
-        onModalClose();
+    const handleNgramClick = useCallback((item: unknown) => {
+        // NOTE: Recharts doesn't have good typing
+        const typedItem = item as { name: string } | undefined;
+        if (typedItem?.name) {
+            onNgramClick(typedItem.name);
+            onModalClose();
+        }
     }, [onNgramClick, onModalClose]);
 
     const entriesForNgrams = useMemo(() => (
@@ -93,7 +99,7 @@ function AnalyticalNGramsModal(props: Props) {
         const excerptTexts = entriesForNgrams.map(ae => ae.excerpt);
 
         return ({
-            entries: excerptTexts.filter(ae => ae && ae.length > 3).filter(isDefined),
+            entries: excerptTexts.filter(isDefined),
             ngrams: {
                 unigrams: true,
                 bigrams: true,
@@ -123,9 +129,9 @@ function AnalyticalNGramsModal(props: Props) {
     } = useMemo(() => {
         const ngrams = ngramsResponse?.ngrams;
         return ({
-            unigrams: mapToList(ngrams?.unigrams ?? {}, (d, k) => ({ count: d, name: k })),
-            bigrams: mapToList(ngrams?.bigrams ?? {}, (d, k) => ({ count: d, name: k })),
-            trigrams: mapToList(ngrams?.trigrams ?? {}, (d, k) => ({ count: d, name: k })),
+            unigrams: mapToList(ngrams?.unigrams, (d, k) => ({ count: d, name: k })) ?? [],
+            bigrams: mapToList(ngrams?.bigrams, (d, k) => ({ count: d, name: k })) ?? [],
+            trigrams: mapToList(ngrams?.trigrams, (d, k) => ({ count: d, name: k })) ?? [],
         });
     }, [ngramsResponse]);
 
@@ -196,31 +202,28 @@ function AnalyticalNGramsModal(props: Props) {
                             data={unigrams}
                             margin={chartMargins}
                         >
-                            <XAxis
-                                type="number"
-                                width={10}
-                            />
+                            <XAxis type="number" />
                             <YAxis
                                 dataKey="name"
                                 type="category"
                                 scale="band"
-                                mirror
-                                style={{
-                                    fontSize: '0.6rem',
-                                }}
+                                tickFormatter={emptyTickFormatter}
                             />
                             <Tooltip />
-                            <Legend
-                                verticalAlign="top"
-                            />
+                            <Legend verticalAlign="top" />
                             <Bar
                                 name="Unigrams"
                                 onClick={handleNgramClick}
                                 dataKey="count"
-                                barSize={15}
+                                barSize={16}
                                 fill="#796ec6"
                                 opacity="0.4"
-                            />
+                            >
+                                <LabelList
+                                    dataKey="name"
+                                    position="insideLeft"
+                                />
+                            </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                     <ResponsiveContainer>
@@ -229,31 +232,28 @@ function AnalyticalNGramsModal(props: Props) {
                             data={bigrams}
                             margin={chartMargins}
                         >
-                            <XAxis
-                                type="number"
-                                width={10}
-                            />
+                            <XAxis type="number" />
                             <YAxis
                                 dataKey="name"
                                 type="category"
                                 scale="band"
-                                mirror
-                                style={{
-                                    fontSize: '0.5rem',
-                                }}
+                                tickFormatter={emptyTickFormatter}
                             />
                             <Tooltip />
-                            <Legend
-                                verticalAlign="top"
-                            />
+                            <Legend verticalAlign="top" />
                             <Bar
                                 name="Bigrams"
                                 onClick={handleNgramClick}
                                 dataKey="count"
-                                barSize={15}
+                                barSize={16}
                                 fill="#FB8A91"
                                 opacity="0.4"
-                            />
+                            >
+                                <LabelList
+                                    dataKey="name"
+                                    position="insideLeft"
+                                />
+                            </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                     <ResponsiveContainer>
@@ -262,18 +262,12 @@ function AnalyticalNGramsModal(props: Props) {
                             data={trigrams}
                             margin={chartMargins}
                         >
-                            <XAxis
-                                type="number"
-                                width={10}
-                            />
+                            <XAxis type="number" />
                             <YAxis
                                 dataKey="name"
+                                tickFormatter={emptyTickFormatter}
                                 type="category"
                                 scale="band"
-                                mirror
-                                style={{
-                                    fontSize: '0.5rem',
-                                }}
                             />
                             <Tooltip />
                             <Legend
@@ -283,10 +277,15 @@ function AnalyticalNGramsModal(props: Props) {
                                 name="Trigrams"
                                 onClick={handleNgramClick}
                                 dataKey="count"
-                                barSize={15}
+                                barSize={16}
                                 fill="#4CC1B7"
                                 opacity="0.4"
-                            />
+                            >
+                                <LabelList
+                                    dataKey="name"
+                                    position="insideLeft"
+                                />
+                            </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

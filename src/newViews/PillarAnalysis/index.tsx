@@ -177,7 +177,6 @@ function PillarAnalysis(props: Props) {
     const initialValue = pillarAnalysisFromProps?.data ?? defaultFormValues;
 
     const [versionId, setVersionId] = useState(pillarAnalysisFromProps?.versionId);
-    const [selectedNgram, setSelectedNgram] = useState<string | undefined>();
 
     const {
         pristine,
@@ -545,6 +544,13 @@ function PillarAnalysis(props: Props) {
         || pendingPillarAnalysisSave
         || pendingDiscardedTags;
 
+    const handleNgramChange = useCallback((val: string | undefined) => {
+        setFiltersValue(filterVal => ({
+            ...filterVal,
+            search: val,
+        }));
+    }, []);
+
     const analyticalStatementRendererParams = useCallback((
         key: string,
         statement: PartialAnalyticalStatementType,
@@ -557,9 +563,10 @@ function PillarAnalysis(props: Props) {
         onRemove: onAnalyticalStatementRemove,
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
-        onSelectedNgramChange: setSelectedNgram,
+        onSelectedNgramChange: handleNgramChange,
         error: arrayError?.[statement?.clientId],
     }), [
+        handleNgramChange,
         onAnalyticalStatementChange,
         onAnalyticalStatementRemove,
         handleEntryMove,
@@ -649,7 +656,6 @@ function PillarAnalysis(props: Props) {
                     widgets={framework?.widgets}
                     projectId={projectId}
                     disabled={pendingFramework}
-                    selectedNgram={selectedNgram}
                 />
                 <div className={styles.workspace}>
                     <Tabs
