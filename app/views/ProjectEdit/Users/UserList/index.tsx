@@ -163,7 +163,6 @@ function UserList(props: Props) {
         <Container
             className={_cs(className, styles.users)}
             heading={_ts('projectEdit', 'projectUsers')}
-            headingClassName={styles.heading}
             contentClassName={styles.content}
             headerActions={(
                 <Button
@@ -184,6 +183,7 @@ function UserList(props: Props) {
                 data={usersResponse?.results}
                 keySelector={userKeySelector}
                 emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
+                rowClassName={styles.tableRow}
                 columns={columns}
             />
             <Pager

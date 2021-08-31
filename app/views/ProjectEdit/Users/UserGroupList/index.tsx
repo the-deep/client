@@ -34,6 +34,7 @@ import {
 import _ts from '#ts';
 
 import AddUserGroupModal from './AddUserGroupModal';
+
 import styles from './styles.css';
 
 const maxItemsPerPage = 10;
@@ -167,39 +168,31 @@ function UserGroupList(props: Props) {
     return (
         <Container
             className={_cs(className, styles.usergroups)}
-            heading={(
-                <>
-                    <span className={styles.title}>
-                        {_ts('projectEdit', 'userGroup')}
-                    </span>
-                    <Link
-                        className={styles.link}
-                        to={routeToUserGroups}
-                        actions={(
-                            <IoChevronForward />
-                        )}
-                    >
-                        {_ts('projectEdit', 'manageUserGroup')}
-                    </Link>
-                </>
+            heading={_ts('projectEdit', 'userGroup')}
+            inlineHeadingDescription
+            headingDescription={(
+                <Link
+                    to={routeToUserGroups}
+                    actions={(
+                        <IoChevronForward />
+                    )}
+                >
+                    {_ts('projectEdit', 'manageUserGroup')}
+                </Link>
             )}
-            headingClassName={styles.heading}
-            headerClassName={styles.header}
             contentClassName={styles.content}
             headerActions={(
-                <div className={styles.actions}>
-                    <Button
-                        variant="tertiary"
-                        name="add-usergroup"
-                        icons={(
-                            <IoAdd />
-                        )}
-                        onClick={handleAddUsergroupClick}
-                        disabled={pending}
-                    >
-                        {_ts('projectEdit', 'addUserGroup')}
-                    </Button>
-                </div>
+                <Button
+                    variant="tertiary"
+                    name="add-usergroup"
+                    icons={(
+                        <IoAdd />
+                    )}
+                    onClick={handleAddUsergroupClick}
+                    disabled={pending}
+                >
+                    {_ts('projectEdit', 'addUserGroup')}
+                </Button>
             )}
         >
             {(usergroupPending || pending) && (<PendingMessage />)}
@@ -208,6 +201,7 @@ function UserGroupList(props: Props) {
                 keySelector={usergroupKeySelector}
                 columns={columns}
                 emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
+                rowClassName={styles.tableRow}
             />
             <Pager
                 activePage={activePage}

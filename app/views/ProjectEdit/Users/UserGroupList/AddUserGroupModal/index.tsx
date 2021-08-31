@@ -204,12 +204,10 @@ function AddUserGroupModal(props: Props) {
             <NonFieldError error={error} />
             <SelectInput
                 name="usergroup"
-                className={styles.input}
                 options={usergroupList}
                 readOnly={isDefined(usergroupValue)}
                 keySelector={usergroupKeySelector}
                 labelSelector={usergroupLabelSelector}
-                optionsPopupClassName={styles.optionsPopup}
                 onChange={setFieldValue}
                 value={value.usergroup}
                 error={error?.usergroup}
@@ -218,11 +216,9 @@ function AddUserGroupModal(props: Props) {
             />
             <SelectInput
                 name="role"
-                className={styles.input}
                 options={roles}
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
-                optionsPopupClassName={styles.optionsPopup}
                 onChange={setFieldValue}
                 value={value.role}
                 error={error?.role}

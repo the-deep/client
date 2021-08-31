@@ -175,7 +175,6 @@ function AddUserModal(props: Props) {
             {pendingAddAction && (<PendingMessage />)}
             <NonFieldError error={error} />
             <UserSelectInput
-                className={styles.input}
                 queryParams={queryForUsers}
                 name="member"
                 readOnly={isDefined(userValue)}
@@ -185,17 +184,14 @@ function AddUserModal(props: Props) {
                 onOptionsChange={setUserOptions}
                 error={error?.member}
                 disabled={pendingRequests}
-                optionsPopupClassName={styles.optionsPopup}
                 label={_ts('projectEdit', 'userLabel')}
                 placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
             />
             <SelectInput
                 name="role"
-                className={styles.input}
                 options={roles}
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
-                optionsPopupClassName={styles.optionsPopup}
                 onChange={setFieldValue}
                 value={value.role}
                 error={error?.role}
