@@ -6,24 +6,21 @@
     overflow-y: auto;
     --width-left-container: 320px;
 
-    .left-padding {
-        background-color: var(--dui-color-background-information);
-        width: var(--dui-spacing-extra-large);
-    }
-
     .left-container {
         flex-shrink: 0;
         background-color: var(--dui-color-background-information);
+        padding-left: var(--dui-spacing-super-large);
         width: var(--width-left-container);
         height: 100%;
         overflow-y: auto;
 
         .filters {
-            padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium)) 0;
-
-            .filter {
-                padding: var(--dui-spacing-medium);
-            }
+            display: flex;
+            flex-direction: column;
+            padding: var(--dui-spacing-medium) 0;
+            padding-right: var(--dui-spacing-medium);
+            overflow-y: auto;
+            gap: var(--dui-spacing-medium);
         }
 
         .framework-list {
@@ -80,11 +77,13 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        background-color: var(--dui-color-background);
         padding: var(--dui-spacing-medium) var(--dui-spacing-large);
+        padding-right: var(--dui-spacing-super-large);
 
         .selected-framework-details {
             flex-grow: 1;
-            margin: var(--dui-spacing-medium);
+            margin: var(--dui-spacing-medium) 0;
         }
 
         .no-framework-selected {

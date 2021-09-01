@@ -225,18 +225,26 @@ function ProjectFramework(props: Props) {
 
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
         setSelectedFramework(newFrameworkId);
-        retriggerGetFrameworkListRequest();
+        setFrameworkList([]);
+        if (offset !== 0) {
+            setOffset(0);
+        } else {
+            retriggerGetFrameworkListRequest();
+        }
         hideFrameworkAddModal();
-    }, [setSelectedFramework, hideFrameworkAddModal, retriggerGetFrameworkListRequest]);
+    }, [
+        setSelectedFramework,
+        hideFrameworkAddModal,
+        retriggerGetFrameworkListRequest,
+        offset,
+    ]);
 
     return (
         <div className={_cs(styles.framework, className)}>
-            <div className={styles.leftPadding} />
             <div className={styles.leftContainer}>
                 <div className={styles.filters}>
                     <SelectInput
                         name="relatedToMe"
-                        className={styles.filter}
                         onChange={setFieldValue}
                         options={frameworkFilterOptions}
                         keySelector={relatedToMeKeySelector}
@@ -247,7 +255,6 @@ function ProjectFramework(props: Props) {
                     <TextInput
                         icons={<IoSearch />}
                         name="search"
-                        className={styles.filter}
                         onChange={setFieldValue}
                         value={value.search}
                         placeholder={_ts('projectEdit', 'searchLabel')}
@@ -289,8 +296,8 @@ function ProjectFramework(props: Props) {
             </div>
             <div className={styles.mainContainer}>
                 <Header
-                    heading={_ts('projectEdit', 'infoOnFrameworkLabel')}
-                    headingSize="extraSmall"
+                    // heading={_ts('projectEdit', 'infoOnFrameworkLabel')}
+                    // headingSize="extraSmall"
                     actions={(
                         <Button
                             name="addNewFramework"
@@ -316,8 +323,7 @@ function ProjectFramework(props: Props) {
                         frameworkId={selectedFramework}
                         className={styles.selectedFrameworkDetails}
                         onProjectChange={retriggerProjectDetailsRequest}
-                        onFrameworkChange={setSelectedFramework}
-                        onFrameworkCreate={retriggerGetFrameworkListRequest}
+                        onFrameworkCreate={handleNewFrameworkAddSuccess}
                     />
                 ) : (
                     <div className={styles.noFrameworkSelected}>

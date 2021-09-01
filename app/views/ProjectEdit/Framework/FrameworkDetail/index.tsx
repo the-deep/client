@@ -10,6 +10,7 @@ import {
 } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
+    Card,
     ConfirmButton,
     Tag,
     List,
@@ -56,8 +57,7 @@ interface Props {
     frameworkId: number;
     projectId: number;
     onProjectChange: (project: ProjectDetails) => void;
-    onFrameworkChange: (newFrameworkSelected: number) => void;
-    onFrameworkCreate: () => void;
+    onFrameworkCreate: (newFrameworkId: number) => void;
 }
 
 function FrameworkDetail(props: Props) {
@@ -67,7 +67,6 @@ function FrameworkDetail(props: Props) {
         frameworkId,
         projectId,
         onProjectChange,
-        onFrameworkChange,
         onFrameworkCreate,
     } = props;
 
@@ -116,10 +115,9 @@ function FrameworkDetail(props: Props) {
 
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
         setFrameworkToClone(undefined);
-        onFrameworkChange(newFrameworkId);
-        onFrameworkCreate();
+        onFrameworkCreate(newFrameworkId);
         hideFrameworkAddModal();
-    }, [onFrameworkChange, hideFrameworkAddModal, onFrameworkCreate]);
+    }, [hideFrameworkAddModal, onFrameworkCreate]);
 
     const handleFrameworkCloneClick = useCallback(() => {
         setFrameworkToClone(frameworkDetails);
@@ -211,9 +209,7 @@ function FrameworkDetail(props: Props) {
                 contentClassName={styles.content}
             >
                 <div className={styles.metadataContainer}>
-                    <div className={styles.frameworkDescription}>
-                        {frameworkDetails?.description}
-                    </div>
+                    {frameworkDetails?.description}
                     <TextOutput
                         className={styles.block}
                         label={_ts('projectEdit', 'frameworkCreatorTitle')}
@@ -245,9 +241,9 @@ function FrameworkDetail(props: Props) {
                         hideLabelColon
                     />
                 </div>
-                <div className={styles.preview}>
+                <Card className={styles.preview}>
                     Preview
-                </div>
+                </Card>
             </ContainerCard>
             {frameworkAddModalShown && (
                 <AddFrameworkModal

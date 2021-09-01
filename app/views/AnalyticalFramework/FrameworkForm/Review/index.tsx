@@ -7,11 +7,13 @@ import {
     TabPanel,
 } from '@the-deep/deep-ui';
 import { _cs } from '@togglecorp/fujs';
-import _ts from '#ts';
 
 import { Section, Widget } from '#types/newAnalyticalFramework';
+import _ts from '#ts';
+
 import Canvas from '../components/Canvas';
 import { WidgetsType, SectionsType } from '../schema';
+
 import styles from './styles.css';
 
 interface Props {
@@ -37,47 +39,45 @@ function Review(props: Props) {
     return (
         <div className={_cs(styles.review, className)}>
             <ContainerCard
-                className={styles.primaryTagging}
+                className={styles.card}
                 heading={_ts('analyticalFramework.review', 'primaryTagging')}
+                contentClassName={styles.primaryTaggingContent}
             >
                 <Tabs
                     value={selectedSection}
                     onChange={setSelectedSection}
                     variant="step"
                 >
-                    <div className={styles.canvas}>
-                        <TabList className={styles.tabs}>
-                            {primaryTagging.map((section) => (
-                                <Tab
-                                    key={section.clientId}
-                                    name={section.clientId}
-                                    borderWrapperClassName={styles.borderWrapper}
-                                    className={styles.tab}
-                                    title={section.tooltip}
-                                >
-                                    {section.title}
-                                </Tab>
-                            ))}
-                        </TabList>
+                    <TabList className={styles.tabs}>
                         {primaryTagging.map((section) => (
-                            <TabPanel
+                            <Tab
                                 key={section.clientId}
                                 name={section.clientId}
-                                className={styles.panel}
+                                borderWrapperClassName={styles.borderWrapper}
+                                className={styles.tab}
+                                title={section.tooltip}
                             >
-                                <Canvas
-                                    name={selectedSection}
-                                    widgets={section.widgets}
-                                    editMode={false}
-                                    disabled
-                                />
-                            </TabPanel>
+                                {section.title}
+                            </Tab>
                         ))}
-                    </div>
+                    </TabList>
+                    {primaryTagging.map((section) => (
+                        <TabPanel
+                            key={section.clientId}
+                            name={section.clientId}
+                        >
+                            <Canvas
+                                name={selectedSection}
+                                widgets={section.widgets}
+                                editMode={false}
+                                disabled
+                            />
+                        </TabPanel>
+                    ))}
                 </Tabs>
             </ContainerCard>
             <ContainerCard
-                className={styles.secondaryTagging}
+                className={styles.card}
                 heading={_ts('analyticalFramework.review', 'secondaryTagging')}
             >
                 <Canvas

@@ -207,69 +207,71 @@ function WidgetList(props: Props) {
                 defaultVisibility={!!props.sectionsDisabled}
                 className={styles.widgets}
             >
-                <AddItem
-                    name="TEXTWIDGET"
-                    // FIXME: use strings
-                    label="Text"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="NUMBERWIDGET"
-                    // FIXME: use strings
-                    label="Number"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="DATEWIDGET"
-                    // FIXME: use strings
-                    label="Date"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="DATERANGEWIDGET"
-                    // FIXME: use strings
-                    label="Date Range"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="TIMEWIDGET"
-                    // FIXME: use strings
-                    label="Time"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="TIMERANGEWIDGET"
-                    // FIXME: use strings
-                    label="Time Range"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="SCALEWIDGET"
-                    // FIXME: use strings
-                    label="Scale"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="SELECTWIDGET"
-                    // FIXME: use strings
-                    label="Single Select"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
-                <AddItem
-                    name="MULTISELECTWIDGET"
-                    // FIXME: use strings
-                    label="Multi Select"
-                    onAddClick={handleAddClick}
-                    disabled={disabled || widgetsDisabled}
-                />
+                <div className={styles.moreWidgetsList}>
+                    <AddItem
+                        name="TEXTWIDGET"
+                        // FIXME: use strings
+                        label="Text"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="NUMBERWIDGET"
+                        // FIXME: use strings
+                        label="Number"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="DATEWIDGET"
+                        // FIXME: use strings
+                        label="Date"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="DATERANGEWIDGET"
+                        // FIXME: use strings
+                        label="Date Range"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="TIMEWIDGET"
+                        // FIXME: use strings
+                        label="Time"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="TIMERANGEWIDGET"
+                        // FIXME: use strings
+                        label="Time Range"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="SCALEWIDGET"
+                        // FIXME: use strings
+                        label="Scale"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="SELECTWIDGET"
+                        // FIXME: use strings
+                        label="Single Select"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="MULTISELECTWIDGET"
+                        // FIXME: use strings
+                        label="Multi Select"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                </div>
             </ExpandableContainer>
         </div>
     );

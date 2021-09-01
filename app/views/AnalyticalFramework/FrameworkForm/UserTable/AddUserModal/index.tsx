@@ -1,7 +1,5 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import {
-    isDefined,
-} from '@togglecorp/fujs';
+import { isDefined } from '@togglecorp/fujs';
 import {
     ObjectSchema,
     PartialForm,
@@ -180,7 +178,6 @@ function AddUserModal(props: Props) {
             {pendingAddAction && (<PendingMessage />)}
             <NonFieldError error={error} />
             <UserSelectInput
-                className={styles.input}
                 queryParams={queryForUsers}
                 name="member"
                 readOnly={isDefined(userValue)}
@@ -190,17 +187,14 @@ function AddUserModal(props: Props) {
                 onOptionsChange={setUserOptions}
                 error={error?.member}
                 disabled={pendingRequests}
-                optionsPopupClassName={styles.optionsPopup}
                 label={_ts('analyticalFramework.addUser', 'userLabel')}
                 placeholder={_ts('analyticalFramework.addUser', 'selectUserPlaceholder')}
             />
             <SelectInput
                 name="role"
-                className={styles.input}
                 options={frameworkRolesResponse?.results}
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
-                optionsPopupClassName={styles.optionsPopup}
                 onChange={setFieldValue}
                 value={value.role}
                 label={_ts('analyticalFramework.addUser', 'roleLabel')}

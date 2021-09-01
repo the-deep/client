@@ -31,14 +31,17 @@ function AnalyticalFramework(props: Props) {
 
     const [childrenNode, setChildrenNode] = useState<Element | null | undefined>();
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
+    const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
     const navbarContextValue = useMemo(
         () => ({
             childrenNode,
+            iconsNode,
             actionsNode,
             setChildrenNode,
             setActionsNode,
+            setIconsNode,
         }),
-        [childrenNode, actionsNode],
+        [childrenNode, actionsNode, iconsNode],
     );
 
     const { frameworkId: frameworkIdFromParams } = useParams<{ frameworkId: string }>();
