@@ -4,8 +4,13 @@ import {
     Button,
     ConfirmButton,
 } from '@the-deep/deep-ui';
+import { useMutation, gql } from '@apollo/client';
 
 import { useModalState } from '#hooks/stateManagement';
+import {
+    CancelJoinProjectMutation,
+    CancelJoinProjectMutationVariables,
+} from '#generated/types';
 
 import ProjectJoinModal from './ProjectJoinModal';
 
@@ -18,6 +23,16 @@ export interface Props {
     membershipPending: boolean;
     isMember: boolean;
 }
+
+const CANCEL_JOIN_PROJECT = gql`
+    mutation CancelJoinProject(
+        $projectId: ID!,
+    ) {
+        deleteProjectJoin(id: $projectId) {
+            ok,
+        }
+    }
+`;
 
 function ActionCell(props: Props) {
     const {
@@ -34,8 +49,24 @@ function ActionCell(props: Props) {
         hideJoinModal,
     ] = useModalState(false);
 
+    const [
+        cancelJoinProject,
+    ] = useMutation<CancelJoinProjectMutation, CancelJoinProjectMutationVariables>(
+        CANCEL_JOIN_PROJECT,
+        {
+            onCompleted: () => {
+                console.warn('Join Request successfully sent');
+            },
+            onError: () => {
+                console.warn('Failed to send request');
+            },
+        },
+    );
+
     const handleCancelJoinProjectClick = useCallback(() => {
-        console.warn('Canceling project join request', projectId);
+        cancelJoinProject({
+            variables: { projectId },
+        });
     }, [projectId]);
 
     if (isMember) {
