@@ -1,39 +1,28 @@
 .review {
     display: flex;
+    align-items: center;
     flex-direction: column;
-    padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-large))
-        var(--dui-spacing-super-large);
+    background-color: var(--dui-color-background);
+    padding: var(--dui-spacing-super-large);
+    gap: var(--dui-spacing-extra-large);
+    height: 100%;
+    overflow-y: auto;
 
-    .primary-tagging {
-        display: flex;
-        margin: var(--dui-spacing-large) 0;
-
-        .canvas {
-            flex-grow: 1;
-            margin: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) var(--dui-spacing-extra-large);
-
-            .tabs {
-                .border-wrapper {
-                    display: flex;
-                    flex-grow: 1;
-                }
-
-                .tab {
-                    flex-grow: 1;
-                }
-            }
-
-            .panel {
-                display: flex;
-                flex-direction: column;
-                padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
-                overflow-y: auto;
-            }
-        }
+    .card {
+        width: calc(100% - 240px - 10vw);
+        min-height: 40vh;
     }
 
-    .secondary-tagging {
-        display: flex;
-        margin: var(--dui-spacing-large) 0;
+    .primary-tagging-content {
+        .tabs {
+            .border-wrapper {
+                display: flex;
+                flex-grow: 1;
+            }
+
+            .tab {
+                flex-grow: 1;
+            }
+        }
     }
 }

@@ -1,13 +1,13 @@
 import React, { useContext, useState, useCallback, useMemo } from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     Pager,
     Button,
-    Header,
+    Container,
     PendingMessage,
     createStringColumn,
-    Table,
+    TableView,
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
@@ -61,12 +61,14 @@ const userKeySelector = (user: User) => user.id;
 const maxItemsPerPage = 10;
 
 interface Props {
+    className?: string;
     framework: Framework;
 }
 
 function UserTable(props: Props) {
     const {
         framework,
+        className,
     } = props;
 
     const {
@@ -193,26 +195,20 @@ function UserTable(props: Props) {
 
     return (
         <>
-            <div className={styles.tableContainer}>
-                {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
-                <Header
-                    heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
-                    actions={(
-                        <Button
-                            name="userAdd"
-                            onClick={handleUserAddClick}
-                            icons={(<IoAdd />)}
-                        >
-                            {_ts('analyticalFramework', 'addUserButtonLabel')}
-                        </Button>
-                    )}
-                />
-                <Table
-                    data={frameworkUsers?.results}
-                    keySelector={userKeySelector}
-                    columns={columns}
-                />
-                <div className={styles.pagerContainer}>
+            {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
+            <Container
+                className={_cs(styles.tableContainer, className)}
+                heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
+                headerActions={(
+                    <Button
+                        name="userAdd"
+                        onClick={handleUserAddClick}
+                        icons={(<IoAdd />)}
+                    >
+                        {_ts('analyticalFramework', 'addUserButtonLabel')}
+                    </Button>
+                )}
+                footerActions={(
                     <Pager
                         activePage={activePage}
                         itemsCount={frameworkUsers?.count ?? 0}
@@ -220,8 +216,15 @@ function UserTable(props: Props) {
                         onActivePageChange={setActivePage}
                         itemsPerPageControlHidden
                     />
-                </div>
-            </div>
+                )}
+            >
+                <TableView
+                    data={frameworkUsers?.results}
+                    keySelector={userKeySelector}
+                    columns={columns}
+                    rowClassName={styles.tableRow}
+                />
+            </Container>
             {addUserModalShown && (
                 <AddUserModal
                     frameworkId={frameworkId}

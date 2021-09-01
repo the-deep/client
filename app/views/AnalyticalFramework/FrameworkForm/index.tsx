@@ -27,8 +27,14 @@ import {
     useMutation,
 } from '@apollo/client';
 
-import { SubNavbarActions, SubNavbarChildren } from '#components/SubNavbar';
+import {
+    SubNavbarIcons,
+    SubNavbarActions,
+    SubNavbarChildren,
+} from '#components/SubNavbar';
 import routes from '#base/configs/routes';
+import Svg from '#components/Svg';
+import deepLogo from '#resources/img/deep-logo-new.svg';
 import { transformToFormError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/NewOrganizationSelectInput';
 import PrivacyInput from './components/PrivacyInput';
@@ -281,6 +287,14 @@ function FrameworkForm(props: FrameworkFormProps) {
                     return true;
                 }}
             />
+            <SubNavbarIcons>
+                <div className={styles.appBrand}>
+                    <Svg
+                        className={styles.logo}
+                        src={deepLogo}
+                    />
+                </div>
+            </SubNavbarIcons>
             <SubNavbarActions>
                 <Button
                     disabled={pristine || pending}
@@ -320,14 +334,12 @@ function FrameworkForm(props: FrameworkFormProps) {
                 </Tab>
             </SubNavbarChildren>
             <TabPanel
-                className={styles.tabPanel}
+                className={_cs(styles.tabPanel, styles.detailsTabPanel)}
                 name="framework-details"
             >
                 <div className={styles.content}>
                     <div className={styles.details}>
-                        <NonFieldError
-                            error={error}
-                        />
+                        <NonFieldError error={error} />
                         <TextInput
                             name="title"
                             onChange={setFieldValue}
@@ -337,7 +349,6 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label={_ts('analyticalFramework', 'frameworkTitle')}
                             placeholder={_ts('analyticalFramework', 'frameworkTitle')}
                             autoFocus
-                            className={styles.input}
                         />
                         <div className={styles.creationDetails}>
                             <TextInput
@@ -358,7 +369,6 @@ function FrameworkForm(props: FrameworkFormProps) {
                             />
                         </div>
                         <NewOrganizationSelectInput
-                            className={styles.input}
                             name="organization"
                             value={value.organization}
                             onChange={setFieldValue}
@@ -370,7 +380,6 @@ function FrameworkForm(props: FrameworkFormProps) {
                             placeholder={_ts('analyticalFramework', 'associatedOrganization')}
                         />
                         <TextArea
-                            className={styles.input}
                             name="description"
                             value={value.description}
                             onChange={setFieldValue}
@@ -381,7 +390,6 @@ function FrameworkForm(props: FrameworkFormProps) {
                             placeholder={_ts('analyticalFramework', 'description')}
                         />
                         <PrivacyInput
-                            className={styles.input}
                             name="isPrivate"
                             value={value.isPrivate}
                             onChange={setFieldValue}
@@ -405,6 +413,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 </div>
                 {framework && (
                     <UserTable
+                        className={styles.usersTable}
                         framework={framework}
                     />
                 )}

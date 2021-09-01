@@ -1,5 +1,6 @@
 .primary-tagging {
     display: flex;
+    height: 100%;
     overflow-y: auto;
 
     .widget-list-container {
@@ -7,6 +8,7 @@
         flex-direction: column;
         flex-shrink: 0;
         background-color: var(--dui-color-foreground);
+        padding-left: var(--dui-spacing-super-large);
         width: calc(240px + 10vw);
         overflow-y: auto;
 
@@ -27,18 +29,15 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        padding-right: var(--dui-spacing-super-large);
         overflow-y: auto;
 
-        .top-bar {
+        .content {
             display: flex;
-            background-color: var(--dui-color-foreground);
-            padding: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
-        }
-
-        .canvas {
+            flex-direction: column;
             flex-grow: 1;
-            margin: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) var(--dui-spacing-extra-large);
             background-color: var(--dui-color-foreground);
+            overflow-y: auto;
 
             .tabs {
                 .border-wrapper {
@@ -73,7 +72,7 @@
             .panel {
                 display: flex;
                 flex-direction: column;
-                padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+                flex-grow: 1;
                 overflow-y: auto;
             }
         }

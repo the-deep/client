@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import {
     Heading,
+    Border,
 } from '@the-deep/deep-ui';
 import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
@@ -67,6 +68,12 @@ export function SubNavbarActions(props: SubNavbarActionsProps) {
 
 interface SubNavbarProps {
     className?: string;
+    iconsClassName?: string;
+    actionsClassName?: string;
+    headingClassName?: string;
+    childrenClassName?: string;
+    descriptionClassName?: string;
+    descriptionContainerClassName?: string;
     children?: React.ReactNode;
 
     defaultActions?: React.ReactNode;
@@ -78,10 +85,16 @@ interface SubNavbarProps {
 function SubNavbar(props: SubNavbarProps) {
     const {
         children,
+        iconsClassName,
+        actionsClassName,
+        headingClassName,
         className,
         defaultActions,
         defaultIcons,
         heading,
+        childrenClassName,
+        descriptionClassName,
+        descriptionContainerClassName,
         description,
     } = props;
 
@@ -120,37 +133,38 @@ function SubNavbar(props: SubNavbarProps) {
         <nav className={_cs(className, styles.subNavbar)}>
             <div
                 ref={iconsRef}
-                className={styles.icons}
+                className={_cs(styles.icons, iconsClassName)}
             >
                 {defaultIcons}
             </div>
             {heading && (
                 <Heading
                     size="medium"
-                    className={styles.heading}
+                    className={_cs(styles.heading, headingClassName)}
                 >
                     {heading}
                 </Heading>
             )}
             {description && (
-                <div className={styles.descriptionContainer}>
-                    <div className={styles.description}>
+                <div className={_cs(styles.descriptionContainer, descriptionContainerClassName)}>
+                    <div className={_cs(styles.description, descriptionClassName)}>
                         {description}
                     </div>
                 </div>
             )}
             <div
                 ref={childrenRef}
-                className={styles.children}
+                className={_cs(styles.children, childrenClassName)}
             >
                 {children}
             </div>
             <div
                 ref={actionsRef}
-                className={styles.actions}
+                className={_cs(styles.actions, actionsClassName)}
             >
                 {defaultActions}
             </div>
+            <Border width="thin" />
         </nav>
     );
 }
