@@ -5,7 +5,6 @@
 
     .framework-item {
         flex-grow: 1;
-        border-radius: 0;
         overflow-y: auto;
 
         .created-at-container {
@@ -24,25 +23,21 @@
             --width-left-container: 320px;
 
             .metadata-container {
+                display: flex;
+                flex-direction: column;
                 flex-shrink: 0;
-                padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
+                padding: var(--dui-spacing-medium);
                 width: var(--width-left-container);
+                gap: var(--dui-spacing-medium);
                 overflow-y: auto;
-
-                .framework-description {
-                    padding: var(--dui-spacing-medium);
-                }
 
                 .block {
                     display: flex;
                     align-items: flex-start;
                     flex-direction: column;
-                    padding: var(--dui-spacing-medium);
                 }
 
                 .project-title {
-                    padding: var(--dui-spacing-extra-small) 0;
-
                     >a {
                         padding: 0;
                     }
@@ -54,7 +49,6 @@
                 align-items: center;
                 flex-grow: 1;
                 justify-content: center;
-                margin: var(--dui-spacing-large);
                 border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 padding: var(--dui-spacing-large);
             }

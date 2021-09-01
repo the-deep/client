@@ -1,7 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-
 import {
-    ElementFragments,
     Button,
     Container,
 } from '@the-deep/deep-ui';
@@ -164,52 +162,48 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                     />
                 )}
             </Container>
-            <div className={styles.frameworkPreview}>
-                <div className={styles.topBar}>
-                    <ElementFragments
-                        actions={(
-                            <Button
-                                name={undefined}
-                                disabled
-                            >
-                                {_ts('analyticalFramework.secondaryTagging', 'nextButtonLabel')}
-                            </Button>
-                        )}
+            <Container
+                className={styles.frameworkPreview}
+                headerIcons={frameworkId && (
+                    <FrameworkImageButton
+                        frameworkId={frameworkId}
+                        label={_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
+                        variant="secondary"
+                    />
+                )}
+                headerActions={(
+                    <Button
+                        name={undefined}
+                        disabled
                     >
-                        {frameworkId && (
-                            <FrameworkImageButton
-                                frameworkId={frameworkId}
-                                label={_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
-                                variant="secondary"
-                            />
-                        )}
-                    </ElementFragments>
-                </div>
-                <div className={styles.canvas}>
-                    {widgetsState.editMode ? (
-                        <Canvas
-                            name={undefined}
-                            widgets={widgetsState.appliedWidgets}
-                            editMode
-                            isSecondary
-                            disabled={disabled}
-                            error={error}
-                        />
-                    ) : (
-                        <Canvas
-                            name={undefined}
-                            widgets={widgetsState.appliedWidgets}
-                            onWidgetDelete={handleWidgetDeleteClick}
-                            onWidgetEdit={handleWidgetEditClick}
-                            onWidgetOrderChange={handleWidgetOrderChange}
-                            editMode={false}
-                            isSecondary
-                            disabled={disabled}
-                            error={error}
-                        />
-                    )}
-                </div>
-            </div>
+                        {_ts('analyticalFramework.secondaryTagging', 'nextButtonLabel')}
+                    </Button>
+                )}
+                contentClassName={styles.canvas}
+            >
+                {widgetsState.editMode ? (
+                    <Canvas
+                        name={undefined}
+                        widgets={widgetsState.appliedWidgets}
+                        editMode
+                        isSecondary
+                        disabled={disabled}
+                        error={error}
+                    />
+                ) : (
+                    <Canvas
+                        name={undefined}
+                        widgets={widgetsState.appliedWidgets}
+                        onWidgetDelete={handleWidgetDeleteClick}
+                        onWidgetEdit={handleWidgetEditClick}
+                        onWidgetOrderChange={handleWidgetOrderChange}
+                        editMode={false}
+                        isSecondary
+                        disabled={disabled}
+                        error={error}
+                    />
+                )}
+            </Container>
         </div>
     );
 }

@@ -1,8 +1,9 @@
 .sub-navbar {
     display: flex;
     position: relative;
-    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     padding: 0 var(--dui-spacing-super-large);
+    --gap: var(--dui-spacing-large);
+    gap: var(--gap);
 
     .children {
         display: flex;
@@ -13,6 +14,7 @@
     .heading {
         align-self: center;
         flex-shrink: unset;
+        padding: var(--dui-spacing-medium) 0;
     }
 
     .description-container {
@@ -30,12 +32,14 @@
         display: flex;
         align-self: center;
         flex-shrink: 0;
+        padding: var(--dui-spacing-medium) 0;
     }
 
     .actions {
         display: flex;
         align-self: center;
         flex-shrink: 0;
+        padding: var(--dui-spacing-medium) 0;
 
         >* {
             margin: 0 var(--dui-spacing-extra-small);

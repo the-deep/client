@@ -35,9 +35,9 @@ function WidgetWrapper(props: Props) {
             <Header
                 // FIXME: use strings
                 heading={title ?? 'Unnamed'}
-                className={_cs(headerClassName, styles.header)}
+                className={headerClassName}
                 headingSize="small"
-                actionsContainerClassName={_cs(actionsContainerClassName, styles.actions)}
+                actionsContainerClassName={actionsContainerClassName}
                 actions={actions}
             />
             <div className={childrenContainerClassName}>

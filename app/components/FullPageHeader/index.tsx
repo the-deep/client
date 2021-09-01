@@ -58,7 +58,7 @@ function FullPageHeader(props: FullPageHeaderProps) {
             <div className={styles.actionsSection}>
                 {actions}
             </div>
-            <Border />
+            <Border width="thin" />
         </div>
     );
 }

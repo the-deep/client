@@ -1,5 +1,4 @@
 .add-item {
-    margin: var(--dui-spacing-small);
     background-color: var(--dui-color-background-information);
     color: var(--dui-color-accent);
 
@@ -18,22 +17,18 @@
 .widget-list {
     display: flex;
     flex-direction: column;
+    gap: var(--dui-spacing-extra-small);
     overflow-y: auto;
 
     .widgets {
-        margin: var(--dui-spacing-small) 0;
-
         .children {
             border: none;
+            padding: 0;
 
-            .add-item {
-                &:first-child {
-                    margin-top: 0;
-                }
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
+            .more-widgets-list {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-extra-small);
             }
         }
     }

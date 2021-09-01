@@ -1,16 +1,7 @@
 .modal {
     .modal-body {
         display: flex;
-        position: relative;
-        flex-direction: column;
-        padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
-
-        .input {
-            margin: var(--dui-spacing-small);
-        }
+        padding: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
     }
-}
-
-.options-popup {
-    z-index: 1;
 }
