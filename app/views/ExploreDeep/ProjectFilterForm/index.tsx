@@ -83,41 +83,43 @@ function ProjectFilterForm(props: Props) {
     }, [onFiltersChange, value]);
 
     return (
-        <div className={styles.filters}>
-            <TextInput
-                name="search"
-                label="Search"
-                value={value?.search}
-                onChange={setFieldValue}
-            />
-            <DateInput
-                name="startDate"
-                label="Start Date"
-                value={value?.startDate}
-                onChange={setFieldValue}
-            />
-            <DateInput
-                name="endDate"
-                label="End Date"
-                value={value?.endDate}
-                onChange={setFieldValue}
-            />
-            <NewOrganizationSelectInput
-                name="organizations"
-                label="Organizations"
-                value={value?.organizations}
-                onChange={setFieldValue}
-                options={organizationOptions}
-                onOptionsChange={setOrganizationOptions}
-            />
-            <AnalysisFrameworkSearchMultiSelectInput
-                name="analysisFramework"
-                label="Analysis Framework"
-                value={value?.analysisFrameworks}
-                onChange={setFieldValue}
-                options={analysisFrameworkOptions}
-                onOptionsChange={setAnalysisFrameworkOptions}
-            />
+        <div className={styles.content}>
+            <div className={styles.filters}>
+                <TextInput
+                    name="search"
+                    label="Search"
+                    value={value?.search}
+                    onChange={setFieldValue}
+                />
+                <DateInput
+                    name="startDate"
+                    label="Start Date"
+                    value={value?.startDate}
+                    onChange={setFieldValue}
+                />
+                <DateInput
+                    name="endDate"
+                    label="End Date"
+                    value={value?.endDate}
+                    onChange={setFieldValue}
+                />
+                <NewOrganizationSelectInput
+                    name="organizations"
+                    label="Organizations"
+                    value={value?.organizations}
+                    onChange={setFieldValue}
+                    options={organizationOptions}
+                    onOptionsChange={setOrganizationOptions}
+                />
+                <AnalysisFrameworkSearchMultiSelectInput
+                    name="analysisFramework"
+                    label="Analysis Framework"
+                    value={value?.analysisFrameworks}
+                    onChange={setFieldValue}
+                    options={analysisFrameworkOptions}
+                    onOptionsChange={setAnalysisFrameworkOptions}
+                />
+            </div>
             <div className={styles.buttonContainer}>
                 <Button
                     name="submit"

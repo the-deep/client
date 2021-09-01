@@ -1,7 +1,19 @@
-.filters {
+.content {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--dui-spacing-medium);
-    padding: var(--dui-spacing-medium);
+
+    .filters {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        padding: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
+    }
+
+    .button-container {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        gap: var(--dui-spacing-medium);
+    }
 }
