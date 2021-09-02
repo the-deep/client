@@ -14,6 +14,7 @@ import DateRangeWidgetForm from './DateRangeWidgetForm';
 import MultiSelectWidgetForm from './MultiSelectWidgetForm';
 import ScaleWidgetForm from './ScaleWidgetForm';
 import SingleSelectWidgetForm from './SingleSelectWidgetForm';
+import OrganigramWidgetForm from './OrganigramWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
@@ -166,6 +167,17 @@ function WidgetEditor<T>(props: Props<T>) {
         case 'SELECTWIDGET': {
             return (
                 <SingleSelectWidgetForm
+                    className={className}
+                    initialValue={initialValue}
+                    onChange={handleChange}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                />
+            );
+        }
+        case 'ORGANIGRAMWIDGET': {
+            return (
+                <OrganigramWidgetForm
                     className={className}
                     initialValue={initialValue}
                     onChange={handleChange}

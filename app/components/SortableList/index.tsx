@@ -292,6 +292,8 @@ function SortableList<
                 strategy={sortingStrategy}
             >
                 <ListView
+                    emptyIcon={null}
+                    emptyMessage={null}
                     className={className}
                     data={data}
                     keySelector={keySelector}

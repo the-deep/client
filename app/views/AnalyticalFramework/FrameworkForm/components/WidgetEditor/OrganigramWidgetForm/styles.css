@@ -1,0 +1,9 @@
+.organigram-widget-form {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .container {
+        background-color: var(--dui-color-foreground);
+    }
+}
