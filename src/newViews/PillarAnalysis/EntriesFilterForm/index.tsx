@@ -9,6 +9,7 @@ import {
     Button,
     DateRangeInput,
     MultiSelectInput,
+    TextInput,
     SelectInput,
 } from '@the-deep/deep-ui';
 import {
@@ -194,6 +195,13 @@ function EntriesFilterForm(props: OwnProps) {
             )}
             onSubmit={handleSubmit}
         >
+            <TextInput
+                className={_cs(styles.filter, styles.showFilter)}
+                name="search"
+                value={value?.search as (string | undefined)}
+                onChange={setFieldValue}
+                label="Search"
+            />
             <MultiSelectInput
                 className={styles.filter}
                 name="created_by"

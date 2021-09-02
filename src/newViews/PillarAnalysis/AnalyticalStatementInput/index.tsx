@@ -3,6 +3,7 @@ import {
     IoClose,
     IoCheckmarkCircleSharp,
     IoEllipseOutline,
+    IoBarChartSharp,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
 
@@ -29,6 +30,7 @@ import {
 import NonFieldError from '#newComponents/ui/NonFieldError';
 import { Attributes, Listeners } from '#newComponents/ui/SortableList';
 import { genericMemo } from '#utils/safeCommon';
+import { useModalState } from '#hooks/stateManagement';
 
 import {
     AnalyticalStatementType,
@@ -38,6 +40,7 @@ import {
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
+import AnalyticalNGramsModal from './AnalyticalNGramsModal';
 
 export const ENTRIES_LIMIT = 50;
 
@@ -58,6 +61,7 @@ interface AnalyticalStatementInputProps {
     isBeingDragged?: boolean;
     attributes?: Attributes;
     listeners?: Listeners;
+    onSelectedNgramChange: (item: string | undefined) => void;
 }
 
 const defaultVal: AnalyticalStatementType = {
@@ -77,12 +81,20 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         index,
         attributes,
         listeners,
+        onSelectedNgramChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultVal);
 
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.analyticalEntries);
+    const [
+        showAnalysisChart,
+        ,
+        hideAnalysisChart,
+        ,
+        toggleAnalysisChart,
+    ] = useModalState(false);
 
     const {
         // setValue: onAnalyticalEntryChange,
@@ -173,22 +185,35 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onFieldChange((oldVal?: boolean) => !oldVal, 'includeInReport' as const);
     }, [onFieldChange]);
 
+    const handleStatementChange = useCallback((newStatementVal: string | undefined) => {
+        onFieldChange(newStatementVal, 'statement');
+    }, [onFieldChange]);
+
     return (
         <Container
             className={_cs(styles.analyticalStatementInput, className)}
             contentClassName={styles.dragContent}
             headerClassName={styles.header}
             headerIcons={(
-                <QuickActionButton
-                    name="includeInReport"
-                    onClick={handleIncludeInReportChange}
-                    big
-                >
-                    {value.includeInReport
-                        ? <IoCheckmarkCircleSharp />
-                        : <IoEllipseOutline />
-                    }
-                </QuickActionButton>
+                <>
+                    <QuickActionButton
+                        name="includeInReport"
+                        onClick={handleIncludeInReportChange}
+                        big
+                    >
+                        {value.includeInReport
+                            ? <IoCheckmarkCircleSharp />
+                            : <IoEllipseOutline />
+                        }
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name="includeInReport"
+                        onClick={toggleAnalysisChart}
+                        big
+                    >
+                        <IoBarChartSharp />
+                    </QuickActionButton>
+                </>
             )}
             // actionsContainerClassName={styles.actionsContainer}
             headerActions={(
@@ -248,6 +273,16 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     onDrop={handleAnalyticalEntryAdd}
                 />
             </div>
+            {showAnalysisChart && (
+                <AnalyticalNGramsModal
+                    onModalClose={hideAnalysisChart}
+                    mainStatement={value.statement}
+                    onStatementChange={handleStatementChange}
+                    statementId={value.clientId}
+                    analyticalEntries={value.analyticalEntries}
+                    onNgramClick={onSelectedNgramChange}
+                />
+            )}
         </Container>
     );
 }
