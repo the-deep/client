@@ -89,6 +89,13 @@ const partialWidgets: PartialWidget[] = [
         order: -1,
         width: 'FULL',
     },
+    {
+        widgetId: 'ORGANIGRAMWIDGET',
+        key: 'random',
+        clientId: 'random',
+        order: -1,
+        width: 'FULL',
+    },
 ];
 
 interface AddItemProps<T extends string | number | undefined> {
@@ -268,6 +275,13 @@ function WidgetList(props: Props) {
                         name="MULTISELECTWIDGET"
                         // FIXME: use strings
                         label="Multi Select"
+                        onAddClick={handleAddClick}
+                        disabled={disabled || widgetsDisabled}
+                    />
+                    <AddItem
+                        name="ORGANIGRAMWIDGET"
+                        // FIXME: use strings
+                        label="Organigram"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />

@@ -82,7 +82,7 @@ interface ScaleData extends BaseData<ScaleValue> {
 }
 
 interface OrganigramDatum extends KeyLabel {
-    children?: OrganigramDatum[];
+    children: OrganigramDatum[];
 }
 interface OrganigramData extends BaseData<OrganigramValue> {
     options: OrganigramDatum;
@@ -171,7 +171,7 @@ export interface Matrix2dWidget extends BaseWidget {
     widgetId: 'MATRIX2DWIDGET';
     properties: Matrix2Data;
 }
-interface OrganigramWidget extends BaseWidget {
+export interface OrganigramWidget extends BaseWidget {
     widgetId: 'ORGANIGRAMWIDGET';
     properties: OrganigramData;
 }

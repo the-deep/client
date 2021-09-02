@@ -89,7 +89,6 @@ export default class List extends React.PureComponent {
                         widgets={widgets}
                         widgetType={VIEW.list}
                         analysisFrameworkId={analysisFrameworkId}
-
                         onWidgetEditClick={onWidgetEditClick}
                         widgetsDisabled={widgetsDisabled}
                     />
