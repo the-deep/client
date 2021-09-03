@@ -22,7 +22,6 @@ import TimeRangeWidgetInput from './TimeRangeWidgetInput';
 import ScaleWidgetInput from './ScaleWidgetInput';
 import MultiSelectWidgetInput from './MultiSelectWidgetInput';
 import SingleSelectWidgetInput from './SingleSelectWidgetInput';
-
 import BaseWidgetInput from './BaseWidgetInput';
 
 type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
@@ -259,6 +258,24 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                     disabled={disabled}
                     actions={actions}
                     widget={widget}
+                />
+            );
+        }
+        case 'ORGANIGRAMWIDGET': {
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
+            return (
+                <OrganigramWidgetInput
+                    className={className}
+                    title={widget.title}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    widget={widget}
+                    actions={actions}
                 />
             );
         }

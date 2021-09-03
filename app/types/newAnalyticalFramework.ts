@@ -83,6 +83,7 @@ interface ScaleProperties extends BaseProperties<ScaleValue> {
 interface OrganigramDatum extends KeyLabelEntity {
     children: OrganigramDatum[];
 }
+
 interface OrganigramProperties extends BaseProperties<OrganigramValue> {
     options: OrganigramDatum;
 }
