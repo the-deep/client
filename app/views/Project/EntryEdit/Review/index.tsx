@@ -2,12 +2,11 @@ import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
-    Header,
+    Container,
 } from '@the-deep/deep-ui';
 
 import { Entry } from '#types/newEntry';
 import EntryListItem from '#components/EntryListItem';
-import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import FrameworkImageButton from '#components/FrameworkImageButton';
 import { AnalysisFramework } from '#types/newAnalyticalFramework';
 
@@ -35,24 +34,24 @@ function Review(props: Props) {
     }), [framework]);
 
     return (
-        <div className={_cs(className, styles.review)}>
-            <Header
-                actions={(
-                    <FrameworkImageButton
-                        frameworkId={frameworkMockData.id}
-                        label="View framework image for reference"
-                        variant="secondary"
-                    />
-                )}
-            />
+        <Container
+            className={_cs(className, styles.review)}
+            headerActions={(
+                <FrameworkImageButton
+                    frameworkId={framework.id}
+                    label="View framework image for reference"
+                    variant="secondary"
+                />
+            )}
+        >
             <ListView
+                className={styles.entries}
                 keySelector={entryKeySelector}
                 renderer={EntryListItem}
                 data={entryMockData}
                 rendererParams={entryDataRendererParams}
-                rendererClassName={styles.entryItem}
             />
-        </div>
+        </Container>
     );
 }
 

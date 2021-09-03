@@ -36,9 +36,29 @@ const FRAMEWORK = gql`
 // eslint-disable-next-line import/prefer-default-export
 export const PROJECT_FRAMEWORK = gql`
     ${FRAMEWORK}
-    query ProjectFramework($id: ID!) {
-        analysisFramework(id: $id) {
+    query ProjectFramework(
+        $frameworkId: ID!,
+        $projectId: ID!,
+        $leadId: ID!,
+    ) {
+        analysisFramework(id: $frameworkId) {
             ...ProjectFramework
+        }
+        project(id: $projectId) {
+            lead(id: $leadId) {
+                entries {
+                    clientId
+                    id
+                    image {
+                        file {
+                            name
+                            url
+                        }
+                    }
+                    imageRaw
+                    excerpt
+                }
+            }
         }
     }
 `;

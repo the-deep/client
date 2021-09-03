@@ -5,7 +5,7 @@ import { Section } from '#types/newAnalyticalFramework';
 import { Lead } from '#components/LeadEditForm/schema';
 
 import Sections from './Sections';
-import SourceDetails, { Entry } from './SourceDetails';
+import LeftPane, { Entry } from '../LeftPane';
 import styles from './styles.css';
 
 interface Props {
@@ -13,6 +13,12 @@ interface Props {
     lead?: Lead;
     sections: Section[] | undefined | null;
     frameworkId: string;
+
+    entries: Entry[];
+    onEntriesChange: React.Dispatch<React.SetStateAction<Entry[]>>;
+
+    activeEntry: string | undefined;
+    onActiveEntryChange: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 function PrimaryTagging(props: Props) {
@@ -21,20 +27,21 @@ function PrimaryTagging(props: Props) {
         lead,
         sections,
         frameworkId,
+        entries,
+        onEntriesChange,
+        activeEntry,
+        onActiveEntryChange,
     } = props;
 
-    const [entries, setEntries] = React.useState<Entry[]>([]);
-    const [activeEntry, setActiveEntry] = React.useState<Entry['clientId'] | undefined>();
-
     const handleEntryCreate = React.useCallback((newEntry: Entry) => {
-        setEntries((oldEntries) => ([
+        onEntriesChange((oldEntries) => ([
             ...oldEntries,
             newEntry,
         ]));
-    }, [setEntries]);
+    }, [onEntriesChange]);
 
     const handleEntryDelete = React.useCallback((entryId: string) => {
-        setEntries((oldEntries) => {
+        onEntriesChange((oldEntries) => {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
             if (i === -1) {
@@ -48,10 +55,10 @@ function PrimaryTagging(props: Props) {
 
             return newEntries;
         });
-    }, [setEntries]);
+    }, [onEntriesChange]);
 
     const handleExcerptChange = React.useCallback((entryId: string, modifiedExcerpt: string) => {
-        setEntries((oldEntries) => {
+        onEntriesChange((oldEntries) => {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
             if (i === -1) {
@@ -71,23 +78,23 @@ function PrimaryTagging(props: Props) {
 
             return newEntries;
         });
-    }, [setEntries]);
+    }, [onEntriesChange]);
 
     return (
         <div className={_cs(className, styles.primaryTagging)}>
-            <SourceDetails
+            <LeftPane
                 className={styles.sourcePreview}
                 onEntryCreate={handleEntryCreate}
                 entries={entries}
                 activeEntry={activeEntry}
-                onEntryClick={setActiveEntry}
+                onEntryClick={onActiveEntryChange}
                 onEntryDelete={handleEntryDelete}
                 onExcerptChange={handleExcerptChange}
                 lead={lead}
             />
             {sections && (
                 <Sections
-                    className={styles.taggingPlayground}
+                    className={styles.sections}
                     sections={sections}
                     frameworkId={frameworkId}
                 />
