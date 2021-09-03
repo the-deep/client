@@ -12,6 +12,7 @@ generates:
     config:
       # maybeValue: T | undefined
       enumsAsTypes: true
+      skipTypename: true
       scalars:
         Date: 'string'
         DateTime: 'string'

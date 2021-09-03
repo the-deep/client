@@ -20,7 +20,7 @@ const query = {
 };
 
 interface Props {
-    frameworkId: number;
+    frameworkId: number | string;
     label?: string;
     className?: string;
     variant?: ButtonProps<string>['variant'];

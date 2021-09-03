@@ -15,7 +15,7 @@ import {
 import {
     WidgetValue,
 } from '#types/newEntry';
-import ListWidgetPreview from '#views/AnalyticalFramework/FrameworkForm/components/ListCanvas/ListWidgetPreview';
+import ListWidgetPreview from '#components/framework/ListWidgetPreview';
 
 import styles from './styles.css';
 
@@ -23,7 +23,7 @@ const widgetKeySelector = (d: Widget) => d.clientId;
 
 interface Props {
     className?: string;
-    widgets: Widget[];
+    widgets: Widget[] | undefined;
     title?: string;
     onChange: (newVal: unknown, widgetName: string) => void;
     attributesMap: Obj<WidgetValue>;
@@ -41,7 +41,7 @@ function SectionItem(props: Props) {
     } = props;
 
     const widgetsWithValue = useMemo(() => (
-        widgets.filter(
+        widgets?.filter(
             (widget) => isDefined(attributesMap[widget.clientId]?.data?.value),
         )
     ), [attributesMap, widgets]);

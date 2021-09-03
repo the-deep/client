@@ -36,7 +36,7 @@ export type Matrix2dValue = {
 export type Types = WidgetTypes;
 
 interface BasicEntity {
-    id: number;
+    id: string;
     createdAt: string;
     createdBy: number;
     createdByName: string;
@@ -204,7 +204,7 @@ export interface Section {
     order: number;
     title: string;
     tooltip?: string;
-    widgets: Widget[];
+    widgets?: Widget[];
 }
 
 export interface AnalysisFramework extends BasicEntity {
