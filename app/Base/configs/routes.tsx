@@ -152,7 +152,6 @@ const taggingRoute = wrap({
         );
     },
 });
-
 const projectEditRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/edit/',
@@ -169,6 +168,52 @@ const projectEditRoute = wrap({
             return false;
         }
         return project.allowedPermissions.includes('UPDATE_PROJECT');
+    },
+});
+const entryEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/leads/:leadId(\\d+)/',
+    title: 'Edit Entry',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/Project/EntryEdit')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project || project.allowedPermissions.length <= 0) {
+            return false;
+        }
+        // NOTE: should also check if users can edit lead
+        // either in route or inside page
+        return (
+            project.allowedPermissions.includes('CREATE_ENTRY')
+            || project.allowedPermissions.includes('UPDATE_ENTRY')
+            || project.allowedPermissions.includes('DELETE_ENTRY')
+        );
+    },
+});
+const analysis = wrap({
+    parent: projectRoute,
+    path: '/analysis/',
+    title: 'Analysis',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Analysis')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project || project.allowedPermissions.length <= 0) {
+            return false;
+        }
+        return (
+            project.allowedPermissions.includes('VIEW_ENTRY')
+        );
     },
 });
 
@@ -202,39 +247,6 @@ const exportRoute = wrap({
     },
     visibility: 'is-authenticated',
 });
-const taggingFlow = wrap({
-    parent: { path: taggingRoute.path },
-    path: '/:leadId(\\d+)/',
-    title: 'Tagging Flow',
-    navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/TaggingFlow')),
-    componentProps: {
-    },
-    visibility: 'is-authenticated',
-});
-
-const analysis = wrap({
-    parent: projectRoute,
-    path: '/analysis/',
-    title: 'Analysis',
-    navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Analysis')),
-    componentProps: {
-    },
-    visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
-        if (skipProjectPermissionCheck) {
-            return true;
-        }
-        if (!project || project.allowedPermissions.length <= 0) {
-            return false;
-        }
-        return (
-            project.allowedPermissions.includes('VIEW_ALL_ENTRY')
-            || project.allowedPermissions.includes('VIEW_ONLY_UNPROTECTED_ENTRY')
-        );
-    },
-});
 
 const routes = {
     signIn,
@@ -256,6 +268,6 @@ const routes = {
     fourHundredFour,
     dashboard,
     export: exportRoute,
-    taggingFlow,
+    entryEdit: entryEditRoute,
 };
 export default routes;

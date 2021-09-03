@@ -53,14 +53,14 @@ function Actions<T extends number>(props: Props<T>) {
     const canViewEntry = project?.allowedPermissions.includes('VIEW_ENTRY');
 
     const route = useRouteMatching(
-        routes.taggingFlow,
+        routes.entryEdit,
         {
             projectId,
             leadId: id,
         },
     );
 
-    const taggingFlowLink = route?.to ?? '';
+    const entryEditLink = route?.to ?? '';
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
@@ -113,7 +113,7 @@ function Actions<T extends number>(props: Props<T>) {
                         variant="primary"
                         title="tag"
                         disabled={disabled}
-                        to={taggingFlowLink}
+                        to={entryEditLink}
                         icons={<IoAdd />}
                     >
                         Tag

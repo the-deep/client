@@ -1,12 +1,6 @@
-.project-edit {
+.entry-edit {
     display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
     flex-direction: column;
-    background-color: var(--dui-color-background);
-    width: 100vw;
-    height: 100vh;
     overflow: auto;
 
     .header {
