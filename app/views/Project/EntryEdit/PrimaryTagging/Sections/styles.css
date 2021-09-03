@@ -1,43 +1,38 @@
 .sections {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
 
-    .framework-preview {
+    .content {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        padding-right: var(--dui-spacing-super-large);
+        background-color: var(--dui-color-foreground);
         overflow-y: auto;
 
-        .content {
+        .tabs {
+            .border-wrapper {
+                display: flex;
+                flex-grow: 1;
+            }
+
+            .tab {
+                flex-grow: 1;
+
+                /*
+                &.errored {
+                    color: var(--dui-color-danger);
+                }
+                */
+            }
+        }
+
+        .panel {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            background-color: var(--dui-color-foreground);
             overflow-y: auto;
-
-            .tabs {
-                .border-wrapper {
-                    display: flex;
-                    flex-grow: 1;
-                }
-
-                .tab {
-                    flex-grow: 1;
-
-                    /*
-                    &.errored {
-                        color: var(--dui-color-danger);
-                    }
-                    */
-                }
-            }
-
-            .panel {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                overflow-y: auto;
-            }
         }
     }
 }

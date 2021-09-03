@@ -34,58 +34,56 @@ function Sections(props: Props) {
     );
 
     return (
-        <div className={_cs(className, styles.sections)}>
+        <Container
+            className={_cs(className, styles.sections)}
+            headerActions={frameworkId && (
+                <FrameworkImageButton
+                    frameworkId={frameworkId}
+                    label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                    variant="secondary"
+                />
+            )}
+            contentClassName={styles.content}
+        >
             <Tabs
                 value={selectedSection}
                 onChange={setSelectedSection}
                 variant="step"
             >
-                <Container
-                    className={styles.frameworkPreview}
-                    headerIcons={frameworkId && (
-                        <FrameworkImageButton
-                            frameworkId={frameworkId}
-                            label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
-                            variant="secondary"
-                        />
-                    )}
-                    contentClassName={styles.content}
-                >
-                    {/*
-                        <NonFieldError error={error} />
-                    */}
-                    <TabList className={styles.tabs}>
-                        {sections.map((section) => (
-                            <Tab
-                                key={section.clientId}
-                                name={section.clientId}
-                                borderWrapperClassName={styles.borderWrapper}
-                                className={_cs(
-                                    styles.tab,
-                                    // eslint-disable-next-line max-len
-                                    // analyzeErrors(error?.[section.clientId]) && styles.errored,
-                                )}
-                                title={section.tooltip}
-                            >
-                                {section.title}
-                            </Tab>
-                        ))}
-                    </TabList>
+                {/*
+                    <NonFieldError error={error} />
+                */}
+                <TabList className={styles.tabs}>
                     {sections.map((section) => (
-                        <TabPanel
+                        <Tab
                             key={section.clientId}
                             name={section.clientId}
-                            className={styles.panel}
+                            borderWrapperClassName={styles.borderWrapper}
+                            className={_cs(
+                                styles.tab,
+                                // eslint-disable-next-line max-len
+                                // analyzeErrors(error?.[section.clientId]) && styles.errored,
+                            )}
+                            title={section.tooltip}
                         >
-                            <FrameworkOutput
-                                name={section.clientId}
-                                widgets={section.widgets}
-                            />
-                        </TabPanel>
+                            {section.title}
+                        </Tab>
                     ))}
-                </Container>
+                </TabList>
+                {sections.map((section) => (
+                    <TabPanel
+                        key={section.clientId}
+                        name={section.clientId}
+                        className={styles.panel}
+                    >
+                        <FrameworkOutput
+                            name={section.clientId}
+                            widgets={section.widgets}
+                        />
+                    </TabPanel>
+                ))}
             </Tabs>
-        </div>
+        </Container>
     );
 }
 

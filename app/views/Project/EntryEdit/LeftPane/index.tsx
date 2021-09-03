@@ -181,9 +181,11 @@ interface Props {
     onExcerptChange?: (entryClientId: Entry['clientId'], newExcerpt: string) => void;
     onEntryDelete?: (entryClientId: Entry['clientId']) => void;
     lead?: Lead;
+    hideSimplifiedPreview?: boolean;
+    hideOriginalPreview?: boolean;
 }
 
-function SourceDetails(props: Props) {
+function LeftPane(props: Props) {
     const {
         className,
         onEntryCreate,
@@ -193,12 +195,16 @@ function SourceDetails(props: Props) {
         lead,
         onExcerptChange,
         onEntryDelete,
+        hideSimplifiedPreview = false,
+        hideOriginalPreview = false,
     } = props;
 
     const alert = useAlert();
 
     const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
-    const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries' | undefined>('simplified');
+    const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries' | undefined>(
+        !hideSimplifiedPreview ? 'simplified' : 'entries',
+    );
     const [excerpt, setExcerpt] = useInputState<string | undefined>(undefined);
     const [
         showScreenshot,
@@ -385,47 +391,55 @@ function SourceDetails(props: Props) {
                 variant="secondary"
             >
                 <TabList className={styles.tabList}>
-                    <Tab name="simplified">
-                        Simplified Text
-                    </Tab>
-                    <Tab name="original">
-                        Original
-                    </Tab>
+                    {!hideSimplifiedPreview && (
+                        <Tab name="simplified">
+                            Simplified Text
+                        </Tab>
+                    )}
+                    {!hideOriginalPreview && (
+                        <Tab name="original">
+                            Original
+                        </Tab>
+                    )}
                     <Tab name="entries">
                         All Entries
                     </Tab>
                 </TabList>
-                <TabPanel
-                    name="simplified"
-                    className={styles.simplifiedTab}
-                >
-                    {leadPreviewPending ? (
-                        <PendingMessage
-                            message="Fetching simplified text"
-                        />
-                    ) : (
-                        <SimplifiedTextView
-                            className={styles.simplifiedTextView}
-                            activeEntryClientId={activeEntry}
-                            onExcerptClick={onEntryClick}
-                            entries={entries}
-                            onAddButtonClick={handleSimplifiedViewAddButtonClick}
-                            text={leadPreview?.text}
-                            onExcerptChange={onExcerptChange}
-                        />
-                    )}
-                </TabPanel>
-                <TabPanel
-                    name="original"
-                    className={styles.originalTab}
-                >
-                    {leadPreviewPending && (
-                        <PendingMessage
-                            message="Fetching simplified text"
-                        />
-                    )}
-                    {originalTabContent}
-                </TabPanel>
+                {!hideSimplifiedPreview && (
+                    <TabPanel
+                        name="simplified"
+                        className={styles.simplifiedTab}
+                    >
+                        {leadPreviewPending ? (
+                            <PendingMessage
+                                message="Fetching simplified text"
+                            />
+                        ) : (
+                            <SimplifiedTextView
+                                className={styles.simplifiedTextView}
+                                activeEntryClientId={activeEntry}
+                                onExcerptClick={onEntryClick}
+                                entries={entries}
+                                onAddButtonClick={handleSimplifiedViewAddButtonClick}
+                                text={leadPreview?.text}
+                                onExcerptChange={onExcerptChange}
+                            />
+                        )}
+                    </TabPanel>
+                )}
+                {!hideOriginalPreview && (
+                    <TabPanel
+                        name="original"
+                        className={styles.originalTab}
+                    >
+                        {leadPreviewPending && (
+                            <PendingMessage
+                                message="Fetching simplified text"
+                            />
+                        )}
+                        {originalTabContent}
+                    </TabPanel>
+                )}
                 {showSourcePreviewInFullScreen && (
                     <FullScreen className={styles.originalTab}>
                         {originalTabContent}
@@ -471,4 +485,4 @@ function SourceDetails(props: Props) {
     );
 }
 
-export default SourceDetails;
+export default LeftPane;

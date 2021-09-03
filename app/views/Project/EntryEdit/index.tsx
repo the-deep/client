@@ -34,6 +34,7 @@ import {
 import { AnalysisFramework } from '#types/newAnalyticalFramework';
 import { PROJECT_FRAMEWORK } from './queries';
 
+import type { Entry as EditableEntry } from './LeftPane';
 import SourceDetails from './SourceDetails';
 import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
@@ -42,6 +43,11 @@ import Review from './Review';
 import styles from './styles.css';
 
 type FrameworkDetailsMini = Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
+/*
+type Entry = NonNullable<
+NonNullable<NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>['entries']>[number]
+>;
+*/
 
 interface Props {
     className?: string;
@@ -51,14 +57,25 @@ function EntryEdit(props: Props) {
     const { className } = props;
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
-    const projectId = project ? +project.id : undefined;
+    const projectId = project ? project.id : undefined;
     const frameworkId = project?.analysisFramework?.id;
+
+    const [entries, setEntries] = React.useState<EditableEntry[]>([]);
+    const [activeEntry, setActiveEntry] = React.useState<EditableEntry['clientId'] | undefined>();
 
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
-            frameworkId ? { id: frameworkId } : undefined
+            (frameworkId && leadId && projectId) ? {
+                frameworkId,
+                projectId,
+                leadId,
+            } : undefined
         ),
-        [frameworkId],
+        [
+            frameworkId,
+            leadId,
+            projectId,
+        ],
     );
     const {
         data,
@@ -78,7 +95,7 @@ function EntryEdit(props: Props) {
 
     const [ready, setReady] = useState(!leadId);
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
-        project: projectId,
+        project: projectId ? +projectId : undefined,
         sourceType: 'website',
         priority: 100,
         confidentiality: 'unprotected',
@@ -186,7 +203,7 @@ function EntryEdit(props: Props) {
                                 ready={ready}
                                 pending={leadGetPending}
                                 leadInitialValue={leadInitialValue}
-                                projectId={projectId}
+                                projectId={+projectId}
                             />
                         )}
                     </TabPanel>
@@ -200,6 +217,10 @@ function EntryEdit(props: Props) {
                                 className={styles.primaryTagging}
                                 sections={frameworkDetails.primaryTagging as AnalysisFramework['primaryTagging']}
                                 frameworkId={frameworkDetails.id}
+                                entries={entries}
+                                onEntriesChange={setEntries}
+                                activeEntry={activeEntry}
+                                onActiveEntryChange={setActiveEntry}
                             />
                         )}
                     </TabPanel>
@@ -208,7 +229,14 @@ function EntryEdit(props: Props) {
                         name="secondary-tagging"
                     >
                         {frameworkDetails && (
-                            <SecondaryTagging />
+                            <SecondaryTagging
+                                className={styles.secondaryTagging}
+                                widgets={frameworkDetails.secondaryTagging as AnalysisFramework['secondaryTagging']}
+                                frameworkId={frameworkDetails.id}
+                                entries={entries}
+                                activeEntry={activeEntry}
+                                onActiveEntryChange={setActiveEntry}
+                            />
                         )}
                     </TabPanel>
                     <TabPanel
