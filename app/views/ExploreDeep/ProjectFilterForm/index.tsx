@@ -11,9 +11,11 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
-import NewOrganizationSelectInput from '#components/NewOrganizationSelectInput';
-import AnalysisFrameworkSearchMultiSelectInput from '#components/AnalysisFrameworkSearchMultiSelectInput';
-import { OrganizationDetails } from '#types';
+// import NewOrganizationSelectInput from '#components/NewOrganizationSelectInput';
+import AnalysisFrameworkSearchMultiSelectInput, {
+    AnalysisFramework,
+} from '#components/AnalysisFrameworkSearchMultiSelectInput';
+// import { OrganizationDetails } from '#types';
 import {
     ProjectListQueryVariables,
 } from '#generated/types';
@@ -68,15 +70,17 @@ function ProjectFilterForm(props: Props) {
         onFiltersChange({});
     }, [onFiltersChange]);
 
+    /*
     const [
         organizationOptions,
         setOrganizationOptions,
     ] = useState<OrganizationDetails | undefined>();
+    */
 
     const [
         analysisFrameworkOptions,
         setAnalysisFrameworkOptions,
-    ] = useState(); // FIXME: AF type to be specified
+    ] = useState<AnalysisFramework[] | undefined | null>();
 
     const handleSubmit = useCallback(() => {
         onFiltersChange(value);
@@ -103,16 +107,8 @@ function ProjectFilterForm(props: Props) {
                     value={value?.endDate}
                     onChange={setFieldValue}
                 />
-                <NewOrganizationSelectInput
-                    name="organizations"
-                    label="Organizations"
-                    value={value?.organizations}
-                    onChange={setFieldValue}
-                    options={organizationOptions}
-                    onOptionsChange={setOrganizationOptions}
-                />
                 <AnalysisFrameworkSearchMultiSelectInput
-                    name="analysisFramework"
+                    name="analysisFrameworks"
                     label="Analysis Framework"
                     value={value?.analysisFrameworks}
                     onChange={setFieldValue}
@@ -131,7 +127,6 @@ function ProjectFilterForm(props: Props) {
                 </Button>
                 <Button
                     name={undefined}
-                    className={styles.button}
                     disabled={isClearDisabled}
                     onClick={handleClearFilters}
                     variant="transparent"
