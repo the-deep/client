@@ -10,7 +10,7 @@ import EntryListItem from '#components/EntryListItem';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import FrameworkImageButton from '#components/FrameworkImageButton';
 
-import entryMockData from '../../mockData';
+import entryMockData from '#views/Project/Tagging/mockData';
 
 import styles from './styles.css';
 

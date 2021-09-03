@@ -10,7 +10,6 @@ import {
     Tab,
     TabList,
     TabPanel,
-    Portal,
 } from '@the-deep/deep-ui';
 import { useForm } from '@togglecorp/toggle-form';
 
@@ -35,7 +34,7 @@ interface Props {
     className?: string;
 }
 
-function TaggingFlow(props: Props) {
+function EntryEdit(props: Props) {
     const { className } = props;
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
@@ -73,114 +72,112 @@ function TaggingFlow(props: Props) {
     });
 
     return (
-        <Portal>
-            <div className={_cs(styles.projectEdit, className)}>
-                <Tabs
-                    useHash
-                    defaultHash="source-details"
+        <div className={_cs(styles.entryEdit, className)}>
+            <Tabs
+                useHash
+                defaultHash="source-details"
+            >
+                <FullPageHeader
+                    className={styles.header}
+                    heading="Source"
+                    description={lead?.title}
+                    actions={(
+                        <>
+                            <BackLink defaultLink="/">
+                                Close
+                            </BackLink>
+                            <Button
+                                name={undefined}
+                                variant="secondary"
+                                // NOTE: To be fixed later
+                                disabled
+                            >
+                                Save
+                            </Button>
+                            <Button
+                                name={undefined}
+                                // NOTE: To be fixed later
+                                disabled
+                            >
+                                Finalize
+                            </Button>
+                        </>
+                    )}
                 >
-                    <FullPageHeader
-                        className={styles.header}
-                        heading="Source"
-                        description={lead?.title}
-                        actions={(
-                            <>
-                                <BackLink defaultLink="/">
-                                    Close
-                                </BackLink>
-                                <Button
-                                    name={undefined}
-                                    variant="secondary"
-                                    // NOTE: To be fixed later
-                                    disabled
-                                >
-                                    Save
-                                </Button>
-                                <Button
-                                    name={undefined}
-                                    // NOTE: To be fixed later
-                                    disabled
-                                >
-                                    Finalize
-                                </Button>
-                            </>
-                        )}
-                    >
-                        <TabList>
-                            <Tab
-                                name="source-details"
-                                transparentBorder
-                            >
-                                Source Details
-                            </Tab>
-                            <Tab
-                                name="primary-tagging"
-                                disabled={isNotDefined(projectId)}
-                                transparentBorder
-                            >
-                                Primary Tagging
-                            </Tab>
-                            <Tab
-                                name="secondary-tagging"
-                                disabled={isNotDefined(projectId)}
-                                transparentBorder
-                            >
-                                Secondary Tagging
-                            </Tab>
-                            <Tab
-                                name="review"
-                                disabled={isNotDefined(projectId)}
-                                transparentBorder
-                            >
-                                Review
-                            </Tab>
-                        </TabList>
-                    </FullPageHeader>
-                    <div className={styles.tabPanelContainer}>
-                        <TabPanel
-                            className={styles.tabPanel}
+                    <TabList>
+                        <Tab
                             name="source-details"
+                            transparentBorder
                         >
-                            {projectId && (
-                                <SourceDetails
-                                    leadValue={leadValue}
-                                    setValue={setLeadValue}
-                                    setPristine={setLeadPristine}
-                                    setLeadFieldValue={setLeadFieldValue}
-                                    leadFormError={leadFormError}
-                                    ready={ready}
-                                    pending={leadGetPending}
-                                    leadInitialValue={leadInitialValue}
-                                    projectId={projectId}
-                                />
-                            )}
-                        </TabPanel>
-                        <TabPanel
-                            className={styles.tabPanel}
+                            Source Details
+                        </Tab>
+                        <Tab
                             name="primary-tagging"
+                            disabled={isNotDefined(projectId)}
+                            transparentBorder
                         >
-                            <PrimaryTagging
-                                lead={lead}
-                                className={styles.primaryTagging}
-                            />
-                        </TabPanel>
-                        <TabPanel
+                            Primary Tagging
+                        </Tab>
+                        <Tab
                             name="secondary-tagging"
-                            className={styles.tabPanel}
+                            disabled={isNotDefined(projectId)}
+                            transparentBorder
                         >
-                            <SecondaryTagging />
-                        </TabPanel>
-                        <TabPanel
+                            Secondary Tagging
+                        </Tab>
+                        <Tab
                             name="review"
-                            className={styles.tabPanel}
+                            disabled={isNotDefined(projectId)}
+                            transparentBorder
                         >
-                            <Review />
-                        </TabPanel>
-                    </div>
-                </Tabs>
-            </div>
-        </Portal>
+                            Review
+                        </Tab>
+                    </TabList>
+                </FullPageHeader>
+                <div className={styles.tabPanelContainer}>
+                    <TabPanel
+                        className={styles.tabPanel}
+                        name="source-details"
+                    >
+                        {projectId && (
+                            <SourceDetails
+                                leadValue={leadValue}
+                                setValue={setLeadValue}
+                                setPristine={setLeadPristine}
+                                setLeadFieldValue={setLeadFieldValue}
+                                leadFormError={leadFormError}
+                                ready={ready}
+                                pending={leadGetPending}
+                                leadInitialValue={leadInitialValue}
+                                projectId={projectId}
+                            />
+                        )}
+                    </TabPanel>
+                    <TabPanel
+                        className={styles.tabPanel}
+                        name="primary-tagging"
+                    >
+                        <PrimaryTagging
+                            lead={lead}
+                            className={styles.primaryTagging}
+                        />
+                    </TabPanel>
+                    <TabPanel
+                        name="secondary-tagging"
+                        className={styles.tabPanel}
+                    >
+                        <SecondaryTagging />
+                    </TabPanel>
+                    <TabPanel
+                        name="review"
+                        className={styles.tabPanel}
+                    >
+                        <Review />
+                    </TabPanel>
+                </div>
+            </Tabs>
+        </div>
     );
 }
 
-export default TaggingFlow;
+export default EntryEdit;

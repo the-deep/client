@@ -25,6 +25,7 @@ export interface Props<T extends { className?: string }> {
     ) => boolean | undefined,
     navbarVisibility: boolean;
 
+    path: string;
     loginPage?: string;
     defaultPage?: string;
 }
@@ -41,13 +42,14 @@ function Page<T extends { className?: string }>(props: Props<T>) {
 
         loginPage = '/login/',
         defaultPage = '/',
+        path,
     } = props;
 
     const {
         authenticated,
     } = useContext(UserContext);
     const {
-        setNavbarState,
+        setNavbarVisibility,
     } = useContext(NavbarContext);
     const {
         project,
@@ -62,12 +64,13 @@ function Page<T extends { className?: string }>(props: Props<T>) {
             // NOTE: should not set visibility for redirection or, navbar will
             // flash
             if (!redirect) {
-                setNavbarState(navbarVisibility);
+                setNavbarVisibility(navbarVisibility);
             }
         },
-        // NOTE: setNavbarState will not change, navbarVisibility will not
-        // change
-        [setNavbarState, navbarVisibility, redirect],
+        // NOTE: setNavbarVisibility will not change
+        // NOTE: navbarVisibility will not change
+        // NOTE: adding path because Path component is reused when used in Switch > Routes
+        [setNavbarVisibility, navbarVisibility, path, redirect],
     );
 
     if (redirectToSignIn) {

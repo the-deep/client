@@ -106,6 +106,12 @@ function Project(props: Props) {
         >
             <Switch>
                 <Route
+                    exact
+                    path={routes.entryEdit.path}
+                >
+                    {routes.entryEdit.load({ className })}
+                </Route>
+                <Route
                     path={routes.tagging.path}
                 >
                     {routes.tagging.load({ className })}

@@ -42,14 +42,14 @@ function EntryItem(props: Props) {
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     const route = useRouteMatching(
-        routes.taggingFlow,
+        routes.entryEdit,
         {
             projectId,
             leadId,
         },
     );
 
-    const taggingFlowLink = route?.to ?? '';
+    const entryEditLink = route?.to ?? '';
 
     const {
         pending,
@@ -75,7 +75,7 @@ function EntryItem(props: Props) {
                             <ButtonLikeLink
                                 className={styles.button}
                                 variant="secondary"
-                                to={taggingFlowLink}
+                                to={entryEditLink}
                                 icons={(
                                     <FiEdit2 />
                                 )}

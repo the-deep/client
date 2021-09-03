@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Router } from 'react-router-dom';
 import { init, ErrorBoundary, setUser as setUserOnSentry } from '@sentry/react';
-import { unique } from '@togglecorp/fujs';
+import { unique, _cs } from '@togglecorp/fujs';
 import { AlertContainer, AlertContext, AlertOptions } from '@the-deep/deep-ui';
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import ReactGA from 'react-ga';
@@ -57,7 +57,7 @@ const requestContextValue = {
 function Base() {
     const [user, setUser] = useState<User | undefined>();
 
-    const [navbarState, setNavbarState] = useState(false);
+    const [navbarVisibility, setNavbarVisibility] = useState(false);
 
     const authenticated = !!user;
 
@@ -88,24 +88,24 @@ function Base() {
             authenticated,
             user,
             setUser: setUserWithSentry,
-            navbarState,
-            setNavbarState,
+            navbarVisibility,
+            setNavbarVisibility,
         }),
         [
             authenticated,
             user,
             setUserWithSentry,
-            navbarState,
-            setNavbarState,
+            navbarVisibility,
+            setNavbarVisibility,
         ],
     );
 
     const navbarContext: NavbarContextInterface = useMemo(
         () => ({
-            navbarState,
-            setNavbarState,
+            navbarVisibility,
+            setNavbarVisibility,
         }),
-        [navbarState, setNavbarState],
+        [navbarVisibility, setNavbarVisibility],
     );
 
     const [alerts, setAlerts] = React.useState<AlertOptions[]>([]);
@@ -191,9 +191,12 @@ function Base() {
                                         <Init
                                             className={styles.init}
                                         >
-                                            {navbarState && (
-                                                <Navbar className={styles.navbar} />
-                                            )}
+                                            <Navbar
+                                                className={_cs(
+                                                    styles.navbar,
+                                                    !navbarVisibility && styles.hidden,
+                                                )}
+                                            />
                                             <Routes
                                                 className={styles.view}
                                             />
