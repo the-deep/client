@@ -46,6 +46,7 @@ function Routes(props: Props) {
                     {routes.explore.load({ className })}
                 </Route>
                 <Route
+                    exact
                     path={routes.projectCreate.path}
                 >
                     {routes.projectCreate.load({ className })}
@@ -56,11 +57,13 @@ function Routes(props: Props) {
                     {routes.project.load({ className })}
                 </Route>
                 <Route
+                    exact
                     path={routes.analyticalFrameworkEdit.path}
                 >
                     {routes.analyticalFrameworkEdit.load({ className })}
                 </Route>
                 <Route
+                    exact
                     path={routes.analyticalFrameworkCreate.path}
                 >
                     {routes.analyticalFrameworkCreate.load({ className })}
