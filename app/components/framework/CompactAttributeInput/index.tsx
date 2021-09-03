@@ -9,6 +9,7 @@ import {
 } from '@togglecorp/fujs';
 
 import { Widget } from '#types/newAnalyticalFramework';
+
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 
 import TextWidgetInput from './TextWidgetInput';
@@ -22,7 +23,7 @@ import TimeRangeWidgetInput from './TimeRangeWidgetInput';
 import ScaleWidgetInput from './ScaleWidgetInput';
 import MultiSelectWidgetInput from './MultiSelectWidgetInput';
 import SingleSelectWidgetInput from './SingleSelectWidgetInput';
-
+import OrganigramWidgetInput from './OrganigramWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 
 type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
@@ -238,6 +239,24 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
             }
             return (
                 <Matrix2dWidgetInput
+                    className={className}
+                    title={widget.title}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    widget={widget}
+                />
+            );
+        }
+        case 'ORGANIGRAM': {
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
+
+            return (
+                <OrganigramWidgetInput
                     className={className}
                     title={widget.title}
                     name="data"
