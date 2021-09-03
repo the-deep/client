@@ -21,6 +21,9 @@ const ME = gql`
             displayPictureUrl
             lastActiveProject {
                 allowedPermissions
+                analysisFramework {
+                    id
+                }
                 currentUserRole
                 id
                 isPrivate

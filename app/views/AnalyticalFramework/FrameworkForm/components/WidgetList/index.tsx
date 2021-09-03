@@ -8,7 +8,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { Types } from '#types/newAnalyticalFramework';
-import { PartialWidget } from '../Canvas/WidgetPreview';
+import { PartialWidget } from '#components/framework/WidgetPreview';
 import styles from './styles.css';
 
 const partialWidgets: PartialWidget[] = [

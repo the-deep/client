@@ -1,19 +1,26 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import SourceDetails, { Entry } from './SourceDetails';
+import { Section } from '#types/newAnalyticalFramework';
 import { Lead } from '#components/LeadEditForm/schema';
+
+import Sections from './Sections';
+import SourceDetails, { Entry } from './SourceDetails';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     lead?: Lead;
+    sections: Section[] | undefined | null;
+    frameworkId: string;
 }
 
 function PrimaryTagging(props: Props) {
     const {
         className,
         lead,
+        sections,
+        frameworkId,
     } = props;
 
     const [entries, setEntries] = React.useState<Entry[]>([]);
@@ -78,9 +85,13 @@ function PrimaryTagging(props: Props) {
                 onExcerptChange={handleExcerptChange}
                 lead={lead}
             />
-            <div className={styles.taggingPlayground}>
-                Tagging playground
-            </div>
+            {sections && (
+                <Sections
+                    className={styles.taggingPlayground}
+                    sections={sections}
+                    frameworkId={frameworkId}
+                />
+            )}
         </div>
     );
 }

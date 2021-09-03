@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
     isNotDefined,
     _cs,
 } from '@togglecorp/fujs';
 import {
+    PendingMessage,
     Button,
     Tabs,
     Tab,
     TabList,
     TabPanel,
 } from '@the-deep/deep-ui';
-import { useForm } from '@togglecorp/toggle-form';
+import {
+    useForm,
+    removeNull,
+} from '@togglecorp/toggle-form';
+import { useQuery } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
 import { useRequest } from '#base/utils/restRequest';
@@ -22,6 +27,12 @@ import {
     PartialFormType as PartialLeadFormType,
     Lead,
 } from '#components/LeadEditForm/schema';
+import {
+    ProjectFrameworkQuery,
+    ProjectFrameworkQueryVariables,
+} from '#generated/types';
+import { AnalysisFramework } from '#types/newAnalyticalFramework';
+import { PROJECT_FRAMEWORK } from './queries';
 
 import SourceDetails from './SourceDetails';
 import PrimaryTagging from './PrimaryTagging';
@@ -29,6 +40,8 @@ import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
 
 import styles from './styles.css';
+
+type FrameworkDetailsMini = Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
 
 interface Props {
     className?: string;
@@ -39,6 +52,29 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
     const projectId = project ? +project.id : undefined;
+    const frameworkId = project?.analysisFramework?.id;
+
+    const variables = useMemo(
+        (): ProjectFrameworkQueryVariables | undefined => (
+            frameworkId ? { id: frameworkId } : undefined
+        ),
+        [frameworkId],
+    );
+    const {
+        data,
+        loading,
+    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
+        PROJECT_FRAMEWORK,
+        {
+            skip: isNotDefined(variables),
+            variables,
+        },
+    );
+
+    const frameworkDetails = useMemo(
+        () => removeNull(data?.analysisFramework),
+        [data?.analysisFramework],
+    );
 
     const [ready, setReady] = useState(!leadId);
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
@@ -113,21 +149,21 @@ function EntryEdit(props: Props) {
                         </Tab>
                         <Tab
                             name="primary-tagging"
-                            disabled={isNotDefined(projectId)}
+                            disabled={isNotDefined(frameworkId)}
                             transparentBorder
                         >
                             Primary Tagging
                         </Tab>
                         <Tab
                             name="secondary-tagging"
-                            disabled={isNotDefined(projectId)}
+                            disabled={isNotDefined(frameworkId)}
                             transparentBorder
                         >
                             Secondary Tagging
                         </Tab>
                         <Tab
                             name="review"
-                            disabled={isNotDefined(projectId)}
+                            disabled={isNotDefined(frameworkId)}
                             transparentBorder
                         >
                             Review
@@ -135,6 +171,7 @@ function EntryEdit(props: Props) {
                     </TabList>
                 </FullPageHeader>
                 <div className={styles.tabPanelContainer}>
+                    {loading && <PendingMessage />}
                     <TabPanel
                         className={styles.tabPanel}
                         name="source-details"
@@ -157,22 +194,30 @@ function EntryEdit(props: Props) {
                         className={styles.tabPanel}
                         name="primary-tagging"
                     >
-                        <PrimaryTagging
-                            lead={lead}
-                            className={styles.primaryTagging}
-                        />
+                        {frameworkDetails && (
+                            <PrimaryTagging
+                                lead={lead}
+                                className={styles.primaryTagging}
+                                sections={frameworkDetails.primaryTagging as AnalysisFramework['primaryTagging']}
+                                frameworkId={frameworkDetails.id}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel
-                        name="secondary-tagging"
                         className={styles.tabPanel}
+                        name="secondary-tagging"
                     >
-                        <SecondaryTagging />
+                        {frameworkDetails && (
+                            <SecondaryTagging />
+                        )}
                     </TabPanel>
                     <TabPanel
                         name="review"
                         className={styles.tabPanel}
                     >
-                        <Review />
+                        <Review
+                            framework={frameworkDetails as FrameworkDetailsMini}
+                        />
                     </TabPanel>
                 </div>
             </Tabs>

@@ -23,10 +23,10 @@ import { sortByOrder } from '#utils/common';
 import FrameworkImageButton from '#components/FrameworkImageButton';
 import { Section, Widget } from '#types/newAnalyticalFramework';
 import NonFieldError from '#components/NonFieldError';
+import { PartialWidget } from '#components/framework/WidgetPreview';
 
 import { SectionsType } from '../schema';
 import Canvas from '../components/Canvas';
-import { PartialWidget } from '../components/Canvas/WidgetPreview';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';
 

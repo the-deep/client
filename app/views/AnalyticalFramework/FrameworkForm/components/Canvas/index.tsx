@@ -15,10 +15,9 @@ import SortableList, {
     Listeners,
 } from '#components/SortableList';
 import NonFieldError from '#components/NonFieldError';
-
 import { Widget } from '#types/newAnalyticalFramework';
+import WidgetPreview, { PartialWidget } from '#components/framework/WidgetPreview';
 
-import WidgetPreview, { PartialWidget } from './WidgetPreview';
 import styles from './styles.css';
 
 interface WidgetProps {

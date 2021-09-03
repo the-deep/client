@@ -16,7 +16,7 @@ import {
     Widget,
     Section,
 } from '#types/newAnalyticalFramework';
-import ListWidgetPreview from '#views/AnalyticalFramework/FrameworkForm/components/ListCanvas/ListWidgetPreview';
+import ListWidgetPreview from '#components/framework/ListWidgetPreview';
 
 import SectionItem from './SectionItem';
 
@@ -28,7 +28,7 @@ const widgetKeySelector = (d: Widget) => d.clientId;
 interface Props {
     className?: string;
     entry: Entry;
-    framework: AnalysisFramework;
+    framework: Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
     index?: number;
     hideExcerpt?: boolean;
     sectionContainerClassName?: string;
