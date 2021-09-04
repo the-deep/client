@@ -63,6 +63,7 @@ function UserGroupItem(props: UserGroupItemProps) {
         <ExpandableContainer
             className={styles.userGroupItem}
             heading={data.title}
+            inlineHeadingDescription
             headerClassName={styles.userGroupHeader}
             headingContainerClassName={styles.headingContainer}
             headingClassName={styles.heading}
@@ -233,7 +234,6 @@ function UserGroup(props: Props) {
             headerActions={(
                 <Button
                     name="addUsergroup"
-                    className={styles.addUsergroupButton}
                     icons={<IoAdd />}
                     onClick={handleAddUsergroupClick}
                 >

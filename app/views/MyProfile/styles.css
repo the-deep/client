@@ -1,85 +1,79 @@
 .form {
     display: flex;
     flex-direction: column;
+    background-color: var(--dui-color-background);
     height: 100%;
     overflow-y: auto;
 
-    .my-profile {
-        display: flex;
+    .container {
         flex-grow: 1;
-        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small))
-            var(--dui-spacing-super-large);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 
-        .header {
-            margin: var(--dui-spacing-small) 0;
-        }
-
-        .profile-content {
+        .content {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            margin: var(--dui-spacing-small) 0;
             background-color: var(--dui-color-foreground);
-            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 
-            .content {
+            .display-picture-container {
                 display: flex;
+                position: relative;
+                align-items: center;
                 flex-direction: column;
-                flex-grow: 1;
-                justify-content: center;
-                background-color: var(--dui-color-foreground);
 
-                .display-picture-container {
+                .display-picture {
                     display: flex;
-                    position: relative;
-                    align-items: center;
-                    flex-direction: column;
+                    flex-shrink: 0;
+                    width: calc(96px + 15vh);
+                    height: calc(96px + 15vh);
+                    --size: calc(96px + 15vh);
+                }
 
-                    .display-picture {
+                .change-display-picture {
+                    position: absolute;
+                    bottom: var(--dui-spacing-small);
+                    left: 54%;
+
+                    .label {
+                        width: 3em;
+                        height: 3em;
+                        font-size: 1.2em;
+                    }
+
+                    .file-input {
+                        --height-border: 0;
+                    }
+                }
+            }
+
+            .user-info {
+                display: flex;
+                gap: var(--dui-spacing-extra-large);
+
+                .preferences,
+                .personal-info {
+                    flex: 1;
+                    background-color: var(--dui-color-foreground);
+                    --spacing: var(--dui-spacing-extra-large);
+
+                    .email-preferences {
+                        flex: 1;
+                        background-color: var(--dui-color-foreground);
+                        padding: var(--dui-spacing-medium) 0;
+                    }
+
+                    .input-container {
                         display: flex;
-                        flex-shrink: 0;
-                        width: calc(96px + 15vh);
-                        height: calc(96px + 15vh);
-                        --size: calc(96px + 15vh);
-                    }
-
-                    .change-display-picture {
-                        position: absolute;
-                        bottom: var(--dui-spacing-small);
-                        left: 54%;
-
-                        .label {
-                            width: 3em;
-                            height: 3em;
-                            font-size: 1.2em;
-                        }
-
-                        .file-input {
-                            --height-border: 0;
-                        }
+                        flex-direction: column;
+                        gap: var(--dui-spacing-medium);
                     }
                 }
+            }
 
-                .user-info {
-                    display: flex;
-                    flex-grow: 1;
-
-                    .personal-info {
-                        flex: 1;
-                        background-color: var(--dui-color-foreground);
-                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
-
-                        .change-password {
-                            margin: var(--dui-spacing-medium);
-                        }
-                    }
-
-                    .preferences {
-                        flex: 1;
-                        background-color: var(--dui-color-foreground);
-                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
-                    }
-                }
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+                padding: 0 var(--dui-spacing-extra-large);
             }
         }
     }

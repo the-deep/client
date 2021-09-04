@@ -1,25 +1,21 @@
 .user-group {
     display: flex;
     flex-direction: column;
-    padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+    padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
     height: 100%;
     overflow-y: auto;
-
-    .add-usergroup-button {
-        display: flex;
-    }
 
     .content {
         background-color: var(--dui-color-foreground);
         padding: var(--dui-spacing-large);
 
         .user-group-list {
-            width: 100%;
-
             .user-group-item {
+                gap: 0;
+
                 .user-group-header {
+                    border: none;
                     background-color: var(--dui-color-background);
-                    padding: var(--dui-spacing-small);
 
                     .heading-container {
                         .heading {
@@ -32,6 +28,7 @@
                 .heading-description-container {
                     display: flex;
                     align-items: center;
+                    gap: var(--dui-spacing-large);
 
                     .members-value {
                         order: 1;
@@ -42,6 +39,7 @@
                 }
 
                 .user-group-content {
+                    border: none;
                     padding: 0;
                 }
             }

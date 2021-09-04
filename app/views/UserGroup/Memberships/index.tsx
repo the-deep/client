@@ -106,7 +106,7 @@ function Memberships(props: Props) {
             TableHeaderCellProps
         > = {
             id: 'action',
-            title: _ts('usergroup', 'actionLabel'),
+            title: '',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: false,
@@ -124,6 +124,7 @@ function Memberships(props: Props) {
                 deleteConfirmationMessage: _ts('usergroup', 'deleteMemberConfirmMessage'),
                 disabled: !canEdit || data.member === activeUserId,
             }),
+            columnWidth: 96,
         };
 
         return ([
@@ -177,6 +178,7 @@ function Memberships(props: Props) {
                 className={styles.expandedTable}
                 columns={membersColumns}
                 keySelector={membershipKeySelector}
+                headerCellClassName={styles.headerCell}
                 data={memberships?.results}
             />
             {showAddUserModal && userGroup && (
