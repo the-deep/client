@@ -21,6 +21,8 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 import { User } from '#types';
 
+import styles from './styles.css';
+
 type FormType = {
     oldPassword?: string;
     newPassword?: string;
@@ -148,6 +150,7 @@ function ChangePasswordModal(props: Props) {
                     </Button>
                 </>
             )}
+            bodyClassName={styles.modalBody}
         >
             <NonFieldError error={error} />
             <PasswordInput

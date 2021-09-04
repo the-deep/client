@@ -78,7 +78,7 @@ const emailOptOutsOptions: EmailOptOutOption[] = [
     { key: 'email_comment', label: _ts('userProfile', 'entryCommentsInfo') },
 ];
 const emailOptOutKeySelector = (d: EmailOptOutOption) => d.key;
-const langaugeKeySelector = (d: LanguagePreference) => d.code;
+const languageKeySelector = (d: LanguagePreference) => d.code;
 const languageLabelSelector = (d: LanguagePreference) => d.title;
 
 const initialValue: FormType = {};
@@ -191,103 +191,97 @@ function MyProfile(props: Props) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
-                className={styles.myProfile}
-                headerClassName={styles.header}
+                className={styles.container}
                 heading={_ts('myProfile', 'myProfileTitle')}
-                contentClassName={styles.profileContent}
+                contentClassName={styles.content}
             >
-                <Container
-                    footerActions={(
-                        <Button
-                            disabled={disabled || pristine}
-                            type="submit"
-                            variant="primary"
-                            name="saveProfile"
-                        >
-                            {_ts('myProfile', 'saveMyProfile')}
-                        </Button>
-                    )}
-                    className={styles.content}
-                >
-                    {(userGetPending || languagesPending) && <PendingMessage />}
-                    <div className={styles.displayPictureContainer}>
-                        <Avatar
-                            className={styles.displayPicture}
-                            src={(value.displayPicture
-                                ? value.displayPictureUrl
-                                : undefined
-                            )}
-                            name={`${value.firstName} ${value.lastName}`}
-                        />
-                        <DeepImageInput
-                            className={styles.changeDisplayPicture}
-                            name="displayPicture"
-                            value={value.displayPicture}
-                            onChange={setFieldValue}
-                            showStatus={false}
-                            onOptionChange={handleDisplayPictureOptionChange}
-                            labelClassName={styles.label}
-                            fileInputClassName={styles.fileInput}
-                        >
-                            <FiEdit2 />
-                        </DeepImageInput>
-                    </div>
-                    <NonFieldError
-                        error={error}
+                {(userGetPending || languagesPending) && <PendingMessage />}
+                <div className={styles.displayPictureContainer}>
+                    <Avatar
+                        className={styles.displayPicture}
+                        src={(value.displayPicture
+                            ? value.displayPictureUrl
+                            : undefined
+                        )}
+                        name={`${value.firstName} ${value.lastName}`}
                     />
-                    <div className={styles.userInfo}>
+                    <DeepImageInput
+                        className={styles.changeDisplayPicture}
+                        name="displayPicture"
+                        value={value.displayPicture}
+                        onChange={setFieldValue}
+                        showStatus={false}
+                        onOptionChange={handleDisplayPictureOptionChange}
+                        labelClassName={styles.label}
+                        fileInputClassName={styles.fileInput}
+                    >
+                        <FiEdit2 />
+                    </DeepImageInput>
+                </div>
+                <NonFieldError error={error} />
+                <div className={styles.userInfo}>
+                    <Container
+                        className={styles.personalInfo}
+                        headingSize="small"
+                        heading={_ts('myProfile', 'personalInfo')}
+                        footerIcons={(
+                            <ChangePasswordButton />
+                        )}
+                        contentClassName={styles.inputContainer}
+                    >
+                        <TextInput
+                            name="firstName"
+                            disabled={disabled}
+                            onChange={setFieldValue}
+                            value={value.firstName}
+                            error={error?.firstName}
+                            label={_ts('myProfile', 'firstName')}
+                            placeholder={_ts('myProfile', 'firstName')}
+                            autoFocus
+                        />
+                        <TextInput
+                            name="lastName"
+                            disabled={disabled}
+                            onChange={setFieldValue}
+                            value={value.lastName}
+                            error={error?.lastName}
+                            label={_ts('myProfile', 'lastName')}
+                            placeholder={_ts('myProfile', 'lastName')}
+                        />
+                        <TextInput
+                            name="organization"
+                            disabled={disabled}
+                            onChange={setFieldValue}
+                            value={value.organization}
+                            error={error?.organization}
+                            label={_ts('myProfile', 'organization')}
+                            placeholder={_ts('myProfile', 'organization')}
+                        />
+                    </Container>
+                    <Container
+                        className={styles.preferences}
+                        heading={_ts('myProfile', 'preferences')}
+                        headingSize="small"
+                        contentClassName={styles.inputContainer}
+                    >
+                        <SelectInput
+                            name="language"
+                            disabled={disabled}
+                            onChange={setFieldValue}
+                            value={value.language}
+                            error={error?.language}
+                            label={_ts('myProfile', 'platformLanguage')}
+                            placeholder={_ts('myProfile', 'platformLanguage')}
+                            keySelector={languageKeySelector}
+                            labelSelector={languageLabelSelector}
+                            options={languageResponse?.results}
+                        />
                         <Container
-                            className={styles.personalInfo}
-                            heading={_ts('myProfile', 'personalInfo')}
+                            className={styles.emailPreferences}
+                            heading="Email Notifications"
+                            headingSize="extraSmall"
+                            contentClassName={styles.inputContainer}
                         >
-                            <TextInput
-                                name="firstName"
-                                disabled={disabled}
-                                onChange={setFieldValue}
-                                value={value.firstName}
-                                error={error?.firstName}
-                                label={_ts('myProfile', 'firstName')}
-                                placeholder={_ts('myProfile', 'firstName')}
-                                autoFocus
-                            />
-                            <TextInput
-                                name="lastName"
-                                disabled={disabled}
-                                onChange={setFieldValue}
-                                value={value.lastName}
-                                error={error?.lastName}
-                                label={_ts('myProfile', 'lastName')}
-                                placeholder={_ts('myProfile', 'lastName')}
-                            />
-                            <TextInput
-                                name="organization"
-                                disabled={disabled}
-                                onChange={setFieldValue}
-                                value={value.organization}
-                                error={error?.organization}
-                                label={_ts('myProfile', 'organization')}
-                                placeholder={_ts('myProfile', 'organization')}
-                            />
-                            <ChangePasswordButton
-                                className={styles.changePassword}
-                            />
-                        </Container>
-                        <Container
-                            className={styles.preferences}
-                            heading={_ts('myProfile', 'preferences')}
-                        >
-                            <SelectInput
-                                name="language"
-                                disabled={disabled}
-                                onChange={setFieldValue}
-                                value={value.language}
-                                error={error?.language}
-                                label={_ts('myProfile', 'platformLanguage')}
-                                placeholder={_ts('myProfile', 'platformLanguage')}
-                                keySelector={langaugeKeySelector}
-                                labelSelector={languageLabelSelector}
-                                options={languageResponse?.results}
-                            />
                             <List // FIXME:  use ListSelection component when available
                                 data={emailOptOutsOptions}
                                 renderer={Checkbox}
@@ -295,8 +289,18 @@ function MyProfile(props: Props) {
                                 rendererParams={rowRendererParams}
                             />
                         </Container>
-                    </div>
-                </Container>
+                    </Container>
+                </div>
+                <div className={styles.buttonContainer}>
+                    <Button
+                        disabled={disabled || pristine}
+                        type="submit"
+                        variant="primary"
+                        name="saveProfile"
+                    >
+                        {_ts('myProfile', 'saveMyProfile')}
+                    </Button>
+                </div>
             </Container>
         </form>
     );

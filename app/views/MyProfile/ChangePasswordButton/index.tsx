@@ -15,7 +15,7 @@ function ChangePasswordButton(props: Props) {
     const {
         className,
         disabled,
-        ...stakeholderModalProps
+        ...modalProps
     } = props;
 
     const [
@@ -38,7 +38,7 @@ function ChangePasswordButton(props: Props) {
             </Button>
             {isShown && (
                 <ChangePasswordModal
-                    {...stakeholderModalProps}
+                    {...modalProps}
                     onModalClose={hideModal}
                 />
             )}
