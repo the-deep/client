@@ -61,7 +61,6 @@ function Sections(props: Props) {
                             borderWrapperClassName={styles.borderWrapper}
                             className={_cs(
                                 styles.tab,
-                                // eslint-disable-next-line max-len
                                 // analyzeErrors(error?.[section.clientId]) && styles.errored,
                             )}
                             title={section.tooltip}

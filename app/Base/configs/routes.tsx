@@ -1,4 +1,6 @@
 import { lazy } from 'react';
+import { isNotDefined } from '@togglecorp/fujs';
+
 import { wrap } from '#base/utils/routes';
 
 const fourHundredFour = wrap({
@@ -181,7 +183,11 @@ const entryEditRoute = wrap({
         if (skipProjectPermissionCheck) {
             return true;
         }
-        if (!project || project.allowedPermissions.length <= 0) {
+        if (
+            !project
+            || project.allowedPermissions.length <= 0
+            || isNotDefined(project.analysisFramework?.id)
+        ) {
             return false;
         }
         // NOTE: should also check if users can edit lead

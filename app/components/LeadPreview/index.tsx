@@ -9,9 +9,9 @@ import {
     IoExpand,
 } from 'react-icons/io5';
 import {
+    Element,
     QuickActionButton,
     QuickActionLink,
-    ElementFragments,
     TextInput,
 } from '@the-deep/deep-ui';
 
@@ -85,35 +85,34 @@ function LeadPreview(props: Props) {
             ref={containerRef}
         >
             {!hideBar && (
-                <div className={styles.bar}>
-                    <ElementFragments
-                        actions={(
-                            <>
-                                <QuickActionLink
-                                    className={styles.link}
-                                    to={url ?? attachment?.file ?? ''}
-                                >
-                                    <IoOpenOutline />
-                                </QuickActionLink>
-                                <QuickActionButton
-                                    className={styles.button}
-                                    name={undefined}
-                                    onClick={handleFullScreenToggleClick}
-                                >
-                                    <IoExpand />
-                                </QuickActionButton>
-                            </>
-                        )}
-                    >
-                        <TextInput
-                            className={styles.url}
-                            name="url"
-                            value={url}
-                            variant="general"
-                            readOnly
-                        />
-                    </ElementFragments>
-                </div>
+                <Element
+                    className={styles.bar}
+                    actions={(
+                        <>
+                            <QuickActionLink
+                                className={styles.link}
+                                to={url ?? attachment?.file ?? ''}
+                            >
+                                <IoOpenOutline />
+                            </QuickActionLink>
+                            <QuickActionButton
+                                className={styles.button}
+                                name={undefined}
+                                onClick={handleFullScreenToggleClick}
+                            >
+                                <IoExpand />
+                            </QuickActionButton>
+                        </>
+                    )}
+                >
+                    <TextInput
+                        className={styles.url}
+                        name="url"
+                        value={url}
+                        variant="general"
+                        readOnly
+                    />
+                </Element>
             )}
             {url && (
                 <ExternalUrlPreview

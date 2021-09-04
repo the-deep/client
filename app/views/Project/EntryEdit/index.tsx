@@ -58,21 +58,18 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
     const projectId = project ? project.id : undefined;
-    const frameworkId = project?.analysisFramework?.id;
 
     const [entries, setEntries] = React.useState<EditableEntry[]>([]);
     const [activeEntry, setActiveEntry] = React.useState<EditableEntry['clientId'] | undefined>();
 
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
-            (frameworkId && leadId && projectId) ? {
-                frameworkId,
+            (leadId && projectId) ? {
                 projectId,
                 leadId,
             } : undefined
         ),
         [
-            frameworkId,
             leadId,
             projectId,
         ],
@@ -89,8 +86,8 @@ function EntryEdit(props: Props) {
     );
 
     const frameworkDetails = useMemo(
-        () => removeNull(data?.analysisFramework),
-        [data?.analysisFramework],
+        () => removeNull(data?.project?.analysisFramework),
+        [data?.project?.analysisFramework],
     );
 
     const [ready, setReady] = useState(!leadId);
@@ -166,21 +163,18 @@ function EntryEdit(props: Props) {
                         </Tab>
                         <Tab
                             name="primary-tagging"
-                            disabled={isNotDefined(frameworkId)}
                             transparentBorder
                         >
                             Primary Tagging
                         </Tab>
                         <Tab
                             name="secondary-tagging"
-                            disabled={isNotDefined(frameworkId)}
                             transparentBorder
                         >
                             Secondary Tagging
                         </Tab>
                         <Tab
                             name="review"
-                            disabled={isNotDefined(frameworkId)}
                             transparentBorder
                         >
                             Review

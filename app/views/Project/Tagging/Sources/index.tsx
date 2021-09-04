@@ -6,7 +6,7 @@ import {
 } from 'react-icons/io5';
 import {
     Header,
-    Button,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 
 import ProjectContext from '#base/context/ProjectContext';
@@ -56,22 +56,30 @@ function Sources(props: Props) {
                     headingSize="medium"
                     actions={(
                         <>
-                            <Button
+                            <QuickActionButton
+                                className={_cs(
+                                    styles.switchButton,
+                                    activeView === 'table' && styles.active,
+                                )}
                                 name="switch"
                                 variant="action"
-                                big
                                 onClick={handleTableButtonClick}
+                                big
                             >
                                 <IoList />
-                            </Button>
-                            <Button
+                            </QuickActionButton>
+                            <QuickActionButton
                                 name="switch"
+                                className={_cs(
+                                    styles.switchButton,
+                                    activeView === 'grid' && styles.active,
+                                )}
                                 variant="action"
                                 onClick={handleGridButtonClick}
                                 big
                             >
                                 <IoGridOutline />
-                            </Button>
+                            </QuickActionButton>
                         </>
                     )}
                 />
