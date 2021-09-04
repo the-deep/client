@@ -2,6 +2,12 @@
     display: flex;
     flex-direction: column;
 
+    .switch-button {
+        &.active {
+            color: var(--dui-color-accent);
+        }
+    }
+
     .top-section {
         display: flex;
         flex-direction: column;

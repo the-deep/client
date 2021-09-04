@@ -341,7 +341,7 @@ const matrix2d: Matrix2dWidget = {
 };
 
 const dataAf: AnalysisFramework = {
-    id: 21,
+    id: '21',
     createdAt: '2021-07-19T10:45:08.705794Z',
     createdBy: 24,
     createdByName: 'Iva Barbara',

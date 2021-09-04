@@ -5,9 +5,11 @@ import {
 } from '@togglecorp/fujs';
 import {
     Tabs,
+    Container,
     TabPanel,
     TabList,
     Tab,
+    TextInput,
     QuickActionButton,
     useBooleanState,
     useInputState,
@@ -17,6 +19,7 @@ import {
     ListView,
     useAlert,
     QuickActionDropdownMenu,
+    QuickActionLink,
     QuickActionDropdownMenuProps,
     Footer,
     Heading,
@@ -26,6 +29,7 @@ import {
 import {
     IoPencil,
     IoAdd,
+    IoOpenOutline,
     IoCameraOutline,
     IoExpand,
     IoClose,
@@ -291,78 +295,97 @@ function LeftPane(props: Props) {
     ]);
 
     const originalTabContent = (
-        <>
-            <div className={styles.actions}>
-                <QuickActionButton
-                    name={undefined}
-                    variant="primary"
-                    disabled={showScreenshot}
-                    onClick={setShowAddExcerptModalTrue}
-                >
-                    <IoAdd />
-                </QuickActionButton>
-                {showScreenshot ? (
-                    <>
-                        <QuickActionButton
-                            name={undefined}
-                            onClick={setShowScreenshotFalse}
-                        >
-                            <IoClose />
-                        </QuickActionButton>
-                        { capturedImageUrl && (
-                            <>
-                                <QuickActionButton
-                                    name={undefined}
-                                    onClick={setShowCanvasDrawModalTrue}
-                                >
-                                    <IoBrush />
-                                </QuickActionButton>
-                                <QuickActionButton
-                                    name={undefined}
-                                    onClick={handleScreenshotCaptureComplete}
-                                >
-                                    <IoCheckmark />
-                                </QuickActionButton>
-                            </>
-                        )}
-                    </>
-                ) : (
+        <Container
+            className={styles.originalPreviewContainer}
+            headingSize="extraSmall"
+            headingClassName={styles.leadUrlContainer}
+            heading={(lead?.url || lead?.attachment?.file) && (
+                <TextInput
+                    name="url"
+                    value={lead?.url ?? lead?.attachment?.file ?? ''}
+                    variant="general"
+                    readOnly
+                />
+            )}
+            headerActions={(
+                <>
                     <QuickActionButton
                         name={undefined}
-                        onClick={setShowScreenshotTrue}
+                        variant="primary"
+                        disabled={showScreenshot}
+                        onClick={setShowAddExcerptModalTrue}
                     >
-                        <IoCameraOutline />
+                        <IoAdd />
                     </QuickActionButton>
-                )}
-                <QuickActionButton
-                    name={undefined}
-                    onClick={toggleShowSourcePreviewInFullScreen}
-                >
-                    <IoExpand />
-                </QuickActionButton>
-            </div>
-            <div className={styles.content}>
-                <LeadPreview
-                    className={styles.preview}
-                    url={lead?.url}
-                    attachment={lead?.attachment}
+                    <QuickActionLink
+                        to={lead?.url ?? lead?.attachment?.file ?? ''}
+                    >
+                        <IoOpenOutline />
+                    </QuickActionLink>
+                    {showScreenshot ? (
+                        <>
+                            <QuickActionButton
+                                name={undefined}
+                                onClick={setShowScreenshotFalse}
+                            >
+                                <IoClose />
+                            </QuickActionButton>
+                            { capturedImageUrl && (
+                                <>
+                                    <QuickActionButton
+                                        name={undefined}
+                                        onClick={setShowCanvasDrawModalTrue}
+                                    >
+                                        <IoBrush />
+                                    </QuickActionButton>
+                                    <QuickActionButton
+                                        name={undefined}
+                                        onClick={handleScreenshotCaptureComplete}
+                                    >
+                                        <IoCheckmark />
+                                    </QuickActionButton>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={setShowScreenshotTrue}
+                        >
+                            <IoCameraOutline />
+                        </QuickActionButton>
+                    )}
+                    <QuickActionButton
+                        name={undefined}
+                        onClick={toggleShowSourcePreviewInFullScreen}
+                    >
+                        <IoExpand />
+                    </QuickActionButton>
+                </>
+            )}
+            contentClassName={styles.content}
+        >
+            <LeadPreview
+                className={styles.preview}
+                url={lead?.url}
+                attachment={lead?.attachment}
+                hideBar
+            />
+            {showScreenshot && (
+                <Screenshot
+                    onCapture={setCapturedImageUrl}
+                    onCaptureError={handleScreenshotCaptureError}
+                    onCancel={handleScreenshotCancel}
                 />
-                {showScreenshot && (
-                    <Screenshot
-                        onCapture={setCapturedImageUrl}
-                        onCaptureError={handleScreenshotCaptureError}
-                        onCancel={handleScreenshotCancel}
-                    />
-                )}
-                { showCanvasDrawModal && (
-                    <CanvasDrawModal
-                        imgSrc={capturedImageUrl}
-                        onDone={handleCanvasDrawDone}
-                        onCancel={setShowCanvasDrawModalFalse}
-                    />
-                )}
-            </div>
-        </>
+            )}
+            { showCanvasDrawModal && (
+                <CanvasDrawModal
+                    imgSrc={capturedImageUrl}
+                    onDone={handleCanvasDrawDone}
+                    onCancel={setShowCanvasDrawModalFalse}
+                />
+            )}
+        </Container>
     );
 
     const entryItemRendererParams = React.useCallback((_: Entry['clientId'], entry: Entry) => ({

@@ -1,4 +1,7 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
+import {
+    generatePath,
+} from 'react-router-dom';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
@@ -18,7 +21,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { ProjectContext } from '#base/context/ProjectContext';
-import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
 
 import styles from './styles.css';
@@ -52,15 +54,16 @@ function Actions<T extends number>(props: Props<T>) {
     const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
     const canViewEntry = project?.allowedPermissions.includes('VIEW_ENTRY');
 
-    const route = useRouteMatching(
-        routes.entryEdit,
-        {
-            projectId,
-            leadId: id,
-        },
-    );
-
-    const entryEditLink = route?.to ?? '';
+    const entryEditLink = useMemo(() => ({
+        pathname: generatePath(
+            routes.entryEdit.path,
+            {
+                projectId,
+                leadId: id,
+            },
+        ),
+        hash: '#/primary-tagging',
+    }), [projectId, id]);
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
