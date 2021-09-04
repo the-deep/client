@@ -2,10 +2,12 @@ import React, { useState, useRef, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     TextInput,
+    Link,
     Button,
     PendingMessage,
     Container,
 } from '@the-deep/deep-ui';
+import { generatePath } from 'react-router-dom';
 import {
     ObjectSchema,
     useForm,
@@ -20,6 +22,7 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
 import HCaptchaSiteKey from '#base/configs/hCaptcha';
+import routes from '#base/configs/routes';
 
 import _ts from '#ts';
 
@@ -120,36 +123,24 @@ function RegisterModal(props: Props) {
                 <Container
                     className={styles.registerFormContainer}
                     contentClassName={styles.inputContainer}
-                    heading={_ts('explore.register', 'registerFormHeader')}
-                    footerContent={(
-                        <HCaptcha
-                            className={styles.captcha}
-                            name="hcaptchaResponse"
-                            elementRef={elementRef}
-                            siteKey={HCaptchaSiteKey}
-                            onChange={setFieldValue}
-                            error={error?.hcaptchaResponse}
-                            disabled={registerPending}
-                        />
-                    )}
-                    footerActions={(
-                        <Button
-                            disabled={registerPending || pristine}
-                            type="submit"
-                            variant="primary"
-                            name="register"
-                        >
-                            {_ts('explore.register', 'registerButtonLabel')}
-                        </Button>
+                    heading="Register"
+                    headingSize="medium"
+                    headingDescription={(
+                        <div className={styles.headingDescription}>
+                            <span>
+                                Already a user?
+                            </span>
+                            <Link
+                                to={generatePath(routes.login.path, {})}
+                            >
+                                Login
+                            </Link>
+                        </div>
                     )}
                 >
-                    <NonFieldError
-                        className={styles.error}
-                        error={error}
-                    />
+                    <NonFieldError error={error} />
                     <TextInput
                         name="firstName"
-                        className={styles.input}
                         onChange={setFieldValue}
                         value={value?.firstName}
                         error={error?.firstName}
@@ -159,7 +150,6 @@ function RegisterModal(props: Props) {
                     />
                     <TextInput
                         name="lastName"
-                        className={styles.input}
                         onChange={setFieldValue}
                         value={value?.lastName}
                         error={error?.lastName}
@@ -169,7 +159,6 @@ function RegisterModal(props: Props) {
                     />
                     <TextInput
                         name="organization"
-                        className={styles.input}
                         onChange={setFieldValue}
                         value={value?.organization}
                         error={error?.organization}
@@ -179,7 +168,6 @@ function RegisterModal(props: Props) {
                     />
                     <TextInput
                         name="username"
-                        className={styles.input}
                         onChange={setFieldValue}
                         value={value?.username}
                         error={error?.username}
@@ -187,6 +175,22 @@ function RegisterModal(props: Props) {
                         placeholder={_ts('explore.register', 'emailPlaceholder')}
                         disabled={registerPending}
                     />
+                    <HCaptcha
+                        name="hcaptchaResponse"
+                        elementRef={elementRef}
+                        siteKey={HCaptchaSiteKey}
+                        onChange={setFieldValue}
+                        error={error?.hcaptchaResponse}
+                        disabled={registerPending}
+                    />
+                    <Button
+                        disabled={registerPending || pristine}
+                        type="submit"
+                        variant="primary"
+                        name="register"
+                    >
+                        {_ts('explore.register', 'registerButtonLabel')}
+                    </Button>
                 </Container>
             )}
         </form>
