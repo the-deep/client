@@ -34,6 +34,7 @@ import { hidUrl } from '#base/configs/hid';
 import NonFieldError from '#components/NonFieldError';
 import { transformToFormError } from '#base/utils/errorTransform';
 import routes from '#base/configs/routes';
+import flyingKraken from '#resources/img/flying-kraken.png';
 
 import _ts from '#ts';
 import {
@@ -138,7 +139,7 @@ interface Props {
     className?: string;
 }
 
-function LoginRegisterModal(props: Props) {
+function LoginForm(props: Props) {
     const {
         className,
     } = props;
@@ -353,8 +354,13 @@ function LoginRegisterModal(props: Props) {
                     {_ts('explore.login', 'loginWithHid')}
                 </ButtonLikeLink>
             </Container>
+            <img
+                alt=""
+                className={styles.kraken}
+                src={flyingKraken}
+            />
         </form>
     );
 }
 
-export default LoginRegisterModal;
+export default LoginForm;

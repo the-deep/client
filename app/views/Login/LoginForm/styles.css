@@ -1,4 +1,6 @@
 .login-form {
+    display: flex;
+
     .login-form-container {
         background-color: var(--dui-color-foreground);
         --spacing: var(--dui-spacing-extra-large);
@@ -17,11 +19,20 @@
             display: flex;
             flex-direction: column;
             gap: var(--dui-spacing-large);
+            width: 320px;
         }
 
         .forget-password-button {
             color: var(--dui-color-accent);
             font-size: var(--dui-font-size-extra-small);
         }
+    }
+
+    .kraken {
+        margin: calc(-1 * var(--dui-spacing-extra-large));
+        width: 200px;
+        height: auto;
+        object-fit: contain;
+        object-position: top;
     }
 }
