@@ -74,8 +74,8 @@ function StakeholderList(props: Props) {
             name="stakeholder"
             onDrop={handleDrop}
             contentClassName={styles.content}
-            headerClassName={styles.header}
             heading={label}
+            headingSize="small"
         >
             <List
                 data={value}

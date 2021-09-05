@@ -1,9 +1,4 @@
 .stakeholder-list {
-    .heading {
-        font-size: var(--dui-font-size-heading-extra-small);
-        font-weight: var(--dui-font-weight-medium);
-    }
-
     .content {
         display: flex;
         flex-direction: column;

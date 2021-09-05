@@ -1,11 +1,8 @@
 .search-stakeholder {
     display: flex;
     flex-direction: column;
+    background-color: var(--dui-color-foreground);
     overflow-y: auto;
-
-    .search-input {
-        flex-shrink: 0;
-    }
 
     .items {
         display: flex;
