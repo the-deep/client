@@ -4,81 +4,59 @@
     flex-direction: column;
     flex-grow: 1;
     background-color: var(--dui-color-white);
-    padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
+    padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
     overflow-y: auto;
 
     .content {
         display: flex;
+        gap: var(--dui-spacing-extra-large);
 
         .input {
             display: flex;
             flex-direction: column;
-            padding: var(--dui-spacing-medium);
         }
 
         .created-by-details {
-            margin-top: var(--dui-spacing-small);
-
-            .input {
-                flex-grow: 1;
-                flex-shrink: 0;
-            }
-        }
-
-        .heading {
-            font-size: var(--dui-font-size-heading-extra-small);
-        }
-
-        .buttons-container {
-            margin-top: var(--dui-spacing-small);
-
-            .button {
-                margin: var(--dui-spacing-medium);
-            }
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-medium);
         }
 
         .left {
             display: flex;
             align-self: flex-start;
-            flex-basis: 50%;
+            flex-basis: calc(50% - var(--dui-spacing-extra-large) / 2);
             flex-direction: column;
             flex-shrink: 0;
             justify-content: space-between;
+            gap: var(--dui-spacing-large);
 
             .dates {
                 display: flex;
-                justify-content: space-between;
+                gap: var(--dui-spacing-medium);
 
                 .date-input {
-                    display: flex;
-                    flex-direction: column;
                     flex-grow: 1;
                     flex-shrink: 0;
-                    padding: var(--dui-spacing-medium);
                 }
             }
 
             .stakeholders {
-                margin: var(--dui-spacing-medium);
-                background-color: var(--dui-color-surface-informational);
+                background-color: var(--dui-color-background-information);
 
                 .header {
                     border: 0;
                 }
 
-                .content {
-                    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
-                }
-
                 .items {
                     display: flex;
+                    gap: var(--dui-spacing-medium);
                     flex-wrap: wrap;
 
                     .organizations {
                         display: flex;
                         flex: 1 0 30%;
                         flex-direction: column;
-                        margin: var(--dui-spacing-medium);
                         max-width: 50%;
                         max-height: 12rem;
                         overflow: auto;
@@ -90,40 +68,36 @@
         .right {
             display: flex;
             align-self: flex-start;
-            flex-basis: 50%;
+            flex-basis: calc(50% - var(--dui-spacing-extra-large) / 2);
             flex-direction: column;
             flex-shrink: 0;
+            gap: var(--dui-spacing-large);
             justify-content: space-between;
 
             .features {
-                display: flex;
-                background-color: var(--dui-color-white);
+                background-color: var(--dui-color-foreground);
+                padding: 0;
 
                 .items {
                     display: flex;
+                    gap: var(--dui-spacing-medium);
                 }
             }
 
             .visibility {
-                background-color: var(--dui-color-white);
-
-                .visibility-heading {
-                    font-size: var(--dui-font-size-heading-extra-small);
-                }
+                background-color: var(--dui-color-foreground);
+                padding: 0;
 
                 .items {
                     display: flex;
                     align-items: center;
+                    gap: var(--dui-spacing-medium);
                 }
 
                 .segment-input {
                     display: flex;
                     flex-shrink: 0;
                     padding: 0;
-                }
-
-                .request-button {
-                    margin-left: var(--dui-spacing-small);
                 }
             }
         }
@@ -132,6 +106,5 @@
     .footer {
         display: flex;
         justify-content: flex-end;
-        padding-right: var(--dui-spacing-extra-large);
     }
 }

@@ -111,7 +111,6 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
             }
             onCloseButtonClick={onModalClose}
             bodyClassName={styles.modalBody}
-            footerClassName={styles.footer}
             footerActions={(
                 <Button
                     name={undefined}

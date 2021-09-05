@@ -378,8 +378,8 @@ function ProjectDetailsForm(props: Props) {
                     <ContainerCard
                         className={styles.stakeholders}
                         headerClassName={styles.header}
-                        headingClassName={styles.heading}
                         heading={_ts('projectEdit', 'projectStakeholders')}
+                        headingSize="extraSmall"
                         headerActions={(
                             <AddStakeholderButton
                                 name="organizations"
@@ -404,7 +404,7 @@ function ProjectDetailsForm(props: Props) {
                 <div className={styles.right}>
                     <Container
                         className={styles.visibility}
-                        headingClassName={styles.visibilityHeading}
+                        headingSize="extraSmall"
                         contentClassName={styles.items}
                         heading={_ts('projectEdit', 'projectVisibility')}
                     >
@@ -419,15 +419,13 @@ function ProjectDetailsForm(props: Props) {
                             disabled={isDefined(projectId) || !accessPrivateProject}
                         />
                         { !accessPrivateProject && !isDefined(projectId) && (
-                            <RequestPrivateProjectButton
-                                className={styles.requestButton}
-                            />
+                            <RequestPrivateProjectButton />
                         )}
                     </Container>
                     <Container
                         className={styles.features}
-                        headingClassName={styles.heading}
                         contentClassName={styles.items}
+                        headingSize="extraSmall"
                         heading={_ts('projectEdit', 'projectAdditionalFeatures')}
                     >
                         <Checkbox
@@ -459,19 +457,16 @@ function ProjectDetailsForm(props: Props) {
                             />
                         )}
                     </div>
-                    <div className={styles.buttonsContainer}>
-                        <Button
-                            className={styles.button}
-                            name="deleteProject"
-                            disabled={!projectId || projectDeletePending}
-                            onClick={showDeleteProjectConfirmation}
-                            icons={(
-                                <IoTrashOutline />
-                            )}
-                        >
-                            {_ts('projectEdit', 'deleteProjectButtonLabel')}
-                        </Button>
-                    </div>
+                    <Button
+                        name="deleteProject"
+                        disabled={!projectId || projectDeletePending}
+                        onClick={showDeleteProjectConfirmation}
+                        icons={(
+                            <IoTrashOutline />
+                        )}
+                    >
+                        {_ts('projectEdit', 'deleteProjectButtonLabel')}
+                    </Button>
                     {isDeleteModalVisible && (
                         <Modal
                             onCloseButtonClick={handleProjectDeleteConfirmCancel}
