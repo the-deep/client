@@ -1,19 +1,23 @@
 .content {
     display: flex;
+    padding: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-medium);
 
     .filters {
         display: flex;
         align-items: center;
         flex-grow: 1;
+        flex-shrink: 0;
         flex-wrap: wrap;
-        padding: var(--dui-spacing-medium);
         gap: var(--dui-spacing-medium);
     }
 
     .button-container {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
+        flex-grow: 1;
         flex-shrink: 0;
-        gap: var(--dui-spacing-medium);
+        justify-content: flex-end;
+        gap: var(--dui-spacing-small);
     }
 }

@@ -76,6 +76,8 @@ function StakeholderList(props: Props) {
                 data={data}
                 renderer={StakeholderDetail}
                 keySelector={stakeholderDetailsKeySelector}
+                emptyIcon={null}
+                emptyMessage={null}
                 rendererParams={stakeholderDetailsRendererParams}
             />
         </ContainerCard>

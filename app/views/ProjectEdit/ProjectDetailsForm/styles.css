@@ -44,20 +44,17 @@
             .stakeholders {
                 background-color: var(--dui-color-background-information);
 
-                .header {
-                    border: 0;
-                }
-
-                .items {
+                .organizations-container {
                     display: flex;
                     gap: var(--dui-spacing-medium);
                     flex-wrap: wrap;
 
                     .organizations {
                         display: flex;
-                        flex: 1 0 30%;
+                        flex: calc(33% - var(--dui-spacing-medium));
                         flex-direction: column;
                         max-width: 50%;
+                        min-height: 8rem;
                         max-height: 12rem;
                         overflow: auto;
                     }

@@ -1,3 +1,4 @@
 .explore-deep {
-    padding: var(--dui-spacing-medium);
+    background-color: var(--dui-color-foreground);
+    padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 }

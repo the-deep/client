@@ -388,10 +388,9 @@ function ProjectDetailsForm(props: Props) {
                                 options={stakeholderOptions}
                             />
                         )}
-                        contentClassName={styles.content}
                     >
                         <ListView
-                            className={styles.items}
+                            className={styles.organizationsContainer}
                             data={stakeholderTypes}
                             rendererParams={organizationListRendererParams}
                             renderer={StakeholderList}

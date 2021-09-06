@@ -20,7 +20,7 @@ const query = {
 };
 
 export interface Props {
-    frameworkId: number | string;
+    frameworkId: number | string | undefined;
     label?: string;
     className?: string;
     variant?: ButtonProps<string>['variant'];
@@ -44,7 +44,7 @@ function FrameworkImageButton(props: Props) {
         pending,
         response: frameworkDetails,
     } = useRequest<AnalyticalFramework>({
-        skip: !isModalVisible,
+        skip: !isModalVisible && !frameworkId,
         url: `server://analysis-frameworks/${frameworkId}/`,
         query,
         method: 'GET',
@@ -61,6 +61,7 @@ function FrameworkImageButton(props: Props) {
                 )}
                 onClick={showModal}
                 variant={variant ?? 'transparent'}
+                disabled={!frameworkId}
             >
                 {label}
             </Button>
