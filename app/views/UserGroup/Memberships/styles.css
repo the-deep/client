@@ -2,9 +2,14 @@
     background-color: var(--dui-color-foreground);
     padding: 0;
 
+    .header-cell {
+        background-color: var(--dui-color-foreground);
+    }
+
     .content {
         padding: 0;
     }
+
     .expanded-table {
         width: 100%;
     }

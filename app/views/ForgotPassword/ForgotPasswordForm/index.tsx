@@ -5,10 +5,15 @@ import {
 } from '@togglecorp/fujs';
 import {
     Button,
-    Modal,
+    Link,
+    Container,
     TextInput,
     PendingMessage,
 } from '@the-deep/deep-ui';
+import {
+    generatePath,
+    useLocation,
+} from 'react-router-dom';
 import {
     ObjectSchema,
     useForm,
@@ -23,6 +28,7 @@ import NonFieldError from '#components/NonFieldError';
 import HCaptchaSiteKey from '#base/configs/hCaptcha';
 import { useLazyRequest } from '#base/utils/restRequest';
 import HCaptcha from '#components/HCaptcha';
+import routes from '#base/configs/routes';
 
 import _ts from '#ts';
 
@@ -30,8 +36,6 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    onClose: () => void;
-    email?: string;
 }
 
 interface ForgotPasswordFields {
@@ -55,16 +59,18 @@ const defaultFormValue: FormType = {};
 function ForgotPasswordModal(props: Props) {
     const {
         className,
-        onClose,
-        email,
     } = props;
+    const {
+        state,
+    } = useLocation();
+    const emailFromState = (state as { email?: string } | undefined)?.email;
 
     const elementRef = useRef<Captcha>(null);
     const [success, setSuccess] = useState(false);
 
     const initialValue = useMemo(
-        (): FormType => (email ? { email } : defaultFormValue),
-        [email],
+        (): FormType => (emailFromState ? { email: emailFromState } : defaultFormValue),
+        [emailFromState],
     );
 
     const {
@@ -121,25 +127,25 @@ function ForgotPasswordModal(props: Props) {
     );
 
     return (
-        <>
+        <div className={_cs(styles.passwordResetForm, className)}>
             {resetPending && <PendingMessage />}
-            <Modal
-                className={_cs(styles.passwordResetForm, className)}
-                headingSize="small"
-                heading={_ts('explore.passwordReset', 'forgotPasswordModalHeading')}
-                footerActions={!success && (
-                    <Button
-                        disabled={pristine || resetPending}
-                        type="submit"
-                        variant="primary"
-                        onClick={handleSubmit}
-                        name="login"
-                    >
-                        {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
-                    </Button>
+            <Container
+                className={styles.passwordResetContainer}
+                heading="Forgot Password"
+                headingSize="medium"
+                contentClassName={styles.inputContainer}
+                headingDescription={(
+                    <div className={styles.headingDescription}>
+                        <span>
+                            Remember your password?
+                        </span>
+                        <Link
+                            to={generatePath(routes.login.path, {})}
+                        >
+                            Login
+                        </Link>
+                    </div>
                 )}
-                onCloseButtonClick={onClose}
-                bodyClassName={styles.content}
             >
                 {success ? (
                     <div className={styles.passwordResetSuccess}>
@@ -147,13 +153,9 @@ function ForgotPasswordModal(props: Props) {
                     </div>
                 ) : (
                     <>
-                        <NonFieldError
-                            className={styles.error}
-                            error={error}
-                        />
+                        <NonFieldError error={error} />
                         <TextInput
                             name="email"
-                            className={styles.input}
                             onChange={setFieldValue}
                             value={value?.email}
                             error={error?.email}
@@ -163,7 +165,6 @@ function ForgotPasswordModal(props: Props) {
                             autoFocus
                         />
                         <HCaptcha
-                            className={styles.input}
                             name="hcaptchaResponse"
                             elementRef={elementRef}
                             siteKey={HCaptchaSiteKey}
@@ -171,10 +172,19 @@ function ForgotPasswordModal(props: Props) {
                             error={error?.hcaptchaResponse}
                             disabled={resetPending}
                         />
+                        <Button
+                            disabled={pristine || resetPending}
+                            type="submit"
+                            variant="primary"
+                            onClick={handleSubmit}
+                            name="login"
+                        >
+                            {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
+                        </Button>
                     </>
                 )}
-            </Modal>
-        </>
+            </Container>
+        </div>
     );
 }
 

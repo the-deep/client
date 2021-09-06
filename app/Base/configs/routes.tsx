@@ -12,7 +12,7 @@ const fourHundredFour = wrap({
     visibility: 'is-anything',
     navbarVisibility: true,
 });
-const signIn = wrap({
+const login = wrap({
     path: '/login/',
     title: 'Login',
     navbarVisibility: false,
@@ -21,23 +21,21 @@ const signIn = wrap({
     },
     visibility: 'is-not-authenticated',
 });
-const signUp = wrap({
+const register = wrap({
     path: '/register/',
     title: 'Register',
     navbarVisibility: false,
-    component: lazy(() => import('#base/components/PreloadMessage')),
+    component: lazy(() => import('#views/Register')),
     componentProps: {
-        content: 'Register',
     },
     visibility: 'is-not-authenticated',
 });
-const forgetPassword = wrap({
+const forgotPassword = wrap({
     path: '/forgot-password/',
     title: 'Forgot Password',
     navbarVisibility: false,
-    component: lazy(() => import('#base/components/PreloadMessage')),
+    component: lazy(() => import('#views/ForgotPassword')),
     componentProps: {
-        content: 'Forgot Password',
     },
     visibility: 'is-not-authenticated',
 });
@@ -249,9 +247,9 @@ const exportRoute = wrap({
 });
 
 const routes = {
-    signIn,
-    signUp,
-    forgetPassword,
+    login,
+    register,
+    forgotPassword,
     resetPassword,
     home,
     myProfile,

@@ -70,21 +70,21 @@ function Routes(props: Props) {
                 </Route>
                 <Route
                     exact
-                    path={routes.signIn.path}
+                    path={routes.login.path}
                 >
-                    {routes.signIn.load({ className })}
+                    {routes.login.load({ className })}
                 </Route>
                 <Route
                     exact
-                    path={routes.signUp.path}
+                    path={routes.register.path}
                 >
-                    {routes.signUp.load({ className })}
+                    {routes.register.load({ className })}
                 </Route>
                 <Route
                     exact
-                    path={routes.forgetPassword.path}
+                    path={routes.forgotPassword.path}
                 >
-                    {routes.forgetPassword.load({ className })}
+                    {routes.forgotPassword.load({ className })}
                 </Route>
                 <Route
                     exact

@@ -125,7 +125,6 @@ function AddOrganizationModal(props: Props) {
         >
             {pending && <PendingMessage />}
             <TextInput
-                className={styles.input}
                 name="title"
                 disabled={pending}
                 onChange={setFieldValue}
@@ -136,7 +135,6 @@ function AddOrganizationModal(props: Props) {
                 autoFocus
             />
             <TextInput
-                className={styles.input}
                 name="shortName"
                 disabled={pending}
                 onChange={setFieldValue}
@@ -146,7 +144,6 @@ function AddOrganizationModal(props: Props) {
                 placeholder={_ts('addOrganizationModal', 'shortName')}
             />
             <TextInput
-                className={styles.input}
                 name="url"
                 disabled={pending}
                 onChange={setFieldValue}
@@ -156,7 +153,6 @@ function AddOrganizationModal(props: Props) {
                 placeholder={_ts('addOrganizationModal', 'url')}
             />
             <SelectInput
-                className={styles.input}
                 name="organizationType"
                 onChange={setFieldValue}
                 options={organizatonTypesResponse?.results}

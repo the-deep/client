@@ -4,11 +4,10 @@
 
     .modal-body {
         display: flex;
-        padding: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-large);
         --width-left-container: 20rem;
 
         .left {
-            padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
             width: var(--width-left-container);
             overflow-y: auto;
         }
@@ -17,13 +16,10 @@
             display: flex;
             flex-wrap: wrap;
             background-color: var(--dui-color-surface-information);
-            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-large));
+            gap: var(--dui-spacing-large);
+            padding: var(--dui-spacing-large);
             width: calc(100% - var(--width-left-container));
             overflow: auto;
         }
-    }
-
-    .footer {
-        display: flex;
     }
 }

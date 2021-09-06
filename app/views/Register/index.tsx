@@ -3,27 +3,27 @@ import { _cs } from '@togglecorp/fujs';
 import { Card } from '@the-deep/deep-ui';
 
 import WelcomeContent from '#components/WelcomeContent';
-import LoginForm from './LoginForm';
 
+import RegisterForm from './RegisterForm';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
 }
 
-function Login(props: Props) {
+function Register(props: Props) {
     const {
         className,
     } = props;
 
     return (
-        <div className={_cs(styles.login, className)}>
+        <div className={_cs(styles.register, className)}>
             <Card className={styles.card}>
                 <WelcomeContent className={styles.welcomeContent} />
-                <LoginForm className={styles.rightContent} />
+                <RegisterForm className={styles.rightContent} />
             </Card>
         </div>
     );
 }
 
-export default Login;
+export default Register;

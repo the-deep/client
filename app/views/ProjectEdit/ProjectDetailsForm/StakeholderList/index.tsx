@@ -60,8 +60,9 @@ function StakeholderList(props: Props) {
     return (
         <ContainerCard
             className={_cs(styles.stakeholderList, className)}
-            headingClassName={styles.heading}
             heading={title}
+            headingSize="extraSmall"
+            spacing="compact"
         >
             <ListView
                 className={styles.content}

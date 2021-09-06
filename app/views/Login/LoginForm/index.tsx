@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState, useRef, useMemo, useCallback } 
 import { _cs } from '@togglecorp/fujs';
 import { useMutation, gql } from '@apollo/client';
 import { IoChevronForwardSharp } from 'react-icons/io5';
+import { generatePath } from 'react-router-dom';
 import {
+    Link,
     TextInput,
     Button,
     Container,
@@ -31,6 +33,8 @@ import HCaptcha from '#components/HCaptcha';
 import { hidUrl } from '#base/configs/hid';
 import NonFieldError from '#components/NonFieldError';
 import { transformToFormError } from '#base/utils/errorTransform';
+import routes from '#base/configs/routes';
+import flyingKraken from '#resources/img/flying-kraken.png';
 
 import _ts from '#ts';
 import {
@@ -133,13 +137,11 @@ const initialValue: FormType = {};
 
 interface Props {
     className?: string;
-    onForgotPasswordClick: (email?: string) => void;
 }
 
-function LoginRegisterModal(props: Props) {
+function LoginForm(props: Props) {
     const {
         className,
-        onForgotPasswordClick,
     } = props;
 
     const [captchaRequired, setCaptchaRequired] = useState(false);
@@ -268,6 +270,11 @@ function LoginRegisterModal(props: Props) {
 
     const pending = hidLoginPending || loginPending;
 
+    const forgotPasswordLink = useMemo(() => ({
+        pathname: generatePath(routes.forgotPassword.path, {}),
+        state: { email: value?.email },
+    }), [value?.email]);
+
     return (
         <form
             className={_cs(styles.loginForm, className)}
@@ -276,10 +283,54 @@ function LoginRegisterModal(props: Props) {
             {pending && <PendingMessage />}
             <Container
                 className={styles.loginFormContainer}
-                contentClassName={styles.content}
-                footerContent={captchaRequired && (
+                heading="Login"
+                headingSize="medium"
+                headingDescription={(
+                    <div className={styles.headingDescription}>
+                        <span>
+                            New to DEEP?
+                        </span>
+                        <Link
+                            to={generatePath(routes.register.path, {})}
+                        >
+                            Register
+                        </Link>
+                    </div>
+                )}
+                contentClassName={styles.inputContainer}
+            >
+                <NonFieldError error={error} />
+                <TextInput
+                    name="email"
+                    onChange={setFieldValue}
+                    value={value?.email}
+                    error={error?.email}
+                    label={_ts('explore.login', 'emailLabel')}
+                    placeholder={_ts('explore.login', 'emailPlaceholder')}
+                    disabled={pending}
+                    autoFocus
+                />
+                <PasswordInput
+                    name="password"
+                    onChange={setFieldValue}
+                    value={value?.password}
+                    error={error?.password}
+                    label={_ts('explore.login', 'password')}
+                    placeholder={_ts('explore.login', 'password')}
+                    disabled={pending}
+                />
+                <ButtonLikeLink
+                    className={styles.forgetPasswordButton}
+                    to={forgotPasswordLink}
+                    variant="action"
+                    actions={(
+                        <IoChevronForwardSharp />
+                    )}
+                >
+                    {_ts('explore.login', 'forgotPasswordButtonLabel')}
+                </ButtonLikeLink>
+                {captchaRequired && (
                     <HCaptcha
-                        className={styles.captcha}
                         name="captcha"
                         elementRef={elementRef}
                         siteKey={HCaptchaSiteKey}
@@ -287,70 +338,29 @@ function LoginRegisterModal(props: Props) {
                         error={error?.captcha}
                     />
                 )}
-                footerActions={(
-                    <div className={styles.loginButton}>
-                        <Button
-                            className={styles.button}
-                            disabled={pristine || pending}
-                            type="submit"
-                            variant="primary"
-                            name="login"
-                        >
-                            {_ts('explore.login', 'loginButtonLabel')}
-                        </Button>
-                        {_ts('explore.login', 'or')}
-                        <ButtonLikeLink
-                            disabled={pristine || pending}
-                            className={styles.button}
-                            variant="secondary"
-                            to={hidUrl}
-                        >
-                            {_ts('explore.login', 'loginWithHid')}
-                        </ButtonLikeLink>
-                    </div>
-                )}
-            >
-                <NonFieldError
-                    className={styles.error}
-                    error={error}
-                />
-                <div className={styles.inputContainer}>
-                    <TextInput
-                        name="email"
-                        className={styles.input}
-                        onChange={setFieldValue}
-                        value={value?.email}
-                        error={error?.email}
-                        label={_ts('explore.login', 'emailLabel')}
-                        placeholder={_ts('explore.login', 'emailPlaceholder')}
-                        disabled={pending}
-                        autoFocus
-                    />
-                    <PasswordInput
-                        name="password"
-                        className={styles.input}
-                        onChange={setFieldValue}
-                        value={value?.password}
-                        error={error?.password}
-                        label={_ts('explore.login', 'password')}
-                        placeholder={_ts('explore.login', 'password')}
-                        disabled={pending}
-                    />
-                </div>
                 <Button
-                    className={styles.forgetPasswordButton}
-                    name={value?.email}
-                    onClick={onForgotPasswordClick}
-                    variant="action"
-                    actions={(
-                        <IoChevronForwardSharp />
-                    )}
+                    disabled={pristine || pending}
+                    type="submit"
+                    variant="primary"
+                    name="login"
                 >
-                    {_ts('explore.login', 'forgotPasswordButtonLabel')}
+                    {_ts('explore.login', 'loginButtonLabel')}
                 </Button>
+                <ButtonLikeLink
+                    disabled={pristine || pending}
+                    variant="secondary"
+                    to={hidUrl}
+                >
+                    {_ts('explore.login', 'loginWithHid')}
+                </ButtonLikeLink>
             </Container>
+            <img
+                alt=""
+                className={styles.kraken}
+                src={flyingKraken}
+            />
         </form>
     );
 }
 
-export default LoginRegisterModal;
+export default LoginForm;

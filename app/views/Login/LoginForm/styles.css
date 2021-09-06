@@ -1,0 +1,38 @@
+.login-form {
+    display: flex;
+
+    .login-form-container {
+        background-color: var(--dui-color-foreground);
+        --spacing: var(--dui-spacing-extra-large);
+
+        .heading-description {
+            display: flex;
+            gap: var(--dui-spacing-large);
+            text-transform: initial;
+
+            >* {
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-large);
+            width: 320px;
+        }
+
+        .forget-password-button {
+            color: var(--dui-color-accent);
+            font-size: var(--dui-font-size-extra-small);
+        }
+    }
+
+    .kraken {
+        margin: calc(-1 * var(--dui-spacing-extra-large));
+        width: 200px;
+        height: auto;
+        object-fit: contain;
+        object-position: top;
+    }
+}
