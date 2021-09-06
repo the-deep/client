@@ -26,6 +26,7 @@ import {
 } from 'react-icons/io5';
 
 import { useRequest } from '#base/utils/restRequest';
+import { hasNoData } from '#utils/common';
 import _ts from '#ts';
 import { KeyValueElement, LeadOptions, EmmEntity } from '#types';
 import NonFieldError from '#components/NonFieldError';
@@ -137,6 +138,7 @@ function SourcesFilter(props: Props) {
     ] = useBooleanState(false);
 
     const disabled = disabledFromProps || pending;
+
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
             <NonFieldError error={error} />
@@ -192,7 +194,7 @@ function SourcesFilter(props: Props) {
                 <SelectInput
                     className={_cs(
                         styles.input,
-                        !showContent && styles.hidden,
+                        (hasNoData(value.exists) && !showContent) && styles.hidden,
                     )}
                     name="exists"
                     onChange={setFieldValue}
@@ -206,7 +208,7 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        !showContent && styles.hidden,
+                        (hasNoData(value.priority) && !showContent) && styles.hidden,
                     )}
                     name="priority"
                     onChange={setFieldValue}
@@ -220,7 +222,8 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        !showContent && styles.hidden,
+                        (hasNoData(value.authoringOrganizationTypes)
+                      && !showContent) && styles.hidden,
                     )}
                     name="authoringOrganizationTypes"
                     onChange={setFieldValue}
@@ -235,7 +238,7 @@ function SourcesFilter(props: Props) {
                     <MultiSelectInput
                         className={_cs(
                             styles.input,
-                            !showContent && styles.hidden,
+                            (hasNoData(value.confidentiality) && !showContent) && styles.hidden,
                         )}
                         name="confidentiality"
                         onChange={setFieldValue}
@@ -252,7 +255,7 @@ function SourcesFilter(props: Props) {
                         <MultiSelectInput
                             className={_cs(
                                 styles.input,
-                                !showContent && styles.hidden,
+                                (hasNoData(value.emmRiskFactors) && !showContent) && styles.hidden,
                             )}
                             name="emmRiskFactors"
                             onChange={setFieldValue}
@@ -266,7 +269,7 @@ function SourcesFilter(props: Props) {
                         <MultiSelectInput
                             className={_cs(
                                 styles.input,
-                                !showContent && styles.hidden,
+                                (hasNoData(value.emmKeywords) && !showContent) && styles.hidden,
                             )}
                             name="emmKeywords"
                             onChange={setFieldValue}
@@ -280,7 +283,7 @@ function SourcesFilter(props: Props) {
                         <MultiSelectInput
                             className={_cs(
                                 styles.input,
-                                !showContent && styles.hidden,
+                                (hasNoData(value.emmEntities) && !showContent) && styles.hidden,
                             )}
                             name="emmEntities"
                             onChange={setFieldValue}
