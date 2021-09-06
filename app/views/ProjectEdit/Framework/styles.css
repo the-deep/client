@@ -34,21 +34,20 @@
             overflow-y: auto;
 
             .item {
-                display: block;
+                display: flex;
+                flex-direction: column;
                 border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 background-color: var(--dui-color-background-information);
-                padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
+                padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+                gap: var(--dui-spacing-small);
                 width: 100%;
                 text-align: left;
 
                 .title {
-                    padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
                     font-weight: var(--dui-font-weight-bold);
                 }
 
                 .created-on {
-                    padding-top: calc(var(--dui-spacing-extra-small) - var(--dui-spacing-super-small));
-                    padding-bottom: calc(var(--dui-spacing-extra-small) - var(--dui-spacing-super-small));
                     color: var(--dui-color-text-description);
                     font-size: var(--dui-font-size-small);
                 }
