@@ -33,6 +33,7 @@
         align-self: center;
         flex-shrink: 0;
         padding: var(--dui-spacing-medium) 0;
+        gap: var(--dui-spacing-small);
     }
 
     .actions {
@@ -40,6 +41,7 @@
         align-self: center;
         flex-shrink: 0;
         padding: var(--dui-spacing-medium) 0;
+        gap: var(--dui-spacing-small);
 
         >* {
             margin: 0 var(--dui-spacing-extra-small);
