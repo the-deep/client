@@ -16,6 +16,7 @@
         "initialize": "mkdir -p generated && yes n | cp -i type.template.tsx generated/types.tsx 2>/dev/null",
         "prelint": "yarn initialize",
         "pretypecheck": "yarn initialize",
+        "prebuild": "yarn initialize",
         "prestart": "yarn initialize"
     },
     "sideEffects": [

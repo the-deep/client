@@ -1,4 +1,4 @@
-const reactAppApiHttps = location.protocol === 'https:' // eslint-disable-line no-restricted-globals
+export const reactAppApiHttps = location.protocol === 'https:' // eslint-disable-line no-restricted-globals
     ? 'https'
     : process.env.REACT_APP_API_HTTPS;
 
