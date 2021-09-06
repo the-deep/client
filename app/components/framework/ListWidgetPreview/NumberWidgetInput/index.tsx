@@ -4,7 +4,7 @@ import {
     NumberOutput,
 } from '@the-deep/deep-ui';
 
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 import { NumberValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

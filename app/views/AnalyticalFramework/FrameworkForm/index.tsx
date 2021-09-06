@@ -36,7 +36,7 @@ import routes from '#base/configs/routes';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
 import { transformToFormError } from '#base/utils/errorTransform';
-import NewOrganizationSelectInput, { BasicOrganization } from '#components/NewOrganizationSelectInput';
+import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
 // import UploadImage from './UploadImage';

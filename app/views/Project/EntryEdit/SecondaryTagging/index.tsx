@@ -3,9 +3,9 @@ import { _cs } from '@togglecorp/fujs';
 import { Container } from '@the-deep/deep-ui';
 
 import { Widget } from '#types/newAnalyticalFramework';
-import { Lead } from '#components/LeadEditForm/schema';
-import FrameworkImageButton from '#components/FrameworkImageButton';
-import FrameworkOutput from '#components/framework/FrameworkOutput';
+import { Lead } from '#components/lead/LeadEditForm/schema';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
+import Canvas from '../components/Canvas';
 
 import _ts from '#ts';
 import LeftPane, { Entry } from '../LeftPane';
@@ -57,7 +57,7 @@ function SecondaryTagging(props: Props) {
                     />
                 )}
             >
-                <FrameworkOutput
+                <Canvas
                     name={undefined}
                     widgets={widgets}
                     isSecondary

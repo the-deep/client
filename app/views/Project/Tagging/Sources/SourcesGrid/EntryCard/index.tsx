@@ -15,11 +15,11 @@ import {
 
 import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
-import ExcerptOutput from '#components/ExcerptOutput';
-import EntryListItem from '#components/EntryListItem';
-import EntryVerification from '#components/EntryVerification';
-import EntryComments from '#components/EntryComments';
-import EntryControl from '#components/EntryControl';
+import ExcerptOutput from '#components/entry/ExcerptOutput';
+import EntryListItem from '#components/entry/EntryListItem';
+import EntryVerification from '#components/entryReview/EntryVerification';
+import EntryComments from '#components/entryReview/EntryComments';
+import EntryControl from '#components/entryReview/EntryControl';
 import {
     AnalysisFramework,
 } from '#types/newAnalyticalFramework';

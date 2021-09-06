@@ -10,7 +10,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 
-import FrameworkImageButton from '#components/FrameworkImageButton';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { Widget } from '#types/newAnalyticalFramework';
 import _ts from '#ts';
 

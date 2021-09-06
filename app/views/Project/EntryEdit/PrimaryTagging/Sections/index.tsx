@@ -9,8 +9,8 @@ import {
 } from '@the-deep/deep-ui';
 
 import { Section } from '#types/newAnalyticalFramework';
-import FrameworkImageButton from '#components/FrameworkImageButton';
-import FrameworkOutput from '#components/framework/FrameworkOutput';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
+import Canvas from '../../components/Canvas';
 // import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 
@@ -75,7 +75,7 @@ function Sections(props: Props) {
                         name={section.clientId}
                         className={styles.panel}
                     >
-                        <FrameworkOutput
+                        <Canvas
                             name={section.clientId}
                             widgets={section.widgets}
                         />

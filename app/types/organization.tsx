@@ -1,9 +1,14 @@
-import { BasicElement } from '.';
+import { BasicElement } from './common';
 
 export interface BasicOrganization {
     id: number;
     title: string;
     logoUrl?: string;
+    mergedAs?: {
+        // NOTE: not extending BasicElement as id can be either string or
+        // number depending on where it's used
+        title: string;
+    };
 }
 
 export interface OrganizationType {

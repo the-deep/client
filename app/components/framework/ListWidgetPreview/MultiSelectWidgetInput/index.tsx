@@ -10,7 +10,7 @@ import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
 import { MultiSelectValue, MultiSelectWidget } from '#types/newAnalyticalFramework';
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,

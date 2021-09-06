@@ -15,7 +15,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import NonFieldError from '#components/NonFieldError';
-import UserSelectInput from '#components/UserSelectInput';
+import UserSelectInput from '#components/selections/UserSelectInput';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import {
     MultiResponse,

@@ -4,7 +4,7 @@ import {
     TimeOutput,
 } from '@the-deep/deep-ui';
 
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 import { TimeValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

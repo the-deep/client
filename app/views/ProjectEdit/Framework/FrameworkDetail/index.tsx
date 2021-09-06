@@ -23,7 +23,7 @@ import {
     TextOutput,
 } from '@the-deep/deep-ui';
 
-import FrameworkImageButton from '#components/FrameworkImageButton';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { useLazyRequest, useRequest } from '#base/utils/restRequest';
 import { useModalState } from '#hooks/stateManagement';
 import routes from '#base/configs/routes';

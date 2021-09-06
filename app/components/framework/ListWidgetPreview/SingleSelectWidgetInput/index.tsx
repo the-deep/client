@@ -7,7 +7,7 @@ import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
 import { SingleSelectValue, SingleSelectWidget } from '#types/newAnalyticalFramework';
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,

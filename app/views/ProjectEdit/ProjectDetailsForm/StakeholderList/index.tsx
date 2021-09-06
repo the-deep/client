@@ -12,6 +12,13 @@ import { BasicOrganization } from '#types';
 
 import styles from './styles.css';
 
+export function organizationTitleSelector(org: BasicOrganization) {
+    if (org.mergedAs) {
+        return org.mergedAs.title;
+    }
+    return org.title;
+}
+
 interface StakeholderDetailProps {
     logo?: string;
     title: string;
@@ -42,7 +49,7 @@ function StakeholderDetail(props: StakeholderDetailProps) {
 const stakeholderDetailsKeySelector = (d: BasicOrganization) => d.id;
 const stakeholderDetailsRendererParams = (_: number, d: BasicOrganization) => ({
     logo: d.logoUrl,
-    title: d.title,
+    title: organizationTitleSelector(d),
 });
 
 interface Props {

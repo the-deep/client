@@ -17,7 +17,7 @@ import {
 import NonFieldError from '#components/NonFieldError';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { MultiResponse, BasicUser, Membership } from '#types';
-import UserSelectInput from '#components/UserSelectInput';
+import UserSelectInput from '#components/selections/UserSelectInput';
 import _ts from '#ts';
 
 import styles from './styles.css';

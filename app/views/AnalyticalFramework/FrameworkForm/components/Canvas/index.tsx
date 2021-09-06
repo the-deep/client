@@ -125,13 +125,6 @@ type Props<T> = {
 function Canvas<T>(props: Props<T>) {
     const {
         name,
-        /*
-        widgets,
-        editMode,
-        onWidgetDelete,
-        onWidgetEdit,
-        onWidgetOrderChange,
-        */
         disabled,
         isSecondary = false,
         error: riskyError,
@@ -141,7 +134,7 @@ function Canvas<T>(props: Props<T>) {
 
     const handleWidgetValueChange = useCallback(
         (_: unknown, widgetName: string) => {
-            // NOTE: when we start work no tagging page, we need to handle this
+            // NOTE: when we start work on tagging page, we need to handle this
             // for preview page, we can skip this as the components are disabled any way
             // eslint-disable-next-line no-console
             console.warn(`Trying to edit widget ${widgetName} from section ${name}`);

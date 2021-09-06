@@ -1,7 +1,7 @@
 import React from 'react';
 import { NumberInput } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../WidgetWrapper';
+import WidgetWrapper from '../WidgetWrapper';
 import { NumberValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

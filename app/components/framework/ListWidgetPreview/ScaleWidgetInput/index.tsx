@@ -7,7 +7,7 @@ import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
 import { ScaleValue, ScaleWidget } from '#types/newAnalyticalFramework';
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 
 export type PartialScaleWidget = PartialForm<
     ScaleWidget,

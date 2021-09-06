@@ -14,10 +14,10 @@ import routes from '#base/configs/routes';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
 
-import EntryListItem from '#components/EntryListItem';
-import EntryComments from '#components/EntryComments';
-import EntryVerification from '#components/EntryVerification';
-import EntryControl from '#components/EntryControl';
+import EntryListItem from '#components/entry/EntryListItem';
+import EntryComments from '#components/entryReview/EntryComments';
+import EntryVerification from '#components/entryReview/EntryVerification';
+import EntryControl from '#components/entryReview/EntryControl';
 
 import styles from './styles.css';
 

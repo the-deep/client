@@ -26,7 +26,7 @@ import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
     Lead,
-} from '#components/LeadEditForm/schema';
+} from '#components/lead/LeadEditForm/schema';
 import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,

@@ -2,7 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Card } from '@the-deep/deep-ui';
 
-import WelcomeContent from '#components/WelcomeContent';
+import WelcomeContent from '#components/general/WelcomeContent';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
 import styles from './styles.css';

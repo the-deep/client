@@ -14,10 +14,10 @@ import {
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { transformErrorToToggleFormError } from '#utils/rest';
-import LeadPreview from '#components/LeadPreview';
+import LeadPreview from '#components/lead/LeadPreview';
 
-import { schema, PartialFormType, Lead } from '#components/LeadEditForm/schema';
-import LeadEditForm from '#components/LeadEditForm';
+import { schema, PartialFormType, Lead } from '#components/lead/LeadEditForm/schema';
+import LeadEditForm from '#components/lead/LeadEditForm';
 import styles from './styles.css';
 
 // TODO: Show attachment's title and link if lead is attachment type

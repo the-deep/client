@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../WidgetWrapper';
+import WidgetWrapper from '../WidgetWrapper';
 
 export interface Props{
     title: string | undefined;
