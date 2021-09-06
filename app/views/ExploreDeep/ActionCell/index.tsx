@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     ConfirmButton,
+    useAlert,
 } from '@the-deep/deep-ui';
 import { useMutation, gql } from '@apollo/client';
 
@@ -20,8 +21,11 @@ export interface Props {
     className?: string;
     projectId: string;
     disabled?: boolean;
+    // NOTE: This refers to if a user's join request is yet to be approved
+    // or rejected
     membershipPending: boolean;
     isMember: boolean;
+    onMemberStatusChange: () => void;
 }
 
 const CANCEL_JOIN_PROJECT = gql`
@@ -41,6 +45,7 @@ function ActionCell(props: Props) {
         disabled,
         membershipPending,
         isMember,
+        onMemberStatusChange,
     } = props;
 
     const [
@@ -48,6 +53,7 @@ function ActionCell(props: Props) {
         showJoinModal,
         hideJoinModal,
     ] = useModalState(false);
+    const alert = useAlert();
 
     const [
         cancelJoinProject,
@@ -55,10 +61,19 @@ function ActionCell(props: Props) {
         CANCEL_JOIN_PROJECT,
         {
             onCompleted: () => {
-                console.warn('Join Request successfully sent');
+                alert.show(
+                    'Successfully sent join request.',
+                    {
+                        variant: 'success',
+                    },
+                );
+                onMemberStatusChange();
             },
-            onError: () => {
-                console.warn('Failed to send request');
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -67,7 +82,7 @@ function ActionCell(props: Props) {
         cancelJoinProject({
             variables: { projectId },
         });
-    }, [projectId]);
+    }, [projectId, cancelJoinProject]);
 
     if (isMember) {
         return null;
@@ -77,21 +92,20 @@ function ActionCell(props: Props) {
         <div className={_cs(styles.actionCell, className)}>
             {!membershipPending ? (
                 <Button
-                    name="join"
+                    name={undefined}
                     onClick={showJoinModal}
                     variant="secondary"
                     disabled={disabled}
-                    title="Join Project"
                 >
                     Join
                 </Button>
             ) : (
                 <ConfirmButton
-                    name="cancel-join"
+                    name={undefined}
                     onConfirm={handleCancelJoinProjectClick}
                     variant="secondary"
-                    disabled={disabled}
-                    title="Cancel Join Request"
+                    // TODO: Use new mutation for this
+                    disabled
                 >
                     Cancel Join
                 </ConfirmButton>
@@ -100,6 +114,7 @@ function ActionCell(props: Props) {
                 <ProjectJoinModal
                     projectId={projectId}
                     onModalClose={hideJoinModal}
+                    onJoinRequestSuccess={onMemberStatusChange}
                 />
             )}
         </div>

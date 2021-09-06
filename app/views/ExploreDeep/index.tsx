@@ -4,6 +4,8 @@ import {
 } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
+    Container,
+    PendingMessage,
     TableView,
     TableColumn,
     TableHeaderCellProps,
@@ -13,9 +15,8 @@ import {
     Pager,
 } from '@the-deep/deep-ui';
 
-import PageContent from '#components/PageContent';
 import { createDateColumn } from '#components/tableHelpers';
-import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#components/FrameworkImageButton';
+import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#components/framework/FrameworkImageButton';
 import {
     ProjectListQuery,
     ProjectListQueryVariables,
@@ -49,7 +50,12 @@ const PROJECT_LIST = gql`
             results {
                 id
                 title
+                createdAt
                 currentUserRole
+                regions {
+                    id
+                    title
+                }
                 analysisFramework {
                     id
                     title
@@ -98,6 +104,7 @@ function ExploreDeep(props: Props) {
     const {
         data,
         loading,
+        refetch,
     } = useQuery<ProjectListQuery, ProjectListQueryVariables>(
         PROJECT_LIST,
         {
@@ -107,7 +114,7 @@ function ExploreDeep(props: Props) {
 
     const columns = useMemo(() => {
         const frameworkColumn: TableColumn<
-            Project, number, FrameworkImageButtonProps, TableHeaderCellProps
+            Project, string, FrameworkImageButtonProps, TableHeaderCellProps
         > = {
             id: 'framework',
             title: 'Framework',
@@ -136,7 +143,9 @@ function ExploreDeep(props: Props) {
                 projectId,
                 membershipPending: project?.membershipPending,
                 isMember: !!project?.currentUserRole,
+                onMemberStatusChange: refetch,
             }),
+            columnWidth: 156,
         };
 
         return ([
@@ -154,17 +163,26 @@ function ExploreDeep(props: Props) {
                 'created_at',
                 'Created At',
                 (item) => item?.createdAt,
+                {
+                    columnWidth: 116,
+                },
             ),
             frameworkColumn,
             createNumberColumn<Project, string>(
                 'members_count',
                 'Users',
                 (item) => item?.stats?.numberOfUsers,
+                {
+                    columnWidth: 96,
+                },
             ),
             createNumberColumn<Project, string>(
                 'sources_count',
                 'Sources',
                 (item) => item?.stats?.numberOfLeads,
+                {
+                    columnWidth: 96,
+                },
             ),
             createStringColumn<Project, string>(
                 'organizations',
@@ -173,7 +191,7 @@ function ExploreDeep(props: Props) {
             ),
             actionsColumn,
         ]);
-    }, []);
+    }, [refetch]);
 
     const handleFilterChange = useCallback((value: ProjectListQueryVariables | undefined) => {
         setFilters(value);
@@ -181,24 +199,31 @@ function ExploreDeep(props: Props) {
     }, []);
 
     return (
-        <PageContent className={_cs(styles.exploreDeep, className)}>
+        <Container
+            className={_cs(styles.exploreDeep, className)}
+            heading="Explore DEEP"
+            spacing="compact"
+            footerActions={(
+                <Pager
+                    activePage={page}
+                    itemsCount={(data?.projects?.totalCount) ?? 0}
+                    maxItemsPerPage={pageSize}
+                    onActivePageChange={setPage}
+                    onItemsPerPageChange={setPageSize}
+                />
+            )}
+        >
             <ProjectFilterForm
                 filters={filters}
                 onFiltersChange={handleFilterChange}
             />
+            {loading && (<PendingMessage />)}
             <TableView
                 columns={columns}
                 keySelector={projectKeySelector}
                 data={data?.projects?.results}
             />
-            <Pager
-                activePage={page}
-                itemsCount={(data?.projects?.totalCount) ?? 0}
-                maxItemsPerPage={pageSize}
-                onActivePageChange={setPage}
-                onItemsPerPageChange={setPageSize}
-            />
-        </PageContent>
+        </Container>
     );
 }
 

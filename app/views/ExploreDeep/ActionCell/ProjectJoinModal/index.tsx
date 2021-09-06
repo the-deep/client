@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
     _cs,
     isDefined,
@@ -8,11 +8,14 @@ import {
     Modal,
     Button,
     TextArea,
-    Alert,
+    useAlert,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
+    internal,
     useForm,
+    removeNull,
     requiredStringCondition,
     getErrorObject,
     lengthGreaterThanCondition,
@@ -22,6 +25,8 @@ import {
     JoinProjectMutation,
     JoinProjectMutationVariables,
 } from '#generated/types';
+import { transformToFormError } from '#base/utils/errorTransform';
+import NonFieldError from '#components/NonFieldError';
 
 import styles from './styles.css';
 
@@ -39,6 +44,7 @@ const JOIN_PROJECT = gql`
             project: $project,
         }) {
             ok,
+            errors,
         }
     }
 `;
@@ -60,8 +66,9 @@ const defaultFormValue: FormType = {};
 
 interface Props {
     className?: string;
-    projectId?: string;
+    projectId: string;
     onModalClose: () => void;
+    onJoinRequestSuccess: () => void;
 }
 
 function ProjectJoinModal(props: Props) {
@@ -69,6 +76,7 @@ function ProjectJoinModal(props: Props) {
         className,
         projectId,
         onModalClose,
+        onJoinRequestSuccess,
     } = props;
 
     const {
@@ -79,31 +87,51 @@ function ProjectJoinModal(props: Props) {
         validate,
         setError,
     } = useForm(schema, defaultFormValue);
+    const alert = useAlert();
 
     const error = getErrorObject(riskyError);
 
     const [
         joinProject,
-        { loading: joinProjectPending },
+        { loading },
     ] = useMutation<JoinProjectMutation, JoinProjectMutationVariables>(
         JOIN_PROJECT,
         {
-            onCompleted: () => {
-                console.warn('Join Request successfully sent');
-                onModalClose();
+            onCompleted: (response) => {
+                const { joinProject: joinProjectRes } = response;
+                if (!joinProjectRes) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = joinProjectRes;
+
+                if (!ok) {
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
+                } else {
+                    alert.show(
+                        'Successfully sent join request.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    onJoinRequestSuccess();
+                    onModalClose();
+                }
             },
-            onError: () => {
-                console.warn('Failed to send request');
+            onError: (gqlError) => {
+                setError({
+                    [internal]: gqlError.message,
+                });
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
             },
         },
     );
-
-    const pending = joinProjectPending;
-
-    const valueToSend = useMemo(() => ({
-        ...value,
-        project: projectId,
-    }), [projectId, value]);
 
     const handleSubmit = useCallback(
         () => {
@@ -111,11 +139,14 @@ function ProjectJoinModal(props: Props) {
             setError(err);
             if (!errored && isDefined(val)) {
                 joinProject({
-                    variables: valueToSend,
+                    variables: {
+                        reason: val.reason ?? '',
+                        project: projectId,
+                    },
                 });
             }
         },
-        [setError, validate, projectId, value],
+        [setError, validate, projectId, joinProject],
     );
 
     return (
@@ -134,7 +165,7 @@ function ProjectJoinModal(props: Props) {
                     </Button>
                     <Button
                         name={undefined}
-                        disabled={pristine || pending}
+                        disabled={pristine || loading}
                         onClick={handleSubmit}
                         variant="primary"
                     >
@@ -143,6 +174,8 @@ function ProjectJoinModal(props: Props) {
                 </>
             )}
         >
+            {loading && <PendingMessage />}
+            <NonFieldError error={error} />
             <TextArea
                 label="Why do you want to join the project?"
                 name="reason"

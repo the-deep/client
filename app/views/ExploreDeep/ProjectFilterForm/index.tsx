@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
-
 import { doesObjectHaveNoData } from '@togglecorp/fujs';
+import { IoClose } from 'react-icons/io5';
 import {
     TextInput,
     DateInput,
@@ -11,11 +11,13 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
-// import NewOrganizationSelectInput from '#components/NewOrganizationSelectInput';
-import AnalysisFrameworkSearchMultiSelectInput, {
+import OrganizationMultiSelectInput, {
+    BasicOrganization,
+} from '#components/selections/NewOrganizationMultiSelectInput';
+
+import FrameworkMultiSelectInput, {
     AnalysisFramework,
-} from '#components/AnalysisFrameworkSearchMultiSelectInput';
-// import { OrganizationDetails } from '#types';
+} from '#components/selections/FrameworkMultiSelectInput';
 import {
     ProjectListQueryVariables,
 } from '#generated/types';
@@ -70,12 +72,10 @@ function ProjectFilterForm(props: Props) {
         onFiltersChange({});
     }, [onFiltersChange]);
 
-    /*
     const [
         organizationOptions,
         setOrganizationOptions,
-    ] = useState<OrganizationDetails | undefined>();
-    */
+    ] = useState<BasicOrganization[] | undefined | null>();
 
     const [
         analysisFrameworkOptions,
@@ -94,6 +94,7 @@ function ProjectFilterForm(props: Props) {
                     label="Search"
                     value={value?.search}
                     onChange={setFieldValue}
+                    placeholder="any"
                 />
                 <DateInput
                     name="startDate"
@@ -107,9 +108,19 @@ function ProjectFilterForm(props: Props) {
                     value={value?.endDate}
                     onChange={setFieldValue}
                 />
-                <AnalysisFrameworkSearchMultiSelectInput
+                <OrganizationMultiSelectInput
+                    name="organizations"
+                    label="Organizations"
+                    value={value?.organizations}
+                    onChange={setFieldValue}
+                    options={organizationOptions}
+                    onOptionsChange={setOrganizationOptions}
+                    placeholder="any"
+                />
+                <FrameworkMultiSelectInput
                     name="analysisFrameworks"
-                    label="Analysis Framework"
+                    label="Analysis Frameworks"
+                    placeholder="any"
                     value={value?.analysisFrameworks}
                     onChange={setFieldValue}
                     options={analysisFrameworkOptions}
@@ -118,17 +129,18 @@ function ProjectFilterForm(props: Props) {
             </div>
             <div className={styles.buttonContainer}>
                 <Button
-                    name="submit"
+                    name={undefined}
                     onClick={handleSubmit}
                     disabled={pristine}
-                    variant="tertiary"
+                    variant="transparent"
                 >
-                    Submit
+                    Apply
                 </Button>
                 <Button
                     name={undefined}
                     disabled={isClearDisabled}
                     onClick={handleClearFilters}
+                    actions={<IoClose />}
                     variant="transparent"
                 >
                     Clear All

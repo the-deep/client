@@ -1,21 +1,23 @@
 import { compareDate } from '@togglecorp/fujs';
 import {
     DateOutputProps,
+    TableCellProps,
+    TableHeaderCellProps,
     DateOutput,
     TableColumn,
     TableSortDirection,
     TableFilterType,
     TableHeaderCell,
-    TableHeaderCellProps,
 } from '@the-deep/deep-ui';
 
-interface ColumnOptions {
+interface ColumnOptions<D, K> {
     cellAsHeader?: boolean,
     sortable?: boolean,
     defaultSortDirection?: TableSortDirection,
     filterType?: TableFilterType,
     orderable?: boolean;
     hideable?: boolean;
+    columnWidth?: TableColumn<D, K, TableCellProps<string>, TableHeaderCellProps>['columnWidth'];
 }
 
 // FIXME: Move this later to Deep UI and support null and undefined in DateOutput
@@ -26,7 +28,7 @@ export function createDateColumn<D, K>(
     accessor: (item: D) => string | number,
     options?: {
         format?: string;
-    } & ColumnOptions,
+    } & ColumnOptions<D, K>,
 ) {
     const item: TableColumn<D, K, DateOutputProps, TableHeaderCellProps> & {
         valueSelector: (item: D) => number | string,
@@ -49,6 +51,7 @@ export function createDateColumn<D, K>(
         }),
         valueSelector: accessor,
         valueComparator: (foo: D, bar: D) => compareDate(accessor(foo), accessor(bar)),
+        columnWidth: options?.columnWidth,
     };
     return item;
 }
