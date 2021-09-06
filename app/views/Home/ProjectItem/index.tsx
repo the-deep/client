@@ -30,7 +30,7 @@ import {
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import ProgressLine from '#components/ProgressLine';
-import FrameworkImageButton from '#components/FrameworkImageButton';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import routes from '#base/configs/routes';
 
 import {

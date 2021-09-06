@@ -2,7 +2,7 @@ import React from 'react';
 import { TextArea } from '@the-deep/deep-ui';
 
 import { TextValue } from '#types/newAnalyticalFramework';
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 
 export interface Props <N extends string>{
     title: string | undefined;

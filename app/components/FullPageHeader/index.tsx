@@ -10,6 +10,8 @@ import deepLogo from '#resources/img/deep-logo-new.svg';
 
 import styles from './styles.css';
 
+// FIXME: this should be obsolete
+
 interface FullPageHeaderProps {
     className?: string;
     children?: React.ReactNode;

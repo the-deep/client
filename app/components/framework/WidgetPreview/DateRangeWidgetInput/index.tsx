@@ -5,7 +5,7 @@ import {
 } from '@the-deep/deep-ui';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
-import WidgetWrapper from '../../WidgetWrapper';
+import WidgetWrapper from '../WidgetWrapper';
 import { DateRangeValue } from '#types/newAnalyticalFramework';
 
 import styles from './styles.css';

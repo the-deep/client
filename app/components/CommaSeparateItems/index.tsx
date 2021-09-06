@@ -9,11 +9,13 @@ interface Item {
     id: number;
     name: string;
 }
+
 interface Props {
     className?: string;
     items?: Item[];
 }
 
+// FIXME may need to add key on the commas
 function CommaSeparateItems(props: Props) {
     const { items, className } = props;
     if (!items || items.length < 1) {

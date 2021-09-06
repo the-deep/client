@@ -19,7 +19,7 @@ import {
     ProjectDetails,
 } from '#types';
 import _ts from '#ts';
-import RegionSelectInput from '#components/RegionSelectInput';
+import RegionSelectInput from '#components/selections/RegionSelectInput';
 import { useLazyRequest } from '#base/utils/restRequest';
 
 import RegionTabPanel from './RegionTabPanel';

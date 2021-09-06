@@ -4,7 +4,7 @@ import {
     DateOutput,
 } from '@the-deep/deep-ui';
 
-import ListWidgetWrapper from '../../ListWidgetWrapper';
+import ListWidgetWrapper from '../ListWidgetWrapper';
 import { DateValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

@@ -2,7 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import { Section } from '#types/newAnalyticalFramework';
-import { Lead } from '#components/LeadEditForm/schema';
+import { Lead } from '#components/lead/LeadEditForm/schema';
 
 import Sections from './Sections';
 import LeftPane, { Entry } from '../LeftPane';

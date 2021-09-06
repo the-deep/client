@@ -3,7 +3,7 @@ import { _cs, randomString } from '@togglecorp/fujs';
 import { FaGoogleDrive } from 'react-icons/fa';
 import _ts from '#ts';
 
-import { MimeTypes } from '#components/LeadPreview/Preview/mimeTypes';
+import { MimeTypes } from '#components/lead/LeadPreview/Preview/mimeTypes';
 
 import { supportedGoogleDriveMimeTypes } from '../../utils';
 import GoogleDrivePicker from './GoogleDrivePicker';

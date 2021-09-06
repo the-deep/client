@@ -22,7 +22,7 @@ import {
 } from '#types';
 import { Project } from '#base/types/project';
 import PageContent from '#components/PageContent';
-import ProjectSelectInput from '#components/ProjectSelectInput';
+import ProjectSelectInput from '#components/selections/ProjectSelectInput';
 import routes from '#base/configs/routes';
 
 import _ts from '#ts';

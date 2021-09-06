@@ -39,14 +39,13 @@ import {
 } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
-import AddStakeholderButton from '#components/AddStakeholderButton';
-import { BasicProjectOrganization } from '#components/AddStakeholderModal';
+import AddStakeholderButton from '#components/general/AddStakeholderButton';
+import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
 import {
     BasicOrganization,
     KeyValueElement,
     ProjectDetails,
 } from '#types';
-import { organizationTitleSelector } from '#components/OrganizationList';
 import routes from '#base/configs/routes';
 import { useModalState } from '#hooks/stateManagement';
 
@@ -56,7 +55,7 @@ import {
     useRequest,
 } from '#base/utils/restRequest';
 
-import StakeholderList from './StakeholderList';
+import StakeholderList, { organizationTitleSelector } from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 
 import styles from './styles.css';

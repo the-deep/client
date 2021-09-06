@@ -6,8 +6,8 @@ import {
 } from '@the-deep/deep-ui';
 
 import { Entry } from '#types/newEntry';
-import EntryListItem from '#components/EntryListItem';
-import FrameworkImageButton from '#components/FrameworkImageButton';
+import EntryListItem from '#components/entry/EntryListItem';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { AnalysisFramework } from '#types/newAnalyticalFramework';
 
 import entryMockData from '#views/Project/Tagging/mockData';

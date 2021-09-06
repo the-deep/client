@@ -19,7 +19,7 @@ import {
     useLazyRequest,
 } from '#base/utils/restRequest';
 import { useModalState } from '#hooks/stateManagement';
-import ActionCell, { Props as ActionCellProps } from '#components/EditDeleteActionCell';
+import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import {
     MultiResponse,
 } from '#types';

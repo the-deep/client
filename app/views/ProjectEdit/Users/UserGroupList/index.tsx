@@ -24,7 +24,7 @@ import {
 import { createDateColumn } from '#components/tableHelpers';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import routes from '#base/configs/routes';
-import ActionCell, { Props as ActionCellProps } from '#components/EditDeleteActionCell';
+import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
 
 import {

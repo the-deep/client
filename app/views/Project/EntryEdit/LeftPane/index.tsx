@@ -38,14 +38,14 @@ import {
     IoTrash,
 } from 'react-icons/io5';
 
-import CanvasDrawModal from '#components/CanvasDrawModal';
-import SimplifiedTextView from '#components/SimplifiedTextView';
-import LeadPreview from '#components/LeadPreview';
+import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
 import FullScreen from '#components/FullScreen';
-import { Lead } from '#components/LeadEditForm/schema';
+import { Lead } from '#components/lead/LeadEditForm/schema';
 import { useRequest } from '#base/utils/restRequest';
 
+import CanvasDrawModal from './CanvasDrawModal';
+import SimplifiedTextView from './SimplifiedTextView';
 import styles from './styles.css';
 
 export interface Entry {

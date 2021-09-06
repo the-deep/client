@@ -1,7 +1,7 @@
 import React from 'react';
 import { TimeInput } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../WidgetWrapper';
+import WidgetWrapper from '../WidgetWrapper';
 import { TimeValue } from '#types/newAnalyticalFramework';
 
 export interface Props <N extends string>{

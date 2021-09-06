@@ -20,7 +20,7 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
-import DeepFileInput from '#components/DeepFileInput';
+import DeepFileInput from '#components/general/DeepFileInput';
 import { useLazyRequest } from '#base/utils/restRequest';
 import {
     AdminLevelGeoArea,
