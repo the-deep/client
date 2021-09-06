@@ -32,7 +32,7 @@ type AnalysisFrameworkMultiSelectInputProps<K extends string> = SearchMultiSelec
     K,
     AnalysisFramework,
     Def,
-    'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector'
+    'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 >;
 
 const keySelector = (d: AnalysisFramework) => d.id;
