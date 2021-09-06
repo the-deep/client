@@ -21,7 +21,7 @@ import {
 } from '@togglecorp/toggle-form';
 
 import Avatar from '#components/Avatar';
-import DeepImageInput from '#components/DeepImageInput';
+import DeepImageInput from '#components/general/DeepImageInput';
 import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 import {

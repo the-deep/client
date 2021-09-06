@@ -1,8 +1,12 @@
 .review {
-    display: block;
+    padding-right: var(--dui-spacing-super-large);
+    padding-left: var(--dui-spacing-super-large);
     width: 100%;
 
-    .entry-item {
-        margin: var(--dui-spacing-medium) var(--dui-spacing-large);
+    .entries {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-large);
+        overflow-y: auto;
     }
 }

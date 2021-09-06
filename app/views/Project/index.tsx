@@ -18,6 +18,9 @@ const CURRENT_PROJECT = gql`
         project(id: $id) {
             allowedPermissions
             currentUserRole
+            analysisFramework {
+                id
+            }
             id
             isPrivate
             title

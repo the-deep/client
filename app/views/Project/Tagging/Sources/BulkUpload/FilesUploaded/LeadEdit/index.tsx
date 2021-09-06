@@ -9,8 +9,8 @@ import UserContext from '#base/context/UserContext';
 import ProjectContext from '#base/context/ProjectContext';
 
 import { FileUploadResponse } from '../../types';
-import { schema, PartialFormType } from '#components/LeadEditForm/schema';
-import LeadEditForm from '#components/LeadEditForm';
+import { schema, PartialFormType } from '#components/lead/LeadEditForm/schema';
+import LeadEditForm from '#components/lead/LeadEditForm';
 
 import styles from './styles.css';
 

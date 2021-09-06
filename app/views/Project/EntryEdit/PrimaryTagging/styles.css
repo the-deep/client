@@ -1,16 +1,17 @@
 .primary-tagging {
     display: flex;
+    gap: var(--dui-spacing-large);
+    background-color: var(--dui-color-background);
 
     .source-preview {
         flex-shrink: 0;
         width: calc(16rem + 16vw);
     }
 
-    .tagging-playground {
+    .sections {
         display: flex;
-        align-items: center;
         flex-grow: 1;
-        justify-content: center;
+        padding-right: var(--dui-spacing-super-large);
     }
 }
 

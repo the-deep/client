@@ -10,11 +10,11 @@ import {
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 
-import FrameworkImageButton from '#components/FrameworkImageButton';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { Widget } from '#types/newAnalyticalFramework';
 import _ts from '#ts';
 
-import { PartialWidget } from '../components/Canvas/WidgetPreview';
+import { PartialWidget } from '#components/framework/WidgetPreview';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';

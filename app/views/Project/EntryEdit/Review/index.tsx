@@ -2,13 +2,13 @@ import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
-    Header,
+    Container,
 } from '@the-deep/deep-ui';
 
 import { Entry } from '#types/newEntry';
-import EntryListItem from '#components/EntryListItem';
-import frameworkMockData from '#views/AnalyticalFramework/mockData';
-import FrameworkImageButton from '#components/FrameworkImageButton';
+import EntryListItem from '#components/entry/EntryListItem';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
+import { AnalysisFramework } from '#types/newAnalyticalFramework';
 
 import entryMockData from '#views/Project/Tagging/mockData';
 
@@ -18,38 +18,40 @@ const entryKeySelector = (e: Entry) => e.clientId;
 
 interface Props {
     className?: string;
+    framework: Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
 }
 
 function Review(props: Props) {
     const {
         className,
+        framework,
     } = props;
 
     const entryDataRendererParams = useCallback((_: string, data: Entry, index: number) => ({
         entry: data,
         index,
-        framework: frameworkMockData,
-    }), []);
+        framework,
+    }), [framework]);
 
     return (
-        <div className={_cs(className, styles.review)}>
-            <Header
-                actions={(
-                    <FrameworkImageButton
-                        frameworkId={frameworkMockData.id}
-                        label="View framework image for reference"
-                        variant="secondary"
-                    />
-                )}
-            />
+        <Container
+            className={_cs(className, styles.review)}
+            headerActions={(
+                <FrameworkImageButton
+                    frameworkId={framework.id}
+                    label="View framework image for reference"
+                    variant="secondary"
+                />
+            )}
+        >
             <ListView
+                className={styles.entries}
                 keySelector={entryKeySelector}
                 renderer={EntryListItem}
                 data={entryMockData}
                 rendererParams={entryDataRendererParams}
-                rendererClassName={styles.entryItem}
             />
-        </div>
+        </Container>
     );
 }
 

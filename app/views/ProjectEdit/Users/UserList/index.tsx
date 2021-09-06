@@ -15,7 +15,7 @@ import {
 
 import { createDateColumn } from '#components/tableHelpers';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
-import ActionCell, { Props as ActionCellProps } from '#components/EditDeleteActionCell';
+import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import _ts from '#ts';
 
 import { useModalState } from '#hooks/stateManagement';

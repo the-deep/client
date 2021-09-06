@@ -1,33 +1,47 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import SourceDetails, { Entry } from './SourceDetails';
-import { Lead } from '#components/LeadEditForm/schema';
+import { Section } from '#types/newAnalyticalFramework';
+import { Lead } from '#components/lead/LeadEditForm/schema';
+
+import Sections from './Sections';
+import LeftPane, { Entry } from '../LeftPane';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     lead?: Lead;
+    sections: Section[] | undefined | null;
+    frameworkId: string;
+
+    entries: Entry[];
+    onEntriesChange: React.Dispatch<React.SetStateAction<Entry[]>>;
+
+    activeEntry: string | undefined;
+    onActiveEntryChange: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 function PrimaryTagging(props: Props) {
     const {
         className,
         lead,
+        sections,
+        frameworkId,
+        entries,
+        onEntriesChange,
+        activeEntry,
+        onActiveEntryChange,
     } = props;
 
-    const [entries, setEntries] = React.useState<Entry[]>([]);
-    const [activeEntry, setActiveEntry] = React.useState<Entry['clientId'] | undefined>();
-
     const handleEntryCreate = React.useCallback((newEntry: Entry) => {
-        setEntries((oldEntries) => ([
+        onEntriesChange((oldEntries) => ([
             ...oldEntries,
             newEntry,
         ]));
-    }, [setEntries]);
+    }, [onEntriesChange]);
 
     const handleEntryDelete = React.useCallback((entryId: string) => {
-        setEntries((oldEntries) => {
+        onEntriesChange((oldEntries) => {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
             if (i === -1) {
@@ -41,10 +55,10 @@ function PrimaryTagging(props: Props) {
 
             return newEntries;
         });
-    }, [setEntries]);
+    }, [onEntriesChange]);
 
     const handleExcerptChange = React.useCallback((entryId: string, modifiedExcerpt: string) => {
-        setEntries((oldEntries) => {
+        onEntriesChange((oldEntries) => {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
             if (i === -1) {
@@ -64,23 +78,27 @@ function PrimaryTagging(props: Props) {
 
             return newEntries;
         });
-    }, [setEntries]);
+    }, [onEntriesChange]);
 
     return (
         <div className={_cs(className, styles.primaryTagging)}>
-            <SourceDetails
+            <LeftPane
                 className={styles.sourcePreview}
                 onEntryCreate={handleEntryCreate}
                 entries={entries}
                 activeEntry={activeEntry}
-                onEntryClick={setActiveEntry}
+                onEntryClick={onActiveEntryChange}
                 onEntryDelete={handleEntryDelete}
                 onExcerptChange={handleExcerptChange}
                 lead={lead}
             />
-            <div className={styles.taggingPlayground}>
-                Tagging playground
-            </div>
+            {sections && (
+                <Sections
+                    className={styles.sections}
+                    sections={sections}
+                    frameworkId={frameworkId}
+                />
+            )}
         </div>
     );
 }

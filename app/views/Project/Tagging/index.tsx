@@ -12,7 +12,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { useModalState } from '#hooks/stateManagement';
-import ProjectSwitcher from '#components/ProjectSwitcher';
+import ProjectSwitcher from '#components/general/ProjectSwitcher';
 import PreloadMessage from '#base/components/PreloadMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
 import SubNavbar, { SubNavbarIcons, SubNavbarActions } from '#components/SubNavbar';
