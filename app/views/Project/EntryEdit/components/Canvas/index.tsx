@@ -52,7 +52,7 @@ function Canvas<T>(props: Props<T>) {
         onChange: handleWidgetValueChange,
         disabled,
     }), [
-        // isSecondary,
+        isSecondary,
         handleWidgetValueChange,
         disabled,
         error,

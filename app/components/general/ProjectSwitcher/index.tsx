@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     generatePath,
     useRouteMatch,
@@ -6,7 +7,9 @@ import {
 } from 'react-router-dom';
 
 import ProjectSelectInput from '#components/selections/ProjectSelectInput';
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import ProjectContext from '#base/context/ProjectContext';
+import routes from '#base/configs/routes';
 
 function ProjectSwitcher() {
     const { project } = React.useContext(ProjectContext);
@@ -23,14 +26,24 @@ function ProjectSwitcher() {
     );
 
     return (
-        <ProjectSelectInput
-            name="project"
-            value={project?.id}
-            onChange={handleChange}
-            options={project ? [project] : undefined}
-            variant="general"
-            nonClearable
-        />
+        <>
+            <ProjectSelectInput
+                name="project"
+                value={project?.id}
+                onChange={handleChange}
+                options={project ? [project] : undefined}
+                variant="general"
+                nonClearable
+            />
+            <SmartButtonLikeLink
+                // FIXME: use SmartQuickButtonLikeLink
+                variant="secondary"
+                route={routes.projectEdit}
+                title="Edit Project"
+            >
+                <FiEdit2 />
+            </SmartButtonLikeLink>
+        </>
     );
 }
 export default ProjectSwitcher;
