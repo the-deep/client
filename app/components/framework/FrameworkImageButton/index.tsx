@@ -44,7 +44,7 @@ function FrameworkImageButton(props: Props) {
         pending,
         response: frameworkDetails,
     } = useRequest<AnalyticalFramework>({
-        skip: !isModalVisible && !frameworkId,
+        skip: !isModalVisible || !frameworkId,
         url: `server://analysis-frameworks/${frameworkId}/`,
         query,
         method: 'GET',

@@ -32,7 +32,7 @@ const CANCEL_JOIN_PROJECT = gql`
     mutation CancelJoinProject(
         $projectId: ID!,
     ) {
-        deleteProjectJoin(id: $projectId) {
+        deleteProjectJoin(projectId: $projectId) {
             ok,
         }
     }
@@ -62,7 +62,7 @@ function ActionCell(props: Props) {
         {
             onCompleted: () => {
                 alert.show(
-                    'Successfully sent join request.',
+                    'Successfully cancelled project join request.',
                     {
                         variant: 'success',
                     },
@@ -104,8 +104,7 @@ function ActionCell(props: Props) {
                     name={undefined}
                     onConfirm={handleCancelJoinProjectClick}
                     variant="secondary"
-                    // TODO: Use new mutation for this
-                    disabled
+                    disabled={disabled}
                 >
                     Cancel Join
                 </ConfirmButton>

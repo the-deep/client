@@ -7,15 +7,6 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .created-at-container {
-            display: flex;
-            align-items: center;
-
-            .created-date {
-                padding: 0 var(--dui-spacing-extra-small);
-            }
-        }
-
         .content {
             display: flex;
             padding: 0;

@@ -153,7 +153,9 @@ function ProjectEdit() {
                         className={styles.tabPanel}
                     >
                         {projectId && (
-                            <Framework projectId={projectId} />
+                            <Framework
+                                projectId={String(projectId)}
+                            />
                         )}
                     </TabPanel>
                 </div>

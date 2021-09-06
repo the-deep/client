@@ -53,7 +53,7 @@ interface ValueToSend {
 interface Props {
     className?: string;
     frameworkToClone?: FormType;
-    onActionSuccess: (newFrameworkId: number) => void;
+    onActionSuccess: (newFrameworkId: string) => void;
     onModalClose: () => void;
 }
 
@@ -99,7 +99,7 @@ function AddFrameworkModal(props: Props) {
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            onActionSuccess(response?.id);
+            onActionSuccess(String(response?.id));
             const message = isDefined(frameworkToClone)
                 ? _ts('projectEdit', 'cloneFrameworkSuccessMessage')
                 : _ts('projectEdit', 'createFrameworkSuccessMessage');
