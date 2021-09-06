@@ -129,59 +129,61 @@ function ForgotPasswordModal(props: Props) {
     return (
         <div className={_cs(styles.passwordResetForm, className)}>
             {resetPending && <PendingMessage />}
-            {success ? (
-                <div className={styles.passwordResetSuccess}>
-                    {_ts('explore.passwordReset', 'checkYourEmailText', { email: context?.email })}
-                </div>
-            ) : (
-                <Container
-                    className={styles.passwordResetContainer}
-                    heading="Forgot Password"
-                    headingSize="medium"
-                    contentClassName={styles.inputContainer}
-                    headingDescription={(
-                        <div className={styles.headingDescription}>
-                            <span>
-                                Remember your password?
-                            </span>
-                            <Link
-                                to={generatePath(routes.login.path, {})}
-                            >
-                                Login
-                            </Link>
-                        </div>
-                    )}
-                >
-                    <NonFieldError error={error} />
-                    <TextInput
-                        name="email"
-                        onChange={setFieldValue}
-                        value={value?.email}
-                        error={error?.email}
-                        label={_ts('explore.passwordReset', 'emailLabel')}
-                        placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}
-                        disabled={resetPending}
-                        autoFocus
-                    />
-                    <HCaptcha
-                        name="hcaptchaResponse"
-                        elementRef={elementRef}
-                        siteKey={HCaptchaSiteKey}
-                        onChange={setFieldValue}
-                        error={error?.hcaptchaResponse}
-                        disabled={resetPending}
-                    />
-                    <Button
-                        disabled={pristine || resetPending}
-                        type="submit"
-                        variant="primary"
-                        onClick={handleSubmit}
-                        name="login"
-                    >
-                        {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
-                    </Button>
-                </Container>
-            )}
+            <Container
+                className={styles.passwordResetContainer}
+                heading="Forgot Password"
+                headingSize="medium"
+                contentClassName={styles.inputContainer}
+                headingDescription={(
+                    <div className={styles.headingDescription}>
+                        <span>
+                            Remember your password?
+                        </span>
+                        <Link
+                            to={generatePath(routes.login.path, {})}
+                        >
+                            Login
+                        </Link>
+                    </div>
+                )}
+            >
+                {success ? (
+                    <div className={styles.passwordResetSuccess}>
+                        {_ts('explore.passwordReset', 'checkYourEmailText', { email: context?.email })}
+                    </div>
+                ) : (
+                    <>
+                        <NonFieldError error={error} />
+                        <TextInput
+                            name="email"
+                            onChange={setFieldValue}
+                            value={value?.email}
+                            error={error?.email}
+                            label={_ts('explore.passwordReset', 'emailLabel')}
+                            placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}
+                            disabled={resetPending}
+                            autoFocus
+                        />
+                        <HCaptcha
+                            name="hcaptchaResponse"
+                            elementRef={elementRef}
+                            siteKey={HCaptchaSiteKey}
+                            onChange={setFieldValue}
+                            error={error?.hcaptchaResponse}
+                            disabled={resetPending}
+                        />
+                        <Button
+                            disabled={pristine || resetPending}
+                            type="submit"
+                            variant="primary"
+                            onClick={handleSubmit}
+                            name="login"
+                        >
+                            {_ts('explore.passwordReset', 'resetPasswordButtonLabel')}
+                        </Button>
+                    </>
+                )}
+            </Container>
         </div>
     );
 }

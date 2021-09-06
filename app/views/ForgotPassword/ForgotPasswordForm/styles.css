@@ -25,7 +25,6 @@
 
     .password-reset-success {
         display: flex;
-        justify-content: center;
         margin: var(--dui-spacing-medium) auto;
     }
 }

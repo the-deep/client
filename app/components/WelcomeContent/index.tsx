@@ -1,14 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import {
-    Heading,
-    ButtonLikeLink,
-} from '@the-deep/deep-ui';
+import { Heading } from '@the-deep/deep-ui';
 import {
     IoCompassOutline,
 } from 'react-icons/io5';
-import { generatePath } from 'react-router-dom';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/logo.svg';
 import routes from '#base/configs/routes';
@@ -49,15 +46,15 @@ function WelcomeContent(props: Props) {
             >
                 Curious about the platform?
             </Heading>
-            <ButtonLikeLink
-                to={generatePath(routes.explore.path, {})}
+            <SmartButtonLikeLink
+                route={routes.explore}
                 variant="tertiary"
                 icons={(
                     <IoCompassOutline />
                 )}
             >
                 Explore DEEP
-            </ButtonLikeLink>
+            </SmartButtonLikeLink>
         </div>
     );
 }
