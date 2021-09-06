@@ -116,84 +116,86 @@ function RegisterModal(props: Props) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             {registerPending && <PendingMessage />}
-            {success ? (
-                <div className={styles.registerSuccess}>
-                    {_ts('explore.register', 'checkYourEmailText', { email: context?.username })}
-                </div>
-            ) : (
-                <Container
-                    className={styles.registerFormContainer}
-                    contentClassName={styles.inputContainer}
-                    heading="Register"
-                    headingSize="medium"
-                    headingDescription={(
-                        <div className={styles.headingDescription}>
-                            <span>
-                                Already a user?
-                            </span>
-                            <Link
-                                to={generatePath(routes.login.path, {})}
-                            >
-                                Login
-                            </Link>
-                        </div>
-                    )}
-                >
-                    <NonFieldError error={error} />
-                    <TextInput
-                        name="firstName"
-                        onChange={setFieldValue}
-                        value={value?.firstName}
-                        error={error?.firstName}
-                        label={_ts('explore.register', 'firstNameLabel')}
-                        placeholder={_ts('explore.register', 'firstNamePlaceholder')}
-                        disabled={registerPending}
-                    />
-                    <TextInput
-                        name="lastName"
-                        onChange={setFieldValue}
-                        value={value?.lastName}
-                        error={error?.lastName}
-                        label={_ts('explore.register', 'lastNameLabel')}
-                        placeholder={_ts('explore.register', 'lastNamePlaceholder')}
-                        disabled={registerPending}
-                    />
-                    <TextInput
-                        name="organization"
-                        onChange={setFieldValue}
-                        value={value?.organization}
-                        error={error?.organization}
-                        label={_ts('explore.register', 'organizationLabel')}
-                        placeholder={_ts('explore.register', 'organizationPlaceholder')}
-                        disabled={registerPending}
-                    />
-                    <TextInput
-                        name="username"
-                        onChange={setFieldValue}
-                        value={value?.username}
-                        error={error?.username}
-                        label={_ts('explore.register', 'emailLabel')}
-                        placeholder={_ts('explore.register', 'emailPlaceholder')}
-                        disabled={registerPending}
-                    />
-                    <HCaptcha
-                        name="hcaptchaResponse"
-                        elementRef={elementRef}
-                        siteKey={HCaptchaSiteKey}
-                        onChange={setFieldValue}
-                        error={error?.hcaptchaResponse}
-                        disabled={registerPending}
-                    />
-                    <Button
-                        disabled={registerPending || pristine}
-                        type="submit"
-                        variant="primary"
-                        name="register"
-                    >
-                        {_ts('explore.register', 'registerButtonLabel')}
-                    </Button>
-                </Container>
-            )}
+            <Container
+                className={styles.registerFormContainer}
+                contentClassName={styles.inputContainer}
+                heading="Register"
+                headingSize="medium"
+                headingDescription={(
+                    <div className={styles.headingDescription}>
+                        <span>
+                            Already a user?
+                        </span>
+                        <Link
+                            to={generatePath(routes.login.path, {})}
+                        >
+                            Login
+                        </Link>
+                    </div>
+                )}
+            >
+                {success ? (
+                    <div className={styles.registerSuccess}>
+                        {_ts('explore.register', 'checkYourEmailText', { email: context?.username })}
+                    </div>
+                ) : (
+                    <>
+                        <NonFieldError error={error} />
+                        <TextInput
+                            name="firstName"
+                            onChange={setFieldValue}
+                            value={value?.firstName}
+                            error={error?.firstName}
+                            label={_ts('explore.register', 'firstNameLabel')}
+                            placeholder={_ts('explore.register', 'firstNamePlaceholder')}
+                            disabled={registerPending}
+                        />
+                        <TextInput
+                            name="lastName"
+                            onChange={setFieldValue}
+                            value={value?.lastName}
+                            error={error?.lastName}
+                            label={_ts('explore.register', 'lastNameLabel')}
+                            placeholder={_ts('explore.register', 'lastNamePlaceholder')}
+                            disabled={registerPending}
+                        />
+                        <TextInput
+                            name="organization"
+                            onChange={setFieldValue}
+                            value={value?.organization}
+                            error={error?.organization}
+                            label={_ts('explore.register', 'organizationLabel')}
+                            placeholder={_ts('explore.register', 'organizationPlaceholder')}
+                            disabled={registerPending}
+                        />
+                        <TextInput
+                            name="username"
+                            onChange={setFieldValue}
+                            value={value?.username}
+                            error={error?.username}
+                            label={_ts('explore.register', 'emailLabel')}
+                            placeholder={_ts('explore.register', 'emailPlaceholder')}
+                            disabled={registerPending}
+                        />
+                        <HCaptcha
+                            name="hcaptchaResponse"
+                            elementRef={elementRef}
+                            siteKey={HCaptchaSiteKey}
+                            onChange={setFieldValue}
+                            error={error?.hcaptchaResponse}
+                            disabled={registerPending}
+                        />
+                        <Button
+                            disabled={registerPending || pristine}
+                            type="submit"
+                            variant="primary"
+                            name="register"
+                        >
+                            {_ts('explore.register', 'registerButtonLabel')}
+                        </Button>
+                    </>
+                )}
+            </Container>
             <img
                 alt=""
                 className={styles.kraken}

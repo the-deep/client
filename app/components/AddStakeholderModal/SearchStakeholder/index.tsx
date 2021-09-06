@@ -73,7 +73,6 @@ function SearchStakeholder(props: Props) {
             headingSize="extraSmall"
             headerDescription={(
                 <TextInput
-                    className={styles.searchInput}
                     name="search"
                     onChange={handleSearchTextChange}
                     value={searchText}
