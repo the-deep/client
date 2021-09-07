@@ -31,7 +31,7 @@ import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
 } from '#generated/types';
-import { AnalysisFramework } from '#types/newAnalyticalFramework';
+import { Framework } from '#types/newAnalyticalFramework';
 import { PROJECT_FRAMEWORK } from './queries';
 
 import type { Entry as EditableEntry } from './LeftPane';
@@ -41,13 +41,6 @@ import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
 
 import styles from './styles.css';
-
-type FrameworkDetailsMini = Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
-/*
-type Entry = NonNullable<
-NonNullable<NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>['entries']>[number]
->;
-*/
 
 interface Props {
     className?: string;
@@ -86,7 +79,7 @@ function EntryEdit(props: Props) {
     );
 
     const frameworkDetails = useMemo(
-        () => removeNull(data?.project?.analysisFramework),
+        () => removeNull(data?.project?.analysisFramework as Framework | undefined),
         [data?.project?.analysisFramework],
     );
 
@@ -209,7 +202,7 @@ function EntryEdit(props: Props) {
                             <PrimaryTagging
                                 lead={lead}
                                 className={styles.primaryTagging}
-                                sections={frameworkDetails.primaryTagging as AnalysisFramework['primaryTagging']}
+                                sections={frameworkDetails.primaryTagging}
                                 frameworkId={frameworkDetails.id}
                                 entries={entries}
                                 onEntriesChange={setEntries}
@@ -225,7 +218,7 @@ function EntryEdit(props: Props) {
                         {frameworkDetails && (
                             <SecondaryTagging
                                 className={styles.secondaryTagging}
-                                widgets={frameworkDetails.secondaryTagging as AnalysisFramework['secondaryTagging']}
+                                widgets={frameworkDetails.secondaryTagging}
                                 frameworkId={frameworkDetails.id}
                                 entries={entries}
                                 activeEntry={activeEntry}
@@ -238,7 +231,9 @@ function EntryEdit(props: Props) {
                         className={styles.tabPanel}
                     >
                         <Review
-                            framework={frameworkDetails as FrameworkDetailsMini}
+                            frameworkId={frameworkDetails?.id}
+                            secondaryTagging={frameworkDetails?.secondaryTagging}
+                            primaryTagging={frameworkDetails?.primaryTagging}
                         />
                     </TabPanel>
                 </div>

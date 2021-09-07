@@ -137,8 +137,6 @@ function OptionInput(props: OptionInputProps) {
     const {
         className,
         value,
-        // FIXME: use proper variable name
-        // suggestion: errorFromProps
         error: riskyError,
         onChange,
         onRemove,
@@ -252,7 +250,6 @@ interface DataInputProps<K extends string>{
 function DataInput<K extends string>(props: DataInputProps<K>) {
     const {
         value,
-        // FIXME: use proper variable name
         error: riskyError,
         onChange,
         name,

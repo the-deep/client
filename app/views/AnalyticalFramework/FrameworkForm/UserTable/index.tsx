@@ -26,7 +26,7 @@ import {
 import _ts from '#ts';
 import UserContext from '#base/context/UserContext';
 
-import { Framework } from '../../types';
+import { Framework } from '#types/newAnalyticalFramework';
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';

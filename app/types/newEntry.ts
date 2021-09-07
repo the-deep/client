@@ -13,7 +13,7 @@ import {
     Matrix1dValue,
     Matrix2dValue,
     Types,
-} from './newAnalyticalFramework';
+} from '#types/newAnalyticalFramework';
 
 interface BaseWidgetValue {
     id: string;
