@@ -48,7 +48,7 @@ interface PrimaryTaggingInput<K extends string> {
     name: K;
     value: SectionsType | undefined;
     error: Error<SectionsType> | undefined;
-    onChange: (value: SetValueArg<SectionsType>, name: K) => void;
+    onChange: (value: SetValueArg<SectionsType | undefined>, name: K) => void;
     disabled?: boolean;
 }
 
@@ -331,7 +331,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                     )}
                                     title={section.tooltip}
                                     // FIXME: use strings
-                                    // FIXME: set errored color
                                 >
                                     {section.title || 'Unnamed'}
                                     <QuickActionButton
@@ -356,8 +355,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                         analyzeErrors(error?.[section.clientId]) && styles.errored,
                                     )}
                                     title={section.tooltip}
-                                    // FIXME: use strings
-                                    // FIXME: set errored color
                                 >
                                     {section.title}
                                     <QuickActionButton
@@ -365,6 +362,8 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                         name={section.clientId}
                                         onClick={handleSectionEditClick}
                                         disabled={disabled}
+                                        // FIXME: use strings
+                                        title="Edit"
                                     >
                                         <FiEdit2 />
                                     </QuickActionButton>

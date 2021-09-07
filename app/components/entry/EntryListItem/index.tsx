@@ -12,7 +12,6 @@ import {
 import { Entry } from '#types/newEntry';
 import ExcerptOutput from '#components/entry/ExcerptOutput';
 import {
-    AnalysisFramework,
     Widget,
     Section,
 } from '#types/newAnalyticalFramework';
@@ -28,12 +27,14 @@ const widgetKeySelector = (d: Widget) => d.clientId;
 interface Props {
     className?: string;
     entry: Entry;
-    framework: Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
     index?: number;
     hideExcerpt?: boolean;
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
     readOnly?: boolean;
+
+    primaryTagging: Section[] | undefined;
+    secondaryTagging: Widget[] | undefined;
 }
 
 function EntryListItem(props: Props) {
@@ -48,7 +49,8 @@ function EntryListItem(props: Props) {
             attributes,
         },
         hideExcerpt = false,
-        framework,
+        primaryTagging,
+        secondaryTagging,
         sectionContainerClassName,
         secondaryTaggingContainerClassName,
         readOnly,
@@ -76,10 +78,10 @@ function EntryListItem(props: Props) {
     }), [handleWidgetValueChange, attributesMap, readOnly]);
 
     const secondaryWidgetsWithValue = useMemo(() => (
-        framework.secondaryTagging.filter(
+        secondaryTagging?.filter(
             (widget) => isDefined(attributesMap[widget.clientId]?.data?.value),
         )
-    ), [attributesMap, framework.secondaryTagging]);
+    ), [attributesMap, secondaryTagging]);
 
     const widgetRendererParams = useCallback((key: string, data: Widget) => ({
         name: key,
@@ -107,7 +109,7 @@ function EntryListItem(props: Props) {
                 </Container>
             )}
             <List
-                data={framework.primaryTagging}
+                data={primaryTagging}
                 rendererParams={sectionRendererParams}
                 rendererClassName={_cs(styles.section, sectionContainerClassName)}
                 renderer={SectionItem}

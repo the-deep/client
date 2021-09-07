@@ -15,6 +15,7 @@ import {
     CurrentFrameworkQuery,
     CurrentFrameworkQueryVariables,
 } from '#generated/types';
+import { Framework } from '#types/newAnalyticalFramework';
 
 import FrameworkForm from './FrameworkForm';
 import { CURRENT_FRAMEWORK } from './queries';
@@ -121,7 +122,7 @@ function AnalyticalFramework(props: Props) {
                         />
                     ) : (
                         <FrameworkForm
-                            framework={framework}
+                            framework={framework as Framework}
                             frameworkId={frameworkId}
                         />
                     )}

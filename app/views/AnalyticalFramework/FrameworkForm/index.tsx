@@ -18,7 +18,6 @@ import {
     useForm,
     removeNull,
     getErrorObject,
-    // PartialForm,
     SetValueArg,
     internal,
     analyzeErrors,
@@ -43,7 +42,7 @@ import UserTable from './UserTable';
 import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
-import { Framework } from '../types';
+import { Framework, FrameworkInput } from '#types/newAnalyticalFramework';
 
 import NonFieldError from '#components/NonFieldError';
 import {
@@ -68,7 +67,7 @@ interface FrameworkFormProps {
     framework: Framework | undefined;
 }
 
-function transformFramework(framework: Framework) {
+function transformFramework(framework: Framework): FrameworkInput {
     const {
         title,
         description,
@@ -83,9 +82,8 @@ function transformFramework(framework: Framework) {
         description,
         isPrivate,
         organization: organization?.id,
-        // FIXME: these empty array are side-effects of new PartialForm
-        primaryTagging: primaryTagging ?? [],
-        secondaryTagging: secondaryTagging ?? [],
+        primaryTagging,
+        secondaryTagging,
     });
 }
 
@@ -188,7 +186,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
                 } else if (ok && result) {
-                    setValue(transformFramework(result));
+                    setValue(transformFramework(result as Framework));
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
                 }
@@ -206,17 +204,17 @@ function FrameworkForm(props: FrameworkFormProps) {
     const error = getErrorObject(riskyError);
 
     const handlePrimaryTaggingChange = useCallback(
-        (val: SetValueArg<SectionsType>, key: 'primaryTagging') => {
+        (val: SetValueArg<SectionsType | undefined>, name: 'primaryTagging') => {
             setPrimaryTaggingPristine(false);
-            setFieldValue(val, key);
+            setFieldValue(val, name);
         },
         [setFieldValue],
     );
 
     const handleSecondaryTaggingChange = useCallback(
-        (val: SetValueArg<WidgetsType>, key: 'secondaryTagging') => {
+        (val: SetValueArg<WidgetsType | undefined>, name: 'secondaryTagging') => {
             setSecondaryTaggingPristine(false);
-            setFieldValue(val, key);
+            setFieldValue(val, name);
         },
         [setFieldValue],
     );

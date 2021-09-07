@@ -1,5 +1,5 @@
 import {
-    AnalysisFramework,
+    Framework as AnalysisFramework,
     Matrix1dWidget,
     Matrix2dWidget,
 } from '#types/newAnalyticalFramework';
@@ -341,20 +341,16 @@ const matrix2d: Matrix2dWidget = {
 };
 
 const dataAf: AnalysisFramework = {
-    id: '21',
-    createdAt: '2021-07-19T10:45:08.705794Z',
-    createdBy: 24,
-    createdByName: 'Iva Barbara',
     title: 'Sign of the Painted Pearls',
-    members: [24, 34],
-    organization: 901,
+    allowedPermissions: [],
+    id: '1',
+    createdAt: '2012-10-12',
+    organization: {
+        id: '901',
+        title: 'idk',
+    },
     description: 'Sign of the Painted Pearls is an international bestseller written by Iva Barbara. The book takes the reader into the journey of her teen years in Hawaii where she meets her destiny and her sweetest tragedy. The readers are in for a rush of adrenaline and tear-jerking moments.',
     isPrivate: true,
-    organizationDetails: {
-        id: 3,
-        title: 'Non-governmental Organization',
-        shortName: 'NGO',
-    },
 
     primaryTagging: [
         {

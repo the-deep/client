@@ -376,7 +376,6 @@ function ProjectDetailsForm(props: Props) {
                     />
                     <ContainerCard
                         className={styles.stakeholders}
-                        headerClassName={styles.header}
                         heading={_ts('projectEdit', 'projectStakeholders')}
                         headingSize="extraSmall"
                         headerActions={(
