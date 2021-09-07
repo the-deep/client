@@ -10,7 +10,6 @@ generates:
       - "typescript"
       - "typescript-operations"
     config:
-      # maybeValue: T | undefined
       arrayInputCoercion: false
       enumsAsTypes: true
       skipTypename: true

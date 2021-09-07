@@ -2,35 +2,17 @@ import {
     ObjectSchema,
     ArraySchema,
     requiredStringCondition,
-    PurgeNull,
     defaultUndefinedType,
+    PartialForm,
 } from '@togglecorp/toggle-form';
-import {
-    AnalysisFrameworkInputType,
-} from '#generated/types';
+import { FrameworkInput } from '#types/newAnalyticalFramework';
 
-type Intersects<A, B> = A extends B ? true : never;
+type FormType = FrameworkInput;
+// NOTE: they will be handled internally
+export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging'>;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type PartialForm<T, J extends string = 'uuid'> = T extends object ? (
-    T extends (infer K)[] ? (
-        PartialForm<K, J>[]
-    ) : (
-        Intersects<J, keyof T> extends true ? (
-            { [P in Exclude<keyof T, J>]?: PartialForm<T[P], J> }
-            & { [P in (keyof T & J)]: NonNullable<T[P]> }
-        ) : (
-            { [P in keyof T]?: PartialForm<T[P], J> }
-        )
-    )
-) : T;
-
-type FormType = PurgeNull<AnalysisFrameworkInputType>;
-export type WidgetsType = NonNullable<FormType['secondaryTagging']>;
-export type SectionsType = NonNullable<FormType['primaryTagging']>;
-
-// NOTE: making primaryTagging and secondaryTagging non partial as it will be handled internally
-export type PartialFormType = PartialForm<FormType, 'clientId' | 'widget_id' | 'primaryTagging' | 'secondaryTagging'>;
+export type WidgetsType = NonNullable<PartialFormType['secondaryTagging']>;
+export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
 
 export type PartialWidgetsType = WidgetsType;
 export type PartialSectionsType = SectionsType;
@@ -52,16 +34,14 @@ const widgetSchema: WidgetSchema = {
         properties: [],
         title: [],
         widgetId: [],
-        // FIXME: the width should be accepted by the server later on
-        // width: [],
+        width: [],
     }),
 };
 
 type WidgetsSchema = ArraySchema<PartialWidgetType>;
 type WidgetsSchemaMember = ReturnType<WidgetsSchema['member']>;
 const widgetsSchema: WidgetsSchema = {
-    // FIXME: this will be mandatory
-    keySelector: (col) => col.clientId ?? '',
+    keySelector: (col) => col.clientId,
     member: (): WidgetsSchemaMember => widgetSchema,
 };
 
@@ -81,15 +61,13 @@ const sectionSchema: SectionSchema = {
 type SectionsSchema = ArraySchema<PartialSectionType>;
 type SectionsSchemaMember = ReturnType<SectionsSchema['member']>;
 const sectionsSchema: SectionsSchema = {
-    // FIXME: this will be mandatory
-    keySelector: (col) => col.clientId ?? '',
+    keySelector: (col) => col.clientId,
     member: (): SectionsSchemaMember => sectionSchema,
 };
 
 export const defaultFormValues: PartialFormType = {
+    title: '',
     isPrivate: false,
-    primaryTagging: [],
-    secondaryTagging: [],
 };
 
 const schema: FormSchema = {

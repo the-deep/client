@@ -35,7 +35,7 @@ interface Props<K extends string> {
 
     name: K;
     value: WidgetsType | undefined;
-    onChange: (value: SetValueArg<WidgetsType>, name: K) => void;
+    onChange: (value: SetValueArg<WidgetsType | undefined>, name: K) => void;
     error: Error<WidgetsType> | undefined;
     disabled?: boolean;
 }

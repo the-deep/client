@@ -8,7 +8,7 @@ import {
 import { Entry } from '#types/newEntry';
 import EntryListItem from '#components/entry/EntryListItem';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
-import { AnalysisFramework } from '#types/newAnalyticalFramework';
+import { Section, Widget } from '#types/newAnalyticalFramework';
 
 import entryMockData from '#views/Project/Tagging/mockData';
 
@@ -18,27 +18,32 @@ const entryKeySelector = (e: Entry) => e.clientId;
 
 interface Props {
     className?: string;
-    framework: Pick<AnalysisFramework, 'id' | 'primaryTagging' | 'secondaryTagging'>;
+    frameworkId: string | undefined;
+    secondaryTagging: Widget[] | undefined;
+    primaryTagging: Section[] | undefined;
 }
 
 function Review(props: Props) {
     const {
         className,
-        framework,
+        frameworkId,
+        secondaryTagging,
+        primaryTagging,
     } = props;
 
     const entryDataRendererParams = useCallback((_: string, data: Entry, index: number) => ({
         entry: data,
         index,
-        framework,
-    }), [framework]);
+        secondaryTagging,
+        primaryTagging,
+    }), [secondaryTagging, primaryTagging]);
 
     return (
         <Container
             className={_cs(className, styles.review)}
             headerActions={(
                 <FrameworkImageButton
-                    frameworkId={framework.id}
+                    frameworkId={frameworkId}
                     label="View framework image for reference"
                     variant="secondary"
                 />

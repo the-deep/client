@@ -1,5 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import {
+    removeNull,
+} from '@togglecorp/toggle-form';
 import {
     ButtonLikeLink,
     Container,
@@ -63,6 +66,11 @@ function EntryItem(props: Props) {
         failureHeader: 'Entry',
     });
 
+    const safeFramework = useMemo(
+        () => removeNull(frameworkMockData),
+        [],
+    );
+
     return (
         <Container
             className={_cs(className, styles.entryItemContainer)}
@@ -110,7 +118,8 @@ function EntryItem(props: Props) {
             <EntryListItem
                 className={styles.entry}
                 entry={entry1} // TODO remove mock entry usage appropriate
-                framework={frameworkMockData}
+                primaryTagging={safeFramework.primaryTagging}
+                secondaryTagging={safeFramework.secondaryTagging}
                 readOnly
             />
         </Container>

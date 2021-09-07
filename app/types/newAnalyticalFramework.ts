@@ -1,7 +1,71 @@
 import {
+    PurgeNull,
+} from '@togglecorp/toggle-form';
+import {
     Widget_Id as WidgetTypes,
-    WidgetWidth,
+    // NOTE: we can take any framework query that is complete
+    CurrentFrameworkQuery,
+    AnalysisFrameworkInputType,
 } from '#generated/types';
+
+// TODO: move to common utils
+// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
+type DeepMandatory<T, K extends keyof any> = T extends object ? (
+    T extends (infer I)[] ? (
+        DeepMandatory<I, K>[]
+    ) : (
+        ({ [P1 in (Extract<keyof T, K>)]-?: NonNullable<T[P1]> } &
+         { [P2 in keyof Pick<T, Exclude<keyof T, K>>]: DeepMandatory<T[P2], K> })
+    )
+) : T
+
+// TODO: move to common utils
+export type DeepReplace<T, A, B> = (
+    T extends A
+        ? B
+        : (
+            T extends (infer Z)[]
+                ? DeepReplace<Z, A, B>[]
+                : (
+                    // eslint-disable-next-line @typescript-eslint/ban-types
+                    T extends object
+                        ? { [K in keyof T]: DeepReplace<T[K], A, B> }
+                        : T
+                )
+        )
+)
+
+// FIXME: 'key' is thought to be mandatory from server.
+// Remove this DeepMandatory transformation after server sends key as mandatory
+export type FrameworkRaw = DeepMandatory<NonNullable<CurrentFrameworkQuery['analysisFramework']>, 'key'>;
+export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order'>;
+
+export type Types = WidgetTypes;
+
+interface KeyLabelEntity {
+    clientId: string;
+    label: string;
+    tooltip?: string;
+    order: number;
+}
+interface KeyLabelColorEntity extends KeyLabelEntity {
+    color: string;
+}
+
+/*
+interface Condition
+    clientId: string;
+    type: unknown;
+    directive: unknown;
+
+    order: number;
+    conjunction: 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
+}
+*/
+
+interface BaseProperties<T> {
+    defaultValue?: T;
+}
 
 export type NumberValue = number;
 export type TextValue = string;
@@ -33,155 +97,104 @@ export type Matrix2dValue = {
     } | undefined,
 };
 
-export type Types = WidgetTypes;
-
-interface BasicEntity {
-    id: string;
-    createdAt: string;
-    createdBy: number;
-    createdByName: string;
-}
-interface KeyLabel {
-    clientId: string;
-    label: string;
-    tooltip?: string;
-    order: number;
-}
-interface KeyLabelColor extends KeyLabel {
-    color: string;
-}
-
-/*
-interface Condition {
-    clientId: string;
-    type: unknown;
-    directive: unknown;
-
-    order: number;
-    conjunction: 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
-}
-*/
-
-interface BaseData<T> {
-    defaultValue?: T;
-}
-
-interface NumberData extends BaseData<NumberValue> {
+interface NumberProperties extends BaseProperties<NumberValue> {
     maxValue?: number;
     minValue?: number;
 }
 
-interface SingleSelectData extends BaseData<SingleSelectValue> {
-    options: KeyLabel[];
+interface SingleSelectProperties extends BaseProperties<SingleSelectValue> {
+    options: KeyLabelEntity[];
 }
-interface MultiSelectData extends BaseData<MultiSelectValue> {
-    options: KeyLabel[];
+interface MultiSelectProperties extends BaseProperties<MultiSelectValue> {
+    options: KeyLabelEntity[];
 }
-interface ScaleData extends BaseData<ScaleValue> {
-    options: KeyLabelColor[];
+interface ScaleProperties extends BaseProperties<ScaleValue> {
+    options: KeyLabelColorEntity[];
 }
 
-interface OrganigramDatum extends KeyLabel {
+interface OrganigramDatum extends KeyLabelEntity {
     children: OrganigramDatum[];
 }
-interface OrganigramData extends BaseData<OrganigramValue> {
+interface OrganigramProperties extends BaseProperties<OrganigramValue> {
     options: OrganigramDatum;
 }
 
-interface GeoLocationData extends BaseData<GeoLocationValue> {
+interface GeoLocationProperties extends BaseProperties<GeoLocationValue> {
 }
 
-interface Matrix1dRows extends KeyLabelColor {
-    cells: KeyLabel[]
+interface Matrix1dRows extends KeyLabelColorEntity {
+    cells: KeyLabelEntity[]
 }
-interface Matrix1dData extends BaseData<undefined> {
+interface Matrix1dProperties extends BaseProperties<undefined> {
     rows: Matrix1dRows[]
 }
 
-interface Matrix2dRows extends KeyLabelColor {
-    subRows: KeyLabel[]
+interface Matrix2dRows extends KeyLabelColorEntity {
+    subRows: KeyLabelEntity[]
 }
-interface Matrix2dColumns extends KeyLabel {
-    subColumns: KeyLabel[]
+interface Matrix2dColumns extends KeyLabelEntity {
+    subColumns: KeyLabelEntity[]
 }
 
-interface Matrix2Data extends BaseData<undefined> {
+interface Matrix2Properties extends BaseProperties<undefined> {
     rows: Matrix2dRows[];
     columns: Matrix2dColumns[];
 }
 
-interface BaseWidget {
-    clientId: string;
-    // TODO: clientId should always sync with key
-    key: string;
-
-    id: string;
-    order: number;
-    title: string;
-
-    width?: WidgetWidth;
-
-    widgetId: Types;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    properties: object;
-
-    /*
-    parent?: string;
-    condition?: Condition[];
-    */
-}
+// NOTE: we are replacing these with more strict types
+type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
 
 export interface NumberWidget extends BaseWidget {
     widgetId: 'NUMBERWIDGET';
-    properties: NumberData;
+    properties: NumberProperties;
 }
 export interface TextWidget extends BaseWidget {
     widgetId: 'TEXTWIDGET';
-    properties: BaseData<TextValue>;
+    properties: BaseProperties<TextValue>;
 }
 export interface SingleSelectWidget extends BaseWidget {
     widgetId: 'SELECTWIDGET';
-    properties: SingleSelectData;
+    properties: SingleSelectProperties;
 }
 export interface MultiSelectWidget extends BaseWidget {
     widgetId: 'MULTISELECTWIDGET';
-    properties: MultiSelectData;
+    properties: MultiSelectProperties;
 }
 export interface DateWidget extends BaseWidget {
     widgetId: 'DATEWIDGET';
-    properties: BaseData<DateValue>;
+    properties: BaseProperties<DateValue>;
 }
 export interface TimeWidget extends BaseWidget {
     widgetId: 'TIMEWIDGET';
-    properties: BaseData<TimeValue>;
+    properties: BaseProperties<TimeValue>;
 }
 export interface TimeRangeWidget extends BaseWidget {
     widgetId: 'TIMERANGEWIDGET';
-    properties: BaseData<TimeRangeValue>;
+    properties: BaseProperties<TimeRangeValue>;
 }
 export interface DateRangeWidget extends BaseWidget {
     widgetId: 'DATERANGEWIDGET';
-    properties: BaseData<DateRangeValue>;
+    properties: BaseProperties<DateRangeValue>;
 }
 export interface Matrix1dWidget extends BaseWidget {
     widgetId: 'MATRIX1DWIDGET';
-    properties: Matrix1dData;
+    properties: Matrix1dProperties;
 }
 export interface Matrix2dWidget extends BaseWidget {
     widgetId: 'MATRIX2DWIDGET';
-    properties: Matrix2Data;
+    properties: Matrix2Properties;
 }
 export interface OrganigramWidget extends BaseWidget {
     widgetId: 'ORGANIGRAMWIDGET';
-    properties: OrganigramData;
+    properties: OrganigramProperties;
 }
 export interface ScaleWidget extends BaseWidget {
     widgetId: 'SCALEWIDGET';
-    properties: ScaleData;
+    properties: ScaleProperties;
 }
-interface GeoLocationWidget extends BaseWidget {
+export interface GeoLocationWidget extends BaseWidget {
     widgetId: 'GEOWIDGET';
-    properties: GeoLocationData;
+    properties: GeoLocationProperties;
 }
 
 export type Widget = NumberWidget
@@ -198,31 +211,10 @@ export type Widget = NumberWidget
     | GeoLocationWidget
     | ScaleWidget;
 
-export interface Section {
-    clientId: string;
-    id: string;
-    order: number;
-    title: string;
-    tooltip?: string;
-    widgets?: Widget[];
-}
+// NOTE: Same WidgetRaw is used for Framework in both query and mutation
+type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
 
-export interface AnalysisFramework extends BasicEntity {
-    title: string;
-    members: number[];
-    referenceImage?: string;
+export type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
+export type FrameworkInput = DeepReplace<FrameworkInputRaw, WidgetRaw, Widget>;
 
-    isPrivate?: boolean;
-
-    description?: string;
-
-    organization?: number;
-    organizationDetails?: {
-        id: number;
-        title: string;
-        shortName: string;
-    };
-
-    primaryTagging: Section[];
-    secondaryTagging: Widget[];
-}
+export type Section = NonNullable<NonNullable<FrameworkInput['primaryTagging']>[number]>;

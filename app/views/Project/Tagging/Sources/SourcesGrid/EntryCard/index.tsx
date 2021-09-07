@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
+    removeNull,
+} from '@togglecorp/toggle-form';
+import {
     IoPencil,
     IoTrash,
     IoClose,
@@ -21,7 +24,7 @@ import EntryVerification from '#components/entryReview/EntryVerification';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
 import {
-    AnalysisFramework,
+    Framework,
 } from '#types/newAnalyticalFramework';
 import { Entry } from '#types/newEntry';
 import { entry1 } from '#views/Project/Tagging/mockData';
@@ -33,7 +36,7 @@ interface Props {
     entry: Entry;
     leadDetails: Entry['lead'];
     projectId: number;
-    framework: AnalysisFramework;
+    framework: Framework;
     viewTags?: boolean;
     onViewTagsButtonClick?: (entryId: number) => void;
     onHideTagsButtonClick?: (entryId: number) => void;
@@ -74,6 +77,11 @@ function EntryCard(props: Props) {
     const authorsDetailText = useMemo(() => (
         leadDetails?.authorsDetail?.map((a) => a.title)?.join(', ')
     ), [leadDetails?.authorsDetail]);
+
+    const safeFramework = useMemo(
+        () => removeNull(framework),
+        [framework],
+    );
 
     return (
         <div
@@ -209,7 +217,8 @@ function EntryCard(props: Props) {
                         <EntryListItem
                             entry={entry1}
                             hideExcerpt
-                            framework={framework}
+                            primaryTagging={safeFramework?.primaryTagging}
+                            secondaryTagging={safeFramework?.secondaryTagging}
                             className={styles.entryTags}
                             sectionContainerClassName={styles.section}
                             secondaryTaggingContainerClassName={styles.section}
