@@ -79,10 +79,17 @@
         background-color: var(--dui-color-background);
         padding: var(--dui-spacing-medium) var(--dui-spacing-large);
         padding-right: var(--dui-spacing-super-large);
+        overflow-y: auto;
+
+        .main-container-content {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
 
         .selected-framework-details {
             flex-grow: 1;
-            margin: var(--dui-spacing-medium) 0;
+            overflow-y: auto;
         }
 
         .no-framework-selected {

@@ -141,8 +141,6 @@ interface Matrix2Properties extends BaseProperties<undefined> {
     columns: Matrix2dColumns[];
 }
 
-// NOTE: Same WidgetRaw is used for Framework in both query and mutation
-type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
 // NOTE: we are replacing these with more strict types
 type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
 
@@ -212,6 +210,9 @@ export type Widget = TextWidget
     | GeoLocationWidget
     | Matrix1dWidget
     | Matrix2dWidget;
+
+// NOTE: Same WidgetRaw is used for Framework in both query and mutation
+export type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
 
 export type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
 export type FrameworkInput = DeepReplace<FrameworkInputRaw, WidgetRaw, Widget>;

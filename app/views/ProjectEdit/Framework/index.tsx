@@ -6,6 +6,7 @@ import {
     IoSearch,
 } from 'react-icons/io5';
 import {
+    Container,
     Button,
     List,
     PendingMessage,
@@ -271,19 +272,20 @@ function ProjectFramework(props: Props) {
                     )}
                 </div>
             </div>
-            <div className={styles.mainContainer}>
-                <Header
-                    actions={(
-                        <SmartButtonLikeLink
-                            title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                            icons={(<IoAdd />)}
-                            route={routes.analyticalFrameworkCreate}
-                            variant="tertiary"
-                        >
-                            {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                        </SmartButtonLikeLink>
-                    )}
-                />
+            <Container
+                className={styles.mainContainer}
+                headerActions={(
+                    <SmartButtonLikeLink
+                        title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
+                        icons={(<IoAdd />)}
+                        route={routes.analyticalFrameworkCreate}
+                        variant="tertiary"
+                    >
+                        {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
+                    </SmartButtonLikeLink>
+                )}
+                contentClassName={styles.mainContainerContent}
+            >
                 {selectedFramework ? (
                     <FrameworkDetail
                         projectFrameworkId={project?.analysisFramework?.id}
@@ -297,7 +299,7 @@ function ProjectFramework(props: Props) {
                         {_ts('projectEdit', 'noFrameworkSelectedMessage')}
                     </div>
                 )}
-            </div>
+            </Container>
         </div>
     );
 }

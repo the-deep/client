@@ -5,8 +5,6 @@
     background-color: var(--dui-color-background);
     padding: var(--dui-spacing-super-large);
     gap: var(--dui-spacing-extra-large);
-    height: 100%;
-    overflow-y: auto;
 
     .card {
         width: calc(100% - 240px - 10vw);
