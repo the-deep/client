@@ -1,23 +1,23 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useState, useMemo } from 'react';
+// import { _cs } from '@togglecorp/fujs';
 import {
-    ListView,
+    // ListView,
     Pager,
     Container,
 } from '@the-deep/deep-ui';
 
 import { Entry } from '#types/newEntry';
-import frameworkMockData from '#views/AnalyticalFramework/mockData';
+// import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { MultiResponse } from '#types';
 import { useRequest } from '#base/utils/restRequest';
 
-import EntryCard from './EntryCard';
+// import EntryCard from './EntryCard';
 
-import styles from './styles.css';
+// import styles from './styles.css';
 
 const maxItemsPerPage = 50;
 
-const entryKeySelector = (entry: Entry) => entry.id;
+// const entryKeySelector = (entry: Entry) => entry.id;
 
 interface Props {
     className?: string;
@@ -30,10 +30,17 @@ function SourcesGrid(props: Props) {
         projectId,
     } = props;
 
+    // FIXME: use this later on
+    // eslint-disable-next-line no-console
+    console.log(className);
+
+    /*
     const [expandedEntry, setExpandedEntry] = React.useState<number | undefined>();
+
     const handleHideTagsButtonClick = useCallback(() => {
         setExpandedEntry(undefined);
     }, []);
+    */
 
     const [activePage, setActivePage] = useState(1);
 
@@ -47,7 +54,7 @@ function SourcesGrid(props: Props) {
     );
 
     const {
-        pending: entryListPending,
+        // pending: entryListPending,
         response: entryListResponse,
     } = useRequest<MultiResponse<Entry>>({
         url: 'server://entries/',
@@ -57,6 +64,7 @@ function SourcesGrid(props: Props) {
         preserveResponse: true,
     });
 
+    /*
     const entryRendererParams = useCallback((key: number, entry: Entry) => ({
         entry,
         framework: frameworkMockData,
@@ -71,6 +79,7 @@ function SourcesGrid(props: Props) {
         projectId,
         handleHideTagsButtonClick,
     ]);
+    */
 
     return (
         <Container
@@ -86,6 +95,7 @@ function SourcesGrid(props: Props) {
                 />
             )}
         >
+            {/*
             <ListView
                 className={_cs(styles.sourcesGrid, className)}
                 data={entryListResponse?.results}
@@ -94,6 +104,7 @@ function SourcesGrid(props: Props) {
                 keySelector={entryKeySelector}
                 pending={entryListPending}
             />
+            */}
         </Container>
     );
 }

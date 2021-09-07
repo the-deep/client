@@ -11,14 +11,26 @@ export const PROJECT_FRAMEWORK = gql`
                 entries {
                     clientId
                     id
+                    entryType
+                    droppedExcerpt
+                    excerpt
+                    attributes {
+                        clientId
+                        data
+                        id
+                        widget
+                        widgetType
+                    }
                     image {
+                        id
+                        metadata
+                        mimeType
+                        title
                         file {
                             name
                             url
                         }
                     }
-                    imageRaw
-                    excerpt
                 }
             }
             analysisFramework {

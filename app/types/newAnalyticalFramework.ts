@@ -10,7 +10,7 @@ import {
 
 // TODO: move to common utils
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-type DeepMandatory<T, K extends keyof any> = T extends object ? (
+export type DeepMandatory<T, K extends keyof any> = T extends object ? (
     T extends (infer I)[] ? (
         DeepMandatory<I, K>[]
     ) : (
@@ -141,6 +141,8 @@ interface Matrix2Properties extends BaseProperties<undefined> {
     columns: Matrix2dColumns[];
 }
 
+// NOTE: Same WidgetRaw is used for Framework in both query and mutation
+type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
 // NOTE: we are replacing these with more strict types
 type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
 
@@ -197,22 +199,19 @@ export interface GeoLocationWidget extends BaseWidget {
     properties: GeoLocationProperties;
 }
 
-export type Widget = NumberWidget
-    | TextWidget
-    | SingleSelectWidget
-    | MultiSelectWidget
-    | DateWidget
+export type Widget = TextWidget
+    | NumberWidget
     | TimeWidget
+    | DateWidget
     | TimeRangeWidget
     | DateRangeWidget
-    | Matrix1dWidget
-    | Matrix2dWidget
+    | SingleSelectWidget
+    | MultiSelectWidget
+    | ScaleWidget
     | OrganigramWidget
     | GeoLocationWidget
-    | ScaleWidget;
-
-// NOTE: Same WidgetRaw is used for Framework in both query and mutation
-type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
+    | Matrix1dWidget
+    | Matrix2dWidget;
 
 export type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
 export type FrameworkInput = DeepReplace<FrameworkInputRaw, WidgetRaw, Widget>;

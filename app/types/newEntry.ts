@@ -1,4 +1,7 @@
 import {
+    PurgeNull,
+} from '@togglecorp/toggle-form';
+import {
     TextValue,
     NumberValue,
     TimeValue,
@@ -12,97 +15,105 @@ import {
     GeoLocationValue,
     Matrix1dValue,
     Matrix2dValue,
-    Types,
+    DeepMandatory,
+    DeepReplace,
 } from '#types/newAnalyticalFramework';
+import {
+    BulkEntryInputType,
+    ProjectFrameworkQuery,
+} from '#generated/types';
 
-interface BaseWidgetValue {
-    id: string;
-    type: Types;
+export type EntryRaw = NonNullable<NonNullable<NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>['entries']>[number]>;
+export type EntryInputRaw = DeepMandatory<PurgeNull<BulkEntryInputType>, 'clientId' | 'widgetType' | 'lead' | 'entryType'>;
+
+type WidgetAttributeRaw = NonNullable<BulkEntryInputType['attributes']>[number];
+type BaseWidgetAttribute = Omit<WidgetAttributeRaw, 'data' | 'widgetType'>;
+
+type BaseData<T> = { value: T; } | undefined;
+
+export interface TextWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'TEXTWIDGET';
+    data: BaseData<TextValue>;
 }
 
-interface BaseValue<T> {
-    value: T;
+export interface NumberWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'NUMBERWIDGET';
+    data: BaseData<NumberValue>;
 }
 
-export interface TextWidgetValue extends BaseWidgetValue {
-    type: 'TEXTWIDGET';
-    data: BaseValue<TextValue>;
+export interface TimeWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'TIMEWIDGET';
+    data: BaseData<TimeValue>;
 }
 
-export interface NumberWidgetValue extends BaseWidgetValue {
-    type: 'NUMBERWIDGET';
-    data: BaseValue<NumberValue>;
+export interface DateWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'DATEWIDGET';
+    data: BaseData<DateValue>;
 }
 
-export interface TimeWidgetValue extends BaseWidgetValue {
-    type: 'TIMEWIDGET';
-    data: BaseValue<TimeValue>;
+export interface TimeRangeWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'TIMERANGEWIDGET';
+    data: BaseData<TimeRangeValue>;
 }
 
-export interface DateWidgetValue extends BaseWidgetValue {
-    type: 'DATEWIDGET';
-    data: BaseValue<DateValue>;
+export interface DateRangeWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'DATERANGEWIDGET';
+    data: BaseData<DateRangeValue>;
 }
 
-export interface TimeRangeWidgetValue extends BaseWidgetValue {
-    type: 'TIMERANGEWIDGET';
-    data: BaseValue<TimeRangeValue>;
+export interface SingleSelectWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'SELECTWIDGET';
+    data: BaseData<SingleSelectValue>;
 }
 
-export interface DateRangeWidgetValue extends BaseWidgetValue {
-    type: 'DATERANGEWIDGET';
-    data: BaseValue<DateRangeValue>;
+export interface MultiSelectWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'MULTISELECTWIDGET';
+    data: BaseData<MultiSelectValue>;
 }
 
-export interface SingleSelectWidgetValue extends BaseWidgetValue {
-    type: 'SELECTWIDGET';
-    data: BaseValue<SingleSelectValue>;
+export interface ScaleWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'SCALEWIDGET';
+    data: BaseData<ScaleValue>;
 }
 
-export interface MultiSelectWidgetValue extends BaseWidgetValue {
-    type: 'MULTISELECTWIDGET';
-    data: BaseValue<MultiSelectValue>;
+export interface OrganigramWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'ORGANIGRAMWIDGET';
+    data: BaseData<OrganigramValue>;
 }
 
-export interface ScaleWidgetValue extends BaseWidgetValue {
-    type: 'SCALEWIDGET';
-    data: BaseValue<ScaleValue>;
+export interface GeoLocationWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'GEOWIDGET';
+    data: BaseData<GeoLocationValue>;
 }
 
-export interface OrganigramWidgetValue extends BaseWidgetValue {
-    type: 'ORGANIGRAMWIDGET';
-    data: BaseValue<OrganigramValue>;
+export interface Matrix1dWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'MATRIX1DWIDGET';
+    data: BaseData<Matrix1dValue>;
 }
 
-export interface GeoLocationWidgetValue extends BaseWidgetValue {
-    type: 'GEOWIDGET';
-    data: BaseValue<GeoLocationValue>;
+export interface Matrix2dWidgetAttribute extends BaseWidgetAttribute {
+    widgetType: 'MATRIX2DWIDGET';
+    data: BaseData<Matrix2dValue>;
 }
 
-export interface Matrix1dWidgetValue extends BaseWidgetValue {
-    type: 'MATRIX1DWIDGET';
-    data: BaseValue<Matrix1dValue>;
-}
+export type WidgetAttribute = TextWidgetAttribute
+    | NumberWidgetAttribute
+    | TimeWidgetAttribute
+    | DateWidgetAttribute
+    | TimeRangeWidgetAttribute
+    | DateRangeWidgetAttribute
+    | SingleSelectWidgetAttribute
+    | MultiSelectWidgetAttribute
+    | ScaleWidgetAttribute
+    | OrganigramWidgetAttribute
+    | GeoLocationWidgetAttribute
+    | Matrix1dWidgetAttribute
+    | Matrix2dWidgetAttribute
 
-export interface Matrix2dWidgetValue extends BaseWidgetValue {
-    type: 'MATRIX2DWIDGET';
-    data: BaseValue<Matrix2dValue>;
-}
+export type Entry = DeepReplace<EntryRaw, WidgetAttributeRaw, WidgetAttribute>;
+export type EntryInput = DeepReplace<EntryInputRaw, WidgetAttributeRaw, WidgetAttribute>;
 
-export type WidgetValue = TextWidgetValue
-    | NumberWidgetValue
-    | TimeWidgetValue
-    | DateWidgetValue
-    | TimeRangeWidgetValue
-    | DateRangeWidgetValue
-    | SingleSelectWidgetValue
-    | MultiSelectWidgetValue
-    | ScaleWidgetValue
-    | OrganigramWidgetValue
-    | GeoLocationWidgetValue
-    | Matrix1dWidgetValue
-    | Matrix2dWidgetValue
-
+/*
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
 export interface Entity {
@@ -162,7 +173,7 @@ export interface Entry extends Entity {
     entryType: EntryType;
 
     analyticalFramework: number;
-    attributes: WidgetValue[];
+    attributes: WidgetAttribute[];
 
     verificationLastChangedByDetails?: UserFields;
 
@@ -172,7 +183,7 @@ export interface Entry extends Entity {
     // Labels for entry groups
     projectLabels?: string[];
 
-    // Data for image type entry
+    // Data for image widgetType entry
     image?: number;
     imageRaw?: string;
     imageDetails?: {
@@ -180,7 +191,7 @@ export interface Entry extends Entity {
         file: string;
     };
 
-    // Data for dataSeries type entry
+    // Data for dataSeries widgetType entry
     tabularField?: number;
     tabularFieldData?: TabularDataFields;
     verifiedBy: number[];
@@ -211,3 +222,4 @@ export interface EntryReviewComment {
     entry: number;
     mentionedUsers: number[];
 }
+*/

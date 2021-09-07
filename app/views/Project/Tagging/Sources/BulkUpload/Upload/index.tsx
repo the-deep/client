@@ -47,7 +47,6 @@ function Upload(props: Props) {
             const updatedState = produce(oldState, (safeState) => {
                 const index = safeState.findIndex((file: FileLike) => file.key === key);
                 if (index !== -1) {
-                    // eslint-disable-next-line no-param-reassign
                     safeState.splice(index, 1);
                 }
             });
@@ -90,7 +89,6 @@ function Upload(props: Props) {
             const updatedState = produce(oldState, (safeState) => {
                 const index = safeState.findIndex((file: FileLike) => file.key === key);
                 if (index !== -1) {
-                    // eslint-disable-next-line no-param-reassign
                     safeState.splice(index, 1);
                 }
             });

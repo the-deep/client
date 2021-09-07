@@ -111,12 +111,10 @@ const getString = (
 
 type DevLang = typeof devLang;
 
-// eslint-disable-next-line no-underscore-dangle
 function _ts(
     namespace: keyof DevLang['links'],
     identifier: string,
 ): string;
-// eslint-disable-next-line no-underscore-dangle
 function _ts(
     namespace: keyof DevLang['links'],
     identifier: string,

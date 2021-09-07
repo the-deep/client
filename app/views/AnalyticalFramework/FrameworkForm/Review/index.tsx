@@ -8,7 +8,6 @@ import {
 } from '@the-deep/deep-ui';
 import { _cs } from '@togglecorp/fujs';
 
-import { Section, Widget } from '#types/newAnalyticalFramework';
 import _ts from '#ts';
 
 import Canvas from '../components/Canvas';
@@ -29,8 +28,8 @@ function Review(props: Props) {
         className,
     } = props;
 
-    const primaryTagging = primaryTaggingFromProps as Section[];
-    const secondaryTagging = secondaryTaggingFromProps as Widget[];
+    const primaryTagging = primaryTaggingFromProps;
+    const secondaryTagging = secondaryTaggingFromProps;
 
     const [selectedSection, setSelectedSection] = useState<string | undefined>(
         primaryTagging[0]?.clientId,

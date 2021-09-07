@@ -13,7 +13,7 @@ export interface TempWidget {
 }
 
 export function findWidget(
-    sections: Section[],
+    sections: Section[] | undefined = [],
     sectionId: string,
     widgetId: string,
 ): Widget | undefined {
@@ -31,7 +31,7 @@ export function findWidget(
 }
 
 export function orderWidgets(
-    sections: Section[],
+    sections: Section[] | undefined = [],
     sectionId: string,
     widgets: Widget[],
 ): Section[] {
@@ -49,17 +49,17 @@ export function orderWidgets(
 }
 
 export function injectWidget(
-    sections: Section[],
+    sections: Section[] | undefined,
     sectionId: string,
     widget: Widget,
 ): Section[];
 export function injectWidget(
-    sections: PartialSectionType[],
+    sections: PartialSectionType[] | undefined,
     sectionId: string,
     widget: PartialWidget,
 ): PartialSectionType[];
 export function injectWidget(
-    sections: PartialSectionType[],
+    sections: PartialSectionType[] | undefined = [],
     sectionId: string,
     widget: PartialWidget,
 ) {
@@ -89,7 +89,11 @@ export function injectWidget(
     });
 }
 
-export function deleteWidget(sections: Section[], sectionId: string, widgetId: string): Section[] {
+export function deleteWidget(
+    sections: Section[] | undefined = [],
+    sectionId: string,
+    widgetId: string,
+): Section[] {
     const selectedSectionIndex = sections.findIndex((s) => s.clientId === sectionId);
     if (selectedSectionIndex === -1) {
         // eslint-disable-next-line no-console

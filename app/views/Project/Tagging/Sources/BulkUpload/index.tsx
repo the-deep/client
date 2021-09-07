@@ -37,7 +37,6 @@ function BulkUpload(props: Props) {
             const updatedState = produce(oldState, (safeState) => {
                 const index = safeState.findIndex((file: FileUploadResponse) => file.id === id);
                 if (index !== -1) {
-                    // eslint-disable-next-line no-param-reassign
                     safeState.splice(index, 1);
                 }
             });
