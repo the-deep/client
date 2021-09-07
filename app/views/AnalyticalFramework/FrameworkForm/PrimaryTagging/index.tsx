@@ -63,9 +63,9 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         error: errorFromProps,
     } = props;
 
-    const sections = sectionsFromProps as Section[];
-    const setSections = setSectionsFromProps as (value: SetValueArg<Section[]>, name: K) => void;
-    const riskyError = errorFromProps as (Error<Section[]> | undefined);
+    const sections = sectionsFromProps;
+    const setSections = setSectionsFromProps;
+    const riskyError = errorFromProps;
 
     // NOTE: typescript couldn't infer the type here
     const error = getErrorObject<Section>(riskyError);
@@ -326,7 +326,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                     borderWrapperClassName={styles.borderWrapper}
                                     className={_cs(
                                         styles.tab,
-                                        // eslint-disable-next-line max-len
                                         analyzeErrors(error?.[section.clientId]) && styles.errored,
                                     )}
                                     title={section.tooltip}
@@ -351,7 +350,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                     borderWrapperClassName={styles.borderWrapper}
                                     className={_cs(
                                         styles.tab,
-                                        // eslint-disable-next-line max-len
                                         analyzeErrors(error?.[section.clientId]) && styles.errored,
                                     )}
                                     title={section.tooltip}

@@ -1,73 +1,64 @@
 import { Entry } from '#types/newEntry';
 
 export const entry1: Entry = {
-    id: 1,
-    createdAt: 'Fri Feb 26 2021 20:14:55 GMT+0545 (Nepal Time)',
-    createdBy: 65277,
-    createdByName: 'sameer',
-    modifiedBy: 34089,
-    modifiedByName: 'sameer',
+    id: '1',
     clientId: 'wwfrillnhe',
-    controlled: false,
-    verifiedBy: [],
-    versionId: 74123,
-    project: 9839,
-    lead: {
-        id: 1,
-        title: 'The standard Lorem Ipsum passage, used since the 1500s',
-        createdAt: '2020-10-12',
-        publishedOn: '2020-09-31',
-        createdByName: 'Aditya Katri',
-        authorsDetail: [{ title: 'ReliefWeb' }],
-        sourceDetail: { title: 'ReliefWeb' },
-    },
-    analyticalFramework: 96021,
+    entryType: 'EXCERPT',
+    droppedExcerpt: '',
+    excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     attributes: [
         {
             id: 'widget1',
-            type: 'TEXTWIDGET',
+            widgetType: 'TEXTWIDGET',
+            widget: '0',
             data: {
                 value: 'ram',
             },
         },
         {
             id: 'number-widget-random',
-            type: 'NUMBERWIDGET',
+            widgetType: 'NUMBERWIDGET',
+            widget: '0',
             data: {
                 value: 10,
             },
         },
         {
             id: 'single-select-random',
-            type: 'SELECTWIDGET',
+            widgetType: 'SELECTWIDGET',
+            widget: '0',
             data: {
                 value: '15',
             },
         },
         {
             id: 'multi-select-random',
-            type: 'MULTISELECTWIDGET',
+            widgetType: 'MULTISELECTWIDGET',
+            widget: '0',
             data: {
                 value: ['31', '23'],
             },
         },
         {
             id: 'date-random',
-            type: 'DATEWIDGET',
+            widgetType: 'DATEWIDGET',
+            widget: '0',
             data: {
                 value: '2021-01-13',
             },
         },
         {
             id: 'time-random',
-            type: 'TIMEWIDGET',
+            widgetType: 'TIMEWIDGET',
+            widget: '0',
             data: {
                 value: '13:03:00',
             },
         },
         {
             id: 'date-range-random',
-            type: 'DATERANGEWIDGET',
+            widgetType: 'DATERANGEWIDGET',
+            widget: '0',
             data: {
                 value: {
                     startDate: '2021-01-12',
@@ -77,7 +68,8 @@ export const entry1: Entry = {
         },
         {
             id: 'time-range-random',
-            type: 'TIMERANGEWIDGET',
+            widgetType: 'TIMERANGEWIDGET',
+            widget: '0',
             data: {
                 value: {
                     startTime: '13:05:00',
@@ -87,7 +79,8 @@ export const entry1: Entry = {
         },
         {
             id: 'matrix-1d-random',
-            type: 'MATRIX1DWIDGET',
+            widgetType: 'MATRIX1DWIDGET',
+            widget: '0',
             data: {
                 value: {
                     1: {
@@ -98,7 +91,8 @@ export const entry1: Entry = {
         },
         {
             id: 'matrix-2d-random',
-            type: 'MATRIX2DWIDGET',
+            widgetType: 'MATRIX2DWIDGET',
+            widget: '0',
             data: {
                 value: {
                     1: {
@@ -114,90 +108,78 @@ export const entry1: Entry = {
         },
         {
             id: 'widget12',
-            type: 'ORGANIGRAMWIDGET',
+            widgetType: 'ORGANIGRAMWIDGET',
+            widget: '0',
             data: {
                 value: ['nepal', 'pradesh', 'municipality'],
             },
         },
         {
             id: 'widget13',
-            type: 'GEOWIDGET',
+            widgetType: 'GEOWIDGET',
+            widget: '0',
             data: {
                 value: ['nepal', 'pradesh1', 'ilam'],
             },
         },
         {
             id: 'scale-random',
-            type: 'SCALEWIDGET',
+            widgetType: 'SCALEWIDGET',
+            widget: '0',
             data: {
                 value: '331',
             },
         },
     ],
-    entryType: 'excerpt',
-    excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
 };
 
 export const entry2: Entry = {
-    id: 2,
-    createdAt: 'Thu Apr 08 2021 07:32:27 GMT+0545 (Nepal Time)',
-    createdBy: 23744,
-    createdByName: 'Illum quibusdam magnam earum nam id.\nId et iste laboriosam molestias suscipit molestiae consectetur.\nDucimus nobis omnis ad temporibus dolores maxime.',
-    modifiedBy: 71034,
-    controlled: true,
-    verifiedBy: [],
-    modifiedByName: 'eaque a eius',
-    clientId: 'saepe mollitia atque',
-    versionId: 1784,
-    project: 93490,
-    lead: {
-        id: 2,
-        title: 'Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC',
-        createdAt: '2020-10-12',
-        publishedOn: '2020-09-31',
-        createdByName: 'Aditya Katri',
-        authorsDetail: [{ title: 'ReliefWeb' }],
-        sourceDetail: { title: 'ReliefWeb' },
-    },
-    analyticalFramework: 92024,
-    entryType: 'image',
-    image: 1123,
-    imageDetails: {
-        id: 1,
-        file: 'https://i.imgur.com/blcysR7.png',
+    id: '2',
+    clientId: '12',
+    entryType: 'IMAGE',
+    excerpt: '',
+    droppedExcerpt: '',
+    image: {
+        id: '1123',
+        title: 'Some image',
     },
     attributes: [
         {
             id: 'number-widget-random',
-            type: 'NUMBERWIDGET',
+            widgetType: 'NUMBERWIDGET',
+            widget: '0',
             data: {
                 value: 10,
             },
         },
         {
             id: 'single-select-random',
-            type: 'SELECTWIDGET',
+            widgetType: 'SELECTWIDGET',
+            widget: '0',
             data: {
                 value: '15',
             },
         },
         {
             id: 'multi-select-random',
-            type: 'MULTISELECTWIDGET',
+            widgetType: 'MULTISELECTWIDGET',
+            widget: '0',
             data: {
                 value: ['31', '23'],
             },
         },
         {
             id: 'widget13',
-            type: 'GEOWIDGET',
+            widgetType: 'GEOWIDGET',
+            widget: '0',
             data: {
                 value: ['nepal', 'pradesh1', 'ilam'],
             },
         },
         {
             id: 'scale-random',
-            type: 'SCALEWIDGET',
+            widgetType: 'SCALEWIDGET',
+            widget: '0',
             data: {
                 value: '331',
             },

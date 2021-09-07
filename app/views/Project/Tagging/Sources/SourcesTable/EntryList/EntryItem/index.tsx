@@ -17,10 +17,12 @@ import routes from '#base/configs/routes';
 import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { entry1 } from '#views/Project/Tagging/mockData';
 
+/*
 import EntryListItem from '#components/entry/EntryListItem';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryVerification from '#components/entryReview/EntryVerification';
 import EntryControl from '#components/entryReview/EntryControl';
+*/
 
 import styles from './styles.css';
 
@@ -90,6 +92,7 @@ function EntryItem(props: Props) {
                             >
                                 Edit Tags
                             </ButtonLikeLink>
+                            {/*
                             <EntryComments
                                 className={styles.button}
                                 entryId={entry.id}
@@ -103,8 +106,10 @@ function EntryItem(props: Props) {
                                 onVerificationChange={getEntry}
                                 disabled={pending}
                             />
+                            */}
                         </>
                     )}
+                    {/*
                     <EntryControl
                         entryId={entry.id}
                         projectId={entry.project}
@@ -112,9 +117,11 @@ function EntryItem(props: Props) {
                         onChange={getEntry}
                         disabled={pending}
                     />
+                    */}
                 </div>
             )}
         >
+            {/*
             <EntryListItem
                 className={styles.entry}
                 entry={entry1} // TODO remove mock entry usage appropriate
@@ -122,6 +129,7 @@ function EntryItem(props: Props) {
                 secondaryTagging={safeFramework.secondaryTagging}
                 readOnly
             />
+            */}
         </Container>
     );
 }

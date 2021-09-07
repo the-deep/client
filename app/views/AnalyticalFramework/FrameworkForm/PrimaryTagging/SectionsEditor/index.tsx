@@ -282,8 +282,6 @@ function SectionsEditor(props: Props) {
 
     const handleSubmit = useCallback(
         (values: PartialFormType) => {
-            // eslint-disable-next-line no-console
-            console.log(values);
             onSave((values as FormType).sections);
         },
         [onSave],

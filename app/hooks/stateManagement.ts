@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 
-// eslint-disable-next-line import/prefer-default-export
 export function useModalState(initialValue: boolean): [
     boolean,
     () => void,

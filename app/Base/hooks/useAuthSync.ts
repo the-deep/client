@@ -44,7 +44,6 @@ function useAuthSync() {
                 const authenticatedSignal = stringToBool(event.newValue);
                 const lastLoggedInUser = localStorage.getItem(LAST_USER);
 
-                // eslint-disable-next-line max-len
                 if (authenticated === authenticatedSignal) {
                     if (authenticated && user !== lastLoggedInUser) {
                         setMessage('You have signed in as different user on another tab.');

@@ -53,9 +53,9 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
     } = props;
 
     // NOTE: we are casting to a more stricter version of Widget
-    const widgets = widgetsFromProps as Widget[];
-    const setWidgets = setWidgetsFromProps as (value: SetValueArg<Widget[]>, name: K) => void;
-    const error = errorFromProps as Error<Widget[]>;
+    const widgets = widgetsFromProps;
+    const setWidgets = setWidgetsFromProps;
+    const error = errorFromProps;
 
     const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
 
