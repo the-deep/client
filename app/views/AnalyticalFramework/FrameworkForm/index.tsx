@@ -131,6 +131,7 @@ function FrameworkForm(props: FrameworkFormProps) {
         validate,
         setError,
         setValue,
+        setPristine,
     } = useForm(schema, initialValue);
 
     const [
@@ -152,6 +153,10 @@ function FrameworkForm(props: FrameworkFormProps) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
                 } else if (ok && result) {
+                    setPristine(true);
+                    setPrimaryTaggingPristine(true);
+                    setSecondaryTaggingPristine(true);
+
                     const path = generatePath(
                         routes.analyticalFrameworkEdit.path,
                         { frameworkId: result.id },

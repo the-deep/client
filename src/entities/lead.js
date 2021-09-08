@@ -155,6 +155,7 @@ const getEntryFilters = (filter, widgets, geoOptions) => {
                 let options = areas;
                 if (includeSubRegions) {
                     let newOptions = new Set(areas);
+
                     newOptions.forEach((option) => {
                         const treeNode = treeMap[option];
                         if (!treeNode) {
