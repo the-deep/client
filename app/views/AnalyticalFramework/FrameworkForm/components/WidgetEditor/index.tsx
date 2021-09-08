@@ -54,7 +54,7 @@ function WidgetEditor<T>(props: Props<T>) {
     );
 
     switch (initialValue.widgetId) {
-        case 'TEXTWIDGET': {
+        case 'TEXT': {
             return (
                 <TextWidgetForm
                     className={className}
@@ -65,7 +65,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'NUMBERWIDGET': {
+        case 'NUMBER': {
             return (
                 <NumberWidgetForm
                     className={className}
@@ -76,7 +76,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'DATEWIDGET': {
+        case 'DATE': {
             return (
                 <DateWidgetForm
                     className={className}
@@ -87,7 +87,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'TIMEWIDGET': {
+        case 'TIME': {
             return (
                 <TimeWidgetForm
                     className={className}
@@ -98,7 +98,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'DATERANGEWIDGET': {
+        case 'DATE_RANGE': {
             return (
                 <DateRangeWidgetForm
                     className={className}
@@ -109,7 +109,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'TIMERANGEWIDGET': {
+        case 'TIME_RANGE': {
             return (
                 <TimeRangeWidgetForm
                     className={className}
@@ -120,7 +120,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'MATRIX1DWIDGET': {
+        case 'MATRIX1D': {
             return (
                 <Matrix1dWidgetForm
                     className={className}
@@ -131,7 +131,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'MATRIX2DWIDGET': {
+        case 'MATRIX2D': {
             return (
                 <Matrix2dWidgetForm
                     className={className}
@@ -142,7 +142,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'SCALEWIDGET': {
+        case 'SCALE': {
             return (
                 <ScaleWidgetForm
                     className={className}
@@ -153,7 +153,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'MULTISELECTWIDGET': {
+        case 'MULTISELECT': {
             return (
                 <MultiSelectWidgetForm
                     className={className}
@@ -164,7 +164,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'SELECTWIDGET': {
+        case 'SELECT': {
             return (
                 <SingleSelectWidgetForm
                     className={className}
@@ -175,7 +175,7 @@ function WidgetEditor<T>(props: Props<T>) {
                 />
             );
         }
-        case 'ORGANIGRAMWIDGET': {
+        case 'ORGANIGRAM': {
             return (
                 <OrganigramWidgetForm
                     className={className}

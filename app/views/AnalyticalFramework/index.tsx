@@ -88,9 +88,7 @@ function AnalyticalFramework(props: Props) {
     }
 
     const framework = data?.analysisFramework ?? undefined;
-    const hasPermission = createMode
-        ? true
-        : framework?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
+    const hasPermission = createMode || framework?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
 
     return (
         <div className={_cs(styles.analyticalFramework, className)}>

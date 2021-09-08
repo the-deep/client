@@ -1,21 +1,18 @@
 import React, { useMemo, useEffect, useCallback, useState } from 'react';
-import {
-    _cs,
-    isNotDefined,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     IoChevronForward,
     IoAdd,
     IoSearch,
 } from 'react-icons/io5';
 import {
+    Container,
     Button,
     List,
     PendingMessage,
     RawButton,
     TextInput,
     SelectInput,
-    Header,
     TextOutput,
 } from '@the-deep/deep-ui';
 import {
@@ -26,15 +23,15 @@ import {
 } from '@togglecorp/toggle-form';
 
 import {
-    ProjectDetails,
     MultiResponse,
 } from '#types';
 import { useRequest } from '#base/utils/restRequest';
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import { useModalState } from '#hooks/stateManagement';
+import ProjectContext from '#base/context/ProjectContext';
+import routes from '#base/configs/routes';
 import _ts from '#ts';
 
-import AddFrameworkModal from './AddFrameworkModal';
 import FrameworkDetail from './FrameworkDetail';
 import styles from './styles.css';
 
@@ -46,15 +43,15 @@ interface FrameworkMini {
 
 const frameworkKeySelector = (d: FrameworkMini) => d.id;
 
-interface ItemProps<T> {
-    itemKey: T;
+interface ItemProps {
+    itemKey: string;
     title: string;
     createdAt: string;
-    onClick: (key: T) => void;
+    onClick: (key: string) => void;
     isSelected: boolean;
 }
 
-function Item<T>(props: ItemProps<T>) {
+function Item(props: ItemProps) {
     const {
         itemKey,
         title,
@@ -131,7 +128,7 @@ const defaultFormValue: PartialForm<FormType> = {
 
 interface Props {
     className?: string;
-    projectId: number;
+    projectId: string;
 }
 
 function ProjectFramework(props: Props) {
@@ -140,24 +137,16 @@ function ProjectFramework(props: Props) {
         projectId,
     } = props;
 
-    const {
-        response: projectDetails,
-        retrigger: retriggerProjectDetailsRequest,
-    } = useRequest<ProjectDetails>({
-        skip: isNotDefined(projectId),
-        url: `server://projects/${projectId}/`,
-        method: 'GET',
-        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
-    });
+    const { project } = React.useContext(ProjectContext);
 
     const [
         selectedFramework,
         setSelectedFramework,
-    ] = useState<number| undefined>(projectDetails?.analysisFramework);
+    ] = useState<string | undefined>(project?.analysisFramework?.id);
 
     useEffect(() => {
-        setSelectedFramework(projectDetails?.analysisFramework);
-    }, [projectDetails?.analysisFramework]);
+        setSelectedFramework(project?.analysisFramework?.id);
+    }, [project?.analysisFramework]);
 
     const [frameworkList, setFrameworkList] = useState<FrameworkMini[]>([]);
     const [offset, setOffset] = useState<number>(0);
@@ -168,12 +157,6 @@ function ProjectFramework(props: Props) {
     } = useForm(schema, defaultFormValue);
 
     const delayedValue = useDebouncedValue(value);
-
-    const [
-        frameworkAddModalShown,
-        showFrameworkAddModal,
-        hideFrameworkAddModal,
-    ] = useModalState(false);
 
     useEffect(() => {
         setOffset(0);
@@ -207,23 +190,19 @@ function ProjectFramework(props: Props) {
         preserveResponse: true,
     });
 
-    const handleFrameworkAddClick = useCallback(() => {
-        showFrameworkAddModal();
-    }, [showFrameworkAddModal]);
-
-    const frameworksRendererParams = useCallback((key, data) => ({
-        itemKey: key,
+    const frameworksRendererParams = useCallback((key: number, data: FrameworkMini) => ({
+        itemKey: String(key),
         title: data.title,
         createdAt: data.createdAt,
         onClick: setSelectedFramework,
-        isSelected: key === selectedFramework,
+        isSelected: String(key) === selectedFramework,
     }), [selectedFramework]);
 
     const handleShowMoreButtonClick = useCallback(() => {
         setOffset(frameworkList.length);
     }, [frameworkList.length]);
 
-    const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
+    const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
         setSelectedFramework(newFrameworkId);
         setFrameworkList([]);
         if (offset !== 0) {
@@ -231,10 +210,8 @@ function ProjectFramework(props: Props) {
         } else {
             retriggerGetFrameworkListRequest();
         }
-        hideFrameworkAddModal();
     }, [
         setSelectedFramework,
-        hideFrameworkAddModal,
         retriggerGetFrameworkListRequest,
         offset,
     ]);
@@ -294,35 +271,26 @@ function ProjectFramework(props: Props) {
                     )}
                 </div>
             </div>
-            <div className={styles.mainContainer}>
-                <Header
-                    // heading={_ts('projectEdit', 'infoOnFrameworkLabel')}
-                    // headingSize="extraSmall"
-                    actions={(
-                        <Button
-                            name="addNewFramework"
-                            title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                            icons={(<IoAdd />)}
-                            onClick={handleFrameworkAddClick}
-                            variant="tertiary"
-                        >
-                            {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
-                        </Button>
-                    )}
-                />
-                {frameworkAddModalShown && (
-                    <AddFrameworkModal
-                        onActionSuccess={handleNewFrameworkAddSuccess}
-                        onModalClose={hideFrameworkAddModal}
-                    />
+            <Container
+                className={styles.mainContainer}
+                headerActions={(
+                    <SmartButtonLikeLink
+                        title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
+                        icons={(<IoAdd />)}
+                        route={routes.analyticalFrameworkCreate}
+                        variant="tertiary"
+                    >
+                        {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
+                    </SmartButtonLikeLink>
                 )}
+                contentClassName={styles.mainContainerContent}
+            >
                 {selectedFramework ? (
                     <FrameworkDetail
-                        projectFrameworkId={projectDetails?.analysisFramework}
+                        projectFrameworkId={project?.analysisFramework?.id}
                         projectId={projectId}
                         frameworkId={selectedFramework}
                         className={styles.selectedFrameworkDetails}
-                        onProjectChange={retriggerProjectDetailsRequest}
                         onFrameworkCreate={handleNewFrameworkAddSuccess}
                     />
                 ) : (
@@ -330,7 +298,7 @@ function ProjectFramework(props: Props) {
                         {_ts('projectEdit', 'noFrameworkSelectedMessage')}
                     </div>
                 )}
-            </div>
+            </Container>
         </div>
     );
 }

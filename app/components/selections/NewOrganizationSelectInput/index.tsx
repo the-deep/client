@@ -36,8 +36,12 @@ type NewOrganizationSelectInputProps<K extends string> = SearchSelectInputProps<
 >;
 
 const keySelector = (d: BasicOrganization) => d.id;
-// FIXME: update this
-const labelSelector = (d: BasicOrganization) => d.title;
+export function organizationTitleSelector(org: BasicOrganization) {
+    if (org.mergedAs) {
+        return org.mergedAs.title;
+    }
+    return org.title;
+}
 
 function NewOrganizationSelectInput<K extends string>(props: NewOrganizationSelectInputProps<K>) {
     const {
@@ -66,7 +70,7 @@ function NewOrganizationSelectInput<K extends string>(props: NewOrganizationSele
             {...otherProps}
             className={className}
             keySelector={keySelector}
-            labelSelector={labelSelector}
+            labelSelector={organizationTitleSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.organizations?.results}
             optionsPending={loading}

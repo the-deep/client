@@ -7,15 +7,6 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .created-at-container {
-            display: flex;
-            align-items: center;
-
-            .created-date {
-                padding: 0 var(--dui-spacing-extra-small);
-            }
-        }
-
         .content {
             display: flex;
             padding: 0;
@@ -46,11 +37,36 @@
 
             .preview {
                 display: flex;
-                align-items: center;
+                flex-direction: column;
                 flex-grow: 1;
-                justify-content: center;
                 border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                padding: var(--dui-spacing-large);
+                padding: var(--dui-spacing-small);
+                overflow-y: auto;
+
+                .tab-panel {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+                }
+
+                .tabs {
+                    .border-wrapper {
+                        display: flex;
+                        flex-grow: 1;
+                    }
+
+                    .tab {
+                        flex-grow: 1;
+                    }
+                }
+
+                .panel {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+                }
             }
         }
     }

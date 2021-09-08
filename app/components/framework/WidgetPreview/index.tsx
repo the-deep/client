@@ -46,7 +46,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
     } = props;
 
     switch (widget.widgetId) {
-        case 'TEXTWIDGET': {
+        case 'TEXT': {
             // NOTE: we are casting this value
             const onChangeForText = onChange as TextWidgetInputProps<string>['onChange'];
             const valueForText = value as TextWidgetInputProps<string>['value'];
@@ -64,7 +64,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'NUMBERWIDGET': {
+        case 'NUMBER': {
             // NOTE: we are casting this value
             const onChangeForNumber = onChange as NumberWidgetInputProps<string>['onChange'];
             const valueForNumber = value as NumberWidgetInputProps<string>['value'];
@@ -82,7 +82,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'DATEWIDGET': {
+        case 'DATE': {
             // NOTE: we are casting this value
             const onChangeForDate = onChange as DateWidgetInputProps<string>['onChange'];
             const valueForDate = value as DateWidgetInputProps<string>['value'];
@@ -100,7 +100,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'TIMEWIDGET': {
+        case 'TIME': {
             // NOTE: we are casting this value
             const onChangeForTime = onChange as TimeWidgetInputProps<string>['onChange'];
             const valueForTime = value as TimeWidgetInputProps<string>['value'];
@@ -118,7 +118,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'DATERANGEWIDGET': {
+        case 'DATE_RANGE': {
             // NOTE: we are casting this value
             const onChangeForDate = onChange as DateRangeWidgetInputProps<string>['onChange'];
             const valueForDate = value as DateRangeWidgetInputProps<string>['value'];
@@ -136,7 +136,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'TIMERANGEWIDGET': {
+        case 'TIME_RANGE': {
             // NOTE: we are casting this value
             const onChangeForTimeRange = onChange as TimeRangeWidgetInputProps<string>['onChange'];
             const valueForTimeRange = value as TimeRangeWidgetInputProps<string>['value'];
@@ -153,7 +153,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'MATRIX1DWIDGET': {
+        case 'MATRIX1D': {
             // NOTE: we are casting this value
             const onChangeForMatrix1d = onChange as Matrix1dWidgetInputProps<string>['onChange'];
             const valueForMatrix1d = value as Matrix1dWidgetInputProps<string>['value'];
@@ -172,7 +172,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'MATRIX2DWIDGET': {
+        case 'MATRIX2D': {
             // NOTE: we are casting this value
             const onChangeForMatrix2d = onChange as Matrix2dWidgetInputProps<string>['onChange'];
             const valueForMatrix2d = value as Matrix2dWidgetInputProps<string>['value'];
@@ -191,7 +191,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'SCALEWIDGET': {
+        case 'SCALE': {
             // NOTE: we are casting this value
             const onChangeForTimeRange = onChange as ScaleWidgetInputProps<string>['onChange'];
             const valueForTimeRange = value as ScaleWidgetInputProps<string>['value'];
@@ -209,7 +209,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'MULTISELECTWIDGET': {
+        case 'MULTISELECT': {
             // NOTE: we are casting this value
             const onChangeForMultiSelect = onChange as MultiSelectWidgetInputProps<string>['onChange'];
             const valueForMultiSelect = value as MultiSelectWidgetInputProps<string>['value'];
@@ -228,7 +228,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 />
             );
         }
-        case 'SELECTWIDGET': {
+        case 'SELECT': {
             // NOTE: we are casting this value
             const onChangeForSingleSelect = onChange as SingleSelectWidgetInputProps<string>['onChange'];
             const valueForSingleSelect = value as SingleSelectWidgetInputProps<string>['value'];

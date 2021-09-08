@@ -22,6 +22,7 @@ import {
     ProjectListQueryVariables,
 } from '#generated/types';
 
+import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import ActionCell, { Props as ActionCellProps } from './ActionCell';
 import ProjectFilterForm from './ProjectFilterForm';
 
@@ -67,10 +68,13 @@ const PROJECT_LIST = gql`
                 membershipPending
                 organizations {
                     id
-                    title
-                    mergedAs {
+                    organization {
                         id
                         title
+                        mergedAs {
+                            id
+                            title
+                        }
                     }
                 }
             }
@@ -187,7 +191,7 @@ function ExploreDeep(props: Props) {
             createStringColumn<Project, string>(
                 'organizations',
                 'Organizations',
-                (item) => item?.organizations?.map((org) => org.title)?.join(', '),
+                (item) => item?.organizations?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
             ),
             actionsColumn,
         ]);

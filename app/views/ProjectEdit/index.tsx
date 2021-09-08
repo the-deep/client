@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
 import { isNotDefined } from '@togglecorp/fujs';
 import {
     useHistory,
@@ -6,18 +6,24 @@ import {
     useParams,
 } from 'react-router-dom';
 import {
-    Button,
     Tabs,
     Tab,
     TabList,
     TabPanel,
 } from '@the-deep/deep-ui';
 
-import FullPageHeader from '#components/FullPageHeader';
-import BackLink from '#components/BackLink';
+import SubNavbar, {
+    SubNavbarIcons,
+    SubNavbarActions,
+    SubNavbarChildren,
+} from '#components/SubNavbar';
+import Svg from '#components/Svg';
+import deepLogo from '#resources/img/deep-logo-new.svg';
+import SubNavbarContext from '#components/SubNavbar/context';
 import { UserContext } from '#base/context/UserContext';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+import BackLink from '#components/BackLink';
 import { ProjectDetails } from '#types';
 import _ts from '#ts';
 
@@ -31,6 +37,20 @@ import styles from './styles.css';
 function ProjectEdit() {
     const { user } = useContext(UserContext);
     const { project } = useContext(ProjectContext);
+    const [childrenNode, setChildrenNode] = useState<Element | null | undefined>();
+    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
+    const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
+    const navbarContextValue = useMemo(
+        () => ({
+            childrenNode,
+            iconsNode,
+            actionsNode,
+            setChildrenNode,
+            setActionsNode,
+            setIconsNode,
+        }),
+        [childrenNode, actionsNode, iconsNode],
+    );
 
     const history = useHistory();
 
@@ -55,109 +75,124 @@ function ProjectEdit() {
 
     return (
         <div className={styles.projectEdit}>
-            <Tabs
-                useHash
-                defaultHash="general"
-            >
-                <FullPageHeader
-                    className={styles.header}
-                    heading={heading}
-                    actions={(
-                        <>
-                            <BackLink
-                                className={styles.button}
-                                defaultLink="/"
-                            >
-                                {_ts('projectEdit', 'closeButtonLabel')}
-                            </BackLink>
-                            <Button
-                                name={undefined}
-                                className={styles.button}
-                                variant="primary"
-                                // NOTE: To be fixed later
-                                disabled
-                            >
-                                {_ts('projectEdit', 'saveButtonLabel')}
-                            </Button>
-                        </>
-                    )}
+            <SubNavbarContext.Provider value={navbarContextValue}>
+                <Tabs
+                    useHash
+                    defaultHash="general"
                 >
-                    <TabList className={styles.tabList}>
-                        <Tab
+                    <SubNavbar
+                        className={styles.header}
+                        heading={heading}
+                    />
+                    <SubNavbarIcons>
+                        <div className={styles.appBrand}>
+                            <Svg
+                                className={styles.logo}
+                                src={deepLogo}
+                            />
+                        </div>
+                    </SubNavbarIcons>
+                    <SubNavbarChildren>
+                        <TabList className={styles.tabList}>
+                            <Tab
+                                name="general"
+                                className={styles.tab}
+                                transparentBorder
+                            >
+                                {_ts('projectEdit', 'projectDetailsLabel')}
+                            </Tab>
+                            <Tab
+                                name="geo-areas"
+                                className={styles.tab}
+                                disabled={isNotDefined(projectId)}
+                                transparentBorder
+                            >
+                                {_ts('projectEdit', 'geoAreas')}
+                            </Tab>
+                            <Tab
+                                name="users"
+                                className={styles.tab}
+                                disabled={isNotDefined(projectId)}
+                                transparentBorder
+                            >
+                                {_ts('projectEdit', 'usersLabel')}
+                            </Tab>
+                            <Tab
+                                name="framework"
+                                className={styles.tab}
+                                disabled={isNotDefined(projectId)}
+                                transparentBorder
+                            >
+                                {_ts('projectEdit', 'frameworkLabel')}
+                            </Tab>
+                        </TabList>
+                    </SubNavbarChildren>
+                    <div className={styles.tabPanelContainer}>
+                        <TabPanel
+                            className={styles.tabPanel}
                             name="general"
-                            className={styles.tab}
-                            transparentBorder
                         >
-                            {_ts('projectEdit', 'projectDetailsLabel')}
-                        </Tab>
-                        <Tab
-                            name="geo-areas"
-                            className={styles.tab}
-                            disabled={isNotDefined(projectId)}
-                            transparentBorder
-                        >
-                            {_ts('projectEdit', 'geoAreas')}
-                        </Tab>
-                        <Tab
-                            name="users"
-                            className={styles.tab}
-                            disabled={isNotDefined(projectId)}
-                            transparentBorder
-                        >
-                            {_ts('projectEdit', 'usersLabel')}
-                        </Tab>
-                        <Tab
-                            name="framework"
-                            className={styles.tab}
-                            disabled={isNotDefined(projectId)}
-                            transparentBorder
-                        >
-                            {_ts('projectEdit', 'frameworkLabel')}
-                        </Tab>
-                    </TabList>
-                </FullPageHeader>
-                <div className={styles.tabPanelContainer}>
-                    <TabPanel
-                        className={styles.tabPanel}
-                        name="general"
-                    >
-                        <ProjectDetailsForm
-                            key={projectId}
-                            projectId={projectId}
-                            onCreate={handleCreate}
-                        />
-                    </TabPanel>
-                    <TabPanel
-                        className={styles.tabPanel}
-                        name="geo-areas"
-                    >
-                        {projectId && (
-                            <GeoAreas
-                                activeProject={projectId}
-                            />
-                        )}
-                    </TabPanel>
-                    <TabPanel
-                        name="users"
-                        className={styles.tabPanel}
-                    >
-                        {projectId && (
-                            <Users
+                            <ProjectDetailsForm
+                                key={projectId}
                                 projectId={projectId}
-                                activeUserId={userId}
+                                onCreate={handleCreate}
                             />
-                        )}
-                    </TabPanel>
-                    <TabPanel
-                        name="framework"
-                        className={styles.tabPanel}
-                    >
-                        {projectId && (
-                            <Framework projectId={projectId} />
-                        )}
-                    </TabPanel>
-                </div>
-            </Tabs>
+                        </TabPanel>
+                        <TabPanel
+                            className={styles.tabPanel}
+                            name="geo-areas"
+                        >
+                            <SubNavbarActions>
+                                <BackLink
+                                    defaultLink="/"
+                                >
+                                    {_ts('projectEdit', 'closeButtonLabel')}
+                                </BackLink>
+                            </SubNavbarActions>
+                            {projectId && (
+                                <GeoAreas
+                                    activeProject={projectId}
+                                />
+                            )}
+                        </TabPanel>
+                        <TabPanel
+                            name="users"
+                            className={styles.tabPanel}
+                        >
+                            <SubNavbarActions>
+                                <BackLink
+                                    defaultLink="/"
+                                >
+                                    {_ts('projectEdit', 'closeButtonLabel')}
+                                </BackLink>
+                            </SubNavbarActions>
+                            {projectId && (
+                                <Users
+                                    projectId={projectId}
+                                    activeUserId={userId}
+                                />
+                            )}
+                        </TabPanel>
+                        <TabPanel
+                            name="framework"
+                            className={styles.tabPanel}
+                        >
+                            <SubNavbarActions>
+                                <BackLink
+                                    defaultLink="/"
+                                >
+                                    {_ts('projectEdit', 'closeButtonLabel')}
+                                </BackLink>
+                            </SubNavbarActions>
+                            {projectId && (
+                                <Framework
+                                    projectId={String(projectId)}
+                                />
+                            )}
+                        </TabPanel>
+                    </div>
+                </Tabs>
+            </SubNavbarContext.Provider>
         </div>
     );
 }

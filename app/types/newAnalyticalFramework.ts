@@ -2,7 +2,7 @@ import {
     PurgeNull,
 } from '@togglecorp/toggle-form';
 import {
-    Widget_Id as WidgetTypes,
+    WidgetWidgetTypeEnum as WidgetTypes,
     // NOTE: we can take any framework query that is complete
     CurrentFrameworkQuery,
     AnalysisFrameworkInputType,
@@ -142,60 +142,60 @@ interface Matrix2Properties extends BaseProperties<undefined> {
 }
 
 // NOTE: Same WidgetRaw is used for Framework in both query and mutation
-type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
+export type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
 // NOTE: we are replacing these with more strict types
 type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
 
 export interface NumberWidget extends BaseWidget {
-    widgetId: 'NUMBERWIDGET';
+    widgetId: 'NUMBER';
     properties: NumberProperties;
 }
 export interface TextWidget extends BaseWidget {
-    widgetId: 'TEXTWIDGET';
+    widgetId: 'TEXT';
     properties: BaseProperties<TextValue>;
 }
 export interface SingleSelectWidget extends BaseWidget {
-    widgetId: 'SELECTWIDGET';
+    widgetId: 'SELECT';
     properties: SingleSelectProperties;
 }
 export interface MultiSelectWidget extends BaseWidget {
-    widgetId: 'MULTISELECTWIDGET';
+    widgetId: 'MULTISELECT';
     properties: MultiSelectProperties;
 }
 export interface DateWidget extends BaseWidget {
-    widgetId: 'DATEWIDGET';
+    widgetId: 'DATE';
     properties: BaseProperties<DateValue>;
 }
 export interface TimeWidget extends BaseWidget {
-    widgetId: 'TIMEWIDGET';
+    widgetId: 'TIME';
     properties: BaseProperties<TimeValue>;
 }
 export interface TimeRangeWidget extends BaseWidget {
-    widgetId: 'TIMERANGEWIDGET';
+    widgetId: 'TIME_RANGE';
     properties: BaseProperties<TimeRangeValue>;
 }
 export interface DateRangeWidget extends BaseWidget {
-    widgetId: 'DATERANGEWIDGET';
+    widgetId: 'DATE_RANGE';
     properties: BaseProperties<DateRangeValue>;
 }
 export interface Matrix1dWidget extends BaseWidget {
-    widgetId: 'MATRIX1DWIDGET';
+    widgetId: 'MATRIX1D';
     properties: Matrix1dProperties;
 }
 export interface Matrix2dWidget extends BaseWidget {
-    widgetId: 'MATRIX2DWIDGET';
+    widgetId: 'MATRIX2D';
     properties: Matrix2Properties;
 }
 export interface OrganigramWidget extends BaseWidget {
-    widgetId: 'ORGANIGRAMWIDGET';
+    widgetId: 'ORGANIGRAM';
     properties: OrganigramProperties;
 }
 export interface ScaleWidget extends BaseWidget {
-    widgetId: 'SCALEWIDGET';
+    widgetId: 'SCALE';
     properties: ScaleProperties;
 }
 export interface GeoLocationWidget extends BaseWidget {
-    widgetId: 'GEOWIDGET';
+    widgetId: 'GEO';
     properties: GeoLocationProperties;
 }
 

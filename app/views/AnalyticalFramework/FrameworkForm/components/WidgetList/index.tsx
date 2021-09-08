@@ -13,84 +13,84 @@ import styles from './styles.css';
 
 const partialWidgets: PartialWidget[] = [
     {
-        widgetId: 'TEXTWIDGET',
+        widgetId: 'TEXT',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'NUMBERWIDGET',
+        widgetId: 'NUMBER',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'DATEWIDGET',
+        widgetId: 'DATE',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'DATERANGEWIDGET',
+        widgetId: 'DATE_RANGE',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'TIMEWIDGET',
+        widgetId: 'TIME',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'TIMERANGEWIDGET',
+        widgetId: 'TIME_RANGE',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'MATRIX1DWIDGET',
+        widgetId: 'MATRIX1D',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'MATRIX2DWIDGET',
+        widgetId: 'MATRIX2D',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'SCALEWIDGET',
+        widgetId: 'SCALE',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'SELECTWIDGET',
+        widgetId: 'SELECT',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'MULTISELECTWIDGET',
+        widgetId: 'MULTISELECT',
         key: 'random',
         clientId: 'random',
         order: -1,
         width: 'FULL',
     },
     {
-        widgetId: 'ORGANIGRAMWIDGET',
+        widgetId: 'ORGANIGRAM',
         key: 'random',
         clientId: 'random',
         order: -1,
@@ -191,14 +191,14 @@ function WidgetList(props: Props) {
                         disabled={disabled}
                     />
                     <AddItem
-                        name="MATRIX1DWIDGET"
+                        name="MATRIX1D"
                         // FIXME: use strings
                         label="Matrix1d"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="MATRIX2DWIDGET"
+                        name="MATRIX2D"
                         // FIXME: use strings
                         label="Matrix2d"
                         onAddClick={handleAddClick}
@@ -216,70 +216,70 @@ function WidgetList(props: Props) {
             >
                 <div className={styles.moreWidgetsList}>
                     <AddItem
-                        name="TEXTWIDGET"
+                        name="TEXT"
                         // FIXME: use strings
                         label="Text"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="NUMBERWIDGET"
+                        name="NUMBER"
                         // FIXME: use strings
                         label="Number"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="DATEWIDGET"
+                        name="DATE"
                         // FIXME: use strings
                         label="Date"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="DATERANGEWIDGET"
+                        name="DATE_RANGE"
                         // FIXME: use strings
                         label="Date Range"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="TIMEWIDGET"
+                        name="TIME"
                         // FIXME: use strings
                         label="Time"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="TIMERANGEWIDGET"
+                        name="TIME_RANGE"
                         // FIXME: use strings
                         label="Time Range"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="SCALEWIDGET"
+                        name="SCALE"
                         // FIXME: use strings
                         label="Scale"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="SELECTWIDGET"
+                        name="SELECT"
                         // FIXME: use strings
                         label="Single Select"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="MULTISELECTWIDGET"
+                        name="MULTISELECT"
                         // FIXME: use strings
                         label="Multi Select"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
-                        name="ORGANIGRAMWIDGET"
+                        name="ORGANIGRAM"
                         // FIXME: use strings
                         label="Organigram"
                         onAddClick={handleAddClick}

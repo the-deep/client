@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useContext } from 'react';
 import {
     _cs,
     isNotDefined,
 } from '@togglecorp/fujs';
 import { generatePath } from 'react-router-dom';
+import { gql, useQuery } from '@apollo/client';
 import {
     IoCopyOutline,
     IoCheckmark,
@@ -11,6 +12,10 @@ import {
 import { FiEdit2 } from 'react-icons/fi';
 import {
     Card,
+    Tabs,
+    Tab,
+    TabList,
+    TabPanel,
     ConfirmButton,
     Tag,
     List,
@@ -22,42 +27,89 @@ import {
     DateOutput,
     TextOutput,
 } from '@the-deep/deep-ui';
+import { removeNull } from '@togglecorp/toggle-form';
 
+import { WidgetRaw, Widget, DeepReplace, DeepMandatory } from '#types/newAnalyticalFramework';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
-import { useLazyRequest, useRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
+import { ProjectContext } from '#base/context/ProjectContext';
 import { useModalState } from '#hooks/stateManagement';
 import routes from '#base/configs/routes';
+import Canvas from '#views/Project/EntryEdit/components/Canvas';
 import _ts from '#ts';
 import { ProjectDetails } from '#types';
+import {
+    FrameworkDetailsQuery,
+    FrameworkDetailsQueryVariables,
+} from '#generated/types';
 
 import AddFrameworkModal from '../AddFrameworkModal';
 import styles from './styles.css';
 
-interface ProjectItem {
-    id: number;
-    title: string;
-    isPrivate: boolean;
-}
+const FRAMEWORK_DETAILS = gql`
+    query FrameworkDetails($frameworkId: ID!) {
+        analysisFramework(id: $frameworkId) {
+            id
+            title
+            description
+            createdAt
+            visibleProjects {
+                id
+                title
+            }
+            allowedPermissions
+            createdBy {
+                displayName
+            }
+            primaryTagging {
+                widgets {
+                    id
+                    clientId
+                    key
+                    order
+                    properties
+                    title
+                    widgetId
+                    width
+                }
+                clientId
+                id
+                order
+                title
+                tooltip
+            }
+            secondaryTagging {
+                clientId
+                id
+                key
+                order
+                title
+                properties
+                widgetId
+                width
+            }
+        }
+    }
+`;
 
-interface Framework {
-    id: number;
+// FIXME: 'key' is thought to be mandatory from server.
+// Remove this DeepMandatory transformation after server sends key as mandatory
+type FrameworkRaw = DeepMandatory<NonNullable<FrameworkDetailsQuery['analysisFramework']>, 'key'>;
+type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
+
+interface ProjectItem {
+    id: string;
     title: string;
-    description?: string;
-    createdAt: string;
-    createdByName: string;
-    visibleProjects: ProjectItem[];
-    previewImage?: string;
 }
 
 const itemKeySelector = (d: ProjectItem) => d.id;
 
 interface Props {
     className?: string;
-    projectFrameworkId?: number;
-    frameworkId: number;
-    projectId: number;
-    onProjectChange: (project: ProjectDetails) => void;
-    onFrameworkCreate: (newFrameworkId: number) => void;
+    projectFrameworkId?: string;
+    frameworkId: string;
+    projectId: string;
+    onFrameworkCreate: (newFrameworkId: string) => void;
 }
 
 function FrameworkDetail(props: Props) {
@@ -66,19 +118,37 @@ function FrameworkDetail(props: Props) {
         projectFrameworkId,
         frameworkId,
         projectId,
-        onProjectChange,
         onFrameworkCreate,
     } = props;
+    const { setProject } = useContext(ProjectContext);
 
+    const [activeTab, setActiveTab] = useState<'primary' | 'secondary' | undefined>('primary');
+    const [selectedSection, setSelectedSection] = useState<string | undefined>();
+
+    const variables = useMemo(
+        (): FrameworkDetailsQueryVariables => ({
+            frameworkId,
+        }),
+        [frameworkId],
+    );
     const {
-        pending: frameworkGetPending,
-        response: frameworkDetails,
-    } = useRequest<Framework>({
-        skip: isNotDefined(frameworkId),
-        url: `server://analysis-frameworks/${frameworkId}/`,
-        method: 'GET',
-        failureHeader: _ts('projectEdit', 'frameworkDetails'),
-    });
+        loading: frameworkGetPending,
+        data: frameworkDetailsResponse,
+    } = useQuery<FrameworkDetailsQuery, FrameworkDetailsQueryVariables>(
+        FRAMEWORK_DETAILS,
+        {
+            variables,
+            onCompleted: (response) => {
+                setSelectedSection(response?.analysisFramework?.primaryTagging?.[0]?.clientId);
+            },
+        },
+    );
+
+    const frameworkDetails = useMemo(
+        () => removeNull(frameworkDetailsResponse?.analysisFramework as Framework | undefined),
+        [frameworkDetailsResponse],
+    );
+    const sections = frameworkDetails?.primaryTagging;
 
     const {
         pending: projectPatchPending,
@@ -90,7 +160,18 @@ function FrameworkDetail(props: Props) {
             analysisFramework: frameworkId,
         }),
         onSuccess: (response) => {
-            onProjectChange(response);
+            setProject((oldProjectDetails) => {
+                const { analysisFramework } = response;
+                if (!oldProjectDetails || isNotDefined(analysisFramework)) {
+                    return oldProjectDetails;
+                }
+                return ({
+                    ...oldProjectDetails,
+                    analysisFramework: {
+                        id: String(analysisFramework),
+                    },
+                });
+            });
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
@@ -101,7 +182,9 @@ function FrameworkDetail(props: Props) {
         to: '',
     }), []);
 
-    const [frameworkToClone, setFrameworkToClone] = useState<Framework | undefined>();
+    const [frameworkToClone, setFrameworkToClone] = useState<
+        { title: string; description?: string } | undefined
+    >();
 
     const [
         frameworkAddModalShown,
@@ -113,7 +196,7 @@ function FrameworkDetail(props: Props) {
         projectPatch(null);
     }, [projectPatch]);
 
-    const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
+    const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
         setFrameworkToClone(undefined);
         onFrameworkCreate(newFrameworkId);
         hideFrameworkAddModal();
@@ -129,122 +212,197 @@ function FrameworkDetail(props: Props) {
         frameworkId,
     });
 
+    const canEditFramework = frameworkDetails?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
+    const canCloneFramework = frameworkDetails?.allowedPermissions?.includes('CAN_CLONE_FRAMEWORK');
+    const canUseFramework = frameworkDetails?.allowedPermissions?.includes('CAN_USE_IN_OTHER_PROJECTS');
+
     return (
         <div className={_cs(styles.frameworkDetail, className)}>
             {(projectPatchPending || frameworkGetPending) && <PendingMessage />}
-            <ContainerCard
-                className={styles.frameworkItem}
-                heading={frameworkDetails?.title ?? '-'}
-                headerDescriptionClassName={styles.createdAtContainer}
-                headingDescription={(
-                    <>
-                        {_ts('projectEdit', 'createdAtLabel')}
-                        {frameworkDetails?.createdAt && (
-                            <DateOutput
-                                className={styles.createdDate}
-                                value={frameworkDetails.createdAt}
-                                format="dd MMM, yyyy"
-                            />
-                        )}
-                    </>
-                )}
-                headerActions={(
-                    <>
-                        {projectFrameworkId !== frameworkId && (
-                            <ConfirmButton
-                                variant="secondary"
-                                name="useFramework"
-                                title={_ts('projectEdit', 'selectFrameworkButtonLabel')}
-                                disabled={disableAllButtons}
-                                message={(
-                                    <>
-                                        <p>
-                                            { _ts('projectEdit', 'confirmUseFramework', {
-                                                title: <b>{frameworkDetails?.title}</b>,
-                                            }) }
-                                        </p>
-                                        <p>
-                                            { _ts('projectEdit', 'confirmUseFrameworkText') }
-                                        </p>
-                                    </>
-                                )}
-                                onConfirm={handleUseFrameworkClick}
-                                icons={(
-                                    <IoCheckmark />
-                                )}
-                                showConfirmationInitially={false}
-                            >
-                                {_ts('projectEdit', 'selectFrameworkButtonLabel')}
-                            </ConfirmButton>
-                        )}
-                        {projectFrameworkId === frameworkId && (
-                            <Tag
-                                variant="complement1"
-                                icons={(
-                                    <IoCheckmark />
-                                )}
-                            >
-                                {_ts('projectEdit', 'selectedFrameworkTagLabel')}
-                            </Tag>
-                        )}
-                        <QuickActionLink
-                            variant="secondary"
-                            title={_ts('projectEdit', 'editFrameworkLinkTitle')}
-                            disabled={disableAllButtons}
-                            to={frameworkRoute}
-                        >
-                            <FiEdit2 />
-                        </QuickActionLink>
-                        <QuickActionButton
-                            title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
-                            variant="secondary"
-                            disabled={disableAllButtons}
-                            onClick={handleFrameworkCloneClick}
-                            name="clone"
-                        >
-                            <IoCopyOutline />
-                        </QuickActionButton>
-                    </>
-                )}
-                contentClassName={styles.content}
+            <Tabs
+                value={activeTab}
+                onChange={setActiveTab}
             >
-                <div className={styles.metadataContainer}>
-                    {frameworkDetails?.description}
-                    <TextOutput
-                        className={styles.block}
-                        label={_ts('projectEdit', 'frameworkCreatorTitle')}
-                        value={frameworkDetails?.createdByName}
-                        hideLabelColon
-                    />
-                    <TextOutput
-                        className={styles.block}
-                        label={_ts('projectEdit', 'analyticalFrameworkTitle')}
-                        value={(
-                            <FrameworkImageButton
-                                frameworkId={frameworkId}
-                                label={_ts('projectEdit', 'referenceFrameworkImageLabel')}
+                <ContainerCard
+                    className={styles.frameworkItem}
+                    heading={frameworkDetails?.title ?? '-'}
+                    headingSize="small"
+                    headingDescription={(
+                        <TextOutput
+                            label={_ts('projectEdit', 'createdAtLabel')}
+                            value={frameworkDetails?.createdAt && (
+                                <DateOutput
+                                    value={frameworkDetails.createdAt}
+                                    format="dd MMM, yyyy"
+                                />
+                            )}
+                        />
+                    )}
+                    headerDescription={(
+                        <>
+                            <Tab
+                                name="primary"
+                                transparentBorder
+                            >
+                                Primary Tagging
+                            </Tab>
+                            <Tab
+                                name="secondary"
+                                transparentBorder
+                            >
+                                Secondary Tagging
+                            </Tab>
+                        </>
+                    )}
+                    headerActions={(
+                        <>
+                            {(projectFrameworkId !== frameworkId) && canUseFramework && (
+                                <ConfirmButton
+                                    variant="secondary"
+                                    name="useFramework"
+                                    title={_ts('projectEdit', 'selectFrameworkButtonLabel')}
+                                    disabled={disableAllButtons}
+                                    message={(
+                                        <>
+                                            <p>
+                                                { _ts('projectEdit', 'confirmUseFramework', {
+                                                    title: <b>{frameworkDetails?.title}</b>,
+                                                }) }
+                                            </p>
+                                            <p>
+                                                { _ts('projectEdit', 'confirmUseFrameworkText') }
+                                            </p>
+                                        </>
+                                    )}
+                                    onConfirm={handleUseFrameworkClick}
+                                    icons={(
+                                        <IoCheckmark />
+                                    )}
+                                    showConfirmationInitially={false}
+                                >
+                                    {_ts('projectEdit', 'selectFrameworkButtonLabel')}
+                                </ConfirmButton>
+                            )}
+                            {projectFrameworkId === frameworkId && (
+                                <Tag
+                                    variant="complement1"
+                                    icons={(
+                                        <IoCheckmark />
+                                    )}
+                                >
+                                    {_ts('projectEdit', 'selectedFrameworkTagLabel')}
+                                </Tag>
+                            )}
+                            {canEditFramework && (
+                                <QuickActionLink
+                                    variant="secondary"
+                                    title={_ts('projectEdit', 'editFrameworkLinkTitle')}
+                                    disabled={disableAllButtons}
+                                    to={frameworkRoute}
+                                >
+                                    <FiEdit2 />
+                                </QuickActionLink>
+                            )}
+                            {canCloneFramework && (
+                                <QuickActionButton
+                                    title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
+                                    variant="secondary"
+                                    disabled={disableAllButtons}
+                                    onClick={handleFrameworkCloneClick}
+                                    name="clone"
+                                >
+                                    <IoCopyOutline />
+                                </QuickActionButton>
+                            )}
+                        </>
+                    )}
+                    contentClassName={styles.content}
+                    borderBelowHeader
+                    borderBelowHeaderWidth="thin"
+                >
+                    <div className={styles.metadataContainer}>
+                        {frameworkDetails?.description}
+                        <TextOutput
+                            className={styles.block}
+                            label={_ts('projectEdit', 'frameworkCreatorTitle')}
+                            value={frameworkDetails?.createdBy?.displayName}
+                            hideLabelColon
+                        />
+                        <TextOutput
+                            className={styles.block}
+                            label={_ts('projectEdit', 'analyticalFrameworkTitle')}
+                            value={(
+                                <FrameworkImageButton
+                                    frameworkId={frameworkId}
+                                    label={_ts('projectEdit', 'referenceFrameworkImageLabel')}
+                                />
+                            )}
+                            hideLabelColon
+                        />
+                        {(frameworkDetails?.visibleProjects?.length ?? 0) > 0 && (
+                            <TextOutput
+                                className={styles.block}
+                                label={_ts('projectEdit', 'recentlyUsedInProjectsTitle')}
+                                value={(
+                                    <List
+                                        data={frameworkDetails?.visibleProjects}
+                                        keySelector={itemKeySelector}
+                                        rendererParams={itemRendererParams}
+                                        renderer={Link}
+                                    />
+                                )}
+                                hideLabelColon
                             />
                         )}
-                        hideLabelColon
-                    />
-                    <TextOutput
-                        className={styles.block}
-                        label={_ts('projectEdit', 'recentlyUsedInProjectsTitle')}
-                        value={(
-                            <List
-                                data={frameworkDetails?.visibleProjects}
-                                keySelector={itemKeySelector}
-                                rendererParams={itemRendererParams}
-                                renderer={Link}
+                    </div>
+                    <Card className={styles.preview}>
+                        <TabPanel
+                            name="primary"
+                            className={styles.tabPanel}
+                        >
+                            <Tabs
+                                value={selectedSection}
+                                onChange={setSelectedSection}
+                                variant="step"
+                            >
+                                <TabList className={styles.tabs}>
+                                    {sections?.map((section) => (
+                                        <Tab
+                                            key={section.clientId}
+                                            name={section.clientId}
+                                            borderWrapperClassName={styles.borderWrapper}
+                                            className={styles.tab}
+                                            title={section.tooltip}
+                                        >
+                                            {section.title}
+                                        </Tab>
+                                    ))}
+                                </TabList>
+                                {sections?.map((section) => (
+                                    <TabPanel
+                                        key={section.clientId}
+                                        name={section.clientId}
+                                        className={styles.panel}
+                                    >
+                                        <Canvas
+                                            name={section.clientId}
+                                            widgets={section.widgets}
+                                        />
+                                    </TabPanel>
+                                ))}
+                            </Tabs>
+                        </TabPanel>
+                        <TabPanel
+                            name="secondary"
+                        >
+                            <Canvas
+                                name="secondary"
+                                widgets={frameworkDetails?.secondaryTagging}
                             />
-                        )}
-                        hideLabelColon
-                    />
-                </div>
-                <Card className={styles.preview}>
-                    Preview
-                </Card>
-            </ContainerCard>
+                        </TabPanel>
+                    </Card>
+                </ContainerCard>
+            </Tabs>
             {frameworkAddModalShown && (
                 <AddFrameworkModal
                     frameworkToClone={frameworkToClone}

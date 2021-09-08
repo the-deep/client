@@ -10,7 +10,8 @@ import { _cs } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 
-import Canvas from '../components/Canvas';
+// TODO: Move this to general components
+import Canvas from '#views/Project/EntryEdit/components/Canvas';
 import { WidgetsType, SectionsType } from '../schema';
 
 import styles from './styles.css';
@@ -68,8 +69,6 @@ function Review(props: Props) {
                             <Canvas
                                 name={selectedSection}
                                 widgets={section.widgets}
-                                editMode={false}
-                                disabled
                             />
                         </TabPanel>
                     ))}
@@ -82,8 +81,6 @@ function Review(props: Props) {
                 <Canvas
                     name={undefined}
                     widgets={secondaryTagging}
-                    editMode={false}
-                    disabled
                 />
             </ContainerCard>
         </div>
