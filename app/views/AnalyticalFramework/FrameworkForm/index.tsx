@@ -288,8 +288,8 @@ function FrameworkForm(props: FrameworkFormProps) {
             <SubNavbarIcons>
                 <div className={styles.appBrand}>
                     <Svg
-                        className={styles.logo}
                         src={deepLogo}
+                        className={styles.logo}
                     />
                 </div>
             </SubNavbarIcons>

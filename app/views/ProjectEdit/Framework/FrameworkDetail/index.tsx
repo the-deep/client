@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback, useContext } from 'react';
 import {
     _cs,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import { generatePath } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
@@ -91,6 +92,8 @@ const FRAMEWORK_DETAILS = gql`
     }
 `;
 
+// FIXME: 'key' is thought to be mandatory from server.
+// Remove this DeepMandatory transformation after server sends key as mandatory
 type FrameworkRaw = DeepMandatory<NonNullable<FrameworkDetailsQuery['analysisFramework']>, 'key'>;
 type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
 
@@ -158,13 +161,14 @@ function FrameworkDetail(props: Props) {
         }),
         onSuccess: (response) => {
             setProject((oldProjectDetails) => {
-                if (!oldProjectDetails) {
+                const { analysisFramework } = response;
+                if (!oldProjectDetails || isNotDefined(analysisFramework)) {
                     return oldProjectDetails;
                 }
                 return ({
                     ...oldProjectDetails,
                     analysisFramework: {
-                        id: String(response.analysisFramework),
+                        id: String(analysisFramework),
                     },
                 });
             });

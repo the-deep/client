@@ -3,7 +3,7 @@ import {
     SegmentInput,
 } from '@the-deep/deep-ui';
 import {
-    WidgetWidth,
+    WidgetWidthTypeEnum as WidgetWidth,
 } from '#generated/types';
 
 interface WidgetWidthOption {

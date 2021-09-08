@@ -12,6 +12,7 @@ import { BasicOrganization } from '#types';
 
 import styles from './styles.css';
 
+// FIXME: use form organization multiselect input compooent
 export function organizationTitleSelector(org: BasicOrganization) {
     if (org.mergedAs) {
         return org.mergedAs.title;
