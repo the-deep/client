@@ -99,7 +99,7 @@ function AddFrameworkModal(props: Props) {
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            onActionSuccess(String(response?.id));
+            onActionSuccess(String(response.id));
             const message = isDefined(frameworkToClone)
                 ? _ts('projectEdit', 'cloneFrameworkSuccessMessage')
                 : _ts('projectEdit', 'createFrameworkSuccessMessage');

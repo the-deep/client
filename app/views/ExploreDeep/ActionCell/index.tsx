@@ -32,7 +32,7 @@ const CANCEL_JOIN_PROJECT = gql`
     mutation CancelJoinProject(
         $projectId: ID!,
     ) {
-        deleteProjectJoin(projectId: $projectId) {
+        projectJoinRequestDelete(projectId: $projectId) {
             ok,
         }
     }

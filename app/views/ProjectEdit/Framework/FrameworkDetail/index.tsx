@@ -179,7 +179,7 @@ function FrameworkDetail(props: Props) {
     }), []);
 
     const [frameworkToClone, setFrameworkToClone] = useState<
-        { title: string; description?: string }| undefined
+        { title: string; description?: string } | undefined
     >();
 
     const [

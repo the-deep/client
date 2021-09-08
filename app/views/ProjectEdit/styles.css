@@ -1,3 +1,12 @@
+.app-brand {
+    overflow: auto;
+    color: var(--dui-color-brand);
+
+    .logo {
+        height: var(--dui-font-size-super-large);
+    }
+}
+
 .project-edit {
     display: flex;
     flex-direction: column;
@@ -11,10 +20,6 @@
             .tab {
                 font-size: var(--dui-font-size-large);
             }
-        }
-
-        .button {
-            margin: var(--dui-spacing-small);
         }
     }
 

@@ -10,6 +10,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 
+// TODO: Move this to general components
 import Canvas from '#views/Project/EntryEdit/components/Canvas';
 import { WidgetsType, SectionsType } from '../schema';
 
