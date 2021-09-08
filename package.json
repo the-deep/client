@@ -6,7 +6,7 @@
         "get-hostname": "ip route | awk '/default/ { print $3 }'",
         "replace-localhost": "awk \"{sub(/localhost/, \\\"$(yarn -s get-hostname)\\\")}1\"",
         "generate": "GRAPHQL_CODEGEN_ENDPOINT=$(echo $GRAPHQL_CODEGEN_ENDPOINT | yarn -s replace-localhost) graphql-codegen --config codegen.yml",
-        "lint": "eslint ./app",
+        "lint": "eslint ./app --report-unused-disable-directives",
         "typecheck": "tsc",
         "build": "webpack --mode=production --node-env=production",
         "build:dev": "webpack --mode=development",

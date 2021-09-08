@@ -6,7 +6,7 @@ import { Widget } from '#types/newAnalyticalFramework';
 import { PartialWidget } from '#components/framework/WidgetPreview';
 
 export function findWidget(
-    widgets: Widget[],
+    widgets: Widget[] | undefined = [],
     widgetId: string,
 ): Widget | undefined {
     return widgets.find(
@@ -15,15 +15,15 @@ export function findWidget(
 }
 
 export function injectWidget(
-    widgets: Widget[],
+    widgets: Widget[] | undefined,
     widget: Widget,
 ): Widget[];
 export function injectWidget(
-    widgets: PartialWidget[],
+    widgets: PartialWidget[] | undefined,
     widget: PartialWidget,
 ): PartialWidget[];
 export function injectWidget(
-    widgets: PartialWidget[],
+    widgets: PartialWidget[] | undefined = [],
     widget: PartialWidget,
 ) {
     return produce(widgets, (safeWidgets) => {
@@ -40,7 +40,7 @@ export function injectWidget(
 }
 
 export function deleteWidget(
-    widgets: Widget[],
+    widgets: Widget[] | undefined = [],
     widgetId: string,
 ): Widget[] {
     return produce(widgets, (safeWidgets) => {

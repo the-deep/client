@@ -1,20 +1,20 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    ListView,
+    // ListView,
     Container,
 } from '@the-deep/deep-ui';
 
-import { Entry } from '#types/newEntry';
-import EntryListItem from '#components/entry/EntryListItem';
+// import { Entry } from '#types/newEntry';
+// import EntryListItem from '#components/entry/EntryListItem';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { Section, Widget } from '#types/newAnalyticalFramework';
 
-import entryMockData from '#views/Project/Tagging/mockData';
+// import entryMockData from '#views/Project/Tagging/mockData';
 
 import styles from './styles.css';
 
-const entryKeySelector = (e: Entry) => e.clientId;
+// const entryKeySelector = (e: Entry) => e.clientId;
 
 interface Props {
     className?: string;
@@ -31,12 +31,18 @@ function Review(props: Props) {
         primaryTagging,
     } = props;
 
+    // FIXME: use this later on
+    // eslint-disable-next-line no-console
+    console.log(primaryTagging, secondaryTagging);
+
+    /*
     const entryDataRendererParams = useCallback((_: string, data: Entry, index: number) => ({
         entry: data,
         index,
         secondaryTagging,
         primaryTagging,
     }), [secondaryTagging, primaryTagging]);
+    */
 
     return (
         <Container
@@ -49,6 +55,7 @@ function Review(props: Props) {
                 />
             )}
         >
+            {/*
             <ListView
                 className={styles.entries}
                 keySelector={entryKeySelector}
@@ -56,6 +63,7 @@ function Review(props: Props) {
                 data={entryMockData}
                 rendererParams={entryDataRendererParams}
             />
+            */}
         </Container>
     );
 }

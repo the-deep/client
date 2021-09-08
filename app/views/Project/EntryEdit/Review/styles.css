@@ -3,10 +3,12 @@
     padding-left: var(--dui-spacing-super-large);
     width: 100%;
 
+    /*
     .entries {
         display: flex;
         flex-direction: column;
         gap: var(--dui-spacing-large);
         overflow-y: auto;
     }
+    */
 }

@@ -50,7 +50,6 @@ const FRAMEWORK = gql`
     }
 `;
 
-// eslint-disable-next-line import/prefer-default-export
 export const CURRENT_FRAMEWORK = gql`
     ${FRAMEWORK}
     query CurrentFramework($id: ID!) {

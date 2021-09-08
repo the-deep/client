@@ -13,7 +13,7 @@ import {
     Widget,
 } from '#types/newAnalyticalFramework';
 import {
-    WidgetValue,
+    WidgetAttribute,
 } from '#types/newEntry';
 import ListWidgetPreview from '#components/framework/ListWidgetPreview';
 
@@ -26,7 +26,7 @@ interface Props {
     widgets: Widget[] | undefined;
     title?: string;
     onChange: (newVal: unknown, widgetName: string) => void;
-    attributesMap: Obj<WidgetValue>;
+    attributesMap: Obj<WidgetAttribute>;
     readOnly?: boolean;
 }
 

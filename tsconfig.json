@@ -37,7 +37,8 @@
         "skipLibCheck": true
     },
     "include": [
-        "app",
-        "generated"
+        "./app/index.tsx",
+        "./app/declarations",
+        "./generated/types.tsx"
     ]
 }
