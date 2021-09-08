@@ -152,19 +152,19 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
             body: requestBody,
             ...otherOptions,
         };
+    } else {
+        const requestBody = body ? JSON.stringify(body) : undefined;
+        finalOptions = {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
+                ...headers,
+            },
+            body: requestBody,
+            ...otherOptions,
+        };
     }
-
-    const requestBody = body ? JSON.stringify(body) : undefined;
-    finalOptions = {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json; charset=utf-8',
-            ...headers,
-        },
-        body: requestBody,
-        ...otherOptions,
-    };
 
     const isInternalRequest = url.startsWith(serverPrefix);
     if (isInternalRequest) {

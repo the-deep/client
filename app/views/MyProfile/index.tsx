@@ -208,6 +208,7 @@ function MyProfile(props: Props) {
                     <DeepImageInput
                         className={styles.changeDisplayPicture}
                         name="displayPicture"
+                        accept="image/*"
                         value={value.displayPicture}
                         onChange={setFieldValue}
                         showStatus={false}
