@@ -33,14 +33,15 @@ import {
     requiredStringCondition,
     defaultUndefinedType,
     useForm,
-    createSubmitHandler,
     requiredCondition,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
+import { SubNavbarActions } from '#components/SubNavbar';
 import NonFieldError from '#components/NonFieldError';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
+import BackLink from '#components/BackLink';
 import {
     BasicOrganization,
     KeyValueElement,
@@ -245,11 +246,11 @@ function ProjectDetailsForm(props: Props) {
     const {
         pending: projectPatchPending,
         trigger: projectPatch,
-    } = useLazyRequest<ProjectDetails, FormType>({
+    } = useLazyRequest<ProjectDetails, { values: FormType; type: string }>({
         url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
         method: projectId ? 'PATCH' : 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
+        body: (ctx) => ctx.values,
+        onSuccess: (response, ctx) => {
             // FIXME: better to use context instead of mutable props
             if (!projectId) {
                 // Set this as pristine so the prompt will not be trigger
@@ -259,6 +260,14 @@ function ProjectDetailsForm(props: Props) {
                 setProjectDetails(response);
                 const options = getOrganizationOptions(response);
                 setStakeholderOptions(options);
+            }
+            if (ctx.type === 'saveAndClose') {
+                history.push(generatePath(routes.tagging.path, {
+                    projectId: response.id,
+                }));
+            }
+            if (ctx.type === 'saveAndNext') {
+                window.location.replace('#/geo-areas');
             }
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
@@ -285,12 +294,6 @@ function ProjectDetailsForm(props: Props) {
     const handleProjectDeleteConfirm = useCallback(() => {
         triggerProjectDelete(null);
     }, [triggerProjectDelete]);
-
-    const handleSubmit = useCallback((values: FormType) => {
-        projectPatch({
-            ...values,
-        });
-    }, [projectPatch]);
 
     const groupedStakeholders = useMemo(
         () => listToGroupList(
@@ -321,11 +324,37 @@ function ProjectDetailsForm(props: Props) {
     const pending = pendingProjectDetailsGet || projectPatchPending || projectDeletePending;
     const disabled = pending;
 
+    const handleSubmit = useCallback(
+        (name: string) => {
+            const { errored, error: err, value: val } = validate();
+            setError(err);
+            if (!errored && isDefined(val)) {
+                projectPatch({
+                    values: val,
+                    type: name,
+                });
+            }
+        },
+        [setError, validate, projectPatch],
+    );
+
     return (
-        <form
-            className={styles.projectDetails}
-            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
-        >
+        <div className={styles.projectDetails}>
+            <SubNavbarActions>
+                <BackLink
+                    defaultLink="/"
+                >
+                    {_ts('projectEdit', 'closeButtonLabel')}
+                </BackLink>
+                <Button
+                    disabled={disabled || pristine}
+                    onClick={handleSubmit}
+                    variant="primary"
+                    name="saveAndClose"
+                >
+                    {_ts('projectEdit', 'saveButtonLabel')}
+                </Button>
+            </SubNavbarActions>
             {pending && <PendingMessage />}
             <NonFieldError error={error} />
             <div className={styles.content}>
@@ -515,9 +544,9 @@ function ProjectDetailsForm(props: Props) {
                 actions={(
                     <Button
                         disabled={disabled || pristine}
-                        type="submit"
+                        onClick={handleSubmit}
                         variant="primary"
-                        name="projectSave"
+                        name="saveAndNext"
                     >
                         {_ts('projectEdit', 'projectSave')}
                     </Button>
@@ -527,7 +556,7 @@ function ProjectDetailsForm(props: Props) {
                 when={!pristine}
                 message={_ts('common', 'youHaveUnsavedChanges')}
             />
-        </form>
+        </div>
     );
 }
 
