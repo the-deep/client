@@ -9,7 +9,7 @@ export const entry1: Entry = {
     attributes: [
         {
             id: 'widget1',
-            widgetType: 'TEXTWIDGET',
+            widgetType: 'TEXT',
             widget: '0',
             data: {
                 value: 'ram',
@@ -17,7 +17,7 @@ export const entry1: Entry = {
         },
         {
             id: 'number-widget-random',
-            widgetType: 'NUMBERWIDGET',
+            widgetType: 'NUMBER',
             widget: '0',
             data: {
                 value: 10,
@@ -25,7 +25,7 @@ export const entry1: Entry = {
         },
         {
             id: 'single-select-random',
-            widgetType: 'SELECTWIDGET',
+            widgetType: 'SELECT',
             widget: '0',
             data: {
                 value: '15',
@@ -33,7 +33,7 @@ export const entry1: Entry = {
         },
         {
             id: 'multi-select-random',
-            widgetType: 'MULTISELECTWIDGET',
+            widgetType: 'MULTISELECT',
             widget: '0',
             data: {
                 value: ['31', '23'],
@@ -41,7 +41,7 @@ export const entry1: Entry = {
         },
         {
             id: 'date-random',
-            widgetType: 'DATEWIDGET',
+            widgetType: 'DATE',
             widget: '0',
             data: {
                 value: '2021-01-13',
@@ -49,7 +49,7 @@ export const entry1: Entry = {
         },
         {
             id: 'time-random',
-            widgetType: 'TIMEWIDGET',
+            widgetType: 'TIME',
             widget: '0',
             data: {
                 value: '13:03:00',
@@ -57,7 +57,7 @@ export const entry1: Entry = {
         },
         {
             id: 'date-range-random',
-            widgetType: 'DATERANGEWIDGET',
+            widgetType: 'DATE_RANGE',
             widget: '0',
             data: {
                 value: {
@@ -68,7 +68,7 @@ export const entry1: Entry = {
         },
         {
             id: 'time-range-random',
-            widgetType: 'TIMERANGEWIDGET',
+            widgetType: 'TIME_RANGE',
             widget: '0',
             data: {
                 value: {
@@ -79,7 +79,7 @@ export const entry1: Entry = {
         },
         {
             id: 'matrix-1d-random',
-            widgetType: 'MATRIX1DWIDGET',
+            widgetType: 'MATRIX1D',
             widget: '0',
             data: {
                 value: {
@@ -91,7 +91,7 @@ export const entry1: Entry = {
         },
         {
             id: 'matrix-2d-random',
-            widgetType: 'MATRIX2DWIDGET',
+            widgetType: 'MATRIX2D',
             widget: '0',
             data: {
                 value: {
@@ -108,7 +108,7 @@ export const entry1: Entry = {
         },
         {
             id: 'widget12',
-            widgetType: 'ORGANIGRAMWIDGET',
+            widgetType: 'ORGANIGRAM',
             widget: '0',
             data: {
                 value: ['nepal', 'pradesh', 'municipality'],
@@ -116,7 +116,7 @@ export const entry1: Entry = {
         },
         {
             id: 'widget13',
-            widgetType: 'GEOWIDGET',
+            widgetType: 'GEO',
             widget: '0',
             data: {
                 value: ['nepal', 'pradesh1', 'ilam'],
@@ -124,7 +124,7 @@ export const entry1: Entry = {
         },
         {
             id: 'scale-random',
-            widgetType: 'SCALEWIDGET',
+            widgetType: 'SCALE',
             widget: '0',
             data: {
                 value: '331',
@@ -146,7 +146,7 @@ export const entry2: Entry = {
     attributes: [
         {
             id: 'number-widget-random',
-            widgetType: 'NUMBERWIDGET',
+            widgetType: 'NUMBER',
             widget: '0',
             data: {
                 value: 10,
@@ -154,7 +154,7 @@ export const entry2: Entry = {
         },
         {
             id: 'single-select-random',
-            widgetType: 'SELECTWIDGET',
+            widgetType: 'SELECT',
             widget: '0',
             data: {
                 value: '15',
@@ -162,7 +162,7 @@ export const entry2: Entry = {
         },
         {
             id: 'multi-select-random',
-            widgetType: 'MULTISELECTWIDGET',
+            widgetType: 'MULTISELECT',
             widget: '0',
             data: {
                 value: ['31', '23'],
@@ -170,7 +170,7 @@ export const entry2: Entry = {
         },
         {
             id: 'widget13',
-            widgetType: 'GEOWIDGET',
+            widgetType: 'GEO',
             widget: '0',
             data: {
                 value: ['nepal', 'pradesh1', 'ilam'],
@@ -178,7 +178,7 @@ export const entry2: Entry = {
         },
         {
             id: 'scale-random',
-            widgetType: 'SCALEWIDGET',
+            widgetType: 'SCALE',
             widget: '0',
             data: {
                 value: '331',

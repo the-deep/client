@@ -32,67 +32,67 @@ type BaseWidgetAttribute = Omit<WidgetAttributeRaw, 'data' | 'widgetType'>;
 type BaseData<T> = { value: T; } | undefined;
 
 export interface TextWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'TEXTWIDGET';
+    widgetType: 'TEXT';
     data: BaseData<TextValue>;
 }
 
 export interface NumberWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'NUMBERWIDGET';
+    widgetType: 'NUMBER';
     data: BaseData<NumberValue>;
 }
 
 export interface TimeWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'TIMEWIDGET';
+    widgetType: 'TIME';
     data: BaseData<TimeValue>;
 }
 
 export interface DateWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'DATEWIDGET';
+    widgetType: 'DATE';
     data: BaseData<DateValue>;
 }
 
 export interface TimeRangeWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'TIMERANGEWIDGET';
+    widgetType: 'TIME_RANGE';
     data: BaseData<TimeRangeValue>;
 }
 
 export interface DateRangeWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'DATERANGEWIDGET';
+    widgetType: 'DATE_RANGE';
     data: BaseData<DateRangeValue>;
 }
 
 export interface SingleSelectWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'SELECTWIDGET';
+    widgetType: 'SELECT';
     data: BaseData<SingleSelectValue>;
 }
 
 export interface MultiSelectWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'MULTISELECTWIDGET';
+    widgetType: 'MULTISELECT';
     data: BaseData<MultiSelectValue>;
 }
 
 export interface ScaleWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'SCALEWIDGET';
+    widgetType: 'SCALE';
     data: BaseData<ScaleValue>;
 }
 
 export interface OrganigramWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'ORGANIGRAMWIDGET';
+    widgetType: 'ORGANIGRAM';
     data: BaseData<OrganigramValue>;
 }
 
 export interface GeoLocationWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'GEOWIDGET';
+    widgetType: 'GEO';
     data: BaseData<GeoLocationValue>;
 }
 
 export interface Matrix1dWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'MATRIX1DWIDGET';
+    widgetType: 'MATRIX1D';
     data: BaseData<Matrix1dValue>;
 }
 
 export interface Matrix2dWidgetAttribute extends BaseWidgetAttribute {
-    widgetType: 'MATRIX2DWIDGET';
+    widgetType: 'MATRIX2D';
     data: BaseData<Matrix2dValue>;
 }
 

@@ -8,7 +8,7 @@ const matrix1d: Matrix1dWidget = {
     id: '1',
     key: 'matrix-1d-random',
     clientId: 'matrix-1d-random',
-    widgetId: 'MATRIX1DWIDGET',
+    widgetId: 'MATRIX1D',
     title: 'Matrix 1d',
     order: 1,
     width: 'FULL',
@@ -195,7 +195,7 @@ const matrix2d: Matrix2dWidget = {
     id: '2',
     key: 'matrix-2d-random',
     clientId: 'matrix-2d-random',
-    widgetId: 'MATRIX2DWIDGET',
+    widgetId: 'MATRIX2D',
     title: 'Matrix 2d',
     order: 2,
     width: 'FULL',
@@ -378,7 +378,7 @@ const dataAf: AnalysisFramework = {
             title: 'Number Widget',
             order: 1,
             width: 'FULL',
-            widgetId: 'NUMBERWIDGET',
+            widgetId: 'NUMBER',
             properties: {
                 maxValue: 10000,
                 minValue: 1,
@@ -391,7 +391,7 @@ const dataAf: AnalysisFramework = {
             title: 'Single Select Value',
             order: 2,
             width: 'HALF',
-            widgetId: 'SELECTWIDGET',
+            widgetId: 'SELECT',
             properties: {
                 options: [
                     {
@@ -414,7 +414,7 @@ const dataAf: AnalysisFramework = {
             title: 'Multi Select Value',
             order: 3,
             width: 'HALF',
-            widgetId: 'MULTISELECTWIDGET',
+            widgetId: 'MULTISELECT',
             properties: {
                 options: [
                     {
@@ -442,7 +442,7 @@ const dataAf: AnalysisFramework = {
             title: 'Date',
             order: 4,
             width: 'HALF',
-            widgetId: 'DATEWIDGET',
+            widgetId: 'DATE',
             properties: {
                 defaultValue: '2021-07-19T10:45:08.705794Z',
             },
@@ -454,7 +454,7 @@ const dataAf: AnalysisFramework = {
             title: 'Text',
             order: 5,
             width: 'HALF',
-            widgetId: 'TEXTWIDGET',
+            widgetId: 'TEXT',
             properties: {
                 defaultValue: 'Hi, I am a text',
             },
@@ -466,7 +466,7 @@ const dataAf: AnalysisFramework = {
             title: 'time',
             order: 6,
             width: 'HALF',
-            widgetId: 'TIMEWIDGET',
+            widgetId: 'TIME',
             properties: {
                 defaultValue: '20:19:26.977084Z',
             },
@@ -478,7 +478,7 @@ const dataAf: AnalysisFramework = {
             title: 'Time Range',
             order: 7,
             width: 'HALF',
-            widgetId: 'TIMERANGEWIDGET',
+            widgetId: 'TIME_RANGE',
             properties: {
                 defaultValue: {
                     startTime: '00:00:00.00',
@@ -493,7 +493,7 @@ const dataAf: AnalysisFramework = {
             title: 'Scale',
             order: 8,
             width: 'HALF',
-            widgetId: 'SCALEWIDGET',
+            widgetId: 'SCALE',
             properties: {
                 options: [
                     {
@@ -524,7 +524,7 @@ const dataAf: AnalysisFramework = {
             title: 'Date Range',
             order: 9,
             width: 'HALF',
-            widgetId: 'DATERANGEWIDGET',
+            widgetId: 'DATE_RANGE',
             properties: {
                 defaultValue: {
                     startDate: '2021-07-01T00:00:00.00Z',
