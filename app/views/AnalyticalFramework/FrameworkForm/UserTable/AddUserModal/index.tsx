@@ -8,6 +8,7 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import {
+    useAlert,
     Modal,
     SelectInput,
     Button,
@@ -80,6 +81,7 @@ function AddUserModal(props: Props) {
     } = props;
 
     const formValueFromProps: PartialForm<FormType> = userValue ?? defaultFormValue;
+    const alert = useAlert();
 
     const [
         userOptions,
@@ -129,6 +131,21 @@ function AddUserModal(props: Props) {
             : 'POST',
         body: (ctx) => ctx,
         onSuccess: () => {
+            if (userValue?.id) {
+                alert.show(
+                    'Successfully updated user permissions.',
+                    {
+                        variant: 'success',
+                    },
+                );
+            } else {
+                alert.show(
+                    'Successfully added user to the analytical framework.',
+                    {
+                        variant: 'success',
+                    },
+                );
+            }
             onTableReload();
             onModalClose();
         },

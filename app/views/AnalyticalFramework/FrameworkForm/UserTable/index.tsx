@@ -9,6 +9,7 @@ import {
     createStringColumn,
     TableView,
     TableColumn,
+    useAlert,
     TableHeaderCell,
     TableHeaderCellProps,
 } from '@the-deep/deep-ui';
@@ -74,6 +75,7 @@ function UserTable(props: Props) {
     const {
         user,
     } = useContext(UserContext);
+    const alert = useAlert();
 
     const activeUserId = user ? +user.id : undefined;
 
@@ -112,6 +114,12 @@ function UserTable(props: Props) {
         url: (ctx) => `server://framework-memberships/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
+            alert.show(
+                'Successfully removed user from the analytical framework.',
+                {
+                    variant: 'success',
+                },
+            );
             triggerMembersList();
         },
         failureHeader: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
