@@ -6,6 +6,13 @@ import {
 
 export type Types = WidgetTypes;
 
+// NOTE: we are replacing these with more strict types
+type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
+
+interface BaseProperties<T> {
+    defaultValue?: T;
+}
+
 interface KeyLabelEntity {
     clientId: string;
     label: string;
@@ -26,10 +33,6 @@ interface Condition
     conjunction: 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
 }
 */
-
-interface BaseProperties<T> {
-    defaultValue?: T;
-}
 
 export type NumberValue = number;
 export type TextValue = string;
@@ -104,9 +107,6 @@ interface Matrix2Properties extends BaseProperties<undefined> {
     rows: Matrix2dRows[];
     columns: Matrix2dColumns[];
 }
-
-// NOTE: we are replacing these with more strict types
-type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
 
 export interface NumberWidget extends BaseWidget {
     widgetId: 'NUMBER';

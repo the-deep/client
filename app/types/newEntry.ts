@@ -1,7 +1,4 @@
 import {
-    PurgeNull,
-} from '@togglecorp/toggle-form';
-import {
     TextValue,
     NumberValue,
     TimeValue,
@@ -17,18 +14,10 @@ import {
     Matrix2dValue,
 } from '#types/newAnalyticalFramework';
 import {
-    DeepMandatory,
-    DeepReplace,
-} from '#utils/types';
-import {
-    BulkEntryInputType,
-    ProjectFrameworkQuery,
+    // NOTE: Taking AttributeType instead of AttributeInputType
+    AttributeType as WidgetAttributeRaw,
 } from '#generated/types';
 
-export type EntryRaw = NonNullable<NonNullable<NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>['entries']>[number]>;
-export type EntryInputRaw = DeepMandatory<PurgeNull<BulkEntryInputType>, 'clientId' | 'widgetType' | 'lead' | 'entryType'>;
-
-type WidgetAttributeRaw = NonNullable<BulkEntryInputType['attributes']>[number];
 type BaseWidgetAttribute = Omit<WidgetAttributeRaw, 'data' | 'widgetType'>;
 
 type BaseData<T> = { value: T; } | undefined;
@@ -112,10 +101,10 @@ export type WidgetAttribute = TextWidgetAttribute
     | Matrix1dWidgetAttribute
     | Matrix2dWidgetAttribute
 
-export type Entry = DeepReplace<EntryRaw, WidgetAttributeRaw, WidgetAttribute>;
-export type EntryInput = DeepReplace<EntryInputRaw, WidgetAttributeRaw, WidgetAttribute>;
-
 /*
+// FIXME: remove this after all the other entry related components are
+// fixed. Keeping this for reference purpose only
+
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
 export interface Entity {

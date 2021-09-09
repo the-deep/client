@@ -1,23 +1,25 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 // import { _cs } from '@togglecorp/fujs';
 import {
     // ListView,
-    Pager,
+    // Pager,
     Container,
 } from '@the-deep/deep-ui';
 
+/*
 import { Entry } from '#types/newEntry';
-// import frameworkMockData from '#views/AnalyticalFramework/mockData';
+import frameworkMockData from '#views/AnalyticalFramework/mockData';
 import { MultiResponse } from '#types';
 import { useRequest } from '#base/utils/restRequest';
 
-// import EntryCard from './EntryCard';
+import EntryCard from './EntryCard';
 
-// import styles from './styles.css';
+import styles from './styles.css';
 
 const maxItemsPerPage = 50;
 
-// const entryKeySelector = (entry: Entry) => entry.id;
+const entryKeySelector = (entry: Entry) => entry.id;
+*/
 
 interface Props {
     className?: string;
@@ -32,7 +34,7 @@ function SourcesGrid(props: Props) {
 
     // FIXME: use this later on
     // eslint-disable-next-line no-console
-    console.log(className);
+    console.log(className, projectId);
 
     /*
     const [expandedEntry, setExpandedEntry] = React.useState<number | undefined>();
@@ -40,7 +42,6 @@ function SourcesGrid(props: Props) {
     const handleHideTagsButtonClick = useCallback(() => {
         setExpandedEntry(undefined);
     }, []);
-    */
 
     const [activePage, setActivePage] = useState(1);
 
@@ -85,6 +86,7 @@ function SourcesGrid(props: Props) {
         <Container
             spacing="compact"
             footerActions={(
+                {/*
                 <Pager
                     activePage={activePage}
                     itemsCount={entryListResponse?.count ?? 0}
@@ -93,6 +95,7 @@ function SourcesGrid(props: Props) {
                     itemsPerPageControlHidden
                     hideInfo
                 />
+                */}
             )}
         >
             {/*
