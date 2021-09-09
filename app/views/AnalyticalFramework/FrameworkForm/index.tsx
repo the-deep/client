@@ -42,7 +42,7 @@ import UserTable from './UserTable';
 import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
-import { Framework, FrameworkInput } from '#types/newAnalyticalFramework';
+import { Framework, FrameworkInput } from '../types';
 
 import NonFieldError from '#components/NonFieldError';
 import {

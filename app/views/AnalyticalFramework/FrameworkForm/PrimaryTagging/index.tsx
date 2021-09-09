@@ -21,7 +21,6 @@ import { FiEdit2 } from 'react-icons/fi';
 import _ts from '#ts';
 import { sortByOrder } from '#utils/common';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
-import { Section, Widget } from '#types/newAnalyticalFramework';
 import NonFieldError from '#components/NonFieldError';
 import { PartialWidget } from '#components/framework/WidgetPreview';
 
@@ -29,6 +28,7 @@ import { SectionsType } from '../schema';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';
+import { Section, Widget } from '../../types';
 
 import SectionsEditor, { PartialSectionType } from './SectionsEditor';
 import {

@@ -23,9 +23,8 @@ import EntryListItem from '#components/entry/EntryListItem';
 import EntryVerification from '#components/entryReview/EntryVerification';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
-import {
-    Framework,
-} from '#types/newAnalyticalFramework';
+// FIXME: fix this import later on
+import { Framework } from '#types/newAnalyticalFramework';
 import { Entry } from '#types/newEntry';
 import { entry1 } from '#views/Project/Tagging/mockData';
 

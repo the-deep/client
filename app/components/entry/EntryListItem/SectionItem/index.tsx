@@ -9,12 +9,8 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 
-import {
-    Widget,
-} from '#types/newAnalyticalFramework';
-import {
-    WidgetAttribute,
-} from '#types/newEntry';
+import { Widget } from '#types/newAnalyticalFramework';
+import { WidgetAttribute } from '#types/newEntry';
 import ListWidgetPreview from '#components/framework/ListWidgetPreview';
 
 import styles from './styles.css';

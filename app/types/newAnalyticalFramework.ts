@@ -1,44 +1,8 @@
 import {
-    PurgeNull,
-} from '@togglecorp/toggle-form';
-import {
+    // NOTE: Taking WidgetType instead of WidgetInputType
+    WidgetType as WidgetRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
-    // NOTE: we can take any framework query that is complete
-    CurrentFrameworkQuery,
-    AnalysisFrameworkInputType,
 } from '#generated/types';
-
-// TODO: move to common utils
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export type DeepMandatory<T, K extends keyof any> = T extends object ? (
-    T extends (infer I)[] ? (
-        DeepMandatory<I, K>[]
-    ) : (
-        ({ [P1 in (Extract<keyof T, K>)]-?: NonNullable<T[P1]> } &
-         { [P2 in keyof Pick<T, Exclude<keyof T, K>>]: DeepMandatory<T[P2], K> })
-    )
-) : T
-
-// TODO: move to common utils
-export type DeepReplace<T, A, B> = (
-    T extends A
-        ? B
-        : (
-            T extends (infer Z)[]
-                ? DeepReplace<Z, A, B>[]
-                : (
-                    // eslint-disable-next-line @typescript-eslint/ban-types
-                    T extends object
-                        ? { [K in keyof T]: DeepReplace<T[K], A, B> }
-                        : T
-                )
-        )
-)
-
-// FIXME: 'key' is thought to be mandatory from server.
-// Remove this DeepMandatory transformation after server sends key as mandatory
-export type FrameworkRaw = DeepMandatory<NonNullable<CurrentFrameworkQuery['analysisFramework']>, 'key'>;
-export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order'>;
 
 export type Types = WidgetTypes;
 
@@ -141,8 +105,6 @@ interface Matrix2Properties extends BaseProperties<undefined> {
     columns: Matrix2dColumns[];
 }
 
-// NOTE: Same WidgetRaw is used for Framework in both query and mutation
-export type WidgetRaw = NonNullable<FrameworkInputRaw['secondaryTagging']>[number];
 // NOTE: we are replacing these with more strict types
 type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
 
@@ -212,8 +174,3 @@ export type Widget = TextWidget
     | GeoLocationWidget
     | Matrix1dWidget
     | Matrix2dWidget;
-
-export type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
-export type FrameworkInput = DeepReplace<FrameworkInputRaw, WidgetRaw, Widget>;
-
-export type Section = NonNullable<NonNullable<FrameworkInput['primaryTagging']>[number]>;

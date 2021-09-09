@@ -15,8 +15,8 @@ import {
     CurrentFrameworkQuery,
     CurrentFrameworkQueryVariables,
 } from '#generated/types';
-import { Framework } from '#types/newAnalyticalFramework';
 
+import { Framework } from './types';
 import FrameworkForm from './FrameworkForm';
 import { CURRENT_FRAMEWORK } from './queries';
 import styles from './styles.css';

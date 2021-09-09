@@ -11,6 +11,7 @@ import {
 
 import { Entry } from '#types/newEntry';
 import ExcerptOutput from '#components/entry/ExcerptOutput';
+// FIXME: fix this import later on
 import {
     Widget,
     Section,
