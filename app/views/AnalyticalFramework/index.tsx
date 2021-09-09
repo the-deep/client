@@ -2,12 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import {
-    Tabs,
-    ButtonLikeLink,
-} from '@the-deep/deep-ui';
+import { Tabs } from '@the-deep/deep-ui';
 
 import PreloadMessage from '#base/components/PreloadMessage';
+import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import SubNavbarContext from '#components/SubNavbar/context';
 import _ts from '#ts';
@@ -105,12 +103,11 @@ function AnalyticalFramework(props: Props) {
                                 : framework?.title
                         )}
                         defaultActions={(
-                            <ButtonLikeLink
-                                variant="tertiary"
-                                to="/"
+                            <BackLink
+                                defaultLink="/"
                             >
                                 {_ts('analyticalFramework', 'closeButtonLabel')}
-                            </ButtonLikeLink>
+                            </BackLink>
                         )}
                     />
                     {!hasPermission ? (

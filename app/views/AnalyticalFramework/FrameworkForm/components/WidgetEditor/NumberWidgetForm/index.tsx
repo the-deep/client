@@ -50,9 +50,19 @@ const dataSchema: DataSchema = {
         maxValue: [],
     }),
     validation: (value) => {
-        const { minValue, maxValue } = value ?? {};
+        if (!value) {
+            return undefined;
+        }
+        const { minValue, maxValue, defaultValue } = value;
+
         if (isTruthy(minValue) && isTruthy(maxValue) && minValue >= maxValue) {
             return 'Min value must be less than max value.'; // TODO: use translation
+        }
+        if (isTruthy(minValue) && isTruthy(defaultValue) && minValue >= defaultValue) {
+            return 'Default value must be greater than min value.'; // TODO: use translation
+        }
+        if (isTruthy(maxValue) && isTruthy(defaultValue) && defaultValue >= maxValue) {
+            return 'Default value must be less than max value.'; // TODO: use translation
         }
         return undefined;
     },

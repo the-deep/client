@@ -41,7 +41,6 @@ import { SubNavbarActions } from '#components/SubNavbar';
 import NonFieldError from '#components/NonFieldError';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
-import BackLink from '#components/BackLink';
 import {
     BasicOrganization,
     KeyValueElement,
@@ -341,11 +340,6 @@ function ProjectDetailsForm(props: Props) {
     return (
         <div className={styles.projectDetails}>
             <SubNavbarActions>
-                <BackLink
-                    defaultLink="/"
-                >
-                    {_ts('projectEdit', 'closeButtonLabel')}
-                </BackLink>
                 <Button
                     disabled={disabled || pristine}
                     onClick={handleSubmit}
