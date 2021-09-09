@@ -6,36 +6,40 @@ import {
 } from '@togglecorp/fujs';
 import {
     List,
+    ListView,
     Container,
 } from '@the-deep/deep-ui';
 
-import { Entry } from '#types/newEntry';
-import ExcerptOutput from '#components/entry/ExcerptOutput';
-// FIXME: fix this import later on
 import {
-    Widget,
-    Section,
-} from '#types/newAnalyticalFramework';
+    EntryType,
+    WidgetType as WidgetRaw,
+    AnalysisFrameworkDetailType,
+} from '#generated/types';
+import ExcerptOutput from '#components/entry/ExcerptOutput';
+import { Widget } from '#types/newAnalyticalFramework';
 import ListWidgetPreview from '#components/framework/ListWidgetPreview';
+import { DeepReplace } from '#utils/types';
 
-import SectionItem from './SectionItem';
-
+import SectionItem, { Props as SectionProps } from './SectionItem';
 import styles from './styles.css';
+
+export type Framework = DeepReplace<AnalysisFrameworkDetailType, WidgetRaw, Widget>;
+type Section = NonNullable<Framework['primaryTagging']>[number];
 
 const sectionKeySelector = (d: Section) => d.clientId;
 const widgetKeySelector = (d: Widget) => d.clientId;
 
 interface Props {
     className?: string;
-    entry: Entry;
+    entry: Pick<EntryType, 'entryType' | 'excerpt' | 'droppedExcerpt' | 'image' | 'attributes'>;
     index?: number;
     hideExcerpt?: boolean;
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
     readOnly?: boolean;
 
-    primaryTagging: Section[] | undefined;
-    secondaryTagging: Widget[] | undefined;
+    primaryTagging: Section[] | undefined | null;
+    secondaryTagging: Widget[] | undefined | null;
 }
 
 function EntryListItem(props: Props) {
@@ -45,8 +49,8 @@ function EntryListItem(props: Props) {
         entry: {
             entryType,
             excerpt,
-            imageDetails,
-            tabularFieldData,
+            droppedExcerpt,
+            image,
             attributes,
         },
         hideExcerpt = false,
@@ -70,7 +74,7 @@ function EntryListItem(props: Props) {
         },
         [],
     );
-    const sectionRendererParams = useCallback((_: string, sectionItem: Section) => ({
+    const sectionRendererParams = useCallback((_: string, sectionItem: Section): SectionProps => ({
         title: sectionItem.title,
         widgets: sectionItem.widgets,
         onChange: handleWidgetValueChange,
@@ -80,14 +84,14 @@ function EntryListItem(props: Props) {
 
     const secondaryWidgetsWithValue = useMemo(() => (
         secondaryTagging?.filter(
-            (widget) => isDefined(attributesMap[widget.clientId]?.data?.value),
+            (widget) => isDefined(attributesMap?.[widget.clientId]?.data?.value),
         )
     ), [attributesMap, secondaryTagging]);
 
     const widgetRendererParams = useCallback((key: string, data: Widget) => ({
         name: key,
         clientId: key,
-        value: attributesMap[key]?.data?.value,
+        value: attributesMap?.[key]?.data?.value,
         widget: data,
         onChange: handleWidgetValueChange,
         readOnly,
@@ -104,13 +108,13 @@ function EntryListItem(props: Props) {
                     <ExcerptOutput
                         entryType={entryType}
                         excerpt={excerpt}
-                        imageDetails={imageDetails}
-                        tabularFieldData={tabularFieldData}
+                        droppedExcerpt={droppedExcerpt}
+                        image={image}
                     />
                 </Container>
             )}
             <List
-                data={primaryTagging}
+                data={primaryTagging ?? undefined}
                 rendererParams={sectionRendererParams}
                 rendererClassName={_cs(styles.section, sectionContainerClassName)}
                 renderer={SectionItem}
@@ -124,7 +128,7 @@ function EntryListItem(props: Props) {
                 heading="Secondary Tagging"
                 headingSize="extraSmall"
             >
-                <List
+                <ListView
                     data={secondaryWidgetsWithValue}
                     keySelector={widgetKeySelector}
                     renderer={ListWidgetPreview}

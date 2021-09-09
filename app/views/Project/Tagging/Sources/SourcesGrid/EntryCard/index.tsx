@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    removeNull,
-} from '@togglecorp/toggle-form';
-import {
     IoPencil,
     IoTrash,
     IoClose,
@@ -20,13 +17,11 @@ import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptOutput from '#components/entry/ExcerptOutput';
 import EntryListItem from '#components/entry/EntryListItem';
-import EntryVerification from '#components/entryReview/EntryVerification';
+// import EntryVerification from '#components/entryReview/EntryVerification';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
-// FIXME: fix this import later on
-import { Framework } from '#types/newAnalyticalFramework';
-import { Entry } from '#types/newEntry';
-import { entry1 } from '#views/Project/Tagging/mockData';
+
+import { Framework, Entry } from '../types';
 
 import styles from './styles.css';
 
@@ -34,11 +29,11 @@ interface Props {
     className?: string;
     entry: Entry;
     leadDetails: Entry['lead'];
-    projectId: number;
-    framework: Framework;
-    viewTags?: boolean;
-    onViewTagsButtonClick?: (entryId: number) => void;
-    onHideTagsButtonClick?: (entryId: number) => void;
+    projectId: string;
+    framework: Framework | undefined | null;
+    tagsVisible?: boolean;
+    onViewTagsButtonClick?: (entryId: string) => void;
+    onHideTagsButtonClick?: (entryId: string) => void;
 }
 
 function EntryCard(props: Props) {
@@ -48,7 +43,7 @@ function EntryCard(props: Props) {
         leadDetails,
         framework,
         projectId,
-        viewTags,
+        tagsVisible,
         onViewTagsButtonClick,
         onHideTagsButtonClick,
     } = props;
@@ -74,20 +69,15 @@ function EntryCard(props: Props) {
     });
 
     const authorsDetailText = useMemo(() => (
-        leadDetails?.authorsDetail?.map((a) => a.title)?.join(', ')
-    ), [leadDetails?.authorsDetail]);
-
-    const safeFramework = useMemo(
-        () => removeNull(framework),
-        [framework],
-    );
+        leadDetails?.authors?.map((a) => a.title)?.join(', ')
+    ), [leadDetails?.authors]);
 
     return (
         <div
             className={_cs(
                 styles.entryCard,
                 className,
-                viewTags && styles.expanded,
+                tagsVisible && styles.expanded,
             )}
         >
             <Container
@@ -112,7 +102,7 @@ function EntryCard(props: Props) {
                 footerActions={(
                     <Button
                         name={entry.id}
-                        disabled={viewTags}
+                        disabled={tagsVisible}
                         onClick={onViewTagsButtonClick}
                     >
                         View tags
@@ -122,8 +112,9 @@ function EntryCard(props: Props) {
                 <ExcerptOutput
                     entryType={entry.entryType}
                     excerpt={entry.excerpt}
-                    imageDetails={entry.imageDetails}
-                    tabularFieldData={entry.tabularFieldData}
+                    image={entry.image}
+                    droppedExcerpt={entry.droppedExcerpt}
+                    // tabularFieldData={entry.tabularFieldData}
                 />
                 <div className={styles.metaSection}>
                     <TextOutput
@@ -133,11 +124,11 @@ function EntryCard(props: Props) {
                     />
                     <TextOutput
                         label="Publisher"
-                        value={leadDetails.sourceDetail?.title}
+                        value={leadDetails.source?.title}
                     />
                     <TextOutput
                         label="Added by"
-                        value={leadDetails.createdByName}
+                        value={leadDetails.createdBy?.displayName}
                     />
                     <TextOutput
                         label="Author"
@@ -145,7 +136,7 @@ function EntryCard(props: Props) {
                     />
                 </div>
             </Container>
-            {viewTags && (
+            {tagsVisible && (
                 <>
                     <div className={styles.verticalSeparator} />
                     <Container
@@ -191,22 +182,28 @@ function EntryCard(props: Props) {
                                             Edit Tags
                                         </Button>
                                         <EntryComments
-                                            entryId={entry.id}
-                                            projectId={projectId}
+                                            // FIXME: Remove cast after entry comments
+                                            // is switched to gql
+                                            entryId={+entry.id}
+                                            projectId={+projectId}
                                         />
+                                        {/*
                                         <EntryVerification
                                             entryId={entry.id}
-                                            projectId={entry.project}
+                                            projectId={projectId}
                                             verifiedBy={entry.verifiedBy}
                                             onVerificationChange={getEntry}
                                             disabled={pending}
                                         />
+                                        */}
                                     </>
                                 )}
                                 <EntryControl
-                                    entryId={entry.id}
-                                    projectId={entry.project}
-                                    value={entry.controlled}
+                                    // FIXME: Remove cast after entry comments
+                                    // is switched to gql
+                                    entryId={+entry.id}
+                                    projectId={+projectId}
+                                    value={!!entry.controlled}
                                     onChange={getEntry}
                                     disabled={pending}
                                 />
@@ -214,10 +211,10 @@ function EntryCard(props: Props) {
                         )}
                     >
                         <EntryListItem
-                            entry={entry1}
+                            entry={entry}
                             hideExcerpt
-                            primaryTagging={safeFramework?.primaryTagging}
-                            secondaryTagging={safeFramework?.secondaryTagging}
+                            primaryTagging={framework?.primaryTagging}
+                            secondaryTagging={framework?.secondaryTagging}
                             className={styles.entryTags}
                             sectionContainerClassName={styles.section}
                             secondaryTaggingContainerClassName={styles.section}

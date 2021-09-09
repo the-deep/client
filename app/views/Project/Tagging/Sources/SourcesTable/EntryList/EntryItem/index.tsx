@@ -1,8 +1,5 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import {
-    removeNull,
-} from '@togglecorp/toggle-form';
 import {
     ButtonLikeLink,
     Container,
@@ -10,27 +7,29 @@ import {
 import { FiEdit2 } from 'react-icons/fi';
 
 import { useLazyRequest } from '#base/utils/restRequest';
-import { Entry } from '#types/newEntry';
 import ProjectContext from '#base/context/ProjectContext';
 import useRouteMatching from '#base/hooks/useRouteMatching';
 import routes from '#base/configs/routes';
-import frameworkMockData from '#views/AnalyticalFramework/mockData';
-import { entry1 } from '#views/Project/Tagging/mockData';
+import {
+    Framework,
+    Entry,
+} from '../../types';
 
-/*
 import EntryListItem from '#components/entry/EntryListItem';
-import EntryComments from '#components/entryReview/EntryComments';
+/*
 import EntryVerification from '#components/entryReview/EntryVerification';
+ */
+import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
-*/
 
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     entry: Entry;
-    projectId: number;
-    leadId: number;
+    projectId: string;
+    leadId: string;
+    framework: Framework | undefined | null;
 }
 
 function EntryItem(props: Props) {
@@ -39,6 +38,7 @@ function EntryItem(props: Props) {
         projectId,
         leadId,
         entry: entryFromProps,
+        framework,
     } = props;
 
     const { project } = useContext(ProjectContext);
@@ -68,11 +68,6 @@ function EntryItem(props: Props) {
         failureHeader: 'Entry',
     });
 
-    const safeFramework = useMemo(
-        () => removeNull(frameworkMockData),
-        [],
-    );
-
     return (
         <Container
             className={_cs(className, styles.entryItemContainer)}
@@ -92,12 +87,14 @@ function EntryItem(props: Props) {
                             >
                                 Edit Tags
                             </ButtonLikeLink>
-                            {/*
                             <EntryComments
                                 className={styles.button}
-                                entryId={entry.id}
-                                projectId={projectId}
+                                // FIXME: Remove cast after entry comments
+                                // is switched to gql
+                                entryId={+entry.id}
+                                projectId={+projectId}
                             />
+                            {/*
                             <EntryVerification
                                 className={styles.button}
                                 entryId={entry.id}
@@ -109,27 +106,25 @@ function EntryItem(props: Props) {
                             */}
                         </>
                     )}
-                    {/*
                     <EntryControl
-                        entryId={entry.id}
-                        projectId={entry.project}
-                        value={entry.controlled}
+                        // FIXME: Remove cast after entry comments
+                        // is switched to gql
+                        entryId={+entry.id}
+                        projectId={+projectId}
+                        value={!!entry.controlled}
                         onChange={getEntry}
                         disabled={pending}
                     />
-                    */}
                 </div>
             )}
         >
-            {/*
             <EntryListItem
                 className={styles.entry}
-                entry={entry1} // TODO remove mock entry usage appropriate
-                primaryTagging={safeFramework.primaryTagging}
-                secondaryTagging={safeFramework.secondaryTagging}
+                entry={entry}
+                primaryTagging={framework?.primaryTagging}
+                secondaryTagging={framework?.secondaryTagging}
                 readOnly
             />
-            */}
         </Container>
     );
 }

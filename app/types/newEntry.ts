@@ -187,30 +187,4 @@ export interface Entry extends Entity {
     tabularFieldData?: TabularDataFields;
     verifiedBy: number[];
 }
-
-export interface EntryReviewComment {
-    id: number;
-    textHistory: string[];
-    lead: number;
-    createdByDetails: {
-        id: number;
-        name: string;
-        email: string;
-        organization: string;
-        displayPictureUrl: string;
-    };
-    mentionedUsersDetails: {
-        id: number;
-        name: string;
-        email: string;
-        organization: string;
-        displayPictureUrl: string;
-    }[];
-    commentTypeDisplay: string;
-    createdAt: string;
-    commentType: number;
-    createdBy: number;
-    entry: number;
-    mentionedUsers: number[];
-}
 */

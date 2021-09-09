@@ -23,7 +23,6 @@
                 background-color: var(--dui-color-foreground);
             }
 
-            /*
             .expanded-row {
                 .expanded-cell {
                     border-bottom: 0;
@@ -37,7 +36,6 @@
                     padding: 0;
                 }
             }
-            */
         }
 
         .status {
