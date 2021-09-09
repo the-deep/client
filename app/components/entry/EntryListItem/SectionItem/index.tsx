@@ -2,27 +2,27 @@ import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
     isDefined,
-    Obj,
 } from '@togglecorp/fujs';
 import {
     ListView,
     Container,
 } from '@the-deep/deep-ui';
 
+import { EntryType } from '#generated/types';
 import { Widget } from '#types/newAnalyticalFramework';
-import { WidgetAttribute } from '#types/newEntry';
 import ListWidgetPreview from '#components/framework/ListWidgetPreview';
 
 import styles from './styles.css';
 
 const widgetKeySelector = (d: Widget) => d.clientId;
+type WidgetAttribute = NonNullable<EntryType['attributes']>[number];
 
-interface Props {
+export interface Props {
     className?: string;
-    widgets: Widget[] | undefined;
+    widgets: Widget[] | undefined | null;
     title?: string;
     onChange: (newVal: unknown, widgetName: string) => void;
-    attributesMap: Obj<WidgetAttribute>;
+    attributesMap: Record<string, WidgetAttribute> | undefined;
     readOnly?: boolean;
 }
 
@@ -38,14 +38,14 @@ function SectionItem(props: Props) {
 
     const widgetsWithValue = useMemo(() => (
         widgets?.filter(
-            (widget) => isDefined(attributesMap[widget.clientId]?.data?.value),
+            (widget) => isDefined(attributesMap?.[widget.clientId]?.data?.value),
         )
     ), [attributesMap, widgets]);
 
     const widgetRendererParams = useCallback((key: string, data: Widget) => ({
         name: key,
         clientId: key,
-        value: attributesMap[key]?.data?.value,
+        value: attributesMap?.[key]?.data?.value,
         widget: data,
         onChange,
         readOnly,

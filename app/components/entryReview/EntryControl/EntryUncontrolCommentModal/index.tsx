@@ -19,7 +19,7 @@ import {
 import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import ProjectMembersMultiSelectInput from '#components/selections/ProjectMembersSelectInput';
-import { EntryReviewComment } from '#types/newEntry';
+import { EntryReviewComment } from '#types/entry';
 import {
     Membership,
 } from '#types';

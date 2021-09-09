@@ -1,29 +1,123 @@
-import React from 'react';
-// import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
-    // ListView,
-    // Pager,
+    _cs,
+    isNotDefined,
+} from '@togglecorp/fujs';
+import { useQuery, gql } from '@apollo/client';
+import {
+    ListView,
+    Pager,
     Container,
 } from '@the-deep/deep-ui';
+import {
+    Framework,
+    Entry,
+} from './types';
 
-/*
-import { Entry } from '#types/newEntry';
-import frameworkMockData from '#views/AnalyticalFramework/mockData';
-import { MultiResponse } from '#types';
-import { useRequest } from '#base/utils/restRequest';
+import {
+    ProjectEntriesQuery,
+    ProjectEntriesQueryVariables,
+} from '#generated/types';
 
 import EntryCard from './EntryCard';
-
 import styles from './styles.css';
 
 const maxItemsPerPage = 50;
 
 const entryKeySelector = (entry: Entry) => entry.id;
-*/
+
+export const PROJECT_ENTRIES = gql`
+    query ProjectEntries(
+        $projectId: ID!,
+        $page: Int,
+        $pageSize: Int,
+        ) {
+        project(id: $projectId) {
+            entries(
+                page: $page,
+                pageSize: $pageSize,
+            ) {
+                totalCount
+                results {
+                    clientId
+                    id
+                    entryType
+                    droppedExcerpt
+                    excerpt
+                    lead {
+                        id
+                        title
+                        publishedOn
+                        authors {
+                            id
+                            title
+                        }
+                        source {
+                            id
+                            title
+                        }
+                        createdAt
+                        createdBy {
+                            displayName
+                        }
+                    }
+                    attributes {
+                        clientId
+                        data
+                        id
+                        widget
+                        widgetType
+                    }
+                    image {
+                        id
+                        metadata
+                        mimeType
+                        title
+                        file {
+                            name
+                            url
+                        }
+                    }
+                    controlled
+                }
+            }
+            analysisFramework {
+                primaryTagging {
+                    widgets {
+                        id
+                        clientId
+                        key
+                        order
+                        properties
+                        title
+                        widgetId
+                        width
+                    }
+                    clientId
+                    id
+                    order
+                    title
+                    tooltip
+                }
+                secondaryTagging {
+                    clientId
+                    id
+                    key
+                    order
+                    title
+                    properties
+                    widgetId
+                    width
+                }
+                id
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
-    projectId: number;
+    projectId: string;
 }
 
 function SourcesGrid(props: Props) {
@@ -32,82 +126,82 @@ function SourcesGrid(props: Props) {
         projectId,
     } = props;
 
-    // FIXME: use this later on
-    // eslint-disable-next-line no-console
-    console.log(className, projectId);
+    const [activePage, setActivePage] = useState(1);
 
-    /*
-    const [expandedEntry, setExpandedEntry] = React.useState<number | undefined>();
+    const variables = useMemo(
+        (): ProjectEntriesQueryVariables | undefined => (
+            (projectId) ? {
+                projectId,
+                page: activePage,
+                pageSize: maxItemsPerPage,
+            } : undefined
+        ),
+        [projectId, activePage],
+    );
+
+    const {
+        data: projectEntriesResponse,
+        loading,
+    } = useQuery<ProjectEntriesQuery, ProjectEntriesQueryVariables>(
+        PROJECT_ENTRIES,
+        {
+            skip: isNotDefined(variables),
+            variables,
+        },
+    );
+
+    // eslint-disable-next-line max-len
+    const frameworkDetails = projectEntriesResponse?.project?.analysisFramework as Framework | undefined | null;
+
+    const entriesResponse = projectEntriesResponse?.project?.entries;
+
+    const entries = entriesResponse?.results as Entry[] | undefined | null;
+
+    const [expandedEntry, setExpandedEntry] = React.useState<string | undefined>();
 
     const handleHideTagsButtonClick = useCallback(() => {
         setExpandedEntry(undefined);
     }, []);
 
-    const [activePage, setActivePage] = useState(1);
-
-    const entriesQuery = useMemo(
-        () => ({
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-            project: projectId,
-        }),
-        [activePage, projectId],
-    );
-
-    const {
-        // pending: entryListPending,
-        response: entryListResponse,
-    } = useRequest<MultiResponse<Entry>>({
-        url: 'server://entries/',
-        query: entriesQuery,
-        method: 'GET',
-        failureHeader: 'Entries',
-        preserveResponse: true,
-    });
-
-    /*
-    const entryRendererParams = useCallback((key: number, entry: Entry) => ({
+    const entryRendererParams = useCallback((key: string, entry: Entry) => ({
         entry,
-        framework: frameworkMockData,
-        viewTags: expandedEntry === key,
+        framework: frameworkDetails,
+        tagsVisible: expandedEntry === key,
         leadDetails: entry.lead,
         projectId,
         onViewTagsButtonClick: setExpandedEntry,
         onHideTagsButtonClick: handleHideTagsButtonClick,
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
     }), [
+        frameworkDetails,
         expandedEntry,
         projectId,
         handleHideTagsButtonClick,
     ]);
-    */
 
     return (
         <Container
+            className={_cs(styles.sourcesGrid, className)}
             spacing="compact"
             footerActions={(
-                {/*
                 <Pager
                     activePage={activePage}
-                    itemsCount={entryListResponse?.count ?? 0}
+                    itemsCount={entriesResponse?.totalCount ?? 0}
                     maxItemsPerPage={maxItemsPerPage}
                     onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
                     hideInfo
                 />
-                */}
             )}
         >
-            {/*
             <ListView
                 className={_cs(styles.sourcesGrid, className)}
-                data={entryListResponse?.results}
+                data={entries ?? undefined}
                 renderer={EntryCard}
                 rendererParams={entryRendererParams}
                 keySelector={entryKeySelector}
-                pending={entryListPending}
+                pending={loading}
             />
-            */}
         </Container>
     );
 }

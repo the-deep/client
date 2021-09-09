@@ -1,20 +1,14 @@
 import React, { memo } from 'react';
 import { ImagePreview } from '@the-deep/deep-ui';
 
-import { TabularDataFields } from '#types/newEntry';
+import { EntryType } from '#generated/types';
+
 import _ts from '#ts';
 
-export interface Props {
+export interface Props extends Pick<EntryType, 'excerpt' | 'image' | 'droppedExcerpt' | 'entryType'> {
     className?: string;
     imageClassName?: string;
     excerptForImageClassName?: string;
-    entryType: 'excerpt' | 'image' | 'dataSeries';
-    excerpt?: string;
-    imageDetails?: {
-        file?: string;
-    };
-    droppedValue?: string;
-    tabularFieldData?: TabularDataFields;
 }
 
 function ExcerptOutput(props: Props) {
@@ -27,13 +21,13 @@ function ExcerptOutput(props: Props) {
     } = props;
 
     // eslint-disable-next-line react/destructuring-assignment
-    if (props.entryType === 'image') {
+    if (props.entryType === 'IMAGE') {
         return (
             <div className={className}>
                 <ImagePreview
                     className={imageClassName}
                     alt=""
-                    src={props.imageDetails?.file}
+                    src={props.image?.file?.url ?? undefined}
                 />
                 {props.excerpt && (
                     <p className={excerptForImageClassName}>
@@ -44,7 +38,7 @@ function ExcerptOutput(props: Props) {
         );
     }
     // eslint-disable-next-line react/destructuring-assignment
-    if (props.entryType === 'excerpt') {
+    if (props.entryType === 'EXCERPT') {
         return (
             <p className={className}>
                 { props.excerpt }
@@ -52,7 +46,7 @@ function ExcerptOutput(props: Props) {
         );
     }
     // eslint-disable-next-line react/destructuring-assignment
-    if (props.entryType === 'dataSeries') {
+    if (props.entryType === 'DATA_SERIES') {
         return (
             <p className={className}>
                 {_ts('components.excerptOutput', 'quantitativeDataNotSupportedLabel')}
