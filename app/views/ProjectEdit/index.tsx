@@ -14,7 +14,6 @@ import {
 
 import SubNavbar, {
     SubNavbarIcons,
-    SubNavbarActions,
     SubNavbarChildren,
 } from '#components/SubNavbar';
 import Svg from '#components/Svg';
@@ -83,6 +82,13 @@ function ProjectEdit() {
                     <SubNavbar
                         className={styles.header}
                         heading={heading}
+                        defaultActions={(
+                            <BackLink
+                                defaultLink="/"
+                            >
+                                {_ts('projectEdit', 'closeButtonLabel')}
+                            </BackLink>
+                        )}
                     />
                     <SubNavbarIcons>
                         <div className={styles.appBrand}>
@@ -142,13 +148,6 @@ function ProjectEdit() {
                             className={styles.tabPanel}
                             name="geo-areas"
                         >
-                            <SubNavbarActions>
-                                <BackLink
-                                    defaultLink="/"
-                                >
-                                    {_ts('projectEdit', 'closeButtonLabel')}
-                                </BackLink>
-                            </SubNavbarActions>
                             {projectId && (
                                 <GeoAreas
                                     activeProject={projectId}
@@ -159,13 +158,6 @@ function ProjectEdit() {
                             name="users"
                             className={styles.tabPanel}
                         >
-                            <SubNavbarActions>
-                                <BackLink
-                                    defaultLink="/"
-                                >
-                                    {_ts('projectEdit', 'closeButtonLabel')}
-                                </BackLink>
-                            </SubNavbarActions>
                             {projectId && (
                                 <Users
                                     projectId={projectId}
@@ -177,13 +169,6 @@ function ProjectEdit() {
                             name="framework"
                             className={styles.tabPanel}
                         >
-                            <SubNavbarActions>
-                                <BackLink
-                                    defaultLink="/"
-                                >
-                                    {_ts('projectEdit', 'closeButtonLabel')}
-                                </BackLink>
-                            </SubNavbarActions>
                             {projectId && (
                                 <Framework
                                     projectId={String(projectId)}

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import {
     Tab,
     TextArea,
+    useAlert,
     TextInput,
     DateInput,
     TabPanel,
@@ -94,6 +95,7 @@ function FrameworkForm(props: FrameworkFormProps) {
     } = props;
 
     const { replace: replacePath } = useHistory();
+    const alert = useAlert();
 
     const location = useLocation();
 
@@ -153,6 +155,12 @@ function FrameworkForm(props: FrameworkFormProps) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
                 } else if (ok && result) {
+                    alert.show(
+                        'New analytical framework was successfully created.',
+                        {
+                            variant: 'success',
+                        },
+                    );
                     setPristine(true);
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
@@ -168,6 +176,12 @@ function FrameworkForm(props: FrameworkFormProps) {
                 setError({
                     [internal]: error.message,
                 });
+                alert.show(
+                    'There was an error while creating the analytical framework.',
+                    {
+                        variant: 'error',
+                    },
+                );
             },
         },
     );
@@ -191,6 +205,12 @@ function FrameworkForm(props: FrameworkFormProps) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
                 } else if (ok && result) {
+                    alert.show(
+                        'The analytical framework was successfully updated.',
+                        {
+                            variant: 'success',
+                        },
+                    );
                     setValue(transformFramework(result as Framework));
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
@@ -200,6 +220,12 @@ function FrameworkForm(props: FrameworkFormProps) {
                 setError({
                     [internal]: error.message,
                 });
+                alert.show(
+                    'There was an error while updating the analytical framework.',
+                    {
+                        variant: 'error',
+                    },
+                );
             },
         },
     );
@@ -358,16 +384,14 @@ function FrameworkForm(props: FrameworkFormProps) {
                                 className={styles.createdBy}
                                 name="createdBy"
                                 value={framework?.createdBy?.displayName}
-                                readOnly
-                                disabled={pending}
+                                disabled
                                 label={_ts('analyticalFramework', 'createdBy')}
                             />
                             <DateInput
                                 className={styles.createdOn}
                                 name="createdAt"
                                 value={framework?.createdAt?.split('T')[0]}
-                                readOnly
-                                disabled={pending}
+                                disabled
                                 label={_ts('analyticalFramework', 'createdOn')}
                             />
                         </div>

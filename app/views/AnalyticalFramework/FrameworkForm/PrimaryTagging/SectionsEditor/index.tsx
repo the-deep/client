@@ -10,6 +10,7 @@ import {
     TextInput,
     TextArea,
     QuickActionButton,
+    QuickActionConfirmButton,
     ExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
@@ -136,14 +137,15 @@ function SectionInput(props: SectionInputProps) {
             expansionTriggerArea="arrow"
             headerActions={(
                 <>
-                    <QuickActionButton
+                    <QuickActionConfirmButton
                         name={index}
                         onClick={onRemove}
+                        message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
                         // FIXME: use translation
                         title="Remove Title"
                     >
                         <IoTrash />
-                    </QuickActionButton>
+                    </QuickActionConfirmButton>
                     <QuickActionButton
                         name={index}
                         // FIXME: use translation

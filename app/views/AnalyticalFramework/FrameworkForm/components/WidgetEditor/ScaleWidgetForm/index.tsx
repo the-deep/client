@@ -9,7 +9,6 @@ import {
     Checkbox,
     SelectInput,
     TextInput,
-    TextArea,
     QuickActionButton,
     ExpandableContainer,
     Container,
@@ -68,7 +67,6 @@ const optionSchema: OptionSchema = {
     fields: (): OptionSchemaFields => ({
         clientId: [],
         label: [requiredStringCondition],
-        tooltip: [],
         color: [isValidColor],
         order: [],
     }),
@@ -222,16 +220,6 @@ function OptionInput(props: OptionInputProps) {
                 value={value.color}
                 onChange={onFieldChange}
                 error={error?.color}
-                className={styles.optionInput}
-            />
-            <TextArea
-                // FIXME: use translation
-                label="Tooltip"
-                name="tooltip"
-                rows={2}
-                value={value.tooltip}
-                onChange={onFieldChange}
-                error={error?.tooltip}
                 className={styles.optionInput}
             />
         </ExpandableContainer>
