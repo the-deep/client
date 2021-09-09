@@ -29,7 +29,11 @@ import {
 } from '@the-deep/deep-ui';
 import { removeNull } from '@togglecorp/toggle-form';
 
-import { WidgetRaw, Widget, DeepReplace, DeepMandatory } from '#types/newAnalyticalFramework';
+import { Widget } from '#types/newAnalyticalFramework';
+import {
+    DeepMandatory,
+    DeepReplace,
+} from '#utils/types';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { ProjectContext } from '#base/context/ProjectContext';
@@ -41,6 +45,7 @@ import { ProjectDetails } from '#types';
 import {
     FrameworkDetailsQuery,
     FrameworkDetailsQueryVariables,
+    WidgetType as WidgetRaw,
 } from '#generated/types';
 
 import AddFrameworkModal from '../AddFrameworkModal';

@@ -1,11 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import { Section } from '#types/newAnalyticalFramework';
 import { Lead } from '#components/lead/LeadEditForm/schema';
 
 import Sections from './Sections';
 import LeftPane, { Entry } from '../LeftPane';
+import { Section } from '../types';
 import styles from './styles.css';
 
 interface Props {

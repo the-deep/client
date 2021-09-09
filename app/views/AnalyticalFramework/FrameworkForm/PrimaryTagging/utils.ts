@@ -2,9 +2,10 @@ import produce from 'immer';
 import { isNotDefined } from '@togglecorp/fujs';
 
 import { reorder } from '#utils/common';
-import { Section, Widget } from '#types/newAnalyticalFramework';
 
 import { PartialWidget } from '#components/framework/WidgetPreview';
+
+import { Section, Widget } from '../../types';
 import { PartialSectionType } from './SectionsEditor';
 
 export interface TempWidget {

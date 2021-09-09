@@ -8,7 +8,7 @@ import {
 // import { Entry } from '#types/newEntry';
 // import EntryListItem from '#components/entry/EntryListItem';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
-import { Section, Widget } from '#types/newAnalyticalFramework';
+import { Section, Widget } from '../types';
 
 // import entryMockData from '#views/Project/Tagging/mockData';
 

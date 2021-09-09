@@ -8,9 +8,9 @@ import {
     TabPanel,
 } from '@the-deep/deep-ui';
 
-import { Section } from '#types/newAnalyticalFramework';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import Canvas from '../../components/Canvas';
+import { Section } from '../../types';
 // import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 
@@ -63,7 +63,7 @@ function Sections(props: Props) {
                                 styles.tab,
                                 // analyzeErrors(error?.[section.clientId]) && styles.errored,
                             )}
-                            title={section.tooltip}
+                            title={section.tooltip ?? undefined}
                         >
                             {section.title}
                         </Tab>
@@ -77,7 +77,7 @@ function Sections(props: Props) {
                     >
                         <Canvas
                             name={section.clientId}
-                            widgets={section.widgets}
+                            widgets={section.widgets ?? undefined}
                         />
                     </TabPanel>
                 ))}
