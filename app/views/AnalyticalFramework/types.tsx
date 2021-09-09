@@ -21,6 +21,5 @@ export type Framework = DeepReplace<FrameworkRaw, WidgetRaw, WidgetFromAF>;
 
 export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order'>;
 export type FrameworkInput = DeepReplace<FrameworkInputRaw, WidgetInputRaw, WidgetFromAF>;
-
 export type Section = NonNullable<NonNullable<FrameworkInput['primaryTagging']>[number]>;
 export type Widget = WidgetFromAF;
