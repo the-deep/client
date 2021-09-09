@@ -31,7 +31,7 @@ import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
 } from '#generated/types';
-import { Framework } from '#types/newAnalyticalFramework';
+import { Framework } from './types';
 import { PROJECT_FRAMEWORK } from './queries';
 
 import type { Entry as EditableEntry } from './LeftPane';

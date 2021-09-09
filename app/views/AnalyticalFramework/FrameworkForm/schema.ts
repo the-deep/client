@@ -5,7 +5,8 @@ import {
     defaultUndefinedType,
     PartialForm,
 } from '@togglecorp/toggle-form';
-import { FrameworkInput } from '#types/newAnalyticalFramework';
+
+import { FrameworkInput } from '../types';
 
 type FormType = FrameworkInput;
 // NOTE: they will be handled internally

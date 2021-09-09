@@ -15,9 +15,11 @@ import {
     GeoLocationValue,
     Matrix1dValue,
     Matrix2dValue,
+} from '#types/newAnalyticalFramework';
+import {
     DeepMandatory,
     DeepReplace,
-} from '#types/newAnalyticalFramework';
+} from '#utils/types';
 import {
     BulkEntryInputType,
     ProjectFrameworkQuery,
