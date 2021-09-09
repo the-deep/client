@@ -5,7 +5,7 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 
-import { EntryReviewComment } from '#types/newEntry';
+import { EntryReviewComment } from '#types/entry';
 import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import UserContext from '#base/context/UserContext';
