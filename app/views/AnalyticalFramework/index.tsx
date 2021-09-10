@@ -19,6 +19,8 @@ import FrameworkForm from './FrameworkForm';
 import { CURRENT_FRAMEWORK } from './queries';
 import styles from './styles.css';
 
+// TODO: create a parent route for Framework as well
+
 interface Props {
     className?: string;
 }

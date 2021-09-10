@@ -18,6 +18,7 @@ export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
 export type PartialWidgetsType = WidgetsType;
 export type PartialSectionsType = SectionsType;
 
+// NOTE: These are not partials widget types even if it's on the name
 type PartialWidgetType = WidgetsType[number];
 type PartialSectionType = SectionsType[number];
 

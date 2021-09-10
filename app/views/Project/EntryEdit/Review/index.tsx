@@ -19,8 +19,8 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     frameworkId: string | undefined;
-    secondaryTagging: Widget[] | undefined;
-    primaryTagging: Section[] | undefined;
+    secondaryTagging: Widget[] | null | undefined;
+    primaryTagging: Section[] | null | undefined;
 }
 
 function Review(props: Props) {
