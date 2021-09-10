@@ -16,7 +16,7 @@ interface Props<T> {
     isSecondary?: boolean;
     disabled?: boolean;
     error?: Error<Widget[]> | undefined;
-    widgets: Widget[] | undefined;
+    widgets: Widget[] | undefined | null;
 }
 
 function Canvas<T>(props: Props<T>) {
@@ -66,7 +66,7 @@ function Canvas<T>(props: Props<T>) {
             <ListView
                 className={styles.canvas}
                 // eslint-disable-next-line react/destructuring-assignment
-                data={props.widgets}
+                data={props.widgets ?? undefined}
                 keySelector={widgetKeySelector}
                 renderer={WidgetPreview}
                 rendererParams={widgetRendererParams}

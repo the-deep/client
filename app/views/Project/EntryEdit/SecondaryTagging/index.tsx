@@ -15,13 +15,12 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     lead?: Lead;
-    widgets?: Widget[];
+    widgets?: Widget[] | null;
     frameworkId: string;
 
-    entries: Entry[];
-
-    activeEntry: string | undefined;
-    onActiveEntryChange: React.Dispatch<React.SetStateAction<string | undefined>>;
+    entries?: Entry[];
+    activeEntry?: string | undefined;
+    onActiveEntryChange?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 function SecondaryTagging(props: Props) {

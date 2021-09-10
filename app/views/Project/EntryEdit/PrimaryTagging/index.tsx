@@ -14,11 +14,10 @@ interface Props {
     sections: Section[] | undefined | null;
     frameworkId: string;
 
-    entries: Entry[];
-    onEntriesChange: React.Dispatch<React.SetStateAction<Entry[]>>;
-
-    activeEntry: string | undefined;
-    onActiveEntryChange: React.Dispatch<React.SetStateAction<string | undefined>>;
+    entries?: Entry[];
+    onEntriesChange?: React.Dispatch<React.SetStateAction<Entry[]>>;
+    activeEntry?: string | undefined;
+    onActiveEntryChange?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 function PrimaryTagging(props: Props) {
@@ -34,6 +33,9 @@ function PrimaryTagging(props: Props) {
     } = props;
 
     const handleEntryCreate = React.useCallback((newEntry: Entry) => {
+        if (!onEntriesChange) {
+            return;
+        }
         onEntriesChange((oldEntries) => ([
             ...oldEntries,
             newEntry,
@@ -41,6 +43,9 @@ function PrimaryTagging(props: Props) {
     }, [onEntriesChange]);
 
     const handleEntryDelete = React.useCallback((entryId: string) => {
+        if (!onEntriesChange) {
+            return;
+        }
         onEntriesChange((oldEntries) => {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
@@ -58,6 +63,9 @@ function PrimaryTagging(props: Props) {
     }, [onEntriesChange]);
 
     const handleExcerptChange = React.useCallback((entryId: string, modifiedExcerpt: string) => {
+        if (!onEntriesChange) {
+            return;
+        }
         onEntriesChange((oldEntries) => {
             const i = oldEntries.findIndex((e) => e.clientId === entryId);
 
