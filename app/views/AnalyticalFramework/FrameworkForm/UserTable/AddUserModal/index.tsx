@@ -6,6 +6,7 @@ import {
     requiredCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     useAlert,
@@ -154,11 +155,14 @@ function AddUserModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                triggerAddFrameworkMember({ ...val, framework: frameworkId } as ValueToSend);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    triggerAddFrameworkMember({ ...val, framework: frameworkId } as ValueToSend);
+                },
+            );
+            submit();
         },
         [setError, validate, triggerAddFrameworkMember, frameworkId],
     );

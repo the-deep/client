@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import {
     Checkbox,
     Heading,
@@ -8,35 +8,38 @@ import {
 import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
-import { Matrix2dValue, Matrix2dWidget } from '#types/newAnalyticalFramework';
+import { Matrix2dWidget } from '#types/newAnalyticalFramework';
+import { Matrix2dWidgetAttribute } from '#types/newEntry';
 import WidgetWrapper from '../WidgetWrapper';
 
 import styles from './styles.css';
+
+type Matrix2dValue = NonNullable<Matrix2dWidgetAttribute['data']>;
 
 export type PartialMatrix2dWidget = PartialForm<
     Matrix2dWidget,
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type Row = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];
-type Column = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['columns']>[number];
-type SubRow = NonNullable<NonNullable<Row>['subRows']>[number];
+type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];
+type ColumnType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['columns']>[number];
+type SubRow = NonNullable<NonNullable<RowType>['subRows']>[number];
 
-interface CellProps {
+interface ColumnProps {
     onSubRowChange: (
         rowId: string,
         subRowId: string,
         columnId: string,
         selected: string[] | undefined,
     ) => void;
-    rowId: string,
-    subRowId: string,
-    columnId: string,
-    disabled?: boolean,
-    title?: string,
-    selected: boolean,
+    rowId: string;
+    subRowId: string;
+    columnId: string;
+    disabled?: boolean;
+    title?: string;
+    selected: boolean;
 }
-function Cell(props: CellProps) {
+function Column(props: ColumnProps) {
     const {
         rowId,
         subRowId,
@@ -57,7 +60,7 @@ function Cell(props: CellProps) {
     return (
         <td
             title={title}
-            className={_cs(styles.tableCell, styles.checkboxCell)}
+            className={_cs(styles.tableColumn, styles.checkboxColumn)}
         >
             <Checkbox
                 className={styles.input}
@@ -87,8 +90,8 @@ interface SubRowProps {
         selected: string[] | undefined,
     ) => void;
     subRow: SubRow;
-    value: NonNullable<NonNullable<Matrix2dValue>[string]>[string];
-    columns: Column[] | undefined;
+    value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
+    columns: ColumnType[] | undefined;
 }
 
 function SubRow(props: SubRowProps) {
@@ -113,13 +116,13 @@ function SubRow(props: SubRowProps) {
     return (
         <tr className={_cs(className, styles.tableRow)}>
             <td
-                className={_cs(styles.tableCell, styles.subRowHeading)}
+                className={_cs(styles.tableRow, styles.subRowHeading)}
                 title={title ?? ''}
             >
                 {label ?? 'Unnamed'}
             </td>
             {columns?.map((column) => (
-                <Cell
+                <Column
                     key={column.clientId}
                     rowId={rowId}
                     subRowId={subRowId}
@@ -137,9 +140,9 @@ function SubRow(props: SubRowProps) {
 interface RowProps {
     disabled?: boolean;
     readOnly?: boolean;
-    row: Row;
-    columns: Column[] | undefined;
-    value: NonNullable<Matrix2dValue>[string];
+    row: RowType;
+    columns: ColumnType[] | undefined;
+    value: NonNullable<Matrix2dValue['value']>[string];
     onSubRowChange: (
         rowId: string,
         subRowId: string,
@@ -245,20 +248,36 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         widget,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
         actions,
     } = props;
 
+    const onChange = useCallback(
+        (val: Matrix2dValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
+
     const handleSubRowChange = useCallback(
-        (rowId: string, subRowId: string, columnId: string, state: string[] | undefined) => {
-            const newValue: Matrix2dValue = {
-                ...value,
+        (
+            rowId: string,
+            subRowId: string,
+            columnId: string,
+            state: string[] | undefined,
+        ) => {
+            const newValue = {
+                ...value?.value,
                 [rowId]: {
-                    ...value?.[rowId],
+                    ...value?.value?.[rowId],
                     [subRowId]: {
-                        ...value?.[rowId]?.[subRowId],
+                        ...value?.value?.[rowId]?.[subRowId],
                         [columnId]: state,
                     },
                 },
@@ -269,7 +288,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: Row) => row.clientId,
+        (row: RowType) => row.clientId,
         [],
     );
 
@@ -278,10 +297,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     ), [widget?.properties?.columns]);
 
     const rowRendererParams = useCallback(
-        (key: string, row: Row) => ({
+        (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.[key],
+            value: value?.value?.[key],
             row,
             columns,
             onSubRowChange: handleSubRowChange,

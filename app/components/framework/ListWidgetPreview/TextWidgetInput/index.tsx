@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TextArea } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
 
-import { TextValue } from '#types/newAnalyticalFramework';
+import { TextWidgetAttribute } from '#types/newEntry';
 import ListWidgetWrapper from '../ListWidgetWrapper';
+
+type TextValue = NonNullable<TextWidgetAttribute['data']>;
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -22,10 +25,21 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: TextValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     return (
         <ListWidgetWrapper
@@ -42,7 +56,7 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
                 <TextArea
                     name={name}
                     onChange={onChange}
-                    value={value}
+                    value={value?.value}
                     rows={3}
                     readOnly={readOnly}
                     disabled={disabled}

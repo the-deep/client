@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import { isDefined } from '@togglecorp/fujs';
 import {
     useForm,
     requiredCondition,
     ObjectSchema,
     requiredStringCondition,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -76,11 +76,12 @@ function AddLeadGroupModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                leadGroupAddTrigger(val);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                leadGroupAddTrigger,
+            );
+            submit();
         },
         [setError, validate, leadGroupAddTrigger],
     );

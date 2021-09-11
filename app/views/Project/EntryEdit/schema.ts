@@ -10,9 +10,9 @@ type FormType = {
     entries: EntryInput[];
 }
 
-export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data'>;
+export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data' | 'entryType' | 'lead'>;
 
-type PartialEntryType = NonNullable<PartialFormType['entries']>[number];
+export type PartialEntryType = NonNullable<PartialFormType['entries']>[number];
 
 type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 

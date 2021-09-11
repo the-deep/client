@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { _cs, isDefined } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     requiredStringCondition,
     requiredListCondition,
@@ -9,6 +9,7 @@ import {
     requiredCondition,
     internal,
     getErrorString,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -102,11 +103,12 @@ function EntryUncontrolCommentModal(props: Props) {
     const error = getErrorObject(riskyError);
 
     const handleSubmit = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            triggerReviewRequest(val);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            triggerReviewRequest,
+        );
+        submit();
     }, [setError, validate, triggerReviewRequest]);
 
     return (

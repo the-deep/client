@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { NumberInput } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import WidgetWrapper from '../WidgetWrapper';
-import { NumberValue } from '#types/newAnalyticalFramework';
+import { NumberWidgetAttribute } from '#types/newEntry';
+
+type NumberValue = NonNullable<NumberWidgetAttribute['data']>;
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -23,11 +26,22 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
         actions,
     } = props;
+
+    const onChange = useCallback(
+        (val: NumberValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     return (
         <WidgetWrapper
@@ -38,7 +52,7 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
             <NumberInput
                 name={name}
                 onChange={onChange}
-                value={value}
+                value={value?.value}
                 readOnly={readOnly}
                 disabled={disabled}
             />

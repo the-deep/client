@@ -7,7 +7,9 @@ export const PROJECT_FRAMEWORK = gql`
         $leadId: ID!,
     ) {
         project(id: $projectId) {
+            id
             lead(id: $leadId) {
+                id
                 entries {
                     clientId
                     id
@@ -20,6 +22,9 @@ export const PROJECT_FRAMEWORK = gql`
                         id
                         widget
                         widgetType
+                    }
+                    lead {
+                        id
                     }
                     image {
                         id
@@ -34,6 +39,7 @@ export const PROJECT_FRAMEWORK = gql`
                 }
             }
             analysisFramework {
+                id
                 primaryTagging {
                     widgets {
                         id
@@ -61,7 +67,6 @@ export const PROJECT_FRAMEWORK = gql`
                     widgetId
                     width
                 }
-                id
             }
         }
     }

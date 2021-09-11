@@ -1,26 +1,34 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    // ListView,
+    // Error,
+    // SetValueArg,
+    EntriesAsList,
+    useFormArray,
+} from '@togglecorp/toggle-form';
+import {
+    ListView,
     Container,
 } from '@the-deep/deep-ui';
 
-// import { Entry } from '#types/newEntry';
-// import EntryListItem from '#components/entry/EntryListItem';
+import EntryInput from '#components/entry/EntryInput';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { Section, Widget } from '../types';
-
-// import entryMockData from '#views/Project/Tagging/mockData';
+import { PartialFormType, PartialEntryType } from '../schema';
 
 import styles from './styles.css';
 
-// const entryKeySelector = (e: Entry) => e.clientId;
+const entryKeySelector = (e: PartialEntryType) => e.clientId;
 
 interface Props {
     className?: string;
     frameworkId: string | undefined;
     secondaryTagging: Widget[] | null | undefined;
     primaryTagging: Section[] | null | undefined;
+
+    value: PartialFormType,
+    // error: Error<PartialFormType>,
+    onChange: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
 function Review(props: Props) {
@@ -29,20 +37,28 @@ function Review(props: Props) {
         frameworkId,
         secondaryTagging,
         primaryTagging,
+
+        value,
+        // error,
+        onChange,
     } = props;
 
-    // FIXME: use this later on
-    // eslint-disable-next-line no-console
-    console.log(primaryTagging, secondaryTagging);
+    const {
+        setValue: onEntryChange,
+    } = useFormArray<'entries', PartialEntryType>('entries', onChange);
 
-    /*
-    const entryDataRendererParams = useCallback((_: string, data: Entry, index: number) => ({
-        entry: data,
-        index,
-        secondaryTagging,
-        primaryTagging,
-    }), [secondaryTagging, primaryTagging]);
-    */
+    const entryDataRendererParams = useCallback(
+        (_: string, data: PartialEntryType, index: number) => ({
+            value: data,
+            name: index,
+            index,
+            onChange: onEntryChange,
+            secondaryTagging,
+            primaryTagging,
+            // error,
+        }),
+        [secondaryTagging, primaryTagging, onEntryChange],
+    );
 
     return (
         <Container
@@ -55,15 +71,13 @@ function Review(props: Props) {
                 />
             )}
         >
-            {/*
             <ListView
                 className={styles.entries}
                 keySelector={entryKeySelector}
-                renderer={EntryListItem}
-                data={entryMockData}
+                renderer={EntryInput}
+                data={value.entries}
                 rendererParams={entryDataRendererParams}
             />
-            */}
         </Container>
     );
 }

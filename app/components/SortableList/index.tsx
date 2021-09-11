@@ -30,7 +30,7 @@ import {
     verticalListSortingStrategy,
     rectSortingStrategy,
 } from '@dnd-kit/sortable';
-import { listToMap } from '@togglecorp/fujs';
+import { listToMap, isDefined } from '@togglecorp/fujs';
 
 import { genericMemo } from '#utils/common';
 
@@ -196,7 +196,7 @@ function SortableList<
                 (d) => String(keySelector(d)),
                 (d) => d,
             );
-            const newData = newItems.map((item) => dataMap[item]);
+            const newData = newItems.map((item) => dataMap[item]).filter(isDefined);
             onChange(newData, name);
         }
     }, [keySelector, items, data, onChange, name]);
@@ -217,6 +217,9 @@ function SortableList<
             activeIndex,
             data,
         );
+        if (!params) {
+            return null;
+        }
         return (
             <Renderer
                 {...params}

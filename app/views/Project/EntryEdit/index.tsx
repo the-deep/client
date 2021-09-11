@@ -28,7 +28,6 @@ import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
 } from '#generated/types';
-import { Framework } from './types';
 import { PROJECT_FRAMEWORK } from './queries';
 
 // import type { Entry as EditableEntry } from './LeftPane';
@@ -38,7 +37,16 @@ import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
 
 import schema, { defaultFormValues } from './schema';
+import { Entry, EntryInput, Framework } from './types';
 import styles from './styles.css';
+
+function transformEntry(entry: Entry): EntryInput {
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+    });
+}
 
 interface Props {
     className?: string;
@@ -86,19 +94,11 @@ function EntryEdit(props: Props) {
 
     // ENTRY
 
-    /*
-    const [entries, setEntries] = React.useState<EditableEntry[]>([]);
-    const [
-        activeEntry,
-        setActiveEntry,
-    ] = React.useState<EditableEntry['clientId'] | undefined>();
-    */
-
     const {
         value: formValue,
         setValue: setFormValue,
         setFieldValue: setFormFieldValue,
-        error: formFormError,
+        // error: formError,
     } = useForm(schema, defaultFormValues);
 
     const variables = useMemo(
@@ -122,7 +122,13 @@ function EntryEdit(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                const entries = removeNull(response?.project?.lead?.entries);
+                const leadFromResponse = response?.project?.lead;
+                if (!leadFromResponse) {
+                    return;
+                }
+                const entries = leadFromResponse.entries?.map(
+                    (entry) => transformEntry(entry as Entry),
+                );
                 setFormValue((oldVal) => ({ ...oldVal, entries }));
             },
         },
@@ -247,6 +253,9 @@ function EntryEdit(props: Props) {
                         className={styles.tabPanel}
                     >
                         <Review
+                            value={formValue}
+                            // error={formError}
+                            onChange={setFormFieldValue}
                             frameworkId={frameworkDetails?.id}
                             secondaryTagging={frameworkDetails?.secondaryTagging}
                             primaryTagging={frameworkDetails?.primaryTagging}

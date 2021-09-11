@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import {
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 import {
     Card,
@@ -10,6 +9,7 @@ import {
 } from '@the-deep/deep-ui';
 import {
     useForm,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -94,11 +94,12 @@ function LeadEditModal(props: Props) {
     const pending = leadGetPending || leadSavePending;
 
     const handleSubmit = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            triggerLeadSave(val);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            triggerLeadSave,
+        );
+        submit();
     }, [triggerLeadSave, setError, validate]);
 
     return (

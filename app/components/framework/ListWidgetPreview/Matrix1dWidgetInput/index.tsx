@@ -4,6 +4,7 @@ import {
     mapToList,
     listToMap,
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     ListView,
@@ -13,26 +14,29 @@ import { PartialForm } from '@togglecorp/toggle-form';
 
 import { sortByOrder } from '#utils/common';
 
-import { Matrix1dValue, Matrix1dWidget } from '#types/newAnalyticalFramework';
+import { Matrix1dWidget } from '#types/newAnalyticalFramework';
+import { Matrix1dWidgetAttribute } from '#types/newEntry';
 
 import styles from './styles.css';
 
+type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
+
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
-    'clientId' | 'widgetId' | 'order' | 'key'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
-type Cell = NonNullable<NonNullable<RowType>['cells']>[number];
+type CellType = NonNullable<NonNullable<RowType>['cells']>[number];
 
-const cellKeySelector = (c: Cell) => c.clientId;
-const cellLabelSelector = (c: Cell) => c.label ?? '';
+const cellKeySelector = (c: CellType) => c.clientId;
+const cellLabelSelector = (c: CellType) => c.label ?? '';
 
 interface RowProps {
     disabled?: boolean;
     readOnly?: boolean;
     row: RowType;
-    value: NonNullable<Matrix1dValue>[string];
+    value: NonNullable<Matrix1dValue['value']>[string];
     onCellsChange: (cells: { [key: string]: boolean | undefined }, cellId: string) => void;
 }
 
@@ -45,24 +49,24 @@ function Row(props: RowProps) {
         value,
     } = props;
 
+    const {
+        clientId,
+        label,
+        tooltip,
+        cells,
+    } = row;
+
     const transformedValue = useMemo(() => (
         // FIXME: Remove the cast below later on
         mapToList(value, (d, k) => (d ? k as string : undefined))?.filter(isDefined)
     ), [value]);
-
-    const {
-        label,
-        tooltip,
-        cells,
-        clientId,
-    } = row;
 
     const handleCellsChange = useCallback((newCells: string[]) => {
         onCellsChange(listToMap(newCells, (d) => d, () => true), clientId);
     }, [onCellsChange, clientId]);
 
     const sortedCells = useMemo(() => (
-        sortByOrder(cells)?.filter(isDefined)
+        sortByOrder(cells)
     ), [cells]);
 
     const selectedValues = useMemo(() => {
@@ -119,17 +123,28 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         widget,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: Matrix1dValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     const widgetRows = widget?.properties?.rows;
 
     const filteredRows = useMemo(() => {
         const rows = widgetRows?.filter(
             (row) => {
-                const rowValue = value?.[row.clientId];
+                const rowValue = value?.value?.[row.clientId];
                 return !!rowValue && Object.values(rowValue).some((d) => d);
             },
         );
@@ -139,7 +154,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     const handleCellsChange = useCallback(
         (newCells: { [key: string]: boolean | undefined }, rowId: string) => {
             const newValue = {
-                ...value,
+                ...value?.value,
                 [rowId]: newCells,
             };
             onChange(newValue, name);
@@ -155,7 +170,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.[key],
+            value: value?.value?.[key],
             row,
             onCellsChange: handleCellsChange,
         }),

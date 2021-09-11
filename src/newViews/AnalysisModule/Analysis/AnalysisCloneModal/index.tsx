@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import {
-    isDefined,
     compareDate,
 } from '@togglecorp/fujs';
 import {
@@ -16,6 +15,7 @@ import {
     PartialForm,
     getErrorObject,
     requiredStringCondition,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -124,11 +124,12 @@ function AnalysisCloneModal(props: Props) {
     });
 
     const handleSubmitButtonClick = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            triggerAnalysisClone(val as FormType);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (val) => triggerAnalysisClone(val as FormType),
+        );
+        submit();
     }, [triggerAnalysisClone, setError, validate]);
 
     const pending = pendingAnalysisClone || pendingAnalysisGet;

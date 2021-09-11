@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     DateInput,
     DateOutput,
 } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import ListWidgetWrapper from '../ListWidgetWrapper';
-import { DateValue } from '#types/newAnalyticalFramework';
+import { DateWidgetAttribute } from '#types/newEntry';
+
+type DateValue = NonNullable<DateWidgetAttribute['data']>;
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -25,10 +28,21 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: DateValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     return (
         <ListWidgetWrapper
@@ -39,14 +53,14 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
         >
             {readOnly ? (
                 <DateOutput
-                    value={value}
+                    value={value?.value}
                     format="dd, MMM yyyy"
                 />
             ) : (
                 <DateInput
                     name={name}
                     onChange={onChange}
-                    value={value}
+                    value={value?.value}
                     readOnly={readOnly}
                     disabled={disabled}
                 />
