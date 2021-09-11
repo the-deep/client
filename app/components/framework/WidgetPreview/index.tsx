@@ -1,63 +1,84 @@
 import React from 'react';
-import { PartialForm } from '@togglecorp/toggle-form';
+import {
+    PartialForm,
+    SetValueArg,
+    useFormObject,
+} from '@togglecorp/toggle-form';
+import {
+    randomString,
+} from '@togglecorp/fujs';
 
 import { Widget } from '#types/newAnalyticalFramework';
+import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 
-import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
-import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
-import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
-import Matrix2dWidgetInput, { Props as Matrix2dWidgetInputProps } from './Matrix2dWidgetInput';
-import NumberWidgetInput, { Props as NumberWidgetInputProps } from './NumberWidgetInput';
-import TimeWidgetInput, { Props as TimeWidgetInputProps } from './TimeWidgetInput';
-import DateRangeWidgetInput, { Props as DateRangeWidgetInputProps } from './DateRangeWidgetInput';
-import TimeRangeWidgetInput, { Props as TimeRangeWidgetInputProps } from './TimeRangeWidgetInput';
-import ScaleWidgetInput, { Props as ScaleWidgetInputProps } from './ScaleWidgetInput';
-import MultiSelectWidgetInput, { Props as MultiSelectWidgetInputProps } from './MultiSelectWidgetInput';
-import SingleSelectWidgetInput, { Props as SingleSelectWidgetInputProps } from './SingleSelectWidgetInput';
+import TextWidgetInput from './TextWidgetInput';
+import DateWidgetInput from './DateWidgetInput';
+import NumberWidgetInput from './NumberWidgetInput';
+import Matrix1dWidgetInput from './Matrix1dWidgetInput';
+import Matrix2dWidgetInput from './Matrix2dWidgetInput';
+import TimeWidgetInput from './TimeWidgetInput';
+import DateRangeWidgetInput from './DateRangeWidgetInput';
+import TimeRangeWidgetInput from './TimeRangeWidgetInput';
+import ScaleWidgetInput from './ScaleWidgetInput';
+import MultiSelectWidgetInput from './MultiSelectWidgetInput';
+import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 
 import BaseWidgetInput from './BaseWidgetInput';
+
+type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
 export type PartialWidget = PartialForm<
     Widget,
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-interface Props <N extends string, T>{
+const defaultOptionVal = (): PartialAttributeType => ({
+    // FIXME: always generate this
+    clientId: randomString(),
+    widgetType: 'TEXT',
+    widget: 'something-not-random',
+    data: undefined,
+});
+
+export interface Props<N extends string | number | undefined> {
+    name: N,
+    value: PartialAttributeType | null | undefined,
+    onChange: (value: SetValueArg<PartialAttributeType>, name: N) => void,
+
     className?: string,
     widget: PartialWidget,
-    name: N,
-    value: T | null | undefined,
-    onChange: (value: T | undefined, name: N) => void,
-    actions?: React.ReactNode,
     readOnly?: boolean;
     disabled?: boolean;
+    actions?: React.ReactNode,
 }
 
-function WidgetPreview<N extends string, T>(props: Props<N, T>) {
+function AttributeInput<N extends string | number | undefined>(props: Props<N>) {
     const {
-        className,
-        widget,
-        name,
         value,
         onChange,
+        name,
+
+        className,
+        widget,
         readOnly,
         disabled,
         actions,
     } = props;
 
+    const onFieldChange = useFormObject(name, onChange, defaultOptionVal);
+
     switch (widget.widgetId) {
         case 'TEXT': {
-            // NOTE: we are casting this value
-            const onChangeForText = onChange as TextWidgetInputProps<string>['onChange'];
-            const valueForText = value as TextWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <TextWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForText}
-                    value={valueForText}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -65,17 +86,16 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'NUMBER': {
-            // NOTE: we are casting this value
-            const onChangeForNumber = onChange as NumberWidgetInputProps<string>['onChange'];
-            const valueForNumber = value as NumberWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <NumberWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForNumber}
-                    value={valueForNumber}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -83,17 +103,16 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'DATE': {
-            // NOTE: we are casting this value
-            const onChangeForDate = onChange as DateWidgetInputProps<string>['onChange'];
-            const valueForDate = value as DateWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <DateWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForDate}
-                    value={valueForDate}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -101,17 +120,16 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'TIME': {
-            // NOTE: we are casting this value
-            const onChangeForTime = onChange as TimeWidgetInputProps<string>['onChange'];
-            const valueForTime = value as TimeWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <TimeWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForTime}
-                    value={valueForTime}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -119,17 +137,16 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'DATE_RANGE': {
-            // NOTE: we are casting this value
-            const onChangeForDate = onChange as DateRangeWidgetInputProps<string>['onChange'];
-            const valueForDate = value as DateRangeWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <DateRangeWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForDate}
-                    value={valueForDate}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -137,71 +154,33 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'TIME_RANGE': {
-            // NOTE: we are casting this value
-            const onChangeForTimeRange = onChange as TimeRangeWidgetInputProps<string>['onChange'];
-            const valueForTimeRange = value as TimeRangeWidgetInputProps<string>['value'];
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <TimeRangeWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForTimeRange}
-                    value={valueForTimeRange}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
-                />
-            );
-        }
-        case 'MATRIX1D': {
-            // NOTE: we are casting this value
-            const onChangeForMatrix1d = onChange as Matrix1dWidgetInputProps<string>['onChange'];
-            const valueForMatrix1d = value as Matrix1dWidgetInputProps<string>['value'];
-
-            return (
-                <Matrix1dWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name={name}
-                    onChange={onChangeForMatrix1d}
-                    value={valueForMatrix1d}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    actions={actions}
-                    widget={widget}
-                />
-            );
-        }
-        case 'MATRIX2D': {
-            // NOTE: we are casting this value
-            const onChangeForMatrix2d = onChange as Matrix2dWidgetInputProps<string>['onChange'];
-            const valueForMatrix2d = value as Matrix2dWidgetInputProps<string>['value'];
-
-            return (
-                <Matrix2dWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name={name}
-                    onChange={onChangeForMatrix2d}
-                    value={valueForMatrix2d}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    actions={actions}
-                    widget={widget}
                 />
             );
         }
         case 'SCALE': {
-            // NOTE: we are casting this value
-            const onChangeForTimeRange = onChange as ScaleWidgetInputProps<string>['onChange'];
-            const valueForTimeRange = value as ScaleWidgetInputProps<string>['value'];
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <ScaleWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForTimeRange}
-                    value={valueForTimeRange}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -210,17 +189,16 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'MULTISELECT': {
-            // NOTE: we are casting this value
-            const onChangeForMultiSelect = onChange as MultiSelectWidgetInputProps<string>['onChange'];
-            const valueForMultiSelect = value as MultiSelectWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <MultiSelectWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForMultiSelect}
-                    value={valueForMultiSelect}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -229,17 +207,52 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             );
         }
         case 'SELECT': {
-            // NOTE: we are casting this value
-            const onChangeForSingleSelect = onChange as SingleSelectWidgetInputProps<string>['onChange'];
-            const valueForSingleSelect = value as SingleSelectWidgetInputProps<string>['value'];
-
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
             return (
                 <SingleSelectWidgetInput
                     className={className}
                     title={widget.title}
-                    name={name}
-                    onChange={onChangeForSingleSelect}
-                    value={valueForSingleSelect}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    actions={actions}
+                    widget={widget}
+                />
+            );
+        }
+        case 'MATRIX1D': {
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
+            return (
+                <Matrix1dWidgetInput
+                    className={className}
+                    title={widget.title}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    actions={actions}
+                    widget={widget}
+                />
+            );
+        }
+        case 'MATRIX2D': {
+            if (value && value.widgetType !== widget.widgetId) {
+                return null;
+            }
+            return (
+                <Matrix2dWidgetInput
+                    className={className}
+                    title={widget.title}
+                    name="data"
+                    onChange={onFieldChange}
+                    value={value?.data}
                     readOnly={readOnly}
                     disabled={disabled}
                     actions={actions}
@@ -259,4 +272,4 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
     }
 }
 
-export default WidgetPreview;
+export default AttributeInput;

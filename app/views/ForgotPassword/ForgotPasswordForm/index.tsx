@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useRef, useMemo } from 'react';
 import {
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 import {
     Button,
@@ -21,6 +20,7 @@ import {
     requiredStringCondition,
     internal,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
@@ -116,12 +116,15 @@ function ForgotPasswordModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                elementRef.current?.resetCaptcha();
-                triggerReset(val as ForgotPasswordFields);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    elementRef.current?.resetCaptcha();
+                    triggerReset(val as ForgotPasswordFields);
+                },
+            );
+            submit();
         },
         [setError, validate, triggerReset],
     );

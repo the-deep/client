@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { isDefined } from '@togglecorp/fujs';
 import {
     useForm,
     requiredCondition,
@@ -7,6 +6,7 @@ import {
     ObjectSchema,
     requiredStringCondition,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     PendingMessage,
@@ -95,11 +95,12 @@ function AddOrganizationModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                createOrganization(val);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                createOrganization,
+            );
+            submit();
         },
         [setError, validate, createOrganization],
     );

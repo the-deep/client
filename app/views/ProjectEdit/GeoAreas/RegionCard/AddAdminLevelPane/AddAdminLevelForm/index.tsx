@@ -18,6 +18,7 @@ import {
     requiredCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 import DeepFileInput from '#components/general/DeepFileInput';
@@ -115,11 +116,12 @@ function AddAdminLevelForm(props: Props) {
     }, [onDelete, valueFromProps.id]);
 
     const handleSubmit = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            addAdminLevelTrigger(val as PartialAdminLevel);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (val) => addAdminLevelTrigger(val as PartialAdminLevel),
+        );
+        submit();
     }, [setError, validate, addAdminLevelTrigger]);
 
     const parentOptions = adminLevelOptions?.filter((v) => v.id !== valueFromProps.id);

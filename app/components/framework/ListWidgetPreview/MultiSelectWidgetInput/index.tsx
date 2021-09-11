@@ -1,16 +1,17 @@
-import React, { useMemo } from 'react';
-import {
-    listToMap,
-} from '@togglecorp/fujs';
+import React, { useMemo, useCallback } from 'react';
 import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
+import { listToMap, isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
 
-import { MultiSelectValue, MultiSelectWidget } from '#types/newAnalyticalFramework';
+import { MultiSelectWidget } from '#types/newAnalyticalFramework';
+import { MultiSelectWidgetAttribute } from '#types/newEntry';
 import ListWidgetWrapper from '../ListWidgetWrapper';
+
+type MultiSelectValue = NonNullable<MultiSelectWidgetAttribute['data']>;
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
@@ -44,11 +45,22 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         widget,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: MultiSelectValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     const widgetOptions = widget?.properties?.options;
     const sortedOptions = useMemo(() => (
@@ -57,7 +69,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(widgetOptions, (d) => d.clientId, (d) => d.label);
-        return value?.map((v) => optionsMap?.[v])?.join(', ');
+        return value?.value?.map((v) => optionsMap?.[v])?.join(', ');
     }, [widgetOptions, value]);
 
     return (
@@ -78,7 +90,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
                     keySelector={optionKeySelector}
                     labelSelector={optionLabelSelector}
                     onChange={onChange}
-                    value={value}
+                    value={value?.value}
                     readOnly={readOnly}
                     disabled={disabled}
                 />

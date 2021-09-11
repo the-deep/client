@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
@@ -12,18 +12,30 @@ import {
     QuickActionButton,
     Container,
 } from '@the-deep/deep-ui';
+import {
+    removeNull,
+} from '@togglecorp/toggle-form';
 
 import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptOutput from '#components/entry/ExcerptOutput';
-import EntryListItem from '#components/entry/EntryListItem';
+import EntryInput from '#components/entry/EntryInput';
 // import EntryVerification from '#components/entryReview/EntryVerification';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
+import { EntryInput as EntryInputType } from '#views/Project/EntryEdit/types';
 
 import { Framework, Entry } from '../types';
 
 import styles from './styles.css';
+
+function transformEntry(entry: Entry): EntryInputType {
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+    });
+}
 
 interface Props {
     className?: string;
@@ -67,6 +79,15 @@ function EntryCard(props: Props) {
         },
         failureHeader: 'Entry',
     });
+
+    const handleChange = useCallback(
+        (value: unknown) => {
+            // FIXME: handle here
+            // eslint-disable-next-line no-console
+            console.warn('Should set value to', value);
+        },
+        [],
+    );
 
     const authorsDetailText = useMemo(() => (
         leadDetails?.authors?.map((a) => a.title)?.join(', ')
@@ -210,8 +231,10 @@ function EntryCard(props: Props) {
                             </>
                         )}
                     >
-                        <EntryListItem
-                            entry={entry}
+                        <EntryInput
+                            name={undefined}
+                            value={transformEntry(entry)}
+                            onChange={handleChange}
                             hideExcerpt
                             primaryTagging={framework?.primaryTagging}
                             secondaryTagging={framework?.secondaryTagging}

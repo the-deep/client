@@ -22,6 +22,7 @@ import {
     SetValueArg,
     internal,
     analyzeErrors,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     useMutation,
@@ -252,33 +253,36 @@ function FrameworkForm(props: FrameworkFormProps) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                // NOTE: clearing out these data so they don't override
-                const data = { ...val } as AnalysisFrameworkInputType;
-                if (primaryTaggingPristine) {
-                    delete data.primaryTagging;
-                }
-                if (secondaryTaggingPristine) {
-                    delete data.secondaryTagging;
-                }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    // NOTE: clearing out these data so they don't override
+                    const data = { ...val } as AnalysisFrameworkInputType;
+                    if (primaryTaggingPristine) {
+                        delete data.primaryTagging;
+                    }
+                    if (secondaryTaggingPristine) {
+                        delete data.secondaryTagging;
+                    }
 
-                if (frameworkId) {
-                    updateAnalysisFramework({
-                        variables: {
-                            id: String(frameworkId),
-                            data,
-                        },
-                    });
-                } else {
-                    createAnalysisFramework({
-                        variables: {
-                            data,
-                        },
-                    });
-                }
-            }
+                    if (frameworkId) {
+                        updateAnalysisFramework({
+                            variables: {
+                                id: String(frameworkId),
+                                data,
+                            },
+                        });
+                    } else {
+                        createAnalysisFramework({
+                            variables: {
+                                data,
+                            },
+                        });
+                    }
+                },
+            );
+            submit();
         },
         [
             setError, validate, frameworkId,

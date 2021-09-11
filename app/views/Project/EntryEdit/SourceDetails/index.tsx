@@ -4,7 +4,7 @@ import { Card } from '@the-deep/deep-ui';
 import {
     EntriesAsList,
     Error,
-    SetValueArg,
+    SetBaseValueArg,
 } from '@togglecorp/toggle-form';
 
 import LeadPreview from '#components/lead/LeadPreview';
@@ -21,7 +21,7 @@ interface Props {
     ready: boolean;
     leadInitialValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
-    setValue: (value: SetValueArg<PartialFormType>) => void;
+    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     setPristine: (val: boolean) => void;
     projectId: number;
 }

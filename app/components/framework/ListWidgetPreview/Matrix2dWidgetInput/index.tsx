@@ -1,39 +1,39 @@
 import React, { useMemo, useCallback } from 'react';
+import { _cs, isNotDefined, listToMap } from '@togglecorp/fujs';
 import {
-    _cs,
-    listToMap,
-} from '@togglecorp/fujs';
-import {
-    Heading,
     MultiSelectInput,
-    List,
     ListView,
+    Heading,
+    List,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
-import { Matrix2dValue, Matrix2dWidget } from '#types/newAnalyticalFramework';
+import { Matrix2dWidget } from '#types/newAnalyticalFramework';
+import { Matrix2dWidgetAttribute } from '#types/newEntry';
 
 import styles from './styles.css';
 
+type Matrix2dValue = NonNullable<Matrix2dWidgetAttribute['data']>;
+
 export type PartialMatrix2dWidget = PartialForm<
     Matrix2dWidget,
-    'clientId' | 'widgetId' | 'order' | 'key'
+    'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type Row = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];
-type Column = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['columns']>[number];
-type SubColumn = NonNullable<NonNullable<Column>['subColumns']>[number];
-type SubRow = NonNullable<NonNullable<Row>['subRows']>[number];
+type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];
+type ColumnType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['columns']>[number];
+type SubColumn = NonNullable<NonNullable<ColumnType>['subColumns']>[number];
+type SubRow = NonNullable<NonNullable<RowType>['subRows']>[number];
 
-const columnKeySelector = (col: Column) => col.clientId;
+const columnKeySelector = (col: ColumnType) => col.clientId;
 const subColumnKeySelector = (col: SubColumn) => col.clientId;
 const subColumnLabelSelector = (col: SubColumn) => col.label ?? '';
 
 interface ColumnProps {
     subRowLabel?: string;
-    value: NonNullable<NonNullable<Matrix2dValue>[string]>[string];
-    column: Column;
+    value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
+    column: ColumnType;
     onSubColumnsChange: (
         rowId: string,
         subRowId: string,
@@ -118,8 +118,8 @@ interface SubRowProps {
         selected: string[] | undefined,
     ) => void;
     subRow: SubRow;
-    value: NonNullable<NonNullable<Matrix2dValue>[string]>[string];
-    columns: Column[] | undefined;
+    value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
+    columns: ColumnType[] | undefined;
 }
 
 function SubRow(props: SubRowProps) {
@@ -144,7 +144,7 @@ function SubRow(props: SubRowProps) {
         return sortByOrder(filteredSubRows);
     }, [columns, value]);
 
-    const columnRendererParams = useCallback((_: string, column: Column) => ({
+    const columnRendererParams = useCallback((_: string, column: ColumnType) => ({
         subRowLabel: label,
         column,
         readOnly,
@@ -176,9 +176,9 @@ function SubRow(props: SubRowProps) {
 interface RowProps {
     disabled?: boolean;
     readOnly?: boolean;
-    row: Row;
-    columns: Column[] | undefined;
-    value: NonNullable<Matrix2dValue>[string];
+    row: RowType;
+    columns: ColumnType[] | undefined;
+    value: NonNullable<Matrix2dValue['value']>[string];
     onSubColumnsChange: (
         rowId: string,
         subRowId: string,
@@ -205,7 +205,7 @@ function Row(props: RowProps) {
     } = row;
 
     const orderedSubRows = useMemo(() => {
-        const filteredSubRows = subRows?.filter((sr) => value?.[sr.clientId]);
+        const filteredSubRows = subRows?.filter((sr) => value?.value?.[sr.clientId]);
         return sortByOrder(filteredSubRows);
     }, [subRows, value]);
 
@@ -265,10 +265,21 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         widget,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: Matrix2dValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     const handleSubColumnsChange = useCallback(
         (
@@ -277,12 +288,12 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             columnId: string,
             newSubColValue: string[] | undefined,
         ) => {
-            const newValue: Matrix2dValue = {
-                ...value,
+            const newValue = {
+                ...value?.value,
                 [rowId]: {
-                    ...value?.[rowId],
+                    ...value?.value?.[rowId],
                     [subRowId]: {
-                        ...value?.[rowId]?.[subRowId],
+                        ...value?.value?.[rowId]?.[subRowId],
                         [columnId]: newSubColValue,
                     },
                 },
@@ -293,7 +304,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: Row) => row.clientId,
+        (row: RowType) => row.clientId,
         [],
     );
 
@@ -302,10 +313,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     ), [widget?.properties?.columns]);
 
     const rowRendererParams = useCallback(
-        (key: string, row: Row) => ({
+        (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.[key],
+            value: value?.value?.[key],
             row,
             columns,
             onSubColumnsChange: handleSubColumnsChange,
@@ -316,7 +327,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     const widgetRows = widget?.properties?.rows;
 
     const orderedRows = useMemo(() => {
-        const filteredRows = widgetRows?.filter((wr) => value?.[wr.clientId]);
+        const filteredRows = widgetRows?.filter((wr) => value?.value?.[wr.clientId]);
         return sortByOrder(filteredRows);
     }, [widgetRows, value]);
 

@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import {
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 import { useMutation, gql } from '@apollo/client';
 import {
@@ -19,6 +18,7 @@ import {
     requiredStringCondition,
     getErrorObject,
     lengthGreaterThanCondition,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import {
@@ -135,16 +135,19 @@ function ProjectJoinModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                joinProject({
-                    variables: {
-                        reason: val.reason ?? '',
-                        project: projectId,
-                    },
-                });
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    joinProject({
+                        variables: {
+                            reason: val.reason ?? '',
+                            project: projectId,
+                        },
+                    });
+                },
+            );
+            submit();
         },
         [setError, validate, projectId, joinProject],
     );

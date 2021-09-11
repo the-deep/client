@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import { isDefined } from '@togglecorp/fujs';
 import {
     ObjectSchema,
     PartialForm,
@@ -7,6 +6,7 @@ import {
     requiredCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -91,11 +91,12 @@ function CustomGeoAddModal(props: Props) {
 
     const handleCustomGeoSubmitClick = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                addRegionsTrigger(val as Region);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => addRegionsTrigger(val as Region),
+            );
+            submit();
         },
         [setError, validate, addRegionsTrigger],
     );

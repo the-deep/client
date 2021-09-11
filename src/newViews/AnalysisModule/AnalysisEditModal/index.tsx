@@ -17,6 +17,7 @@ import {
     requiredListCondition,
     requiredStringCondition,
     defaultUndefinedType,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     PendingMessage,
@@ -262,34 +263,29 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     }, [setFieldValue]);
 
     const handleSubmitButtonClick = React.useCallback(() => {
-        const {
-            errored,
-            error: validationError,
-            value: finalValue,
-        } = validate();
-
-        setError(validationError);
-
-        if (!errored) {
-            const matrixMap = listToMap(
-                matrixPillars,
-                d => d.uniqueId,
-                d => ({
-                    id: d.id,
-                    key: d.key,
-                    uniqueId: d.uniqueId,
-                }),
-            );
-            triggerAnalysisEdit({
-                ...finalValue,
-                analysisPillar: finalValue?.analysisPillar?.map(ap => ({
-                    ...ap,
-                    filters: ap.filters?.map(f => matrixMap[f]),
-                })),
-            });
-        } else {
-            console.error(validationError);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (finalValue) => {
+                const matrixMap = listToMap(
+                    matrixPillars,
+                    d => d.uniqueId,
+                    d => ({
+                        id: d.id,
+                        key: d.key,
+                        uniqueId: d.uniqueId,
+                    }),
+                );
+                triggerAnalysisEdit({
+                    ...finalValue,
+                    analysisPillar: finalValue?.analysisPillar?.map(ap => ({
+                        ...ap,
+                        filters: ap.filters?.map(f => matrixMap[f]),
+                    })),
+                });
+            },
+        );
+        submit();
     }, [validate, setError, matrixPillars, triggerAnalysisEdit]);
 
     const apError = error?.analysisPillar;

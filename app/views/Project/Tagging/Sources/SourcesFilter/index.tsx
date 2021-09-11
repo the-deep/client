@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
-    isDefined,
     isNotDefined,
 } from '@togglecorp/fujs';
 import {
@@ -9,6 +8,7 @@ import {
     ObjectSchema,
     getErrorString,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
@@ -118,11 +118,12 @@ function SourcesFilter(props: Props) {
     const error = getErrorObject(riskyError);
 
     const handleApply = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            onFilterApply(val);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            onFilterApply,
+        );
+        submit();
     }, [setError, validate, onFilterApply]);
 
     const handleClear = useCallback(() => {

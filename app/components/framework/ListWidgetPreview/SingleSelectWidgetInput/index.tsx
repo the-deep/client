@@ -1,13 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     SelectInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
 
-import { SingleSelectValue, SingleSelectWidget } from '#types/newAnalyticalFramework';
+import { SingleSelectWidget } from '#types/newAnalyticalFramework';
+import { SingleSelectWidgetAttribute } from '#types/newEntry';
 import ListWidgetWrapper from '../ListWidgetWrapper';
+
+type SingleSelectValue = NonNullable<SingleSelectWidgetAttribute['data']>;
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
@@ -41,11 +45,22 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         widget,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: SingleSelectValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     const widgetOptions = widget?.properties?.options;
     const sortedOptions = useMemo(() => (
@@ -53,7 +68,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [widgetOptions]);
 
     const selectedValue = useMemo(() => (
-        widgetOptions?.find((o) => o.clientId === value)?.label
+        widgetOptions?.find((o) => o.clientId === value?.value)?.label
     ), [widgetOptions, value]);
 
     return (
@@ -74,7 +89,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                     keySelector={optionKeySelector}
                     labelSelector={optionLabelSelector}
                     onChange={onChange}
-                    value={value}
+                    value={value?.value}
                     readOnly={readOnly}
                     disabled={disabled}
                 />

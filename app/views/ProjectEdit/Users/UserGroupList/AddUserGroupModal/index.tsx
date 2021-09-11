@@ -9,6 +9,7 @@ import {
     requiredCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     Modal,
@@ -148,11 +149,12 @@ function AddUserGroupModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                triggerAddUserGroup(val as ValueToSend);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => triggerAddUserGroup(val as ValueToSend),
+            );
+            submit();
         },
         [setError, validate, triggerAddUserGroup],
     );

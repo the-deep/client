@@ -27,7 +27,7 @@
             }
 
             .table-row {
-                .checkbox-cell {
+                .checkbox-column {
                     text-align: center;
 
                     .input {
@@ -47,7 +47,7 @@
                     }
                 }
 
-                .table-cell {
+                .table-column {
                     border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 }
             }

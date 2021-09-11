@@ -5,10 +5,14 @@ import { EntryType } from '#generated/types';
 
 import _ts from '#ts';
 
-export interface Props extends Pick<EntryType, 'excerpt' | 'image' | 'droppedExcerpt' | 'entryType'> {
+export interface Props {
     className?: string;
     imageClassName?: string;
     excerptForImageClassName?: string;
+    entryType: EntryType['entryType'];
+    excerpt: EntryType['excerpt'] | undefined;
+    droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
+    image: EntryType['image'] | undefined;
 }
 
 function ExcerptOutput(props: Props) {
@@ -18,35 +22,38 @@ function ExcerptOutput(props: Props) {
         // tabularFieldData,
         imageClassName,
         excerptForImageClassName,
+        entryType,
+        image,
+        excerpt,
     } = props;
 
-    // eslint-disable-next-line react/destructuring-assignment
-    if (props.entryType === 'IMAGE') {
+    if (entryType === 'IMAGE') {
+        const imageUrl = image?.file?.url;
         return (
             <div className={className}>
-                <ImagePreview
-                    className={imageClassName}
-                    alt=""
-                    src={props.image?.file?.url ?? undefined}
-                />
-                {props.excerpt && (
+                {imageUrl && (
+                    <ImagePreview
+                        className={imageClassName}
+                        alt=""
+                        src={imageUrl}
+                    />
+                )}
+                {excerpt && (
                     <p className={excerptForImageClassName}>
-                        { props.excerpt }
+                        { excerpt }
                     </p>
                 )}
             </div>
         );
     }
-    // eslint-disable-next-line react/destructuring-assignment
-    if (props.entryType === 'EXCERPT') {
+    if (entryType === 'EXCERPT') {
         return (
             <p className={className}>
-                { props.excerpt }
+                { excerpt }
             </p>
         );
     }
-    // eslint-disable-next-line react/destructuring-assignment
-    if (props.entryType === 'DATA_SERIES') {
+    if (entryType === 'DATA_SERIES') {
         return (
             <p className={className}>
                 {_ts('components.excerptOutput', 'quantitativeDataNotSupportedLabel')}

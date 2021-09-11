@@ -35,6 +35,7 @@ import {
     useForm,
     requiredCondition,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import { SubNavbarActions } from '#components/SubNavbar';
@@ -45,6 +46,7 @@ import {
     BasicOrganization,
     KeyValueElement,
     ProjectDetails,
+    OrganizationTypes,
 } from '#types';
 import routes from '#base/configs/routes';
 import { useModalState } from '#hooks/stateManagement';
@@ -61,7 +63,7 @@ import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 import styles from './styles.css';
 
 interface StakeholderType {
-    id: string;
+    id: OrganizationTypes;
     label: string;
 }
 
@@ -305,7 +307,7 @@ function ProjectDetailsForm(props: Props) {
     );
 
     const organizationListRendererParams = useCallback(
-        (key: string, v: StakeholderType) => {
+        (key: OrganizationTypes, v: StakeholderType) => {
             const organizations = groupedStakeholders[key];
             return {
                 data: organizations
@@ -325,14 +327,12 @@ function ProjectDetailsForm(props: Props) {
 
     const handleSubmit = useCallback(
         (name: string) => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                projectPatch({
-                    values: val,
-                    type: name,
-                });
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => projectPatch({ values: val, type: name }),
+            );
+            submit();
         },
         [setError, validate, projectPatch],
     );

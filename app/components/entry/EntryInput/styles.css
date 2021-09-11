@@ -1,5 +1,6 @@
-.entry-list-item {
+.entry-input {
     display: flex;
+
     background-color: var(--dui-color-foreground);
     height: var(--height-entry-item);
     overflow-y: auto;
