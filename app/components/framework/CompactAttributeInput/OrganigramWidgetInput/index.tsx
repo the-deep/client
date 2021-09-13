@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { isNotDefined } from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
 
 import OrganigramInput from '#components/OrganigramInput';
-import { OrganigramValue, OrganigramWidget } from '#types/newAnalyticalFramework';
+import { OrganigramWidgetAttribute } from '#types/newEntry';
+import { OrganigramWidget } from '#types/newAnalyticalFramework';
 
-import ListWidgetWrapper from '../ListWidgetWrapper';
+import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialOrganigramWidget = PartialForm<
     OrganigramWidget,
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
+
+type OrganigramValue = NonNullable<OrganigramWidgetAttribute['data']>;
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -31,14 +35,25 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         widget,
         disabled,
         readOnly,
     } = props;
 
+    const onChange = useCallback(
+        (val: OrganigramValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
+
     return (
-        <ListWidgetWrapper
+        <WidgetWrapper
             className={className}
             title={title}
             disabled={disabled}
@@ -46,13 +61,13 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         >
             <OrganigramInput
                 name={name}
-                value={value}
+                value={value?.value}
                 onChange={onChange}
                 options={widget.properties?.options}
                 disabled={disabled}
                 readOnly={readOnly}
             />
-        </ListWidgetWrapper>
+        </WidgetWrapper>
     );
 }
 

@@ -23,6 +23,7 @@ import ScaleWidgetInput from './ScaleWidgetInput';
 import MultiSelectWidgetInput from './MultiSelectWidgetInput';
 import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
+import OrganigramWidgetInput from './OrganigramWidgetInput';
 
 type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
@@ -261,7 +262,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 />
             );
         }
-        case 'ORGANIGRAMWIDGET': {
+        case 'ORGANIGRAM': {
             if (value && value.widgetType !== widget.widgetId) {
                 return null;
             }
