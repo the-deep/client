@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { isDefined, isTruthyString } from '@togglecorp/fujs';
+import { isTruthyString } from '@togglecorp/fujs';
 import {
     useForm,
     ObjectSchema,
@@ -9,6 +9,7 @@ import {
     lengthSmallerThanCondition,
     getErrorObject,
     internal,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -118,11 +119,14 @@ function ChangePasswordModal(props: Props) {
     });
 
     const handleSubmitButtonClick = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            changePassword({ oldPassword: val.oldPassword, newPassword: val.newPassword });
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (val) => {
+                changePassword({ oldPassword: val.oldPassword, newPassword: val.newPassword });
+            },
+        );
+        submit();
     }, [setError, validate, changePassword]);
 
     return (

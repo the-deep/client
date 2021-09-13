@@ -17,6 +17,7 @@ import {
     requiredStringCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#base/utils/restRequest';
@@ -113,11 +114,12 @@ function AddFrameworkModal(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                triggerCreateFramework(val as ValueToSend);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => triggerCreateFramework(val as ValueToSend),
+            );
+            submit();
         },
         [setError, validate, triggerCreateFramework],
     );

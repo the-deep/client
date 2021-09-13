@@ -1,10 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ButtonLikeLink,
     Container,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
+import {
+    removeNull,
+} from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#base/utils/restRequest';
 import ProjectContext from '#base/context/ProjectContext';
@@ -15,14 +18,23 @@ import {
     Entry,
 } from '../../types';
 
-import EntryListItem from '#components/entry/EntryListItem';
+import EntryInput from '#components/entry/EntryInput';
 /*
 import EntryVerification from '#components/entryReview/EntryVerification';
  */
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
+import { EntryInput as EntryInputType } from '#views/Project/EntryEdit/types';
 
 import styles from './styles.css';
+
+function transformEntry(entry: Entry): EntryInputType {
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+    });
+}
 
 interface Props {
     className?: string;
@@ -67,6 +79,15 @@ function EntryItem(props: Props) {
         },
         failureHeader: 'Entry',
     });
+
+    const handleChange = useCallback(
+        (value: unknown) => {
+            // FIXME: handle here
+            // eslint-disable-next-line no-console
+            console.warn('Should set value to', value);
+        },
+        [],
+    );
 
     return (
         <Container
@@ -118,9 +139,11 @@ function EntryItem(props: Props) {
                 </div>
             )}
         >
-            <EntryListItem
+            <EntryInput
+                name={undefined}
+                value={transformEntry(entry)}
+                onChange={handleChange}
                 className={styles.entry}
-                entry={entry}
                 primaryTagging={framework?.primaryTagging}
                 secondaryTagging={framework?.secondaryTagging}
                 readOnly

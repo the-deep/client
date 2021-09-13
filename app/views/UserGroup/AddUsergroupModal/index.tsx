@@ -12,6 +12,7 @@ import {
     requiredStringCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import { useLazyRequest } from '#base/utils/restRequest';
@@ -108,11 +109,12 @@ function AddUsergroupModal(props: Props) {
         failureHeader: _ts('usergroup.editModal', 'addUsergroupFailed'),
     });
     const handleSubmit = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            triggerAddUsergroup(val as UsergroupAdd);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (val) => triggerAddUsergroup(val as UsergroupAdd),
+        );
+        submit();
     }, [setError, validate, triggerAddUsergroup]);
 
     return (

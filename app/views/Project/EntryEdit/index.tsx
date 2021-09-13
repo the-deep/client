@@ -12,10 +12,7 @@ import {
     TabList,
     TabPanel,
 } from '@the-deep/deep-ui';
-import {
-    useForm,
-    removeNull,
-} from '@togglecorp/toggle-form';
+import { useForm, removeNull } from '@togglecorp/toggle-form';
 import { useQuery } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
@@ -31,16 +28,25 @@ import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
 } from '#generated/types';
-import { Framework } from './types';
 import { PROJECT_FRAMEWORK } from './queries';
 
-import type { Entry as EditableEntry } from './LeftPane';
+// import type { Entry as EditableEntry } from './LeftPane';
 import SourceDetails from './SourceDetails';
 import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
 
+import schema, { defaultFormValues } from './schema';
+import { Entry, EntryInput, Framework } from './types';
 import styles from './styles.css';
+
+function transformEntry(entry: Entry): EntryInput {
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+    });
+}
 
 interface Props {
     className?: string;
@@ -52,38 +58,10 @@ function EntryEdit(props: Props) {
     const { leadId } = useParams<{ leadId: string }>();
     const projectId = project ? project.id : undefined;
 
-    const [entries, setEntries] = React.useState<EditableEntry[]>([]);
-    const [activeEntry, setActiveEntry] = React.useState<EditableEntry['clientId'] | undefined>();
-
-    const variables = useMemo(
-        (): ProjectFrameworkQueryVariables | undefined => (
-            (leadId && projectId) ? {
-                projectId,
-                leadId,
-            } : undefined
-        ),
-        [
-            leadId,
-            projectId,
-        ],
-    );
-    const {
-        data,
-        loading,
-    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
-        PROJECT_FRAMEWORK,
-        {
-            skip: isNotDefined(variables),
-            variables,
-        },
-    );
-
-    const frameworkDetails = useMemo(
-        () => removeNull(data?.project?.analysisFramework as Framework | undefined),
-        [data?.project?.analysisFramework],
-    );
+    // LEAD
 
     const [ready, setReady] = useState(!leadId);
+
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
         project: projectId ? +projectId : undefined,
         sourceType: 'website',
@@ -113,6 +91,50 @@ function EntryEdit(props: Props) {
         },
         failureHeader: 'Leads',
     });
+
+    // ENTRY
+
+    const {
+        value: formValue,
+        setValue: setFormValue,
+        setFieldValue: setFormFieldValue,
+        // error: formError,
+    } = useForm(schema, defaultFormValues);
+
+    const variables = useMemo(
+        (): ProjectFrameworkQueryVariables | undefined => (
+            (leadId && projectId)
+                ? { projectId, leadId }
+                : undefined
+        ),
+        [
+            leadId,
+            projectId,
+        ],
+    );
+
+    const {
+        data,
+        loading,
+    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
+        PROJECT_FRAMEWORK,
+        {
+            skip: isNotDefined(variables),
+            variables,
+            onCompleted: (response) => {
+                const leadFromResponse = response?.project?.lead;
+                if (!leadFromResponse) {
+                    return;
+                }
+                const entries = leadFromResponse.entries?.map(
+                    (entry) => transformEntry(entry as Entry),
+                );
+                setFormValue((oldVal) => ({ ...oldVal, entries }));
+            },
+        },
+    );
+
+    const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
@@ -204,10 +226,10 @@ function EntryEdit(props: Props) {
                                 className={styles.primaryTagging}
                                 sections={frameworkDetails.primaryTagging}
                                 frameworkId={frameworkDetails.id}
-                                entries={entries}
-                                onEntriesChange={setEntries}
-                                activeEntry={activeEntry}
-                                onActiveEntryChange={setActiveEntry}
+                                // entries={entries}
+                                // onEntriesChange={setEntries}
+                                // activeEntry={activeEntry}
+                                // onActiveEntryChange={setActiveEntry}
                             />
                         )}
                     </TabPanel>
@@ -220,9 +242,9 @@ function EntryEdit(props: Props) {
                                 className={styles.secondaryTagging}
                                 widgets={frameworkDetails.secondaryTagging}
                                 frameworkId={frameworkDetails.id}
-                                entries={entries}
-                                activeEntry={activeEntry}
-                                onActiveEntryChange={setActiveEntry}
+                                // entries={entries}
+                                // activeEntry={activeEntry}
+                                // onActiveEntryChange={setActiveEntry}
                             />
                         )}
                     </TabPanel>
@@ -231,6 +253,9 @@ function EntryEdit(props: Props) {
                         className={styles.tabPanel}
                     >
                         <Review
+                            value={formValue}
+                            // error={formError}
+                            onChange={setFormFieldValue}
                             frameworkId={frameworkDetails?.id}
                             secondaryTagging={frameworkDetails?.secondaryTagging}
                             primaryTagging={frameworkDetails?.primaryTagging}

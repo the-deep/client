@@ -1,13 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     ScaleInput,
 } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
 
-import { ScaleValue, ScaleWidget } from '#types/newAnalyticalFramework';
+import { ScaleWidget } from '#types/newAnalyticalFramework';
+import { ScaleWidgetAttribute } from '#types/newEntry';
 import ListWidgetWrapper from '../ListWidgetWrapper';
+
+type ScaleValue = NonNullable<ScaleWidgetAttribute['data']>;
 
 export type PartialScaleWidget = PartialForm<
     ScaleWidget,
@@ -42,7 +46,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         widget,
         disabled,
         readOnly,
@@ -51,6 +55,17 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
     const sortedOptions = useMemo(() => (
         sortByOrder(widget?.properties?.options)
     ), [widget?.properties?.options]);
+
+    const onChange = useCallback(
+        (val: ScaleValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     return (
         <ListWidgetWrapper
@@ -66,7 +81,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 labelSelector={optionLabelSelector}
                 colorSelector={optionColorSelector}
                 onChange={onChange}
-                value={value ?? widget?.properties?.defaultValue}
+                value={value?.value ?? widget?.properties?.defaultValue}
                 readOnly={readOnly}
                 disabled={disabled}
             />

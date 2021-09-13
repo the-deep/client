@@ -24,7 +24,7 @@ import {
     Error,
     getErrorObject,
     getErrorString,
-    SetValueArg,
+    SetBaseValueArg,
 } from '@togglecorp/toggle-form';
 import {
     IoAdd,
@@ -110,7 +110,7 @@ const valueSelector = (item: Priority) => item.value;
 interface Props {
     className?: string;
     setFieldValue: (...values: EntriesAsList<PartialFormType>) => void;
-    setValue: (value: SetValueArg<PartialFormType>) => void;
+    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     value: PartialFormType;
     error: Error<PartialFormType> | undefined;
     setPristine: (val: boolean) => void;

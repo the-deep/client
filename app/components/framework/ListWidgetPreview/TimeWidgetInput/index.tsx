@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     TimeInput,
     TimeOutput,
 } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import ListWidgetWrapper from '../ListWidgetWrapper';
-import { TimeValue } from '#types/newAnalyticalFramework';
+import { TimeWidgetAttribute } from '#types/newEntry';
+
+type TimeValue = NonNullable<TimeWidgetAttribute['data']>;
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -25,10 +28,21 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
     } = props;
+
+    const onChange = useCallback(
+        (val: TimeValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     return (
         <ListWidgetWrapper
@@ -39,13 +53,13 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
         >
             {readOnly ? (
                 <TimeOutput
-                    value={value}
+                    value={value?.value}
                 />
             ) : (
                 <TimeInput
                     name={name}
                     onChange={onChange}
-                    value={value}
+                    value={value?.value}
                     readOnly={readOnly}
                     disabled={disabled}
                 />

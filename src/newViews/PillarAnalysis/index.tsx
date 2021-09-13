@@ -31,6 +31,7 @@ import {
     useForm,
     useFormArray,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import FullPageHeader from '#newComponents/ui/FullPageHeader';
@@ -510,11 +511,12 @@ function PillarAnalysis(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
-            const { errored, error: err, value: val } = validate();
-            setError(err);
-            if (!errored && isDefined(val)) {
-                updateAnalysisPillars(val);
-            }
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                updateAnalysisPillars,
+            );
+            submit();
         },
         [setError, validate, updateAnalysisPillars],
     );

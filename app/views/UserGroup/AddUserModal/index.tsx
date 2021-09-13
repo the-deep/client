@@ -14,6 +14,7 @@ import {
     requiredCondition,
     useForm,
     getErrorObject,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
 import _ts from '#ts';
@@ -121,11 +122,12 @@ function AddUserModal(props: Props) {
     });
 
     const handleSubmit = useCallback(() => {
-        const { errored, error: err, value: val } = validate();
-        setError(err);
-        if (!errored && isDefined(val)) {
-            triggerAddMember(val as FormType);
-        }
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (val) => triggerAddMember(val as FormType),
+        );
+        submit();
     }, [setError, validate, triggerAddMember]);
 
     return (

@@ -149,6 +149,7 @@ function FrameworkDetail(props: Props) {
         },
     );
 
+    // FIXME: do not use removeNull here
     const frameworkDetails = useMemo(
         () => removeNull(frameworkDetailsResponse?.analysisFramework as Framework | undefined),
         [frameworkDetailsResponse],

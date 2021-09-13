@@ -4,12 +4,15 @@ import {
     DateRangeInput,
     DateRangeOutput,
 } from '@the-deep/deep-ui';
+import { isNotDefined } from '@togglecorp/fujs';
 import { IoSwapHorizontal } from 'react-icons/io5';
 
 import ListWidgetWrapper from '../ListWidgetWrapper';
-import { DateRangeValue } from '#types/newAnalyticalFramework';
+import { DateRangeWidgetAttribute } from '#types/newEntry';
 
 import styles from './styles.css';
+
+type DateRangeValue = NonNullable<DateRangeWidgetAttribute['data']>;
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -31,15 +34,32 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
     } = props;
 
+    const onChange = useCallback(
+        (val: DateRangeValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
+
     const handleValueSwap = useCallback(
         () => {
-            if (value) {
-                onChange({ endDate: value.startDate, startDate: value.endDate }, name);
+            if (value?.value) {
+                onChange(
+                    {
+                        endDate: value.value.startDate,
+                        startDate: value.value.endDate,
+                    },
+                    name,
+                );
             }
         },
         [onChange, value, name],
@@ -59,7 +79,7 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
                         className={styles.input}
                         name={name}
                         onChange={onChange}
-                        value={value}
+                        value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
                     />
@@ -76,8 +96,8 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             ) : (
                 <DateRangeOutput
                     className={styles.input}
-                    startDate={value?.startDate}
-                    endDate={value?.endDate}
+                    startDate={value?.value?.startDate}
+                    endDate={value?.value?.endDate}
                 />
             )}
         </ListWidgetWrapper>

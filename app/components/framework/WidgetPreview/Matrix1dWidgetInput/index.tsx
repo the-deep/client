@@ -1,21 +1,25 @@
 import React, { useCallback, useMemo } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
 import { PartialForm } from '@togglecorp/toggle-form';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
 
-import { Matrix1dValue, Matrix1dWidget } from '#types/newAnalyticalFramework';
+import { Matrix1dWidget } from '#types/newAnalyticalFramework';
+import { Matrix1dWidgetAttribute } from '#types/newEntry';
 import WidgetWrapper from '../WidgetWrapper';
 
 import styles from './styles.css';
+
+type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
 
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type Row = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
-type Cell = NonNullable<NonNullable<Row>['cells']>[number];
+type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
+type CellType = NonNullable<NonNullable<RowType>['cells']>[number];
 
 interface CellProps {
     className?: string;
@@ -64,8 +68,8 @@ function Cell(props: CellProps) {
 interface RowProps {
     disabled?: boolean;
     readOnly?: boolean;
-    row: Row;
-    value: NonNullable<Matrix1dValue>[string];
+    row: RowType;
+    value: NonNullable<Matrix1dValue['value']>[string];
     onCellChange: (rowId: string, cellId: string, selected: boolean) => void;
 }
 
@@ -90,11 +94,11 @@ function Row(props: RowProps) {
     ), [cells]);
 
     const cellKeySelector = useCallback(
-        (cell: Cell) => cell.clientId,
+        (cell: CellType) => cell.clientId,
         [],
     );
     const cellRendererParams = useCallback(
-        (_: string, cell: Cell) => ({
+        (_: string, cell: CellType) => ({
             key: cell.clientId,
             title: cell.tooltip,
             label: cell.label,
@@ -131,15 +135,15 @@ export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
 
-    name: N,
-    value: Matrix1dValue | null | undefined,
-    onChange: (value: Matrix1dValue | undefined, name: N) => void,
+    name: N;
+    value: Matrix1dValue | null | undefined;
+    onChange: (value: Matrix1dValue | undefined, name: N) => void;
 
-    actions?: React.ReactNode,
+    actions?: React.ReactNode;
     disabled?: boolean;
     readOnly?: boolean;
 
-    widget: PartialMatrix1dWidget,
+    widget: PartialMatrix1dWidget;
 }
 
 function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
@@ -149,11 +153,22 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         widget,
         name,
         value,
-        onChange,
+        onChange: onChangeFromProps,
         disabled,
         readOnly,
         actions,
     } = props;
+
+    const onChange = useCallback(
+        (val: Matrix1dValue['value'] | undefined, inputName: N) => {
+            if (isNotDefined(val)) {
+                onChangeFromProps(undefined, inputName);
+            } else {
+                onChangeFromProps({ value: val }, inputName);
+            }
+        },
+        [onChangeFromProps],
+    );
 
     const sortedRows = useMemo(() => (
         sortByOrder(widget?.properties?.rows)
@@ -162,9 +177,9 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     const handleCellChange = useCallback(
         (rowId: string, cellId: string, state: boolean) => {
             const newValue = {
-                ...value,
+                ...value?.value,
                 [rowId]: {
-                    ...value?.[rowId],
+                    ...value?.value?.[rowId],
                     [cellId]: state,
                 },
             };
@@ -174,14 +189,14 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: Row) => row.clientId,
+        (row: RowType) => row.clientId,
         [],
     );
     const rowRendererParams = useCallback(
-        (key: string, row: Row) => ({
+        (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.[key],
+            value: value?.value?.[key],
             row,
             onCellChange: handleCellChange,
         }),
