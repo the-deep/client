@@ -80,7 +80,7 @@ interface ScaleProperties extends BaseProperties<ScaleValue> {
     options: KeyLabelColorEntity[];
 }
 
-interface OrganigramDatum extends KeyLabelEntity {
+export interface OrganigramDatum extends KeyLabelEntity {
     children: OrganigramDatum[];
 }
 

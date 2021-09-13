@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
 import OrgTree from 'react-org-tree';
@@ -16,6 +16,21 @@ interface Props<N extends string> {
     options: PartialForm<OrganigramDatum> | null | undefined;
     readOnly?: boolean;
     disabled?: boolean;
+}
+
+function transformData(data: OrganigramDatum): OrganigramDatum & { id: string } {
+    if (data.children) {
+        return {
+            ...data,
+            id: data.clientId,
+            children: data.children.map(transformData),
+        };
+    }
+    return {
+        ...data,
+        id: data.clientId,
+        children: [],
+    };
 }
 
 function OrganigramInput<N extends string>(props: Props<N>) {
@@ -48,13 +63,15 @@ function OrganigramInput<N extends string>(props: Props<N>) {
         </Card>
     ), [isSelected]);
 
+    const data = useMemo(() => transformData(options as OrganigramDatum), [options]);
+
     if (!options) {
         return null;
     }
 
     return (
         <OrgTree
-            data={options}
+            data={data}
             vertical
             renderContent={renderContent}
             labelClassName={_cs(
