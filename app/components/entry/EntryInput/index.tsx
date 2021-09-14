@@ -130,6 +130,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                         // Should work similarly to SearchSelectInput
                         // image={value.image}
                         image={undefined}
+                        imageRaw={undefined}
+                        leadImageUrl={undefined}
                         // TODO: edit excerpt
                     />
                 </Container>

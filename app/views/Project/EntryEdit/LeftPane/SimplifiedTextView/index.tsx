@@ -3,15 +3,10 @@ import { IoAddCircle } from 'react-icons/io5';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import { Button } from '@the-deep/deep-ui';
 
+import { PartialEntryType as EntryInput } from '../../schema';
 import useTextSelection from './useTextSelection';
-import TaggedExcerpt from './TaggedExcerpt';
+import EntryItem from '../EntryItem';
 import styles from './styles.css';
-
-export interface Entry {
-    clientId: string;
-    droppedExcerpt?: string;
-    excerpt?: string;
-}
 
 interface Split {
     startIndex: number;
@@ -23,7 +18,7 @@ interface Split {
 interface Props {
     className?: string;
     text?: string;
-    entries: Entry[] | undefined | null;
+    entries: EntryInput[] | undefined | null;
     onAddButtonClick?: (selectedText: string) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     activeEntryClientId?: string;
@@ -69,6 +64,9 @@ function SimplifiedTextView(props: Props) {
                 entryId: entry.clientId,
                 excerpt: entry.excerpt,
                 droppedExcerpt: entry.droppedExcerpt,
+                entryType: entry.entryType,
+                lead: entry.lead,
+                clientId: entry.clientId,
             });
         })
             .filter(isDefined)
@@ -97,17 +95,22 @@ function SimplifiedTextView(props: Props) {
                                 {text.substring(splits[i - 1].endIndex, split.startIndex)}
                             </span>
                         )}
-                        <TaggedExcerpt
+                        <EntryItem
+                            className={styles.entry}
+                            clientId={split.clientId}
+                            lead={split.lead}
                             entryId={split.entryId}
                             onClick={onExcerptClick}
                             isActive={activeEntryClientId === split.entryId}
                             excerpt={split.excerpt}
+                            entryType={split.entryType}
                             droppedExcerpt={split.droppedExcerpt}
                             onExcerptChange={onExcerptChange}
                             onApproveButtonClick={onApproveButtonClick}
                             onDiscardButtonClick={onDiscardButtonClick}
                             disableApproveButton={disableApproveButton}
                             disableDiscardButton={disableDiscardButton}
+                            entryImage={undefined}
                         />
                     </React.Fragment>
                 ))}

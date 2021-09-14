@@ -13,6 +13,8 @@ export interface Props {
     excerpt: EntryType['excerpt'] | undefined;
     droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
     image: EntryType['image'] | undefined;
+    imageRaw: string | undefined;
+    leadImageUrl: string | undefined;
 }
 
 function ExcerptOutput(props: Props) {
@@ -24,40 +26,42 @@ function ExcerptOutput(props: Props) {
         excerptForImageClassName,
         entryType,
         image,
+        imageRaw,
+        leadImageUrl,
         excerpt,
     } = props;
 
     if (entryType === 'IMAGE') {
-        const imageUrl = image?.file?.url;
+        const imageSrc = image?.file?.url ?? leadImageUrl ?? imageRaw;
         return (
             <div className={className}>
-                {imageUrl && (
+                {imageSrc && (
                     <ImagePreview
                         className={imageClassName}
                         alt=""
-                        src={imageUrl}
+                        src={imageSrc}
                     />
                 )}
                 {excerpt && (
-                    <p className={excerptForImageClassName}>
+                    <div className={excerptForImageClassName}>
                         { excerpt }
-                    </p>
+                    </div>
                 )}
             </div>
         );
     }
     if (entryType === 'EXCERPT') {
         return (
-            <p className={className}>
+            <div className={className}>
                 { excerpt }
-            </p>
+            </div>
         );
     }
     if (entryType === 'DATA_SERIES') {
         return (
-            <p className={className}>
+            <div className={className}>
                 {_ts('components.excerptOutput', 'quantitativeDataNotSupportedLabel')}
-            </p>
+            </div>
         );
     }
     return null;
