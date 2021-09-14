@@ -15,6 +15,7 @@ import {
     entrySchema,
     PartialEntryType as EntryInputType,
 } from '#views/Project/EntryEdit/schema';
+import { Entry } from '#views/Project/EntryEdit/types';
 import {
     WidgetType as WidgetRaw,
     AnalysisFrameworkDetailType,
@@ -51,6 +52,7 @@ interface Props {
     secondaryTagging: Widget[] | undefined | null;
     controlled: boolean | undefined | null;
     compact?: boolean;
+    entryImage: Entry['image'] | undefined | null;
 }
 
 function EditableEntry(props: Props) {
@@ -64,6 +66,7 @@ function EditableEntry(props: Props) {
         secondaryTagging,
         compact,
         controlled,
+        entryImage,
     } = props;
 
     const alert = useAlert();
@@ -169,6 +172,7 @@ function EditableEntry(props: Props) {
             readOnly={!editMode}
             compact={compact}
             leadId={leadId}
+            entryImage={entryImage}
         />
     );
 

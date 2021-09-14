@@ -35,12 +35,16 @@ function ExcerptOutput(props: Props) {
         const imageSrc = image?.file?.url ?? leadImageUrl ?? imageRaw;
         return (
             <div className={className}>
-                {imageSrc && (
+                {imageSrc ? (
                     <ImagePreview
                         className={imageClassName}
                         alt=""
                         src={imageSrc}
                     />
+                ) : (
+                    <div>
+                        Image data is not available.
+                    </div>
                 )}
                 {excerpt && (
                     <div className={excerptForImageClassName}>
