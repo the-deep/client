@@ -39,7 +39,7 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import { ProjectContext } from '#base/context/ProjectContext';
 import { useModalState } from '#hooks/stateManagement';
 import routes from '#base/configs/routes';
-import Canvas from '#views/Project/EntryEdit/components/Canvas';
+import Section from '#components/entry/Section';
 import _ts from '#ts';
 import { ProjectDetails } from '#types';
 import {
@@ -50,6 +50,11 @@ import {
 
 import AddFrameworkModal from '../AddFrameworkModal';
 import styles from './styles.css';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
+const emptyObject = {};
 
 const FRAMEWORK_DETAILS = gql`
     query FrameworkDetails($frameworkId: ID!) {
@@ -390,9 +395,10 @@ function FrameworkDetail(props: Props) {
                                         name={section.clientId}
                                         className={styles.panel}
                                     >
-                                        <Canvas
-                                            name={section.clientId}
+                                        <Section
                                             widgets={section.widgets}
+                                            onAttributeChange={noop}
+                                            attributesMap={emptyObject}
                                         />
                                     </TabPanel>
                                 ))}
@@ -401,9 +407,10 @@ function FrameworkDetail(props: Props) {
                         <TabPanel
                             name="secondary"
                         >
-                            <Canvas
-                                name="secondary"
+                            <Section
                                 widgets={frameworkDetails?.secondaryTagging}
+                                onAttributeChange={noop}
+                                attributesMap={emptyObject}
                             />
                         </TabPanel>
                     </Card>

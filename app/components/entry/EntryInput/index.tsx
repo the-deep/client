@@ -25,7 +25,7 @@ import ExcerptOutput from '#components/entry/ExcerptOutput';
 import { Widget } from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
 
-import SectionItem from './SectionItem';
+import CompactSection from '../CompactSection';
 import styles from './styles.css';
 
 export type Framework = DeepReplace<AnalysisFrameworkDetailType, WidgetRaw, Widget>;
@@ -33,15 +33,10 @@ type Section = NonNullable<Framework['primaryTagging']>[number];
 
 const sectionKeySelector = (d: Section) => d.clientId;
 
-const defaultOptionVal = (): PartialEntryType => ({
-    clientId: randomString(),
-    entryType: 'EXCERPT',
-    // FIXME: get this from parent
-    lead: 'get-this-from-parent',
-});
-
 interface EntryInputProps<T extends string | number | undefined> {
     className?: string;
+
+    leadId: string;
 
     index?: number;
     name: T;
@@ -72,11 +67,20 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         name,
         index,
         onChange,
+        leadId,
     } = props;
+
+    const defaultOptionVal = useCallback(
+        (): PartialEntryType => ({
+            clientId: randomString(),
+            entryType: 'EXCERPT',
+            lead: leadId,
+        }),
+        [leadId],
+    );
 
     const onFieldChange = useFormObject(name, onChange, defaultOptionVal);
 
-    // FIXME: move this inside attributes
     const {
         setValue: onAttributeChange,
     } = useFormArray('attributes', onFieldChange);
@@ -127,10 +131,10 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 data={primaryTagging ?? undefined}
                 rendererParams={sectionRendererParams}
                 rendererClassName={_cs(styles.section, sectionContainerClassName)}
-                renderer={SectionItem}
+                renderer={CompactSection}
                 keySelector={sectionKeySelector}
             />
-            <SectionItem
+            <CompactSection
                 className={_cs(
                     styles.secondaryTagging,
                     secondaryTaggingContainerClassName,

@@ -3,7 +3,7 @@ import { isNotDefined } from '@togglecorp/fujs';
 
 import { reorder } from '#utils/common';
 
-import { PartialWidget } from '#components/framework/WidgetPreview';
+import { PartialWidget } from '#components/framework/AttributeInput';
 
 import { Section, Widget } from '../../types';
 import { PartialSectionType } from './SectionsEditor';

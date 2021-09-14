@@ -8,7 +8,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { Types } from '#types/newAnalyticalFramework';
-import { PartialWidget } from '#components/framework/WidgetPreview';
+import { PartialWidget } from '#components/framework/AttributeInput';
 import styles from './styles.css';
 
 const partialWidgets: PartialWidget[] = [

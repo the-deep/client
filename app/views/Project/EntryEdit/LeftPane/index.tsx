@@ -18,16 +18,10 @@ import {
     Button,
     ListView,
     useAlert,
-    QuickActionDropdownMenu,
     QuickActionLink,
-    QuickActionDropdownMenuProps,
-    Footer,
-    Heading,
-    QuickActionConfirmButton,
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
-    IoPencil,
     IoAdd,
     IoOpenOutline,
     IoCameraOutline,
@@ -35,7 +29,6 @@ import {
     IoClose,
     IoBrush,
     IoCheckmark,
-    IoTrash,
 } from 'react-icons/io5';
 
 import LeadPreview from '#components/lead/LeadPreview';
@@ -44,127 +37,13 @@ import FullScreen from '#components/FullScreen';
 import { Lead } from '#components/lead/LeadEditForm/schema';
 import { useRequest } from '#base/utils/restRequest';
 
+import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
 import SimplifiedTextView from './SimplifiedTextView';
+import EntryItem from './EntryItem';
 import styles from './styles.css';
 
-export interface Entry {
-    clientId: string;
-    excerpt: string;
-    droppedExcerpt: string;
-    image?: string;
-}
-
-const entryKeySelector = (e: Entry) => e.clientId;
-
-interface EntryItemProps extends Entry {
-    isActive?: boolean;
-    onClick?: (entryId: Entry['clientId']) => void;
-    onExcerptChange?: (entryId: Entry['clientId'], modifiedExcerpt: string) => void;
-    onEntryDelete?: (entryId: Entry['clientId']) => void;
-}
-
-function EntryItem(props: EntryItemProps) {
-    const {
-        clientId,
-        droppedExcerpt,
-        excerpt: excerptFromProps,
-        image,
-        isActive,
-        onClick,
-        onExcerptChange,
-        onEntryDelete,
-    } = props;
-
-    const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
-    const [excerpt, setExcerpt] = useInputState<string | undefined>(excerptFromProps);
-    const handleClick = React.useCallback(() => {
-        if (onClick) {
-            onClick(clientId);
-        }
-    }, [clientId, onClick]);
-
-    const handleExcerptChange = React.useCallback((modifiedExcerpt) => {
-        if (onExcerptChange) {
-            onExcerptChange(clientId, modifiedExcerpt);
-        }
-
-        if (editExcerptDropdownRef?.current) {
-            editExcerptDropdownRef.current.setShowPopup(false);
-        }
-    }, [clientId, onExcerptChange]);
-
-    const handleDeleteConfirm = React.useCallback(() => {
-        if (onEntryDelete) {
-            onEntryDelete(clientId);
-        }
-    }, [clientId, onEntryDelete]);
-
-    return (
-        <div
-            role="presentation"
-            className={_cs(
-                isActive && styles.active,
-                styles.entry,
-            )}
-            onClick={handleClick}
-        >
-            <div className={styles.excerpt}>
-                {droppedExcerpt}
-            </div>
-            {image && (
-                <img
-                    className={styles.image}
-                    alt={excerpt}
-                    src={image}
-                />
-            )}
-            {isActive && (
-                <Footer
-                    quickActions={(
-                        <>
-                            <QuickActionDropdownMenu
-                                label={<IoPencil />}
-                                popupClassName={styles.editExcerptPopup}
-                                popupContentClassName={styles.content}
-                                persistent
-                                componentRef={editExcerptDropdownRef}
-                            >
-                                <Heading size="small">
-                                    Modify Excerpt
-                                </Heading>
-                                <TextArea
-                                    className={styles.excerptTextArea}
-                                    name="modified-excerpt"
-                                    value={excerpt}
-                                    onChange={setExcerpt}
-                                    rows={4}
-                                />
-                                <Footer
-                                    actions={(
-                                        <Button
-                                            name={excerpt}
-                                            onClick={handleExcerptChange}
-                                        >
-                                            Done
-                                        </Button>
-                                    )}
-                                />
-                            </QuickActionDropdownMenu>
-                            <QuickActionConfirmButton
-                                name={undefined}
-                                onConfirm={handleDeleteConfirm}
-                            >
-                                <IoTrash />
-                            </QuickActionConfirmButton>
-                        </>
-                    )}
-                />
-            )}
-            <div className={styles.verticalBorder} />
-        </div>
-    );
-}
+const entryKeySelector = (e: EntryInput) => e.clientId;
 
 interface LeadPreview {
     id: number;
@@ -178,13 +57,16 @@ interface LeadPreview {
 
 interface Props {
     className?: string;
-    onEntryCreate?: (newEntry: Entry) => void;
-    entries?: Entry[];
-    activeEntry?: Entry['clientId'];
-    onEntryClick?: EntryItemProps['onClick'];
-    onExcerptChange?: (entryClientId: Entry['clientId'], newExcerpt: string) => void;
-    onEntryDelete?: (entryClientId: Entry['clientId']) => void;
+    onEntryCreate?: (newEntry: EntryInput) => void;
+    entries: EntryInput[] | undefined | null;
+    activeEntry?: string;
+    onEntryClick?: (entryId: string) => void;
+    onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
+    onEntryDelete?: (entryClientId: string) => void;
+    onApproveButtonClick?: (entryClientId: string) => void;
+    onDiscardButtonClick?: (entryClientId: string) => void;
     lead?: Lead;
+    leadId: string;
     hideSimplifiedPreview?: boolean;
     hideOriginalPreview?: boolean;
 }
@@ -195,21 +77,28 @@ function LeftPane(props: Props) {
         onEntryCreate,
         entries,
         activeEntry,
-        onEntryClick,
         lead,
+        onEntryClick,
         onExcerptChange,
+        onApproveButtonClick,
+        onDiscardButtonClick,
         onEntryDelete,
         hideSimplifiedPreview = false,
         hideOriginalPreview = false,
+        leadId,
     } = props;
 
     const alert = useAlert();
 
-    const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
     const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries' | undefined>(
         !hideSimplifiedPreview ? 'simplified' : 'entries',
     );
+
+    // FIXME: we shouldn't need these values here
+    const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
+
     const [excerpt, setExcerpt] = useInputState<string | undefined>(undefined);
+
     const [
         showScreenshot,
         setShowScreenshotTrue,
@@ -276,16 +165,19 @@ function LeftPane(props: Props) {
         if (excerpt) {
             if (onEntryCreate) {
                 onEntryCreate({
-                    clientId: randomString(16),
+                    clientId: randomString(),
                     excerpt,
+                    entryType: 'IMAGE',
+                    lead: leadId,
                     droppedExcerpt: excerpt,
-                    image: capturedImageUrl,
+                    imageRaw: capturedImageUrl,
                 });
             }
         }
     }, [
         capturedImageUrl,
         excerpt,
+        leadId,
         setExcerpt,
         onEntryCreate,
         setShowAddExcerptModalFalse,
@@ -293,6 +185,26 @@ function LeftPane(props: Props) {
         setCapturedImageUrl,
         setShowScreenshotFalse,
     ]);
+
+    const entryItemRendererParams = React.useCallback((_: string, entry: EntryInput) => ({
+        ...entry,
+        isActive: activeEntry === entry.clientId,
+        onClick: onEntryClick,
+        onExcerptChange,
+        onEntryDelete,
+    }), [activeEntry, onEntryClick, onExcerptChange, onEntryDelete]);
+
+    const handleSimplifiedViewAddButtonClick = React.useCallback((selectedText: string) => {
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(),
+                entryType: 'EXCERPT',
+                lead: leadId,
+                excerpt: selectedText,
+                droppedExcerpt: selectedText,
+            });
+        }
+    }, [leadId, onEntryCreate]);
 
     const originalTabContent = (
         <Container
@@ -388,24 +300,6 @@ function LeftPane(props: Props) {
         </Container>
     );
 
-    const entryItemRendererParams = React.useCallback((_: Entry['clientId'], entry: Entry) => ({
-        ...entry,
-        isActive: activeEntry === entry.clientId,
-        onClick: onEntryClick,
-        onExcerptChange,
-        onEntryDelete,
-    }), [activeEntry, onEntryClick, onExcerptChange, onEntryDelete]);
-
-    const handleSimplifiedViewAddButtonClick = React.useCallback((selectedText: string) => {
-        if (onEntryCreate) {
-            onEntryCreate({
-                clientId: randomString(8),
-                excerpt: selectedText,
-                droppedExcerpt: selectedText,
-            });
-        }
-    }, [onEntryCreate]);
-
     return (
         <div className={_cs(styles.sourcePreview, className)}>
             <Tabs
@@ -446,6 +340,9 @@ function LeftPane(props: Props) {
                                 onAddButtonClick={handleSimplifiedViewAddButtonClick}
                                 text={leadPreview?.text}
                                 onExcerptChange={onExcerptChange}
+                                onApproveButtonClick={onApproveButtonClick}
+                                onDiscardButtonClick={onDiscardButtonClick}
+                                // FIXME: disabled
                             />
                         )}
                     </TabPanel>
@@ -473,7 +370,7 @@ function LeftPane(props: Props) {
                     className={styles.entryListTab}
                 >
                     <ListView
-                        data={entries}
+                        data={entries ?? undefined}
                         renderer={EntryItem}
                         rendererParams={entryItemRendererParams}
                         keySelector={entryKeySelector}

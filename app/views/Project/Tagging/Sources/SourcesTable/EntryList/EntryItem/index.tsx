@@ -33,6 +33,11 @@ function transformEntry(entry: Entry): EntryInputType {
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
     });
 }
 
@@ -146,6 +151,7 @@ function EntryItem(props: Props) {
                 className={styles.entry}
                 primaryTagging={framework?.primaryTagging}
                 secondaryTagging={framework?.secondaryTagging}
+                leadId={entry.lead.id}
                 readOnly
             />
         </Container>

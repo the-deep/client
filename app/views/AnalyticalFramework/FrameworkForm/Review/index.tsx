@@ -10,11 +10,15 @@ import { _cs } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 
-// TODO: Move this to general components
-import Canvas from '#views/Project/EntryEdit/components/Canvas';
+import Section from '#components/entry/Section';
 import { WidgetsType, SectionsType } from '../schema';
 
 import styles from './styles.css';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
+const emptyObject = {};
 
 interface Props {
     className?: string;
@@ -66,9 +70,10 @@ function Review(props: Props) {
                             key={section.clientId}
                             name={section.clientId}
                         >
-                            <Canvas
-                                name={selectedSection}
+                            <Section
                                 widgets={section.widgets}
+                                onAttributeChange={noop}
+                                attributesMap={emptyObject}
                             />
                         </TabPanel>
                     ))}
@@ -78,9 +83,10 @@ function Review(props: Props) {
                 className={styles.card}
                 heading={_ts('analyticalFramework.review', 'secondaryTagging')}
             >
-                <Canvas
-                    name={undefined}
+                <Section
                     widgets={secondaryTagging}
+                    onAttributeChange={noop}
+                    attributesMap={emptyObject}
                 />
             </ContainerCard>
         </div>
