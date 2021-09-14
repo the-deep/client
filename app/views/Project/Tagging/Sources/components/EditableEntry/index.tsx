@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-    removeNull,
-    useForm,
-} from '@togglecorp/toggle-form';
+import { useForm } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
 
 import {
@@ -14,17 +11,24 @@ import {
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
 
-import { entrySchema } from '#views/Project/EntryEdit/schema';
 import {
-    Framework,
-    Entry,
-    EntryInput as EntryInputType,
-} from '#views/Project/EntryEdit/types';
+    entrySchema,
+    PartialEntryType as EntryInputType,
+} from '#views/Project/EntryEdit/schema';
+import {
+    WidgetType as WidgetRaw,
+    AnalysisFrameworkDetailType,
+} from '#generated/types';
+import { Widget } from '#types/newAnalyticalFramework';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
 import { useLazyRequest } from '#base/utils/restRequest';
 import ProjectContext from '#base/context/ProjectContext';
+import { DeepReplace } from '#utils/types';
+
+export type Framework = DeepReplace<AnalysisFrameworkDetailType, WidgetRaw, Widget>;
+type Section = NonNullable<Framework['primaryTagging']>[number];
 
 const UPDATE_ENTRY = gql`
 mutation UpdateEntry($projectId:ID!, $entryId:ID!, $entryData: EntryInputType!) {
@@ -37,24 +41,15 @@ mutation UpdateEntry($projectId:ID!, $entryId:ID!, $entryData: EntryInputType!) 
 }
 `;
 
-function transformEntry(entry: Entry): EntryInputType {
-    return removeNull({
-        ...entry,
-        lead: entry.lead.id,
-        image: entry.image?.id,
-        attributes: entry.attributes?.map((attribute) => ({
-            ...attribute,
-            // NOTE: we don't need this on form
-            geoSelectedOptions: undefined,
-        })),
-    });
-}
-
 interface Props {
     className?: string;
-    entry: Entry;
+    entry: EntryInputType;
     projectId: string;
-    framework: Framework | undefined | null;
+    leadId: string;
+    entryId: string;
+    primaryTagging: Section[] | undefined | null;
+    secondaryTagging: Widget[] | undefined | null;
+    controlled: boolean | undefined | null;
     compact?: boolean;
 }
 
@@ -62,9 +57,13 @@ function EditableEntry(props: Props) {
     const {
         className,
         projectId,
+        leadId,
+        entryId,
         entry,
-        framework,
+        primaryTagging,
+        secondaryTagging,
         compact,
+        controlled,
     } = props;
 
     const alert = useAlert();
@@ -106,16 +105,20 @@ function EditableEntry(props: Props) {
     const {
         pending,
         trigger: getEntry,
-    } = useLazyRequest<Entry, number>({
+    } = useLazyRequest<unknown, number>({
         url: (ctx) => `server://v2/entries/${ctx}/`,
         method: 'GET',
+        /*
+        // FIXME: this will not work
         onSuccess: (response) => {
             setValue(response);
         },
+        */
         failureHeader: 'Entry',
     });
 
     const handleSaveButtonClick = React.useCallback(() => {
+        // FIXME: this doesn't work
         const {
             value: entryData,
         } = validate();
@@ -164,13 +167,13 @@ function EditableEntry(props: Props) {
                     <EntryComments
                         // FIXME: Remove cast after entry comments
                         // is switched to gql
-                        entryId={+entry.id}
+                        entryId={+entryId}
                         projectId={+projectId}
                     />
                     {/*
                         <EntryVerification
                             className={styles.button}
-                            entryId={entry.id}
+                            entryId={entryId}
                             projectId={entry.project}
                             verifiedBy={entry.verifiedBy}
                             onVerificationChange={getEntry}
@@ -182,9 +185,9 @@ function EditableEntry(props: Props) {
             <EntryControl
                 // FIXME: Remove cast after entry comments
                 // is switched to gql
-                entryId={+entry.id}
+                entryId={+entryId}
                 projectId={+projectId}
-                value={!!entry.controlled}
+                value={!!controlled}
                 onChange={getEntry}
                 disabled={pending}
             />
@@ -211,13 +214,13 @@ function EditableEntry(props: Props) {
         >
             <EntryInput
                 name={undefined}
-                value={transformEntry(value)}
+                value={value}
                 onChange={handleEntryChange}
-                primaryTagging={framework?.primaryTagging}
-                secondaryTagging={framework?.secondaryTagging}
+                primaryTagging={primaryTagging}
+                secondaryTagging={secondaryTagging}
                 readOnly={!editMode}
                 compact={compact}
-                leadId={entry.lead.id}
+                leadId={leadId}
             />
         </Container>
     );
