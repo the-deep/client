@@ -216,6 +216,7 @@ function EntryItem(props: EntryItemProps) {
                     droppedExcerpt={droppedExcerpt}
                     image={entryImage}
                     imageRaw={imageRaw}
+                    // FIXME: pass this after image drag/drop is implemented
                     leadImageUrl={undefined}
                     entryType={entryType}
                 />

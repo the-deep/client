@@ -186,6 +186,7 @@ function EntryList(props: Props) {
         primaryTagging: frameworkDetails?.primaryTagging,
         secondaryTagging: frameworkDetails?.secondaryTagging,
         controlled: data.controlled,
+        entryImage: data.image,
     }), [
         leadId,
         projectId,
