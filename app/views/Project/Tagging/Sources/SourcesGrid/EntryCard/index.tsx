@@ -6,6 +6,9 @@ import {
     IoClose,
 } from 'react-icons/io5';
 import {
+    removeNull,
+} from '@togglecorp/toggle-form';
+import {
     DateOutput,
     TextOutput,
     Button,
@@ -18,8 +21,22 @@ import ExcerptOutput from '#components/entry/ExcerptOutput';
 import EditableEntry from '../../components/EditableEntry';
 
 import { Framework, Entry } from '../types';
+import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
 
 import styles from './styles.css';
+
+function transformEntry(entry: Entry): EntryInputType {
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
+    });
+}
 
 interface Props {
     className?: string;
@@ -125,9 +142,14 @@ function EntryCard(props: Props) {
                     <div className={styles.verticalSeparator} />
                     <EditableEntry
                         className={styles.entry}
-                        entry={entry}
+                        // FIXME: memoize this
+                        entry={transformEntry(entry)}
                         projectId={projectId}
-                        framework={framework}
+                        leadId={entry.lead.id}
+                        entryId={entry.id}
+                        primaryTagging={framework?.primaryTagging}
+                        secondaryTagging={framework?.secondaryTagging}
+                        controlled={entry.controlled}
                         compact
                     />
                 </>
