@@ -55,3 +55,15 @@ export const getFiltersForRequest = (filters: FilterFormType | undefined) => {
     });
     return requestFilters;
 };
+
+export function getValidDateRangeValues(dateRange?: { startDate: string, endDate: string}) {
+    if (dateRange) {
+        const endDate = new Date(dateRange.endDate);
+        endDate.setDate(endDate.getDate() + 1);
+        return {
+            startDate: getDateWithTimezone(dateRange.startDate),
+            endDate: getDateWithTimezone(encodeDate(endDate)),
+        };
+    }
+    return undefined;
+}

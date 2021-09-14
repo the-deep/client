@@ -11,13 +11,14 @@ import _ts from '#ts';
 import { useRequest } from '#base/utils/restRequest';
 import ProgressLine from '#components/ProgressLine';
 
-import { FilterFormType as Filters, getFiltersForRequest } from '../utils';
+import { getFiltersForRequest } from '../utils';
+import { SourcesFilterFields } from '../SourcesFilter';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    projectId: number;
-    filters?: Filters;
+    projectId: string;
+    filters: SourcesFilterFields;
     refreshTimestamp: number | undefined;
 }
 
@@ -30,7 +31,7 @@ function SourcesStats(props: Props) {
     } = props;
 
     const leadsRequestBody = useMemo(() => ({
-        ...getFiltersForRequest(filters),
+        ...getFiltersForRequest(filters), // FIXME remove when graphql api is present
         project: projectId,
     }), [projectId, filters]);
 

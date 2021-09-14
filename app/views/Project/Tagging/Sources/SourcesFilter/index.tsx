@@ -1,7 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
     _cs,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     useForm,
@@ -12,10 +11,10 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
-    DateRangeInput,
     SelectInput,
     MultiSelectInput,
     useBooleanState,
+    DateRangeInput,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -24,30 +23,48 @@ import {
     IoChevronUpOutline,
     IoChevronDownOutline,
 } from 'react-icons/io5';
-
-import { useRequest } from '#base/utils/restRequest';
-import { hasNoData } from '#utils/common';
+import { gql, useQuery } from '@apollo/client';
+import { EnumEntity } from '#types';
 import _ts from '#ts';
-import { KeyValueElement, LeadOptions, EmmEntity } from '#types';
+import { enumKeySelector, enumLabelSelector } from '#utils/common';
 import NonFieldError from '#components/NonFieldError';
-import { FilterFormType } from '../utils';
-
+import {
+    ProjectSourcesQueryVariables,
+    LeadPriorityEnum,
+    LeadConfidentialityEnum,
+    LeadExistsEnum,
+    SourceFilterOptionsQuery,
+    LeadStatusEnum,
+    UserType,
+    OrganizationTypeType,
+} from '#generated/types';
 import styles from './styles.css';
 
 // FIXME: Created at and published on are date ranges and not date inputs
-
-type FormSchema = ObjectSchema<FilterFormType>;
+export type SourcesFilterFields = Omit<ProjectSourcesQueryVariables,
+    'ordering' | 'page' | 'pageSize' | 'projectId' | 'createdAt_Gte' | 'createdAt_Lt' | 'publishedOn_Gte' | 'publishedOn_Lt'> & {
+        createdAt?: {
+            startDate: string;
+            endDate: string;
+        }
+        publishedOn?: {
+            startDate: string;
+            endDate: string;
+        }
+    };
+type FormType = SourcesFilterFields;
+type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        status: [],
+        statuses: [],
         createdAt: [],
         publishedOn: [],
-        assignee: [],
+        assignees: [],
         search: [],
         exists: [],
-        priority: [],
+        priorities: [],
         authoringOrganizationTypes: [],
         confidentiality: [],
         emmRiskFactors: [],
@@ -56,30 +73,87 @@ const schema: FormSchema = {
     }),
 };
 
-const initialValue: FilterFormType = {};
+const initialValue: FormType = {};
 
-const keySelector = (d: KeyValueElement): string => d.key;
-const labelSelector = (d: KeyValueElement): string => d.value;
-const emmKeySelector = (d: EmmEntity): string => d.key.toString();
-const emmLabelSelector = (d: EmmEntity): string => `${d.label} ${d.totalCount}`;
+const SOURCE_FILTER_OPTIONS = gql`
+    query SourceFilterOptions(
+        $projectId: ID!,
+    ) {
+        sourceStatusOptions: __type(name: "LeadStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceExistsOptions: __type(name: "LeadExistsEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourcePriorityOptions: __type(name: "LeadPriorityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        project(id: $projectId) {
+            members {
+                id
+                displayName
+            }
+        }
+        organizationTypes {
+            results {
+                id
+                title
+            }
+        }
+        emmEntititiesOptions: __type(name: "EmmEntityType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        emmRiskFactorsOptions: __type(name: "EmmKeyRiskFactorType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        emmKeywordsOptions: __type(name: "EmmKeyWordType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+    }
+`;
 
-const existsFilterOptions: KeyValueElement[] = [
-    {
-        key: 'assessment_exists',
-        value: _ts('sourcesFilter', 'assessmentExistsOptionLabel'),
-    },
-    {
-        key: 'assessment_does_not_exist',
-        value: _ts('sourcesFilter', 'assessmentDoesNotExistsOptionLabel'),
-    },
-];
+const userKeySelector = (d: Pick<UserType, 'id' | 'displayName'>) => d.id;
+const userLabelSelector = (d: Pick<UserType, 'id' | 'displayName'>) => d.displayName;
+const organizationTypeKeySelector = (d: Pick<OrganizationTypeType, 'id' | 'title'>) => d.id;
+const organizationTypeLabelSelector = (d: Pick<OrganizationTypeType, 'id' | 'title'>) => d.title;
 
 interface Props {
     className?: string;
     disabled?: boolean;
-    projectId: number;
+    projectId: string;
     filterOnlyUnprotected?: boolean;
-    onFilterApply: (filters: FilterFormType) => void;
+    onFilterApply: (value: SourcesFilterFields) => void;
 }
 
 function SourcesFilter(props: Props) {
@@ -88,23 +162,8 @@ function SourcesFilter(props: Props) {
         onFilterApply,
         projectId,
         filterOnlyUnprotected,
-        disabled: disabledFromProps,
+        disabled,
     } = props;
-
-    const queryOptions = useMemo(() => ({
-        projects: [projectId],
-    }), [projectId]);
-
-    const {
-        pending,
-        response: leadOptions,
-    } = useRequest<LeadOptions>({
-        skip: isNotDefined(projectId),
-        url: 'server://lead-options/',
-        method: 'GET',
-        query: queryOptions,
-        failureHeader: _ts('sourcesFilter', 'title'),
-    });
 
     const {
         pristine,
@@ -115,6 +174,17 @@ function SourcesFilter(props: Props) {
         setError,
         setValue,
     } = useForm(schema, initialValue);
+
+    const {
+        data: sourceFilterOptions,
+    } = useQuery<SourceFilterOptionsQuery>(
+        SOURCE_FILTER_OPTIONS,
+        {
+            variables: {
+                projectId,
+            },
+        },
+    );
 
     const error = getErrorObject(riskyError);
 
@@ -137,7 +207,24 @@ function SourcesFilter(props: Props) {
         toggleContentVisibility,
     ] = useBooleanState(false);
 
-    const disabled = disabledFromProps || pending;
+    const statusOptions = sourceFilterOptions
+        ?.sourceStatusOptions?.enumValues as EnumEntity<LeadStatusEnum>[] | undefined;
+    const existsOptions = sourceFilterOptions
+        ?.sourceExistsOptions?.enumValues as EnumEntity<LeadExistsEnum>[] | undefined;
+    const priorityOptions = sourceFilterOptions
+        ?.sourcePriorityOptions?.enumValues as EnumEntity<LeadPriorityEnum>[] | undefined;
+    const confidentialityOptions = sourceFilterOptions
+        ?.sourceConfidentialityOptions?.enumValues as EnumEntity<LeadConfidentialityEnum>[]
+        | undefined;
+    const assigneesOptions = sourceFilterOptions
+        ?.project?.members;
+    const organizationTypeOptions = sourceFilterOptions?.organizationTypes?.results;
+    const emmEntitiesOptions = sourceFilterOptions
+        ?.emmEntititiesOptions?.enumValues as EnumEntity<string>[] | undefined;
+    const emmRiskFactorsOptions = sourceFilterOptions
+        ?.emmRiskFactorsOptions?.enumValues as EnumEntity<string>[] | undefined;
+    const emmKeywordsOptions = sourceFilterOptions
+        ?.emmKeywordsOptions?.enumValues as EnumEntity<string>[] | undefined;
 
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
@@ -155,13 +242,13 @@ function SourcesFilter(props: Props) {
                 />
                 <MultiSelectInput
                     className={styles.input}
-                    name="status"
+                    name="statuses"
                     onChange={setFieldValue}
-                    options={leadOptions?.status}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.status}
-                    error={getErrorString(error?.status)}
+                    options={statusOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.statuses}
+                    error={getErrorString(error?.statuses)}
                     label={_ts('sourcesFilter', 'status')}
                 />
                 <DateRangeInput
@@ -182,13 +269,13 @@ function SourcesFilter(props: Props) {
                 />
                 <MultiSelectInput
                     className={styles.input}
-                    name="assignee"
+                    name="assignees"
                     onChange={setFieldValue}
-                    options={leadOptions?.assignee}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.assignee}
-                    error={getErrorString(error?.assignee)}
+                    options={assigneesOptions}
+                    keySelector={userKeySelector}
+                    labelSelector={userLabelSelector}
+                    value={value.assignees}
+                    error={getErrorString(error?.assignees)}
                     label={_ts('sourcesFilter', 'assignee')}
                 />
                 <SelectInput
@@ -198,9 +285,9 @@ function SourcesFilter(props: Props) {
                     )}
                     name="exists"
                     onChange={setFieldValue}
-                    options={existsFilterOptions}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
+                    options={existsOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
                     value={value.exists}
                     error={error?.exists}
                     label={_ts('sourcesFilter', 'exists')}
@@ -210,13 +297,13 @@ function SourcesFilter(props: Props) {
                         styles.input,
                         (hasNoData(value.priority) && !showContent) && styles.hidden,
                     )}
-                    name="priority"
+                    name="priorities"
                     onChange={setFieldValue}
-                    options={leadOptions?.priority}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.priority}
-                    error={getErrorString(error?.priority)}
+                    options={priorityOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.priorities}
+                    error={getErrorString(error?.priorities)}
                     label={_ts('sourcesFilter', 'priority')}
                 />
                 <MultiSelectInput
@@ -227,75 +314,71 @@ function SourcesFilter(props: Props) {
                     )}
                     name="authoringOrganizationTypes"
                     onChange={setFieldValue}
-                    options={leadOptions?.organizationTypes}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
+                    options={organizationTypeOptions}
+                    keySelector={organizationTypeKeySelector}
+                    labelSelector={organizationTypeLabelSelector}
                     value={value.authoringOrganizationTypes}
                     error={getErrorString(error?.authoringOrganizationTypes)}
                     label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
                 />
                 {!filterOnlyUnprotected && (
-                    <MultiSelectInput
+                    <SelectInput
                         className={_cs(
                             styles.input,
                             (hasNoData(value.confidentiality) && !showContent) && styles.hidden,
                         )}
                         name="confidentiality"
                         onChange={setFieldValue}
-                        options={leadOptions?.confidentiality}
-                        keySelector={keySelector}
-                        labelSelector={labelSelector}
+                        options={confidentialityOptions}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
                         value={value.confidentiality}
                         error={getErrorString(error?.confidentiality)}
                         label={_ts('sourcesFilter', 'confidentiality')}
                     />
                 )}
-                {leadOptions?.hasEmmLeads && (
-                    <>
-                        <MultiSelectInput
-                            className={_cs(
-                                styles.input,
-                                (hasNoData(value.emmRiskFactors) && !showContent) && styles.hidden,
-                            )}
-                            name="emmRiskFactors"
-                            onChange={setFieldValue}
-                            options={leadOptions?.emmRiskFactors}
-                            keySelector={emmKeySelector}
-                            labelSelector={emmLabelSelector}
-                            value={value.emmRiskFactors}
-                            error={getErrorString(error?.emmRiskFactors)}
-                            label={_ts('sourcesFilter', 'emmRiskFactors')}
-                        />
-                        <MultiSelectInput
-                            className={_cs(
-                                styles.input,
-                                (hasNoData(value.emmKeywords) && !showContent) && styles.hidden,
-                            )}
-                            name="emmKeywords"
-                            onChange={setFieldValue}
-                            options={leadOptions?.emmKeywords}
-                            keySelector={emmKeySelector}
-                            labelSelector={emmLabelSelector}
-                            value={value.emmKeywords}
-                            error={getErrorString(error?.emmKeywords)}
-                            label={_ts('sourcesFilter', 'emmKeywords')}
-                        />
-                        <MultiSelectInput
-                            className={_cs(
-                                styles.input,
-                                (hasNoData(value.emmEntities) && !showContent) && styles.hidden,
-                            )}
-                            name="emmEntities"
-                            onChange={setFieldValue}
-                            options={leadOptions?.emmEntities}
-                            keySelector={emmKeySelector}
-                            labelSelector={emmLabelSelector}
-                            value={value.emmEntities}
-                            error={getErrorString(error?.emmEntities)}
-                            label={_ts('sourcesFilter', 'emmEntities')}
-                        />
-                    </>
-                )}
+                <MultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        !showContent && styles.hidden,
+                    )}
+                    name="emmRiskFactors"
+                    onChange={setFieldValue}
+                    options={emmRiskFactorsOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.emmRiskFactors}
+                    error={getErrorString(error?.emmRiskFactors)}
+                    label={_ts('sourcesFilter', 'emmRiskFactors')}
+                />
+                <MultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        !showContent && styles.hidden,
+                    )}
+                    name="emmKeywords"
+                    onChange={setFieldValue}
+                    options={emmKeywordsOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.emmKeywords}
+                    error={getErrorString(error?.emmKeywords)}
+                    label={_ts('sourcesFilter', 'emmKeywords')}
+                />
+                <MultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        !showContent && styles.hidden,
+                    )}
+                    name="emmEntities"
+                    onChange={setFieldValue}
+                    options={emmEntitiesOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.emmEntities}
+                    error={getErrorString(error?.emmEntities)}
+                    label={_ts('sourcesFilter', 'emmEntities')}
+                />
                 <div className={styles.actions}>
                     <Button
                         disabled={disabled || pristine}
