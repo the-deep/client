@@ -43,7 +43,7 @@ const attributesSchema: AttributesSchema = {
 
 type EntrySchema = ObjectSchema<PartialEntryType>;
 type EntrySchemaFields = ReturnType<EntrySchema['fields']>;
-const entrySchema: EntrySchema = {
+export const entrySchema: EntrySchema = {
     fields: (): EntrySchemaFields => ({
         id: [defaultUndefinedType],
         lead: [],
