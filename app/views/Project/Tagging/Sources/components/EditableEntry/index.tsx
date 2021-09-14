@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from '@togglecorp/toggle-form';
+import { useForm, createSubmitHandler } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
 
 import {
@@ -73,6 +73,7 @@ function EditableEntry(props: Props) {
         setValue,
         value,
         validate,
+        setError,
     } = useForm(entrySchema, entry);
 
     const [updateEntry, { loading: updateEntryPending }] = useMutation(
@@ -118,19 +119,27 @@ function EditableEntry(props: Props) {
     });
 
     const handleSaveButtonClick = React.useCallback(() => {
-        // FIXME: this doesn't work
-        const {
-            value: entryData,
-        } = validate();
-
-        updateEntry({
-            variables: {
-                projectId,
-                entryId: entry.id,
-                entryData,
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (entryData) => {
+                updateEntry({
+                    variables: {
+                        projectId,
+                        entryId: entry.id,
+                        entryData: {
+                            ...entryData,
+                            attributes: entryData.attributes?.map((attribute) => ({
+                                ...attribute,
+                                widgetType: undefined,
+                            })),
+                        },
+                    },
+                });
             },
-        });
-    }, [projectId, validate, updateEntry, entry.id]);
+        );
+        submit();
+    }, [projectId, validate, setError, updateEntry, entry.id]);
 
     const saveButton = (
         <Button
