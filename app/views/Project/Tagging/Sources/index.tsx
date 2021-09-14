@@ -11,10 +11,9 @@ import {
 
 import ProjectContext from '#base/context/ProjectContext';
 import SourcesStats from './SourcesStats';
-import SourcesFilter from './SourcesFilter';
+import SourcesFilter, { SourcesFilterFields } from './SourcesFilter';
 import SourcesTable from './SourcesTable';
 import SourcesGrid from './SourcesGrid';
-import { FilterFormType as Filters } from './utils';
 
 import _ts from '#ts';
 import styles from './styles.css';
@@ -27,8 +26,8 @@ interface Props {
 function Sources(props: Props) {
     const { className, refreshTimestamp } = props;
     const { project } = React.useContext(ProjectContext);
-    const activeProject = project ? +project.id : undefined;
-    const [sourcesFilters, setSourcesFilters] = useState<Filters>();
+    const activeProject = project ? project.id : undefined;
+    const [sourcesFilters, setSourcesFilters] = useState<SourcesFilterFields>({});
 
     const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
 
