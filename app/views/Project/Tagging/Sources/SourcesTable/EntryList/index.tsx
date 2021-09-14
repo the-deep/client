@@ -131,7 +131,7 @@ export const LEAD_ENTRIES = gql`
     }
 `;
 
-const maxItemsPerPage = 1;
+const maxItemsPerPage = 5;
 const entryKeySelector = (e: Entry) => e.clientId ?? e.id;
 
 interface Props {

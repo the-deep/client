@@ -51,8 +51,8 @@ export const entrySchema: EntrySchema = {
         // informationDate
         entryType: [],
         image: [], // NOTE: to send previously set image
-        imageRaw: [], // NOTE: to send url encoded image
-        leadImage: [], // NOTE: to send images from lead
+        imageRaw: [defaultUndefinedType], // NOTE: to send url encoded image
+        leadImage: [defaultUndefinedType], // NOTE: to send images from lead
         tabularField: [],
         excerpt: [],
         droppedExcerpt: [],

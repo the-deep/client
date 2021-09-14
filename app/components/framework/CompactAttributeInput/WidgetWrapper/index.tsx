@@ -1,6 +1,8 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import ErrorBoundary from '#components/ErrorBoundary';
+
 import styles from './styles.css';
 
 export interface Props {
@@ -42,7 +44,9 @@ function WidgetWrapper(props: Props) {
                     readOnly && styles.readOnly,
                 )}
             >
-                {children}
+                <ErrorBoundary>
+                    {children}
+                </ErrorBoundary>
             </div>
         </div>
     );
