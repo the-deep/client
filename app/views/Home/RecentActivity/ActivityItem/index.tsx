@@ -42,24 +42,18 @@ function ActivityItem(props: RecentActivityProps) {
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
-                <Link
-                    to={emptyLink}
-                    className={styles.link}
-                >
+                <span className={styles.boldText}>
                     {createdByDisplayName}
-                </Link>
+                </span>
                 &nbsp;
                 {(type === 'lead'
                     ? _ts('recentActivity', 'leadAdded')
                     : _ts('recentActivity', 'entryCommentAdded')
                 )}
                 &nbsp;
-                <Link
-                    to={emptyLink}
-                    className={styles.link}
-                >
+                <span className={styles.boldText}>
                     {projectDisplayName}
-                </Link>
+                </span>
             </div>
             <DateOutput
                 className={styles.createdDate}

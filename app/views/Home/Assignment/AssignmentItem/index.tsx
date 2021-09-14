@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { IoCheckmarkCircle } from 'react-icons/io5';
+import { generatePath } from 'react-router-dom';
 import {
     Element,
     Link,
@@ -10,6 +11,7 @@ import {
 import { Assignment } from '#types';
 
 import _ts from '#ts';
+import routes from '#base/configs/routes';
 
 import styles from './styles.css';
 
@@ -54,17 +56,12 @@ function AssignmentItem(props: AssignmentItemProps) {
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
-                <Link
-                    to={emptyLink}
-                    className={styles.link}
-                >
-                    {createdByDetails.displayName}
-                </Link>
+                {createdByDetails.displayName}
                 &nbsp;
                 {_ts('assignment', 'assignedYou')}
                 &nbsp;
                 <Link
-                    to={emptyLink}
+                    to={emptyLink} // TODO: Add path to edit entries flow
                     className={styles.link}
                 >
                     {contentObjectDetails?.title}
@@ -73,7 +70,7 @@ function AssignmentItem(props: AssignmentItemProps) {
                 {_ts('assignment', 'in')}
                 &nbsp;
                 <Link
-                    to={emptyLink}
+                    to={generatePath(routes.tagging.path, { projectId: projectDetails?.id })}
                     className={styles.link}
                 >
                     {projectDetails?.title}
