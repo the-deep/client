@@ -9,27 +9,27 @@ import styles from './styles.css';
 
 export interface Entry {
     clientId: string;
-    droppedExcerpt: string;
-    excerpt: string;
+    droppedExcerpt?: string;
+    excerpt?: string;
 }
 
 interface Split {
     startIndex: number;
     endIndex: number;
-    excerpt: string;
-    droppedExcerpt: string;
+    excerpt: string | undefined;
+    droppedExcerpt: string | undefined;
 }
 
 interface Props {
     className?: string;
     text?: string;
-    entries?: Entry[];
+    entries: Entry[] | undefined | null;
     onAddButtonClick?: (selectedText: string) => void;
-    onExcerptChange?: (entryClientId: Entry['clientId'], newExcerpt: string) => void;
-    activeEntryClientId?: Entry['clientId'];
-    onExcerptClick?: (entryClientId: Entry['clientId']) => void;
-    onApproveButtonClick?: (entryClientId: Entry['clientId']) => void;
-    onDiscardButtonClick?: (entryClientId: Entry['clientId']) => void;
+    onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
+    activeEntryClientId?: string;
+    onExcerptClick?: (entryClientId: string) => void;
+    onApproveButtonClick?: (entryClientId: string) => void;
+    onDiscardButtonClick?: (entryClientId: string) => void;
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
 }
@@ -121,6 +121,7 @@ function SimplifiedTextView(props: Props) {
     }
 
     const containerRef = React.useRef<HTMLDivElement>(null);
+
     const {
         clientRect,
         isCollapsed,

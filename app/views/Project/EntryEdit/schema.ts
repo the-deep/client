@@ -2,6 +2,7 @@ import {
     ObjectSchema,
     ArraySchema,
     PartialForm,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 
 import { EntryInput } from './types';
@@ -23,12 +24,13 @@ type AttributeSchema = ObjectSchema<PartialAttributeType>;
 type AttributeSchemaFields = ReturnType<AttributeSchema['fields']>;
 const attributeSchema: AttributeSchema = {
     fields: (): AttributeSchemaFields => ({
-        id: [],
-        // NOTE: this one is not needed on server
-        widgetType: [],
+        id: [defaultUndefinedType],
         clientId: [],
         widget: [],
-        data: [],
+        data: [], // FIXME: lot of things here
+
+        // NOTE: widgetType this one is not needed on server
+        widgetType: [],
     }),
 };
 
@@ -43,19 +45,19 @@ type EntrySchema = ObjectSchema<PartialEntryType>;
 type EntrySchemaFields = ReturnType<EntrySchema['fields']>;
 const entrySchema: EntrySchema = {
     fields: (): EntrySchemaFields => ({
-        id: [],
+        id: [defaultUndefinedType],
         lead: [],
         // order
         // informationDate
         entryType: [],
-        image: [],
-        // imageRaw
-        // leadImage: [],
+        image: [], // NOTE: to send previously set image
+        imageRaw: [], // NOTE: to send url encoded image
+        leadImage: [], // NOTE: to send images from lead
         tabularField: [],
         excerpt: [],
         droppedExcerpt: [],
         // highlightHidden: [],
-        attributes: attributesSchema, // FIXME: lot of things here
+        attributes: attributesSchema,
         clientId: [],
     }),
 };

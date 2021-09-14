@@ -1,0 +1,14 @@
+.section {
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--dui-spacing-large);
+    gap: var(--dui-spacing-large);
+
+    .widget-container {
+        flex-basis: 100%;
+
+        &.half-widget {
+            flex-basis: 50%;
+        }
+    }
+}

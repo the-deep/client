@@ -22,7 +22,7 @@ import _ts from '#ts';
 import { sortByOrder } from '#utils/common';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import NonFieldError from '#components/NonFieldError';
-import { PartialWidget } from '#components/framework/WidgetPreview';
+import { PartialWidget } from '#components/framework/AttributeInput';
 
 import { SectionsType } from '../schema';
 import Canvas from '../components/Canvas';

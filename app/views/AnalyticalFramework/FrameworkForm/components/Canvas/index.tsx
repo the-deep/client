@@ -16,7 +16,7 @@ import SortableList, {
 } from '#components/SortableList';
 import NonFieldError from '#components/NonFieldError';
 import { Widget } from '#types/newAnalyticalFramework';
-import WidgetPreview, { PartialWidget } from '#components/framework/WidgetPreview';
+import AttributeInput, { PartialWidget } from '#components/framework/AttributeInput';
 
 import styles from './styles.css';
 
@@ -51,7 +51,7 @@ function WidgetWrapper(props: WidgetProps) {
     } = props;
 
     return (
-        <WidgetPreview
+        <AttributeInput
             key={clientId}
             name={clientId}
             value={undefined}
