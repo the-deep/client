@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     _cs,
     randomString,
@@ -39,6 +39,7 @@ import { useRequest } from '#base/utils/restRequest';
 
 import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
+import { EntryImagesMap } from '../index';
 import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem from './EntryItem';
 import styles from './styles.css';
@@ -69,6 +70,7 @@ interface Props {
     leadId: string;
     hideSimplifiedPreview?: boolean;
     hideOriginalPreview?: boolean;
+    entryImagesMap: EntryImagesMap | undefined;
 }
 
 function LeftPane(props: Props) {
@@ -85,6 +87,7 @@ function LeftPane(props: Props) {
         onEntryDelete,
         hideSimplifiedPreview = false,
         hideOriginalPreview = false,
+        entryImagesMap,
         leadId,
     } = props;
 
@@ -141,20 +144,6 @@ function LeftPane(props: Props) {
         setShowScreenshotFalse();
     }, [setShowScreenshotFalse]);
 
-    const handleScreenshotCaptureComplete = React.useCallback(() => {
-        setShowAddExcerptModalTrue();
-    }, [setShowAddExcerptModalTrue]);
-
-    const handleCanvasDrawDone = React.useCallback((newImageUrl: string) => {
-        setCapturedImageUrl(newImageUrl);
-        setShowAddExcerptModalTrue();
-    }, [setShowAddExcerptModalTrue]);
-
-    const handleAddExcerptCancel = React.useCallback(() => {
-        setShowAddExcerptModalFalse();
-        setExcerpt(undefined);
-    }, [setExcerpt, setShowAddExcerptModalFalse]);
-
     const handleCreateEntryButtonClick = React.useCallback(() => {
         setShowAddExcerptModalFalse();
         setCapturedImageUrl(undefined);
@@ -162,17 +151,15 @@ function LeftPane(props: Props) {
         setExcerpt(undefined);
         setShowScreenshotFalse();
 
-        if (excerpt) {
-            if (onEntryCreate) {
-                onEntryCreate({
-                    clientId: randomString(),
-                    excerpt,
-                    entryType: 'IMAGE',
-                    lead: leadId,
-                    droppedExcerpt: excerpt,
-                    imageRaw: capturedImageUrl,
-                });
-            }
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(),
+                excerpt,
+                entryType: 'IMAGE',
+                lead: leadId,
+                droppedExcerpt: excerpt,
+                imageRaw: capturedImageUrl,
+            });
         }
     }, [
         capturedImageUrl,
@@ -186,13 +173,42 @@ function LeftPane(props: Props) {
         setShowScreenshotFalse,
     ]);
 
-    const entryItemRendererParams = React.useCallback((_: string, entry: EntryInput) => ({
+    const handleCanvasDrawDone = React.useCallback((newImageUrl: string) => {
+        setCapturedImageUrl(newImageUrl);
+        handleCreateEntryButtonClick();
+    }, [handleCreateEntryButtonClick]);
+
+    const handleAddExcerptCancel = React.useCallback(() => {
+        setShowAddExcerptModalFalse();
+        setExcerpt(undefined);
+    }, [setExcerpt, setShowAddExcerptModalFalse]);
+
+    const entryItemRendererParams = React.useCallback((entryId: string, entry: EntryInput) => ({
         ...entry,
+        entryId: entry.clientId,
         isActive: activeEntry === entry.clientId,
         onClick: onEntryClick,
         onExcerptChange,
         onEntryDelete,
-    }), [activeEntry, onEntryClick, onExcerptChange, onEntryDelete]);
+        entryImage: entryImagesMap?.[entryId],
+        onApproveButtonClick,
+        onDiscardButtonClick,
+    }), [
+        onApproveButtonClick,
+        onDiscardButtonClick,
+        activeEntry,
+        onEntryClick,
+        onExcerptChange,
+        onEntryDelete,
+        entryImagesMap,
+    ]);
+
+    const activeEntryDetails = useMemo(() => (
+        entries?.find((entry) => entry.clientId === activeEntry)
+    ), [
+        entries,
+        activeEntry,
+    ]);
 
     const handleSimplifiedViewAddButtonClick = React.useCallback((selectedText: string) => {
         if (onEntryCreate) {
@@ -252,7 +268,7 @@ function LeftPane(props: Props) {
                                     </QuickActionButton>
                                     <QuickActionButton
                                         name={undefined}
-                                        onClick={handleScreenshotCaptureComplete}
+                                        onClick={handleCreateEntryButtonClick}
                                     >
                                         <IoCheckmark />
                                     </QuickActionButton>
@@ -274,6 +290,18 @@ function LeftPane(props: Props) {
                         <IoExpand />
                     </QuickActionButton>
                 </>
+            )}
+            headerDescription={activeEntryDetails && activeEntry && (
+                <EntryItem
+                    {...activeEntryDetails}
+                    entryId={activeEntry}
+                    isActive
+                    onExcerptChange={onExcerptChange}
+                    onEntryDelete={onEntryDelete}
+                    onApproveButtonClick={onApproveButtonClick}
+                    onDiscardButtonClick={onDiscardButtonClick}
+                    entryImage={entryImagesMap?.[activeEntry]}
+                />
             )}
             contentClassName={styles.content}
         >
@@ -373,6 +401,7 @@ function LeftPane(props: Props) {
                         data={entries ?? undefined}
                         renderer={EntryItem}
                         rendererParams={entryItemRendererParams}
+                        className={styles.entryList}
                         keySelector={entryKeySelector}
                     />
                 </TabPanel>

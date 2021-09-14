@@ -21,6 +21,7 @@ import {
 } from '#generated/types';
 // FIXME: move this component
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import { Entry } from '#views/Project/EntryEdit/types';
 import ExcerptOutput from '#components/entry/ExcerptOutput';
 import { Widget } from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
@@ -52,6 +53,8 @@ interface EntryInputProps<T extends string | number | undefined> {
     primaryTagging: Section[] | undefined | null;
     secondaryTagging: Widget[] | undefined | null;
     compact?: boolean;
+
+    entryImage: Entry['image'] | undefined | null;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -69,6 +72,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onChange,
         leadId,
         compact,
+        entryImage,
     } = props;
 
     const defaultOptionVal = useCallback(
@@ -126,10 +130,10 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                         entryType={value.entryType}
                         excerpt={value.excerpt}
                         droppedExcerpt={value.droppedExcerpt}
-                        // TODO: instead of passing image id, we should pass image object
-                        // Should work similarly to SearchSelectInput
-                        // image={value.image}
-                        image={undefined}
+                        image={entryImage}
+                        imageRaw={value.imageRaw}
+                        // FIXME: pass this after image drag/drop is implemented
+                        leadImageUrl={undefined}
                         // TODO: edit excerpt
                     />
                 </Container>

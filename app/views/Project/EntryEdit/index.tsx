@@ -53,6 +53,8 @@ import schema, { defaultFormValues, PartialEntryType, PartialFormType } from './
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
+export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
+
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
 
 function transformEntry(entry: Entry): EntryInputType {
@@ -230,6 +232,7 @@ function EntryEdit(props: Props) {
 
     // FIXME: set section initially
     const [selectedSection, setSelectedSection] = useState<string | undefined>();
+    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
@@ -263,6 +266,12 @@ function EntryEdit(props: Props) {
                         (entry) => transformEntry(entry as Entry),
                     );
                     setFormValue((oldVal) => ({ ...oldVal, entries }));
+                    const imagesMap = listToMap(
+                        leadFromResponse.entries,
+                        (d) => d.clientId,
+                        (d) => d.image,
+                    );
+                    setEntryImagesMap(imagesMap);
                 }
 
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
@@ -276,7 +285,7 @@ function EntryEdit(props: Props) {
     const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
 
     const entryDataRendererParams = useCallback(
-        (_: string, datum: PartialEntryType, index: number) => ({
+        (entryId: string, datum: PartialEntryType, index: number) => ({
             value: datum,
             name: index,
             index,
@@ -285,9 +294,11 @@ function EntryEdit(props: Props) {
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
             disabled: !!selectedEntry,
+            entryImage: entryImagesMap?.[entryId],
             // error,
         }),
         [
+            entryImagesMap,
             frameworkDetails?.secondaryTagging,
             frameworkDetails?.primaryTagging,
             handleEntryChange,
@@ -394,6 +405,7 @@ function EntryEdit(props: Props) {
                                     onExcerptChange={handleExcerptChange}
                                     lead={lead}
                                     leadId={leadId}
+                                    entryImagesMap={entryImagesMap}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -465,6 +477,7 @@ function EntryEdit(props: Props) {
                                     leadId={leadId}
                                     hideSimplifiedPreview
                                     hideOriginalPreview
+                                    entryImagesMap={entryImagesMap}
                                 />
                                 <Container
                                     className={styles.rightContainer}

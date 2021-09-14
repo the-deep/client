@@ -106,6 +106,10 @@ function EntryCard(props: Props) {
                     entryType={entry.entryType}
                     excerpt={entry.excerpt}
                     image={entry.image}
+                    // NOTE: no need to pass imageRaw and leadImageUrl as they
+                    // are not retrieved from server
+                    imageRaw={undefined}
+                    leadImageUrl={undefined}
                     droppedExcerpt={entry.droppedExcerpt}
                     // tabularFieldData={entry.tabularFieldData}
                 />
@@ -151,6 +155,7 @@ function EntryCard(props: Props) {
                         secondaryTagging={framework?.secondaryTagging}
                         controlled={entry.controlled}
                         compact
+                        entryImage={entry.image}
                     />
                 </>
             )}
