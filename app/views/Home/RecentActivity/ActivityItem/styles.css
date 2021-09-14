@@ -36,7 +36,7 @@
             font-size: var(--dui-font-size-small);
         }
 
-        .link {
+        .bold-text{
             color: var(--dui-color-brand);
             font-weight: var(--dui-font-weight-bold);
         }
