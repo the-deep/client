@@ -1,5 +1,6 @@
 .entry-card {
     display: flex;
+    position: relative;
     border-radius: var(--dui-border-radius-card);
     background-color: var(--dui-color-foreground);
 
@@ -8,41 +9,35 @@
         background-color: transparent;
 
         .meta-section {
-            padding: var(--dui-spacing-medium) 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-small);
         }
     }
 
     &.expanded {
-        position: relative;
-
         .source-details {
             flex-basis: 50%;
+            flex-grow: unset;
         }
 
         .vertical-separator {
-            position: absolute;
-            top: var(--dui-spacing-extra-large);
-            left: 50%;
+            --top: var(--dui-spacing-extra-large);
+            margin: var(--top) 0;
             background-color: var(--dui-color-separator);
             width: var(--dui-width-separator-thin);
-            height: calc(100% - var(--dui-spacing-extra-large) * 2);
+            height: calc(100% - var(--top) * 2);
         }
 
-        .tags-container {
+        .entry {
             flex-basis: 50%;
             background-color: transparent;
-
-            .entry-tags {
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                --height-entry-item: unset;
-
-                .section {
-                    flex-basis: unset;
-                    width: unset;
-                }
-            }
         }
+    }
+
+    .close-button {
+        position: absolute;
+        top: var(--dui-spacing-medium);
+        right: var(--dui-spacing-medium);
     }
 }

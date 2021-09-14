@@ -13,7 +13,7 @@ import {
     Framework,
     Entry,
 } from '../types';
-import EntryItem from './EntryItem';
+import EditableEntry from '../../components/EditableEntry';
 import {
     LeadEntriesQuery,
     LeadEntriesQueryVariables,
@@ -113,7 +113,7 @@ export const LEAD_ENTRIES = gql`
 `;
 
 const maxItemsPerPage = 1;
-const entryKeySelector = (e: Entry) => e.clientId;
+const entryKeySelector = (e: Entry) => e.clientId ?? e.id;
 
 interface Props {
     className?: string;
@@ -188,7 +188,7 @@ function EntryList(props: Props) {
             <ListView
                 className={styles.entryList}
                 keySelector={entryKeySelector}
-                renderer={EntryItem}
+                renderer={EditableEntry}
                 data={entries ?? undefined}
                 rendererParams={entryDataRendererParams}
                 rendererClassName={styles.entryItem}
