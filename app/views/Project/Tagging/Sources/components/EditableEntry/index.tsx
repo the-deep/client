@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useForm, createSubmitHandler } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
 
@@ -67,7 +67,7 @@ function EditableEntry(props: Props) {
     } = props;
 
     const alert = useAlert();
-    const { project } = React.useContext(ProjectContext);
+    const { project } = useContext(ProjectContext);
     const [editMode, setEditModeTrue, setEditModeFalse] = useBooleanState(false);
     const {
         setValue,
@@ -80,6 +80,7 @@ function EditableEntry(props: Props) {
         UPDATE_ENTRY,
         {
             onCompleted: () => {
+                // FIXME: check ok if actually okay
                 alert.show(
                     'Tags updated successfully!',
                     { variant: 'success' },
@@ -97,7 +98,7 @@ function EditableEntry(props: Props) {
         },
     );
 
-    const handleEntryChange = React.useCallback((v) => {
+    const handleEntryChange = useCallback((v) => {
         setValue(v);
     }, [setValue]);
 
@@ -118,22 +119,25 @@ function EditableEntry(props: Props) {
         failureHeader: 'Entry',
     });
 
-    const handleSaveButtonClick = React.useCallback(() => {
+    const handleSaveButtonClick = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
             (entryData) => {
+                const transformedEntryData = {
+                    ...entryData,
+                    deleted: undefined,
+                    stale: undefined,
+                    attributes: entryData.attributes?.map((attribute) => ({
+                        ...attribute,
+                        widgetType: undefined,
+                    })),
+                };
                 updateEntry({
                     variables: {
                         projectId,
                         entryId: entry.id,
-                        entryData: {
-                            ...entryData,
-                            attributes: entryData.attributes?.map((attribute) => ({
-                                ...attribute,
-                                widgetType: undefined,
-                            })),
-                        },
+                        entryData: transformedEntryData,
                     },
                 });
             },
@@ -155,58 +159,105 @@ function EditableEntry(props: Props) {
         </Button>
     );
 
-    const extraActions = (
-        <>
-            {canEditEntry && (
-                <>
-                    {(!compact || !editMode) && (
-                        <Button
-                            name={undefined}
-                            variant="secondary"
-                            icons={(
-                                <FiEdit2 />
-                            )}
-                            onClick={setEditModeTrue}
-                            disabled={editMode}
-                        >
-                            Edit Tags
-                        </Button>
-                    )}
-                    {compact && editMode && saveButton}
-                    <EntryComments
-                        // FIXME: Remove cast after entry comments
-                        // is switched to gql
-                        entryId={+entryId}
-                        projectId={+projectId}
-                    />
-                    {/*
-                        <EntryVerification
-                            className={styles.button}
-                            entryId={entryId}
-                            projectId={entry.project}
-                            verifiedBy={entry.verifiedBy}
-                            onVerificationChange={getEntry}
-                            disabled={pending}
-                        />
-                      */}
-                </>
-            )}
-            <EntryControl
-                // FIXME: Remove cast after entry comments
-                // is switched to gql
-                entryId={+entryId}
-                projectId={+projectId}
-                value={!!controlled}
-                onChange={getEntry}
-                disabled={pending}
-            />
-        </>
+    const entryInput = (
+        <EntryInput
+            name={undefined}
+            value={value}
+            onChange={handleEntryChange}
+            primaryTagging={primaryTagging}
+            secondaryTagging={secondaryTagging}
+            readOnly={!editMode}
+            compact={compact}
+            leadId={leadId}
+        />
     );
+
+    const entryControl = (
+        <EntryControl
+            // FIXME: Remove cast after entry comments
+            // is switched to gql
+            entryId={+entryId}
+            projectId={+projectId}
+            value={!!controlled}
+            onChange={getEntry}
+            disabled={pending}
+        />
+    );
+    const entryVerification = (
+        null
+        /*
+           <EntryVerification
+               className={styles.button}
+               entryId={entryId}
+               projectId={entry.project}
+               verifiedBy={entry.verifiedBy}
+               onVerificationChange={getEntry}
+               disabled={pending}
+           />
+         */
+    );
+
+    const entryComments = (
+        <EntryComments
+            // FIXME: Remove cast after entry comments
+            // is switched to gql
+            entryId={+entryId}
+            projectId={+projectId}
+        />
+    );
+
+    const editTagsButton = (
+        <Button
+            name={undefined}
+            variant="secondary"
+            icons={(
+                <FiEdit2 />
+            )}
+            onClick={setEditModeTrue}
+            disabled={editMode}
+        >
+            Edit Tags
+        </Button>
+    );
+
+    if (compact) {
+        return (
+            <Container
+                className={className}
+                footerActions={(
+                    <>
+                        {canEditEntry && (
+                            <>
+                                {editMode ? saveButton : editTagsButton}
+                                {entryComments}
+                                {entryVerification}
+                            </>
+                        )}
+                        {entryControl}
+                    </>
+                )}
+            >
+                {entryInput}
+            </Container>
+        );
+    }
+
     return (
         <Container
             className={className}
-            headerIcons={!compact && extraActions}
-            headerActions={!compact && editMode && (
+            headerIcons={(
+                <>
+                    {canEditEntry && (
+                        <>
+                            {editTagsButton}
+                            {entryComments}
+                            {entryVerification}
+                        </>
+                    )}
+                    {entryControl}
+                </>
+            )}
+            headerActions={editMode && (
                 <>
                     {saveButton}
                     <Button
@@ -219,18 +270,8 @@ function EditableEntry(props: Props) {
                     </Button>
                 </>
             )}
-            footerActions={compact && extraActions}
         >
-            <EntryInput
-                name={undefined}
-                value={value}
-                onChange={handleEntryChange}
-                primaryTagging={primaryTagging}
-                secondaryTagging={secondaryTagging}
-                readOnly={!editMode}
-                compact={compact}
-                leadId={leadId}
-            />
+            {entryInput}
         </Container>
     );
 }

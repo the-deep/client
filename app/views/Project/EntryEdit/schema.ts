@@ -45,6 +45,11 @@ type EntrySchema = ObjectSchema<PartialEntryType>;
 type EntrySchemaFields = ReturnType<EntrySchema['fields']>;
 export const entrySchema: EntrySchema = {
     fields: (): EntrySchemaFields => ({
+        // NOTE: widgetType this one is not needed on server
+        stale: [],
+        // NOTE: widgetType this one is not needed on server
+        deleted: [],
+
         id: [defaultUndefinedType],
         lead: [],
         // order
