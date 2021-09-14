@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
     isNotDefined,
     _cs,
+    listToMap,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -11,8 +13,15 @@ import {
     Tab,
     TabList,
     TabPanel,
+    ListView,
+    Container,
 } from '@the-deep/deep-ui';
-import { useForm, removeNull } from '@togglecorp/toggle-form';
+import {
+    useForm,
+    removeNull,
+    useFormArray,
+    useFormObject,
+} from '@togglecorp/toggle-form';
 import { useQuery } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
@@ -28,23 +37,32 @@ import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
 } from '#generated/types';
+import EntryInput from '#components/entry/EntryInput';
+import Section from '#components/entry/Section';
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
+import _ts from '#ts';
+
 import { PROJECT_FRAMEWORK } from './queries';
 
-// import type { Entry as EditableEntry } from './LeftPane';
 import SourceDetails from './SourceDetails';
-import PrimaryTagging from './PrimaryTagging';
-import SecondaryTagging from './SecondaryTagging';
-import Review from './Review';
+import LeftPane from './LeftPane';
 
-import schema, { defaultFormValues } from './schema';
-import { Entry, EntryInput, Framework } from './types';
+import schema, { defaultFormValues, PartialEntryType, PartialFormType } from './schema';
+import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
-function transformEntry(entry: Entry): EntryInput {
+const entryKeySelector = (e: PartialEntryType) => e.clientId;
+
+function transformEntry(entry: Entry): EntryInputType {
     return removeNull({
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
     });
 }
 
@@ -60,6 +78,8 @@ function EntryEdit(props: Props) {
 
     // LEAD
 
+    // FIXME: why have this ready/setReady state here?
+    // leadId will always be defined anyway
     const [ready, setReady] = useState(!leadId);
 
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
@@ -69,6 +89,15 @@ function EntryEdit(props: Props) {
         confidentiality: 'unprotected',
         isAssessmentLead: false,
     }));
+
+    const defaultOptionVal = useCallback(
+        (): PartialEntryType => ({
+            clientId: randomString(),
+            entryType: 'EXCERPT',
+            lead: leadId,
+        }),
+        [leadId],
+    );
 
     const {
         value: leadValue,
@@ -92,7 +121,7 @@ function EntryEdit(props: Props) {
         failureHeader: 'Leads',
     });
 
-    // ENTRY
+    // ENTRY FORM
 
     const {
         value: formValue,
@@ -100,6 +129,80 @@ function EntryEdit(props: Props) {
         setFieldValue: setFormFieldValue,
         // error: formError,
     } = useForm(schema, defaultFormValues);
+
+    const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
+
+    const currentEntryIndex = formValue.entries?.findIndex(
+        (entry) => entry.clientId === selectedEntry,
+    ) ?? -1;
+    const currentEntry = formValue.entries?.[currentEntryIndex];
+
+    const {
+        setValue: onEntryChange,
+    } = useFormArray<'entries', PartialEntryType>('entries', setFormFieldValue);
+
+    const handleEntryCreate = useCallback(
+        (newValue: PartialEntryType) => {
+            // TODO: start snapshot mode
+            setFormFieldValue(
+                (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), newValue],
+                'entries',
+            );
+            setSelectedEntry(newValue.clientId);
+        },
+        [setFormFieldValue],
+    );
+
+    const handleEntryChangeApprove = useCallback(
+        () => {
+            // TODO: clear snapshot
+            setSelectedEntry(undefined);
+        },
+        [],
+    );
+
+    const handleEntryChangeDiscard = useCallback(
+        () => {
+            // TODO: restore snapshot
+            setSelectedEntry(undefined);
+        },
+        [],
+    );
+
+    const onEntryFieldChange = useFormObject(
+        currentEntryIndex === -1 ? undefined : currentEntryIndex,
+        onEntryChange,
+        defaultOptionVal,
+    );
+
+    const handleExcerptChange = useCallback(
+        (_: string, excerpt: string | undefined) => {
+            onEntryFieldChange(excerpt, 'excerpt');
+        },
+        [onEntryFieldChange],
+    );
+
+    // NOTE: we are creating a map of index and value because we are iterating
+    // over widgets but modifying attributes
+    const attributesMap = useMemo(() => (
+        listToMap(
+            currentEntry?.attributes ?? [],
+            (d) => d.widget,
+            (d, _, i) => ({
+                index: i,
+                value: d,
+            }),
+        )
+    ), [currentEntry?.attributes]);
+
+    const {
+        setValue: onAttributeChange,
+    } = useFormArray('attributes', onEntryFieldChange);
+
+    // ENTRY
+
+    // FIXME: set section initially
+    const [selectedSection, setSelectedSection] = useState<string | undefined>();
 
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
@@ -122,19 +225,47 @@ function EntryEdit(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                const leadFromResponse = response?.project?.lead;
-                if (!leadFromResponse) {
+                const projectFromResponse = response?.project;
+                if (!projectFromResponse) {
                     return;
                 }
-                const entries = leadFromResponse.entries?.map(
-                    (entry) => transformEntry(entry as Entry),
-                );
-                setFormValue((oldVal) => ({ ...oldVal, entries }));
+
+                const leadFromResponse = projectFromResponse.lead;
+                if (leadFromResponse) {
+                    const entries = leadFromResponse.entries?.map(
+                        (entry) => transformEntry(entry as Entry),
+                    );
+                    setFormValue((oldVal) => ({ ...oldVal, entries }));
+                }
+
+                const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
+                if (analysisFrameworkFromResponse) {
+                    const firstSection = analysisFrameworkFromResponse?.primaryTagging?.[0];
+                    setSelectedSection(firstSection?.clientId);
+                }
             },
         },
     );
-
     const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
+
+    const entryDataRendererParams = useCallback(
+        (_: string, datum: PartialEntryType, index: number) => ({
+            value: datum,
+            name: index,
+            index,
+            onChange: onEntryChange,
+            secondaryTagging: frameworkDetails?.secondaryTagging,
+            primaryTagging: frameworkDetails?.primaryTagging,
+            leadId,
+            // error,
+        }),
+        [
+            frameworkDetails?.secondaryTagging,
+            frameworkDetails?.primaryTagging,
+            onEntryChange,
+            leadId,
+        ],
+    );
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
@@ -221,16 +352,70 @@ function EntryEdit(props: Props) {
                         name="primary-tagging"
                     >
                         {frameworkDetails && (
-                            <PrimaryTagging
-                                lead={lead}
-                                className={styles.primaryTagging}
-                                sections={frameworkDetails.primaryTagging}
-                                frameworkId={frameworkDetails.id}
-                                // entries={entries}
-                                // onEntriesChange={setEntries}
-                                // activeEntry={activeEntry}
-                                // onActiveEntryChange={setActiveEntry}
-                            />
+                            <div className={styles.primaryTagging}>
+                                <LeftPane
+                                    className={styles.sourcePreview}
+                                    entries={formValue.entries}
+                                    activeEntry={selectedEntry}
+                                    onEntryClick={setSelectedEntry}
+                                    onEntryCreate={handleEntryCreate}
+                                    onApproveButtonClick={handleEntryChangeApprove}
+                                    onDiscardButtonClick={handleEntryChangeDiscard}
+                                    // onEntryDelete={handleEntryDelete}
+                                    onExcerptChange={handleExcerptChange}
+                                    lead={lead}
+                                    leadId={leadId}
+                                />
+                                <Container
+                                    className={_cs(className, styles.sections)}
+                                    headerActions={(
+                                        <FrameworkImageButton
+                                            frameworkId={frameworkDetails.id}
+                                            label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                                            variant="secondary"
+                                        />
+                                    )}
+                                    contentClassName={styles.content}
+                                >
+                                    <Tabs
+                                        value={selectedSection}
+                                        onChange={setSelectedSection}
+                                        variant="step"
+                                    >
+                                        <TabList className={styles.tabs}>
+                                            {frameworkDetails.primaryTagging?.map((section) => (
+                                                <Tab
+                                                    key={section.clientId}
+                                                    name={section.clientId}
+                                                    borderWrapperClassName={styles.borderWrapper}
+                                                    className={_cs(
+                                                        styles.tab,
+                                                        // analyzeErrors(error?.[section.clientId])
+                                                        // && styles.errored,
+                                                    )}
+                                                    title={section.tooltip ?? undefined}
+                                                >
+                                                    {section.title}
+                                                </Tab>
+                                            ))}
+                                        </TabList>
+                                        {frameworkDetails.primaryTagging?.map((section) => (
+                                            <TabPanel
+                                                key={section.clientId}
+                                                name={section.clientId}
+                                                className={styles.panel}
+                                            >
+                                                <Section
+                                                    widgets={section.widgets}
+                                                    attributesMap={attributesMap}
+                                                    onAttributeChange={onAttributeChange}
+                                                    readOnly={!currentEntry}
+                                                />
+                                            </TabPanel>
+                                        ))}
+                                    </Tabs>
+                                </Container>
+                            </div>
                         )}
                     </TabPanel>
                     <TabPanel
@@ -238,28 +423,65 @@ function EntryEdit(props: Props) {
                         name="secondary-tagging"
                     >
                         {frameworkDetails && (
-                            <SecondaryTagging
-                                className={styles.secondaryTagging}
-                                widgets={frameworkDetails.secondaryTagging}
-                                frameworkId={frameworkDetails.id}
-                                // entries={entries}
-                                // activeEntry={activeEntry}
-                                // onActiveEntryChange={setActiveEntry}
-                            />
+                            <div className={styles.secondaryTagging}>
+                                <LeftPane
+                                    className={styles.sourcePreview}
+                                    entries={formValue.entries}
+                                    activeEntry={selectedEntry}
+                                    onEntryClick={setSelectedEntry}
+                                    onEntryCreate={handleEntryCreate}
+                                    // onEntryDelete={handleEntryDelete}
+                                    onExcerptChange={handleExcerptChange}
+                                    lead={lead}
+                                    leadId={leadId}
+                                    hideSimplifiedPreview
+                                    hideOriginalPreview
+                                />
+                                <Container
+                                    className={styles.rightContainer}
+                                    contentClassName={styles.frameworkOutput}
+                                    headerActions={(
+                                        <FrameworkImageButton
+                                            frameworkId={frameworkDetails.id}
+                                            label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                                            variant="secondary"
+                                        />
+                                    )}
+                                >
+                                    <Section
+                                        widgets={frameworkDetails.secondaryTagging}
+                                        attributesMap={attributesMap}
+                                        onAttributeChange={onAttributeChange}
+                                        readOnly={!currentEntry}
+                                    />
+                                </Container>
+                            </div>
                         )}
                     </TabPanel>
                     <TabPanel
                         name="review"
                         className={styles.tabPanel}
                     >
-                        <Review
-                            value={formValue}
-                            // error={formError}
-                            onChange={setFormFieldValue}
-                            frameworkId={frameworkDetails?.id}
-                            secondaryTagging={frameworkDetails?.secondaryTagging}
-                            primaryTagging={frameworkDetails?.primaryTagging}
-                        />
+                        {frameworkDetails && (
+                            <Container
+                                className={styles.review}
+                                headerActions={(
+                                    <FrameworkImageButton
+                                        frameworkId={frameworkDetails.id}
+                                        label="View framework image for reference"
+                                        variant="secondary"
+                                    />
+                                )}
+                            >
+                                <ListView
+                                    className={styles.entries}
+                                    keySelector={entryKeySelector}
+                                    renderer={EntryInput}
+                                    data={formValue.entries}
+                                    rendererParams={entryDataRendererParams}
+                                />
+                            </Container>
+                        )}
                     </TabPanel>
                 </div>
             </Tabs>

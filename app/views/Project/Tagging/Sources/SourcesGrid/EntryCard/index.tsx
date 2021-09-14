@@ -34,6 +34,11 @@ function transformEntry(entry: Entry): EntryInputType {
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
     });
 }
 
@@ -242,6 +247,7 @@ function EntryCard(props: Props) {
                             sectionContainerClassName={styles.section}
                             secondaryTaggingContainerClassName={styles.section}
                             readOnly={!editEntryMode}
+                            leadId={entry.lead.id}
                         />
                     </Container>
                 </>

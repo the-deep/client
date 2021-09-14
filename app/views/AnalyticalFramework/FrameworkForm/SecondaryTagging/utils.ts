@@ -3,7 +3,7 @@ import { isNotDefined } from '@togglecorp/fujs';
 
 import { Widget } from '#types/newAnalyticalFramework';
 
-import { PartialWidget } from '#components/framework/WidgetPreview';
+import { PartialWidget } from '#components/framework/AttributeInput';
 
 export function findWidget(
     widgets: Widget[] | undefined = [],

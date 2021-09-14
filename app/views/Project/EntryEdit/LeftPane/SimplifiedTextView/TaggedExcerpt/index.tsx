@@ -5,6 +5,7 @@ import {
     IoPencil,
 } from 'react-icons/io5';
 import { BsFileDiff } from 'react-icons/bs';
+import { requiredStringCondition } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 import {
     Footer,
@@ -20,6 +21,55 @@ import {
 
 import styles from './styles.css';
 
+interface ExcerptModalProps {
+    excerpt?: string;
+    onExcerptChange?: (modifiedExcerpt: string | undefined) => void;
+}
+
+function ExcerptModal(props: ExcerptModalProps) {
+    const {
+        excerpt: excerptFromProps,
+        onExcerptChange,
+    } = props;
+
+    const [excerpt, setExcerpt] = useInputState(excerptFromProps);
+
+    const handleSubmit = React.useCallback(
+        () => {
+            if (onExcerptChange) {
+                onExcerptChange(excerpt);
+            }
+        },
+        [onExcerptChange, excerpt],
+    );
+
+    return (
+        <>
+            <Heading size="small">
+                Modify Excerpt
+            </Heading>
+            <TextArea
+                className={styles.excerptTextArea}
+                name="modified-excerpt"
+                value={excerpt}
+                onChange={setExcerpt}
+                rows={4}
+            />
+            <Footer
+                actions={(
+                    <Button
+                        name={excerpt}
+                        onClick={handleSubmit}
+                        disabled={requiredStringCondition(excerpt) !== undefined}
+                    >
+                        Done
+                    </Button>
+                )}
+            />
+        </>
+    );
+}
+
 interface TaggedExcerptProps<K extends string> {
     entryId: K;
     isActive?: boolean;
@@ -29,7 +79,7 @@ interface TaggedExcerptProps<K extends string> {
     className?: string;
     droppedExcerpt?: string;
     excerpt?: string;
-    onExcerptChange?: (entryId: K, modifiedExcerpt: string) => void;
+    onExcerptChange?: (entryId: K, modifiedExcerpt: string | undefined) => void;
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
 }
@@ -39,7 +89,7 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
         className,
         droppedExcerpt,
         entryId,
-        excerpt: excerptFromProps,
+        excerpt,
         isActive,
         onClick,
         onApproveButtonClick,
@@ -50,7 +100,6 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
     } = props;
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
-    const [excerpt, setExcerpt] = useInputState(excerptFromProps);
 
     const handleClick = React.useCallback(() => {
         if (onClick) {
@@ -58,15 +107,18 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
         }
     }, [entryId, onClick]);
 
-    const handleExcerptChange = React.useCallback((modifiedExcerpt) => {
-        if (onExcerptChange) {
-            onExcerptChange(entryId, modifiedExcerpt);
-        }
+    const handleExcerptChange = React.useCallback(
+        (modifiedExcerpt: string | undefined) => {
+            if (onExcerptChange) {
+                onExcerptChange(entryId, modifiedExcerpt);
+            }
 
-        if (editExcerptDropdownRef?.current) {
-            editExcerptDropdownRef.current.setShowPopup(false);
-        }
-    }, [entryId, onExcerptChange]);
+            if (editExcerptDropdownRef?.current) {
+                editExcerptDropdownRef.current.setShowPopup(false);
+            }
+        },
+        [entryId, onExcerptChange],
+    );
 
     return (
         <div
@@ -80,8 +132,13 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
                 className={styles.content}
                 onClick={handleClick}
             >
-                {droppedExcerpt}
+                {excerpt}
             </div>
+            {excerpt !== droppedExcerpt && (
+                <div>
+                    (Edited)
+                </div>
+            )}
             {isActive && (
                 <Footer
                     quickActions={(
@@ -131,25 +188,9 @@ function TaggedExcerpt<K extends string>(props: TaggedExcerptProps<K>) {
                                 persistent
                                 componentRef={editExcerptDropdownRef}
                             >
-                                <Heading size="small">
-                                    Modify Excerpt
-                                </Heading>
-                                <TextArea
-                                    className={styles.excerptTextArea}
-                                    name="modified-excerpt"
-                                    value={excerpt}
-                                    onChange={setExcerpt}
-                                    rows={4}
-                                />
-                                <Footer
-                                    actions={(
-                                        <Button
-                                            name={excerpt}
-                                            onClick={handleExcerptChange}
-                                        >
-                                            Done
-                                        </Button>
-                                    )}
+                                <ExcerptModal
+                                    excerpt={excerpt}
+                                    onExcerptChange={handleExcerptChange}
                                 />
                             </QuickActionDropdownMenu>
                         </>
