@@ -14,7 +14,6 @@ import {
 import { Widget } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
-import ErrorBoundary from '#components/ErrorBoundary';
 
 import styles from './styles.css';
 

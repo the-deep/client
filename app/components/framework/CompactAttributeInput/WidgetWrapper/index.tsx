@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import ErrorBoundary from '#components/ErrorBoundary';
+import ErrorBoundary from '#base/components/ErrorBoundary';
 
 import styles from './styles.css';
 
