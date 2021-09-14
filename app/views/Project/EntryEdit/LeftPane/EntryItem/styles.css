@@ -1,3 +1,29 @@
+.tagged-excerpt {
+    /* NOTE: when user select tagged excerpt, the add button will be visible */
+    position: relative;
+    user-select: none;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+    background-color: var(--dui-color-foreground);
+    cursor: pointer;
+    font-weight: var(--dui-font-weight-bold);
+
+    .vertical-border {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+        width: var(--dui-width-separator-thick);
+        height: 100%;
+    }
+
+    &.active {
+        .vertical-border {
+            background-color: var(--dui-color-accent);
+            animation: grow var(--dui-duration-transition-medium) ease-in forwards;
+        }
+    }
+}
+
 .edit-excerpt-popup {
     width: 20rem;
     max-width: unset!important;
@@ -11,39 +37,18 @@
     }
 }
 
-.entry {
-    position: relative;
-    transition: var(--dui-duration-transition-medium) background-color ease-in-out;
-    margin: var(--dui-spacing-medium);
-    border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
-    background-color: var(--dui-color-foreground);
-    cursor: pointer;
-    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
 
-    .excerpt {
-        padding: var(--dui-spacing-small);
-    }
+.diff-excerpt-popup {
+    width: 20rem;
+    max-width: unset!important;
 
-    .image {
-        max-width: 100%;
-    }
+    .content {
+        padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
 
-    .vertical-border {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: transparent;
-        width: var(--dui-width-separator-thick);
-        height: 100%;
-    }
-
-    &.active {
-        background-color: var(--dui-color-background-information);
-
-
-        .vertical-border {
-            background-color: var(--dui-color-accent);
-            animation: grow var(--dui-duration-transition-medium) ease-in forwards;
+        .excerpt {
+            .text {
+                padding: var(--dui-spacing-small);
+            }
         }
     }
 }

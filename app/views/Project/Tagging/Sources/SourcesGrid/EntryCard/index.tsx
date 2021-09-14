@@ -106,6 +106,8 @@ function EntryCard(props: Props) {
                     entryType={entry.entryType}
                     excerpt={entry.excerpt}
                     image={entry.image}
+                    imageRaw={undefined}
+                    leadImageUrl={undefined}
                     droppedExcerpt={entry.droppedExcerpt}
                     // tabularFieldData={entry.tabularFieldData}
                 />

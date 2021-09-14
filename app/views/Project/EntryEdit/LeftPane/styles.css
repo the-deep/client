@@ -30,6 +30,14 @@
         background-color: var(--dui-color-background-information);
         padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
         overflow: auto;
+
+        .entry-list {
+            display: flex;
+            flex-direction: column;
+            padding: var(--dui-spacing-medium);
+            overflow-y: auto;
+            gap: var(--dui-spacing-medium);
+        }
     }
 }
 
