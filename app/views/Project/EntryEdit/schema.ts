@@ -43,16 +43,21 @@ const attributesSchema: AttributesSchema = {
 
 type EntrySchema = ObjectSchema<PartialEntryType>;
 type EntrySchemaFields = ReturnType<EntrySchema['fields']>;
-const entrySchema: EntrySchema = {
+export const entrySchema: EntrySchema = {
     fields: (): EntrySchemaFields => ({
+        // NOTE: widgetType this one is not needed on server
+        stale: [],
+        // NOTE: widgetType this one is not needed on server
+        deleted: [],
+
         id: [defaultUndefinedType],
         lead: [],
         // order
         // informationDate
         entryType: [],
         image: [], // NOTE: to send previously set image
-        imageRaw: [], // NOTE: to send url encoded image
-        leadImage: [], // NOTE: to send images from lead
+        imageRaw: [defaultUndefinedType], // NOTE: to send url encoded image
+        leadImage: [defaultUndefinedType], // NOTE: to send images from lead
         tabularField: [],
         excerpt: [],
         droppedExcerpt: [],

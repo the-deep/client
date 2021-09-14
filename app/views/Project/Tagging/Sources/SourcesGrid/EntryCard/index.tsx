@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
@@ -6,26 +6,22 @@ import {
     IoClose,
 } from 'react-icons/io5';
 import {
+    removeNull,
+} from '@togglecorp/toggle-form';
+import {
     DateOutput,
     TextOutput,
     Button,
     QuickActionButton,
     Container,
 } from '@the-deep/deep-ui';
-import {
-    removeNull,
-} from '@togglecorp/toggle-form';
 
-import { useModalState } from '#hooks/stateManagement';
-import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptOutput from '#components/entry/ExcerptOutput';
-import EntryInput from '#components/entry/EntryInput';
 // import EntryVerification from '#components/entryReview/EntryVerification';
-import EntryComments from '#components/entryReview/EntryComments';
-import EntryControl from '#components/entryReview/EntryControl';
-import { EntryInput as EntryInputType } from '#views/Project/EntryEdit/types';
+import EditableEntry from '../../components/EditableEntry';
 
 import { Framework, Entry } from '../types';
+import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
 
 import styles from './styles.css';
 
@@ -56,7 +52,7 @@ interface Props {
 function EntryCard(props: Props) {
     const {
         className,
-        entry: entryFromProps,
+        entry,
         leadDetails,
         framework,
         projectId,
@@ -64,35 +60,6 @@ function EntryCard(props: Props) {
         onViewTagsButtonClick,
         onHideTagsButtonClick,
     } = props;
-
-    const [entry, setEntry] = useState<Entry>(entryFromProps);
-
-    const [
-        editEntryMode,
-        setEditEntryMode,
-        unsetEditEntryMode,
-    ] = useModalState(false);
-
-    const {
-        pending,
-        trigger: getEntry,
-    } = useLazyRequest<Entry, number>({
-        url: (ctx) => `server://v2/entries/${ctx}/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            setEntry(response);
-        },
-        failureHeader: 'Entry',
-    });
-
-    const handleChange = useCallback(
-        (value: unknown) => {
-            // FIXME: handle here
-            // eslint-disable-next-line no-console
-            console.warn('Should set value to', value);
-        },
-        [],
-    );
 
     const authorsDetailText = useMemo(() => (
         leadDetails?.authors?.map((a) => a.title)?.join(', ')
@@ -164,92 +131,27 @@ function EntryCard(props: Props) {
             </Container>
             {tagsVisible && (
                 <>
-                    <div className={styles.verticalSeparator} />
-                    <Container
-                        className={styles.tagsContainer}
-                        headerActions={(
-                            <Button
-                                name={entry.id}
-                                onClick={onHideTagsButtonClick}
-                                variant="action"
-                            >
-                                <IoClose />
-                            </Button>
-                        )}
-                        footerActions={(
-                            <>
-                                {editEntryMode ? (
-                                    <>
-                                        <Button
-                                            name={entry.id}
-                                            variant="secondary"
-                                            onClick={unsetEditEntryMode}
-                                        >
-                                            Cancel
-                                        </Button>
-                                        <Button
-                                            name={entry.id}
-                                            variant="secondary"
-                                            onClick={unsetEditEntryMode}
-                                        >
-                                            Save
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Button
-                                            name={entry.id}
-                                            variant="secondary"
-                                            onClick={setEditEntryMode}
-                                            icons={(
-                                                <IoPencil />
-                                            )}
-                                        >
-                                            Edit Tags
-                                        </Button>
-                                        <EntryComments
-                                            // FIXME: Remove cast after entry comments
-                                            // is switched to gql
-                                            entryId={+entry.id}
-                                            projectId={+projectId}
-                                        />
-                                        {/*
-                                        <EntryVerification
-                                            entryId={entry.id}
-                                            projectId={projectId}
-                                            verifiedBy={entry.verifiedBy}
-                                            onVerificationChange={getEntry}
-                                            disabled={pending}
-                                        />
-                                        */}
-                                    </>
-                                )}
-                                <EntryControl
-                                    // FIXME: Remove cast after entry comments
-                                    // is switched to gql
-                                    entryId={+entry.id}
-                                    projectId={+projectId}
-                                    value={!!entry.controlled}
-                                    onChange={getEntry}
-                                    disabled={pending}
-                                />
-                            </>
-                        )}
+                    <Button
+                        className={styles.closeButton}
+                        name={entry.id}
+                        onClick={onHideTagsButtonClick}
+                        variant="action"
                     >
-                        <EntryInput
-                            name={undefined}
-                            value={transformEntry(entry)}
-                            onChange={handleChange}
-                            hideExcerpt
-                            primaryTagging={framework?.primaryTagging}
-                            secondaryTagging={framework?.secondaryTagging}
-                            className={styles.entryTags}
-                            sectionContainerClassName={styles.section}
-                            secondaryTaggingContainerClassName={styles.section}
-                            readOnly={!editEntryMode}
-                            leadId={entry.lead.id}
-                        />
-                    </Container>
+                        <IoClose />
+                    </Button>
+                    <div className={styles.verticalSeparator} />
+                    <EditableEntry
+                        className={styles.entry}
+                        // FIXME: memoize this
+                        entry={transformEntry(entry)}
+                        projectId={projectId}
+                        leadId={entry.lead.id}
+                        entryId={entry.id}
+                        primaryTagging={framework?.primaryTagging}
+                        secondaryTagging={framework?.secondaryTagging}
+                        controlled={entry.controlled}
+                        compact
+                    />
                 </>
             )}
         </div>

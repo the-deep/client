@@ -21,6 +21,8 @@ import {
     removeNull,
     useFormArray,
     useFormObject,
+    SetValueArg,
+    isCallable,
 } from '@togglecorp/toggle-form';
 import { useQuery } from '@apollo/client';
 
@@ -135,15 +137,33 @@ function EntryEdit(props: Props) {
     const currentEntryIndex = formValue.entries?.findIndex(
         (entry) => entry.clientId === selectedEntry,
     ) ?? -1;
+
     const currentEntry = formValue.entries?.[currentEntryIndex];
 
     const {
         setValue: onEntryChange,
     } = useFormArray<'entries', PartialEntryType>('entries', setFormFieldValue);
 
+    const handleEntryChange = useCallback(
+        (val: SetValueArg<PartialEntryType>, otherName: number | undefined) => {
+            onEntryChange(
+                (oldValue) => {
+                    const newVal = !isCallable(val)
+                        ? val
+                        : val(oldValue);
+                    return { ...newVal, stale: true };
+                },
+                otherName,
+            );
+        },
+        [onEntryChange],
+    );
+
     const handleEntryCreate = useCallback(
         (newValue: PartialEntryType) => {
             // TODO: start snapshot mode
+
+            // FIXME: iterate over widgets to create attributes with default values
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), newValue],
                 'entries',
@@ -171,13 +191,20 @@ function EntryEdit(props: Props) {
 
     const onEntryFieldChange = useFormObject(
         currentEntryIndex === -1 ? undefined : currentEntryIndex,
-        onEntryChange,
+        handleEntryChange,
         defaultOptionVal,
     );
 
     const handleExcerptChange = useCallback(
         (_: string, excerpt: string | undefined) => {
             onEntryFieldChange(excerpt, 'excerpt');
+        },
+        [onEntryFieldChange],
+    );
+
+    const handleEntryDelete = useCallback(
+        () => {
+            onEntryFieldChange(true, 'deleted');
         },
         [onEntryFieldChange],
     );
@@ -253,17 +280,19 @@ function EntryEdit(props: Props) {
             value: datum,
             name: index,
             index,
-            onChange: onEntryChange,
+            onChange: handleEntryChange,
             secondaryTagging: frameworkDetails?.secondaryTagging,
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
+            disabled: !!selectedEntry,
             // error,
         }),
         [
             frameworkDetails?.secondaryTagging,
             frameworkDetails?.primaryTagging,
-            onEntryChange,
+            handleEntryChange,
             leadId,
+            selectedEntry,
         ],
     );
 
@@ -361,7 +390,7 @@ function EntryEdit(props: Props) {
                                     onEntryCreate={handleEntryCreate}
                                     onApproveButtonClick={handleEntryChangeApprove}
                                     onDiscardButtonClick={handleEntryChangeDiscard}
-                                    // onEntryDelete={handleEntryDelete}
+                                    onEntryDelete={handleEntryDelete}
                                     onExcerptChange={handleExcerptChange}
                                     lead={lead}
                                     leadId={leadId}
@@ -430,7 +459,7 @@ function EntryEdit(props: Props) {
                                     activeEntry={selectedEntry}
                                     onEntryClick={setSelectedEntry}
                                     onEntryCreate={handleEntryCreate}
-                                    // onEntryDelete={handleEntryDelete}
+                                    onEntryDelete={handleEntryDelete}
                                     onExcerptChange={handleExcerptChange}
                                     lead={lead}
                                     leadId={leadId}

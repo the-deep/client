@@ -14,6 +14,7 @@ interface BaseProperties<T> {
 }
 
 interface KeyLabelEntity {
+    // FIXME: clientId should be renamed to be key
     clientId: string;
     label: string;
     tooltip?: string;

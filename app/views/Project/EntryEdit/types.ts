@@ -24,7 +24,11 @@ export type Entry = DeepReplace<EntryRaw, WidgetAttributeRaw, WidgetAttributeFro
 export type EntryInputRaw = DeepMandatory<PurgeNull<BulkEntryInputType>, 'clientId' | 'entryType'>;
 
 // eslint-disable-next-line max-len
-export type EntryInput = DeepReplace<EntryInputRaw, WidgetInputAttributeRaw, WidgetAttributeFromEntry>;
+export type EntryInput = DeepReplace<EntryInputRaw, WidgetInputAttributeRaw, WidgetAttributeFromEntry> & {
+    // NOTE: we track stale information using this value
+    stale?: boolean;
+    deleted?: boolean;
+};
 
 // FIXME: 'key' is thought to be mandatory from server.
 // Remove this DeepMandatory transformation after server sends key as mandatory

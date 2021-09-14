@@ -7,6 +7,7 @@ import { NavbarContext } from '#base/context/NavbarContext';
 import { ProjectContext } from '#base/context/ProjectContext';
 import PageTitle from '#base/components/PageTitle';
 import { Project } from '#base/types/project';
+import ErrorBoundary from '#base/components/ErrorBoundary';
 
 import styles from './styles.css';
 
@@ -105,11 +106,13 @@ function Page<T extends { className?: string }>(props: Props<T>) {
     return (
         <>
             <PageTitle value={title} />
-            <Comp
-                className={styles.page}
-                {...componentProps}
-                {...overrideProps}
-            />
+            <ErrorBoundary>
+                <Comp
+                    className={styles.page}
+                    {...componentProps}
+                    {...overrideProps}
+                />
+            </ErrorBoundary>
         </>
     );
 }

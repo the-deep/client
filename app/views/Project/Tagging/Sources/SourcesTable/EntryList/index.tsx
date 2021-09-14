@@ -10,16 +10,35 @@ import {
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 import {
+    removeNull,
+} from '@togglecorp/toggle-form';
+
+import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
+
+import {
     Framework,
     Entry,
 } from '../types';
-import EntryItem from './EntryItem';
+import EditableEntry from '../../components/EditableEntry';
 import {
     LeadEntriesQuery,
     LeadEntriesQueryVariables,
 } from '#generated/types';
 
 import styles from './styles.css';
+
+function transformEntry(entry: Entry): EntryInputType {
+    return removeNull({
+        ...entry,
+        lead: entry.lead.id,
+        image: entry.image?.id,
+        attributes: entry.attributes?.map((attribute) => ({
+            ...attribute,
+            // NOTE: we don't need this on form
+            geoSelectedOptions: undefined,
+        })),
+    });
+}
 
 export const LEAD_ENTRIES = gql`
     query LeadEntries(
@@ -112,8 +131,8 @@ export const LEAD_ENTRIES = gql`
     }
 `;
 
-const maxItemsPerPage = 1;
-const entryKeySelector = (e: Entry) => e.clientId;
+const maxItemsPerPage = 5;
+const entryKeySelector = (e: Entry) => e.clientId ?? e.id;
 
 interface Props {
     className?: string;
@@ -159,10 +178,14 @@ function EntryList(props: Props) {
     const entries = entriesResponse?.results as Entry[] | undefined | null;
 
     const entryDataRendererParams = useCallback((_: string, data: Entry) => ({
-        entry: data,
+        // FIXME: memoize this
+        entry: transformEntry(data),
         leadId,
         projectId,
-        framework: frameworkDetails,
+        entryId: data.id,
+        primaryTagging: frameworkDetails?.primaryTagging,
+        secondaryTagging: frameworkDetails?.secondaryTagging,
+        controlled: data.controlled,
     }), [
         leadId,
         projectId,
@@ -188,7 +211,7 @@ function EntryList(props: Props) {
             <ListView
                 className={styles.entryList}
                 keySelector={entryKeySelector}
-                renderer={EntryItem}
+                renderer={EditableEntry}
                 data={entries ?? undefined}
                 rendererParams={entryDataRendererParams}
                 rendererClassName={styles.entryItem}

@@ -50,7 +50,7 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
         >
             {readOnly ? (
                 <div>
-                    {value}
+                    {value?.value}
                 </div>
             ) : (
                 <TextArea

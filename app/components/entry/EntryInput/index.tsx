@@ -44,7 +44,6 @@ interface EntryInputProps<T extends string | number | undefined> {
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
     // TODO: error
 
-    hideExcerpt?: boolean;
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
     readOnly?: boolean;
@@ -52,12 +51,13 @@ interface EntryInputProps<T extends string | number | undefined> {
     emptyValueHidden?: boolean;
     primaryTagging: Section[] | undefined | null;
     secondaryTagging: Widget[] | undefined | null;
+    compact?: boolean;
 }
+
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
     const {
         className,
         value,
-        hideExcerpt = false,
         primaryTagging,
         secondaryTagging,
         sectionContainerClassName,
@@ -68,6 +68,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         index,
         onChange,
         leadId,
+        compact,
     } = props;
 
     const defaultOptionVal = useCallback(
@@ -108,8 +109,14 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
     }), [emptyValueHidden, onAttributeChange, attributesMap, readOnly]);
 
     return (
-        <div className={_cs(className, styles.entryInput)}>
-            {!hideExcerpt && (
+        <div
+            className={_cs(
+                className,
+                compact && styles.compact,
+                styles.entryInput,
+            )}
+        >
+            {!compact && (
                 <Container
                     className={styles.excerpt}
                     heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
