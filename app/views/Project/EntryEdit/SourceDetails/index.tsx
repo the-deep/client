@@ -24,6 +24,7 @@ interface Props {
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     setPristine: (val: boolean) => void;
     projectId: number;
+    disabled?: boolean;
 }
 
 function SourceDetails(props: Props) {
@@ -38,6 +39,7 @@ function SourceDetails(props: Props) {
         leadFormError,
         pending,
         projectId,
+        disabled,
     } = props;
 
     return (
@@ -60,6 +62,7 @@ function SourceDetails(props: Props) {
                     setPristine={setPristine}
                     ready={ready}
                     projectId={projectId}
+                    disabled={disabled}
                 />
             </Card>
         </div>

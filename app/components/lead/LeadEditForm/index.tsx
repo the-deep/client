@@ -118,6 +118,7 @@ interface Props {
     pending?: boolean;
     ready?: boolean;
     projectId: number;
+    disabled?: boolean;
 }
 
 function LeadEditForm(props: Props) {
@@ -132,6 +133,7 @@ function LeadEditForm(props: Props) {
         pending: pendingFromProps,
         ready,
         projectId,
+        disabled,
     } = props;
     const error = getErrorObject(riskyError);
 
@@ -371,8 +373,7 @@ function LeadEditForm(props: Props) {
         setLeadGroupOptions((oldVal) => [...oldVal ?? [], val]);
     }, [setFieldValue]);
 
-    const pending = pendingUserToken || pendingFromProps
-    || pendingLeadOptions || webInfoPending || rawWebInfoPending;
+    const pending = pendingFromProps || pendingUserToken || webInfoPending || rawWebInfoPending;
 
     return (
         <div className={_cs(styles.leadEditForm, className)}>
@@ -387,6 +388,7 @@ function LeadEditForm(props: Props) {
                 labelSelector={titleSelector}
                 options={leadOptions?.projects}
                 error={error?.project}
+                disabled={pendingLeadOptions || disabled}
                 readOnly
             />
             {value.sourceType === 'website' && (
@@ -399,11 +401,13 @@ function LeadEditForm(props: Props) {
                         onChange={setFieldValue}
                         error={error?.url}
                         readOnly={!!value.id}
+                        disabled={disabled}
                         actions={(
                             <QuickActionButton
                                 name="leadExtract"
                                 variant="action"
                                 onClick={handleLeadDataExtract}
+                                disabled={disabled}
                             >
                                 <IoEye />
                             </QuickActionButton>
@@ -416,6 +420,7 @@ function LeadEditForm(props: Props) {
                         value={value.website}
                         onChange={setFieldValue}
                         error={error?.website}
+                        disabled={disabled}
                     />
                 </>
             )}
@@ -428,6 +433,7 @@ function LeadEditForm(props: Props) {
                     onChange={setFieldValue}
                     rows={10}
                     error={error?.text}
+                    disabled={disabled}
                 />
             )}
             <TextInput
@@ -437,6 +443,7 @@ function LeadEditForm(props: Props) {
                 value={value.title}
                 onChange={setFieldValue}
                 error={error?.title}
+                disabled={disabled}
                 actions={
                     (
                         value.sourceType === 'disk'
@@ -448,6 +455,7 @@ function LeadEditForm(props: Props) {
                                 name="fileExtract"
                                 variant="action"
                                 onClick={handleFileExtractClick}
+                                disabled={disabled}
                             >
                                 <IoEye />
                             </QuickActionButton>
@@ -463,7 +471,7 @@ function LeadEditForm(props: Props) {
                 onChange={setFieldValue}
                 options={leadGroupOptions ?? leadOptions?.leadGroups}
                 onOptionsChange={setLeadGroupOptions}
-                disabled={pending}
+                disabled={pendingLeadOptions || disabled}
                 label="Lead Group"
                 error={error?.leadGroup}
                 projectId={projectId}
@@ -472,6 +480,7 @@ function LeadEditForm(props: Props) {
                         name="add-lead-group"
                         variant="transparent"
                         onClick={handleAddLeadGroupClick}
+                        disabled={disabled}
                     >
                         <IoAdd />
 
@@ -486,6 +495,7 @@ function LeadEditForm(props: Props) {
                     value={value.publishedOn}
                     onChange={setFieldValue}
                     error={error?.publishedOn}
+                    disabled={disabled}
                 />
                 <SelectInput
                     className={styles.input}
@@ -497,6 +507,7 @@ function LeadEditForm(props: Props) {
                     labelSelector={displayNameSelector}
                     options={leadOptions?.members}
                     error={error?.assignee}
+                    disabled={pendingLeadOptions || disabled}
                 />
             </div>
             <div className={styles.row}>
@@ -507,7 +518,7 @@ function LeadEditForm(props: Props) {
                     onChange={setFieldValue}
                     options={sourceOrganizationOptions ?? leadOptions?.organizations}
                     onOptionsChange={setSourceOrganizationOptions}
-                    disabled={pending}
+                    disabled={pendingLeadOptions || disabled}
                     label="Publishing Organizations"
                     hint={isTruthyString(value.sourceRaw) && `Previous organization: ${value.sourceRaw}`}
                     error={error?.source}
@@ -516,6 +527,7 @@ function LeadEditForm(props: Props) {
                             name="add organizations"
                             variant="transparent"
                             onClick={handleAddPublishingOrganizationsClick}
+                            disabled={pendingLeadOptions || disabled}
                         >
                             <IoAdd />
 
@@ -529,7 +541,7 @@ function LeadEditForm(props: Props) {
                     onChange={setFieldValue}
                     options={authorOrganizationOptions ?? leadOptions?.organizations}
                     onOptionsChange={setAuthorOrganizationOptions}
-                    disabled={pending}
+                    disabled={pendingLeadOptions || disabled}
                     label="Authoring Organizations"
                     hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
                     error={getErrorString(error?.authors)}
@@ -538,6 +550,7 @@ function LeadEditForm(props: Props) {
                             name="add organizations"
                             variant="transparent"
                             onClick={handleAddAuthorOrganizationsClick}
+                            disabled={pendingLeadOptions || disabled}
                         >
                             <IoAdd />
 
@@ -556,6 +569,7 @@ function LeadEditForm(props: Props) {
                     labelSelector={valueSelector}
                     className={styles.input}
                     error={error?.priority}
+                    disabled={disabled}
                 />
                 <div className={styles.nestedRow}>
                     <ConfidentialityInput
@@ -564,6 +578,7 @@ function LeadEditForm(props: Props) {
                         value={value.confidentiality}
                         onChange={setFieldValue}
                         label="Confidential"
+                        disabled={disabled}
                     />
                     <Checkbox
                         className={styles.nestedInput}
@@ -571,6 +586,7 @@ function LeadEditForm(props: Props) {
                         value={value.isAssessmentLead}
                         onChange={setFieldValue}
                         label="Is Assessment"
+                        disabled={disabled}
                     />
                 </div>
             </div>
