@@ -1,5 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import {
+    useParams,
+    useLocation,
+    Prompt,
+} from 'react-router-dom';
 import {
     isNotDefined,
     _cs,
@@ -103,6 +107,7 @@ function EntryEdit(props: Props) {
     const projectId = project ? project.id : undefined;
 
     const alert = useAlert();
+    const location = useLocation();
 
     // LEAD
 
@@ -258,8 +263,11 @@ function EntryEdit(props: Props) {
     const currentEntry = formValue.entries?.[currentEntryIndex];
 
     // FIXME: memoize this
+    const entriesError = getErrorObject(getErrorObject(formError)?.entries);
+
+    // FIXME: memoize this
     const currentEntryError = currentEntry
-        ? getErrorObject(getErrorObject(formError)?.entries)?.[currentEntry.clientId]
+        ? entriesError?.[currentEntry.clientId]
         : undefined;
 
     const {
@@ -416,7 +424,7 @@ function EntryEdit(props: Props) {
             leadId,
             disabled: !!selectedEntry,
             entryImage: entryImagesMap?.[entryId],
-            // error,
+            error: entriesError?.[entryId],
         }),
         [
             entryImagesMap,
@@ -425,11 +433,20 @@ function EntryEdit(props: Props) {
             handleEntryChange,
             leadId,
             selectedEntry,
+            entriesError,
         ],
     );
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
+            <Prompt
+                message={(newLocation) => {
+                    if (newLocation.pathname !== location.pathname && !formPristine) {
+                        return _ts('common', 'youHaveUnsavedChanges');
+                    }
+                    return true;
+                }}
+            />
             <Tabs
                 useHash
                 defaultHash="source-details"

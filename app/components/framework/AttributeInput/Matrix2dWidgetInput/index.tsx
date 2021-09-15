@@ -11,6 +11,7 @@ import { sortByOrder } from '#utils/common';
 import NonFieldError from '#components/NonFieldError';
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
 import { Matrix2dWidgetAttribute } from '#types/newEntry';
+
 import WidgetWrapper from '../WidgetWrapper';
 
 import styles from './styles.css';
