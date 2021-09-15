@@ -5,6 +5,7 @@ import {
     _cs,
     listToMap,
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -15,6 +16,7 @@ import {
     TabPanel,
     ListView,
     Container,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -25,7 +27,7 @@ import {
     isCallable,
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
 import { useRequest } from '#base/utils/restRequest';
@@ -39,6 +41,8 @@ import {
 import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
+    BulkUpdateEntriesMutation,
+    BulkUpdateEntriesMutationVariables,
 } from '#generated/types';
 import EntryInput from '#components/entry/EntryInput';
 import Section from '#components/entry/Section';
@@ -71,6 +75,22 @@ function transformEntry(entry: Entry): EntryInputType {
     });
 }
 
+const BULK_UPDATE_ENTRIES = gql`
+mutation BulkUpdateEntries($projectId:ID!, $deleteIds:[ID!], $entries: [BulkEntryInputType!]) {
+    project(id: $projectId) {
+        entryBulk(deleteIds: $deleteIds, items: $entries) {
+            errors
+            result {
+                id
+            }
+            deletedResult {
+                id
+            }
+        }
+    }
+}
+`;
+
 interface Props {
     className?: string;
 }
@@ -80,6 +100,8 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
     const projectId = project ? project.id : undefined;
+
+    const alert = useAlert();
 
     // LEAD
 
@@ -128,6 +150,31 @@ function EntryEdit(props: Props) {
 
     // ENTRY FORM
 
+    const [, setStaleIndices] = useState<number[] | undefined>(undefined);
+
+    const [
+        bulkUpdateEntries,
+        // { loading: bulkUpdateEntriesPending },
+    ] = useMutation<BulkUpdateEntriesMutation, BulkUpdateEntriesMutationVariables>(
+        BULK_UPDATE_ENTRIES,
+        {
+            onCompleted: (response) => {
+                setStaleIndices(undefined);
+                // eslint-disable-next-line no-console
+                console.warn(response);
+            },
+            onError: (gqlError) => {
+                setStaleIndices(undefined);
+                alert.show(
+                    'Failed to update tags!',
+                    { variant: 'error' },
+                );
+                // eslint-disable-next-line no-console
+                console.error(gqlError);
+            },
+        },
+    );
+
     const {
         value: formValue,
         setValue: setFormValue,
@@ -145,17 +192,56 @@ function EntryEdit(props: Props) {
 
     const handleSubmit = useCallback(
         () => {
+            if (!projectId) {
+                // eslint-disable-next-line no-console
+                console.error('No project id');
+                return;
+            }
             const submit = createSubmitHandler(
                 formValidate,
                 setFormError,
                 (value) => {
-                    // eslint-disable-next-line no-console
-                    console.warn(value);
+                    const entriesWithIndex = value.entries
+                        ?.map((item, index) => ({ entry: item, index }));
+
+                    const deletedValues = entriesWithIndex
+                        ?.filter((item) => item.entry.deleted);
+                    const deleteIds = deletedValues
+                        ?.map((item) => item.entry.id)
+                        .filter(isDefined);
+
+                    const staleItems = entriesWithIndex
+                        ?.filter((item) => item.entry.stale && !item.entry.deleted);
+
+                    const staleIndices = staleItems?.map((item) => item.index);
+                    const staleEntries = staleItems
+                        ?.map((item) => item.entry)
+                        .map((entry) => ({
+                            ...entry,
+                            deleted: undefined,
+                            stale: undefined,
+                            attributes: entry.attributes?.map((attribute) => ({
+                                ...attribute,
+                                widgetType: undefined,
+                            })),
+                        }));
+
+                    // FIXME: clear this on any error
+                    setStaleIndices(staleIndices);
+
+                    // FIXME: handle when there is no stale and no entries
+                    bulkUpdateEntries({
+                        variables: {
+                            projectId,
+                            deleteIds,
+                            entries: staleEntries,
+                        },
+                    });
                 },
             );
             submit();
         },
-        [setFormError, formValidate],
+        [setFormError, formValidate, bulkUpdateEntries, projectId],
     );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
@@ -195,7 +281,7 @@ function EntryEdit(props: Props) {
             createRestorePoint();
             // FIXME: iterate over widgets to create attributes with default values
             setFormFieldValue(
-                (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), newValue],
+                (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), { ...newValue, stale: true }],
                 'entries',
             );
             setSelectedEntry(newValue.clientId);
@@ -355,6 +441,15 @@ function EntryEdit(props: Props) {
                             <Button
                                 name={undefined}
                                 // NOTE: To be fixed later
+                                disabled={formPristine}
+                                onClick={handleSubmit}
+                            >
+                                Save
+                            </Button>
+                            {/*
+                            <Button
+                                name={undefined}
+                                // NOTE: To be fixed later
                                 disabled
                             >
                                 Save Source
@@ -362,19 +457,10 @@ function EntryEdit(props: Props) {
                             <Button
                                 name={undefined}
                                 // NOTE: To be fixed later
-                                disabled={formPristine}
-                                onClick={handleSubmit}
+                                disabled
                             >
-                                Save
+                                Finalize
                             </Button>
-                            {/*
-                                <Button
-                                    name={undefined}
-                                    // NOTE: To be fixed later
-                                    disabled
-                                >
-                                    Finalize
-                                </Button>
                             */}
                         </>
                     )}
@@ -427,6 +513,7 @@ function EntryEdit(props: Props) {
                                 pending={leadGetPending}
                                 leadInitialValue={leadInitialValue}
                                 projectId={+projectId}
+                                disabled={disabled}
                             />
                         )}
                     </TabPanel>

@@ -162,6 +162,7 @@ function EditableEntry(props: Props) {
                         },
                     });
                 } else {
+                    // FIXME: handle error
                     // eslint-disable-next-line no-console
                     console.error('No entry id');
                 }
