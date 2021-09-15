@@ -63,9 +63,9 @@ function OrganigramInput<N extends string>(props: Props<N>) {
         </Card>
     ), [isSelected]);
 
-    const data = useMemo(() => transformData(options as OrganigramDatum), [options]);
+    const data = useMemo(() => options && transformData(options as OrganigramDatum), [options]);
 
-    if (!options) {
+    if (!data) {
         return null;
     }
 
