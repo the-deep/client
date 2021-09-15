@@ -55,7 +55,7 @@ export type PartialRootType = PartialForm<
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type RootSchema = ObjectSchema<PartialRootType>;
+type RootSchema = ObjectSchema<PartialRootType, PartialFormType>;
 type RootSchemaFields = ReturnType<RootSchema['fields']>;
 const rootSchema: RootSchema = {
     fields: (): RootSchemaFields => ({
@@ -72,7 +72,7 @@ export type PartialNodeType = PartialForm<
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type DataSchema = ObjectSchema<PartialDataType>;
+type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({

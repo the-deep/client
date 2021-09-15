@@ -2448,10 +2448,10 @@
     immer "^7.0.5"
     resize-observer-polyfill "^1.5.1"
 
-"@togglecorp/toggle-form@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@togglecorp/toggle-form/-/toggle-form-1.1.0.tgz#118c1da41f2428d4d15d427cb6173cfe91585168"
-  integrity sha512-M8+ZzsCLNAPbK8qFHRbrIWHCf7w7pO7rzc7FeNEsxaedkWt4IAWW/BBA+jfHiDI7w7hhcD0L5bGry9su5D/xIQ==
+"@togglecorp/toggle-form@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@togglecorp/toggle-form/-/toggle-form-1.2.0.tgz#bedea2e2c6c42c0081a714ae3d302342e04531a7"
+  integrity sha512-5k15qCIZh/3lzreGrjAO+WT6QqjZlfGOiYPLB3KIqTa40u5SbwAR6OAphc7K1WPj/yUyaOMLX5GCpgelGZHu4g==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"

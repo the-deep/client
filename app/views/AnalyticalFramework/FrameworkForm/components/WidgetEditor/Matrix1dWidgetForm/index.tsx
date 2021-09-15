@@ -66,7 +66,7 @@ export type PartialCellType = PartialForm<
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type CellSchema = ObjectSchema<PartialCellType>;
+type CellSchema = ObjectSchema<PartialCellType, PartialFormType>;
 type CellSchemaFields = ReturnType<CellSchema['fields']>;
 const cellSchema: CellSchema = {
     fields: (): CellSchemaFields => ({
@@ -77,7 +77,7 @@ const cellSchema: CellSchema = {
     }),
 };
 
-type CellsSchema = ArraySchema<PartialCellType>;
+type CellsSchema = ArraySchema<PartialCellType, PartialFormType>;
 type CellsSchemaMember = ReturnType<CellsSchema['member']>;
 const cellsSchema: CellsSchema = {
     keySelector: (col) => col.clientId,
@@ -90,7 +90,7 @@ const cellsSchema: CellsSchema = {
     },
 };
 
-type RowSchema = ObjectSchema<PartialRowType>;
+type RowSchema = ObjectSchema<PartialRowType, PartialFormType>;
 type RowSchemaFields = ReturnType<RowSchema['fields']>;
 const rowSchema: RowSchema = {
     fields: (): RowSchemaFields => ({
@@ -103,7 +103,7 @@ const rowSchema: RowSchema = {
     }),
 };
 
-type RowsSchema = ArraySchema<PartialRowType>;
+type RowsSchema = ArraySchema<PartialRowType, PartialFormType>;
 type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
     keySelector: (col) => col.clientId,
@@ -116,7 +116,7 @@ const rowsSchema: RowsSchema = {
     },
 };
 
-type DataSchema = ObjectSchema<PartialDataType>;
+type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({

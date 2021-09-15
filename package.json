@@ -46,7 +46,7 @@
         "@the-deep/deep-ui": "^1.5.6",
         "@togglecorp/fujs": "^1.9.2",
         "@togglecorp/re-map": "^0.1.2",
-        "@togglecorp/toggle-form": "^1.1.0",
+        "@togglecorp/toggle-form": "^1.2.0",
         "@togglecorp/toggle-request": "^0.0.1",
         "@types/chrome": "^0.0.153",
         "@types/d3-brush": "^3.0.1",
