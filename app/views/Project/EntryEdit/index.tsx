@@ -23,12 +23,13 @@ import {
     useFormObject,
     SetValueArg,
     isCallable,
+    createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import { useQuery } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
 import { useRequest } from '#base/utils/restRequest';
-import FullPageHeader from '#components/FullPageHeader';
+import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import {
     schema as leadSchema,
@@ -131,6 +132,9 @@ function EntryEdit(props: Props) {
         value: formValue,
         setValue: setFormValue,
         setFieldValue: setFormFieldValue,
+        setError: setFormError,
+        pristine: formPristine,
+        validate: formValidate,
         // error: formError,
 
         hasRestorePoint: isEntrySelectionActive,
@@ -138,6 +142,21 @@ function EntryEdit(props: Props) {
         createRestorePoint,
         clearRestorePoint,
     } = useForm(schema, defaultFormValues);
+
+    const handleSubmit = useCallback(
+        () => {
+            const submit = createSubmitHandler(
+                formValidate,
+                setFormError,
+                (value) => {
+                    // eslint-disable-next-line no-console
+                    console.warn(value);
+                },
+            );
+            submit();
+        },
+        [setFormError, formValidate],
+    );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
 
@@ -324,30 +343,39 @@ function EntryEdit(props: Props) {
                 useHash
                 defaultHash="source-details"
             >
-                <FullPageHeader
+                <SubNavbar
                     className={styles.header}
                     heading="Source"
                     description={lead?.title}
-                    actions={(
+                    defaultActions={(
                         <>
                             <BackLink defaultLink="/">
                                 Close
                             </BackLink>
                             <Button
                                 name={undefined}
-                                variant="secondary"
                                 // NOTE: To be fixed later
                                 disabled
                             >
-                                Save
+                                Save Source
                             </Button>
                             <Button
                                 name={undefined}
                                 // NOTE: To be fixed later
-                                disabled
+                                disabled={formPristine}
+                                onClick={handleSubmit}
                             >
-                                Finalize
+                                Save
                             </Button>
+                            {/*
+                                <Button
+                                    name={undefined}
+                                    // NOTE: To be fixed later
+                                    disabled
+                                >
+                                    Finalize
+                                </Button>
+                            */}
                         </>
                     )}
                 >
@@ -381,7 +409,7 @@ function EntryEdit(props: Props) {
                             Review
                         </Tab>
                     </TabList>
-                </FullPageHeader>
+                </SubNavbar>
                 <div className={styles.tabPanelContainer}>
                     {loading && <PendingMessage />}
                     <TabPanel

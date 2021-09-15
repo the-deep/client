@@ -29,31 +29,33 @@ import { Entry } from '../../types';
 import styles from './styles.css';
 
 interface ExcerptModalProps {
+    title: string;
     excerpt?: string;
-    onExcerptChange?: (modifiedExcerpt: string | undefined) => void;
+    onComplete?: (modifiedExcerpt: string | undefined) => void;
 }
 
-function ExcerptModal(props: ExcerptModalProps) {
+export function ExcerptModal(props: ExcerptModalProps) {
     const {
+        title,
         excerpt: excerptFromProps,
-        onExcerptChange,
+        onComplete,
     } = props;
 
     const [excerpt, setExcerpt] = useInputState(excerptFromProps);
 
     const handleSubmit = React.useCallback(
         () => {
-            if (onExcerptChange) {
-                onExcerptChange(excerpt);
+            if (onComplete) {
+                onComplete(excerpt);
             }
         },
-        [onExcerptChange, excerpt],
+        [onComplete, excerpt],
     );
 
     return (
         <>
             <Heading size="small">
-                Modify Excerpt
+                {title}
             </Heading>
             <TextArea
                 className={styles.excerptTextArea}
@@ -188,8 +190,9 @@ function EntryItem(props: EntryItemProps) {
                         componentRef={editExcerptDropdownRef}
                     >
                         <ExcerptModal
+                            title="Edit Excerpt"
                             excerpt={excerpt}
-                            onExcerptChange={handleExcerptChange}
+                            onComplete={handleExcerptChange}
                         />
                     </QuickActionDropdownMenu>
                     <QuickActionButton
