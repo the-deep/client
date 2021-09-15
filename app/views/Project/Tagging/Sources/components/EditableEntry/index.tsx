@@ -19,6 +19,8 @@ import { Entry } from '#views/Project/EntryEdit/types';
 import {
     WidgetType as WidgetRaw,
     AnalysisFrameworkDetailType,
+    UpdateEntryMutation,
+    UpdateEntryMutationVariables,
 } from '#generated/types';
 import { Widget } from '#types/newAnalyticalFramework';
 import EntryInput from '#components/entry/EntryInput';
@@ -79,15 +81,30 @@ function EditableEntry(props: Props) {
         setError,
     } = useForm(entrySchema, entry);
 
-    const [updateEntry, { loading: updateEntryPending }] = useMutation(
+    const [
+        updateEntry,
+        { loading: updateEntryPending },
+    ] = useMutation<UpdateEntryMutation, UpdateEntryMutationVariables>(
         UPDATE_ENTRY,
         {
-            onCompleted: () => {
-                // FIXME: check ok if actually okay
-                alert.show(
-                    'Tags updated successfully!',
-                    { variant: 'success' },
-                );
+            onCompleted: (gqlResponse) => {
+                const response = gqlResponse?.project?.entryUpdate;
+
+                if (response?.ok) {
+                    alert.show(
+                        'Tags updated successfully!',
+                        { variant: 'success' },
+                    );
+                    setEditModeFalse();
+                } else {
+                    alert.show(
+                        'Failed to update tags!',
+                        { variant: 'error' },
+                    );
+
+                    // eslint-disable-next-line no-console
+                    console.error(response?.errors);
+                }
             },
             onError: (gqlError) => {
                 alert.show(

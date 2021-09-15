@@ -28,12 +28,10 @@ function WidgetWrapper(props: Props) {
     } = props;
 
     return (
-        <div
-            className={_cs(className, styles.widgetWrapper)}
-        >
+        <div className={_cs(className, styles.widgetWrapper)}>
             <div
-                // FIXME: use strings
                 className={_cs(headerClassName, styles.header)}
+                // FIXME: use strings
             >
                 {title ?? 'Unnamed'}
             </div>

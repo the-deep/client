@@ -1,21 +1,23 @@
 .matrix {
-    display: flex;
-    flex-direction: column;
-    margin: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
-
-    .row {
+    .row-list {
         display: flex;
-        align-items: center;
-        padding: var(--dui-spacing-small);
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
 
-        .title {
-            text-transform: capitalize;
-        }
+        .row {
+            display: flex;
+            flex-direction: column;
 
-        .selected-values {
-            margin: 0 var(--dui-spacing-small);
-            color: var(--dui-color-accent);
-            font-weight: var(--dui-font-weight-bold);
+            .title {
+                text-transform: capitalize;
+                color: var(--dui-color-text-label);
+                font-size: var(--dui-font-size-small);
+            }
+
+            .selected-values {
+                color: var(--dui-color-accent);
+                font-weight: var(--dui-font-weight-bold);
+            }
         }
     }
 }
