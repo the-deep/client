@@ -399,6 +399,7 @@ function FrameworkDetail(props: Props) {
                                             widgets={section.widgets}
                                             onAttributeChange={noop}
                                             attributesMap={emptyObject}
+                                            error={undefined}
                                         />
                                     </TabPanel>
                                 ))}
@@ -411,6 +412,7 @@ function FrameworkDetail(props: Props) {
                                 widgets={frameworkDetails?.secondaryTagging}
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}
+                                error={undefined}
                             />
                         </TabPanel>
                     </Card>

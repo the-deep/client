@@ -10,10 +10,11 @@ import {
     ListView,
     MultiSelectInput,
 } from '@the-deep/deep-ui';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import { sortByOrder } from '#utils/common';
 
+import NonFieldError from '#components/NonFieldError';
 import { Matrix1dWidget } from '#types/newAnalyticalFramework';
 import { Matrix1dWidgetAttribute } from '#types/newEntry';
 
@@ -111,6 +112,7 @@ export interface Props <N extends string>{
     name: N;
     value: Matrix1dValue | null | undefined;
     onChange: (value: Matrix1dValue | undefined, name: N) => void;
+    error: Error<Matrix1dValue> | undefined;
 
     actions?: React.ReactNode;
     disabled?: boolean;
@@ -122,14 +124,17 @@ export interface Props <N extends string>{
 function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
+        title,
         widget,
         name,
         value,
         onChange: onChangeFromProps,
         disabled,
         readOnly,
-        title,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: Matrix1dValue['value'] | undefined, inputName: N) => {
@@ -180,14 +185,20 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         [disabled, readOnly, handleCellsChange, value],
     );
 
+    // FIXME: handle finer level errors
+
     return (
         <WidgetWrapper
             className={_cs(className, styles.matrix)}
             title={title}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <ListView
-                className={styles.rowList}
                 data={filteredRows}
+                className={styles.rowList}
                 keySelector={rowKeySelector}
                 rendererParams={rowRendererParams}
                 renderer={Row}

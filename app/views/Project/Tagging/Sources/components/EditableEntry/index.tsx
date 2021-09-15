@@ -79,6 +79,7 @@ function EditableEntry(props: Props) {
         value,
         validate,
         setError,
+        error,
     } = useForm(entrySchema, entry);
 
     const [
@@ -196,6 +197,7 @@ function EditableEntry(props: Props) {
             compact={compact}
             leadId={leadId}
             entryImage={entryImage}
+            error={error}
         />
     );
 

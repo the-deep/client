@@ -74,6 +74,7 @@ function Review(props: Props) {
                                 widgets={section.widgets}
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}
+                                error={undefined}
                             />
                         </TabPanel>
                     ))}
@@ -87,6 +88,7 @@ function Review(props: Props) {
                     widgets={secondaryTagging}
                     onAttributeChange={noop}
                     attributesMap={emptyObject}
+                    error={undefined}
                 />
             </ContainerCard>
         </div>
