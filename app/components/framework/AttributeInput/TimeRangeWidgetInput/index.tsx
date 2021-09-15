@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
-import {
-    TimeRangeInput,
-    QuickActionButton,
-} from '@the-deep/deep-ui';
+import { TimeRangeInput, QuickActionButton } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 import { IoSwapHorizontal } from 'react-icons/io5';
+import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { TimeRangeWidgetAttribute } from '#types/newEntry';
 
@@ -19,6 +18,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: TimeRangeValue | null | undefined,
+    error: Error<TimeRangeValue> | undefined;
     onChange: (
         value: TimeRangeValue | undefined,
         name: N,
@@ -38,7 +38,10 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: TimeRangeValue['value'] | undefined, inputName: N) => {
@@ -65,13 +68,24 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         [onChange, value, name],
     );
 
+    const valueErrorString = getErrorString(error?.value);
+    const valueErrorObject = getErrorObject(error?.value);
+
+    const valueError = valueErrorString
+        ?? valueErrorObject?.startTime
+        ?? valueErrorObject?.endTime;
+
     return (
         <WidgetWrapper
             className={className}
             title={title}
-            actions={actions}
             childrenContainerClassName={styles.content}
+            actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <TimeRangeInput
                 className={styles.input}
                 name={name}
@@ -79,6 +93,7 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
                 value={value?.value}
                 readOnly={readOnly}
                 disabled={disabled}
+                error={valueError}
             />
             <QuickActionButton
                 className={styles.button}

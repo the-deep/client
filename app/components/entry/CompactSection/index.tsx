@@ -7,9 +7,7 @@ import {
     ListView,
     Container,
 } from '@the-deep/deep-ui';
-import {
-    SetValueArg,
-} from '@togglecorp/toggle-form';
+import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import { Widget } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
@@ -24,6 +22,7 @@ export interface Props {
     className?: string;
     widgets: Widget[] | undefined | null;
     title?: string;
+    error: Error<WidgetAttribute[]> | undefined;
     onAttributeChange: (val: SetValueArg<WidgetAttribute>, index: number | undefined) => void;
     attributesMap: Partial<Record<string, { index: number, value: WidgetAttribute }>>;
     readOnly?: boolean;
@@ -41,7 +40,10 @@ function CompactSection(props: Props) {
         emptyValueHidden,
         readOnly,
         disabled,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const widgetsWithValue = useMemo(() => {
         if (!emptyValueHidden) {
@@ -56,6 +58,7 @@ function CompactSection(props: Props) {
     const widgetRendererParams = useCallback(
         (key: string, data: Widget): AttributeInputProps<number | undefined> => {
             const attribute = attributesMap[key];
+            const err = error?.[key];
             return {
                 name: attribute?.index,
                 value: attribute?.value,
@@ -63,9 +66,10 @@ function CompactSection(props: Props) {
                 onChange: onAttributeChange,
                 readOnly,
                 disabled,
+                error: err,
             };
         },
-        [onAttributeChange, attributesMap, readOnly, disabled],
+        [onAttributeChange, attributesMap, readOnly, disabled, error],
     );
 
     return (

@@ -5,9 +5,10 @@ import {
     Heading,
     List,
 } from '@the-deep/deep-ui';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
+import NonFieldError from '#components/NonFieldError';
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
 import { Matrix2dWidgetAttribute } from '#types/newEntry';
 import WidgetWrapper from '../WidgetWrapper';
@@ -232,6 +233,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: Matrix2dValue | null | undefined,
+    error: Error<Matrix2dValue> | undefined;
     onChange: (value: Matrix2dValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
@@ -252,7 +254,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: Matrix2dValue['value'] | undefined, inputName: N) => {
@@ -318,7 +323,11 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             childrenContainerClassName={styles.matrix}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <List
                 data={orderedRows}
                 keySelector={rowKeySelector}

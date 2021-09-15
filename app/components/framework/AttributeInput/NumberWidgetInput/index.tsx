@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
 import { NumberInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
+import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { NumberWidgetAttribute } from '#types/newEntry';
 
@@ -13,6 +15,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: NumberValue | null | undefined,
+    error: Error<NumberValue> | undefined;
     onChange: (value: NumberValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
@@ -30,7 +33,10 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: NumberValue['value'] | undefined, inputName: N) => {
@@ -48,13 +54,18 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <NumberInput
                 name={name}
                 onChange={onChange}
                 value={value?.value}
                 readOnly={readOnly}
                 disabled={disabled}
+                error={error?.value}
             />
         </WidgetWrapper>
     );

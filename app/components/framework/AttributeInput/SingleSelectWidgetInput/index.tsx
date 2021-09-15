@@ -2,9 +2,10 @@ import React, { useMemo, useCallback } from 'react';
 import {
     SelectInput,
 } from '@the-deep/deep-ui';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
 
+import NonFieldError from '#components/NonFieldError';
 import { sortByOrder } from '#utils/common';
 
 import { SingleSelectWidget } from '#types/newAnalyticalFramework';
@@ -31,6 +32,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: SingleSelectValue | null | undefined,
+    error: Error<SingleSelectValue> | undefined;
     onChange: (value: SingleSelectValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
@@ -51,7 +53,10 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: SingleSelectValue['value'] | undefined, inputName: N) => {
@@ -74,7 +79,11 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <SelectInput
                 name={name}
                 options={sortedOptions}
@@ -84,6 +93,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                 value={value?.value}
                 readOnly={readOnly}
                 disabled={disabled}
+                error={error?.value}
             />
         </WidgetWrapper>
     );
