@@ -1,7 +1,37 @@
 import { gql } from '@apollo/client';
 
-// eslint-disable-next-line import/prefer-default-export
+const ENTRY_FRAGMENT = gql`
+    fragment EntryResponse on EntryType {
+        clientId
+        id
+        entryType
+        droppedExcerpt
+        excerpt
+        attributes {
+            clientId
+            data
+            id
+            widget
+            widgetType
+        }
+        lead {
+            id
+        }
+        image {
+            id
+            metadata
+            mimeType
+            title
+            file {
+                name
+                url
+            }
+        }
+    }
+`;
+
 export const PROJECT_FRAMEWORK = gql`
+    ${ENTRY_FRAGMENT}
     query ProjectFramework(
         $projectId: ID!,
         $leadId: ID!,
@@ -11,31 +41,7 @@ export const PROJECT_FRAMEWORK = gql`
             lead(id: $leadId) {
                 id
                 entries {
-                    clientId
-                    id
-                    entryType
-                    droppedExcerpt
-                    excerpt
-                    attributes {
-                        clientId
-                        data
-                        id
-                        widget
-                        widgetType
-                    }
-                    lead {
-                        id
-                    }
-                    image {
-                        id
-                        metadata
-                        mimeType
-                        title
-                        file {
-                            name
-                            url
-                        }
-                    }
+                    ...EntryResponse
                 }
             }
             analysisFramework {
@@ -66,6 +72,23 @@ export const PROJECT_FRAMEWORK = gql`
                     properties
                     widgetId
                     width
+                }
+            }
+        }
+    }
+`;
+
+export const BULK_UPDATE_ENTRIES = gql`
+    ${ENTRY_FRAGMENT}
+    mutation BulkUpdateEntries($projectId:ID!, $deleteIds:[ID!], $entries: [BulkEntryInputType!]) {
+        project(id: $projectId) {
+            entryBulk(deleteIds: $deleteIds, items: $entries) {
+                errors
+                result {
+                    ...EntryResponse
+                }
+                deletedResult {
+                    id
                 }
             }
         }
