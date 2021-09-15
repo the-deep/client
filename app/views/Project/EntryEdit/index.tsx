@@ -10,6 +10,7 @@ import {
     listToMap,
     randomString,
     isDefined,
+    mapToMap,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -31,6 +32,7 @@ import {
     isCallable,
     createSubmitHandler,
     getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -391,10 +393,16 @@ function EntryEdit(props: Props) {
 
     const currentEntry = formValue.entries?.[currentEntryIndex];
 
-    // FIXME: memoize this
-    const entriesError = getErrorObject(getErrorObject(formError)?.entries);
+    const entriesError = useMemo(
+        () => getErrorObject(getErrorObject(formError)?.entries),
+        [formError],
+    );
 
-    // FIXME: memoize this
+    const entriesErrorStateMap = useMemo(
+        () => mapToMap(entriesError, (k) => k, (err) => analyzeErrors(err)),
+        [entriesError],
+    );
+
     const currentEntryError = currentEntry
         ? entriesError?.[currentEntry.clientId]
         : undefined;
@@ -687,6 +695,7 @@ function EntryEdit(props: Props) {
                                     leadId={leadId}
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
+                                    entriesError={entriesErrorStateMap}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -763,6 +772,7 @@ function EntryEdit(props: Props) {
                                     hideOriginalPreview
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
+                                    entriesError={entriesErrorStateMap}
                                 />
                                 <Container
                                     className={styles.rightContainer}

@@ -70,6 +70,7 @@ interface Props {
     hideOriginalPreview?: boolean;
     entryImagesMap: EntryImagesMap | undefined;
     isEntrySelectionActive?: boolean;
+    entriesError: Partial<Record<string, boolean>> | undefined;
 }
 
 function LeftPane(props: Props) {
@@ -89,6 +90,7 @@ function LeftPane(props: Props) {
         entryImagesMap,
         leadId,
         isEntrySelectionActive,
+        entriesError,
     } = props;
 
     const alert = useAlert();
@@ -208,8 +210,10 @@ function LeftPane(props: Props) {
         onApproveButtonClick,
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
+        errored: entriesError?.[entryId],
     }), [
         onApproveButtonClick,
+        entriesError,
         onDiscardButtonClick,
         activeEntry,
         onEntryClick,

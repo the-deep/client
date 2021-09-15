@@ -9,6 +9,7 @@ import { BsFileDiff } from 'react-icons/bs';
 import { requiredStringCondition } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 import {
+    Tag,
     Footer,
     Container,
     QuickActionButton,
@@ -91,7 +92,8 @@ interface EntryItemProps extends EntryInput {
     disableDiscardButton?: boolean;
     onEntryDelete?: (entryId: string) => void;
     entryImage: Entry['image'];
-    disableClick?: boolean,
+    disableClick?: boolean;
+    errored?: boolean;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -112,6 +114,9 @@ function EntryItem(props: EntryItemProps) {
         imageRaw,
         entryImage,
         entryType,
+        deleted,
+        errored,
+        stale,
     } = props;
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
@@ -141,6 +146,39 @@ function EntryItem(props: EntryItemProps) {
                 styles.taggedExcerpt,
                 className,
                 isActive && styles.active,
+            )}
+            footerIcons={(
+                <>
+                    {excerpt !== droppedExcerpt && (
+                        <Tag
+                            spacing="compact"
+                        >
+                            Edited
+                        </Tag>
+                    )}
+                    {stale && !deleted && !errored && (
+                        <Tag
+                            spacing="compact"
+                        >
+                            Changed
+                        </Tag>
+                    )}
+                    {deleted && (
+                        <Tag
+                            variant="complement2"
+                            spacing="compact"
+                        >
+                            Deleted
+                        </Tag>
+                    )}
+                    {errored && (
+                        <Tag
+                            spacing="compact"
+                        >
+                            Error
+                        </Tag>
+                    )}
+                </>
             )}
             footerQuickActions={isActive && (
                 <>
@@ -217,11 +255,6 @@ function EntryItem(props: EntryItemProps) {
                     leadImageUrl={undefined}
                     entryType={entryType}
                 />
-                {excerpt !== droppedExcerpt && (
-                    <div>
-                        (Edited)
-                    </div>
-                )}
             </div>
             <div className={styles.verticalBorder} />
         </Container>
