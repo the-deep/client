@@ -1,0 +1,23 @@
+:global {
+    .org-tree-node-label-inner {
+        padding: 0;
+    }
+}
+
+.card {
+    display: flex;
+    flex-grow: 1;
+    padding: var(--dui-spacing-medium);
+}
+
+.selected {
+    border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+}
+
+.disabled {
+    :global {
+        .org-tree-node-label {
+            pointer-events: none;
+        }
+    }
+}
