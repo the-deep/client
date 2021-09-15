@@ -57,8 +57,7 @@ function ShareModal(props: ComponentProps) {
         {
             url: `server://projects/${projectId}/public-viz/`,
             method: 'POST',
-            // FIXME: please check if this is correct
-            body: ctx => (ctx ? { action: 'off' } : { action: 'on' }),
+            body: ctx => (ctx ? { action: 'on' } : { action: 'off' }),
             onSuccess: (response) => {
                 if (onShareLinkChange) {
                     onShareLinkChange(response?.publicUrl, !isEntriesVizPublic);

@@ -359,6 +359,7 @@ export default class Entry extends React.PureComponent {
                                     'entries',
                                     'verificationLastChangedBy',
                                     {
+                                        // eslint-disable-next-line max-len
                                         userName: verificationLastChangedByDetails.displayName,
                                     },
                                 )
@@ -370,17 +371,24 @@ export default class Entry extends React.PureComponent {
                             onPendingChange={this.handleEntryVerificationPendingChange}
                             handleEntryVerify={this.handleEntryVerificationChange}
                         />
-                        <EntryOpenLink
-                            className={styles.button}
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                        />
-                        <EntryEditButton
-                            className={styles.button}
-                            entry={entry}
-                            framework={framework}
-                            onEditSuccess={this.handleEntryEdit}
+                        <Cloak
+                            hide={Entry.shouldHideEntryEdit}
+                            render={(
+                                <>
+                                    <EntryOpenLink
+                                        className={styles.button}
+                                        entryId={entry.id}
+                                        leadId={entry.lead}
+                                        projectId={entry.project}
+                                    />
+                                    <EntryEditButton
+                                        className={styles.button}
+                                        entry={entry}
+                                        framework={framework}
+                                        onEditSuccess={this.handleEntryEdit}
+                                    />
+                                </>
+                            )}
                         />
                         <ModalButton
                             className={
@@ -393,17 +401,19 @@ export default class Entry extends React.PureComponent {
                             modal={
                                 <EntryCommentModal
                                     entryServerId={entryId}
-                                    onCommentsCountChange={this.handleCommentsCountChange}
+                                    onCommentsCountChange={
+                                        this.handleCommentsCountChange
+                                    }
                                     defaultAssignees={defaultAssignees}
                                 />
                             }
                             iconName="chat"
                         >
-                            {commentCount > 0 &&
+                            {commentCount > 0 && (
                                 <div className={styles.commentCount}>
                                     {commentCount}
                                 </div>
-                            }
+                            )}
                         </ModalButton>
                         <Cloak
                             hide={Entry.shouldHideEntryDelete}
