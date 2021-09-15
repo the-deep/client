@@ -165,6 +165,7 @@ function Actions<T extends number>(props: Props<T>) {
                 >
                     {`${entriesCount} ${entriesCount === 1 ? 'Entry' : 'Entries'}`}
                 </Button>
+                {/* TODO: Update entriesCount when parent has graphql */}
 
             </div>
             {modal}
