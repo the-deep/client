@@ -1,5 +1,5 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import { Header } from '@the-deep/deep-ui';
 
 import ErrorBoundary from '#base/components/ErrorBoundary';
@@ -19,6 +19,8 @@ export interface Props {
 
     disabled?: boolean;
     readOnly?: boolean;
+
+    error: unknown;
 }
 
 function WidgetWrapper(props: Props) {
@@ -30,10 +32,17 @@ function WidgetWrapper(props: Props) {
         headerClassName,
         actionsContainerClassName,
         childrenContainerClassName,
+        error,
     } = props;
 
     return (
-        <div className={_cs(className, styles.widgetWrapper)}>
+        <div
+            className={_cs(
+                className,
+                styles.widgetWrapper,
+                isDefined(error) && styles.errored,
+            )}
+        >
             <Header
                 // FIXME: use strings
                 heading={title ?? 'Unnamed'}

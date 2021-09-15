@@ -9,12 +9,15 @@ import {
     SetValueArg,
     useFormObject,
     useFormArray,
+    getErrorObject,
+    Error,
 } from '@togglecorp/toggle-form';
 import {
     List,
     Container,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#components/NonFieldError';
 import {
     WidgetType as WidgetRaw,
     AnalysisFrameworkDetailType,
@@ -43,7 +46,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     name: T;
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
-    // TODO: error
+    error: Error<PartialEntryType> | undefined;
 
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
@@ -73,7 +76,10 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         leadId,
         compact,
         entryImage,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
@@ -110,7 +116,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         attributesMap,
         readOnly,
         emptyValueHidden,
-    }), [emptyValueHidden, onAttributeChange, attributesMap, readOnly]);
+        error: error?.attributes,
+    }), [emptyValueHidden, onAttributeChange, attributesMap, readOnly, error?.attributes]);
 
     return (
         <div
@@ -120,6 +127,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 styles.entryInput,
             )}
         >
+            <NonFieldError error={error} />
             {!compact && (
                 <Container
                     className={styles.excerpt}
@@ -156,6 +164,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 readOnly={readOnly}
                 emptyValueHidden={emptyValueHidden}
                 widgets={secondaryTagging}
+                error={error?.attributes}
             />
         </div>
     );

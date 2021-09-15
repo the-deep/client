@@ -3,14 +3,20 @@ import {
     PartialForm,
     SetValueArg,
     useFormObject,
+    Error,
+    ArrayError,
+    ObjectError,
+    internal,
 } from '@togglecorp/toggle-form';
 import {
     randomString,
+    isNotDefined,
 } from '@togglecorp/fujs';
 
 import { Widget } from '#types/newAnalyticalFramework';
 
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import NonFieldError from '#components/NonFieldError';
 
 import TextWidgetInput from './TextWidgetInput';
 import DateWidgetInput from './DateWidgetInput';
@@ -26,6 +32,27 @@ import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 import OrganigramWidgetInput from './OrganigramWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 
+// FIXME: move this to utils later on
+export function getErrorObject<T extends ArrayError<T>>(
+    value: T | string | undefined,
+): T | undefined
+export function getErrorObject<T extends ObjectError<T>>(
+    value: ArrayError<T> | string | undefined,
+): T | undefined
+export function getErrorObject<T extends ArrayError<T> | ObjectError<T>>(
+    value: T | string | undefined,
+) {
+    if (isNotDefined(value)) {
+        return undefined;
+    }
+    if (typeof value === 'string') {
+        return {
+            [internal]: value,
+        };
+    }
+    return value;
+}
+
 type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
 export type PartialWidget = PartialForm<
@@ -36,6 +63,7 @@ export type PartialWidget = PartialForm<
 export interface Props<N extends string | number | undefined> {
     name: N,
     value: PartialAttributeType | null | undefined,
+    error: Error<PartialAttributeType> | undefined,
     onChange: (value: SetValueArg<PartialAttributeType>, name: N) => void,
 
     className?: string,
@@ -54,7 +82,10 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         widget,
         readOnly,
         disabled,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const defaultOptionVal = useCallback(
         (): PartialAttributeType => ({
@@ -68,215 +99,198 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
 
     const onFieldChange = useFormObject(name, onChange, defaultOptionVal);
 
-    switch (widget.widgetId) {
-        case 'TEXT': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <TextWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
-            );
-        }
-        case 'NUMBER': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <NumberWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
-            );
-        }
-        case 'DATE': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <DateWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
-            );
-        }
-        case 'TIME': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <TimeWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
-            );
-        }
-        case 'DATE_RANGE': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <DateRangeWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
-            );
-        }
-        case 'TIME_RANGE': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <TimeRangeWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
-            );
-        }
-        case 'SCALE': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <ScaleWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    widget={widget}
-                />
-            );
-        }
-        case 'MULTISELECT': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <MultiSelectWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    widget={widget}
-                />
-            );
-        }
-        case 'SELECT': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <SingleSelectWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    widget={widget}
-                />
-            );
-        }
-        case 'MATRIX1D': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <Matrix1dWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    widget={widget}
-                />
-            );
-        }
-        case 'MATRIX2D': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
-            return (
-                <Matrix2dWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    widget={widget}
-                />
-            );
-        }
-        case 'ORGANIGRAM': {
-            if (value && value.widgetType !== widget.widgetId) {
-                return null;
-            }
+    let component: JSX.Element;
 
-            return (
-                <OrganigramWidgetInput
-                    className={className}
-                    title={widget.title}
-                    name="data"
-                    onChange={onFieldChange}
-                    value={value?.data}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    widget={widget}
-                />
-            );
-        }
-        default: {
-            return (
-                <BaseWidgetInput
-                    className={className}
-                    title={widget.title}
-                />
-            );
-        }
+    if (widget.widgetId === 'TEXT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <TextWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'NUMBER' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <NumberWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'DATE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <DateWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'TIME' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <TimeWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'DATE_RANGE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <DateRangeWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'TIME_RANGE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <TimeRangeWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'SCALE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <ScaleWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'MULTISELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <MultiSelectWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'SELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <SingleSelectWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'MATRIX1D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <Matrix1dWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'MATRIX2D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <Matrix2dWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'ORGANIGRAM' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <OrganigramWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else {
+        component = (
+            <BaseWidgetInput
+                className={className}
+                title={widget.title}
+                error={error?.data}
+            />
+        );
     }
+
+    return (
+        <>
+            <NonFieldError error={error} />
+            {component}
+        </>
+    );
 }
 
 export default CompactAttributeInput;

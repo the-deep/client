@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
 import { DateInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
+import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { DateWidgetAttribute } from '#types/newEntry';
 
@@ -14,6 +16,7 @@ export interface Props <N extends string>{
     name: N,
     value: DateValue | null | undefined,
     onChange: (value: DateValue | undefined, name: N) => void,
+    error: Error<DateValue> | undefined;
 
     actions?: React.ReactNode,
     disabled?: boolean;
@@ -30,7 +33,10 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: DateValue['value'] | undefined, inputName: N) => {
@@ -48,13 +54,18 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <DateInput
                 name={name}
                 onChange={onChange}
                 value={value?.value}
                 readOnly={readOnly}
                 disabled={disabled}
+                error={error?.value}
             />
         </WidgetWrapper>
     );

@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
 import { TextArea } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
+import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import { TextWidgetAttribute } from '#types/newEntry';
 import WidgetWrapper from '../WidgetWrapper';
 
@@ -13,6 +15,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: TextValue | null | undefined,
+    error: Error<TextValue> | undefined;
     onChange: (value: TextValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
@@ -30,7 +33,10 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: TextValue['value'] | undefined, inputName: N) => {
@@ -48,7 +54,11 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <TextArea
                 name={name}
                 onChange={onChange}
@@ -56,6 +66,7 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
                 rows={5}
                 readOnly={readOnly}
                 disabled={disabled}
+                error={error?.value}
             />
         </WidgetWrapper>
     );

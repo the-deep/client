@@ -26,6 +26,7 @@ import {
     SetValueArg,
     isCallable,
     createSubmitHandler,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
@@ -182,12 +183,11 @@ function EntryEdit(props: Props) {
         setError: setFormError,
         pristine: formPristine,
         validate: formValidate,
-        // error: formError,
-
         hasRestorePoint: isEntrySelectionActive,
         restore,
         createRestorePoint,
         clearRestorePoint,
+        error: formError,
     } = useForm(schema, defaultFormValues);
 
     const handleSubmit = useCallback(
@@ -256,6 +256,11 @@ function EntryEdit(props: Props) {
     ) ?? -1;
 
     const currentEntry = formValue.entries?.[currentEntryIndex];
+
+    // FIXME: memoize this
+    const currentEntryError = currentEntry
+        ? getErrorObject(getErrorObject(formError)?.entries)?.[currentEntry.clientId]
+        : undefined;
 
     const {
         setValue: onEntryChange,
@@ -513,7 +518,7 @@ function EntryEdit(props: Props) {
                                 pending={leadGetPending}
                                 leadInitialValue={leadInitialValue}
                                 projectId={+projectId}
-                                disabled={disabled}
+                                disabled
                             />
                         )}
                     </TabPanel>
@@ -582,6 +587,7 @@ function EntryEdit(props: Props) {
                                                     attributesMap={attributesMap}
                                                     onAttributeChange={onAttributeChange}
                                                     readOnly={!currentEntry}
+                                                    error={currentEntryError}
                                                 />
                                             </TabPanel>
                                         ))}
@@ -629,6 +635,7 @@ function EntryEdit(props: Props) {
                                         attributesMap={attributesMap}
                                         onAttributeChange={onAttributeChange}
                                         readOnly={!currentEntry}
+                                        error={currentEntryError}
                                     />
                                 </Container>
                             </div>

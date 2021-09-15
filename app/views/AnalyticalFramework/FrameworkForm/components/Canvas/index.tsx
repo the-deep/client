@@ -51,13 +51,14 @@ function WidgetWrapper(props: WidgetProps) {
     } = props;
 
     return (
-        <AttributeInput
+        <AttributeInput<string>
             key={clientId}
             name={clientId}
             value={undefined}
             onChange={onWidgetValueChange}
             widget={widget}
             readOnly
+            error={undefined}
             actions={(
                 <>
                     {showWidgetEdit && (

@@ -2,9 +2,10 @@ import React, { useMemo, useCallback } from 'react';
 import {
     MultiSelectInput,
 } from '@the-deep/deep-ui';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 import { listToMap, isNotDefined } from '@togglecorp/fujs';
 
+import NonFieldError from '#components/NonFieldError';
 import { sortByOrder } from '#utils/common';
 
 import { MultiSelectWidget } from '#types/newAnalyticalFramework';
@@ -31,6 +32,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: MultiSelectValue | null | undefined,
+    error: Error<MultiSelectValue> | undefined;
     onChange: (value: MultiSelectValue | undefined, name: N) => void,
 
     disabled?: boolean;
@@ -49,7 +51,10 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: MultiSelectValue['value'] | undefined, inputName: N) => {
@@ -78,22 +83,29 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             disabled={disabled}
             readOnly={readOnly}
+            error={error}
         >
             {readOnly ? (
                 <div>
                     {selectedValues}
                 </div>
             ) : (
-                <MultiSelectInput
-                    name={name}
-                    options={sortedOptions}
-                    keySelector={optionKeySelector}
-                    labelSelector={optionLabelSelector}
-                    onChange={onChange}
-                    value={value?.value}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
+                <>
+                    <NonFieldError
+                        error={error}
+                    />
+                    <MultiSelectInput
+                        name={name}
+                        options={sortedOptions}
+                        keySelector={optionKeySelector}
+                        labelSelector={optionLabelSelector}
+                        onChange={onChange}
+                        value={value?.value}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                        error={getErrorString(error?.value)}
+                    />
+                </>
             )}
         </WidgetWrapper>
     );

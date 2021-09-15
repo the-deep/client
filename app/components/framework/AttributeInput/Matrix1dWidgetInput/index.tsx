@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import { Button, List } from '@the-deep/deep-ui';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
 
+import NonFieldError from '#components/NonFieldError';
 import { Matrix1dWidget } from '#types/newAnalyticalFramework';
 import { Matrix1dWidgetAttribute } from '#types/newEntry';
 import WidgetWrapper from '../WidgetWrapper';
@@ -138,6 +139,7 @@ export interface Props <N extends string>{
     name: N;
     value: Matrix1dValue | null | undefined;
     onChange: (value: Matrix1dValue | undefined, name: N) => void;
+    error: Error<Matrix1dValue> | undefined;
 
     actions?: React.ReactNode;
     disabled?: boolean;
@@ -157,7 +159,10 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: Matrix1dValue['value'] | undefined, inputName: N) => {
@@ -203,13 +208,19 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         [disabled, readOnly, handleCellChange, value],
     );
 
+    // FIXME: handle finer level errors
+
     return (
         <WidgetWrapper
             className={className}
             childrenContainerClassName={styles.matrix}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError
+                error={error}
+            />
             <List
                 data={sortedRows}
                 keySelector={rowKeySelector}

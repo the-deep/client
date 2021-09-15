@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
 import { TextArea } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
+import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import { TextWidgetAttribute } from '#types/newEntry';
 import WidgetWrapper from '../WidgetWrapper';
 
@@ -13,6 +15,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: TextValue | null | undefined,
+    error: Error<TextValue> | undefined;
     onChange: (value: TextValue | undefined, name: N) => void,
 
     disabled?: boolean;
@@ -28,7 +31,10 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: TextValue['value'] | undefined, inputName: N) => {
@@ -47,20 +53,27 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             disabled={disabled}
             readOnly={readOnly}
+            error={error}
         >
             {readOnly ? (
                 <div>
                     {value?.value}
                 </div>
             ) : (
-                <TextArea
-                    name={name}
-                    onChange={onChange}
-                    value={value?.value}
-                    rows={3}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
+                <>
+                    <NonFieldError
+                        error={error}
+                    />
+                    <TextArea
+                        name={name}
+                        onChange={onChange}
+                        value={value?.value}
+                        rows={3}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                        error={error?.value}
+                    />
+                </>
             )}
         </WidgetWrapper>
     );

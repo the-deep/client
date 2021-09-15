@@ -5,7 +5,9 @@ import {
 } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 import { IoSwapHorizontal } from 'react-icons/io5';
+import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { DateRangeWidgetAttribute } from '#types/newEntry';
 
@@ -19,6 +21,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: DateRangeValue | null | undefined,
+    error: Error<DateRangeValue> | undefined;
     onChange: (value: DateRangeValue | undefined, name: N) => void,
     actions?: React.ReactNode,
     disabled?: boolean;
@@ -35,7 +38,10 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: DateRangeValue['value'] | undefined, inputName: N) => {
@@ -63,13 +69,24 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         [onChange, value, name],
     );
 
+    const valueErrorString = getErrorString(error?.value);
+    const valueErrorObject = getErrorObject(error?.value);
+
+    const valueError = valueErrorString
+        ?? valueErrorObject?.startDate
+        ?? valueErrorObject?.endDate;
+
     return (
         <WidgetWrapper
             className={className}
             title={title}
-            actions={actions}
             childrenContainerClassName={styles.content}
+            error={error}
+            actions={actions}
         >
+            <NonFieldError
+                error={error}
+            />
             <DateRangeInput
                 className={styles.input}
                 name={name}
@@ -77,6 +94,7 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
                 value={value?.value}
                 readOnly={readOnly}
                 disabled={disabled}
+                error={valueError}
             />
             <QuickActionButton
                 className={styles.button}
