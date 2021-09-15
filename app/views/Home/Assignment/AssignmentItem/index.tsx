@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { IoCheckmarkCircle } from 'react-icons/io5';
+import { generatePath } from 'react-router-dom';
 import {
     Element,
     Link,
@@ -10,11 +11,9 @@ import {
 import { Assignment } from '#types';
 
 import _ts from '#ts';
+import routes from '#base/configs/routes';
 
 import styles from './styles.css';
-
-// TODO add link when made
-const emptyLink = '#';
 
 interface AssignmentItemProps extends Assignment {
     handleClick: (id: number) => void;
@@ -54,17 +53,15 @@ function AssignmentItem(props: AssignmentItemProps) {
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
-                <Link
-                    to={emptyLink}
-                    className={styles.link}
-                >
-                    {createdByDetails.displayName}
-                </Link>
+                {createdByDetails.displayName}
                 &nbsp;
                 {_ts('assignment', 'assignedYou')}
                 &nbsp;
                 <Link
-                    to={emptyLink}
+                    to={generatePath(routes.entryEdit.path, {
+                        projectId: projectDetails?.id,
+                        leadId: contentObjectDetails?.id,
+                    })}
                     className={styles.link}
                 >
                     {contentObjectDetails?.title}
@@ -73,7 +70,7 @@ function AssignmentItem(props: AssignmentItemProps) {
                 {_ts('assignment', 'in')}
                 &nbsp;
                 <Link
-                    to={emptyLink}
+                    to={generatePath(routes.tagging.path, { projectId: projectDetails?.id })}
                     className={styles.link}
                 >
                     {projectDetails?.title}

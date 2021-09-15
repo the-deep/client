@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     Element,
-    Link,
     DateOutput,
 } from '@the-deep/deep-ui';
 
@@ -10,8 +9,6 @@ import Avatar from '#components/Avatar';
 import _ts from '#ts';
 
 import styles from './styles.css';
-
-const emptyLink = '#'; // TODO: Add link when made
 
 interface RecentActivityProps {
     projectDisplayName: string;
@@ -42,24 +39,18 @@ function ActivityItem(props: RecentActivityProps) {
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
-                <Link
-                    to={emptyLink}
-                    className={styles.link}
-                >
+                <span className={styles.boldText}>
                     {createdByDisplayName}
-                </Link>
+                </span>
                 &nbsp;
                 {(type === 'lead'
                     ? _ts('recentActivity', 'leadAdded')
                     : _ts('recentActivity', 'entryCommentAdded')
                 )}
                 &nbsp;
-                <Link
-                    to={emptyLink}
-                    className={styles.link}
-                >
+                <span className={styles.boldText}>
                     {projectDisplayName}
-                </Link>
+                </span>
             </div>
             <DateOutput
                 className={styles.createdDate}
