@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     Element,
-    Link,
     DateOutput,
 } from '@the-deep/deep-ui';
 
@@ -10,8 +9,6 @@ import Avatar from '#components/Avatar';
 import _ts from '#ts';
 
 import styles from './styles.css';
-
-const emptyLink = '#'; // TODO: Add link when made
 
 interface RecentActivityProps {
     projectDisplayName: string;

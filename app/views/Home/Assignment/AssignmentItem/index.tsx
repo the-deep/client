@@ -15,9 +15,6 @@ import routes from '#base/configs/routes';
 
 import styles from './styles.css';
 
-// TODO add link when made
-const emptyLink = '#';
-
 interface AssignmentItemProps extends Assignment {
     handleClick: (id: number) => void;
     markAsDonePending: boolean;
@@ -61,7 +58,10 @@ function AssignmentItem(props: AssignmentItemProps) {
                 {_ts('assignment', 'assignedYou')}
                 &nbsp;
                 <Link
-                    to={emptyLink} // TODO: Add path to edit entries flow
+                    to={generatePath(routes.entryEdit.path, {
+                        projectId: projectDetails?.id,
+                        leadId: contentObjectDetails?.id,
+                    })}
                     className={styles.link}
                 >
                     {contentObjectDetails?.title}
