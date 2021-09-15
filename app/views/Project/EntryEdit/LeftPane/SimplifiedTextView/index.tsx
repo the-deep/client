@@ -25,8 +25,11 @@ interface Props {
     onExcerptClick?: (entryClientId: string) => void;
     onApproveButtonClick?: (entryClientId: string) => void;
     onDiscardButtonClick?: (entryClientId: string) => void;
+    onEntryDelete?: (entryId: string) => void;
+    disableExcerptClick?: boolean;
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
+    disableAddButton?: boolean;
 }
 
 function SimplifiedTextView(props: Props) {
@@ -40,8 +43,11 @@ function SimplifiedTextView(props: Props) {
         onExcerptClick,
         onApproveButtonClick,
         onDiscardButtonClick,
+        onEntryDelete,
+        disableExcerptClick,
         disableApproveButton,
         disableDiscardButton,
+        disableAddButton,
     } = props;
 
     // TODO: Remove overlapping splits if necessary
@@ -101,11 +107,13 @@ function SimplifiedTextView(props: Props) {
                             lead={split.lead}
                             entryId={split.entryId}
                             onClick={onExcerptClick}
+                            disableClick={disableExcerptClick}
                             isActive={activeEntryClientId === split.entryId}
                             excerpt={split.excerpt}
                             entryType={split.entryType}
                             droppedExcerpt={split.droppedExcerpt}
                             onExcerptChange={onExcerptChange}
+                            onEntryDelete={onEntryDelete}
                             onApproveButtonClick={onApproveButtonClick}
                             onDiscardButtonClick={onDiscardButtonClick}
                             disableApproveButton={disableApproveButton}
@@ -165,7 +173,7 @@ function SimplifiedTextView(props: Props) {
             className={_cs(styles.simplifiedTextView, className)}
         >
             {children}
-            {!isCollapsed && textContent && (
+            {!isCollapsed && textContent && !disableAddButton && (
                 <div
                     className={styles.actionsPopup}
                     style={position ? ({ ...position }) : undefined}

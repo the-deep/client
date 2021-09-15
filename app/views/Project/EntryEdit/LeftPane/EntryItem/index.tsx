@@ -14,7 +14,6 @@ import {
     QuickActionButton,
     QuickActionButtonProps,
     QuickActionDropdownMenu,
-    QuickActionConfirmButton,
     QuickActionDropdownMenuProps,
     Heading,
     TextArea,
@@ -90,6 +89,7 @@ interface EntryItemProps extends EntryInput {
     disableDiscardButton?: boolean;
     onEntryDelete?: (entryId: string) => void;
     entryImage: Entry['image'];
+    disableClick?: boolean,
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -105,6 +105,7 @@ function EntryItem(props: EntryItemProps) {
         onExcerptChange,
         disableApproveButton,
         disableDiscardButton,
+        disableClick,
         onEntryDelete,
         imageRaw,
         entryImage,
@@ -114,10 +115,10 @@ function EntryItem(props: EntryItemProps) {
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
 
     const handleClick = React.useCallback(() => {
-        if (onClick) {
+        if (onClick && !disableClick) {
             onClick(entryId);
         }
-    }, [entryId, onClick]);
+    }, [entryId, onClick, disableClick]);
 
     const handleExcerptChange = React.useCallback(
         (modifiedExcerpt: string | undefined) => {
@@ -131,12 +132,6 @@ function EntryItem(props: EntryItemProps) {
         },
         [entryId, onExcerptChange],
     );
-
-    const handleDeleteConfirm = React.useCallback(() => {
-        if (onEntryDelete) {
-            onEntryDelete(entryId);
-        }
-    }, [entryId, onEntryDelete]);
 
     return (
         <Container
@@ -197,13 +192,12 @@ function EntryItem(props: EntryItemProps) {
                             onExcerptChange={handleExcerptChange}
                         />
                     </QuickActionDropdownMenu>
-                    <QuickActionConfirmButton
+                    <QuickActionButton
                         name={entryId}
-                        onConfirm={handleDeleteConfirm}
-                        message="Are you sure you want to remove this entry?"
+                        onClick={onEntryDelete}
                     >
                         <IoTrash />
-                    </QuickActionConfirmButton>
+                    </QuickActionButton>
                 </>
             )}
         >

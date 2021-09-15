@@ -41,7 +41,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
 export type PartialDataType = PartialForm<DataType, 'clientId'>;
 
-type DataSchema = ObjectSchema<PartialDataType>;
+type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({

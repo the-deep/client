@@ -132,9 +132,19 @@ function EntryEdit(props: Props) {
         setValue: setFormValue,
         setFieldValue: setFormFieldValue,
         // error: formError,
+
+        hasRestorePoint: isEntrySelectionActive,
+        restore,
+        createRestorePoint,
+        clearRestorePoint,
     } = useForm(schema, defaultFormValues);
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
+
+    const handleEntryClick = useCallback((entryId: string) => {
+        createRestorePoint();
+        setSelectedEntry(entryId);
+    }, [createRestorePoint]);
 
     const currentEntryIndex = formValue.entries?.findIndex(
         (entry) => entry.clientId === selectedEntry,
@@ -163,8 +173,7 @@ function EntryEdit(props: Props) {
 
     const handleEntryCreate = useCallback(
         (newValue: PartialEntryType) => {
-            // TODO: start snapshot mode
-
+            createRestorePoint();
             // FIXME: iterate over widgets to create attributes with default values
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), newValue],
@@ -172,23 +181,23 @@ function EntryEdit(props: Props) {
             );
             setSelectedEntry(newValue.clientId);
         },
-        [setFormFieldValue],
+        [setFormFieldValue, createRestorePoint],
     );
 
     const handleEntryChangeApprove = useCallback(
         () => {
-            // TODO: clear snapshot
+            clearRestorePoint();
             setSelectedEntry(undefined);
         },
-        [],
+        [clearRestorePoint],
     );
 
     const handleEntryChangeDiscard = useCallback(
         () => {
-            // TODO: restore snapshot
+            restore();
             setSelectedEntry(undefined);
         },
-        [],
+        [restore],
     );
 
     const onEntryFieldChange = useFormObject(
@@ -206,9 +215,11 @@ function EntryEdit(props: Props) {
 
     const handleEntryDelete = useCallback(
         () => {
+            clearRestorePoint();
             onEntryFieldChange(true, 'deleted');
+            setSelectedEntry(undefined);
         },
-        [onEntryFieldChange],
+        [onEntryFieldChange, clearRestorePoint],
     );
 
     // NOTE: we are creating a map of index and value because we are iterating
@@ -344,24 +355,28 @@ function EntryEdit(props: Props) {
                         <Tab
                             name="source-details"
                             transparentBorder
+                            disabled={isEntrySelectionActive}
                         >
                             Source Details
                         </Tab>
                         <Tab
                             name="primary-tagging"
                             transparentBorder
+                            disabled={isEntrySelectionActive}
                         >
                             Primary Tagging
                         </Tab>
                         <Tab
                             name="secondary-tagging"
                             transparentBorder
+                            disabled={isEntrySelectionActive}
                         >
                             Secondary Tagging
                         </Tab>
                         <Tab
                             name="review"
                             transparentBorder
+                            disabled={isEntrySelectionActive}
                         >
                             Review
                         </Tab>
@@ -397,7 +412,7 @@ function EntryEdit(props: Props) {
                                     className={styles.sourcePreview}
                                     entries={formValue.entries}
                                     activeEntry={selectedEntry}
-                                    onEntryClick={setSelectedEntry}
+                                    onEntryClick={handleEntryClick}
                                     onEntryCreate={handleEntryCreate}
                                     onApproveButtonClick={handleEntryChangeApprove}
                                     onDiscardButtonClick={handleEntryChangeDiscard}
@@ -406,6 +421,7 @@ function EntryEdit(props: Props) {
                                     lead={lead}
                                     leadId={leadId}
                                     entryImagesMap={entryImagesMap}
+                                    isEntrySelectionActive={isEntrySelectionActive}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -469,15 +485,18 @@ function EntryEdit(props: Props) {
                                     className={styles.sourcePreview}
                                     entries={formValue.entries}
                                     activeEntry={selectedEntry}
-                                    onEntryClick={setSelectedEntry}
+                                    onEntryClick={handleEntryClick}
                                     onEntryCreate={handleEntryCreate}
                                     onEntryDelete={handleEntryDelete}
                                     onExcerptChange={handleExcerptChange}
+                                    onApproveButtonClick={handleEntryChangeApprove}
+                                    onDiscardButtonClick={handleEntryChangeDiscard}
                                     lead={lead}
                                     leadId={leadId}
                                     hideSimplifiedPreview
                                     hideOriginalPreview
                                     entryImagesMap={entryImagesMap}
+                                    isEntrySelectionActive={isEntrySelectionActive}
                                 />
                                 <Container
                                     className={styles.rightContainer}

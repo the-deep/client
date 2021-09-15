@@ -59,7 +59,7 @@ export type PartialSectionType = PartialForm<
 >;
 // type PartialWidgetType = NonNullable<PartialSectionType['widgets']>[number];
 
-type SectionSchema = ObjectSchema<PartialSectionType>;
+type SectionSchema = ObjectSchema<PartialSectionType, PartialFormType>;
 type SectionSchemaFields = ReturnType<SectionSchema['fields']>;
 const sectionSchema: SectionSchema = {
     fields: (): SectionSchemaFields => ({
@@ -71,7 +71,7 @@ const sectionSchema: SectionSchema = {
     }),
 };
 
-type SectionsSchema = ArraySchema<PartialSectionType>;
+type SectionsSchema = ArraySchema<PartialSectionType, PartialFormType>;
 type SectionsSchemaMember = ReturnType<SectionsSchema['member']>;
 const sectionsSchema: SectionsSchema = {
     keySelector: (col) => col.clientId,
