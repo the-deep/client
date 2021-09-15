@@ -153,13 +153,18 @@ function EditableEntry(props: Props) {
                         widgetType: undefined,
                     })),
                 };
-                updateEntry({
-                    variables: {
-                        projectId,
-                        entryId: entry.id,
-                        entryData: transformedEntryData,
-                    },
-                });
+                if (entry.id) {
+                    updateEntry({
+                        variables: {
+                            projectId,
+                            entryId: entry.id,
+                            entryData: transformedEntryData,
+                        },
+                    });
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.error('No entry id');
+                }
             },
         );
         submit();

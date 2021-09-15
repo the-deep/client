@@ -4,7 +4,7 @@ import { IoAdd } from 'react-icons/io5';
 import {
     Button,
     ExpandableContainer,
-    ElementFragments,
+    Element,
 } from '@the-deep/deep-ui';
 
 import { Types } from '#types/newAnalyticalFramework';
@@ -104,7 +104,9 @@ interface AddItemProps<T extends string | number | undefined> {
     label: string;
     onAddClick: (name: T) => void;
     preview?: React.ReactNode;
+    previewContainerClassName?: string;
     disabled?: boolean;
+    accented?: boolean;
 }
 
 function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) {
@@ -113,31 +115,40 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
         onAddClick,
         label,
         preview,
+        previewContainerClassName,
         name,
         disabled,
+        accented,
     } = props;
 
     return (
-        <div className={_cs(styles.addItem, className)}>
-            <div className={styles.title}>
-                <ElementFragments
-                    actions={(
-                        <Button
-                            name={name}
-                            variant="action"
-                            onClick={onAddClick}
-                            disabled={disabled}
-                        >
-                            <IoAdd className={styles.addIcon} />
-                        </Button>
-                    )}
-                >
-                    {label}
-                </ElementFragments>
-            </div>
-            <div>
-                {preview}
-            </div>
+        <div
+            className={_cs(
+                styles.addItem,
+                accented && styles.accented,
+                className,
+            )}
+        >
+            <Element
+                className={styles.title}
+                actions={(
+                    <Button
+                        name={name}
+                        variant="action"
+                        onClick={onAddClick}
+                        disabled={disabled}
+                    >
+                        <IoAdd className={styles.addIcon} />
+                    </Button>
+                )}
+            >
+                {label}
+            </Element>
+            {preview && (
+                <div className={previewContainerClassName}>
+                    {preview}
+                </div>
+            )}
         </div>
     );
 }
@@ -193,14 +204,14 @@ function WidgetList(props: Props) {
                     <AddItem
                         name="MATRIX1D"
                         // FIXME: use strings
-                        label="Matrix1d"
+                        label="1D Matrix"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
                     <AddItem
                         name="MATRIX2D"
                         // FIXME: use strings
-                        label="Matrix2d"
+                        label="2D Matrix"
                         onAddClick={handleAddClick}
                         disabled={disabled || widgetsDisabled}
                     />
@@ -208,84 +219,87 @@ function WidgetList(props: Props) {
             )}
             <ExpandableContainer
                 // FIXME: use strings
-                heading="Widgets"
-                contentClassName={styles.children}
+                heading="More Widgets"
+                headingSize="extraSmall"
+                headerClassName={styles.header}
+                contentClassName={styles.moreWidgetList}
                 // eslint-disable-next-line react/destructuring-assignment
                 defaultVisibility={!!props.sectionsDisabled}
                 className={styles.widgets}
+                spacing="compact"
+                // FIXME: This should be default behaviour
+                alwaysMountContent={false}
             >
-                <div className={styles.moreWidgetsList}>
-                    <AddItem
-                        name="TEXT"
-                        // FIXME: use strings
-                        label="Text"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="NUMBER"
-                        // FIXME: use strings
-                        label="Number"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="DATE"
-                        // FIXME: use strings
-                        label="Date"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="DATE_RANGE"
-                        // FIXME: use strings
-                        label="Date Range"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="TIME"
-                        // FIXME: use strings
-                        label="Time"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="TIME_RANGE"
-                        // FIXME: use strings
-                        label="Time Range"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="SCALE"
-                        // FIXME: use strings
-                        label="Scale"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="SELECT"
-                        // FIXME: use strings
-                        label="Single Select"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="MULTISELECT"
-                        // FIXME: use strings
-                        label="Multi Select"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                    <AddItem
-                        name="ORGANIGRAM"
-                        // FIXME: use strings
-                        label="Organigram"
-                        onAddClick={handleAddClick}
-                        disabled={disabled || widgetsDisabled}
-                    />
-                </div>
+                <AddItem
+                    name="TEXT"
+                    // FIXME: use strings
+                    label="Text"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="NUMBER"
+                    // FIXME: use strings
+                    label="Number"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="DATE"
+                    // FIXME: use strings
+                    label="Date"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="DATE_RANGE"
+                    // FIXME: use strings
+                    label="Date Range"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="TIME"
+                    // FIXME: use strings
+                    label="Time"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="TIME_RANGE"
+                    // FIXME: use strings
+                    label="Time Range"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="SCALE"
+                    // FIXME: use strings
+                    label="Scale"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="SELECT"
+                    // FIXME: use strings
+                    label="Single Select"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="MULTISELECT"
+                    // FIXME: use strings
+                    label="Multi Select"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="ORGANIGRAM"
+                    // FIXME: use strings
+                    label="Organigram"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
             </ExpandableContainer>
         </div>
     );

@@ -185,8 +185,11 @@ function CellInput(props: CellInputProps) {
             defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
             autoFocus={autoFocus}
             expansionTriggerArea="arrow"
+            contentClassName={styles.containerContent}
+            spacing="none"
             headerActions={(
                 <>
                     <QuickActionButton
@@ -218,7 +221,6 @@ function CellInput(props: CellInputProps) {
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
-                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -228,7 +230,6 @@ function CellInput(props: CellInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
-                className={styles.optionInput}
             />
         </ExpandableContainer>
     );
@@ -330,6 +331,10 @@ function RowInput(props: RowInputProps) {
             expansionTriggerArea="arrow"
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
+            spacing="none"
+            contentClassName={styles.containerContent}
+            alwaysMountContent={false}
             headerActions={(
                 <>
                     <QuickActionButton
@@ -361,7 +366,6 @@ function RowInput(props: RowInputProps) {
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
-                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -371,11 +375,12 @@ function RowInput(props: RowInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
-                className={styles.optionInput}
             />
             <Container
-                className={styles.optionInput}
                 heading="Cells"
+                spacing="none"
+                headingSize="extraSmall"
+                contentClassName={styles.containerContent}
                 headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -389,6 +394,7 @@ function RowInput(props: RowInputProps) {
             >
                 <NonFieldError error={error?.cells} />
                 <SortableList
+                    className={styles.containerContent}
                     name="cells"
                     onChange={handleOrderChange}
                     data={value.cells}
@@ -484,7 +490,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 className={className}
                 // FIXME: Use translation
                 heading="Rows"
-                contentClassName={styles.optionsList}
+                headingSize="small"
+                contentClassName={styles.containerContent}
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -495,9 +502,11 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         <IoAdd />
                     </QuickActionButton>
                 )}
+                spacing="none"
             >
                 <NonFieldError error={error?.rows} />
                 <SortableList
+                    className={styles.containerContent}
                     name="options"
                     onChange={handleOrderChange}
                     data={value?.rows}
@@ -585,7 +594,6 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
             >
                 <NonFieldError error={error} />
                 <TextInput
-                    className={styles.input}
                     // FIXME: use translation
                     label="Title"
                     name="title"
