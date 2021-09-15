@@ -45,9 +45,7 @@ function Sources(props: Props) {
                 {activeProject && (
                     <SourcesStats
                         className={styles.stats}
-                        filters={sourcesFilters}
                         projectId={activeProject}
-                        refreshTimestamp={refreshTimestamp}
                     />
                 )}
                 <Header

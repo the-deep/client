@@ -37,6 +37,7 @@ import {
     LeadStatusEnum,
     UserType,
     OrganizationTypeType,
+    SourceFilterOptionsQueryVariables,
 } from '#generated/types';
 import styles from './styles.css';
 
@@ -177,7 +178,7 @@ function SourcesFilter(props: Props) {
 
     const {
         data: sourceFilterOptions,
-    } = useQuery<SourceFilterOptionsQuery>(
+    } = useQuery<SourceFilterOptionsQuery, SourceFilterOptionsQueryVariables>(
         SOURCE_FILTER_OPTIONS,
         {
             variables: {
