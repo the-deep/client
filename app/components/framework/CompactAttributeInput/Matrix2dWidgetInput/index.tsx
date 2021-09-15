@@ -3,14 +3,16 @@ import { _cs, isNotDefined, listToMap } from '@togglecorp/fujs';
 import {
     MultiSelectInput,
     ListView,
-    Heading,
     List,
 } from '@the-deep/deep-ui';
+import { IoChevronForward } from 'react-icons/io5';
 import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
 import { Matrix2dWidgetAttribute } from '#types/newEntry';
+
+import WidgetWrapper from '../WidgetWrapper';
 
 import styles from './styles.css';
 
@@ -79,12 +81,15 @@ function Column(props: ColumnProps) {
 
     return (
         <div className={styles.column}>
-            <div className={styles.subRowLabel}>
-                {subRowLabel}
-            </div>
             <div className={styles.columnDetails}>
-                <div className={styles.columnLabel}>
-                    {column.label}
+                <div className={styles.columnTitle}>
+                    <div className={styles.subrowLabel}>
+                        {subRowLabel}
+                    </div>
+                    <IoChevronForward className={styles.separatorIcon} />
+                    <div className={styles.columnLabel}>
+                        {column.label}
+                    </div>
                 </div>
                 {!readOnly ? (
                     <MultiSelectInput
@@ -205,7 +210,7 @@ function Row(props: RowProps) {
     } = row;
 
     const orderedSubRows = useMemo(() => {
-        const filteredSubRows = subRows?.filter((sr) => value?.value?.[sr.clientId]);
+        const filteredSubRows = subRows?.filter((sr) => value?.[sr.clientId]);
         return sortByOrder(filteredSubRows);
     }, [subRows, value]);
 
@@ -228,12 +233,12 @@ function Row(props: RowProps) {
 
     return (
         <div className={styles.matrixRow}>
-            <Heading
-                size="extraSmall"
+            <div
+                className={styles.rowTitle}
                 title={tooltip ?? ''}
             >
                 {label ?? 'Unnamed'}
-            </Heading>
+            </div>
             <List
                 data={orderedSubRows}
                 keySelector={subRowKeySelector}
@@ -268,6 +273,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        title,
     } = props;
 
     const onChange = useCallback(
@@ -332,13 +338,19 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     }, [widgetRows, value]);
 
     return (
-        <ListView
+        <WidgetWrapper
             className={_cs(className, styles.matrix)}
-            data={orderedRows}
-            keySelector={rowKeySelector}
-            rendererParams={rowRendererParams}
-            renderer={Row}
-        />
+            title={title}
+        >
+            <ListView
+                className={styles.rowList}
+                data={orderedRows}
+                keySelector={rowKeySelector}
+                rendererParams={rowRendererParams}
+                renderer={Row}
+                compactEmptyMessage
+            />
+        </WidgetWrapper>
     );
 }
 

@@ -135,6 +135,7 @@ function SectionInput(props: SectionInputProps) {
             autoFocus={autoFocus}
             heading={`${heading} ${errored ? '*' : ''}`}
             expansionTriggerArea="arrow"
+            spacing="none"
             headerActions={(
                 <>
                     <QuickActionConfirmButton

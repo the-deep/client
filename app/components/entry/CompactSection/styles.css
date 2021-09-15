@@ -1,3 +1,9 @@
 .compact-section {
     background-color: var(--dui-color-foreground);
+
+    .widget-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-large);
+    }
 }

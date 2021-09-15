@@ -1,36 +1,46 @@
 .matrix {
-    display: flex;
-    flex-direction: column;
+    .row-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
 
-    .matrix-row {
-        margin: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
-
-        .column {
+        .matrix-row {
             display: flex;
+            flex-direction:column;
+            gap: var(--dui-spacing-medium);
 
-            .sub-row-label {
-                flex-basis: 50%;
-                padding: 0 var(--dui-spacing-small);
+            .row-title {
+                font-weight: var(--dui-font-weight-bold);
             }
 
-            .column-details {
-                display: flex;
-                flex-basis: 50%;
-                flex-direction: column;
-                justify-content: flex-end;
-                padding: 0 var(--dui-spacing-small);
+            .column {
+                .column-details {
+                    .column-title {
+                        display: flex;
+                        align-items: center;
+                        gap: var(--dui-spacing-small);
 
-                .sub-row-label {
-                    font-weight: var(--dui-font-weight-bold);
-                }
+                        .subrow-label {
+                            color: var(--dui-color-text-label);
+                        }
 
-                .column-label {
-                    font-weight: var(--dui-font-weight-bold);
-                }
+                        .separator-icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: var(--dui-color-text-label);
+                        }
 
-                .selected-values {
-                    color: var(--dui-color-accent);
-                    font-weight: var(--dui-font-weight-bold);
+                        .column-label {
+                            color: var(--dui-color-text-label);
+                        }
+
+                    }
+
+
+                    .selected-values {
+                        color: var(--dui-color-accent);
+                    }
                 }
             }
         }
