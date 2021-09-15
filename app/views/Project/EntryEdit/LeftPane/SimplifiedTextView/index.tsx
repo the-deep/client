@@ -1,7 +1,7 @@
 import React from 'react';
-import { IoAddCircle } from 'react-icons/io5';
+import { IoAdd } from 'react-icons/io5';
 import { _cs, isDefined } from '@togglecorp/fujs';
-import { Button } from '@the-deep/deep-ui';
+import { QuickActionButton } from '@the-deep/deep-ui';
 
 import { PartialEntryType as EntryInput } from '../../schema';
 import useTextSelection from './useTextSelection';
@@ -170,7 +170,11 @@ function SimplifiedTextView(props: Props) {
     return (
         <div
             ref={containerRef}
-            className={_cs(styles.simplifiedTextView, className)}
+            className={_cs(
+                styles.simplifiedTextView,
+                className,
+                disableAddButton && styles.disabled,
+            )}
         >
             {children}
             {!isCollapsed && textContent && !disableAddButton && (
@@ -178,14 +182,14 @@ function SimplifiedTextView(props: Props) {
                     className={styles.actionsPopup}
                     style={position ? ({ ...position }) : undefined}
                 >
-                    <Button
+                    <QuickActionButton
                         name={textContent}
-                        variant="action"
+                        variant="primary"
                         className={styles.addButton}
                         onClick={handleAddButtonClick}
                     >
-                        <IoAddCircle className={styles.addIcon} />
-                    </Button>
+                        <IoAdd />
+                    </QuickActionButton>
                 </div>
             )}
         </div>

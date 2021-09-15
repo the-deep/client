@@ -1,6 +1,10 @@
 .simplified-text-view {
     --padding: var(--dui-spacing-medium);
 
+    &.disabled {
+        user-select: none;
+    }
+
     position: relative;
     padding: var(--padding);
     text-align: justify;
@@ -15,8 +19,11 @@
         display: flex;
         position: absolute;
         align-items: center;
+        transition: var(--dui-duration-transition-fast) top ease-in-out,
+            var(--dui-duration-transition-fast) left ease-in-out,
+            var(--dui-duration-transition-fast) right ease-in-out;
         margin: var(--dui-spacing-extra-small);
-        background-color: var(--dui-color-foreground);
+        /* background-color: var(--dui-color-foreground); */
         user-select: none;
 
         >* {
@@ -28,12 +35,8 @@
         }
 
         .add-button {
-            font-size: var(--dui-font-size-extra-large);
+            font-size: var(--dui-font-size-large);
             user-select: none;
-
-            .add-icon {
-                color: var(--dui-color-accent);
-            }
         }
     }
 }
