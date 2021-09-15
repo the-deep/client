@@ -2,33 +2,44 @@
     .row-list {
         display: flex;
         flex-direction: column;
+        gap: var(--dui-spacing-medium);
 
         .matrix-row {
+            display: flex;
+            flex-direction:column;
+            gap: var(--dui-spacing-medium);
+
+            .row-title {
+                font-weight: var(--dui-font-weight-bold);
+            }
+
             .column {
-                display: flex;
-                gap: var(--dui-spacing-small);
-
-                .sub-row-label {
-                    flex-basis: 50%;
-                }
-
                 .column-details {
-                    display: flex;
-                    flex-basis: 50%;
-                    flex-direction: column;
-                    justify-content: flex-end;
+                    .column-title {
+                        display: flex;
+                        align-items: center;
+                        gap: var(--dui-spacing-small);
 
-                    .sub-row-label {
-                        font-weight: var(--dui-font-weight-bold);
+                        .subrow-label {
+                            color: var(--dui-color-text-label);
+                        }
+
+                        .separator-icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: var(--dui-color-text-label);
+                        }
+
+                        .column-label {
+                            color: var(--dui-color-text-label);
+                        }
+
                     }
 
-                    .column-label {
-                        font-weight: var(--dui-font-weight-bold);
-                    }
 
                     .selected-values {
                         color: var(--dui-color-accent);
-                        font-weight: var(--dui-font-weight-bold);
                     }
                 }
             }

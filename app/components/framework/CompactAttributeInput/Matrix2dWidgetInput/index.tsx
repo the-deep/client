@@ -3,9 +3,9 @@ import { _cs, isNotDefined, listToMap } from '@togglecorp/fujs';
 import {
     MultiSelectInput,
     ListView,
-    Heading,
     List,
 } from '@the-deep/deep-ui';
+import { IoChevronForward } from 'react-icons/io5';
 import { PartialForm } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 
@@ -81,12 +81,15 @@ function Column(props: ColumnProps) {
 
     return (
         <div className={styles.column}>
-            <div className={styles.subRowLabel}>
-                {subRowLabel}
-            </div>
             <div className={styles.columnDetails}>
-                <div className={styles.columnLabel}>
-                    {column.label}
+                <div className={styles.columnTitle}>
+                    <div className={styles.subrowLabel}>
+                        {subRowLabel}
+                    </div>
+                    <IoChevronForward className={styles.separatorIcon} />
+                    <div className={styles.columnLabel}>
+                        {column.label}
+                    </div>
                 </div>
                 {!readOnly ? (
                     <MultiSelectInput
@@ -207,7 +210,7 @@ function Row(props: RowProps) {
     } = row;
 
     const orderedSubRows = useMemo(() => {
-        const filteredSubRows = subRows?.filter((sr) => value?.value?.[sr.clientId]);
+        const filteredSubRows = subRows?.filter((sr) => value?.[sr.clientId]);
         return sortByOrder(filteredSubRows);
     }, [subRows, value]);
 
@@ -230,12 +233,12 @@ function Row(props: RowProps) {
 
     return (
         <div className={styles.matrixRow}>
-            <Heading
-                size="extraSmall"
+            <div
+                className={styles.rowTitle}
                 title={tooltip ?? ''}
             >
                 {label ?? 'Unnamed'}
-            </Heading>
+            </div>
             <List
                 data={orderedSubRows}
                 keySelector={subRowKeySelector}
