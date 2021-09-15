@@ -18,6 +18,7 @@
     }
 
     .description-container {
+        align-self: center;
         flex-shrink: unset;
         overflow: auto;
 

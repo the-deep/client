@@ -24,16 +24,16 @@
     }
 }
 
+.excerpt-text-area {
+    margin: var(--dui-spacing-small);
+}
+
 .edit-excerpt-popup {
     width: 20rem;
     max-width: unset!important;
 
     .content {
         padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
-
-        .excerpt-text-area {
-            margin: var(--dui-spacing-small);
-        }
     }
 }
 
