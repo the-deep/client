@@ -227,8 +227,6 @@ function WidgetList(props: Props) {
                 defaultVisibility={!!props.sectionsDisabled}
                 className={styles.widgets}
                 spacing="compact"
-                // FIXME: This should be default behaviour
-                alwaysMountContent={false}
             >
                 <AddItem
                     name="TEXT"

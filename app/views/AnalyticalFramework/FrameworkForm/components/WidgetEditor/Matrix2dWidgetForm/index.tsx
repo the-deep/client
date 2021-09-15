@@ -9,7 +9,7 @@ import {
     TextInput,
     TextArea,
     QuickActionButton,
-    ExpandableContainer,
+    ControlledExpandableContainer,
     Container,
     Tabs,
     Tab,
@@ -224,6 +224,8 @@ interface SubRowInputProps {
     listeners?: Listeners;
     attributes?: Attributes;
     autoFocus?: boolean;
+    expanded: boolean;
+    onExpansionChange: (isExpanded: boolean, subRowId: string) => void;
 }
 function SubRowInput(props: SubRowInputProps) {
     const {
@@ -236,6 +238,8 @@ function SubRowInput(props: SubRowInputProps) {
         listeners,
         attributes,
         autoFocus,
+        expanded,
+        onExpansionChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubRowVal);
@@ -246,14 +250,19 @@ function SubRowInput(props: SubRowInputProps) {
     const heading = value.label ?? `Sub Row ${index + 1}`;
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
+            contentClassName={styles.containerContent}
             expansionTriggerArea="arrow"
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
+            name={value.clientId}
+            expanded={expanded}
+            onExpansionChange={onExpansionChange}
+            withoutBorder
+            withoutExternalPadding
             headerActions={(
                 <>
                     <QuickActionButton
@@ -285,7 +294,6 @@ function SubRowInput(props: SubRowInputProps) {
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
-                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -295,9 +303,8 @@ function SubRowInput(props: SubRowInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
-                className={styles.optionInput}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -315,6 +322,8 @@ interface RowInputProps {
     listeners?: Listeners;
     attributes?: Attributes;
     autoFocus?: boolean;
+    expanded: boolean;
+    onExpansionChange: (expanded: boolean, clientId: string) => void;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -327,6 +336,8 @@ function RowInput(props: RowInputProps) {
         listeners,
         attributes,
         autoFocus,
+        expanded,
+        onExpansionChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultRowVal);
@@ -339,6 +350,8 @@ function RowInput(props: RowInputProps) {
         setValue: onSubRowsChange,
         removeValue: onSubRowsRemove,
     } = useFormArray('subRows', onFieldChange);
+
+    const [expandedSubRowId, setExpandedSubRowId] = React.useState<string | undefined>();
 
     const handleAdd = useCallback(
         () => {
@@ -358,6 +371,7 @@ function RowInput(props: RowInputProps) {
                 [...reorder(oldSubRows), newSubRow],
                 'subRows' as const,
             );
+            setExpandedSubRowId(clientId);
         },
         [onFieldChange, value.subRows],
     );
@@ -368,6 +382,10 @@ function RowInput(props: RowInputProps) {
 
     const errored = analyzeErrors(error);
     const heading = value.label ?? `Row ${index + 1}`;
+
+    const handleSubRowExpansionChange = useCallback((subRowExpanded: boolean, subRowId: string) => {
+        setExpandedSubRowId(subRowExpanded ? subRowId : undefined);
+    }, []);
 
     const subRowRendererParams = useCallback(
         (
@@ -381,39 +399,52 @@ function RowInput(props: RowInputProps) {
             onRemove: onSubRowsRemove,
             error: arrayError?.[key],
             autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
+            expanded: expandedSubRowId === data.clientId,
+            onExpansionChange: handleSubRowExpansionChange,
         }),
-        [onSubRowsChange, onSubRowsRemove, arrayError],
+        [
+            onSubRowsChange,
+            onSubRowsRemove,
+            arrayError,
+            expandedSubRowId,
+            handleSubRowExpansionChange,
+        ],
     );
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
+            contentClassName={styles.containerContent}
             expansionTriggerArea="arrow"
+            name={value.clientId}
+            expanded={expanded}
+            onExpansionChange={onExpansionChange}
+            withoutBorder
+            withoutExternalPadding
+            headerIcons={(
+                <QuickActionButton
+                    name={index}
+                    // FIXME: use translation
+                    title="Drag"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GrDrag />
+                </QuickActionButton>
+            )}
             headerActions={(
-                <>
-                    <QuickActionButton
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Row"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
-                    </QuickActionButton>
-                </>
+                <QuickActionButton
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Row"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -425,7 +456,6 @@ function RowInput(props: RowInputProps) {
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
-                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -435,11 +465,13 @@ function RowInput(props: RowInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
-                className={styles.optionInput}
             />
             <Container
-                className={styles.optionInput}
                 heading="Sub Rows"
+                headingSize="extraSmall"
+                className={styles.container}
+                contentClassName={styles.containerContent}
+                withoutExternalPadding
                 headerActions={(value.subRows?.length ?? 0) < SUB_ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -453,6 +485,7 @@ function RowInput(props: RowInputProps) {
             >
                 <NonFieldError error={error?.subRows} />
                 <SortableList
+                    className={styles.sortableList}
                     name="subRows"
                     onChange={handleSubRowsOrderChange}
                     data={value.subRows}
@@ -462,7 +495,7 @@ function RowInput(props: RowInputProps) {
                     direction="vertical"
                 />
             </Container>
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -480,6 +513,8 @@ interface SubColumnInputProps {
     listeners?: Listeners;
     attributes?: Attributes;
     autoFocus?: boolean;
+    expanded: boolean;
+    onExpansionChange: (isExpanded: boolean, rowId: string) => void;
 }
 function SubColumnInput(props: SubColumnInputProps) {
     const {
@@ -492,6 +527,8 @@ function SubColumnInput(props: SubColumnInputProps) {
         listeners,
         attributes,
         autoFocus,
+        expanded,
+        onExpansionChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultSubColumnVal);
@@ -502,14 +539,19 @@ function SubColumnInput(props: SubColumnInputProps) {
     const heading = value.label ?? `Sub Column ${index + 1}`;
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
+            contentClassName={styles.containerContent}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
             expansionTriggerArea="arrow"
+            name={value.clientId}
+            expanded={expanded}
+            onExpansionChange={onExpansionChange}
+            withoutBorder
+            withoutExternalPadding
             headerActions={(
                 <>
                     <QuickActionButton
@@ -551,7 +593,7 @@ function SubColumnInput(props: SubColumnInputProps) {
                 onChange={onFieldChange}
                 error={error?.tooltip}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -569,6 +611,8 @@ interface ColumnInputProps {
     listeners?: Listeners;
     attributes?: Attributes;
     autoFocus?: boolean;
+    expanded: boolean;
+    onExpansionChange: (isExpanded: boolean, columnId: string) => void;
 }
 function ColumnInput(props: ColumnInputProps) {
     const {
@@ -581,6 +625,8 @@ function ColumnInput(props: ColumnInputProps) {
         listeners,
         attributes,
         autoFocus,
+        expanded,
+        onExpansionChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -593,6 +639,8 @@ function ColumnInput(props: ColumnInputProps) {
         setValue: onSubColumnsChange,
         removeValue: onSubColumnsRemove,
     } = useFormArray('subColumns', onFieldChange);
+
+    const [expandedSubColumnId, setExpandedSubColumnId] = React.useState<string | undefined>();
 
     const handleAdd = useCallback(
         () => {
@@ -612,6 +660,7 @@ function ColumnInput(props: ColumnInputProps) {
                 [...reorder(oldSubColumns), newSubColumn],
                 'subColumns' as const,
             );
+            setExpandedSubColumnId(clientId);
         },
         [onFieldChange, value.subColumns],
     );
@@ -622,6 +671,13 @@ function ColumnInput(props: ColumnInputProps) {
     const handleSubColumnOrderChange = useCallback((newSubColumns: PartialSubColumnType[]) => {
         onFieldChange(reorder(newSubColumns), 'subColumns');
     }, [onFieldChange]);
+
+    const handleSubColumnExpansionChange = React.useCallback(
+        (subColumnExpanded: boolean, subColumnId: string) => {
+            setExpandedSubColumnId(subColumnExpanded ? subColumnId : undefined);
+        },
+        [],
+    );
 
     const subColumnRendererParams = useCallback(
         (
@@ -635,19 +691,32 @@ function ColumnInput(props: ColumnInputProps) {
             onRemove: onSubColumnsRemove,
             error: arrayError?.[key],
             autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
+            expanded: expandedSubColumnId === data.clientId,
+            onExpansionChange: handleSubColumnExpansionChange,
         }),
-        [onSubColumnsChange, onSubColumnsRemove, arrayError],
+        [
+            onSubColumnsChange,
+            onSubColumnsRemove,
+            arrayError,
+            expandedSubColumnId,
+            handleSubColumnExpansionChange,
+        ],
     );
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
             autoFocus={autoFocus}
             className={className}
-            // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
+            contentClassName={styles.containerContent}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
             expansionTriggerArea="arrow"
+            withoutBorder
+            withoutExternalPadding
+            name={value.clientId}
+            expanded={expanded}
+            onExpansionChange={onExpansionChange}
             headerActions={(
                 <>
                     <QuickActionButton
@@ -679,7 +748,6 @@ function ColumnInput(props: ColumnInputProps) {
                 value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
-                className={styles.optionInput}
             />
             <TextArea
                 // FIXME: use translation
@@ -689,11 +757,13 @@ function ColumnInput(props: ColumnInputProps) {
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
-                className={styles.optionInput}
             />
             <Container
-                className={styles.optionInput}
+                className={styles.container}
                 heading="Sub Columns"
+                headingSize="extraSmall"
+                contentClassName={styles.containerContent}
+                withoutExternalPadding
                 headerActions={(value.subColumns?.length ?? 0) < SUB_COLUMNS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -707,6 +777,7 @@ function ColumnInput(props: ColumnInputProps) {
             >
                 <NonFieldError error={error?.subColumns} />
                 <SortableList
+                    className={styles.sortableList}
                     name="subColumns"
                     onChange={handleSubColumnOrderChange}
                     data={value.subColumns}
@@ -716,7 +787,7 @@ function ColumnInput(props: ColumnInputProps) {
                     direction="vertical"
                 />
             </Container>
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -746,6 +817,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const onFieldChange = useFormObject(name, onChange, defaultVal);
     const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
+    const [expandedRowId, setExpandedRowId] = React.useState<string | undefined>();
+    const [expandedColumnId, setExpandedColumnId] = React.useState<string | undefined>();
+
     const {
         setValue: onRowsChange,
         removeValue: onRowsRemove,
@@ -769,6 +843,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 [...reorder(oldRows), newRow],
                 'rows' as const,
             );
+            setExpandedRowId(clientId);
         },
         [onFieldChange, value?.rows],
     );
@@ -777,6 +852,14 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         setValue: onColumnsChange,
         removeValue: onColumnsRemove,
     } = useFormArray('columns', onFieldChange);
+
+    const handleRowExpansionChange = useCallback((rowExpanded: boolean, rowId: string) => {
+        setExpandedRowId(rowExpanded ? rowId : undefined);
+    }, []);
+
+    const handleColumnExpansionChange = useCallback((columnExpanded: boolean, columnId: string) => {
+        setExpandedColumnId(columnExpanded ? columnId : undefined);
+    }, []);
 
     const columnRendererParams = useCallback(
         (
@@ -790,8 +873,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             onRemove: onColumnsRemove,
             error: columnError?.[key],
             autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
+            expanded: expandedColumnId === data.clientId,
+            onExpansionChange: handleColumnExpansionChange,
         }),
-        [onColumnsChange, onColumnsRemove, columnError],
+        [
+            onColumnsChange,
+            onColumnsRemove,
+            columnError,
+            expandedColumnId,
+            handleColumnExpansionChange,
+        ],
     );
 
     const rowRendererParams = useCallback(
@@ -806,8 +897,16 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             onRemove: onRowsRemove,
             error: rowError?.[key],
             autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
+            expanded: expandedRowId === data.clientId,
+            onExpansionChange: handleRowExpansionChange,
         }),
-        [onRowsChange, onRowsRemove, rowError],
+        [
+            onRowsChange,
+            onRowsRemove,
+            rowError,
+            expandedRowId,
+            handleRowExpansionChange,
+        ],
     );
 
     const handleRowsOrderChange = useCallback((newRows: PartialRowType[]) => {
@@ -836,6 +935,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 [...reorder(oldColumns), newColumn],
                 'columns' as const,
             );
+            setExpandedColumnId(clientId);
         },
         [onFieldChange, value?.columns],
     );
@@ -869,62 +969,68 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     Columns
                 </Tab>
             </TabList>
-            <div className={styles.optionsList}>
-                <TabPanel name="rows">
-                    <Container
-                        className={className}
-                        heading="Rows"
-                        headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
-                            <QuickActionButton
-                                name={undefined}
-                                onClick={handleRowAdd}
-                                // FIXME: use strings
-                                title="Add row"
-                            >
-                                <IoAdd />
-                            </QuickActionButton>
-                        )}
-                    >
-                        <NonFieldError error={error?.rows} />
-                        <SortableList
-                            name="rows"
-                            onChange={handleRowsOrderChange}
-                            data={value?.rows}
-                            keySelector={rowKeySelector}
-                            renderer={RowInput}
-                            rendererParams={rowRendererParams}
-                            direction="vertical"
-                        />
-                    </Container>
-                </TabPanel>
-                <TabPanel name="columns">
-                    <Container
-                        className={className}
-                        heading="Columns"
-                        headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
-                            <QuickActionButton
-                                name={undefined}
-                                onClick={handleColumnAdd}
-                                // FIXME: use strings
-                                title="Add column"
-                            >
-                                <IoAdd />
-                            </QuickActionButton>
-                        )}
-                    >
-                        <NonFieldError error={error?.columns} />
-                        <SortableList
-                            name="columns"
-                            onChange={handleColumnsOrderChange}
-                            data={value?.columns}
-                            keySelector={columnKeySelector}
-                            renderer={ColumnInput}
-                            rendererParams={columnRendererParams}
-                            direction="vertical"
-                        />
-                    </Container>
-                </TabPanel>
-            </div>
+            <TabPanel name="rows">
+                <Container
+                    className={_cs(styles.container, className)}
+                    contentClassName={styles.containerContent}
+                    heading="Rows"
+                    headingSize="small"
+                    withoutExternalPadding
+                    headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleRowAdd}
+                            // FIXME: use strings
+                            title="Add row"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                >
+                    <NonFieldError error={error?.rows} />
+                    <SortableList
+                        className={styles.sortableList}
+                        name="rows"
+                        onChange={handleRowsOrderChange}
+                        data={value?.rows}
+                        keySelector={rowKeySelector}
+                        renderer={RowInput}
+                        rendererParams={rowRendererParams}
+                        direction="vertical"
+                    />
+                </Container>
+            </TabPanel>
+            <TabPanel name="columns">
+                <Container
+                    className={_cs(styles.container, className)}
+                    headingSize="small"
+                    contentClassName={styles.containerContent}
+                    heading="Columns"
+                    withoutExternalPadding
+                    headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
+                        <QuickActionButton
+                            name={undefined}
+                            onClick={handleColumnAdd}
+                            // FIXME: use strings
+                            title="Add column"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
+                >
+                    <NonFieldError error={error?.columns} />
+                    <SortableList
+                        className={styles.sortableList}
+                        name="columns"
+                        onChange={handleColumnsOrderChange}
+                        data={value?.columns}
+                        keySelector={columnKeySelector}
+                        renderer={ColumnInput}
+                        rendererParams={columnRendererParams}
+                        direction="vertical"
+                    />
+                </Container>
+            </TabPanel>
         </Tabs>
     );
 }
@@ -977,8 +1083,11 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.container}
                 heading={value.title ?? 'Unnamed'}
                 contentClassName={styles.editorContent}
+                withoutExternalPadding
+                ellipsizeHeading
                 headerActions={(
                     <>
                         <Button
@@ -1002,7 +1111,6 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
             >
                 <NonFieldError error={error} />
                 <TextInput
-                    className={styles.input}
                     // FIXME: use translation
                     label="Title"
                     name="title"
