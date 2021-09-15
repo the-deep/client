@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -23,12 +23,13 @@ import _ts from '#ts';
 import {
     RecentProjectsQuery,
     RecentProjectsQueryVariables,
-    ProjectDetailType,
+    FetchProjectQuery,
+    FetchProjectQueryVariables,
 } from '#generated/types';
 
 import { ProjectsSummary } from '#types';
 
-import ProjectItem from './ProjectItem';
+import ProjectItem, { RecentProjectItemProps } from './ProjectItem';
 import Summary from './Summary';
 import Activity from './Activity';
 import Assignment from './Assignment';
@@ -37,8 +38,8 @@ import RecentActivity from './RecentActivity';
 import styles from './styles.css';
 
 const RECENT_PROJECTS = gql`
-    query RecentProjects{
-      recentProjects {
+query RecentProjects{
+    recentProjects {
         id
         title
         isPrivate
@@ -46,44 +47,95 @@ const RECENT_PROJECTS = gql`
         startDate
         endDate
         analysisFramework {
-          id
-          title
+            id
+            title
         }
         createdBy {
-          displayName
+            displayName
         }
         leads {
-          totalCount
+            totalCount
         }
         userGroups {
-          memberships {
-            role
-          }
+            memberships {
+                role
+            }
         }
         topTaggers {
-          count
-          name
+            count
+            name
         }
         stats {
-          numberOfLeads
-          numberOfLeadsTagged
-          numberOfLeadsTaggedAndControlled
-          numberOfUsers
-          entriesActivity {
-            count
-            date
-          }
-          leadsActivity {
-            count
-            date
-          }
-          numberOfEntries
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsTaggedAndControlled
+            numberOfUsers
+            entriesActivity {
+                count
+                date
+            }
+            leadsActivity {
+                count
+                date
+            }
+            numberOfEntries
         }
-      }
+        allowedPermissions
     }
+}
 `;
 
-const recentProjectKeySelector = (d: ProjectDetailType) => d.id;
+const FETCH_PROJECT = gql`
+query FetchProject($projectId: ID!) {
+    project(id: $projectId) {
+        id
+        title
+        isPrivate
+        description
+        startDate
+        endDate
+        analysisFramework {
+            id
+            title
+        }
+        createdBy {
+            displayName
+        }
+        leads {
+            totalCount
+        }
+        userGroups {
+            memberships {
+                role
+            }
+        }
+        topTaggers {
+            count
+            name
+        }
+        stats {
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsTaggedAndControlled
+            numberOfUsers
+            entriesActivity {
+                count
+                date
+            }
+            leadsActivity {
+                count
+                date
+            }
+            numberOfEntries
+        }
+        allowedPermissions
+    }
+}
+`;
+
+type ProjectDetail = NonNullable<FetchProjectQuery>['project'];
+
+const recentProjectKeySelector = (d: ProjectDetail) => d?.id ?? '';
 
 interface ViewProps {
     className?: string;
@@ -106,6 +158,23 @@ function Home(props: ViewProps) {
         RECENT_PROJECTS,
     );
 
+    const variables = useMemo(() => (
+        selectedProject
+            ? ({ projectId: selectedProject })
+            : undefined
+    ), [selectedProject]);
+
+    const {
+        data: selectedProjectResponse,
+        loading: selectedProjectPending,
+    } = useQuery<FetchProjectQuery, FetchProjectQueryVariables>(
+        FETCH_PROJECT,
+        {
+            skip: !variables,
+            variables,
+        },
+    );
+
     const {
         pending: summaryPending,
         response: summaryResponse,
@@ -115,12 +184,41 @@ function Home(props: ViewProps) {
         failureHeader: _ts('home', 'summaryOfMyProjectsHeading'),
     });
 
-    const recentProjectsRendererParams = useCallback((_, data) => ({
-        ...data,
-        projectId: data.id,
-    }), []);
+    const recentProjectsRendererParams = useCallback(
+        (_, data: ProjectDetail): RecentProjectItemProps => ({
+            projectId: data?.id,
+            title: data?.title,
+            isPrivate: data?.isPrivate,
+            startDate: data?.startDate,
+            endDate: data?.endDate,
+            description: data?.description,
+            projectOwnerName: data?.createdBy?.displayName,
+            analysisFrameworkTitle: data?.analysisFramework?.title,
+            analysisFramework: data?.analysisFramework?.id,
+            totalUsers: data?.stats?.numberOfUsers,
+            totalSources: data?.stats?.numberOfLeads,
+            totalSourcesTagged: data?.stats?.numberOfLeadsTagged,
+            totalSourcesValidated: data?.stats?.numberOfLeadsTaggedAndControlled,
+            entriesActivity: data?.stats?.entriesActivity,
+            topTaggers: data?.topTaggers,
+            allowedPermissions: data?.allowedPermissions,
+        }),
+        [],
+    );
 
-    const pageDataPending = summaryPending || recentProjectsPending;
+    const pageDataPending = summaryPending
+    || recentProjectsPending
+    || selectedProjectPending;
+
+    const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
+        if (selectedProject && selectedProjectResponse?.project) {
+            return [selectedProjectResponse.project];
+        }
+        if (recentProjectsResponse?.recentProjects) {
+            return recentProjectsResponse.recentProjects;
+        }
+        return undefined;
+    }, [selectedProject, selectedProjectResponse, recentProjectsResponse]);
 
     return (
         <PageContent
@@ -176,7 +274,7 @@ function Home(props: ViewProps) {
             >
                 <ListView
                     className={styles.projectList}
-                    data={recentProjectsResponse?.recentProjects ?? []}
+                    data={recentProjects}
                     rendererParams={recentProjectsRendererParams}
                     renderer={ProjectItem}
                     keySelector={recentProjectKeySelector}
