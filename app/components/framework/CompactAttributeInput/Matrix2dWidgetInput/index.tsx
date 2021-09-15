@@ -12,6 +12,8 @@ import { sortByOrder } from '#utils/common';
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
 import { Matrix2dWidgetAttribute } from '#types/newEntry';
 
+import WidgetWrapper from '../WidgetWrapper';
+
 import styles from './styles.css';
 
 type Matrix2dValue = NonNullable<Matrix2dWidgetAttribute['data']>;
@@ -268,6 +270,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        title,
     } = props;
 
     const onChange = useCallback(
@@ -332,13 +335,19 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     }, [widgetRows, value]);
 
     return (
-        <ListView
+        <WidgetWrapper
             className={_cs(className, styles.matrix)}
-            data={orderedRows}
-            keySelector={rowKeySelector}
-            rendererParams={rowRendererParams}
-            renderer={Row}
-        />
+            title={title}
+        >
+            <ListView
+                className={styles.rowList}
+                data={orderedRows}
+                keySelector={rowKeySelector}
+                rendererParams={rowRendererParams}
+                renderer={Row}
+                compactEmptyMessage
+            />
+        </WidgetWrapper>
     );
 }
 

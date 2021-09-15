@@ -17,6 +17,8 @@ import { sortByOrder } from '#utils/common';
 import { Matrix1dWidget } from '#types/newAnalyticalFramework';
 import { Matrix1dWidgetAttribute } from '#types/newEntry';
 
+import WidgetWrapper from '../WidgetWrapper';
+
 import styles from './styles.css';
 
 type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
@@ -126,6 +128,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        title,
     } = props;
 
     const onChange = useCallback(
@@ -178,13 +181,19 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     return (
-        <ListView
+        <WidgetWrapper
             className={_cs(className, styles.matrix)}
-            data={filteredRows}
-            keySelector={rowKeySelector}
-            rendererParams={rowRendererParams}
-            renderer={Row}
-        />
+            title={title}
+        >
+            <ListView
+                className={styles.rowList}
+                data={filteredRows}
+                keySelector={rowKeySelector}
+                rendererParams={rowRendererParams}
+                renderer={Row}
+                compactEmptyMessage
+            />
+        </WidgetWrapper>
     );
 }
 

@@ -73,12 +73,15 @@ function CompactSection(props: Props) {
             className={_cs(className, styles.compactSection)}
             heading={title}
             headingSize="extraSmall"
+            spacing="loose"
         >
             <ListView
+                className={styles.widgetList}
                 data={widgetsWithValue ?? undefined}
                 keySelector={widgetKeySelector}
                 renderer={CompactAttributeInput}
                 rendererParams={widgetRendererParams}
+                compactEmptyMessage
             />
         </Container>
     );
