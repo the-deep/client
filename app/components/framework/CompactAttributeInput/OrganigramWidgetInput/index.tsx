@@ -1,10 +1,15 @@
-import React, { useCallback } from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
+import React, { useCallback, useMemo } from 'react';
+import {
+    MultiSelectInput,
+} from '@the-deep/deep-ui';
+import {
+    isNotDefined,
+    listToMap,
+} from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
 
-import OrganigramInput from '#components/OrganigramInput';
 import { OrganigramWidgetAttribute } from '#types/newEntry';
-import { OrganigramWidget } from '#types/newAnalyticalFramework';
+import { OrganigramWidget, OrganigramDatum } from '#types/newAnalyticalFramework';
 
 import WidgetWrapper from '../WidgetWrapper';
 
@@ -15,7 +20,27 @@ export type PartialOrganigramWidget = PartialForm<
 
 type OrganigramValue = NonNullable<OrganigramWidgetAttribute['data']>;
 
-export interface Props <N extends string>{
+type Option = NonNullable<NonNullable<
+NonNullable<PartialOrganigramWidget>['properties']
+>['options']>;
+
+const optionKeySelector = (option: Option) => option.clientId;
+const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
+
+function getFlatOptions(data?: OrganigramDatum, prefix?: string): Omit<OrganigramDatum, 'children'>[] {
+    if (!data) {
+        return [];
+    }
+    const { children, ...values } = data;
+    const label = `${prefix ? `${prefix}/` : ''}${values.label}`;
+    const childrenValues = children?.flatMap((v) => getFlatOptions(v, label)) ?? [];
+    return [
+        { ...values, label },
+        ...childrenValues,
+    ];
+}
+
+export interface Props <N extends string> {
     title: string | undefined;
     className?: string;
 
@@ -52,6 +77,15 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
 
+    const options = useMemo(() => (
+        getFlatOptions(widget.properties?.options as OrganigramDatum)
+    ), [widget.properties?.options]);
+
+    const selectedValues = useMemo(() => {
+        const optionsMap = listToMap(options, (d) => d.clientId, (d) => d.label);
+        return value?.value?.map((v) => optionsMap?.[v])?.join(', ');
+    }, [options, value]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -59,14 +93,22 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
             disabled={disabled}
             readOnly={readOnly}
         >
-            <OrganigramInput
-                name={name}
-                value={value?.value}
-                onChange={onChange}
-                options={widget.properties?.options}
-                disabled={disabled}
-                readOnly={readOnly}
-            />
+            {readOnly ? (
+                <div>
+                    {selectedValues}
+                </div>
+            ) : (
+                <MultiSelectInput
+                    name={name}
+                    value={value?.value}
+                    onChange={onChange}
+                    options={options}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
+                />
+            )}
         </WidgetWrapper>
     );
 }
