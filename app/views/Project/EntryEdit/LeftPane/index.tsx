@@ -71,6 +71,7 @@ interface Props {
     hideSimplifiedPreview?: boolean;
     hideOriginalPreview?: boolean;
     entryImagesMap: EntryImagesMap | undefined;
+    isEntrySelectionActive?: boolean;
 }
 
 function LeftPane(props: Props) {
@@ -89,6 +90,7 @@ function LeftPane(props: Props) {
         hideOriginalPreview = false,
         entryImagesMap,
         leadId,
+        isEntrySelectionActive,
     } = props;
 
     const alert = useAlert();
@@ -240,7 +242,7 @@ function LeftPane(props: Props) {
                     <QuickActionButton
                         name={undefined}
                         variant="primary"
-                        disabled={showScreenshot}
+                        disabled={showScreenshot || isEntrySelectionActive}
                         onClick={setShowAddExcerptModalTrue}
                     >
                         <IoAdd />
@@ -279,6 +281,7 @@ function LeftPane(props: Props) {
                         <QuickActionButton
                             name={undefined}
                             onClick={setShowScreenshotTrue}
+                            disabled={isEntrySelectionActive}
                         >
                             <IoCameraOutline />
                         </QuickActionButton>
@@ -370,6 +373,7 @@ function LeftPane(props: Props) {
                                 onExcerptChange={onExcerptChange}
                                 onApproveButtonClick={onApproveButtonClick}
                                 onDiscardButtonClick={onDiscardButtonClick}
+                                disabled={isEntrySelectionActive}
                                 // FIXME: disabled
                             />
                         )}

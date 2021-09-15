@@ -77,7 +77,7 @@ export type PartialSubColumnType = PartialForm<
 
 const subColumnKeySelector = (d: PartialSubColumnType) => d.clientId;
 
-type SubColumnSchema = ObjectSchema<PartialSubColumnType>;
+type SubColumnSchema = ObjectSchema<PartialSubColumnType, PartialFormType>;
 type SubColumnSchemaFields = ReturnType<SubColumnSchema['fields']>;
 const subColumnSchema: SubColumnSchema = {
     fields: (): SubColumnSchemaFields => ({
@@ -88,14 +88,14 @@ const subColumnSchema: SubColumnSchema = {
     }),
 };
 
-type SubColumnsSchema = ArraySchema<PartialSubColumnType>;
+type SubColumnsSchema = ArraySchema<PartialSubColumnType, PartialFormType>;
 type SubColumnsSchemaMember = ReturnType<SubColumnsSchema['member']>;
 const subColumnsSchema: SubColumnsSchema = {
     keySelector: (col) => col.clientId,
     member: (): SubColumnsSchemaMember => subColumnSchema,
 };
 
-type ColumnSchema = ObjectSchema<PartialColumnType>;
+type ColumnSchema = ObjectSchema<PartialColumnType, PartialFormType>;
 type ColumnSchemaFields = ReturnType<ColumnSchema['fields']>;
 const columnSchema: ColumnSchema = {
     fields: (): ColumnSchemaFields => ({
@@ -107,7 +107,7 @@ const columnSchema: ColumnSchema = {
     }),
 };
 
-type ColumnsSchema = ArraySchema<PartialColumnType>;
+type ColumnsSchema = ArraySchema<PartialColumnType, PartialFormType>;
 type ColumnsSchemaMember = ReturnType<ColumnsSchema['member']>;
 const columnsSchema: ColumnsSchema = {
     keySelector: (col) => col.clientId,
@@ -137,7 +137,7 @@ export type PartialSubRowType = PartialForm<
 const rowKeySelector = (d: PartialRowType) => d.clientId;
 const subRowKeySelector = (d: PartialSubRowType) => d.clientId;
 
-type SubRowSchema = ObjectSchema<PartialSubRowType>;
+type SubRowSchema = ObjectSchema<PartialSubRowType, PartialFormType>;
 type SubRowSchemaFields = ReturnType<SubRowSchema['fields']>;
 const subRowSchema: SubRowSchema = {
     fields: (): SubRowSchemaFields => ({
@@ -148,7 +148,7 @@ const subRowSchema: SubRowSchema = {
     }),
 };
 
-type SubRowsSchema = ArraySchema<PartialSubRowType>;
+type SubRowsSchema = ArraySchema<PartialSubRowType, PartialFormType>;
 type SubRowsSchemaMember = ReturnType<SubRowsSchema['member']>;
 const subRowsSchema: SubRowsSchema = {
     keySelector: (col) => col.clientId,
@@ -161,7 +161,7 @@ const subRowsSchema: SubRowsSchema = {
     },
 };
 
-type RowSchema = ObjectSchema<PartialRowType>;
+type RowSchema = ObjectSchema<PartialRowType, PartialFormType>;
 type RowSchemaFields = ReturnType<RowSchema['fields']>;
 const rowSchema: RowSchema = {
     fields: (): RowSchemaFields => ({
@@ -174,7 +174,7 @@ const rowSchema: RowSchema = {
     }),
 };
 
-type RowsSchema = ArraySchema<PartialRowType>;
+type RowsSchema = ArraySchema<PartialRowType, PartialFormType>;
 type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
     keySelector: (col) => col.clientId,
@@ -187,7 +187,7 @@ const rowsSchema: RowsSchema = {
     },
 };
 
-type DataSchema = ObjectSchema<PartialDataType>;
+type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({

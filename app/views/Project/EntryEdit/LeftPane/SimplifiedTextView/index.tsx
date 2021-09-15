@@ -27,6 +27,7 @@ interface Props {
     onDiscardButtonClick?: (entryClientId: string) => void;
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
+    disabled?: boolean;
 }
 
 function SimplifiedTextView(props: Props) {
@@ -42,6 +43,7 @@ function SimplifiedTextView(props: Props) {
         onDiscardButtonClick,
         disableApproveButton,
         disableDiscardButton,
+        disabled,
     } = props;
 
     // TODO: Remove overlapping splits if necessary
@@ -165,7 +167,7 @@ function SimplifiedTextView(props: Props) {
             className={_cs(styles.simplifiedTextView, className)}
         >
             {children}
-            {!isCollapsed && textContent && (
+            {!isCollapsed && textContent && !disabled && (
                 <div
                     className={styles.actionsPopup}
                     style={position ? ({ ...position }) : undefined}

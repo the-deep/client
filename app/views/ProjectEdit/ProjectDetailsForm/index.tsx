@@ -118,7 +118,7 @@ type FormType = {
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type StakeholderSchema = ObjectSchema<BasicProjectOrganization>;
+type StakeholderSchema = ObjectSchema<BasicProjectOrganization, FormType>;
 type StakeholderSchemaFields = ReturnType<StakeholderSchema['fields']>;
 const organizationSchema: StakeholderSchema = {
     fields: (): StakeholderSchemaFields => ({
@@ -127,7 +127,7 @@ const organizationSchema: StakeholderSchema = {
     }),
 };
 
-type StakeholderListSchema = ArraySchema<BasicProjectOrganization>;
+type StakeholderListSchema = ArraySchema<BasicProjectOrganization, FormType>;
 type StakeholderListMember = ReturnType<StakeholderListSchema['member']>;
 const organizationListSchema: StakeholderListSchema = {
     keySelector: (d) => d.organization,

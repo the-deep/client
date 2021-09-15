@@ -20,7 +20,7 @@ type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type AttributeSchema = ObjectSchema<PartialAttributeType>;
+type AttributeSchema = ObjectSchema<PartialAttributeType, PartialFormType>;
 type AttributeSchemaFields = ReturnType<AttributeSchema['fields']>;
 const attributeSchema: AttributeSchema = {
     fields: (): AttributeSchemaFields => ({
@@ -34,14 +34,14 @@ const attributeSchema: AttributeSchema = {
     }),
 };
 
-type AttributesSchema = ArraySchema<PartialAttributeType>;
+type AttributesSchema = ArraySchema<PartialAttributeType, PartialFormType>;
 type AttributesSchemaMember = ReturnType<AttributesSchema['member']>;
 const attributesSchema: AttributesSchema = {
     keySelector: (col) => col.clientId,
     member: (): AttributesSchemaMember => attributeSchema,
 };
 
-type EntrySchema = ObjectSchema<PartialEntryType>;
+type EntrySchema = ObjectSchema<PartialEntryType, PartialFormType>;
 type EntrySchemaFields = ReturnType<EntrySchema['fields']>;
 export const entrySchema: EntrySchema = {
     fields: (): EntrySchemaFields => ({
@@ -67,7 +67,7 @@ export const entrySchema: EntrySchema = {
     }),
 };
 
-type EntriesSchema = ArraySchema<PartialEntryType>;
+type EntriesSchema = ArraySchema<PartialEntryType, PartialFormType>;
 type EntriesSchemaMember = ReturnType<EntriesSchema['member']>;
 const entriesSchema: EntriesSchema = {
     keySelector: (col) => col.clientId,

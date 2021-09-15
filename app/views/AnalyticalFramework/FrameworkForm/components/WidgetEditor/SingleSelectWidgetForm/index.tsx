@@ -60,7 +60,7 @@ export type PartialOptionType = PartialForm<
     'clientId' | 'key' | 'widgetId' | 'order'
 >;
 
-type OptionSchema = ObjectSchema<PartialOptionType>;
+type OptionSchema = ObjectSchema<PartialOptionType, PartialFormType>;
 type OptionSchemaFields = ReturnType<OptionSchema['fields']>;
 const optionSchema: OptionSchema = {
     fields: (): OptionSchemaFields => ({
@@ -71,7 +71,7 @@ const optionSchema: OptionSchema = {
     }),
 };
 
-type OptionsSchema = ArraySchema<PartialOptionType>;
+type OptionsSchema = ArraySchema<PartialOptionType, PartialFormType>;
 type OptionsSchemaMember = ReturnType<OptionsSchema['member']>;
 const optionsSchema: OptionsSchema = {
     keySelector: (col) => col.clientId,
@@ -84,7 +84,7 @@ const optionsSchema: OptionsSchema = {
     },
 };
 
-type DataSchema = ObjectSchema<PartialDataType>;
+type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({

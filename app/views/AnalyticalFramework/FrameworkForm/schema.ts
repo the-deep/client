@@ -25,7 +25,7 @@ type PartialSectionType = SectionsType[number];
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type WidgetSchema = ObjectSchema<PartialWidgetType>;
+type WidgetSchema = ObjectSchema<PartialWidgetType, PartialFormType>;
 type WidgetSchemaFields = ReturnType<WidgetSchema['fields']>;
 const widgetSchema: WidgetSchema = {
     fields: (): WidgetSchemaFields => ({
@@ -40,14 +40,14 @@ const widgetSchema: WidgetSchema = {
     }),
 };
 
-type WidgetsSchema = ArraySchema<PartialWidgetType>;
+type WidgetsSchema = ArraySchema<PartialWidgetType, PartialFormType>;
 type WidgetsSchemaMember = ReturnType<WidgetsSchema['member']>;
 const widgetsSchema: WidgetsSchema = {
     keySelector: (col) => col.clientId,
     member: (): WidgetsSchemaMember => widgetSchema,
 };
 
-type SectionSchema = ObjectSchema<PartialSectionType>;
+type SectionSchema = ObjectSchema<PartialSectionType, PartialFormType>;
 type SectionSchemaFields = ReturnType<SectionSchema['fields']>;
 const sectionSchema: SectionSchema = {
     fields: (): SectionSchemaFields => ({
@@ -60,7 +60,7 @@ const sectionSchema: SectionSchema = {
     }),
 };
 
-type SectionsSchema = ArraySchema<PartialSectionType>;
+type SectionsSchema = ArraySchema<PartialSectionType, PartialFormType>;
 type SectionsSchemaMember = ReturnType<SectionsSchema['member']>;
 const sectionsSchema: SectionsSchema = {
     keySelector: (col) => col.clientId,
