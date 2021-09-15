@@ -32,8 +32,9 @@ import {
     createSubmitHandler,
     getErrorObject,
 } from '@togglecorp/toggle-form';
-import { useMutation, useQuery, gql } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
+import { transformToFormError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
 import { useRequest } from '#base/utils/restRequest';
 import SubNavbar from '#components/SubNavbar';
@@ -54,7 +55,7 @@ import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import _ts from '#ts';
 
-import { PROJECT_FRAMEWORK } from './queries';
+import { PROJECT_FRAMEWORK, BULK_UPDATE_ENTRIES } from './queries';
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
@@ -79,22 +80,6 @@ function transformEntry(entry: Entry): EntryInputType {
         })),
     });
 }
-
-const BULK_UPDATE_ENTRIES = gql`
-mutation BulkUpdateEntries($projectId:ID!, $deleteIds:[ID!], $entries: [BulkEntryInputType!]) {
-    project(id: $projectId) {
-        entryBulk(deleteIds: $deleteIds, items: $entries) {
-            errors
-            result {
-                id
-            }
-            deletedResult {
-                id
-            }
-        }
-    }
-}
-`;
 
 interface Props {
     className?: string;
@@ -156,7 +141,25 @@ function EntryEdit(props: Props) {
 
     // ENTRY FORM
 
-    const [, setStaleIndices] = useState<number[] | undefined>(undefined);
+    const {
+        value: formValue,
+        setValue: setFormValue,
+        setFieldValue: setFormFieldValue,
+        setError: setFormError,
+        // pristine: formPristine,
+        validate: formValidate,
+        hasRestorePoint: isEntrySelectionActive,
+        restore,
+        createRestorePoint,
+        clearRestorePoint,
+        error: formError,
+    } = useForm(schema, defaultFormValues);
+
+    const formStale = formValue?.entries?.some((entry) => entry.stale) ?? false;
+    const formPristine = !formStale;
+
+    const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
+    const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
 
     const [
         bulkUpdateEntries,
@@ -165,14 +168,136 @@ function EntryEdit(props: Props) {
         BULK_UPDATE_ENTRIES,
         {
             onCompleted: (response) => {
-                setStaleIndices(undefined);
-                // eslint-disable-next-line no-console
-                console.warn(response);
+                const entryBulk = response.project?.entryBulk;
+                if (!entryBulk) {
+                    return;
+                }
+                const errors = entryBulk?.errors;
+                const deletedResult = response.project?.entryBulk?.deletedResult;
+                const saveResult = response.project?.entryBulk?.result;
+
+                const entriesError = errors?.map((item, index) => {
+                    if (isNotDefined(item)) {
+                        return undefined;
+                    }
+                    const clientId = staleIdentifiers?.[index];
+                    if (isNotDefined(clientId)) {
+                        return undefined;
+                    }
+
+                    return {
+                        clientId,
+                        error: transformToFormError(item),
+                    };
+                }).filter(isDefined) ?? [];
+                const entriesErrorMapping = listToMap(
+                    entriesError,
+                    (item) => item.clientId,
+                    (item) => item.error,
+                );
+
+                const deletedEntries = deletedResult?.map((item, index) => {
+                    if (isNotDefined(item)) {
+                        return undefined;
+                    }
+                    const clientId = deleteIdentifiers?.[index];
+                    return clientId;
+                }).filter(isDefined) ?? [];
+
+                const savedEntries = saveResult?.map((item, index) => {
+                    if (item === null) {
+                        return undefined;
+                    }
+                    const clientId = staleIdentifiers?.[index];
+                    if (isNotDefined(clientId)) {
+                        return undefined;
+                    }
+
+                    return {
+                        clientId,
+                        entry: transformEntry(item as Entry),
+                    };
+                }).filter(isDefined) ?? [];
+                const savedEntriesMapping = listToMap(
+                    savedEntries,
+                    (item) => item.clientId,
+                    (item) => item.entry,
+                );
+
+                setFormValue((oldValue) => {
+                    const entries = oldValue?.entries ?? [];
+                    const filteredEntries = entries.filter((item) => (
+                        !deletedEntries.includes(item.clientId)
+                    ));
+
+                    const mappedEntries = filteredEntries.map((item) => {
+                        const newEntry = savedEntriesMapping[item.clientId];
+                        return newEntry ?? item;
+                    });
+                    return {
+                        entries: mappedEntries,
+                    };
+                }, true);
+
+                setFormError((oldError) => {
+                    const err = getErrorObject(oldError);
+                    return {
+                        ...err,
+                        entries: {
+                            ...getErrorObject(err?.entries),
+                            ...entriesErrorMapping,
+                        },
+                    };
+                });
+
+                // eslint-disable-next-line max-len
+                const deleteErrorsCount = entryBulk?.deletedResult?.filter(isNotDefined).length ?? 0;
+                if (deleteErrorsCount > 0) {
+                    alert.show(
+                        `Failed to delete ${deleteErrorsCount} entries!`,
+                        { variant: 'error' },
+                    );
+                }
+                const deleteSuccessCount = entryBulk?.deletedResult?.filter(isDefined).length ?? 0;
+                if (deleteSuccessCount > 0) {
+                    alert.show(
+                        `${deleteSuccessCount} entries deleted successfully!`,
+                        { variant: 'success' },
+                    );
+                }
+
+                const saveErrorsCount = entryBulk?.result?.filter(isNotDefined).length ?? 0;
+                if (saveErrorsCount > 0) {
+                    alert.show(
+                        `Failed to save ${saveErrorsCount} entries!`,
+                        { variant: 'error' },
+                    );
+                }
+                const saveSuccessCount = entryBulk?.result?.filter(isDefined).length ?? 0;
+                if (saveSuccessCount > 0) {
+                    alert.show(
+                        `${saveSuccessCount} entries saved successfully!`,
+                        { variant: 'success' },
+                    );
+                }
+
+                // eslint-disable-next-line max-len
+                if (deleteErrorsCount + deleteSuccessCount + saveErrorsCount + saveSuccessCount <= 0) {
+                    alert.show(
+                        'Did nothing successfully!',
+                        { variant: 'success' },
+                    );
+                }
+
+                setStaleIdentifiers(undefined);
+                setDeleteIdentifiers(undefined);
             },
             onError: (gqlError) => {
-                setStaleIndices(undefined);
+                setStaleIdentifiers(undefined);
+                setDeleteIdentifiers(undefined);
+
                 alert.show(
-                    'Failed to update tags!',
+                    'Failed to save entries!',
                     { variant: 'error' },
                 );
                 // eslint-disable-next-line no-console
@@ -180,20 +305,6 @@ function EntryEdit(props: Props) {
             },
         },
     );
-
-    const {
-        value: formValue,
-        setValue: setFormValue,
-        setFieldValue: setFormFieldValue,
-        setError: setFormError,
-        pristine: formPristine,
-        validate: formValidate,
-        hasRestorePoint: isEntrySelectionActive,
-        restore,
-        createRestorePoint,
-        clearRestorePoint,
-        error: formError,
-    } = useForm(schema, defaultFormValues);
 
     const handleSubmit = useCallback(
         () => {
@@ -206,47 +317,65 @@ function EntryEdit(props: Props) {
                 formValidate,
                 setFormError,
                 (value) => {
-                    const entriesWithIndex = value.entries
-                        ?.map((item, index) => ({ entry: item, index }));
+                    // FIXME: do not send entries with errors
+                    const entriesWithError = value.entries ?? [];
+                    const entriesWithoutError = (value.entries ?? []) as EntryInputType[];
 
-                    const deletedValues = entriesWithIndex
-                        ?.filter((item) => item.entry.deleted);
-                    const deleteIds = deletedValues
-                        ?.map((item) => item.entry.id)
-                        .filter(isDefined);
+                    const deletedEntries = entriesWithError
+                        .filter((entry) => entry.deleted && entry.id);
 
-                    const staleItems = entriesWithIndex
-                        ?.filter((item) => item.entry.stale && !item.entry.deleted);
+                    const staleEntries = entriesWithoutError
+                        .filter((entry) => entry.stale && !entry.deleted);
 
-                    const staleIndices = staleItems?.map((item) => item.index);
-                    const staleEntries = staleItems
-                        ?.map((item) => item.entry)
-                        .map((entry) => ({
-                            ...entry,
-                            deleted: undefined,
-                            stale: undefined,
-                            attributes: entry.attributes?.map((attribute) => ({
-                                ...attribute,
-                                widgetType: undefined,
-                            })),
-                        }));
+                    // NOTE: remembering the identifiers so that data ane error
+                    // can be patched later on
+                    const deleteIds = deletedEntries?.map((entry) => entry.clientId);
+                    const staleIds = staleEntries?.map((entry) => entry.clientId);
+                    setStaleIdentifiers(staleIds);
+                    setDeleteIdentifiers(deleteIds);
 
-                    // FIXME: clear this on any error
-                    setStaleIndices(staleIndices);
+                    // NOTE: deleting all the entries that are not saved on server
+                    setFormValue((oldValue) => ({
+                        entries: oldValue.entries?.filter(
+                            (entry) => entry.id || !entry.deleted,
+                        ),
+                    }));
 
-                    // FIXME: handle when there is no stale and no entries
-                    bulkUpdateEntries({
-                        variables: {
-                            projectId,
-                            deleteIds,
-                            entries: staleEntries,
-                        },
-                    });
+                    if (deletedEntries.length > 0 || staleEntries.length > 0) {
+                        const entryDeleteIds = deletedEntries
+                            .map((entry) => entry.id)
+                            // NOTE: we do not need this filter as entry.id is always defined
+                            .filter(isDefined);
+
+                        const transformedEntries = staleEntries
+                            .map((entry) => ({
+                                ...entry,
+                                deleted: undefined,
+                                stale: undefined,
+                                attributes: entry.attributes?.map((attribute) => ({
+                                    ...attribute,
+                                    widgetType: undefined,
+                                })),
+                            }));
+
+                        bulkUpdateEntries({
+                            variables: {
+                                projectId,
+                                deleteIds: entryDeleteIds,
+                                entries: transformedEntries,
+                            },
+                        });
+                    } else {
+                        alert.show(
+                            'Entries updated successfully!',
+                            { variant: 'success' },
+                        );
+                    }
                 },
             );
             submit();
         },
-        [setFormError, formValidate, bulkUpdateEntries, projectId],
+        [setFormError, formValidate, bulkUpdateEntries, projectId, alert, setFormValue],
     );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
@@ -462,8 +591,7 @@ function EntryEdit(props: Props) {
                             </BackLink>
                             <Button
                                 name={undefined}
-                                // NOTE: To be fixed later
-                                disabled={formPristine}
+                                disabled={formPristine || !!selectedEntry}
                                 onClick={handleSubmit}
                             >
                                 Save
