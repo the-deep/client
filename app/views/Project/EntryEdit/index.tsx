@@ -215,9 +215,11 @@ function EntryEdit(props: Props) {
 
     const handleEntryDelete = useCallback(
         () => {
+            clearRestorePoint();
             onEntryFieldChange(true, 'deleted');
+            setSelectedEntry(undefined);
         },
-        [onEntryFieldChange],
+        [onEntryFieldChange, clearRestorePoint],
     );
 
     // NOTE: we are creating a map of index and value because we are iterating
@@ -360,12 +362,14 @@ function EntryEdit(props: Props) {
                         <Tab
                             name="primary-tagging"
                             transparentBorder
+                            disabled={isEntrySelectionActive}
                         >
                             Primary Tagging
                         </Tab>
                         <Tab
                             name="secondary-tagging"
                             transparentBorder
+                            disabled={isEntrySelectionActive}
                         >
                             Secondary Tagging
                         </Tab>

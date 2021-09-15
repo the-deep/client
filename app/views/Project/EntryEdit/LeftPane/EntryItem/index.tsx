@@ -89,6 +89,7 @@ interface EntryItemProps extends EntryInput {
     disableDiscardButton?: boolean;
     onEntryDelete?: (entryId: string) => void;
     entryImage: Entry['image'];
+    disableClick?: boolean,
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -104,6 +105,7 @@ function EntryItem(props: EntryItemProps) {
         onExcerptChange,
         disableApproveButton,
         disableDiscardButton,
+        disableClick,
         onEntryDelete,
         imageRaw,
         entryImage,
@@ -113,10 +115,10 @@ function EntryItem(props: EntryItemProps) {
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
 
     const handleClick = React.useCallback(() => {
-        if (onClick) {
+        if (onClick && !disableClick) {
             onClick(entryId);
         }
-    }, [entryId, onClick]);
+    }, [entryId, onClick, disableClick]);
 
     const handleExcerptChange = React.useCallback(
         (modifiedExcerpt: string | undefined) => {

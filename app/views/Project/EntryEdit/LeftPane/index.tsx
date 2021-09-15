@@ -195,6 +195,7 @@ function LeftPane(props: Props) {
         entryImage: entryImagesMap?.[entryId],
         onApproveButtonClick,
         onDiscardButtonClick,
+        disableClick: isEntrySelectionActive,
     }), [
         onApproveButtonClick,
         onDiscardButtonClick,
@@ -203,6 +204,7 @@ function LeftPane(props: Props) {
         onExcerptChange,
         onEntryDelete,
         entryImagesMap,
+        isEntrySelectionActive,
     ]);
 
     const activeEntryDetails = useMemo(() => (
@@ -304,6 +306,7 @@ function LeftPane(props: Props) {
                     onApproveButtonClick={onApproveButtonClick}
                     onDiscardButtonClick={onDiscardButtonClick}
                     entryImage={entryImagesMap?.[activeEntry]}
+                    disableClick={isEntrySelectionActive}
                 />
             )}
             contentClassName={styles.content}
@@ -340,16 +343,25 @@ function LeftPane(props: Props) {
             >
                 <TabList className={styles.tabList}>
                     {!hideSimplifiedPreview && (
-                        <Tab name="simplified">
+                        <Tab
+                            name="simplified"
+                            disabled={isEntrySelectionActive}
+                        >
                             Simplified Text
                         </Tab>
                     )}
                     {!hideOriginalPreview && (
-                        <Tab name="original">
+                        <Tab
+                            name="original"
+                            disabled={isEntrySelectionActive}
+                        >
                             Original
                         </Tab>
                     )}
-                    <Tab name="entries">
+                    <Tab
+                        name="entries"
+                        disabled={isEntrySelectionActive}
+                    >
                         All Entries
                     </Tab>
                 </TabList>
@@ -373,8 +385,9 @@ function LeftPane(props: Props) {
                                 onExcerptChange={onExcerptChange}
                                 onApproveButtonClick={onApproveButtonClick}
                                 onDiscardButtonClick={onDiscardButtonClick}
-                                disabled={isEntrySelectionActive}
-                                // FIXME: disabled
+                                onEntryDelete={onEntryDelete}
+                                disableAddButton={isEntrySelectionActive}
+                                disableExcerptClick={isEntrySelectionActive}
                             />
                         )}
                     </TabPanel>
