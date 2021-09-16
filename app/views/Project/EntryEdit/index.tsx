@@ -162,6 +162,7 @@ function EntryEdit(props: Props) {
 
     const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
     const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
+    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const [
         bulkUpdateEntries,
@@ -220,11 +221,23 @@ function EntryEdit(props: Props) {
                         entry: transformEntry(item as Entry),
                     };
                 }).filter(isDefined) ?? [];
+
                 const savedEntriesMapping = listToMap(
                     savedEntries,
                     (item) => item.clientId,
                     (item) => item.entry,
                 );
+
+                const newImagesMap = listToMap(
+                    saveResult?.map((item) => item?.image).filter(isDefined),
+                    (item) => item.id,
+                    (item) => item,
+                );
+
+                setEntryImagesMap((oldMap) => ({
+                    ...oldMap,
+                    ...newImagesMap,
+                }));
 
                 setFormValue((oldValue) => {
                     const entries = oldValue?.entries ?? [];
@@ -498,7 +511,6 @@ function EntryEdit(props: Props) {
 
     // FIXME: set section initially
     const [selectedSection, setSelectedSection] = useState<string | undefined>();
-    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
@@ -533,9 +545,9 @@ function EntryEdit(props: Props) {
                     );
                     setFormValue((oldVal) => ({ ...oldVal, entries }));
                     const imagesMap = listToMap(
-                        leadFromResponse.entries,
-                        (d) => d.clientId,
-                        (d) => d.image,
+                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
+                        (d) => d.id,
+                        (d) => d,
                     );
                     setEntryImagesMap(imagesMap);
                 }
@@ -560,7 +572,7 @@ function EntryEdit(props: Props) {
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
             disabled: !!selectedEntry,
-            entryImage: entryImagesMap?.[entryId],
+            entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
         }),
         [
