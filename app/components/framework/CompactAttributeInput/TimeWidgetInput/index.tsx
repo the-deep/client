@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
-import {
-    TimeInput,
-    TimeOutput,
-} from '@the-deep/deep-ui';
+import { TimeInput, TimeOutput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
+import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { TimeWidgetAttribute } from '#types/newEntry';
 
@@ -17,6 +16,7 @@ export interface Props <N extends string>{
     name: N,
     value: TimeValue | null | undefined,
     onChange: (value: TimeValue | undefined, name: N) => void,
+    error: Error<TimeValue> | undefined;
 
     disabled?: boolean;
     readOnly?: boolean;
@@ -31,7 +31,10 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: TimeValue['value'] | undefined, inputName: N) => {
@@ -50,19 +53,26 @@ function TimeWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             disabled={disabled}
             readOnly={readOnly}
+            error={error}
         >
             {readOnly ? (
                 <TimeOutput
                     value={value?.value}
                 />
             ) : (
-                <TimeInput
-                    name={name}
-                    onChange={onChange}
-                    value={value?.value}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                />
+                <>
+                    <NonFieldError
+                        error={error}
+                    />
+                    <TimeInput
+                        name={name}
+                        onChange={onChange}
+                        value={value?.value}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                        error={error?.value}
+                    />
+                </>
             )}
         </WidgetWrapper>
     );

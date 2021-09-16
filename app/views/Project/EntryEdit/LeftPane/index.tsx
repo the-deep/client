@@ -12,10 +12,8 @@ import {
     TextInput,
     QuickActionButton,
     useBooleanState,
-    useInputState,
-    TextArea,
-    Modal,
-    Button,
+    QuickActionDropdownMenu,
+    QuickActionDropdownMenuProps,
     ListView,
     useAlert,
     QuickActionLink,
@@ -41,7 +39,7 @@ import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
 import { EntryImagesMap } from '../index';
 import SimplifiedTextView from './SimplifiedTextView';
-import EntryItem from './EntryItem';
+import EntryItem, { ExcerptModal } from './EntryItem';
 import styles from './styles.css';
 
 const entryKeySelector = (e: EntryInput) => e.clientId;
@@ -72,6 +70,7 @@ interface Props {
     hideOriginalPreview?: boolean;
     entryImagesMap: EntryImagesMap | undefined;
     isEntrySelectionActive?: boolean;
+    entriesError: Partial<Record<string, boolean>> | undefined;
 }
 
 function LeftPane(props: Props) {
@@ -91,6 +90,7 @@ function LeftPane(props: Props) {
         entryImagesMap,
         leadId,
         isEntrySelectionActive,
+        entriesError,
     } = props;
 
     const alert = useAlert();
@@ -101,8 +101,6 @@ function LeftPane(props: Props) {
 
     // FIXME: we shouldn't need these values here
     const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
-
-    const [excerpt, setExcerpt] = useInputState<string | undefined>(undefined);
 
     const [
         showScreenshot,
@@ -118,11 +116,8 @@ function LeftPane(props: Props) {
         setShowCanvasDrawModalTrue,
         setShowCanvasDrawModalFalse,
     ] = useBooleanState(false);
-    const [
-        showAddExcerptModal,
-        setShowAddExcerptModalTrue,
-        setShowAddExcerptModalFalse,
-    ] = useBooleanState(false);
+
+    const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
 
     const {
         pending: leadPreviewPending,
@@ -147,29 +142,24 @@ function LeftPane(props: Props) {
     }, [setShowScreenshotFalse]);
 
     const handleCreateEntryButtonClick = React.useCallback(() => {
-        setShowAddExcerptModalFalse();
         setCapturedImageUrl(undefined);
         setShowCanvasDrawModalFalse();
-        setExcerpt(undefined);
         setShowScreenshotFalse();
 
         if (onEntryCreate) {
             onEntryCreate({
                 clientId: randomString(),
-                excerpt,
+                excerpt: '',
+                droppedExcerpt: '',
                 entryType: 'IMAGE',
                 lead: leadId,
-                droppedExcerpt: excerpt,
                 imageRaw: capturedImageUrl,
             });
         }
     }, [
         capturedImageUrl,
-        excerpt,
         leadId,
-        setExcerpt,
         onEntryCreate,
-        setShowAddExcerptModalFalse,
         setShowCanvasDrawModalFalse,
         setCapturedImageUrl,
         setShowScreenshotFalse,
@@ -180,10 +170,34 @@ function LeftPane(props: Props) {
         handleCreateEntryButtonClick();
     }, [handleCreateEntryButtonClick]);
 
-    const handleAddExcerptCancel = React.useCallback(() => {
-        setShowAddExcerptModalFalse();
-        setExcerpt(undefined);
-    }, [setExcerpt, setShowAddExcerptModalFalse]);
+    const handleExcerptAddFromSimplified = React.useCallback((selectedText: string) => {
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(),
+                entryType: 'EXCERPT',
+                lead: leadId,
+                excerpt: selectedText,
+                droppedExcerpt: selectedText,
+            });
+        }
+    }, [leadId, onEntryCreate]);
+
+    const handleExcerptAddFromOriginal = React.useCallback((selectedText: string | undefined) => {
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(),
+                entryType: 'EXCERPT',
+                lead: leadId,
+                excerpt: selectedText,
+                // NOTE: the droppedExcerpt should not be same as `excerpt`
+                droppedExcerpt: '',
+            });
+        }
+        // Just hide the excerpt dropdown if it is shown
+        if (editExcerptDropdownRef?.current) {
+            editExcerptDropdownRef.current.setShowPopup(false);
+        }
+    }, [leadId, onEntryCreate]);
 
     const entryItemRendererParams = React.useCallback((entryId: string, entry: EntryInput) => ({
         ...entry,
@@ -192,12 +206,14 @@ function LeftPane(props: Props) {
         onClick: onEntryClick,
         onExcerptChange,
         onEntryDelete,
-        entryImage: entryImagesMap?.[entryId],
+        entryImage: entry?.image ? entryImagesMap?.[entry.image] : undefined,
         onApproveButtonClick,
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
+        errored: entriesError?.[entryId],
     }), [
         onApproveButtonClick,
+        entriesError,
         onDiscardButtonClick,
         activeEntry,
         onEntryClick,
@@ -213,19 +229,6 @@ function LeftPane(props: Props) {
         entries,
         activeEntry,
     ]);
-
-    const handleSimplifiedViewAddButtonClick = React.useCallback((selectedText: string) => {
-        if (onEntryCreate) {
-            onEntryCreate({
-                clientId: randomString(),
-                entryType: 'EXCERPT',
-                lead: leadId,
-                excerpt: selectedText,
-                droppedExcerpt: selectedText,
-            });
-        }
-    }, [leadId, onEntryCreate]);
-
     const originalTabContent = (
         <Container
             className={styles.originalPreviewContainer}
@@ -241,14 +244,21 @@ function LeftPane(props: Props) {
             )}
             headerActions={(
                 <>
-                    <QuickActionButton
-                        name={undefined}
+                    <QuickActionDropdownMenu
+                        label={<IoAdd />}
                         variant="primary"
                         disabled={showScreenshot || isEntrySelectionActive}
-                        onClick={setShowAddExcerptModalTrue}
+                        popupClassName={styles.createExcerptPopup}
+                        popupContentClassName={styles.createExcerptContent}
+                        persistent
+                        componentRef={editExcerptDropdownRef}
                     >
-                        <IoAdd />
-                    </QuickActionButton>
+                        <ExcerptModal
+                            title="Add Excerpt"
+                            excerpt=""
+                            onComplete={handleExcerptAddFromOriginal}
+                        />
+                    </QuickActionDropdownMenu>
                     <QuickActionLink
                         to={lead?.url ?? lead?.attachment?.file ?? ''}
                     >
@@ -305,7 +315,8 @@ function LeftPane(props: Props) {
                     onEntryDelete={onEntryDelete}
                     onApproveButtonClick={onApproveButtonClick}
                     onDiscardButtonClick={onDiscardButtonClick}
-                    entryImage={entryImagesMap?.[activeEntry]}
+                    // eslint-disable-next-line max-len
+                    entryImage={activeEntryDetails.image ? entryImagesMap?.[activeEntryDetails.image] : undefined}
                     disableClick={isEntrySelectionActive}
                 />
             )}
@@ -324,7 +335,7 @@ function LeftPane(props: Props) {
                     onCancel={handleScreenshotCancel}
                 />
             )}
-            { showCanvasDrawModal && (
+            {showCanvasDrawModal && (
                 <CanvasDrawModal
                     imgSrc={capturedImageUrl}
                     onDone={handleCanvasDrawDone}
@@ -380,7 +391,7 @@ function LeftPane(props: Props) {
                                 activeEntryClientId={activeEntry}
                                 onExcerptClick={onEntryClick}
                                 entries={entries}
-                                onAddButtonClick={handleSimplifiedViewAddButtonClick}
+                                onAddButtonClick={handleExcerptAddFromSimplified}
                                 text={leadPreview?.text}
                                 onExcerptChange={onExcerptChange}
                                 onApproveButtonClick={onApproveButtonClick}
@@ -423,30 +434,6 @@ function LeftPane(props: Props) {
                     />
                 </TabPanel>
             </Tabs>
-            {showAddExcerptModal && (
-                <Modal
-                    heading="Add excerpt"
-                    headingSize="small"
-                    onCloseButtonClick={handleAddExcerptCancel}
-                    footerActions={(
-                        <Button
-                            name="create-entry-button"
-                            variant="primary"
-                            onClick={handleCreateEntryButtonClick}
-                            disabled={!excerpt}
-                        >
-                            Create Entry
-                        </Button>
-                    )}
-                >
-                    <TextArea
-                        name="excerpt"
-                        value={excerpt}
-                        onChange={setExcerpt}
-                        rows={5}
-                    />
-                </Modal>
-            )}
         </div>
     );
 }

@@ -3,4 +3,9 @@
     flex-direction: column;
     background-color: var(--dui-color-foreground);
     overflow-y: auto;
+
+    &.errored {
+        /* FIXME: add proper styling */
+        background-color: var(--dui-color-danger);
+    }
 }

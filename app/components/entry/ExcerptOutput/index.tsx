@@ -42,7 +42,7 @@ function ExcerptOutput(props: Props) {
                         src={imageSrc}
                     />
                 ) : (
-                    <div>
+                    <div className={excerptForImageClassName}>
                         Image data is not available.
                     </div>
                 )}

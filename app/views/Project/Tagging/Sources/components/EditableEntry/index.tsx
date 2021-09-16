@@ -1,5 +1,9 @@
 import React, { useCallback, useContext } from 'react';
-import { useForm, createSubmitHandler } from '@togglecorp/toggle-form';
+import {
+    useForm,
+    createSubmitHandler,
+    removeNull,
+} from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
 
 import {
@@ -22,6 +26,7 @@ import {
     UpdateEntryMutation,
     UpdateEntryMutationVariables,
 } from '#generated/types';
+import { transformToFormError } from '#base/utils/errorTransform';
 import { Widget } from '#types/newAnalyticalFramework';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
@@ -79,6 +84,7 @@ function EditableEntry(props: Props) {
         value,
         validate,
         setError,
+        error,
     } = useForm(entrySchema, entry);
 
     const [
@@ -89,21 +95,24 @@ function EditableEntry(props: Props) {
         {
             onCompleted: (gqlResponse) => {
                 const response = gqlResponse?.project?.entryUpdate;
+                if (!response) {
+                    return;
+                }
 
-                if (response?.ok) {
+                if (response.ok) {
                     alert.show(
                         'Tags updated successfully!',
                         { variant: 'success' },
                     );
                     setEditModeFalse();
                 } else {
+                    const formError = transformToFormError(removeNull(response.errors));
+                    setError(formError);
+
                     alert.show(
                         'Failed to update tags!',
                         { variant: 'error' },
                     );
-
-                    // eslint-disable-next-line no-console
-                    console.error(response?.errors);
                 }
             },
             onError: (gqlError) => {
@@ -162,6 +171,7 @@ function EditableEntry(props: Props) {
                         },
                     });
                 } else {
+                    // FIXME: handle error
                     // eslint-disable-next-line no-console
                     console.error('No entry id');
                 }
@@ -195,6 +205,7 @@ function EditableEntry(props: Props) {
             compact={compact}
             leadId={leadId}
             entryImage={entryImage}
+            error={error}
         />
     );
 

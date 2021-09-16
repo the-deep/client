@@ -9,6 +9,7 @@ import { BsFileDiff } from 'react-icons/bs';
 import { requiredStringCondition } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 import {
+    Tag,
     Footer,
     Container,
     QuickActionButton,
@@ -29,31 +30,33 @@ import { Entry } from '../../types';
 import styles from './styles.css';
 
 interface ExcerptModalProps {
+    title: string;
     excerpt?: string;
-    onExcerptChange?: (modifiedExcerpt: string | undefined) => void;
+    onComplete?: (modifiedExcerpt: string | undefined) => void;
 }
 
-function ExcerptModal(props: ExcerptModalProps) {
+export function ExcerptModal(props: ExcerptModalProps) {
     const {
+        title,
         excerpt: excerptFromProps,
-        onExcerptChange,
+        onComplete,
     } = props;
 
     const [excerpt, setExcerpt] = useInputState(excerptFromProps);
 
     const handleSubmit = React.useCallback(
         () => {
-            if (onExcerptChange) {
-                onExcerptChange(excerpt);
+            if (onComplete) {
+                onComplete(excerpt);
             }
         },
-        [onExcerptChange, excerpt],
+        [onComplete, excerpt],
     );
 
     return (
         <>
             <Heading size="small">
-                Modify Excerpt
+                {title}
             </Heading>
             <TextArea
                 className={styles.excerptTextArea}
@@ -89,7 +92,8 @@ interface EntryItemProps extends EntryInput {
     disableDiscardButton?: boolean;
     onEntryDelete?: (entryId: string) => void;
     entryImage: Entry['image'];
-    disableClick?: boolean,
+    disableClick?: boolean;
+    errored?: boolean;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -110,6 +114,9 @@ function EntryItem(props: EntryItemProps) {
         imageRaw,
         entryImage,
         entryType,
+        deleted,
+        errored,
+        stale,
     } = props;
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
@@ -139,6 +146,39 @@ function EntryItem(props: EntryItemProps) {
                 styles.taggedExcerpt,
                 className,
                 isActive && styles.active,
+            )}
+            footerIcons={(
+                <>
+                    {excerpt !== droppedExcerpt && (
+                        <Tag
+                            spacing="compact"
+                        >
+                            Edited
+                        </Tag>
+                    )}
+                    {stale && !deleted && !errored && (
+                        <Tag
+                            spacing="compact"
+                        >
+                            Changed
+                        </Tag>
+                    )}
+                    {deleted && (
+                        <Tag
+                            variant="complement2"
+                            spacing="compact"
+                        >
+                            Deleted
+                        </Tag>
+                    )}
+                    {errored && (
+                        <Tag
+                            spacing="compact"
+                        >
+                            Error
+                        </Tag>
+                    )}
+                </>
             )}
             footerQuickActions={isActive && (
                 <>
@@ -188,8 +228,9 @@ function EntryItem(props: EntryItemProps) {
                         componentRef={editExcerptDropdownRef}
                     >
                         <ExcerptModal
+                            title="Edit Excerpt"
                             excerpt={excerpt}
-                            onExcerptChange={handleExcerptChange}
+                            onComplete={handleExcerptChange}
                         />
                     </QuickActionDropdownMenu>
                     <QuickActionButton
@@ -214,11 +255,6 @@ function EntryItem(props: EntryItemProps) {
                     leadImageUrl={undefined}
                     entryType={entryType}
                 />
-                {excerpt !== droppedExcerpt && (
-                    <div>
-                        (Edited)
-                    </div>
-                )}
             </div>
             <div className={styles.verticalBorder} />
         </Container>

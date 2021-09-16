@@ -7,6 +7,7 @@ export interface Props{
     title: string | undefined;
     className?: string;
     actions?: React.ReactNode,
+    error?: unknown;
 }
 
 function BaseWidgetInput(props: Props) {
@@ -14,6 +15,7 @@ function BaseWidgetInput(props: Props) {
         className,
         title,
         actions,
+        error,
     } = props;
 
     return (
@@ -21,6 +23,7 @@ function BaseWidgetInput(props: Props) {
             className={className}
             title={title}
             actions={actions}
+            error={error}
         >
             <Card>
                 {/* FIXME: use strings */}

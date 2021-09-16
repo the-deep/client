@@ -1,10 +1,16 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import {
+    useParams,
+    useLocation,
+    Prompt,
+} from 'react-router-dom';
 import {
     isNotDefined,
     _cs,
     listToMap,
     randomString,
+    isDefined,
+    mapToMap,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -15,6 +21,7 @@ import {
     TabPanel,
     ListView,
     Container,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -23,12 +30,16 @@ import {
     useFormObject,
     SetValueArg,
     isCallable,
+    createSubmitHandler,
+    getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
+import { transformToFormError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
 import { useRequest } from '#base/utils/restRequest';
-import FullPageHeader from '#components/FullPageHeader';
+import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import {
     schema as leadSchema,
@@ -38,13 +49,15 @@ import {
 import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
+    BulkUpdateEntriesMutation,
+    BulkUpdateEntriesMutationVariables,
 } from '#generated/types';
 import EntryInput from '#components/entry/EntryInput';
 import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import _ts from '#ts';
 
-import { PROJECT_FRAMEWORK } from './queries';
+import { PROJECT_FRAMEWORK, BULK_UPDATE_ENTRIES } from './queries';
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
@@ -79,6 +92,9 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
     const projectId = project ? project.id : undefined;
+
+    const alert = useAlert();
+    const location = useLocation();
 
     // LEAD
 
@@ -131,13 +147,251 @@ function EntryEdit(props: Props) {
         value: formValue,
         setValue: setFormValue,
         setFieldValue: setFormFieldValue,
-        // error: formError,
-
+        setError: setFormError,
+        // pristine: formPristine,
+        validate: formValidate,
         hasRestorePoint: isEntrySelectionActive,
         restore,
         createRestorePoint,
         clearRestorePoint,
+        error: formError,
     } = useForm(schema, defaultFormValues);
+
+    const formStale = formValue?.entries?.some((entry) => entry.stale) ?? false;
+    const formPristine = !formStale;
+
+    const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
+    const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
+    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
+
+    const [
+        bulkUpdateEntries,
+        // { loading: bulkUpdateEntriesPending },
+    ] = useMutation<BulkUpdateEntriesMutation, BulkUpdateEntriesMutationVariables>(
+        BULK_UPDATE_ENTRIES,
+        {
+            onCompleted: (response) => {
+                const entryBulk = response.project?.entryBulk;
+                if (!entryBulk) {
+                    return;
+                }
+                const errors = entryBulk?.errors;
+                const deletedResult = response.project?.entryBulk?.deletedResult;
+                const saveResult = response.project?.entryBulk?.result;
+
+                const entriesError = errors?.map((item, index) => {
+                    if (isNotDefined(item)) {
+                        return undefined;
+                    }
+                    const clientId = staleIdentifiers?.[index];
+                    if (isNotDefined(clientId)) {
+                        return undefined;
+                    }
+
+                    return {
+                        clientId,
+                        error: transformToFormError(item),
+                    };
+                }).filter(isDefined) ?? [];
+                const entriesErrorMapping = listToMap(
+                    entriesError,
+                    (item) => item.clientId,
+                    (item) => item.error,
+                );
+
+                const deletedEntries = deletedResult?.map((item, index) => {
+                    if (isNotDefined(item)) {
+                        return undefined;
+                    }
+                    const clientId = deleteIdentifiers?.[index];
+                    return clientId;
+                }).filter(isDefined) ?? [];
+
+                const savedEntries = saveResult?.map((item, index) => {
+                    if (item === null) {
+                        return undefined;
+                    }
+                    const clientId = staleIdentifiers?.[index];
+                    if (isNotDefined(clientId)) {
+                        return undefined;
+                    }
+
+                    return {
+                        clientId,
+                        entry: transformEntry(item as Entry),
+                    };
+                }).filter(isDefined) ?? [];
+
+                const savedEntriesMapping = listToMap(
+                    savedEntries,
+                    (item) => item.clientId,
+                    (item) => item.entry,
+                );
+
+                const newImagesMap = listToMap(
+                    saveResult?.map((item) => item?.image).filter(isDefined),
+                    (item) => item.id,
+                    (item) => item,
+                );
+
+                setEntryImagesMap((oldMap) => ({
+                    ...oldMap,
+                    ...newImagesMap,
+                }));
+
+                setFormValue((oldValue) => {
+                    const entries = oldValue?.entries ?? [];
+                    const filteredEntries = entries.filter((item) => (
+                        !deletedEntries.includes(item.clientId)
+                    ));
+
+                    const mappedEntries = filteredEntries.map((item) => {
+                        const newEntry = savedEntriesMapping[item.clientId];
+                        return newEntry ?? item;
+                    });
+                    return {
+                        entries: mappedEntries,
+                    };
+                }, true);
+
+                setFormError((oldError) => {
+                    const err = getErrorObject(oldError);
+                    return {
+                        ...err,
+                        entries: {
+                            ...getErrorObject(err?.entries),
+                            ...entriesErrorMapping,
+                        },
+                    };
+                });
+
+                // eslint-disable-next-line max-len
+                const deleteErrorsCount = entryBulk?.deletedResult?.filter(isNotDefined).length ?? 0;
+                if (deleteErrorsCount > 0) {
+                    alert.show(
+                        `Failed to delete ${deleteErrorsCount} entries!`,
+                        { variant: 'error' },
+                    );
+                }
+                const deleteSuccessCount = entryBulk?.deletedResult?.filter(isDefined).length ?? 0;
+                if (deleteSuccessCount > 0) {
+                    alert.show(
+                        `${deleteSuccessCount} entries deleted successfully!`,
+                        { variant: 'success' },
+                    );
+                }
+
+                const saveErrorsCount = entryBulk?.result?.filter(isNotDefined).length ?? 0;
+                if (saveErrorsCount > 0) {
+                    alert.show(
+                        `Failed to save ${saveErrorsCount} entries!`,
+                        { variant: 'error' },
+                    );
+                }
+                const saveSuccessCount = entryBulk?.result?.filter(isDefined).length ?? 0;
+                if (saveSuccessCount > 0) {
+                    alert.show(
+                        `${saveSuccessCount} entries saved successfully!`,
+                        { variant: 'success' },
+                    );
+                }
+
+                // eslint-disable-next-line max-len
+                if (deleteErrorsCount + deleteSuccessCount + saveErrorsCount + saveSuccessCount <= 0) {
+                    alert.show(
+                        'Did nothing successfully!',
+                        { variant: 'success' },
+                    );
+                }
+
+                setStaleIdentifiers(undefined);
+                setDeleteIdentifiers(undefined);
+            },
+            onError: (gqlError) => {
+                setStaleIdentifiers(undefined);
+                setDeleteIdentifiers(undefined);
+
+                alert.show(
+                    'Failed to save entries!',
+                    { variant: 'error' },
+                );
+                // eslint-disable-next-line no-console
+                console.error(gqlError);
+            },
+        },
+    );
+
+    const handleSubmit = useCallback(
+        () => {
+            if (!projectId) {
+                // eslint-disable-next-line no-console
+                console.error('No project id');
+                return;
+            }
+            const submit = createSubmitHandler(
+                formValidate,
+                setFormError,
+                (value) => {
+                    // FIXME: do not send entries with errors
+                    const entriesWithError = value.entries ?? [];
+                    const entriesWithoutError = (value.entries ?? []) as EntryInputType[];
+
+                    const deletedEntries = entriesWithError
+                        .filter((entry) => entry.deleted && entry.id);
+
+                    const staleEntries = entriesWithoutError
+                        .filter((entry) => entry.stale && !entry.deleted);
+
+                    // NOTE: remembering the identifiers so that data ane error
+                    // can be patched later on
+                    const deleteIds = deletedEntries?.map((entry) => entry.clientId);
+                    const staleIds = staleEntries?.map((entry) => entry.clientId);
+                    setStaleIdentifiers(staleIds);
+                    setDeleteIdentifiers(deleteIds);
+
+                    // NOTE: deleting all the entries that are not saved on server
+                    setFormValue((oldValue) => ({
+                        entries: oldValue.entries?.filter(
+                            (entry) => entry.id || !entry.deleted,
+                        ),
+                    }));
+
+                    if (deletedEntries.length > 0 || staleEntries.length > 0) {
+                        const entryDeleteIds = deletedEntries
+                            .map((entry) => entry.id)
+                            // NOTE: we do not need this filter as entry.id is always defined
+                            .filter(isDefined);
+
+                        const transformedEntries = staleEntries
+                            .map((entry) => ({
+                                ...entry,
+                                deleted: undefined,
+                                stale: undefined,
+                                attributes: entry.attributes?.map((attribute) => ({
+                                    ...attribute,
+                                    widgetType: undefined,
+                                })),
+                            }));
+
+                        bulkUpdateEntries({
+                            variables: {
+                                projectId,
+                                deleteIds: entryDeleteIds,
+                                entries: transformedEntries,
+                            },
+                        });
+                    } else {
+                        alert.show(
+                            'Entries updated successfully!',
+                            { variant: 'success' },
+                        );
+                    }
+                },
+            );
+            submit();
+        },
+        [setFormError, formValidate, bulkUpdateEntries, projectId, alert, setFormValue],
+    );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
 
@@ -151,6 +405,20 @@ function EntryEdit(props: Props) {
     ) ?? -1;
 
     const currentEntry = formValue.entries?.[currentEntryIndex];
+
+    const entriesError = useMemo(
+        () => getErrorObject(getErrorObject(formError)?.entries),
+        [formError],
+    );
+
+    const entriesErrorStateMap = useMemo(
+        () => mapToMap(entriesError, (k) => k, (err) => analyzeErrors(err)),
+        [entriesError],
+    );
+
+    const currentEntryError = currentEntry
+        ? entriesError?.[currentEntry.clientId]
+        : undefined;
 
     const {
         setValue: onEntryChange,
@@ -176,7 +444,7 @@ function EntryEdit(props: Props) {
             createRestorePoint();
             // FIXME: iterate over widgets to create attributes with default values
             setFormFieldValue(
-                (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), newValue],
+                (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), { ...newValue, stale: true }],
                 'entries',
             );
             setSelectedEntry(newValue.clientId);
@@ -243,7 +511,6 @@ function EntryEdit(props: Props) {
 
     // FIXME: set section initially
     const [selectedSection, setSelectedSection] = useState<string | undefined>();
-    const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
@@ -278,9 +545,9 @@ function EntryEdit(props: Props) {
                     );
                     setFormValue((oldVal) => ({ ...oldVal, entries }));
                     const imagesMap = listToMap(
-                        leadFromResponse.entries,
-                        (d) => d.clientId,
-                        (d) => d.image,
+                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
+                        (d) => d.id,
+                        (d) => d,
                     );
                     setEntryImagesMap(imagesMap);
                 }
@@ -305,8 +572,8 @@ function EntryEdit(props: Props) {
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
             disabled: !!selectedEntry,
-            entryImage: entryImagesMap?.[entryId],
-            // error,
+            entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
+            error: entriesError?.[entryId],
         }),
         [
             entryImagesMap,
@@ -315,31 +582,47 @@ function EntryEdit(props: Props) {
             handleEntryChange,
             leadId,
             selectedEntry,
+            entriesError,
         ],
     );
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
+            <Prompt
+                message={(newLocation) => {
+                    if (newLocation.pathname !== location.pathname && !formPristine) {
+                        return _ts('common', 'youHaveUnsavedChanges');
+                    }
+                    return true;
+                }}
+            />
             <Tabs
                 useHash
                 defaultHash="source-details"
             >
-                <FullPageHeader
+                <SubNavbar
                     className={styles.header}
                     heading="Source"
                     description={lead?.title}
-                    actions={(
+                    defaultActions={(
                         <>
                             <BackLink defaultLink="/">
                                 Close
                             </BackLink>
                             <Button
                                 name={undefined}
-                                variant="secondary"
+                                disabled={formPristine || !!selectedEntry}
+                                onClick={handleSubmit}
+                            >
+                                Save
+                            </Button>
+                            {/*
+                            <Button
+                                name={undefined}
                                 // NOTE: To be fixed later
                                 disabled
                             >
-                                Save
+                                Save Source
                             </Button>
                             <Button
                                 name={undefined}
@@ -348,6 +631,7 @@ function EntryEdit(props: Props) {
                             >
                                 Finalize
                             </Button>
+                            */}
                         </>
                     )}
                 >
@@ -381,7 +665,7 @@ function EntryEdit(props: Props) {
                             Review
                         </Tab>
                     </TabList>
-                </FullPageHeader>
+                </SubNavbar>
                 <div className={styles.tabPanelContainer}>
                     {loading && <PendingMessage />}
                     <TabPanel
@@ -399,6 +683,7 @@ function EntryEdit(props: Props) {
                                 pending={leadGetPending}
                                 leadInitialValue={leadInitialValue}
                                 projectId={+projectId}
+                                disabled
                             />
                         )}
                     </TabPanel>
@@ -422,6 +707,7 @@ function EntryEdit(props: Props) {
                                     leadId={leadId}
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
+                                    entriesError={entriesErrorStateMap}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -467,6 +753,7 @@ function EntryEdit(props: Props) {
                                                     attributesMap={attributesMap}
                                                     onAttributeChange={onAttributeChange}
                                                     readOnly={!currentEntry}
+                                                    error={currentEntryError}
                                                 />
                                             </TabPanel>
                                         ))}
@@ -497,6 +784,7 @@ function EntryEdit(props: Props) {
                                     hideOriginalPreview
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
+                                    entriesError={entriesErrorStateMap}
                                 />
                                 <Container
                                     className={styles.rightContainer}
@@ -514,6 +802,7 @@ function EntryEdit(props: Props) {
                                         attributesMap={attributesMap}
                                         onAttributeChange={onAttributeChange}
                                         readOnly={!currentEntry}
+                                        error={currentEntryError}
                                     />
                                 </Container>
                             </div>

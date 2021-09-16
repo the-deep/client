@@ -3,6 +3,11 @@
     flex-direction: column;
     gap: var(--dui-spacing-medium);
 
+    &.errored {
+        /* FIXME: add proper styling */
+        background-color: var(--dui-color-danger);
+    }
+
     .header {
         display: flex;
         align-items: flex-end;
