@@ -6,8 +6,9 @@ import {
     isNotDefined,
     listToMap,
 } from '@togglecorp/fujs';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import { OrganigramWidgetAttribute } from '#types/newEntry';
 import { OrganigramWidget, OrganigramDatum } from '#types/newAnalyticalFramework';
 
@@ -46,6 +47,7 @@ export interface Props <N extends string> {
 
     name: N;
     value: OrganigramValue | null | undefined;
+    error: Error<OrganigramValue> | undefined;
     onChange: (value: OrganigramValue | undefined, name: N) => void;
 
     disabled?: boolean;
@@ -64,7 +66,10 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: OrganigramValue['value'] | undefined, inputName: N) => {
@@ -92,22 +97,27 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             disabled={disabled}
             readOnly={readOnly}
+            error={error}
         >
             {readOnly ? (
                 <div>
                     {selectedValues}
                 </div>
             ) : (
-                <MultiSelectInput
-                    name={name}
-                    value={value?.value}
-                    onChange={onChange}
-                    options={options}
-                    disabled={disabled}
-                    readOnly={readOnly}
-                    keySelector={optionKeySelector}
-                    labelSelector={optionLabelSelector}
-                />
+                <>
+                    <NonFieldError error={error} />
+                    <MultiSelectInput
+                        name={name}
+                        value={value?.value}
+                        onChange={onChange}
+                        options={options}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        keySelector={optionKeySelector}
+                        labelSelector={optionLabelSelector}
+                        error={getErrorString(error?.value)}
+                    />
+                </>
             )}
         </WidgetWrapper>
     );

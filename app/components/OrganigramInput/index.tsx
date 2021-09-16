@@ -9,27 +9,33 @@ import styles from './styles.css';
 
 import { OrganigramValue, OrganigramDatum } from '#types/newAnalyticalFramework';
 
+
 interface Props<N extends string> {
     name: N;
     value: OrganigramValue | null | undefined;
     onChange: (value: OrganigramValue | undefined, name: N) => void,
-    options: PartialForm<OrganigramDatum> | null | undefined;
+    options: PartialForm<OrganigramDatum, 'clientId'> | null | undefined;
+    error?: string;
     readOnly?: boolean;
     disabled?: boolean;
 }
 
-function transformData(data: OrganigramDatum): OrganigramDatum & { id: string } {
+function transformData(data: PartialForm<OrganigramDatum, 'clientId'>): OrganigramDatum & { id: string } {
     if (data.children) {
         return {
             ...data,
             id: data.clientId,
-            children: data.children.map(transformData),
+            children: data.children.map(transformData) ?? [],
+            label: data.label ?? 'Unnamed',
+            order: data.order ?? 0,
         };
     }
     return {
         ...data,
         id: data.clientId,
         children: [],
+        label: data.label ?? 'Unnamed',
+        order: data.order ?? 0,
     };
 }
 
@@ -43,27 +49,41 @@ function OrganigramInput<N extends string>(props: Props<N>) {
         options,
     } = props;
 
-    const handleClick = useCallback((_: Event, data: OrganigramDatum) => {
-        if (value?.some((v) => v === data.clientId)) {
-            onChange(value?.filter((v) => v !== data.clientId), name);
-        } else {
-            onChange([...(value ?? []), data.clientId], name);
-        }
-    }, [value, onChange, name]);
+    // FIXME: handle error
 
-    const isSelected = useCallback((d: OrganigramDatum) => (
-        value?.find((v) => v === d.clientId)
-    ), [value]);
+    const handleClick = useCallback(
+        (_: Event, data: OrganigramDatum) => {
+            if (value?.some((v) => v === data.clientId)) {
+                onChange(value?.filter((v) => v !== data.clientId), name);
+            } else {
+                onChange([...(value ?? []), data.clientId], name);
+            }
+        },
+        [value, onChange, name],
+    );
 
-    const renderContent = useCallback((data: OrganigramDatum) => (
-        <Card
-            className={_cs(styles.card, isSelected(data) && styles.selected)}
-        >
-            { data.label }
-        </Card>
-    ), [isSelected]);
+    const isSelected = useCallback(
+        (d: OrganigramDatum) => (
+            value?.find((v) => v === d.clientId)
+        ),
+        [value],
+    );
 
-    const data = useMemo(() => options && transformData(options as OrganigramDatum), [options]);
+    const renderContent = useCallback(
+        (data: OrganigramDatum) => (
+            <Card
+                className={_cs(styles.card, isSelected(data) && styles.selected)}
+            >
+                { data.label }
+            </Card>
+        ),
+        [isSelected],
+    );
+
+    const data = useMemo(
+        () => options && transformData(options),
+        [options],
+    );
 
     if (!data) {
         return null;
