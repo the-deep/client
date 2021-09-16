@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { isNotDefined } from '@togglecorp/fujs';
-import { PartialForm } from '@togglecorp/toggle-form';
+import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
 import { OrganigramWidget } from '#types/newAnalyticalFramework';
 import { OrganigramWidgetAttribute } from '#types/newEntry';
 import OrganigramInput from '#components/OrganigramInput';
@@ -20,6 +21,7 @@ export interface Props <N extends string>{
 
     name: N;
     value: OrganigramValue | null | undefined;
+    error: Error<OrganigramValue> | undefined;
     onChange: (value: OrganigramValue | undefined, name: N) => void;
 
     actions?: React.ReactNode;
@@ -40,7 +42,10 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        error: riskyError,
     } = props;
+
+    const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: OrganigramValue['value'] | undefined, inputName: N) => {
@@ -58,7 +63,9 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            error={error}
         >
+            <NonFieldError error={error} />
             <OrganigramInput
                 name={name}
                 value={value?.value}
@@ -66,6 +73,7 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
                 options={widget.properties?.options}
                 disabled={disabled}
                 readOnly={readOnly}
+                error={getErrorString(error?.value)}
             />
         </WidgetWrapper>
     );
