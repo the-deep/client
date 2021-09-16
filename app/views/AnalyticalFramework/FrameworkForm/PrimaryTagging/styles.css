@@ -9,13 +9,14 @@
         flex-shrink: 0;
         background-color: var(--dui-color-foreground);
         padding-left: var(--dui-spacing-super-large);
-        width: calc(240px + 10vw);
+        width: calc(16rem + 16vw);
         overflow-y: auto;
 
         .widget-list-content {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+            background-color: var(--dui-color-foreground);
             overflow-y: auto;
         }
 
