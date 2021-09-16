@@ -62,7 +62,7 @@ import { PROJECT_FRAMEWORK, BULK_UPDATE_ENTRIES } from './queries';
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
 
-import schema, { defaultFormValues, PartialEntryType, PartialFormType } from './schema';
+import schema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
@@ -71,10 +71,12 @@ export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
 
 function transformEntry(entry: Entry): EntryInputType {
+    // FIXME: make this re-usable
     return removeNull({
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
+        // FIXME: try to filter out un-necessary attributes
         attributes: entry.attributes?.map((attribute) => ({
             ...attribute,
             // NOTE: we don't need this on form
@@ -144,6 +146,9 @@ function EntryEdit(props: Props) {
     });
 
     // ENTRY FORM
+
+    // FIXME: set section initially
+    const [selectedSection, setSelectedSection] = useState<string | undefined>();
 
     const {
         value: formValue,
@@ -323,6 +328,56 @@ function EntryEdit(props: Props) {
         },
     );
 
+    const variables = useMemo(
+        (): ProjectFrameworkQueryVariables | undefined => (
+            (leadId && projectId)
+                ? { projectId, leadId }
+                : undefined
+        ),
+        [
+            leadId,
+            projectId,
+        ],
+    );
+
+    const {
+        data,
+        loading,
+    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
+        PROJECT_FRAMEWORK,
+        {
+            skip: isNotDefined(variables),
+            variables,
+            onCompleted: (response) => {
+                const projectFromResponse = response?.project;
+                if (!projectFromResponse) {
+                    return;
+                }
+
+                const leadFromResponse = projectFromResponse.lead;
+                if (leadFromResponse) {
+                    const entries = leadFromResponse.entries?.map(
+                        (entry) => transformEntry(entry as Entry),
+                    );
+                    setFormValue((oldVal) => ({ ...oldVal, entries }));
+                    const imagesMap = listToMap(
+                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
+                        (d) => d.id,
+                        (d) => d,
+                    );
+                    setEntryImagesMap(imagesMap);
+                }
+
+                const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
+                if (analysisFrameworkFromResponse) {
+                    const firstSection = analysisFrameworkFromResponse.primaryTagging?.[0];
+                    setSelectedSection(firstSection?.clientId);
+                }
+            },
+        },
+    );
+    const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
+
     const handleSubmit = useCallback(
         () => {
             if (!projectId) {
@@ -443,15 +498,93 @@ function EntryEdit(props: Props) {
 
     const handleEntryCreate = useCallback(
         (newValue: PartialEntryType) => {
+            const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
+                (section) => section.widgets,
+            ).filter(isDefined) ?? [];
+            const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
+
+            const defaultAttributes = [
+                ...widgetsFromPrimary,
+                ...widgetsFromSecondary,
+            ].map((item) => {
+                if (isNotDefined(item.properties.defaultValue)) {
+                    return undefined;
+                }
+
+                let attr: PartialAttributeType | undefined;
+                const clientId = randomString();
+                const widget = item.id;
+
+                if (item.widgetId === 'TEXT') {
+                    attr = {
+                        clientId,
+                        widget,
+                        widgetType: item.widgetId,
+                        data: {
+                            value: item.properties.defaultValue,
+                        },
+                    };
+                } else if (item.widgetId === 'NUMBER') {
+                    attr = {
+                        clientId,
+                        widget,
+                        widgetType: item.widgetId,
+                        data: {
+                            value: item.properties.defaultValue,
+                        },
+                    };
+                } else if (item.widgetId === 'DATE') {
+                    attr = {
+                        clientId,
+                        widget,
+                        widgetType: item.widgetId,
+                        data: {
+                            value: item.properties.defaultValue,
+                        },
+                    };
+                } else if (item.widgetId === 'TIME') {
+                    attr = {
+                        clientId,
+                        widget,
+                        widgetType: item.widgetId,
+                        data: {
+                            value: item.properties.defaultValue,
+                        },
+                    };
+                } else if (item.widgetId === 'SCALE') {
+                    attr = {
+                        clientId,
+                        widget,
+                        widgetType: item.widgetId,
+                        data: {
+                            value: item.properties.defaultValue,
+                        },
+                    };
+                }
+                return attr;
+            }).filter(isDefined);
+
             createRestorePoint();
             // FIXME: iterate over widgets to create attributes with default values
             setFormFieldValue(
-                (prevValue: PartialFormType['entries']) => [...(prevValue ?? []), { ...newValue, stale: true }],
+                (prevValue: PartialFormType['entries']) => [
+                    ...(prevValue ?? []),
+                    {
+                        ...newValue,
+                        stale: true,
+                        attributes: defaultAttributes,
+                    },
+                ],
                 'entries',
             );
             setSelectedEntry(newValue.clientId);
         },
-        [setFormFieldValue, createRestorePoint],
+        [
+            setFormFieldValue,
+            createRestorePoint,
+            frameworkDetails?.primaryTagging,
+            frameworkDetails?.secondaryTagging,
+        ],
     );
 
     const handleEntryChangeApprove = useCallback(
@@ -510,59 +643,6 @@ function EntryEdit(props: Props) {
     } = useFormArray('attributes', onEntryFieldChange);
 
     // ENTRY
-
-    // FIXME: set section initially
-    const [selectedSection, setSelectedSection] = useState<string | undefined>();
-
-    const variables = useMemo(
-        (): ProjectFrameworkQueryVariables | undefined => (
-            (leadId && projectId)
-                ? { projectId, leadId }
-                : undefined
-        ),
-        [
-            leadId,
-            projectId,
-        ],
-    );
-
-    const {
-        data,
-        loading,
-    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
-        PROJECT_FRAMEWORK,
-        {
-            skip: isNotDefined(variables),
-            variables,
-            onCompleted: (response) => {
-                const projectFromResponse = response?.project;
-                if (!projectFromResponse) {
-                    return;
-                }
-
-                const leadFromResponse = projectFromResponse.lead;
-                if (leadFromResponse) {
-                    const entries = leadFromResponse.entries?.map(
-                        (entry) => transformEntry(entry as Entry),
-                    );
-                    setFormValue((oldVal) => ({ ...oldVal, entries }));
-                    const imagesMap = listToMap(
-                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
-                        (d) => d.id,
-                        (d) => d,
-                    );
-                    setEntryImagesMap(imagesMap);
-                }
-
-                const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
-                if (analysisFrameworkFromResponse) {
-                    const firstSection = analysisFrameworkFromResponse?.primaryTagging?.[0];
-                    setSelectedSection(firstSection?.clientId);
-                }
-            },
-        },
-    );
-    const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
 
     const entryDataRendererParams = useCallback(
         (entryId: string, datum: PartialEntryType, index: number) => ({

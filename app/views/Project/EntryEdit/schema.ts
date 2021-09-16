@@ -15,7 +15,7 @@ export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 
 
 export type PartialEntryType = NonNullable<PartialFormType['entries']>[number];
 
-type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
+export type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
