@@ -7,8 +7,8 @@ import {
 } from '@the-deep/deep-ui';
 import styles from './styles.css';
 
+import NonFieldError from '#components/NonFieldError';
 import { OrganigramValue, OrganigramDatum } from '#types/newAnalyticalFramework';
-
 
 interface Props<N extends string> {
     name: N;
@@ -47,6 +47,7 @@ function OrganigramInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         options,
+        error,
     } = props;
 
     // FIXME: handle error
@@ -90,16 +91,19 @@ function OrganigramInput<N extends string>(props: Props<N>) {
     }
 
     return (
-        <OrgTree
-            data={data}
-            vertical
-            renderContent={renderContent}
-            labelClassName={_cs(
-                disabled && styles.disabled,
-                readOnly && styles.disabled,
-            )}
-            onClick={handleClick}
-        />
+        <>
+            <NonFieldError error={error} />
+            <OrgTree
+                data={data}
+                vertical
+                renderContent={renderContent}
+                labelClassName={_cs(
+                    disabled && styles.disabled,
+                    readOnly && styles.disabled,
+                )}
+                onClick={handleClick}
+            />
+        </>
     );
 }
 

@@ -149,8 +149,8 @@ function LeftPane(props: Props) {
         if (onEntryCreate) {
             onEntryCreate({
                 clientId: randomString(),
-                excerpt: undefined,
-                droppedExcerpt: undefined,
+                excerpt: '',
+                droppedExcerpt: '',
                 entryType: 'IMAGE',
                 lead: leadId,
                 imageRaw: capturedImageUrl,
@@ -170,7 +170,7 @@ function LeftPane(props: Props) {
         handleCreateEntryButtonClick();
     }, [handleCreateEntryButtonClick]);
 
-    const handleExcerptAddFromSimplified = React.useCallback((selectedText: string | undefined) => {
+    const handleExcerptAddFromSimplified = React.useCallback((selectedText: string) => {
         if (onEntryCreate) {
             onEntryCreate({
                 clientId: randomString(),
@@ -190,7 +190,7 @@ function LeftPane(props: Props) {
                 lead: leadId,
                 excerpt: selectedText,
                 // NOTE: the droppedExcerpt should not be same as `excerpt`
-                droppedExcerpt: undefined,
+                droppedExcerpt: '',
             });
         }
         // Just hide the excerpt dropdown if it is shown
