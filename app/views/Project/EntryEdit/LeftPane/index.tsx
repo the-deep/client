@@ -206,7 +206,7 @@ function LeftPane(props: Props) {
         onClick: onEntryClick,
         onExcerptChange,
         onEntryDelete,
-        entryImage: entryImagesMap?.[entryId],
+        entryImage: entry?.image ? entryImagesMap?.[entry.image] : undefined,
         onApproveButtonClick,
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
@@ -315,7 +315,8 @@ function LeftPane(props: Props) {
                     onEntryDelete={onEntryDelete}
                     onApproveButtonClick={onApproveButtonClick}
                     onDiscardButtonClick={onDiscardButtonClick}
-                    entryImage={entryImagesMap?.[activeEntry]}
+                    // eslint-disable-next-line max-len
+                    entryImage={activeEntryDetails.image ? entryImagesMap?.[activeEntryDetails.image] : undefined}
                     disableClick={isEntrySelectionActive}
                 />
             )}
