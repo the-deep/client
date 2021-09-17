@@ -8,14 +8,14 @@ import {
     Header,
     QuickActionButton,
 } from '@the-deep/deep-ui';
-
+import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
+import { SourceFilterOptionsQueryVariables } from '#generated/types';
+
 import SourcesStats from './SourcesStats';
-import SourcesFilter, { SourcesFilterFields } from './SourcesFilter';
+import SourcesFilter from './SourcesFilter';
 import SourcesTable from './SourcesTable';
 import SourcesGrid from './SourcesGrid';
-
-import _ts from '#ts';
 import styles from './styles.css';
 
 interface Props {
@@ -27,7 +27,7 @@ function Sources(props: Props) {
     const { className, refreshTimestamp } = props;
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? project.id : undefined;
-    const [sourcesFilters, setSourcesFilters] = useState<SourcesFilterFields>({});
+    const [sourcesFilters, setSourcesFilters] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
 

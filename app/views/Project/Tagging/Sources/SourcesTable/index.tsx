@@ -33,7 +33,6 @@ import { useQuery, gql } from '@apollo/client';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
 
-import { Lead } from './types';
 import {
     ProjectSourcesQuery,
     ProjectSourcesQueryVariables,
@@ -41,13 +40,11 @@ import {
 } from '#generated/types';
 import _ts from '#ts';
 
+import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
-import { SourcesFilterFields } from '../SourcesFilter';
 import LeadEditModal from '../LeadEditModal';
 import BulkActions from './BulkActions';
 import EntryList from './EntryList';
-import { getValidDateRangeValues } from '../utils';
-
 import styles from './styles.css';
 
 const sourcesKeySelector: (d: Lead) => string = (d) => d.id;
@@ -74,7 +71,7 @@ const defaultSorting = {
 interface Props {
     className?: string;
     projectId: string;
-    filters: SourcesFilterFields;
+    filters: Omit<ProjectSourcesQueryVariables, 'projectId'>;
     refreshTimestamp: number | undefined;
 }
 
@@ -84,8 +81,8 @@ export const PROJECT_ENTRIES = gql`
         $page: Int,
         $pageSize: Int,
         $ordering: String,
-        $assignees: [ID],
-        $authoringOrganizationTypes: [ID],
+        $assignees: [ID!],
+        $authoringOrganizationTypes: [ID!],
         $confidentiality: LeadConfidentialityEnum,
         $createdAt_Gte: DateTime,
         $createdAt_Lt: DateTime,
@@ -98,6 +95,7 @@ export const PROJECT_ENTRIES = gql`
         $publishedOn_Lt: Date,
         $search: String,
         $statuses: [LeadStatusEnum!],
+        $entriesFilterData: LeadEntriesFilterData,
         ) {
         project(id: $projectId) {
             leads (
@@ -118,6 +116,7 @@ export const PROJECT_ENTRIES = gql`
                 publishedOn_Lt: $publishedOn_Lt,
                 search: $search,
                 statuses: $statuses,
+                entriesFilterData: $entriesFilterData,
             ) {
                 totalCount
                 page
@@ -168,13 +167,10 @@ function SourcesTable(props: Props) {
     } = props;
 
     console.warn('refres', refreshTimestamp);
-    const { createdAt: createdAtRaw, publishedOn: publisedOnRaw, ...otherFilters } = filters;
     const [activePage, setActivePage] = useState<number>(1);
     const [selectedSources, setSelectedSources] = useState<Lead[]>([]);
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
 
-    const createdAt = getValidDateRangeValues(createdAtRaw);
-    const publishedOn = getValidDateRangeValues(publisedOnRaw);
     const sortState = useSortState();
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
@@ -189,14 +185,10 @@ function SourcesTable(props: Props) {
                 page: activePage,
                 pageSize: maxItemsPerPage,
                 ordering,
-                ...otherFilters,
-                createdAt_Gte: createdAt?.startDate,
-                createdAt_Lt: createdAt?.endDate,
-                publishedOn_Gte: publishedOn?.startDate,
-                publishedOn_Lt: publishedOn?.endDate,
+                ...filters as Omit<ProjectSourcesQueryVariables, 'projectId' | 'page' | 'pageSize' | 'ordering'>,
             } : undefined
         ),
-        [projectId, activePage, ordering, otherFilters, createdAt, publishedOn],
+        [projectId, activePage, ordering, filters],
     );
 
     const {

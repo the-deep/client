@@ -3,11 +3,12 @@ import {
     _cs,
 } from '@togglecorp/fujs';
 import {
-    useForm,
     ObjectSchema,
-    getErrorString,
-    getErrorObject,
+    PurgeNull,
     createSubmitHandler,
+    getErrorObject,
+    getErrorString,
+    useForm,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
@@ -24,35 +25,64 @@ import {
     IoChevronDownOutline,
 } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
-import { EnumEntity } from '#types';
 import _ts from '#ts';
-import { enumKeySelector, enumLabelSelector } from '#utils/common';
+import { EnumFix } from '#utils/types';
+import {
+    hasNoData,
+    enumKeySelector,
+    enumLabelSelector,
+} from '#utils/common';
 import NonFieldError from '#components/NonFieldError';
 import {
+    LeadEntriesFilterData,
     ProjectSourcesQueryVariables,
-    LeadPriorityEnum,
-    LeadConfidentialityEnum,
-    LeadExistsEnum,
     SourceFilterOptionsQuery,
-    LeadStatusEnum,
-    UserType,
-    OrganizationTypeType,
     SourceFilterOptionsQueryVariables,
 } from '#generated/types';
+
+import { getValidDateRangeValues } from '../utils';
+import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
-// FIXME: Created at and published on are date ranges and not date inputs
-export type SourcesFilterFields = Omit<ProjectSourcesQueryVariables,
-    'ordering' | 'page' | 'pageSize' | 'projectId' | 'createdAt_Gte' | 'createdAt_Lt' | 'publishedOn_Gte' | 'publishedOn_Lt'> & {
+export type SourcesFilterFields = PurgeNull<Pick<EnumFix<ProjectSourcesQueryVariables,
+    'statuses'
+    | 'confidentiality'
+    | 'exists'
+    | 'priorities'
+    | 'statuses'
+>,
+    'statuses'
+    | 'search'
+    | 'exists'
+    | 'priorities'
+    | 'confidentiality'
+    | 'assignees'
+    | 'authoringOrganizationTypes'
+>> & {
+    createdAt?: {
+        startDate: string;
+        endDate: string;
+    }
+    publishedOn?: {
+        startDate: string;
+        endDate: string;
+    }
+    entriesFilterData?: PurgeNull<Pick<EnumFix<LeadEntriesFilterData,
+        'commentStatus'
+        | 'entryTypes'
+    >,
+        'commentStatus'
+        | 'entryTypes'
+    >> & {
+        controlled?: 'true' | 'false';
+        createdBy?: string[];
         createdAt?: {
             startDate: string;
             endDate: string;
         }
-        publishedOn?: {
-            startDate: string;
-            endDate: string;
-        }
-    };
+    }
+};
+
 type FormType = SourcesFilterFields;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
@@ -68,9 +98,7 @@ const schema: FormSchema = {
         priorities: [],
         authoringOrganizationTypes: [],
         confidentiality: [],
-        emmRiskFactors: [],
-        emmKeywords: [],
-        emmEntities: [],
+        entriesFilterData: [],
     }),
 };
 
@@ -112,6 +140,8 @@ const SOURCE_FILTER_OPTIONS = gql`
             members {
                 id
                 displayName
+                firstName
+                lastName
             }
         }
         organizationTypes {
@@ -141,20 +171,89 @@ const SOURCE_FILTER_OPTIONS = gql`
                 description
             }
         }
+        entryTypeOptions: __type(name: "EntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        commentStatusOptions: __type(name: "EntryFilterCommentStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
-const userKeySelector = (d: Pick<UserType, 'id' | 'displayName'>) => d.id;
-const userLabelSelector = (d: Pick<UserType, 'id' | 'displayName'>) => d.displayName;
-const organizationTypeKeySelector = (d: Pick<OrganizationTypeType, 'id' | 'title'>) => d.id;
-const organizationTypeLabelSelector = (d: Pick<OrganizationTypeType, 'id' | 'title'>) => d.title;
+const userLabelSelector = (
+    d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
+) => d.displayName ?? `${d.firstName} ${d.lastName}`;
+const userKeySelector = (
+    d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
+) => d.id;
+const organizationTypeKeySelector = (
+    d: NonNullable<NonNullable<NonNullable<SourceFilterOptionsQuery['organizationTypes']>>['results']>[number],
+) => d.id;
+const organizationTypeLabelSelector = (
+    d: NonNullable<NonNullable<NonNullable<SourceFilterOptionsQuery['organizationTypes']>>['results']>[number],
+) => d.title;
+
+function getProjectSourcesQueryVariables(
+    filters: SourcesFilterFields,
+) {
+    const {
+        createdAt: createdAtRaw,
+        publishedOn: publishedOnRaw,
+        entriesFilterData,
+        ...leadsFilters
+    } = filters;
+
+    const createdAt = getValidDateRangeValues(createdAtRaw);
+    const publishedOn = getValidDateRangeValues(publishedOnRaw);
+
+    if (entriesFilterData) {
+        const {
+            controlled: controlledRaw,
+            createdAt: entryCreatedAt,
+            ...entriesFilters
+        } = entriesFilterData;
+
+        const controlled = controlledRaw === 'true';
+        const entryCreatedAtFilter = getValidDateRangeValues(entryCreatedAt);
+
+        return {
+            createdAt_Gte: createdAt?.startDate,
+            createdAt_Lt: createdAt?.endDate,
+            publishedOn_Gte: publishedOn?.startDate,
+            publishedOn_Lt: publishedOn?.endDate,
+            ...leadsFilters,
+            entriesFilterData: {
+                controlled,
+                createdAt_Gte: entryCreatedAtFilter?.startDate,
+                createdAt_Lt: entryCreatedAtFilter?.endDate,
+                ...entriesFilters,
+            },
+        };
+    }
+
+    return {
+        createdAt_Gte: createdAt?.startDate,
+        createdAt_Lt: createdAt?.endDate,
+        publishedOn_Gte: publishedOn?.startDate,
+        publishedOn_Lt: publishedOn?.endDate,
+        ...leadsFilters,
+    };
+}
 
 interface Props {
     className?: string;
     disabled?: boolean;
     projectId: string;
     filterOnlyUnprotected?: boolean;
-    onFilterApply: (value: SourcesFilterFields) => void;
+    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
 }
 
 function SourcesFilter(props: Props) {
@@ -178,6 +277,8 @@ function SourcesFilter(props: Props) {
 
     const {
         data: sourceFilterOptions,
+        loading,
+        error: sourceFilterOptionsError,
     } = useQuery<SourceFilterOptionsQuery, SourceFilterOptionsQueryVariables>(
         SOURCE_FILTER_OPTIONS,
         {
@@ -189,43 +290,41 @@ function SourcesFilter(props: Props) {
 
     const error = getErrorObject(riskyError);
 
+    const handleSubmit = useCallback((values) => {
+        const finalValues = getProjectSourcesQueryVariables(values);
+        onFilterApply(finalValues);
+    }, [onFilterApply]);
+
     const handleApply = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
-            onFilterApply,
+            handleSubmit,
         );
         submit();
-    }, [setError, validate, onFilterApply]);
+    }, [setError, validate, handleSubmit]);
 
     const handleClear = useCallback(() => {
         setValue(initialValue);
-        onFilterApply(initialValue);
+        onFilterApply({});
     }, [setValue, onFilterApply]);
 
     const [
-        showContent,,,,
-        toggleContentVisibility,
+        allFiltersVisible,,,,
+        toggleAllFiltersVisibility,
     ] = useBooleanState(false);
 
     const statusOptions = sourceFilterOptions
-        ?.sourceStatusOptions?.enumValues as EnumEntity<LeadStatusEnum>[] | undefined;
+        ?.sourceStatusOptions?.enumValues;
     const existsOptions = sourceFilterOptions
-        ?.sourceExistsOptions?.enumValues as EnumEntity<LeadExistsEnum>[] | undefined;
+        ?.sourceExistsOptions?.enumValues;
     const priorityOptions = sourceFilterOptions
-        ?.sourcePriorityOptions?.enumValues as EnumEntity<LeadPriorityEnum>[] | undefined;
+        ?.sourcePriorityOptions?.enumValues;
     const confidentialityOptions = sourceFilterOptions
-        ?.sourceConfidentialityOptions?.enumValues as EnumEntity<LeadConfidentialityEnum>[]
-        | undefined;
+        ?.sourceConfidentialityOptions?.enumValues;
     const assigneesOptions = sourceFilterOptions
         ?.project?.members;
     const organizationTypeOptions = sourceFilterOptions?.organizationTypes?.results;
-    const emmEntitiesOptions = sourceFilterOptions
-        ?.emmEntititiesOptions?.enumValues as EnumEntity<string>[] | undefined;
-    const emmRiskFactorsOptions = sourceFilterOptions
-        ?.emmRiskFactorsOptions?.enumValues as EnumEntity<string>[] | undefined;
-    const emmKeywordsOptions = sourceFilterOptions
-        ?.emmKeywordsOptions?.enumValues as EnumEntity<string>[] | undefined;
 
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
@@ -251,6 +350,7 @@ function SourcesFilter(props: Props) {
                     value={value.statuses}
                     error={getErrorString(error?.statuses)}
                     label={_ts('sourcesFilter', 'status')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <DateRangeInput
                     className={styles.input}
@@ -278,11 +378,12 @@ function SourcesFilter(props: Props) {
                     value={value.assignees}
                     error={getErrorString(error?.assignees)}
                     label={_ts('sourcesFilter', 'assignee')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <SelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.exists) && !showContent) && styles.hidden,
+                        (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
                     )}
                     name="exists"
                     onChange={setFieldValue}
@@ -292,11 +393,12 @@ function SourcesFilter(props: Props) {
                     value={value.exists}
                     error={error?.exists}
                     label={_ts('sourcesFilter', 'exists')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.priority) && !showContent) && styles.hidden,
+                        (hasNoData(value.priorities) && !allFiltersVisible) && styles.hidden,
                     )}
                     name="priorities"
                     onChange={setFieldValue}
@@ -306,12 +408,13 @@ function SourcesFilter(props: Props) {
                     value={value.priorities}
                     error={getErrorString(error?.priorities)}
                     label={_ts('sourcesFilter', 'priority')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
                         (hasNoData(value.authoringOrganizationTypes)
-                      && !showContent) && styles.hidden,
+                        && !allFiltersVisible) && styles.hidden,
                     )}
                     name="authoringOrganizationTypes"
                     onChange={setFieldValue}
@@ -321,12 +424,14 @@ function SourcesFilter(props: Props) {
                     value={value.authoringOrganizationTypes}
                     error={getErrorString(error?.authoringOrganizationTypes)}
                     label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 {!filterOnlyUnprotected && (
                     <SelectInput
                         className={_cs(
                             styles.input,
-                            (hasNoData(value.confidentiality) && !showContent) && styles.hidden,
+                            (hasNoData(value.confidentiality) && !allFiltersVisible)
+                            && styles.hidden,
                         )}
                         name="confidentiality"
                         onChange={setFieldValue}
@@ -336,50 +441,19 @@ function SourcesFilter(props: Props) {
                         value={value.confidentiality}
                         error={getErrorString(error?.confidentiality)}
                         label={_ts('sourcesFilter', 'confidentiality')}
+                        disabled={disabled || loading || !!sourceFilterOptionsError}
                     />
                 )}
-                <MultiSelectInput
-                    className={_cs(
-                        styles.input,
-                        !showContent && styles.hidden,
-                    )}
-                    name="emmRiskFactors"
-                    onChange={setFieldValue}
-                    options={emmRiskFactorsOptions}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                    value={value.emmRiskFactors}
-                    error={getErrorString(error?.emmRiskFactors)}
-                    label={_ts('sourcesFilter', 'emmRiskFactors')}
-                />
-                <MultiSelectInput
-                    className={_cs(
-                        styles.input,
-                        !showContent && styles.hidden,
-                    )}
-                    name="emmKeywords"
-                    onChange={setFieldValue}
-                    options={emmKeywordsOptions}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                    value={value.emmKeywords}
-                    error={getErrorString(error?.emmKeywords)}
-                    label={_ts('sourcesFilter', 'emmKeywords')}
-                />
-                <MultiSelectInput
-                    className={_cs(
-                        styles.input,
-                        !showContent && styles.hidden,
-                    )}
-                    name="emmEntities"
-                    onChange={setFieldValue}
-                    options={emmEntitiesOptions}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                    value={value.emmEntities}
-                    error={getErrorString(error?.emmEntities)}
-                    label={_ts('sourcesFilter', 'emmEntities')}
-                />
+                {allFiltersVisible && (
+                    <EntryFilter
+                        name="entriesFilterData"
+                        value={value.entriesFilterData}
+                        onChange={setFieldValue}
+                        options={sourceFilterOptions}
+                        optionsDisabled={loading || !!sourceFilterOptionsError}
+                        disabled={disabled}
+                    />
+                )}
                 <div className={styles.actions}>
                     <Button
                         disabled={disabled || pristine}
@@ -401,14 +475,14 @@ function SourcesFilter(props: Props) {
                     <Button
                         name="showAll"
                         variant="transparent"
-                        actions={showContent ? (
+                        actions={allFiltersVisible ? (
                             <IoChevronUpOutline />
                         ) : (
                             <IoChevronDownOutline />
                         )}
-                        onClick={toggleContentVisibility}
+                        onClick={toggleAllFiltersVisibility}
                     >
-                        {showContent ? 'Show Less' : 'Show All'}
+                        {allFiltersVisible ? 'Show Less' : 'Show All'}
                     </Button>
                 </div>
             </div>
