@@ -95,6 +95,9 @@ export const LEAD_ENTRIES = gql`
                         }
                     }
                     controlled
+                    verifiedBy {
+                        id
+                    }
                 }
             }
             analysisFramework {
@@ -163,6 +166,7 @@ function EntryList(props: Props) {
     const {
         data: leadEntriesResponse,
         loading: entryListPending,
+        refetch: getEntries,
     } = useQuery<LeadEntriesQuery, LeadEntriesQueryVariables>(
         LEAD_ENTRIES,
         {
@@ -186,8 +190,11 @@ function EntryList(props: Props) {
         primaryTagging: frameworkDetails?.primaryTagging,
         secondaryTagging: frameworkDetails?.secondaryTagging,
         controlled: data.controlled,
+        verifiedBy: data.verifiedBy,
         entryImage: data.image,
+        getEntries,
     }), [
+        getEntries,
         leadId,
         projectId,
         frameworkDetails,

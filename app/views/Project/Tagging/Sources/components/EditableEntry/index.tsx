@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
 import {
     useForm,
     createSubmitHandler,
@@ -31,7 +31,7 @@ import { Widget } from '#types/newAnalyticalFramework';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
-import { useLazyRequest } from '#base/utils/restRequest';
+import EntryVerification from '#components/entryReview/EntryVerification';
 import ProjectContext from '#base/context/ProjectContext';
 import { DeepReplace } from '#utils/types';
 
@@ -58,8 +58,12 @@ interface Props {
     primaryTagging: Section[] | undefined | null;
     secondaryTagging: Widget[] | undefined | null;
     controlled: boolean | undefined | null;
+    verifiedBy: {
+        id: string;
+    }[] | undefined | null;
     compact?: boolean;
     entryImage: Entry['image'] | undefined | null;
+    getEntries: () => void;
 }
 
 function EditableEntry(props: Props) {
@@ -73,7 +77,9 @@ function EditableEntry(props: Props) {
         secondaryTagging,
         compact,
         controlled,
+        verifiedBy,
         entryImage,
+        getEntries,
     } = props;
 
     const alert = useAlert();
@@ -133,21 +139,6 @@ function EditableEntry(props: Props) {
 
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
-    const {
-        pending,
-        trigger: getEntry,
-    } = useLazyRequest<unknown, number>({
-        url: (ctx) => `server://v2/entries/${ctx}/`,
-        method: 'GET',
-        /*
-        // FIXME: this will not work
-        onSuccess: (response) => {
-            setValue(response);
-        },
-        */
-        failureHeader: 'Entry',
-    });
-
     const handleSaveButtonClick = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
@@ -179,6 +170,10 @@ function EditableEntry(props: Props) {
         );
         submit();
     }, [projectId, validate, setError, updateEntry, entry.id]);
+
+    const verifiedByIds = useMemo(() => (
+        verifiedBy?.map((v) => +v.id) ?? []
+    ), [verifiedBy]);
 
     const saveButton = (
         <Button
@@ -216,22 +211,18 @@ function EditableEntry(props: Props) {
             entryId={+entryId}
             projectId={+projectId}
             value={!!controlled}
-            onChange={getEntry}
-            disabled={pending}
+            onChange={getEntries}
         />
     );
     const entryVerification = (
-        null
-        /*
-           <EntryVerification
-               className={styles.button}
-               entryId={entryId}
-               projectId={entry.project}
-               verifiedBy={entry.verifiedBy}
-               onVerificationChange={getEntry}
-               disabled={pending}
-           />
-         */
+        <EntryVerification
+            // FIXME: Remove cast after entry comments
+            // is switched to gql
+            entryId={+entryId}
+            projectId={+projectId}
+            verifiedBy={verifiedByIds}
+            onVerificationChange={getEntries}
+        />
     );
 
     const entryComments = (
