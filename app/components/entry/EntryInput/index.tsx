@@ -25,7 +25,7 @@ import {
 // FIXME: move this component
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import { Entry } from '#views/Project/EntryEdit/types';
-import ExcerptOutput from '#components/entry/ExcerptOutput';
+import ExcerptInput from '#components/entry/ExcerptInput';
 import { Widget } from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
 
@@ -133,16 +133,20 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                     className={styles.excerpt}
                     heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
                     headingSize="extraSmall"
+                    contentClassName={styles.excerptContent}
                 >
-                    <ExcerptOutput
+                    <ExcerptInput
+                        className={styles.excerptInput}
+                        name="excerpt"
+                        onChange={onFieldChange}
                         entryType={value.entryType}
-                        excerpt={value.excerpt}
+                        value={value.excerpt}
                         droppedExcerpt={value.droppedExcerpt}
                         image={entryImage}
                         imageRaw={value.imageRaw}
+                        readOnly={readOnly}
                         // FIXME: pass this after image drag/drop is implemented
                         leadImageUrl={undefined}
-                        // TODO: edit excerpt
                     />
                 </Container>
             )}

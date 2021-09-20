@@ -1,0 +1,9 @@
+.excerpt-input {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .text-area {
+        flex-grow: 1;
+    }
+}
