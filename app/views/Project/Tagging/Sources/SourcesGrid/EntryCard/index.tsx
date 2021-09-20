@@ -17,7 +17,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import ExcerptOutput from '#components/entry/ExcerptOutput';
-// import EntryVerification from '#components/entryReview/EntryVerification';
 import EditableEntry from '../../components/EditableEntry';
 
 import { Framework, Entry } from '../types';
@@ -47,6 +46,7 @@ interface Props {
     tagsVisible?: boolean;
     onViewTagsButtonClick?: (entryId: string) => void;
     onHideTagsButtonClick?: (entryId: string) => void;
+    getEntries: () => void;
 }
 
 function EntryCard(props: Props) {
@@ -59,6 +59,7 @@ function EntryCard(props: Props) {
         tagsVisible,
         onViewTagsButtonClick,
         onHideTagsButtonClick,
+        getEntries,
     } = props;
 
     const authorsDetailText = useMemo(() => (
@@ -154,8 +155,10 @@ function EntryCard(props: Props) {
                         primaryTagging={framework?.primaryTagging}
                         secondaryTagging={framework?.secondaryTagging}
                         controlled={entry.controlled}
+                        verifiedBy={entry.verifiedBy}
                         compact
                         entryImage={entry.image}
+                        getEntries={getEntries}
                     />
                 </>
             )}
