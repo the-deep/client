@@ -63,7 +63,7 @@ interface Props {
     }[] | undefined | null;
     compact?: boolean;
     entryImage: Entry['image'] | undefined | null;
-    getEntries: () => void;
+    onEntryDataChange: () => void;
 }
 
 function EditableEntry(props: Props) {
@@ -79,7 +79,7 @@ function EditableEntry(props: Props) {
         controlled,
         verifiedBy,
         entryImage,
-        getEntries,
+        onEntryDataChange,
     } = props;
 
     const alert = useAlert();
@@ -211,7 +211,7 @@ function EditableEntry(props: Props) {
             entryId={+entryId}
             projectId={+projectId}
             value={!!controlled}
-            onChange={getEntries}
+            onChange={onEntryDataChange}
         />
     );
     const entryVerification = (
@@ -221,7 +221,7 @@ function EditableEntry(props: Props) {
             entryId={+entryId}
             projectId={+projectId}
             verifiedBy={verifiedByIds}
-            onVerificationChange={getEntries}
+            onVerificationChange={onEntryDataChange}
         />
     );
 

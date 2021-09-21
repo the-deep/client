@@ -86,6 +86,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             clientId: randomString(),
             entryType: 'EXCERPT',
             lead: leadId,
+            excerpt: '',
+            droppedExcerpt: '',
         }),
         [leadId],
     );

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ImagePreview,
@@ -102,4 +102,4 @@ function ExcerptInput<N extends string>(props: Props<N>) {
     return null;
 }
 
-export default memo(ExcerptInput);
+export default ExcerptInput;
