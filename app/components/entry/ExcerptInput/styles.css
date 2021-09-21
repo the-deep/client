@@ -2,6 +2,12 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    gap: var(--dui-spacing-small);
+
+    .empty-image {
+        background-color: var(--dui-color-background-information);
+        min-height: 96px;
+    }
 
     .text-area {
         flex-grow: 1;

@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     ImagePreview,
     TextArea,
+    Message,
 } from '@the-deep/deep-ui';
 
 import { EntryType } from '#generated/types';
@@ -53,13 +54,14 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         src={imageSrc}
                     />
                 ) : (
-                    <div className={excerptForImageClassName}>
-                        Image data is not available.
-                    </div>
+                    <Message
+                        className={_cs(excerptForImageClassName, styles.emptyImage)}
+                        message="Image data is not available."
+                    />
                 )}
                 {!readOnly && (
                     <TextArea
-                        label="Excerpt"
+                        label="Additional Context"
                         className={_cs(excerptForImageClassName, styles.textArea)}
                         value={value}
                         name={name}
@@ -82,11 +84,9 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         ) : (
             <div className={_cs(className, styles.excerptInput)}>
                 <TextArea
-                    label="Excerpt"
                     className={_cs(className, styles.textArea)}
                     value={value}
                     onChange={onChange}
-                    rows={15}
                     name={name}
                 />
             </div>
