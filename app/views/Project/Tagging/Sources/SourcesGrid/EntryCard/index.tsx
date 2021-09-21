@@ -16,7 +16,7 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 
-import ExcerptOutput from '#components/entry/ExcerptOutput';
+import ExcerptInput from '#components/entry/ExcerptInput';
 import EditableEntry from '../../components/EditableEntry';
 
 import { Framework, Entry } from '../types';
@@ -103,16 +103,17 @@ function EntryCard(props: Props) {
                     </Button>
                 )}
             >
-                <ExcerptOutput
+                <ExcerptInput
                     entryType={entry.entryType}
-                    excerpt={entry.excerpt}
+                    value={entry.excerpt}
                     image={entry.image}
                     // NOTE: no need to pass imageRaw and leadImageUrl as they
                     // are not retrieved from server
                     imageRaw={undefined}
                     leadImageUrl={undefined}
-                    droppedExcerpt={entry.droppedExcerpt}
+                    // droppedExcerpt={entry.droppedExcerpt}
                     // tabularFieldData={entry.tabularFieldData}
+                    readOnly
                 />
                 <div className={styles.metaSection}>
                     <TextOutput
