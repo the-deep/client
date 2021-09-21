@@ -178,7 +178,7 @@ function SourcesGrid(props: Props) {
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
         controlled: entry.controlled,
         verifiedBy: entry.verifiedBy,
-        getEntries,
+        onEntryDataChange: getEntries,
     }), [
         getEntries,
         frameworkDetails,

@@ -192,7 +192,7 @@ function EntryList(props: Props) {
         controlled: data.controlled,
         verifiedBy: data.verifiedBy,
         entryImage: data.image,
-        getEntries,
+        onEntryDataChange: getEntries,
     }), [
         getEntries,
         leadId,

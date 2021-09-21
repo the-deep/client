@@ -46,7 +46,7 @@ interface Props {
     tagsVisible?: boolean;
     onViewTagsButtonClick?: (entryId: string) => void;
     onHideTagsButtonClick?: (entryId: string) => void;
-    getEntries: () => void;
+    onEntryDataChange: () => void;
 }
 
 function EntryCard(props: Props) {
@@ -59,7 +59,7 @@ function EntryCard(props: Props) {
         tagsVisible,
         onViewTagsButtonClick,
         onHideTagsButtonClick,
-        getEntries,
+        onEntryDataChange,
     } = props;
 
     const authorsDetailText = useMemo(() => (
@@ -158,7 +158,7 @@ function EntryCard(props: Props) {
                         verifiedBy={entry.verifiedBy}
                         compact
                         entryImage={entry.image}
-                        getEntries={getEntries}
+                        onEntryDataChange={onEntryDataChange}
                     />
                 </>
             )}

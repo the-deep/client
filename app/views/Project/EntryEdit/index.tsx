@@ -115,6 +115,8 @@ function EntryEdit(props: Props) {
             clientId: randomString(),
             entryType: 'EXCERPT',
             lead: leadId,
+            excerpt: '',
+            droppedExcerpt: '',
         }),
         [leadId],
     );
