@@ -72,8 +72,8 @@ function Activity(props: Props) {
 
     return (
         <Card className={_cs(className, styles.activity)}>
-            { (data?.activities?.length ?? 0) > 0 ? (
-                <ResponsiveContainer className={styles.container}>
+            <ResponsiveContainer className={styles.container}>
+                { (data?.activities?.length ?? 0) > 0 ? (
                     <LineChart>
                         <XAxis
                             dataKey="date"
@@ -114,18 +114,18 @@ function Activity(props: Props) {
                             />
                         ))}
                     </LineChart>
-                </ResponsiveContainer>
-            ) : (
-                <div className={styles.emptyChart}>
-                    <IoStatsChart
-                        className={styles.icon}
-                    />
-                    <div className={styles.text}>
-                        {/* FIXME: use strings with appropriate wording */}
-                        Chart not available
+                ) : (
+                    <div className={styles.emptyChart}>
+                        <IoStatsChart
+                            className={styles.icon}
+                        />
+                        <div className={styles.text}>
+                            {/* FIXME: use strings with appropriate wording */}
+                            Chart not available
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </ResponsiveContainer>
         </Card>
     );
 }

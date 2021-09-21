@@ -1,11 +1,14 @@
 .activity {
-    position: relative;
+    display: flex;
+    flex-direction: column;
     padding: var(--dui-spacing-large);
     min-height: 300px;
+    overflow-y: none;
 
     .container {
-        display: flex;
         flex-grow: 1;
+        width: 100%;
+        overflow-y: none;
     }
 
     .empty-chart {

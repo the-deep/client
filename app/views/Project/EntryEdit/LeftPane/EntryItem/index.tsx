@@ -22,7 +22,7 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 
-import ExcerptOutput from '#components/entry/ExcerptOutput';
+import ExcerptInput from '#components/entry/ExcerptInput';
 
 import { PartialEntryType as EntryInput } from '../../schema';
 import { Entry } from '../../types';
@@ -246,14 +246,15 @@ function EntryItem(props: EntryItemProps) {
                 onClick={handleClick}
                 role="presentation"
             >
-                <ExcerptOutput
-                    excerpt={excerpt}
-                    droppedExcerpt={droppedExcerpt}
+                <ExcerptInput
+                    value={excerpt}
+                    // droppedExcerpt={droppedExcerpt}
                     image={entryImage}
                     imageRaw={imageRaw}
                     // FIXME: pass this after image drag/drop is implemented
                     leadImageUrl={undefined}
                     entryType={entryType}
+                    readOnly
                 />
             </div>
             <div className={styles.verticalBorder} />

@@ -20,7 +20,7 @@
         }
 
         .project-tagging-activity {
-            flex-grow: 1;
+            flex-basis: calc(60% - var(--dui-spacing-extra-large));
             padding: 0;
         }
 

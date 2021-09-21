@@ -16,8 +16,7 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 
-import ExcerptOutput from '#components/entry/ExcerptOutput';
-// import EntryVerification from '#components/entryReview/EntryVerification';
+import ExcerptInput from '#components/entry/ExcerptInput';
 import EditableEntry from '../../components/EditableEntry';
 
 import { Framework, Entry } from '../types';
@@ -47,6 +46,7 @@ interface Props {
     tagsVisible?: boolean;
     onViewTagsButtonClick?: (entryId: string) => void;
     onHideTagsButtonClick?: (entryId: string) => void;
+    onEntryDataChange: () => void;
 }
 
 function EntryCard(props: Props) {
@@ -59,6 +59,7 @@ function EntryCard(props: Props) {
         tagsVisible,
         onViewTagsButtonClick,
         onHideTagsButtonClick,
+        onEntryDataChange,
     } = props;
 
     const authorsDetailText = useMemo(() => (
@@ -102,16 +103,17 @@ function EntryCard(props: Props) {
                     </Button>
                 )}
             >
-                <ExcerptOutput
+                <ExcerptInput
                     entryType={entry.entryType}
-                    excerpt={entry.excerpt}
+                    value={entry.excerpt}
                     image={entry.image}
                     // NOTE: no need to pass imageRaw and leadImageUrl as they
                     // are not retrieved from server
                     imageRaw={undefined}
                     leadImageUrl={undefined}
-                    droppedExcerpt={entry.droppedExcerpt}
+                    // droppedExcerpt={entry.droppedExcerpt}
                     // tabularFieldData={entry.tabularFieldData}
+                    readOnly
                 />
                 <div className={styles.metaSection}>
                     <TextOutput
@@ -154,8 +156,10 @@ function EntryCard(props: Props) {
                         primaryTagging={framework?.primaryTagging}
                         secondaryTagging={framework?.secondaryTagging}
                         controlled={entry.controlled}
+                        verifiedBy={entry.verifiedBy}
                         compact
                         entryImage={entry.image}
+                        onEntryDataChange={onEntryDataChange}
                     />
                 </>
             )}

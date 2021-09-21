@@ -15,6 +15,17 @@
     .excerpt {
         background-color: var(--dui-color-foreground);
         width: var(--inner-width);
+
+        .excerpt-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .excerpt-input {
+                flex-grow: 1;
+            }
+        }
     }
 
     .section {

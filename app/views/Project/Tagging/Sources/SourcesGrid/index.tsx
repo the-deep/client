@@ -79,6 +79,9 @@ export const PROJECT_ENTRIES = gql`
                         }
                     }
                     controlled
+                    verifiedBy {
+                        id
+                    }
                 }
             }
             analysisFramework {
@@ -142,6 +145,7 @@ function SourcesGrid(props: Props) {
     const {
         data: projectEntriesResponse,
         loading,
+        refetch: getEntries,
     } = useQuery<ProjectEntriesQuery, ProjectEntriesQueryVariables>(
         PROJECT_ENTRIES,
         {
@@ -172,7 +176,11 @@ function SourcesGrid(props: Props) {
         onViewTagsButtonClick: setExpandedEntry,
         onHideTagsButtonClick: handleHideTagsButtonClick,
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
+        controlled: entry.controlled,
+        verifiedBy: entry.verifiedBy,
+        onEntryDataChange: getEntries,
     }), [
+        getEntries,
         frameworkDetails,
         expandedEntry,
         projectId,
