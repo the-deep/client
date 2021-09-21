@@ -72,7 +72,6 @@ interface Props {
     className?: string;
     projectId: string;
     filters: Omit<ProjectSourcesQueryVariables, 'projectId'>;
-    refreshTimestamp: number | undefined;
 }
 
 export const PROJECT_ENTRIES = gql`
@@ -96,7 +95,7 @@ export const PROJECT_ENTRIES = gql`
         $search: String,
         $statuses: [LeadStatusEnum!],
         $entriesFilterData: LeadEntriesFilterData,
-        ) {
+    ) {
         project(id: $projectId) {
             leads (
                 page: $page,
@@ -132,15 +131,18 @@ export const PROJECT_ENTRIES = gql`
                     publishedOn
                     priority
                     createdBy {
+                        id
                         displayName
                     }
                     project {
                         id
                     }
                     authors {
+                        id
                         title
                     }
                     assignee {
+                        id
                         displayName
                     }
                     source {
@@ -163,10 +165,8 @@ function SourcesTable(props: Props) {
         className,
         projectId,
         filters,
-        refreshTimestamp,
     } = props;
 
-    console.warn('refres', refreshTimestamp);
     const [activePage, setActivePage] = useState<number>(1);
     const [selectedSources, setSelectedSources] = useState<Lead[]>([]);
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
@@ -203,7 +203,7 @@ function SourcesTable(props: Props) {
     );
 
     const sourcesResponse = projectSourcesResponse?.project?.leads;
-    const sources = sourcesResponse?.results as Lead[] | undefined | null;
+    const sources = sourcesResponse?.results;
 
     const handlePageChange = useCallback((page: number) => {
         setActivePage(page);
@@ -262,9 +262,8 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalFalse,
     ] = useBooleanState(false);
 
-    const handleDelete = useCallback((leadId: string) => {
-        console.warn('leadid', leadId);
-    }, []);
+    // eslint-disable-next-line
+    const handleDelete = useCallback((_: string) => {}, []); //FIXME handle delete action later
 
     const handleEdit = useCallback((leadId: string) => {
         setLeadToEdit(leadId);
@@ -273,7 +272,7 @@ function SourcesTable(props: Props) {
 
     const columns = useMemo(() => {
         const selectedSourcesMap = listToMap(selectedSources, (d) => d.id, () => true);
-        const selectAllCheckValue = sourcesResponse?.results?.some((d) => selectedSourcesMap[d.id]);
+        const selectAllCheckValue = sources?.some((d) => selectedSourcesMap[d.id]);
 
         const selectColumn: TableColumn<
             Lead, string, CheckboxProps<string>, CheckboxProps<string>
@@ -287,7 +286,7 @@ function SourcesTable(props: Props) {
                 // ? _ts('sourcesTable', 'selectedNumberOfSources',
                 // { noOfSources: selectedSources.length }) : _ts('sourcesTable', 'selectAll'),
                 onChange: handleSelectAll,
-                indeterminate: !(selectedSources.length === sourcesResponse?.results?.length
+                indeterminate: !(selectedSources.length === sources?.length
                 || selectedSources.length === 0),
             },
             cellRenderer: Checkbox,
@@ -452,7 +451,7 @@ function SourcesTable(props: Props) {
     }, [
         handleSelectAll,
         handleSelection,
-        sourcesResponse,
+        sources,
         selectedSources,
         handleEdit,
         handleDelete,

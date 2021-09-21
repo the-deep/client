@@ -26,7 +26,7 @@ interface Props {
 function Sources(props: Props) {
     const { className, refreshTimestamp } = props;
     const { project } = React.useContext(ProjectContext);
-    const activeProject = project ? project.id : undefined;
+    const activeProject = project?.id;
     const [sourcesFilters, setSourcesFilters] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
