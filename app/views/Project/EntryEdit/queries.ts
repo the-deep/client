@@ -30,30 +30,30 @@ const ENTRY_FRAGMENT = gql`
     }
 `;
 
-export const PROJECT_FRAMEWORK = gql`
+export const LEAD_ENTRIES = gql`
     ${ENTRY_FRAGMENT}
-    query ProjectFramework(
+    query LeadEntries(
         $projectId: ID!,
         $leadId: ID!,
     ) {
         project(id: $projectId) {
             id
             lead(id: $leadId) {
-                title,
+                title
                 leadGroup {
-                    id,
-                    title,
-                },
-                title,
-                clientId,
-                assignee {
-                    id,
-                    displayName,
+                    id
+                    title
                 }
-                publishedOn,
-                text,
-                url,
-                website,
+                title
+                clientId
+                assignee {
+                    id
+                    displayName
+                }
+                publishedOn
+                text
+                url
+                website
                 attachment {
                     id
                     title
@@ -97,6 +97,16 @@ export const PROJECT_FRAMEWORK = gql`
                     ...EntryResponse
                 }
             }
+        }
+    }
+`;
+
+export const PROJECT_FRAMEWORK = gql`
+    query ProjectFramework(
+        $projectId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
             analysisFramework {
                 id
                 primaryTagging {

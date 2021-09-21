@@ -3,6 +3,7 @@ import {
 } from '@togglecorp/toggle-form';
 
 import {
+    LeadEntriesQuery,
     ProjectFrameworkQuery,
     WidgetType as WidgetRaw,
     BulkEntryInputType,
@@ -16,9 +17,7 @@ import {
 import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
 import { Widget as WidgetFromAF } from '#types/newAnalyticalFramework';
 
-type Project = NonNullable<ProjectFrameworkQuery['project']>;
-
-export type EntryRaw = NonNullable<NonNullable<NonNullable<Project['lead']>['entries']>[number]>;
+export type EntryRaw = NonNullable<NonNullable<NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>['entries']>[number]>;
 export type Entry = DeepReplace<EntryRaw, Omit<WidgetAttributeRaw, 'widgetTypeDisplay' | 'widthTypeDisplay'>, WidgetAttributeFromEntry>;
 
 export type EntryInputRaw = DeepMandatory<PurgeNull<BulkEntryInputType>, 'clientId' | 'entryType'>;
@@ -32,7 +31,7 @@ export type EntryInput = DeepReplace<EntryInputRaw, WidgetInputAttributeRaw, Wid
 
 // FIXME: 'key' is thought to be mandatory from server.
 // Remove this DeepMandatory transformation after server sends key as mandatory
-export type FrameworkRaw = DeepMandatory<NonNullable<Project['analysisFramework']>, 'key'>;
+export type FrameworkRaw = DeepMandatory<NonNullable<NonNullable<ProjectFrameworkQuery['project']>['analysisFramework']>, 'key'>;
 export type Framework = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
 export type Section = NonNullable<Framework['primaryTagging']>[number];
 export type Widget = WidgetFromAF;
