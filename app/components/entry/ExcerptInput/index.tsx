@@ -5,26 +5,30 @@ import {
     TextArea,
     Message,
 } from '@the-deep/deep-ui';
+import { genericMemo } from '#utils/common';
 
 import { EntryType } from '#generated/types';
 import _ts from '#ts';
 
 import styles from './styles.css';
 
-export interface Props<N extends string> {
-    name: N;
+type Props<N extends string> = {
     className?: string;
     imageClassName?: string;
     excerptForImageClassName?: string;
     entryType: EntryType['entryType'];
     value: string | undefined | null;
-    onChange: (newVal: string | undefined, name: N) => void;
-    droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
+    // droppedExcerpt: EntryType['droppedExcerpt'] | undefined;
     image: EntryType['image'] | undefined;
     imageRaw: string | undefined;
     leadImageUrl: string | undefined;
-    readOnly?: boolean;
-}
+} & ({
+    name: N;
+    onChange: (newVal: string | undefined, name: N) => void;
+    readOnly?: false;
+} | {
+    readOnly: true;
+})
 
 function ExcerptInput<N extends string>(props: Props<N>) {
     const {
@@ -38,9 +42,6 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         imageRaw,
         leadImageUrl,
         value,
-        onChange,
-        name,
-        readOnly,
     } = props;
 
     if (entryType === 'IMAGE') {
@@ -59,16 +60,16 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         message="Image data is not available."
                     />
                 )}
-                {!readOnly && (
+                {!props.readOnly && (
                     <TextArea
                         label="Additional Context"
                         className={_cs(excerptForImageClassName, styles.textArea)}
                         value={value}
-                        name={name}
-                        onChange={onChange}
+                        name={props.name}
+                        onChange={props.onChange}
                     />
                 )}
-                {value && readOnly && (
+                {value && !props.readOnly && (
                     <div className={excerptForImageClassName}>
                         {value}
                     </div>
@@ -77,7 +78,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         );
     }
     if (entryType === 'EXCERPT') {
-        return readOnly ? (
+        return props.readOnly ? (
             <div className={className}>
                 { value }
             </div>
@@ -86,8 +87,8 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                 <TextArea
                     className={_cs(className, styles.textArea)}
                     value={value}
-                    onChange={onChange}
-                    name={name}
+                    onChange={props.onChange}
+                    name={props.name}
                 />
             </div>
         );
@@ -102,4 +103,4 @@ function ExcerptInput<N extends string>(props: Props<N>) {
     return null;
 }
 
-export default ExcerptInput;
+export default genericMemo(ExcerptInput);

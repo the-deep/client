@@ -24,6 +24,7 @@ import {
 } from '#generated/types';
 // FIXME: move this component
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+
 import { Entry } from '#views/Project/EntryEdit/types';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import { Widget } from '#types/newAnalyticalFramework';
@@ -143,7 +144,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                         onChange={onFieldChange}
                         entryType={value.entryType}
                         value={value.excerpt}
-                        droppedExcerpt={value.droppedExcerpt}
+                        // droppedExcerpt={value.droppedExcerpt}
                         image={entryImage}
                         imageRaw={value.imageRaw}
                         readOnly={readOnly}
