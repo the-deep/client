@@ -61,7 +61,7 @@ export const shortMonthNamesMap: MonthNameMap = {
     11: 'Dec',
 };
 
-export function calcPercent(value?: number, total?: number) {
+export function calcPercent(value: number | null | undefined, total: number | null | undefined) {
     if (isNotDefined(value) || isNotDefined(total) || total === 0) {
         return undefined;
     }

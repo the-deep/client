@@ -36,6 +36,7 @@ export const getFiltersForRequest = (filters: FilterFormType | undefined) => {
         if (key === 'createdAt') {
             if (filters.createdAt) {
                 const endDate = new Date(filters.createdAt.endDate);
+                // A day added to include 24 hours of endDate
                 endDate.setDate(endDate.getDate() + 1);
 
                 requestFilters.created_at__gte = getDateWithTimezone(filters.createdAt.startDate);
@@ -44,6 +45,7 @@ export const getFiltersForRequest = (filters: FilterFormType | undefined) => {
         } else if (key === 'publishedOn') {
             if (filters.publishedOn) {
                 const endDate = new Date(filters.publishedOn.endDate);
+                // A day added to include 24 hours of endDate
                 endDate.setDate(endDate.getDate() + 1);
 
                 requestFilters.published_on__gte = filters.publishedOn.startDate;

@@ -12,6 +12,9 @@ import {
     ProjectSourceStatsQuery,
     ProjectSourceStatsQueryVariables,
 } from '#generated/types';
+import {
+    calcPercent,
+} from '#utils/common';
 import styles from './styles.css';
 
 const PROJECT_SOURCE_STATS = gql`
@@ -51,14 +54,9 @@ function SourcesStats(props: Props) {
         },
     );
 
-    const {
-        numberOfEntries,
-        numberOfLeads,
-        numberOfLeadsTaggedAndControlled,
-        numberOfLeadsTagged,
-    } = sourcesStats?.project?.stats ?? {};
     const totalControlledEntries = 0; // FIXME get values form server
     const totalVerifiedEntries = 0; // FIXME get values form server
+
     return (
         <div className={_cs(styles.sourcesStats, className)}>
             <Card className={styles.leadStatsCard}>
@@ -68,27 +66,35 @@ function SourcesStats(props: Props) {
                         <IoBookmarks />
                     )}
                     label={_ts('sourcesStats', 'totalSources')}
-                    value={numberOfLeads ?? 0}
+                    value={sourcesStats?.project?.stats?.numberOfLeads ?? 0}
                     variant="accent"
                 />
                 <ProgressLine
-                    progress={((numberOfLeadsTagged ?? 0) / (numberOfLeads ?? 0)) * 100}
+                    progress={calcPercent(
+                        sourcesStats?.project?.stats?.numberOfLeadsTagged,
+                        sourcesStats?.project?.stats?.numberOfLeads,
+                    )}
                     title={_ts('sourcesStats', 'sourcesTaggedLabel')}
                     variant="complement2"
                     size="large"
                 />
                 <ProgressLine
-                    progress={
-                        ((numberOfLeadsTaggedAndControlled ?? 0) / (numberOfLeads ?? 0)) * 100
-                    }
+                    progress={calcPercent(
+                        sourcesStats?.project?.stats?.numberOfLeadsTaggedAndControlled,
+                        sourcesStats?.project?.stats?.numberOfLeads,
+                    )}
                     title={_ts('sourcesStats', 'sourcesTaggedValidatedLabel')}
                     variant="complement1"
                     size="large"
                 />
                 <ProgressLine
-                    progress={((
-                        (numberOfLeads ?? 0) - (numberOfLeadsTagged ?? 0)) / (numberOfLeads ?? 0)
-                    ) * 100}
+                    progress={calcPercent(
+                        (
+                            sourcesStats?.project?.stats?.numberOfLeads ?? 0
+                            - (sourcesStats?.project?.stats?.numberOfLeadsTagged ?? 0)
+                        ),
+                        sourcesStats?.project?.stats?.numberOfLeads,
+                    )}
                     title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
                     variant="complement3"
                     size="large"
@@ -101,17 +107,23 @@ function SourcesStats(props: Props) {
                         <IoDocument />
                     )}
                     label={_ts('sourcesStats', 'totalEntries')}
-                    value={numberOfEntries ?? 0}
+                    value={sourcesStats?.project?.stats?.numberOfEntries ?? 0}
                     variant="accent"
                 />
                 <ProgressLine
-                    progress={((totalVerifiedEntries ?? 0) / (numberOfEntries ?? 0)) * 100}
+                    progress={calcPercent(
+                        totalVerifiedEntries,
+                        sourcesStats?.project?.stats?.numberOfEntries,
+                    )}
                     title="Entries Verified"
                     variant="complement1"
                     size="large"
                 />
                 <ProgressLine
-                    progress={((totalControlledEntries ?? 0) / (numberOfEntries ?? 0)) * 100}
+                    progress={calcPercent(
+                        totalControlledEntries,
+                        sourcesStats?.project?.stats?.numberOfEntries,
+                    )}
                     title="Entries Controlled"
                     variant="complement2"
                     size="large"
