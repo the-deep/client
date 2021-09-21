@@ -47,6 +47,8 @@ import {
 import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
+    LeadEntriesQuery,
+    LeadEntriesQueryVariables,
     BulkUpdateEntriesMutation,
     BulkUpdateEntriesMutationVariables,
     LeadUpdateMutation,
@@ -66,19 +68,20 @@ import {
     PROJECT_FRAMEWORK,
     BULK_UPDATE_ENTRIES,
     UPDATE_LEAD,
+    LEAD_ENTRIES,
 } from './queries';
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
 
-import schema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
+import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
-export type Lead = NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>;
+export type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
 
 function transformEntry(entry: Entry): EntryInputType {
     // FIXME: make this re-usable
@@ -168,6 +171,48 @@ function EntryEdit(props: Props) {
 
     // FIXME: set section initially
     const [selectedSection, setSelectedSection] = useState<string | undefined>();
+
+    const frameworkVariables = useMemo(
+        (): ProjectFrameworkQueryVariables | undefined => (
+            projectId ? { projectId } : undefined
+        ),
+        [projectId],
+    );
+    const {
+        data: frameworkData,
+        loading: frameworkLoading,
+    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
+        PROJECT_FRAMEWORK,
+        {
+            skip: isNotDefined(frameworkVariables),
+            variables: frameworkVariables,
+            onCompleted: (response) => {
+                const projectFromResponse = response?.project;
+                if (!projectFromResponse) {
+                    return;
+                }
+                const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
+                if (analysisFrameworkFromResponse) {
+                    const firstSection = analysisFrameworkFromResponse?.primaryTagging?.[0];
+                    setSelectedSection(firstSection?.clientId);
+                }
+            },
+        },
+    );
+
+    // eslint-disable-next-line max-len
+    const frameworkDetails = frameworkData?.project?.analysisFramework as Framework | undefined | null;
+
+    // FIXME: memoize this
+    const widgetsMapping = listToMap(
+        [
+            ...(frameworkDetails?.primaryTagging?.flatMap((item) => (item.widgets ?? [])) ?? []),
+            ...(frameworkDetails?.secondaryTagging ?? []),
+        ],
+        (item) => item.id,
+        (item) => item,
+    );
+    const schema = getSchema(widgetsMapping);
 
     const {
         value: formValue,
@@ -421,6 +466,7 @@ function EntryEdit(props: Props) {
         },
     );
 
+<<<<<<< HEAD
     const variables = useMemo(
         (): ProjectFrameworkQueryVariables | undefined => (
             (leadId && projectId)
@@ -520,6 +566,8 @@ function EntryEdit(props: Props) {
     );
     const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
 
+=======
+>>>>>>> d0ab11034 (Add form validation for entry attributes)
     const handleSubmit = useCallback(
         (shouldSetFinalize: boolean) => {
             if (!projectId) {
@@ -809,6 +857,83 @@ function EntryEdit(props: Props) {
         }
     }, [handleEntryClick]);
 
+    const entriesVariables = useMemo(
+        (): LeadEntriesQueryVariables | undefined => (
+            (leadId && projectId) ? { projectId, leadId } : undefined
+        ),
+        [
+            leadId,
+            projectId,
+        ],
+    );
+    const {
+        data,
+        loading: entriesLoading,
+    } = useQuery<LeadEntriesQuery, LeadEntriesQueryVariables>(
+        LEAD_ENTRIES,
+        {
+            skip: isNotDefined(entriesVariables),
+            variables: entriesVariables,
+            onCompleted: (response) => {
+                const projectFromResponse = response?.project;
+                if (!projectFromResponse) {
+                    return;
+                }
+
+                const leadFromResponse = projectFromResponse.lead;
+                if (leadFromResponse) {
+                    const entries = leadFromResponse.entries?.map(
+                        (entry) => transformEntry(entry as Entry),
+                    );
+                    setFormValue((oldVal) => ({ ...oldVal, entries }));
+                    const imagesMap = listToMap(
+                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
+                        (d) => d.id,
+                        (d) => d,
+                    );
+                    setEntryImagesMap(imagesMap);
+
+                    const leadData = removeNull(leadFromResponse);
+                    setLeadValue({
+                        ...leadData,
+                        attachment: leadData?.attachment?.id,
+                        leadGroup: leadData?.leadGroup?.id,
+                        assignee: leadData?.assignee?.id,
+                        source: leadData?.source?.id,
+                        authors: leadData?.authors?.map((author) => author.id),
+                    });
+                    const {
+                        leadGroup,
+                        assignee,
+                        authors,
+                        source,
+                    } = leadData;
+
+                    if (leadGroup) {
+                        setLeadGroupOptions((oldVal) => (
+                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
+                        ));
+                    }
+                    if (assignee) {
+                        setProjectUserOptions((oldVal) => (
+                            oldVal ? [...oldVal, assignee] : [assignee]
+                        ));
+                    }
+                    if (source) {
+                        setSourceOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, source] : [source]
+                        ));
+                    }
+                    if (authors) {
+                        setAuthorOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, ...authors] : [...authors]
+                        ));
+                    }
+                }
+            },
+        },
+    );
+
     const entryDataRendererParams = useCallback(
         (entryId: string, datum: PartialEntryType, index: number) => ({
             value: datum,
@@ -838,6 +963,7 @@ function EntryEdit(props: Props) {
     );
 
     const lead = data?.project?.lead;
+    const loading = frameworkLoading || entriesLoading;
 
     return (
         <div className={_cs(styles.entryEdit, className)}>

@@ -3,7 +3,14 @@ import {
     ArraySchema,
     PartialForm,
     defaultUndefinedType,
+    greaterThanOrEqualToCondition,
+    lessThanOrEqualToCondition,
 } from '@togglecorp/toggle-form';
+import {
+    isDefined,
+} from '@togglecorp/fujs';
+
+import { Widget } from '#types/newAnalyticalFramework';
 
 import { EntryInput } from './types';
 
@@ -11,39 +18,74 @@ type FormType = {
     entries: EntryInput[];
 }
 
+type getType<T, Q> = T extends Q ? T : never;
+
 export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data' | 'entryType' | 'lead'>;
 
 export type PartialEntryType = NonNullable<PartialFormType['entries']>[number];
 
 export type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
+type NumberAttributeType = getType<PartialAttributeType, { widgetType: 'NUMBER' }>;
+
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type AttributeSchema = ObjectSchema<PartialAttributeType, PartialFormType>;
 type AttributeSchemaFields = ReturnType<AttributeSchema['fields']>;
-const attributeSchema: AttributeSchema = {
-    fields: (): AttributeSchemaFields => ({
-        id: [defaultUndefinedType],
-        clientId: [],
-        widget: [],
-        data: [], // FIXME: lot of things here
 
-        // NOTE: widgetType this one is not needed on server
-        widgetType: [],
-    }),
-};
+const getAttributeSchema = (widgets: Partial<Record<string, Widget>>): AttributeSchema => ({
+    fields: (value): AttributeSchemaFields => {
+        const basicValidation = {
+            id: [defaultUndefinedType],
+            clientId: [],
+            widget: [],
+            data: [],
+
+            // NOTE: widgetType this one is not needed on server
+            widgetType: [],
+        };
+        if (!value) {
+            return basicValidation;
+        }
+        const widget = widgets[value?.widgetType];
+        if (!widget) {
+            return basicValidation;
+        }
+        if (widget.widgetId === 'NUMBER' && value.widgetType !== widget.widgetId) {
+            type NumberAttributeDataSchema = ObjectSchema<NonNullable<NumberAttributeType['data']>, PartialFormType>;
+            type NumberAttributeDataSchemaFields = ReturnType<NumberAttributeDataSchema['fields']>;
+            const validations: NumberAttributeDataSchemaFields['value'] = [];
+            if (isDefined(widget.properties.maxValue)) {
+                validations.push(lessThanOrEqualToCondition(widget.properties.maxValue));
+            }
+            if (isDefined(widget.properties.minValue)) {
+                validations.push(greaterThanOrEqualToCondition(widget.properties.minValue));
+            }
+
+            return {
+                ...basicValidation,
+                data: {
+                    fields: (): NumberAttributeDataSchemaFields => ({
+                        value: validations,
+                    }),
+                },
+            };
+        }
+        return basicValidation;
+    },
+});
 
 type AttributesSchema = ArraySchema<PartialAttributeType, PartialFormType>;
 type AttributesSchemaMember = ReturnType<AttributesSchema['member']>;
-const attributesSchema: AttributesSchema = {
+const getAttributesSchema = (widgets: Partial<Record<string, Widget>>): AttributesSchema => ({
     keySelector: (col) => col.clientId,
-    member: (): AttributesSchemaMember => attributeSchema,
-};
+    member: (): AttributesSchemaMember => getAttributeSchema(widgets),
+});
 
 type EntrySchema = ObjectSchema<PartialEntryType, PartialFormType>;
 type EntrySchemaFields = ReturnType<EntrySchema['fields']>;
-export const entrySchema: EntrySchema = {
+export const getEntrySchema = (widgets: Partial<Record<string, Widget>>): EntrySchema => ({
     fields: (): EntrySchemaFields => ({
         // NOTE: widgetType this one is not needed on server
         stale: [],
@@ -62,26 +104,26 @@ export const entrySchema: EntrySchema = {
         excerpt: [],
         droppedExcerpt: [],
         // highlightHidden: [],
-        attributes: attributesSchema,
+        attributes: getAttributesSchema(widgets),
         clientId: [],
     }),
-};
+});
 
 type EntriesSchema = ArraySchema<PartialEntryType, PartialFormType>;
 type EntriesSchemaMember = ReturnType<EntriesSchema['member']>;
-const entriesSchema: EntriesSchema = {
+const getEntriesSchema = (widgets: Partial<Record<string, Widget>>): EntriesSchema => ({
     keySelector: (col) => col.clientId,
-    member: (): EntriesSchemaMember => entrySchema,
-};
+    member: (): EntriesSchemaMember => getEntrySchema(widgets),
+});
 
-const schema: FormSchema = {
+const getSchema = (widgets: Partial<Record<string, Widget>>): FormSchema => ({
     fields: (): FormSchemaFields => ({
-        entries: entriesSchema,
+        entries: getEntriesSchema(widgets),
     }),
-};
+});
 
 export const defaultFormValues: PartialFormType = {
     entries: [],
 };
 
-export default schema;
+export default getSchema;
