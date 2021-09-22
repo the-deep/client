@@ -46,6 +46,7 @@ const PROJECT_LEAD = gql`
     query ProjectLead($projectId: ID!, $leadId: ID!) {
         project(id: $projectId) {
             lead (id: $leadId) {
+                id,
                 title,
                 leadGroup {
                     id,

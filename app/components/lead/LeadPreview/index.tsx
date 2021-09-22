@@ -33,7 +33,7 @@ export interface Attachment {
 interface Props {
     className?: string;
     url?: string;
-    attachment?: Attachment;
+    attachment?: Attachment | null;
     hideBar?: boolean;
 }
 
