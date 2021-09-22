@@ -32,12 +32,11 @@ import {
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
 import FullScreen from '#components/FullScreen';
-import { Lead } from '#components/lead/LeadEditForm/schema';
 import { useRequest } from '#base/utils/restRequest';
 
 import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
-import { EntryImagesMap } from '../index';
+import { Lead, EntryImagesMap } from '../index';
 import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
 import styles from './styles.css';
@@ -64,7 +63,7 @@ interface Props {
     onEntryDelete?: (entryClientId: string) => void;
     onApproveButtonClick?: (entryClientId: string) => void;
     onDiscardButtonClick?: (entryClientId: string) => void;
-    lead?: Lead;
+    lead?: Lead | null;
     leadId: string;
     hideSimplifiedPreview?: boolean;
     hideOriginalPreview?: boolean;
@@ -124,7 +123,7 @@ function LeftPane(props: Props) {
         response: leadPreview,
     } = useRequest<LeadPreview>({
         skip: !lead,
-        url: `server://lead-previews/${lead?.id}/`,
+        url: `server://lead-previews/${leadId}/`,
     });
 
     const handleScreenshotCaptureError = React.useCallback((message) => {
@@ -260,7 +259,7 @@ function LeftPane(props: Props) {
                         />
                     </QuickActionDropdownMenu>
                     <QuickActionLink
-                        to={lead?.url ?? lead?.attachment?.file ?? ''}
+                        to={lead?.url ?? lead?.attachment?.file?.url ?? ''}
                     >
                         <IoOpenOutline />
                     </QuickActionLink>

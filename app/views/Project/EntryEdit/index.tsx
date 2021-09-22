@@ -38,13 +38,11 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { transformToFormError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
-import { useRequest } from '#base/utils/restRequest';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
-    Lead,
 } from '#components/lead/LeadEditForm/schema';
 import {
     ProjectFrameworkQuery,
@@ -69,6 +67,7 @@ import styles from './styles.css';
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
+export type Lead = NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>;
 
 function transformEntry(entry: Entry): EntryInputType {
     // FIXME: make this re-usable
@@ -100,7 +99,7 @@ function EntryEdit(props: Props) {
 
     // LEAD
 
-    const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
+    const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
         sourceType: 'WEBSITE',
         isAssessmentLead: false,
     }));
@@ -123,19 +122,6 @@ function EntryEdit(props: Props) {
         setPristine: setLeadPristine,
         error: leadFormError,
     } = useForm(leadSchema, leadInitialValue);
-
-    const {
-        pending: leadGetPending,
-        response: lead,
-    } = useRequest<Lead>({
-        skip: !leadId,
-        url: `server://v2/leads/${leadId}/`,
-        onSuccess: (response) => {
-            setLeadInitialValue(response);
-            setLeadValue(response);
-        },
-        failureHeader: 'Leads',
-    });
 
     // ENTRY FORM
 
@@ -358,6 +344,16 @@ function EntryEdit(props: Props) {
                         (d) => d,
                     );
                     setEntryImagesMap(imagesMap);
+
+                    const leadData = removeNull(leadFromResponse);
+                    setLeadValue({
+                        ...leadData,
+                        attachment: leadData?.attachment?.id,
+                        leadGroup: leadData?.leadGroup?.id,
+                        assignee: leadData?.assignee?.id,
+                        source: leadData?.source?.id,
+                        authors: leadData?.authors?.map((author) => author.id),
+                    });
                 }
 
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
@@ -662,6 +658,8 @@ function EntryEdit(props: Props) {
         ],
     );
 
+    const lead = data?.project?.lead;
+
     return (
         <div className={_cs(styles.entryEdit, className)}>
             <Prompt
@@ -755,9 +753,13 @@ function EntryEdit(props: Props) {
                                 setPristine={setLeadPristine}
                                 setLeadFieldValue={setLeadFieldValue}
                                 leadFormError={leadFormError}
-                                pending={leadGetPending}
+                                pending={loading}
                                 projectId={projectId}
-                                disabled
+                                sourceOrganization={lead?.source}
+                                authorOrganizations={lead?.authors}
+                                leadGroup={lead?.leadGroup}
+                                assignee={lead?.assignee}
+                                attachment={lead?.attachment}
                             />
                         )}
                     </TabPanel>
