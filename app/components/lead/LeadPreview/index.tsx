@@ -22,10 +22,12 @@ import { MimeTypes } from './Preview/mimeTypes';
 import styles from './styles.css';
 
 export interface Attachment {
-    id: number;
-    title: string;
-    file: string;
-    mimeType: MimeTypes;
+    id: string;
+    title: string | undefined;
+    file?: {
+        url?: string | undefined | null;
+    } | undefined | null;
+    mimeType?: MimeTypes | undefined | null;
 }
 
 interface Props {
@@ -91,7 +93,7 @@ function LeadPreview(props: Props) {
                         <>
                             <QuickActionLink
                                 className={styles.link}
-                                to={url ?? attachment?.file ?? ''}
+                                to={url ?? attachment?.file?.url ?? ''}
                             >
                                 <IoOpenOutline />
                             </QuickActionLink>
@@ -120,10 +122,10 @@ function LeadPreview(props: Props) {
                     url={url}
                 />
             )}
-            {attachment && (
+            {attachment?.file?.url && attachment.mimeType && (
                 <Viewer
                     className={_cs(styles.content, className)}
-                    url={attachment.file}
+                    url={attachment.file.url}
                     mimeType={attachment.mimeType}
                     canShowIframe
                 />

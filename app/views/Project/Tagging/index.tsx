@@ -179,7 +179,7 @@ function Tagging(props: Props) {
             </div>
             {isSingleSourceModalShown && project?.id && (
                 <LeadEditModal
-                    projectId={+project.id}
+                    projectId={project.id}
                     onClose={hideSingleSourceAddModal}
                     onLeadSaveSuccess={handleSingleLeadSaveSuccess}
                 />

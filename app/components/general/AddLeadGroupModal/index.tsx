@@ -31,7 +31,8 @@ const leadGroupSchema: FormSchema = {
 
 export interface Props {
     onModalClose: () => void;
-    onLeadGroupAdd?: (leadGroup: LeadGroup) => void;
+    // FIXME: Replace with graphql mutation
+    onLeadGroupAdd?: (leadGroup: { id: string; title: string }) => void;
 }
 
 function AddLeadGroupModal(props: Props) {
@@ -52,7 +53,10 @@ function AddLeadGroupModal(props: Props) {
         body: (ctx) => ctx,
         onSuccess: (response) => {
             if (onLeadGroupAdd) {
-                onLeadGroupAdd(response);
+                onLeadGroupAdd({
+                    id: String(response.id),
+                    title: response.title,
+                });
             }
             onModalClose();
         },

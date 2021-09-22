@@ -100,15 +100,8 @@ function EntryEdit(props: Props) {
 
     // LEAD
 
-    // FIXME: why have this ready/setReady state here?
-    // leadId will always be defined anyway
-    const [ready, setReady] = useState(!leadId);
-
     const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
-        project: projectId ? +projectId : undefined,
-        sourceType: 'website',
-        priority: 100,
-        confidentiality: 'unprotected',
+        sourceType: 'WEBSITE',
         isAssessmentLead: false,
     }));
 
@@ -140,7 +133,6 @@ function EntryEdit(props: Props) {
         onSuccess: (response) => {
             setLeadInitialValue(response);
             setLeadValue(response);
-            setReady(true);
         },
         failureHeader: 'Leads',
     });
@@ -763,10 +755,8 @@ function EntryEdit(props: Props) {
                                 setPristine={setLeadPristine}
                                 setLeadFieldValue={setLeadFieldValue}
                                 leadFormError={leadFormError}
-                                ready={ready}
                                 pending={leadGetPending}
-                                leadInitialValue={leadInitialValue}
-                                projectId={+projectId}
+                                projectId={projectId}
                                 disabled
                             />
                         )}
