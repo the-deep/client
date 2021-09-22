@@ -11,6 +11,7 @@ import {
     removeNull,
     useForm,
     createSubmitHandler,
+    internal,
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
@@ -25,7 +26,10 @@ import {
     LeadInputType,
     LeadUpdateMutation,
     LeadUpdateMutationVariables,
+    LeadCreateMutation,
+    LeadCreateMutationVariables,
 } from '#generated/types';
+import { transformToFormError } from '#base/utils/errorTransform';
 import LeadEditForm from '#components/lead/LeadEditForm';
 import styles from './styles.css';
 
@@ -120,6 +124,20 @@ const LEAD_UPDATE = gql`
     }
 `;
 
+const LEAD_CREATE = gql`
+    mutation LeadCreate(
+        $projectId: ID!,
+        $data: LeadInputType!,
+    ) {
+        project(id: $projectId) {
+            leadCreate(data: $data) {
+                ok,
+                errors,
+            }
+        }
+    }
+`;
+
 interface Props {
     className?: string;
     onClose: () => void;
@@ -139,6 +157,7 @@ function LeadEditModal(props: Props) {
 
     const [initialValue] = useState<PartialFormType>(() => ({
         sourceType: 'WEBSITE',
+        confidentiality: 'UNPROTECTED',
         isAssessmentLead: false,
     }));
 
@@ -195,13 +214,55 @@ function LeadEditModal(props: Props) {
     const [
         updateLead,
         {
-            loading: leadSavePending,
+            loading: leadUpdatePending,
         },
     ] = useMutation<LeadUpdateMutation, LeadUpdateMutationVariables>(
         LEAD_UPDATE,
         {
             onCompleted: (response) => {
-                if (response?.project?.leadUpdate?.ok) {
+                if (!response?.project?.leadUpdate) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = response.project.leadUpdate;
+                // FIXME: To talk with @tnagorra to figure our non field error during form save
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
+                } else if (ok) {
+                    onLeadSaveSuccess();
+                }
+            },
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+            },
+        },
+    );
+
+    const [
+        createLead,
+        {
+            loading: leadCreatePending,
+        },
+    ] = useMutation<LeadCreateMutation, LeadCreateMutationVariables>(
+        LEAD_CREATE,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.leadCreate) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = response.project.leadCreate;
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors));
+                    setError(formError);
+                } else if (ok) {
                     onLeadSaveSuccess();
                 }
             },
@@ -210,7 +271,7 @@ function LeadEditModal(props: Props) {
 
     const leadData = lead?.project?.lead;
 
-    const pending = leadLoading || leadOptionsLoading || leadSavePending;
+    const pending = leadLoading || leadOptionsLoading || leadCreatePending || leadUpdatePending;
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
@@ -226,11 +287,18 @@ function LeadEditModal(props: Props) {
                             leadId,
                         },
                     });
+                } else {
+                    createLead({
+                        variables: {
+                            data,
+                            projectId,
+                        },
+                    });
                 }
             },
         );
         submit();
-    }, [setError, validate, updateLead, projectId, leadId]);
+    }, [setError, validate, updateLead, createLead, projectId, leadId]);
 
     return (
         <Modal

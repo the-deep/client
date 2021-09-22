@@ -2,17 +2,18 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: var(--dui-spacing-small);
 
     .row {
         display: flex;
         align-items: center;
         flex-grow: 1;
+        flex-wrap: wrap;
         justify-content: flex-end;
-        padding-top: var(--dui-spacing-extra-small);
+        gap: var(--dui-spacing-small);
 
         .button {
             flex-shrink: 0;
-            margin: var(--dui-spacing-extra-small);
         }
     }
 }
