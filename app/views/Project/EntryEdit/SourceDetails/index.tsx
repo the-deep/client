@@ -18,21 +18,17 @@ interface Props {
     pending: boolean;
     leadValue: PartialFormType;
     setLeadFieldValue: (...values: EntriesAsList<PartialFormType>) => void;
-    ready: boolean;
-    leadInitialValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     setPristine: (val: boolean) => void;
-    projectId: number;
+    projectId: string;
     disabled?: boolean;
 }
 
 function SourceDetails(props: Props) {
     const {
         className,
-        ready,
         leadValue,
-        leadInitialValue,
         setLeadFieldValue,
         setValue,
         setPristine,
@@ -55,12 +51,10 @@ function SourceDetails(props: Props) {
                 <LeadEditForm
                     pending={pending}
                     value={leadValue}
-                    initialValue={leadInitialValue}
                     setFieldValue={setLeadFieldValue}
                     error={leadFormError}
                     setValue={setValue}
                     setPristine={setPristine}
-                    ready={ready}
                     projectId={projectId}
                     disabled={disabled}
                 />

@@ -9,13 +9,15 @@ import {
 } from '@togglecorp/toggle-form';
 
 import {
+    LeadEmmTriggerInputType,
+    EmmEntityInputType,
+    LeadInputType,
+} from '#generated/types';
+import { EnumFix } from '#utils/types';
+
+import {
     KeyValueElement,
 } from '#types';
-
-import { MimeTypes } from '#components/lead/LeadPreview/Preview/mimeTypes';
-
-export type LeadSourceType = 'text' | 'disk' | 'website' |
-    'dropbox' | 'google-drive' | 'rss-feed' | 'emm' | 'web-api' | 'unknown';
 
 export interface EmmEntityOption {
     key: number;
@@ -23,44 +25,11 @@ export interface EmmEntityOption {
     totalCount: number;
 }
 
-export interface EmmTrigger {
-    emmKeyword: string;
-    emmRiskFactor?: string;
-    count: number;
-}
+export type EmmTrigger = LeadEmmTriggerInputType;
 
-export interface EmmEntity {
-    name: string;
-}
+export type EmmEntity = EmmEntityInputType;
 
-export interface Lead {
-    // TODO: Handle case where assignee can be multiple
-    id?: number;
-    assignee: number;
-    authorRaw?: string;
-    authors?: [number];
-    confidentiality: 'unprotected' | 'confidential';
-    isAssessmentLead: boolean;
-    emmEntities?: EmmEntity[];
-    emmTriggers?: EmmTrigger[];
-    leadGroup?: number;
-    priority: number;
-    project: number;
-    publishedOn: string;
-    source: number;
-    sourceRaw?: string;
-    sourceType: LeadSourceType;
-    text?: string;
-    title: string;
-    url?: string;
-    website?: string;
-    attachment?: {
-        id: number;
-        title: string;
-        file: string;
-        mimeType: MimeTypes;
-    };
-}
+export type Lead = EnumFix<LeadInputType, 'priority'>;
 
 export type PartialFormType = PartialForm<
     Lead,
@@ -115,7 +84,6 @@ export const schema:FormSchema = {
             isAssessmentLead: [],
             leadGroup: [],
             priority: [requiredCondition],
-            project: [requiredCondition],
             publishedOn: [requiredCondition],
             source: [requiredCondition],
             sourceType: [requiredCondition],
@@ -131,13 +99,13 @@ export const schema:FormSchema = {
             attachment: [forceNullType],
             */
         };
-        if (value?.sourceType === 'website') {
+        if (value?.sourceType === 'WEBSITE') {
             baseSchema = {
                 ...baseSchema,
                 url: [requiredCondition, urlCondition],
                 website: [requiredCondition],
             };
-        } else if (value?.sourceType === 'text') {
+        } else if (value?.sourceType === 'TEXT') {
             baseSchema = {
                 ...baseSchema,
                 text: [requiredStringCondition],

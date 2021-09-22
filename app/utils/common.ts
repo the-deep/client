@@ -11,6 +11,8 @@ import {
     padStart,
 } from '@togglecorp/fujs';
 
+import { EnumEntity } from '../types';
+
 export const genericMemo: (<T>(c: T) => T) = memo;
 
 export function sortByOrder<T extends { order: number }>(data: T[]): T[]
@@ -147,3 +149,11 @@ export function hasNoData(obj: unknown): boolean {
 
     return false;
 }
+
+export const enumKeySelector = <T>(d: EnumEntity<T>) => (
+    d.name
+);
+
+export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) => (
+    d.description ?? `${d.name}`
+);

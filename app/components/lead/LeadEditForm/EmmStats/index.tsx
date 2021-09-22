@@ -31,8 +31,8 @@ const emmEntitiesKeySelector = (t: EmmEntity) => t.name;
 
 interface Props {
     className?: string;
-    emmEntities?: EmmEntity[];
-    emmTriggers?: EmmTrigger[];
+    emmEntities: EmmEntity[] | null | undefined;
+    emmTriggers: EmmTrigger[] | null | undefined;
 }
 
 function EmmStatsModal(props: Props) {
@@ -56,7 +56,7 @@ function EmmStatsModal(props: Props) {
                     <ListView
                         className={styles.list}
                         renderer={Tag}
-                        data={emmTriggers}
+                        data={emmTriggers ?? undefined}
                         keySelector={emmTriggerKeySelector}
                         rendererParams={emmTriggerRendererParams}
                     />
@@ -71,7 +71,7 @@ function EmmStatsModal(props: Props) {
                     <ListView
                         className={styles.list}
                         renderer={Tag}
-                        data={emmEntities}
+                        data={emmEntities ?? undefined}
                         keySelector={emmEntitiesKeySelector}
                         rendererParams={emmEntitiesRendererParams}
                     />
