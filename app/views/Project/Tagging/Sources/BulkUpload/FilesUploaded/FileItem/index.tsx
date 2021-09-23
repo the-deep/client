@@ -16,7 +16,7 @@ interface Props {
     isSelected: boolean;
     data: PartialLeadType;
     onSelect: (id: string) => void;
-    onDeleteFile: (id: string) => void;
+    onLeadRemove: (clientId: string) => void;
 }
 
 function FileItem(props: Props) {
@@ -24,15 +24,13 @@ function FileItem(props: Props) {
         className,
         isSelected,
         data,
-        onDeleteFile,
+        onLeadRemove,
         onSelect,
     } = props;
 
     const handleDeleteClick = useCallback(() => {
-        if (data.attachment) {
-            onDeleteFile(data.attachment);
-        }
-    }, [onDeleteFile, data.attachment]);
+        onLeadRemove(data.clientId);
+    }, [onLeadRemove, data.clientId]);
 
     const handleSelect = useCallback(() => {
         onSelect(data.clientId);
