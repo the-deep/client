@@ -16,11 +16,11 @@ import {
     useBooleanState,
 } from '@the-deep/deep-ui';
 import {
-    EntriesAsList,
     Error,
     getErrorObject,
     getErrorString,
     SetBaseValueArg,
+    useFormObject,
 } from '@togglecorp/toggle-form';
 import {
     IoAdd,
@@ -33,6 +33,7 @@ import ProjectUserSelectInput, { BasicProjectUser } from '#components/selections
 import LeadGroupSelectInput, { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import NewOrganizationMultiSelectInput from '#components/selections/NewOrganizationMultiSelectInput';
 import AddOrganizationModal from '#components/general/AddOrganizationModal';
+import NonFieldError from '#components/NonFieldError';
 import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
 import {
     enumKeySelector,
@@ -97,73 +98,66 @@ interface WebInfo {
     author?: OrganizationDetails;
 }
 
-interface Props {
+interface Props<N extends string> {
+    name: N;
     className?: string;
-    setFieldValue: (...values: EntriesAsList<PartialFormType>) => void;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    onChange: (value: SetBaseValueArg<PartialFormType>) => void;
     value: PartialFormType;
     error: Error<PartialFormType> | undefined;
     setPristine: (val: boolean) => void;
     pending?: boolean;
     projectId: string;
     disabled?: boolean;
+    defaultValue: PartialFormType;
     priorityOptions: NonNullable<LeadOptionsQuery['leadPriorityOptions']>['enumValues'] | undefined;
-    sourceOrganization: BasicOrganization | undefined | null;
-    authorOrganizations: BasicOrganization[] | undefined | null;
-    leadGroup: BasicLeadGroup | undefined | null;
-    assignee: { id: string; displayName?: string | null } | undefined | null;
+    sourceOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    authorOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    assigneeOptions: BasicProjectUser[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
     pendingLeadOptions?: boolean;
     attachment: LeadType['attachment'];
 }
 
-function LeadEditForm(props: Props) {
+function LeadEditForm<N extends string>(props: Props<N>) {
     const {
+        name,
         className,
         value,
-        setValue,
+        onChange,
         setPristine,
         error: riskyError,
-        setFieldValue,
+        defaultValue,
         pending: pendingFromProps,
         projectId,
         disabled,
         priorityOptions,
-        sourceOrganization,
-        authorOrganizations,
-        leadGroup,
-        assignee,
         pendingLeadOptions,
         attachment,
+        sourceOrganizationOptions,
+        onSourceOrganizationOptionsChange,
+        authorOrganizationOptions,
+        onAuthorOrganizationOptionsChange,
+        leadGroupOptions,
+        onLeadGroupOptionsChange,
+        assigneeOptions,
+        onAssigneeOptionChange,
     } = props;
 
     const error = getErrorObject(riskyError);
+    const setFieldValue = useFormObject(name, onChange, defaultValue);
 
-    const [
-        projectUserOptions,
-        setProjectUserOptions,
-    ] = useState<BasicProjectUser[] | undefined | null>();
-
-    const [
-        sourceOrganizationOptions,
-        setSourceOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
-
-    const [
-        authorOrganizationOptions,
-        setAuthorOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
-
-    // NOTE: the loading animation flashes when loading for
-    // lead-options. this will be mitigated when using graphql
     const [
         organizationAddType,
         setOrganizationAddType,
     ] = useState<'author' | 'publisher' | undefined>(undefined);
-
-    const [
-        leadGroupOptions,
-        setLeadGroupOptions,
-    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const [
         showAddOrganizationModal,
@@ -178,7 +172,7 @@ function LeadEditForm(props: Props) {
     ] = useBooleanState(false);
 
     const handleInfoAutoFill = useCallback((webInfo: WebInfo) => {
-        setValue((oldValues) => {
+        onChange((oldValues) => {
             const newValues = produce(oldValues, (safeValues) => {
                 if (webInfo.date) {
                     // eslint-disable-next-line no-param-reassign
@@ -213,7 +207,7 @@ function LeadEditForm(props: Props) {
                 id: String(webInfo.source.id),
                 title: String(webInfo.source.id),
             };
-            setSourceOrganizationOptions(
+            onSourceOrganizationOptionsChange(
                 (oldVal) => [...oldVal ?? [], transformedSource].filter(isDefined),
             );
         }
@@ -222,12 +216,17 @@ function LeadEditForm(props: Props) {
                 id: String(webInfo.author.id),
                 title: String(webInfo.author.id),
             };
-            setAuthorOrganizationOptions(
+            onAuthorOrganizationOptionsChange(
                 (oldVal) => [...oldVal ?? [], transformedAuthor].filter(isDefined),
             );
         }
         setPristine(false);
-    }, [setValue, setPristine]);
+    }, [
+        onChange,
+        setPristine,
+        onSourceOrganizationOptionsChange,
+        onAuthorOrganizationOptionsChange,
+    ]);
 
     const {
         pending: webInfoPending,
@@ -335,12 +334,17 @@ function LeadEditForm(props: Props) {
         };
         if (organizationAddType === 'publisher') {
             setFieldValue(transformedVal.id, 'source');
-            setSourceOrganizationOptions((oldVal) => [...oldVal ?? [], transformedVal]);
+            onSourceOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
         } else if (organizationAddType === 'author') {
             setFieldValue((oldVal: string[] | undefined | null) => [...oldVal ?? [], transformedVal.id], 'authors');
-            setAuthorOrganizationOptions((oldVal) => [...oldVal ?? [], transformedVal]);
+            onAuthorOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
         }
-    }, [organizationAddType, setFieldValue]);
+    }, [
+        organizationAddType,
+        setFieldValue,
+        onSourceOrganizationOptionsChange,
+        onAuthorOrganizationOptionsChange,
+    ]);
 
     const handleAddLeadGroupClick = useCallback(() => {
         setShowAddLeadAddGroupModal();
@@ -348,14 +352,15 @@ function LeadEditForm(props: Props) {
 
     const handleLeadGroupAdd = useCallback((val: BasicLeadGroup) => {
         setFieldValue(val.id, 'leadGroup');
-        setLeadGroupOptions((oldVal) => [...oldVal ?? [], val]);
-    }, [setFieldValue]);
+        onLeadGroupOptionsChange((oldVal) => [...oldVal ?? [], val]);
+    }, [setFieldValue, onLeadGroupOptionsChange]);
 
     const pending = pendingFromProps || pendingUserToken || webInfoPending || rawWebInfoPending;
 
     return (
         <div className={_cs(styles.leadEditForm, className)}>
             {pending && <PendingMessage />}
+            <NonFieldError error={error} />
             {value.sourceType === 'WEBSITE' && (
                 <>
                     <TextInput
@@ -434,8 +439,8 @@ function LeadEditForm(props: Props) {
                 className={styles.input}
                 value={value.leadGroup}
                 onChange={setFieldValue}
-                options={leadGroupOptions ?? (leadGroup && [leadGroup])}
-                onOptionsChange={setLeadGroupOptions}
+                options={leadGroupOptions}
+                onOptionsChange={onLeadGroupOptionsChange}
                 disabled={disabled}
                 label="Lead Group"
                 error={error?.leadGroup}
@@ -469,8 +474,8 @@ function LeadEditForm(props: Props) {
                     label="Assignee"
                     name="assignee"
                     onChange={setFieldValue}
-                    onOptionsChange={setProjectUserOptions}
-                    options={projectUserOptions ?? (assignee ? [assignee] : undefined)}
+                    onOptionsChange={onAssigneeOptionChange}
+                    options={assigneeOptions}
                     value={value.assignee}
                     projectId={projectId}
                 />
@@ -481,11 +486,8 @@ function LeadEditForm(props: Props) {
                     name="source"
                     value={value.source}
                     onChange={setFieldValue}
-                    options={
-                        sourceOrganizationOptions
-                        ?? (sourceOrganization ? [sourceOrganization] : undefined)
-                    }
-                    onOptionsChange={setSourceOrganizationOptions}
+                    options={sourceOrganizationOptions}
+                    onOptionsChange={onSourceOrganizationOptionsChange}
                     disabled={pendingLeadOptions || disabled}
                     label="Publishing Organizations"
                     // eslint-disable-next-line max-len
@@ -508,10 +510,8 @@ function LeadEditForm(props: Props) {
                     name="authors"
                     value={value.authors}
                     onChange={setFieldValue}
-                    options={
-                        authorOrganizationOptions ?? authorOrganizations
-                    }
-                    onOptionsChange={setAuthorOrganizationOptions}
+                    options={authorOrganizationOptions}
+                    onOptionsChange={onAuthorOrganizationOptionsChange}
                     disabled={pendingLeadOptions || disabled}
                     label="Authoring Organizations"
                     // eslint-disable-next-line max-len

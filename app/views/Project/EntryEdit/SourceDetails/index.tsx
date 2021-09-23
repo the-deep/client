@@ -3,7 +3,6 @@ import { _cs } from '@togglecorp/fujs';
 import { Card } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 import {
-    EntriesAsList,
     Error,
     SetBaseValueArg,
 } from '@togglecorp/toggle-form';
@@ -37,16 +36,24 @@ interface Props {
     className?: string;
     pending: boolean;
     leadValue: PartialFormType;
-    setLeadFieldValue: (...values: EntriesAsList<PartialFormType>) => void;
     leadFormError: Error<PartialFormType> | undefined;
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
     setPristine: (val: boolean) => void;
+    defaultValue: PartialFormType;
     projectId: string;
     disabled?: boolean;
-    sourceOrganization: BasicOrganization | undefined | null;
-    authorOrganizations: BasicOrganization[] | undefined | null;
-    leadGroup: BasicLeadGroup | undefined | null;
-    assignee: BasicProjectUser | undefined | null;
+    sourceOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    authorOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    assigneeOptions: BasicProjectUser[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
     attachment: LeadType['attachment'];
 }
 
@@ -54,18 +61,22 @@ function SourceDetails(props: Props) {
     const {
         className,
         leadValue,
-        setLeadFieldValue,
+        defaultValue,
         setValue,
         setPristine,
         leadFormError,
         pending,
         projectId,
         disabled,
-        sourceOrganization,
-        authorOrganizations,
-        leadGroup,
-        assignee,
         attachment,
+        sourceOrganizationOptions,
+        onSourceOrganizationOptionsChange,
+        authorOrganizationOptions,
+        onAuthorOrganizationOptionsChange,
+        leadGroupOptions,
+        onLeadGroupOptionsChange,
+        assigneeOptions,
+        onAssigneeOptionChange,
     } = props;
 
     const {
@@ -86,18 +97,23 @@ function SourceDetails(props: Props) {
             </Card>
             <Card className={styles.formContainer}>
                 <LeadEditForm
+                    name="lead"
                     pending={pending || leadOptionsLoading}
                     value={leadValue}
-                    setFieldValue={setLeadFieldValue}
+                    defaultValue={defaultValue}
                     error={leadFormError}
-                    setValue={setValue}
+                    onChange={setValue}
                     setPristine={setPristine}
                     projectId={projectId}
                     disabled={disabled}
-                    sourceOrganization={sourceOrganization}
-                    authorOrganizations={authorOrganizations}
-                    leadGroup={leadGroup}
-                    assignee={assignee}
+                    sourceOrganizationOptions={sourceOrganizationOptions}
+                    onSourceOrganizationOptionsChange={onSourceOrganizationOptionsChange}
+                    authorOrganizationOptions={authorOrganizationOptions}
+                    onAuthorOrganizationOptionsChange={onAuthorOrganizationOptionsChange}
+                    leadGroupOptions={leadGroupOptions}
+                    onLeadGroupOptionsChange={onLeadGroupOptionsChange}
+                    assigneeOptions={assigneeOptions}
+                    onAssigneeOptionChange={onAssigneeOptionChange}
                     attachment={attachment}
                     priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
                 />

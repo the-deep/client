@@ -28,8 +28,8 @@ function LeadEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { user } = React.useContext(UserContext);
 
-    const activeProject = project ? +project.id : undefined;
-    const userId = user ? +user.id : undefined;
+    const activeProject = project ? project.id : undefined;
+    const userId = user ? user.id : undefined;
 
     const partialLead: PartialFormType = useMemo(() => ({
         title: file?.title,
@@ -64,7 +64,6 @@ function LeadEdit(props: Props) {
             className={_cs(className, styles.leadEdit)}
             value={value}
             projectId={activeProject}
-            initialValue={partialLead}
             setFieldValue={setFieldValue}
             setPristine={setPristine}
             setValue={setValue}

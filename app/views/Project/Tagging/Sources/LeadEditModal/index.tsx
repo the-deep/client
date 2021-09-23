@@ -1,7 +1,5 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     Card,
     Button,
@@ -29,6 +27,9 @@ import {
     LeadCreateMutation,
     LeadCreateMutationVariables,
 } from '#generated/types';
+import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
+import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
+import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import { transformToFormError } from '#base/utils/errorTransform';
 import LeadEditForm from '#components/lead/LeadEditForm';
 import styles from './styles.css';
@@ -50,21 +51,21 @@ const PROJECT_LEAD = gql`
     query ProjectLead($projectId: ID!, $leadId: ID!) {
         project(id: $projectId) {
             lead (id: $leadId) {
-                id,
-                title,
+                id
+                title
                 leadGroup {
-                    id,
-                    title,
-                },
-                title,
-                assignee {
-                    id,
-                    displayName,
+                    id
+                    title
                 }
-                publishedOn,
-                text,
-                url,
-                website,
+                title
+                assignee {
+                    id
+                    displayName
+                }
+                publishedOn
+                text
+                url
+                website
                 attachment {
                     id
                     title
@@ -117,8 +118,8 @@ const LEAD_UPDATE = gql`
     ) {
         project(id: $projectId) {
             leadUpdate(id: $leadId, data: $data) {
-                ok,
-                errors,
+                ok
+                errors
             }
         }
     }
@@ -131,8 +132,8 @@ const LEAD_CREATE = gql`
     ) {
         project(id: $projectId) {
             leadCreate(data: $data) {
-                ok,
-                errors,
+                ok
+                errors
             }
         }
     }
@@ -161,11 +162,30 @@ function LeadEditModal(props: Props) {
         isAssessmentLead: false,
     }));
 
+    const [
+        projectUserOptions,
+        setProjectUserOptions,
+    ] = useState<BasicProjectUser[] | undefined | null>();
+
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+
+    const [
+        leadGroupOptions,
+        setLeadGroupOptions,
+    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
+
     const {
         pristine,
         setPristine,
         value,
-        setFieldValue,
         setValue,
         error: riskyError,
         validate,
@@ -206,6 +226,33 @@ function LeadEditModal(props: Props) {
                         source: leadData?.source?.id,
                         authors: leadData?.authors?.map((author) => author.id),
                     });
+                    const {
+                        leadGroup,
+                        assignee,
+                        authors,
+                        source,
+                    } = leadData;
+
+                    if (leadGroup) {
+                        setLeadGroupOptions((oldVal) => (
+                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
+                        ));
+                    }
+                    if (assignee) {
+                        setProjectUserOptions((oldVal) => (
+                            oldVal ? [...oldVal, assignee] : [assignee]
+                        ));
+                    }
+                    if (source) {
+                        setSourceOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, source] : [source]
+                        ));
+                    }
+                    if (authors) {
+                        setAuthorOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, ...authors] : [...authors]
+                        ));
+                    }
                 }
             },
         },
@@ -227,7 +274,6 @@ function LeadEditModal(props: Props) {
                     ok,
                     errors,
                 } = response.project.leadUpdate;
-                // FIXME: To talk with @tnagorra to figure our non field error during form save
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
@@ -325,19 +371,24 @@ function LeadEditModal(props: Props) {
             </Card>
             <Card className={styles.formContainer}>
                 <LeadEditForm
+                    name="lead"
                     pending={pending}
                     value={value}
+                    onChange={setValue}
                     projectId={projectId}
-                    setFieldValue={setFieldValue}
-                    setValue={setValue}
                     setPristine={setPristine}
                     error={riskyError}
-                    priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
-                    sourceOrganization={leadData?.source}
-                    authorOrganizations={leadData?.authors}
-                    leadGroup={leadData?.leadGroup}
-                    assignee={leadData?.assignee}
+                    defaultValue={initialValue}
                     attachment={leadData?.attachment}
+                    priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
+                    sourceOrganizationOptions={sourceOrganizationOptions}
+                    onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
+                    authorOrganizationOptions={authorOrganizationOptions}
+                    onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
+                    leadGroupOptions={leadGroupOptions}
+                    onLeadGroupOptionsChange={setLeadGroupOptions}
+                    assigneeOptions={projectUserOptions}
+                    onAssigneeOptionChange={setProjectUserOptions}
                 />
             </Card>
         </Modal>

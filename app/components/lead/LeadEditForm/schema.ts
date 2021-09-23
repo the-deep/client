@@ -15,16 +15,6 @@ import {
 } from '#generated/types';
 import { EnumFix } from '#utils/types';
 
-import {
-    KeyValueElement,
-} from '#types';
-
-export interface EmmEntityOption {
-    key: number;
-    label: string;
-    totalCount: number;
-}
-
 export type EmmTrigger = LeadEmmTriggerInputType;
 
 export type EmmEntity = EmmEntityInputType;
@@ -41,37 +31,6 @@ export type FormSchemaFields = ReturnType<FormSchema['fields']>;
 export interface Priority {
     key: number;
     value: string;
-}
-
-export interface LeadOptions {
-    status: KeyValueElement[];
-    projects: {
-        id: number;
-        title: string;
-    }[];
-    members: {
-        id: number;
-        displayName: string;
-    }[];
-    leadGroups: {
-        id: number;
-        title: string;
-    }[];
-    priority: Priority[];
-    confidentiality: KeyValueElement[];
-    organizations: {
-        id: number;
-        title: string;
-        shortName: string;
-        mergedAs: {
-            id: number;
-            title: string;
-        };
-    }[];
-    hasEmmLeads: boolean;
-    emmEntities?: EmmEntityOption[];
-    emmRiskFactors?: EmmEntityOption[];
-    emmKeywords?: EmmEntityOption[];
 }
 
 export const schema:FormSchema = {
