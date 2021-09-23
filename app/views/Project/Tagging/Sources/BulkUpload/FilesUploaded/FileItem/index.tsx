@@ -6,15 +6,17 @@ import {
 } from '@the-deep/deep-ui';
 import { IoTrashOutline } from 'react-icons/io5';
 
-import { FileUploadResponse } from '../../types';
+import {
+    PartialLeadType,
+} from '../../schema';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     isSelected: boolean;
-    data: FileUploadResponse;
-    onSelect: (id: number) => void;
-    onDeleteFile: (id: number) => void;
+    data: PartialLeadType;
+    onSelect: (id: string) => void;
+    onDeleteFile: (id: string) => void;
 }
 
 function FileItem(props: Props) {
@@ -27,12 +29,14 @@ function FileItem(props: Props) {
     } = props;
 
     const handleDeleteClick = useCallback(() => {
-        onDeleteFile(data.id);
-    }, [onDeleteFile, data.id]);
+        if (data.attachment) {
+            onDeleteFile(data.attachment);
+        }
+    }, [onDeleteFile, data.attachment]);
 
     const handleSelect = useCallback(() => {
-        onSelect(data.id);
-    }, [onSelect, data.id]);
+        onSelect(data.clientId);
+    }, [onSelect, data.clientId]);
 
     return (
         <div className={_cs(className, styles.itemContainer, isSelected && styles.selected)}>

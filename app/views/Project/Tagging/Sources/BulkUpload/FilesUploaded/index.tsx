@@ -13,51 +13,54 @@ import { IoSearch } from 'react-icons/io5';
 
 import _ts from '#ts';
 
-import { FileUploadResponse } from '../types';
+import { PartialLeadType } from '../schema';
 import FileItem from './FileItem';
 import LeadEdit from './LeadEdit';
 import styles from './styles.css';
 
-const keySelector = (d: FileUploadResponse): number => d.id;
+const keySelector = (d: PartialLeadType): string => d.clientId;
 
 interface Props {
     className?: string;
-    onDeleteFile: (id: number) => void;
-    files: FileUploadResponse[];
+    onDeleteFile: (id: string) => void;
+    leads: PartialLeadType[] | undefined;
+    selectedLead: string | undefined;
+    onSelectedLeadChange: (newLead: string) => void;
 }
 
 function FilesUploaded(props: Props) {
     const {
         className,
         onDeleteFile,
-        files = [],
+        leads,
+        selectedLead,
+        onSelectedLeadChange,
     } = props;
 
-    const [selectedFileId, setSelectedFileId] = useState<number | undefined>();
     const [searchText, setSearchText] = useState<string | undefined>();
 
     const fileRendererParams = useCallback((
-        _: number,
-        data: FileUploadResponse,
+        _: string,
+        data: PartialLeadType,
     ) => ({
         data,
-        isSelected: data.id === selectedFileId,
-        onSelect: setSelectedFileId,
+        isSelected: data.clientId === selectedLead,
+        onSelect: onSelectedLeadChange,
         onDeleteFile,
-    }), [onDeleteFile, setSelectedFileId, selectedFileId]);
+    }), [onDeleteFile, onSelectedLeadChange, selectedLead]);
 
     const searchedFiles = useMemo(() => {
         if (isTruthyString(searchText)) {
-            return files.filter((file) => (
+            return leads?.filter((file) => (
                 caseInsensitiveSubmatch(file.title, searchText)
             ));
         }
-        return files;
-    }, [files, searchText]);
+        return leads;
+    }, [leads, searchText]);
 
     const selectedFile = useMemo(() => (
-        files.find((f) => f.id === selectedFileId)
-    ), [files, selectedFileId]);
+        leads?.find((f) => f.id === selectedLead)
+    ), [leads, selectedLead]);
 
     return (
         <div className={_cs(className, styles.filesUploadedDetails)}>
@@ -88,7 +91,6 @@ function FilesUploaded(props: Props) {
             {selectedFile && (
                 <LeadEdit
                     className={styles.editLead}
-                    file={selectedFile}
                 />
             )}
         </div>

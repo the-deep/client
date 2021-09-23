@@ -45,6 +45,7 @@ export const PROJECT_FRAMEWORK = gql`
                     title,
                 },
                 title,
+                clientId,
                 assignee {
                     id,
                     displayName,

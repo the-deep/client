@@ -103,6 +103,7 @@ function EntryEdit(props: Props) {
     // LEAD
 
     const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
+        clientId: randomString(),
         sourceType: 'WEBSITE',
         isAssessmentLead: false,
     }));
