@@ -161,12 +161,15 @@ function SectionInput(props: SectionInputProps) {
             className={_cs(
                 className,
                 autoFocus && styles.focus,
+                styles.sectionExpandable,
             )}
+            headerClassName={styles.sectionHeader}
             defaultVisibility={autoFocus}
         >
             <NonFieldError error={error} />
             <TextInput
                 name="title"
+                className={styles.textInput}
                 label="Title"
                 value={value.title}
                 onChange={onFieldChange}
@@ -176,6 +179,7 @@ function SectionInput(props: SectionInputProps) {
             <TextArea
                 // FIXME: use translation
                 label="Tooltip"
+                className={styles.textInput}
                 name="tooltip"
                 rows={4}
                 value={value.tooltip}
@@ -296,6 +300,8 @@ function SectionsEditor(props: Props) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.mainContainer}
+                heading="Sections"
                 headerActions={(
                     <>
                         <Button
@@ -320,8 +326,7 @@ function SectionsEditor(props: Props) {
             >
                 <NonFieldError error={error} />
                 <Container
-                    // FIXME: Use translation
-                    heading="Sections"
+                    className={styles.sectionContainer}
                     headerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
                         <QuickActionButton
                             name={undefined}

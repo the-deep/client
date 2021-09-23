@@ -1,13 +1,40 @@
 .form {
     display: flex;
     flex-direction: column;
+    background: var(--dui-color-foreground);
     overflow-y: auto;
 
-    .content {
-        overflow-y: auto;
+    .main-container {
+        background: var(--dui-color-foreground);
+        padding: 0;
+
+        .content {
+            overflow-y: auto;
+
+            .section-container {
+                background: var(--dui-color-foreground);
+                padding: 0;
+
+                .section-expandable {
+                    border: none;
+                    padding: var(--dui-spacing-medium) 0;
+
+                    .section-header {
+                        background: var(--dui-color-foreground);
+                    }
+
+                    .text-input {
+                        margin: var(--dui-spacing-small) 0;
+                    }
+                }
+            }
+        }
     }
 
+
     .section-input {
+        border: none !important;
+
         &.focus {
             animation: focus 2s 1 ease-out;
         }
