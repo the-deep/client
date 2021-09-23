@@ -1,5 +1,8 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 import {
     Card,
     Button,
@@ -53,6 +56,7 @@ const PROJECT_LEAD = gql`
             lead (id: $leadId) {
                 id
                 title
+                clientId
                 leadGroup {
                     id
                     title
@@ -157,6 +161,7 @@ function LeadEditModal(props: Props) {
     } = props;
 
     const [initialValue] = useState<PartialFormType>(() => ({
+        clientId: randomString(),
         sourceType: 'WEBSITE',
         confidentiality: 'UNPROTECTED',
         isAssessmentLead: false,

@@ -64,9 +64,8 @@ function LeadEdit(props: Props) {
             className={_cs(className, styles.leadEdit)}
             value={value}
             projectId={activeProject}
-            setFieldValue={setFieldValue}
             setPristine={setPristine}
-            setValue={setValue}
+            onChange={setValue}
             error={riskyError}
         />
     );
