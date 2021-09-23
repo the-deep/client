@@ -50,6 +50,9 @@ import {
     BulkUpdateEntriesMutation,
     BulkUpdateEntriesMutationVariables,
 } from '#generated/types';
+import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
+import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
+import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import EntryInput from '#components/entry/EntryInput';
 import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
@@ -104,6 +107,26 @@ function EntryEdit(props: Props) {
         isAssessmentLead: false,
     }));
 
+    const [
+        projectUserOptions,
+        setProjectUserOptions,
+    ] = useState<BasicProjectUser[] | undefined | null>();
+
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+
+    const [
+        leadGroupOptions,
+        setLeadGroupOptions,
+    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
+
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
             clientId: randomString(),
@@ -117,7 +140,6 @@ function EntryEdit(props: Props) {
 
     const {
         value: leadValue,
-        setFieldValue: setLeadFieldValue,
         setValue: setLeadValue,
         setPristine: setLeadPristine,
         error: leadFormError,
@@ -354,6 +376,33 @@ function EntryEdit(props: Props) {
                         source: leadData?.source?.id,
                         authors: leadData?.authors?.map((author) => author.id),
                     });
+                    const {
+                        leadGroup,
+                        assignee,
+                        authors,
+                        source,
+                    } = leadData;
+
+                    if (leadGroup) {
+                        setLeadGroupOptions((oldVal) => (
+                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
+                        ));
+                    }
+                    if (assignee) {
+                        setProjectUserOptions((oldVal) => (
+                            oldVal ? [...oldVal, assignee] : [assignee]
+                        ));
+                    }
+                    if (source) {
+                        setSourceOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, source] : [source]
+                        ));
+                    }
+                    if (authors) {
+                        setAuthorOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, ...authors] : [...authors]
+                        ));
+                    }
                 }
 
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
@@ -750,15 +799,19 @@ function EntryEdit(props: Props) {
                             <SourceDetails
                                 leadValue={leadValue}
                                 setValue={setLeadValue}
+                                defaultValue={leadInitialValue}
                                 setPristine={setLeadPristine}
-                                setLeadFieldValue={setLeadFieldValue}
                                 leadFormError={leadFormError}
                                 pending={loading}
                                 projectId={projectId}
-                                sourceOrganization={lead?.source}
-                                authorOrganizations={lead?.authors}
-                                leadGroup={lead?.leadGroup}
-                                assignee={lead?.assignee}
+                                sourceOrganizationOptions={sourceOrganizationOptions}
+                                onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
+                                authorOrganizationOptions={authorOrganizationOptions}
+                                onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
+                                leadGroupOptions={leadGroupOptions}
+                                onLeadGroupOptionsChange={setLeadGroupOptions}
+                                assigneeOptions={projectUserOptions}
+                                onAssigneeOptionChange={setProjectUserOptions}
                                 attachment={lead?.attachment}
                             />
                         )}
