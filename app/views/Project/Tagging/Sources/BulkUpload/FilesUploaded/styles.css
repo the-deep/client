@@ -31,7 +31,14 @@
         }
     }
 
-    .edit-lead {
+    .right-pane {
+        display: flex;
         flex-basis: 60%;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .lead-preview {
+            flex-basis: 50%;
+        }
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     randomString,
@@ -25,18 +25,23 @@ import {
 
 import Upload from './Upload';
 import FilesUploaded from './FilesUploaded';
-import { FileUploadResponse } from './types';
+import {
+    FileUploadResponse,
+    sourceTypeMap,
+} from './types';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     onClose: () => void;
+    projectId: string;
 }
 
 function BulkUpload(props: Props) {
     const {
         className,
         onClose,
+        projectId,
     } = props;
 
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
@@ -76,8 +81,9 @@ function BulkUpload(props: Props) {
         ]));
         const newLead: PartialLeadType = {
             clientId: randomString(),
-            sourceType: 'WEBSITE',
+            sourceType: sourceTypeMap[value.sourceType],
             confidentiality: 'UNPROTECTED',
+            priority: 'LOW',
             isAssessmentLead: false,
             attachment: String(value.id),
             title: value.title,
@@ -89,21 +95,50 @@ function BulkUpload(props: Props) {
             ],
             'leads',
         );
-    }, [setFormFieldValue]);
+        if (!selectedLead) {
+            setSelectedLead(newLead.clientId);
+        }
+    }, [setUploadedFiles, setFormFieldValue, selectedLead]);
 
-    const handleDeleteFile = useCallback((id: string) => {
-        setUploadedFiles((oldState: FileUploadResponse[]) => {
-            const updatedState = produce(oldState, (safeState) => {
-                const index = safeState.findIndex(
-                    (file: FileUploadResponse) => String(file.id) === id,
-                );
-                if (index !== -1) {
-                    safeState.splice(index, 1);
-                }
+    const handleLeadRemove = useCallback((clientId: string) => {
+        const selectedLeadObj = formValue?.leads?.find((lead) => lead.clientId === clientId);
+        setFormFieldValue((oldVal) => oldVal?.filter((lead) => lead.clientId !== clientId), 'leads');
+        if (selectedLeadObj?.attachment) {
+            setUploadedFiles((oldState: FileUploadResponse[]) => {
+                const updatedState = produce(oldState, (safeState) => {
+                    const index = safeState.findIndex(
+                        (file) => String(file.id) === selectedLeadObj.attachment,
+                    );
+                    if (index !== -1) {
+                        safeState.splice(index, 1);
+                    }
+                });
+                return updatedState;
             });
-            return updatedState;
+        }
+    }, [formValue, setFormFieldValue]);
+
+    const selectedLeadAttachment = useMemo(() => {
+        if (!selectedLead) {
+            return undefined;
+        }
+        const selectedLeadData = formValue?.leads?.find((lead) => lead.clientId === selectedLead);
+        if (!selectedLeadData) {
+            return undefined;
+        }
+        const selectedFile = uploadedFiles?.find(
+            (file) => String(file.id) === selectedLeadData.attachment,
+        );
+        if (!selectedFile) {
+            return undefined;
+        }
+        return ({
+            id: String(selectedFile.id),
+            title: selectedFile.title,
+            mimeType: selectedFile.mimeType,
+            file: selectedFile.file ? { url: selectedFile.file } : undefined,
         });
-    }, []);
+    }, [uploadedFiles, selectedLead, formValue]);
 
     return (
         <Modal
@@ -120,9 +155,12 @@ function BulkUpload(props: Props) {
             <FilesUploaded
                 leads={formValue.leads}
                 className={styles.details}
-                onDeleteFile={handleDeleteFile}
+                onLeadRemove={handleLeadRemove}
                 selectedLead={selectedLead}
+                onLeadChange={handleLeadChange}
                 onSelectedLeadChange={setSelectedLead}
+                selectedLeadAttachment={selectedLeadAttachment}
+                projectId={projectId}
             />
         </Modal>
     );

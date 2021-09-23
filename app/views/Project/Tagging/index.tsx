@@ -184,9 +184,10 @@ function Tagging(props: Props) {
                     onLeadSaveSuccess={handleSingleLeadSaveSuccess}
                 />
             )}
-            {isBulkModalShown && (
+            {isBulkModalShown && project?.id && (
                 <BulkUpload
                     onClose={hideBulkUploadModal}
+                    projectId={project.id}
                 />
             )}
         </SubNavbarContext.Provider>

@@ -98,13 +98,12 @@ interface WebInfo {
     author?: OrganizationDetails;
 }
 
-interface Props<N extends string> {
+interface Props<N extends string | number> {
     name: N;
     className?: string;
-    onChange: (value: SetBaseValueArg<PartialFormType>) => void;
+    onChange: (value: SetBaseValueArg<PartialFormType>, name: N) => void;
     value: PartialFormType;
     error: Error<PartialFormType> | undefined;
-    setPristine: (val: boolean) => void;
     pending?: boolean;
     projectId: string;
     disabled?: boolean;
@@ -126,13 +125,12 @@ interface Props<N extends string> {
     attachment: LeadType['attachment'];
 }
 
-function LeadEditForm<N extends string>(props: Props<N>) {
+function LeadEditForm<N extends string | number>(props: Props<N>) {
     const {
         name,
         className,
         value,
         onChange,
-        setPristine,
         error: riskyError,
         defaultValue,
         pending: pendingFromProps,
@@ -201,7 +199,7 @@ function LeadEditForm<N extends string>(props: Props<N>) {
                 }
             });
             return newValues;
-        });
+        }, name);
         if (webInfo.source) {
             const transformedSource = {
                 id: String(webInfo.source.id),
@@ -220,10 +218,9 @@ function LeadEditForm<N extends string>(props: Props<N>) {
                 (oldVal) => [...oldVal ?? [], transformedAuthor].filter(isDefined),
             );
         }
-        setPristine(false);
     }, [
+        name,
         onChange,
-        setPristine,
         onSourceOrganizationOptionsChange,
         onAuthorOrganizationOptionsChange,
     ]);
