@@ -79,9 +79,6 @@ export const PROJECT_ENTRIES = gql`
                         }
                     }
                     controlled
-                    verifiedBy {
-                        id
-                    }
                 }
             }
             analysisFramework {

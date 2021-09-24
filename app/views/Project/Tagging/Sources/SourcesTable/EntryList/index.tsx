@@ -92,9 +92,6 @@ export const LEAD_ENTRIES = gql`
                         }
                     }
                     controlled
-                    verifiedBy {
-                        id
-                    }
                 }
             }
             analysisFramework {

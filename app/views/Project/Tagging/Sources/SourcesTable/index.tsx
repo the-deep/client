@@ -95,6 +95,7 @@ export const PROJECT_ENTRIES = gql`
         $search: String,
         $statuses: [LeadStatusEnum!],
         $entriesFilterData: LeadEntriesFilterData,
+        $customFilters: LeadCustomFilterEnum,
     ) {
         project(id: $projectId) {
             leads (
@@ -116,6 +117,7 @@ export const PROJECT_ENTRIES = gql`
                 search: $search,
                 statuses: $statuses,
                 entriesFilterData: $entriesFilterData,
+                customFilters: $customFilters,
             ) {
                 totalCount
                 page
