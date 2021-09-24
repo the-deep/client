@@ -34,9 +34,10 @@ import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import routes from '#base/configs/routes';
 
 import {
-    UserActivityStat,
-    CountTimeSeries,
-} from '#types';
+    DateCountType,
+    UserEntityCountType,
+    ProjectPermission,
+} from '#generated/types';
 
 import _ts from '#ts';
 
@@ -55,25 +56,26 @@ const minTickFormatter = (value: number | string) => {
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
-const recentlyActiveKeySelector = (d: UserActivityStat) => d.id;
+const topTaggersKeySelector = (d: UserEntityCountType) => d?.id ?? '';
 
-interface RecentProjectItemProps {
+export interface RecentProjectItemProps {
     className?: string;
-    projectId: number;
-    title: string;
-    isPrivate: boolean;
-    startDate?: string;
-    endDate?: string;
+    projectId?: string;
+    title?: string;
+    isPrivate?: boolean;
+    startDate: string | null | undefined;
+    endDate: string | null | undefined;
     description?: string;
-    projectOwnerName: string;
-    analysisFrameworkTitle?: string;
-    analysisFramework?: number;
-    totalUsers: number;
-    totalSources: number;
-    totalSourcesTagged: number;
-    totalSourcesValidated: number;
-    entriesActivity: CountTimeSeries[];
-    recentlyActive: UserActivityStat[];
+    projectOwnerName: string | null | undefined;
+    analysisFrameworkTitle: string | undefined;
+    analysisFramework: string | undefined;
+    totalUsers: number | null | undefined;
+    totalSources: number | null | undefined;
+    totalSourcesTagged: number | null | undefined;
+    totalSourcesValidated: number | null | undefined;
+    entriesActivity: DateCountType[] | null | undefined;
+    topTaggers: UserEntityCountType[] | null | [] | undefined;
+    allowedPermissions: ProjectPermission[] | null | undefined;
 }
 
 function ProjectItem(props: RecentProjectItemProps) {
@@ -92,11 +94,12 @@ function ProjectItem(props: RecentProjectItemProps) {
         totalSources = 0,
         totalSourcesTagged = 0,
         totalSourcesValidated = 0,
-        recentlyActive,
+        topTaggers,
         entriesActivity,
+        allowedPermissions,
     } = props;
 
-    const recentlyActiveRendererParams = useCallback((_, data) => ({
+    const topTaggersRendererParams = useCallback((_, data) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
         labelContainerClassName: styles.recentlyActiveUserName,
@@ -114,13 +117,9 @@ function ProjectItem(props: RecentProjectItemProps) {
     const convertedProjectActivity = useMemo(() => (
         entriesActivity?.map((pa) => ({
             count: pa.count,
-            date: (new Date(pa.date)).getTime(),
+            date: pa.date ? (new Date(pa.date)).getTime() : undefined,
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [entriesActivity]);
-
-    // TODO: get these from server later on
-    const canEditProject = true;
-    const canAddEntries = true;
 
     return (
         <ContainerCard
@@ -149,7 +148,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                             _ts('home.recentProjects', 'publicProjectLabel')
                         )}
                     </Element>
-                    {canEditProject && (
+                    {allowedPermissions?.includes('UPDATE_PROJECT') && (
                         <SmartButtonLikeLink
                             variant="tertiary"
                             route={routes.projectEdit}
@@ -167,14 +166,16 @@ function ProjectItem(props: RecentProjectItemProps) {
             )}
             contentClassName={styles.content}
             // TODO: there should be two different urls for editing and viewing entry
-            footerActions={canAddEntries && (
+            footerActions={(
                 <SmartButtonLikeLink
                     route={routes.tagging}
                     attrs={{
                         projectId,
                     }}
                 >
-                    {_ts('home', 'continueTaggingButton')}
+                    {allowedPermissions?.includes('UPDATE_ENTRY')
+                        ? _ts('home', 'continueTaggingButton')
+                        : _ts('home', 'viewTaggingButton')}
                 </SmartButtonLikeLink>
             )}
         >
@@ -219,9 +220,9 @@ function ProjectItem(props: RecentProjectItemProps) {
                             valueContainerClassName={styles.recentlyActiveList}
                             value={(
                                 <List
-                                    data={recentlyActive}
-                                    keySelector={recentlyActiveKeySelector}
-                                    rendererParams={recentlyActiveRendererParams}
+                                    data={topTaggers ?? []}
+                                    keySelector={topTaggersKeySelector}
+                                    rendererParams={topTaggersRendererParams}
                                     renderer={TextOutput}
                                 />
                             )}
@@ -236,23 +237,24 @@ function ProjectItem(props: RecentProjectItemProps) {
                         <IoBookmarkOutline className={styles.bookmarkIcon} />
                     )}
                     label={_ts('home.recentProjects', 'totalSourcesLabel')}
-                    value={totalSources}
+                    value={totalSources ?? 0}
                     variant="accent"
                 />
                 <Card className={styles.progressLines}>
                     <ProgressLine
-                        progress={(totalSourcesValidated / totalSources) * 100}
+                        progress={((totalSourcesValidated ?? 0) / (totalSources ?? 0)) * 100}
                         title={_ts('home.recentProjects', 'sourcesTaggedValidatedLabel')}
                         variant="complement1"
                     />
                     <ProgressLine
-                        progress={(totalSourcesTagged / totalSources) * 100}
+                        progress={((totalSourcesTagged ?? 0) / (totalSources ?? 0)) * 100}
                         title={_ts('home.recentProjects', 'sourcesTaggedLabel')}
                         variant="complement2"
                     />
                     <ProgressLine
                         progress={
-                            ((totalSources - totalSourcesTagged) / totalSources) * 100
+                            // eslint-disable-next-line max-len
+                            (((totalSources ?? 0) - (totalSourcesTagged ?? 0)) / (totalSources ?? 0)) * 100
                         }
                         title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
                         variant="complement3"

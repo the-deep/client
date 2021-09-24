@@ -1,9 +1,9 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import { generatePath } from 'react-router-dom';
+import { useQuery, gql } from '@apollo/client';
 import {
     ButtonLikeLink,
     Container,
@@ -14,20 +14,22 @@ import { GiShrug } from 'react-icons/gi';
 
 import { useRequest } from '#base/utils/restRequest';
 
-import {
-    UserActivityStat,
-    CountTimeSeries,
-    ProjectStat,
-    ProjectsSummary,
-} from '#types';
 import { Project } from '#base/types/project';
 import PageContent from '#components/PageContent';
 import ProjectSelectInput from '#components/selections/ProjectSelectInput';
 import routes from '#base/configs/routes';
 
 import _ts from '#ts';
+import {
+    RecentProjectsQuery,
+    RecentProjectsQueryVariables,
+    FetchProjectQuery,
+    FetchProjectQueryVariables,
+} from '#generated/types';
 
-import ProjectItem from './ProjectItem';
+import { ProjectsSummary } from '#types';
+
+import ProjectItem, { RecentProjectItemProps } from './ProjectItem';
 import Summary from './Summary';
 import Activity from './Activity';
 import Assignment from './Assignment';
@@ -35,48 +37,109 @@ import RecentActivity from './RecentActivity';
 
 import styles from './styles.css';
 
-interface RecentProjectItemProps {
-    projectId: number;
-    title: string;
-    isPrivate: boolean;
-    description?: string;
-    projectOwnerName: string;
-    analysisFrameworkTitle?: string;
-    startDate?: string;
-    endDate?: string;
-    totalUsers: number;
-    totalSources: number;
-    totalSourcesTagged: number;
-    totalSourcesValidated: number;
-    entriesActivity: CountTimeSeries[];
-    recentlyActive: UserActivityStat[];
+const RECENT_PROJECTS = gql`
+query RecentProjects{
+    recentProjects {
+        id
+        title
+        isPrivate
+        description
+        startDate
+        endDate
+        analysisFramework {
+            id
+            title
+        }
+        createdBy {
+            displayName
+        }
+        leads {
+            totalCount
+        }
+        userGroups {
+            memberships {
+                role
+            }
+        }
+        topTaggers {
+            count
+            name
+        }
+        stats {
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsTaggedAndControlled
+            numberOfUsers
+            entriesActivity {
+                count
+                date
+            }
+            leadsActivity {
+                count
+                date
+            }
+            numberOfEntries
+        }
+        allowedPermissions
+    }
 }
+`;
 
-const recentProjectKeySelector = (option: RecentProjectItemProps) => option.projectId;
+const FETCH_PROJECT = gql`
+query FetchProject($projectId: ID!) {
+    project(id: $projectId) {
+        id
+        title
+        isPrivate
+        description
+        startDate
+        endDate
+        analysisFramework {
+            id
+            title
+        }
+        createdBy {
+            displayName
+        }
+        leads {
+            totalCount
+        }
+        userGroups {
+            memberships {
+                role
+            }
+        }
+        topTaggers {
+            count
+            name
+        }
+        stats {
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsTaggedAndControlled
+            numberOfUsers
+            entriesActivity {
+                count
+                date
+            }
+            leadsActivity {
+                count
+                date
+            }
+            numberOfEntries
+        }
+        allowedPermissions
+    }
+}
+`;
+
+type ProjectDetail = NonNullable<FetchProjectQuery>['project'];
+
+const recentProjectKeySelector = (d: ProjectDetail) => d?.id ?? '';
 
 interface ViewProps {
     className?: string;
 }
-
-const getRecentProjectStat = (projectStat: ProjectStat) => ({
-    projectId: projectStat.id,
-    title: projectStat.title,
-    isPrivate: projectStat.isPrivate,
-    description: projectStat.description,
-    startDate: projectStat.startDate,
-    endDate: projectStat.endDate,
-    projectOwnerName: projectStat.createdByName,
-    analysisFrameworkTitle: projectStat.analysisFrameworkTitle,
-    analysisFramework: projectStat.analysisFramework,
-    totalUsers: projectStat.numberOfUsers,
-    totalSources: projectStat.numberOfLeads,
-    totalSourcesTagged: projectStat.numberOfLeadsTagged,
-    totalSourcesValidated: projectStat.numberOfLeadsTaggedAndVerified,
-    entriesActivity: projectStat.entriesActivity,
-    role: projectStat.role,
-    // TODO: Use better activity after API is ready
-    recentlyActive: projectStat.topTaggers,
-});
 
 function Home(props: ViewProps) {
     const {
@@ -89,13 +152,28 @@ function Home(props: ViewProps) {
     >(undefined);
 
     const {
-        pending: recentProjectsPending,
-        response: recentProjectsResponse,
-    } = useRequest<ProjectStat[]>({
-        url: 'server://projects-stat/recent/',
-        method: 'GET',
-        failureHeader: _ts('home', 'recentProjectsTitle'),
-    });
+        data: recentProjectsResponse,
+        loading: recentProjectsPending,
+    } = useQuery<RecentProjectsQuery, RecentProjectsQueryVariables>(
+        RECENT_PROJECTS,
+    );
+
+    const variables = useMemo(() => (
+        selectedProject
+            ? ({ projectId: selectedProject })
+            : undefined
+    ), [selectedProject]);
+
+    const {
+        data: selectedProjectResponse,
+        loading: selectedProjectPending,
+    } = useQuery<FetchProjectQuery, FetchProjectQueryVariables>(
+        FETCH_PROJECT,
+        {
+            skip: !variables,
+            variables,
+        },
+    );
 
     const {
         pending: summaryPending,
@@ -106,37 +184,41 @@ function Home(props: ViewProps) {
         failureHeader: _ts('home', 'summaryOfMyProjectsHeading'),
     });
 
-    const {
-        pending: projectStatsPending,
-        response: projectStats,
-    } = useRequest<ProjectStat>({
-        skip: isNotDefined(selectedProject),
-        url: `server://projects-stat/${selectedProject}/`,
-        method: 'GET',
-        failureHeader: _ts('home', 'projectDetails'),
-    });
+    const recentProjectsRendererParams = useCallback(
+        (_, data: ProjectDetail): RecentProjectItemProps => ({
+            projectId: data?.id,
+            title: data?.title,
+            isPrivate: data?.isPrivate,
+            startDate: data?.startDate,
+            endDate: data?.endDate,
+            description: data?.description,
+            projectOwnerName: data?.createdBy?.displayName,
+            analysisFrameworkTitle: data?.analysisFramework?.title,
+            analysisFramework: data?.analysisFramework?.id,
+            totalUsers: data?.stats?.numberOfUsers,
+            totalSources: data?.stats?.numberOfLeads,
+            totalSourcesTagged: data?.stats?.numberOfLeadsTagged,
+            totalSourcesValidated: data?.stats?.numberOfLeadsTaggedAndControlled,
+            entriesActivity: data?.stats?.entriesActivity,
+            topTaggers: data?.topTaggers,
+            allowedPermissions: data?.allowedPermissions,
+        }),
+        [],
+    );
 
-    const projectDashboardData = useMemo(() => {
-        if (!selectedProject || !projectStats) {
-            return undefined;
+    const pageDataPending = summaryPending
+    || recentProjectsPending
+    || selectedProjectPending;
+
+    const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
+        if (selectedProject && selectedProjectResponse?.project) {
+            return [selectedProjectResponse.project];
         }
-        return getRecentProjectStat(projectStats);
-    }, [projectStats, selectedProject]);
-
-    const recentProjectsRendererParams = useCallback((_, data) => ({
-        ...data,
-    }), []);
-
-    const finalRecentProjects: RecentProjectItemProps[] = useMemo(() => {
-        if (selectedProject && projectDashboardData) {
-            return [projectDashboardData];
+        if (recentProjectsResponse?.recentProjects) {
+            return recentProjectsResponse.recentProjects;
         }
-        return (recentProjectsResponse ?? []).map(
-            (recentProject) => getRecentProjectStat(recentProject),
-        );
-    }, [projectDashboardData, selectedProject, recentProjectsResponse]);
-
-    const pageDataPending = summaryPending || recentProjectsPending || projectStatsPending;
+        return undefined;
+    }, [selectedProject, selectedProjectResponse, recentProjectsResponse]);
 
     return (
         <PageContent
@@ -192,7 +274,7 @@ function Home(props: ViewProps) {
             >
                 <ListView
                     className={styles.projectList}
-                    data={finalRecentProjects}
+                    data={recentProjects}
                     rendererParams={recentProjectsRendererParams}
                     renderer={ProjectItem}
                     keySelector={recentProjectKeySelector}
