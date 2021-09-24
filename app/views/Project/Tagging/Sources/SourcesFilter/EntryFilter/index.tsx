@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
+    listToMap,
 } from '@togglecorp/fujs';
 import {
     DateRangeInput,
     MultiSelectInput,
     SelectInput,
+    List,
 } from '@the-deep/deep-ui';
 import {
+    useFormArray,
     useFormObject,
     SetValueArg,
 } from '@togglecorp/toggle-form';
-
 import {
     SourceFilterOptionsQuery,
+    AnalysisFrameworkFilterType,
 } from '#generated/types';
 import { enumKeySelector, enumLabelSelector } from '#utils/common';
-import { SourcesFilterFields } from '..';
+
+import FrameworkFilterItem from './FrameworkFilterItem';
+import { PartialEntriesFilterDataType } from '..';
 import styles from './styles.css';
 
 const userKeySelector = (
@@ -25,6 +30,7 @@ const userKeySelector = (
 const userLabelSelector = (
     d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
 ) => d.displayName ?? `${d.firstName} ${d.lastName}`;
+const filterKeySelector = (d: AnalysisFrameworkFilterType) => d.key;
 
 interface ControlStatusOption {
     key: 'true' | 'false';
@@ -44,12 +50,14 @@ const controlledStatusOptions: ControlStatusOption[] = [
     },
 ];
 
-const defaultValue: NonNullable<SourcesFilterFields['entriesFilterData']> = {};
+const defaultValue: PartialEntriesFilterDataType = {
+    filterableData: [],
+};
 
 interface Props<K extends string> {
     name: K;
-    value: SourcesFilterFields['entriesFilterData'] | undefined;
-    onChange: (value: SetValueArg<SourcesFilterFields['entriesFilterData']> | undefined, name: K) => void;
+    value: PartialEntriesFilterDataType | undefined;
+    onChange: (value: SetValueArg<PartialEntriesFilterDataType | undefined>, name: K) => void;
     optionsDisabled: boolean;
     options?: SourceFilterOptionsQuery;
     disabled?: boolean;
@@ -68,6 +76,36 @@ function EntryFilter<K extends string>(props: Props<K>) {
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
+    const {
+        setValue: onFrameworkFilterChange,
+    } = useFormArray('filterableData', setFieldValue);
+
+    const filterValuesMap = useMemo(() => (
+        listToMap(
+            value?.filterableData ?? [],
+            (d) => d.filterKey,
+            (d, _, i) => ({
+                index: i,
+                value: d,
+            }),
+        )
+    ), [value?.filterableData]);
+
+    const framewonrkFilterRendererParams = useCallback(
+        (key: string, data: AnalysisFrameworkFilterType) => {
+            const filterValue = filterValuesMap[key];
+            return {
+                name: filterValue?.index,
+                title: data.title,
+                value: filterValue?.value,
+                filter: data,
+                onChange: onFrameworkFilterChange,
+                optionsDisabled,
+                disabled,
+            };
+        },
+        [onFrameworkFilterChange, optionsDisabled, disabled, filterValuesMap],
+    );
 
     return (
         <div className={_cs(className, styles.entryFilter)}>
@@ -75,7 +113,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 className={styles.input}
                 name="createdBy"
                 value={value?.createdBy}
-                onChange={setFieldValue}
+                onChange={setFieldValue} // FIXME: fix type issue
                 keySelector={userKeySelector}
                 labelSelector={userLabelSelector}
                 options={options?.project?.members}
@@ -119,13 +157,20 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 className={styles.input}
                 name="entryTypes"
                 value={value?.entryTypes}
-                onChange={setFieldValue}
+                onChange={setFieldValue} // FIXME: fix type issue
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 options={options?.entryTypeOptions?.enumValues}
                 disabled={disabled || optionsDisabled}
                 label="Entry type"
                 placeholder="Entry type"
+            />
+            <List
+                data={options?.project?.analysisFramework?.filters ?? undefined}
+                keySelector={filterKeySelector}
+                renderer={FrameworkFilterItem}
+                rendererClassName={styles.input}
+                rendererParams={framewonrkFilterRendererParams}
             />
         </div>
     );

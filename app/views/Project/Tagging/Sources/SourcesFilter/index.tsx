@@ -9,6 +9,8 @@ import {
     getErrorObject,
     getErrorString,
     useForm,
+    ArraySchema,
+    PartialForm,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
@@ -58,6 +60,7 @@ export type SourcesFilterFields = PurgeNull<Pick<EnumFix<ProjectSourcesQueryVari
     | 'confidentiality'
     | 'assignees'
     | 'authoringOrganizationTypes'
+    | 'customFilters'
 >> & {
     createdAt?: {
         startDate: string;
@@ -73,6 +76,7 @@ export type SourcesFilterFields = PurgeNull<Pick<EnumFix<ProjectSourcesQueryVari
     >,
         'commentStatus'
         | 'entryTypes'
+        | 'filterableData'
     >> & {
         controlled?: 'true' | 'false';
         createdBy?: string[];
@@ -84,8 +88,42 @@ export type SourcesFilterFields = PurgeNull<Pick<EnumFix<ProjectSourcesQueryVari
 };
 
 type FormType = SourcesFilterFields;
-type FormSchema = ObjectSchema<FormType>;
+
+type PartialFormType = PartialForm<FormType, 'filterKey' | 'createdAt' | 'publishedOn'>;
+export type PartialEntriesFilterDataType = NonNullable<PartialFormType['entriesFilterData']>;
+type PartialFrameworkFilterType = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
+type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
+
+type FrameworkFilterSchema = ObjectSchema<PartialFrameworkFilterType, PartialFormType>;
+type FrameworkFilterFields = ReturnType<FrameworkFilterSchema['fields']>;
+const frameworkFilterSchema: FrameworkFilterSchema = {
+    fields: (): FrameworkFilterFields => ({
+        filterKey: [],
+        value: [],
+        valueList: [],
+    }),
+};
+type FrameworkFiltersSchema = ArraySchema<PartialFrameworkFilterType, PartialFormType>;
+type FrameworkFiltersMember = ReturnType<FrameworkFiltersSchema['member']>;
+
+const frameworkFiltersSchema: FrameworkFiltersSchema = {
+    keySelector: (d) => d.filterKey,
+    member: (): FrameworkFiltersMember => frameworkFilterSchema,
+};
+
+type EntriesFilterDataSchema = ObjectSchema<PartialEntriesFilterDataType, PartialFormType>;
+type EntriesFilterDataFields = ReturnType<EntriesFilterDataSchema['fields']>;
+const entriesFilterDataSchema: EntriesFilterDataSchema = {
+    fields: (): EntriesFilterDataFields => ({
+        createdBy: [],
+        createdAt: [],
+        commentStatus: [],
+        controlled: [],
+        entryTypes: [],
+        filterableData: frameworkFiltersSchema,
+    }),
+};
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
@@ -96,13 +134,16 @@ const schema: FormSchema = {
         search: [],
         exists: [],
         priorities: [],
+        customFilters: [],
         authoringOrganizationTypes: [],
         confidentiality: [],
-        entriesFilterData: [],
+        entriesFilterData: entriesFilterDataSchema,
     }),
 };
 
-const initialValue: FormType = {};
+const initialValue: PartialFormType = {
+    customFilters: 'EXCLUDE_EMPTY_FILTERED_ENTRIES', // NOTE: customFilters is required when entriesFilterData filter is applied.
+};
 
 const SOURCE_FILTER_OPTIONS = gql`
     query SourceFilterOptions(
@@ -142,6 +183,15 @@ const SOURCE_FILTER_OPTIONS = gql`
                 displayName
                 firstName
                 lastName
+            }
+            analysisFramework {
+                filters {
+                    filterType
+                    key
+                    properties
+                    title
+                    widgetType
+                }
             }
         }
         organizationTypes {
