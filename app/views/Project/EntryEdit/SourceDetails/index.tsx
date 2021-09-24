@@ -13,8 +13,8 @@ import {
     LeadOptionsQueryVariables,
 } from '#generated/types';
 import LeadPreview from '#components/lead/LeadPreview';
-import LeadEditForm from '#components/lead/LeadEditForm';
-import { PartialFormType } from '#components/lead/LeadEditForm/schema';
+import LeadInput from '#components/lead/LeadInput';
+import { PartialFormType } from '#components/lead/LeadInput/schema';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -38,7 +38,6 @@ interface Props {
     leadValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
-    setPristine: (val: boolean) => void;
     defaultValue: PartialFormType;
     projectId: string;
     disabled?: boolean;
@@ -63,7 +62,6 @@ function SourceDetails(props: Props) {
         leadValue,
         defaultValue,
         setValue,
-        setPristine,
         leadFormError,
         pending,
         projectId,
@@ -96,14 +94,13 @@ function SourceDetails(props: Props) {
                 />
             </Card>
             <Card className={styles.formContainer}>
-                <LeadEditForm
+                <LeadInput
                     name="lead"
                     pending={pending || leadOptionsLoading}
                     value={leadValue}
                     defaultValue={defaultValue}
                     error={leadFormError}
                     onChange={setValue}
-                    setPristine={setPristine}
                     projectId={projectId}
                     disabled={disabled}
                     sourceOrganizationOptions={sourceOrganizationOptions}

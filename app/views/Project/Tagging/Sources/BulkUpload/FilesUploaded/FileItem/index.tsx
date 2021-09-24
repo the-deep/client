@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
-    ElementFragments,
+    Tag,
+    Button,
+    Element,
 } from '@the-deep/deep-ui';
 import { IoTrashOutline } from 'react-icons/io5';
 
@@ -14,6 +16,7 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     isSelected: boolean;
+    isErrored: boolean;
     data: PartialLeadType;
     onSelect: (id: string) => void;
     onLeadRemove: (clientId: string) => void;
@@ -23,45 +26,47 @@ function FileItem(props: Props) {
     const {
         className,
         isSelected,
+        isErrored,
         data,
         onLeadRemove,
         onSelect,
     } = props;
 
-    const handleDeleteClick = useCallback(() => {
-        onLeadRemove(data.clientId);
-    }, [onLeadRemove, data.clientId]);
-
-    const handleSelect = useCallback(() => {
-        onSelect(data.clientId);
-    }, [onSelect, data.clientId]);
-
     return (
-        <div className={_cs(className, styles.itemContainer, isSelected && styles.selected)}>
-            <ElementFragments
-                actions={(
+        <Element
+            className={_cs(
+                className,
+                styles.itemContainer,
+                isSelected && styles.selected,
+            )}
+            spacing="none"
+            actionsContainerClassName={styles.actions}
+            actions={(
+                <>
+                    {isErrored && (
+                        <Tag>
+                            Error
+                        </Tag>
+                    )}
                     <QuickActionButton
-                        name="remove"
+                        name={data.clientId}
                         title="Remove File"
-                        onClick={handleDeleteClick}
+                        onClick={onLeadRemove}
                     >
                         <IoTrashOutline />
                     </QuickActionButton>
-                )}
-                actionsContainerClassName={styles.actions}
-                childrenContainerClassName={styles.content}
+                </>
+            )}
+        >
+            <Button
+                name={data.clientId}
+                className={_cs(styles.item)}
+                variant="action"
+                onClick={onSelect}
             >
-                <div
-                    className={_cs(styles.item)}
-                    onClick={handleSelect}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={handleSelect}
-                >
-                    {data.title}
-                </div>
-            </ElementFragments>
-        </div>
+                {data.title}
+            </Button>
+        </Element>
     );
 }
 

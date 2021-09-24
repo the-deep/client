@@ -13,11 +13,14 @@ import {
 import { IoSearch } from 'react-icons/io5';
 import {
     SetValueArg,
+    Error,
+    getErrorObject,
+    analyzeErrors,
 } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
 import _ts from '#ts';
-import LeadEditForm from '#components/lead/LeadEditForm';
+import LeadInput from '#components/lead/LeadInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
@@ -52,8 +55,9 @@ interface Props {
     onLeadRemove: (clientId: string) => void;
     onSelectedLeadChange: (newLead: string) => void;
     selectedLeadAttachment: LeadType['attachment'];
-    onLeadChange: (val: SetValueArg<PartialLeadType> | undefined, name: number) => void;
+    onLeadChange: (val: SetValueArg<PartialLeadType>, name: number | undefined) => void;
     projectId: string;
+    leadsError: Error<PartialLeadType[]> | undefined;
 }
 
 function FilesUploaded(props: Props) {
@@ -66,6 +70,7 @@ function FilesUploaded(props: Props) {
         selectedLeadAttachment,
         projectId,
         onLeadChange,
+        leadsError: riskyLeadsErrors,
     } = props;
 
     const [searchText, setSearchText] = useState<string | undefined>();
@@ -97,15 +102,28 @@ function FilesUploaded(props: Props) {
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
+    const currentLeadIndex = leads?.findIndex(
+        (lead) => lead.clientId === selectedLead,
+    ) ?? -1;
+
+    const currentLead = leads?.[currentLeadIndex];
+
+    const leadsError = getErrorObject(riskyLeadsErrors);
+
+    const currentLeadError = currentLead
+        ? leadsError?.[currentLead.clientId]
+        : undefined;
+
     const fileRendererParams = useCallback((
         _: string,
         data: PartialLeadType,
     ) => ({
         data,
+        isErrored: analyzeErrors(leadsError?.[data.clientId]),
         isSelected: data.clientId === selectedLead,
         onSelect: onSelectedLeadChange,
         onLeadRemove,
-    }), [onLeadRemove, onSelectedLeadChange, selectedLead]);
+    }), [onLeadRemove, onSelectedLeadChange, selectedLead, leadsError]);
 
     const searchedFiles = useMemo(() => {
         if (isTruthyString(searchText)) {
@@ -126,11 +144,12 @@ function FilesUploaded(props: Props) {
         <div className={_cs(className, styles.filesUploadedDetails)}>
             <Container
                 className={styles.filesContainer}
+                headerClassName={styles.header}
+                headingSize="small"
                 heading={_ts('bulkUpload', 'sourcesUploadedTitle')}
                 headerDescription={(
                     <TextInput
-                        className={styles.search}
-                        icons={<IoSearch className={styles.icon} />}
+                        icons={<IoSearch />}
                         name="Search"
                         onChange={setSearchText}
                         value={searchText}
@@ -150,13 +169,13 @@ function FilesUploaded(props: Props) {
             </Container>
             <div className={styles.rightPane}>
                 {selectedLeadValue && isDefined(selectedLeadIndex) && (
-                    <LeadEditForm
+                    <LeadInput
                         name={selectedLeadIndex}
                         pending={leadOptionsPending}
                         value={selectedLeadValue}
                         onChange={onLeadChange}
                         projectId={projectId}
-                        // error={riskyError}
+                        error={currentLeadError}
                         defaultValue={selectedLeadValue}
                         attachment={selectedLeadAttachment}
                         priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}

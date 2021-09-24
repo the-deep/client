@@ -1,20 +1,34 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
+    isNotDefined,
+    isDefined,
+    listToMap,
     randomString,
 } from '@togglecorp/fujs';
 import { produce } from 'immer';
 import {
     Modal,
+    Button,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useForm,
     useFormArray,
     SetValueArg,
     isCallable,
+    createSubmitHandler,
+    getErrorObject,
 } from '@togglecorp/toggle-form';
+import { gql, useMutation } from '@apollo/client';
 
 import _ts from '#ts';
+import {
+    BulkCreateLeadsMutation,
+    BulkCreateLeadsMutationVariables,
+    LeadInputType,
+} from '#generated/types';
+import { transformToFormError } from '#base/utils/errorTransform';
 
 import {
     schema,
@@ -31,9 +45,24 @@ import {
 } from './types';
 import styles from './styles.css';
 
+export const BULK_CREATE_LEADS = gql`
+    mutation BulkCreateLeads($projectId:ID!, $leads: [BulkLeadInputType!]) {
+        project(id: $projectId) {
+            leadBulk(items: $leads) {
+                errors
+                result {
+                    id
+                    clientId
+                }
+            }
+        }
+    }
+`;
+
 interface Props {
     className?: string;
     onClose: () => void;
+    onLeadsAdd: () => void;
     projectId: string;
 }
 
@@ -42,22 +71,123 @@ function BulkUpload(props: Props) {
         className,
         onClose,
         projectId,
+        onLeadsAdd,
     } = props;
 
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
+    // NOTE: leadsAdded is a boolean set when at least on lead was successfully added
+    const [leadsAdded, setLeadsAdded] = useState<boolean>(false);
     const [selectedLead, setSelectedLead] = useState<string | undefined>();
+    const [leadClientIds, setLeadClientIds] = useState<string[] | undefined>();
+
+    const handleModalClose = useCallback(() => {
+        onClose();
+        if (leadsAdded) {
+            onLeadsAdd();
+        }
+    }, [onClose, onLeadsAdd, leadsAdded]);
+
+    const alert = useAlert();
 
     const {
         value: formValue,
-        // setValue: setFormValue,
+        error: formError,
+        validate: formValidate,
         setFieldValue: setFormFieldValue,
-        // setError: setFormError,
-        // pristine: formPristine,
+        setError: setFormError,
+        pristine: formPristine,
     } = useForm(schema, defaultFormValues);
+
+    const leadsError = useMemo(
+        () => getErrorObject(getErrorObject(formError)?.leads),
+        [formError],
+    );
 
     const {
         setValue: onLeadChange,
     } = useFormArray<'leads', PartialLeadType>('leads', setFormFieldValue);
+
+    const [
+        bulkCreateLeads,
+        // { loading: bulkCreateLeadsPending },
+    ] = useMutation<BulkCreateLeadsMutation, BulkCreateLeadsMutationVariables>(
+        BULK_CREATE_LEADS,
+        {
+            onCompleted: (response) => {
+                const leadBulk = response.project?.leadBulk;
+                if (!leadBulk) {
+                    return;
+                }
+                const {
+                    errors,
+                    result,
+                } = leadBulk;
+
+                if (errors) {
+                    const leadsErrors = errors?.map((item, index) => {
+                        if (isNotDefined(item)) {
+                            return undefined;
+                        }
+                        const clientId = leadClientIds?.[index];
+                        if (isNotDefined(clientId)) {
+                            return undefined;
+                        }
+
+                        return {
+                            clientId,
+                            error: transformToFormError(item),
+                        };
+                    }).filter(isDefined) ?? [];
+                    const leadsErrorMapping = listToMap(
+                        leadsErrors,
+                        (item) => item.clientId,
+                        (item) => item.error,
+                    );
+                    setFormError((oldError) => {
+                        const err = getErrorObject(oldError);
+                        return {
+                            ...err,
+                            leads: {
+                                ...getErrorObject(err?.leads),
+                                ...leadsErrorMapping,
+                            },
+                        };
+                    });
+                }
+                if (result) {
+                    const uploadedLeads = result?.map((item, index) => {
+                        if (isNotDefined(item)) {
+                            return undefined;
+                        }
+                        const clientId = leadClientIds?.[index];
+                        if (isNotDefined(clientId)) {
+                            return undefined;
+                        }
+
+                        return clientId;
+                    }).filter(isDefined) ?? [];
+                    if (uploadedLeads.length > 0) {
+                        alert.show(
+                            `${uploadedLeads.length} leads were successfully added!`,
+                            { variant: 'success' },
+                        );
+                        setLeadsAdded(true);
+                        setFormFieldValue((oldValues) => (
+                            oldValues?.filter((lead) => !uploadedLeads.includes(lead.clientId))
+                        ), 'leads');
+                    }
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    'Failed to save leads!',
+                    { variant: 'error' },
+                );
+                // eslint-disable-next-line no-console
+                console.error(gqlError);
+            },
+        },
+    );
 
     const handleLeadChange = useCallback(
         (val: SetValueArg<PartialLeadType>, otherName: number | undefined) => {
@@ -140,13 +270,55 @@ function BulkUpload(props: Props) {
         });
     }, [uploadedFiles, selectedLead, formValue]);
 
+    const handleSubmit = useCallback(
+        () => {
+            if (!projectId) {
+                // eslint-disable-next-line no-console
+                console.error('No project id');
+                return;
+            }
+            const submit = createSubmitHandler(
+                formValidate,
+                setFormError,
+                (value) => {
+                    setLeadClientIds(value?.leads?.map((lead) => lead.clientId));
+                    const leads = (value.leads ?? []) as LeadInputType[];
+
+                    if (leads.length > 0) {
+                        bulkCreateLeads({
+                            variables: {
+                                projectId,
+                                leads,
+                            },
+                        });
+                    } else {
+                        alert.show(
+                            'Leads uploaded successfully!',
+                            { variant: 'success' },
+                        );
+                    }
+                },
+            );
+            submit();
+        },
+        [setFormError, formValidate, bulkCreateLeads, projectId, alert],
+    );
+
     return (
         <Modal
             className={_cs(className, styles.bulkUploadModal)}
             heading={_ts('bulkUpload', 'title')}
-            headerClassName={styles.modalHeader}
-            onCloseButtonClick={onClose}
+            onCloseButtonClick={handleModalClose}
             bodyClassName={styles.modalBody}
+            footerActions={(
+                <Button
+                    name={undefined}
+                    disabled={formPristine}
+                    onClick={handleSubmit}
+                >
+                    Save
+                </Button>
+            )}
         >
             <Upload
                 className={styles.upload}
@@ -157,6 +329,7 @@ function BulkUpload(props: Props) {
                 className={styles.details}
                 onLeadRemove={handleLeadRemove}
                 selectedLead={selectedLead}
+                leadsError={leadsError}
                 onLeadChange={handleLeadChange}
                 onSelectedLeadChange={setSelectedLead}
                 selectedLeadAttachment={selectedLeadAttachment}

@@ -165,6 +165,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                 </>
             )}
             contentClassName={styles.content}
+            borderBelowHeader
+            borderBelowHeaderWidth="thin"
             // TODO: there should be two different urls for editing and viewing entry
             footerActions={(
                 <SmartButtonLikeLink
