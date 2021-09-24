@@ -67,6 +67,10 @@ function Tagging(props: Props) {
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
 
+    const handleLeadsAdd = useCallback(() => {
+        setRefreshTimestamp(new Date().getTime());
+    }, []);
+
     const subNavbarComponents = (
         <>
             <SubNavbarIcons>
@@ -187,6 +191,7 @@ function Tagging(props: Props) {
             {isBulkModalShown && project?.id && (
                 <BulkUpload
                     onClose={hideBulkUploadModal}
+                    onLeadsAdd={handleLeadsAdd}
                     projectId={project.id}
                 />
             )}

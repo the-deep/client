@@ -13,12 +13,13 @@ import {
     useForm,
     createSubmitHandler,
     internal,
+    SetValueArg,
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
 import LeadPreview from '#components/lead/LeadPreview';
 
-import { schema, PartialFormType } from '#components/lead/LeadEditForm/schema';
+import { schema, PartialFormType } from '#components/lead/LeadInput/schema';
 import {
     LeadOptionsQuery,
     LeadOptionsQueryVariables,
@@ -34,7 +35,7 @@ import { BasicOrganization } from '#components/selections/NewOrganizationSelectI
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import { transformToFormError } from '#base/utils/errorTransform';
-import LeadEditForm from '#components/lead/LeadEditForm';
+import LeadInput from '#components/lead/LeadInput';
 import styles from './styles.css';
 
 // TODO: Show attachment's title and link if lead is attachment type
@@ -188,8 +189,7 @@ function LeadEditModal(props: Props) {
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const {
-        pristine,
-        setPristine,
+        // pristine,
         value,
         setValue,
         error: riskyError,
@@ -351,6 +351,10 @@ function LeadEditModal(props: Props) {
         submit();
     }, [setError, validate, updateLead, createLead, projectId, leadId]);
 
+    const handleLeadChange = useCallback((newValue: SetValueArg<PartialFormType>) => {
+        setValue(newValue, true);
+    }, [setValue]);
+
     return (
         <Modal
             className={_cs(className, styles.leadEditModal)}
@@ -360,7 +364,9 @@ function LeadEditModal(props: Props) {
             footerActions={(
                 <Button
                     name="save"
-                    disabled={pristine || pending}
+                    // FIXME: Add disabled during pristine later
+                    // disabled={pristine || pending}
+                    disabled={pending}
                     onClick={handleSubmit}
                 >
                     Save
@@ -375,13 +381,12 @@ function LeadEditModal(props: Props) {
                 />
             </Card>
             <Card className={styles.formContainer}>
-                <LeadEditForm
-                    name="lead"
+                <LeadInput
+                    name={undefined}
                     pending={pending}
                     value={value}
-                    onChange={setValue}
+                    onChange={handleLeadChange}
                     projectId={projectId}
-                    setPristine={setPristine}
                     error={riskyError}
                     defaultValue={initialValue}
                     attachment={leadData?.attachment}

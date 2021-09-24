@@ -19,7 +19,7 @@ import {
     Error,
     getErrorObject,
     getErrorString,
-    SetBaseValueArg,
+    SetValueArg,
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
@@ -98,10 +98,10 @@ interface WebInfo {
     author?: OrganizationDetails;
 }
 
-interface Props<N extends string | number> {
+interface Props<N extends string | number | undefined> {
     name: N;
     className?: string;
-    onChange: (value: SetBaseValueArg<PartialFormType>, name: N) => void;
+    onChange: (value: SetValueArg<PartialFormType>, name: N) => void;
     value: PartialFormType;
     error: Error<PartialFormType> | undefined;
     pending?: boolean;
@@ -125,7 +125,7 @@ interface Props<N extends string | number> {
     attachment: LeadType['attachment'];
 }
 
-function LeadEditForm<N extends string | number>(props: Props<N>) {
+function LeadInput<N extends string | number | undefined>(props: Props<N>) {
     const {
         name,
         className,
@@ -170,7 +170,7 @@ function LeadEditForm<N extends string | number>(props: Props<N>) {
     ] = useBooleanState(false);
 
     const handleInfoAutoFill = useCallback((webInfo: WebInfo) => {
-        onChange((oldValues) => {
+        onChange((oldValues = defaultValue) => {
             const newValues = produce(oldValues, (safeValues) => {
                 if (webInfo.date) {
                     // eslint-disable-next-line no-param-reassign
@@ -219,6 +219,7 @@ function LeadEditForm<N extends string | number>(props: Props<N>) {
             );
         }
     }, [
+        defaultValue,
         name,
         onChange,
         onSourceOrganizationOptionsChange,
@@ -579,4 +580,4 @@ function LeadEditForm<N extends string | number>(props: Props<N>) {
     );
 }
 
-export default LeadEditForm;
+export default LeadInput;

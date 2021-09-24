@@ -81,8 +81,6 @@ function LeadPreview(props: Props) {
         );
     }
 
-    console.warn('here', attachment);
-
     return (
         <div
             className={_cs(className, styles.leadPreview)}
@@ -95,7 +93,7 @@ function LeadPreview(props: Props) {
                         <>
                             <QuickActionLink
                                 className={styles.link}
-                                to={url ?? attachment?.file?.url ?? ''}
+                                to={url || attachment?.file?.url || ''}
                             >
                                 <IoOpenOutline />
                             </QuickActionLink>
@@ -112,7 +110,7 @@ function LeadPreview(props: Props) {
                     <TextInput
                         className={styles.url}
                         name="url"
-                        value={url ?? attachment?.file?.url}
+                        value={url || attachment?.file?.url}
                         variant="general"
                         readOnly
                     />

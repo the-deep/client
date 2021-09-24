@@ -43,7 +43,7 @@ import BackLink from '#components/BackLink';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
-} from '#components/lead/LeadEditForm/schema';
+} from '#components/lead/LeadInput/schema';
 import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
@@ -142,7 +142,6 @@ function EntryEdit(props: Props) {
     const {
         value: leadValue,
         setValue: setLeadValue,
-        setPristine: setLeadPristine,
         error: leadFormError,
     } = useForm(leadSchema, leadInitialValue);
 
@@ -801,7 +800,6 @@ function EntryEdit(props: Props) {
                                 leadValue={leadValue}
                                 setValue={setLeadValue}
                                 defaultValue={leadInitialValue}
-                                setPristine={setLeadPristine}
                                 leadFormError={leadFormError}
                                 pending={loading}
                                 projectId={projectId}
