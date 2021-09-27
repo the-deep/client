@@ -134,29 +134,30 @@ function SectionInput(props: SectionInputProps) {
         <ExpandableContainer
             autoFocus={autoFocus}
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
             expansionTriggerArea="arrow"
-            spacing="none"
+            spacing="comfortable"
             headerActions={(
-                <>
-                    <QuickActionConfirmButton
-                        name={index}
-                        onClick={onRemove}
-                        message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
-                        // FIXME: use translation
-                        title="Remove Title"
-                    >
-                        <IoTrash />
-                    </QuickActionConfirmButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
-                    </QuickActionButton>
-                </>
+                <QuickActionConfirmButton
+                    name={index}
+                    onClick={onRemove}
+                    message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
+                    // FIXME: use translation
+                    title="Remove Title"
+                >
+                    <IoTrash />
+                </QuickActionConfirmButton>
+            )}
+            headerIcons={(
+                <QuickActionButton
+                    name={index}
+                    // FIXME: use translation
+                    title="Drag"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GrDrag />
+                </QuickActionButton>
             )}
             className={_cs(
                 className,
@@ -164,6 +165,7 @@ function SectionInput(props: SectionInputProps) {
                 styles.sectionExpandable,
             )}
             headerClassName={styles.sectionHeader}
+            headingClassName={styles.heading}
             defaultVisibility={autoFocus}
         >
             <NonFieldError error={error} />
@@ -342,6 +344,7 @@ function SectionsEditor(props: Props) {
                         <NonFieldError error={error?.sections} />
                         <SortableList
                             name="sections"
+                            className={styles.list}
                             onChange={handleOrderChange}
                             data={value.sections}
                             keySelector={sectionKeySelector}
