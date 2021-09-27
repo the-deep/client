@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -17,6 +17,7 @@ import {
 import {
     AnalysisFrameworkFilterType,
 } from '#generated/types';
+import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import { PartialEntriesFilterDataType } from '../..';
 import styles from './styles.css';
 
@@ -33,9 +34,10 @@ interface Props<K extends number> {
     name: K;
     title: string;
     filter: AnalysisFrameworkFilterType;
-    className?: string;
     value: PartialFrameworkFilterValue;
     onChange: (value: SetValueArg<PartialFrameworkFilterValue>, name: K) => void;
+    projectId: string;
+    className?: string;
     optionsDisabled?: boolean;
     disabled?: boolean;
 }
@@ -46,11 +48,17 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         title,
         value,
         filter,
+        projectId,
         className,
         onChange,
         optionsDisabled,
         disabled,
     } = props;
+
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
 
     const defaultOptionVal = useCallback(
         (): PartialFrameworkFilterValue => ({
@@ -160,7 +168,20 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
             );
         }
         case 'GEO': {
-            return null;
+            return (
+                <GeoMultiSelectInput
+                    name="valueList"
+                    value={value.valueList}
+                    onChange={onFieldChange}
+                    className={_cs(styles.frameworkFilter, className)}
+                    label={title}
+                    projectId={projectId}
+                    options={geoAreaOptions}
+                    onOptionsChange={setGeoAreaOptions}
+                    disabled={disabled}
+                    placeholder={title}
+                />
+            );
         }
         case 'SELECT': {
             return (
@@ -186,7 +207,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     options={filter.properties.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
-                    placeholder="Any"
+                    placeholder={title}
                     className={_cs(styles.frameworkFilter, className)}
                     disabled={disabled || optionsDisabled}
                 />
