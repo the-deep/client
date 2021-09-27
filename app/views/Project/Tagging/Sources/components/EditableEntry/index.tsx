@@ -17,6 +17,7 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
+import { IoTrash } from 'react-icons/io5';
 
 import {
     entrySchema,
@@ -45,6 +46,17 @@ const UPDATE_ENTRY = gql`
 mutation UpdateEntry($projectId:ID!, $entryId:ID!, $entryData: EntryInputType!) {
     project(id: $projectId) {
         entryUpdate(id: $entryId, data: $entryData) {
+            ok
+            errors
+        }
+    }
+}
+`;
+
+const DELETE_ENTRY = gql`
+mutation DeleteEntry($projectId:ID!, $entryId:ID!) {
+    project(id: $projectId) {
+        entryDelete(id: $entryId) {
             ok
             errors
         }
@@ -130,6 +142,31 @@ function EditableEntry(props: Props) {
                     { variant: 'error' },
                 );
 
+                // eslint-disable-next-line no-console
+                console.error(gqlError);
+            },
+        },
+    );
+    const [
+        deleteEntry,
+        { loading: deleteEntryPending },
+    ] = useMutation(
+        DELETE_ENTRY,
+        {
+            onCompleted: () => {
+                alert.show(
+                    'Successfully deleted entry.',
+                    {
+                        variant: 'success',
+                    },
+                );
+                onEntryDataChange();
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
                 // eslint-disable-next-line no-console
                 console.error(gqlError);
             },
@@ -253,6 +290,30 @@ function EditableEntry(props: Props) {
         </Button>
     );
 
+    const handleEntryDeleteButtonClick = useCallback(() => {
+        deleteEntry({
+            variables: {
+                projectId,
+                entryId: entry.id,
+            },
+        });
+    }, [projectId, entry.id]);
+
+    const entryDeleteButton = (
+        <Button
+            name={undefined}
+            variant="secondary"
+            onClick={handleEntryDeleteButtonClick}
+            disabled={deleteEntryPending}
+            icons={(
+                <IoTrash />
+            )}
+        >
+            Delete Entry
+        </Button>
+
+    );
+
     if (compact) {
         return (
             <Container
@@ -264,6 +325,7 @@ function EditableEntry(props: Props) {
                                 {editMode ? saveButton : editTagsButton}
                                 {entryComments}
                                 {entryVerification}
+                                {entryDeleteButton}
                             </>
                         )}
                         {entryControl}
@@ -285,6 +347,7 @@ function EditableEntry(props: Props) {
                             {editTagsButton}
                             {entryComments}
                             {entryVerification}
+                            {entryDeleteButton}
                         </>
                     )}
                     {entryControl}
