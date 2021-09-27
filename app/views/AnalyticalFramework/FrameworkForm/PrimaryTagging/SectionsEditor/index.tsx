@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     IoTrash,
     IoAdd,
@@ -11,7 +11,7 @@ import {
     TextArea,
     QuickActionButton,
     QuickActionConfirmButton,
-    ExpandableContainer,
+    ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -108,6 +108,8 @@ interface SectionInputProps {
     autoFocus: boolean;
     listeners?: Listeners;
     attributes?: Attributes;
+    onExpansionChange: (sectionExpanded: boolean, sectionId: string) => void;
+    expanded?: boolean;
 }
 
 function SectionInput(props: SectionInputProps) {
@@ -121,6 +123,8 @@ function SectionInput(props: SectionInputProps) {
         autoFocus,
         listeners,
         attributes,
+        onExpansionChange,
+        expanded,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -131,7 +135,8 @@ function SectionInput(props: SectionInputProps) {
     const heading = value.title ?? `Section ${index + 1}`;
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
+            name={value.clientId}
             autoFocus={autoFocus}
             heading={`${heading} ${errored ? '*' : ''}`}
             headingSize="extraSmall"
@@ -166,7 +171,9 @@ function SectionInput(props: SectionInputProps) {
             )}
             headerClassName={styles.sectionHeader}
             headingClassName={styles.heading}
-            defaultVisibility={autoFocus}
+            onExpansionChange={onExpansionChange}
+            expanded={expanded}
+            withoutBorder
         >
             <NonFieldError error={error} />
             <TextInput
@@ -188,7 +195,7 @@ function SectionInput(props: SectionInputProps) {
                 onChange={onFieldChange}
                 error={error?.tooltip}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -241,6 +248,12 @@ function SectionsEditor(props: Props) {
         removeValue: onSectionsRemove,
     } = useFormArray('sections', setFieldValue);
 
+    const [expandedSectionId, setExpandedSectionId] = useState<string | undefined>();
+
+    const handleExpansionChange = useCallback((sectionExpanded: boolean, sectionId) => {
+        setExpandedSectionId(sectionExpanded ? sectionId : undefined);
+    }, []);
+
     const handleAdd = useCallback(
         () => {
             const oldSections = value.sections ?? [];
@@ -282,11 +295,14 @@ function SectionsEditor(props: Props) {
         value: section,
         autoFocus: focusedSection === section.clientId,
         index,
+        onExpansionChange: handleExpansionChange,
+        expanded: expandedSectionId === section.clientId,
     }), [
         onSectionsChange,
         focusedSection,
         onSectionsRemove,
         arrayError,
+        expandedSectionId,
     ]);
 
     const handleSubmit = useCallback(
