@@ -16,13 +16,17 @@
                 padding: 0;
 
                 .section-expandable {
-                    border: none;
-                    padding: var(--dui-spacing-medium) 0;
+                    padding: var(--dui-spacing-medium);
 
                     .section-header {
-                        background: var(--dui-color-foreground);
-                    }
+                        display: flex;
+                        background-color: var(--dui-color-background-information);
+                        grid-gap: var(--spacing);
 
+                        .heading {
+                            padding: calc(var(--spacing) / 2) 0;
+                        }
+                    }
                     .text-input {
                         margin: var(--dui-spacing-small) 0;
                     }
@@ -38,6 +42,12 @@
         &.focus {
             animation: focus 2s 1 ease-out;
         }
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        grid-gap: var(--dui-spacing-small);
     }
 
     @keyframes focus {
