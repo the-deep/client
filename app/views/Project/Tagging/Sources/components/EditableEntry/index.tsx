@@ -12,6 +12,7 @@ import {
 import {
     Container,
     Button,
+    ConfirmButton,
     useBooleanState,
     Spinner,
     useAlert,
@@ -147,6 +148,7 @@ function EditableEntry(props: Props) {
             },
         },
     );
+
     const [
         deleteEntry,
         { loading: deleteEntryPending },
@@ -300,7 +302,7 @@ function EditableEntry(props: Props) {
     }, [projectId, entry.id]);
 
     const entryDeleteButton = (
-        <Button
+        <ConfirmButton
             name={undefined}
             variant="secondary"
             onClick={handleEntryDeleteButtonClick}
@@ -310,7 +312,7 @@ function EditableEntry(props: Props) {
             )}
         >
             Delete Entry
-        </Button>
+        </ConfirmButton>
 
     );
 
@@ -325,10 +327,10 @@ function EditableEntry(props: Props) {
                                 {editMode ? saveButton : editTagsButton}
                                 {entryComments}
                                 {entryVerification}
-                                {entryDeleteButton}
                             </>
                         )}
                         {entryControl}
+                        {canEditEntry && entryDeleteButton }
                     </>
                 )}
             >
@@ -347,10 +349,10 @@ function EditableEntry(props: Props) {
                             {editTagsButton}
                             {entryComments}
                             {entryVerification}
-                            {entryDeleteButton}
                         </>
                     )}
                     {entryControl}
+                    {canEditEntry && entryDeleteButton}
                 </>
             )}
             headerActions={editMode && (
