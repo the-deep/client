@@ -2,6 +2,11 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    gap: var(--dui-spacing-medium);
+
+    .container {
+        background-color: var(--dui-color-foreground);
+    }
 
     .error,
     .input {
@@ -12,10 +17,21 @@
         display: flex;
         flex-direction: column;
         overflow-y: auto;
+        gap: var(--dui-spacing-medium);
 
-        .options-list {
-            overflow-y: auto;
-        }
+    }
+
+    .list-container {
+        background-color: var(--dui-background);
+        gap: var(--dui-spacing-medium);
+    }
+
+    .sortable-list {
+        display: flex;
+        flex-direction: column;
+        border-left: var(--dui-width-separator-medium) dotted var(--dui-color-separator);
+        padding-left: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
     }
 
     .option-input {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     IoTrash,
     IoAdd,
@@ -10,7 +10,7 @@ import {
     SelectInput,
     TextInput,
     QuickActionButton,
-    ExpandableContainer,
+    ControlledExpandableContainer,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -129,6 +129,8 @@ interface OptionInputProps {
     listeners?: Listeners,
     attributes?: Attributes,
     autoFocus?: boolean;
+    expanded?: boolean;
+    onExpansionChange: (scaleExpanded: boolean, scaleId: string) => void;
 }
 
 function OptionInput(props: OptionInputProps) {
@@ -145,6 +147,8 @@ function OptionInput(props: OptionInputProps) {
         listeners,
         attributes,
         autoFocus,
+        expanded,
+        onExpansionChange,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
@@ -167,13 +171,30 @@ function OptionInput(props: OptionInputProps) {
     }, [onDefaultValueChange, clientId]);
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
+            name={value.clientId}
             className={className}
             // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
             autoFocus={autoFocus}
+            expansionTriggerArea="arrow"
+            onExpansionChange={onExpansionChange}
+            expanded={expanded}
+            headingSize="extraSmall"
+            withoutBorder
+            spacing="comfortable"
+            headerIcons={(
+                <QuickActionButton
+                    name={index}
+                    // FIXME: use translation
+                    title="Drag"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GrDrag />
+                </QuickActionButton>
+            )}
             headerActions={(
                 <>
                     <Checkbox
@@ -189,15 +210,6 @@ function OptionInput(props: OptionInputProps) {
                         title="Remove Option"
                     >
                         <IoTrash />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
                     </QuickActionButton>
                 </>
             )}
@@ -222,7 +234,7 @@ function OptionInput(props: OptionInputProps) {
                 error={error?.color}
                 className={styles.optionInput}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -244,6 +256,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         className,
     } = props;
 
+    const [expandedScaleId, setExpandedScaleId] = useState<string | undefined>();
     const onFieldChange = useFormObject(name, onChange, defaultVal);
     const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
@@ -265,6 +278,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         }
         onOptionsRemove(index);
     }, [onOptionsRemove, onFieldChange]);
+
+    const handleExpansionChange = useCallback((scaleExpanded: boolean, scaleId: string) => {
+        setExpandedScaleId(scaleExpanded ? scaleId : undefined);
+    }, []);
 
     const handleAdd = useCallback(
         () => {
@@ -308,12 +325,15 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         isDefault: value?.defaultValue === key,
         index,
         autoFocus: newlyCreatedOptionIdRef.current === option.clientId,
+        onExpansionChange: handleExpansionChange,
+        expanded: expandedScaleId === option.clientId,
     }), [
         onOptionsChange,
         handleOptionRemove,
         handleDefaultValueChange,
         value?.defaultValue,
         arrayError,
+        expandedScaleId,
     ]);
 
     return (
@@ -336,8 +356,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 readOnly
             />
             <Container
-                className={className}
+                className={_cs(className, styles.listContainer)}
                 heading="Options"
+                headingSize="extraSmall"
+                withoutExternalPadding
                 contentClassName={styles.optionsList}
                 headerActions={(value?.options?.length ?? 0) < OPTIONS_LIMIT && (
                     <QuickActionButton
@@ -353,6 +375,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <NonFieldError error={error?.options} />
                 <SortableList
                     name="options"
+                    className={styles.sortableList}
                     onChange={handleOrderChange}
                     data={value?.options}
                     keySelector={optionKeySelector}
@@ -414,6 +437,7 @@ function ScaleWidgetForm(props: ScaleWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.container}
                 heading={value.title ?? 'Unnamed'}
                 contentClassName={styles.editorContent}
                 headerActions={(
