@@ -499,6 +499,7 @@ function SourcesFilter(props: Props) {
                         name="entriesFilterData"
                         value={value.entriesFilterData}
                         onChange={setFieldValue}
+                        projectId={projectId}
                         options={sourceFilterOptions}
                         optionsDisabled={loading || !!sourceFilterOptionsError}
                         disabled={disabled}

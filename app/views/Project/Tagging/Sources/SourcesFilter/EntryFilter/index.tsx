@@ -58,6 +58,7 @@ interface Props<K extends string> {
     name: K;
     value: PartialEntriesFilterDataType | undefined;
     onChange: (value: SetValueArg<PartialEntriesFilterDataType | undefined>, name: K) => void;
+    projectId: string;
     optionsDisabled: boolean;
     options?: SourceFilterOptionsQuery;
     disabled?: boolean;
@@ -70,8 +71,9 @@ function EntryFilter<K extends string>(props: Props<K>) {
         value,
         onChange,
         options,
-        className,
+        projectId,
         disabled,
+        className,
         optionsDisabled,
     } = props;
 
@@ -99,12 +101,19 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 title: data.title,
                 value: filterValue?.value,
                 filter: data,
+                projectId,
                 onChange: onFrameworkFilterChange,
                 optionsDisabled,
                 disabled,
             };
         },
-        [onFrameworkFilterChange, optionsDisabled, disabled, filterValuesMap],
+        [
+            onFrameworkFilterChange,
+            optionsDisabled,
+            disabled,
+            filterValuesMap,
+            projectId,
+        ],
     );
 
     return (
