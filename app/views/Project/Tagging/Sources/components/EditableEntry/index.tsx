@@ -169,8 +169,6 @@ function EditableEntry(props: Props) {
                     gqlError.message,
                     { variant: 'error' },
                 );
-                // eslint-disable-next-line no-console
-                console.error(gqlError);
             },
         },
     );
@@ -299,14 +297,15 @@ function EditableEntry(props: Props) {
                 entryId: entry.id,
             },
         });
-    }, [projectId, entry.id]);
+    }, [projectId, entry.id, deleteEntry]);
 
     const entryDeleteButton = (
         <ConfirmButton
             name={undefined}
             variant="secondary"
             onClick={handleEntryDeleteButtonClick}
-            disabled={deleteEntryPending}
+            message="Are you sure you want to delete the entry?"
+            disabled={deleteEntryPending || editMode}
             icons={(
                 <IoTrash />
             )}
@@ -329,8 +328,6 @@ function EditableEntry(props: Props) {
                                 {entryVerification}
                             </>
                         )}
-                        {entryControl}
-                        {canEditEntry && entryDeleteButton }
                     </>
                 )}
             >
