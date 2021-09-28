@@ -79,9 +79,6 @@ export const PROJECT_ENTRIES = gql`
                         }
                     }
                     controlled
-                    verifiedBy {
-                        id
-                    }
                 }
             }
             analysisFramework {
@@ -177,7 +174,6 @@ function SourcesGrid(props: Props) {
         onHideTagsButtonClick: handleHideTagsButtonClick,
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
         controlled: entry.controlled,
-        verifiedBy: entry.verifiedBy,
         onEntryDataChange: getEntries,
     }), [
         getEntries,
