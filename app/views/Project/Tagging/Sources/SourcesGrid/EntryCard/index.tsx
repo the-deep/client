@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
@@ -20,10 +20,11 @@ import {
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
-import EditableEntry from '../../components/EditableEntry';
-
-import { Framework, Entry } from '../types';
+import ProjectContext from '#base/context/ProjectContext';
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
+
+import EditableEntry from '../../components/EditableEntry';
+import { Framework, Entry } from '../types';
 
 import styles from './styles.css';
 
@@ -77,6 +78,7 @@ function EntryCard(props: Props) {
     } = props;
 
     const alert = useAlert();
+    const { project } = useContext(ProjectContext);
     const authorsDetailText = useMemo(() => (
         leadDetails?.authors?.map((a) => a.title)?.join(', ')
     ), [leadDetails?.authors]);
@@ -101,8 +103,6 @@ function EntryCard(props: Props) {
                     gqlError.message,
                     { variant: 'error' },
                 );
-                // eslint-disable-next-line no-console
-                console.error(gqlError);
             },
         },
     );
@@ -114,7 +114,9 @@ function EntryCard(props: Props) {
                 entryId: entry.id,
             },
         });
-    }, [projectId, entry.id]);
+    }, [projectId, entry.id, deleteEntry]);
+
+    const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     return (
         <div
@@ -133,7 +135,7 @@ function EntryCard(props: Props) {
                         value={leadDetails.publishedOn}
                     />
                 )}
-                footerQuickActions={(
+                footerQuickActions={canEditEntry && (
                     <>
                         <QuickActionButton name={undefined}>
                             <IoPencil />
@@ -142,6 +144,7 @@ function EntryCard(props: Props) {
                             name={undefined}
                             onConfirm={handleEntryDeleteClick}
                             disabled={deleteEntryPending}
+                            message="Are you sure you want to delete the entry?"
                         >
                             <IoTrash />
                         </QuickActionConfirmButton>
