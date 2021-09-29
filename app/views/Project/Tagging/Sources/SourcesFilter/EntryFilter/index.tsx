@@ -18,18 +18,17 @@ import {
     SourceFilterOptionsQuery,
     AnalysisFrameworkFilterType,
 } from '#generated/types';
-import { enumKeySelector, enumLabelSelector } from '#utils/common';
+import {
+    hasNoData,
+    enumKeySelector,
+    enumLabelSelector,
+} from '#utils/common';
+import ProjectMemberMultiSelectInput from '#components/selections/ProjectMemberMultiSelectInput';
 
 import FrameworkFilterItem from './FrameworkFilterItem';
 import { PartialEntriesFilterDataType } from '..';
 import styles from './styles.css';
 
-const userKeySelector = (
-    d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
-) => d.id;
-const userLabelSelector = (
-    d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
-) => d.displayName ?? `${d.firstName} ${d.lastName}`;
 const filterKeySelector = (d: AnalysisFrameworkFilterType) => d.key;
 
 interface ControlStatusOption {
@@ -60,6 +59,7 @@ interface Props<K extends string> {
     onChange: (value: SetValueArg<PartialEntriesFilterDataType | undefined>, name: K) => void;
     projectId: string;
     optionsDisabled: boolean;
+    allFiltersVisible: boolean;
     options?: SourceFilterOptionsQuery;
     disabled?: boolean;
     className?: string;
@@ -74,6 +74,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
         projectId,
         disabled,
         className,
+        allFiltersVisible,
         optionsDisabled,
     } = props;
 
@@ -104,6 +105,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 projectId,
                 onChange: onFrameworkFilterChange,
                 optionsDisabled,
+                allFiltersVisible,
                 disabled,
             };
         },
@@ -112,26 +114,34 @@ function EntryFilter<K extends string>(props: Props<K>) {
             optionsDisabled,
             disabled,
             filterValuesMap,
+            allFiltersVisible,
             projectId,
         ],
     );
 
     return (
         <div className={_cs(className, styles.entryFilter)}>
-            <MultiSelectInput
-                className={styles.input}
+            <ProjectMemberMultiSelectInput
+                className={_cs(
+                    styles.input,
+                    (hasNoData(value?.createdBy) && !allFiltersVisible)
+                    && styles.hidden,
+                )}
                 name="createdBy"
+                projectId={projectId}
                 value={value?.createdBy}
                 onChange={setFieldValue} // FIXME: fix type issue
-                keySelector={userKeySelector}
-                labelSelector={userLabelSelector}
                 options={options?.project?.members}
                 label="Entry created by"
                 placeholder="Entry created by"
-                disabled={disabled || optionsDisabled}
+                disabled={disabled}
             />
             <DateRangeInput
-                className={styles.input}
+                className={_cs(
+                    styles.input,
+                    (hasNoData(value?.createdAt) && !allFiltersVisible)
+                    && styles.hidden,
+                )}
                 name="createdAt"
                 label="Entry created at"
                 value={value?.createdAt}
@@ -139,7 +149,11 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled}
             />
             <SelectInput
-                className={styles.input}
+                className={_cs(
+                    styles.input,
+                    (hasNoData(value?.commentStatus) && !allFiltersVisible)
+                    && styles.hidden,
+                )}
                 name="commentStatus"
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
@@ -151,7 +165,11 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled || optionsDisabled}
             />
             <SelectInput
-                className={styles.input}
+                className={_cs(
+                    styles.input,
+                    (hasNoData(value?.controlled) && !allFiltersVisible)
+                    && styles.hidden,
+                )}
                 name="controlled"
                 value={value?.controlled}
                 onChange={setFieldValue}
@@ -163,7 +181,11 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled}
             />
             <MultiSelectInput
-                className={styles.input}
+                className={_cs(
+                    styles.input,
+                    (hasNoData(value?.entryTypes) && !allFiltersVisible)
+                    && styles.hidden,
+                )}
                 name="entryTypes"
                 value={value?.entryTypes}
                 onChange={setFieldValue} // FIXME: fix type issue

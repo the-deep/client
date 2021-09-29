@@ -178,12 +178,6 @@ const SOURCE_FILTER_OPTIONS = gql`
             }
         }
         project(id: $projectId) {
-            members {
-                id
-                displayName
-                firstName
-                lastName
-            }
             analysisFramework {
                 filters {
                     filterType
@@ -256,13 +250,12 @@ function getProjectSourcesQueryVariables(
 ) {
     const {
         createdAt: createdAtRaw,
-        publishedOn: publishedOnRaw,
+        publishedOn,
         entriesFilterData,
         ...leadsFilters
     } = filters;
 
     const createdAt = getValidDateRangeValues(createdAtRaw);
-    const publishedOn = getValidDateRangeValues(publishedOnRaw);
 
     if (entriesFilterData) {
         const {
@@ -494,17 +487,16 @@ function SourcesFilter(props: Props) {
                         disabled={disabled || loading || !!sourceFilterOptionsError}
                     />
                 )}
-                {allFiltersVisible && (
-                    <EntryFilter
-                        name="entriesFilterData"
-                        value={value.entriesFilterData}
-                        onChange={setFieldValue}
-                        projectId={projectId}
-                        options={sourceFilterOptions}
-                        optionsDisabled={loading || !!sourceFilterOptionsError}
-                        disabled={disabled}
-                    />
-                )}
+                <EntryFilter
+                    name="entriesFilterData"
+                    value={value.entriesFilterData}
+                    onChange={setFieldValue}
+                    projectId={projectId}
+                    options={sourceFilterOptions}
+                    optionsDisabled={loading || !!sourceFilterOptionsError}
+                    allFiltersVisible={allFiltersVisible}
+                    disabled={disabled}
+                />
                 <div className={styles.actions}>
                     <Button
                         disabled={disabled || pristine}

@@ -15,7 +15,7 @@ import EntryUncontrolCommentModal from './EntryUncontrolCommentModal';
 interface Props {
     className?: string;
     entryId: number;
-    projectId: number;
+    projectId: string;
     value: boolean;
     disabled?: boolean;
     onChange: (entryId: number) => void;
