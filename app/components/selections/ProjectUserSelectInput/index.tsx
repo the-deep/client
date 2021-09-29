@@ -13,21 +13,24 @@ import {
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
 const PROJECT_USERS = gql`
-    # query ProjectUser($search: String, $projectId: ID!) {
-    query ProjectUser($projectId: ID!) {
+    query ProjectUser($search: String, $projectId: ID!) {
         project(id: $projectId) {
-            # members(search: $search) {
-            members {
-                id
-                displayName
+            userMembers(search: $search) {
+                results {
+                    member {
+                        id
+                        displayName
+                    }
+                }
+                totalCount
             }
         }
     }
 `;
 
-export type BasicProjectUser = NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['members']>[number]>;
-const keySelector = (d: BasicProjectUser) => d.id;
-const labelSelector = (d: BasicProjectUser) => d.displayName ?? '';
+export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>;
+const keySelector = (d: BasicProjectUser) => d.member.id;
+const labelSelector = (d: BasicProjectUser) => d.member.displayName ?? '';
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -68,11 +71,11 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            searchOptions={data?.project?.members}
+            searchOptions={data?.project?.userMembers?.results}
             onSearchValueChange={setSearchText}
             optionsPending={loading}
             onShowDropdownChange={setOpened}
-            totalOptionsCount={undefined}
+            totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
         />
     );
 }

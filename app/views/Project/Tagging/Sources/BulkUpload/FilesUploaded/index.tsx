@@ -100,7 +100,7 @@ function FilesUploaded(props: Props) {
     const [
         leadGroupOptions,
         setLeadGroupOptions,
-    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
+    ] = useState<BasicLeadGroup[] | undefined | null>();
 
     const currentLeadIndex = leads?.findIndex(
         (lead) => lead.clientId === selectedLead,

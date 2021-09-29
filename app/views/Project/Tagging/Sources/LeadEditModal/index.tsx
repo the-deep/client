@@ -161,12 +161,13 @@ function LeadEditModal(props: Props) {
         onLeadSaveSuccess,
     } = props;
 
-    const [initialValue] = useState<PartialFormType>(() => ({
+    const initialValue: PartialFormType = useMemo(() => ({
         clientId: randomString(),
         sourceType: 'WEBSITE',
+        priority: 'LOW',
         confidentiality: 'UNPROTECTED',
         isAssessmentLead: false,
-    }));
+    }), []);
 
     const [
         projectUserOptions,
@@ -244,8 +245,15 @@ function LeadEditModal(props: Props) {
                         ));
                     }
                     if (assignee) {
+                        const transformedAssignee = {
+                            member: {
+                                id: assignee.id,
+                                displayName: assignee.displayName,
+                            },
+                        };
+
                         setProjectUserOptions((oldVal) => (
-                            oldVal ? [...oldVal, assignee] : [assignee]
+                            oldVal ? [...oldVal, transformedAssignee] : [transformedAssignee]
                         ));
                     }
                     if (source) {

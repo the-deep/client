@@ -6,11 +6,11 @@ import {
     listToMap,
     randomString,
 } from '@togglecorp/fujs';
-import { produce } from 'immer';
 import {
     Modal,
     Button,
     useAlert,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -74,6 +74,7 @@ function BulkUpload(props: Props) {
         onLeadsAdd,
     } = props;
 
+    // NOTE: If a lead is removed or saved, uploaded files are not being removed at the moment
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
     // NOTE: leadsAdded is a boolean set when at least on lead was successfully added
     const [leadsAdded, setLeadsAdded] = useState<boolean>(false);
@@ -109,7 +110,7 @@ function BulkUpload(props: Props) {
 
     const [
         bulkCreateLeads,
-        // { loading: bulkCreateLeadsPending },
+        { loading: bulkCreateLeadsPending },
     ] = useMutation<BulkCreateLeadsMutation, BulkCreateLeadsMutationVariables>(
         BULK_CREATE_LEADS,
         {
@@ -155,7 +156,7 @@ function BulkUpload(props: Props) {
                     });
                 }
                 if (result) {
-                    const uploadedLeads = result?.map((item, index) => {
+                    const uploadedLeads = result.map((item, index) => {
                         if (isNotDefined(item)) {
                             return undefined;
                         }
@@ -165,7 +166,8 @@ function BulkUpload(props: Props) {
                         }
 
                         return clientId;
-                    }).filter(isDefined) ?? [];
+                    }).filter(isDefined);
+
                     if (uploadedLeads.length > 0) {
                         alert.show(
                             `${uploadedLeads.length} leads were successfully added!`,
@@ -175,6 +177,14 @@ function BulkUpload(props: Props) {
                         setFormFieldValue((oldValues) => (
                             oldValues?.filter((lead) => !uploadedLeads.includes(lead.clientId))
                         ), 'leads');
+                    }
+
+                    const erroredLeadsCount = result?.length - uploadedLeads.length;
+                    if (erroredLeadsCount > 0) {
+                        alert.show(
+                            `${uploadedLeads.length} couldn't be saved!`,
+                            { variant: 'error' },
+                        );
                     }
                 }
             },
@@ -231,22 +241,8 @@ function BulkUpload(props: Props) {
     }, [setUploadedFiles, setFormFieldValue, selectedLead]);
 
     const handleLeadRemove = useCallback((clientId: string) => {
-        const selectedLeadObj = formValue?.leads?.find((lead) => lead.clientId === clientId);
         setFormFieldValue((oldVal) => oldVal?.filter((lead) => lead.clientId !== clientId), 'leads');
-        if (selectedLeadObj?.attachment) {
-            setUploadedFiles((oldState: FileUploadResponse[]) => {
-                const updatedState = produce(oldState, (safeState) => {
-                    const index = safeState.findIndex(
-                        (file) => String(file.id) === selectedLeadObj.attachment,
-                    );
-                    if (index !== -1) {
-                        safeState.splice(index, 1);
-                    }
-                });
-                return updatedState;
-            });
-        }
-    }, [formValue, setFormFieldValue]);
+    }, [setFormFieldValue]);
 
     const selectedLeadAttachment = useMemo(() => {
         if (!selectedLead) {
@@ -273,8 +269,6 @@ function BulkUpload(props: Props) {
     const handleSubmit = useCallback(
         () => {
             if (!projectId) {
-                // eslint-disable-next-line no-console
-                console.error('No project id');
                 return;
             }
             const submit = createSubmitHandler(
@@ -291,17 +285,12 @@ function BulkUpload(props: Props) {
                                 leads,
                             },
                         });
-                    } else {
-                        alert.show(
-                            'Leads uploaded successfully!',
-                            { variant: 'success' },
-                        );
                     }
                 },
             );
             submit();
         },
-        [setFormError, formValidate, bulkCreateLeads, projectId, alert],
+        [setFormError, formValidate, bulkCreateLeads, projectId],
     );
 
     return (
@@ -313,13 +302,18 @@ function BulkUpload(props: Props) {
             footerActions={(
                 <Button
                     name={undefined}
-                    disabled={formPristine}
+                    disabled={
+                        formPristine
+                        || bulkCreateLeadsPending
+                        || (formValue?.leads?.length ?? 0) < 1
+                    }
                     onClick={handleSubmit}
                 >
                     Save
                 </Button>
             )}
         >
+            {bulkCreateLeadsPending && <PendingMessage />}
             <Upload
                 className={styles.upload}
                 onSuccess={handleFileUploadSuccess}
