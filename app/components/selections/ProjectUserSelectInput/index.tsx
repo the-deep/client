@@ -28,9 +28,9 @@ const PROJECT_USERS = gql`
     }
 `;
 
-export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>;
-const keySelector = (d: BasicProjectUser) => d.member.id;
-const labelSelector = (d: BasicProjectUser) => d.member.displayName ?? '';
+export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
+const keySelector = (d: BasicProjectUser) => d.id;
+const labelSelector = (d: BasicProjectUser) => d.displayName ?? '';
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -65,13 +65,19 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
         },
     );
 
+    const projectMembers = data?.project?.userMembers?.results;
+    const members = useMemo(
+        () => projectMembers?.map((item) => item.member),
+        [projectMembers],
+    );
+
     return (
         <SearchSelectInput
             {...otherProps}
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            searchOptions={data?.project?.userMembers?.results}
+            searchOptions={members}
             onSearchValueChange={setSearchText}
             optionsPending={loading}
             onShowDropdownChange={setOpened}
