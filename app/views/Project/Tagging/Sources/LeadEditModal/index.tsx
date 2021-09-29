@@ -245,15 +245,8 @@ function LeadEditModal(props: Props) {
                         ));
                     }
                     if (assignee) {
-                        const transformedAssignee = {
-                            member: {
-                                id: assignee.id,
-                                displayName: assignee.displayName,
-                            },
-                        };
-
                         setProjectUserOptions((oldVal) => (
-                            oldVal ? [...oldVal, transformedAssignee] : [transformedAssignee]
+                            oldVal ? [...oldVal, assignee] : [assignee]
                         ));
                     }
                     if (source) {
