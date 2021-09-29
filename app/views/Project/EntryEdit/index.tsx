@@ -389,8 +389,15 @@ function EntryEdit(props: Props) {
                         ));
                     }
                     if (assignee) {
+                        const transformedAssignee = {
+                            member: {
+                                id: assignee.id,
+                                displayName: assignee.displayName,
+                            },
+                        };
+
                         setProjectUserOptions((oldVal) => (
-                            oldVal ? [...oldVal, assignee] : [assignee]
+                            oldVal ? [...oldVal, transformedAssignee] : [transformedAssignee]
                         ));
                     }
                     if (source) {

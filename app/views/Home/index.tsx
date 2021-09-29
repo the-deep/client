@@ -56,11 +56,6 @@ query RecentProjects{
         leads {
             totalCount
         }
-        userGroups {
-            memberships {
-                role
-            }
-        }
         topTaggers {
             count
             name
@@ -103,11 +98,6 @@ query FetchProject($projectId: ID!) {
         }
         leads {
             totalCount
-        }
-        userGroups {
-            memberships {
-                role
-            }
         }
         topTaggers {
             count

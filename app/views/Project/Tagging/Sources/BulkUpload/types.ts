@@ -5,7 +5,7 @@ import {
 
 export type SourceFileType = 'disk' | 'google-drive' | 'dropbox';
 
-export const sourceTypeMap: { [key in string]: LeadSourceTypeEnum } = {
+export const sourceTypeMap: { [key in SourceFileType]: LeadSourceTypeEnum } = {
     disk: 'DISK',
     'google-drive': 'GOOGLE_DRIVE',
     dropbox: 'DROPBOX',
