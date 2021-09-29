@@ -33,7 +33,7 @@ import { DeepReplace } from '#utils/types';
 import CompactSection from '../CompactSection';
 import styles from './styles.css';
 
-export type Framework = DeepReplace<AnalysisFrameworkDetailType, WidgetRaw, Widget>;
+export type Framework = DeepReplace<AnalysisFrameworkDetailType, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
 type Section = NonNullable<Framework['primaryTagging']>[number];
 
 const sectionKeySelector = (d: Section) => d.clientId;

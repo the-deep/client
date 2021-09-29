@@ -105,7 +105,7 @@ const FRAMEWORK_DETAILS = gql`
 // FIXME: 'key' is thought to be mandatory from server.
 // Remove this DeepMandatory transformation after server sends key as mandatory
 type FrameworkRaw = DeepMandatory<NonNullable<FrameworkDetailsQuery['analysisFramework']>, 'key'>;
-type Framework = DeepReplace<FrameworkRaw, WidgetRaw, Widget>;
+type Framework = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
 
 interface ProjectItem {
     id: string;

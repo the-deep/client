@@ -5,6 +5,9 @@ import {
     removeNull,
 } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
+import {
+    isDefined,
+} from '@togglecorp/fujs';
 
 import {
     Container,
@@ -35,7 +38,7 @@ import EntryVerification from '#components/entryReview/EntryVerification';
 import ProjectContext from '#base/context/ProjectContext';
 import { DeepReplace } from '#utils/types';
 
-export type Framework = DeepReplace<AnalysisFrameworkDetailType, WidgetRaw, Widget>;
+export type Framework = DeepReplace<AnalysisFrameworkDetailType, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
 type Section = NonNullable<Framework['primaryTagging']>[number];
 
 const UPDATE_ENTRY = gql`
@@ -148,10 +151,12 @@ function EditableEntry(props: Props) {
                     ...entryData,
                     deleted: undefined,
                     stale: undefined,
-                    attributes: entryData.attributes?.map((attribute) => ({
-                        ...attribute,
-                        widgetType: undefined,
-                    })),
+                    attributes: entryData.attributes
+                        ?.filter((attribute) => isDefined(attribute.data))
+                        .map((attribute) => ({
+                            ...attribute,
+                            widgetType: undefined,
+                        })),
                 };
                 if (entry.id) {
                     updateEntry({
