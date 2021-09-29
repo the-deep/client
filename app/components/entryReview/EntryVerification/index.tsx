@@ -21,7 +21,7 @@ interface EntryVerificationFormData {
 interface Props {
     className?: string;
     entryId: number;
-    projectId: number;
+    projectId: string;
     disabled?: boolean;
     verifiedBy: number[];
     onVerificationChange: (entryId: number) => void;

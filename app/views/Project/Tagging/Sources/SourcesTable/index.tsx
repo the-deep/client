@@ -142,6 +142,10 @@ export const PROJECT_ENTRIES = gql`
                     authors {
                         id
                         title
+                        mergedAs {
+                            id
+                            title
+                        }
                     }
                     assignee {
                         id
@@ -170,7 +174,7 @@ function SourcesTable(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [selectedSources, setSelectedSources] = useState<Lead[]>([]);
+    const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
 
     const sortState = useSortState();
@@ -183,11 +187,11 @@ function SourcesTable(props: Props) {
     const variables = useMemo(
         (): ProjectSourcesQueryVariables | undefined => (
             (projectId) ? {
+                ...filters,
                 projectId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
                 ordering,
-                ...filters as Omit<ProjectSourcesQueryVariables, 'projectId' | 'page' | 'pageSize' | 'ordering'>,
             } : undefined
         ),
         [projectId, activePage, ordering, filters],
@@ -212,29 +216,29 @@ function SourcesTable(props: Props) {
     }, []);
 
     const clearSelection = useCallback(() => {
-        setSelectedSources([]);
+        setSelectedLeads([]);
     }, []);
 
     const handleBulkSourcesRemoveSuccess = useCallback(() => {
-        setSelectedSources([]);
+        setSelectedLeads([]);
     }, []);
 
     const handleSelectAll = useCallback((value: boolean) => {
-        setSelectedSources((oldSources) => {
+        setSelectedLeads((oldLeads) => {
             if (value) {
-                return unique([...oldSources, ...sources ?? []], (d) => d.id);
+                return unique([...oldLeads, ...sources ?? []], (d) => d.id);
             }
             const idMap = listToMap(sources ?? [], (d) => d.id, () => true);
-            return oldSources.filter((d) => !idMap[d.id]);
+            return oldLeads.filter((d) => !idMap[d.id]);
         });
     }, [sources]);
 
     const handleSelection = useCallback((value: boolean, lead: Lead) => {
         if (value) {
-            setSelectedSources((oldSelectedSources) => ([...oldSelectedSources, lead]));
+            setSelectedLeads((oldSelectedLeads) => ([...oldSelectedLeads, lead]));
         } else {
-            setSelectedSources((oldSelectedSources) => (
-                oldSelectedSources.filter((v) => v.id !== lead.id)
+            setSelectedLeads((oldSelectedLeads) => (
+                oldSelectedLeads.filter((v) => v.id !== lead.id)
             ));
         }
     }, []);
@@ -273,8 +277,8 @@ function SourcesTable(props: Props) {
     }, [setShowSingleSourceModalTrue]);
 
     const columns = useMemo(() => {
-        const selectedSourcesMap = listToMap(selectedSources, (d) => d.id, () => true);
-        const selectAllCheckValue = sources?.some((d) => selectedSourcesMap[d.id]);
+        const selectedLeadsMap = listToMap(selectedLeads, (d) => d.id, () => true);
+        const selectAllCheckValue = sources?.some((d) => selectedLeadsMap[d.id]);
 
         const selectColumn: TableColumn<
             Lead, string, CheckboxProps<string>, CheckboxProps<string>
@@ -284,17 +288,17 @@ function SourcesTable(props: Props) {
             headerCellRenderer: Checkbox,
             headerCellRendererParams: {
                 value: selectAllCheckValue,
-                // label: selectedSources.length > 0
+                // label: selectedLeads.length > 0
                 // ? _ts('sourcesTable', 'selectedNumberOfSources',
-                // { noOfSources: selectedSources.length }) : _ts('sourcesTable', 'selectAll'),
+                // { noOfSources: selectedLeads.length }) : _ts('sourcesTable', 'selectAll'),
                 onChange: handleSelectAll,
-                indeterminate: !(selectedSources.length === sources?.length
-                || selectedSources.length === 0),
+                indeterminate: !(selectedLeads.length === sources?.length
+                || selectedLeads.length === 0),
             },
             cellRenderer: Checkbox,
             cellRendererParams: (_, data) => ({
                 name: data.id,
-                value: selectedSources.some((v) => v.id === data.id),
+                value: selectedLeads.some((v) => v.id === data.id),
                 onChange: (newVal) => handleSelection(newVal, data),
             }),
             columnWidth: 48,
@@ -414,7 +418,12 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, string>(
                 'authors',
                 _ts('sourcesTable', 'authors'),
-                (item) => item.authors?.map((v: Pick<OrganizationType, 'title'>) => v.title).join(', '),
+                (item) => item.authors?.map((v: Pick<OrganizationType, 'title' | 'mergedAs'>) => {
+                    if (v.mergedAs) {
+                        return v.mergedAs.title;
+                    }
+                    return v.title;
+                }).join(', '),
                 {
                     sortable: false,
                     columnWidth: 144,
@@ -454,7 +463,7 @@ function SourcesTable(props: Props) {
         handleSelectAll,
         handleSelection,
         sources,
-        selectedSources,
+        selectedLeads,
         handleEdit,
         handleDelete,
     ]);
@@ -505,9 +514,9 @@ function SourcesTable(props: Props) {
                     />
                 )}
             </Container>
-            {selectedSources.length > 0 && (
+            {selectedLeads.length > 0 && (
                 <BulkActions
-                    selectedLeads={selectedSources}
+                    selectedLeads={selectedLeads}
                     activeProject={projectId}
                     onRemoveSuccess={handleBulkSourcesRemoveSuccess}
                     onClearSelection={clearSelection}

@@ -58,6 +58,10 @@ export const getFiltersForRequest = (filters: FilterFormType | undefined) => {
     return requestFilters;
 };
 
+/* DateInput only supports date(without timezone offset). The filters endDate and startDate
+ * accept datetime. When filtering with datetime, we should always send the timezone information
+ * to the server. getValidDateRangeValues function converts DateInput value to valid datetime.
+ */
 export function getValidDateRangeValues(dateRange?: { startDate: string, endDate: string}) {
     if (dateRange) {
         const endDate = new Date(dateRange.endDate);

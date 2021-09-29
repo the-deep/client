@@ -18,17 +18,16 @@ import {
 import NonFieldError from '#components/NonFieldError';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { EntryAction } from '#components/entryReview/commentConstants';
-import ProjectMembersMultiSelectInput from '#components/selections/ProjectMembersSelectInput';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import {
     EntryComment,
-    Membership,
 } from '#types';
 import styles from './styles.css';
 
 interface Comment {
     text: string;
     commentType: number,
-    mentionedUsers: number[],
+    mentionedUsers: string[],
 }
 
 type FormType = Partial<Comment>;
@@ -50,7 +49,7 @@ interface Props {
     className?: string;
     onSave: (response: EntryComment) => void;
     entryId: number;
-    projectId: number;
+    projectId: string;
 }
 
 function CommentForm(props: Props) {
@@ -61,7 +60,7 @@ function CommentForm(props: Props) {
         projectId,
     } = props;
 
-    const [members, setMembers] = useState<Membership[] | undefined | null>();
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
         pristine,
@@ -128,7 +127,7 @@ function CommentForm(props: Props) {
                     error={error?.text}
                     autoFocus
                 />
-                <ProjectMembersMultiSelectInput
+                <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
                     label="Assignees"
                     value={value.mentionedUsers}

@@ -1,3 +1,6 @@
-.framework-filter {
+.input {
     margin: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+    &.hidden {
+        display: none;
+    }
 }

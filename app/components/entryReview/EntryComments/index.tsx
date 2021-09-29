@@ -28,7 +28,7 @@ interface Props {
     className?: string;
     activityCount?: number;
     entryId: number;
-    projectId: number;
+    projectId: string;
 }
 
 interface MultiResponseWithSummary<T> extends MultiResponse<T> {
