@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -34,6 +34,7 @@ import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import {
     LeadEntriesFilterData,
@@ -77,8 +78,8 @@ export type SourcesFilterFields = PurgeNull<Pick<EnumFix<ProjectSourcesQueryVari
         'commentStatus'
         | 'entryTypes'
         | 'filterableData'
+        | 'controlled'
     >> & {
-        controlled?: 'true' | 'false';
         createdBy?: string[];
         createdAt?: {
             startDate: string;
@@ -232,12 +233,6 @@ const SOURCE_FILTER_OPTIONS = gql`
     }
 `;
 
-const userLabelSelector = (
-    d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
-) => d.displayName ?? `${d.firstName} ${d.lastName}`;
-const userKeySelector = (
-    d: NonNullable<SourceFilterOptionsQuery['project']>['members'][number],
-) => d.id;
 const organizationTypeKeySelector = (
     d: NonNullable<NonNullable<NonNullable<SourceFilterOptionsQuery['organizationTypes']>>['results']>[number],
 ) => d.id;
@@ -259,35 +254,32 @@ function getProjectSourcesQueryVariables(
 
     if (entriesFilterData) {
         const {
-            controlled: controlledRaw,
             createdAt: entryCreatedAt,
             ...entriesFilters
         } = entriesFilterData;
 
-        const controlled = controlledRaw === 'true';
         const entryCreatedAtFilter = getValidDateRangeValues(entryCreatedAt);
 
         return {
+            ...leadsFilters,
             createdAt_Gte: createdAt?.startDate,
             createdAt_Lt: createdAt?.endDate,
             publishedOn_Gte: publishedOn?.startDate,
             publishedOn_Lt: publishedOn?.endDate,
-            ...leadsFilters,
             entriesFilterData: {
-                controlled,
+                ...entriesFilters,
                 createdAt_Gte: entryCreatedAtFilter?.startDate,
                 createdAt_Lt: entryCreatedAtFilter?.endDate,
-                ...entriesFilters,
             },
         };
     }
 
     return {
+        ...leadsFilters,
         createdAt_Gte: createdAt?.startDate,
         createdAt_Lt: createdAt?.endDate,
         publishedOn_Gte: publishedOn?.startDate,
         publishedOn_Lt: publishedOn?.endDate,
-        ...leadsFilters,
     };
 }
 
@@ -307,6 +299,8 @@ function SourcesFilter(props: Props) {
         filterOnlyUnprotected,
         disabled,
     } = props;
+
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
         pristine,
@@ -365,8 +359,6 @@ function SourcesFilter(props: Props) {
         ?.sourcePriorityOptions?.enumValues;
     const confidentialityOptions = sourceFilterOptions
         ?.sourceConfidentialityOptions?.enumValues;
-    const assigneesOptions = sourceFilterOptions
-        ?.project?.members;
     const organizationTypeOptions = sourceFilterOptions?.organizationTypes?.results;
 
     return (
@@ -411,17 +403,21 @@ function SourcesFilter(props: Props) {
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
                 />
-                <MultiSelectInput
-                    className={styles.input}
+                <ProjectMemberMultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        (hasNoData(value?.assignees) && !allFiltersVisible)
+                        && styles.hidden,
+                    )}
                     name="assignees"
+                    projectId={projectId}
+                    value={value?.assignees}
                     onChange={setFieldValue}
-                    options={assigneesOptions}
-                    keySelector={userKeySelector}
-                    labelSelector={userLabelSelector}
-                    value={value.assignees}
-                    error={getErrorString(error?.assignees)}
-                    label={_ts('sourcesFilter', 'assignee')}
-                    disabled={disabled || loading || !!sourceFilterOptionsError}
+                    options={members}
+                    onOptionsChange={setMembers}
+                    label="Entry created by"
+                    placeholder="Entry created by"
+                    disabled={disabled}
                 />
                 <SelectInput
                     className={_cs(

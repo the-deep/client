@@ -27,8 +27,11 @@ import styles from './styles.css';
 interface Option {
     key: string;
     label: string;
+    clientId: string;
 }
 const filterKeySelector = (d: Option) => d.key;
+// FIXME remove clientId as key when clientId is removed from widget option properties
+const filterClientIdSelector = (d: Option) => d.clientId;
 const filterLabelSelector = (d: Option) => d.label;
 
 type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
@@ -245,7 +248,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     label={title}
                     onChange={onFieldChange}
                     options={filter.properties.options}
-                    keySelector={filterKeySelector}
+                    keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
                     disabled={disabled || optionsDisabled}
                 />
@@ -265,7 +268,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     onChange={onFieldChange}
                     label={title}
                     options={filter.properties.options}
-                    keySelector={filterKeySelector}
+                    keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
                     disabled={disabled || optionsDisabled}

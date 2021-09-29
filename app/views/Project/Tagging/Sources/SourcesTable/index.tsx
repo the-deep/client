@@ -36,9 +36,9 @@ import { VscLoading } from 'react-icons/vsc';
 import {
     ProjectSourcesQuery,
     ProjectSourcesQueryVariables,
-    OrganizationType,
 } from '#generated/types';
 import _ts from '#ts';
+import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 
 import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
@@ -418,12 +418,7 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, string>(
                 'authors',
                 _ts('sourcesTable', 'authors'),
-                (item) => item.authors?.map((v: Pick<OrganizationType, 'title' | 'mergedAs'>) => {
-                    if (v.mergedAs) {
-                        return v.mergedAs.title;
-                    }
-                    return v.title;
-                }).join(', '),
+                (item) => item.authors?.map(organizationTitleSelector).join(', '),
                 {
                     sortable: false,
                     columnWidth: 144,

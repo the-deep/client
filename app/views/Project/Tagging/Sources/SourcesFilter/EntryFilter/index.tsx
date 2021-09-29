@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import {
     _cs,
     listToMap,
@@ -23,7 +23,8 @@ import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
-import ProjectMemberMultiSelectInput from '#components/selections/ProjectMemberMultiSelectInput';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
 import FrameworkFilterItem from './FrameworkFilterItem';
 import { PartialEntriesFilterDataType } from '..';
@@ -31,14 +32,7 @@ import styles from './styles.css';
 
 const filterKeySelector = (d: AnalysisFrameworkFilterType) => d.key;
 
-interface ControlStatusOption {
-    key: 'true' | 'false';
-    value: string;
-}
-const optionLabelSelector = (d: ControlStatusOption) => d.value;
-const optionKeySelector = (d: ControlStatusOption) => d.key;
-
-const controlledStatusOptions: ControlStatusOption[] = [
+const controlledStatusOptions: Option[] = [
     {
         key: 'true',
         value: 'Controlled',
@@ -79,6 +73,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
     const {
         setValue: onFrameworkFilterChange,
     } = useFormArray('filterableData', setFieldValue);
@@ -130,8 +125,9 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 name="createdBy"
                 projectId={projectId}
                 value={value?.createdBy}
-                onChange={setFieldValue} // FIXME: fix type issue
-                options={options?.project?.members}
+                onChange={setFieldValue}
+                options={members}
+                onOptionsChange={setMembers}
                 label="Entry created by"
                 placeholder="Entry created by"
                 disabled={disabled}
@@ -164,18 +160,16 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 placeholder="Entry comment status"
                 disabled={disabled || optionsDisabled}
             />
-            <SelectInput
+            <BooleanInput
                 className={_cs(
                     styles.input,
                     (hasNoData(value?.controlled) && !allFiltersVisible)
                     && styles.hidden,
                 )}
+                options={controlledStatusOptions}
                 name="controlled"
                 value={value?.controlled}
                 onChange={setFieldValue}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-                options={controlledStatusOptions}
                 label="Entry controlled status"
                 placeholder="Entry controlled status"
                 disabled={disabled}
