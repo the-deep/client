@@ -4,6 +4,7 @@ import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
+import { removeEmptyObject } from '#utils/unsafeCommon';
 
 import NonFieldError from '#components/NonFieldError';
 import { Matrix1dWidget } from '#types/newAnalyticalFramework';
@@ -30,7 +31,7 @@ interface CellProps {
     selected: boolean;
     rowId: string;
     cellId: string;
-    onCellChange: (rowId: string, cellId: string, selected: boolean) => void;
+    onCellChange: (rowId: string, cellId: string, selected: boolean | undefined) => void;
 }
 
 function Cell(props: CellProps) {
@@ -47,7 +48,8 @@ function Cell(props: CellProps) {
 
     const handleCellChange = useCallback(
         () => {
-            onCellChange(rowId, cellId, !selected);
+            // NOTE: setting undefined so that it will be cleaned up
+            onCellChange(rowId, cellId, selected ? undefined : true);
         },
         [rowId, cellId, onCellChange, selected],
     );
@@ -71,7 +73,7 @@ interface RowProps {
     readOnly?: boolean;
     row: RowType;
     value: NonNullable<Matrix1dValue['value']>[string];
-    onCellChange: (rowId: string, cellId: string, selected: boolean) => void;
+    onCellChange: (rowId: string, cellId: string, selected: boolean | undefined) => void;
 }
 
 function Row(props: RowProps) {
@@ -180,14 +182,14 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     ), [widget?.properties?.rows]);
 
     const handleCellChange = useCallback(
-        (rowId: string, cellId: string, state: boolean) => {
-            const newValue = {
+        (rowId: string, cellId: string, state: boolean | undefined) => {
+            const newValue = removeEmptyObject({
                 ...value?.value,
                 [rowId]: {
                     ...value?.value?.[rowId],
                     [cellId]: state,
                 },
-            };
+            });
             onChange(newValue, name);
         },
         [value, name, onChange],
