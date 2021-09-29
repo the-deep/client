@@ -375,6 +375,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                                 name="leadExtract"
                                 variant="action"
                                 onClick={handleLeadDataExtract}
+                                title="Auto-fill lead information"
                                 disabled={disabled}
                             >
                                 <IoEye />
@@ -421,6 +422,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                         <>
                             <QuickActionButton
                                 name="fileExtract"
+                                title="Auto-fill lead information"
                                 variant="action"
                                 onClick={handleFileExtractClick}
                                 disabled={disabled}
@@ -449,6 +451,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                         variant="transparent"
                         onClick={handleAddLeadGroupClick}
                         disabled={disabled}
+                        title="Add lead group"
                     >
                         <IoAdd />
 
@@ -497,6 +500,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                             variant="transparent"
                             onClick={handleAddPublishingOrganizationsClick}
                             disabled={pendingLeadOptions || disabled}
+                            title="Add new organization"
                         >
                             <IoAdd />
 
@@ -518,6 +522,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     actions={(
                         <QuickActionButton
                             name="add organizations"
+                            title="Add new organization"
                             variant="transparent"
                             onClick={handleAddAuthorOrganizationsClick}
                             disabled={pendingLeadOptions || disabled}

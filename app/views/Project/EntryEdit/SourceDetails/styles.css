@@ -12,6 +12,7 @@
         flex-direction: column;
         flex-shrink: 0;
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        padding: 0;
         overflow: auto;
 
         .preview {

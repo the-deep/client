@@ -182,7 +182,7 @@ function BulkUpload(props: Props) {
                     const erroredLeadsCount = result?.length - uploadedLeads.length;
                     if (erroredLeadsCount > 0) {
                         alert.show(
-                            `${uploadedLeads.length} couldn't be saved!`,
+                            `Failed to add ${erroredLeadsCount} leads!`,
                             { variant: 'error' },
                         );
                     }
@@ -190,7 +190,7 @@ function BulkUpload(props: Props) {
             },
             onError: (gqlError) => {
                 alert.show(
-                    'Failed to save leads!',
+                    'Failed to add leads!',
                     { variant: 'error' },
                 );
                 // eslint-disable-next-line no-console

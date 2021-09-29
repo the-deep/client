@@ -377,7 +377,7 @@ function LeadEditModal(props: Props) {
             <Card className={styles.previewContainer}>
                 <LeadPreview
                     className={styles.preview}
-                    url={leadData?.url}
+                    url={value?.url}
                     attachment={leadData?.attachment ?? undefined}
                 />
             </Card>
