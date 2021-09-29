@@ -18,7 +18,7 @@ import {
     AttributeType as WidgetAttributeRaw,
 } from '#generated/types';
 
-type BaseWidgetAttribute = Omit<WidgetAttributeRaw, 'data' | 'widgetType'>;
+type BaseWidgetAttribute = Omit<WidgetAttributeRaw, 'data' | 'widgetTypeDisplay' | 'widthTypeDisplay'>;
 
 type BaseData<T> = { value: T; } | undefined;
 
