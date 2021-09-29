@@ -424,10 +424,12 @@ function EntryEdit(props: Props) {
                                 ...entry,
                                 deleted: undefined,
                                 stale: undefined,
-                                attributes: entry.attributes?.map((attribute) => ({
-                                    ...attribute,
-                                    widgetType: undefined,
-                                })),
+                                attributes: entry.attributes
+                                    ?.filter((attribute) => isDefined(attribute.data))
+                                    .map((attribute) => ({
+                                        ...attribute,
+                                        widgetType: undefined,
+                                    })),
                             }));
 
                         bulkUpdateEntries({

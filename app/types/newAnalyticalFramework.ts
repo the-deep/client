@@ -7,7 +7,7 @@ import {
 export type Types = WidgetTypes;
 
 // NOTE: we are replacing these with more strict types
-type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties'>;
+type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'>;
 
 interface BaseProperties<T> {
     defaultValue?: T;
