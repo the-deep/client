@@ -8,6 +8,9 @@ import {
     IoCreateOutline,
     IoTrash,
 } from 'react-icons/io5';
+import {
+    FaClone,
+} from 'react-icons/fa';
 import { Error, getErrorObject, analyzeErrors } from '@togglecorp/toggle-form';
 
 import SortableList, {
@@ -27,8 +30,10 @@ interface WidgetProps {
     onWidgetValueChange: (value: unknown, widgetName: string) => void;
     onWidgetEditClick: (widgetName: string) => void;
     onWidgetDeleteClick: (widgetName: string) => void;
+    onWidgetCloneClick: (widgetName: string) => void;
     showWidgetEdit: boolean | undefined;
     showWidgetDelete: boolean | undefined;
+    showWidgetClone: boolean | undefined;
     editMode: boolean | undefined;
     attributes?: Attributes;
     listeners?: Listeners;
@@ -41,7 +46,9 @@ function WidgetWrapper(props: WidgetProps) {
         clientId,
         onWidgetValueChange,
         onWidgetEditClick,
+        onWidgetCloneClick,
         showWidgetEdit,
+        showWidgetClone,
         showWidgetDelete,
         editMode,
         onWidgetDeleteClick,
@@ -70,6 +77,17 @@ function WidgetWrapper(props: WidgetProps) {
                             disabled={editMode || disabled}
                         >
                             <IoCreateOutline />
+                        </QuickActionButton>
+                    )}
+                    {showWidgetClone && (
+                        <QuickActionButton
+                            name={clientId}
+                            onClick={onWidgetCloneClick}
+                            // FIXME: use translation
+                            title="Clone Widget"
+                            disabled={editMode || disabled}
+                        >
+                            <FaClone />
                         </QuickActionButton>
                     )}
                     {showWidgetDelete && (
@@ -115,12 +133,14 @@ type Props<T> = {
     onWidgetOrderChange?: (widgets: Widget[]) => void;
     onWidgetDelete?: (widgetId: string, name: T) => void;
     onWidgetEdit?: (widgetId: string, name: T) => void;
+    onWidgetClone?: (widgetId: string, name: T) => void;
 } | {
     editMode: true;
     widgets: PartialWidget[] | undefined;
     onWidgetOrderChange?: never;
     onWidgetDelete?: never;
     onWidgetEdit?: never;
+    onWidgetClone?: never;
 })
 
 function Canvas<T>(props: Props<T>) {
@@ -171,6 +191,16 @@ function Canvas<T>(props: Props<T>) {
         [props.editMode, props.onWidgetOrderChange],
     );
 
+    const handleWidgetCloneClick = useCallback(
+        (widgetId: string) => {
+            if (!props.editMode && props.onWidgetClone) {
+                props.onWidgetClone(widgetId, name);
+            }
+        },
+        // eslint-disable-next-line react/destructuring-assignment
+        [props.editMode, props.onWidgetClone, name],
+    );
+
     const widgetRendererParams = useCallback((key: string, data: Widget | PartialWidget) => ({
         clientId: key,
         isSecondary,
@@ -180,6 +210,8 @@ function Canvas<T>(props: Props<T>) {
         onWidgetEditClick: handleWidgetEditClick,
         showWidgetDelete: !props.editMode,
         onWidgetDeleteClick: handleWidgetDeleteClick,
+        showWidgetClone: !props.editMode,
+        onWidgetCloneClick: handleWidgetCloneClick,
         editMode: props.editMode,
         disabled,
     }), [
@@ -187,6 +219,7 @@ function Canvas<T>(props: Props<T>) {
         handleWidgetValueChange,
         handleWidgetEditClick,
         handleWidgetDeleteClick,
+        handleWidgetCloneClick,
         // eslint-disable-next-line react/destructuring-assignment
         props.editMode,
         disabled,

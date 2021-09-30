@@ -18,6 +18,7 @@ import { PartialWidget } from '#components/framework/AttributeInput';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';
+import { cloneWidget } from '../../utils';
 
 import {
     findWidget,
@@ -78,6 +79,19 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
             const widget = findWidget(widgets, widgetId);
             if (widget) {
                 setTempWidget(widget);
+            }
+        },
+        [widgets],
+    );
+
+    const handleWidgetCloneClick = useCallback(
+        (widgetId: string) => {
+            const widget = findWidget(widgets, widgetId);
+            if (widget) {
+                const clonedWidget = cloneWidget(widget);
+                if (clonedWidget) {
+                    setTempWidget(clonedWidget);
+                }
             }
         },
         [widgets],
@@ -197,6 +211,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                         onWidgetDelete={handleWidgetDeleteClick}
                         onWidgetEdit={handleWidgetEditClick}
                         onWidgetOrderChange={handleWidgetOrderChange}
+                        onWidgetClone={handleWidgetCloneClick}
                         editMode={false}
                         isSecondary
                         disabled={disabled}
