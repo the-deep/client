@@ -29,6 +29,7 @@ import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';
 import { Section, Widget } from '../../types';
+import { cloneWidget } from '../../utils';
 
 import SectionsEditor, { PartialSectionType } from './SectionsEditor';
 import {
@@ -145,6 +146,22 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                     sectionId,
                     widget,
                 });
+            }
+        },
+        [sections],
+    );
+
+    const handleWidgetClone = useCallback(
+        (widgetId: string, sectionId: string) => {
+            const widget = findWidget(sections, sectionId, widgetId);
+            if (widget) {
+                const clonedWidget = cloneWidget(widget);
+                if (clonedWidget) {
+                    setTempWidget({
+                        sectionId,
+                        widget: clonedWidget,
+                    });
+                }
             }
         },
         [sections],
@@ -400,6 +417,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                     onWidgetDelete={handleWidgetDeleteClick}
                                     onWidgetEdit={handleWidgetEditClick}
                                     onWidgetOrderChange={handleWidgetOrderChange}
+                                    onWidgetClone={handleWidgetClone}
                                     editMode={false}
                                     disabled={disabled}
                                     error={
