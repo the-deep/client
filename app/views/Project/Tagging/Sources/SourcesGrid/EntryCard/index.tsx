@@ -2,7 +2,7 @@ import React, { useMemo, useCallback, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
-    IoTrash,
+    IoTrashBinOutline,
     IoClose,
 } from 'react-icons/io5';
 import { gql, useMutation } from '@apollo/client';
@@ -146,7 +146,7 @@ function EntryCard(props: Props) {
                             disabled={deleteEntryPending}
                             message="Are you sure you want to delete the entry?"
                         >
-                            <IoTrash />
+                            <IoTrashBinOutline />
                         </QuickActionConfirmButton>
                     </>
                 )}

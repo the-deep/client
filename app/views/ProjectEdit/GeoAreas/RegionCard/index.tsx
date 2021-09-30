@@ -5,7 +5,7 @@ import {
 } from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
 import {
-    IoTrash,
+    IoTrashBinOutline,
     IoAdd,
 } from 'react-icons/io5';
 import {
@@ -274,7 +274,7 @@ function RegionCard(props: Props) {
                     disabled
                     // disabled={navigationDisabled}
                 >
-                    <IoTrash />
+                    <IoTrashBinOutline />
                 </QuickActionConfirmButton>
             )}
         >

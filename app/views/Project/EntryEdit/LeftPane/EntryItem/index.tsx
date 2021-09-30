@@ -3,7 +3,7 @@ import {
     IoClose,
     IoCheckmark,
     IoPencil,
-    IoTrash,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 import { BsFileDiff } from 'react-icons/bs';
 import { requiredStringCondition } from '@togglecorp/toggle-form';
@@ -237,7 +237,7 @@ function EntryItem(props: EntryItemProps) {
                         name={entryId}
                         onClick={onEntryDelete}
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                 </>
             )}

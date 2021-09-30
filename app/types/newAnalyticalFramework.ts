@@ -7,7 +7,7 @@ import {
 export type Types = WidgetTypes;
 
 // NOTE: we are replacing these with more strict types
-type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'>;
+export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'>;
 
 interface BaseProperties<T> {
     defaultValue?: T;
@@ -81,7 +81,7 @@ interface ScaleProperties extends BaseProperties<ScaleValue> {
 }
 
 export interface OrganigramDatum extends KeyLabelEntity {
-    children: OrganigramDatum[];
+    children: OrganigramDatum[] | undefined;
 }
 
 interface OrganigramProperties extends BaseProperties<OrganigramValue> {

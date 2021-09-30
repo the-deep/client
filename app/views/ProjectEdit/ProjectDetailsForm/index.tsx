@@ -5,7 +5,7 @@ import {
     generatePath,
 } from 'react-router-dom';
 import {
-    IoTrashOutline,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     Button,
@@ -482,7 +482,7 @@ function ProjectDetailsForm(props: Props) {
                         disabled={!projectId || projectDeletePending}
                         onClick={showDeleteProjectConfirmation}
                         icons={(
-                            <IoTrashOutline />
+                            <IoTrashBinOutline />
                         )}
                     >
                         {_ts('projectEdit', 'deleteProjectButtonLabel')}

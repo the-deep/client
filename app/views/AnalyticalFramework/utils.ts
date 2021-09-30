@@ -9,11 +9,7 @@ import {
     Matrix1dWidget,
     Matrix2dWidget,
     KeyLabelEntity,
-    KeyLabelColorEntity,
     BaseWidget,
-    Matrix1dRows,
-    Matrix2dRows,
-    Matrix2dColumns,
 } from '#types/newAnalyticalFramework';
 
 function cloneWidgetSuperficially<T extends BaseWidget>(value: T): T {
@@ -23,7 +19,6 @@ function cloneWidgetSuperficially<T extends BaseWidget>(value: T): T {
         key: randKey,
         clientId: randKey,
         id: undefined,
-        title: `${value.title} (Cloned)`,
     };
 }
 
@@ -36,114 +31,87 @@ function cloneOption<T extends KeyLabelEntity>(value: T): T {
 
 function cloneScaleWidget(widget: ScaleWidget) {
     const { options } = widget.properties;
-    const defaultOption = options.find((o: KeyLabelColorEntity) => (
+
+    // NOTE: rememebering index to get defaultOption after transformation
+    const defaultOptionIndex = options.findIndex((o) => (
         o.clientId === widget.properties.defaultValue
     ));
-    const otherOptions = options.filter((o: KeyLabelColorEntity) => (
-        o.clientId !== defaultOption?.clientId
-    ))
-        .map((o: KeyLabelColorEntity) => cloneOption(o));
 
-    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
+    const clonedOptions = options.map(cloneOption);
 
-    if (defaultOption) {
-        const newDefaultOption = cloneOption(defaultOption);
-        return ({
-            ...partiallyClonedWidget,
-            properties: {
-                options: [
-                    ...otherOptions,
-                    newDefaultOption,
-                ],
-                defaultValue: newDefaultOption.clientId,
-            },
-        });
-    }
-
-    return ({
-        ...partiallyClonedWidget,
+    return cloneWidgetSuperficially({
+        ...widget,
         properties: {
-            options: [
-                ...otherOptions,
-            ],
+            ...widget.properties,
+            options: clonedOptions,
+            defaultValue: defaultOptionIndex !== -1
+                ? clonedOptions[defaultOptionIndex]?.clientId
+                : undefined,
         },
     });
 }
 
 function cloneSelectionWidget(widget: MultiSelectWidget | SingleSelectWidget) {
-    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
-    return ({
-        ...partiallyClonedWidget,
+    return cloneWidgetSuperficially({
+        ...widget,
         properties: {
-            options: widget.properties.options.map((v: KeyLabelEntity) => cloneOption(v)),
+            ...widget.properties,
+            options: widget.properties.options.map(cloneOption),
         },
     });
 }
 
 function transformOrganigramData(data: OrganigramDatum): OrganigramDatum {
-    const clonedOption = cloneOption(data);
-    if (data.children) {
-        return {
-            ...clonedOption,
-            children: data.children.map(transformOrganigramData),
-        };
-    }
-    return {
-        ...clonedOption,
-        children: [],
-    };
+    return cloneOption({
+        ...data,
+        children: data.children?.map(transformOrganigramData),
+    });
 }
 
 function cloneOrganigramWidget(widget: OrganigramWidget) {
-    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
-    return ({
-        ...partiallyClonedWidget,
+    return cloneWidgetSuperficially({
+        ...widget,
         properties: {
+            ...widget.properties,
             options: transformOrganigramData(widget.properties.options),
         },
     });
 }
 
 function cloneMatrix1dWidget(widget: Matrix1dWidget) {
-    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
-    return ({
-        ...partiallyClonedWidget,
+    return cloneWidgetSuperficially({
+        ...widget,
         properties: {
-            rows: widget.properties.rows.map((row: Matrix1dRows) => {
-                const clonedRow = cloneOption(row);
-                return ({
-                    ...clonedRow,
-                    cells: row.cells.map((cell: KeyLabelEntity) => cloneOption(cell)),
-                });
-            }),
+            ...widget.properties,
+            rows: widget.properties.rows.map((row) => (
+                cloneOption({
+                    ...row,
+                    cells: row.cells.map(cloneOption),
+                })
+            )),
         },
     });
 }
 
 function cloneMatrix2dWidget(widget: Matrix2dWidget) {
-    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
-    return {
-        ...partiallyClonedWidget,
+    return cloneWidgetSuperficially({
+        ...widget,
         properties: {
-            rows: widget.properties.rows.map((row: Matrix2dRows) => {
-                const clonedRow = cloneOption(row);
-                return ({
-                    ...clonedRow,
-                    clientId: randomString(),
-                    subRows: row.subRows.map((subRow: KeyLabelEntity) => (cloneOption(subRow))),
-                });
-            }),
-            columns: widget.properties.columns.map((column: Matrix2dColumns) => {
-                const clonedColumn = cloneOption(column);
-                return ({
-                    ...clonedColumn,
-                    subColumns: column.subColumns.map(
-                        (subColumn: KeyLabelEntity) => (cloneOption(subColumn)),
-                    ),
-                });
-            }),
+            ...widget.properties,
+            rows: widget.properties.rows.map((row) => (
+                cloneOption({
+                    ...row,
+                    subRows: row.subRows.map(cloneOption),
+                })
+            )),
+            columns: widget.properties.columns.map((column) => (
+                cloneOption({
+                    ...column,
+                    subColumns: column.subColumns.map(cloneOption),
+                })
+            )),
         },
-    };
+    });
 }
 // eslint-disable-next-line import/prefer-default-export
 export function cloneWidget(

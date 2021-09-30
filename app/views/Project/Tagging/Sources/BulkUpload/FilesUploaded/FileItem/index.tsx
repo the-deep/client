@@ -6,7 +6,7 @@ import {
     Button,
     Element,
 } from '@the-deep/deep-ui';
-import { IoTrashOutline } from 'react-icons/io5';
+import { IoTrashBinOutline } from 'react-icons/io5';
 
 import {
     PartialLeadType,
@@ -53,7 +53,7 @@ function FileItem(props: Props) {
                         title="Remove File"
                         onClick={onLeadRemove}
                     >
-                        <IoTrashOutline />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                 </>
             )}

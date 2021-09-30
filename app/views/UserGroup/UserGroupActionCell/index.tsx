@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrashOutline, IoAdd } from 'react-icons/io5';
+import { IoTrashBinOutline, IoAdd } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     QuickActionButton,
@@ -82,7 +82,7 @@ function UserGroupActionCell(props: Props) {
                 showConfirmationInitially={false}
                 disabled={disabled}
             >
-                <IoTrashOutline />
+                <IoTrashBinOutline />
             </QuickActionConfirmButton>
         </div>
     );

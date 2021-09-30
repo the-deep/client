@@ -16,7 +16,7 @@ import {
 import { FiEdit2 } from 'react-icons/fi';
 import Cloak from '#components/general/Cloak';
 import {
-    IoTrashOutline,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 
 import {
@@ -145,7 +145,7 @@ function AnalysisPillar(props: Props) {
                                 showConfirmationInitially={false}
                                 variant="secondary"
                             >
-                                <IoTrashOutline />
+                                <IoTrashBinOutline />
                             </QuickActionConfirmButton>
                         </>
                     )}

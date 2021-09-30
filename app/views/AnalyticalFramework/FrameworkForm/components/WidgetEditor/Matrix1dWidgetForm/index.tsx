@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import {
-    IoTrash,
+    IoTrashBinOutline,
     IoAdd,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
@@ -214,7 +214,7 @@ function CellInput(props: CellInputProps) {
                     // FIXME: use translation
                     title="Remove Cell"
                 >
-                    <IoTrash />
+                    <IoTrashBinOutline />
                 </QuickActionButton>
             )}
         >
@@ -375,7 +375,7 @@ function RowInput(props: RowInputProps) {
                     // FIXME: use translation
                     title="Remove Row"
                 >
-                    <IoTrash />
+                    <IoTrashBinOutline />
                 </QuickActionButton>
             )}
         >

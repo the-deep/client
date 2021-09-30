@@ -6,11 +6,9 @@ import {
 import { GrDrag } from 'react-icons/gr';
 import {
     IoCreateOutline,
-    IoTrash,
+    IoCopyOutline,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
-import {
-    FaClone,
-} from 'react-icons/fa';
 import { Error, getErrorObject, analyzeErrors } from '@togglecorp/toggle-form';
 
 import SortableList, {
@@ -87,7 +85,7 @@ function WidgetWrapper(props: WidgetProps) {
                             title="Clone Widget"
                             disabled={editMode || disabled}
                         >
-                            <FaClone />
+                            <IoCopyOutline />
                         </QuickActionButton>
                     )}
                     {showWidgetDelete && (
@@ -98,7 +96,7 @@ function WidgetWrapper(props: WidgetProps) {
                             title="Delete Widget"
                             disabled={editMode || disabled}
                         >
-                            <IoTrash />
+                            <IoTrashBinOutline />
                         </QuickActionButton>
                     )}
                     {!editMode && (
