@@ -6,8 +6,233 @@ import {
 
 export type Types = WidgetTypes;
 
+type Conjunction = 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
+
+interface BaseCondition {
+    key: string;
+    conjunctionOperator: Conjunction;
+    order: number;
+    invert: boolean;
+}
+
+interface BaseConditional {
+    id: string;
+    clientId: string;
+
+    // id of parent widget
+    parentId: string;
+}
+
+type NumberCondition = BaseCondition & ({
+    operator: 'greater-than';
+    value: number;
+} | {
+    operator: 'less-than';
+    value: number;
+} | {
+    operator: 'equal-to';
+    value: number;
+} | {
+    operator: 'empty';
+});
+
+type TextCondition = BaseCondition & ({
+    operator: 'starts-with';
+    value: string;
+} | {
+    operator: 'ends-with';
+    value: string;
+} | {
+    operator: 'contains';
+    value: string;
+} | {
+    operator: 'empty';
+});
+
+// NOTE: single select doesn't need to implement array-every-selected as it is
+// not possible in most cases
+type SelectCondition = BaseCondition & ({
+    operator: 'one-selected';
+    value: string;
+} | {
+    operator: 'some-selected';
+    value: string[];
+} | {
+    operator: 'every-selected';
+    value: string[];
+} | {
+    operator: 'empty';
+});
+
+// NOTE: we can add array selections here
+type OrganigramCondition = BaseCondition & ({
+    operator: 'one-selected';
+    value: string;
+} | {
+    operator: 'some-descendent-selected';
+    value: string;
+} | {
+    operator: 'empty';
+});
+
+type ScaleCondition = BaseCondition & ({
+    operator: 'equal-to';
+    value: string;
+} | {
+    operator: 'at-least';
+    value: string;
+} | {
+    operator: 'at-most';
+    value: string;
+} | {
+    operator: 'empty';
+});
+
+type Matrix1dCondition = BaseCondition & ({
+    operator: 'some-cell-selected';
+    value: string[];
+} | {
+    operator: 'some-row-selected';
+    value: string[];
+});
+
+type Matrix2dCondition = BaseCondition & ({
+    operator: 'some-row-selected';
+    value: string[];
+} | {
+    operator: 'some-sub-row-selected';
+    value: string[];
+} | {
+    operator: 'some-column-selected';
+    value: string[];
+} | {
+    operator: 'some-sub-column-selected';
+    value: string[];
+});
+
+type DateCondition = BaseCondition & ({
+    operator: 'after';
+    value: string;
+} | {
+    operator: 'before';
+    value: string;
+} | {
+    operator: 'equal-to';
+    value: string;
+} | {
+    operator: 'empty';
+});
+
+type TimeCondition = BaseCondition & ({
+    operator: 'after';
+    value: string;
+} | {
+    operator: 'before';
+    value: string;
+} | {
+    operator: 'equal-to';
+    value: string;
+} | {
+    operator: 'empty';
+});
+
+type DateRangeCondition = BaseCondition & ({
+    operator: 'after';
+    value: string;
+} | {
+    operator: 'before';
+    value: string;
+} | {
+    operator: 'includes';
+    value: string;
+} | {
+    operator: 'empty';
+})
+
+type TimeRangeCondition = BaseCondition & ({
+    operator: 'after';
+    value: string;
+} | {
+    operator: 'before';
+    value: string;
+} | {
+    operator: 'includes';
+    value: string;
+} | {
+    operator: 'empty';
+})
+
+export interface NumberConditional extends BaseConditional {
+    parentWidgetId: 'NUMBER';
+    conditions: NumberCondition[];
+}
+export interface TextConditional extends BaseConditional {
+    parentWidgetId: 'TEXT';
+    conditions: TextCondition[];
+}
+export interface SingleSelectConditional extends BaseConditional {
+    parentWidgetId: 'SELECT';
+    conditions: SelectCondition[];
+}
+export interface MultiSelectConditional extends BaseConditional {
+    parentWidgetId: 'MULTISELECT';
+    conditions: SelectCondition[];
+}
+export interface DateConditional extends BaseConditional {
+    parentWidgetId: 'DATE';
+    conditions: DateCondition[];
+}
+export interface TimeConditional extends BaseConditional {
+    parentWidgetId: 'TIME';
+    conditions: TimeCondition[];
+}
+export interface TimeRangeConditional extends BaseConditional {
+    parentWidgetId: 'TIME_RANGE';
+    conditions: TimeRangeCondition[];
+}
+export interface DateRangeConditional extends BaseConditional {
+    parentWidgetId: 'DATE_RANGE';
+    conditions: DateRangeCondition[];
+}
+export interface Matrix1dConditional extends BaseConditional {
+    parentWidgetId: 'MATRIX1D';
+    conditions: Matrix1dCondition[];
+}
+export interface Matrix2dConditional extends BaseConditional {
+    parentWidgetId: 'MATRIX2D';
+    conditions: Matrix2dCondition[];
+}
+export interface OrganigramConditional extends BaseConditional {
+    parentWidgetId: 'ORGANIGRAM';
+    conditions: OrganigramCondition[];
+}
+export interface ScaleConditional extends BaseConditional {
+    parentWidgetId: 'SCALE';
+    conditions: ScaleCondition[];
+}
+export interface GeoLocationConditional extends BaseConditional {
+    parentWidgetId: 'GEO';
+    conditions: SelectCondition[];
+}
+
+type Conditional = NumberConditional
+    | TextConditional
+    | SingleSelectConditional
+    | MultiSelectConditional
+    | DateConditional
+    | TimeConditional
+    | TimeRangeConditional
+    | DateRangeConditional
+    | Matrix1dConditional
+    | Matrix2dConditional
+    | OrganigramConditional
+    | ScaleConditional
+    | GeoLocationConditional;
+
 // NOTE: we are replacing these with more strict types
-export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'>;
+export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'> & {
+    conditional?: Conditional | undefined;
+};
 
 interface BaseProperties<T> {
     defaultValue?: T;
@@ -22,17 +247,6 @@ export interface KeyLabelEntity {
 export interface KeyLabelColorEntity extends KeyLabelEntity {
     color: string;
 }
-
-/*
-interface Condition
-    key: string;
-    type: unknown;
-    directive: unknown;
-
-    order: number;
-    conjunction: 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
-}
-*/
 
 export type NumberValue = number;
 export type TextValue = string;
