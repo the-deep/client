@@ -54,19 +54,19 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'key' | 'widgetId' | 'order'>;
 
 type OptionType = DataType['options'][number];
 export type PartialOptionType = PartialForm<
     OptionType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type OptionSchema = ObjectSchema<PartialOptionType, PartialFormType>;
 type OptionSchemaFields = ReturnType<OptionSchema['fields']>;
 const optionSchema: OptionSchema = {
     fields: (): OptionSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         color: [isValidColor],
         order: [],
@@ -76,7 +76,7 @@ const optionSchema: OptionSchema = {
 type OptionsSchema = ArraySchema<PartialOptionType, PartialFormType>;
 type OptionsSchemaMember = ReturnType<OptionsSchema['member']>;
 const optionsSchema: OptionsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): OptionsSchemaMember => optionSchema,
     validation: (options) => {
         if ((options?.length ?? 0) <= 0) {
@@ -110,11 +110,11 @@ const schema: FormSchema = {
 };
 
 const defaultOptionVal: PartialOptionType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 
-const optionKeySelector = (o: PartialOptionType) => o.clientId;
+const optionKeySelector = (o: PartialOptionType) => o.key;
 const optionLabelSelector = (o: PartialOptionType) => o.label ?? 'Unnamed';
 
 interface OptionInputProps {
@@ -125,8 +125,8 @@ interface OptionInputProps {
     onRemove: (index: number, isDefault: boolean) => void;
     index: number;
     isDefault: boolean;
-    clientId: string;
-    onDefaultValueChange: (clientId: string | undefined) => void;
+    optionKey: string;
+    onDefaultValueChange: (key: string | undefined) => void;
     listeners?: Listeners,
     attributes?: Attributes,
     autoFocus?: boolean;
@@ -143,7 +143,7 @@ function OptionInput(props: OptionInputProps) {
         onRemove,
         index,
         isDefault,
-        clientId,
+        optionKey,
         onDefaultValueChange,
         listeners,
         attributes,
@@ -165,15 +165,15 @@ function OptionInput(props: OptionInputProps) {
 
     const handleCheckboxChange = useCallback((newVal: boolean) => {
         if (newVal) {
-            onDefaultValueChange(clientId);
+            onDefaultValueChange(optionKey);
         } else {
             onDefaultValueChange(undefined);
         }
-    }, [onDefaultValueChange, clientId]);
+    }, [onDefaultValueChange, optionKey]);
 
     return (
         <ControlledExpandableContainer
-            name={value.clientId}
+            name={value.key}
             className={className}
             // NOTE: newly created elements should be open, else closed
             // FIXME: use strings
@@ -290,13 +290,13 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newOption: PartialOptionType = {
-                clientId,
+                key,
                 order: oldOptions.length,
             };
-            setExpandedScaleId(newOption.clientId);
+            setExpandedScaleId(newOption.key);
             onFieldChange(
                 [...reorder(oldOptions), newOption],
                 'options' as const,
@@ -321,12 +321,12 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onDefaultValueChange: handleDefaultValueChange,
         error: arrayError?.[key],
         value: option,
-        clientId: key,
+        optionKey: key,
         isDefault: value?.defaultValue === key,
         index,
-        autoFocus: newlyCreatedOptionIdRef.current === option.clientId,
+        autoFocus: newlyCreatedOptionIdRef.current === option.key,
         onExpansionChange: handleExpansionChange,
-        expanded: expandedScaleId === option.clientId,
+        expanded: expandedScaleId === option.key,
     }), [
         onOptionsChange,
         handleOptionRemove,

@@ -16,7 +16,7 @@ import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialOrganigramWidget = PartialForm<
     OrganigramWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type OrganigramValue = NonNullable<OrganigramWidgetAttribute['data']>;
@@ -25,7 +25,7 @@ type Option = NonNullable<NonNullable<
 NonNullable<PartialOrganigramWidget>['properties']
 >['options']>;
 
-const optionKeySelector = (option: Option) => option.clientId;
+const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 
 function getFlatOptions(data?: OrganigramDatum, prefix?: string): Omit<OrganigramDatum, 'children'>[] {
@@ -87,7 +87,7 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
     ), [widget.properties?.options]);
 
     const selectedValues = useMemo(() => {
-        const optionsMap = listToMap(options, (d) => d.clientId, (d) => d.label);
+        const optionsMap = listToMap(options, (d) => d.key, (d) => d.label);
         return value?.value?.map((v) => optionsMap?.[v])?.join(', ');
     }, [options, value]);
 

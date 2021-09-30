@@ -26,13 +26,13 @@ type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
 
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
 type CellType = NonNullable<NonNullable<RowType>['cells']>[number];
 
-const cellKeySelector = (c: CellType) => c.clientId;
+const cellKeySelector = (c: CellType) => c.key;
 const cellLabelSelector = (c: CellType) => c.label ?? '';
 
 interface RowProps {
@@ -53,7 +53,7 @@ function Row(props: RowProps) {
     } = props;
 
     const {
-        clientId,
+        key,
         label,
         tooltip,
         cells,
@@ -65,15 +65,15 @@ function Row(props: RowProps) {
     ), [value]);
 
     const handleCellsChange = useCallback((newCells: string[]) => {
-        onCellsChange(listToMap(newCells, (d) => d, () => true), clientId);
-    }, [onCellsChange, clientId]);
+        onCellsChange(listToMap(newCells, (d) => d, () => true), key);
+    }, [onCellsChange, key]);
 
     const sortedCells = useMemo(() => (
         sortByOrder(cells)
     ), [cells]);
 
     const selectedValues = useMemo(() => {
-        const optionsMap = listToMap(sortedCells, (d) => d.clientId, (d) => d.label);
+        const optionsMap = listToMap(sortedCells, (d) => d.key, (d) => d.label);
         return transformedValue?.map((v) => optionsMap?.[v])?.join(', ');
     }, [sortedCells, transformedValue]);
 
@@ -87,7 +87,7 @@ function Row(props: RowProps) {
             </div>
             {!readOnly ? (
                 <MultiSelectInput
-                    name={row?.clientId}
+                    name={row?.key}
                     onChange={handleCellsChange}
                     options={sortedCells}
                     labelSelector={cellLabelSelector}
@@ -151,7 +151,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     const filteredRows = useMemo(() => {
         const rows = widgetRows?.filter(
             (row) => {
-                const rowValue = value?.value?.[row.clientId];
+                const rowValue = value?.value?.[row.key];
                 return !!rowValue && Object.values(rowValue).some((d) => d);
             },
         );
@@ -170,7 +170,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: RowType) => row.clientId,
+        (row: RowType) => row.key,
         [],
     );
     const rowRendererParams = useCallback(

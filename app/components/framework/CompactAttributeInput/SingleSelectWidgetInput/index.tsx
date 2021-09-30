@@ -16,14 +16,14 @@ type SingleSelectValue = NonNullable<SingleSelectWidgetAttribute['data']>;
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
     NonNullable<PartialSingleSelectWidget>['properties']
 >['options']>[number];
 
-const optionKeySelector = (option: Option) => option.clientId;
+const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 
 export interface Props <N extends string>{
@@ -73,7 +73,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [widgetOptions]);
 
     const selectedValue = useMemo(() => (
-        widgetOptions?.find((o) => o.clientId === value?.value)?.label
+        widgetOptions?.find((o) => o.key === value?.value)?.label
     ), [widgetOptions, value]);
 
     return (

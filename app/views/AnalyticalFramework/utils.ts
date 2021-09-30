@@ -35,7 +35,7 @@ function cloneScaleWidget(widget: ScaleWidget): ScaleWidget {
     }
     // NOTE: remembering index to get defaultOption after transformation
     const defaultOptionIndex = widget.properties.options.findIndex((o) => (
-        o.clientId === widget.properties?.defaultValue
+        o.key === widget.properties?.defaultValue
     )) ?? -1;
 
     const clonedOptions = widget.properties.options.map(cloneOption);
@@ -46,7 +46,7 @@ function cloneScaleWidget(widget: ScaleWidget): ScaleWidget {
             ...widget.properties,
             options: clonedOptions,
             defaultValue: defaultOptionIndex !== -1 && clonedOptions
-                ? clonedOptions[defaultOptionIndex]?.clientId
+                ? clonedOptions[defaultOptionIndex]?.key
                 : undefined,
         },
     });
