@@ -4,7 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     IoCopyOutline,
-    IoTrashOutline,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     Container,
@@ -224,7 +224,7 @@ function Analysis(props: ComponentProps) {
                                 variant="secondary"
                                 showConfirmationInitially={false}
                             >
-                                <IoTrashOutline />
+                                <IoTrashBinOutline />
                             </QuickActionConfirmButton>
                         </>
                     )}

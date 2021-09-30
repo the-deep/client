@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    IoTrashOutline,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     QuickActionConfirmButton,
@@ -39,7 +39,7 @@ function TableActions(props: Props) {
                 showConfirmationInitially={false}
                 disabled={disabled}
             >
-                <IoTrashOutline />
+                <IoTrashBinOutline />
             </QuickActionConfirmButton>
         </div>
     );

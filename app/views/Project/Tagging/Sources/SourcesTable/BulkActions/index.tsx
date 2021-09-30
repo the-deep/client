@@ -5,7 +5,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     IoClose,
-    IoTrashOutline,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     Button,
@@ -86,8 +86,8 @@ function BulkActions(props: Props) {
                 name="bulk-delete"
                 title={_ts('leads', 'removeLeadLeadButtonTitle')}
                 onConfirm={onRemoveBulkLead}
-                icons={<IoTrashOutline />}
                 variant="tertiary"
+                icons={<IoTrashBinOutline />}
                 className={styles.button}
                 message={_ts('leads', 'removeMultipleLeadsConfirm', {
                     leadsCount: (

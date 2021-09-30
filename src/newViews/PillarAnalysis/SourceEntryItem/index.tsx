@@ -3,7 +3,7 @@ import {
     _cs,
     compareDate,
 } from '@togglecorp/fujs';
-import { IoTrash } from 'react-icons/io5';
+import { IoTrashBinOutline } from 'react-icons/io5';
 import {
     Tag,
     DraggableContent,
@@ -92,7 +92,7 @@ function SourceEntryItem(props: Props) {
             )}
             footerActions={(
                 <QuickActionDropdownMenu
-                    label={(<IoTrash />)}
+                    label={(<IoTrashBinOutline />)}
                 >
                     {discardedTags && discardedTags.map(tag => (
                         <DropdownMenuItem

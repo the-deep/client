@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import {
-    IoTrash,
+    IoTrashBinOutline,
     IoAdd,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
@@ -271,7 +271,7 @@ function SubRowInput(props: SubRowInputProps) {
                         // FIXME: use translation
                         title="Remove Sub Row"
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={index}
@@ -443,7 +443,7 @@ function RowInput(props: RowInputProps) {
                     // FIXME: use translation
                     title="Remove Row"
                 >
-                    <IoTrash />
+                    <IoTrashBinOutline />
                 </QuickActionButton>
             )}
         >
@@ -560,7 +560,7 @@ function SubColumnInput(props: SubColumnInputProps) {
                         // FIXME: use translation
                         title="Remove Sub Column"
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={index}
@@ -725,7 +725,7 @@ function ColumnInput(props: ColumnInputProps) {
                         // FIXME: use translation
                         title="Remove Column"
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={index}
