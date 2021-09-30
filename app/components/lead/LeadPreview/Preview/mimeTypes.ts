@@ -29,11 +29,11 @@ export type DocsMimeType =
     | 'application/msword'
     | 'application/wps-office.docx';
 
-export type MimeTypes = HTMLMimeTypes | ImageMimeTypes | DocsMimeType;
+export type MimeTypes = string;
 
-export const imageMimeTypes: ImageMimeTypes[] = ['image/png', 'image/jpeg', 'image/fig', 'image/gif'];
+export const imageMimeTypes: string[] = ['image/png', 'image/jpeg', 'image/fig', 'image/gif'];
 
-export const docsMimeTypes: DocsMimeType[] = [
+export const docsMimeTypes: string[] = [
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/rtf', 'text/plain', 'font/otf', 'application/pdf',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -43,14 +43,14 @@ export const docsMimeTypes: DocsMimeType[] = [
     'application/wps-office.docx',
 ];
 
-export function isImageMimeType(mimeType: MimeTypes) {
+export function isImageMimeType(mimeType: string) {
     return imageMimeTypes.some((d) => d === mimeType);
 }
 
-export function isDocMimeType(mimeType: MimeTypes) {
+export function isDocMimeType(mimeType: string) {
     return docsMimeTypes.some((d) => d === mimeType);
 }
 
-export function isHTMLMimeType(mimeType: MimeTypes) {
+export function isHTMLMimeType(mimeType: string) {
     return mimeType === 'text/html';
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     _cs,
-    isValidUrl,
+    isValidUrl as isValidRemoteUrl,
 } from '@togglecorp/fujs';
 import {
     ImagePreview,
@@ -18,6 +18,20 @@ import {
 } from './mimeTypes';
 
 import styles from './styles.css';
+
+const rege = /(?<=\/\/)localhost(?=[:/]|$)/;
+
+export function isLocalUrl(url: string) {
+    return rege.test(url);
+}
+
+export function isValidUrl(url: string | undefined): url is string {
+    if (!url) {
+        return false;
+    }
+    const sanitizedUrl = url.replace(rege, 'localhost.com');
+    return isValidRemoteUrl(sanitizedUrl);
+}
 
 interface Props {
     className?: string;
@@ -92,7 +106,13 @@ function Preview(props: Props) {
     }
     if (isDocMimeType(mimeType)) {
         // NOTE: try to show pdf in iframe
-        if (mimeType === 'application/pdf' && !cannotPreviewHttps && canShowIframe) {
+        if (
+            mimeType === 'application/pdf'
+            && (
+                (!cannotPreviewHttps && canShowIframe)
+                || isLocalUrl(url)
+            )
+        ) {
             return (
                 <iframe
                     title={url}

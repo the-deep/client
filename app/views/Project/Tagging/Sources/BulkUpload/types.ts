@@ -1,6 +1,15 @@
 import { MimeTypes } from '#components/lead/LeadPreview/Preview/mimeTypes';
+import {
+    LeadSourceTypeEnum,
+} from '#generated/types';
 
 export type SourceFileType = 'disk' | 'google-drive' | 'dropbox';
+
+export const sourceTypeMap: { [key in SourceFileType]: LeadSourceTypeEnum } = {
+    disk: 'DISK',
+    'google-drive': 'GOOGLE_DRIVE',
+    dropbox: 'DROPBOX',
+};
 
 export interface FileUploadResponse {
     id: number;

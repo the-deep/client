@@ -431,8 +431,8 @@ function SourcesTable(props: Props) {
                 </RowExpansionContext.Provider>
                 {showSingleSourceModal && (
                     <LeadEditModal
-                        leadId={leadToEdit}
-                        projectId={projectId}
+                        leadId={String(leadToEdit)}
+                        projectId={String(projectId)}
                         onClose={setShowSingleSourceModalFalse}
                         onLeadSaveSuccess={handleLeadSaveSuccess}
                     />

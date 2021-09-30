@@ -15,6 +15,7 @@
             >* {
                 display: inline;
                 padding: 0;
+                word-break: break-all;
 
                 >* {
                     display: inline;

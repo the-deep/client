@@ -39,7 +39,60 @@ export const PROJECT_FRAMEWORK = gql`
         project(id: $projectId) {
             id
             lead(id: $leadId) {
-                id
+                title,
+                leadGroup {
+                    id,
+                    title,
+                },
+                title,
+                clientId,
+                assignee {
+                    id,
+                    displayName,
+                }
+                publishedOn,
+                text,
+                url,
+                website,
+                attachment {
+                    id
+                    title
+                    mimeType
+                    file {
+                        url
+                    }
+                }
+                isAssessmentLead
+                sourceType
+                priority
+                confidentiality
+                status
+                source {
+                    id
+                    title
+                    mergedAs {
+                        id
+                        title
+                    }
+                }
+                authors {
+                    id
+                    title
+                    mergedAs {
+                        id
+                        title
+                    }
+                }
+                emmEntities {
+                    id
+                    name
+                }
+                emmTriggers {
+                    id
+                    emmKeyword
+                    emmRiskFactor
+                    count
+                }
                 entries {
                     ...EntryResponse
                 }

@@ -67,6 +67,10 @@ function Tagging(props: Props) {
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
 
+    const handleLeadsAdd = useCallback(() => {
+        setRefreshTimestamp(new Date().getTime());
+    }, []);
+
     const subNavbarComponents = (
         <>
             <SubNavbarIcons>
@@ -179,14 +183,16 @@ function Tagging(props: Props) {
             </div>
             {isSingleSourceModalShown && project?.id && (
                 <LeadEditModal
-                    projectId={+project.id}
+                    projectId={project.id}
                     onClose={hideSingleSourceAddModal}
                     onLeadSaveSuccess={handleSingleLeadSaveSuccess}
                 />
             )}
-            {isBulkModalShown && (
+            {isBulkModalShown && project?.id && (
                 <BulkUpload
                     onClose={hideBulkUploadModal}
+                    onLeadsAdd={handleLeadsAdd}
+                    projectId={project.id}
                 />
             )}
         </SubNavbarContext.Provider>

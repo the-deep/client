@@ -41,3 +41,8 @@ export interface BooleanKeyValueElement {
 export interface FaramErrors {
     [key: string]: string | undefined | string [] | FaramErrors;
 }
+
+export interface EnumEntity<T> {
+    name: T;
+    description?: string | null;
+}

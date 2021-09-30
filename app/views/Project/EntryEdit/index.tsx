@@ -38,20 +38,21 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { transformToFormError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
-import { useRequest } from '#base/utils/restRequest';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
-    Lead,
-} from '#components/lead/LeadEditForm/schema';
+} from '#components/lead/LeadInput/schema';
 import {
     ProjectFrameworkQuery,
     ProjectFrameworkQueryVariables,
     BulkUpdateEntriesMutation,
     BulkUpdateEntriesMutationVariables,
 } from '#generated/types';
+import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
+import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
+import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import EntryInput from '#components/entry/EntryInput';
 import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
@@ -69,6 +70,7 @@ import styles from './styles.css';
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
+export type Lead = NonNullable<NonNullable<ProjectFrameworkQuery['project']>['lead']>;
 
 function transformEntry(entry: Entry): EntryInputType {
     // FIXME: make this re-usable
@@ -100,17 +102,31 @@ function EntryEdit(props: Props) {
 
     // LEAD
 
-    // FIXME: why have this ready/setReady state here?
-    // leadId will always be defined anyway
-    const [ready, setReady] = useState(!leadId);
-
-    const [leadInitialValue, setLeadInitialValue] = useState<PartialLeadFormType>(() => ({
-        project: projectId ? +projectId : undefined,
-        sourceType: 'website',
-        priority: 100,
-        confidentiality: 'unprotected',
+    const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
+        clientId: randomString(),
+        sourceType: 'WEBSITE',
         isAssessmentLead: false,
     }));
+
+    const [
+        projectUserOptions,
+        setProjectUserOptions,
+    ] = useState<BasicProjectUser[] | undefined | null>();
+
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+
+    const [
+        leadGroupOptions,
+        setLeadGroupOptions,
+    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
@@ -125,25 +141,9 @@ function EntryEdit(props: Props) {
 
     const {
         value: leadValue,
-        setFieldValue: setLeadFieldValue,
         setValue: setLeadValue,
-        setPristine: setLeadPristine,
         error: leadFormError,
     } = useForm(leadSchema, leadInitialValue);
-
-    const {
-        pending: leadGetPending,
-        response: lead,
-    } = useRequest<Lead>({
-        skip: !leadId,
-        url: `server://v2/leads/${leadId}/`,
-        onSuccess: (response) => {
-            setLeadInitialValue(response);
-            setLeadValue(response);
-            setReady(true);
-        },
-        failureHeader: 'Leads',
-    });
 
     // ENTRY FORM
 
@@ -366,6 +366,43 @@ function EntryEdit(props: Props) {
                         (d) => d,
                     );
                     setEntryImagesMap(imagesMap);
+
+                    const leadData = removeNull(leadFromResponse);
+                    setLeadValue({
+                        ...leadData,
+                        attachment: leadData?.attachment?.id,
+                        leadGroup: leadData?.leadGroup?.id,
+                        assignee: leadData?.assignee?.id,
+                        source: leadData?.source?.id,
+                        authors: leadData?.authors?.map((author) => author.id),
+                    });
+                    const {
+                        leadGroup,
+                        assignee,
+                        authors,
+                        source,
+                    } = leadData;
+
+                    if (leadGroup) {
+                        setLeadGroupOptions((oldVal) => (
+                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
+                        ));
+                    }
+                    if (assignee) {
+                        setProjectUserOptions((oldVal) => (
+                            oldVal ? [...oldVal, assignee] : [assignee]
+                        ));
+                    }
+                    if (source) {
+                        setSourceOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, source] : [source]
+                        ));
+                    }
+                    if (authors) {
+                        setAuthorOrganizationOptions((oldVal) => (
+                            oldVal ? [...oldVal, ...authors] : [...authors]
+                        ));
+                    }
                 }
 
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
@@ -670,6 +707,8 @@ function EntryEdit(props: Props) {
         ],
     );
 
+    const lead = data?.project?.lead;
+
     return (
         <div className={_cs(styles.entryEdit, className)}>
             <Prompt
@@ -760,14 +799,19 @@ function EntryEdit(props: Props) {
                             <SourceDetails
                                 leadValue={leadValue}
                                 setValue={setLeadValue}
-                                setPristine={setLeadPristine}
-                                setLeadFieldValue={setLeadFieldValue}
+                                defaultValue={leadInitialValue}
                                 leadFormError={leadFormError}
-                                ready={ready}
-                                pending={leadGetPending}
-                                leadInitialValue={leadInitialValue}
-                                projectId={+projectId}
-                                disabled
+                                pending={loading}
+                                projectId={projectId}
+                                sourceOrganizationOptions={sourceOrganizationOptions}
+                                onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
+                                authorOrganizationOptions={authorOrganizationOptions}
+                                onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
+                                leadGroupOptions={leadGroupOptions}
+                                onLeadGroupOptionsChange={setLeadGroupOptions}
+                                assigneeOptions={projectUserOptions}
+                                onAssigneeOptionChange={setProjectUserOptions}
+                                attachment={lead?.attachment}
                             />
                         )}
                     </TabPanel>

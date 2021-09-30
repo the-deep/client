@@ -116,6 +116,7 @@ function UploadItem(props: Props) {
                         name="retrigger"
                         onClick={handleRetriggerClick}
                         disabled={pending}
+                        title="Retry failed upload"
                     >
                         <AiOutlineRedo />
                     </QuickActionButton>

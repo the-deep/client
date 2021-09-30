@@ -1,10 +1,7 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useLazyQuery, gql } from '@apollo/client';
 import {
     _cs,
-    unique,
-    isTruthyString,
-    compareNumber,
     isDefined,
 } from '@togglecorp/fujs';
 import produce from 'immer';
@@ -13,44 +10,45 @@ import {
     TextInput,
     DateInput,
     SegmentInput,
-    SelectInput,
     Checkbox,
     TextArea,
     QuickActionButton,
     useBooleanState,
 } from '@the-deep/deep-ui';
 import {
-    EntriesAsList,
     Error,
     getErrorObject,
     getErrorString,
-    SetBaseValueArg,
+    SetValueArg,
+    useFormObject,
 } from '@togglecorp/toggle-form';
 import {
     IoAdd,
     IoEye,
 } from 'react-icons/io5';
 
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
-import OrganizationSelectInput from '#components/selections/OrganizationSelectInput';
-import OrganizationMultiSelectInput from '#components/selections/OrganizationMultiSelectInput';
+import { useLazyRequest } from '#base/utils/restRequest';
+import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
+import ProjectUserSelectInput, { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import LeadGroupSelectInput, { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+import NewOrganizationMultiSelectInput from '#components/selections/NewOrganizationMultiSelectInput';
 import AddOrganizationModal from '#components/general/AddOrganizationModal';
+import NonFieldError from '#components/NonFieldError';
 import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
 import {
-    BasicOrganization,
-    LeadGroup,
+    enumKeySelector,
+    enumLabelSelector,
+} from '#utils/common';
+import {
     OrganizationDetails,
 } from '#types';
 import {
+    LeadType,
     TokenQuery,
+    LeadOptionsQuery,
 } from '#generated/types';
 
-import {
-    PartialFormType,
-    LeadOptions,
-    Priority,
-} from './schema';
+import { PartialFormType } from './schema';
 import ConfidentialityInput from './ConfidentialityInput';
 import EmmStats from './EmmStats';
 
@@ -100,76 +98,64 @@ interface WebInfo {
     author?: OrganizationDetails;
 }
 
-const idSelector = (item: { id: number }) => item.id;
-const titleSelector = (item: { title: string}) => item.title;
-const displayNameSelector = (item: { displayName: string }) => item.displayName;
-
-const keySelector = (item: Priority) => item.key;
-const valueSelector = (item: Priority) => item.value;
-
-interface Props {
+interface Props<N extends string | number | undefined> {
+    name: N;
     className?: string;
-    setFieldValue: (...values: EntriesAsList<PartialFormType>) => void;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    onChange: (value: SetValueArg<PartialFormType>, name: N) => void;
     value: PartialFormType;
     error: Error<PartialFormType> | undefined;
-    setPristine: (val: boolean) => void;
-    initialValue: PartialFormType;
     pending?: boolean;
-    ready?: boolean;
-    projectId: number;
+    projectId: string;
     disabled?: boolean;
+    defaultValue: PartialFormType;
+    priorityOptions: NonNullable<LeadOptionsQuery['leadPriorityOptions']>['enumValues'] | undefined;
+    sourceOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    authorOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    assigneeOptions: BasicProjectUser[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
+    pendingLeadOptions?: boolean;
+    attachment: LeadType['attachment'];
 }
 
-function LeadEditForm(props: Props) {
+function LeadInput<N extends string | number | undefined>(props: Props<N>) {
     const {
+        name,
         className,
         value,
-        setValue,
-        setPristine,
-        initialValue,
+        onChange,
         error: riskyError,
-        setFieldValue,
+        defaultValue,
         pending: pendingFromProps,
-        ready,
         projectId,
         disabled,
-    } = props;
-    const error = getErrorObject(riskyError);
-
-    const optionsRequestBody = useMemo(() => ({
-        projects: [initialValue.project],
-        leadGroups: [initialValue.leadGroup].filter(isDefined),
-        organizations: unique(
-            [
-                initialValue.source,
-                ...(initialValue.authors || []),
-            ].filter(isDefined),
-            (id) => id,
-        ),
-    }), [initialValue]);
-
-    const [
+        priorityOptions,
+        pendingLeadOptions,
+        attachment,
         sourceOrganizationOptions,
-        setSourceOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
-
-    const [
+        onSourceOrganizationOptionsChange,
         authorOrganizationOptions,
-        setAuthorOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
+        onAuthorOrganizationOptionsChange,
+        leadGroupOptions,
+        onLeadGroupOptionsChange,
+        assigneeOptions,
+        onAssigneeOptionChange,
+    } = props;
 
-    // NOTE: the loading animation flashes when loading for
-    // lead-options. this will be mitigated when using graphql
+    const error = getErrorObject(riskyError);
+    const setFieldValue = useFormObject(name, onChange, defaultValue);
+
     const [
         organizationAddType,
         setOrganizationAddType,
     ] = useState<'author' | 'publisher' | undefined>(undefined);
-
-    const [
-        leadGroupOptions,
-        setLeadGroupOptions,
-    ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const [
         showAddOrganizationModal,
@@ -183,31 +169,8 @@ function LeadEditForm(props: Props) {
         setShowAddLeadGroupModalFalse,
     ] = useBooleanState(false);
 
-    const {
-        pending: pendingLeadOptions,
-        response: leadOptions,
-    } = useRequest<LeadOptions>({
-        method: 'POST',
-        url: 'server://lead-options/',
-        body: optionsRequestBody,
-        onSuccess: (response) => {
-            if (response.organizations) {
-                setSourceOrganizationOptions((oldVal) => unique([
-                    ...(oldVal ?? []),
-                    ...response.organizations,
-                ], (d) => d.id));
-                setAuthorOrganizationOptions((oldVal) => unique([
-                    ...(oldVal ?? []),
-                    ...response.organizations,
-                ], (d) => d.id));
-            }
-        },
-        failureHeader: 'Lead Options',
-        skip: !ready,
-    });
-
     const handleInfoAutoFill = useCallback((webInfo: WebInfo) => {
-        setValue((oldValues) => {
+        onChange((oldValues = defaultValue) => {
             const newValues = produce(oldValues, (safeValues) => {
                 if (webInfo.date) {
                     // eslint-disable-next-line no-param-reassign
@@ -227,28 +190,41 @@ function LeadEditForm(props: Props) {
                 }
                 if (webInfo.source) {
                     // eslint-disable-next-line no-param-reassign
-                    safeValues.source = webInfo.source.id;
+                    safeValues.source = String(webInfo.source.id);
                 }
                 if (webInfo.author) {
                     // FIXME: we have to look into this
                     // eslint-disable-next-line no-param-reassign
-                    safeValues.authors = [webInfo.author.id];
+                    safeValues.authors = [String(webInfo.author.id)].filter(isDefined);
                 }
             });
             return newValues;
-        });
+        }, name);
         if (webInfo.source) {
-            setSourceOrganizationOptions(
-                (oldVal) => [...oldVal ?? [], webInfo.source].filter(isDefined),
+            const transformedSource = {
+                id: String(webInfo.source.id),
+                title: String(webInfo.source.id),
+            };
+            onSourceOrganizationOptionsChange(
+                (oldVal) => [...oldVal ?? [], transformedSource].filter(isDefined),
             );
         }
         if (webInfo.author) {
-            setAuthorOrganizationOptions(
-                (oldVal) => [...oldVal ?? [], webInfo.author].filter(isDefined),
+            const transformedAuthor = {
+                id: String(webInfo.author.id),
+                title: String(webInfo.author.id),
+            };
+            onAuthorOrganizationOptionsChange(
+                (oldVal) => [...oldVal ?? [], transformedAuthor].filter(isDefined),
             );
         }
-        setPristine(false);
-    }, [setValue, setPristine]);
+    }, [
+        defaultValue,
+        name,
+        onChange,
+        onSourceOrganizationOptionsChange,
+        onAuthorOrganizationOptionsChange,
+    ]);
 
     const {
         pending: webInfoPending,
@@ -311,15 +287,15 @@ function LeadEditForm(props: Props) {
                     return;
                 }
 
-                if (value.sourceType === 'website' && value.url) {
+                if (value.sourceType === 'WEBSITE' && value.url) {
                     getRawWebInfo({
                         url: value.url,
                         isFile: false,
                         token,
                     });
-                } else if (value.attachment?.file) {
+                } else if (attachment?.file?.url) {
                     getRawWebInfo({
-                        url: value.attachment.file,
+                        url: attachment.file.url,
                         isFile: true,
                         token,
                     });
@@ -330,11 +306,6 @@ function LeadEditForm(props: Props) {
             },
         },
     );
-
-    const sortedPriority = useMemo(() => (
-        // FIXME: sort mutates original array
-        leadOptions?.priority?.sort((a, b) => compareNumber(a.key, b.key))
-    ), [leadOptions?.priority]);
 
     const handleAddPublishingOrganizationsClick = useCallback(() => {
         setShowAddOrganizationModalTrue();
@@ -354,44 +325,41 @@ function LeadEditForm(props: Props) {
         getUserToken();
     }, [getUserToken]);
 
-    const handleOrganizationAdd = useCallback((val: BasicOrganization) => {
+    const handleOrganizationAdd = useCallback((val: { id: number; title: string }) => {
+        const transformedVal = {
+            id: String(val.id),
+            title: val.title,
+        };
         if (organizationAddType === 'publisher') {
-            setFieldValue(val.id, 'source');
-            setSourceOrganizationOptions((oldVal) => [...oldVal ?? [], val]);
+            setFieldValue(transformedVal.id, 'source');
+            onSourceOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
         } else if (organizationAddType === 'author') {
-            setFieldValue((oldVal: number[] | undefined) => [...oldVal ?? [], val.id], 'authors');
-            setAuthorOrganizationOptions((oldVal) => [...oldVal ?? [], val]);
+            setFieldValue((oldVal: string[] | undefined | null) => [...oldVal ?? [], transformedVal.id], 'authors');
+            onAuthorOrganizationOptionsChange((oldVal) => [...oldVal ?? [], transformedVal]);
         }
-    }, [organizationAddType, setFieldValue]);
+    }, [
+        organizationAddType,
+        setFieldValue,
+        onSourceOrganizationOptionsChange,
+        onAuthorOrganizationOptionsChange,
+    ]);
 
     const handleAddLeadGroupClick = useCallback(() => {
         setShowAddLeadAddGroupModal();
     }, [setShowAddLeadAddGroupModal]);
 
-    const handleLeadGroupAdd = useCallback((val: LeadGroup) => {
+    const handleLeadGroupAdd = useCallback((val: BasicLeadGroup) => {
         setFieldValue(val.id, 'leadGroup');
-        setLeadGroupOptions((oldVal) => [...oldVal ?? [], val]);
-    }, [setFieldValue]);
+        onLeadGroupOptionsChange((oldVal) => [...oldVal ?? [], val]);
+    }, [setFieldValue, onLeadGroupOptionsChange]);
 
     const pending = pendingFromProps || pendingUserToken || webInfoPending || rawWebInfoPending;
 
     return (
         <div className={_cs(styles.leadEditForm, className)}>
             {pending && <PendingMessage />}
-            <SelectInput
-                label="Project"
-                name="project"
-                value={value.project}
-                className={styles.input}
-                onChange={setFieldValue}
-                keySelector={idSelector}
-                labelSelector={titleSelector}
-                options={leadOptions?.projects}
-                error={error?.project}
-                disabled={pendingLeadOptions || disabled}
-                readOnly
-            />
-            {value.sourceType === 'website' && (
+            <NonFieldError error={error} />
+            {value.sourceType === 'WEBSITE' && (
                 <>
                     <TextInput
                         className={styles.input}
@@ -407,6 +375,7 @@ function LeadEditForm(props: Props) {
                                 name="leadExtract"
                                 variant="action"
                                 onClick={handleLeadDataExtract}
+                                title="Auto-fill lead information"
                                 disabled={disabled}
                             >
                                 <IoEye />
@@ -424,7 +393,7 @@ function LeadEditForm(props: Props) {
                     />
                 </>
             )}
-            {value.sourceType === 'text' && (
+            {value.sourceType === 'TEXT' && (
                 <TextArea
                     className={styles.input}
                     label="Text"
@@ -446,13 +415,14 @@ function LeadEditForm(props: Props) {
                 disabled={disabled}
                 actions={
                     (
-                        value.sourceType === 'disk'
-                        || value.sourceType === 'dropbox'
-                        || value.sourceType === 'google-drive'
-                    ) && value.attachment?.file && (
+                        value.sourceType === 'DISK'
+                        || value.sourceType === 'DROPBOX'
+                        || value.sourceType === 'GOOGLE_DRIVE'
+                    ) && attachment?.file && (
                         <>
                             <QuickActionButton
                                 name="fileExtract"
+                                title="Auto-fill lead information"
                                 variant="action"
                                 onClick={handleFileExtractClick}
                                 disabled={disabled}
@@ -469,9 +439,9 @@ function LeadEditForm(props: Props) {
                 className={styles.input}
                 value={value.leadGroup}
                 onChange={setFieldValue}
-                options={leadGroupOptions ?? leadOptions?.leadGroups}
-                onOptionsChange={setLeadGroupOptions}
-                disabled={pendingLeadOptions || disabled}
+                options={leadGroupOptions}
+                onOptionsChange={onLeadGroupOptionsChange}
+                disabled={disabled}
                 label="Lead Group"
                 error={error?.leadGroup}
                 projectId={projectId}
@@ -481,6 +451,7 @@ function LeadEditForm(props: Props) {
                         variant="transparent"
                         onClick={handleAddLeadGroupClick}
                         disabled={disabled}
+                        title="Add lead group"
                     >
                         <IoAdd />
 
@@ -497,30 +468,31 @@ function LeadEditForm(props: Props) {
                     error={error?.publishedOn}
                     disabled={disabled}
                 />
-                <SelectInput
+                <ProjectUserSelectInput
                     className={styles.input}
+                    disabled={pendingLeadOptions || disabled}
+                    error={error?.assignee}
                     label="Assignee"
                     name="assignee"
-                    value={value.assignee}
                     onChange={setFieldValue}
-                    keySelector={idSelector}
-                    labelSelector={displayNameSelector}
-                    options={leadOptions?.members}
-                    error={error?.assignee}
-                    disabled={pendingLeadOptions || disabled}
+                    onOptionsChange={onAssigneeOptionChange}
+                    options={assigneeOptions}
+                    value={value.assignee}
+                    projectId={projectId}
                 />
             </div>
             <div className={styles.row}>
-                <OrganizationSelectInput
+                <NewOrganizationSelectInput
                     className={styles.input}
                     name="source"
                     value={value.source}
                     onChange={setFieldValue}
-                    options={sourceOrganizationOptions ?? leadOptions?.organizations}
-                    onOptionsChange={setSourceOrganizationOptions}
+                    options={sourceOrganizationOptions}
+                    onOptionsChange={onSourceOrganizationOptionsChange}
                     disabled={pendingLeadOptions || disabled}
                     label="Publishing Organizations"
-                    hint={isTruthyString(value.sourceRaw) && `Previous organization: ${value.sourceRaw}`}
+                    // eslint-disable-next-line max-len
+                    // hint={isTruthyString(value.sourceRaw) && `Previous organization: ${value.sourceRaw}`}
                     error={error?.source}
                     actions={(
                         <QuickActionButton
@@ -528,26 +500,29 @@ function LeadEditForm(props: Props) {
                             variant="transparent"
                             onClick={handleAddPublishingOrganizationsClick}
                             disabled={pendingLeadOptions || disabled}
+                            title="Add new organization"
                         >
                             <IoAdd />
 
                         </QuickActionButton>
                     )}
                 />
-                <OrganizationMultiSelectInput
+                <NewOrganizationMultiSelectInput
                     className={styles.input}
                     name="authors"
                     value={value.authors}
                     onChange={setFieldValue}
-                    options={authorOrganizationOptions ?? leadOptions?.organizations}
-                    onOptionsChange={setAuthorOrganizationOptions}
+                    options={authorOrganizationOptions}
+                    onOptionsChange={onAuthorOrganizationOptionsChange}
                     disabled={pendingLeadOptions || disabled}
                     label="Authoring Organizations"
-                    hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
+                    // eslint-disable-next-line max-len
+                    // hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
                     error={getErrorString(error?.authors)}
                     actions={(
                         <QuickActionButton
                             name="add organizations"
+                            title="Add new organization"
                             variant="transparent"
                             onClick={handleAddAuthorOrganizationsClick}
                             disabled={pendingLeadOptions || disabled}
@@ -564,9 +539,9 @@ function LeadEditForm(props: Props) {
                     label="Priority"
                     value={value.priority}
                     onChange={setFieldValue}
-                    options={sortedPriority}
-                    keySelector={keySelector}
-                    labelSelector={valueSelector}
+                    options={priorityOptions ?? undefined}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
                     className={styles.input}
                     error={error?.priority}
                     disabled={disabled}
@@ -575,7 +550,7 @@ function LeadEditForm(props: Props) {
                     <ConfidentialityInput
                         name="confidentiality"
                         className={styles.nestedInput}
-                        value={value.confidentiality}
+                        value={value.confidentiality ?? undefined}
                         onChange={setFieldValue}
                         label="Confidential"
                         disabled={disabled}
@@ -610,4 +585,4 @@ function LeadEditForm(props: Props) {
     );
 }
 
-export default LeadEditForm;
+export default LeadInput;

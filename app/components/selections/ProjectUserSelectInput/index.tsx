@@ -6,18 +6,21 @@ import {
 import { useQuery, gql } from '@apollo/client';
 
 import {
-    LeadGroupsQuery,
-    LeadGroupsQueryVariables,
+    ProjectUserQuery,
+    ProjectUserQueryVariables,
 } from '#generated/types';
+
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
-const LEAD_GROUPS = gql`
-    query LeadGroups($search: String, $projectId: ID!) {
+const PROJECT_USERS = gql`
+    query ProjectUser($search: String, $projectId: ID!) {
         project(id: $projectId) {
-            leadGroups(title: $search) {
+            userMembers(search: $search) {
                 results {
-                    id
-                    title
+                    member {
+                        id
+                        displayName
+                    }
                 }
                 totalCount
             }
@@ -25,20 +28,20 @@ const LEAD_GROUPS = gql`
     }
 `;
 
-export type BasicLeadGroup = NonNullable<NonNullable<NonNullable<NonNullable<LeadGroupsQuery['project']>['leadGroups']>['results']>[number]>;
-const keySelector = (d: BasicLeadGroup) => d.id;
-const labelSelector = (d: BasicLeadGroup) => d.title;
+export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
+const keySelector = (d: BasicProjectUser) => d.id;
+const labelSelector = (d: BasicProjectUser) => d.displayName ?? '';
 
 type Def = { containerClassName?: string };
-type LeadGroupSelectInputProps<K extends string> = SearchSelectInputProps<
+type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<
     string,
     K,
-    BasicLeadGroup,
+    BasicProjectUser,
     Def,
     'keySelector' | 'labelSelector' | 'searchOptions' | 'onSearchValueChange' | 'optionsPending' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & { projectId: string };
 
-function LeadGroupSelectInput<K extends string>(props: LeadGroupSelectInputProps<K>) {
+function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputProps<K>) {
     const {
         className,
         projectId,
@@ -54,12 +57,18 @@ function LeadGroupSelectInput<K extends string>(props: LeadGroupSelectInputProps
         projectId,
     }), [debouncedSearchText, projectId]);
 
-    const { data, loading } = useQuery<LeadGroupsQuery, LeadGroupsQueryVariables>(
-        LEAD_GROUPS,
+    const { data, loading } = useQuery<ProjectUserQuery, ProjectUserQueryVariables>(
+        PROJECT_USERS,
         {
             variables,
             skip: !opened,
         },
+    );
+
+    const projectMembers = data?.project?.userMembers?.results;
+    const members = useMemo(
+        () => projectMembers?.map((item) => item.member),
+        [projectMembers],
     );
 
     return (
@@ -68,13 +77,13 @@ function LeadGroupSelectInput<K extends string>(props: LeadGroupSelectInputProps
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            searchOptions={data?.project?.leadGroups?.results}
+            searchOptions={members}
             onSearchValueChange={setSearchText}
             optionsPending={loading}
-            totalOptionsCount={data?.project?.leadGroups?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
+            totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
         />
     );
 }
 
-export default LeadGroupSelectInput;
+export default ProjectUserSelectInput;

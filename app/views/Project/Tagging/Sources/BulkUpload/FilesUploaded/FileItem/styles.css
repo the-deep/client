@@ -1,23 +1,16 @@
 .item-container {
-    display: flex;
+    .item {
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium);
+        font-size: var(--dui-font-size-small);
+        font-weight: var(--dui-font-weight-regular);
+    }
 
     .actions {
         display: flex;
-    }
-
-    .content {
-        display: flex;
-        flex-grow: 1;
-        padding: 0;
-
-        .item {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            cursor: pointer;
-            padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
-            height: 100%;
-        }
+        align-items: center;
+        gap: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-medium);
     }
 
     &:hover {

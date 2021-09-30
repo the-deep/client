@@ -5,8 +5,8 @@ import {
 } from '@the-deep/deep-ui';
 
 interface Props<N extends string> extends Omit<CheckboxProps<N>, 'value' | 'onChange'> {
-    value: 'confidential' | 'unprotected';
-    onChange: (newValue: 'confidential' | 'unprotected', name: N) => void;
+    value: 'CONFIDENTIAL' | 'UNPROTECTED' | undefined;
+    onChange: (newValue: 'CONFIDENTIAL' | 'UNPROTECTED', name: N) => void;
 }
 
 function ConfidentialityInput<N extends string>(props: Props<N>) {
@@ -17,10 +17,10 @@ function ConfidentialityInput<N extends string>(props: Props<N>) {
         ...otherProps
     } = props;
 
-    const modifiedValue = value === 'confidential';
+    const modifiedValue = value === 'CONFIDENTIAL';
 
     const handleCheckboxChange = useCallback((newVal: boolean) => {
-        onChange(newVal ? 'confidential' : 'unprotected', name);
+        onChange(newVal ? 'CONFIDENTIAL' : 'UNPROTECTED', name);
     }, [onChange, name]);
 
     return (
