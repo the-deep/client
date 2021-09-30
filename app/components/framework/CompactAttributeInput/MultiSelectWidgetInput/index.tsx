@@ -16,14 +16,14 @@ type MultiSelectValue = NonNullable<MultiSelectWidgetAttribute['data']>;
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
     NonNullable<PartialMultiSelectWidget>['properties']
 >['options']>[number];
 
-const optionKeySelector = (option: Option) => option.clientId;
+const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 
 export interface Props <N extends string>{
@@ -73,7 +73,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [widgetOptions]);
 
     const selectedValues = useMemo(() => {
-        const optionsMap = listToMap(widgetOptions, (d) => d.clientId, (d) => d.label);
+        const optionsMap = listToMap(widgetOptions, (d) => d.key, (d) => d.label);
         return value?.value?.map((v) => optionsMap?.[v])?.join(', ');
     }, [widgetOptions, value]);
 

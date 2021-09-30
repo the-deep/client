@@ -59,29 +59,29 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'key' | 'widgetId' | 'order'>;
 
 type ColumnType = DataType['columns'][number];
 export type PartialColumnType = PartialForm<
     ColumnType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
-const columnKeySelector = (d: PartialColumnType) => d.clientId;
+const columnKeySelector = (d: PartialColumnType) => d.key;
 
 type SubColumnType = ColumnType['subColumns'][number];
 export type PartialSubColumnType = PartialForm<
     SubColumnType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
-const subColumnKeySelector = (d: PartialSubColumnType) => d.clientId;
+const subColumnKeySelector = (d: PartialSubColumnType) => d.key;
 
 type SubColumnSchema = ObjectSchema<PartialSubColumnType, PartialFormType>;
 type SubColumnSchemaFields = ReturnType<SubColumnSchema['fields']>;
 const subColumnSchema: SubColumnSchema = {
     fields: (): SubColumnSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         order: [],
@@ -91,7 +91,7 @@ const subColumnSchema: SubColumnSchema = {
 type SubColumnsSchema = ArraySchema<PartialSubColumnType, PartialFormType>;
 type SubColumnsSchemaMember = ReturnType<SubColumnsSchema['member']>;
 const subColumnsSchema: SubColumnsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): SubColumnsSchemaMember => subColumnSchema,
 };
 
@@ -99,7 +99,7 @@ type ColumnSchema = ObjectSchema<PartialColumnType, PartialFormType>;
 type ColumnSchemaFields = ReturnType<ColumnSchema['fields']>;
 const columnSchema: ColumnSchema = {
     fields: (): ColumnSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         subColumns: subColumnsSchema,
@@ -110,7 +110,7 @@ const columnSchema: ColumnSchema = {
 type ColumnsSchema = ArraySchema<PartialColumnType, PartialFormType>;
 type ColumnsSchemaMember = ReturnType<ColumnsSchema['member']>;
 const columnsSchema: ColumnsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): ColumnsSchemaMember => columnSchema,
     /*
     validation: (columns) => {
@@ -125,23 +125,23 @@ const columnsSchema: ColumnsSchema = {
 type RowType = DataType['rows'][number];
 export type PartialRowType = PartialForm<
     RowType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type SubRowType = RowType['subRows'][number];
 export type PartialSubRowType = PartialForm<
     SubRowType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
-const rowKeySelector = (d: PartialRowType) => d.clientId;
-const subRowKeySelector = (d: PartialSubRowType) => d.clientId;
+const rowKeySelector = (d: PartialRowType) => d.key;
+const subRowKeySelector = (d: PartialSubRowType) => d.key;
 
 type SubRowSchema = ObjectSchema<PartialSubRowType, PartialFormType>;
 type SubRowSchemaFields = ReturnType<SubRowSchema['fields']>;
 const subRowSchema: SubRowSchema = {
     fields: (): SubRowSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         order: [],
@@ -151,7 +151,7 @@ const subRowSchema: SubRowSchema = {
 type SubRowsSchema = ArraySchema<PartialSubRowType, PartialFormType>;
 type SubRowsSchemaMember = ReturnType<SubRowsSchema['member']>;
 const subRowsSchema: SubRowsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): SubRowsSchemaMember => subRowSchema,
     validation: (subRows) => {
         if ((subRows?.length ?? 0) <= 0) {
@@ -165,7 +165,7 @@ type RowSchema = ObjectSchema<PartialRowType, PartialFormType>;
 type RowSchemaFields = ReturnType<RowSchema['fields']>;
 const rowSchema: RowSchema = {
     fields: (): RowSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         color: [],
@@ -177,7 +177,7 @@ const rowSchema: RowSchema = {
 type RowsSchema = ArraySchema<PartialRowType, PartialFormType>;
 type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): RowsSchemaMember => rowSchema,
     validation: (rows) => {
         if ((rows?.length ?? 0) <= 0) {
@@ -211,7 +211,7 @@ const schema: FormSchema = {
 };
 
 const defaultSubRowVal: PartialSubRowType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 interface SubRowInputProps {
@@ -258,7 +258,7 @@ function SubRowInput(props: SubRowInputProps) {
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
             headingSize="extraSmall"
-            name={value.clientId}
+            name={value.key}
             expanded={expanded}
             onExpansionChange={onExpansionChange}
             withoutBorder
@@ -309,7 +309,7 @@ function SubRowInput(props: SubRowInputProps) {
 }
 
 const defaultRowVal: PartialRowType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 interface RowInputProps {
@@ -323,7 +323,7 @@ interface RowInputProps {
     attributes?: Attributes;
     autoFocus?: boolean;
     expanded: boolean;
-    onExpansionChange: (expanded: boolean, clientId: string) => void;
+    onExpansionChange: (expanded: boolean, key: string) => void;
 }
 function RowInput(props: RowInputProps) {
     const {
@@ -361,17 +361,17 @@ function RowInput(props: RowInputProps) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newSubRow: PartialSubRowType = {
-                clientId,
+                key,
                 order: oldSubRows.length,
             };
             onFieldChange(
                 [...reorder(oldSubRows), newSubRow],
                 'subRows' as const,
             );
-            setExpandedSubRowId(clientId);
+            setExpandedSubRowId(key);
         },
         [onFieldChange, value.subRows],
     );
@@ -398,8 +398,8 @@ function RowInput(props: RowInputProps) {
             onChange: onSubRowsChange,
             onRemove: onSubRowsRemove,
             error: arrayError?.[key],
-            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
-            expanded: expandedSubRowId === data.clientId,
+            autoFocus: newlyCreatedOptionIdRef.current === data.key,
+            expanded: expandedSubRowId === data.key,
             onExpansionChange: handleSubRowExpansionChange,
         }),
         [
@@ -420,7 +420,7 @@ function RowInput(props: RowInputProps) {
             headingSize="extraSmall"
             contentClassName={styles.containerContent}
             expansionTriggerArea="arrow"
-            name={value.clientId}
+            name={value.key}
             expanded={expanded}
             onExpansionChange={onExpansionChange}
             withoutBorder
@@ -500,7 +500,7 @@ function RowInput(props: RowInputProps) {
 }
 
 const defaultSubColumnVal: PartialSubColumnType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 interface SubColumnInputProps {
@@ -547,7 +547,7 @@ function SubColumnInput(props: SubColumnInputProps) {
             heading={`${heading} ${errored ? '*' : ''}`}
             headingSize="extraSmall"
             expansionTriggerArea="arrow"
-            name={value.clientId}
+            name={value.key}
             expanded={expanded}
             onExpansionChange={onExpansionChange}
             withoutBorder
@@ -598,7 +598,7 @@ function SubColumnInput(props: SubColumnInputProps) {
 }
 
 const defaultColumnVal: PartialColumnType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 interface ColumnInputProps {
@@ -650,17 +650,17 @@ function ColumnInput(props: ColumnInputProps) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newSubColumn: PartialSubColumnType = {
-                clientId,
+                key,
                 order: oldSubColumns.length,
             };
             onFieldChange(
                 [...reorder(oldSubColumns), newSubColumn],
                 'subColumns' as const,
             );
-            setExpandedSubColumnId(clientId);
+            setExpandedSubColumnId(key);
         },
         [onFieldChange, value.subColumns],
     );
@@ -690,8 +690,8 @@ function ColumnInput(props: ColumnInputProps) {
             onChange: onSubColumnsChange,
             onRemove: onSubColumnsRemove,
             error: arrayError?.[key],
-            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
-            expanded: expandedSubColumnId === data.clientId,
+            autoFocus: newlyCreatedOptionIdRef.current === data.key,
+            expanded: expandedSubColumnId === data.key,
             onExpansionChange: handleSubColumnExpansionChange,
         }),
         [
@@ -714,7 +714,7 @@ function ColumnInput(props: ColumnInputProps) {
             expansionTriggerArea="arrow"
             withoutBorder
             withoutExternalPadding
-            name={value.clientId}
+            name={value.key}
             expanded={expanded}
             onExpansionChange={onExpansionChange}
             headerActions={(
@@ -833,17 +833,17 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newRow: PartialRowType = {
-                clientId,
+                key,
                 order: oldRows.length,
             };
             onFieldChange(
                 [...reorder(oldRows), newRow],
                 'rows' as const,
             );
-            setExpandedRowId(clientId);
+            setExpandedRowId(key);
         },
         [onFieldChange, value?.rows],
     );
@@ -872,8 +872,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             onChange: onColumnsChange,
             onRemove: onColumnsRemove,
             error: columnError?.[key],
-            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
-            expanded: expandedColumnId === data.clientId,
+            autoFocus: newlyCreatedOptionIdRef.current === data.key,
+            expanded: expandedColumnId === data.key,
             onExpansionChange: handleColumnExpansionChange,
         }),
         [
@@ -896,8 +896,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             onChange: onRowsChange,
             onRemove: onRowsRemove,
             error: rowError?.[key],
-            autoFocus: newlyCreatedOptionIdRef.current === data.clientId,
-            expanded: expandedRowId === data.clientId,
+            autoFocus: newlyCreatedOptionIdRef.current === data.key,
+            expanded: expandedRowId === data.key,
             onExpansionChange: handleRowExpansionChange,
         }),
         [
@@ -925,17 +925,17 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newColumn: PartialColumnType = {
-                clientId,
+                key,
                 order: -1,
             };
             onFieldChange(
                 [...reorder(oldColumns), newColumn],
                 'columns' as const,
             );
-            setExpandedColumnId(clientId);
+            setExpandedColumnId(key);
         },
         [onFieldChange, value?.columns],
     );

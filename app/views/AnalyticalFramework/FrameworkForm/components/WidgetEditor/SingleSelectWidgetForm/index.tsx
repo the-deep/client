@@ -52,19 +52,19 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'key' | 'widgetId' | 'order'>;
 
 type OptionType = DataType['options'][number];
 export type PartialOptionType = PartialForm<
     OptionType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type OptionSchema = ObjectSchema<PartialOptionType, PartialFormType>;
 type OptionSchemaFields = ReturnType<OptionSchema['fields']>;
 const optionSchema: OptionSchema = {
     fields: (): OptionSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         order: [],
@@ -74,7 +74,7 @@ const optionSchema: OptionSchema = {
 type OptionsSchema = ArraySchema<PartialOptionType, PartialFormType>;
 type OptionsSchemaMember = ReturnType<OptionsSchema['member']>;
 const optionsSchema: OptionsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): OptionsSchemaMember => optionSchema,
     validation: (options) => {
         if ((options?.length ?? 0) <= 0) {
@@ -107,11 +107,11 @@ const schema: FormSchema = {
 };
 
 const defaultOptionVal: PartialOptionType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 
-const optionKeySelector = (o: PartialOptionType) => o.clientId;
+const optionKeySelector = (o: PartialOptionType) => o.key;
 
 interface OptionInputProps {
     className?: string;
@@ -151,7 +151,7 @@ function OptionInput(props: OptionInputProps) {
 
     return (
         <ControlledExpandableContainer
-            name={value.clientId}
+            name={value.key}
             className={className}
             // NOTE: newly created elements should be open, else closed
             // FIXME: use strings
@@ -186,7 +186,7 @@ function OptionInput(props: OptionInputProps) {
         >
             <NonFieldError error={error} />
             <TextInput
-                autoFocus
+                autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
                 name="label"
@@ -248,13 +248,13 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newOption: PartialOptionType = {
-                clientId,
+                key,
                 order: oldOptions.length,
             };
-            setExpandedOptionId(newOption.clientId);
+            setExpandedOptionId(newOption.key);
             onFieldChange(
                 [...reorder(oldOptions), newOption],
                 'options' as const,
@@ -282,10 +282,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onRemove: onOptionsRemove,
         error: arrayError?.[key],
         value: option,
-        autoFocus: newlyCreatedOptionIdRef.current === option.clientId,
+        autoFocus: newlyCreatedOptionIdRef.current === option.key,
         index,
         onExpansionChange: handleExpansionChange,
-        expanded: expandedOptionId === option.clientId,
+        expanded: expandedOptionId === option.key,
     }), [
         onOptionsChange,
         onOptionsRemove,

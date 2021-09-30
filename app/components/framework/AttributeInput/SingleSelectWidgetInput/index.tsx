@@ -16,14 +16,14 @@ type SingleSelectValue = NonNullable<SingleSelectWidgetAttribute['data']>;
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
     NonNullable<PartialSingleSelectWidget>['properties']
 >['options']>[number];
 
-const optionKeySelector = (option: Option) => option.clientId;
+const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 
 export interface Props <N extends string>{

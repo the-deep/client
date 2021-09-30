@@ -52,25 +52,25 @@ type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'key' | 'widgetId' | 'order'>;
 
 type RowType = DataType['rows'][number];
 export type PartialRowType = PartialForm<
     RowType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type CellType = RowType['cells'][number];
 export type PartialCellType = PartialForm<
     CellType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type CellSchema = ObjectSchema<PartialCellType, PartialFormType>;
 type CellSchemaFields = ReturnType<CellSchema['fields']>;
 const cellSchema: CellSchema = {
     fields: (): CellSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         order: [],
@@ -80,7 +80,7 @@ const cellSchema: CellSchema = {
 type CellsSchema = ArraySchema<PartialCellType, PartialFormType>;
 type CellsSchemaMember = ReturnType<CellsSchema['member']>;
 const cellsSchema: CellsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): CellsSchemaMember => cellSchema,
     validation: (cells) => {
         if ((cells?.length ?? 0) <= 0) {
@@ -94,7 +94,7 @@ type RowSchema = ObjectSchema<PartialRowType, PartialFormType>;
 type RowSchemaFields = ReturnType<RowSchema['fields']>;
 const rowSchema: RowSchema = {
     fields: (): RowSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         color: [],
@@ -106,7 +106,7 @@ const rowSchema: RowSchema = {
 type RowsSchema = ArraySchema<PartialRowType, PartialFormType>;
 type RowsSchemaMember = ReturnType<RowsSchema['member']>;
 const rowsSchema: RowsSchema = {
-    keySelector: (col) => col.clientId,
+    keySelector: (col) => col.key,
     member: (): RowsSchemaMember => rowSchema,
     validation: (rows) => {
         if ((rows?.length ?? 0) <= 0) {
@@ -139,12 +139,12 @@ const schema: FormSchema = {
 };
 
 const defaultCellVal: PartialCellType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 
-const rowKeySelector = (row: PartialRowType) => row.clientId;
-const cellKeySelector = (cell: PartialCellType) => cell.clientId;
+const rowKeySelector = (row: PartialRowType) => row.key;
+const cellKeySelector = (cell: PartialCellType) => cell.key;
 
 interface CellInputProps {
     className?: string;
@@ -157,7 +157,7 @@ interface CellInputProps {
     attributes?: Attributes;
     autoFocus?: boolean;
     expanded: boolean;
-    onExpansionChange: (expanded: boolean, clientId: string) => void;
+    onExpansionChange: (expanded: boolean, key: string) => void;
 }
 
 function CellInput(props: CellInputProps) {
@@ -193,7 +193,7 @@ function CellInput(props: CellInputProps) {
             contentClassName={styles.containerContent}
             withoutBorder
             withoutExternalPadding
-            name={value.clientId}
+            name={value.key}
             expanded={expanded}
             onExpansionChange={onExpansionChange}
             headerIcons={(
@@ -242,7 +242,7 @@ function CellInput(props: CellInputProps) {
 }
 
 const defaultRowVal: PartialRowType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 interface RowInputProps {
@@ -297,7 +297,7 @@ function RowInput(props: RowInputProps) {
             const cellClientId = randomString();
             newlyCreatedOptionIdRef.current = cellClientId;
             const newCell: PartialCellType = {
-                clientId: cellClientId,
+                key: cellClientId,
                 order: oldCells.length,
             };
             onFieldChange(
@@ -315,8 +315,8 @@ function RowInput(props: RowInputProps) {
         onFieldChange(reorder(newValues), 'cells');
     }, [onFieldChange]);
 
-    const handleExpansionChange = useCallback((cellExpanded: boolean, clientId: string) => {
-        setExpandedCellId(cellExpanded ? clientId : undefined);
+    const handleExpansionChange = useCallback((cellExpanded: boolean, key: string) => {
+        setExpandedCellId(cellExpanded ? key : undefined);
     }, []);
 
     const cellRendererParams = useCallback((
@@ -328,9 +328,9 @@ function RowInput(props: RowInputProps) {
         onRemove: onCellsRemove,
         error: arrayError?.[key],
         value: cell,
-        autoFocus: newlyCreatedOptionIdRef.current === cell.clientId,
+        autoFocus: newlyCreatedOptionIdRef.current === cell.key,
         index: cellIndex,
-        expanded: expandedCellId === cell.clientId,
+        expanded: expandedCellId === cell.key,
         onExpansionChange: handleExpansionChange,
     }), [
         onCellsChange,
@@ -354,7 +354,7 @@ function RowInput(props: RowInputProps) {
             contentClassName={styles.containerContent}
             withoutExternalPadding
             withoutBorder
-            name={value.clientId}
+            name={value.key}
             expanded={expanded}
             onExpansionChange={onExpansionChange}
             headerIcons={(
@@ -470,10 +470,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 return;
             }
 
-            const clientId = randomString();
-            newlyCreatedOptionIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedOptionIdRef.current = key;
             const newRow: PartialRowType = {
-                clientId,
+                key,
                 order: oldRows.length,
             };
             onFieldChange(
@@ -481,7 +481,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 'rows' as const,
             );
 
-            setExpandedRowId(clientId);
+            setExpandedRowId(key);
         },
         [onFieldChange, value?.rows],
     );
@@ -492,8 +492,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onFieldChange(reorder(newValues), 'rows');
     }, [onFieldChange]);
 
-    const handleRowExpansionChange = React.useCallback((expanded: boolean, clientId: string) => {
-        setExpandedRowId(expanded ? clientId : undefined);
+    const handleRowExpansionChange = React.useCallback((expanded: boolean, key: string) => {
+        setExpandedRowId(expanded ? key : undefined);
     }, []);
 
     const rowRendererParams = useCallback((
@@ -505,9 +505,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onRemove: onRowsRemove,
         error: arrayError?.[key],
         value: row,
-        autoFocus: newlyCreatedOptionIdRef.current === row.clientId,
+        autoFocus: newlyCreatedOptionIdRef.current === row.key,
         index,
-        expanded: expandedRowId === row.clientId,
+        expanded: expandedRowId === row.key,
         onExpansionChange: handleRowExpansionChange,
     }), [
         onRowsChange,

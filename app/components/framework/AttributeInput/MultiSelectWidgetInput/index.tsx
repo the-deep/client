@@ -16,14 +16,14 @@ type MultiSelectValue = NonNullable<MultiSelectWidgetAttribute['data']>;
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
     NonNullable<PartialMultiSelectWidget>['properties']
 >['options']>[number];
 
-const optionKeySelector = (option: Option) => option.clientId;
+const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 
 export interface Props <N extends string>{

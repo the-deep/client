@@ -17,7 +17,7 @@ type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
 
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
@@ -86,7 +86,7 @@ function Row(props: RowProps) {
     } = props;
 
     const {
-        clientId,
+        key,
         label,
         tooltip,
         cells,
@@ -97,21 +97,21 @@ function Row(props: RowProps) {
     ), [cells]);
 
     const cellKeySelector = useCallback(
-        (cell: CellType) => cell.clientId,
+        (cell: CellType) => cell.key,
         [],
     );
     const cellRendererParams = useCallback(
         (_: string, cell: CellType) => ({
-            key: cell.clientId,
+            key: cell.key,
             title: cell.tooltip,
             label: cell.label,
             onCellChange,
             disabled: disabled || readOnly,
-            selected: value?.[cell.clientId] ?? false,
-            rowId: clientId,
-            cellId: cell.clientId,
+            selected: value?.[cell.key] ?? false,
+            rowId: key,
+            cellId: cell.key,
         }),
-        [disabled, onCellChange, readOnly, value, clientId],
+        [disabled, onCellChange, readOnly, value, key],
     );
 
     return (
@@ -196,7 +196,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: RowType) => row.clientId,
+        (row: RowType) => row.key,
         [],
     );
     const rowRendererParams = useCallback(

@@ -48,19 +48,19 @@ FormType,
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 type DataType = NonNullable<NonNullable<FormType['properties']>>;
-export type PartialDataType = PartialForm<DataType, 'clientId' | 'key' | 'widgetId' | 'order'>;
+export type PartialDataType = PartialForm<DataType, 'key' | 'widgetId' | 'order'>;
 
 type RootType = DataType['options'];
 export type PartialRootType = PartialForm<
     RootType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type RootSchema = ObjectSchema<PartialRootType, PartialFormType>;
 type RootSchemaFields = ReturnType<RootSchema['fields']>;
 const rootSchema: RootSchema = {
     fields: (): RootSchemaFields => ({
-        clientId: [],
+        key: [],
         label: [requiredStringCondition],
         tooltip: [],
         order: [],
@@ -70,7 +70,7 @@ const rootSchema: RootSchema = {
 type NodeType = NonNullable<RootType['children']>[number];
 export type PartialNodeType = PartialForm<
     NodeType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
@@ -95,11 +95,11 @@ const schema: FormSchema = {
     }),
 };
 const defaultNodeVal: PartialNodeType = {
-    clientId: 'random',
+    key: 'random',
     order: -1,
 };
 
-const optionKeySelector = (o: PartialRootType) => o.clientId;
+const optionKeySelector = (o: PartialRootType) => o.key;
 
 interface NodeInputProps {
     className?: string;
@@ -147,13 +147,13 @@ function NodeInput(props: NodeInputProps) {
     const handleAdd = useCallback(
         () => {
             const oldNodes = value?.children ?? [];
-            const clientId = randomString();
-            newlyCreatedNodeIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedNodeIdRef.current = key;
             const newNode: PartialNodeType = {
-                clientId,
+                key,
                 order: oldNodes.length,
             };
-            setExpandedNodeId(newNode.clientId);
+            setExpandedNodeId(newNode.key);
             onFieldChange(
                 [...reorder(oldNodes), newNode],
                 'children' as const,
@@ -184,10 +184,10 @@ function NodeInput(props: NodeInputProps) {
         onRemove: onSiblingRemove,
         error: arrayError?.[key],
         value: option,
-        autoFocus: newlyCreatedNodeIdRef.current === option.clientId,
+        autoFocus: newlyCreatedNodeIdRef.current === option.key,
         index: optionIndex,
         onExpansionChange: handleNodeExpansionChange,
-        expanded: expandedNodeId === option.clientId,
+        expanded: expandedNodeId === option.key,
     }), [
         onSiblingChange,
         onSiblingRemove,
@@ -198,7 +198,7 @@ function NodeInput(props: NodeInputProps) {
 
     return (
         <ControlledExpandableContainer
-            name={value?.clientId}
+            name={value?.key}
             className={className}
             heading={`${heading} ${errored ? '*' : ''}`}
             headingSize="extraSmall"
@@ -275,7 +275,7 @@ function NodeInput(props: NodeInputProps) {
     );
 }
 const defaultRootVal = (): PartialRootType => ({
-    clientId: randomString(),
+    key: randomString(),
     order: -1,
 });
 
@@ -322,13 +322,13 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
         () => {
             const oldNodes = value?.children ?? [];
 
-            const clientId = randomString();
-            newlyCreatedNodeIdRef.current = clientId;
+            const key = randomString();
+            newlyCreatedNodeIdRef.current = key;
             const newNode: PartialNodeType = {
-                clientId,
+                key,
                 order: oldNodes.length,
             };
-            setExpandedRootId(newNode.clientId);
+            setExpandedRootId(newNode.key);
             onFieldChange(
                 [...oldNodes, newNode],
                 'children' as const,
@@ -346,10 +346,10 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
         onRemove: onSiblingRemove,
         error: arrayError?.[key],
         value: option,
-        autoFocus: newlyCreatedNodeIdRef.current === option.clientId,
+        autoFocus: newlyCreatedNodeIdRef.current === option.key,
         index: optionIndex,
         onExpansionChange: handleExpansionChange,
-        expanded: expandedRootId === option.clientId,
+        expanded: expandedRootId === option.key,
     }), [
         onSiblingChange,
         onSiblingRemove,
