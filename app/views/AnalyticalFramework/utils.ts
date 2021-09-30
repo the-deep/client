@@ -8,35 +8,48 @@ import {
     OrganigramDatum,
     Matrix1dWidget,
     Matrix2dWidget,
+    KeyLabelEntity,
+    KeyLabelColorEntity,
+    BaseWidget,
+    Matrix1dRows,
+    Matrix2dRows,
+    Matrix2dColumns,
 } from '#types/newAnalyticalFramework';
-import { PartialWidget } from '#components/framework/AttributeInput';
 
-function clone(widget: PartialWidget) {
-    return ({
-        ...widget,
-        title: `${widget.title}-cloned`,
-        key: randomString(),
-        clientId: randomString(),
+function cloneWidgetSuperficially<T extends BaseWidget>(value: T): T {
+    const randKey = randomString();
+    return {
+        ...value,
+        key: randKey,
+        clientId: randKey,
         id: undefined,
-    });
+        title: `${value.title}: Cloned`,
+    };
+}
+
+function cloneOption<T extends KeyLabelEntity>(value: T): T {
+    return {
+        ...value,
+        clientId: randomString(),
+    };
 }
 
 function cloneScaleWidget(widget: ScaleWidget) {
     const { options } = widget.properties;
-    const defaultOption = options.find((v) => v.clientId === widget.properties.defaultValue);
-    const otherOptions = options.filter((v) => v.clientId !== defaultOption?.clientId)
-        .map((v) => ({
-            ...v,
-            clientId: randomString(),
-        }));
+    const defaultOption = options.find((o: KeyLabelColorEntity) => (
+        o.clientId === widget.properties.defaultValue
+    ));
+    const otherOptions = options.filter((o: KeyLabelColorEntity) => (
+        o.clientId !== defaultOption?.clientId
+    ))
+        .map((o: KeyLabelColorEntity) => cloneOption(o));
+
+    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
 
     if (defaultOption) {
-        const newDefaultOption = { ...defaultOption, clientId: randomString() };
+        const newDefaultOption = cloneOption(defaultOption);
         return ({
-            ...widget,
-            id: undefined,
-            key: randomString(),
-            clientId: randomString(),
+            ...partiallyClonedWidget,
             properties: {
                 options: [
                     ...otherOptions,
@@ -48,10 +61,7 @@ function cloneScaleWidget(widget: ScaleWidget) {
     }
 
     return ({
-        ...widget,
-        id: undefined,
-        key: randomString(),
-        clientId: randomString(),
+        ...partiallyClonedWidget,
         properties: {
             options: [
                 ...otherOptions,
@@ -61,40 +71,33 @@ function cloneScaleWidget(widget: ScaleWidget) {
 }
 
 function cloneSelectionWidget(widget: MultiSelectWidget | SingleSelectWidget) {
+    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
     return ({
-        ...widget,
-        id: undefined,
-        key: randomString(),
-        clientId: randomString(),
+        ...partiallyClonedWidget,
         properties: {
-            options: widget.properties.options.map((v) => ({
-                ...v,
-                clientId: randomString(),
-            })),
+            options: widget.properties.options.map((v: KeyLabelEntity) => cloneOption(v)),
         },
     });
 }
 
 function transformOrganigramData(data: OrganigramDatum): OrganigramDatum {
+    const clonedOption = cloneOption(data);
     if (data.children) {
         return {
-            ...data,
-            clientId: randomString(),
+            ...clonedOption,
             children: data.children.map(transformOrganigramData),
         };
     }
     return {
-        ...data,
+        ...clonedOption,
         children: [],
     };
 }
 
 function cloneOrganigramWidget(widget: OrganigramWidget) {
+    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
     return ({
-        ...widget,
-        id: undefined,
-        key: randomString(),
-        clientId: randomString(),
+        ...partiallyClonedWidget,
         properties: {
             options: transformOrganigramData(widget.properties.options),
         },
@@ -102,47 +105,43 @@ function cloneOrganigramWidget(widget: OrganigramWidget) {
 }
 
 function cloneMatrix1dWidget(widget: Matrix1dWidget) {
+    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
     return ({
-        ...widget,
-        id: undefined,
-        key: randomString(),
-        clientId: randomString(),
+        ...partiallyClonedWidget,
         properties: {
-            rows: widget.properties.rows.map((row) => ({
-                ...row,
-                clientId: randomString(),
-                cells: row.cells.map((cell) => ({
-                    ...cell,
-                    clientId: randomString(),
-                })),
-            })),
+            rows: widget.properties.rows.map((row: Matrix1dRows) => {
+                const clonedRow = cloneOption(row);
+                return ({
+                    ...clonedRow,
+                    cells: row.cells.map((cell: KeyLabelEntity) => cloneOption(cell)),
+                });
+            }),
         },
     });
 }
 
 function cloneMatrix2dWidget(widget: Matrix2dWidget) {
+    const partiallyClonedWidget = cloneWidgetSuperficially(widget);
     return {
-        ...widget,
-        id: undefined,
-        key: randomString(),
-        clientId: randomString(),
+        ...partiallyClonedWidget,
         properties: {
-            rows: widget.properties.rows.map((row) => ({
-                ...row,
-                clientId: randomString(),
-                subRows: row.subRows.map((subRow) => ({
-                    ...subRow,
+            rows: widget.properties.rows.map((row: Matrix2dRows) => {
+                const clonedRow = cloneOption(row);
+                return ({
+                    ...clonedRow,
                     clientId: randomString(),
-                })),
-            })),
-            columns: widget.properties.columns.map((column) => ({
-                ...column,
-                clientId: randomString(),
-                subColumns: column.subColumns.map((subColumn) => ({
-                    ...subColumn,
-                    clientId: randomString(),
-                })),
-            })),
+                    subRows: row.subRows.map((subRow: KeyLabelEntity) => (cloneOption(subRow))),
+                });
+            }),
+            columns: widget.properties.columns.map((column: Matrix2dColumns) => {
+                const clonedColumn = cloneOption(column);
+                return ({
+                    ...clonedColumn,
+                    subColumns: column.subColumns.map(
+                        (subColumn: KeyLabelEntity) => (cloneOption(subColumn)),
+                    ),
+                });
+            }),
         },
     };
 }
@@ -152,19 +151,19 @@ export function cloneWidget(
 ) {
     switch (widget.widgetId) {
         case 'DATE':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         case 'DATE_RANGE':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         case 'TIME':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         case 'TIME_RANGE':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         case 'NUMBER':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         case 'SCALE':
             return cloneScaleWidget(widget);
         case 'GEO':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         case 'SELECT':
             return cloneSelectionWidget(widget);
         case 'MULTISELECT':
@@ -176,7 +175,7 @@ export function cloneWidget(
         case 'MATRIX2D':
             return cloneMatrix2dWidget(widget);
         case 'TEXT':
-            return clone(widget);
+            return cloneWidgetSuperficially(widget);
         default:
             return undefined;
     }
