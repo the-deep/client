@@ -67,7 +67,7 @@ const rootSchema: RootSchema = {
         children: [],
     }),
 };
-type NodeType = RootType['children'][number];
+type NodeType = NonNullable<RootType['children']>[number];
 export type PartialNodeType = PartialForm<
     NodeType,
     'clientId' | 'key' | 'widgetId' | 'order'
