@@ -8,7 +8,6 @@ import {
     TextInput,
     DateInput,
     TimeInput,
-    NumberInput,
     DateRangeDualInput,
 } from '@the-deep/deep-ui';
 import {
@@ -22,6 +21,7 @@ import {
     hasNoData,
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
+import NumberButStringInput from '#components/NumberButStringInput';
 import { PartialEntriesFilterDataType } from '../..';
 import styles from './styles.css';
 
@@ -40,7 +40,9 @@ type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['fil
 interface Props<K extends number> {
     name: K;
     title: string;
+    // FIXME: the filter's properties is `any`, inject proper type
     filter: Pick<AnalysisFrameworkFilterType, 'title' | 'filterType' | 'widgetType' | 'properties' | 'key'>;
+    // FIXME: the filter's value should depend on the filter type as well
     value: PartialFrameworkFilterValue;
     onChange: (value: SetValueArg<PartialFrameworkFilterValue>, name: K) => void;
     projectId: string;
@@ -167,7 +169,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         }
         case 'NUMBER': {
             return (
-                <NumberInput
+                <NumberButStringInput
                     className={_cs(
                         className,
                         styles.input,
@@ -344,8 +346,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     disabled={disabled}
                 />
             );
-        case 'CONDITIONAL':
-            return null; // FIXME to be added later
+        // case 'CONDITIONAL':
         default:
             return null;
     }

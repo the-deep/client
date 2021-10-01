@@ -2,6 +2,7 @@ import { encodeDate } from '@togglecorp/fujs';
 
 import { getDateWithTimezone } from '#utils/common';
 
+// FIXME: do we need these? we should be able to remove these
 export interface FilterFormType {
     createdAt?: {
         startDate: string;

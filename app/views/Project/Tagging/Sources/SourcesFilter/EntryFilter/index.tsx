@@ -4,7 +4,6 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 import {
-    DateRangeInput,
     MultiSelectInput,
     SelectInput,
     List,
@@ -23,6 +22,7 @@ import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
+import DateRangeDualInput from '#components/DateRangeDualInput';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
@@ -73,6 +73,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
+
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
     const {
         setValue: onFrameworkFilterChange,
@@ -124,7 +125,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 )}
                 name="createdBy"
                 projectId={projectId}
-                value={value?.createdBy}
+                value={value?.createdBy} // FIXME: fix type issue from server
                 onChange={setFieldValue}
                 options={members}
                 onOptionsChange={setMembers}
@@ -132,17 +133,22 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 placeholder="Entry created by"
                 disabled={disabled}
             />
-            <DateRangeInput
+            <DateRangeDualInput
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.createdAt) && !allFiltersVisible)
-                    && styles.hidden,
+                    hasNoData(value?.createdAt_Gte)
+                        && hasNoData(value?.createdAt_Lt)
+                        && !allFiltersVisible
+                        && styles.hidden,
                 )}
-                name="createdAt"
-                label="Entry created at"
-                value={value?.createdAt}
-                onChange={setFieldValue}
+                fromName="createdAt_Gte"
+                fromOnChange={setFieldValue}
+                fromValue={value?.createdAt_Gte}
+                toName="createdAt_Lt"
+                toOnChange={setFieldValue}
+                toValue={value?.createdAt_Lt}
                 disabled={disabled}
+                label="Entry created at"
             />
             <SelectInput
                 className={_cs(
@@ -174,7 +180,8 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 placeholder="Entry controlled status"
                 disabled={disabled}
             />
-            <MultiSelectInput
+            <MultiSelectInput<string, 'entryTypes', { name: string, description?: string | null }, { containerClassName?: string, title?: string; }>
+                // FIXME: ts couldn't properly infer type for this MultiSelectInput
                 className={_cs(
                     styles.input,
                     (hasNoData(value?.entryTypes) && !allFiltersVisible)
