@@ -289,6 +289,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onOptionsRemove,
         arrayError,
         expandedOptionId,
+        handleExpansionChange,
     ]);
 
     return (

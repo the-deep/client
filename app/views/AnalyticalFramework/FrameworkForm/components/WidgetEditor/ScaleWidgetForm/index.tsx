@@ -334,6 +334,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         value?.defaultValue,
         arrayError,
         expandedScaleId,
+        handleExpansionChange,
     ]);
 
     return (
@@ -360,7 +361,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 heading="Options"
                 headingSize="extraSmall"
                 withoutExternalPadding
-                contentClassName={styles.optionsList}
                 headerActions={(value?.options?.length ?? 0) < OPTIONS_LIMIT && (
                     <QuickActionButton
                         name={undefined}

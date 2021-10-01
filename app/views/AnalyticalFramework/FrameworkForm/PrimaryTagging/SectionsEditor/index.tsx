@@ -303,6 +303,7 @@ function SectionsEditor(props: Props) {
         onSectionsRemove,
         arrayError,
         expandedSectionId,
+        handleExpansionChange,
     ]);
 
     const handleSubmit = useCallback(
