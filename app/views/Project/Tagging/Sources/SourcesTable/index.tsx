@@ -51,16 +51,16 @@ function sourcesKeySelector(d: Lead) {
     return d.id;
 }
 
-const statusIconMap: Record<Lead['status'], ReactNode> = {
-    PENDING: <VscLoading />,
-    VALIDATED: <IoCheckmarkCircleOutline />,
-    PROCESSED: null,
+const statusIconMap: { [key in Lead['status']]: ReactNode } = {
+    NOT_TAGGED: null,
+    IN_PROGRESS: <VscLoading />,
+    TAGGED: <IoCheckmarkCircleOutline />,
 };
 
 const statusVariantMap: Record<Lead['status'], 'complement2' | 'accent' | 'complement1'> = {
-    PENDING: 'complement2',
-    VALIDATED: 'accent',
-    PROCESSED: 'complement1',
+    NOT_TAGGED: 'complement2',
+    IN_PROGRESS: 'accent',
+    TAGGED: 'complement1',
 };
 
 const maxItemsPerPage = 10;
@@ -69,12 +69,6 @@ const defaultSorting = {
     name: 'created_at',
     direction: 'asc',
 };
-
-interface Props {
-    className?: string;
-    projectId: string;
-    filters: Omit<ProjectSourcesQueryVariables, 'projectId'>;
-}
 
 export const PROJECT_ENTRIES = gql`
     query ProjectSources(
@@ -130,6 +124,7 @@ export const PROJECT_ENTRIES = gql`
                     confidentiality
                     clientId
                     status
+                    statusDisplay
                     createdAt
                     title
                     publishedOn
@@ -162,11 +157,24 @@ export const PROJECT_ENTRIES = gql`
                         url
                         title
                     }
+                    entriesCounts {
+                        total
+                    }
+                    leadPreview {
+                        pageCount
+                    }
+                    isAssessmentLead
                 }
             }
         }
     }
 `;
+
+interface Props {
+    className?: string;
+    projectId: string;
+    filters: Omit<ProjectSourcesQueryVariables, 'projectId'>;
+}
 
 function SourcesTable(props: Props) {
     const {
@@ -319,7 +327,7 @@ function SourcesTable(props: Props) {
             cellRendererParams: (_, data) => ({
                 actions: data.entriesCount === 0 ? undefined : statusIconMap[data.status],
                 variant: data.entriesCount === 0 ? 'default' : statusVariantMap[data.status],
-                children: data.entriesCount === 0 ? 'Not Tagged' : data.status,
+                children: data.entriesCount === 0 ? 'Not Tagged' : data.statusDisplay,
             }),
             columnWidth: 190,
         };
@@ -383,9 +391,9 @@ function SourcesTable(props: Props) {
                 id: data.id,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
-                entriesCount: 100, // FIXME use real value
+                entriesCount: data.entriesCounts?.total ?? 0,
                 projectId: data.project.id,
-                isAssessmentLead: false, // FIXME use real value
+                isAssessmentLead: data.isAssessmentLead,
             }),
             columnWidth: 196,
         };
@@ -402,14 +410,14 @@ function SourcesTable(props: Props) {
                     columnClassName: styles.titleColumn,
                 },
             ),
-            createStringColumn<Lead, string>( // FIXME no value from graphql server
+            createStringColumn<Lead, string>(
                 'pageCount',
                 _ts('sourcesTable', 'pages'),
                 (item) => {
-                    if (!item.pageCount) {
+                    if (!item.leadPreview?.pageCount) {
                         return '-';
                     }
-                    return `${item?.pageCount} ${item?.pageCount > 1 ? 'pages' : 'page'}`;
+                    return `${item.leadPreview.pageCount} ${item.leadPreview.pageCount > 1 ? 'pages' : 'page'}`;
                 },
                 {
                     sortable: true,

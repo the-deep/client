@@ -55,12 +55,16 @@ function BulkActions(props: Props) {
     });
 
     const entriesCount = useMemo(() => (
-        sum(selectedLeads.map((lead) => lead?.entriesCount).filter(isDefined))
+        sum(selectedLeads.map((lead) => lead.entriesCounts?.total).filter(isDefined))
     ), [selectedLeads]);
 
+    /*
+    FIXME: get assessment count
     const assessmentsCount = useMemo(() => (
         selectedLeads.filter((lead) => isDefined(lead.assessmentId)).length
     ), [selectedLeads]);
+    */
+    const assessmentsCount = 'Some';
 
     const onRemoveBulkLead = useCallback(() => {
         bulkLeadDeleteTrigger(selectedLeads.map((lead) => lead.id));

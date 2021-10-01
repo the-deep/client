@@ -38,7 +38,8 @@ function Tagging(props: Props) {
 
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
-    const [refreshTimestamp, setRefreshTimestamp] = useState<number | undefined>();
+    // FIXME: use refreshTimestamp to refetch the table
+    const [, setRefreshTimestamp] = useState<number | undefined>();
 
     const [
         isSingleSourceModalShown,
@@ -158,7 +159,7 @@ function Tagging(props: Props) {
                             exact
                             path={routes.sources.path}
                         >
-                            {routes.sources.load({ className: styles.childView, refreshTimestamp })}
+                            {routes.sources.load({ className: styles.childView })}
                         </Route>
                         <Route
                             exact
