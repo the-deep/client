@@ -89,8 +89,8 @@ function EntryFilter<K extends string>(props: Props<K>) {
         )
     ), [value?.filterableData]);
 
-    const framewonrkFilterRendererParams = useCallback(
-        (key: string, data: AnalysisFrameworkFilterType) => {
+    const frameworkFilterRendererParams = useCallback(
+        (key: string, data: Pick<AnalysisFrameworkFilterType, 'title' | 'filterType' | 'widgetType' | 'properties' | 'key'>) => {
             const filterValue = filterValuesMap[key];
             return {
                 name: filterValue?.index,
@@ -195,7 +195,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 keySelector={filterKeySelector}
                 renderer={FrameworkFilterItem}
                 rendererClassName={styles.input}
-                rendererParams={framewonrkFilterRendererParams}
+                rendererParams={frameworkFilterRendererParams}
             />
         </div>
     );
