@@ -133,7 +133,7 @@ function Actions<T extends number>(props: Props<T>) {
                             onClick={onDeleteLeadClick}
                             name={undefined}
                         >
-                            Delete
+                            Delete Source
                         </DropdownMenuItem>
                     </QuickActionDropdownMenu>
                 )}

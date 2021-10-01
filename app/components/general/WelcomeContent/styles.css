@@ -19,6 +19,8 @@
 
     .bottom-text {
         width: 18em;
+        text-transform: uppercase;
+        color: var(--dui-color-brand);
     }
 
     .explore-heading {

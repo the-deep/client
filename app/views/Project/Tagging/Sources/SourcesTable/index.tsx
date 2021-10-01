@@ -50,8 +50,8 @@ const statusIconMap: Record<Lead['status'], ReactNode> = {
     validated: <IoCheckmarkCircleOutline />,
     processed: null,
 };
-const statusVariantMap: Record<Lead['status'], 'complement2' | 'accent' | 'complement1'> = {
-    pending: 'complement2',
+const statusVariantMap: Record<Lead['status'], 'gradient2' | 'accent' | 'complement1'> = {
+    pending: 'gradient2',
     validated: 'accent',
     processed: 'complement1',
 };

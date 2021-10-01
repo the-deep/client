@@ -36,7 +36,7 @@ function WelcomeContent(props: Props) {
             </Heading>
             <Heading
                 className={styles.bottomText}
-                size="medium"
+                size="small"
             >
                 {_ts('explore.login', 'deepSubText')}
             </Heading>
