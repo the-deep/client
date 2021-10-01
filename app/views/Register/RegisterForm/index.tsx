@@ -146,7 +146,6 @@ function RegisterModal(props: Props) {
                             onChange={setFieldValue}
                             value={value?.firstName}
                             error={error?.firstName}
-                            label={_ts('explore.register', 'firstNameLabel')}
                             placeholder={_ts('explore.register', 'firstNamePlaceholder')}
                             disabled={registerPending}
                         />
@@ -155,7 +154,6 @@ function RegisterModal(props: Props) {
                             onChange={setFieldValue}
                             value={value?.lastName}
                             error={error?.lastName}
-                            label={_ts('explore.register', 'lastNameLabel')}
                             placeholder={_ts('explore.register', 'lastNamePlaceholder')}
                             disabled={registerPending}
                         />
@@ -164,7 +162,6 @@ function RegisterModal(props: Props) {
                             onChange={setFieldValue}
                             value={value?.organization}
                             error={error?.organization}
-                            label={_ts('explore.register', 'organizationLabel')}
                             placeholder={_ts('explore.register', 'organizationPlaceholder')}
                             disabled={registerPending}
                         />
@@ -173,7 +170,6 @@ function RegisterModal(props: Props) {
                             onChange={setFieldValue}
                             value={value?.username}
                             error={error?.username}
-                            label={_ts('explore.register', 'emailLabel')}
                             placeholder={_ts('explore.register', 'emailPlaceholder')}
                             disabled={registerPending}
                         />

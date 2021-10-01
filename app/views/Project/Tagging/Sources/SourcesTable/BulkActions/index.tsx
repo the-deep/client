@@ -76,6 +76,7 @@ function BulkActions(props: Props) {
                 name="clear"
                 title={_ts('leads', 'clearSelectedLeadsTitle')}
                 icons={(<IoClose />)}
+                variant="general"
                 onClick={onClearSelection}
                 className={styles.button}
             >
@@ -86,6 +87,7 @@ function BulkActions(props: Props) {
                 title={_ts('leads', 'removeLeadLeadButtonTitle')}
                 onConfirm={onRemoveBulkLead}
                 icons={<IoTrashOutline />}
+                variant="tertiary"
                 className={styles.button}
                 message={_ts('leads', 'removeMultipleLeadsConfirm', {
                     leadsCount: (
