@@ -9,6 +9,7 @@ import {
     DateInput,
     TimeInput,
     NumberInput,
+    DateRangeDualInput,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
@@ -39,7 +40,7 @@ type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['fil
 interface Props<K extends number> {
     name: K;
     title: string;
-    filter: AnalysisFrameworkFilterType;
+    filter: Pick<AnalysisFrameworkFilterType, 'title' | 'filterType' | 'widgetType' | 'properties' | 'key'>;
     value: PartialFrameworkFilterValue;
     onChange: (value: SetValueArg<PartialFrameworkFilterValue>, name: K) => void;
     projectId: string;
@@ -97,34 +98,22 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         }
         case 'DATE_RANGE': {
             return (
-                <>
-                    <DateInput
-                        className={_cs(
-                            className,
-                            styles.input,
-                            (hasNoData(value?.valueGte) && !allFiltersVisible)
-                            && styles.hidden,
-                        )}
-                        name="valueGte"
-                        label={`${title} Start Date`}
-                        value={value?.valueGte}
-                        onChange={onFieldChange}
-                        disabled={disabled}
-                    />
-                    <DateInput
-                        className={_cs(
-                            className,
-                            styles.input,
-                            (hasNoData(value?.valueLte) && !allFiltersVisible)
-                            && styles.hidden,
-                        )}
-                        name="valueLte"
-                        label={`${title} End Date`}
-                        value={value?.valueLte}
-                        onChange={onFieldChange}
-                        disabled={disabled}
-                    />
-                </>
+                <DateRangeDualInput
+                    className={_cs(
+                        className,
+                        styles.input,
+                        (hasNoData(value?.valueGte) && !allFiltersVisible)
+                        && styles.hidden,
+                    )}
+                    fromName="valueGte"
+                    fromOnChange={onFieldChange}
+                    toName="valueLte"
+                    toOnChange={onFieldChange}
+                    label={title}
+                    fromValue={value?.valueGte}
+                    toValue={value.valueLte}
+                    disabled={disabled}
+                />
             );
         }
         case 'TIME': {

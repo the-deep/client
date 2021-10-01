@@ -41,6 +41,7 @@ import {
     ProjectSourcesQueryVariables,
     SourceFilterOptionsQuery,
     SourceFilterOptionsQueryVariables,
+    OrganizationType,
 } from '#generated/types';
 
 import { getValidDateRangeValues } from '../utils';
@@ -233,12 +234,13 @@ const SOURCE_FILTER_OPTIONS = gql`
     }
 `;
 
-const organizationTypeKeySelector = (
-    d: NonNullable<NonNullable<NonNullable<SourceFilterOptionsQuery['organizationTypes']>>['results']>[number],
-) => d.id;
-const organizationTypeLabelSelector = (
-    d: NonNullable<NonNullable<NonNullable<SourceFilterOptionsQuery['organizationTypes']>>['results']>[number],
-) => d.title;
+function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
+    return value.id;
+}
+
+function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'title'>) {
+    return value.title;
+}
 
 function getProjectSourcesQueryVariables(
     filters: SourcesFilterFields,

@@ -47,7 +47,9 @@ import BulkActions from './BulkActions';
 import EntryList from './EntryList';
 import styles from './styles.css';
 
-const sourcesKeySelector: (d: Lead) => string = (d) => d.id;
+function sourcesKeySelector(d: Lead) {
+    return d.id;
+}
 
 const statusIconMap: Record<Lead['status'], ReactNode> = {
     PENDING: <VscLoading />,
