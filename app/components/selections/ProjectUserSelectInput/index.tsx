@@ -17,6 +17,7 @@ const PROJECT_USERS = gql`
         project(id: $projectId) {
             userMembers(search: $search) {
                 results {
+                    id
                     member {
                         id
                         displayName
@@ -66,6 +67,7 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
     );
 
     const projectMembers = data?.project?.userMembers?.results;
+
     const members = useMemo(
         () => projectMembers?.map((item) => item.member),
         [projectMembers],

@@ -15,7 +15,7 @@ import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/sch
 import {
     Framework,
     Entry,
-} from '../types';
+} from './types';
 import EditableEntry from '../../components/EditableEntry';
 import {
     LeadEntriesQuery,
@@ -92,6 +92,9 @@ export const LEAD_ENTRIES = gql`
                         }
                     }
                     controlled
+                    verifiedBy {
+                        id
+                    }
                 }
             }
             analysisFramework {
