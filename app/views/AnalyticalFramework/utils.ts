@@ -51,7 +51,17 @@ function cloneScaleWidget(widget: ScaleWidget) {
     });
 }
 
-function cloneSelectionWidget(widget: MultiSelectWidget | SingleSelectWidget) {
+function cloneMultiSelectionWidget(widget: MultiSelectWidget) {
+    return cloneWidgetSuperficially({
+        ...widget,
+        properties: {
+            ...widget.properties,
+            options: widget.properties.options.map(cloneOption),
+        },
+    });
+}
+
+function cloneSingleSelectionWidget(widget: SingleSelectWidget) {
     return cloneWidgetSuperficially({
         ...widget,
         properties: {
@@ -116,7 +126,7 @@ function cloneMatrix2dWidget(widget: Matrix2dWidget) {
 // eslint-disable-next-line import/prefer-default-export
 export function cloneWidget(
     widget: Widget,
-) {
+): Widget | undefined {
     switch (widget.widgetId) {
         case 'DATE':
             return cloneWidgetSuperficially(widget);
@@ -133,9 +143,9 @@ export function cloneWidget(
         case 'GEO':
             return cloneWidgetSuperficially(widget);
         case 'SELECT':
-            return cloneSelectionWidget(widget);
+            return cloneSingleSelectionWidget(widget);
         case 'MULTISELECT':
-            return cloneSelectionWidget(widget);
+            return cloneMultiSelectionWidget(widget);
         case 'ORGANIGRAM':
             return cloneOrganigramWidget(widget);
         case 'MATRIX1D':
