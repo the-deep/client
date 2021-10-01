@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import {
     _cs,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
@@ -17,7 +18,6 @@ import {
     SelectInput,
     MultiSelectInput,
     useBooleanState,
-    DateRangeInput,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -34,64 +34,34 @@ import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
+import DateRangeDualInput from '#components/DateRangeDualInput';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import {
-    LeadEntriesFilterData,
     ProjectSourcesQueryVariables,
     SourceFilterOptionsQuery,
     SourceFilterOptionsQueryVariables,
     OrganizationType,
 } from '#generated/types';
 
-import { getValidDateRangeValues } from '../utils';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
-export type SourcesFilterFields = PurgeNull<Pick<EnumFix<ProjectSourcesQueryVariables,
+export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
     'statuses'
     | 'confidentiality'
     | 'exists'
     | 'priorities'
     | 'statuses'
->,
-    'statuses'
-    | 'search'
-    | 'exists'
-    | 'priorities'
-    | 'confidentiality'
-    | 'assignees'
-    | 'authoringOrganizationTypes'
-    | 'customFilters'
->> & {
-    createdAt?: {
-        startDate: string;
-        endDate: string;
-    }
-    publishedOn?: {
-        startDate: string;
-        endDate: string;
-    }
-    entriesFilterData?: PurgeNull<Pick<EnumFix<LeadEntriesFilterData,
-        'commentStatus'
-        | 'entryTypes'
-    >,
-        'commentStatus'
-        | 'entryTypes'
-        | 'filterableData'
-        | 'controlled'
-    >> & {
-        createdBy?: string[];
-        createdAt?: {
-            startDate: string;
-            endDate: string;
-        }
-    }
-};
+
+    // NOTE: the enum fix works recursively
+    | 'commentStatus'
+    | 'entryTypes'
+>>;
 
 type FormType = SourcesFilterFields;
 
-type PartialFormType = PartialForm<FormType, 'filterKey' | 'createdAt' | 'publishedOn'>;
+type PartialFormType = PartialForm<FormType, 'filterKey'>;
 export type PartialEntriesFilterDataType = NonNullable<PartialFormType['entriesFilterData']>;
 type PartialFrameworkFilterType = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -119,7 +89,8 @@ type EntriesFilterDataFields = ReturnType<EntriesFilterDataSchema['fields']>;
 const entriesFilterDataSchema: EntriesFilterDataSchema = {
     fields: (): EntriesFilterDataFields => ({
         createdBy: [],
-        createdAt: [],
+        createdAt_Gte: [],
+        createdAt_Lt: [],
         commentStatus: [],
         controlled: [],
         entryTypes: [],
@@ -130,8 +101,10 @@ const entriesFilterDataSchema: EntriesFilterDataSchema = {
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         statuses: [],
-        createdAt: [],
-        publishedOn: [],
+        createdAt_Gte: [],
+        createdAt_Lt: [],
+        publishedOn_Gte: [],
+        publishedOn_Lt: [],
         assignees: [],
         search: [],
         exists: [],
@@ -234,6 +207,19 @@ const SOURCE_FILTER_OPTIONS = gql`
     }
 `;
 
+function convertDateToIsoDateTime(dateString: string | undefined) {
+    if (!dateString) {
+        return undefined;
+    }
+    const date = new Date(dateString);
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+
+    return date.toISOString();
+}
+
 function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.id;
 }
@@ -245,43 +231,23 @@ function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'tit
 function getProjectSourcesQueryVariables(
     filters: SourcesFilterFields,
 ) {
-    const {
-        createdAt: createdAtRaw,
-        publishedOn,
-        entriesFilterData,
-        ...leadsFilters
-    } = filters;
-
-    const createdAt = getValidDateRangeValues(createdAtRaw);
-
-    if (entriesFilterData) {
-        const {
-            createdAt: entryCreatedAt,
-            ...entriesFilters
-        } = entriesFilterData;
-
-        const entryCreatedAtFilter = getValidDateRangeValues(entryCreatedAt);
-
-        return {
-            ...leadsFilters,
-            createdAt_Gte: createdAt?.startDate,
-            createdAt_Lt: createdAt?.endDate,
-            publishedOn_Gte: publishedOn?.startDate,
-            publishedOn_Lt: publishedOn?.endDate,
-            entriesFilterData: {
-                ...entriesFilters,
-                createdAt_Gte: entryCreatedAtFilter?.startDate,
-                createdAt_Lt: entryCreatedAtFilter?.endDate,
-            },
-        };
-    }
-
     return {
-        ...leadsFilters,
-        createdAt_Gte: createdAt?.startDate,
-        createdAt_Lt: createdAt?.endDate,
-        publishedOn_Gte: publishedOn?.startDate,
-        publishedOn_Lt: publishedOn?.endDate,
+        ...filters,
+        createdAt_Gte: convertDateToIsoDateTime(filters.createdAt_Gte),
+        createdAt_Lt: convertDateToIsoDateTime(filters.createdAt_Lt),
+        entriesFilterData: filters.entriesFilterData ? {
+            ...filters.entriesFilterData,
+            createdAt_Gte: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Gte),
+            createdAt_Lt: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Lt),
+            filterableData: filters.entriesFilterData.filterableData
+                ? filters.entriesFilterData.filterableData.filter((filterable) => (
+                    isDefined(filterable.value)
+                    || isDefined(filterable.valueGte)
+                    || isDefined(filterable.valueLte)
+                    || isDefined(filterable.valueList)
+                ))
+                : undefined,
+        } : undefined,
     };
 }
 
@@ -389,19 +355,25 @@ function SourcesFilter(props: Props) {
                     label={_ts('sourcesFilter', 'status')}
                     disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
-                <DateRangeInput
+                <DateRangeDualInput
                     className={styles.input}
-                    name="publishedOn"
-                    onChange={setFieldValue}
-                    value={value.publishedOn}
+                    fromName="publishedOn_Gte"
+                    fromOnChange={setFieldValue}
+                    fromValue={value.publishedOn_Gte}
+                    toName="publishedOn_Lt"
+                    toOnChange={setFieldValue}
+                    toValue={value.publishedOn_Lt}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'originalDate')}
                 />
-                <DateRangeInput
+                <DateRangeDualInput
                     className={styles.input}
-                    name="createdAt"
-                    onChange={setFieldValue}
-                    value={value.createdAt}
+                    fromName="createdAt_Gte"
+                    fromOnChange={setFieldValue}
+                    fromValue={value.createdAt_Gte}
+                    toName="createdAt_Lt"
+                    toOnChange={setFieldValue}
+                    toValue={value.createdAt_Lt}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
                 />
