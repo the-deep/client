@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     IoTrash,
     IoAdd,
@@ -11,7 +11,7 @@ import {
     TextArea,
     QuickActionButton,
     QuickActionConfirmButton,
-    ExpandableContainer,
+    ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -108,6 +108,8 @@ interface SectionInputProps {
     autoFocus: boolean;
     listeners?: Listeners;
     attributes?: Attributes;
+    onExpansionChange: (sectionExpanded: boolean, sectionId: string) => void;
+    expanded?: boolean;
 }
 
 function SectionInput(props: SectionInputProps) {
@@ -121,6 +123,8 @@ function SectionInput(props: SectionInputProps) {
         autoFocus,
         listeners,
         attributes,
+        onExpansionChange,
+        expanded,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -131,42 +135,50 @@ function SectionInput(props: SectionInputProps) {
     const heading = value.title ?? `Section ${index + 1}`;
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
+            name={value.clientId}
             autoFocus={autoFocus}
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
             expansionTriggerArea="arrow"
-            spacing="none"
+            spacing="comfortable"
             headerActions={(
-                <>
-                    <QuickActionConfirmButton
-                        name={index}
-                        onClick={onRemove}
-                        message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
-                        // FIXME: use translation
-                        title="Remove Title"
-                    >
-                        <IoTrash />
-                    </QuickActionConfirmButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
-                    </QuickActionButton>
-                </>
+                <QuickActionConfirmButton
+                    name={index}
+                    onClick={onRemove}
+                    message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
+                    // FIXME: use translation
+                    title="Remove Title"
+                >
+                    <IoTrash />
+                </QuickActionConfirmButton>
+            )}
+            headerIcons={(
+                <QuickActionButton
+                    name={index}
+                    // FIXME: use translation
+                    title="Drag"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GrDrag />
+                </QuickActionButton>
             )}
             className={_cs(
                 className,
                 autoFocus && styles.focus,
+                styles.sectionExpandable,
             )}
-            defaultVisibility={autoFocus}
+            headerClassName={styles.sectionHeader}
+            headingClassName={styles.heading}
+            onExpansionChange={onExpansionChange}
+            expanded={expanded}
+            withoutBorder
         >
             <NonFieldError error={error} />
             <TextInput
                 name="title"
+                className={styles.textInput}
                 label="Title"
                 value={value.title}
                 onChange={onFieldChange}
@@ -176,13 +188,14 @@ function SectionInput(props: SectionInputProps) {
             <TextArea
                 // FIXME: use translation
                 label="Tooltip"
+                className={styles.textInput}
                 name="tooltip"
                 rows={4}
                 value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -235,6 +248,12 @@ function SectionsEditor(props: Props) {
         removeValue: onSectionsRemove,
     } = useFormArray('sections', setFieldValue);
 
+    const [expandedSectionId, setExpandedSectionId] = useState<string | undefined>();
+
+    const handleExpansionChange = useCallback((sectionExpanded: boolean, sectionId) => {
+        setExpandedSectionId(sectionExpanded ? sectionId : undefined);
+    }, []);
+
     const handleAdd = useCallback(
         () => {
             const oldSections = value.sections ?? [];
@@ -276,11 +295,15 @@ function SectionsEditor(props: Props) {
         value: section,
         autoFocus: focusedSection === section.clientId,
         index,
+        onExpansionChange: handleExpansionChange,
+        expanded: expandedSectionId === section.clientId,
     }), [
         onSectionsChange,
         focusedSection,
         onSectionsRemove,
         arrayError,
+        expandedSectionId,
+        handleExpansionChange,
     ]);
 
     const handleSubmit = useCallback(
@@ -296,6 +319,8 @@ function SectionsEditor(props: Props) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.mainContainer}
+                heading="Sections"
                 headerActions={(
                     <>
                         <Button
@@ -320,8 +345,7 @@ function SectionsEditor(props: Props) {
             >
                 <NonFieldError error={error} />
                 <Container
-                    // FIXME: Use translation
-                    heading="Sections"
+                    className={styles.sectionContainer}
                     headerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
                         <QuickActionButton
                             name={undefined}
@@ -337,6 +361,7 @@ function SectionsEditor(props: Props) {
                         <NonFieldError error={error?.sections} />
                         <SortableList
                             name="sections"
+                            className={styles.list}
                             onChange={handleOrderChange}
                             data={value.sections}
                             keySelector={sectionKeySelector}

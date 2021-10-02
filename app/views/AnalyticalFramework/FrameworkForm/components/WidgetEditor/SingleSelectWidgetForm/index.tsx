@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     IoTrash,
     IoAdd,
@@ -9,7 +9,7 @@ import {
     TextInput,
     TextArea,
     QuickActionButton,
-    ExpandableContainer,
+    ControlledExpandableContainer,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -123,6 +123,8 @@ interface OptionInputProps {
     listeners?: Listeners;
     attributes?: Attributes;
     autoFocus?: boolean;
+    onExpansionChange: (optionExpanded: boolean, optionId: string) => void;
+    expanded?: boolean;
 }
 
 function OptionInput(props: OptionInputProps) {
@@ -136,6 +138,8 @@ function OptionInput(props: OptionInputProps) {
         listeners,
         attributes,
         autoFocus,
+        onExpansionChange,
+        expanded,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultOptionVal);
@@ -146,33 +150,38 @@ function OptionInput(props: OptionInputProps) {
     const heading = value.label ?? `Option ${index + 1}`;
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
+            name={value.clientId}
             className={className}
             // NOTE: newly created elements should be open, else closed
-            defaultVisibility={!value.label}
             // FIXME: use strings
             heading={`${heading} ${errored ? '*' : ''}`}
+            headingSize="extraSmall"
+            spacing="comfortable"
             autoFocus={autoFocus}
+            expanded={expanded}
+            onExpansionChange={onExpansionChange}
+            withoutBorder
+            headerIcons={(
+                <QuickActionButton
+                    name={index}
+                    // FIXME: use translation
+                    title="Drag"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GrDrag />
+                </QuickActionButton>
+            )}
             headerActions={(
-                <>
-                    <QuickActionButton
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Option"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
-                    </QuickActionButton>
-                </>
+                <QuickActionButton
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Option"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -196,7 +205,7 @@ function OptionInput(props: OptionInputProps) {
                 error={error?.tooltip}
                 className={styles.optionInput}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -219,6 +228,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         className,
     } = props;
 
+    const [expandedOptionId, setExpandedOptionId] = useState<string | undefined>();
     const onFieldChange = useFormObject(name, onChange, defaultVal);
     const newlyCreatedOptionIdRef = React.useRef<string | undefined>();
 
@@ -258,6 +268,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         onFieldChange(reorder(newValues), 'options');
     }, [onFieldChange]);
 
+    const handleExpansionChange = useCallback((optionExpanded: boolean, optionId: string) => {
+        setExpandedOptionId(optionExpanded ? optionId : undefined);
+    }, []);
+
     const optionRendererParams = useCallback((
         key: string,
         option: PartialOptionType,
@@ -269,10 +283,14 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         value: option,
         autoFocus: newlyCreatedOptionIdRef.current === option.clientId,
         index,
+        onExpansionChange: handleExpansionChange,
+        expanded: expandedOptionId === option.clientId,
     }), [
         onOptionsChange,
         onOptionsRemove,
         arrayError,
+        expandedOptionId,
+        handleExpansionChange,
     ]);
     return (
         <>
@@ -281,7 +299,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 error={error}
             />
             <Container
-                className={className}
+                className={_cs(className, styles.listContainer)}
                 heading="Options"
                 contentClassName={styles.optionsList}
                 headerActions={(value?.options?.length ?? 0) < OPTIONS_LIMIT && (
@@ -298,6 +316,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 <NonFieldError error={error?.options} />
                 <SortableList
                     name="options"
+                    className={styles.sortableList}
                     onChange={handleOrderChange}
                     data={value?.options}
                     keySelector={optionKeySelector}
@@ -359,6 +378,7 @@ function SingleSelectWidgetForm(props: SingleSelectWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.container}
                 heading={value.title ?? 'Unnamed'}
                 contentClassName={styles.editorContent}
                 headerActions={(

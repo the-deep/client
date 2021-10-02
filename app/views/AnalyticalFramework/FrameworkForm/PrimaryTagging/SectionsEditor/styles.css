@@ -1,16 +1,53 @@
 .form {
     display: flex;
     flex-direction: column;
+    background: var(--dui-color-foreground);
     overflow-y: auto;
 
-    .content {
-        overflow-y: auto;
+    .main-container {
+        background: var(--dui-color-foreground);
+        padding: 0;
+
+        .content {
+            overflow-y: auto;
+
+            .section-container {
+                background: var(--dui-color-foreground);
+                padding: 0;
+
+                .section-expandable {
+                    padding: var(--dui-spacing-medium);
+
+                    .section-header {
+                        display: flex;
+                        background-color: var(--dui-color-background-information);
+                        grid-gap: var(--spacing);
+
+                        .heading {
+                            padding: calc(var(--spacing) / 2) 0;
+                        }
+                    }
+                    .text-input {
+                        margin: var(--dui-spacing-small) 0;
+                    }
+                }
+            }
+        }
     }
 
+
     .section-input {
+        border: none !important;
+
         &.focus {
             animation: focus 2s 1 ease-out;
         }
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        grid-gap: var(--dui-spacing-small);
     }
 
     @keyframes focus {
