@@ -61,6 +61,7 @@ function Sources(props: Props) {
                                     styles.switchButton,
                                     activeView === 'table' && styles.active,
                                 )}
+                                title="Table View"
                                 name="switch"
                                 variant="action"
                                 onClick={handleTableButtonClick}
@@ -70,6 +71,7 @@ function Sources(props: Props) {
                             </QuickActionButton>
                             <QuickActionButton
                                 name="switch"
+                                title="Grid View"
                                 className={_cs(
                                     styles.switchButton,
                                     activeView === 'grid' && styles.active,

@@ -305,7 +305,6 @@ function LoginForm(props: Props) {
                     onChange={setFieldValue}
                     value={value?.email}
                     error={error?.email}
-                    label={_ts('explore.login', 'emailLabel')}
                     placeholder={_ts('explore.login', 'emailPlaceholder')}
                     disabled={pending}
                     autoFocus
@@ -315,7 +314,6 @@ function LoginForm(props: Props) {
                     onChange={setFieldValue}
                     value={value?.password}
                     error={error?.password}
-                    label={_ts('explore.login', 'password')}
                     placeholder={_ts('explore.login', 'password')}
                     disabled={pending}
                 />
