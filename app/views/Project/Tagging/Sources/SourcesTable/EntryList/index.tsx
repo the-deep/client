@@ -1,14 +1,11 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import {
-    _cs,
-    isNotDefined,
-} from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { useQuery, gql } from '@apollo/client';
 import {
     Container,
     ListView,
     Pager,
 } from '@the-deep/deep-ui';
-import { useQuery, gql } from '@apollo/client';
 import {
     removeNull,
 } from '@togglecorp/toggle-form';
@@ -228,5 +225,4 @@ function EntryList(props: Props) {
         </Container>
     );
 }
-
 export default EntryList;

@@ -12,11 +12,13 @@ import {
 import {
     Container,
     Button,
+    ConfirmButton,
     useBooleanState,
     Spinner,
     useAlert,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
+import { IoTrash } from 'react-icons/io5';
 
 import {
     entrySchema,
@@ -45,6 +47,17 @@ const UPDATE_ENTRY = gql`
 mutation UpdateEntry($projectId:ID!, $entryId:ID!, $entryData: EntryInputType!) {
     project(id: $projectId) {
         entryUpdate(id: $entryId, data: $entryData) {
+            ok
+            errors
+        }
+    }
+}
+`;
+
+const DELETE_ENTRY = gql`
+mutation DeleteEntry($projectId:ID!, $entryId:ID!) {
+    project(id: $projectId) {
+        entryDelete(id: $entryId) {
             ok
             errors
         }
@@ -132,6 +145,30 @@ function EditableEntry(props: Props) {
 
                 // eslint-disable-next-line no-console
                 console.error(gqlError);
+            },
+        },
+    );
+
+    const [
+        deleteEntry,
+        { loading: deleteEntryPending },
+    ] = useMutation(
+        DELETE_ENTRY,
+        {
+            onCompleted: () => {
+                alert.show(
+                    'Successfully deleted entry.',
+                    {
+                        variant: 'success',
+                    },
+                );
+                onEntryDataChange();
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -253,6 +290,31 @@ function EditableEntry(props: Props) {
         </Button>
     );
 
+    const handleEntryDeleteButtonClick = useCallback(() => {
+        deleteEntry({
+            variables: {
+                projectId,
+                entryId: entry.id,
+            },
+        });
+    }, [projectId, entry.id, deleteEntry]);
+
+    const entryDeleteButton = (
+        <ConfirmButton
+            name={undefined}
+            variant="secondary"
+            onClick={handleEntryDeleteButtonClick}
+            message="Are you sure you want to delete the entry?"
+            disabled={deleteEntryPending || editMode}
+            icons={(
+                <IoTrash />
+            )}
+        >
+            Delete Entry
+        </ConfirmButton>
+
+    );
+
     if (compact) {
         return (
             <Container
@@ -266,7 +328,6 @@ function EditableEntry(props: Props) {
                                 {entryVerification}
                             </>
                         )}
-                        {entryControl}
                     </>
                 )}
             >
@@ -288,6 +349,7 @@ function EditableEntry(props: Props) {
                         </>
                     )}
                     {entryControl}
+                    {canEditEntry && entryDeleteButton}
                 </>
             )}
             headerActions={editMode && (

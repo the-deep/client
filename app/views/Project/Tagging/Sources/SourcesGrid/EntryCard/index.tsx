@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoPencil,
     IoTrash,
     IoClose,
 } from 'react-icons/io5';
+import { gql, useMutation } from '@apollo/client';
 import {
     removeNull,
 } from '@togglecorp/toggle-form';
@@ -13,16 +14,30 @@ import {
     TextOutput,
     Button,
     QuickActionButton,
+    QuickActionConfirmButton,
     Container,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
-import EditableEntry from '../../components/EditableEntry';
-
-import { Framework, Entry } from '../types';
+import ProjectContext from '#base/context/ProjectContext';
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
 
+import EditableEntry from '../../components/EditableEntry';
+import { Framework, Entry } from '../types';
+
 import styles from './styles.css';
+
+const DELETE_ENTRY = gql`
+mutation DeleteEntry($projectId:ID!, $entryId:ID!) {
+    project(id: $projectId) {
+        entryDelete(id: $entryId) {
+            ok
+            errors
+        }
+    }
+}
+`;
 
 function transformEntry(entry: Entry): EntryInputType {
     return removeNull({
@@ -62,9 +77,46 @@ function EntryCard(props: Props) {
         onEntryDataChange,
     } = props;
 
+    const alert = useAlert();
+    const { project } = useContext(ProjectContext);
     const authorsDetailText = useMemo(() => (
         leadDetails?.authors?.map((a) => a.title)?.join(', ')
     ), [leadDetails?.authors]);
+
+    const [
+        deleteEntry,
+        { loading: deleteEntryPending },
+    ] = useMutation(
+        DELETE_ENTRY,
+        {
+            onCompleted: () => {
+                alert.show(
+                    'Successfully deleted entry.',
+                    {
+                        variant: 'success',
+                    },
+                );
+                onEntryDataChange();
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const handleEntryDeleteClick = useCallback(() => {
+        deleteEntry({
+            variables: {
+                projectId,
+                entryId: entry.id,
+            },
+        });
+    }, [projectId, entry.id, deleteEntry]);
+
+    const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     return (
         <div
@@ -83,14 +135,19 @@ function EntryCard(props: Props) {
                         value={leadDetails.publishedOn}
                     />
                 )}
-                footerQuickActions={(
+                footerQuickActions={canEditEntry && (
                     <>
                         <QuickActionButton name={undefined}>
                             <IoPencil />
                         </QuickActionButton>
-                        <QuickActionButton name={undefined}>
+                        <QuickActionConfirmButton
+                            name={undefined}
+                            onConfirm={handleEntryDeleteClick}
+                            disabled={deleteEntryPending}
+                            message="Are you sure you want to delete the entry?"
+                        >
                             <IoTrash />
-                        </QuickActionButton>
+                        </QuickActionConfirmButton>
                     </>
                 )}
                 footerActions={(
