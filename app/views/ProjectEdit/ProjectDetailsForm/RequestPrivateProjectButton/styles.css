@@ -1,6 +1,7 @@
 .request-private-project-modal {
     display: flex;
     flex-direction: column;
+    width: clamp(640px, 60vw, 96vw);
 
     .modal-body {
         display: flex;
