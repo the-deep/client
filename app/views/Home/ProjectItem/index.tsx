@@ -272,7 +272,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                         <AreaChart data={convertedProjectActivity}>
                             <defs>
                                 <linearGradient id="entriesActivity" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.1} />
+                                    <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.2} />
                                     <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
@@ -295,7 +295,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                                 fillOpacity={1}
                                 fill="url(#entriesActivity)"
                                 strokeWidth={2}
-                                dot
+                                connectNulls
+                                activeDot
                             />
                         </AreaChart>
                     </ResponsiveContainer>
