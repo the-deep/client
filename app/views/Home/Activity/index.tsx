@@ -6,12 +6,12 @@ import {
     listToGroupList,
 } from '@togglecorp/fujs';
 import {
-    LineChart,
+    AreaChart,
     XAxis,
     YAxis,
     Tooltip,
     Legend,
-    Line,
+    Area,
     ResponsiveContainer,
 } from 'recharts';
 
@@ -74,7 +74,21 @@ function Activity(props: Props) {
         <Card className={_cs(className, styles.activity)}>
             <ResponsiveContainer className={styles.container}>
                 { (data?.activities?.length ?? 0) > 0 ? (
-                    <LineChart>
+                    <AreaChart>
+                        <defs>
+                            {colorScheme.map((color) => (
+                                <linearGradient
+                                    id={`${color.substring(1)}-gradient`}
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+                                    <stop offset="5%" stopColor={color} stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor={color} stopOpacity={0} />
+                                </linearGradient>
+                            ))}
+                        </defs>
                         <XAxis
                             dataKey="date"
                             type="number"
@@ -99,21 +113,26 @@ function Activity(props: Props) {
                             align="left"
                             content={RechartsLegend}
                         />
-                        {projectList.map((p, index) => (
-                            <Line
-                                dataKey="value"
-                                data={p.data}
-                                name={p.title}
-                                key={p.id}
-                                stroke={colorScheme[
-                                    index % colorScheme.length
-                                ]}
-                                strokeWidth={2}
-                                connectNulls
-                                dot
-                            />
-                        ))}
-                    </LineChart>
+                        {projectList.map((p, index) => {
+                            const color = colorScheme[index % colorScheme.length];
+                            const fillColorScheme = `${color.substring(1)}-gradient`;
+
+                            return (
+                                <Area
+                                    key={p.id}
+                                    data={p.data}
+                                    name={p.title}
+                                    dataKey="value"
+                                    stroke={color}
+                                    fillOpacity={1}
+                                    fill={`url(#${fillColorScheme})`}
+                                    strokeWidth={2}
+                                    connectNulls
+                                    activeDot
+                                />
+                            );
+                        })}
+                    </AreaChart>
                 ) : (
                     <div className={styles.emptyChart}>
                         <IoStatsChart
