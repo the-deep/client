@@ -49,6 +49,8 @@ import {
     ProjectFrameworkQueryVariables,
     BulkUpdateEntriesMutation,
     BulkUpdateEntriesMutationVariables,
+    LeadUpdateMutation,
+    LeadUpdateMutationVariables,
 } from '#generated/types';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
@@ -58,7 +60,11 @@ import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import _ts from '#ts';
 
-import { PROJECT_FRAMEWORK, BULK_UPDATE_ENTRIES } from './queries';
+import {
+    PROJECT_FRAMEWORK,
+    BULK_UPDATE_ENTRIES,
+    UPDATE_LEAD,
+} from './queries';
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
@@ -128,6 +134,8 @@ function EntryEdit(props: Props) {
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
+    const [isFinalizeClicked, setIsFinalizeClicked] = useState(false);
+
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
             clientId: randomString(),
@@ -170,6 +178,51 @@ function EntryEdit(props: Props) {
     const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
     const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
+
+    const [
+        updateLead,
+        // { loading: leadUpdatePending },
+    ] = useMutation<LeadUpdateMutation, LeadUpdateMutationVariables>(
+        UPDATE_LEAD,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.leadUpdate) {
+                    return;
+                }
+                const {
+                    result,
+                    ok,
+                } = response.project.leadUpdate;
+
+                if (!ok) {
+                    alert.show(
+                        'Failed to change lead status!',
+                        { variant: 'error' },
+                    );
+                }
+                alert.show(
+                    'Successfully marked lead as tagged!',
+                    { variant: 'success' },
+                );
+                const leadData = removeNull(result);
+                setLeadValue({
+                    ...leadData,
+                    attachment: leadData?.attachment?.id,
+                    leadGroup: leadData?.leadGroup?.id,
+                    assignee: leadData?.assignee?.id,
+                    source: leadData?.source?.id,
+                    authors: leadData?.authors?.map((author) => author.id),
+                });
+                setIsFinalizeClicked(false);
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to change lead status!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const [
         bulkUpdateEntries,
@@ -308,6 +361,25 @@ function EntryEdit(props: Props) {
                     alert.show(
                         'Did nothing successfully!',
                         { variant: 'success' },
+                    );
+                }
+
+                // eslint-disable-next-line max-len
+                if (saveErrorsCount < 1 && deleteErrorsCount < 1 && projectId && isFinalizeClicked) {
+                    updateLead({
+                        variables: {
+                            data: {
+                                title: leadValue?.title || '',
+                                status: 'TAGGED',
+                            },
+                            leadId,
+                            projectId,
+                        },
+                    });
+                } else {
+                    alert.show(
+                        'Failed to change lead status!',
+                        { variant: 'error' },
                     );
                 }
 
@@ -487,6 +559,16 @@ function EntryEdit(props: Props) {
             submit();
         },
         [setFormError, formValidate, bulkUpdateEntries, projectId, alert, setFormValue],
+    );
+
+    const handleFinalizeClick = useCallback(
+        () => {
+            setIsFinalizeClicked(true);
+            handleSubmit();
+        },
+        [
+            handleSubmit,
+        ],
     );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
@@ -738,6 +820,14 @@ function EntryEdit(props: Props) {
                                 onClick={handleSubmit}
                             >
                                 Save
+                            </Button>
+                            <Button
+                                name={undefined}
+                                disabled={formPristine || !!selectedEntry}
+                                variant="primary"
+                                onClick={handleFinalizeClick}
+                            >
+                                Finalize
                             </Button>
                             {/*
                             <Button

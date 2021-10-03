@@ -125,6 +125,63 @@ const LEAD_UPDATE = gql`
             leadUpdate(id: $leadId, data: $data) {
                 ok
                 errors
+                result {
+                    id
+                    title
+                    clientId
+                    leadGroup {
+                        id
+                        title
+                    }
+                    title
+                    assignee {
+                        id
+                        displayName
+                    }
+                    publishedOn
+                    text
+                    url
+                    website
+                    attachment {
+                        id
+                        title
+                        mimeType
+                        file {
+                            url
+                        }
+                    }
+                    isAssessmentLead
+                    sourceType
+                    priority
+                    confidentiality
+                    status
+                    source {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    authors {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    emmEntities {
+                        id
+                        name
+                    }
+                    emmTriggers {
+                        id
+                        emmKeyword
+                        emmRiskFactor
+                        count
+                    }
+                }
             }
         }
     }
@@ -139,6 +196,63 @@ const LEAD_CREATE = gql`
             leadCreate(data: $data) {
                 ok
                 errors
+                result {
+                    id
+                    title
+                    clientId
+                    leadGroup {
+                        id
+                        title
+                    }
+                    title
+                    assignee {
+                        id
+                        displayName
+                    }
+                    publishedOn
+                    text
+                    url
+                    website
+                    attachment {
+                        id
+                        title
+                        mimeType
+                        file {
+                            url
+                        }
+                    }
+                    isAssessmentLead
+                    sourceType
+                    priority
+                    confidentiality
+                    status
+                    source {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    authors {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    emmEntities {
+                        id
+                        name
+                    }
+                    emmTriggers {
+                        id
+                        emmKeyword
+                        emmRiskFactor
+                        count
+                    }
+                }
             }
         }
     }
@@ -311,6 +425,7 @@ function LeadEditModal(props: Props) {
                     ok,
                     errors,
                 } = response.project.leadCreate;
+
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
@@ -377,7 +492,7 @@ function LeadEditModal(props: Props) {
             <Card className={styles.previewContainer}>
                 <LeadPreview
                     className={styles.preview}
-                    url={value?.url}
+                    url={value?.url ?? undefined}
                     attachment={leadData?.attachment ?? undefined}
                 />
             </Card>

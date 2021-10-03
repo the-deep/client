@@ -28,7 +28,6 @@ import {
     useRowExpansion,
     RowExpansionContext,
 } from '@the-deep/deep-ui';
-import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -47,18 +46,20 @@ const leadsKeySelector: (d: Lead) => number = (d) => d.id;
 
 const statusIconMap: Record<Lead['status'], ReactNode> = {
     pending: <VscLoading />,
-    validated: <IoCheckmarkCircleOutline />,
-    processed: null,
+    validated: undefined,
+    processed: <VscLoading />,
 };
 const statusVariantMap: Record<Lead['status'], 'gradient2' | 'accent' | 'complement1'> = {
     pending: 'gradient2',
-    validated: 'accent',
-    processed: 'complement1',
+    processed: 'gradient2',
+    validated: 'complement1',
 };
+
+// NOTE: This will be removed after introduction of graphQL
 const statusLabelMap: Record<Lead['status'], string> = {
     pending: 'In Progress',
-    validated: 'Validated',
-    processed: 'Tagged',
+    processed: 'In Progress',
+    validated: 'Tagged',
 };
 
 const maxItemsPerPage = 10;
@@ -242,9 +243,9 @@ function SourcesTable(props: Props) {
             cellRendererClassName: styles.status,
             cellRenderer: Tag,
             cellRendererParams: (_, data) => ({
-                actions: statusIconMap[data.status],
-                variant: statusVariantMap[data.status],
-                children: statusLabelMap[data.status],
+                actions: data.entriesCount === 0 ? undefined : statusIconMap[data.status],
+                variant: data.entriesCount === 0 ? 'default' : statusVariantMap[data.status],
+                children: data.entriesCount === 0 ? 'Not Tagged' : statusLabelMap[data.status],
             }),
             columnWidth: 190,
         };
@@ -252,7 +253,7 @@ function SourcesTable(props: Props) {
             Lead, number, DateOutputProps, TableHeaderCellProps
         > = {
             id: 'created_at',
-            title: _ts('sourcesTable', 'createdAt'),
+            title: 'Added On',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: true,
@@ -352,15 +353,6 @@ function SourcesTable(props: Props) {
                 },
             ),
             publishedOnColumn,
-            createStringColumn<Lead, number>(
-                'created_by',
-                _ts('sourcesTable', 'addedBy'),
-                (item) => item?.createdByName,
-                {
-                    sortable: true,
-                    columnWidth: 144,
-                },
-            ),
             createStringColumn<Lead, number>(
                 'assignee',
                 _ts('sourcesTable', 'assignee'),

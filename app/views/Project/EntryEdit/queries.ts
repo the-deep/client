@@ -147,3 +147,70 @@ export const BULK_UPDATE_ENTRIES = gql`
         }
     }
 `;
+
+export const UPDATE_LEAD = gql`
+    mutation UpdateLead($projectId:ID!, $leadId:ID!, $data: LeadInputType!) {
+        project(id: $projectId) {
+            leadUpdate(data: $data, id: $leadId) {
+                result {
+                    title,
+                    leadGroup {
+                        id,
+                        title,
+                    },
+                    title,
+                    clientId,
+                    assignee {
+                        id,
+                        displayName,
+                    }
+                    publishedOn,
+                    text,
+                    url,
+                    website,
+                    attachment {
+                        id
+                        title
+                        mimeType
+                        file {
+                            url
+                        }
+                    }
+                    isAssessmentLead
+                    sourceType
+                    priority
+                    confidentiality
+                    status
+                    source {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    authors {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    emmEntities {
+                        id
+                        name
+                    }
+                    emmTriggers {
+                        id
+                        emmKeyword
+                        emmRiskFactor
+                        count
+                    }
+                }
+                errors
+                ok
+            }
+        }
+    }
+`;
