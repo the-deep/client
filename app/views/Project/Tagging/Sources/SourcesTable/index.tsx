@@ -325,9 +325,9 @@ function SourcesTable(props: Props) {
             cellRendererClassName: styles.status,
             cellRenderer: Tag,
             cellRendererParams: (_, data) => ({
-                actions: data.entriesCount === 0 ? undefined : statusIconMap[data.status],
-                variant: data.entriesCount === 0 ? 'default' : statusVariantMap[data.status],
-                children: data.entriesCount === 0 ? 'Not Tagged' : data.statusDisplay,
+                actions: statusIconMap[data.status],
+                variant: statusVariantMap[data.status],
+                children: data.statusDisplay,
             }),
             columnWidth: 190,
         };
