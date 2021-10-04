@@ -280,6 +280,8 @@ function SourcesFilter(props: Props) {
         setValue,
     } = useForm(schema, initialValue);
 
+    console.log(value);
+
     const {
         data: sourceFilterOptions,
         loading,

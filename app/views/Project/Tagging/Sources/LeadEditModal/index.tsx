@@ -36,7 +36,7 @@ import { ProjectContext } from '#base/context/ProjectContext';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import LeadInput from '#components/lead/LeadInput';
 import styles from './styles.css';
 
@@ -353,7 +353,7 @@ function LeadEditModal(props: Props) {
                     errors,
                 } = response.project.leadUpdate;
                 if (errors) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok) {
                     alert.show(
@@ -393,7 +393,7 @@ function LeadEditModal(props: Props) {
                 } = response.project.leadCreate;
 
                 if (errors) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok) {
                     alert.show(

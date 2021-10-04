@@ -25,7 +25,7 @@ import {
     JoinProjectMutation,
     JoinProjectMutationVariables,
 } from '#generated/types';
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NonFieldError from '#components/NonFieldError';
 
 import styles from './styles.css';
@@ -108,7 +108,7 @@ function ProjectJoinModal(props: Props) {
                 } = joinProjectRes;
 
                 if (!ok) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else {
                     alert.show(

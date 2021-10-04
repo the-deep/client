@@ -25,7 +25,6 @@ import {
 } from '@the-deep/deep-ui';
 import {
     useForm,
-    removeNull,
     useFormArray,
     useFormObject,
     SetValueArg,
@@ -33,10 +32,11 @@ import {
     createSubmitHandler,
     getErrorObject,
     analyzeErrors,
+    removeNull,
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
@@ -251,7 +251,7 @@ function EntryEdit(props: Props) {
 
                     return {
                         clientId,
-                        error: transformToFormError(item),
+                        error: transformToFormError(removeNull(item) as ObjectError[]),
                     };
                 }).filter(isDefined) ?? [];
                 const entriesErrorMapping = listToMap(

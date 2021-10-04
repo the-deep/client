@@ -31,7 +31,7 @@ import {
     UpdateEntryMutation,
     UpdateEntryMutationVariables,
 } from '#generated/types';
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import { Widget } from '#types/newAnalyticalFramework';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
@@ -128,7 +128,7 @@ function EditableEntry(props: Props) {
                     );
                     setEditModeFalse();
                 } else {
-                    const formError = transformToFormError(removeNull(response.errors));
+                    const formError = transformToFormError(removeNull(response.errors) as ObjectError[]);
                     setError(formError);
 
                     alert.show(

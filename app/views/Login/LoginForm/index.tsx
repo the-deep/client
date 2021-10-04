@@ -32,7 +32,7 @@ import { ProjectContext } from '#base/context/ProjectContext';
 import HCaptcha from '#components/HCaptcha';
 import { hidUrl } from '#base/configs/hid';
 import NonFieldError from '#components/NonFieldError';
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import routes from '#base/configs/routes';
 import flyingKraken from '#resources/img/flying-kraken.png';
 
@@ -189,7 +189,7 @@ function LoginForm(props: Props) {
                 setCaptchaRequired(captchaRequiredFromResponse);
 
                 if (errors) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok) {
                     const safeUser = removeNull(result);
@@ -223,7 +223,7 @@ function LoginForm(props: Props) {
                 } = loginRes;
 
                 if (errors) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok) {
                     const safeUser = removeNull(result);
