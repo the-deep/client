@@ -7,20 +7,20 @@ import {
 export type Types = WidgetTypes;
 
 // NOTE: we are replacing these with more strict types
-type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'>;
+export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'>;
 
 interface BaseProperties<T> {
     defaultValue?: T;
 }
 
-interface KeyLabelEntity {
+export interface KeyLabelEntity {
     // FIXME: clientId should be renamed to be key
     clientId: string;
     label: string;
     tooltip?: string;
     order: number;
 }
-interface KeyLabelColorEntity extends KeyLabelEntity {
+export interface KeyLabelColorEntity extends KeyLabelEntity {
     color: string;
 }
 
@@ -81,7 +81,7 @@ interface ScaleProperties extends BaseProperties<ScaleValue> {
 }
 
 export interface OrganigramDatum extends KeyLabelEntity {
-    children: OrganigramDatum[];
+    children: OrganigramDatum[] | undefined;
 }
 
 interface OrganigramProperties extends BaseProperties<OrganigramValue> {
@@ -91,17 +91,17 @@ interface OrganigramProperties extends BaseProperties<OrganigramValue> {
 interface GeoLocationProperties extends BaseProperties<GeoLocationValue> {
 }
 
-interface Matrix1dRows extends KeyLabelColorEntity {
+export interface Matrix1dRows extends KeyLabelColorEntity {
     cells: KeyLabelEntity[]
 }
 interface Matrix1dProperties extends BaseProperties<undefined> {
     rows: Matrix1dRows[]
 }
 
-interface Matrix2dRows extends KeyLabelColorEntity {
+export interface Matrix2dRows extends KeyLabelColorEntity {
     subRows: KeyLabelEntity[]
 }
-interface Matrix2dColumns extends KeyLabelEntity {
+export interface Matrix2dColumns extends KeyLabelEntity {
     subColumns: KeyLabelEntity[]
 }
 

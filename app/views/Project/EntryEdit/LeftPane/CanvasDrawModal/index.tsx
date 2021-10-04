@@ -1,6 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrash } from 'react-icons/io5';
+import { IoTrashBinOutline } from 'react-icons/io5';
 
 import {
     Modal,
@@ -287,7 +287,7 @@ function CanvasDraw(props: Props) {
                         onClick={handleClearButtonClick}
                         variant="secondary"
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </Button>
                 </Container>
             </div>

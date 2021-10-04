@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    IoTrash,
+    IoTrashBinOutline,
     IoAdd,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
@@ -142,17 +142,6 @@ function SectionInput(props: SectionInputProps) {
             headingSize="extraSmall"
             expansionTriggerArea="arrow"
             spacing="comfortable"
-            headerActions={(
-                <QuickActionConfirmButton
-                    name={index}
-                    onClick={onRemove}
-                    message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
-                    // FIXME: use translation
-                    title="Remove Title"
-                >
-                    <IoTrash />
-                </QuickActionConfirmButton>
-            )}
             headerIcons={(
                 <QuickActionButton
                     name={index}
@@ -163,6 +152,17 @@ function SectionInput(props: SectionInputProps) {
                 >
                     <GrDrag />
                 </QuickActionButton>
+            )}
+            headerActions={(
+                <QuickActionConfirmButton
+                    name={index}
+                    onClick={onRemove}
+                    message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
+                    // FIXME: use translation
+                    title="Remove Title"
+                >
+                    <IoTrashBinOutline />
+                </QuickActionConfirmButton>
             )}
             className={_cs(
                 className,

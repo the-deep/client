@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    IoTrash,
+    IoTrashBinOutline,
     IoAdd,
 } from 'react-icons/io5';
 import { GrDrag } from 'react-icons/gr';
@@ -209,7 +209,7 @@ function OptionInput(props: OptionInputProps) {
                         // FIXME: use translation
                         title="Remove Option"
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                 </>
             )}

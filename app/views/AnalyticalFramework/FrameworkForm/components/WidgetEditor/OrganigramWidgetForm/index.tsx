@@ -5,7 +5,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     IoAdd,
-    IoTrash,
+    IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     Button,
@@ -33,6 +33,7 @@ import { GrDrag } from 'react-icons/gr';
 import NonFieldError from '#components/NonFieldError';
 import SortableList, { Attributes, Listeners } from '#components/SortableList';
 import { reorder } from '#utils/common';
+import WidgetSizeInput from '../../WidgetSizeInput';
 import { OrganigramWidget } from '#types/newAnalyticalFramework';
 
 import styles from './styles.css';
@@ -66,7 +67,7 @@ const rootSchema: RootSchema = {
         children: [],
     }),
 };
-type NodeType = RootType['children'][number];
+type NodeType = NonNullable<RootType['children']>[number];
 export type PartialNodeType = PartialForm<
     NodeType,
     'clientId' | 'key' | 'widgetId' | 'order'
@@ -206,7 +207,7 @@ function NodeInput(props: NodeInputProps) {
                         // FIXME: use strings
                         title="Remove cell"
                     >
-                        <IoTrash />
+                        <IoTrashBinOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={index}
@@ -504,6 +505,12 @@ function OrganigramWidgetForm(props: OrganigramWidgetFormProps) {
                     value={value.title}
                     onChange={setFieldValue}
                     error={error?.title}
+                />
+                <WidgetSizeInput
+                    name="width"
+                    value={value.width}
+                    onChange={setFieldValue}
+                    error={error?.width}
                 />
                 <DataInput
                     name="properties"
