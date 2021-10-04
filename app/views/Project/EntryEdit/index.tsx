@@ -186,6 +186,7 @@ function EntryEdit(props: Props) {
         UPDATE_LEAD,
         {
             onCompleted: (response) => {
+                setIsFinalizeClicked(false);
                 if (!response?.project?.leadUpdate) {
                     return;
                 }
@@ -213,13 +214,13 @@ function EntryEdit(props: Props) {
                     source: leadData?.source?.id,
                     authors: leadData?.authors?.map((author) => author.id),
                 });
-                setIsFinalizeClicked(false);
             },
             onError: () => {
                 alert.show(
                     'Failed to change lead status!',
                     { variant: 'error' },
                 );
+                setIsFinalizeClicked(false);
             },
         },
     );
@@ -364,8 +365,12 @@ function EntryEdit(props: Props) {
                     );
                 }
 
-                // eslint-disable-next-line max-len
-                if (saveErrorsCount < 1 && deleteErrorsCount < 1 && projectId && isFinalizeClicked) {
+                if (
+                    saveErrorsCount < 1
+                    && deleteErrorsCount < 1
+                    && projectId
+                    && isFinalizeClicked
+                ) {
                     updateLead({
                         variables: {
                             data: {
@@ -488,7 +493,7 @@ function EntryEdit(props: Props) {
     const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
 
     const handleSubmit = useCallback(
-        () => {
+        (shouldSetFinalize: boolean) => {
             if (!projectId) {
                 // eslint-disable-next-line no-console
                 console.error('No project id');
@@ -508,7 +513,7 @@ function EntryEdit(props: Props) {
                     const staleEntries = entriesWithoutError
                         .filter((entry) => entry.stale && !entry.deleted);
 
-                    // NOTE: remembering the identifiers so that data ane error
+                    // NOTE: remembering the identifiers so that data and error
                     // can be patched later on
                     const deleteIds = deletedEntries?.map((entry) => entry.clientId);
                     const staleIds = staleEntries?.map((entry) => entry.clientId);
@@ -541,6 +546,7 @@ function EntryEdit(props: Props) {
                                     })),
                             }));
 
+                        setIsFinalizeClicked(shouldSetFinalize);
                         bulkUpdateEntries({
                             variables: {
                                 projectId,
@@ -558,17 +564,24 @@ function EntryEdit(props: Props) {
             );
             submit();
         },
-        [setFormError, formValidate, bulkUpdateEntries, projectId, alert, setFormValue],
+        [
+            setFormError,
+            formValidate,
+            bulkUpdateEntries,
+            projectId,
+            alert,
+            setFormValue,
+        ],
+    );
+
+    const handleSaveClick = useCallback(
+        () => handleSubmit(false),
+        [handleSubmit],
     );
 
     const handleFinalizeClick = useCallback(
-        () => {
-            setIsFinalizeClicked(true);
-            handleSubmit();
-        },
-        [
-            handleSubmit,
-        ],
+        () => { handleSubmit(true); },
+        [handleSubmit],
     );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
@@ -817,7 +830,7 @@ function EntryEdit(props: Props) {
                             <Button
                                 name={undefined}
                                 disabled={formPristine || !!selectedEntry}
-                                onClick={handleSubmit}
+                                onClick={handleSaveClick}
                             >
                                 Save
                             </Button>

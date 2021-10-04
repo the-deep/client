@@ -84,13 +84,13 @@ function Tagging(props: Props) {
                         onClick={showSingleSourceAddModal}
                         name={undefined}
                     >
-                        {_ts('tagging', 'addSource')}
+                        Add a website
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={showBulkUploadModal}
                         name={undefined}
                     >
-                        {_ts('bulkUpload', 'title')}
+                        Add sources
                     </DropdownMenuItem>
                 </DropdownMenu>
             </SubNavbarActions>
