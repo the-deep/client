@@ -105,62 +105,62 @@ export interface Matrix2dColumns extends KeyLabelEntity {
     subColumns: KeyLabelEntity[]
 }
 
-interface Matrix2Properties extends BaseProperties<undefined> {
+interface Matrix2dProperties extends BaseProperties<undefined> {
     rows: Matrix2dRows[];
     columns: Matrix2dColumns[];
 }
 
 export interface NumberWidget extends BaseWidget {
     widgetId: 'NUMBER';
-    properties: NumberProperties;
+    properties: NumberProperties | undefined;
 }
 export interface TextWidget extends BaseWidget {
     widgetId: 'TEXT';
-    properties: BaseProperties<TextValue>;
+    properties: BaseProperties<TextValue> | undefined;
 }
 export interface SingleSelectWidget extends BaseWidget {
     widgetId: 'SELECT';
-    properties: SingleSelectProperties;
+    properties: SingleSelectProperties | undefined;
 }
 export interface MultiSelectWidget extends BaseWidget {
     widgetId: 'MULTISELECT';
-    properties: MultiSelectProperties;
+    properties: MultiSelectProperties | undefined;
 }
 export interface DateWidget extends BaseWidget {
     widgetId: 'DATE';
-    properties: BaseProperties<DateValue>;
+    properties: BaseProperties<DateValue> | undefined;
 }
 export interface TimeWidget extends BaseWidget {
     widgetId: 'TIME';
-    properties: BaseProperties<TimeValue>;
+    properties: BaseProperties<TimeValue> | undefined;
 }
 export interface TimeRangeWidget extends BaseWidget {
     widgetId: 'TIME_RANGE';
-    properties: BaseProperties<TimeRangeValue>;
+    properties: BaseProperties<TimeRangeValue> | undefined;
 }
 export interface DateRangeWidget extends BaseWidget {
     widgetId: 'DATE_RANGE';
-    properties: BaseProperties<DateRangeValue>;
+    properties: BaseProperties<DateRangeValue> | undefined;
 }
 export interface Matrix1dWidget extends BaseWidget {
     widgetId: 'MATRIX1D';
-    properties: Matrix1dProperties;
+    properties: Matrix1dProperties | undefined;
 }
 export interface Matrix2dWidget extends BaseWidget {
     widgetId: 'MATRIX2D';
-    properties: Matrix2Properties;
+    properties: Matrix2dProperties | undefined;
 }
 export interface OrganigramWidget extends BaseWidget {
     widgetId: 'ORGANIGRAM';
-    properties: OrganigramProperties;
+    properties: OrganigramProperties | undefined;
 }
 export interface ScaleWidget extends BaseWidget {
     widgetId: 'SCALE';
-    properties: ScaleProperties;
+    properties: ScaleProperties | undefined;
 }
 export interface GeoLocationWidget extends BaseWidget {
     widgetId: 'GEO';
-    properties: GeoLocationProperties;
+    properties: GeoLocationProperties | undefined;
 }
 
 export type Widget = TextWidget

@@ -186,7 +186,6 @@ function EntryEdit(props: Props) {
         UPDATE_LEAD,
         {
             onCompleted: (response) => {
-                setIsFinalizeClicked(false);
                 if (!response?.project?.leadUpdate) {
                     return;
                 }
@@ -220,7 +219,6 @@ function EntryEdit(props: Props) {
                     'Failed to change lead status!',
                     { variant: 'error' },
                 );
-                setIsFinalizeClicked(false);
             },
         },
     );
@@ -365,27 +363,26 @@ function EntryEdit(props: Props) {
                     );
                 }
 
-                if (
-                    saveErrorsCount < 1
-                    && deleteErrorsCount < 1
-                    && projectId
-                    && isFinalizeClicked
-                ) {
-                    updateLead({
-                        variables: {
-                            data: {
-                                title: leadValue?.title || '',
-                                status: 'TAGGED',
+                if (projectId && isFinalizeClicked) {
+                    if (saveErrorsCount < 1 && deleteErrorsCount < 1) {
+                        setIsFinalizeClicked(false);
+                        updateLead({
+                            variables: {
+                                data: {
+                                    title: leadValue?.title || '',
+                                    status: 'TAGGED',
+                                },
+                                leadId,
+                                projectId,
                             },
-                            leadId,
-                            projectId,
-                        },
-                    });
-                } else {
-                    alert.show(
-                        'Failed to change lead status!',
-                        { variant: 'error' },
-                    );
+                        });
+                    } else {
+                        setIsFinalizeClicked(false);
+                        alert.show(
+                            'Failed to change lead status!',
+                            { variant: 'error' },
+                        );
+                    }
                 }
 
                 setStaleIdentifiers(undefined);
@@ -401,6 +398,14 @@ function EntryEdit(props: Props) {
                 );
                 // eslint-disable-next-line no-console
                 console.error(gqlError);
+
+                if (isFinalizeClicked) {
+                    setIsFinalizeClicked(false);
+                    alert.show(
+                        'Failed to change lead status!',
+                        { variant: 'error' },
+                    );
+                }
             },
         },
     );
@@ -641,15 +646,11 @@ function EntryEdit(props: Props) {
                 ...widgetsFromPrimary,
                 ...widgetsFromSecondary,
             ].map((item) => {
-                if (isNotDefined(item.properties.defaultValue)) {
-                    return undefined;
-                }
-
                 let attr: PartialAttributeType | undefined;
                 const clientId = randomString();
                 const widget = item.id;
 
-                if (item.widgetId === 'TEXT') {
+                if (item.widgetId === 'TEXT' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -658,7 +659,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'NUMBER') {
+                } else if (item.widgetId === 'NUMBER' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -667,7 +668,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'DATE') {
+                } else if (item.widgetId === 'DATE' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -676,7 +677,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'TIME') {
+                } else if (item.widgetId === 'TIME' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -685,7 +686,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'SCALE') {
+                } else if (item.widgetId === 'SCALE' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
