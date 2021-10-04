@@ -14,9 +14,8 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
-    SourceFilterOptionsQuery,
-    AnalysisFrameworkFilterType,
-} from '#generated/types';
+    FrameworkFilterType,
+} from '../types';
 import {
     hasNoData,
     enumKeySelector,
@@ -27,10 +26,10 @@ import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/select
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
 import FrameworkFilterItem from './FrameworkFilterItem';
-import { PartialEntriesFilterDataType } from '..';
+import { PartialEntriesFilterDataType, SourceFilterOptions } from '..';
 import styles from './styles.css';
 
-const filterKeySelector = (d: AnalysisFrameworkFilterType) => d.key;
+const filterKeySelector = (d: FrameworkFilterType) => d.key;
 
 const controlledStatusOptions: Option[] = [
     {
@@ -54,7 +53,7 @@ interface Props<K extends string> {
     projectId: string;
     optionsDisabled: boolean;
     allFiltersVisible: boolean;
-    options?: SourceFilterOptionsQuery;
+    options?: SourceFilterOptions;
     disabled?: boolean;
     className?: string;
 }
@@ -91,7 +90,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
     ), [value?.filterableData]);
 
     const frameworkFilterRendererParams = useCallback(
-        (key: string, data: Pick<AnalysisFrameworkFilterType, 'title' | 'filterType' | 'widgetType' | 'properties' | 'key'>) => {
+        (key: string, data: FrameworkFilterType) => {
             const filterValue = filterValuesMap[key];
             return {
                 name: filterValue?.index,

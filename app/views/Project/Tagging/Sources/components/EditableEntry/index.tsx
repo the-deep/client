@@ -128,7 +128,9 @@ function EditableEntry(props: Props) {
                     );
                     setEditModeFalse();
                 } else {
-                    const formError = transformToFormError(removeNull(response.errors) as ObjectError[]);
+                    const formError = transformToFormError(
+                        removeNull(response.errors) as ObjectError[],
+                    );
                     setError(formError);
 
                     alert.show(

@@ -28,7 +28,7 @@ import {
 } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
 import _ts from '#ts';
-import { EnumFix } from '#utils/types';
+import { EnumFix, DeepReplace } from '#utils/types';
 import {
     hasNoData,
     enumKeySelector,
@@ -42,8 +42,10 @@ import {
     SourceFilterOptionsQuery,
     SourceFilterOptionsQueryVariables,
     OrganizationType,
+    AnalysisFrameworkFilterType,
 } from '#generated/types';
 
+import { FrameworkFilterType } from './types';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
@@ -58,6 +60,8 @@ export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables
     | 'commentStatus'
     | 'entryTypes'
 >>;
+
+export type SourceFilterOptions = DeepReplace<SourceFilterOptionsQuery, Pick<AnalysisFrameworkFilterType, 'filterType' | 'key' | 'properties' | 'title' | 'widgetType'>, FrameworkFilterType>;
 
 type FormType = SourcesFilterFields;
 
@@ -207,7 +211,7 @@ const SOURCE_FILTER_OPTIONS = gql`
     }
 `;
 
-function convertDateToIsoDateTime(dateString: string | undefined) {
+export function convertDateToIsoDateTime(dateString: string | undefined) {
     if (!dateString) {
         return undefined;
     }
@@ -280,13 +284,11 @@ function SourcesFilter(props: Props) {
         setValue,
     } = useForm(schema, initialValue);
 
-    console.log(value);
-
     const {
         data: sourceFilterOptions,
         loading,
         error: sourceFilterOptionsError,
-    } = useQuery<SourceFilterOptionsQuery, SourceFilterOptionsQueryVariables>(
+    } = useQuery<SourceFilterOptions, SourceFilterOptionsQueryVariables>(
         SOURCE_FILTER_OPTIONS,
         {
             variables: {
@@ -382,12 +384,12 @@ function SourcesFilter(props: Props) {
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value?.assignees) && !allFiltersVisible)
+                        (hasNoData(value.assignees) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="assignees"
                     projectId={projectId}
-                    value={value?.assignees}
+                    value={value.assignees}
                     onChange={setFieldValue}
                     options={members}
                     onOptionsChange={setMembers}

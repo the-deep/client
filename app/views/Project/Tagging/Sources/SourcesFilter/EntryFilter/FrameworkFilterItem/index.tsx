@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import {
     _cs,
     isNotDefined,
+    encodeDate,
 } from '@togglecorp/fujs';
 import {
     SelectInput,
@@ -10,39 +11,36 @@ import {
     DateInput,
     TimeInput,
     DateRangeInput,
+    TimeRangeInput,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
-    AnalysisFrameworkFilterType,
-} from '#generated/types';
+    FrameworkFilterType,
+    KeyLabelEntity,
+    KeyLabel,
+} from '../../types';
 import {
     hasNoData,
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
-import { PartialEntriesFilterDataType } from '../..';
+import { PartialEntriesFilterDataType, convertDateToIsoDateTime } from '../..';
 import styles from './styles.css';
 
-interface Option {
-    key: string;
-    label: string;
-    clientId: string;
-}
-const filterKeySelector = (d: Option) => d.key;
+const filterKeySelector = (d: KeyLabel) => d.key;
 // FIXME remove clientId as key when clientId is removed from widget option properties
-const filterClientIdSelector = (d: Option) => d.clientId;
-const filterLabelSelector = (d: Option) => d.label;
+const filterClientIdSelector = (d: KeyLabelEntity) => d.clientId;
+const filterLabelSelector = (d: KeyLabelEntity | KeyLabel) => d.label;
 
 type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
 
 interface Props<K extends number> {
     name: K;
     title: string;
-    // FIXME: the filter's properties is `any`, inject proper type
-    filter: Pick<AnalysisFrameworkFilterType, 'title' | 'filterType' | 'widgetType' | 'properties' | 'key'>;
+    filter: FrameworkFilterType;
     // FIXME: the filter's value should depend on the filter type as well
     value: PartialFrameworkFilterValue | undefined;
     onChange: (value: SetValueArg<PartialFrameworkFilterValue>, name: K) => void;
@@ -90,8 +88,27 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     (oldVal) => ({
                         ...oldVal,
                         filterKey: filter.key,
-                        valueGte: dateRangeValue.startDate,
-                        valueLt: dateRangeValue.endDate,
+                        valueGte: convertDateToIsoDateTime(dateRangeValue.startDate),
+                        valueLte: convertDateToIsoDateTime(dateRangeValue.endDate),
+                    }),
+                    name,
+                );
+            }
+        },
+        [name, onChange, filter.key],
+    );
+
+    const handleTimeRangeChange = useCallback(
+        (timeRangeValue: { startTime: string, endTime: string } | undefined) => {
+            if (isNotDefined(timeRangeValue)) {
+                onChange({ filterKey: filter.key }, name);
+            } else {
+                onChange(
+                    (oldVal) => ({
+                        ...oldVal,
+                        filterKey: filter.key,
+                        valueGte: timeRangeValue.startTime,
+                        valueLte: timeRangeValue.endTime,
                     }),
                     name,
                 );
@@ -137,8 +154,8 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     name={name}
                     onChange={handleDateRangeChange}
                     value={value?.valueGte && value?.valueLte ? {
-                        startDate: value?.valueGte,
-                        endDate: value?.valueLte,
+                        startDate: encodeDate(new Date(value?.valueGte)),
+                        endDate: encodeDate(new Date(value?.valueLte)),
                     } : undefined}
                     label={title}
                     disabled={disabled}
@@ -164,34 +181,24 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         }
         case 'TIME_RANGE': {
             return (
-                <>
-                    <TimeInput
-                        className={_cs(
-                            className,
-                            styles.input,
-                            (hasNoData(value?.valueGte) && !allFiltersVisible)
-                            && styles.hidden,
-                        )}
-                        name="valueGte"
-                        label={`${title} Start Time `}
-                        value={value?.valueGte}
-                        onChange={onFieldChange}
-                        disabled={disabled}
-                    />
-                    <TimeInput
-                        className={_cs(
-                            className,
-                            styles.input,
-                            (hasNoData(value?.valueLte) && !allFiltersVisible)
-                            && styles.hidden,
-                        )}
-                        name="valueLte"
-                        label={`${title} End Time `}
-                        value={value?.valueLte}
-                        onChange={onFieldChange}
-                        disabled={disabled}
-                    />
-                </>
+                <TimeRangeInput
+                    className={_cs(
+                        className,
+                        styles.input,
+                        hasNoData(value?.valueGte)
+                        && hasNoData(value?.valueLte)
+                        && !allFiltersVisible
+                        && styles.hidden,
+                    )}
+                    name={name}
+                    onChange={handleTimeRangeChange}
+                    value={value?.valueGte && value?.valueLte ? {
+                        startTime: value?.valueGte,
+                        endTime: value?.valueLte,
+                    } : undefined}
+                    label={title}
+                    disabled={disabled}
+                />
             );
         }
         case 'NUMBER': {
@@ -241,7 +248,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         (hasNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
-                    value={value.valueList}
+                    value={value?.valueList}
                     onChange={onFieldChange}
                     label={title}
                     projectId={projectId}
@@ -307,7 +314,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     onChange={onFieldChange}
                     label={title}
                     options={filter.properties.options}
-                    keySelector={filterKeySelector}
+                    keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
                     disabled={disabled || optionsDisabled}
