@@ -29,45 +29,46 @@ function cloneOption<T extends KeyLabelEntity>(value: T): T {
     };
 }
 
-function cloneScaleWidget(widget: ScaleWidget) {
-    const { options } = widget.properties;
+function cloneScaleWidget(widget: ScaleWidget): ScaleWidget {
+    if (!widget.properties) {
+        return cloneWidgetSuperficially(widget);
+    }
+    // NOTE: remembering index to get defaultOption after transformation
+    const defaultOptionIndex = widget.properties.options.findIndex((o) => (
+        o.clientId === widget.properties?.defaultValue
+    )) ?? -1;
 
-    // NOTE: rememebering index to get defaultOption after transformation
-    const defaultOptionIndex = options.findIndex((o) => (
-        o.clientId === widget.properties.defaultValue
-    ));
-
-    const clonedOptions = options.map(cloneOption);
+    const clonedOptions = widget.properties.options.map(cloneOption);
 
     return cloneWidgetSuperficially({
         ...widget,
         properties: {
             ...widget.properties,
             options: clonedOptions,
-            defaultValue: defaultOptionIndex !== -1
+            defaultValue: defaultOptionIndex !== -1 && clonedOptions
                 ? clonedOptions[defaultOptionIndex]?.clientId
                 : undefined,
         },
     });
 }
 
-function cloneMultiSelectionWidget(widget: MultiSelectWidget) {
+function cloneMultiSelectionWidget(widget: MultiSelectWidget): MultiSelectWidget {
     return cloneWidgetSuperficially({
         ...widget,
-        properties: {
+        properties: widget.properties ? {
             ...widget.properties,
-            options: widget.properties.options.map(cloneOption),
-        },
+            options: widget.properties?.options.map(cloneOption),
+        } : undefined,
     });
 }
 
-function cloneSingleSelectionWidget(widget: SingleSelectWidget) {
+function cloneSingleSelectionWidget(widget: SingleSelectWidget): SingleSelectWidget {
     return cloneWidgetSuperficially({
         ...widget,
-        properties: {
+        properties: widget.properties ? {
             ...widget.properties,
-            options: widget.properties.options.map(cloneOption),
-        },
+            options: widget.properties?.options.map(cloneOption),
+        } : undefined,
     });
 }
 
@@ -78,49 +79,49 @@ function transformOrganigramData(data: OrganigramDatum): OrganigramDatum {
     });
 }
 
-function cloneOrganigramWidget(widget: OrganigramWidget) {
+function cloneOrganigramWidget(widget: OrganigramWidget): OrganigramWidget {
     return cloneWidgetSuperficially({
         ...widget,
-        properties: {
+        properties: widget.properties ? {
             ...widget.properties,
             options: transformOrganigramData(widget.properties.options),
-        },
+        } : undefined,
     });
 }
 
-function cloneMatrix1dWidget(widget: Matrix1dWidget) {
+function cloneMatrix1dWidget(widget: Matrix1dWidget): Matrix1dWidget {
     return cloneWidgetSuperficially({
         ...widget,
-        properties: {
+        properties: widget.properties ? {
             ...widget.properties,
-            rows: widget.properties.rows.map((row) => (
+            rows: widget.properties?.rows.map((row) => (
                 cloneOption({
                     ...row,
                     cells: row.cells.map(cloneOption),
                 })
             )),
-        },
+        } : undefined,
     });
 }
 
-function cloneMatrix2dWidget(widget: Matrix2dWidget) {
+function cloneMatrix2dWidget(widget: Matrix2dWidget): Matrix2dWidget {
     return cloneWidgetSuperficially({
         ...widget,
-        properties: {
+        properties: widget.properties ? {
             ...widget.properties,
-            rows: widget.properties.rows.map((row) => (
+            rows: widget.properties?.rows.map((row) => (
                 cloneOption({
                     ...row,
                     subRows: row.subRows.map(cloneOption),
                 })
             )),
-            columns: widget.properties.columns.map((column) => (
+            columns: widget.properties?.columns.map((column) => (
                 cloneOption({
                     ...column,
                     subColumns: column.subColumns.map(cloneOption),
                 })
             )),
-        },
+        } : undefined,
     });
 }
 // eslint-disable-next-line import/prefer-default-export
