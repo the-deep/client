@@ -48,19 +48,22 @@ const getAttributeSchema = (widgets: Partial<Record<string, Widget>>): Attribute
         if (!value) {
             return basicValidation;
         }
-        const widget = widgets[value?.widgetType];
+        const widget = widgets[value.widget];
         if (!widget) {
             return basicValidation;
         }
-        if (widget.widgetId === 'NUMBER' && value.widgetType !== widget.widgetId) {
+
+        if (widget.widgetId === 'NUMBER' && widget.widgetId === value.widgetType) {
             type NumberAttributeDataSchema = ObjectSchema<NonNullable<NumberAttributeType['data']>, PartialFormType>;
             type NumberAttributeDataSchemaFields = ReturnType<NumberAttributeDataSchema['fields']>;
             const validations: NumberAttributeDataSchemaFields['value'] = [];
-            if (isDefined(widget.properties.maxValue)) {
-                validations.push(lessThanOrEqualToCondition(widget.properties.maxValue));
+            const maxValue = widget.properties?.maxValue;
+            const minValue = widget.properties?.minValue;
+            if (isDefined(maxValue)) {
+                validations.push(lessThanOrEqualToCondition(maxValue));
             }
-            if (isDefined(widget.properties.minValue)) {
-                validations.push(greaterThanOrEqualToCondition(widget.properties.minValue));
+            if (isDefined(minValue)) {
+                validations.push(greaterThanOrEqualToCondition(minValue));
             }
 
             return {

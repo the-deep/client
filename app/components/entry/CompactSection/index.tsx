@@ -66,7 +66,9 @@ function CompactSection(props: Props) {
     const widgetRendererParams = useCallback(
         (key: string, data: Widget): AttributeInputProps<number | undefined> => {
             const attribute = attributesMap[key];
-            const err = error?.[key];
+            const err = attribute
+                ? error?.[attribute.value.clientId]
+                : undefined;
             return {
                 name: attribute?.index,
                 value: attribute?.value,
