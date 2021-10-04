@@ -13,6 +13,7 @@ generates:
       arrayInputCoercion: false
       enumsAsTypes: true
       skipTypename: true
+      defaultScalarType: unknown
       scalars:
         Date: 'string'
         DateTime: 'string'

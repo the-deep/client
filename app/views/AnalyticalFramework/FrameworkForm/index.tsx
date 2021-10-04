@@ -36,7 +36,7 @@ import {
 import routes from '#base/configs/routes';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
@@ -153,7 +153,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     result,
                 } = response.analysisFrameworkCreate;
                 if (!ok && errors) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok && result) {
                     alert.show(
@@ -203,7 +203,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     result,
                 } = response.analysisFramework.analysisFrameworkUpdate;
                 if (!ok && errors) {
-                    const formError = transformToFormError(removeNull(errors));
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok && result) {
                     alert.show(

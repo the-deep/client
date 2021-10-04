@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import {
     _cs,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     SelectInput,
@@ -8,7 +9,7 @@ import {
     TextInput,
     DateInput,
     TimeInput,
-    DateRangeDualInput,
+    DateRangeInput,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
@@ -43,7 +44,7 @@ interface Props<K extends number> {
     // FIXME: the filter's properties is `any`, inject proper type
     filter: Pick<AnalysisFrameworkFilterType, 'title' | 'filterType' | 'widgetType' | 'properties' | 'key'>;
     // FIXME: the filter's value should depend on the filter type as well
-    value: PartialFrameworkFilterValue;
+    value: PartialFrameworkFilterValue | undefined;
     onChange: (value: SetValueArg<PartialFrameworkFilterValue>, name: K) => void;
     projectId: string;
     allFiltersVisible: boolean;
@@ -74,11 +75,30 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
     const defaultOptionVal = useCallback(
         (): PartialFrameworkFilterValue => ({
             filterKey: filter.key,
-            valueList: undefined,
         }),
         [filter],
     );
     const onFieldChange = useFormObject(name, onChange, defaultOptionVal);
+
+    // FIXME: move this logic to it's own component
+    const handleDateRangeChange = useCallback(
+        (dateRangeValue: { startDate: string, endDate: string } | undefined) => {
+            if (isNotDefined(dateRangeValue)) {
+                onChange({ filterKey: filter.key }, name);
+            } else {
+                onChange(
+                    (oldVal) => ({
+                        ...oldVal,
+                        filterKey: filter.key,
+                        valueGte: dateRangeValue.startDate,
+                        valueLt: dateRangeValue.endDate,
+                    }),
+                    name,
+                );
+            }
+        },
+        [name, onChange, filter.key],
+    );
 
     switch (filter.widgetType) {
         case 'DATE': {
@@ -99,21 +119,28 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
             );
         }
         case 'DATE_RANGE': {
+            // NOTE: not using DateRangeDualInput here because it will trigger
+            // two onChange calls consecutively
+            // A new filter data is added on the first call.
+            // Before the index is updated, the second onChange is called which
+            // will again dd another filter data
             return (
-                <DateRangeDualInput
+                <DateRangeInput
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueGte) && !allFiltersVisible)
-                        && styles.hidden,
+                        hasNoData(value?.valueGte)
+                            && hasNoData(value?.valueLte)
+                            && !allFiltersVisible
+                            && styles.hidden,
                     )}
-                    fromName="valueGte"
-                    fromOnChange={onFieldChange}
-                    toName="valueLte"
-                    toOnChange={onFieldChange}
+                    name={name}
+                    onChange={handleDateRangeChange}
+                    value={value?.valueGte && value?.valueLte ? {
+                        startDate: value?.valueGte,
+                        endDate: value?.valueLte,
+                    } : undefined}
                     label={title}
-                    fromValue={value?.valueGte}
-                    toValue={value.valueLte}
                     disabled={disabled}
                 />
             );
