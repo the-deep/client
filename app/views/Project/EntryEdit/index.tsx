@@ -49,6 +49,8 @@ import {
     ProjectFrameworkQueryVariables,
     BulkUpdateEntriesMutation,
     BulkUpdateEntriesMutationVariables,
+    LeadUpdateMutation,
+    LeadUpdateMutationVariables,
 } from '#generated/types';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
@@ -58,7 +60,11 @@ import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import _ts from '#ts';
 
-import { PROJECT_FRAMEWORK, BULK_UPDATE_ENTRIES } from './queries';
+import {
+    PROJECT_FRAMEWORK,
+    BULK_UPDATE_ENTRIES,
+    UPDATE_LEAD,
+} from './queries';
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
@@ -128,6 +134,8 @@ function EntryEdit(props: Props) {
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
+    const [isFinalizeClicked, setIsFinalizeClicked] = useState(false);
+
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
             clientId: randomString(),
@@ -170,6 +178,50 @@ function EntryEdit(props: Props) {
     const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
     const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
+
+    const [
+        updateLead,
+        // { loading: leadUpdatePending },
+    ] = useMutation<LeadUpdateMutation, LeadUpdateMutationVariables>(
+        UPDATE_LEAD,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.leadUpdate) {
+                    return;
+                }
+                const {
+                    result,
+                    ok,
+                } = response.project.leadUpdate;
+
+                if (!ok) {
+                    alert.show(
+                        'Failed to change lead status!',
+                        { variant: 'error' },
+                    );
+                }
+                alert.show(
+                    'Successfully marked lead as tagged!',
+                    { variant: 'success' },
+                );
+                const leadData = removeNull(result);
+                setLeadValue({
+                    ...leadData,
+                    attachment: leadData?.attachment?.id,
+                    leadGroup: leadData?.leadGroup?.id,
+                    assignee: leadData?.assignee?.id,
+                    source: leadData?.source?.id,
+                    authors: leadData?.authors?.map((author) => author.id),
+                });
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to change lead status!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const [
         bulkUpdateEntries,
@@ -311,6 +363,28 @@ function EntryEdit(props: Props) {
                     );
                 }
 
+                if (projectId && isFinalizeClicked) {
+                    if (saveErrorsCount < 1 && deleteErrorsCount < 1) {
+                        setIsFinalizeClicked(false);
+                        updateLead({
+                            variables: {
+                                data: {
+                                    title: leadValue?.title || '',
+                                    status: 'TAGGED',
+                                },
+                                leadId,
+                                projectId,
+                            },
+                        });
+                    } else {
+                        setIsFinalizeClicked(false);
+                        alert.show(
+                            'Failed to change lead status!',
+                            { variant: 'error' },
+                        );
+                    }
+                }
+
                 setStaleIdentifiers(undefined);
                 setDeleteIdentifiers(undefined);
             },
@@ -324,6 +398,14 @@ function EntryEdit(props: Props) {
                 );
                 // eslint-disable-next-line no-console
                 console.error(gqlError);
+
+                if (isFinalizeClicked) {
+                    setIsFinalizeClicked(false);
+                    alert.show(
+                        'Failed to change lead status!',
+                        { variant: 'error' },
+                    );
+                }
             },
         },
     );
@@ -416,7 +498,7 @@ function EntryEdit(props: Props) {
     const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
 
     const handleSubmit = useCallback(
-        () => {
+        (shouldSetFinalize: boolean) => {
             if (!projectId) {
                 // eslint-disable-next-line no-console
                 console.error('No project id');
@@ -436,7 +518,7 @@ function EntryEdit(props: Props) {
                     const staleEntries = entriesWithoutError
                         .filter((entry) => entry.stale && !entry.deleted);
 
-                    // NOTE: remembering the identifiers so that data ane error
+                    // NOTE: remembering the identifiers so that data and error
                     // can be patched later on
                     const deleteIds = deletedEntries?.map((entry) => entry.clientId);
                     const staleIds = staleEntries?.map((entry) => entry.clientId);
@@ -469,6 +551,7 @@ function EntryEdit(props: Props) {
                                     })),
                             }));
 
+                        setIsFinalizeClicked(shouldSetFinalize);
                         bulkUpdateEntries({
                             variables: {
                                 projectId,
@@ -486,7 +569,24 @@ function EntryEdit(props: Props) {
             );
             submit();
         },
-        [setFormError, formValidate, bulkUpdateEntries, projectId, alert, setFormValue],
+        [
+            setFormError,
+            formValidate,
+            bulkUpdateEntries,
+            projectId,
+            alert,
+            setFormValue,
+        ],
+    );
+
+    const handleSaveClick = useCallback(
+        () => handleSubmit(false),
+        [handleSubmit],
+    );
+
+    const handleFinalizeClick = useCallback(
+        () => { handleSubmit(true); },
+        [handleSubmit],
     );
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
@@ -546,15 +646,11 @@ function EntryEdit(props: Props) {
                 ...widgetsFromPrimary,
                 ...widgetsFromSecondary,
             ].map((item) => {
-                if (isNotDefined(item.properties.defaultValue)) {
-                    return undefined;
-                }
-
                 let attr: PartialAttributeType | undefined;
                 const clientId = randomString();
                 const widget = item.id;
 
-                if (item.widgetId === 'TEXT') {
+                if (item.widgetId === 'TEXT' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -563,7 +659,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'NUMBER') {
+                } else if (item.widgetId === 'NUMBER' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -572,7 +668,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'DATE') {
+                } else if (item.widgetId === 'DATE' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -581,7 +677,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'TIME') {
+                } else if (item.widgetId === 'TIME' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -590,7 +686,7 @@ function EntryEdit(props: Props) {
                             value: item.properties.defaultValue,
                         },
                     };
-                } else if (item.widgetId === 'SCALE') {
+                } else if (item.widgetId === 'SCALE' && item.properties?.defaultValue) {
                     attr = {
                         clientId,
                         widget,
@@ -735,9 +831,17 @@ function EntryEdit(props: Props) {
                             <Button
                                 name={undefined}
                                 disabled={formPristine || !!selectedEntry}
-                                onClick={handleSubmit}
+                                onClick={handleSaveClick}
                             >
                                 Save
+                            </Button>
+                            <Button
+                                name={undefined}
+                                disabled={formPristine || !!selectedEntry}
+                                variant="primary"
+                                onClick={handleFinalizeClick}
+                            >
+                                Finalize
                             </Button>
                             {/*
                             <Button

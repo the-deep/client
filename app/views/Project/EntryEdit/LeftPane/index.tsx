@@ -228,6 +228,7 @@ function LeftPane(props: Props) {
         entries,
         activeEntry,
     ]);
+
     const originalTabContent = (
         <Container
             className={styles.originalPreviewContainer}
@@ -236,7 +237,7 @@ function LeftPane(props: Props) {
             heading={(lead?.url || lead?.attachment?.file) && (
                 <TextInput
                     name="url"
-                    value={lead?.url ?? lead?.attachment?.file ?? ''}
+                    value={lead?.url || lead?.attachment?.file?.url || ''}
                     variant="general"
                     readOnly
                 />
@@ -259,7 +260,7 @@ function LeftPane(props: Props) {
                         />
                     </QuickActionDropdownMenu>
                     <QuickActionLink
-                        to={lead?.url ?? lead?.attachment?.file?.url ?? ''}
+                        to={lead?.url || lead?.attachment?.file?.url || ''}
                     >
                         <IoOpenOutline />
                     </QuickActionLink>

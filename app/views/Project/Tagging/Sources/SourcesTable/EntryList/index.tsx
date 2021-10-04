@@ -92,6 +92,9 @@ export const LEAD_ENTRIES = gql`
                         }
                     }
                     controlled
+                    verifiedBy {
+                        id
+                    }
                 }
             }
             analysisFramework {
@@ -184,6 +187,7 @@ function EntryList(props: Props) {
         primaryTagging: frameworkDetails?.primaryTagging,
         secondaryTagging: frameworkDetails?.secondaryTagging,
         controlled: data.controlled,
+        verifiedBy: data.verifiedBy,
         entryImage: data.image,
         onEntryDataChange: getEntries,
     }), [

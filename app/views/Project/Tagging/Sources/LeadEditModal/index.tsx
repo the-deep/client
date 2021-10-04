@@ -7,6 +7,7 @@ import {
     Card,
     Button,
     Modal,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     removeNull,
@@ -115,7 +116,68 @@ const PROJECT_LEAD = gql`
     }
 `;
 
+const LEAD_FRAGMENT = gql`
+    fragment LeadResponse on LeadType {
+        id
+        title
+        clientId
+        leadGroup {
+            id
+            title
+        }
+        title
+        assignee {
+            id
+            displayName
+        }
+        publishedOn
+        text
+        url
+        website
+        attachment {
+            id
+            title
+            mimeType
+            file {
+                url
+            }
+        }
+        isAssessmentLead
+        sourceType
+        priority
+        confidentiality
+        status
+        source {
+            id
+            title
+            mergedAs {
+                id
+                title
+            }
+        }
+        authors {
+            id
+            title
+            mergedAs {
+                id
+                title
+            }
+        }
+        emmEntities {
+            id
+            name
+        }
+        emmTriggers {
+            id
+            emmKeyword
+            emmRiskFactor
+            count
+        }
+    }
+`;
+
 const LEAD_UPDATE = gql`
+    ${LEAD_FRAGMENT}
     mutation LeadUpdate(
         $projectId: ID!,
         $data: LeadInputType!,
@@ -125,12 +187,16 @@ const LEAD_UPDATE = gql`
             leadUpdate(id: $leadId, data: $data) {
                 ok
                 errors
+                result {
+                    ...LeadResponse
+                }
             }
         }
     }
 `;
 
 const LEAD_CREATE = gql`
+    ${LEAD_FRAGMENT}
     mutation LeadCreate(
         $projectId: ID!,
         $data: LeadInputType!,
@@ -139,6 +205,9 @@ const LEAD_CREATE = gql`
             leadCreate(data: $data) {
                 ok
                 errors
+                result {
+                    ...LeadResponse
+                }
             }
         }
     }
@@ -160,6 +229,7 @@ function LeadEditModal(props: Props) {
         leadId,
         onLeadSaveSuccess,
     } = props;
+    const alert = useAlert();
 
     const initialValue: PartialFormType = useMemo(() => ({
         clientId: randomString(),
@@ -284,6 +354,10 @@ function LeadEditModal(props: Props) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
                 } else if (ok) {
+                    alert.show(
+                        'Successfully updated lead!',
+                        { variant: 'success' },
+                    );
                     onLeadSaveSuccess();
                 }
             },
@@ -291,6 +365,10 @@ function LeadEditModal(props: Props) {
                 setError({
                     [internal]: errors.message,
                 });
+                alert.show(
+                    'There was an issue updated the selected lead!',
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -311,12 +389,26 @@ function LeadEditModal(props: Props) {
                     ok,
                     errors,
                 } = response.project.leadCreate;
+
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors));
                     setError(formError);
                 } else if (ok) {
+                    alert.show(
+                        'Successfully created lead!',
+                        { variant: 'success' },
+                    );
                     onLeadSaveSuccess();
                 }
+            },
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+                alert.show(
+                    'There was an issue creating a new lead!',
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -377,7 +469,7 @@ function LeadEditModal(props: Props) {
             <Card className={styles.previewContainer}>
                 <LeadPreview
                     className={styles.preview}
-                    url={value?.url}
+                    url={value?.url ?? undefined}
                     attachment={leadData?.attachment ?? undefined}
                 />
             </Card>
