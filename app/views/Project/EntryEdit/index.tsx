@@ -193,8 +193,15 @@ function EntryEdit(props: Props) {
                 }
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
                 if (analysisFrameworkFromResponse) {
-                    const firstSection = analysisFrameworkFromResponse?.primaryTagging?.[0];
-                    setSelectedSection(firstSection?.clientId);
+                    const firstSection = analysisFrameworkFromResponse.primaryTagging?.[0];
+                    const sectionFromState = analysisFrameworkFromResponse
+                        .primaryTagging?.find((section) => section.id === sectionIdFromState);
+
+                    setSelectedSection(
+                        sectionFromState
+                            ? sectionFromState.clientId
+                            : firstSection?.clientId,
+                    );
                 }
             },
         },
@@ -466,108 +473,6 @@ function EntryEdit(props: Props) {
         },
     );
 
-<<<<<<< HEAD
-    const variables = useMemo(
-        (): ProjectFrameworkQueryVariables | undefined => (
-            (leadId && projectId)
-                ? { projectId, leadId }
-                : undefined
-        ),
-        [
-            leadId,
-            projectId,
-        ],
-    );
-
-    const {
-        data,
-        loading,
-    } = useQuery<ProjectFrameworkQuery, ProjectFrameworkQueryVariables>(
-        PROJECT_FRAMEWORK,
-        {
-            skip: isNotDefined(variables),
-            variables,
-            onCompleted: (response) => {
-                const projectFromResponse = response?.project;
-                if (!projectFromResponse) {
-                    return;
-                }
-
-                const leadFromResponse = projectFromResponse.lead;
-                if (leadFromResponse) {
-                    const entries = leadFromResponse.entries?.map(
-                        (entry) => transformEntry(entry as Entry),
-                    );
-                    setFormValue((oldVal) => ({ ...oldVal, entries }));
-                    const imagesMap = listToMap(
-                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
-                        (d) => d.id,
-                        (d) => d,
-                    );
-                    setEntryImagesMap(imagesMap);
-
-                    if (entries?.some((entry) => entry.clientId === entryIdFromState)) {
-                        createRestorePoint();
-                        setSelectedEntry(entryIdFromState);
-                    }
-
-                    const leadData = removeNull(leadFromResponse);
-                    setLeadValue({
-                        ...leadData,
-                        attachment: leadData?.attachment?.id,
-                        leadGroup: leadData?.leadGroup?.id,
-                        assignee: leadData?.assignee?.id,
-                        source: leadData?.source?.id,
-                        authors: leadData?.authors?.map((author) => author.id),
-                    });
-                    const {
-                        leadGroup,
-                        assignee,
-                        authors,
-                        source,
-                    } = leadData;
-
-                    if (leadGroup) {
-                        setLeadGroupOptions((oldVal) => (
-                            oldVal ? [...oldVal, leadGroup] : [leadGroup]
-                        ));
-                    }
-                    if (assignee) {
-                        setProjectUserOptions((oldVal) => (
-                            oldVal ? [...oldVal, assignee] : [assignee]
-                        ));
-                    }
-                    if (source) {
-                        setSourceOrganizationOptions((oldVal) => (
-                            oldVal ? [...oldVal, source] : [source]
-                        ));
-                    }
-                    if (authors) {
-                        setAuthorOrganizationOptions((oldVal) => (
-                            oldVal ? [...oldVal, ...authors] : [...authors]
-                        ));
-                    }
-                }
-
-                const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
-                if (analysisFrameworkFromResponse) {
-                    const firstSection = analysisFrameworkFromResponse.primaryTagging?.[0];
-                    const sectionFromState = analysisFrameworkFromResponse
-                        .primaryTagging?.find((section) => section.id === sectionIdFromState);
-
-                    setSelectedSection(
-                        sectionFromState
-                            ? sectionFromState.clientId
-                            : firstSection?.clientId,
-                    );
-                }
-            },
-        },
-    );
-    const frameworkDetails = data?.project?.analysisFramework as Framework | undefined | null;
-
-=======
->>>>>>> d0ab11034 (Add form validation for entry attributes)
     const handleSubmit = useCallback(
         (shouldSetFinalize: boolean) => {
             if (!projectId) {
@@ -682,7 +587,7 @@ function EntryEdit(props: Props) {
     );
 
     const currentEntryError = currentEntry
-        ? entriesError?.[currentEntry.clientId]
+        ? getErrorObject(entriesError?.[currentEntry.clientId])
         : undefined;
 
     const {
@@ -893,14 +798,19 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
+                    if (entries?.some((entry) => entry.clientId === entryIdFromState)) {
+                        createRestorePoint();
+                        setSelectedEntry(entryIdFromState);
+                    }
+
                     const leadData = removeNull(leadFromResponse);
                     setLeadValue({
                         ...leadData,
-                        attachment: leadData?.attachment?.id,
-                        leadGroup: leadData?.leadGroup?.id,
-                        assignee: leadData?.assignee?.id,
-                        source: leadData?.source?.id,
-                        authors: leadData?.authors?.map((author) => author.id),
+                        attachment: leadData.attachment?.id,
+                        leadGroup: leadData.leadGroup?.id,
+                        assignee: leadData.assignee?.id,
+                        source: leadData.source?.id,
+                        authors: leadData.authors?.map((author) => author.id),
                     });
                     const {
                         leadGroup,
@@ -1156,7 +1066,7 @@ function EntryEdit(props: Props) {
                                                     attributesMap={attributesMap}
                                                     onAttributeChange={onAttributeChange}
                                                     readOnly={!currentEntry}
-                                                    error={currentEntryError}
+                                                    error={currentEntryError?.attributes}
                                                 />
                                             </TabPanel>
                                         ))}
@@ -1206,7 +1116,7 @@ function EntryEdit(props: Props) {
                                         attributesMap={attributesMap}
                                         onAttributeChange={onAttributeChange}
                                         readOnly={!currentEntry}
-                                        error={currentEntryError}
+                                        error={currentEntryError?.attributes}
                                     />
                                 </Container>
                             </div>

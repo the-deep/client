@@ -20,6 +20,7 @@ import EditableEntry from '../../components/EditableEntry';
 import {
     EntriesByLeadQuery,
     EntriesByLeadQueryVariables,
+    LeadEntriesQueryVariables,
 } from '#generated/types';
 
 import styles from './styles.css';
