@@ -1,22 +1,21 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import {
     Prompt,
     useHistory,
     generatePath,
 } from 'react-router-dom';
 import {
+    IoInformationCircleOutline,
     IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     Button,
     Container,
     ContainerCard,
-    Footer,
     PendingMessage,
     TextInput,
     DateInput,
     TextArea,
-    Checkbox,
     ListView,
     SegmentInput,
     Modal,
@@ -40,6 +39,7 @@ import {
 
 import { SubNavbarActions } from '#components/SubNavbar';
 import NonFieldError from '#components/NonFieldError';
+import UserContext from '#base/context/UserContext';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
 import {
@@ -202,6 +202,12 @@ function ProjectDetailsForm(props: Props) {
         setValue,
     } = useForm(schema, initialValue);
 
+    const {
+        user,
+    } = useContext(UserContext);
+
+    const accessPrivateProject = !!user?.accessibleFeatures?.some((f) => f.key === 'PRIVATE_PROJECT');
+
     const [
         isDeleteModalVisible,
         showDeleteProjectConfirmation,
@@ -247,11 +253,11 @@ function ProjectDetailsForm(props: Props) {
     const {
         pending: projectPatchPending,
         trigger: projectPatch,
-    } = useLazyRequest<ProjectDetails, { values: FormType; type: string }>({
+    } = useLazyRequest<ProjectDetails, { values: FormType; }>({
         url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
         method: projectId ? 'PATCH' : 'POST',
         body: (ctx) => ctx.values,
-        onSuccess: (response, ctx) => {
+        onSuccess: (response) => {
             // FIXME: better to use context instead of mutable props
             if (!projectId) {
                 // Set this as pristine so the prompt will not be trigger
@@ -261,14 +267,6 @@ function ProjectDetailsForm(props: Props) {
                 setProjectDetails(response);
                 const options = getOrganizationOptions(response);
                 setStakeholderOptions(options);
-            }
-            if (ctx.type === 'saveAndClose') {
-                history.push(generatePath(routes.tagging.path, {
-                    projectId: response.id,
-                }));
-            }
-            if (ctx.type === 'saveAndNext') {
-                window.location.replace('#/geo-areas');
             }
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
@@ -319,18 +317,15 @@ function ProjectDetailsForm(props: Props) {
         [groupedStakeholders, stakeholderOptions],
     );
 
-    // TODO: Add private feature access here
-    const accessPrivateProject = false;
-
     const pending = pendingProjectDetailsGet || projectPatchPending || projectDeletePending;
     const disabled = pending;
 
     const handleSubmit = useCallback(
-        (name: string) => {
+        () => {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                (val) => projectPatch({ values: val, type: name }),
+                (val) => projectPatch({ values: val }),
             );
             submit();
         },
@@ -344,9 +339,9 @@ function ProjectDetailsForm(props: Props) {
                     disabled={disabled || pristine}
                     onClick={handleSubmit}
                     variant="primary"
-                    name="saveAndClose"
+                    name="save"
                 >
-                    {_ts('projectEdit', 'saveButtonLabel')}
+                    Save Project
                 </Button>
             </SubNavbarActions>
             {pending && <PendingMessage />}
@@ -427,6 +422,14 @@ function ProjectDetailsForm(props: Props) {
                         headingSize="extraSmall"
                         contentClassName={styles.items}
                         heading={_ts('projectEdit', 'projectVisibility')}
+                        inlineHeadingDescription
+                        headerDescriptionClassName={styles.infoIconContainer}
+                        headingDescription={(
+                            <IoInformationCircleOutline
+                                className={styles.infoIcon}
+                                title="Private projects will be visible to only project members."
+                            />
+                        )}
                     >
                         <SegmentInput
                             className={styles.segmentInput}
@@ -442,6 +445,7 @@ function ProjectDetailsForm(props: Props) {
                             <RequestPrivateProjectButton />
                         )}
                     </Container>
+                    {/*
                     <Container
                         className={styles.features}
                         contentClassName={styles.items}
@@ -457,6 +461,7 @@ function ProjectDetailsForm(props: Props) {
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />
                     </Container>
+                    */}
                     <div className={styles.createdByDetails}>
                         {projectDetails?.createdByName && (
                             <TextInput
@@ -533,19 +538,6 @@ function ProjectDetailsForm(props: Props) {
                     )}
                 </div>
             </div>
-            <Footer
-                className={styles.footer}
-                actions={(
-                    <Button
-                        disabled={disabled || pristine}
-                        onClick={handleSubmit}
-                        variant="primary"
-                        name="saveAndNext"
-                    >
-                        {_ts('projectEdit', 'projectSave')}
-                    </Button>
-                )}
-            />
             <Prompt
                 when={!pristine}
                 message={_ts('common', 'youHaveUnsavedChanges')}

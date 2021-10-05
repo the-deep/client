@@ -19,8 +19,12 @@ const ME = gql`
             id
             displayName
             displayPictureUrl
+            accessibleFeatures {
+                key
+            }
             lastActiveProject {
                 allowedPermissions
+                hasAssessmentTemplate
                 analysisFramework {
                     id
                 }

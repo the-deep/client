@@ -76,6 +76,7 @@ const LOGIN = gql`
                     allowedPermissions
                     currentUserRole
                     id
+                    hasAssessmentTemplate
                     isPrivate
                     title
                 }
@@ -98,6 +99,7 @@ const LOGIN_WITH_HID = gql`
                 lastActiveProject {
                     allowedPermissions
                     currentUserRole
+                    hasAssessmentTemplate
                     id
                     isPrivate
                     title

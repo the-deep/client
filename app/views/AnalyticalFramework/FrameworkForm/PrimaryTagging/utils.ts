@@ -83,7 +83,13 @@ export function injectWidget(
         );
 
         if (isNotDefined(widgetIndex) || widgetIndex === -1) {
-            selectedSection.widgets.push(widget);
+            const orderList = selectedSection.widgets.map((w) => w.order);
+            Math.max(...orderList, 0);
+
+            selectedSection.widgets.push({
+                ...widget,
+                order: selectedSection.widgets.length,
+            });
         } else {
             selectedSection.widgets.splice(widgetIndex, 1, widget);
         }

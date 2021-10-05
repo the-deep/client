@@ -5,8 +5,7 @@ import ErrorBoundary from '#base/components/ErrorBoundary';
 
 import styles from './styles.css';
 
-export interface Props {
-    title: string | undefined;
+interface BaseProps {
     className?: string;
     headerClassName?: string;
 
@@ -19,6 +18,14 @@ export interface Props {
     error: unknown;
 }
 
+export type Props = BaseProps & ({
+    title: string | undefined;
+    hideTitle: false;
+} | {
+    title?: string;
+    hideTitle: true;
+});
+
 function WidgetWrapper(props: Props) {
     const {
         className,
@@ -26,6 +33,7 @@ function WidgetWrapper(props: Props) {
         children,
         headerClassName,
         childrenContainerClassName,
+        hideTitle,
         readOnly,
         error,
     } = props;
@@ -38,12 +46,14 @@ function WidgetWrapper(props: Props) {
                 isDefined(error) && styles.errored,
             )}
         >
-            <div
-                className={_cs(headerClassName, styles.header)}
-                // FIXME: use strings
-            >
-                {title ?? 'Unnamed'}
-            </div>
+            {!hideTitle && (
+                <div
+                    className={_cs(headerClassName, styles.header)}
+                    // FIXME: use strings
+                >
+                    {title ?? 'Unnamed'}
+                </div>
+            )}
             <div
                 className={_cs(
                     childrenContainerClassName,

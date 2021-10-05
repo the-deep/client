@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useContext, useMemo, useCallback, useState } from 'react';
 import {
     _cs,
     randomString,
@@ -32,6 +32,7 @@ import {
     LeadCreateMutation,
     LeadCreateMutationVariables,
 } from '#generated/types';
+import { ProjectContext } from '#base/context/ProjectContext';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -230,6 +231,7 @@ function LeadEditModal(props: Props) {
         onLeadSaveSuccess,
     } = props;
     const alert = useAlert();
+    const { project } = useContext(ProjectContext);
 
     const initialValue: PartialFormType = useMemo(() => ({
         clientId: randomString(),
@@ -492,6 +494,7 @@ function LeadEditModal(props: Props) {
                     onLeadGroupOptionsChange={setLeadGroupOptions}
                     assigneeOptions={projectUserOptions}
                     onAssigneeOptionChange={setProjectUserOptions}
+                    hasAssessment={project?.hasAssessmentTemplate}
                 />
             </Card>
         </Modal>

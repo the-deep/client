@@ -124,7 +124,6 @@ export interface Props <N extends string>{
 function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
-        title,
         widget,
         name,
         value,
@@ -190,8 +189,8 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     return (
         <WidgetWrapper
             className={_cs(className, styles.matrix)}
-            title={title}
             error={error}
+            hideTitle
         >
             <NonFieldError
                 error={error}

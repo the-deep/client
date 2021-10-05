@@ -6,6 +6,7 @@ import {
 import { generatePath } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import {
+    IoEarth,
     IoCopyOutline,
     IoCheckmark,
 } from 'react-icons/io5';
@@ -15,6 +16,7 @@ import {
     Tabs,
     Tab,
     TabList,
+    Message,
     TabPanel,
     ConfirmButton,
     Tag,
@@ -238,6 +240,9 @@ function FrameworkDetail(props: Props) {
                     className={styles.frameworkItem}
                     heading={frameworkDetails?.title ?? '-'}
                     headingSize="small"
+                    headerClassName={styles.header}
+                    headingContainerClassName={styles.headingContainer}
+                    headerActionsContainerClassName={styles.headerActions}
                     headingDescription={(
                         <TextOutput
                             label={_ts('projectEdit', 'createdAtLabel')}
@@ -249,87 +254,85 @@ function FrameworkDetail(props: Props) {
                             )}
                         />
                     )}
-                    headerDescription={(
-                        <>
-                            <Tab
-                                name="primary"
-                                transparentBorder
-                            >
-                                Primary Tagging
-                            </Tab>
-                            <Tab
-                                name="secondary"
-                                transparentBorder
-                            >
-                                Secondary Tagging
-                            </Tab>
-                        </>
-                    )}
                     headerActions={(
                         <>
-                            {(projectFrameworkId !== frameworkId) && canUseFramework && (
-                                <ConfirmButton
-                                    variant="secondary"
-                                    name="useFramework"
-                                    title={_ts('projectEdit', 'selectFrameworkButtonLabel')}
-                                    disabled={disableAllButtons}
-                                    message={(
-                                        <>
-                                            <p>
-                                                { _ts('projectEdit', 'confirmUseFramework', {
-                                                    title: <b>{frameworkDetails?.title}</b>,
-                                                }) }
-                                            </p>
-                                            <p>
-                                                { _ts('projectEdit', 'confirmUseFrameworkText') }
-                                            </p>
-                                        </>
-                                    )}
-                                    onConfirm={handleUseFrameworkClick}
-                                    icons={(
-                                        <IoCheckmark />
-                                    )}
-                                    showConfirmationInitially={false}
+                            <TabList className={styles.tabList}>
+                                <Tab
+                                    name="primary"
+                                    transparentBorder
                                 >
-                                    {_ts('projectEdit', 'selectFrameworkButtonLabel')}
-                                </ConfirmButton>
-                            )}
-                            {projectFrameworkId === frameworkId && (
-                                <Tag
-                                    variant="complement1"
-                                    icons={(
-                                        <IoCheckmark />
-                                    )}
+                                    Primary Tagging
+                                </Tab>
+                                <Tab
+                                    name="secondary"
+                                    transparentBorder
                                 >
-                                    {_ts('projectEdit', 'selectedFrameworkTagLabel')}
-                                </Tag>
-                            )}
-                            {canEditFramework && (
-                                <QuickActionLink
-                                    variant="secondary"
-                                    title={_ts('projectEdit', 'editFrameworkLinkTitle')}
-                                    disabled={disableAllButtons}
-                                    to={frameworkRoute}
-                                >
-                                    <FiEdit2 />
-                                </QuickActionLink>
-                            )}
-                            {canCloneFramework && (
-                                <QuickActionButton
-                                    title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
-                                    variant="secondary"
-                                    disabled={disableAllButtons}
-                                    onClick={handleFrameworkCloneClick}
-                                    name="clone"
-                                >
-                                    <IoCopyOutline />
-                                </QuickActionButton>
-                            )}
+                                    Secondary Tagging
+                                </Tab>
+                            </TabList>
+                            <div className={styles.actions}>
+                                {(projectFrameworkId !== frameworkId) && canUseFramework && (
+                                    <ConfirmButton
+                                        variant="secondary"
+                                        name="useFramework"
+                                        title={_ts('projectEdit', 'selectFrameworkButtonLabel')}
+                                        disabled={disableAllButtons}
+                                        message={(
+                                            <>
+                                                <p>
+                                                    { _ts('projectEdit', 'confirmUseFramework', {
+                                                        title: <b>{frameworkDetails?.title}</b>,
+                                                    }) }
+                                                </p>
+                                                <p>
+                                                    { _ts('projectEdit', 'confirmUseFrameworkText') }
+                                                </p>
+                                            </>
+                                        )}
+                                        onConfirm={handleUseFrameworkClick}
+                                        icons={(
+                                            <IoCheckmark />
+                                        )}
+                                        showConfirmationInitially={false}
+                                    >
+                                        {_ts('projectEdit', 'selectFrameworkButtonLabel')}
+                                    </ConfirmButton>
+                                )}
+                                {projectFrameworkId === frameworkId && (
+                                    <Tag
+                                        variant="complement1"
+                                        icons={(
+                                            <IoCheckmark />
+                                        )}
+                                    >
+                                        {_ts('projectEdit', 'selectedFrameworkTagLabel')}
+                                    </Tag>
+                                )}
+                                {canEditFramework && (
+                                    <QuickActionLink
+                                        variant="secondary"
+                                        title={_ts('projectEdit', 'editFrameworkLinkTitle')}
+                                        disabled={disableAllButtons}
+                                        to={frameworkRoute}
+                                    >
+                                        <FiEdit2 />
+                                    </QuickActionLink>
+                                )}
+                                {canCloneFramework && (
+                                    <QuickActionButton
+                                        title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
+                                        variant="secondary"
+                                        disabled={disableAllButtons}
+                                        onClick={handleFrameworkCloneClick}
+                                        name="clone"
+                                    >
+                                        <IoCopyOutline />
+                                    </QuickActionButton>
+                                )}
+                            </div>
                         </>
                     )}
                     contentClassName={styles.content}
-                    borderBelowHeader
-                    borderBelowHeaderWidth="thin"
                 >
                     <div className={styles.metadataContainer}>
                         {frameworkDetails?.description}
@@ -376,33 +379,46 @@ function FrameworkDetail(props: Props) {
                                 onChange={setSelectedSection}
                                 variant="step"
                             >
-                                <TabList className={styles.tabs}>
-                                    {sections?.map((section) => (
-                                        <Tab
-                                            key={section.clientId}
-                                            name={section.clientId}
-                                            borderWrapperClassName={styles.borderWrapper}
-                                            className={styles.tab}
-                                            title={section.tooltip}
-                                        >
-                                            {section.title}
-                                        </Tab>
-                                    ))}
-                                </TabList>
-                                {sections?.map((section) => (
-                                    <TabPanel
-                                        key={section.clientId}
-                                        name={section.clientId}
-                                        className={styles.panel}
-                                    >
-                                        <Section
-                                            widgets={section.widgets}
-                                            onAttributeChange={noop}
-                                            attributesMap={emptyObject}
-                                            error={undefined}
-                                        />
-                                    </TabPanel>
-                                ))}
+                                {(sections?.length ?? 0) > 0 ? (
+                                    <>
+                                        <TabList className={styles.tabs}>
+                                            {sections?.map((section) => (
+                                                <Tab
+                                                    key={section.clientId}
+                                                    name={section.clientId}
+                                                    borderWrapperClassName={styles.borderWrapper}
+                                                    className={styles.tab}
+                                                    title={section.tooltip}
+                                                >
+                                                    {section.title}
+                                                </Tab>
+                                            ))}
+                                        </TabList>
+                                        {(
+                                            sections?.map((section) => (
+                                                <TabPanel
+                                                    key={section.clientId}
+                                                    name={section.clientId}
+                                                    className={styles.panel}
+                                                >
+                                                    <Section
+                                                        widgets={section.widgets}
+                                                        onAttributeChange={noop}
+                                                        attributesMap={emptyObject}
+                                                        error={undefined}
+                                                    />
+                                                </TabPanel>
+                                            ))
+                                        )}
+                                    </>
+                                ) : (
+                                    <Message
+                                        icon={(
+                                            <IoEarth />
+                                        )}
+                                        message="There are no sections in this framework"
+                                    />
+                                )}
                             </Tabs>
                         </TabPanel>
                         <TabPanel

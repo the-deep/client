@@ -1,4 +1,8 @@
 .usergroups {
+    .user-groups-link {
+        margin: 0 var(--dui-spacing-large);
+    }
+
     .content {
         display: flex;
         flex-direction: column;

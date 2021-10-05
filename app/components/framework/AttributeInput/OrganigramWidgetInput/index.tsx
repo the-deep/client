@@ -71,7 +71,7 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
                 value={value?.value}
                 onChange={onChange}
                 options={widget.properties?.options}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 readOnly={readOnly}
                 error={getErrorString(error?.value)}
             />

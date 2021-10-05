@@ -21,6 +21,7 @@ const CURRENT_PROJECT = gql`
             analysisFramework {
                 id
             }
+            hasAssessmentTemplate
             id
             isPrivate
             title
