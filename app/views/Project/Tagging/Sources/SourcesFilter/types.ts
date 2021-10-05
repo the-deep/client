@@ -24,59 +24,59 @@ interface BaseProperties<T> {
 
 interface TextFilterType extends BaseFilterType {
     widgetType: 'TEXT';
-    properties: {
+    properties?: {
         type: string;
     };
 }
 
 interface NumberFilterType extends BaseFilterType {
     widgetType: 'NUMBER';
-    properties: {
+    properties?: {
         type: string;
     };
 }
 
 interface TimeFilterType extends BaseFilterType {
     widgetType: 'TIME';
-    properties: {
+    properties?: {
         type: string;
     };
 }
 
 interface DateFilterType extends BaseFilterType {
     widgetType: 'DATE';
-    properties: {
+    properties?: {
         type: string;
     };
 }
 
 interface TimeRangeFilterType extends BaseFilterType {
     widgetType: 'TIME_RANGE';
-    properties: {
+    properties?: {
         type: string;
     };
 }
 
 interface DateRangeFilterType extends BaseFilterType {
     widgetType: 'DATE_RANGE';
-    properties: {
+    properties?: {
         type: string;
     };
 }
 
 interface SingleSelectFilterType extends BaseFilterType {
     widgetType: 'SELECT';
-    properties: BaseProperties<KeyLabelEntity>;
+    properties?: BaseProperties<KeyLabelEntity>;
 }
 
 interface MultiSelectFilterType extends BaseFilterType {
     widgetType: 'MULTISELECT';
-    properties: BaseProperties<KeyLabelEntity>;
+    properties?: BaseProperties<KeyLabelEntity>;
 }
 
 interface ScaleFilterType extends BaseFilterType {
     widgetType: 'SCALE';
-    properties: BaseProperties<KeyLabel>;
+    properties?: BaseProperties<KeyLabel>;
 }
 
 export interface OrganigramDatum extends KeyLabelEntity {
@@ -85,22 +85,22 @@ export interface OrganigramDatum extends KeyLabelEntity {
 
 interface OrganigramFilterType extends BaseFilterType {
     widgetType: 'ORGANIGRAM';
-    properties: BaseProperties<OrganigramDatum>;
+    properties?: BaseProperties<OrganigramDatum>;
 }
 
 interface GeoLocationFilterType extends BaseFilterType {
     widgetType: 'GEO';
-    properties: BaseProperties<KeyLabelEntity>;
+    properties?: BaseProperties<KeyLabelEntity>;
 }
 
 interface Matrix1dFilterType extends BaseFilterType {
     widgetType: 'MATRIX1D';
-    properties: BaseProperties<KeyLabel>;
+    properties?: BaseProperties<KeyLabel>;
 }
 
 interface Matrix2dFilterType extends BaseFilterType {
     widgetType: 'MATRIX2D';
-    properties: BaseProperties<KeyLabel>;
+    properties?: BaseProperties<KeyLabel>;
 }
 
 export type FrameworkFilterType = TextFilterType

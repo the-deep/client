@@ -8,10 +8,9 @@ import {
     SelectInput,
     MultiSelectInput,
     TextInput,
-    DateInput,
-    TimeInput,
     DateRangeInput,
     TimeRangeInput,
+    Checkbox,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
@@ -27,7 +26,8 @@ import {
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
-import { PartialEntriesFilterDataType, convertDateToIsoDateTime } from '../..';
+import { PartialEntriesFilterDataType } from '../..';
+import { convertDateToIsoDateTime } from '../../utils';
 import styles from './styles.css';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
@@ -120,17 +120,22 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
     switch (filter.widgetType) {
         case 'DATE': {
             return (
-                <DateInput
+                <DateRangeInput
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
+                        hasNoData(value?.valueGte)
+                        && hasNoData(value?.valueLte)
+                        && !allFiltersVisible
                         && styles.hidden,
                     )}
-                    name="value"
+                    name={name}
+                    onChange={handleDateRangeChange}
+                    value={value?.valueGte && value?.valueLte ? {
+                        startDate: encodeDate(new Date(value?.valueGte)),
+                        endDate: encodeDate(new Date(value?.valueLte)),
+                    } : undefined}
                     label={title}
-                    value={value?.value}
-                    onChange={onFieldChange}
                     disabled={disabled}
                 />
             );
@@ -164,17 +169,22 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         }
         case 'TIME': {
             return (
-                <TimeInput
+                <TimeRangeInput
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
+                        hasNoData(value?.valueGte)
+                        && hasNoData(value?.valueLte)
+                        && !allFiltersVisible
                         && styles.hidden,
                     )}
-                    name="value"
+                    name={name}
+                    onChange={handleTimeRangeChange}
+                    value={value?.valueGte && value?.valueLte ? {
+                        startTime: value?.valueGte,
+                        endTime: value?.valueLte,
+                    } : undefined}
                     label={title}
-                    value={value?.value}
-                    onChange={onFieldChange}
                     disabled={disabled}
                 />
             );
@@ -203,19 +213,34 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         }
         case 'NUMBER': {
             return (
-                <NumberButStringInput
-                    className={_cs(
-                        className,
-                        styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
-                        && styles.hidden,
-                    )}
-                    name="value"
-                    label={title}
-                    value={value?.value}
-                    onChange={onFieldChange}
-                    disabled={disabled}
-                />
+                <>
+                    <NumberButStringInput
+                        className={_cs(
+                            className,
+                            styles.input,
+                            (hasNoData(value?.value) && !allFiltersVisible)
+                            && styles.hidden,
+                        )}
+                        name="valueGte"
+                        label={`${title} (Greater than)`}
+                        value={value?.valueGte}
+                        onChange={onFieldChange}
+                        disabled={disabled}
+                    />
+                    <NumberButStringInput
+                        className={_cs(
+                            className,
+                            styles.input,
+                            (hasNoData(value?.value) && !allFiltersVisible)
+                            && styles.hidden,
+                        )}
+                        name="valueLte"
+                        label={`${title} (Less than)`}
+                        value={value?.valueLte}
+                        onChange={onFieldChange}
+                        disabled={disabled}
+                    />
+                </>
             );
         }
         case 'SCALE': {
@@ -231,7 +256,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.valueList}
                     onChange={onFieldChange}
                     label={title}
-                    options={filter.properties.options}
+                    options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
                     disabled={disabled || optionsDisabled}
@@ -256,6 +281,15 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     onOptionsChange={setGeoAreaOptions}
                     disabled={disabled}
                     placeholder={title}
+                    actions={(
+                        <Checkbox
+                            name="includeSubRegions"
+                            disabled={disabled}
+                            onChange={onFieldChange}
+                            value={value?.includeSubRegions}
+                            label="Include sub regions"
+                        />
+                    )}
                 />
             );
         }
@@ -272,7 +306,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.value}
                     label={title}
                     onChange={onFieldChange}
-                    options={filter.properties.options}
+                    options={filter.properties?.options}
                     keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
                     disabled={disabled || optionsDisabled}
@@ -292,7 +326,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.valueList}
                     onChange={onFieldChange}
                     label={title}
-                    options={filter.properties.options}
+                    options={filter.properties?.options}
                     keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
@@ -313,7 +347,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.valueList}
                     onChange={onFieldChange}
                     label={title}
-                    options={filter.properties.options}
+                    options={filter.properties?.options}
                     keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
@@ -334,7 +368,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.valueList}
                     onChange={onFieldChange}
                     label={title}
-                    options={filter.properties.options}
+                    options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
@@ -355,7 +389,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.valueList}
                     onChange={onFieldChange}
                     label={title}
-                    options={filter.properties.options}
+                    options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
