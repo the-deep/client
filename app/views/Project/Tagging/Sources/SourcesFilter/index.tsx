@@ -33,6 +33,7 @@ import {
     hasNoData,
     enumKeySelector,
     enumLabelSelector,
+    convertDateToIsoDateTime,
 } from '#utils/common';
 import DateRangeDualInput from '#components/DateRangeDualInput';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
@@ -45,11 +46,11 @@ import {
     AnalysisFrameworkFilterType,
 } from '#generated/types';
 
-import { convertDateToIsoDateTime } from './utils';
 import { FrameworkFilterType } from './types';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
+// FIXME: move this to types.ts
 export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
     'statuses'
     | 'confidentiality'
@@ -62,10 +63,15 @@ export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables
     | 'entryTypes'
 >>;
 
-export type SourceFilterOptions = DeepReplace<SourceFilterOptionsQuery, Pick<AnalysisFrameworkFilterType, 'filterType' | 'key' | 'properties' | 'title' | 'widgetType'>, FrameworkFilterType>;
+export type SourceFilterOptions = DeepReplace<
+    SourceFilterOptionsQuery,
+    Omit<AnalysisFrameworkFilterType, 'widgetTypeDisplay' | 'filterTypeDisplay'>,
+    FrameworkFilterType
+>;
 
 type FormType = SourcesFilterFields;
 
+// FIXME: move this to schema.ts
 type PartialFormType = PartialForm<FormType, 'filterKey'>;
 export type PartialEntriesFilterDataType = NonNullable<PartialFormType['entriesFilterData']>;
 type PartialFrameworkFilterType = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];

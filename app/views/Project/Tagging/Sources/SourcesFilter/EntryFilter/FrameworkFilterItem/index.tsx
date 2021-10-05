@@ -23,14 +23,15 @@ import {
 } from '../../types';
 import {
     hasNoData,
+    convertDateToIsoDateTime,
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
 import { PartialEntriesFilterDataType } from '../..';
-import { convertDateToIsoDateTime } from '../../utils';
 import styles from './styles.css';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
+
 // FIXME remove clientId as key when clientId is removed from widget option properties
 const filterClientIdSelector = (d: KeyLabelEntity) => d.clientId;
 const filterLabelSelector = (d: KeyLabelEntity | KeyLabel) => d.label;
@@ -334,7 +335,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                 />
             );
         }
-        case 'ORGANIGRAM': { // FIXME options sent by the server is gibberish (null values)
+        case 'ORGANIGRAM': {
             return (
                 <MultiSelectInput
                     className={_cs(
@@ -348,7 +349,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     onChange={onFieldChange}
                     label={title}
                     options={filter.properties?.options}
-                    keySelector={filterClientIdSelector}
+                    keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
                     placeholder={title}
                     disabled={disabled || optionsDisabled}

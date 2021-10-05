@@ -79,7 +79,7 @@ interface ScaleFilterType extends BaseFilterType {
     properties?: BaseProperties<KeyLabel>;
 }
 
-export interface OrganigramDatum extends KeyLabelEntity {
+export interface OrganigramDatum extends KeyLabel {
     children: OrganigramDatum[];
 }
 
