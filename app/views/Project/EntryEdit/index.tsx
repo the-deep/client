@@ -108,8 +108,11 @@ function EntryEdit(props: Props) {
     const alert = useAlert();
     const location = useLocation();
 
-    // LEAD
+    const entryIdFromState = (location.state as {
+        initialEntryId?: string
+    } | undefined)?.initialEntryId;
 
+    // LEAD
     const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
         clientId: randomString(),
         sourceType: 'WEBSITE',
@@ -137,6 +140,8 @@ function EntryEdit(props: Props) {
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const [isFinalizeClicked, setIsFinalizeClicked] = useState(false);
+
+    const [selectedEntry, setSelectedEntry] = useState<string | undefined>(undefined);
 
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
@@ -451,6 +456,11 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
+                    if (entries?.some((entry) => entry.clientId === entryIdFromState)) {
+                        createRestorePoint();
+                        setSelectedEntry(entryIdFromState);
+                    }
+
                     const leadData = removeNull(leadFromResponse);
                     setLeadValue({
                         ...leadData,
@@ -590,8 +600,6 @@ function EntryEdit(props: Props) {
         () => { handleSubmit(true); },
         [handleSubmit],
     );
-
-    const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
 
     const handleEntryClick = useCallback((entryId: string) => {
         createRestorePoint();
@@ -790,11 +798,13 @@ function EntryEdit(props: Props) {
             secondaryTagging: frameworkDetails?.secondaryTagging,
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
+            projectId,
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
         }),
         [
+            projectId,
             entryImagesMap,
             frameworkDetails?.secondaryTagging,
             frameworkDetails?.primaryTagging,

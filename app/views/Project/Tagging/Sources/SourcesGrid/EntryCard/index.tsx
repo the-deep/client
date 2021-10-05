@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { generatePath } from 'react-router-dom';
 import {
     IoPencil,
     IoTrashBinOutline,
@@ -13,7 +14,7 @@ import {
     DateOutput,
     TextOutput,
     Button,
-    QuickActionButton,
+    QuickActionLink,
     QuickActionConfirmButton,
     Container,
     useAlert,
@@ -22,6 +23,7 @@ import {
 import ExcerptInput from '#components/entry/ExcerptInput';
 import ProjectContext from '#base/context/ProjectContext';
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
+import routes from '#base/configs/routes';
 
 import EditableEntry from '../../components/EditableEntry';
 import { Framework, Entry } from '../types';
@@ -107,6 +109,15 @@ function EntryCard(props: Props) {
         },
     );
 
+    const editEntryLink = useMemo(() => ({
+        pathname: generatePath(routes.entryEdit.path, {
+            projectId,
+            leadId: entry.lead.id,
+        }),
+        state: { initialEntryId: entry.clientId },
+        hash: '#/primary-tagging',
+    }), [projectId, entry.lead.id, entry.clientId]);
+
     const handleEntryDeleteClick = useCallback(() => {
         deleteEntry({
             variables: {
@@ -137,9 +148,11 @@ function EntryCard(props: Props) {
                 )}
                 footerQuickActions={canEditEntry && (
                     <>
-                        <QuickActionButton name={undefined}>
+                        <QuickActionLink
+                            to={editEntryLink}
+                        >
                             <IoPencil />
-                        </QuickActionButton>
+                        </QuickActionLink>
                         <QuickActionConfirmButton
                             name={undefined}
                             onConfirm={handleEntryDeleteClick}
