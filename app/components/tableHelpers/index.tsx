@@ -47,7 +47,7 @@ export function createDateColumn<D, K>(
         cellRenderer: DateOutput,
         cellRendererParams: (_: K, datum: D): DateOutputProps => ({
             value: accessor(datum),
-            format: options?.format ?? 'dd MMM, yyyy',
+            format: options?.format ?? 'dd MMM yyyy',
         }),
         valueSelector: accessor,
         valueComparator: (foo: D, bar: D) => compareDate(accessor(foo), accessor(bar)),

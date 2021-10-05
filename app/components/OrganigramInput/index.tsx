@@ -54,13 +54,16 @@ function OrganigramInput<N extends string>(props: Props<N>) {
 
     const handleClick = useCallback(
         (_: Event, data: OrganigramDatum) => {
+            if (disabled || readOnly) {
+                return;
+            }
             if (value?.some((v) => v === data.clientId)) {
                 onChange(value?.filter((v) => v !== data.clientId), name);
             } else {
                 onChange([...(value ?? []), data.clientId], name);
             }
         },
-        [value, onChange, name],
+        [value, onChange, name, readOnly, disabled],
     );
 
     const isSelected = useCallback(

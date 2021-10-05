@@ -59,11 +59,15 @@ function Section(props: Props) {
         <>
             <NonFieldError error={error} />
             <ListView
-                className={styles.section}
+                className={_cs(
+                    styles.section,
+                    (widgets?.length ?? 0) < 1 && styles.empty,
+                )}
                 data={widgets ?? undefined}
                 keySelector={widgetKeySelector}
                 renderer={AttributeInput}
                 rendererParams={widgetRendererParams}
+                emptyMessage="There are no widgets in this section."
             />
         </>
     );

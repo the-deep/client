@@ -334,7 +334,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     name="login"
                     onClick={handleSubmit}
                 >
-                    Submit
+                    Save
                 </Button>
             </SubNavbarActions>
             <SubNavbarChildren>

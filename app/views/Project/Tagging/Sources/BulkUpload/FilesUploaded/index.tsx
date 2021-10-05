@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useContext, useCallback, useState, useMemo } from 'react';
 import {
     _cs,
     isDefined,
@@ -21,6 +21,7 @@ import { useQuery, gql } from '@apollo/client';
 
 import _ts from '#ts';
 import LeadInput from '#components/lead/LeadInput';
+import { ProjectContext } from '#base/context/ProjectContext';
 import LeadPreview from '#components/lead/LeadPreview';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
@@ -81,6 +82,8 @@ function FilesUploaded(props: Props) {
     } = useQuery<LeadOptionsQuery, LeadOptionsQueryVariables>(
         LEAD_OPTIONS,
     );
+
+    const { project } = useContext(ProjectContext);
 
     const [
         projectUserOptions,
@@ -187,6 +190,7 @@ function FilesUploaded(props: Props) {
                         onLeadGroupOptionsChange={setLeadGroupOptions}
                         assigneeOptions={projectUserOptions}
                         onAssigneeOptionChange={setProjectUserOptions}
+                        hasAssessment={project?.hasAssessmentTemplate}
                     />
                 )}
                 {selectedLeadAttachment && (
