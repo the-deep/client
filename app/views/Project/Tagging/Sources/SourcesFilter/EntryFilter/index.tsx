@@ -4,6 +4,7 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 import {
+    DateRangeDualInput,
     MultiSelectInput,
     SelectInput,
     List,
@@ -21,7 +22,6 @@ import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
-import DateRangeDualInput from '#components/DateRangeDualInput';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 

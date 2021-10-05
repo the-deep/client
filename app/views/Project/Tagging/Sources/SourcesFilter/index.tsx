@@ -19,6 +19,7 @@ import {
     MultiSelectInput,
     useBooleanState,
     Button,
+    DateRangeDualInput,
 } from '@the-deep/deep-ui';
 import {
     IoSearch,
@@ -35,7 +36,6 @@ import {
     enumLabelSelector,
     convertDateToIsoDateTime,
 } from '#utils/common';
-import DateRangeDualInput from '#components/DateRangeDualInput';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import {
