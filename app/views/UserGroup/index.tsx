@@ -9,7 +9,7 @@ import {
     TextOutput,
     NumberOutput,
     DateOutput,
-    ExpandableContainer,
+    ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -21,14 +21,13 @@ import {
 } from '#base/utils/restRequest';
 import {
     MultiResponse,
+    UserGroup as UserGroupType,
 } from '#types';
 import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
 import _ts from '#ts';
 
-import AddUsergroupModal, {
-    Usergroup,
-} from './AddUsergroupModal';
+import AddUsergroupModal from './AddUsergroupModal';
 import AddUserModal from './AddUserModal';
 import Memberships from './Memberships';
 import UserGroupActionCell from './UserGroupActionCell';
@@ -36,7 +35,7 @@ import UserGroupActionCell from './UserGroupActionCell';
 import styles from './styles.css';
 
 const MAX_ITEMS_PER_PAGE = 10;
-const usergroupKeySelector = (d: Usergroup) => d.id;
+const usergroupKeySelector = (d: UserGroupType) => d.id;
 
 interface UserGroupItemProps {
     userGroupId: number;
@@ -45,7 +44,9 @@ interface UserGroupItemProps {
     onEditClick: (id: number) => void;
     onDeleteClick: (id: number) => void;
     onAddClick: (id: number) => void;
-    data: Usergroup;
+    data: UserGroupType;
+    onExpansionChange: (usergroupExpanded: boolean, usergroupId: number) => void;
+    expanded?: boolean;
 }
 
 function UserGroupItem(props: UserGroupItemProps) {
@@ -57,19 +58,26 @@ function UserGroupItem(props: UserGroupItemProps) {
         data,
         activeUserId,
         onUserDeleteSuccess,
+        onExpansionChange,
+        expanded,
     } = props;
 
     return (
-        <ExpandableContainer
+        <ControlledExpandableContainer
+            name={userGroupId}
             className={styles.userGroupItem}
             heading={data.title}
+            autoFocus
+            withoutBorder
+            spacing="comfortable"
+            expansionTriggerArea="arrow"
+            onExpansionChange={onExpansionChange}
+            expanded={expanded}
             inlineHeadingDescription
             headerClassName={styles.userGroupHeader}
             headingContainerClassName={styles.headingContainer}
             headingClassName={styles.heading}
             headerDescriptionClassName={styles.headingDescriptionContainer}
-            alwaysMountContent={false}
-            expansionTriggerArea="arrow"
             contentClassName={styles.userGroupContent}
             headingDescription={(
                 <>
@@ -116,7 +124,7 @@ function UserGroupItem(props: UserGroupItemProps) {
                 activeUserId={activeUserId}
                 onUserDeleteSuccess={onUserDeleteSuccess}
             />
-        </ExpandableContainer>
+        </ControlledExpandableContainer>
     );
 }
 
@@ -136,6 +144,7 @@ function UserGroup(props: Props) {
     const userId = user ? +user?.id : undefined;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [expandedUsergroupId, setExpandedUsergroupId] = useState<number | undefined>();
 
     const [activeUsergroupId, setActiveUsergroupId] = useState<number | undefined>();
     const [usergroupToEdit, setUsergroupToEdit] = useState<number | undefined>();
@@ -169,7 +178,7 @@ function UserGroup(props: Props) {
         pending: usergroupGetPending,
         response: usergroupResponse,
         retrigger: usergroupResponseTrigger,
-    } = useRequest<MultiResponse<Usergroup>>({
+    } = useRequest<MultiResponse<UserGroupType>>({
         url: 'server://user-groups/member-of/',
         method: 'GET',
         query: usergroupQuery,
@@ -211,7 +220,11 @@ function UserGroup(props: Props) {
         setUserModalShow();
     }, [setUserModalShow]);
 
-    const userGroupRendererParams = useCallback((key: number, datum: Usergroup) => ({
+    const handleExpansionChange = useCallback((usergroupExpanded: boolean, usergroupId: number) => {
+        setExpandedUsergroupId(usergroupExpanded ? usergroupId : undefined);
+    }, []);
+
+    const userGroupRendererParams = useCallback((key: number, datum: UserGroupType) => ({
         userGroupId: key,
         activeUserId: userId,
         onUserDeleteSuccess: usergroupResponseTrigger,
@@ -219,12 +232,16 @@ function UserGroup(props: Props) {
         onEditClick: handleEditUsergroupClick,
         onAddClick: handleMemberAddClick,
         data: datum,
+        onExpansionChange: handleExpansionChange,
+        expanded: expandedUsergroupId === datum.id,
     }), [
         userId,
         usergroupResponseTrigger,
         usergroupDeleteTrigger,
         handleEditUsergroupClick,
         handleMemberAddClick,
+        handleExpansionChange,
+        expandedUsergroupId,
     ]);
 
     return (
