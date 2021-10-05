@@ -42,6 +42,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     className?: string;
 
     leadId: string;
+    projectId?: string;
 
     index?: number;
     name: T;
@@ -75,6 +76,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         index,
         onChange,
         leadId,
+        projectId,
         compact,
         entryImage,
         error: riskyError,
@@ -120,7 +122,19 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         readOnly,
         emptyValueHidden,
         error: error?.attributes,
-    }), [emptyValueHidden, onAttributeChange, attributesMap, readOnly, error?.attributes]);
+        leadId,
+        entryClientId: value.clientId,
+        projectId,
+    }), [
+        emptyValueHidden,
+        onAttributeChange,
+        attributesMap,
+        readOnly,
+        error?.attributes,
+        projectId,
+        leadId,
+        value,
+    ]);
 
     return (
         <div
@@ -170,8 +184,11 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 onAttributeChange={onAttributeChange}
                 readOnly={readOnly}
                 emptyValueHidden={emptyValueHidden}
+                leadId={leadId}
+                projectId={projectId}
                 widgets={secondaryTagging}
                 error={error?.attributes}
+                entryClientId={value.clientId}
             />
         </div>
     );

@@ -3,7 +3,10 @@ import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
+import { generatePath } from 'react-router-dom';
+import { IoAdd } from 'react-icons/io5';
 import {
+    QuickActionLink,
     ListView,
     Container,
 } from '@the-deep/deep-ui';
@@ -12,6 +15,7 @@ import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { Widget } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import routes from '#base/configs/routes';
 
 import styles from './styles.css';
 
@@ -28,6 +32,9 @@ export interface Props {
     readOnly?: boolean;
     emptyValueHidden?: boolean;
     disabled?: boolean;
+    leadId: string;
+    projectId?: string;
+    entryClientId: string;
 }
 
 function CompactSection(props: Props) {
@@ -41,6 +48,9 @@ function CompactSection(props: Props) {
         readOnly,
         disabled,
         error: riskyError,
+        leadId,
+        projectId,
+        entryClientId,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -72,10 +82,32 @@ function CompactSection(props: Props) {
         [onAttributeChange, attributesMap, readOnly, disabled, error],
     );
 
+    // TODO: Fix routes from review to primary-tagging
+    const editEntryLink = useMemo(() => ({
+        pathname: generatePath(routes.entryEdit.path, {
+            projectId,
+            leadId,
+        }),
+        state: { initialEntryId: entryClientId },
+        hash: '#/primary-tagging',
+    }), [
+        projectId,
+        leadId,
+        entryClientId,
+    ]);
+
     return (
         <Container
             className={_cs(className, styles.compactSection)}
             heading={title}
+            headerActions={!readOnly && (
+                <QuickActionLink
+                    to={editEntryLink}
+                    variant="primary"
+                >
+                    <IoAdd />
+                </QuickActionLink>
+            )}
             headingSize="extraSmall"
             spacing="comfortable"
         >

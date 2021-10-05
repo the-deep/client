@@ -243,6 +243,7 @@ function EditableEntry(props: Props) {
             readOnly={!editMode}
             compact={compact}
             leadId={leadId}
+            projectId={projectId}
             entryImage={entryImage}
             error={error}
         />
@@ -305,7 +306,7 @@ function EditableEntry(props: Props) {
         <ConfirmButton
             name={undefined}
             variant="secondary"
-            onClick={handleEntryDeleteButtonClick}
+            onConfirm={handleEntryDeleteButtonClick}
             message="Are you sure you want to delete the entry?"
             disabled={deleteEntryPending || editMode}
             icons={(
