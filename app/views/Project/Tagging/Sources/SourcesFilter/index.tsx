@@ -45,6 +45,7 @@ import {
     AnalysisFrameworkFilterType,
 } from '#generated/types';
 
+import { convertDateToIsoDateTime } from './utils';
 import { FrameworkFilterType } from './types';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
@@ -78,6 +79,11 @@ const frameworkFilterSchema: FrameworkFilterSchema = {
         filterKey: [],
         value: [],
         valueList: [],
+        valueGte: [],
+        valueLte: [],
+        includeSubRegions: [],
+        useAndOperator: [],
+        useExclude: [],
     }),
 };
 type FrameworkFiltersSchema = ArraySchema<PartialFrameworkFilterType, PartialFormType>;
@@ -210,19 +216,6 @@ const SOURCE_FILTER_OPTIONS = gql`
         }
     }
 `;
-
-export function convertDateToIsoDateTime(dateString: string | undefined) {
-    if (!dateString) {
-        return undefined;
-    }
-    const date = new Date(dateString);
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(0);
-    date.setMilliseconds(0);
-
-    return date.toISOString();
-}
 
 function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.id;
