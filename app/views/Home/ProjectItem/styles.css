@@ -10,6 +10,7 @@
 
     .content {
         display: flex;
+        align-items: flex-start;
 
         .info {
             flex-basis: 0;
