@@ -425,7 +425,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             value={value.isPrivate}
                             onChange={setFieldValue}
                             error={error?.isPrivate}
-                            disabled={pending}
+                            disabled={pending || !!frameworkId}
                             label={_ts('analyticalFramework', 'frameworkVisibility')}
                         />
                     </div>

@@ -73,6 +73,7 @@ function Comment(props: Props) {
                 <>
                     <DateOutput
                         value={createdAt}
+                        format="hh:mm aaa, MMM dd, yyyy"
                     />
                     {isEditable && (
                         <QuickActionButton
@@ -105,6 +106,7 @@ function Comment(props: Props) {
                     &nbsp;
                     <DateOutput
                         value={latest.createdAt}
+                        format="hh:mm aaa, MMM dd, yyyy"
                     />
                 </span>
             )}

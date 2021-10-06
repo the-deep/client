@@ -78,7 +78,7 @@ function UserGroupItem(props: UserGroupItemProps) {
                         value={(
                             <DateOutput
                                 value={data.createdAt}
-                                format="hh:mmaaa, MMM dd, yyyy"
+                                format="hh:mm aaa, MMM dd, yyyy"
                             />
                         )}
                         hideLabelColon

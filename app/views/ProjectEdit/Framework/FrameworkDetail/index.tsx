@@ -249,7 +249,6 @@ function FrameworkDetail(props: Props) {
                             value={frameworkDetails?.createdAt && (
                                 <DateOutput
                                     value={frameworkDetails.createdAt}
-                                    format="dd MMM, yyyy"
                                 />
                             )}
                         />

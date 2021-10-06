@@ -58,7 +58,6 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
             {readOnly ? (
                 <DateOutput
                     value={value?.value}
-                    format="dd, MMM yyyy"
                 />
             ) : (
                 <>

@@ -261,7 +261,6 @@ function SourcesTable(props: Props) {
             cellRenderer: DateOutput,
             cellRendererParams: (_, data) => ({
                 value: data.createdAt,
-                format: 'dd MMM yyyy',
             }),
             columnWidth: 128,
         };
@@ -277,7 +276,6 @@ function SourcesTable(props: Props) {
             cellRenderer: DateOutput,
             cellRendererParams: (_, data) => ({
                 value: data.publishedOn,
-                format: 'dd MMM yyyy',
             }),
             columnWidth: 144,
         };
