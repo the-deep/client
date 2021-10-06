@@ -60,6 +60,10 @@ query RecentProjects{
             count
             name
         }
+        topSourcers {
+            count
+            name
+        }
         stats {
             numberOfLeads
             numberOfLeadsTagged
@@ -100,6 +104,10 @@ query FetchProject($projectId: ID!) {
             totalCount
         }
         topTaggers {
+            count
+            name
+        }
+        topSourcers {
             count
             name
         }
@@ -191,6 +199,7 @@ function Home(props: ViewProps) {
             totalSourcesValidated: data?.stats?.numberOfLeadsTaggedAndControlled,
             entriesActivity: data?.stats?.entriesActivity,
             topTaggers: data?.topTaggers,
+            topSourcers: data?.topSourcers,
             allowedPermissions: data?.allowedPermissions,
         }),
         [],

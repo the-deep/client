@@ -32,7 +32,13 @@ export function injectWidget(
         );
 
         if (isNotDefined(widgetIndex) || widgetIndex === -1) {
-            safeWidgets.push(widget);
+            const orderList = safeWidgets.map((w) => w.order);
+            Math.max(...orderList, 0);
+
+            safeWidgets.push({
+                ...widget,
+                order: safeWidgets.length,
+            });
         } else {
             safeWidgets.splice(widgetIndex, 1, widget);
         }

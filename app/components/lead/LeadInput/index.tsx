@@ -123,6 +123,7 @@ interface Props<N extends string | number | undefined> {
     onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
     pendingLeadOptions?: boolean;
     attachment: LeadType['attachment'];
+    hasAssessment?: boolean;
 }
 
 function LeadInput<N extends string | number | undefined>(props: Props<N>) {
@@ -147,6 +148,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         onLeadGroupOptionsChange,
         assigneeOptions,
         onAssigneeOptionChange,
+        hasAssessment,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -203,7 +205,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         if (webInfo.source) {
             const transformedSource = {
                 id: String(webInfo.source.id),
-                title: String(webInfo.source.id),
+                title: String(webInfo.source.title),
             };
             onSourceOrganizationOptionsChange(
                 (oldVal) => [...oldVal ?? [], transformedSource].filter(isDefined),
@@ -212,7 +214,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         if (webInfo.author) {
             const transformedAuthor = {
                 id: String(webInfo.author.id),
-                title: String(webInfo.author.id),
+                title: String(webInfo.author.title),
             };
             onAuthorOrganizationOptionsChange(
                 (oldVal) => [...oldVal ?? [], transformedAuthor].filter(isDefined),
@@ -433,31 +435,33 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     )
                 }
             />
-            <LeadGroupSelectInput
-                // FIXME: Filter this out based on if the project has assessment or not
-                name="leadGroup"
-                className={styles.input}
-                value={value.leadGroup}
-                onChange={setFieldValue}
-                options={leadGroupOptions}
-                onOptionsChange={onLeadGroupOptionsChange}
-                disabled={disabled}
-                label="Lead Group"
-                error={error?.leadGroup}
-                projectId={projectId}
-                actions={(
-                    <QuickActionButton
-                        name="add-lead-group"
-                        variant="transparent"
-                        onClick={handleAddLeadGroupClick}
-                        disabled={disabled}
-                        title="Add lead group"
-                    >
-                        <IoAdd />
+            {hasAssessment && (
+                <LeadGroupSelectInput
+                    // FIXME: Filter this out based on if the project has assessment or not
+                    name="leadGroup"
+                    className={styles.input}
+                    value={value.leadGroup}
+                    onChange={setFieldValue}
+                    options={leadGroupOptions}
+                    onOptionsChange={onLeadGroupOptionsChange}
+                    disabled={disabled}
+                    label="Lead Group"
+                    error={error?.leadGroup}
+                    projectId={projectId}
+                    actions={(
+                        <QuickActionButton
+                            name="add-lead-group"
+                            variant="transparent"
+                            onClick={handleAddLeadGroupClick}
+                            disabled={disabled}
+                            title="Add lead group"
+                        >
+                            <IoAdd />
 
-                    </QuickActionButton>
-                )}
-            />
+                        </QuickActionButton>
+                    )}
+                />
+            )}
             <div className={styles.row}>
                 <DateInput
                     className={styles.input}
@@ -555,14 +559,16 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                         label="Confidential"
                         disabled={disabled}
                     />
-                    <Checkbox
-                        className={styles.nestedInput}
-                        name="isAssessmentLead"
-                        value={value.isAssessmentLead}
-                        onChange={setFieldValue}
-                        label="Is Assessment"
-                        disabled={disabled}
-                    />
+                    {hasAssessment && (
+                        <Checkbox
+                            className={styles.nestedInput}
+                            name="isAssessmentLead"
+                            value={value.isAssessmentLead}
+                            onChange={setFieldValue}
+                            label="Is Assessment"
+                            disabled={disabled}
+                        />
+                    )}
                 </div>
             </div>
             <EmmStats

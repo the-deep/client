@@ -20,6 +20,7 @@ import {
 import {
     ContainerCard,
     Card,
+    NumberOutput,
     InformationCard,
     Element,
     List,
@@ -56,7 +57,7 @@ const minTickFormatter = (value: number | string) => {
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
-const topTaggersKeySelector = (d: UserEntityCountType) => d?.id ?? '';
+const topUserKeySelector = (d: UserEntityCountType) => d?.id ?? '';
 
 export interface RecentProjectItemProps {
     className?: string;
@@ -75,6 +76,7 @@ export interface RecentProjectItemProps {
     totalSourcesValidated: number | null | undefined;
     entriesActivity: DateCountType[] | null | undefined;
     topTaggers: UserEntityCountType[] | null | [] | undefined;
+    topSourcers: UserEntityCountType[] | null | [] | undefined;
     allowedPermissions: ProjectPermission[] | null | undefined;
 }
 
@@ -95,6 +97,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         totalSourcesTagged = 0,
         totalSourcesValidated = 0,
         topTaggers,
+        topSourcers,
         entriesActivity,
         allowedPermissions,
     } = props;
@@ -109,7 +112,20 @@ function ProjectItem(props: RecentProjectItemProps) {
                 className={styles.recentActivityDate}
                 // FIXME: Remove this fallback
                 value={data.date ?? Date.now()}
-                format="hh:mmaaa, MMM dd, yyyy"
+                format="hh:mm aaa, MMM dd, yyyy"
+            />
+        ),
+    }), []);
+
+    const userStatsRendererParams = useCallback((_, data) => ({
+        className: styles.recentlyActiveItem,
+        label: data.name,
+        labelContainerClassName: styles.recentlyActiveUserName,
+        hideLabelColon: true,
+        value: (
+            <NumberOutput
+                className={styles.recentActivityDate}
+                value={data.count ?? 0}
             />
         ),
     }), []);
@@ -120,6 +136,8 @@ function ProjectItem(props: RecentProjectItemProps) {
             date: pa.date ? (new Date(pa.date)).getTime() : undefined,
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [entriesActivity]);
+
+    const canEditProject = allowedPermissions?.includes('UPDATE_PROJECT');
 
     return (
         <ContainerCard
@@ -148,7 +166,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                             _ts('home.recentProjects', 'publicProjectLabel')
                         )}
                     </Element>
-                    {allowedPermissions?.includes('UPDATE_PROJECT') && (
+                    {canEditProject && (
                         <SmartButtonLikeLink
                             variant="tertiary"
                             route={routes.projectEdit}
@@ -223,12 +241,44 @@ function ProjectItem(props: RecentProjectItemProps) {
                             value={(
                                 <List
                                     data={topTaggers ?? []}
-                                    keySelector={topTaggersKeySelector}
+                                    keySelector={topUserKeySelector}
                                     rendererParams={topTaggersRendererParams}
                                     renderer={TextOutput}
                                 />
                             )}
                         />
+                        {canEditProject && (
+                            <>
+                                <TextOutput
+                                    label="Top Taggers"
+                                    block
+                                    hideLabelColon
+                                    valueContainerClassName={styles.recentlyActiveList}
+                                    value={(
+                                        <List
+                                            data={topTaggers ?? []}
+                                            keySelector={topUserKeySelector}
+                                            rendererParams={userStatsRendererParams}
+                                            renderer={TextOutput}
+                                        />
+                                    )}
+                                />
+                                <TextOutput
+                                    label="Top Sourcers"
+                                    block
+                                    hideLabelColon
+                                    valueContainerClassName={styles.recentlyActiveList}
+                                    value={(
+                                        <List
+                                            data={topSourcers ?? []}
+                                            keySelector={topUserKeySelector}
+                                            rendererParams={userStatsRendererParams}
+                                            renderer={TextOutput}
+                                        />
+                                    )}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

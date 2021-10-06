@@ -77,7 +77,7 @@ function CompactSection(props: Props) {
             className={_cs(className, styles.compactSection)}
             heading={title}
             headingSize="extraSmall"
-            spacing="loose"
+            spacing="comfortable"
         >
             <ListView
                 className={styles.widgetList}

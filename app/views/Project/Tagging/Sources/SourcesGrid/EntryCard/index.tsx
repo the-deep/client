@@ -159,8 +159,10 @@ function EntryCard(props: Props) {
                         View tags
                     </Button>
                 )}
+                contentClassName={styles.content}
             >
                 <ExcerptInput
+                    className={styles.excerpt}
                     entryType={entry.entryType}
                     value={entry.excerpt}
                     image={entry.image}
@@ -186,10 +188,12 @@ function EntryCard(props: Props) {
                         label="Added by"
                         value={leadDetails.createdBy?.displayName}
                     />
-                    <TextOutput
-                        label="Author"
-                        value={authorsDetailText}
-                    />
+                    {authorsDetailText && (
+                        <TextOutput
+                            label="Author"
+                            value={authorsDetailText}
+                        />
+                    )}
                 </div>
             </Container>
             {tagsVisible && (

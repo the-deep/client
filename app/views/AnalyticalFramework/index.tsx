@@ -108,7 +108,7 @@ function AnalyticalFramework(props: Props) {
                             <BackLink
                                 defaultLink="/"
                             >
-                                {_ts('analyticalFramework', 'closeButtonLabel')}
+                                Close
                             </BackLink>
                         )}
                     />

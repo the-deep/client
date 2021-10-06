@@ -52,6 +52,8 @@ import {
     LeadUpdateMutation,
     LeadUpdateMutationVariables,
 } from '#generated/types';
+import Svg from '#components/Svg';
+import deepLogo from '#resources/img/deep-logo-new.svg';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -823,6 +825,14 @@ function EntryEdit(props: Props) {
                     className={styles.header}
                     heading="Source"
                     description={lead?.title}
+                    defaultIcons={(
+                        <div className={styles.appBrand}>
+                            <Svg
+                                src={deepLogo}
+                                className={styles.logo}
+                            />
+                        </div>
+                    )}
                     defaultActions={(
                         <>
                             <BackLink defaultLink="/">

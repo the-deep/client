@@ -143,6 +143,16 @@ function SourcesFilter(props: Props) {
         <div className={_cs(styles.sourcesFilter, className)}>
             <NonFieldError error={error} />
             <div className={styles.content}>
+                <TextInput
+                    className={styles.input}
+                    icons={<IoSearch />}
+                    name="search"
+                    onChange={setFieldValue}
+                    value={value.search}
+                    error={error?.search}
+                    disabled={disabled}
+                    label={_ts('sourcesFilter', 'search')}
+                />
                 <MultiSelectInput
                     className={styles.input}
                     name="status"
@@ -180,16 +190,6 @@ function SourcesFilter(props: Props) {
                     value={value.assignee}
                     error={getErrorString(error?.assignee)}
                     label={_ts('sourcesFilter', 'assignee')}
-                />
-                <TextInput
-                    className={styles.input}
-                    icons={<IoSearch />}
-                    name="search"
-                    onChange={setFieldValue}
-                    value={value.search}
-                    error={error?.search}
-                    disabled={disabled}
-                    label={_ts('sourcesFilter', 'search')}
                 />
                 <SelectInput
                     className={_cs(

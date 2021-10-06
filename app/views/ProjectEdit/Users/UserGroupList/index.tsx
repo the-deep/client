@@ -172,6 +172,7 @@ function UserGroupList(props: Props) {
             inlineHeadingDescription
             headingDescription={(
                 <Link
+                    className={styles.userGroupsLink}
                     to={routeToUserGroups}
                     actions={(
                         <IoChevronForward />
