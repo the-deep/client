@@ -35,16 +35,12 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
     assumeImmutableResults: true,
     defaultOptions: {
         query: {
-            fetchPolicy: 'cache-first',
-            // fetchPolicy: 'cache-first',
+            fetchPolicy: 'network-only',
             errorPolicy: 'all',
         },
         watchQuery: {
             fetchPolicy: 'cache-and-network',
-            // NOTE: https://github.com/apollographql/apollo-client/issues/7346#issuecomment-730275343
-            // Setting nextFetchPolicy to stop duplicate queries call
-            nextFetchPolicy: 'cache-first',
-            // fetchPolicy: 'cache-first',
+            nextFetchPolicy: 'cache-and-network',
             errorPolicy: 'all',
         },
     },
