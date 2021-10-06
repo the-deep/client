@@ -91,7 +91,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         (): PartialAttributeType => ({
             clientId: randomString(),
             widgetType: widget.widgetId,
-            widget: widget.clientId,
+            // NOTE: widget.id should always be defined before an attribute can be saved
+            widget: widget.id ?? 'not-random',
             data: undefined,
         }),
         [widget],
