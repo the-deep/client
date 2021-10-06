@@ -38,7 +38,7 @@ type Section = NonNullable<Framework['primaryTagging']>[number];
 
 const sectionKeySelector = (d: Section) => d.clientId;
 
-interface EntryInputProps<T extends string | number | undefined> {
+export interface EntryInputProps<T extends string | number | undefined> {
     className?: string;
 
     leadId: string;

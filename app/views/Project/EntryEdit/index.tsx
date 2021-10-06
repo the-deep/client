@@ -51,11 +51,12 @@ import {
     BulkUpdateEntriesMutationVariables,
     LeadUpdateMutation,
     LeadUpdateMutationVariables,
+    UserType,
 } from '#generated/types';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
-import EntryInput from '#components/entry/EntryInput';
+import EntryReviewItem from './EntryReviewItem';
 import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import _ts from '#ts';
@@ -780,7 +781,11 @@ function EntryEdit(props: Props) {
     // ENTRY
 
     const entryDataRendererParams = useCallback(
-        (entryId: string, datum: PartialEntryType, index: number) => ({
+        (
+            entryId: string,
+            datum: PartialEntryType & { verifiedBy?: Pick<UserType, 'id'>[]; controlled?: boolean; },
+            index: number,
+        ) => ({
             value: datum,
             name: index,
             index,
@@ -791,6 +796,11 @@ function EntryEdit(props: Props) {
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
+            entryId: datum.id,
+            projectId,
+            controlled: datum?.controlled,
+            verifiedBy: datum?.verifiedBy,
+            onEntryStatusChange: handleSaveClick,
         }),
         [
             entryImagesMap,
@@ -800,6 +810,8 @@ function EntryEdit(props: Props) {
             leadId,
             selectedEntry,
             entriesError,
+            projectId,
+            handleSaveClick,
         ],
     );
 
@@ -1058,7 +1070,7 @@ function EntryEdit(props: Props) {
                                 <ListView
                                     className={styles.entries}
                                     keySelector={entryKeySelector}
-                                    renderer={EntryInput}
+                                    renderer={EntryReviewItem}
                                     data={formValue.entries}
                                     rendererParams={entryDataRendererParams}
                                 />

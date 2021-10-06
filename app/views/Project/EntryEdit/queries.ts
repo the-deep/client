@@ -27,6 +27,11 @@ const ENTRY_FRAGMENT = gql`
                 url
             }
         }
+        verifiedBy {
+          displayName
+          id
+        }
+        controlled
     }
 `;
 
