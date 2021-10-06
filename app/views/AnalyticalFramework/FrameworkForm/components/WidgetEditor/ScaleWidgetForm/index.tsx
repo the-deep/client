@@ -8,6 +8,7 @@ import {
     Button,
     Checkbox,
     SelectInput,
+    ColorInput,
     TextInput,
     QuickActionButton,
     ControlledExpandableContainer,
@@ -215,6 +216,13 @@ function OptionInput(props: OptionInputProps) {
             )}
         >
             <NonFieldError error={error} />
+            <ColorInput
+                // FIXME: use translation
+                name="color"
+                value={value.color ?? '#414141'}
+                onChange={onFieldChange}
+                className={styles.optionInput}
+            />
             <TextInput
                 // FIXME: use translation
                 label="Label"
@@ -223,15 +231,6 @@ function OptionInput(props: OptionInputProps) {
                 onChange={onFieldChange}
                 error={error?.label}
                 autoFocus={autoFocus}
-                className={styles.optionInput}
-            />
-            <TextInput
-                // FIXME: use translation
-                label="Color"
-                name="color"
-                value={value.color}
-                onChange={onFieldChange}
-                error={error?.color}
                 className={styles.optionInput}
             />
         </ControlledExpandableContainer>
@@ -297,6 +296,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 clientId,
                 order: oldOptions.length,
             };
+            setExpandedScaleId(newOption.clientId);
             onFieldChange(
                 [...reorder(oldOptions), newOption],
                 'options' as const,

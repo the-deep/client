@@ -253,6 +253,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 clientId,
                 order: oldOptions.length,
             };
+            setExpandedOptionId(newOption.clientId);
             onFieldChange(
                 [...reorder(oldOptions), newOption],
                 'options' as const,

@@ -148,6 +148,7 @@ function TimeWidgetForm(props: TimeWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.container}
                 heading={value.title ?? 'Unnamed'}
                 headerActions={(
                     <>
