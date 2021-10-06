@@ -133,7 +133,6 @@ function EntryCard(props: Props) {
                 headerDescription={(
                     <DateOutput
                         value={leadDetails.publishedOn}
-                        format="dd MMM yyyy"
                     />
                 )}
                 footerQuickActions={canEditEntry && (

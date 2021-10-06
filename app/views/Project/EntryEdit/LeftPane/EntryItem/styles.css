@@ -1,11 +1,12 @@
 .tagged-excerpt {
     /* NOTE: when user select tagged excerpt, the add button will be visible */
     position: relative;
-    user-select: none;
     border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
     background-color: var(--dui-color-foreground);
     cursor: pointer;
+    max-height: 480px;
     font-weight: var(--dui-font-weight-bold);
+    user-select: none;
 
     .vertical-border {
         position: absolute;

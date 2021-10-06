@@ -20,7 +20,7 @@ interface BaseProps {
 
 export type Props = BaseProps & ({
     title: string | undefined;
-    hideTitle: false;
+    hideTitle?: false;
 } | {
     title?: string;
     hideTitle: true;

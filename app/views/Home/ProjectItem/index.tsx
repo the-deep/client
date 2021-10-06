@@ -112,7 +112,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                 className={styles.recentActivityDate}
                 // FIXME: Remove this fallback
                 value={data.date ?? Date.now()}
-                format="hh:mmaaa, MMM dd, yyyy"
+                format="hh:mm aaa, MMM dd, yyyy"
             />
         ),
     }), []);
