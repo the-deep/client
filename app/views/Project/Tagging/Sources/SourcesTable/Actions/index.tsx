@@ -52,7 +52,6 @@ function Actions<T extends number>(props: Props<T>) {
 
     const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
     const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
-    const canViewEntry = project?.allowedPermissions.includes('VIEW_ENTRY');
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     const entryEditLink = useMemo(() => ({
@@ -111,7 +110,7 @@ function Actions<T extends number>(props: Props<T>) {
                         <MdModeEdit />
                     </QuickActionButton>
                 )}
-                {canViewEntry && (
+                {canEditEntry && (
                     <ButtonLikeLink
                         className={styles.button}
                         variant="primary"
