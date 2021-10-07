@@ -145,6 +145,7 @@ function TextWidgetForm(props: TextWidgetFormProps) {
             onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
         >
             <Container
+                className={styles.container}
                 heading={value.title ?? 'Unnamed'}
                 headerActions={(
                     <>

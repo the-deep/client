@@ -2,8 +2,31 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    gap: var(--dui-spacing-medium);
 
     .container {
+        display: flex;
+        flex-direction: column;
         background-color: var(--dui-color-foreground);
+        overflow-y: auto;
+        gap: var(--dui-spacing-medium);
+    }
+
+    .list-container {
+        background-color: var(--dui-background);
+    }
+
+    .sortable-list{
+        display: flex;
+        flex-direction: column;
+        margin-top: var(--dui-spacing-medium);
+        border-left: var(--dui-width-separator-medium) dotted var(--dui-color-separator);
+        padding-left: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
+    }
+
+    .option-input {
+        margin: var(--dui-spacing-small) 0;
     }
 }
+

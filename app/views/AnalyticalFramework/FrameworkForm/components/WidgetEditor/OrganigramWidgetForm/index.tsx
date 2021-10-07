@@ -111,6 +111,8 @@ interface NodeInputProps {
     listeners?: Listeners;
     attributes?: Attributes;
     autoFocus?: boolean;
+    onExpansionChange: (rootExpanded: boolean, rootId: string) => void;
+    expanded?: boolean;
 }
 
 function NodeInput(props: NodeInputProps) {
@@ -124,9 +126,11 @@ function NodeInput(props: NodeInputProps) {
         listeners,
         attributes,
         autoFocus,
+        onExpansionChange,
+        expanded,
     } = props;
 
-    const [expanded, setExpanded] = useState<boolean>(autoFocus || true);
+    const [expandedNodeId, setExpandedNodeId] = useState<string | undefined>();
     const onFieldChange = useFormObject(index, onChange, defaultNodeVal);
     const newlyCreatedNodeIdRef = React.useRef<string | undefined>();
 
@@ -142,7 +146,6 @@ function NodeInput(props: NodeInputProps) {
 
     const handleAdd = useCallback(
         () => {
-            setExpanded(true);
             const oldNodes = value?.children ?? [];
             const clientId = randomString();
             newlyCreatedNodeIdRef.current = clientId;
@@ -150,12 +153,20 @@ function NodeInput(props: NodeInputProps) {
                 clientId,
                 order: oldNodes.length,
             };
+            setExpandedNodeId(newNode.clientId);
             onFieldChange(
                 [...reorder(oldNodes), newNode],
                 'children' as const,
             );
         },
         [onFieldChange, value?.children],
+    );
+
+    const handleNodeExpansionChange = useCallback(
+        (nodeExpanded: boolean, nodeId: string) => {
+            setExpandedNodeId(nodeExpanded ? nodeId : undefined);
+        },
+        [],
     );
 
     const handleOrderChange = useCallback((
@@ -175,22 +186,39 @@ function NodeInput(props: NodeInputProps) {
         value: option,
         autoFocus: newlyCreatedNodeIdRef.current === option.clientId,
         index: optionIndex,
+        onExpansionChange: handleNodeExpansionChange,
+        expanded: expandedNodeId === option.clientId,
     }), [
         onSiblingChange,
         onSiblingRemove,
         arrayError,
+        handleNodeExpansionChange,
+        expandedNodeId,
     ]);
 
     return (
         <ControlledExpandableContainer
-            name={value?.label}
+            name={value?.clientId}
             className={className}
             heading={`${heading} ${errored ? '*' : ''}`}
             headingSize="extraSmall"
             expanded={expanded}
-            onExpansionChange={setExpanded}
+            onExpansionChange={onExpansionChange}
             autoFocus={autoFocus}
+            withoutBorder
+            withoutExternalPadding
             expansionTriggerArea="arrow"
+            headerIcons={(
+                <QuickActionButton
+                    name={index}
+                    // FIXME: use translation
+                    title="Drag"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GrDrag />
+                </QuickActionButton>
+            )}
             headerActions={(value?.children?.length ?? 0) < OPTIONS_LIMIT && (
                 <>
                     <QuickActionButton
@@ -209,20 +237,12 @@ function NodeInput(props: NodeInputProps) {
                     >
                         <IoTrashBinOutline />
                     </QuickActionButton>
-                    <QuickActionButton
-                        name={index}
-                        // FIXME: use translation
-                        title="Drag"
-                        {...attributes}
-                        {...listeners}
-                    >
-                        <GrDrag />
-                    </QuickActionButton>
                 </>
             )}
         >
             <NonFieldError error={error} />
             <TextInput
+                className={styles.optionInput}
                 autoFocus={autoFocus}
                 // FIXME: use translation
                 label="Label"
@@ -233,6 +253,7 @@ function NodeInput(props: NodeInputProps) {
             />
             <TextArea
                 // FIXME: use translation
+                className={styles.optionInput}
                 label="Tooltip"
                 name="tooltip"
                 rows={2}
@@ -242,6 +263,7 @@ function NodeInput(props: NodeInputProps) {
             />
             <SortableList
                 name="children"
+                className={styles.sortableList}
                 onChange={handleOrderChange}
                 data={value?.children}
                 keySelector={optionKeySelector}
@@ -274,6 +296,7 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
         onChange,
     } = props;
 
+    const [expandedRootId, setExpandedRootId] = useState<string | undefined>();
     const onFieldChange = useFormObject(name, onChange, defaultRootVal);
     const newlyCreatedNodeIdRef = React.useRef<string | undefined>();
     const error = getErrorObject(riskyError);
@@ -291,6 +314,10 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
         onFieldChange(newValues, 'children');
     }, [onFieldChange]);
 
+    const handleExpansionChange = useCallback((rootExpanded: boolean, rootId: string) => {
+        setExpandedRootId(rootExpanded ? rootId : undefined);
+    }, []);
+
     const handleAdd = useCallback(
         () => {
             const oldNodes = value?.children ?? [];
@@ -301,6 +328,7 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
                 clientId,
                 order: oldNodes.length,
             };
+            setExpandedRootId(newNode.clientId);
             onFieldChange(
                 [...oldNodes, newNode],
                 'children' as const,
@@ -320,15 +348,19 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
         value: option,
         autoFocus: newlyCreatedNodeIdRef.current === option.clientId,
         index: optionIndex,
+        onExpansionChange: handleExpansionChange,
+        expanded: expandedRootId === option.clientId,
     }), [
         onSiblingChange,
         onSiblingRemove,
         arrayError,
+        handleExpansionChange,
+        expandedRootId,
     ]);
 
     return (
         <Container
-            className={_cs(className, styles.container)}
+            className={_cs(className, styles.listContainer)}
             headingSize="extraSmall"
             heading={`${heading} ${errored ? '*' : ''}`}
             headerActions={(value?.children?.length ?? 0) < OPTIONS_LIMIT && (
@@ -361,6 +393,7 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
                 error={error?.tooltip}
             />
             <SortableList
+                className={styles.sortableList}
                 name="children"
                 onChange={handleOrderChange}
                 data={value?.children}
@@ -500,6 +533,7 @@ function OrganigramWidgetForm(props: OrganigramWidgetFormProps) {
                 />
                 <TextInput
                     autoFocus
+                    className={styles.optionInput}
                     label="Title"
                     name="title"
                     value={value.title}
@@ -508,6 +542,7 @@ function OrganigramWidgetForm(props: OrganigramWidgetFormProps) {
                 />
                 <WidgetSizeInput
                     name="width"
+                    className={styles.optionInput}
                     value={value.width}
                     onChange={setFieldValue}
                     error={error?.width}
