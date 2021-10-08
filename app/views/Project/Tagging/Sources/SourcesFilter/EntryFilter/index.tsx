@@ -4,7 +4,7 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 import {
-    DateRangeDualInput,
+    DateDualRangeInput,
     MultiSelectInput,
     SelectInput,
     List,
@@ -15,9 +15,6 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
-    FrameworkFilterType,
-} from '../types';
-import {
     hasNoData,
     enumKeySelector,
     enumLabelSelector,
@@ -26,7 +23,8 @@ import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/select
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
 import FrameworkFilterItem from './FrameworkFilterItem';
-import { PartialEntriesFilterDataType, SourceFilterOptions } from '..';
+import { SourceFilterOptions, FrameworkFilterType } from '../types';
+import { PartialEntriesFilterDataType } from '../schema';
 import styles from './styles.css';
 
 const filterKeySelector = (d: FrameworkFilterType) => d.key;
@@ -132,7 +130,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 placeholder="Entry created by"
                 disabled={disabled}
             />
-            <DateRangeDualInput
+            <DateDualRangeInput
                 className={_cs(
                     styles.input,
                     hasNoData(value?.createdAt_Gte)

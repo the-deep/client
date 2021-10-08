@@ -1,25 +1,28 @@
-// FIXME: do we need these? we should be able to remove these
-export interface FilterFormType {
-    createdAt?: {
-        startDate: string;
-        endDate: string;
-    };
-    publishedOn?: {
-        startDate: string;
-        endDate: string;
-    };
-    assignee?: string[];
-    status?: string[];
-    search?: string;
-    exists?: string;
-    priority?: string[];
-    authoringOrganizationTypes?: string[];
-    confidentiality?: string[];
-    emmRiskFactors?: string[];
-    emmKeywords?: string[];
-    emmEntities?: string[];
-}
+import {
+    ProjectSourcesQueryVariables,
+} from '#generated/types';
 
-export interface TransformedFilterFormType {
-    [key: string]: string | string[] | undefined;
+// eslint-disable-next-line import/prefer-default-export
+export function transformSourcesFilterToEntiesFilter(filters: Omit<ProjectSourcesQueryVariables, 'projectId'>) {
+    const {
+        assignees,
+        confidentiality,
+        priorities,
+        statuses,
+        publishedOn_Gte: publisedOnGte,
+        publishedOn_Lt: publishedOnLt,
+        authoringOrganizationTypes,
+        entriesFilterData,
+    } = filters;
+
+    return {
+        ...entriesFilterData,
+        authoringOrganizationTypes,
+        leadAssignees: assignees,
+        leadConfidentialities: confidentiality && [confidentiality],
+        leadPriorities: priorities,
+        leadPublishedOn_Gte: publisedOnGte,
+        leadPublishedOn_Lt: publishedOnLt,
+        leadStatuses: statuses,
+    };
 }

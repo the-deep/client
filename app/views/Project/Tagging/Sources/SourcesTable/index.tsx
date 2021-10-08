@@ -40,6 +40,7 @@ import {
 import _ts from '#ts';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 
+import { transformSourcesFilterToEntiesFilter } from '../utils';
 import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
 import LeadEditModal from '../LeadEditModal';
@@ -253,6 +254,8 @@ function SourcesTable(props: Props) {
         }
     }, []);
 
+    const entriesFilter = useMemo(() => transformSourcesFilterToEntiesFilter(filters), [filters]);
+
     const [
         rowModifier,
         expandedRowKey,
@@ -262,6 +265,7 @@ function SourcesTable(props: Props) {
             <EntryList
                 leadId={datum.id}
                 projectId={datum.project.id}
+                filters={entriesFilter}
             />
         ),
         {

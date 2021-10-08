@@ -1,5 +1,12 @@
 import {
+    PurgeNull,
+} from '@togglecorp/toggle-form';
+import { EnumFix, DeepReplace } from '#utils/types';
+import {
     AnalysisFrameworkFilterType as AnalysisFrameworkFilterTypeRaw,
+    ProjectSourcesQueryVariables,
+    SourceFilterOptionsQuery,
+    AnalysisFrameworkFilterType,
 } from '#generated/types';
 
 type BaseFilterType = Omit<AnalysisFrameworkFilterTypeRaw, 'properties'>;
@@ -116,3 +123,19 @@ export type FrameworkFilterType = TextFilterType
     | GeoLocationFilterType
     | Matrix1dFilterType
     | Matrix2dFilterType;
+
+export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
+'statuses'
+    | 'confidentiality'
+    | 'exists'
+    | 'priorities'
+    | 'statuses'
+    | 'commentStatus'
+    | 'entryTypes'
+>>;
+
+export type SourceFilterOptions = DeepReplace<
+    SourceFilterOptionsQuery,
+    Omit<AnalysisFrameworkFilterType, 'widgetTypeDisplay' | 'filterTypeDisplay'>,
+    FrameworkFilterType
+>

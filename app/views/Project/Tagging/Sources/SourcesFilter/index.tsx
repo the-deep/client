@@ -4,14 +4,10 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 import {
-    ObjectSchema,
-    PurgeNull,
     createSubmitHandler,
     getErrorObject,
     getErrorString,
     useForm,
-    ArraySchema,
-    PartialForm,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
@@ -19,7 +15,7 @@ import {
     MultiSelectInput,
     useBooleanState,
     Button,
-    DateRangeDualInput,
+    DateDualRangeInput,
 } from '@the-deep/deep-ui';
 import {
     IoSearch,
@@ -29,7 +25,6 @@ import {
 } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
 import _ts from '#ts';
-import { EnumFix, DeepReplace } from '#utils/types';
 import {
     hasNoData,
     enumKeySelector,
@@ -39,98 +34,17 @@ import {
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import {
-    ProjectSourcesQueryVariables,
-    SourceFilterOptionsQuery,
     SourceFilterOptionsQueryVariables,
     OrganizationType,
-    AnalysisFrameworkFilterType,
 } from '#generated/types';
 
-import { FrameworkFilterType } from './types';
+import {
+    SourcesFilterFields,
+    SourceFilterOptions,
+} from './types';
+import schema, { PartialFormType } from './schema';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
-
-// FIXME: move this to types.ts
-export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
-    'statuses'
-    | 'confidentiality'
-    | 'exists'
-    | 'priorities'
-    | 'statuses'
-
-    // NOTE: the enum fix works recursively
-    | 'commentStatus'
-    | 'entryTypes'
->>;
-
-export type SourceFilterOptions = DeepReplace<
-    SourceFilterOptionsQuery,
-    Omit<AnalysisFrameworkFilterType, 'widgetTypeDisplay' | 'filterTypeDisplay'>,
-    FrameworkFilterType
->;
-
-type FormType = SourcesFilterFields;
-
-// FIXME: move this to schema.ts
-type PartialFormType = PartialForm<FormType, 'filterKey'>;
-export type PartialEntriesFilterDataType = NonNullable<PartialFormType['entriesFilterData']>;
-type PartialFrameworkFilterType = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
-type FormSchema = ObjectSchema<PartialFormType>;
-type FormSchemaFields = ReturnType<FormSchema['fields']>;
-
-type FrameworkFilterSchema = ObjectSchema<PartialFrameworkFilterType, PartialFormType>;
-type FrameworkFilterFields = ReturnType<FrameworkFilterSchema['fields']>;
-const frameworkFilterSchema: FrameworkFilterSchema = {
-    fields: (): FrameworkFilterFields => ({
-        filterKey: [],
-        value: [],
-        valueList: [],
-        valueGte: [],
-        valueLte: [],
-        includeSubRegions: [],
-        useAndOperator: [],
-        useExclude: [],
-    }),
-};
-type FrameworkFiltersSchema = ArraySchema<PartialFrameworkFilterType, PartialFormType>;
-type FrameworkFiltersMember = ReturnType<FrameworkFiltersSchema['member']>;
-
-const frameworkFiltersSchema: FrameworkFiltersSchema = {
-    keySelector: (d) => d.filterKey,
-    member: (): FrameworkFiltersMember => frameworkFilterSchema,
-};
-
-type EntriesFilterDataSchema = ObjectSchema<PartialEntriesFilterDataType, PartialFormType>;
-type EntriesFilterDataFields = ReturnType<EntriesFilterDataSchema['fields']>;
-const entriesFilterDataSchema: EntriesFilterDataSchema = {
-    fields: (): EntriesFilterDataFields => ({
-        createdBy: [],
-        createdAt_Gte: [],
-        createdAt_Lt: [],
-        commentStatus: [],
-        controlled: [],
-        entryTypes: [],
-        filterableData: frameworkFiltersSchema,
-    }),
-};
-
-const schema: FormSchema = {
-    fields: (): FormSchemaFields => ({
-        statuses: [],
-        createdAt_Gte: [],
-        createdAt_Lt: [],
-        publishedOn_Gte: [],
-        publishedOn_Lt: [],
-        assignees: [],
-        search: [],
-        exists: [],
-        priorities: [],
-        customFilters: [],
-        authoringOrganizationTypes: [],
-        confidentiality: [],
-        entriesFilterData: entriesFilterDataSchema,
-    }),
-};
 
 const initialValue: PartialFormType = {
     customFilters: 'EXCLUDE_EMPTY_FILTERED_ENTRIES', // NOTE: customFilters is required when entriesFilterData filter is applied.
@@ -358,7 +272,7 @@ function SourcesFilter(props: Props) {
                     label={_ts('sourcesFilter', 'status')}
                     disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
-                <DateRangeDualInput
+                <DateDualRangeInput
                     className={styles.input}
                     fromName="publishedOn_Gte"
                     fromOnChange={setFieldValue}
@@ -369,7 +283,7 @@ function SourcesFilter(props: Props) {
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'originalDate')}
                 />
-                <DateRangeDualInput
+                <DateDualRangeInput
                     className={styles.input}
                     fromName="createdAt_Gte"
                     fromOnChange={setFieldValue}
@@ -392,8 +306,8 @@ function SourcesFilter(props: Props) {
                     onChange={setFieldValue}
                     options={members}
                     onOptionsChange={setMembers}
-                    label="Entry created by"
-                    placeholder="Entry created by"
+                    label="Assignees"
+                    placeholder="Assignees"
                     disabled={disabled}
                 />
                 <SelectInput

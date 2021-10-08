@@ -27,7 +27,7 @@ import {
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
-import { PartialEntriesFilterDataType } from '../..';
+import { PartialEntriesFilterDataType } from '../../schema';
 import styles from './styles.css';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
@@ -117,6 +117,10 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         },
         [name, onChange, filter.key],
     );
+
+    const handleSingleSelect = useCallback((val: string | undefined) => {
+        onChange({ filterKey: filter.key, valueList: val ? [val] : [], value: val }, name);
+    }, [onChange, filter.key, name]);
 
     switch (filter.widgetType) {
         case 'DATE': {
@@ -303,10 +307,10 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         (hasNoData(value?.value) && !allFiltersVisible)
                         && styles.hidden,
                     )}
-                    name="value"
+                    name="valueList"
                     value={value?.value}
                     label={title}
-                    onChange={onFieldChange}
+                    onChange={handleSingleSelect}
                     options={filter.properties?.options}
                     keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
