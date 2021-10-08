@@ -43,12 +43,40 @@ export const LEAD_ENTRIES = gql`
         $leadId: ID!,
         $page: Int,
         $pageSize: Int,
+        $authoringOrganizationTypes: [ID!],
+        $commentStatus: EntryFilterCommentStatusEnum,
+        $controlled: Boolean,
+        $createdAt_Gte: DateTime,
+        $createdAt_Lt: DateTime,
+        $createdBy: [ID!],
+        $entryTypes: [EntryTagTypeEnum!],
+        $filterableData: [EntryFilterDataType!]
+        $leadAssignees: [ID!],
+        $leadConfidentialities: [LeadConfidentialityEnum!],
+        $leadPriorities: [LeadPriorityEnum!],
+        $leadPublishedOn_Gte: Date,
+        $leadPublishedOn_Lt: Date,
+        $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
             entries(
                 leads: [$leadId],
                 page: $page,
                 pageSize: $pageSize,
+                authoringOrganizationTypes: $authoringOrganizationTypes,
+                commentStatus: $commentStatus,
+                controlled: $controlled,
+                createdAt_Gte: $createdAt_Gte,
+                createdAt_Lt: $createdAt_Lt,
+                createdBy: $createdBy,
+                entryTypes: $entryTypes,
+                filterableData: $filterableData,
+                leadAssignees: $leadAssignees,
+                leadConfidentialities: $leadConfidentialities,
+                leadPriorities: $leadPriorities,
+                leadPublishedOn_Gte: $leadPublishedOn_Gte,
+                leadPublishedOn_Lt: $leadPublishedOn_Lt,
+                leadStatuses: $leadStatuses,
             ) {
                 totalCount
                 results {
@@ -138,6 +166,7 @@ interface Props {
     className?: string;
     leadId: string;
     projectId: string;
+    filters: Omit<LeadEntriesQueryVariables, 'projectId' | 'leadId'>
 }
 
 function EntryList(props: Props) {
@@ -145,6 +174,7 @@ function EntryList(props: Props) {
         leadId,
         projectId,
         className,
+        filters,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
@@ -155,9 +185,10 @@ function EntryList(props: Props) {
                 leadId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
+                ...filters,
             } : undefined
         ),
-        [leadId, projectId, activePage],
+        [leadId, projectId, activePage, filters],
     );
 
     const {
