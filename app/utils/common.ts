@@ -61,7 +61,7 @@ export const shortMonthNamesMap: MonthNameMap = {
     11: 'Dec',
 };
 
-export function calcPercent(value?: number, total?: number) {
+export function calcPercent(value: number | null | undefined, total: number | null | undefined) {
     if (isNotDefined(value) || isNotDefined(total) || total === 0) {
         return undefined;
     }
@@ -157,3 +157,16 @@ export const enumKeySelector = <T>(d: EnumEntity<T>) => (
 export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) => (
     d.description ?? `${d.name}`
 );
+
+export function convertDateToIsoDateTime(dateString: string | undefined) {
+    if (!dateString) {
+        return undefined;
+    }
+    const date = new Date(dateString);
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+
+    return date.toISOString();
+}

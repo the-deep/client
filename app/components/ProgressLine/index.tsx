@@ -14,7 +14,7 @@ interface Props {
     className?: string;
     progressClassName?: string;
     title?: string;
-    progress: number;
+    progress?: number;
     variant?: 'complement1' | 'complement2' | 'complement3';
     size?: 'small' | 'large';
 }

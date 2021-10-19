@@ -19,6 +19,7 @@ import {
     isCallable,
     createSubmitHandler,
     getErrorObject,
+    removeNull,
 } from '@togglecorp/toggle-form';
 import { gql, useMutation } from '@apollo/client';
 
@@ -28,7 +29,7 @@ import {
     BulkCreateLeadsMutationVariables,
     LeadInputType,
 } from '#generated/types';
-import { transformToFormError } from '#base/utils/errorTransform';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
 import {
     schema,
@@ -136,7 +137,7 @@ function BulkUpload(props: Props) {
 
                         return {
                             clientId,
-                            error: transformToFormError(item),
+                            error: transformToFormError(removeNull(item) as ObjectError[]),
                         };
                     }).filter(isDefined) ?? [];
                     const leadsErrorMapping = listToMap(

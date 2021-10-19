@@ -19,11 +19,8 @@ import {
 
 import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
-import ProjectMembersMultiSelectInput from '#components/selections/ProjectMembersSelectInput';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { EntryReviewComment } from '#types/entry';
-import {
-    Membership,
-} from '#types';
 
 import { EntryAction } from '#components/entryReview/commentConstants';
 import styles from './styles.css';
@@ -31,7 +28,7 @@ import styles from './styles.css';
 type FormType = {
     commentType: number,
     text?: string;
-    mentionedUsers?: number[];
+    mentionedUsers?: string[];
 }
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
@@ -52,7 +49,7 @@ export interface Props {
     entryId: number;
     onControlStatusChange: (entryId: number) => void;
     className?: string;
-    projectId: number;
+    projectId: string;
 }
 
 function EntryUncontrolCommentModal(props: Props) {
@@ -64,7 +61,7 @@ function EntryUncontrolCommentModal(props: Props) {
         projectId,
     } = props;
 
-    const [members, setMembers] = useState<Membership[] | undefined | null>();
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
         pristine,
@@ -118,7 +115,7 @@ function EntryUncontrolCommentModal(props: Props) {
             heading="Reason to uncontrol entry"
             bodyClassName={styles.modalBody}
             footerIcons={(
-                <ProjectMembersMultiSelectInput
+                <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
                     label="Flag to"
                     value={value.mentionedUsers}

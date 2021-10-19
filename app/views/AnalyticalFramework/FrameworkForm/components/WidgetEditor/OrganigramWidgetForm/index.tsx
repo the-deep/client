@@ -274,10 +274,10 @@ function NodeInput(props: NodeInputProps) {
         </ControlledExpandableContainer>
     );
 }
-const defaultRootVal: PartialRootType = {
-    clientId: 'random',
+const defaultRootVal = (): PartialRootType => ({
+    clientId: randomString(),
     order: -1,
-};
+});
 
 interface RootInputProps<K extends string> {
     className?: string;

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
-    SearchSelectInput,
-    SearchSelectInputProps,
+    SearchMultiSelectInput,
+    SearchMultiSelectInputProps,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
@@ -29,20 +29,20 @@ const PROJECT_USERS = gql`
     }
 `;
 
-export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
-const keySelector = (d: BasicProjectUser) => d.id;
-const labelSelector = (d: BasicProjectUser) => d.displayName ?? '';
+export type ProjectMember = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
+const keySelector = (d: ProjectMember) => d.id;
+const labelSelector = (d: ProjectMember) => d.displayName ?? '';
 
 type Def = { containerClassName?: string };
-type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<
+type ProjectUserSelectInputProps<K extends string> = SearchMultiSelectInputProps<
     string,
     K,
-    BasicProjectUser,
+    ProjectMember,
     Def,
     'keySelector' | 'labelSelector' | 'searchOptions' | 'onSearchValueChange' | 'optionsPending' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & { projectId: string };
 
-function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputProps<K>) {
+function ProjectUserMultiSelectInput<K extends string>(props: ProjectUserSelectInputProps<K>) {
     const {
         className,
         projectId,
@@ -74,7 +74,7 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
     );
 
     return (
-        <SearchSelectInput
+        <SearchMultiSelectInput
             {...otherProps}
             className={className}
             keySelector={keySelector}
@@ -88,4 +88,4 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
     );
 }
 
-export default ProjectUserSelectInput;
+export default ProjectUserMultiSelectInput;

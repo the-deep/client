@@ -95,16 +95,17 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={valueError}
+                actions={value?.value && (
+                    <QuickActionButton
+                        name={undefined}
+                        onClick={handleValueSwap}
+                        title="Swap Values" // FIXME: use translations
+                        variant="transparent"
+                    >
+                        <IoSwapHorizontal />
+                    </QuickActionButton>
+                )}
             />
-            <QuickActionButton
-                className={styles.button}
-                name={undefined}
-                onClick={handleValueSwap}
-                title="Swap Values" // FIXME: use translations
-                variant="action"
-            >
-                <IoSwapHorizontal />
-            </QuickActionButton>
         </WidgetWrapper>
     );
 }

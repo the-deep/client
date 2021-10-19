@@ -1,22 +1,22 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     _cs,
-    isNotDefined,
+    isDefined,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
-    useForm,
-    ObjectSchema,
-    getErrorString,
-    getErrorObject,
     createSubmitHandler,
+    getErrorObject,
+    getErrorString,
+    useForm,
 } from '@togglecorp/toggle-form';
 import {
     TextInput,
-    DateRangeInput,
     SelectInput,
     MultiSelectInput,
     useBooleanState,
     Button,
+    DateDualRangeInput,
 } from '@the-deep/deep-ui';
 import {
     IoSearch,
@@ -24,62 +24,160 @@ import {
     IoChevronUpOutline,
     IoChevronDownOutline,
 } from 'react-icons/io5';
-
-import { useRequest } from '#base/utils/restRequest';
-import { hasNoData } from '#utils/common';
+import { gql, useQuery } from '@apollo/client';
 import _ts from '#ts';
-import { KeyValueElement, LeadOptions, EmmEntity } from '#types';
+import {
+    hasNoData,
+    enumKeySelector,
+    enumLabelSelector,
+    convertDateToIsoDateTime,
+} from '#utils/common';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
-import { FilterFormType } from '../utils';
+import {
+    SourceFilterOptionsQueryVariables,
+    OrganizationType,
+} from '#generated/types';
 
+import {
+    SourcesFilterFields,
+    SourceFilterOptions,
+} from './types';
+import schema, { PartialFormType } from './schema';
+import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
-// FIXME: Created at and published on are date ranges and not date inputs
-
-type FormSchema = ObjectSchema<FilterFormType>;
-type FormSchemaFields = ReturnType<FormSchema['fields']>;
-
-const schema: FormSchema = {
-    fields: (): FormSchemaFields => ({
-        status: [],
-        createdAt: [],
-        publishedOn: [],
-        assignee: [],
-        search: [],
-        exists: [],
-        priority: [],
-        authoringOrganizationTypes: [],
-        confidentiality: [],
-        emmRiskFactors: [],
-        emmKeywords: [],
-        emmEntities: [],
-    }),
+const initialValue: PartialFormType = {
+    customFilters: 'EXCLUDE_EMPTY_FILTERED_ENTRIES', // NOTE: customFilters is required when entriesFilterData filter is applied.
 };
 
-const initialValue: FilterFormType = {};
+const SOURCE_FILTER_OPTIONS = gql`
+    query SourceFilterOptions(
+        $projectId: ID!,
+    ) {
+        sourceStatusOptions: __type(name: "LeadStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceExistsOptions: __type(name: "LeadExistsEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourcePriorityOptions: __type(name: "LeadPriorityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        project(id: $projectId) {
+            analysisFramework {
+                filters {
+                    filterType
+                    key
+                    properties
+                    title
+                    widgetType
+                }
+            }
+        }
+        organizationTypes {
+            results {
+                id
+                title
+            }
+        }
+        emmEntititiesOptions: __type(name: "EmmEntityType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        emmRiskFactorsOptions: __type(name: "EmmKeyRiskFactorType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        emmKeywordsOptions: __type(name: "EmmKeyWordType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        entryTypeOptions: __type(name: "EntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        commentStatusOptions: __type(name: "EntryFilterCommentStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+    }
+`;
 
-const keySelector = (d: KeyValueElement): string => d.key;
-const labelSelector = (d: KeyValueElement): string => d.value;
-const emmKeySelector = (d: EmmEntity): string => d.key.toString();
-const emmLabelSelector = (d: EmmEntity): string => `${d.label} ${d.totalCount}`;
+function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
+    return value.id;
+}
 
-const existsFilterOptions: KeyValueElement[] = [
-    {
-        key: 'assessment_exists',
-        value: _ts('sourcesFilter', 'assessmentExistsOptionLabel'),
-    },
-    {
-        key: 'assessment_does_not_exist',
-        value: _ts('sourcesFilter', 'assessmentDoesNotExistsOptionLabel'),
-    },
-];
+function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'title'>) {
+    return value.title;
+}
+
+function getProjectSourcesQueryVariables(
+    filters: SourcesFilterFields,
+) {
+    const isEntriesFilterDataEmpty = doesObjectHaveNoData(filters.entriesFilterData, ['', null]);
+
+    return {
+        ...filters,
+        createdAt_Gte: convertDateToIsoDateTime(filters.createdAt_Gte),
+        createdAt_Lt: convertDateToIsoDateTime(filters.createdAt_Lt),
+        entriesFilterData: (filters.entriesFilterData && isEntriesFilterDataEmpty) ? {
+            ...filters.entriesFilterData,
+            createdAt_Gte: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Gte),
+            createdAt_Lt: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Lt),
+            filterableData: filters.entriesFilterData.filterableData
+                ? filters.entriesFilterData.filterableData.filter((filterable) => (
+                    isDefined(filterable.value)
+                    || isDefined(filterable.valueGte)
+                    || isDefined(filterable.valueLte)
+                    || isDefined(filterable.valueList)
+                ))
+                : undefined,
+        } : undefined,
+        customFilters: isEntriesFilterDataEmpty ? undefined : 'EXCLUDE_EMPTY_FILTERED_ENTRIES',
+    };
+}
 
 interface Props {
     className?: string;
     disabled?: boolean;
-    projectId: number;
+    projectId: string;
     filterOnlyUnprotected?: boolean;
-    onFilterApply: (filters: FilterFormType) => void;
+    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
 }
 
 function SourcesFilter(props: Props) {
@@ -88,23 +186,10 @@ function SourcesFilter(props: Props) {
         onFilterApply,
         projectId,
         filterOnlyUnprotected,
-        disabled: disabledFromProps,
+        disabled,
     } = props;
 
-    const queryOptions = useMemo(() => ({
-        projects: [projectId],
-    }), [projectId]);
-
-    const {
-        pending,
-        response: leadOptions,
-    } = useRequest<LeadOptions>({
-        skip: isNotDefined(projectId),
-        url: 'server://lead-options/',
-        method: 'GET',
-        query: queryOptions,
-        failureHeader: _ts('sourcesFilter', 'title'),
-    });
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
         pristine,
@@ -116,28 +201,54 @@ function SourcesFilter(props: Props) {
         setValue,
     } = useForm(schema, initialValue);
 
+    const {
+        data: sourceFilterOptions,
+        loading,
+        error: sourceFilterOptionsError,
+    } = useQuery<SourceFilterOptions, SourceFilterOptionsQueryVariables>(
+        SOURCE_FILTER_OPTIONS,
+        {
+            variables: {
+                projectId,
+            },
+        },
+    );
+
     const error = getErrorObject(riskyError);
+
+    const handleSubmit = useCallback((values) => {
+        const finalValues = getProjectSourcesQueryVariables(values);
+        onFilterApply(finalValues);
+    }, [onFilterApply]);
 
     const handleApply = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
-            onFilterApply,
+            handleSubmit,
         );
         submit();
-    }, [setError, validate, onFilterApply]);
+    }, [setError, validate, handleSubmit]);
 
     const handleClear = useCallback(() => {
         setValue(initialValue);
-        onFilterApply(initialValue);
+        onFilterApply({});
     }, [setValue, onFilterApply]);
 
     const [
-        showContent,,,,
-        toggleContentVisibility,
+        allFiltersVisible,,,,
+        toggleAllFiltersVisibility,
     ] = useBooleanState(false);
 
-    const disabled = disabledFromProps || pending;
+    const statusOptions = sourceFilterOptions
+        ?.sourceStatusOptions?.enumValues;
+    const existsOptions = sourceFilterOptions
+        ?.sourceExistsOptions?.enumValues;
+    const priorityOptions = sourceFilterOptions
+        ?.sourcePriorityOptions?.enumValues;
+    const confidentialityOptions = sourceFilterOptions
+        ?.sourceConfidentialityOptions?.enumValues;
+    const organizationTypeOptions = sourceFilterOptions?.organizationTypes?.results;
 
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
@@ -155,147 +266,128 @@ function SourcesFilter(props: Props) {
                 />
                 <MultiSelectInput
                     className={styles.input}
-                    name="status"
+                    name="statuses"
                     onChange={setFieldValue}
-                    options={leadOptions?.status}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.status}
-                    error={getErrorString(error?.status)}
+                    options={statusOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.statuses}
+                    error={getErrorString(error?.statuses)}
                     label={_ts('sourcesFilter', 'status')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
-                <DateRangeInput
+                <DateDualRangeInput
                     className={styles.input}
-                    name="publishedOn"
-                    onChange={setFieldValue}
-                    value={value.publishedOn}
+                    fromName="publishedOn_Gte"
+                    fromOnChange={setFieldValue}
+                    fromValue={value.publishedOn_Gte}
+                    toName="publishedOn_Lt"
+                    toOnChange={setFieldValue}
+                    toValue={value.publishedOn_Lt}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'originalDate')}
                 />
-                <DateRangeInput
+                <DateDualRangeInput
                     className={styles.input}
-                    name="createdAt"
-                    onChange={setFieldValue}
-                    value={value.createdAt}
+                    fromName="createdAt_Gte"
+                    fromOnChange={setFieldValue}
+                    fromValue={value.createdAt_Gte}
+                    toName="createdAt_Lt"
+                    toOnChange={setFieldValue}
+                    toValue={value.createdAt_Lt}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
                 />
-                <MultiSelectInput
-                    className={styles.input}
-                    name="assignee"
+                <ProjectMemberMultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        (hasNoData(value.assignees) && !allFiltersVisible)
+                        && styles.hidden,
+                    )}
+                    name="assignees"
+                    projectId={projectId}
+                    value={value.assignees}
                     onChange={setFieldValue}
-                    options={leadOptions?.assignee}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.assignee}
-                    error={getErrorString(error?.assignee)}
-                    label={_ts('sourcesFilter', 'assignee')}
+                    options={members}
+                    onOptionsChange={setMembers}
+                    label="Assignees"
+                    placeholder="Assignees"
+                    disabled={disabled}
                 />
                 <SelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.exists) && !showContent) && styles.hidden,
+                        (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
                     )}
                     name="exists"
                     onChange={setFieldValue}
-                    options={existsFilterOptions}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
+                    options={existsOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
                     value={value.exists}
                     error={error?.exists}
                     label={_ts('sourcesFilter', 'exists')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.priority) && !showContent) && styles.hidden,
+                        (hasNoData(value.priorities) && !allFiltersVisible) && styles.hidden,
                     )}
-                    name="priority"
+                    name="priorities"
                     onChange={setFieldValue}
-                    options={leadOptions?.priority}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    value={value.priority}
-                    error={getErrorString(error?.priority)}
+                    options={priorityOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.priorities}
+                    error={getErrorString(error?.priorities)}
                     label={_ts('sourcesFilter', 'priority')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
                         (hasNoData(value.authoringOrganizationTypes)
-                      && !showContent) && styles.hidden,
+                        && !allFiltersVisible) && styles.hidden,
                     )}
                     name="authoringOrganizationTypes"
                     onChange={setFieldValue}
-                    options={leadOptions?.organizationTypes}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
+                    options={organizationTypeOptions}
+                    keySelector={organizationTypeKeySelector}
+                    labelSelector={organizationTypeLabelSelector}
                     value={value.authoringOrganizationTypes}
                     error={getErrorString(error?.authoringOrganizationTypes)}
                     label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 {!filterOnlyUnprotected && (
-                    <MultiSelectInput
+                    <SelectInput
                         className={_cs(
                             styles.input,
-                            (hasNoData(value.confidentiality) && !showContent) && styles.hidden,
+                            (hasNoData(value.confidentiality) && !allFiltersVisible)
+                            && styles.hidden,
                         )}
                         name="confidentiality"
                         onChange={setFieldValue}
-                        options={leadOptions?.confidentiality}
-                        keySelector={keySelector}
-                        labelSelector={labelSelector}
+                        options={confidentialityOptions}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
                         value={value.confidentiality}
                         error={getErrorString(error?.confidentiality)}
                         label={_ts('sourcesFilter', 'confidentiality')}
+                        disabled={disabled || loading || !!sourceFilterOptionsError}
                     />
                 )}
-                {leadOptions?.hasEmmLeads && (
-                    <>
-                        <MultiSelectInput
-                            className={_cs(
-                                styles.input,
-                                (hasNoData(value.emmRiskFactors) && !showContent) && styles.hidden,
-                            )}
-                            name="emmRiskFactors"
-                            onChange={setFieldValue}
-                            options={leadOptions?.emmRiskFactors}
-                            keySelector={emmKeySelector}
-                            labelSelector={emmLabelSelector}
-                            value={value.emmRiskFactors}
-                            error={getErrorString(error?.emmRiskFactors)}
-                            label={_ts('sourcesFilter', 'emmRiskFactors')}
-                        />
-                        <MultiSelectInput
-                            className={_cs(
-                                styles.input,
-                                (hasNoData(value.emmKeywords) && !showContent) && styles.hidden,
-                            )}
-                            name="emmKeywords"
-                            onChange={setFieldValue}
-                            options={leadOptions?.emmKeywords}
-                            keySelector={emmKeySelector}
-                            labelSelector={emmLabelSelector}
-                            value={value.emmKeywords}
-                            error={getErrorString(error?.emmKeywords)}
-                            label={_ts('sourcesFilter', 'emmKeywords')}
-                        />
-                        <MultiSelectInput
-                            className={_cs(
-                                styles.input,
-                                (hasNoData(value.emmEntities) && !showContent) && styles.hidden,
-                            )}
-                            name="emmEntities"
-                            onChange={setFieldValue}
-                            options={leadOptions?.emmEntities}
-                            keySelector={emmKeySelector}
-                            labelSelector={emmLabelSelector}
-                            value={value.emmEntities}
-                            error={getErrorString(error?.emmEntities)}
-                            label={_ts('sourcesFilter', 'emmEntities')}
-                        />
-                    </>
-                )}
+                <EntryFilter
+                    name="entriesFilterData"
+                    value={value.entriesFilterData}
+                    onChange={setFieldValue}
+                    projectId={projectId}
+                    options={sourceFilterOptions}
+                    optionsDisabled={loading || !!sourceFilterOptionsError}
+                    allFiltersVisible={allFiltersVisible}
+                    disabled={disabled}
+                />
                 <div className={styles.actions}>
                     <Button
                         disabled={disabled || pristine}
@@ -317,14 +409,14 @@ function SourcesFilter(props: Props) {
                     <Button
                         name="showAll"
                         variant="transparent"
-                        actions={showContent ? (
+                        actions={allFiltersVisible ? (
                             <IoChevronUpOutline />
                         ) : (
                             <IoChevronDownOutline />
                         )}
-                        onClick={toggleContentVisibility}
+                        onClick={toggleAllFiltersVisibility}
                     >
-                        {showContent ? 'Show Less' : 'Show All'}
+                        {allFiltersVisible ? 'Show Less' : 'Show All'}
                     </Button>
                 </div>
             </div>

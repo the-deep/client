@@ -8,27 +8,26 @@ import {
     Header,
     QuickActionButton,
 } from '@the-deep/deep-ui';
-
+import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
+import { SourceFilterOptionsQueryVariables } from '#generated/types';
+
 import SourcesStats from './SourcesStats';
 import SourcesFilter from './SourcesFilter';
 import SourcesTable from './SourcesTable';
 import SourcesGrid from './SourcesGrid';
-import { FilterFormType as Filters } from './utils';
-
-import _ts from '#ts';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
-    refreshTimestamp?: number;
+    // refreshTimestamp?: number;
 }
 
 function Sources(props: Props) {
-    const { className, refreshTimestamp } = props;
+    const { className } = props;
     const { project } = React.useContext(ProjectContext);
-    const activeProject = project ? +project.id : undefined;
-    const [sourcesFilters, setSourcesFilters] = useState<Filters>();
+    const activeProject = project?.id;
+    const [sourcesFilters, setSourcesFilters] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
 
@@ -46,9 +45,7 @@ function Sources(props: Props) {
                 {activeProject && (
                     <SourcesStats
                         className={styles.stats}
-                        filters={sourcesFilters}
                         projectId={activeProject}
-                        refreshTimestamp={refreshTimestamp}
                     />
                 )}
                 <Header
@@ -99,7 +96,8 @@ function Sources(props: Props) {
                         className={styles.table}
                         filters={sourcesFilters}
                         projectId={activeProject}
-                        refreshTimestamp={refreshTimestamp}
+                        // FIXME: support refreshing table
+                        // refreshTimestamp={refreshTimestamp}
                     />
                 )}
                 {activeView === 'grid' && activeProject && (

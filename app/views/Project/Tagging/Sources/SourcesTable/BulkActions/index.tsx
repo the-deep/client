@@ -15,7 +15,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#base/utils/restRequest';
-import { Lead } from '#types';
+import { Lead } from '../types';
 import _ts from '#ts';
 
 import styles from './styles.css';
@@ -23,7 +23,7 @@ import styles from './styles.css';
 interface Props {
     selectedLeads: Lead[];
     onClearSelection: () => void;
-    activeProject: number;
+    activeProject: string;
     onRemoveSuccess: () => void;
 }
 
@@ -40,7 +40,7 @@ function BulkActions(props: Props) {
     const {
         pending: bulkDeletePending,
         trigger: bulkLeadDeleteTrigger,
-    } = useLazyRequest<unknown, number[]>({
+    } = useLazyRequest<unknown, string[]>({
         url: `server://project/${activeProject}/leads/bulk-delete/`,
         method: 'POST',
         body: (ctx) => ({ leads: ctx }),
@@ -55,12 +55,16 @@ function BulkActions(props: Props) {
     });
 
     const entriesCount = useMemo(() => (
-        sum(selectedLeads.map((lead) => lead?.entriesCount).filter(isDefined))
+        sum(selectedLeads.map((lead) => lead.entriesCounts?.total).filter(isDefined))
     ), [selectedLeads]);
 
+    /*
+    FIXME: get assessment count
     const assessmentsCount = useMemo(() => (
         selectedLeads.filter((lead) => isDefined(lead.assessmentId)).length
     ), [selectedLeads]);
+    */
+    const assessmentsCount = 'Some';
 
     const onRemoveBulkLead = useCallback(() => {
         bulkLeadDeleteTrigger(selectedLeads.map((lead) => lead.id));

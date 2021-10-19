@@ -1,57 +1,28 @@
-import { encodeDate } from '@togglecorp/fujs';
+import {
+    ProjectSourcesQueryVariables,
+} from '#generated/types';
 
-import { getDateWithTimezone } from '#utils/common';
+// eslint-disable-next-line import/prefer-default-export
+export function transformSourcesFilterToEntiesFilter(filters: Omit<ProjectSourcesQueryVariables, 'projectId'>) {
+    const {
+        assignees,
+        confidentiality,
+        priorities,
+        statuses,
+        publishedOn_Gte: publisedOnGte,
+        publishedOn_Lt: publishedOnLt,
+        authoringOrganizationTypes,
+        entriesFilterData,
+    } = filters;
 
-export interface FilterFormType {
-    createdAt?: {
-        startDate: string;
-        endDate: string;
+    return {
+        ...entriesFilterData,
+        authoringOrganizationTypes,
+        leadAssignees: assignees,
+        leadConfidentialities: confidentiality && [confidentiality],
+        leadPriorities: priorities,
+        leadPublishedOn_Gte: publisedOnGte,
+        leadPublishedOn_Lt: publishedOnLt,
+        leadStatuses: statuses,
     };
-    publishedOn?: {
-        startDate: string;
-        endDate: string;
-    };
-    assignee?: string[];
-    status?: string[];
-    search?: string;
-    exists?: string;
-    priority?: string[];
-    authoringOrganizationTypes?: string[];
-    confidentiality?: string[];
-    emmRiskFactors?: string[];
-    emmKeywords?: string[];
-    emmEntities?: string[];
 }
-
-export interface TransformedFilterFormType {
-    [key: string]: string | string[] | undefined;
-}
-
-export const getFiltersForRequest = (filters: FilterFormType | undefined) => {
-    if (!filters) {
-        return {};
-    }
-    const requestFilters: TransformedFilterFormType = {};
-    (Object.keys(filters) as Array<keyof FilterFormType>).forEach((key) => {
-        if (key === 'createdAt') {
-            if (filters.createdAt) {
-                const endDate = new Date(filters.createdAt.endDate);
-                endDate.setDate(endDate.getDate() + 1);
-
-                requestFilters.created_at__gte = getDateWithTimezone(filters.createdAt.startDate);
-                requestFilters.created_at__lt = getDateWithTimezone(encodeDate(endDate));
-            }
-        } else if (key === 'publishedOn') {
-            if (filters.publishedOn) {
-                const endDate = new Date(filters.publishedOn.endDate);
-                endDate.setDate(endDate.getDate() + 1);
-
-                requestFilters.published_on__gte = filters.publishedOn.startDate;
-                requestFilters.published_on__lt = encodeDate(endDate);
-            }
-        } else {
-            requestFilters[key] = filters[key];
-        }
-    });
-    return requestFilters;
-};

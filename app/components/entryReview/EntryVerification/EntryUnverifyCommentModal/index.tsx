@@ -19,8 +19,7 @@ import {
 import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import { EntryReviewComment } from '#types/entry';
-import ProjectMembersMultiSelectInput from '#components/selections/ProjectMembersSelectInput';
-import { Membership } from '#types';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { EntryAction } from '#components/entryReview/commentConstants';
 
 import styles from './styles.css';
@@ -28,13 +27,13 @@ import styles from './styles.css';
 interface EntryVerificationFormData {
     commentType: number;
     text?: string;
-    mentionedUsers?: number[];
+    mentionedUsers?: string[];
 }
 
 type FormType = {
     commentType: number,
     text?: string;
-    mentionedUsers?: number[];
+    mentionedUsers?: string[];
 }
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
@@ -53,7 +52,7 @@ const defaultFormValue: FormType = {
 export interface Props {
     onModalClose: () => void;
     entryId: number;
-    projectId: number;
+    projectId: string;
     onVerificationChange: (entryId: number) => void;
     className?: string;
 }
@@ -67,7 +66,7 @@ function EntryUnverifyCommentModal(props: Props) {
         entryId,
     } = props;
 
-    const [members, setMembers] = useState<Membership[] | undefined | null>();
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
         pending: reviewRequestPending,
@@ -110,7 +109,7 @@ function EntryUnverifyCommentModal(props: Props) {
             heading="Reason for unverify"
             bodyClassName={styles.modalBody}
             footerIcons={(
-                <ProjectMembersMultiSelectInput
+                <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
                     label="Flag to"
                     value={value.mentionedUsers}

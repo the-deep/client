@@ -25,18 +25,18 @@ import routes from '#base/configs/routes';
 
 import styles from './styles.css';
 
-export interface Props<T extends number> {
+export interface Props<T extends string> {
     className?: string;
     id: T;
     onEditClick: (key: T) => void;
     onDeleteClick: (key: T) => void;
     disabled?: boolean;
     isAssessmentLead?: boolean;
-    projectId: number;
+    projectId: string;
     entriesCount: number;
 }
 
-function Actions<T extends number>(props: Props<T>) {
+function Actions<T extends string>(props: Props<T>) {
     const {
         className,
         id,
