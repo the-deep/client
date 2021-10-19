@@ -3,19 +3,17 @@ import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
-import { generatePath } from 'react-router-dom';
-import { IoAdd } from 'react-icons/io5';
 import {
-    QuickActionLink,
+    QuickActionButton,
     ListView,
     Container,
 } from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import { IoAdd } from 'react-icons/io5';
 import { Widget } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
-import routes from '#base/configs/routes';
 
 import styles from './styles.css';
 
@@ -32,9 +30,9 @@ export interface Props {
     readOnly?: boolean;
     emptyValueHidden?: boolean;
     disabled?: boolean;
-    leadId: string;
-    projectId?: string;
     entryClientId: string;
+    sectionId?: string;
+    onAddButtonClick: (entryId: string, sectionId?: string) => void;
 }
 
 function CompactSection(props: Props) {
@@ -44,13 +42,13 @@ function CompactSection(props: Props) {
         onAttributeChange,
         widgets,
         attributesMap,
+        entryClientId,
+        sectionId,
         emptyValueHidden,
         readOnly,
         disabled,
         error: riskyError,
-        leadId,
-        projectId,
-        entryClientId,
+        onAddButtonClick,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -82,18 +80,12 @@ function CompactSection(props: Props) {
         [onAttributeChange, attributesMap, readOnly, disabled, error],
     );
 
-    // TODO: Fix routes from review to primary-tagging
-    const editEntryLink = useMemo(() => ({
-        pathname: generatePath(routes.entryEdit.path, {
-            projectId,
-            leadId,
-        }),
-        state: { initialEntryId: entryClientId },
-        hash: '#/primary-tagging',
-    }), [
-        projectId,
-        leadId,
+    const handleAddButtonClick = useCallback(() => {
+        onAddButtonClick(entryClientId, sectionId);
+    }, [
         entryClientId,
+        sectionId,
+        onAddButtonClick,
     ]);
 
     return (
@@ -101,12 +93,12 @@ function CompactSection(props: Props) {
             className={_cs(className, styles.compactSection)}
             heading={title}
             headerActions={!readOnly && (
-                <QuickActionLink
-                    to={editEntryLink}
-                    variant="primary"
+                <QuickActionButton
+                    name="addAttribute"
+                    onClick={handleAddButtonClick}
                 >
                     <IoAdd />
-                </QuickActionLink>
+                </QuickActionButton>
             )}
             headingSize="extraSmall"
             spacing="comfortable"

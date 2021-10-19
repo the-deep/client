@@ -114,7 +114,7 @@ function EntryCard(props: Props) {
             projectId,
             leadId: entry.lead.id,
         }),
-        state: { initialEntryId: entry.clientId },
+        state: { entryId: entry.clientId },
         hash: '#/primary-tagging',
     }), [projectId, entry.lead.id, entry.clientId]);
 

@@ -4,6 +4,10 @@ import {
     createSubmitHandler,
     removeNull,
 } from '@togglecorp/toggle-form';
+import {
+    useHistory,
+    generatePath,
+} from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 import {
     isDefined,
@@ -33,6 +37,7 @@ import {
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import { Widget } from '#types/newAnalyticalFramework';
+import routes from '#base/configs/routes';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
 import EntryControl from '#components/entryReview/EntryControl';
@@ -98,6 +103,7 @@ function EditableEntry(props: Props) {
         onEntryDataChange,
     } = props;
 
+    const history = useHistory();
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
     const [editMode, setEditModeTrue, setEditModeFalse] = useBooleanState(false);
@@ -219,6 +225,17 @@ function EditableEntry(props: Props) {
         verifiedBy?.map((v) => +v.id) ?? []
     ), [verifiedBy]);
 
+    const handleAddButtonClick = useCallback((entryIdToAdd: string, sectionId?: string) => {
+        const link = generatePath(routes.entryEdit.path, {
+            projectId,
+            leadId,
+        });
+        history.push(`${link}${sectionId ? '#/primary-tagging' : '#/secondary-tagging'}`, {
+            entryId: entryIdToAdd,
+            sectionId,
+        });
+    }, [projectId, leadId, history]);
+
     const saveButton = (
         <Button
             name={undefined}
@@ -238,12 +255,12 @@ function EditableEntry(props: Props) {
             name={undefined}
             value={value}
             onChange={handleEntryChange}
+            onAddButtonClick={handleAddButtonClick}
             primaryTagging={primaryTagging}
             secondaryTagging={secondaryTagging}
             readOnly={!editMode}
             compact={compact}
             leadId={leadId}
-            projectId={projectId}
             entryImage={entryImage}
             error={error}
         />
