@@ -108,9 +108,13 @@ function EntryEdit(props: Props) {
     const alert = useAlert();
     const location = useLocation();
 
-    const entryIdFromState = (location.state as {
-        initialEntryId?: string
-    } | undefined)?.initialEntryId;
+    const locationState = location?.state as {
+        entryId?: string;
+        sectionId?: string;
+    } | undefined;
+
+    const entryIdFromState = locationState?.entryId;
+    const sectionIdFromState = locationState?.sectionId;
 
     // LEAD
     const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
@@ -502,7 +506,14 @@ function EntryEdit(props: Props) {
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
                 if (analysisFrameworkFromResponse) {
                     const firstSection = analysisFrameworkFromResponse.primaryTagging?.[0];
-                    setSelectedSection(firstSection?.clientId);
+                    const sectionFromState = analysisFrameworkFromResponse
+                        .primaryTagging?.find((section) => section.id === sectionIdFromState);
+
+                    setSelectedSection(
+                        sectionFromState
+                            ? sectionFromState.clientId
+                            : firstSection?.clientId,
+                    );
                 }
             },
         },
@@ -788,6 +799,15 @@ function EntryEdit(props: Props) {
     } = useFormArray('attributes', onEntryFieldChange);
 
     // ENTRY
+    const handleAddButtonClick = useCallback((entryId: string, sectionId?: string) => {
+        handleEntryClick(entryId);
+        if (sectionId) {
+            window.location.replace('#/primary-tagging');
+            setSelectedSection(sectionId);
+        } else {
+            window.location.replace('#/secondary-tagging');
+        }
+    }, [handleEntryClick]);
 
     const entryDataRendererParams = useCallback(
         (entryId: string, datum: PartialEntryType, index: number) => ({
@@ -796,6 +816,7 @@ function EntryEdit(props: Props) {
             index,
             onChange: handleEntryChange,
             secondaryTagging: frameworkDetails?.secondaryTagging,
+            onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
             projectId,
@@ -805,6 +826,7 @@ function EntryEdit(props: Props) {
         }),
         [
             projectId,
+            handleAddButtonClick,
             entryImagesMap,
             frameworkDetails?.secondaryTagging,
             frameworkDetails?.primaryTagging,
@@ -960,6 +982,9 @@ function EntryEdit(props: Props) {
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
+                                    // NOTE: If entry Id comes from state, we need to
+                                    // show entries tab as it always has the entry
+                                    defaultTab={!entryIdFromState ? 'entries' : undefined}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -1037,6 +1062,7 @@ function EntryEdit(props: Props) {
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
+                                    defaultTab={!entryIdFromState ? 'entries' : undefined}
                                 />
                                 <Container
                                     className={styles.rightContainer}
