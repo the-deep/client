@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import {
     _cs,
     isDefined,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     createSubmitHandler,
@@ -148,11 +149,13 @@ function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'tit
 function getProjectSourcesQueryVariables(
     filters: SourcesFilterFields,
 ) {
+    const isEntriesFilterDataEmpty = doesObjectHaveNoData(filters.entriesFilterData, ['', null]);
+
     return {
         ...filters,
         createdAt_Gte: convertDateToIsoDateTime(filters.createdAt_Gte),
         createdAt_Lt: convertDateToIsoDateTime(filters.createdAt_Lt),
-        entriesFilterData: filters.entriesFilterData ? {
+        entriesFilterData: (filters.entriesFilterData && isEntriesFilterDataEmpty) ? {
             ...filters.entriesFilterData,
             createdAt_Gte: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Gte),
             createdAt_Lt: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Lt),
@@ -165,6 +168,7 @@ function getProjectSourcesQueryVariables(
                 ))
                 : undefined,
         } : undefined,
+        customFilters: isEntriesFilterDataEmpty ? undefined : 'EXCLUDE_EMPTY_FILTERED_ENTRIES',
     };
 }
 
