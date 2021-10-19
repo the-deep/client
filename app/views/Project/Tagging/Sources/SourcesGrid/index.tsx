@@ -17,9 +17,11 @@ import {
 import {
     ProjectEntriesQuery,
     ProjectEntriesQueryVariables,
+    LeadEntriesQueryVariables,
 } from '#generated/types';
 
 import EntryCard from './EntryCard';
+import { transformSourcesFilterToEntiesFilter } from '../utils';
 import styles from './styles.css';
 
 const maxItemsPerPage = 50;
@@ -31,11 +33,39 @@ export const PROJECT_ENTRIES = gql`
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
+        $authoringOrganizationTypes: [ID!],
+        $commentStatus: EntryFilterCommentStatusEnum,
+        $controlled: Boolean,
+        $createdAt_Gte: DateTime,
+        $createdAt_Lt: DateTime,
+        $createdBy: [ID!],
+        $entryTypes: [EntryTagTypeEnum!],
+        $filterableData: [EntryFilterDataType!]
+        $leadAssignees: [ID!],
+        $leadConfidentialities: [LeadConfidentialityEnum!],
+        $leadPriorities: [LeadPriorityEnum!],
+        $leadPublishedOn_Gte: Date,
+        $leadPublishedOn_Lt: Date,
+        $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
             entries(
                 page: $page,
                 pageSize: $pageSize,
+                authoringOrganizationTypes: $authoringOrganizationTypes,
+                commentStatus: $commentStatus,
+                controlled: $controlled,
+                createdAt_Gte: $createdAt_Gte,
+                createdAt_Lt: $createdAt_Lt,
+                createdBy: $createdBy,
+                entryTypes: $entryTypes,
+                filterableData: $filterableData,
+                leadAssignees: $leadAssignees,
+                leadConfidentialities: $leadConfidentialities,
+                leadPriorities: $leadPriorities,
+                leadPublishedOn_Gte: $leadPublishedOn_Gte,
+                leadPublishedOn_Lt: $leadPublishedOn_Lt,
+                leadStatuses: $leadStatuses,
             ) {
                 totalCount
                 results {
@@ -121,14 +151,17 @@ export const PROJECT_ENTRIES = gql`
 interface Props {
     className?: string;
     projectId: string;
+    filters: Omit<LeadEntriesQueryVariables, 'projectId' | 'leadId'>;
 }
 
 function SourcesGrid(props: Props) {
     const {
         className,
         projectId,
+        filters,
     } = props;
 
+    const entriesFilter = useMemo(() => transformSourcesFilterToEntiesFilter(filters), [filters]);
     const [activePage, setActivePage] = useState(1);
 
     const variables = useMemo(
@@ -137,9 +170,10 @@ function SourcesGrid(props: Props) {
                 projectId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
+                ...entriesFilter,
             } : undefined
         ),
-        [projectId, activePage],
+        [projectId, activePage, entriesFilter],
     );
 
     const {

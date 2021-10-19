@@ -1,12 +1,5 @@
-.entry-filter {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    .input {
-        margin: var(--dui-spacing-extra-small) var(--dui-spacing-small);
-        &.hidden {
-            display: none;
-        }
+.input {
+    &.hidden {
+        display: none;
     }
 }
