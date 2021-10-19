@@ -25,6 +25,7 @@ import BooleanInput, { Option } from '#components/selections/BooleanInput';
 import FrameworkFilterItem from './FrameworkFilterItem';
 import { SourceFilterOptions, FrameworkFilterType } from '../types';
 import { PartialEntriesFilterDataType } from '../schema';
+
 import styles from './styles.css';
 
 const filterKeySelector = (d: FrameworkFilterType) => d.key;
@@ -53,7 +54,6 @@ interface Props<K extends string> {
     allFiltersVisible: boolean;
     options?: SourceFilterOptions;
     disabled?: boolean;
-    className?: string;
 }
 
 function EntryFilter<K extends string>(props: Props<K>) {
@@ -64,7 +64,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
         options,
         projectId,
         disabled,
-        className,
         allFiltersVisible,
         optionsDisabled,
     } = props;
@@ -113,7 +112,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
     );
 
     return (
-        <div className={_cs(className, styles.entryFilter)}>
+        <>
             <ProjectMemberMultiSelectInput
                 className={_cs(
                     styles.input,
@@ -201,7 +200,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 rendererClassName={styles.input}
                 rendererParams={frameworkFilterRendererParams}
             />
-        </div>
+        </>
     );
 }
 

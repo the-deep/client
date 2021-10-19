@@ -155,7 +155,7 @@ function getProjectSourcesQueryVariables(
         ...filters,
         createdAt_Gte: convertDateToIsoDateTime(filters.createdAt_Gte),
         createdAt_Lt: convertDateToIsoDateTime(filters.createdAt_Lt),
-        entriesFilterData: (filters.entriesFilterData && isEntriesFilterDataEmpty) ? {
+        entriesFilterData: (filters.entriesFilterData && !isEntriesFilterDataEmpty) ? {
             ...filters.entriesFilterData,
             createdAt_Gte: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Gte),
             createdAt_Lt: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Lt),
