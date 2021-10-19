@@ -103,6 +103,7 @@ function Sources(props: Props) {
                 {activeView === 'grid' && activeProject && (
                     <SourcesGrid
                         projectId={String(activeProject)}
+                        filters={sourcesFilters}
                     />
                 )}
             </div>
