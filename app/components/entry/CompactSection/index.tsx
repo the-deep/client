@@ -4,11 +4,13 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 import {
+    QuickActionButton,
     ListView,
     Container,
 } from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import { IoAdd } from 'react-icons/io5';
 import { Widget } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
@@ -28,6 +30,9 @@ export interface Props {
     readOnly?: boolean;
     emptyValueHidden?: boolean;
     disabled?: boolean;
+    entryClientId: string;
+    sectionId?: string;
+    onAddButtonClick: (entryId: string, sectionId?: string) => void;
 }
 
 function CompactSection(props: Props) {
@@ -37,10 +42,13 @@ function CompactSection(props: Props) {
         onAttributeChange,
         widgets,
         attributesMap,
+        entryClientId,
+        sectionId,
         emptyValueHidden,
         readOnly,
         disabled,
         error: riskyError,
+        onAddButtonClick,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -72,10 +80,26 @@ function CompactSection(props: Props) {
         [onAttributeChange, attributesMap, readOnly, disabled, error],
     );
 
+    const handleAddButtonClick = useCallback(() => {
+        onAddButtonClick(entryClientId, sectionId);
+    }, [
+        entryClientId,
+        sectionId,
+        onAddButtonClick,
+    ]);
+
     return (
         <Container
             className={_cs(className, styles.compactSection)}
             heading={title}
+            headerActions={!readOnly && (
+                <QuickActionButton
+                    name="addAttribute"
+                    onClick={handleAddButtonClick}
+                >
+                    <IoAdd />
+                </QuickActionButton>
+            )}
             headingSize="extraSmall"
             spacing="comfortable"
         >

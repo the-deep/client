@@ -70,6 +70,7 @@ interface Props {
     entryImagesMap: EntryImagesMap | undefined;
     isEntrySelectionActive?: boolean;
     entriesError: Partial<Record<string, boolean>> | undefined;
+    defaultTab?: 'entries' | 'simplified' | 'original';
 }
 
 function LeftPane(props: Props) {
@@ -90,12 +91,15 @@ function LeftPane(props: Props) {
         leadId,
         isEntrySelectionActive,
         entriesError,
+        defaultTab = 'simplified',
     } = props;
 
     const alert = useAlert();
 
     const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries' | undefined>(
-        !hideSimplifiedPreview ? 'simplified' : 'entries',
+        (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
+            ? 'entries'
+            : defaultTab,
     );
 
     // FIXME: we shouldn't need these values here

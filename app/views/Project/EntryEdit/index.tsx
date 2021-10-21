@@ -108,8 +108,15 @@ function EntryEdit(props: Props) {
     const alert = useAlert();
     const location = useLocation();
 
-    // LEAD
+    const locationState = location?.state as {
+        entryId?: string;
+        sectionId?: string;
+    } | undefined;
 
+    const entryIdFromState = locationState?.entryId;
+    const sectionIdFromState = locationState?.sectionId;
+
+    // LEAD
     const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
         clientId: randomString(),
         sourceType: 'WEBSITE',
@@ -137,6 +144,8 @@ function EntryEdit(props: Props) {
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const [isFinalizeClicked, setIsFinalizeClicked] = useState(false);
+
+    const [selectedEntry, setSelectedEntry] = useState<string | undefined>(undefined);
 
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
@@ -451,6 +460,11 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
+                    if (entries?.some((entry) => entry.clientId === entryIdFromState)) {
+                        createRestorePoint();
+                        setSelectedEntry(entryIdFromState);
+                    }
+
                     const leadData = removeNull(leadFromResponse);
                     setLeadValue({
                         ...leadData,
@@ -492,7 +506,14 @@ function EntryEdit(props: Props) {
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
                 if (analysisFrameworkFromResponse) {
                     const firstSection = analysisFrameworkFromResponse.primaryTagging?.[0];
-                    setSelectedSection(firstSection?.clientId);
+                    const sectionFromState = analysisFrameworkFromResponse
+                        .primaryTagging?.find((section) => section.id === sectionIdFromState);
+
+                    setSelectedSection(
+                        sectionFromState
+                            ? sectionFromState.clientId
+                            : firstSection?.clientId,
+                    );
                 }
             },
         },
@@ -590,8 +611,6 @@ function EntryEdit(props: Props) {
         () => { handleSubmit(true); },
         [handleSubmit],
     );
-
-    const [selectedEntry, setSelectedEntry] = useState<string | undefined>();
 
     const handleEntryClick = useCallback((entryId: string) => {
         createRestorePoint();
@@ -780,6 +799,15 @@ function EntryEdit(props: Props) {
     } = useFormArray('attributes', onEntryFieldChange);
 
     // ENTRY
+    const handleAddButtonClick = useCallback((entryId: string, sectionId?: string) => {
+        handleEntryClick(entryId);
+        if (sectionId) {
+            window.location.replace('#/primary-tagging');
+            setSelectedSection(sectionId);
+        } else {
+            window.location.replace('#/secondary-tagging');
+        }
+    }, [handleEntryClick]);
 
     const entryDataRendererParams = useCallback(
         (entryId: string, datum: PartialEntryType, index: number) => ({
@@ -788,13 +816,17 @@ function EntryEdit(props: Props) {
             index,
             onChange: handleEntryChange,
             secondaryTagging: frameworkDetails?.secondaryTagging,
+            onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
             leadId,
+            projectId,
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
         }),
         [
+            projectId,
+            handleAddButtonClick,
             entryImagesMap,
             frameworkDetails?.secondaryTagging,
             frameworkDetails?.primaryTagging,
@@ -950,6 +982,9 @@ function EntryEdit(props: Props) {
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
+                                    // NOTE: If entry Id comes from state, we need to
+                                    // show entries tab as it always has the entry
+                                    defaultTab={!entryIdFromState ? 'entries' : undefined}
                                 />
                                 <Container
                                     className={_cs(className, styles.sections)}
@@ -1027,6 +1062,7 @@ function EntryEdit(props: Props) {
                                     entryImagesMap={entryImagesMap}
                                     isEntrySelectionActive={isEntrySelectionActive}
                                     entriesError={entriesErrorStateMap}
+                                    defaultTab={!entryIdFromState ? 'entries' : undefined}
                                 />
                                 <Container
                                     className={styles.rightContainer}

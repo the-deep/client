@@ -48,6 +48,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
     error: Error<PartialEntryType> | undefined;
+    onAddButtonClick: (entryId: string, sectionId?: string) => void;
 
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
@@ -65,6 +66,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
     const {
         className,
         value,
+        onAddButtonClick,
         primaryTagging,
         secondaryTagging,
         sectionContainerClassName,
@@ -112,15 +114,26 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         )
     ), [value.attributes]);
 
-    const sectionRendererParams = useCallback((_: string, sectionItem: Section) => ({
+    const sectionRendererParams = useCallback((sectionId: string, sectionItem: Section) => ({
         title: sectionItem.title,
         widgets: sectionItem.widgets,
+        sectionId,
         onAttributeChange,
         attributesMap,
         readOnly,
         emptyValueHidden,
         error: error?.attributes,
-    }), [emptyValueHidden, onAttributeChange, attributesMap, readOnly, error?.attributes]);
+        onAddButtonClick,
+        entryClientId: value.clientId,
+    }), [
+        onAddButtonClick,
+        emptyValueHidden,
+        onAttributeChange,
+        attributesMap,
+        readOnly,
+        error?.attributes,
+        value.clientId,
+    ]);
 
     return (
         <div
@@ -169,9 +182,11 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 attributesMap={attributesMap}
                 onAttributeChange={onAttributeChange}
                 readOnly={readOnly}
+                onAddButtonClick={onAddButtonClick}
                 emptyValueHidden={emptyValueHidden}
                 widgets={secondaryTagging}
                 error={error?.attributes}
+                entryClientId={value.clientId}
             />
         </div>
     );
