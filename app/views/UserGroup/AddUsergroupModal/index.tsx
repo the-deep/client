@@ -19,7 +19,7 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 
-interface UsergroupAdd {
+interface UserGroupAdd {
     title: string;
     description?: string;
 }
@@ -39,7 +39,7 @@ export interface Membership {
     joinedAt: string;
 }
 
-export interface Usergroup {
+export interface UserGroup {
     id: number;
     title: string;
     description: string;
@@ -64,10 +64,10 @@ const defaultFormValue: PartialForm<FormType> = {};
 
 interface Props {
     onModalClose: () => void;
-    onSuccess: () => void;
-    value?: Usergroup,
+    onSuccess: (userGroupId: number) => void;
+    value?: UserGroup,
 }
-function AddUsergroupModal(props: Props) {
+function AddUserGroupModal(props: Props) {
     const {
         onModalClose,
         onSuccess,
@@ -92,9 +92,9 @@ function AddUsergroupModal(props: Props) {
     const error = getErrorObject(riskyError);
 
     const {
-        pending: pendingAddUsergroup,
-        trigger: triggerAddUsergroup,
-    } = useLazyRequest<unknown, UsergroupAdd>({
+        pending: pendingAddUserGroup,
+        trigger: triggerAddUserGroup,
+    } = useLazyRequest<UserGroup, UserGroupAdd>({
         url: isDefined(initialValue?.id)
             ? `server://user-groups/${initialValue?.id}/`
             : 'server://user-groups/',
@@ -102,8 +102,8 @@ function AddUsergroupModal(props: Props) {
             ? 'PATCH'
             : 'POST',
         body: (ctx) => ctx,
-        onSuccess: () => {
-            onSuccess();
+        onSuccess: (response) => {
+            onSuccess(response.id);
             onModalClose();
         },
         failureHeader: _ts('usergroup.editModal', 'addUsergroupFailed'),
@@ -112,10 +112,10 @@ function AddUsergroupModal(props: Props) {
         const submit = createSubmitHandler(
             validate,
             setError,
-            (val) => triggerAddUsergroup(val as UsergroupAdd),
+            (val) => triggerAddUserGroup(val as UserGroupAdd),
         );
         submit();
-    }, [setError, validate, triggerAddUsergroup]);
+    }, [setError, validate, triggerAddUserGroup]);
 
     return (
         <Modal
@@ -126,25 +126,25 @@ function AddUsergroupModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingAddUsergroup}
+                    disabled={pristine || pendingAddUserGroup}
                     onClick={handleSubmit}
                 >
                     {_ts('usergroup.editModal', 'submitLabel')}
                 </Button>
             )}
         >
-            {pendingAddUsergroup && (<PendingMessage />)}
+            {pendingAddUserGroup && (<PendingMessage />)}
             <NonFieldError error={error} />
             <TextInput
                 name="title"
                 value={value.title}
                 error={error?.title}
                 onChange={setFieldValue}
-                label={_ts('usergroup.editModal', 'usergroupTitleLabel')}
+                label="Title"
                 placeholder={_ts('usergroup.editModal', 'usergroupTitlePlaceholder')}
             />
         </Modal>
     );
 }
 
-export default AddUsergroupModal;
+export default AddUserGroupModal;
