@@ -19,15 +19,12 @@ import {
     useRequest,
     useLazyRequest,
 } from '#base/utils/restRequest';
-import {
-    MultiResponse,
-    UserGroup as UserGroupType,
-} from '#types';
+import { MultiResponse } from '#types';
 import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
 import _ts from '#ts';
 
-import AddUsergroupModal from './AddUsergroupModal';
+import AddUserGroupModal, { UserGroup as UserGroupType } from './AddUsergroupModal';
 import AddUserModal from './AddUserModal';
 import Memberships from './Memberships';
 import UserGroupActionCell from './UserGroupActionCell';
@@ -47,6 +44,7 @@ interface UserGroupItemProps {
     data: UserGroupType;
     onExpansionChange: (usergroupExpanded: boolean, usergroupId: number) => void;
     expanded?: boolean;
+    autoFocus?: boolean;
 }
 
 function UserGroupItem(props: UserGroupItemProps) {
@@ -60,6 +58,7 @@ function UserGroupItem(props: UserGroupItemProps) {
         onUserDeleteSuccess,
         onExpansionChange,
         expanded,
+        autoFocus,
     } = props;
 
     return (
@@ -67,7 +66,7 @@ function UserGroupItem(props: UserGroupItemProps) {
             name={userGroupId}
             className={styles.userGroupItem}
             heading={data.title}
-            autoFocus
+            autoFocus={autoFocus}
             withoutBorder
             spacing="comfortable"
             expansionTriggerArea="arrow"
@@ -111,9 +110,9 @@ function UserGroupItem(props: UserGroupItemProps) {
                     onDeleteClick={onDeleteClick}
                     onAddClick={onAddClick}
                     addButtonTitle={_ts('usergroup', 'addMemberLabel')}
-                    editButtonTitle={_ts('usergroup', 'editUsergroupLabel')}
-                    deleteButtonTitle={_ts('usergroup', 'deleteUsergroupLabel')}
-                    deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
+                    editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
+                    deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
+                    deleteConfirmationMessage={_ts('usergroup', 'deleteUserGroupConfirmMessage')}
                     disabled={data.role === 'normal'}
                 />
             )}
@@ -144,15 +143,15 @@ function UserGroup(props: Props) {
     const userId = user ? +user?.id : undefined;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [expandedUsergroupId, setExpandedUsergroupId] = useState<number | undefined>();
+    const [expandedUserGroupId, setExpandedUserGroupId] = useState<number | undefined>();
 
-    const [activeUsergroupId, setActiveUsergroupId] = useState<number | undefined>();
-    const [usergroupToEdit, setUsergroupToEdit] = useState<number | undefined>();
+    const [activeUserGroupId, setActiveUserGroupId] = useState<number | undefined>();
+    const [usergroupToEdit, setUserGroupToEdit] = useState<number | undefined>();
 
     const [
         showAddUserGroupModal,
-        setUsergroupModalShow,
-        setUsergroupModalHidden,
+        setUserGroupModalShow,
+        setUserGroupModalHidden,
     ] = useModalState(false);
 
     const [
@@ -182,7 +181,7 @@ function UserGroup(props: Props) {
         url: 'server://user-groups/member-of/',
         method: 'GET',
         query: usergroupQuery,
-        failureHeader: _ts('usergroup', 'fetchUsergroupFailed'),
+        failureHeader: _ts('usergroup', 'fetchUserGroupFailed'),
     });
 
     const {
@@ -200,28 +199,31 @@ function UserGroup(props: Props) {
         usergroupResponse?.results?.find((a) => a.id === usergroupToEdit)
     ), [usergroupResponse?.results, usergroupToEdit]);
 
-    const handleAddUsergroupClick = useCallback(() => {
-        setUsergroupToEdit(undefined);
-        setUsergroupModalShow();
-    }, [setUsergroupModalShow]);
+    const handleAddUserGroupClick = useCallback(() => {
+        setUserGroupToEdit(undefined);
+        setUserGroupModalShow();
+    }, [setUserGroupModalShow]);
 
-    const handleEditUsergroupClick = useCallback((value) => {
-        setUsergroupToEdit(value);
-        setUsergroupModalShow();
-    }, [setUsergroupModalShow]);
+    const handleEditUserGroupClick = useCallback((value) => {
+        setUserGroupToEdit(value);
+        setUserGroupModalShow();
+    }, [setUserGroupModalShow]);
 
-    const handleEditUsergroupSuccess = useCallback(() => {
+    const [autoFocusUserGroup, setAutoFocusUserGroup] = useState<number>();
+
+    const handleEditUserGroupSuccess = useCallback((newItemId: number) => {
+        setAutoFocusUserGroup(newItemId);
         usergroupResponseTrigger();
-        setUsergroupModalHidden();
-    }, [setUsergroupModalHidden, usergroupResponseTrigger]);
+        setUserGroupModalHidden();
+    }, [setUserGroupModalHidden, usergroupResponseTrigger]);
 
     const handleMemberAddClick = useCallback((value) => {
-        setActiveUsergroupId(value);
+        setActiveUserGroupId(value);
         setUserModalShow();
     }, [setUserModalShow]);
 
     const handleExpansionChange = useCallback((usergroupExpanded: boolean, usergroupId: number) => {
-        setExpandedUsergroupId(usergroupExpanded ? usergroupId : undefined);
+        setExpandedUserGroupId(usergroupExpanded ? usergroupId : undefined);
     }, []);
 
     const userGroupRendererParams = useCallback((key: number, datum: UserGroupType) => ({
@@ -229,19 +231,21 @@ function UserGroup(props: Props) {
         activeUserId: userId,
         onUserDeleteSuccess: usergroupResponseTrigger,
         onDeleteClick: usergroupDeleteTrigger,
-        onEditClick: handleEditUsergroupClick,
+        onEditClick: handleEditUserGroupClick,
         onAddClick: handleMemberAddClick,
         data: datum,
         onExpansionChange: handleExpansionChange,
-        expanded: expandedUsergroupId === datum.id,
+        autoFocus: autoFocusUserGroup === datum.id,
+        expanded: expandedUserGroupId === datum.id,
     }), [
+        autoFocusUserGroup,
         userId,
         usergroupResponseTrigger,
         usergroupDeleteTrigger,
-        handleEditUsergroupClick,
+        handleEditUserGroupClick,
         handleMemberAddClick,
         handleExpansionChange,
-        expandedUsergroupId,
+        expandedUserGroupId,
     ]);
 
     return (
@@ -250,9 +254,9 @@ function UserGroup(props: Props) {
             heading={_ts('usergroup', 'usergroupPageTitle')}
             headerActions={(
                 <Button
-                    name="addUsergroup"
+                    name="addUserGroup"
                     icons={<IoAdd />}
-                    onClick={handleAddUsergroupClick}
+                    onClick={handleAddUserGroupClick}
                 >
                     {_ts('usergroup', 'addUsergroupButtonLabel')}
                 </Button>
@@ -277,16 +281,16 @@ function UserGroup(props: Props) {
                 rendererParams={userGroupRendererParams}
             />
             {showAddUserGroupModal && (
-                <AddUsergroupModal
-                    onModalClose={setUsergroupModalHidden}
-                    onSuccess={handleEditUsergroupSuccess}
+                <AddUserGroupModal
+                    onModalClose={setUserGroupModalHidden}
+                    onSuccess={handleEditUserGroupSuccess}
                     value={usergroupObjectToEdit}
                 />
             )}
-            {showAddUserModal && activeUsergroupId && (
+            {showAddUserModal && activeUserGroupId && (
                 <AddUserModal
                     onModalClose={setUserModalHidden}
-                    group={activeUsergroupId}
+                    group={activeUserGroupId}
                     onUserAddSuccess={usergroupResponseTrigger}
                 />
             )}
