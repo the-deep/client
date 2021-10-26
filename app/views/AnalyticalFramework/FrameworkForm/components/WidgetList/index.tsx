@@ -96,6 +96,13 @@ const partialWidgets: PartialWidget[] = [
         order: -1,
         width: 'FULL',
     },
+    {
+        widgetId: 'GEO',
+        key: 'random',
+        clientId: 'random',
+        order: -1,
+        width: 'FULL',
+    },
 ];
 
 interface AddItemProps<T extends string | number | undefined> {
@@ -295,6 +302,13 @@ function WidgetList(props: Props) {
                     name="ORGANIGRAM"
                     // FIXME: use strings
                     label="Organigram"
+                    onAddClick={handleAddClick}
+                    disabled={disabled || widgetsDisabled}
+                />
+                <AddItem
+                    name="GEO"
+                    // FIXME: use strings
+                    label="Geo"
                     onAddClick={handleAddClick}
                     disabled={disabled || widgetsDisabled}
                 />

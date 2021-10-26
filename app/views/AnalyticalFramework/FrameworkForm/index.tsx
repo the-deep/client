@@ -2,10 +2,14 @@ import React, { useMemo, useState, useCallback } from 'react';
 import {
     Tab,
     TextArea,
+    SelectInput,
+    Container,
     useAlert,
     TextInput,
     DateInput,
+    MultiSelectInput,
     TabPanel,
+    Checkbox,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -19,6 +23,8 @@ import {
     useForm,
     removeNull,
     getErrorObject,
+    getErrorString,
+    useFormObject,
     SetValueArg,
     internal,
     analyzeErrors,
@@ -36,6 +42,9 @@ import {
 import routes from '#base/configs/routes';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
+import {
+    FrameworkProperties,
+} from '#types/newAnalyticalFramework';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import PrivacyInput from './components/PrivacyInput';
@@ -64,6 +73,9 @@ import {
 import schema, { defaultFormValues, PartialFormType, SectionsType, WidgetsType } from './schema';
 import styles from './styles.css';
 
+const widgetIdSelector = (w: { id: number }) => w.id;
+const widgetLabelSelector = (w: { id: number; title: string }) => w.title;
+
 interface FrameworkFormProps {
     frameworkId: number | undefined;
     framework: Framework | undefined;
@@ -77,6 +89,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         organization,
         primaryTagging,
         secondaryTagging,
+        properties,
     } = framework;
 
     return removeNull({
@@ -86,6 +99,8 @@ function transformFramework(framework: Framework): FrameworkInput {
         organization: organization?.id,
         primaryTagging,
         secondaryTagging,
+        properties,
+        isVisualizationEnabled: isDefined(properties),
     });
 }
 
@@ -234,6 +249,8 @@ function FrameworkForm(props: FrameworkFormProps) {
     const pending = creatingAnalysisFramework || updatingAnalysisFramework;
 
     const error = getErrorObject(riskyError);
+    const frameworkPropertiesError = getErrorObject(error?.properties);
+    const statsConfigError = getErrorObject(frameworkPropertiesError?.stats_config);
 
     const handlePrimaryTaggingChange = useCallback(
         (val: SetValueArg<SectionsType | undefined>, name: 'primaryTagging') => {
@@ -258,7 +275,10 @@ function FrameworkForm(props: FrameworkFormProps) {
                 setError,
                 (val) => {
                     // NOTE: clearing out these data so they don't override
-                    const data = { ...val } as AnalysisFrameworkInputType;
+                    const cleanData = { ...val };
+                    delete cleanData.isVisualizationEnabled;
+
+                    const data = { ...cleanData } as AnalysisFrameworkInputType;
                     if (primaryTaggingPristine) {
                         delete data.primaryTagging;
                     }
@@ -295,20 +315,104 @@ function FrameworkForm(props: FrameworkFormProps) {
         detailsErrored,
         primaryTaggingErrored,
         secondaryTaggingErrored,
+        propertiesErrored,
     ] = useMemo(
         () => {
             const errorWithoutTaggings = { ...error };
             delete errorWithoutTaggings.primaryTagging;
             delete errorWithoutTaggings.secondaryTagging;
+            delete errorWithoutTaggings.properties;
 
             return [
                 analyzeErrors(errorWithoutTaggings),
                 analyzeErrors(error?.primaryTagging),
                 analyzeErrors(error?.secondaryTagging),
+                analyzeErrors(error?.properties),
             ];
         },
         [error],
     );
+
+    const onPropertiesChange = useFormObject<'properties', FrameworkProperties>('properties', setFieldValue, {} as FrameworkProperties);
+    const onStatsConfigChange = useFormObject('stats_config', onPropertiesChange, {} as FrameworkProperties['stats_config']);
+
+    const onAffectedGroupsChange = useCallback((newVal: number | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'affected_groups_widget');
+    }, [onStatsConfigChange]);
+
+    const onGeoWidgetChange = useCallback((newVal: number | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'geo_widget');
+    }, [onStatsConfigChange]);
+
+    const onSeverityWidgetChange = useCallback((newVal: number | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'severity_widget');
+    }, [onStatsConfigChange]);
+
+    const onReliabilityWidgetChange = useCallback((newVal: number | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'reliability_widget');
+    }, [onStatsConfigChange]);
+
+    const onSpecificNeedsWidgetChange = useCallback((newVal: number | undefined) => {
+        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'specific_needs_groups_widgets');
+    }, [onStatsConfigChange]);
+
+    const matrix1dValue = useMemo(() => (
+        value?.properties?.stats_config?.matrix1d?.map((d) => d.pk).filter(isDefined)
+    ), [value?.properties?.stats_config]);
+
+    const matrix2dValue = useMemo(() => (
+        value?.properties?.stats_config?.matrix2d?.map((d) => d.pk).filter(isDefined)
+    ), [value?.properties?.stats_config]);
+
+    const onMatrix1dValueChange = useCallback((newVal: number[] | undefined) => {
+        if (!newVal) {
+            onStatsConfigChange(undefined, 'matrix1d');
+        } else {
+            const transformedNewVal = newVal.map((d) => ({ pk: d }));
+            onStatsConfigChange(transformedNewVal, 'matrix1d');
+        }
+    }, [onStatsConfigChange]);
+
+    const onMatrix2dValueChange = useCallback((newVal: number[] | undefined) => {
+        if (!newVal) {
+            onStatsConfigChange(undefined, 'matrix1d');
+        } else {
+            const transformedNewVal = newVal.map((d) => ({ pk: d }));
+            onStatsConfigChange(transformedNewVal, 'matrix2d');
+        }
+    }, [onStatsConfigChange]);
+
+    const {
+        matrix1dWidgets,
+        matrix2dWidgets,
+        scaleWidgets,
+        geoWidgets,
+        organigramWidgets,
+        multiSelectWidgets,
+    } = useMemo(() => {
+        const widgets = [
+            ...(value.primaryTagging?.map((d) => d.widgets)?.flat() ?? []),
+            ...(value.secondaryTagging ?? []),
+        ];
+
+        const createdWidgets = widgets
+            .filter(isDefined)
+            .filter((w) => isDefined(w?.id))
+            .map((w) => ({
+                id: +w.id,
+                title: w.title,
+                widgetId: w.widgetId,
+            }));
+
+        return ({
+            matrix1dWidgets: createdWidgets.filter((w) => w.widgetId === 'MATRIX1D'),
+            matrix2dWidgets: createdWidgets.filter((w) => w.widgetId === 'MATRIX2D'),
+            scaleWidgets: createdWidgets.filter((w) => w.widgetId === 'SCALE'),
+            geoWidgets: createdWidgets.filter((w) => w.widgetId === 'GEO'),
+            organigramWidgets: createdWidgets.filter((w) => w.widgetId === 'ORGANIGRAM'),
+            multiSelectWidgets: createdWidgets.filter((w) => w.widgetId === 'MULTISELECT'),
+        });
+    }, [value]);
 
     return (
         <>
@@ -365,6 +469,15 @@ function FrameworkForm(props: FrameworkFormProps) {
                 >
                     {_ts('analyticalFramework', 'review')}
                 </Tab>
+                {value.isVisualizationEnabled && (
+                    <Tab
+                        name="viz-settings"
+                        transparentBorder
+                        className={_cs(propertiesErrored && styles.erroredTab)}
+                    >
+                        5. Visualization Settings
+                    </Tab>
+                )}
             </SubNavbarChildren>
             <TabPanel
                 className={_cs(styles.tabPanel, styles.detailsTabPanel)}
@@ -428,6 +541,13 @@ function FrameworkForm(props: FrameworkFormProps) {
                             disabled={pending || !!frameworkId}
                             label={_ts('analyticalFramework', 'frameworkVisibility')}
                         />
+                        <Checkbox
+                            name="isVisualizationEnabled"
+                            value={value.isVisualizationEnabled}
+                            onChange={setFieldValue}
+                            disabled={pending}
+                            label="Is Visualization Enabled"
+                        />
                     </div>
                     <div className={styles.imagePreview} />
                     {/*
@@ -487,6 +607,93 @@ function FrameworkForm(props: FrameworkFormProps) {
                     secondaryTagging={value.secondaryTagging}
                 />
             </TabPanel>
+            {value.isVisualizationEnabled && (
+                <TabPanel
+                    className={styles.tabPanel}
+                    name="viz-settings"
+                >
+                    <Container
+                        heading="Visualization Settings"
+                        headingSize="small"
+                        headingDescription="NOTE: You'll only be able to see widgets
+                        that are already created and saved."
+                        className={styles.vizSettingsContainer}
+                        contentClassName={styles.vizSettings}
+                    >
+                        <MultiSelectInput
+                            label="Matrix 1D"
+                            options={matrix1dWidgets}
+                            name="matrix1d"
+                            value={matrix1dValue}
+                            error={getErrorString(statsConfigError?.matrix1d)}
+                            onChange={onMatrix1dValueChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                        <MultiSelectInput
+                            label="Matrix 2D"
+                            options={matrix2dWidgets}
+                            name="matrix2d"
+                            value={matrix2dValue}
+                            error={getErrorString(statsConfigError?.matrix2d)}
+                            onChange={onMatrix2dValueChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                        <SelectInput
+                            label="Geo Widget"
+                            options={geoWidgets}
+                            name="geo_widget"
+                            value={value?.properties?.stats_config?.geo_widget?.pk}
+                            error={getErrorString(statsConfigError?.geo_widget)}
+                            onChange={onGeoWidgetChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                        <SelectInput
+                            label="Severity Widget"
+                            options={scaleWidgets}
+                            name="severity_widget"
+                            value={value?.properties?.stats_config?.severity_widget?.pk}
+                            error={getErrorString(statsConfigError?.severity_widget)}
+                            onChange={onSeverityWidgetChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                        <SelectInput
+                            label="Reliability Widget"
+                            options={scaleWidgets}
+                            name="reliability_widget"
+                            value={value?.properties?.stats_config?.reliability_widget?.pk}
+                            error={getErrorString(statsConfigError?.reliability_widget)}
+                            onChange={onReliabilityWidgetChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                        <SelectInput
+                            label="Affected Groups"
+                            options={organigramWidgets}
+                            name="affected_groups_widget"
+                            value={value?.properties?.stats_config?.affected_groups_widget?.pk}
+                            error={getErrorString(statsConfigError?.affected_groups_widget)}
+                            onChange={onAffectedGroupsChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                        <SelectInput
+                            label="Specific Needs Groups"
+                            options={multiSelectWidgets}
+                            name="specific_needs_groups_widgets"
+                            value={value?.properties
+                                ?.stats_config?.specific_needs_groups_widgets?.pk}
+                            error={getErrorString(statsConfigError?.specific_needs_groups_widgets)}
+                            onChange={onSpecificNeedsWidgetChange}
+                            keySelector={widgetIdSelector}
+                            labelSelector={widgetLabelSelector}
+                        />
+                    </Container>
+                </TabPanel>
+            )}
         </>
     );
 }
