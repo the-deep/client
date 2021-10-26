@@ -2,6 +2,10 @@
     background-color: var(--dui-color-foreground);
     padding: 0;
 
+    .header {
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large) 0;
+    }
+
     .content {
         display: flex;
         flex-grow: 1;
@@ -12,6 +16,13 @@
             border: 0;
             object-fit: contain;
             object-position: center center;
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
         }
     }
 }
