@@ -1,6 +1,8 @@
 import {
     ObjectSchema,
     ArraySchema,
+    forceNullType,
+    requiredCondition,
     requiredStringCondition,
     defaultUndefinedType,
     PartialForm,
@@ -8,7 +10,7 @@ import {
 
 import { FrameworkInput } from '../types';
 
-type FormType = FrameworkInput;
+type FormType = FrameworkInput & { isVisualizationEnabled?: boolean };
 // NOTE: they will be handled internally
 export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging'>;
 
@@ -70,20 +72,47 @@ const sectionsSchema: SectionsSchema = {
 export const defaultFormValues: PartialFormType = {
     title: '',
     isPrivate: false,
+    isVisualizationEnabled: false,
 };
 
 const schema: FormSchema = {
-    fields: (): FormSchemaFields => ({
-        // TODO: does not work right now
-        // previewImage: [],
+    fields: (value): FormSchemaFields => {
+        let baseSchema: FormSchemaFields = {
+            // TODO: does not work right now
+            // previewImage: [],
 
-        title: [requiredStringCondition],
-        description: [],
-        isPrivate: [],
-        organization: [],
+            title: [requiredStringCondition],
+            description: [],
+            isPrivate: [],
+            organization: [],
+            isVisualizationEnabled: [],
+            properties: [forceNullType],
 
-        primaryTagging: sectionsSchema,
-        secondaryTagging: widgetsSchema,
-    }),
+            primaryTagging: sectionsSchema,
+            secondaryTagging: widgetsSchema,
+        };
+
+        if (value?.isVisualizationEnabled) {
+            baseSchema = {
+                ...baseSchema,
+                properties: {
+                    fields: () => ({
+                        stats_config: {
+                            fields: () => ({
+                                matrix1d: [requiredCondition],
+                                matrix2d: [requiredCondition],
+                                geo_widget: [requiredCondition],
+                                severity_widget: [requiredCondition],
+                                reliability_widget: [requiredCondition],
+                                affected_groups_widget: [requiredCondition],
+                                specific_needs_groups_widgets: [requiredCondition],
+                            }),
+                        },
+                    }),
+                },
+            };
+        }
+        return baseSchema;
+    },
 };
 export default schema;

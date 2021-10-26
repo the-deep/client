@@ -1,3 +1,27 @@
 .dashboard {
-    color: var(--dui-color-text);
+    background-color: var(--dui-color-foreground);
+    padding: 0;
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        padding: 0;
+
+        .iframe {
+            flex-grow: 1;
+            border: 0;
+            object-fit: contain;
+            object-position: center center;
+        }
+    }
+}
+
+.modal {
+    width: 640px;
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+    }
 }

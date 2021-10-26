@@ -25,6 +25,8 @@ const CURRENT_PROJECT = gql`
             id
             isPrivate
             title
+            isVisualizationEnabled
+            isVisualizationAvailable
         }
     }
 `;

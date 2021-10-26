@@ -176,3 +176,35 @@ export type Widget = TextWidget
     | GeoLocationWidget
     | Matrix1dWidget
     | Matrix2dWidget;
+
+export interface FrameworkProperties {
+    // eslint-disable-next-line camelcase
+    stats_config: {
+        matrix1d?: {
+            pk: number;
+        }[];
+        matrix2d?: {
+            pk: number;
+        }[];
+        // eslint-disable-next-line camelcase
+        geo_widget?: {
+            pk: number;
+        };
+        // eslint-disable-next-line camelcase
+        severity_widget?: {
+            pk: number;
+        };
+        // eslint-disable-next-line camelcase
+        reliability_widget?: {
+            pk: number;
+        };
+        // eslint-disable-next-line camelcase
+        affected_groups_widget?: {
+            pk: number;
+        };
+        // eslint-disable-next-line camelcase
+        specific_needs_groups_widgets?: {
+            pk: number;
+        };
+    };
+}
