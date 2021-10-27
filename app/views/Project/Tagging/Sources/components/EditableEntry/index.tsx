@@ -11,6 +11,7 @@ import {
 import { gql, useMutation } from '@apollo/client';
 import {
     isDefined,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import {
@@ -25,7 +26,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { IoTrash } from 'react-icons/io5';
 
 import {
-    entrySchema,
+    getEntrySchema,
     PartialEntryType as EntryInputType,
 } from '#views/Project/EntryEdit/schema';
 import { Entry } from '#views/Project/EntryEdit/types';
@@ -104,6 +105,18 @@ function EditableEntry(props: Props) {
     } = props;
 
     const history = useHistory();
+
+    // FIXME: memoize this
+    const widgetsMapping = listToMap(
+        [
+            ...(primaryTagging?.flatMap((item) => (item.widgets ?? [])) ?? []),
+            ...(secondaryTagging ?? []),
+        ],
+        (item) => item.id,
+        (item) => item,
+    );
+    const schema = getEntrySchema(widgetsMapping);
+
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
     const [editMode, setEditModeTrue, setEditModeFalse] = useBooleanState(false);
@@ -113,7 +126,7 @@ function EditableEntry(props: Props) {
         validate,
         setError,
         error,
-    } = useForm(entrySchema, entry);
+    } = useForm(schema, entry);
 
     const [
         updateEntry,

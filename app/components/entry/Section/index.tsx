@@ -37,7 +37,9 @@ function Section(props: Props) {
     const widgetRendererParams = useCallback(
         (key: string, data: Widget): AttributeInputProps<number | undefined> => {
             const attribute = attributesMap[key];
-            const err = error?.[key];
+            const err = attribute
+                ? error?.[attribute.value.clientId]
+                : undefined;
             return {
                 className: _cs(
                     styles.widgetContainer,

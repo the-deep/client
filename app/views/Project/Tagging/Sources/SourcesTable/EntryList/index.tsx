@@ -18,7 +18,8 @@ import {
 } from './types';
 import EditableEntry from '../../components/EditableEntry';
 import {
-    LeadEntriesQuery,
+    EntriesByLeadQuery,
+    EntriesByLeadQueryVariables,
     LeadEntriesQueryVariables,
 } from '#generated/types';
 
@@ -38,7 +39,7 @@ function transformEntry(entry: Entry): EntryInputType {
 }
 
 export const LEAD_ENTRIES = gql`
-    query LeadEntries(
+    query EntriesByLead(
         $projectId: ID!,
         $leadId: ID!,
         $page: Int,
@@ -179,7 +180,7 @@ function EntryList(props: Props) {
 
     const [activePage, setActivePage] = useState(1);
     const variables = useMemo(
-        (): LeadEntriesQueryVariables | undefined => (
+        (): EntriesByLeadQueryVariables | undefined => (
             (projectId) ? {
                 projectId,
                 leadId,
@@ -195,7 +196,7 @@ function EntryList(props: Props) {
         data: leadEntriesResponse,
         loading: entryListPending,
         refetch: getEntries,
-    } = useQuery<LeadEntriesQuery, LeadEntriesQueryVariables>(
+    } = useQuery<EntriesByLeadQuery, EntriesByLeadQueryVariables>(
         LEAD_ENTRIES,
         {
             skip: isNotDefined(variables),
