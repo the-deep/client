@@ -278,7 +278,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     const cleanData = { ...val };
                     delete cleanData.isVisualizationEnabled;
 
-                    const data = { ...cleanData } as AnalysisFrameworkInputType;
+                    const data = cleanData as AnalysisFrameworkInputType;
                     if (primaryTaggingPristine) {
                         delete data.primaryTagging;
                     }
@@ -357,12 +357,12 @@ function FrameworkForm(props: FrameworkFormProps) {
     }, [onStatsConfigChange]);
 
     const matrix1dValue = useMemo(() => (
-        value?.properties?.stats_config?.matrix1d?.map((d) => d.pk).filter(isDefined)
-    ), [value?.properties?.stats_config]);
+        value.properties?.stats_config?.matrix1d?.map((d) => d.pk).filter(isDefined)
+    ), [value.properties?.stats_config]);
 
     const matrix2dValue = useMemo(() => (
-        value?.properties?.stats_config?.matrix2d?.map((d) => d.pk).filter(isDefined)
-    ), [value?.properties?.stats_config]);
+        value.properties?.stats_config?.matrix2d?.map((d) => d.pk).filter(isDefined)
+    ), [value.properties?.stats_config]);
 
     const onMatrix1dValueChange = useCallback((newVal: number[] | undefined) => {
         if (!newVal) {
@@ -615,8 +615,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     <Container
                         heading="Visualization Settings"
                         headingSize="small"
-                        headingDescription="NOTE: You'll only be able to see widgets
-                        that are already created and saved."
+                        headingDescription="NOTE: You'll only be able to see widgetsthat are already created and saved."
                         className={styles.vizSettingsContainer}
                         contentClassName={styles.vizSettings}
                     >
@@ -644,7 +643,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label="Geo Widget"
                             options={geoWidgets}
                             name="geo_widget"
-                            value={value?.properties?.stats_config?.geo_widget?.pk}
+                            value={value.properties?.stats_config?.geo_widget?.pk}
                             error={getErrorString(statsConfigError?.geo_widget)}
                             onChange={onGeoWidgetChange}
                             keySelector={widgetIdSelector}
@@ -654,7 +653,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label="Severity Widget"
                             options={scaleWidgets}
                             name="severity_widget"
-                            value={value?.properties?.stats_config?.severity_widget?.pk}
+                            value={value.properties?.stats_config?.severity_widget?.pk}
                             error={getErrorString(statsConfigError?.severity_widget)}
                             onChange={onSeverityWidgetChange}
                             keySelector={widgetIdSelector}
@@ -664,7 +663,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label="Reliability Widget"
                             options={scaleWidgets}
                             name="reliability_widget"
-                            value={value?.properties?.stats_config?.reliability_widget?.pk}
+                            value={value.properties?.stats_config?.reliability_widget?.pk}
                             error={getErrorString(statsConfigError?.reliability_widget)}
                             onChange={onReliabilityWidgetChange}
                             keySelector={widgetIdSelector}
@@ -674,7 +673,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label="Affected Groups"
                             options={organigramWidgets}
                             name="affected_groups_widget"
-                            value={value?.properties?.stats_config?.affected_groups_widget?.pk}
+                            value={value.properties?.stats_config?.affected_groups_widget?.pk}
                             error={getErrorString(statsConfigError?.affected_groups_widget)}
                             onChange={onAffectedGroupsChange}
                             keySelector={widgetIdSelector}
@@ -684,7 +683,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label="Specific Needs Groups"
                             options={multiSelectWidgets}
                             name="specific_needs_groups_widgets"
-                            value={value?.properties
+                            value={value.properties
                                 ?.stats_config?.specific_needs_groups_widgets?.pk}
                             error={getErrorString(statsConfigError?.specific_needs_groups_widgets)}
                             onChange={onSpecificNeedsWidgetChange}
