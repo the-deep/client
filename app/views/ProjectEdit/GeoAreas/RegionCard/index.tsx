@@ -234,6 +234,7 @@ function RegionCard(props: Props) {
         (key: string, data: PartialAdminLevel) => ({
             name: key,
             children: data.title,
+            transparentBorder: true,
         }),
         [],
     );
@@ -262,6 +263,7 @@ function RegionCard(props: Props) {
             heading={region.title}
             contentAlwaysMounted={false}
             expanded={isExpanded}
+            withoutBorder
             disabled={navigationDisabled}
             onExpansionChange={handleExpansion}
             headerActions={(
@@ -282,19 +284,9 @@ function RegionCard(props: Props) {
                 <ContainerCard
                     className={_cs(className, styles.addAdminLevel)}
                     heading="Custom Admin Levels"
+                    headingSize="extraSmall"
                     contentClassName={styles.content}
-                    footerActions={!regionResponse.isPublished && (
-                        <ConfirmButton
-                            name="submit"
-                            onClick={handlePublishGeoArea}
-                            disabled
-                            // disabled={navigationDisabled}
-                        >
-                            Publish Geo Area
-                        </ConfirmButton>
-                    )}
-                >
-                    {!regionResponse.isPublished && (
+                    headerActions={!regionResponse.isPublished && (
                         <Button
                             name="addAdminLevel"
                             className={styles.submit}
@@ -306,14 +298,24 @@ function RegionCard(props: Props) {
                             Add Admin Level
                         </Button>
                     )}
+                    footerActions={!regionResponse.isPublished && (
+                        <ConfirmButton
+                            name="submit"
+                            onClick={handlePublishGeoArea}
+                            variant="secondary"
+                            disabled
+                            // disabled={navigationDisabled}
+                        >
+                            Publish Area
+                        </ConfirmButton>
+                    )}
+                >
                     <Tabs
                         onChange={onActiveAdminLevelChange}
                         value={activeAdminLevelWithTempAdminLevel}
                         disabled={navigationDisabled}
                     >
-                        <TabList
-                            className={styles.tabs}
-                        >
+                        <TabList className={styles.tabs}>
                             <List
                                 data={adminLevelsWithTempAdminLevel}
                                 keySelector={tabKeySelector}

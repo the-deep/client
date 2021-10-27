@@ -256,6 +256,7 @@ function RegionMap(props: Props) {
     return (
         <Container
             className={_cs(styles.container, className)}
+            spacing="none"
             heading={title}
             headingSize="small"
             contentClassName={styles.content}

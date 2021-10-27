@@ -1,14 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { IoMapOutline } from 'react-icons/io5';
 import {
     Tabs,
     Tab,
     useAlert,
     TabList,
-    Header,
+    ContainerCard,
     List,
     useConfirmation,
 } from '@the-deep/deep-ui';
@@ -46,7 +44,7 @@ interface Props {
     triggerId?: number;
 }
 
-function RegionsPane(props: Props) {
+function RegionsMap(props: Props) {
     const {
         className,
         projectId,
@@ -118,6 +116,7 @@ function RegionsPane(props: Props) {
         (id: string, data: BasicRegion) => ({
             name: id,
             children: data.title,
+            transparentBorder: true,
         }),
         [],
     );
@@ -134,42 +133,47 @@ function RegionsPane(props: Props) {
     );
 
     return (
-        <div className={_cs(styles.regionsPane, className)}>
-            <RegionSelectInput
-                className={styles.region}
-                name="regions"
-                projectId={projectId}
-                value={undefined}
-                onChange={onRegionSelect}
-                options={regionOptions}
-                onOptionsChange={setRegionOptions}
-                placeholder="Add Geo area"
-                variant="general"
-                nonClearable
-                disabled={navigationDisabled}
-            />
+        <>
             <Tabs
                 value={activeRegion}
                 onChange={onActiveRegionChange}
                 disabled={navigationDisabled}
             >
-                <Header
-                    className={styles.header}
+                <ContainerCard
+                    className={_cs(styles.regionsPane, className)}
+                    spacing="none"
                     heading={_ts('geoAreas', 'projectMaps')}
                     headingSize="medium"
-                    childrenContainerClassName={styles.tabs}
+                    contentClassName={styles.tabPanelContainer}
+                    headerClassName={styles.header}
+                    headingContainerClassName={styles.headingContainer}
+                    headerActionsContainerClassName={styles.headerActions}
+                    headerActions={(
+                        <TabList className={styles.tabList}>
+                            <List
+                                data={regions}
+                                rendererParams={tabRendererParams}
+                                renderer={Tab}
+                                rendererClassName={styles.tab}
+                                keySelector={regionKeySelector}
+                            />
+                        </TabList>
+                    )}
                 >
-                    <TabList>
-                        <List
-                            data={regions}
-                            rendererParams={tabRendererParams}
-                            renderer={Tab}
-                            keySelector={regionKeySelector}
-                        />
-                    </TabList>
-                </Header>
-                <div className={styles.tabPanelContainer}>
                     {/* FIXME: show pending message */}
+                    <RegionSelectInput
+                        className={styles.region}
+                        name="regions"
+                        projectId={projectId}
+                        value={undefined}
+                        onChange={onRegionSelect}
+                        options={regionOptions}
+                        onOptionsChange={setRegionOptions}
+                        placeholder="Add Geo area"
+                        variant="general"
+                        nonClearable
+                        disabled={navigationDisabled}
+                    />
                     {!regionsPending && (regions.length ?? 0) < 1 && (
                         <div className={_cs(styles.message, className)}>
                             <IoMapOutline className={styles.icon} />
@@ -190,11 +194,11 @@ function RegionsPane(props: Props) {
                         rendererClassName={styles.tabPanel}
                         keySelector={regionKeySelector}
                     />
-                </div>
+                </ContainerCard>
             </Tabs>
             {modal}
-        </div>
+        </>
     );
 }
 
-export default RegionsPane;
+export default RegionsMap;

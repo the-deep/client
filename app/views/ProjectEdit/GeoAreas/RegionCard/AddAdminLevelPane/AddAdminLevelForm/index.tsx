@@ -129,7 +129,7 @@ function AddAdminLevelForm(props: Props) {
     return (
         <ContainerCard
             className={styles.form}
-            footerActions={(
+            footerActions={!isPublished && (
                 <>
                     <Button
                         name="delete"
@@ -139,16 +139,14 @@ function AddAdminLevelForm(props: Props) {
                     >
                         {value.id ? 'Delete' : 'Cancel'}
                     </Button>
-                    {!isPublished && (
-                        <Button
-                            name="submit"
-                            onClick={handleSubmit}
-                            disabled={pristine || pending}
-                            variant="transparent"
-                        >
-                            Save
-                        </Button>
-                    )}
+                    <Button
+                        name="submit"
+                        onClick={handleSubmit}
+                        disabled={pristine || pending}
+                        variant="transparent"
+                    >
+                        Save
+                    </Button>
                 </>
             )}
         >
