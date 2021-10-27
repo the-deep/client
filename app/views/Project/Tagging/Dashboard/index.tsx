@@ -1,30 +1,19 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { IoShareSocialOutline } from 'react-icons/io5';
 import {
-    IoHelpCircleOutline,
-    IoShareSocialOutline,
-    IoCopy,
-    IoReloadOutline,
-} from 'react-icons/io5';
-import {
-    Modal,
-    useAlert,
     PendingMessage,
-    QuickActionButton,
-    TextInput,
-    Checkbox,
     Message,
     Button,
     Container,
 } from '@the-deep/deep-ui';
+import { removeNull } from '@togglecorp/toggle-form';
 import {
     prepareUrlParams,
 } from '@togglecorp/toggle-request';
-import { removeNull } from '@togglecorp/toggle-form';
 import {
-    useQuery,
     gql,
-    useMutation,
+    useQuery,
 } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
@@ -32,10 +21,9 @@ import { useModalState } from '#hooks/stateManagement';
 import {
     ProjectVizQuery,
     ProjectVizQueryVariables,
-    ProjectVizConfigurationUpdateMutation,
-    ProjectVizConfigurationUpdateMutationVariables,
 } from '#generated/types';
-import _ts from '#ts';
+
+import VisualizationShareModal from './VisualizationShareModal';
 
 import styles from './styles.css';
 
@@ -54,157 +42,6 @@ const PROJECT_VIZ = gql`
         }
     }
 `;
-
-const UPDATE_PROJECT_VIZ_PUBLIC_SHARE = gql`
-mutation ProjectVizConfigurationUpdate($projectId: ID!, $action: ProjectStatsActionEnum!) {
-    project(id: $projectId) {
-        projectVizConfigurationUpdate(data: { action: $action }) {
-            ok
-            result {
-                dataUrl
-                publicUrl
-                publicShare
-                status
-            }
-        }
-    }
-}
-`;
-
-interface ShareModalProps {
-    url: string | undefined;
-    publicShareEnabled: boolean | undefined;
-    onClose: () => void;
-    projectId: string;
-    onPublicShareEnabledChange: (publicShareEnabled: boolean) => void;
-    onPublicUrlChange: (publicUrl: string | undefined) => void;
-    isAdmin: boolean;
-}
-
-function ShareModal(props: ShareModalProps) {
-    const {
-        url,
-        onClose,
-        publicShareEnabled,
-        onPublicShareEnabledChange,
-        onPublicUrlChange,
-        projectId,
-        isAdmin,
-    } = props;
-
-    const alert = useAlert();
-
-    const [
-        updateProjectVizPublicUrlShare,
-    ] = useMutation<
-    ProjectVizConfigurationUpdateMutation,
-    ProjectVizConfigurationUpdateMutationVariables
-    >(
-        UPDATE_PROJECT_VIZ_PUBLIC_SHARE,
-        {
-            onCompleted: (response) => {
-                const update = removeNull(response?.project?.projectVizConfigurationUpdate);
-                if (update?.ok) {
-                    alert.show(
-                        'Successfully changed url status.',
-                        {
-                            variant: 'success',
-                        },
-                    );
-                    onPublicShareEnabledChange(!!update?.result?.publicShare);
-                    onPublicUrlChange(update?.result?.publicUrl);
-                }
-            },
-            onError: (gqlError) => {
-                alert.show(
-                    gqlError.message,
-                    { variant: 'error' },
-                );
-            },
-        },
-    );
-
-    const handleCheckboxClick = useCallback(() => {
-        updateProjectVizPublicUrlShare({
-            variables: {
-                projectId,
-                action: publicShareEnabled ? 'OFF' : 'ON',
-            },
-        });
-    }, [projectId, publicShareEnabled, updateProjectVizPublicUrlShare]);
-
-    const handleResetClick = useCallback(() => {
-        updateProjectVizPublicUrlShare({
-            variables: {
-                projectId,
-                action: 'NEW',
-            },
-        });
-    }, [projectId, updateProjectVizPublicUrlShare]);
-
-    const copyToClipboard = useCallback(() => {
-        navigator.clipboard.writeText(url ?? '');
-
-        alert.show(
-            'Url was successfully copied to the clipboard',
-            {
-                variant: 'info',
-            },
-        );
-    }, [url, alert]);
-
-    return (
-        <Modal
-            className={styles.modal}
-            heading="Share Public Link"
-            bodyClassName={styles.modalBody}
-            onCloseButtonClick={onClose}
-        >
-            <Checkbox
-                name="isShared"
-                label="Enable Public Link"
-                value={publicShareEnabled}
-                onChange={handleCheckboxClick}
-                disabled={isAdmin}
-            />
-            {publicShareEnabled && url && (
-                <>
-                    <TextInput
-                        name="url"
-                        value={url}
-                        readOnly
-                        actions={url && (
-                            <QuickActionButton
-                                name="copy"
-                                variant="secondary"
-                                title="copy"
-                                onClick={copyToClipboard}
-                            >
-                                <IoCopy />
-                            </QuickActionButton>
-                        )}
-                    />
-                    {isAdmin && (
-                        <Button
-                            name="reset"
-                            onClick={handleResetClick}
-                            variant="secondary"
-                            icons={(
-                                <IoReloadOutline />
-                            )}
-                        >
-                            Reset Public URL
-                        </Button>
-                    )}
-                </>
-            )}
-            <p>
-                <IoHelpCircleOutline />
-                {_ts('entries', 'entriesPublicLinkHelpText')}
-            </p>
-        </Modal>
-    );
-}
 
 interface Props {
     className?: string;
@@ -233,10 +70,9 @@ function Dashboard(props: Props) {
             skip: !activeProject,
             variables,
             onCompleted: (result) => {
-                if (result?.project?.vizData?.publicUrl) {
-                    setPublicUrl(result?.project?.vizData?.publicUrl);
-                }
-                setPublicShareEnabled(result?.project?.vizData?.publicShare);
+                const cleanResult = removeNull(result);
+                setPublicUrl(cleanResult?.project?.vizData?.publicUrl);
+                setPublicShareEnabled(cleanResult?.project?.vizData?.publicShare);
             },
         },
     );
@@ -290,7 +126,7 @@ function Dashboard(props: Props) {
                 />
             )}
             {isShareModalShown && activeProject && publicUrl && (
-                <ShareModal
+                <VisualizationShareModal
                     url={publicUrl}
                     projectId={activeProject}
                     publicShareEnabled={publicShareEnabled}
