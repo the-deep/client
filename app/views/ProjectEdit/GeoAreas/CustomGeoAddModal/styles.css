@@ -1,8 +1,4 @@
 .row {
     display: flex;
-
-    .input {
-        flex-basis: 50%;
-        padding: var(--spacing-small);
-    }
+    gap: var(--dui-spacing-medium);
 }
