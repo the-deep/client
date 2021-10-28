@@ -32,6 +32,8 @@ const ME = gql`
                 id
                 isPrivate
                 title
+                isVisualizationEnabled
+                isVisualizationAvailable
             }
         }
     }

@@ -79,6 +79,8 @@ const LOGIN = gql`
                     hasAssessmentTemplate
                     isPrivate
                     title
+                    isVisualizationEnabled
+                    isVisualizationAvailable
                 }
             }
             captchaRequired
@@ -103,6 +105,8 @@ const LOGIN_WITH_HID = gql`
                     id
                     isPrivate
                     title
+                    isVisualizationEnabled
+                    isVisualizationAvailable
                 }
             }
             errors

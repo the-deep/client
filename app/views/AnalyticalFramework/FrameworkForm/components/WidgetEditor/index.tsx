@@ -15,6 +15,7 @@ import MultiSelectWidgetForm from './MultiSelectWidgetForm';
 import ScaleWidgetForm from './ScaleWidgetForm';
 import SingleSelectWidgetForm from './SingleSelectWidgetForm';
 import OrganigramWidgetForm from './OrganigramWidgetForm';
+import GeoLocationWidgetForm from './GeoWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
@@ -178,6 +179,17 @@ function WidgetEditor<T>(props: Props<T>) {
         case 'ORGANIGRAM': {
             return (
                 <OrganigramWidgetForm
+                    className={className}
+                    initialValue={initialValue}
+                    onChange={handleChange}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                />
+            );
+        }
+        case 'GEO': {
+            return (
+                <GeoLocationWidgetForm
                     className={className}
                     initialValue={initialValue}
                     onChange={handleChange}

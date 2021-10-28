@@ -38,6 +38,7 @@ const FRAMEWORK = gql`
             }
         }
         title
+        properties
         id
         description
         allowedPermissions
