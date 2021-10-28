@@ -1,11 +1,10 @@
 .region {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    background-color: var(--dui-color-background);
 
     .add-admin-level {
         display: flex;
         flex-grow: 1;
+        background-color: var(--dui-color-background);
 
         .content {
             display: flex;

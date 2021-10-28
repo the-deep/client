@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import { PartialForm } from '@togglecorp/toggle-form';
 import {
     Button,
-    ListView,
+    List,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -19,9 +19,10 @@ import { useRequest } from '#base/utils/restRequest';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
-import RegionsPane from './RegionsPane';
+import RegionsMap from './RegionsMap';
 import RegionCard from './RegionCard';
 import CustomGeoAddModal from './CustomGeoAddModal';
+
 import styles from './styles.css';
 
 const regionKeySelector = (d: Region) => d.id;
@@ -132,7 +133,7 @@ function GeoAreas(props: Props) {
     return (
         <div className={_cs(className, styles.geoAreas)}>
             <div className={styles.mapContainer}>
-                <RegionsPane
+                <RegionsMap
                     className={styles.map}
                     projectId={activeProject}
                     regions={regionResponse?.regions}
@@ -146,40 +147,39 @@ function GeoAreas(props: Props) {
                     regionsPending={regionsPending}
                 />
             </div>
-            <div className={styles.listContainer}>
-                <Button
-                    className={styles.addCustom}
-                    variant="secondary"
-                    name="addCustomGeo"
-                    icons={<IoAdd />}
-                    onClick={showGeoAddModal}
-                    disabled={navigationDisabled}
-                >
-                    {_ts('geoAreas', 'addCustom')}
-                </Button>
-                <Container
-                    className={styles.geoAreasDropdown}
-                    headerClassName={styles.header}
-                    contentClassName={styles.content}
-                    heading={_ts('geoAreas', 'title')}
-                >
-                    <ListView
-                        className={styles.regions}
-                        data={regionResponse?.regions}
-                        rendererParams={regionRendererParams}
-                        renderer={RegionCard}
-                        rendererClassName={styles.region}
-                        keySelector={regionKeySelector}
-                    />
-                </Container>
-                {geoAddModalVisible && (
-                    <CustomGeoAddModal
-                        projectId={activeProject}
-                        onSuccess={handleGeoAreaAddSuccess}
-                        onModalClose={hideGeoAddModal}
-                    />
+            <Container
+                className={styles.geoAreasList}
+                contentClassName={styles.content}
+                heading={_ts('geoAreas', 'title')}
+                headerActions={(
+                    <Button
+                        className={styles.addCustom}
+                        variant="secondary"
+                        name="addCustomGeo"
+                        icons={<IoAdd />}
+                        onClick={showGeoAddModal}
+                        disabled={navigationDisabled}
+                    >
+                        {_ts('geoAreas', 'addCustom')}
+                    </Button>
                 )}
-            </div>
+                headingSize="small"
+            >
+                <List
+                    data={regionResponse?.regions}
+                    rendererParams={regionRendererParams}
+                    renderer={RegionCard}
+                    rendererClassName={styles.region}
+                    keySelector={regionKeySelector}
+                />
+            </Container>
+            {geoAddModalVisible && (
+                <CustomGeoAddModal
+                    projectId={activeProject}
+                    onSuccess={handleGeoAreaAddSuccess}
+                    onModalClose={hideGeoAddModal}
+                />
+            )}
         </div>
     );
 }
