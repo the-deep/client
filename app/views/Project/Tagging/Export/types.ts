@@ -1,3 +1,8 @@
+import {
+    WidgetType,
+    ProjectFrameworkDetailsQuery,
+} from '#generated/types';
+
 interface DateValue {
     startDate: string;
     endDate: string;
@@ -41,9 +46,10 @@ export interface Node {
     nodes?: this[];
 }
 
-export interface TreeSelectableWidget<T extends string | number> extends Node {
+export interface TreeSelectableWidget<T extends string> extends Node {
     id: T;
-    actualTitle?: string;
-    conditionalId?: number;
-    isConditional?: boolean;
 }
+
+export type AnalysisFramework = NonNullable<NonNullable<ProjectFrameworkDetailsQuery['project']>['analysisFramework']>;
+
+export type Widget = Pick<WidgetType, 'id' | 'title' | 'widgetId' | 'clientId' | 'order' | 'properties' | 'key'>;

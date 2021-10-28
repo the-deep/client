@@ -9,7 +9,7 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    projectId: number;
+    projectId: string;
     onClose: () => void;
 }
 

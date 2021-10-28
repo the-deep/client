@@ -11,8 +11,9 @@ import {
 import ProjectContext from '#base/context/ProjectContext';
 import { useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
-
-import { SourceEntryFilter } from '../../types';
+import {
+    SourceFilterOptionsQueryVariables,
+} from '#generated/types';
 import ExportPreview from '../../ExportPreview';
 import LeadsSelection from '../../LeadsSelection';
 import styles from './styles.css';
@@ -33,7 +34,7 @@ interface ExportTriggerResponse {
 
 interface Props {
     className?: string;
-    projectId: number;
+    projectId: string;
 }
 
 function AssessmentsExportSelection(props: Props) {
@@ -49,9 +50,9 @@ function AssessmentsExportSelection(props: Props) {
 
     const [queryTitle, setQueryTitle] = useState<string>();
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+    const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
-    const [filterValues, setFilterValues] = useState<SourceEntryFilter>({});
+    const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const {
         pending: exportPending,

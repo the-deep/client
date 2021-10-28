@@ -84,11 +84,11 @@ const statusVariantMap: Record<Lead['status'], 'default' | 'gradient1' | 'comple
 const maxItemsPerPage = 10;
 
 const defaultSorting = {
-    name: 'created_at',
-    direction: 'asc',
+    name: 'createdAt',
+    direction: 'Ascending',
 };
 
-export const PROJECT_ENTRIES = gql`
+export const PROJECT_SOURCES = gql`
     query ProjectSources(
         $projectId: ID!,
         $page: Int,
@@ -138,7 +138,6 @@ export const PROJECT_ENTRIES = gql`
                 pageSize
                 results {
                     id
-
                     confidentiality
                     clientId
                     status
@@ -257,7 +256,7 @@ function SourcesTable(props: Props) {
         loading: projectSourcesPending,
         refetch: getProjectSources,
     } = useQuery<ProjectSourcesQuery, ProjectSourcesQueryVariables>(
-        PROJECT_ENTRIES,
+        PROJECT_SOURCES,
         {
             skip: isNotDefined(variables),
             variables,
