@@ -1,40 +1,77 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     Button,
     useAlert,
     ExpandableContainer,
     TextInput,
 } from '@the-deep/deep-ui';
+import { gql, useQuery } from '@apollo/client';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 import {
-    FrameworkFields,
     Lead,
     ExportType,
-    WidgetElement,
-    ConditionalWidget,
     EntryOptions,
+    FrameworkFields,
 } from '#types';
-import ProjectContext from '#base/context/ProjectContext';
-
 import {
-    SourceEntryFilter,
+    ProjectFrameworkDetailsQuery,
+    ProjectFrameworkDetailsQueryVariables,
+    SourceFilterOptionsQueryVariables,
+} from '#generated/types';
+import ProjectContext from '#base/context/ProjectContext';
+import {
     Node,
     TreeSelectableWidget,
+    AnalysisFramework,
+    Widget,
 } from '../../types';
 import {
     SECTOR_FIRST,
     createReportStructure,
-    getContextualWidgetsFromFramework,
-    getTextWidgetsFromFramework,
 } from '../../utils';
 import ExportPreview from '../../ExportPreview';
 import LeadsSelection from '../../LeadsSelection';
 import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.css';
+
+const PROJECT_FRAMEWORK_DETAILS = gql`
+    query ProjectFrameworkDetails($projectId: ID!) {
+        project(id: $projectId) {
+            analysisFramework {
+                id
+                primaryTagging {
+                    widgets {
+                        id
+                        clientId
+                        key
+                        order
+                        properties
+                        title
+                        widgetId
+                    }
+                    clientId
+                    id
+                    order
+                    title
+                    tooltip
+                }
+                secondaryTagging {
+                    clientId
+                    id
+                    key
+                    order
+                    title
+                    properties
+                    widgetId
+                }
+            }
+        }
+    }
+`;
 
 interface ExportReportStructure {
     id: string;
@@ -69,19 +106,10 @@ const createReportStructureLevelForExport = (nodes: Node[]): ReportStructureLeve
         }))
 );
 
-const createWidgetIds = (widgets: TreeSelectableWidget<string | number>[]) => (
+const createWidgetIds = (widgets: TreeSelectableWidget<string>[]) => (
     widgets
         .filter((widget) => widget.selected)
-        .map((widget) => {
-            if (widget.isConditional) {
-                return ([
-                    widget.conditionalId,
-                    widget.id,
-                    widget.actualTitle,
-                ]);
-            }
-            return widget.id;
-        })
+        .map((widget) => (widget.id))
 );
 
 interface ExportTriggerResponse {
@@ -93,7 +121,36 @@ export interface SelectedLead extends Lead {
 }
 interface Props {
     className?: string;
-    projectId: number;
+    projectId: string;
+}
+
+function getWidgets(framework: AnalysisFramework | undefined | null) {
+    if (!framework) {
+        return [];
+    }
+    const primaryWidgets = framework.primaryTagging?.map((v) => v.widgets)
+        .flat().filter(isDefined);
+    const secondaryWidgets = framework.secondaryTagging;
+    const allWidgets = [
+        ...(primaryWidgets || []),
+        ...(secondaryWidgets || []),
+    ];
+
+    return allWidgets;
+}
+
+function filterContexualWidgets(widgets: Widget[]) {
+    const contextualWidgets = widgets.filter((v) => v.widgetId === 'SELECT'
+        || 'MULTISELECT'
+        || 'SCALE'
+        || 'GEO'
+        || 'TIME'
+        || 'DATE'
+        || 'ORGANIGRAM'
+        || 'DATE_RANGE'
+        || 'TIME_RANGE');
+
+    return contextualWidgets;
 }
 
 function EntriesExportSelection(props: Props) {
@@ -110,7 +167,7 @@ function EntriesExportSelection(props: Props) {
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
-    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
+    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [showEntryId, setShowEntryId] = useState<boolean>(true);
     const [showAryDetails, setShowAryDetails] = useState<boolean>(true);
@@ -118,9 +175,9 @@ function EntriesExportSelection(props: Props) {
     const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
-    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+    const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
-    const [filterValues, setFilterValues] = useState<SourceEntryFilter>({});
+    const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [
         reportStructureVariant,
@@ -129,23 +186,39 @@ function EntriesExportSelection(props: Props) {
     const [
         contextualWidgets,
         setContextualWidgets,
-    ] = useState<TreeSelectableWidget<string | number>[]>([]);
+    ] = useState<TreeSelectableWidget<string>[]>([]);
+
+    const variables = useMemo(
+        (): ProjectFrameworkDetailsQueryVariables => ({
+            projectId,
+        }),
+        [projectId],
+    );
 
     const {
-        pending: analysisFrameworkPending,
-        response: analysisFramework,
-    } = useRequest<FrameworkFields>({
-        url: `server://projects/${projectId}/analysis-framework/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            const textWidgetList = getTextWidgetsFromFramework(response);
-            const contextualWidgetList = getContextualWidgetsFromFramework(response);
-            setTextWidgets(textWidgetList);
-            setContextualWidgets(contextualWidgetList);
-        },
-        failureHeader: _ts('export', 'afLabel'),
-    });
+        loading: frameworkGetPending,
+        data: frameworkResponse,
+    } = useQuery<ProjectFrameworkDetailsQuery, ProjectFrameworkDetailsQueryVariables>(
+        PROJECT_FRAMEWORK_DETAILS,
+        {
+            variables,
+            onCompleted: (response) => {
+                // TODO handle for conditional widgets
+                const widgets = getWidgets(response.project?.analysisFramework);
+                const textWidgetList = widgets
+                    .filter((v) => v.widgetId === 'TEXT')
+                    .map((v) => ({ ...v, selected: true }));
 
+                const contextualWidgetList = filterContexualWidgets(widgets)
+                    .map((v) => ({ ...v, selected: true }));
+                setTextWidgets(textWidgetList);
+                setContextualWidgets(contextualWidgetList);
+            },
+        },
+    );
+
+    const analysisFramework = frameworkResponse?.project?.analysisFramework;
+    console.warn('frameworkPending', frameworkGetPending, frameworkResponse);
     const entryOptionsQueryParams = useMemo(() => ({
         project: projectId,
     }), [projectId]);
@@ -160,15 +233,24 @@ function EntriesExportSelection(props: Props) {
         failureHeader: 'Entry Options',
     });
 
+    const {
+        response: af,
+    } = useRequest<FrameworkFields>({
+        url: `server://projects/${projectId}/analysis-framework/`,
+        method: 'GET',
+        failureHeader: _ts('export', 'afLabel'),
+    });
+
     useEffect(() => {
         const structure = createReportStructure(
             reportStructureVariant,
             includeSubSector,
-            analysisFramework,
+            af,
         );
         setReportStructure(structure);
-    }, [analysisFramework, reportStructureVariant, includeSubSector]);
+    }, [af, reportStructureVariant, includeSubSector]);
 
+    console.warn('structure', reportStructure);
     const handleReportStructureVariantChange = useCallback((value: string) => {
         setReportStructureVariant(value);
     }, []);
@@ -274,24 +356,15 @@ function EntriesExportSelection(props: Props) {
         startExport(true);
     }, [setPreviewId, startExport]);
 
-    const requestsPending = analysisFrameworkPending || entryOptionsPending;
+    const requestsPending = frameworkGetPending || entryOptionsPending;
+
     const showMatrix2dOptions = useMemo(
         () => {
-            if (requestsPending || !analysisFramework || isNotDefined(analysisFramework.widgets)) {
+            if (requestsPending || !analysisFramework) {
                 return false;
             }
-            return analysisFramework.widgets.some((widget: WidgetElement<unknown>) => {
-                if (widget.widgetId === 'matrix2dWidget') {
-                    return true;
-                }
-                if (widget.widgetId === 'conditionalWidget') {
-                    const { properties: { data } } = widget as WidgetElement<ConditionalWidget>;
-                    const widgetsList = (data?.widgets ?? [])
-                        .map((w) => w?.widget);
-                    return widgetsList.some((w) => w?.widgetId === 'matrix2dWidget');
-                }
-                return false;
-            });
+            const widgets = getWidgets(analysisFramework);
+            return widgets.some((widget) => widget.widgetId === 'MATRIX2D'); // TODO check for conditional widgets
         },
         [analysisFramework, requestsPending],
     );
@@ -320,10 +393,6 @@ function EntriesExportSelection(props: Props) {
                             className={styles.leadsTableContainer}
                             projectId={projectId}
                             filterOnlyUnprotected={filterOnlyUnprotected}
-                            entriesFilters={analysisFramework?.filters}
-                            entriesWidgets={analysisFramework?.widgets}
-                            entryOptions={entryOptions}
-                            pending={requestsPending}
                             selectedLeads={selectedLeads}
                             onSelectLeadChange={setSelectedLeads}
                             selectAll={selectAll}

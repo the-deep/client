@@ -21,8 +21,8 @@ type ExportType = 'export-entry-history' | 'export-assessment-history';
 
 function Export() {
     const { project } = React.useContext(ProjectContext);
-    const activeProject = project ? +project.id : undefined;
-    const [activeTab, setActiveTab] = useState<ExportType>('export-entry-history');
+    const activeProject = project ? project.id : undefined;
+    const [activeTab, setActiveTab] = useState<ExportType | undefined>('export-entry-history');
 
     const [
         newExportModalShown,

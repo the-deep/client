@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import {
     DateOutput,
     Pager,
@@ -16,64 +16,156 @@ import {
     Checkbox,
     CheckboxProps,
 } from '@the-deep/deep-ui';
+import { useQuery, gql } from '@apollo/client';
 
-import { useRequest } from '#base/utils/restRequest';
-import _ts from '#ts';
 import {
-    FilterFields,
-    Lead,
-    MultiResponse,
-    WidgetElement,
-    EntryOptions,
-} from '#types';
-
-import { SourceEntryFilter } from '../types';
-import CombinedSourceEntryFilterForm from './CombinedSourceEntryFilterForm';
+    ProjectSourcesQuery,
+    ProjectSourcesQueryVariables,
+    SourceFilterOptionsQueryVariables,
+} from '#generated/types';
+import SourcesFilter from '../../Sources/SourcesFilter';
 import styles from './styles.css';
 
+type Project = NonNullable<ProjectSourcesQuery['project']>;
+type Lead = NonNullable<NonNullable<NonNullable<Project['leads']>['results']>[number]>;
+
 const defaultSorting = {
-    name: 'created_at',
-    direction: 'asc',
+    name: 'createdAt',
+    direction: 'Ascending',
 };
 
-const leadsKeySelector: (d: Lead) => number = (d) => d.id;
+function leadsKeySelector(d: Lead) {
+    return d.id;
+}
 const maxItemsPerPage = 10;
+
+export const PROJECT_LEADS = gql`
+    query ProjectSources(
+        $projectId: ID!,
+        $page: Int,
+        $pageSize: Int,
+        $ordering: String,
+        $assignees: [ID!],
+        $authoringOrganizationTypes: [ID!],
+        $confidentiality: LeadConfidentialityEnum,
+        $createdAt_Gte: DateTime,
+        $createdAt_Lt: DateTime,
+        $emmEntities: String,
+        $emmKeywords: String,
+        $emmRiskFactors: String,
+        $exists: LeadExistsEnum,
+        $priorities: [LeadPriorityEnum!],
+        $publishedOn_Gte: Date,
+        $publishedOn_Lt: Date,
+        $search: String,
+        $statuses: [LeadStatusEnum!],
+        $entriesFilterData: LeadEntriesFilterData,
+        $customFilters: LeadCustomFilterEnum,
+    ) {
+        project(id: $projectId) {
+            leads (
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+                assignees: $assignees,
+                authoringOrganizationTypes: $authoringOrganizationTypes,
+                confidentiality: $confidentiality,
+                createdAt_Gte: $createdAt_Gte,
+                createdAt_Lt: $createdAt_Lt,
+                emmEntities: $emmEntities,
+                emmKeywords: $emmKeywords,
+                emmRiskFactors: $emmRiskFactors,
+                exists: $exists,
+                priorities: $priorities,
+                publishedOn_Gte: $publishedOn_Gte,
+                publishedOn_Lt: $publishedOn_Lt,
+                search: $search,
+                statuses: $statuses,
+                entriesFilterData: $entriesFilterData,
+                customFilters: $customFilters,
+            ) {
+                totalCount
+                page
+                pageSize
+                results {
+                    id
+                    confidentiality
+                    clientId
+                    status
+                    statusDisplay
+                    createdAt
+                    title
+                    publishedOn
+                    priority
+                    createdBy {
+                        id
+                        displayName
+                    }
+                    project {
+                        id
+                    }
+                    authors {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    assignee {
+                        id
+                        displayName
+                    }
+                    source {
+                        mergedAs {
+                            id
+                            title
+                        }
+                        id
+                        url
+                        title
+                    }
+                    entriesCounts {
+                        total
+                    }
+                    leadPreview {
+                        pageCount
+                    }
+                    isAssessmentLead
+                }
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
-    pending?: boolean;
-    projectId: number;
-    filterOnlyUnprotected: boolean;
-    entriesFilters?: FilterFields[];
-    entriesWidgets?: WidgetElement<unknown>[];
-    entryOptions?: EntryOptions;
-    hasAssessment?: boolean;
-    onSelectLeadChange: (values: number[]) => void;
-    selectedLeads: number[];
+    projectId: string;
+    filterOnlyUnprotected: boolean; // TODO handle this
+    hasAssessment?: boolean; // TODO handle this
+    onSelectLeadChange: (values: string[]) => void;
+    selectedLeads: string[];
     selectAll: boolean;
     onSelectAllChange: (v: boolean) => void;
-    filterValues: SourceEntryFilter;
-    onFilterApply: (values: SourceEntryFilter) => void;
+    filterValues: Omit<SourceFilterOptionsQueryVariables, 'projectId'>;
+    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
 }
 
 function LeadsSelection(props: Props) {
     const {
         projectId,
         className,
-        filterOnlyUnprotected,
-        entriesFilters,
-        entriesWidgets,
-        entryOptions,
-        hasAssessment,
         selectedLeads,
         onSelectLeadChange,
         selectAll,
         onSelectAllChange,
         filterValues,
         onFilterApply,
-        pending,
+        filterOnlyUnprotected,
+        hasAssessment, // TODO If hasAssessment don't show entry filters
     } = props;
 
+    console.warn('filterOnlyUnprotected', filterOnlyUnprotected, hasAssessment);
     const sortState = useSortState();
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
@@ -83,58 +175,36 @@ function LeadsSelection(props: Props) {
 
     const [activePage, setActivePage] = useState<number>(1);
 
-    const leadsRequestBody = useMemo(() => ({
-        custom_filters: !hasAssessment ? 'exclude_empty_filtered_entries' : '',
-        ordering,
-        project: [projectId],
-        ...filterValues,
-        exits: hasAssessment ? 'assessment_exists' : undefined,
-        confidentiality: filterOnlyUnprotected ? ['unprotected'] : undefined,
-    }), [
-        ordering,
-        projectId,
-        filterValues,
-        hasAssessment,
-        filterOnlyUnprotected,
-    ]);
-
-    const leadsRequestQuery = useMemo(
-        () => ({
-            fields: [
-                'id',
-                'title',
-                'created_at',
-                'published_on',
-                'entries_count',
-                'filtered_entries_count',
-                'source_detail',
-                'authors_detail',
-            ],
-            project: projectId,
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-        }),
-        [activePage, projectId],
+    const variables = useMemo(
+        (): ProjectSourcesQueryVariables | undefined => (
+            (projectId) ? {
+                ...filterValues,
+                projectId,
+                page: activePage,
+                pageSize: maxItemsPerPage,
+                ordering,
+            } : undefined
+        ),
+        [projectId, activePage, ordering, filterValues],
     );
 
     const {
-        pending: leadsPending,
-        response: leadsResponse,
-    } = useRequest<MultiResponse<Lead>>({
-        url: 'server://v2/leads/filter/',
-        method: 'POST',
-        query: leadsRequestQuery,
-        skip: pending,
-        body: leadsRequestBody,
-        failureHeader: _ts('export', 'leadsLabel'),
-    });
+        data: projectSourcesResponse,
+        loading: projectSourcesPending,
+    } = useQuery<ProjectSourcesQuery, ProjectSourcesQueryVariables>(
+        PROJECT_LEADS,
+        {
+            skip: isNotDefined(variables),
+            variables,
+        },
+    );
 
     const handleSelectAll = useCallback((value: boolean) => {
         onSelectAllChange(value);
         onSelectLeadChange([]);
     }, [onSelectAllChange, onSelectLeadChange]);
 
-    const handleSelection = useCallback((_: boolean, id: number) => {
+    const handleSelection = useCallback((_: boolean, id: string) => {
         const isSelected = selectedLeads.includes(id);
         if (isSelected) {
             onSelectLeadChange(selectedLeads.filter((v) => v !== id));
@@ -145,7 +215,7 @@ function LeadsSelection(props: Props) {
 
     const columns = useMemo(() => {
         const selectColumn: TableColumn<
-        Lead, number, CheckboxProps<number>, CheckboxProps<number>
+        Lead, string, CheckboxProps<string>, CheckboxProps<string>
         > = {
             id: 'select',
             title: '',
@@ -166,9 +236,9 @@ function LeadsSelection(props: Props) {
             columnWidth: 48,
         };
         const createdAtColumn: TableColumn<
-        Lead, number, DateOutputProps, TableHeaderCellProps
+        Lead, string, DateOutputProps, TableHeaderCellProps
         > = {
-            id: 'created_at',
+            id: 'createdAt',
             title: 'Created at',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -181,9 +251,9 @@ function LeadsSelection(props: Props) {
             columnWidth: 128,
         };
         const publishedOnColumn: TableColumn<
-        Lead, number, DateOutputProps, TableHeaderCellProps
+        Lead, string, DateOutputProps, TableHeaderCellProps
         > = {
-            id: 'published_on',
+            id: 'publishedOn',
             title: 'Published Date',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -199,7 +269,7 @@ function LeadsSelection(props: Props) {
         return ([
             selectColumn,
             createdAtColumn,
-            createStringColumn<Lead, number>(
+            createStringColumn<Lead, string>(
                 'title',
                 'Title',
                 (item) => item?.title,
@@ -208,29 +278,29 @@ function LeadsSelection(props: Props) {
                     columnClassName: styles.titleColumn,
                 },
             ),
-            createStringColumn<Lead, number>(
+            createStringColumn<Lead, string>(
                 'source',
                 'Publisher',
-                (item) => item?.sourceDetail?.title ?? item?.sourceRaw,
+                (item) => item?.source?.title ?? item?.source?.mergedAs?.title,
                 {
                     sortable: true,
                     columnWidth: 160,
                 },
             ),
-            createStringColumn<Lead, number>(
-                'authorsDetail',
+            createStringColumn<Lead, string>(
+                'authors',
                 'Authors',
-                (item) => item?.authorsDetail.map((v) => v.title).join(','),
+                (item) => item?.authors?.map((v) => v.title ?? v.mergedAs?.title).join(','),
                 {
                     sortable: false,
                     columnWidth: 144,
                 },
             ),
             publishedOnColumn,
-            createNumberColumn<Lead, number>(
-                'filtered_entries_count',
+            createNumberColumn<Lead, string>(
+                'entriesCounts',
                 'No of entries',
-                (item) => item?.entriesCount,
+                (item) => item?.entriesCounts?.total,
                 {
                     sortable: true,
                 },
@@ -245,20 +315,16 @@ function LeadsSelection(props: Props) {
 
     return (
         <div className={_cs(className, styles.leadsSelection)}>
-            <CombinedSourceEntryFilterForm
+            <SourcesFilter
                 className={styles.sourceEntryFilter}
                 onFilterApply={onFilterApply}
-                filters={entriesFilters}
-                widgets={entriesWidgets}
-                entryOptions={entryOptions}
                 projectId={projectId}
-                hasAssessment={hasAssessment}
             />
             <div className={styles.tableContainer}>
-                {leadsPending && (<PendingMessage />)}
+                {projectSourcesPending && (<PendingMessage />)}
                 <SortContext.Provider value={sortState}>
                     <Table
-                        data={leadsResponse?.results}
+                        data={projectSourcesResponse?.project?.leads?.results}
                         keySelector={leadsKeySelector}
                         columns={columns}
                         variant="large"
@@ -268,7 +334,7 @@ function LeadsSelection(props: Props) {
             <Pager
                 className={styles.footer}
                 activePage={activePage}
-                itemsCount={leadsResponse?.count ?? 0}
+                itemsCount={projectSourcesResponse?.project?.leads?.totalCount ?? 0}
                 maxItemsPerPage={maxItemsPerPage}
                 onActivePageChange={setActivePage}
                 itemsPerPageControlHidden

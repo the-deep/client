@@ -59,10 +59,10 @@ interface Props {
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
-    textWidgets: TreeSelectableWidget<string | number>[];
-    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    contextualWidgets: TreeSelectableWidget<string>[];
+    onSetContextualWidgets: (value: TreeSelectableWidget<string>[]) => void;
+    textWidgets: TreeSelectableWidget<string>[];
+    onSetTextWidgets: (value: TreeSelectableWidget<string>[]) => void;
 }
 
 const exportTypes: ExportTypeItem[] = [
@@ -107,10 +107,10 @@ interface RenderWordProps {
     showEntryId: boolean;
     showAryDetails: boolean;
     showAdditionalMetadata: boolean;
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    onSetContextualWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
-    textWidgets: TreeSelectableWidget<string | number>[];
-    onSetTextWidgets: (value: TreeSelectableWidget<string | number>[]) => void;
+    contextualWidgets: TreeSelectableWidget<string>[];
+    onSetContextualWidgets: (value: TreeSelectableWidget<string>[]) => void;
+    textWidgets: TreeSelectableWidget<string>[];
+    onSetTextWidgets: (value: TreeSelectableWidget<string>[]) => void;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -166,7 +166,6 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 className={styles.contentSettings}
                 headingSize="extraSmall"
                 heading={_ts('export', 'contentSettingsText')}
-                sub
             >
                 {showEntryGroupsSelection && (
                     <Checkbox
@@ -203,7 +202,6 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 className={styles.reportStructure}
                 headingSize="extraSmall"
                 heading={_ts('export', 'reportStructureLabel')}
-                sub
                 contentClassName={styles.content}
             >
                 <TreeSelection
@@ -234,7 +232,6 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 className={styles.additional}
                 headingSize="extraSmall"
                 heading="Additional Metadata"
-                sub
                 contentClassName={styles.content}
             >
                 {contextualWidgets.length > 0 && showAdditionalMetadata && (
@@ -426,7 +423,6 @@ function ExportTypePane(props: Props) {
                 className={styles.exportTypesContainer}
                 headingSize="extraSmall"
                 heading={_ts('export', 'fileFormatSelectionLabel')}
-                sub
                 inlineHeadingDescription
                 contentClassName={styles.content}
             >
@@ -440,7 +436,6 @@ function ExportTypePane(props: Props) {
             <ExpandableContainer
                 className={styles.advanced}
                 headingSize="extraSmall"
-                sub
                 heading="Advanced"
                 defaultVisibility
             >

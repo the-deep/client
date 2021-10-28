@@ -90,7 +90,6 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
             heading={title}
             headingSize="extraSmall"
             contentClassName={styles.sortableContent}
-            sub
             expansionTriggerArea="arrow"
             disabled={!nodes || nodes.length === 0}
         >
