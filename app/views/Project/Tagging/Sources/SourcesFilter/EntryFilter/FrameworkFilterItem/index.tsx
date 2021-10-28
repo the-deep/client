@@ -32,8 +32,7 @@ import styles from './styles.css';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
 
-// FIXME remove clientId as key when clientId is removed from widget option properties
-const filterClientIdSelector = (d: KeyLabelEntity) => d.clientId;
+const filterClientIdSelector = (d: KeyLabelEntity) => d.key;
 const filterLabelSelector = (d: KeyLabelEntity | KeyLabel) => d.label;
 
 type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
