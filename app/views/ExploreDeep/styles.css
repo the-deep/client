@@ -1,4 +1,57 @@
 .explore-deep {
     background-color: var(--dui-color-foreground);
     padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+
+    .stats-container {
+        display: flex;
+        gap: var(--dui-spacing-large);
+
+        .left-container {
+            display: flex;
+            flex-basis: calc(100% / 3 - var(--dui-spacing-large));
+            flex-wrap: wrap;
+            gap: var(--dui-spacing-large);
+
+            .info-item {
+                flex-basis: calc(100% / 2 - var(--dui-spacing-large));
+            }
+
+            .playback-card {
+                flex-basis: 100%;
+                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                height: 240px;
+            }
+        }
+
+        .mid-container {
+            display: flex;
+            flex-basis: calc(100% / 3 - var(--dui-spacing-large));
+            flex-direction: column;
+            gap: var(--dui-spacing-large);
+
+            .stats-by-time-container {
+                display: flex;
+                gap: var(--dui-spacing-large);
+                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+                .info-item {
+                    flex-basis: calc(100% / 3 - var(--dui-spacing-large));
+                }
+            }
+        }
+
+        .right-container {
+            flex-basis: calc(100% / 3 - var(--dui-spacing-large));
+            border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+            .project-list-container {
+                padding: 0;
+            }
+        }
+    }
+
+    .tabs-container {
+        background-color: var(--dui-color-foreground);
+        padding: 0;
+    }
 }

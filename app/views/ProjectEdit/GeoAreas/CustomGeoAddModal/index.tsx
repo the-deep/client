@@ -121,7 +121,6 @@ function CustomGeoAddModal(props: Props) {
             />
             <div className={styles.row}>
                 <TextInput
-                    className={styles.input}
                     name="title"
                     value={value.title}
                     onChange={setFieldValue}
@@ -130,7 +129,6 @@ function CustomGeoAddModal(props: Props) {
                     disabled={addRegionsPending}
                 />
                 <TextInput
-                    className={styles.input}
                     name="code"
                     value={value.code}
                     onChange={setFieldValue}
