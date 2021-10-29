@@ -1,0 +1,13 @@
+.pillar-analysis-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--dui-spacing-medium);
+
+    .remove-button {
+        margin: 0 var(--dui-spacing-small);
+    }
+}
+
+.options-popup {
+    width: 480px!important;
+}

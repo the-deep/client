@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface Props {
     className?: string;

@@ -1,8 +1,5 @@
-import React, { useCallback } from 'react';
-import {
-    reverseRoute,
-    _cs,
-} from '@togglecorp/fujs';
+import React, { useContext, useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     NumberOutput,
     Container,
@@ -14,7 +11,6 @@ import {
     List,
 } from '@the-deep/deep-ui';
 import { FiEdit2 } from 'react-icons/fi';
-import Cloak from '#components/general/Cloak';
 import {
     IoTrashBinOutline,
 } from 'react-icons/io5';
@@ -23,24 +19,11 @@ import {
     PillarSummary,
     AnalyticalStatementSummary,
 } from '#types';
-import { pathNames } from '#constants';
-import { calcPercent } from '#utils/safeCommon';
+import { ProjectContext } from '#base/context/ProjectContext';
+import { calcPercent } from '#utils/common';
 
 import _ts from '#ts';
-import styles from './styles.scss';
-
-function shouldHideEdit({
-    hasAnalysisFramework,
-    entryPermissions,
-}: {
-    hasAnalysisFramework: boolean;
-    entryPermissions: {
-        create: boolean;
-        modify: boolean;
-    };
-}) {
-    return (!hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify));
-}
+import styles from './styles.css';
 
 const statementKeySelector = (d: AnalyticalStatementSummary) => d.id;
 
@@ -75,6 +58,13 @@ function AnalysisPillar(props: Props) {
         analyzedEntries = 0,
     } = props;
 
+    const {
+        project,
+    } = useContext(ProjectContext);
+
+    const canTagEntry = project?.analysisFramework?.id
+        && project?.allowedPermissions?.includes('UPDATE_ENTRY');
+
     const isAnalysisCompleted = analyzedEntries === totalEntries && totalEntries > 0;
     let statusLabel = _ts('analysis', 'inProgressTagLabel');
     if (analyzedEntries === totalEntries && analyzedEntries > 0) {
@@ -83,11 +73,15 @@ function AnalysisPillar(props: Props) {
         statusLabel = _ts('analysis', 'noAnalysisTagLabel');
     }
 
+    /* TODO: Make this work
     const editLink = reverseRoute(pathNames.pillarAnalysis, {
         projectId,
         analysisId,
         pillarId,
     });
+    */
+    console.warn('here', projectId, analysisId);
+    const editLink = '#';
 
     const disabled = pendingPillarDelete;
 
@@ -95,7 +89,7 @@ function AnalysisPillar(props: Props) {
         onDelete(pillarId);
     }, [onDelete, pillarId]);
 
-    const statementRendererParams = useCallback((key, data: AnalyticalStatementSummary) => ({
+    const statementRendererParams = useCallback((_, data: AnalyticalStatementSummary) => ({
         className: styles.statement,
         valueContainerClassName: styles.statementText,
         descriptionContainerClassName: styles.description,
@@ -112,7 +106,6 @@ function AnalysisPillar(props: Props) {
     return (
         <Container
             className={_cs(styles.analysisPillar, className)}
-            sub
             heading={title}
             headerClassName={styles.header}
             headingDescription={(
@@ -121,35 +114,30 @@ function AnalysisPillar(props: Props) {
                 </Tag>
             )}
             inlineHeadingDescription
-            headerActions={(
-                <Cloak
-                    hide={shouldHideEdit}
-                    render={(
-                        <>
-                            <ButtonLikeLink
-                                to={editLink}
-                                disabled={disabled}
-                                variant="tertiary"
-                                icons={(
-                                    <FiEdit2 />
-                                )}
-                            >
-                                {_ts('analysis', 'continueAnalysisButton')}
-                            </ButtonLikeLink>
-                            <QuickActionConfirmButton
-                                name={pillarId}
-                                onConfirm={onDeleteConfirmClick}
-                                title={_ts('analysis', 'deletePillarButtonTitle')}
-                                message={_ts('analysis', 'deletePillarConfirmMessage')}
-                                disabled={disabled}
-                                showConfirmationInitially={false}
-                                variant="secondary"
-                            >
-                                <IoTrashBinOutline />
-                            </QuickActionConfirmButton>
-                        </>
-                    )}
-                />
+            headerActions={canTagEntry && (
+                <>
+                    <ButtonLikeLink
+                        to={editLink}
+                        disabled={disabled}
+                        variant="tertiary"
+                        icons={(
+                            <FiEdit2 />
+                        )}
+                    >
+                        {_ts('analysis', 'continueAnalysisButton')}
+                    </ButtonLikeLink>
+                    <QuickActionConfirmButton
+                        name={pillarId}
+                        onConfirm={onDeleteConfirmClick}
+                        title={_ts('analysis', 'deletePillarButtonTitle')}
+                        message={_ts('analysis', 'deletePillarConfirmMessage')}
+                        disabled={disabled}
+                        showConfirmationInitially={false}
+                        variant="secondary"
+                    >
+                        <IoTrashBinOutline />
+                    </QuickActionConfirmButton>
+                </>
             )}
             headerDescription={(
                 <TextOutput

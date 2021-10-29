@@ -2,16 +2,14 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    border: var(--width-separator-thin) solid var(--dui-border-color-card);
+    border: var(--dui-width-separator-thin) solid var(--dui-border-color-card);
     border-radius: var(--dui-border-radius-card);
-    background-color: var(--color-foreground);
-    // NOTE: I don't want to do this
+    background-color: var(--dui-color-foreground);
     padding-bottom: 0;
     overflow: unset;
     overflow-y: auto;
 
     .content {
-        // NOTE: We don't want to do this
         padding-bottom: 0;
         overflow: unset;
 
@@ -94,7 +92,8 @@
         }
 
         .pillar-analyses {
-            margin: 0 calc(-1 * (var(--dui-spacing-large) - var(--dui-spacing-medium)));
+            margin: 0 calc(-1 * var(--dui-spacing-medium));
+            border: 0;
             border-left: 0.4rem solid var(--dui-color-surface-information);
 
             .pillar-analyses-header {

@@ -204,7 +204,7 @@ const analysis = wrap({
     path: '/analysis/',
     title: 'Analysis',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Analysis')),
+    component: lazy(() => import('#views/AnalysisModule')),
     componentProps: {
     },
     visibility: 'is-authenticated',
