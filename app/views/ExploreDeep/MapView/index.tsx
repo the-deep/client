@@ -90,11 +90,6 @@ const PROJECT_LIST = gql`
 `;
 export type Project = NonNullable<NonNullable<ProjectsByRegionQuery['projectsByRegion']>[number]>;
 
-interface KeyValue {
-    key: string;
-    value: string;
-}
-
 interface Props {
     className?: string;
     // filters: ProjectListQueryVariables | undefined;
@@ -139,7 +134,7 @@ function ExploreDeepMapView(props: Props) {
         });
     }, [data]);
 
-    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
+    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<string[]>([]);
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
 
     const handleMouseEnter = useCallback((
