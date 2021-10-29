@@ -16,14 +16,14 @@ type ScaleValue = NonNullable<ScaleWidgetAttribute['data']>;
 
 export type PartialScaleWidget = PartialForm<
     ScaleWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type Option = NonNullable<NonNullable<
     NonNullable<PartialScaleWidget>['properties']
 >['options']>[number];
 
-const optionKeySelector = (option: Option) => option.clientId;
+const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
 const optionColorSelector = (option: Option) => option.color ?? '#414141';
 

@@ -21,7 +21,7 @@ type Matrix2dValue = NonNullable<Matrix2dWidgetAttribute['data']>;
 
 export type PartialMatrix2dWidget = PartialForm<
     Matrix2dWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];
@@ -113,7 +113,7 @@ function SubRow(props: SubRowProps) {
     const {
         tooltip: title,
         label,
-        clientId: subRowId,
+        key: subRowId,
     } = subRow;
 
     return (
@@ -126,13 +126,13 @@ function SubRow(props: SubRowProps) {
             </td>
             {columns?.map((column) => (
                 <Column
-                    key={column.clientId}
+                    key={column.key}
                     rowId={rowId}
                     subRowId={subRowId}
-                    columnId={column.clientId}
+                    columnId={column.key}
                     disabled={disabled}
                     title={`${subRow.label} & ${column.label}`}
-                    selected={Array.isArray(value?.[column.clientId])}
+                    selected={Array.isArray(value?.[column.key])}
                     onSubRowChange={onSubRowChange}
                 />
             ))}
@@ -165,7 +165,7 @@ function Row(props: RowProps) {
     } = props;
 
     const {
-        clientId,
+        key,
         label,
         tooltip,
         subRows,
@@ -176,19 +176,19 @@ function Row(props: RowProps) {
     ), [subRows]);
 
     const subRowKeySelector = useCallback(
-        (subRow: SubRow) => subRow.clientId,
+        (subRow: SubRow) => subRow.key,
         [],
     );
     const subRowRendererParams = useCallback(
         (_: string, subRow: SubRow) => ({
             onSubRowChange,
             disabled: disabled || readOnly,
-            value: value?.[subRow.clientId],
+            value: value?.[subRow.key],
             subRow,
-            rowId: clientId,
+            rowId: key,
             columns,
         }),
-        [disabled, onSubRowChange, readOnly, value, clientId, columns],
+        [disabled, onSubRowChange, readOnly, value, key, columns],
     );
 
     return (
@@ -210,7 +210,7 @@ function Row(props: RowProps) {
                         {columns?.map((column) => (
                             <th
                                 className={styles.tableHeader}
-                                key={column.clientId}
+                                key={column.key}
                                 title={column.tooltip}
                             >
                                 {column.label}
@@ -295,7 +295,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: RowType) => row.clientId,
+        (row: RowType) => row.key,
         [],
     );
 

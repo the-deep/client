@@ -12,8 +12,7 @@ import {
 type BaseFilterType = Omit<AnalysisFrameworkFilterTypeRaw, 'properties'>;
 
 export interface KeyLabelEntity {
-    // FIXME: clientId should be renamed to be key
-    clientId: string;
+    key: string;
     label: string;
     tooltip?: string;
     order: number;

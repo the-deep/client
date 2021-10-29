@@ -14,17 +14,17 @@ interface Props<N extends string> {
     name: N;
     value: OrganigramValue | null | undefined;
     onChange: (value: OrganigramValue | undefined, name: N) => void,
-    options: PartialForm<OrganigramDatum, 'clientId'> | null | undefined;
+    options: PartialForm<OrganigramDatum, 'key'> | null | undefined;
     error?: string;
     readOnly?: boolean;
     disabled?: boolean;
 }
 
-function transformData(data: PartialForm<OrganigramDatum, 'clientId'>): OrganigramDatum & { id: string } {
+function transformData(data: PartialForm<OrganigramDatum, 'key'>): OrganigramDatum & { id: string } {
     if (data.children) {
         return {
             ...data,
-            id: data.clientId,
+            id: data.key,
             children: data.children.map(transformData) ?? [],
             label: data.label ?? 'Unnamed',
             order: data.order ?? 0,
@@ -32,7 +32,7 @@ function transformData(data: PartialForm<OrganigramDatum, 'clientId'>): Organigr
     }
     return {
         ...data,
-        id: data.clientId,
+        id: data.key,
         children: [],
         label: data.label ?? 'Unnamed',
         order: data.order ?? 0,
@@ -57,10 +57,10 @@ function OrganigramInput<N extends string>(props: Props<N>) {
             if (disabled || readOnly) {
                 return;
             }
-            if (value?.some((v) => v === data.clientId)) {
-                onChange(value?.filter((v) => v !== data.clientId), name);
+            if (value?.some((v) => v === data.key)) {
+                onChange(value?.filter((v) => v !== data.key), name);
             } else {
-                onChange([...(value ?? []), data.clientId], name);
+                onChange([...(value ?? []), data.key], name);
             }
         },
         [value, onChange, name, readOnly, disabled],
@@ -68,7 +68,7 @@ function OrganigramInput<N extends string>(props: Props<N>) {
 
     const isSelected = useCallback(
         (d: OrganigramDatum) => (
-            value?.find((v) => v === d.clientId)
+            value?.find((v) => v === d.key)
         ),
         [value],
     );

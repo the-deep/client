@@ -21,7 +21,7 @@ type Matrix2dValue = NonNullable<Matrix2dWidgetAttribute['data']>;
 
 export type PartialMatrix2dWidget = PartialForm<
     Matrix2dWidget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['properties']>['rows']>[number];
@@ -29,8 +29,8 @@ type ColumnType = NonNullable<NonNullable<NonNullable<PartialMatrix2dWidget>['pr
 type SubColumn = NonNullable<NonNullable<ColumnType>['subColumns']>[number];
 type SubRow = NonNullable<NonNullable<RowType>['subRows']>[number];
 
-const columnKeySelector = (col: ColumnType) => col.clientId;
-const subColumnKeySelector = (col: SubColumn) => col.clientId;
+const columnKeySelector = (col: ColumnType) => col.key;
+const subColumnKeySelector = (col: SubColumn) => col.key;
 const subColumnLabelSelector = (col: SubColumn) => col.label ?? '';
 
 interface ColumnProps {
@@ -63,7 +63,7 @@ function Column(props: ColumnProps) {
 
     const {
         subColumns,
-        clientId: columnId,
+        key: columnId,
     } = column;
 
     const handleSubColumnValueChange = useCallback((newValues?: string[]) => {
@@ -76,7 +76,7 @@ function Column(props: ColumnProps) {
     }, [onSubColumnsChange, rowId, subRowId, columnId]);
 
     const selectedValues = useMemo(() => {
-        const optionsMap = listToMap(subColumns, (d) => d.clientId, (d) => d.label);
+        const optionsMap = listToMap(subColumns, (d) => d.key, (d) => d.label);
         return value?.[columnId]?.map((v) => optionsMap?.[v])?.join(', ');
     }, [subColumns, value, columnId]);
 
@@ -94,8 +94,8 @@ function Column(props: ColumnProps) {
                 </div>
                 {!readOnly ? (
                     <MultiSelectInput
-                        name={column.clientId}
-                        value={value?.[column.clientId]}
+                        name={column.key}
+                        value={value?.[column.key]}
                         disabled={disabled}
                         labelSelector={subColumnLabelSelector}
                         onChange={handleSubColumnValueChange}
@@ -142,11 +142,11 @@ function SubRow(props: SubRowProps) {
 
     const {
         label,
-        clientId: subRowId,
+        key: subRowId,
     } = subRow;
 
     const orderedColumns = useMemo(() => {
-        const filteredSubRows = columns?.filter((col) => value?.[col.clientId]);
+        const filteredSubRows = columns?.filter((col) => value?.[col.key]);
         return sortByOrder(filteredSubRows);
     }, [columns, value]);
 
@@ -204,19 +204,19 @@ function Row(props: RowProps) {
     } = props;
 
     const {
-        clientId,
+        key,
         label,
         tooltip,
         subRows,
     } = row;
 
     const orderedSubRows = useMemo(() => {
-        const filteredSubRows = subRows?.filter((sr) => value?.[sr.clientId]);
+        const filteredSubRows = subRows?.filter((sr) => value?.[sr.key]);
         return sortByOrder(filteredSubRows);
     }, [subRows, value]);
 
     const subRowKeySelector = useCallback(
-        (subRow: SubRow) => subRow.clientId,
+        (subRow: SubRow) => subRow.key,
         [],
     );
     const subRowRendererParams = useCallback(
@@ -224,12 +224,12 @@ function Row(props: RowProps) {
             onSubColumnsChange,
             disabled,
             readOnly,
-            value: value?.[subRow.clientId],
+            value: value?.[subRow.key],
             subRow,
-            rowId: clientId,
+            rowId: key,
             columns,
         }),
-        [disabled, onSubColumnsChange, readOnly, value, clientId, columns],
+        [disabled, onSubColumnsChange, readOnly, value, key, columns],
     );
 
     return (
@@ -314,7 +314,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const rowKeySelector = useCallback(
-        (row: RowType) => row.clientId,
+        (row: RowType) => row.key,
         [],
     );
 
@@ -337,7 +337,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     const widgetRows = widget?.properties?.rows;
 
     const orderedRows = useMemo(() => {
-        const filteredRows = widgetRows?.filter((wr) => value?.value?.[wr.clientId]);
+        const filteredRows = widgetRows?.filter((wr) => value?.value?.[wr.key]);
         return sortByOrder(filteredRows);
     }, [widgetRows, value]);
 

@@ -14,8 +14,7 @@ interface BaseProperties<T> {
 }
 
 export interface KeyLabelEntity {
-    // FIXME: clientId should be renamed to be key
-    clientId: string;
+    key: string;
     label: string;
     tooltip?: string;
     order: number;
@@ -26,7 +25,7 @@ export interface KeyLabelColorEntity extends KeyLabelEntity {
 
 /*
 interface Condition
-    clientId: string;
+    key: string;
     type: unknown;
     directive: unknown;
 
