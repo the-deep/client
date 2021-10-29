@@ -1,5 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useContext, useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
@@ -29,24 +28,22 @@ import {
     Bar,
 } from 'recharts';
 
-import ProgressLine from '#newComponents/viz/ProgressLine';
-import Cloak from '#components/general/Cloak';
+import ProgressLine from '#components/ProgressLine';
+import { ProjectContext } from '#base/context/ProjectContext';
 import {
     useModalState,
 } from '#hooks/stateManagement';
 
 import {
-    AppState,
     PillarSummary,
 } from '#types';
 
 import _ts from '#ts';
-import { activeProjectIdFromStateSelector } from '#redux';
 import PillarAnalysisList from './PillarList';
 import PillarAssignment from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -78,27 +75,12 @@ const barChartMargin = {
 const BAR_TICK_COUNT = 5;
 const MAX_BAR_SIZE = 16;
 
-function shouldHideEdit({
-    hasAnalysisFramework,
-    entryPermissions,
-}: {
-    hasAnalysisFramework: boolean;
-    entryPermissions: {
-        create: boolean;
-        modify: boolean;
-    };
-}) {
-    return (!hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify));
-}
-
-
 interface ComponentProps {
     analysisId: number;
     className?: string;
     title: string;
     startDate?: string;
     endDate: string;
-    activeProject: number;
     onEdit: (analysisId: number) => void;
     onAnalysisPillarDelete: () => void;
     onAnalysisCloseSuccess: () => void;
@@ -114,10 +96,6 @@ interface ComponentProps {
     analyzedSources: number;
 }
 
-const mapStateToProps = (state: AppState) => ({
-    activeProject: activeProjectIdFromStateSelector(state),
-});
-
 const pillarSummaryKeySelector = (item: PillarSummary) => (item.id);
 
 function Analysis(props: ComponentProps) {
@@ -127,7 +105,6 @@ function Analysis(props: ComponentProps) {
         className,
         startDate,
         endDate,
-        activeProject,
         analysisId,
         teamLeadName,
         onAnalysisPillarDelete,
@@ -142,6 +119,11 @@ function Analysis(props: ComponentProps) {
         totalEntries,
         totalSources,
     } = props;
+
+    const {
+        project,
+    } = useContext(ProjectContext);
+    const activeProject = project?.id ? +project?.id : undefined;
 
     const [
         showCloneModal,
@@ -164,7 +146,7 @@ function Analysis(props: ComponentProps) {
     }, [analysisId, onDelete]);
 
     const barChartData = useMemo(() => (
-        pillars.map(o => ({
+        pillars.map((o) => ({
             ...o,
             percent: Math.round(
                 ((o.analyzedEntries ?? 0) / (totalEntries === 0 ? 1 : totalEntries)) * 10000,
@@ -179,10 +161,15 @@ function Analysis(props: ComponentProps) {
         setModalHidden();
     }, [onAnalysisCloseSuccess, setModalHidden]);
 
+    const canTagEntry = project?.analysisFramework?.id
+        && project?.allowedPermissions?.includes('UPDATE_ENTRY');
+
     return (
         <ContainerCard
             className={_cs(className, styles.analysisItem)}
             heading={title}
+            borderBelowHeader
+            borderBelowHeaderWidth="thin"
             headingSize="small"
             headerDescription={(
                 <DateRangeOutput
@@ -190,47 +177,41 @@ function Analysis(props: ComponentProps) {
                     endDate={endDate}
                 />
             )}
-            headerActions={(
-                <Cloak
-                    hide={shouldHideEdit}
-                    render={(
-                        <>
-                            <Button
-                                name={analysisId}
-                                onClick={onEdit}
-                                disabled={disabled}
-                                variant="tertiary"
-                                icons={(
-                                    <FiEdit2 />
-                                )}
-                            >
-                                {_ts('analysis', 'editAnalysisTitle')}
-                            </Button>
-                            <QuickActionButton
-                                name="clone"
-                                onClick={setModalVisible}
-                                disabled={disabled}
-                                title={_ts('analysis', 'cloneAnalysisButtonTitle')}
-                                variant="secondary"
-                            >
-                                <IoCopyOutline />
-                            </QuickActionButton>
-                            <QuickActionConfirmButton
-                                name="delete"
-                                onConfirm={handleDeleteAnalysis}
-                                disabled={disabled}
-                                title={_ts('analysis', 'deleteAnalysisButtonTitle')}
-                                message={_ts('analysis', 'deleteAnalysisConfirmMessage')}
-                                variant="secondary"
-                                showConfirmationInitially={false}
-                            >
-                                <IoTrashBinOutline />
-                            </QuickActionConfirmButton>
-                        </>
-                    )}
-                />
+            headerActions={canTagEntry && (
+                <>
+                    <Button
+                        name={analysisId}
+                        onClick={onEdit}
+                        disabled={disabled}
+                        variant="tertiary"
+                        icons={(
+                            <FiEdit2 />
+                        )}
+                    >
+                        {_ts('analysis', 'editAnalysisTitle')}
+                    </Button>
+                    <QuickActionButton
+                        name="clone"
+                        onClick={setModalVisible}
+                        disabled={disabled}
+                        title={_ts('analysis', 'cloneAnalysisButtonTitle')}
+                        variant="secondary"
+                    >
+                        <IoCopyOutline />
+                    </QuickActionButton>
+                    <QuickActionConfirmButton
+                        name="delete"
+                        onConfirm={handleDeleteAnalysis}
+                        disabled={disabled}
+                        title={_ts('analysis', 'deleteAnalysisButtonTitle')}
+                        message={_ts('analysis', 'deleteAnalysisConfirmMessage')}
+                        variant="secondary"
+                        showConfirmationInitially={false}
+                    >
+                        <IoTrashBinOutline />
+                    </QuickActionConfirmButton>
+                </>
             )}
-            horizontallyCompactContent
             contentClassName={styles.content}
         >
             {pendingAnalysisDelete && <PendingMessage />}
@@ -281,7 +262,6 @@ function Analysis(props: ComponentProps) {
                     className={styles.frameworkOverviewContainer}
                     heading={_ts('analysis', 'frameworkOverviewHeader')}
                     headingSize="small"
-                    horizontallyCompactContent
                     contentClassName={styles.frameworkOverviewContent}
                 >
                     <ResponsiveContainer className={styles.responsiveContainer}>
@@ -332,20 +312,21 @@ function Analysis(props: ComponentProps) {
                 headerClassName={styles.pillarAnalysesHeader}
                 heading={_ts('analysis', 'pillarAnalysisCount', { count: pillars.length })}
                 headingSize="extraSmall"
-                sub
                 alwaysMountContent={false}
                 contentClassName={styles.pillarAnalysisList}
             >
-                <PillarAnalysisList
-                    createdAt={createdAt}
-                    analysisId={analysisId}
-                    modifiedAt={modifiedAt}
-                    activeProject={activeProject}
-                    onAnalysisPillarDelete={onAnalysisPillarDelete}
-                    totalEntries={totalEntries}
-                />
+                {activeProject && (
+                    <PillarAnalysisList
+                        createdAt={createdAt}
+                        analysisId={analysisId}
+                        modifiedAt={modifiedAt}
+                        activeProject={activeProject}
+                        onAnalysisPillarDelete={onAnalysisPillarDelete}
+                        totalEntries={totalEntries}
+                    />
+                )}
             </ExpandableContainer>
-            {showCloneModal && (
+            {showCloneModal && activeProject && (
                 <AnalysisCloneModal
                     onClose={setModalHidden}
                     projectId={activeProject}
@@ -357,4 +338,4 @@ function Analysis(props: ComponentProps) {
     );
 }
 
-export default connect(mapStateToProps)(Analysis);
+export default Analysis;

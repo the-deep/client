@@ -7,6 +7,7 @@ import {
     Button,
     TextInput,
     DateInput,
+    useAlert,
     PendingMessage,
 } from '@the-deep/deep-ui';
 import {
@@ -18,13 +19,12 @@ import {
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
 
-import { useRequest, useLazyRequest } from '#utils/request';
-import NonFieldError from '#newComponents/ui/NonFieldError';
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
-import notify from '#notify';
 import { AnalysisElement } from '#types/analysisModule';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 type FormType = {
     title: string;
@@ -76,6 +76,8 @@ function AnalysisCloneModal(props: Props) {
         onClone,
     } = props;
 
+    const alert = useAlert();
+
     const {
         pristine,
         value,
@@ -103,21 +105,20 @@ function AnalysisCloneModal(props: Props) {
         failureHeader: _ts('analysis.cloneModal', 'anaylsisDetailsFetchFailed'),
     });
 
-
     const {
         pending: pendingAnalysisClone,
         trigger: triggerAnalysisClone,
     } = useLazyRequest<CloneProperties, FormType>({
         url: `server://projects/${projectId}/analysis/${analysisId}/clone/`,
         method: 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: () => {
-            notify.send({
-                title: _ts('analysis.cloneModal', 'analysisClone'),
-                type: notify.type.SUCCESS,
-                message: _ts('analysis.cloneModal', 'analysisCloneSuccessful'),
-                duration: notify.duration.MEDIUM,
-            });
+            alert.show(
+                _ts('analysis.cloneModal', 'analysisCloneSuccessful'),
+                {
+                    variant: 'success',
+                },
+            );
             onClone();
         },
         failureHeader: _ts('analysis.cloneModal', 'anaylsisCloneFailed'),

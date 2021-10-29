@@ -187,3 +187,16 @@ export function convertDateToIsoDateTime(dateString: string | undefined | null, 
 
     return date.toISOString();
 }
+
+export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefined): A[] | A {
+    if (Array.isArray(a)) {
+        return ([] as A[]).concat(...a.map((v) => flatten(v, childSelector)));
+    }
+    if (Array.isArray(childSelector(a))) {
+        return ([] as A[]).concat(
+            a,
+            ...(childSelector(a)?.map((v) => flatten(v, childSelector)) ?? []),
+        );
+    }
+    return a;
+}

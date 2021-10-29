@@ -7,7 +7,7 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 export type MinMax = [number, number];
 
@@ -57,7 +57,7 @@ function AxisTick(props: AxisTickProps) {
             }}
         >
             <div className={styles.bar} />
-            <div className={styles.label}>
+            <div className={styles.axisLabel}>
                 {tickLabel}
             </div>
         </div>
@@ -127,16 +127,16 @@ function Timeline<T>(props: TimelineProps<T>) {
 
         return Array.from(
             { length: maxTicks },
-            (v, i) => Math.round(minDomain + (i * increment)),
+            (_, i) => Math.round(minDomain + (i * increment)),
         );
     }, [domain]);
 
-    const timeElementRendererParams = useCallback((key: string | number, datum: T) => ({
+    const timeElementRendererParams = useCallback((_: string | number, datum: T) => ({
         left: scale(domain, range, valueSelector(datum)),
         label: labelSelector(datum),
     }), [labelSelector, valueSelector, domain]);
 
-    const axisTickRendererParams = useCallback((key: string | number, datum: number) => ({
+    const axisTickRendererParams = useCallback((_: string | number, datum: number) => ({
         left: scale(domain, range, datum),
         tickLabel: tickLabelSelector(datum),
     }), [tickLabelSelector, domain]);

@@ -1,12 +1,29 @@
 .analysis-module {
     display: flex;
     flex-direction: column;
+    background-color: var(--dui-color-background);
+    overflow-y: auto;
+
+    .sub-navbar {
+        flex-shrink: 0;
+        background-color: var(--dui-color-foreground);
+    }
+
+    .child {
+        flex-grow: 1;
+        overflow: auto;
+    }
 
     .summary {
+        margin: 0 var(--dui-spacing-super-large);
+        overflow: unset;
+
         .summary-content {
             display: flex;
             flex-wrap: wrap;
             padding: 0;
+            overflow: unset;
+            gap: var(--dui-spacing-large);
             --height-charts: 320px;
 
             .info-card-container {
@@ -21,7 +38,6 @@
                 flex-grow: 1;
                 flex-wrap: wrap;
                 justify-content: space-between;
-                margin: var(--dui-spacing-medium);
                 min-width: calc(var(--item-per-row) * var(--min-item-width) + var(--gap) * var(--ipr-minus-1));
                 max-width: calc(var(--item-per-row) * var(--max-item-width) + var(--gap) * var(--ipr-minus-1));
                 gap: var(--gap);
@@ -38,7 +54,6 @@
                 flex-basis: 10%;
                 flex-direction: column;
                 flex-grow: 1;
-                margin: var(--dui-spacing-medium);
                 min-width: 280px;
                 max-width: 320px;
                 min-height: var(--height-charts);
@@ -48,7 +63,6 @@
                 display: flex;
                 flex-basis: 30%;
                 flex-grow: 1;
-                margin: var(--dui-spacing-medium);
                 min-width: 420px;
             }
 
@@ -79,28 +93,22 @@
 
 
     .all-analyses {
+        margin: 0 var(--dui-spacing-super-large);
+        overflow: unset;
+
         .analyses-container {
             display: flex;
             flex-direction: column;
-            padding: 0;
+            overflow: unset;
 
             .analysis-list {
                 flex-grow: 1;
                 padding: 0;
                 min-height: 320px;
-
-                .analysis {
-                    margin: var(--dui-spacing-small) var(--dui-spacing-medium);
-                }
+                gap: var(--dui-spacing-medium);
             }
         }
     }
-}
-
-.sub-navbar {
-    display: flex;
-    flex-grow: 1;
-    justify-content: flex-end;
 }
 
 .legend {

@@ -1,6 +1,4 @@
 .analysis-edit-modal {
-    width: 96vw;
-    max-width: 720px;
     max-height: 800px;
 
     .input {

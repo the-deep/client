@@ -60,7 +60,7 @@
 
                 &:last-child {
                     .label {
-                        right: calc(var(--radius-head) + var(--spacing-medium));
+                        right: calc(var(--radius-head) + var(--dui-spacing-medium));
                         left: unset;
                     }
                 }
@@ -101,7 +101,7 @@
                     height: var(--height-axis-tick-bar);
                 }
 
-                .label {
+                .axis-label {
                     position: absolute;
                     left: 0;
                     white-space: nowrap;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     _cs,
     randomString,
@@ -20,6 +20,7 @@ import {
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
 import {
+    useAlert,
     PendingMessage,
     Button,
     Modal,
@@ -29,25 +30,63 @@ import {
     List,
 } from '@the-deep/deep-ui';
 import { IoAdd } from 'react-icons/io5';
+import { gql, useQuery } from '@apollo/client';
 
-import { useRequest, useLazyRequest } from '#utils/request';
-import notify from '#notify';
-
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { flatten } from '#utils/common';
-import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
-import NonFieldError from '#newComponents/ui/NonFieldError';
+import NonFieldError from '#components/NonFieldError';
 import {
     AnalysisElement,
-    MatrixTocElement,
     MultiResponse,
-    FrameworkFields,
     UserMini,
 } from '#types';
+import {
+    FrameworkDetailsForAnalysisQuery,
+    FrameworkDetailsForAnalysisQueryVariables,
+} from '#generated/types';
 
 import _ts from '#ts';
 
+import {
+    getMatrixPillars,
+    MatrixPillarWidgetType,
+    MatrixPillar,
+} from '../utils';
+
 import PillarAnalysisRow, { PillarAnalysisFields, Props as PillarAnalysisProps } from './PillarAnalysisRow';
-import styles from './styles.scss';
+import styles from './styles.css';
+
+const emptyWidget: MatrixPillarWidgetType[] = [];
+
+const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
+    query FrameworkDetailsForAnalysis($projectId: ID!) {
+        project(id: $projectId) {
+            analysisFramework {
+                id
+                primaryTagging {
+                    widgets {
+                        id
+                        clientId
+                        key
+                        title
+                        widgetId
+                        properties
+                    }
+                    clientId
+                    id
+                }
+                secondaryTagging {
+                    id
+                    clientId
+                    key
+                    title
+                    widgetId
+                    properties
+                }
+            }
+        }
+    }
+`;
 
 type PartialForm<T> = RawPartialForm<T, 'key'>;
 type AnalysisPillar = Partial<PillarAnalysisFields> & { key: string; id?: number };
@@ -82,7 +121,7 @@ const analysisPillarSchema: AnalysisPillarSchema = {
 type AnalysisPillarListSchema = ArraySchema<PartialForm<AnalysisPillarType>>;
 type AnalysisPillarListMember = ReturnType<AnalysisPillarListSchema['member']>;
 const analysisPillarListSchema: AnalysisPillarListSchema = {
-    keySelector: d => d.key,
+    keySelector: (d) => d.key,
     member: (): AnalysisPillarListMember => analysisPillarSchema,
 };
 
@@ -116,9 +155,8 @@ const defaultAnalysisFormValues: PartialForm<FormType> = {
 
 const userKeySelector = (u: UserMini) => u.id;
 const userLabelSelector = (u: UserMini) => u.displayName;
-const childrenSelector = (d: MatrixTocElement) => d.children;
+const childrenSelector = (d: MatrixPillar) => d.children;
 
-const frameworkQueryFields = { fields: ['widgets', 'id'] };
 const usersQueryFields = { fields: ['display_name', 'id'] };
 
 interface AnalysisEditModalProps {
@@ -162,34 +200,47 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 title: response.title,
                 startDate: response.startDate,
                 endDate: response.endDate,
-                analysisPillar: response.analysisPillar.map(ap => ({
+                analysisPillar: response.analysisPillar.map((ap) => ({
                     id: ap.id,
                     key: String(ap.id),
                     assignee: ap.assignee,
-                    filters: ap.filters?.map(f => f.uniqueId),
+                    filters: ap.filters?.map((f) => f.uniqueId),
                     title: ap.title,
                 })),
             });
         },
     });
 
+    const variables = useMemo(
+        (): FrameworkDetailsForAnalysisQueryVariables => ({
+            projectId: String(projectId),
+        }),
+        [projectId],
+    );
+
     const {
-        pending: pendingFramework,
-        response: framework,
-    } = useRequest<Partial<FrameworkFields>>({
-        url: `server://projects/${projectId}/analysis-framework/`,
-        method: 'GET',
-        query: frameworkQueryFields,
-        failureHeader: _ts('analysis.editModal', 'frameworkTitle'),
-    });
+        loading: pendingFramework,
+        data: projectWithFramework,
+    } = useQuery<FrameworkDetailsForAnalysisQuery, FrameworkDetailsForAnalysisQueryVariables>(
+        FRAMEWORK_DETAILS_FOR_ANALYSIS,
+        {
+            variables,
+        },
+    );
 
-    const matrixPillars: MatrixTocElement[] = React.useMemo(() => (
-        flatten([
-            ...getMatrix1dToc(framework?.widgets),
-            ...getMatrix2dToc(framework?.widgets),
-        ], childrenSelector).filter((v: MatrixTocElement) => v.key)
-    ), [framework]);
+    const matrixPillars: MatrixPillar[] = React.useMemo(() => {
+        const framework = projectWithFramework?.project?.analysisFramework;
+        const primaryWidgets = framework?.primaryTagging?.map((section) => section.widgets)
+            ?.flat().filter(isDefined);
+        const secondaryWidgets = framework?.secondaryTagging?.filter(isDefined);
+        const matrixItems = getMatrixPillars([
+            ...(primaryWidgets ?? emptyWidget),
+            ...(secondaryWidgets ?? emptyWidget),
+        ]);
+        return flatten(matrixItems, childrenSelector);
+    }, [projectWithFramework]);
 
+    const alert = useAlert();
 
     const {
         pending: pendingUsersList,
@@ -209,21 +260,19 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             ? `server://projects/${projectId}/analysis/${analysisToEdit}/`
             : `server://projects/${projectId}/analysis/`,
         method: isDefined(analysisToEdit) ? 'PATCH' : 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         onSuccess: (response) => {
             if (response) {
                 onSuccess(response, isDefined(analysisToEdit));
             }
-            notify.send({
-                title: isDefined(analysisToEdit)
+            alert.show(
+                isDefined(analysisToEdit)
                     ? _ts('analysis.editModal', 'analysisEdit')
                     : _ts('analysis.editModal', 'analysisCreate'),
-                type: notify.type.SUCCESS,
-                message: isDefined(analysisToEdit)
-                    ? _ts('analysis.editModal', 'analysisEditSuccessful')
-                    : _ts('analysis.editModal', 'analysisCreateSuccessful'),
-                duration: notify.duration.MEDIUM,
-            });
+                {
+                    variant: 'success',
+                },
+            );
             onModalClose();
         },
         failureHeader: _ts('analysis.editModal', 'anaylsisEditModal'),
@@ -269,8 +318,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             (finalValue) => {
                 const matrixMap = listToMap(
                     matrixPillars,
-                    d => d.uniqueId,
-                    d => ({
+                    (d) => d.uniqueId,
+                    (d) => ({
                         id: d.id,
                         key: d.key,
                         uniqueId: d.uniqueId,
@@ -278,9 +327,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 );
                 triggerAnalysisEdit({
                     ...finalValue,
-                    analysisPillar: finalValue?.analysisPillar?.map(ap => ({
+                    analysisPillar: finalValue?.analysisPillar?.map((ap) => ({
                         ...ap,
-                        filters: ap.filters?.map(f => matrixMap[f]),
+                        filters: ap.filters?.map((f) => matrixMap[f]),
                     })),
                 });
             },

@@ -6,7 +6,7 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 
-import { useRequest, useLazyRequest } from '#utils/request';
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 
 import {
     MultiResponse,
@@ -15,7 +15,7 @@ import {
 
 import AnalysisPillar, { Props as PillarComponentProps } from '../AnalysisPillar';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 const MAX_ITEMS_PER_PAGE = 5;
 const keySelector = (item: PillarSummary) => item.id;
@@ -73,7 +73,7 @@ function AnalysisDetails(props: Props) {
         context: deletePillarId,
     } = useLazyRequest<unknown, number>(
         {
-            url: ctx => `server://projects/${activeProject}/analysis/${analysisId}/pillars/${ctx}/`,
+            url: (ctx) => `server://projects/${activeProject}/analysis/${analysisId}/pillars/${ctx}/`,
             method: 'DELETE',
             onSuccess: () => {
                 onAnalysisPillarDelete();
@@ -110,7 +110,6 @@ function AnalysisDetails(props: Props) {
     return (
         <Container
             className={_cs(className, styles.container)}
-            horizontallyCompactContent
             contentClassName={styles.content}
             footerActions={((pillarResponse?.count ?? 0) / MAX_ITEMS_PER_PAGE) > 1 ? (
                 <Pager
