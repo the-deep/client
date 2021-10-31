@@ -24,7 +24,7 @@ import {
 import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import EntryCard from './EntryCard';
-import { transformSourcesFilterToEntiesFilter } from '../utils';
+import { transformSourcesFilterToEntriesFilter } from '../utils';
 import styles from './styles.css';
 
 const maxItemsPerPage = 50;
@@ -170,7 +170,7 @@ function SourcesGrid(props: Props) {
         filters,
     } = props;
 
-    const entriesFilter = useMemo(() => transformSourcesFilterToEntiesFilter(filters), [filters]);
+    const entriesFilter = useMemo(() => transformSourcesFilterToEntriesFilter(filters), [filters]);
     const [activePage, setActivePage] = useState(1);
 
     const [

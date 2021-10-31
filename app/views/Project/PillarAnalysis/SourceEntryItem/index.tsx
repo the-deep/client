@@ -11,23 +11,28 @@ import {
     DropdownMenuItem,
 } from '@the-deep/deep-ui';
 
-import ExcerptOutput, { Props as ExcerptOutputProps } from '#newComponents/viewer/ExcerptOutput';
+import ExcerptInput from '#components/entry/ExcerptInput';
 
-import { useLazyRequest } from '#utils/request';
-import { genericMemo } from '#utils/safeCommon';
+import { useLazyRequest } from '#base/utils/restRequest';
+import { genericMemo } from '#utils/common';
 import _ts from '#ts';
+import { EntryMin } from '../context';
 import { DiscardedTags } from '../index';
-import styles from './styles.scss';
+import styles from './styles.css';
 
-interface Props extends ExcerptOutputProps {
+export interface Props {
     className?: string;
-    entryId: number;
+    entryId: string;
     disabled?: boolean;
-    pillarId: number;
+    pillarId: string;
     onEntryDiscard: () => void;
     discardedTags?: DiscardedTags[];
     createdAt?: string;
     pillarModifiedDate?: string;
+
+    excerpt: EntryMin['excerpt'];
+    image: EntryMin['image'];
+    entryType: EntryMin['entryType'];
 }
 
 function SourceEntryItem(props: Props) {
@@ -41,7 +46,8 @@ function SourceEntryItem(props: Props) {
         onEntryDiscard,
         discardedTags,
         entryType,
-        ...otherProps
+        image,
+        excerpt,
     } = props;
 
     const value = useMemo(() => ({ entryId }), [entryId]);
@@ -51,7 +57,7 @@ function SourceEntryItem(props: Props) {
     } = useLazyRequest<unknown, { entry: number; tag: number }>({
         url: `server://analysis-pillar/${pillarId}/discarded-entries/`,
         method: 'POST',
-        body: ctx => ctx,
+        body: (ctx) => ctx,
         failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
         onSuccess: () => {
             if (onEntryDiscard) {
@@ -62,7 +68,7 @@ function SourceEntryItem(props: Props) {
 
     const handleDiscardClick = useCallback((tagKey: number) => {
         trigger({
-            entry: entryId,
+            entry: +entryId,
             tag: tagKey,
         });
     }, [trigger, entryId]);
@@ -81,7 +87,7 @@ function SourceEntryItem(props: Props) {
             value={value}
             contentClassName={_cs(
                 styles.children,
-                entryType === 'image' && styles.image,
+                entryType === 'IMAGE' && styles.image,
             )}
             footerIcons={isNewEntry && (
                 <Tag
@@ -94,7 +100,7 @@ function SourceEntryItem(props: Props) {
                 <QuickActionDropdownMenu
                     label={(<IoTrashBinOutline />)}
                 >
-                    {discardedTags && discardedTags.map(tag => (
+                    {discardedTags && discardedTags.map((tag) => (
                         <DropdownMenuItem
                             key={tag.key}
                             name={tag.key}
@@ -106,9 +112,13 @@ function SourceEntryItem(props: Props) {
                 </QuickActionDropdownMenu>
             )}
         >
-            <ExcerptOutput
+            <ExcerptInput
                 entryType={entryType}
-                {...otherProps}
+                image={image}
+                value={excerpt}
+                imageRaw={undefined}
+                leadImageUrl={undefined}
+                readOnly
             />
         </DraggableContent>
     );

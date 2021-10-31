@@ -27,10 +27,10 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
-import NonFieldError from '#newComponents/ui/NonFieldError';
-import { Attributes, Listeners } from '#newComponents/ui/SortableList';
-import { genericMemo } from '#utils/safeCommon';
 import { useModalState } from '#hooks/stateManagement';
+import NonFieldError from '#components/NonFieldError';
+import { Attributes, Listeners } from '#components/SortableList';
+import { genericMemo } from '#utils/common';
 
 import {
     AnalyticalStatementType,
@@ -39,24 +39,24 @@ import {
 } from '../schema';
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
-import styles from './styles.scss';
 import AnalyticalNGramsModal from './AnalyticalNGramsModal';
+import styles from './styles.css';
 
 export const ENTRIES_LIMIT = 50;
 
 export interface DroppedValue {
-    entryId: number;
+    entryId: string;
     statementClientId?: string;
 }
 
-interface AnalyticalStatementInputProps {
+export interface AnalyticalStatementInputProps {
     className?: string;
     value: PartialAnalyticalStatementType;
     error: Error<AnalyticalStatementType> | undefined;
     onChange: (value: SetValueArg<PartialAnalyticalStatementType>, index: number) => void;
     onRemove: (index: number) => void;
-    onEntryMove: (entryId: number, statementClientId: string) => void;
-    onEntryDrop: (entryId: number) => void;
+    onEntryMove: (entryId: string, statementClientId: string) => void;
+    onEntryDrop: (entryId: string) => void;
     index: number;
     isBeingDragged?: boolean;
     attributes?: Attributes;
@@ -89,10 +89,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const error = getErrorObject(riskyError);
     const arrayError = getErrorObject(error?.analyticalEntries);
     const [
-        showAnalysisChart,
-        ,
-        hideAnalysisChart,
-        ,
+        showAnalysisChart,,
+        hideAnalysisChart,,
         toggleAnalysisChart,
     ] = useModalState(false);
 
@@ -110,7 +108,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     // NOTE: Treat moved item as a new item by removing the old one and
                     // adding the new one again
                     const movedItem = value.analyticalEntries
-                        ?.find(item => item.entry === dropValue.entryId);
+                        ?.find((item) => item.entry === +dropValue.entryId);
 
                     // NOTE: Don't let users add more that certain items
                     if (
@@ -125,7 +123,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     const clientId = randomString();
                     let newAnalyticalEntry: PartialAnalyticalEntryType = {
                         clientId,
-                        entry: dropValue.entryId,
+                        entry: +dropValue.entryId,
                         order: value.order ?? 0,
                     };
 
@@ -135,13 +133,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                             order: value.order ?? 0,
                         };
                         const movedItemOldIndex = value.analyticalEntries
-                            .findIndex(item => item.entry === dropValue.entryId);
+                            .findIndex((item) => item.entry === +dropValue.entryId);
                         newAnalyticalEntries.splice(movedItemOldIndex, 1);
                     }
 
                     if (dropOverEntryClientId) {
                         const currentIndex = newAnalyticalEntries
-                            .findIndex(v => v.clientId === dropOverEntryClientId);
+                            .findIndex((v) => v.clientId === dropOverEntryClientId);
                         newAnalyticalEntries.splice(currentIndex, 0, newAnalyticalEntry);
                     } else {
                         newAnalyticalEntries.push(newAnalyticalEntry);
@@ -175,7 +173,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             if (!val) {
                 return;
             }
-            const typedVal = val as { entryId: number, statementClientId: string };
+            const typedVal = val as { entryId: string, statementClientId: string };
             handleAnalyticalEntryDrop(typedVal);
         },
         [handleAnalyticalEntryDrop],
@@ -194,6 +192,21 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             className={_cs(styles.analyticalStatementInput, className)}
             contentClassName={styles.dragContent}
             headerClassName={styles.header}
+            headerDescription={(
+                <div className={styles.headerDescription}>
+                    <NonFieldError error={error} />
+                    <TextArea
+                        className={styles.statement}
+                        // FIXME: use translation
+                        placeholder="Enter analytical statement"
+                        name="statement"
+                        rows={4}
+                        value={value.statement}
+                        onChange={onFieldChange}
+                        error={error?.statement}
+                    />
+                </div>
+            )}
             headerIcons={(
                 <>
                     <QuickActionButton
@@ -201,10 +214,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         onClick={handleIncludeInReportChange}
                         big
                     >
-                        {value.includeInReport
+                        {(value.includeInReport
                             ? <IoCheckmarkCircleSharp />
                             : <IoEllipseOutline />
-                        }
+                        )}
                     </QuickActionButton>
                     <QuickActionButton
                         name="includeInReport"
@@ -238,40 +251,19 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 </>
             )}
         >
-            <div className={styles.upperContent}>
-                <NonFieldError error={error} />
-                <TextArea
-                    className={styles.statement}
-                    // FIXME: use translation
-                    placeholder="Enter analytical statement"
-                    name="statement"
-                    rows={4}
-                    value={value.statement}
-                    onChange={onFieldChange}
-                    error={error?.statement}
-                />
-            </div>
-            <div className={styles.bottomContainer}>
-                <div className={styles.entryContainer}>
-                    {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
-                        <AnalyticalEntryInput
-                            key={analyticalEntry.clientId}
-                            index={myIndex}
-                            statementClientId={value.clientId}
-                            value={analyticalEntry}
-                            // onChange={onAnalyticalEntryChange}
-                            onRemove={onAnalyticalEntryRemove}
-                            error={arrayError?.[analyticalEntry.clientId]}
-                            onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
-                        />
-                    ))}
-                </div>
-                <DropContainer
-                    className={styles.dropContainer}
-                    name="entry"
-                    draggedOverClassName={styles.draggedOver}
-                    onDrop={handleAnalyticalEntryAdd}
-                />
+            <div className={styles.entryContainer}>
+                {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
+                    <AnalyticalEntryInput
+                        key={analyticalEntry.clientId}
+                        index={myIndex}
+                        statementClientId={value.clientId}
+                        value={analyticalEntry}
+                        // onChange={onAnalyticalEntryChange}
+                        onRemove={onAnalyticalEntryRemove}
+                        error={arrayError?.[analyticalEntry.clientId]}
+                        onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
+                    />
+                ))}
             </div>
             {showAnalysisChart && (
                 <AnalyticalNGramsModal
@@ -283,6 +275,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     onNgramClick={onSelectedNgramChange}
                 />
             )}
+            <DropContainer
+                className={styles.dropContainer}
+                name="entry"
+                draggedOverClassName={styles.draggedOver}
+                onDrop={handleAnalyticalEntryAdd}
+            />
         </Container>
     );
 }

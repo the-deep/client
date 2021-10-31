@@ -49,14 +49,11 @@ import _ts from '#ts';
 
 import {
     getMatrixPillars,
-    MatrixPillarWidgetType,
     MatrixPillar,
 } from '../utils';
 
 import PillarAnalysisRow, { PillarAnalysisFields, Props as PillarAnalysisProps } from './PillarAnalysisRow';
 import styles from './styles.css';
-
-const emptyWidget: MatrixPillarWidgetType[] = [];
 
 const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
     query FrameworkDetailsForAnalysis($projectId: ID!) {
@@ -101,12 +98,13 @@ type FormType = {
 
 const analysisPillarKeySelector = (d: AnalysisPillar) => d.key;
 
-type FormSchema = ObjectSchema<PartialForm<FormType>>;
+type PartialFormType = PartialForm<FormType>;
+type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type AnalysisPillarType = NonNullable<NonNullable<FormType['analysisPillar']>>[number];
 
-type AnalysisPillarSchema = ObjectSchema<PartialForm<AnalysisPillarType>>;
+type AnalysisPillarSchema = ObjectSchema<PartialForm<AnalysisPillarType>, PartialFormType>;
 type AnalysisPillarSchemaFields = ReturnType<AnalysisPillarSchema['fields']>;
 const analysisPillarSchema: AnalysisPillarSchema = {
     fields: (): AnalysisPillarSchemaFields => ({
@@ -118,7 +116,7 @@ const analysisPillarSchema: AnalysisPillarSchema = {
     }),
 };
 
-type AnalysisPillarListSchema = ArraySchema<PartialForm<AnalysisPillarType>>;
+type AnalysisPillarListSchema = ArraySchema<PartialForm<AnalysisPillarType>, PartialFormType>;
 type AnalysisPillarListMember = ReturnType<AnalysisPillarListSchema['member']>;
 const analysisPillarListSchema: AnalysisPillarListSchema = {
     keySelector: (d) => d.key,
@@ -234,8 +232,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             ?.flat().filter(isDefined);
         const secondaryWidgets = framework?.secondaryTagging?.filter(isDefined);
         const matrixItems = getMatrixPillars([
-            ...(primaryWidgets ?? emptyWidget),
-            ...(secondaryWidgets ?? emptyWidget),
+            ...(primaryWidgets ?? []),
+            ...(secondaryWidgets ?? []),
         ]);
         return flatten(matrixItems, childrenSelector);
     }, [projectWithFramework]);

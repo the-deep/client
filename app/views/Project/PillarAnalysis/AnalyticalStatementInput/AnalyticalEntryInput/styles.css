@@ -16,7 +16,6 @@
         background-color: var(--dui-color-foreground);
         padding: var(--dui-spacing-small);
 
-        // TODO: we should not limit the height of the entry
         height: 160px;
         overflow: auto;
 

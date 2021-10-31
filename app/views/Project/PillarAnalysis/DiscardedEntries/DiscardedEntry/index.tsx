@@ -9,18 +9,23 @@ import {
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#base/utils/restRequest';
+import ExcerptInput from '#components/entry/ExcerptInput';
 import _ts from '#ts';
 
-import ExcerptOutput, { Props as ExcerptOutputProps } from '#newComponents/viewer/ExcerptOutput';
-import styles from './styles.scss';
+import { EntryMin } from '../../context';
+import styles from './styles.css';
 
-interface Props extends ExcerptOutputProps {
+export interface Props {
     className?: string;
     entryId: number;
     pillarId: number;
     tagDisplay: string;
     onEntryUndiscard: () => void;
+
+    excerpt: EntryMin['excerpt'];
+    image?: EntryMin['image'];
+    entryType: EntryMin['entryType'];
 }
 
 function DiscardedEntry(props: Props) {
@@ -31,7 +36,8 @@ function DiscardedEntry(props: Props) {
         onEntryUndiscard,
         tagDisplay,
         entryType,
-        ...otherProps
+        excerpt,
+        image,
     } = props;
 
     const {
@@ -57,7 +63,7 @@ function DiscardedEntry(props: Props) {
             className={_cs(className, styles.entryItem)}
             contentClassName={_cs(
                 styles.children,
-                entryType === 'image' && styles.image,
+                entryType === 'IMAGE' && styles.image,
             )}
             footerIcons={(
                 <Tag>
@@ -77,9 +83,13 @@ function DiscardedEntry(props: Props) {
             )}
         >
             {pending && (<PendingMessage />)}
-            <ExcerptOutput
+            <ExcerptInput
                 entryType={entryType}
-                {...otherProps}
+                image={image}
+                value={excerpt}
+                imageRaw={undefined}
+                leadImageUrl={undefined}
+                readOnly
             />
         </Container>
     );

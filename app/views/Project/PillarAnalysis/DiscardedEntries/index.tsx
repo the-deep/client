@@ -6,7 +6,7 @@ import {
     Pager,
 } from '@the-deep/deep-ui';
 
-import { useRequest } from '#utils/request';
+import { useRequest } from '#base/utils/restRequest';
 import {
     MultiResponse,
 } from '#types';
@@ -17,19 +17,29 @@ import {
 
 import _ts from '#ts';
 
-import { EntryFieldsMin } from '../context';
-import DiscardedEntry from './DiscardedEntry';
+import DiscardedEntryItem, { Props as DiscardedEntryProps } from './DiscardedEntry';
 import { DiscardedTags } from '../index';
-import styles from './styles.scss';
+import styles from './styles.css';
 
-interface DiscardedEntry extends EntryFieldsMin {
+const entryMap = {
+    excerpt: 'EXCERPT',
+    image: 'IMAGE',
+    dataSeries: 'DATA_SERIES',
+} as const;
+
+interface DiscardedEntry {
+    id: number;
+    entry: number;
     tag: number;
     tagDisplay: string;
     entryDetails: {
+        id: number;
         droppedExcerpt?: string;
         entryType: EntryType;
         excerpt?: string;
         imageDetails?: {
+            id: string;
+            title?: string;
             file?: string;
         };
         tabularFieldData?: TabularDataFields;
@@ -40,7 +50,7 @@ const keySelector = (d: DiscardedTags) => d.key;
 const labelSelector = (d: DiscardedTags) => d.value;
 
 const maxItemsPerPage = 5;
-const entryKeySelector = (d: EntryFieldsMin) => d.id;
+const entryKeySelector = (d: DiscardedEntry) => d.entry;
 
 interface Props {
     className?: string;
@@ -78,16 +88,24 @@ function DiscardedEntries(props: Props) {
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
     });
 
-    const entryCardRendererParams = useCallback((key: number, data: DiscardedEntry) => ({
-        entryId: key,
-        tagDisplay: data.tagDisplay,
-        excerpt: data.entryDetails?.excerpt,
-        imageDetails: data.entryDetails?.imageDetails,
-        tabularFieldData: data.entryDetails?.tabularFieldData,
-        entryType: data.entryDetails?.entryType,
-        pillarId,
-        onEntryUndiscard: triggerEntriesPull,
-    }), [pillarId, triggerEntriesPull]);
+    const entryCardRendererParams = useCallback(
+        (_: number, data: DiscardedEntry): DiscardedEntryProps => ({
+            entryId: data.entry,
+            tagDisplay: data.tagDisplay,
+            excerpt: data.entryDetails.excerpt ?? '',
+            image: data.entryDetails?.imageDetails?.file ? ({
+                id: String(data.entryDetails.imageDetails.id),
+                title: data.entryDetails.imageDetails.title ?? '',
+                file: {
+                    url: data.entryDetails.imageDetails.file,
+                },
+            }) : undefined,
+            entryType: entryMap[data.entryDetails.entryType],
+            pillarId,
+            onEntryUndiscard: triggerEntriesPull,
+        }),
+        [pillarId, triggerEntriesPull],
+    );
 
     const handleDiscardedTagFilterChange = useCallback((newValue: number[]) => {
         setActivePage(0);
@@ -112,7 +130,7 @@ function DiscardedEntries(props: Props) {
                 className={styles.list}
                 data={entriesResponse?.results}
                 keySelector={entryKeySelector}
-                renderer={DiscardedEntry}
+                renderer={DiscardedEntryItem}
                 rendererParams={entryCardRendererParams}
                 pending={pendingEntries}
             />
