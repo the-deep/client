@@ -22,7 +22,7 @@ export type PartialAnalyticalStatementType = PartialForm<
 export type AnalyticalEntryType = NonNullable<NonNullable<AnalyticalStatementType['analyticalEntries']>>[number];
 export type PartialAnalyticalEntryType = PartialForm<AnalyticalEntryType, 'clientId'>;
 
-type AnalyticalEntrySchema = ObjectSchema<PartialAnalyticalEntryType>;
+type AnalyticalEntrySchema = ObjectSchema<PartialAnalyticalEntryType, PartialFormType>;
 type AnalyticalEntrySchemaFields = ReturnType<AnalyticalEntrySchema['fields']>;
 const analyticalEntrySchema: AnalyticalEntrySchema = {
     fields: (): AnalyticalEntrySchemaFields => ({
@@ -33,15 +33,14 @@ const analyticalEntrySchema: AnalyticalEntrySchema = {
     }),
 };
 
-type AnalyticalEntriesSchema = ArraySchema<PartialAnalyticalEntryType>;
+type AnalyticalEntriesSchema = ArraySchema<PartialAnalyticalEntryType, PartialFormType>;
 type AnalyticalEntriesSchemaMember = ReturnType<AnalyticalEntriesSchema['member']>;
 const analyticalEntriesSchema: AnalyticalEntriesSchema = {
-    keySelector: col => col.clientId,
+    keySelector: (col) => col.clientId,
     member: (): AnalyticalEntriesSchemaMember => analyticalEntrySchema,
 };
 
-
-type AnalyticalStatementSchema = ObjectSchema<PartialAnalyticalStatementType>;
+type AnalyticalStatementSchema = ObjectSchema<PartialAnalyticalStatementType, PartialFormType>;
 type AnalyticalStatementSchemaFields = ReturnType<AnalyticalStatementSchema['fields']>;
 const analyticalStatementSchema: AnalyticalStatementSchema = {
     fields: (): AnalyticalStatementSchemaFields => ({
@@ -54,10 +53,10 @@ const analyticalStatementSchema: AnalyticalStatementSchema = {
     }),
 };
 
-type AnalyticalStatementsSchema = ArraySchema<PartialAnalyticalStatementType>;
+type AnalyticalStatementsSchema = ArraySchema<PartialAnalyticalStatementType, PartialFormType>;
 type AnalyticalStatementsSchemaMember = ReturnType<AnalyticalStatementsSchema['member']>;
 const analyticalStatementsSchema: AnalyticalStatementsSchema = {
-    keySelector: col => col.clientId,
+    keySelector: (col) => col.clientId,
     member: (): AnalyticalStatementsSchemaMember => analyticalStatementSchema,
 };
 

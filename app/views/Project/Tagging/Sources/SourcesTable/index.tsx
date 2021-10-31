@@ -52,7 +52,7 @@ import {
     convertDateToIsoDateTime,
 } from '#utils/common';
 
-import { transformSourcesFilterToEntiesFilter } from '../utils';
+import { transformSourcesFilterToEntriesFilter } from '../utils';
 import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
 import LeadEditModal from '../LeadEditModal';
@@ -312,7 +312,7 @@ function SourcesTable(props: Props) {
         }
     }, []);
 
-    const entriesFilter = useMemo(() => transformSourcesFilterToEntiesFilter(filters), [filters]);
+    const entriesFilter = useMemo(() => transformSourcesFilterToEntriesFilter(filters), [filters]);
 
     const [
         rowModifier,

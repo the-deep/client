@@ -1,5 +1,6 @@
 import React, { useContext, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { generatePath } from 'react-router-dom';
 import {
     NumberOutput,
     Container,
@@ -19,6 +20,7 @@ import {
     PillarSummary,
     AnalyticalStatementSummary,
 } from '#types';
+import routes from '#base/configs/routes';
 import { ProjectContext } from '#base/context/ProjectContext';
 import { calcPercent } from '#utils/common';
 
@@ -73,15 +75,11 @@ function AnalysisPillar(props: Props) {
         statusLabel = _ts('analysis', 'noAnalysisTagLabel');
     }
 
-    /* TODO: Make this work
-    const editLink = reverseRoute(pathNames.pillarAnalysis, {
+    const editLink = generatePath(routes.pillarAnalysis.path, {
         projectId,
         analysisId,
-        pillarId,
+        pillarAnalysisId: pillarId,
     });
-    */
-    console.warn('here', projectId, analysisId);
-    const editLink = '#';
 
     const disabled = pendingPillarDelete;
 

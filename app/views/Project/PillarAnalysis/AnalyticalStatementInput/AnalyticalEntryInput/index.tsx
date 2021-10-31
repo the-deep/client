@@ -13,14 +13,14 @@ import { _cs } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
-import NonFieldError from '#newComponents/ui/NonFieldError';
-import ExcerptOutput from '#newComponents/viewer/ExcerptOutput';
+import NonFieldError from '#components/NonFieldError';
+import ExcerptInput from '#components/entry/ExcerptInput';
 
 import EntryContext from '../../context';
 import { AnalyticalEntryType, PartialAnalyticalEntryType } from '../../schema';
-import { DroppedValue } from '../';
+import { DroppedValue } from '../index';
 
-import styles from './styles.scss';
+import styles from './styles.css';
 
 interface AnalyticalEntryInputProps {
     statementClientId: string;
@@ -58,7 +58,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             if (!val) {
                 return;
             }
-            const typedVal = val as { entryId: number, statementClientId: string };
+            const typedVal = val as { entryId: string, statementClientId: string };
             onAnalyticalEntryDrop(typedVal, value.clientId);
         },
         [value, onAnalyticalEntryDrop],
@@ -110,11 +110,13 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 <NonFieldError error={error} />
                 <NonFieldError error={error?.entry} />
                 {entry && (
-                    <ExcerptOutput
-                        excerpt={entry.excerpt}
-                        imageDetails={entry.imageDetails}
-                        tabularFieldData={entry.tabularFieldData}
+                    <ExcerptInput
+                        value={entry.excerpt}
+                        image={entry.image}
                         entryType={entry.entryType}
+                        readOnly
+                        imageRaw={undefined}
+                        leadImageUrl={undefined}
                     />
                 )}
             </DraggableContent>

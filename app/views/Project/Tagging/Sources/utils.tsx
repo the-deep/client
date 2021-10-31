@@ -6,7 +6,7 @@ import {
 } from '#utils/common';
 
 // eslint-disable-next-line import/prefer-default-export
-export function transformSourcesFilterToEntiesFilter(filters: Omit<ProjectSourcesQueryVariables, 'projectId'>) {
+export function transformSourcesFilterToEntriesFilter(filters: Omit<ProjectSourcesQueryVariables, 'projectId'>) {
     const {
         assignees,
         confidentiality,

@@ -188,15 +188,18 @@ export function convertDateToIsoDateTime(dateString: string | undefined | null, 
     return date.toISOString();
 }
 
+export function flatten<A>(a: A[], childSelector: (item: A) => A[] | undefined): A[];
+export function flatten<A>(a: A, childSelector: (item: A) => A[] | undefined): A;
 export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefined): A[] | A {
     if (Array.isArray(a)) {
-        return ([] as A[]).concat(...a.map((v) => flatten(v, childSelector)));
+        return a.map((v) => flatten(v, childSelector));
     }
-    if (Array.isArray(childSelector(a))) {
-        return ([] as A[]).concat(
+    const child = childSelector(a);
+    if (Array.isArray(child)) {
+        return [
             a,
-            ...(childSelector(a)?.map((v) => flatten(v, childSelector)) ?? []),
-        );
+            ...child.map((v) => flatten(v, childSelector)),
+        ];
     }
     return a;
 }

@@ -10,19 +10,11 @@
         flex-shrink: 0;
 
         .breadcrumb {
-            font-size: var(--dui-font-size-large);
-            font-weight: var(--dui-font-weight-bold);
-        }
-
-        .actions {
             display: flex;
             align-items: center;
-            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-extra-small));
-
-            .button {
-                margin: 0 var(--dui-spacing-extra-small);
-                font-weight: var(--dui-font-weight-bold);
-            }
+            color: var(--dui-color-accent);
+            font-size: var(--dui-font-size-large);
+            font-weight: var(--dui-font-weight-bold);
         }
     }
 
@@ -36,13 +28,13 @@
         .inputs-container {
             display: flex;
             flex-shrink: 0;
-            padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
+            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+            gap: var(--dui-spacing-large);
 
             .input-container {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                padding: var(--dui-spacing-small) var(--dui-spacing-large);
 
                 .input-header {
                     padding: var(--dui-spacing-medium) 0;
@@ -69,7 +61,7 @@
                 display: flex;
                 flex-basis: var(--width-left-container);
                 flex-shrink: 0;
-                background-color: var(--dui-color-surface-informational);
+                background-color: var(--dui-color-background-information);
                 padding: 0;
                 overflow: auto;
 
@@ -147,3 +139,13 @@
         }
     }
 }
+
+.app-brand {
+    overflow: auto;
+    color: var(--dui-color-brand);
+
+    .logo {
+        height: var(--dui-font-size-super-large);
+    }
+}
+

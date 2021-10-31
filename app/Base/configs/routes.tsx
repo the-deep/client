@@ -204,7 +204,7 @@ const analysis = wrap({
     path: '/analysis/',
     title: 'Analysis',
     navbarVisibility: true,
-    component: lazy(() => import('#views/AnalysisModule')),
+    component: lazy(() => import('#views/Project/AnalysisModule')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -217,6 +217,27 @@ const analysis = wrap({
         }
         return (
             project.allowedPermissions.includes('VIEW_ENTRY')
+        );
+    },
+});
+const pillarAnalysis = wrap({
+    parent: projectRoute,
+    path: '/analysis/:analysisId(\\d+)/pillar/:pillarAnalysisId(\\d+)/',
+    title: 'Pillar Analysis',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/Project/PillarAnalysis')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project || project.allowedPermissions.length <= 0) {
+            return false;
+        }
+        return (
+            project.allowedPermissions.includes('UPDATE_ENTRY')
         );
     },
 });
@@ -309,6 +330,7 @@ const routes = {
     userGroups,
     tagging: taggingRoute,
     analysis,
+    pillarAnalysis,
     explore,
     project: projectRoute,
     analyticalFrameworkEdit: analyticalFrameworkEditRoute,
