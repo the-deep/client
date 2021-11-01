@@ -109,13 +109,16 @@ function Tagging(props: Props) {
                         route={routes.sources}
                         className={styles.link}
                     />
-                    {project?.hasAssessmentTemplate && (
-                        <SmartNavLink
-                            exact
-                            route={routes.assessments}
-                            className={styles.link}
-                        />
-                    )}
+                    <SmartNavLink
+                        exact
+                        route={routes.leadGroups}
+                        className={styles.link}
+                    />
+                    <SmartNavLink
+                        exact
+                        route={routes.assessments}
+                        className={styles.link}
+                    />
                     {project?.isVisualizationEnabled && (
                         <SmartNavLink
                             exact
@@ -137,12 +140,20 @@ function Tagging(props: Props) {
                         {subNavbarComponents}
                     </Route>
                     {project?.hasAssessmentTemplate && (
-                        <Route
-                            exact
-                            path={routes.assessments.path}
-                        >
-                            {subNavbarComponents}
-                        </Route>
+                        <>
+                            <Route
+                                exact
+                                path={routes.assessments.path}
+                            >
+                                {subNavbarComponents}
+                            </Route>
+                            <Route
+                                exact
+                                path={routes.leadGroups.path}
+                            >
+                                {subNavbarComponents}
+                            </Route>
+                        </>
                     )}
                     {project?.isVisualizationEnabled && (
                         <Route
@@ -181,12 +192,20 @@ function Tagging(props: Props) {
                             {routes.sources.load({ className: styles.childView })}
                         </Route>
                         {project?.hasAssessmentTemplate && (
-                            <Route
-                                exact
-                                path={routes.assessments.path}
-                            >
-                                {routes.assessments.load({ className: styles.childView })}
-                            </Route>
+                            <>
+                                <Route
+                                    exact
+                                    path={routes.assessments.path}
+                                >
+                                    {routes.assessments.load({ className: styles.childView })}
+                                </Route>
+                                <Route
+                                    exact
+                                    path={routes.leadGroups.path}
+                                >
+                                    {routes.leadGroups.load({ className: styles.childView })}
+                                </Route>
+                            </>
                         )}
                         {project?.isVisualizationEnabled && (
                             <Route

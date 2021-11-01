@@ -239,6 +239,34 @@ const assessments = wrap({
     component: lazy(() => import('#views/Project/Tagging/Assessments')),
     componentProps: {
     },
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return project.hasAssessmentTemplate;
+    },
+    visibility: 'is-authenticated',
+});
+const leadGroups = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/lead-groups/',
+    title: 'Lead Groups',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/LeadGroups')),
+    componentProps: {
+    },
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return project.hasAssessmentTemplate;
+    },
     visibility: 'is-authenticated',
 });
 const dashboard = wrap({
@@ -280,6 +308,7 @@ const routes = {
     projectEdit: projectEditRoute,
     sources,
     assessments,
+    leadGroups,
     fourHundredFour,
     dashboard,
     export: exportRoute,
