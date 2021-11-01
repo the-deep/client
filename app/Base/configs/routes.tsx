@@ -231,6 +231,16 @@ const sources = wrap({
     },
     visibility: 'is-authenticated',
 });
+const assessments = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/assessments/',
+    title: 'Assessments',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/Assessments')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+});
 const dashboard = wrap({
     parent: { path: taggingRoute.path },
     path: '/dashboard/',
@@ -269,6 +279,7 @@ const routes = {
     projectCreate: projectCreateRoute,
     projectEdit: projectEditRoute,
     sources,
+    assessments,
     fourHundredFour,
     dashboard,
     export: exportRoute,

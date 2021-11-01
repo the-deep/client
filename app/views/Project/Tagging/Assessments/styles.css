@@ -1,0 +1,21 @@
+.analysis {
+    padding: 0;
+
+    .header {
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+    }
+
+    .content {
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+
+        .table {
+            background-color: var(--dui-color-foreground);
+        }
+    }
+
+    .footer {
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
+    }
+}
