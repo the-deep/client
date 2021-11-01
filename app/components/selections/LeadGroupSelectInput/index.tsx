@@ -14,7 +14,7 @@ import useDebouncedValue from '#hooks/useDebouncedValue';
 const LEAD_GROUPS = gql`
     query LeadGroups($search: String, $projectId: ID!) {
         project(id: $projectId) {
-            leadGroups(title: $search) {
+            leadGroups(search: $search) {
                 results {
                     id
                     title
