@@ -11,7 +11,6 @@ import styles from './styles.css';
 
 export interface Props {
     itemKey: string;
-    leadId?: string;
     className?: string;
     disabled?: boolean;
 }
@@ -23,7 +22,7 @@ function ActionCell(props: Props) {
         disabled,
     } = props;
 
-    const handleDeleteAssessmentClick = useCallback(() => {
+    const handleDeleteLeadGroupClick = useCallback(() => {
         console.warn('here', itemKey);
     }, [itemKey]);
 
@@ -31,7 +30,7 @@ function ActionCell(props: Props) {
         <div className={_cs(styles.actionCell, className)}>
             <QuickActionLink
                 className={styles.button}
-                // TODO: Link this to actual assessment edit page
+                // TODO: Link this to actual leadGroup edit page
                 to="#"
                 disabled={disabled}
                 title="Edit"
@@ -42,8 +41,8 @@ function ActionCell(props: Props) {
                 className={styles.button}
                 name="deleteButton"
                 title="Delete"
-                onConfirm={handleDeleteAssessmentClick}
-                message="Are you sure you want to delete this assessment?"
+                onConfirm={handleDeleteLeadGroupClick}
+                message="Are you sure you want to delete this lead group?"
                 showConfirmationInitially={false}
                 disabled={disabled}
             >
