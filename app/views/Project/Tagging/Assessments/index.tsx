@@ -90,6 +90,7 @@ function Assessments(props: Props) {
     const {
         data,
         loading,
+        refetch,
     } = useQuery<AssessmentListQuery, AssessmentListQueryVariables>(
         ASSESSMENT_LIST,
         {
@@ -112,9 +113,11 @@ function Assessments(props: Props) {
             },
             cellRenderer: ActionCell,
             cellRendererParams: (assessmentId, assessment) => ({
-                itemKey: assessmentId,
+                assessmentId,
+                projectId: project?.id,
                 leadId: assessment.lead?.id,
-                disabled: canEditEntry,
+                onDeleteSuccess: refetch,
+                disabled: !canEditEntry,
             }),
         };
 
@@ -139,7 +142,7 @@ function Assessments(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [canEditEntry]);
+    }, [canEditEntry, refetch, project?.id]);
 
     return (
         <Container
