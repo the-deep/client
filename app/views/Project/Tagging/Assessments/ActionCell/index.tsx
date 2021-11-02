@@ -3,29 +3,86 @@ import { _cs } from '@togglecorp/fujs';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
+    useAlert,
     QuickActionLink,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
+import { gql, useMutation } from '@apollo/client';
+
+import {
+    AssessmentDeleteMutation,
+    AssessmentDeleteMutationVariables,
+} from '#generated/types';
 
 import styles from './styles.css';
 
+const ASSESSMENT_DELETE = gql`
+    mutation AssessmentDelete(
+        $projectId: ID!,
+        $assessmentId: ID!,
+    ) {
+        project(id: $projectId) {
+            assessmentDelete(id: $assessmentId) {
+                ok
+            }
+        }
+    }
+`;
+
 export interface Props {
-    itemKey: string;
-    leadId?: string;
+    assessmentId: string;
+    projectId?: string;
     className?: string;
     disabled?: boolean;
+    onDeleteSuccess: () => void;
 }
 
 function ActionCell(props: Props) {
     const {
         className,
-        itemKey,
+        projectId,
+        assessmentId,
+        onDeleteSuccess,
         disabled,
     } = props;
 
+    const alert = useAlert();
+
+    const [
+        deleteAssessment,
+    ] = useMutation<AssessmentDeleteMutation, AssessmentDeleteMutationVariables>(
+        ASSESSMENT_DELETE,
+        {
+            onCompleted: (result) => {
+                if (result?.project?.assessmentDelete?.ok) {
+                    onDeleteSuccess();
+                    alert.show(
+                        'Successfully deleted assessment.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
     const handleDeleteAssessmentClick = useCallback(() => {
-        console.warn('here', itemKey);
-    }, [itemKey]);
+        if (projectId) {
+            deleteAssessment({
+                variables: {
+                    projectId,
+                    assessmentId,
+                },
+            });
+        }
+    }, [deleteAssessment, projectId, assessmentId]);
 
     return (
         <div className={_cs(styles.actionCell, className)}>

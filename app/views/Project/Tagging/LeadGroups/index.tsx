@@ -87,6 +87,7 @@ function LeadGroups(props: Props) {
     const {
         data,
         loading,
+        refetch,
     } = useQuery<LeadGroupListQuery, LeadGroupListQueryVariables>(
         ASSESSMENT_LIST,
         {
@@ -109,8 +110,10 @@ function LeadGroups(props: Props) {
             },
             cellRenderer: ActionCell,
             cellRendererParams: (leadGroupId) => ({
-                itemKey: leadGroupId,
-                disabled: canEditEntry,
+                leadGroupId,
+                projectId: project?.id,
+                onDeleteSuccess: refetch,
+                disabled: !canEditEntry,
             }),
         };
 
@@ -135,7 +138,7 @@ function LeadGroups(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [canEditEntry]);
+    }, [canEditEntry, refetch, project?.id]);
 
     return (
         <Container
