@@ -30,6 +30,7 @@
         }
     }
 
+
     .right {
         display: flex;
         flex-direction: column;
@@ -72,4 +73,29 @@
             }
         }
     }
+
+    &.no-circle {
+        flex-direction: column;
+        flex-shrink: 0;
+        justify-content: flex-start;
+        gap: var(--dui-spacing-extra-small);
+
+        .number-circle {
+            justify-content: flex-start;
+            border-radius: unset;
+            background: unset;
+            width: 100%;
+            height: unset;
+            color: var(--dui-color-text);
+            font-size: var(--dui-font-size-medium);
+            font-weight: var(--dui-font-weight-medium);
+        }
+
+        .right {
+            gap: var(--dui-spacing-extra-small);
+            width: 100%;
+            height: auto;
+        }
+    }
+
 }

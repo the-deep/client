@@ -85,7 +85,7 @@ function SourcesStats(props: Props) {
                     )}
                     title={_ts('sourcesStats', 'sourcesTaggedValidatedLabel')}
                     variant="complement1"
-                    size="large"
+                    size="small"
                 />
                 <ProgressLine
                     progress={calcPercent(

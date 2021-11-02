@@ -39,6 +39,10 @@ import {
 } from '#generated/types';
 import _ts from '#ts';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLine';
+import {
+    calcPercent,
+} from '#utils/common';
 
 import { transformSourcesFilterToEntiesFilter } from '../utils';
 import { Lead } from './types';
@@ -159,6 +163,7 @@ export const PROJECT_ENTRIES = gql`
                         title
                     }
                     entriesCounts {
+                        controlled
                         total
                     }
                     leadPreview {
@@ -381,6 +386,25 @@ function SourcesTable(props: Props) {
             }),
             columnWidth: 160,
         };
+        const percentControlledColumn: TableColumn<
+            Lead, string, ProgressLineProps, TableHeaderCellProps
+        > = {
+            id: 'percentControlled',
+            title: '% Controlled',
+            headerCellRenderer: TableHeaderCell,
+            headerCellRendererParams: {
+                sortable: false,
+            },
+            cellRenderer: ProgressLine,
+            cellRendererParams: (_, data) => ({
+                progress: calcPercent(
+                    data.entriesCounts?.controlled,
+                    data.entriesCounts?.total,
+                ) ?? 0,
+                size: 'small',
+                hideInfoCircle: true,
+            }),
+        };
         const actionsColumn: TableColumn<
             Lead, string, ActionsProps<string>, TableHeaderCellProps
         > = {
@@ -466,6 +490,7 @@ function SourcesTable(props: Props) {
                     columnWidth: 96,
                 },
             ),
+            percentControlledColumn,
             actionsColumn,
         ]);
     }, [
