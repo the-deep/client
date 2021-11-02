@@ -58,9 +58,9 @@ const statusIconMap: { [key in Lead['status']]: ReactNode } = {
     TAGGED: <IoCheckmarkCircleOutline />,
 };
 
-const statusVariantMap: Record<Lead['status'], 'complement2' | 'accent' | 'complement1'> = {
-    NOT_TAGGED: 'complement2',
-    IN_PROGRESS: 'accent',
+const statusVariantMap: Record<Lead['status'], 'default' | 'gradient1' | 'complement1'> = {
+    NOT_TAGGED: 'default',
+    IN_PROGRESS: 'gradient1',
     TAGGED: 'complement1',
 };
 
