@@ -10,13 +10,14 @@ import {
 
 import styles from './styles.css';
 
-interface Props {
+export interface Props {
     className?: string;
     progressClassName?: string;
     title?: string;
     progress?: number;
     variant?: 'complement1' | 'complement2' | 'complement3';
     size?: 'small' | 'large';
+    hideInfoCircle?: boolean;
 }
 
 function ProgressLine(props: Props) {
@@ -27,12 +28,19 @@ function ProgressLine(props: Props) {
         title,
         variant = 'complement1',
         size = 'small',
+        hideInfoCircle = false,
     } = props;
 
     const progressWidth = `${bound(isDefined(progress) ? progress : 0, 0, 100)}%`;
 
     return (
-        <div className={_cs(styles.progressBar, className)}>
+        <div
+            className={_cs(
+                styles.progressBar,
+                className,
+                hideInfoCircle && styles.noCircle,
+            )}
+        >
             <div
                 className={_cs(
                     styles.numberCircle,
