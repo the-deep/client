@@ -1,8 +1,9 @@
-import React, { useMemo, useState, useContext } from 'react';
+import React, { useCallback, useMemo, useState, useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { _cs } from '@togglecorp/fujs';
 import {
     PendingMessage,
+    Button,
     Container,
     TableView,
     TableColumn,
@@ -14,6 +15,8 @@ import {
 
 import ProjectContext from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
+import { useModalState } from '#hooks/stateManagement';
+import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
 import {
     LeadGroupListQuery,
     LeadGroupListQueryVariables,
@@ -70,6 +73,11 @@ function LeadGroups(props: Props) {
     const [filters, setFilters] = useState<Omit<LeadGroupListQueryVariables, 'projectId'> | undefined>(undefined);
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(25);
+    const [
+        addLeadGroupModalShown,
+        showAddLeadGroupModal,
+        hideAddLeadGroupModal,
+    ] = useModalState(false);
 
     const { project } = useContext(ProjectContext);
     const variables = useMemo(
@@ -96,7 +104,7 @@ function LeadGroups(props: Props) {
         },
     );
 
-    const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
+    const canEditLead = project?.allowedPermissions.includes('UPDATE_LEAD');
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
@@ -113,7 +121,7 @@ function LeadGroups(props: Props) {
                 leadGroupId,
                 projectId: project?.id,
                 onDeleteSuccess: refetch,
-                disabled: !canEditEntry,
+                disabled: !canEditLead,
             }),
         };
 
@@ -138,7 +146,11 @@ function LeadGroups(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [canEditEntry, refetch, project?.id]);
+    }, [canEditLead, refetch, project?.id]);
+
+    const handleLeadGroupAddSuccess = useCallback(() => {
+        refetch();
+    }, [refetch]);
 
     return (
         <Container
@@ -147,6 +159,14 @@ function LeadGroups(props: Props) {
             headerClassName={styles.header}
             contentClassName={styles.content}
             footerClassName={styles.footer}
+            headerActions={canEditLead && (
+                <Button
+                    name={undefined}
+                    onClick={showAddLeadGroupModal}
+                >
+                    Add Lead Group
+                </Button>
+            )}
             headerDescription={(
                 <LeadGroupFilterForm
                     filters={filters}
@@ -170,6 +190,12 @@ function LeadGroups(props: Props) {
                 keySelector={leadGroupKeySelector}
                 data={data?.project?.leadGroups?.results}
             />
+            {addLeadGroupModalShown && (
+                <AddLeadGroupModal
+                    onModalClose={hideAddLeadGroupModal}
+                    onLeadGroupAdd={handleLeadGroupAddSuccess}
+                />
+            )}
         </Container>
     );
 }
