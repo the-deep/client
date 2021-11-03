@@ -65,10 +65,6 @@ query RecentProjects{
             name
         }
         stats {
-            numberOfLeads
-            numberOfLeadsTagged
-            numberOfLeadsTaggedAndControlled
-            numberOfUsers
             entriesActivity {
                 count
                 date
@@ -78,6 +74,10 @@ query RecentProjects{
                 date
             }
             numberOfEntries
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsInProgress
+            numberOfUsers
         }
         allowedPermissions
     }
@@ -112,10 +112,6 @@ query FetchProject($projectId: ID!) {
             name
         }
         stats {
-            numberOfLeads
-            numberOfLeadsTagged
-            numberOfLeadsTaggedAndControlled
-            numberOfUsers
             entriesActivity {
                 count
                 date
@@ -125,6 +121,10 @@ query FetchProject($projectId: ID!) {
                 date
             }
             numberOfEntries
+            numberOfLeads
+            numberOfLeadsTagged
+            numberOfLeadsInProgress
+            numberOfUsers
         }
         allowedPermissions
     }
@@ -195,8 +195,8 @@ function Home(props: ViewProps) {
             analysisFramework: data?.analysisFramework?.id,
             totalUsers: data?.stats?.numberOfUsers,
             totalSources: data?.stats?.numberOfLeads,
-            totalSourcesTagged: data?.stats?.numberOfLeadsTagged,
-            totalSourcesValidated: data?.stats?.numberOfLeadsTaggedAndControlled,
+            totalSourcesTagged: data?.stats?.numberOfLeadsInProgress,
+            totalSourcesValidated: data?.stats?.numberOfLeadsTagged,
             entriesActivity: data?.stats?.entriesActivity,
             topTaggers: data?.topTaggers,
             topSourcers: data?.topSourcers,

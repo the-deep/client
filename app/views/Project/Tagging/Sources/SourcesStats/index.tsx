@@ -24,8 +24,11 @@ const PROJECT_SOURCE_STATS = gql`
         project(id: $projectId) {
             stats {
                 numberOfEntries
+                numberOfEntriesControlled
+                numberOfEntriesVerified
                 numberOfLeads
-                numberOfLeadsTaggedAndControlled
+                numberOfLeadsInProgress
+                numberOfLeadsNotTagged
                 numberOfLeadsTagged
             }
         }
@@ -54,9 +57,6 @@ function SourcesStats(props: Props) {
         },
     );
 
-    const totalControlledEntries = 0; // FIXME get values form server
-    const totalVerifiedEntries = 0; // FIXME get values form server
-
     return (
         <div className={_cs(styles.sourcesStats, className)}>
             <Card className={styles.leadStatsCard}>
@@ -74,28 +74,28 @@ function SourcesStats(props: Props) {
                         sourcesStats?.project?.stats?.numberOfLeadsTagged,
                         sourcesStats?.project?.stats?.numberOfLeads,
                     )}
-                    title={_ts('sourcesStats', 'sourcesTaggedLabel')}
+                    // FIXME: Use translation
+                    title="Sources Tagged"
                     variant="complement2"
                     size="large"
                 />
                 <ProgressLine
                     progress={calcPercent(
-                        sourcesStats?.project?.stats?.numberOfLeadsTaggedAndControlled,
+                        sourcesStats?.project?.stats?.numberOfLeadsInProgress,
                         sourcesStats?.project?.stats?.numberOfLeads,
                     )}
-                    title={_ts('sourcesStats', 'sourcesTaggedValidatedLabel')}
+                    // FIXME: Use translation
+                    title="Sources In Progress"
                     variant="complement1"
                     size="small"
                 />
                 <ProgressLine
                     progress={calcPercent(
-                        (
-                            sourcesStats?.project?.stats?.numberOfLeads ?? 0
-                            - (sourcesStats?.project?.stats?.numberOfLeadsTagged ?? 0)
-                        ),
+                        sourcesStats?.project?.stats?.numberOfLeadsNotTagged,
                         sourcesStats?.project?.stats?.numberOfLeads,
                     )}
-                    title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
+                    // FIXME: Use translation
+                    title="Sources Not Tagged"
                     variant="complement3"
                     size="large"
                 />
@@ -112,7 +112,7 @@ function SourcesStats(props: Props) {
                 />
                 <ProgressLine
                     progress={calcPercent(
-                        totalVerifiedEntries,
+                        sourcesStats?.project?.stats?.numberOfEntriesVerified,
                         sourcesStats?.project?.stats?.numberOfEntries,
                     )}
                     title="Entries Verified"
@@ -121,7 +121,7 @@ function SourcesStats(props: Props) {
                 />
                 <ProgressLine
                     progress={calcPercent(
-                        totalControlledEntries,
+                        sourcesStats?.project?.stats?.numberOfEntriesControlled,
                         sourcesStats?.project?.stats?.numberOfEntries,
                     )}
                     title="Entries Controlled"
