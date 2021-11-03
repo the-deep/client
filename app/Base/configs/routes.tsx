@@ -278,6 +278,15 @@ const dashboard = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return project.isVisualizationEnabled && project.isVisualizationAvailable;
+    },
 });
 const exportRoute = wrap({
     parent: { path: taggingRoute.path },

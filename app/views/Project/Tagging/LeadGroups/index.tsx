@@ -10,12 +10,14 @@ import {
     TableHeaderCellProps,
     TableHeaderCell,
     createStringColumn,
+    createNumberColumn,
     Pager,
 } from '@the-deep/deep-ui';
 
 import ProjectContext from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
+import { convertDateToIsoDateTime } from '#utils/common';
 import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
 import {
     LeadGroupListQuery,
@@ -48,6 +50,7 @@ const ASSESSMENT_LIST = gql`
                     id
                     title
                     createdAt
+                    leadsCount
                     createdBy {
                         displayName
                     }
@@ -84,6 +87,8 @@ function LeadGroups(props: Props) {
         () => (
             project ? ({
                 ...filters,
+                startDate: convertDateToIsoDateTime(filters?.startDate),
+                endDate: convertDateToIsoDateTime(filters?.endDate),
                 page,
                 pageSize,
                 projectId: project.id,
@@ -135,6 +140,11 @@ function LeadGroups(props: Props) {
                 'created_by',
                 'Created By',
                 (item) => item?.createdBy?.displayName,
+            ),
+            createNumberColumn<LeadGroup, string>(
+                'leadsCount',
+                'No. of Leads',
+                (item) => item?.leadsCount,
             ),
             createDateColumn<LeadGroup, string>(
                 'created_at',

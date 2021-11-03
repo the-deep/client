@@ -17,6 +17,7 @@ import {
     ProjectListQueryVariables,
 } from '#generated/types';
 import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#components/framework/FrameworkImageButton';
+import { convertDateToIsoDateTime } from '#utils/common';
 import { createDateColumn } from '#components/tableHelpers';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import ActionCell, { Props as ActionCellProps } from '../ActionCell';
@@ -100,6 +101,8 @@ function ExploreDeepTableView(props: Props) {
 
     const variables = useMemo(() => ({
         ...filters,
+        startDate: convertDateToIsoDateTime(filters?.startDate ?? undefined),
+        endDate: convertDateToIsoDateTime(filters?.endDate ?? undefined),
         page,
         pageSize,
     }), [page, pageSize, filters]);

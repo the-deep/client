@@ -14,6 +14,7 @@ import {
 
 import ProjectContext from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
+import { convertDateToIsoDateTime } from '#utils/common';
 import {
     AssessmentListQuery,
     AssessmentListQueryVariables,
@@ -79,6 +80,8 @@ function Assessments(props: Props) {
         () => (
             project ? ({
                 ...filters,
+                startDate: convertDateToIsoDateTime(filters?.startDate),
+                endDate: convertDateToIsoDateTime(filters?.endDate),
                 page,
                 pageSize,
                 projectId: project.id,
