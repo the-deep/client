@@ -41,8 +41,8 @@ import { VscLoading } from 'react-icons/vsc';
 import {
     ProjectSourcesQuery,
     ProjectSourcesQueryVariables,
-    DeleteEntryMutation,
-    DeleteEntryMutationVariables,
+    DeleteLeadMutation,
+    DeleteLeadMutationVariables,
 } from '#generated/types';
 import _ts from '#ts';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
@@ -252,14 +252,16 @@ function SourcesTable(props: Props) {
     ] = useMutation<DeleteLeadMutation, DeleteLeadMutationVariables>(
         DELETE_LEAD,
         {
-            onCompleted: () => {
-                alert.show(
-                    'Successfully deleted lead.',
-                    {
-                        variant: 'success',
-                    },
-                );
-                getProjectSources();
+            onCompleted: (response) => {
+                if (response?.project?.leadDelete?.ok) {
+                    alert.show(
+                        'Successfully deleted lead.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    getProjectSources();
+                }
             },
             onError: (gqlError) => {
                 alert.show(
@@ -344,7 +346,7 @@ function SourcesTable(props: Props) {
                 },
             });
         },
-        [projectId],
+        [projectId, deleteLead],
     );
 
     const handleEdit = useCallback((leadId: string) => {

@@ -26,6 +26,7 @@ import {
     Message,
     Container,
     InformationCard,
+    CompactInformationCard,
     ContainerCard,
 } from '@the-deep/deep-ui';
 
@@ -124,15 +125,14 @@ function ExploreDeep(props: Props) {
                 </div>
                 <div className={styles.midContainer}>
                     <Card className={styles.statsByTimeContainer}>
-                        <InformationCard
+                        <CompactInformationCard
                             className={styles.infoItem}
                             icon={<IoBookmarks />}
                             label="Sources added weekly"
                             valuePrecision={2}
                             value={data?.projectExploreStats?.leadsAddedWeekly ?? 0}
-                            variant="accent"
                         />
-                        <InformationCard
+                        <CompactInformationCard
                             className={styles.infoItem}
                             icon={<IoPricetag />}
                             label="Daily average sources tagged per project"
@@ -140,15 +140,13 @@ function ExploreDeep(props: Props) {
                             value={
                                 data?.projectExploreStats?.dailyAverageLeadsTaggedPerProject ?? 0
                             }
-                            variant="accent"
                         />
-                        <InformationCard
+                        <CompactInformationCard
                             className={styles.infoItem}
                             icon={<IoDocuments />}
                             label="Generated reports monthly"
                             valuePrecision={2}
                             value={data?.projectExploreStats?.generatedExportsMonthly ?? 0}
-                            variant="accent"
                         />
                     </Card>
                 </div>
