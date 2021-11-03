@@ -24,18 +24,25 @@ import {
     Tag,
     TagProps,
     createStringColumn,
+    useAlert,
     useBooleanState,
     useSortState,
     useRowExpansion,
     RowExpansionContext,
 } from '@the-deep/deep-ui';
-import { useQuery, gql } from '@apollo/client';
+import {
+    useMutation,
+    useQuery,
+    gql,
+} from '@apollo/client';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
 
 import {
     ProjectSourcesQuery,
     ProjectSourcesQueryVariables,
+    DeleteEntryMutation,
+    DeleteEntryMutationVariables,
 } from '#generated/types';
 import _ts from '#ts';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
@@ -176,6 +183,20 @@ export const PROJECT_ENTRIES = gql`
     }
 `;
 
+const DELETE_LEAD = gql`
+    mutation DeleteLead(
+        $projectId: ID!,
+        $leadId: ID!,
+    ) {
+        project(id: $projectId) {
+            leadDelete(id: $leadId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
+
 interface Props {
     className?: string;
     projectId: string;
@@ -192,6 +213,7 @@ function SourcesTable(props: Props) {
     const [activePage, setActivePage] = useState<number>(1);
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
+    const alert = useAlert();
 
     const sortState = useSortState();
     const { sorting } = sortState;
@@ -216,11 +238,37 @@ function SourcesTable(props: Props) {
     const {
         data: projectSourcesResponse,
         loading: projectSourcesPending,
+        refetch: getProjectSources,
     } = useQuery<ProjectSourcesQuery, ProjectSourcesQueryVariables>(
         PROJECT_ENTRIES,
         {
             skip: isNotDefined(variables),
             variables,
+        },
+    );
+
+    const [
+        deleteLead,
+    ] = useMutation<DeleteLeadMutation, DeleteLeadMutationVariables>(
+        DELETE_LEAD,
+        {
+            onCompleted: () => {
+                alert.show(
+                    'Successfully deleted lead.',
+                    {
+                        variant: 'success',
+                    },
+                );
+                getProjectSources();
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
         },
     );
 
@@ -287,8 +335,17 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalFalse,
     ] = useBooleanState(false);
 
-    // eslint-disable-next-line
-    const handleDelete = useCallback((_: string) => {}, []); //FIXME handle delete action later
+    const handleDelete = useCallback(
+        (leadId: string) => {
+            deleteLead({
+                variables: {
+                    projectId,
+                    leadId,
+                },
+            });
+        },
+        [projectId],
+    );
 
     const handleEdit = useCallback((leadId: string) => {
         setLeadToEdit(leadId);
