@@ -30,6 +30,7 @@ import MultiSelectWidgetInput from './MultiSelectWidgetInput';
 import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 import OrganigramWidgetInput from './OrganigramWidgetInput';
+import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 
 // FIXME: move this to utils later on
 export function getErrorObject<T extends ArrayError<T>>(
@@ -277,6 +278,22 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
         const data = value?.data;
         component = (
             <OrganigramWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                actions={actions}
+                error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <GeoLocationWidgetInput
                 className={className}
                 title={widget.title}
                 name="data"

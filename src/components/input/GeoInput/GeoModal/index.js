@@ -390,7 +390,7 @@ function GeoModal(props) {
                             showHintAndError={false}
                             disabled={pending || !!responseError}
                         />
-                        <div className={styles.leftInputs} >
+                        <div className={styles.leftInputs}>
                             <MultiSelectInput
                                 label={_ts('components.geo.geoModal', 'adminLevelLabel')}
                                 className={styles.selectInput}

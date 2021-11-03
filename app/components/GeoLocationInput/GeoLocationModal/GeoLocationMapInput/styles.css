@@ -1,0 +1,39 @@
+.geo-location-map-input {
+    display: flex;
+    flex-grow: 1;
+    width: 80vw;
+    height: 70vh;
+
+    .map-selection {
+        display: flex;
+        flex-basis: 75%;
+        flex-direction: column;
+
+        .inputs {
+            display: flex;
+            padding: var(--dui-spacing-small);
+
+            .region-select {
+                padding-right: var(--dui-spacing-small);
+            }
+        }
+
+        .map {
+            display: flex;
+            flex-grow: 1;
+        }
+    }
+
+    .selected-geo-areas {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: var(--dui-color-white);
+
+        .geo-area-group {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+    }
+}
