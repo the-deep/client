@@ -1,0 +1,12 @@
+.geo-location-input {
+    display: flex;
+
+    .input {
+        display: flex;
+        flex-grow: 1;
+
+        .show-geo-location-modal-button {
+            display: flex;
+        }
+    }
+}
