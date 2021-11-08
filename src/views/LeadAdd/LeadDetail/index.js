@@ -83,6 +83,12 @@ const PublisherEmptyComponent = () => (
     </Message>
 );
 
+const LeadGroupEmptyComponent = () => (
+    <Message>
+        {_ts('addLeads', 'searchInputEmptyText', { title: 'lead group' })}
+    </Message>
+);
+
 const AuthorEmptyComponent = () => (
     <Message>
         {_ts('addLeads', 'searchInputEmptyText', { title: 'author' })}
@@ -356,7 +362,7 @@ const requestOptions = {
             const inputValues = leadFaramValuesSelector(lead);
             return {
                 projects: [inputValues.project],
-                leadGroups: [], // this will not fetch any leadGroups
+                leadGroups: [inputValues.leadGroup].filter(isDefined),
                 organizations: unique(
                     [
                         inputValues.source,
@@ -403,6 +409,21 @@ const requestOptions = {
             delay: 300,
         },
     },
+
+    leadGroupsRequest: {
+        url: '/lead-groups/',
+        query: ({ params }) => ({
+            title: params.searchText,
+            limit: 30,
+        }),
+        method: methods.GET,
+        onSuccess: ({ params, response }) => {
+            params.setSearchedLeadGroups(response.results);
+        },
+        options: {
+            delay: 300,
+        },
+    },
 };
 
 class LeadDetail extends React.PureComponent {
@@ -431,8 +452,10 @@ class LeadDetail extends React.PureComponent {
             suggestedTitleFromExtraction: undefined,
 
             searchedOrganizations: [],
+            searchedLeadGroups: [],
             // Organizations filled by web-info-extract and lead-options
             organizations: [],
+            leadGroups: [],
         };
 
         leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
@@ -448,8 +471,16 @@ class LeadDetail extends React.PureComponent {
         this.setState({ searchedOrganizations });
     }
 
+    setSearchedLeadGroups = (searchedLeadGroups) => {
+        this.setState({ searchedLeadGroups });
+    }
+
     setOrganizations = (organizations) => {
         this.setState({ organizations });
+    }
+
+    setLeadGroups = (leadGroups) => {
+        this.setState({ leadGroups });
     }
 
     shouldHideLeadGroupInput = () => {
@@ -589,11 +620,17 @@ class LeadDetail extends React.PureComponent {
         const {
             organizations,
             // priority,
+            leadGroups,
         } = leadOptions;
 
         if (organizations.length > 0) {
             this.setState(state => ({
                 organizations: mergeLists(state.organizations, organizations),
+            }));
+        }
+        if (leadGroups.length > 0) {
+            this.setState(state => ({
+                leadGroups: mergeLists(state.leadGroups, leadGroups),
             }));
         }
 
@@ -709,6 +746,7 @@ class LeadDetail extends React.PureComponent {
             lead,
         } = this.props;
 
+        this.setState(oldState => ({ leadGroups: [...oldState.leadGroups, leadGroup] }));
         const values = leadFaramValuesSelector(lead);
         const newValues = produce(values, (safeValues) => {
             // eslint-disable-next-line no-param-reassign
@@ -732,6 +770,24 @@ class LeadDetail extends React.PureComponent {
             organizationsRequest.do({
                 searchText,
                 setSearchedOrganizations: this.setSearchedOrganizations,
+            });
+        }
+    }
+
+    handleLeadGroupsSearchValueChange = (searchText) => {
+        const {
+            requests: {
+                leadGroupsRequest,
+            },
+        } = this.props;
+
+        if (isFalsyString(searchText)) {
+            leadGroupsRequest.abort();
+            this.setSearchedOrganizations([]);
+        } else {
+            leadGroupsRequest.do({
+                searchText,
+                setSearchedLeadGroups: this.setSearchedLeadGroups,
             });
         }
     }
@@ -764,6 +820,9 @@ class LeadDetail extends React.PureComponent {
                 organizationsRequest: {
                     pending: pendingSearchedOrganizations,
                 },
+                leadGroupsRequest: {
+                    pending: pendingSearchedLeadGroups,
+                },
             },
             hideProjects,
             disableLeadUrlChange,
@@ -774,6 +833,8 @@ class LeadDetail extends React.PureComponent {
             organizations,
             suggestedTitleFromUrl,
             suggestedTitleFromExtraction,
+            leadGroups,
+            searchedLeadGroups,
         } = this.state;
 
         const values = leadFaramValuesSelector(lead);
@@ -1155,13 +1216,21 @@ class LeadDetail extends React.PureComponent {
                                     />
                                 }
                             >
-                                <SelectInput
+                                <FaramBasicSelectInput
                                     faramElementName="leadGroup"
-                                    keySelector={keySelector}
+                                    options={leadGroups}
                                     label={_ts('addLeads', 'leadGroupLabel')}
-                                    labelSelector={labelSelector}
-                                    options={leadOptions.leadGroup}
-                                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                                    keySelector={idSelector}
+                                    emptyWhenFilterComponent={LeadGroupEmptyComponent}
+                                    className={styles.input}
+                                    labelSelector={titleSelector}
+                                    disabled={
+                                        leadOptionsPending || formDisabled || !projectIsSelected
+                                    }
+                                    searchOptions={searchedLeadGroups}
+                                    searchOptionsPending={pendingSearchedLeadGroups}
+                                    onOptionsChange={this.setLeadGroups}
+                                    onSearchValueChange={this.handleLeadGroupsSearchValueChange}
                                 />
                             </ApplyAll>
                         }

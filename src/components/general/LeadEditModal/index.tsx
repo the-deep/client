@@ -15,7 +15,10 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import LeadDetail from '#views/LeadAdd/LeadDetail';
 import schema from '#views/LeadAdd/LeadDetail/faramSchema';
 
-import { patchLeadAction } from '#redux';
+import {
+    patchLeadAction,
+    currentUserLeadChangeableProjectsSelector,
+} from '#redux';
 import {
     notifyOnFailure,
     notifyOnFatal,
@@ -25,6 +28,7 @@ import {
     AddRequestProps,
     Requests,
     Lead as LeadFaramValues,
+    AppState,
 } from '#typings';
 
 import {
@@ -55,7 +59,7 @@ interface Params {
     body?: LeadFaramValues;
 }
 
-const requestOptions: Requests<OwnProps & PropsFromDispatch, Params> = {
+const requestOptions: Requests<OwnProps & PropsFromDispatch & PropsFromState, Params> = {
     leadEditRequest: {
         url: ({ params }) => `/v2/leads/${params && params.leadId}/`,
         body: ({ params }) => params && params.body,
@@ -89,17 +93,29 @@ const requestOptions: Requests<OwnProps & PropsFromDispatch, Params> = {
     },
 };
 
+interface PropsFromState {
+    projects: {
+        id: number;
+        assessmentTemplate: number;
+    }[];
+}
+
+const mapStateToProps = (state: AppState) => ({
+    projects: currentUserLeadChangeableProjectsSelector(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     patchLead: params => dispatch(patchLeadAction(params)),
 });
 
-type Props = AddRequestProps<OwnProps & PropsFromDispatch, Params>;
+type Props = AddRequestProps<OwnProps & PropsFromDispatch & PropsFromState, Params>;
 
 function LeadEdit(props: Props) {
     const {
         leadId,
         lead: leadFromProps,
         closeModal,
+        projects,
         requests: {
             leadEditRequest: {
                 do: onLeadEdit,
@@ -171,6 +187,7 @@ function LeadEdit(props: Props) {
                 <LeadDetail
                     onChange={handleLeadDetailChange}
                     lead={lead}
+                    projects={projects}
                     disableLeadUrlChange
                     bulkActionDisabled
                     hideProjects
@@ -194,7 +211,7 @@ function LeadEdit(props: Props) {
     );
 }
 
-export default connect(undefined, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
     (RequestClient(requestOptions)(LeadEdit)),
 );
 
