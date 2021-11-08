@@ -1,91 +1,98 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
-import { useQuery, gql } from '@apollo/client';
 import {
+    Container,
     ListView,
+    Footer,
+    Pager,
+    TextOutput,
 } from '@the-deep/deep-ui';
 
-import {
-    ProjectDetailsQuery,
-    ProjectDetailsQueryVariables,
-} from '#generated/types';
+import { ProjectDetailsForMapViewQuery } from '#generated/types';
 
 import styles from './styles.css';
 
-const PROJECT_DETAILS = gql`
-    query ProjectDetails(
-        $projectIdList: [ID!]
-    ) {
-        projects(ids: $projectIdList) {
-            results {
-                id
-                title
-                description
-                analysisFramework {
-                    title
-                }
-            }
-        }
-    }
-`;
+type ProjectDetail = NonNullable<NonNullable<NonNullable<ProjectDetailsForMapViewQuery['projects']>['results']>[number]>;
+
+interface TooltipProps {
+    projectTitle: string;
+    analysisFrameworkTitle: string;
+}
+
+function tooltipRenderer(props: TooltipProps) {
+    const {
+        projectTitle,
+        analysisFrameworkTitle,
+    } = props;
+
+    return (
+        <div className={styles.tooltipContainer}>
+            <div className={styles.projectTitle}>
+                {projectTitle}
+            </div>
+            <TextOutput
+                label="Framework used"
+                value={analysisFrameworkTitle}
+                hideLabelColon
+            />
+        </div>
+    );
+}
+
+const keySelector = (d: ProjectDetail) => d.id;
 
 interface Props {
-    projectIds: string[];
+    projectDetails?: ProjectDetail[];
+    page: number;
+    pageSize: number;
+    setPage: (page: number) => void;
+    setPageSize: (pageSize: number) => void;
+    totalCount: number;
 }
 
 function MapTooltipDetails(props: Props) {
     const {
-        projectIds,
+        projectDetails,
+        page,
+        pageSize,
+        setPage,
+        setPageSize,
+        totalCount,
     } = props;
 
-    console.warn(projectIds);
+    const rendererParams = useCallback((_, datum) => ({
+        value: datum,
+        projectDetailsPass: projectDetails,
+        projectTitle: datum?.title,
+        description: datum?.description,
+        analysisFrameworkTitle: datum?.analysisFramework?.title,
+    }), [projectDetails]);
 
-    const variables = useMemo(() => ({
-        projectIds,
-    }), [projectIds],
-    );
-
-    const {
-        data: projectDetails,
-        loading: projectDetailsPending,
-    } = useQuery<ProjectDetailsQuery, ProjectDetailsQueryVariables>(
-        PROJECT_DETAILS,
-        {
-            variables,
-        },
-    );
-
-    const keySelector = (d: ProjectDetailsQuery) => d.id;
-    const labelSelector = (d: ProjectDetailsQuery) => d.title;
-
-    const rendererParams = useCallback((_, val) => ({
-        title: val.title,
-        description: val.description,
-        id: val.id,
-    }), []);
-
-    const renderer = useCallback(() => {
-        const {
-            projectTitle,
-        } = props;
-        return (
-            <div className={styles.listItem}>
-                {projectTitle}
-            </div>
-        );
-    }, []);
-
-    console.warn('project details', projectDetails, projectDetailsPending);
     return (
-        <div className={styles.mapTooltip}>
+        <Container
+            className={styles.mapTooltip}
+        >
             <ListView
+                className={styles.list}
                 keySelector={keySelector}
-                labelSelector={labelSelector}
-                renderer={renderer}
+                data={projectDetails}
+                renderer={tooltipRenderer}
                 rendererParams={rendererParams}
             />
-            {projectIds.join(', ')}
-        </div>
+            <Footer
+                className={styles.footer}
+            >
+                <Pager
+                    className={styles.pager}
+                    activePage={page}
+                    itemsCount={totalCount}
+                    maxItemsPerPage={pageSize}
+                    onActivePageChange={setPage}
+                    onItemsPerPageChange={setPageSize}
+                    itemsPerPageControlHidden
+                />
+            </Footer>
+        </Container>
     );
 }
 

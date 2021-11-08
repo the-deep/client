@@ -4,7 +4,9 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
-import { PendingMessage } from '@the-deep/deep-ui';
+import {
+    PendingMessage,
+} from '@the-deep/deep-ui';
 import Map, {
     MapContainer,
     MapSource,
@@ -22,6 +24,8 @@ import {
 import {
     ProjectsByRegionQuery,
     ProjectsByRegionQueryVariables,
+    ProjectDetailsForMapViewQuery,
+    ProjectDetailsForMapViewQueryVariables,
     // ProjectListQueryVariables,
 } from '#generated/types';
 
@@ -88,6 +92,33 @@ const PROJECT_LIST = gql`
         }
     }
 `;
+
+const PROJECT_DETAILS = gql`
+    query ProjectDetailsForMapView(
+        $projectIdList: [ID!]
+        $page: Int
+        $pageSize: Int
+    ) {
+        projects(
+            ids: $projectIdList,
+            page: $page,
+            pageSize: $pageSize,
+        ) {
+            page
+            pageSize
+            totalCount
+            results {
+                id
+                title
+                description
+                analysisFramework {
+                    title
+                }
+            }
+        }
+    }
+`;
+
 export type Project = NonNullable<NonNullable<ProjectsByRegionQuery['projectsByRegion']>[number]>;
 
 interface Props {
@@ -112,6 +143,30 @@ function ExploreDeepMapView(props: Props) {
         },
     );
 
+    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<string[]>([]);
+    const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
+    const [mapClicked, setMapClicked] = useState<boolean>(false);
+
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(5);
+
+    const projectDetailsVariables = useMemo(() => ({
+        hoverFeatureProperties,
+        page,
+        pageSize,
+    }), [hoverFeatureProperties, page, pageSize],
+    );
+
+    const {
+        data: projectDetails,
+        loading: projectDetailsPending,
+    } = useQuery<ProjectDetailsForMapViewQuery, ProjectDetailsForMapViewQueryVariables>(
+        PROJECT_DETAILS,
+        {
+            variables: projectDetailsVariables,
+        },
+    );
+
     const geoJson: GeoJSON.FeatureCollection<GeoJSON.Point> | undefined = useMemo(() => {
         if (!data) {
             return undefined;
@@ -133,9 +188,6 @@ function ExploreDeepMapView(props: Props) {
             features: projects ?? [],
         });
     }, [data]);
-
-    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<string[]>([]);
-    const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
 
     const handleMouseEnter = useCallback((
         feature: MapboxGeoJSONFeature,
@@ -184,9 +236,13 @@ function ExploreDeepMapView(props: Props) {
         setHoverFeatureProperties([]);
     }, []);
 
+    const handleClick = useCallback(() => {
+        setMapClicked(!mapClicked);
+    }, [mapClicked]);
+
     return (
         <div className={_cs(className, styles.mapView)}>
-            {loading && (<PendingMessage />)}
+            {loading && projectDetailsPending && (<PendingMessage />)}
             <Map
                 mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
                 mapOptions={mapOptions}
@@ -208,6 +264,7 @@ function ExploreDeepMapView(props: Props) {
                         }}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
+                        onClick={handleClick}
                     />
                     <MapLayer
                         layerKey="cases-cluster-number"
@@ -217,14 +274,18 @@ function ExploreDeepMapView(props: Props) {
                             layout: clusterPointTextLayout,
                         }}
                     />
-                    {hoverLngLat && (
+                    {mapClicked && (
                         <MapTooltip
                             coordinates={hoverLngLat}
                             tooltipOptions={tooltipOptions}
-                            trackPointer
                         >
                             <MapTooltipDetails
-                                projectIds={hoverFeatureProperties}
+                                projectDetails={projectDetails?.projects?.results ?? []}
+                                page={page}
+                                pageSize={pageSize}
+                                setPage={setPage}
+                                setPageSize={setPageSize}
+                                totalCount={projectDetails?.projects?.totalCount ?? 0}
                             />
                         </MapTooltip>
                     )}
