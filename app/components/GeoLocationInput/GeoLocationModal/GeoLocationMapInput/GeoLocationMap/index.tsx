@@ -194,13 +194,6 @@ function GeoLocationMap(props: Props) {
         value: data.value,
     }), []);
 
-    const handleAdminLevelChange = useCallback(
-        (value: string) => {
-            onAdminLevelChange(value);
-        },
-        [onAdminLevelChange],
-    );
-
     const bounds: [number, number, number, number] | undefined = useMemo(() => {
         if (!boundsResponse?.bounds) {
             return undefined;
@@ -240,7 +233,7 @@ function GeoLocationMap(props: Props) {
             <SegmentInput
                 className={styles.adminLevels}
                 name="adminLevels"
-                onChange={handleAdminLevelChange}
+                onChange={onAdminLevelChange}
                 options={adminLevels}
                 keySelector={adminLevelKeySelector}
                 labelSelector={adminLevelLabelSelector}

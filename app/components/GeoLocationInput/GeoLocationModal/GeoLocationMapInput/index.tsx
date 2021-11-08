@@ -152,6 +152,13 @@ function GeoLocationMapInput(props: Props) {
         });
     }, [onChange, getGeoAreas, projectId]);
 
+    const handleRegionChange = useCallback((newRegion: string | undefined) => {
+        setSelectedRegion(newRegion);
+        const selectedRegionDetails = projectRegions
+            ?.project?.regions?.find((region) => region.id === newRegion);
+        setSelectedAdminLevel(selectedRegionDetails?.adminLevels?.[0]);
+    }, [projectRegions]);
+
     const handleAdminLevelChange = useCallback((value: string) => {
         const adminLevel = adminLevels?.find((v) => v.id === value);
         setSelectedAdminLevel(adminLevel);
@@ -188,7 +195,7 @@ function GeoLocationMapInput(props: Props) {
                             styles.regionSelect,
                         )}
                         name="regionSelect"
-                        onChange={setSelectedRegion}
+                        onChange={handleRegionChange}
                         options={projectRegions?.project?.regions}
                         keySelector={regionKeySelector}
                         labelSelector={regionLabelSelector}

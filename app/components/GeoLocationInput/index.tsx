@@ -37,6 +37,7 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         showGeoLocationModal,
         hideGeoLocationModal,
     ] = useModalState(false);
+
     const [
         geoAreaOptions,
         setGeoAreaOptions,

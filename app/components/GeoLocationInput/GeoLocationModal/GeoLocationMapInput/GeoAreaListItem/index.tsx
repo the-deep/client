@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { ElementFragments, QuickActionButton } from '@the-deep/deep-ui';
 import { IoTrashBinOutline } from 'react-icons/io5';
@@ -20,19 +20,13 @@ function GeoAreaListItem(props: Props) {
         onDismiss,
     } = props;
 
-    const handleDismissButtonClick = useCallback(
-        () => {
-            onDismiss(id);
-        },
-        [onDismiss, id],
-    );
     return (
         <div className={_cs(className, styles.geoAreaListItem)}>
             <ElementFragments
                 actions={(
                     <QuickActionButton
-                        name="delete"
-                        onClick={handleDismissButtonClick}
+                        name={id}
+                        onClick={onDismiss}
                         title="Remove item"
                     >
                         <IoTrashBinOutline />
