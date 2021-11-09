@@ -1,5 +1,10 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import {
+    _cs,
+    isNotDefined,
+    isDefined,
+    unique,
+} from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
@@ -16,6 +21,7 @@ import {
     EntriesByLeadQueryVariables,
     LeadEntriesQueryVariables,
 } from '#generated/types';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import {
     Framework,
@@ -109,6 +115,12 @@ export const LEAD_ENTRIES = gql`
                         id
                         widget
                         widgetType
+                        geoSelectedOptions {
+                            id
+                            adminLevelTitle
+                            regionTitle
+                            title
+                        }
                     }
                     image {
                         id
@@ -178,6 +190,11 @@ function EntryList(props: Props) {
         filters,
     } = props;
 
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
+
     const [activePage, setActivePage] = useState(1);
     const variables = useMemo(
         (): EntriesByLeadQueryVariables | undefined => (
@@ -208,6 +225,21 @@ function EntryList(props: Props) {
         {
             skip: isNotDefined(variables),
             variables,
+            onCompleted: (response) => {
+                const projectFromResponse = response?.project;
+                if (!projectFromResponse) {
+                    return;
+                }
+                const geoData = projectFromResponse.entries?.results
+                    ?.map((entry) => entry?.attributes)
+                    .flat()
+                    .map((attributes) => attributes?.geoSelectedOptions)
+                    .flat()
+                    .filter(isDefined) ?? [];
+                const uniqueGeoData = unique(geoData, (d) => d.id);
+
+                setGeoAreaOptions(uniqueGeoData);
+            },
         },
     );
 
@@ -216,7 +248,6 @@ function EntryList(props: Props) {
 
     const entriesResponse = leadEntriesResponse?.project?.entries;
     const entries = entriesResponse?.results as Entry[] | undefined | null;
-
     const entryDataRendererParams = useCallback((_: string, data: Entry) => ({
         // FIXME: memoize this
         entry: transformEntry(data),
@@ -229,7 +260,10 @@ function EntryList(props: Props) {
         verifiedBy: data.verifiedBy,
         entryImage: data.image,
         onEntryDataChange: getEntries,
+        geoAreas: geoAreaOptions,
+        onGeoAreasChange: setGeoAreaOptions,
     }), [
+        geoAreaOptions,
         getEntries,
         leadId,
         projectId,

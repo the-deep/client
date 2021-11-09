@@ -38,6 +38,7 @@ import {
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import { Widget } from '#types/newAnalyticalFramework';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import routes from '#base/configs/routes';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
@@ -86,6 +87,8 @@ interface Props {
     compact?: boolean;
     entryImage: Entry['image'] | undefined | null;
     onEntryDataChange: () => void;
+    geoAreas: GeoArea[] | undefined | null;
+    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EditableEntry(props: Props) {
@@ -102,6 +105,8 @@ function EditableEntry(props: Props) {
         verifiedBy,
         entryImage,
         onEntryDataChange,
+        geoAreas,
+        onGeoAreasChange,
     } = props;
 
     const history = useHistory();
@@ -276,6 +281,8 @@ function EditableEntry(props: Props) {
             leadId={leadId}
             entryImage={entryImage}
             error={error}
+            geoAreas={geoAreas}
+            onGeoAreasChange={onGeoAreasChange}
         />
     );
 

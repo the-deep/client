@@ -24,7 +24,6 @@ export interface Props <N extends string>{
     error: Error<GeoLocationValue> | undefined;
     onChange: (value: GeoLocationValue | undefined, name: N) => void;
 
-    actions?: React.ReactNode;
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -39,7 +38,6 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         title,
         name,
         value,
-        actions,
         onChange: onChangeFromProps,
         disabled,
         readOnly,
@@ -65,7 +63,6 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         <WidgetWrapper
             className={className}
             title={title}
-            actions={actions}
             error={error}
         >
             <NonFieldError error={error} />

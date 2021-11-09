@@ -17,6 +17,7 @@ import { Widget } from '#types/newAnalyticalFramework';
 
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import NonFieldError from '#components/NonFieldError';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import TextWidgetInput from './TextWidgetInput';
 import DateWidgetInput from './DateWidgetInput';
@@ -30,6 +31,7 @@ import ScaleWidgetInput from './ScaleWidgetInput';
 import MultiSelectWidgetInput from './MultiSelectWidgetInput';
 import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 import OrganigramWidgetInput from './OrganigramWidgetInput';
+import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 
 // FIXME: move this to utils later on
@@ -70,6 +72,9 @@ export interface Props<N extends string | number | undefined> {
     widget: PartialWidget,
     readOnly?: boolean;
     disabled?: boolean;
+
+    geoAreas: GeoArea[] | undefined | null;
+    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -83,6 +88,9 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         readOnly,
         disabled,
         error: riskyError,
+
+        geoAreas,
+        onGeoAreasChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -274,6 +282,23 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+            />
+        );
+    } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <GeoLocationWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                error={error?.data as Error<typeof data> | undefined}
+                geoAreas={geoAreas}
+                onGeoAreasChange={onGeoAreasChange}
             />
         );
     } else {

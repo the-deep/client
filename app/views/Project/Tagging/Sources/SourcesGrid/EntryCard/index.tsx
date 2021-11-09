@@ -21,6 +21,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import ProjectContext from '#base/context/ProjectContext';
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
 import routes from '#base/configs/routes';
@@ -64,6 +65,8 @@ interface Props {
     onViewTagsButtonClick?: (entryId: string) => void;
     onHideTagsButtonClick?: (entryId: string) => void;
     onEntryDataChange: () => void;
+    geoAreas: GeoArea[] | undefined | null;
+    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EntryCard(props: Props) {
@@ -77,6 +80,8 @@ function EntryCard(props: Props) {
         onViewTagsButtonClick,
         onHideTagsButtonClick,
         onEntryDataChange,
+        geoAreas,
+        onGeoAreasChange,
     } = props;
 
     const alert = useAlert();
@@ -234,6 +239,8 @@ function EntryCard(props: Props) {
                         compact
                         entryImage={entry.image}
                         onEntryDataChange={onEntryDataChange}
+                        geoAreas={geoAreas}
+                        onGeoAreasChange={onGeoAreasChange}
                     />
                 </>
             )}

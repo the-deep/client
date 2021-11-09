@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import { ListView } from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import { Widget } from '#types/newAnalyticalFramework';
 import AttributeInput, { Props as AttributeInputProps } from '#components/framework/AttributeInput';
@@ -20,6 +21,8 @@ interface Props {
     attributesMap: Partial<Record<string, { index: number, value: WidgetAttribute }>>;
     readOnly?: boolean;
     disabled?: boolean;
+    geoAreas: GeoArea[] | undefined | null;
+    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function Section(props: Props) {
@@ -30,6 +33,8 @@ function Section(props: Props) {
         readOnly,
         disabled,
         error: riskyError,
+        geoAreas,
+        onGeoAreasChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -52,9 +57,19 @@ function Section(props: Props) {
                 readOnly,
                 disabled,
                 error: err,
+                geoAreas,
+                onGeoAreasChange,
             };
         },
-        [onAttributeChange, attributesMap, readOnly, disabled, error],
+        [
+            onAttributeChange,
+            attributesMap,
+            readOnly,
+            disabled,
+            error,
+            geoAreas,
+            onGeoAreasChange,
+        ],
     );
 
     return (

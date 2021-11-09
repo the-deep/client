@@ -2,6 +2,8 @@ import React, { useCallback, useState, useMemo } from 'react';
 import {
     _cs,
     isNotDefined,
+    isDefined,
+    unique,
 } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
@@ -19,6 +21,7 @@ import {
     ProjectEntriesQueryVariables,
     LeadEntriesQueryVariables,
 } from '#generated/types';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import EntryCard from './EntryCard';
 import { transformSourcesFilterToEntiesFilter } from '../utils';
@@ -97,6 +100,12 @@ export const PROJECT_ENTRIES = gql`
                         id
                         widget
                         widgetType
+                        geoSelectedOptions {
+                            id
+                            adminLevelTitle
+                            regionTitle
+                            title
+                        }
                     }
                     image {
                         id
@@ -164,6 +173,11 @@ function SourcesGrid(props: Props) {
     const entriesFilter = useMemo(() => transformSourcesFilterToEntiesFilter(filters), [filters]);
     const [activePage, setActivePage] = useState(1);
 
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
+
     const variables = useMemo(
         (): ProjectEntriesQueryVariables | undefined => (
             (projectId) ? {
@@ -185,6 +199,21 @@ function SourcesGrid(props: Props) {
         {
             skip: isNotDefined(variables),
             variables,
+            onCompleted: (response) => {
+                const projectFromResponse = response?.project;
+                if (!projectFromResponse) {
+                    return;
+                }
+                const geoData = projectFromResponse.entries?.results
+                    ?.map((entry) => entry?.attributes)
+                    .flat()
+                    .map((attributes) => attributes?.geoSelectedOptions)
+                    .flat()
+                    .filter(isDefined) ?? [];
+                const uniqueGeoData = unique(geoData, (d) => d.id);
+
+                setGeoAreaOptions(uniqueGeoData);
+            },
         },
     );
 
@@ -212,7 +241,10 @@ function SourcesGrid(props: Props) {
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
         controlled: entry.controlled,
         onEntryDataChange: getEntries,
+        geoAreas: geoAreaOptions,
+        onGeoAreasChange: setGeoAreaOptions,
     }), [
+        geoAreaOptions,
         getEntries,
         frameworkDetails,
         expandedEntry,
