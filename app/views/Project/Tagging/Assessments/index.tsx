@@ -28,8 +28,8 @@ import styles from './styles.css';
 const ASSESSMENT_LIST = gql`
     query AssessmentList(
         $search: String,
-        $startDate: Date,
-        $endDate: Date,
+        $startDate: DateTime,
+        $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
         $projectId: ID!,
@@ -37,8 +37,8 @@ const ASSESSMENT_LIST = gql`
         project(id: $projectId) {
             assessments (
                 search: $search,
-                createdAt_Lt: $endDate,
-                createdAt_Gte: $startDate,
+                createdAtLte: $endDate,
+                createdAtGte: $startDate,
                 page: $page,
                 pageSize: $pageSize,
             ) {
@@ -76,12 +76,14 @@ function Assessments(props: Props) {
     const [pageSize, setPageSize] = useState<number>(25);
 
     const { project } = useContext(ProjectContext);
+    // FIXME: rename startDate to createdAtGte
+    // FIXME: rename endDate to createdAtLte
     const variables = useMemo(
         () => (
             project ? ({
                 ...filters,
                 startDate: convertDateToIsoDateTime(filters?.startDate),
-                endDate: convertDateToIsoDateTime(filters?.endDate),
+                endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
                 page,
                 pageSize,
                 projectId: project.id,
