@@ -153,12 +153,15 @@ function getProjectSourcesQueryVariables(
 
     return {
         ...filters,
-        createdAt_Gte: convertDateToIsoDateTime(filters.createdAt_Gte),
-        createdAt_Lt: convertDateToIsoDateTime(filters.createdAt_Lt),
+        createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
+        createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
         entriesFilterData: (filters.entriesFilterData && !isEntriesFilterDataEmpty) ? {
             ...filters.entriesFilterData,
-            createdAt_Gte: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Gte),
-            createdAt_Lt: convertDateToIsoDateTime(filters.entriesFilterData.createdAt_Lt),
+            createdAtGte: convertDateToIsoDateTime(filters.entriesFilterData.createdAtGte),
+            createdAtLte: convertDateToIsoDateTime(
+                filters.entriesFilterData.createdAtLte,
+                { endOfDay: true },
+            ),
             filterableData: filters.entriesFilterData.filterableData
                 ? filters.entriesFilterData.filterableData.filter((filterable) => (
                     isDefined(filterable.value)
@@ -278,23 +281,23 @@ function SourcesFilter(props: Props) {
                 />
                 <DateDualRangeInput
                     className={styles.input}
-                    fromName="publishedOn_Gte"
+                    fromName="publishedOnGte"
                     fromOnChange={setFieldValue}
-                    fromValue={value.publishedOn_Gte}
-                    toName="publishedOn_Lt"
+                    fromValue={value.publishedOnGte}
+                    toName="publishedOnLte"
                     toOnChange={setFieldValue}
-                    toValue={value.publishedOn_Lt}
+                    toValue={value.publishedOnLte}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'originalDate')}
                 />
                 <DateDualRangeInput
                     className={styles.input}
-                    fromName="createdAt_Gte"
+                    fromName="createdAtGte"
                     fromOnChange={setFieldValue}
-                    fromValue={value.createdAt_Gte}
-                    toName="createdAt_Lt"
+                    fromValue={value.createdAtGte}
+                    toName="createdAtLte"
                     toOnChange={setFieldValue}
-                    toValue={value.createdAt_Lt}
+                    toValue={value.createdAtLte}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
                 />

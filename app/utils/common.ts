@@ -158,15 +158,32 @@ export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) =
     d.description ?? `${d.name}`
 );
 
-export function convertDateToIsoDateTime(dateString: string | undefined) {
+interface Options {
+    endOfDay?: boolean;
+}
+export function convertDateToIsoDateTime(dateString: string, opts?: Options): string
+export function convertDateToIsoDateTime(dateString: null, opts?: Options): undefined
+export function convertDateToIsoDateTime(dateString: undefined, opts?: Options): undefined
+export function convertDateToIsoDateTime(
+    dateString: string | undefined | null,
+    opts?: Options,
+): string | undefined
+export function convertDateToIsoDateTime(dateString: string | undefined | null, opts?: Options) {
     if (!dateString) {
         return undefined;
     }
     const date = new Date(dateString);
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(0);
-    date.setMilliseconds(0);
+    if (opts?.endOfDay) {
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+    } else {
+        date.setHours(23);
+        date.setMinutes(59);
+        date.setSeconds(59);
+        date.setMilliseconds(999);
+    }
 
     return date.toISOString();
 }

@@ -27,8 +27,8 @@ const PROJECT_LIST = gql`
         $search: String,
         $organizations: [ID!],
         $analysisFrameworks: [ID!],
-        $startDate: Date,
-        $endDate: Date,
+        $startDate: DateTime,
+        $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
 
@@ -37,8 +37,8 @@ const PROJECT_LIST = gql`
             search: $search,
             organizations: $organizations,
             analysisFrameworks: $analysisFrameworks,
-            createdAt_Lt: $endDate,
-            createdAt_Gte: $startDate,
+            createdAtLte: $endDate,
+            createdAtGte: $startDate,
             page: $page,
             pageSize: $pageSize,
         ) {
@@ -99,10 +99,12 @@ function ExploreDeepTableView(props: Props) {
         setPage(1);
     }, [filters]);
 
+    // FIXME: rename startDate to createdAtGte
+    // FIXME: rename endDate to createdAtLte
     const variables = useMemo(() => ({
         ...filters,
-        startDate: convertDateToIsoDateTime(filters?.startDate ?? undefined),
-        endDate: convertDateToIsoDateTime(filters?.endDate ?? undefined),
+        startDate: convertDateToIsoDateTime(filters?.startDate),
+        endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
         page,
         pageSize,
     }), [page, pageSize, filters]);

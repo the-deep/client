@@ -132,17 +132,17 @@ function EntryFilter<K extends string>(props: Props<K>) {
             <DateDualRangeInput
                 className={_cs(
                     styles.input,
-                    hasNoData(value?.createdAt_Gte)
-                        && hasNoData(value?.createdAt_Lt)
+                    hasNoData(value?.createdAtGte)
+                        && hasNoData(value?.createdAtLte)
                         && !allFiltersVisible
                         && styles.hidden,
                 )}
-                fromName="createdAt_Gte"
+                fromName="createdAtGte"
                 fromOnChange={setFieldValue}
-                fromValue={value?.createdAt_Gte}
-                toName="createdAt_Lt"
+                fromValue={value?.createdAtGte}
+                toName="createdAtLte"
                 toOnChange={setFieldValue}
-                toValue={value?.createdAt_Lt}
+                toValue={value?.createdAtLte}
                 disabled={disabled}
                 label="Entry created at"
             />

@@ -41,8 +41,8 @@ const entriesFilterDataSchema: EntriesFilterDataSchema = {
     fields: (): EntriesFilterDataFields => ({
         commentStatus: [],
         controlled: [],
-        createdAt_Gte: [],
-        createdAt_Lt: [],
+        createdAtGte: [],
+        createdAtLte: [],
         createdBy: [],
         entryTypes: [],
         filterableData: frameworkFiltersSchema,
@@ -52,10 +52,10 @@ const entriesFilterDataSchema: EntriesFilterDataSchema = {
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         statuses: [],
-        createdAt_Gte: [],
-        createdAt_Lt: [],
-        publishedOn_Gte: [],
-        publishedOn_Lt: [],
+        createdAtGte: [],
+        createdAtLte: [],
+        publishedOnGte: [],
+        publishedOnLte: [],
         assignees: [],
         search: [],
         exists: [],

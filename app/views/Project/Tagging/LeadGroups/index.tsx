@@ -32,8 +32,8 @@ import styles from './styles.css';
 const ASSESSMENT_LIST = gql`
     query LeadGroupList(
         $search: String,
-        $startDate: Date,
-        $endDate: Date,
+        $startDate: DateTime,
+        $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
         $projectId: ID!,
@@ -41,8 +41,8 @@ const ASSESSMENT_LIST = gql`
         project(id: $projectId) {
             leadGroups (
                 search: $search,
-                createdAt_Lt: $endDate,
-                createdAt_Gte: $startDate,
+                createdAtLte: $endDate,
+                createdAtGte: $startDate,
                 page: $page,
                 pageSize: $pageSize,
             ) {
@@ -50,7 +50,7 @@ const ASSESSMENT_LIST = gql`
                     id
                     title
                     createdAt
-                    leadsCount
+                    leadCounts
                     createdBy {
                         displayName
                     }
@@ -83,12 +83,14 @@ function LeadGroups(props: Props) {
     ] = useModalState(false);
 
     const { project } = useContext(ProjectContext);
+    // FIXME: rename startDate to createdAtGte
+    // FIXME: rename endDate to createdAtLte
     const variables = useMemo(
         () => (
             project ? ({
                 ...filters,
                 startDate: convertDateToIsoDateTime(filters?.startDate),
-                endDate: convertDateToIsoDateTime(filters?.endDate),
+                endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
                 page,
                 pageSize,
                 projectId: project.id,
@@ -142,9 +144,9 @@ function LeadGroups(props: Props) {
                 (item) => item?.createdBy?.displayName,
             ),
             createNumberColumn<LeadGroup, string>(
-                'leadsCount',
+                'leadCounts',
                 'No. of Leads',
-                (item) => item?.leadsCount,
+                (item) => item?.leadCounts,
             ),
             createDateColumn<LeadGroup, string>(
                 'created_at',

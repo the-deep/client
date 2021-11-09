@@ -1,6 +1,9 @@
 import {
     ProjectSourcesQueryVariables,
 } from '#generated/types';
+import {
+    convertDateToIsoDateTime,
+} from '#utils/common';
 
 // eslint-disable-next-line import/prefer-default-export
 export function transformSourcesFilterToEntiesFilter(filters: Omit<ProjectSourcesQueryVariables, 'projectId'>) {
@@ -9,20 +12,24 @@ export function transformSourcesFilterToEntiesFilter(filters: Omit<ProjectSource
         confidentiality,
         priorities,
         statuses,
-        publishedOn_Gte: publisedOnGte,
-        publishedOn_Lt: publishedOnLt,
+        publishedOnGte,
+        publishedOnLte,
         authoringOrganizationTypes,
         entriesFilterData,
+        createdAtGte,
+        createdAtLte,
     } = filters;
 
     return {
         ...entriesFilterData,
+        createdAtGte: convertDateToIsoDateTime(createdAtGte),
+        createdAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
         authoringOrganizationTypes,
         leadAssignees: assignees,
         leadConfidentialities: confidentiality && [confidentiality],
         leadPriorities: priorities,
-        leadPublishedOn_Gte: publisedOnGte,
-        leadPublishedOn_Lt: publishedOnLt,
+        leadPublishedOnGte: publishedOnGte,
+        leadPublishedOnLte: publishedOnLte,
         leadStatuses: statuses,
     };
 }
