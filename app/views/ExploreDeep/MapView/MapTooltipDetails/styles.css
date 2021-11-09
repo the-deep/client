@@ -4,30 +4,44 @@
     background-color: var(--dui-color-foreground);
     max-width: 450px;
 
-    .tooltip-container {
-        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-        padding: var(--dui-spacing-medium) 0;
-    }
-
     .list {
         display: flex;
         flex-direction: column;
+        gap: var(--dui-spacing-medium);
 
-        .project-title {
-            color: var(--dui-color-brand);
-            font-size: var(--dui-font-size-large);
-            font-weight: var(--dui-font-weight-bold);
+        .tooltip-container {
+            .project-title {
+                color: var(--dui-color-brand);
+                font-size: var(--dui-font-size-large);
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            .description {
+                line-height: 2;
+            }
+
+            &:not(:last-child) {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
         }
     }
+
     .footer {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         gap: unset;
+
+        .pager {
+            display: flex;
+            justify-content: center;
+            overflow: auto;
+        }
     }
-    .pager {
+
+    .inline {
         display: flex;
-        justify-content: center;
-        overflow: auto;
+        justify-content: space-between;
+        margin: var(--dui-spacing-small) 0;
     }
 }

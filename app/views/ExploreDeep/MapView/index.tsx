@@ -35,7 +35,7 @@ import styles from './styles.css';
 const sourceOptions: mapboxgl.GeoJSONSourceRaw & { clusterProperties: unknown } = {
     type: 'geojson',
     cluster: true,
-    clusterRadius: 12,
+    clusterRadius: 100,
     clusterProperties: {},
 };
 
@@ -111,7 +111,14 @@ const PROJECT_DETAILS = gql`
                 id
                 title
                 description
+                startDate
+                stats {
+                    numberOfUsers
+                    numberOfLeads
+                    numberOfEntries
+                }
                 analysisFramework {
+                    id
                     title
                 }
             }
@@ -143,18 +150,20 @@ function ExploreDeepMapView(props: Props) {
         },
     );
 
-    const [hoverFeatureProperties, setHoverFeatureProperties] = useState<string[]>([]);
-    const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
-    const [mapClicked, setMapClicked] = useState<boolean>(false);
+    const [clickedFeatureProperties, setClickedFeatureProperties] = useState<string[]>([]);
+    const [clickedLngLat, setClickedLngLat] = useState<LngLatLike>();
+    const [clusterClicked, setClusterClicked] = useState<boolean>(false);
 
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
 
-    const projectDetailsVariables = useMemo(() => ({
-        hoverFeatureProperties,
-        page,
-        pageSize,
-    }), [hoverFeatureProperties, page, pageSize],
+    const projectDetailsVariables = useMemo(
+        () => ({
+            projectIdList: clickedFeatureProperties,
+            page,
+            pageSize,
+        }),
+        [clickedFeatureProperties, page, pageSize],
     );
 
     const {
@@ -189,13 +198,13 @@ function ExploreDeepMapView(props: Props) {
         });
     }, [data]);
 
-    const handleMouseEnter = useCallback((
+    const handleClick = useCallback((
         feature: MapboxGeoJSONFeature,
         lngLat: LngLat,
         _: mapboxgl.Point,
         map: mapboxgl.Map,
     ) => {
-        setHoverLngLat(lngLat);
+        setClickedLngLat(lngLat);
         interface ClusterProperties {
             // eslint-disable-next-line camelcase
             cluster_id: number;
@@ -217,28 +226,33 @@ function ExploreDeepMapView(props: Props) {
                             const projectIds = aFeatures
                                 .map((f) => f?.properties?.projectId)
                                 .filter(isDefined);
-                            setHoverFeatureProperties(projectIds);
+                            setClickedFeatureProperties(projectIds);
                         }
                     },
                 );
             }
 
+            /*
+            map.flyTo({
+                // TODO: we should change this to center the tooltip, not the cluster point
+                center: feature.geometry.coordinates,
+            });
+            */
+
             if (feature.properties.projectId) {
-                setHoverFeatureProperties([feature.properties.projectId]);
+                setClickedFeatureProperties([feature.properties.projectId]);
             } else {
-                setHoverFeatureProperties([]);
+                setClickedFeatureProperties([]);
             }
         }
-    }, []);
+        setClusterClicked(!clusterClicked);
+        return true;
+    }, [clusterClicked]);
 
-    const handleMouseLeave = useCallback(() => {
-        setHoverLngLat(undefined);
-        setHoverFeatureProperties([]);
+    const handleTooltipClose = useCallback(() => {
+        setClickedLngLat(undefined);
+        setClusterClicked(false);
     }, []);
-
-    const handleClick = useCallback(() => {
-        setMapClicked(!mapClicked);
-    }, [mapClicked]);
 
     return (
         <div className={_cs(className, styles.mapView)}>
@@ -262,8 +276,6 @@ function ExploreDeepMapView(props: Props) {
                             paint: clusterPointCirclePaint,
                             layout: visibleLayout,
                         }}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
                         onClick={handleClick}
                     />
                     <MapLayer
@@ -274,13 +286,14 @@ function ExploreDeepMapView(props: Props) {
                             layout: clusterPointTextLayout,
                         }}
                     />
-                    {mapClicked && (
+                    {clusterClicked && clickedLngLat && (
                         <MapTooltip
-                            coordinates={hoverLngLat}
+                            coordinates={clickedLngLat}
                             tooltipOptions={tooltipOptions}
                         >
                             <MapTooltipDetails
-                                projectDetails={projectDetails?.projects?.results ?? []}
+                                projectDetails={projectDetails?.projects?.results ?? undefined}
+                                onTooltipCloseButtonClick={handleTooltipClose}
                                 page={page}
                                 pageSize={pageSize}
                                 setPage={setPage}

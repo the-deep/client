@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
-
+import { _cs } from '@togglecorp/fujs';
+import { IoClose } from 'react-icons/io5';
 import {
+    QuickActionButton,
     Container,
+    DateOutput,
     ListView,
     Footer,
     Pager,
@@ -16,25 +19,58 @@ type ProjectDetail = NonNullable<NonNullable<NonNullable<ProjectDetailsForMapVie
 
 interface TooltipProps {
     projectTitle: string;
-    analysisFrameworkTitle: string;
+    frameworkTitle: string;
+    description: string;
+    startDate: string;
+    numberOfUsers: number;
+    numberOfLeads: number;
+    numberOfEntries: number;
 }
 
 function tooltipRenderer(props: TooltipProps) {
     const {
         projectTitle,
-        analysisFrameworkTitle,
+        frameworkTitle,
+        startDate,
+        description,
+        numberOfEntries,
+        numberOfLeads,
+        numberOfUsers,
     } = props;
 
     return (
         <div className={styles.tooltipContainer}>
-            <div className={styles.projectTitle}>
-                {projectTitle}
-            </div>
+            <header className={_cs(styles.projectTitle, styles.inline)}>
+                <TextOutput
+                    value={projectTitle}
+                />
+                <DateOutput
+                    value={startDate}
+                />
+            </header>
             <TextOutput
-                label="Framework used"
-                value={analysisFrameworkTitle}
-                hideLabelColon
+                value={frameworkTitle}
             />
+            <div className={styles.inline}>
+                <TextOutput
+                    label="Users"
+                    value={numberOfUsers}
+                    hideLabelColon
+                />
+                <TextOutput
+                    label="Sources"
+                    value={numberOfLeads}
+                    hideLabelColon
+                />
+                <TextOutput
+                    label="Entries"
+                    value={numberOfEntries}
+                    hideLabelColon
+                />
+            </div>
+            <div className={styles.description}>
+                {description}
+            </div>
         </div>
     );
 }
@@ -47,6 +83,7 @@ interface Props {
     pageSize: number;
     setPage: (page: number) => void;
     setPageSize: (pageSize: number) => void;
+    onTooltipCloseButtonClick: () => void;
     totalCount: number;
 }
 
@@ -57,20 +94,36 @@ function MapTooltipDetails(props: Props) {
         pageSize,
         setPage,
         setPageSize,
+        onTooltipCloseButtonClick,
         totalCount,
     } = props;
 
     const rendererParams = useCallback((_, datum) => ({
         value: datum,
-        projectDetailsPass: projectDetails,
+        projectId: datum?.id,
         projectTitle: datum?.title,
         description: datum?.description,
-        analysisFrameworkTitle: datum?.analysisFramework?.title,
-    }), [projectDetails]);
+        frameworkTitle: datum?.analysisFramework?.title,
+        startDate: datum?.startDate,
+        numberOfEntries: datum?.stats?.numberOfEntries,
+        numberOfLeads: datum?.stats?.numberOfLeads,
+        numberOfUsers: datum?.stats?.numberOfUsers,
+    }), []);
 
     return (
         <Container
             className={styles.mapTooltip}
+            heading="Projects"
+            headingSize="extraSmall"
+            headerActions={(
+                <QuickActionButton
+                    name={undefined}
+                    onClick={onTooltipCloseButtonClick}
+                >
+                    <IoClose />
+                </QuickActionButton>
+            )}
+            spacing="compact"
         >
             <ListView
                 className={styles.list}
