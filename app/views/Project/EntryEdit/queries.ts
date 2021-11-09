@@ -13,6 +13,12 @@ const ENTRY_FRAGMENT = gql`
             id
             widget
             widgetType
+            geoSelectedOptions {
+                id
+                adminLevelTitle
+                regionTitle
+                title
+            }
         }
         lead {
             id

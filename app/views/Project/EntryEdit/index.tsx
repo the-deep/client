@@ -7,6 +7,7 @@ import {
 import {
     isNotDefined,
     _cs,
+    unique,
     listToMap,
     randomString,
     isDefined,
@@ -36,6 +37,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
@@ -107,6 +109,11 @@ function EntryEdit(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
     const projectId = project ? project.id : undefined;
+
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
 
     const alert = useAlert();
     const location = useLocation();
@@ -674,7 +681,6 @@ function EntryEdit(props: Props) {
             }).filter(isDefined);
 
             createRestorePoint();
-            // FIXME: iterate over widgets to create attributes with default values
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
                     ...(prevValue ?? []),
@@ -790,6 +796,15 @@ function EntryEdit(props: Props) {
                     const entries = leadFromResponse.entries?.map(
                         (entry) => transformEntry(entry as Entry),
                     );
+                    const geoData = leadFromResponse.entries
+                        ?.map((entry) => entry?.attributes)
+                        .flat()
+                        .map((attributes) => attributes?.geoSelectedOptions)
+                        .flat()
+                        .filter(isDefined) ?? [];
+                    const uniqueGeoData = unique(geoData, (d) => d.id);
+
+                    setGeoAreaOptions(uniqueGeoData);
                     setFormValue((oldVal) => ({ ...oldVal, entries }));
                     const imagesMap = listToMap(
                         leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
@@ -858,8 +873,11 @@ function EntryEdit(props: Props) {
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
+            geoAreas: geoAreaOptions,
+            onGeoAreasChange: setGeoAreaOptions,
         }),
         [
+            geoAreaOptions,
             projectId,
             handleAddButtonClick,
             entryImagesMap,
@@ -1067,6 +1085,8 @@ function EntryEdit(props: Props) {
                                                     onAttributeChange={onAttributeChange}
                                                     readOnly={!currentEntry}
                                                     error={currentEntryError?.attributes}
+                                                    geoAreas={geoAreaOptions}
+                                                    onGeoAreasChange={setGeoAreaOptions}
                                                 />
                                             </TabPanel>
                                         ))}
@@ -1117,6 +1137,8 @@ function EntryEdit(props: Props) {
                                         onAttributeChange={onAttributeChange}
                                         readOnly={!currentEntry}
                                         error={currentEntryError?.attributes}
+                                        geoAreas={geoAreaOptions}
+                                        onGeoAreasChange={setGeoAreaOptions}
                                     />
                                 </Container>
                             </div>

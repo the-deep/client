@@ -15,6 +15,8 @@ import {
     ProjectRegionsQueryVariables,
 } from '#generated/types';
 
+import { breadcrumb } from '#utils/common';
+
 import GeoAreaListItem from './GeoAreaListItem';
 import GeoLocationMap from './GeoLocationMap';
 
@@ -129,18 +131,20 @@ function GeoLocationMapInput(props: Props) {
             variables,
             onCompleted: (data) => {
                 const [topRegion] = data.project?.regions ?? [];
-                const [topAdminLevel] = topRegion.adminLevels ?? [];
-                setSelectedRegion(topRegion.id);
+                const [topAdminLevel] = topRegion?.adminLevels ?? [];
+                setSelectedRegion(topRegion?.id);
                 setSelectedAdminLevel(topAdminLevel);
             },
         },
     );
 
-    const adminLevels = projectRegions?.project?.regions
-        ?.filter((v) => v.id === selectedRegion)
-        .map((r) => r.adminLevels)
-        .flat()
-        .filter(isDefined);
+    const adminLevels = useMemo(() => (
+        projectRegions?.project?.regions
+            ?.filter((v) => v.id === selectedRegion)
+            .map((r) => r.adminLevels)
+            .flat()
+            .filter(isDefined)
+    ), [projectRegions, selectedRegion]);
 
     const handleGeoAreasMapSelection = useCallback((values: string[]) => {
         onChange(values);
@@ -176,14 +180,12 @@ function GeoLocationMapInput(props: Props) {
 
     const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => ({
         id: `${geoArea.id}`,
-        value: `${geoArea.regionTitle}/${geoArea.adminLevelTitle}/${geoArea.title}`,
+        value: breadcrumb(geoArea.regionTitle, geoArea.adminLevelTitle, geoArea.title),
         onDismiss: handleRemoveItem,
     }), [handleRemoveItem]);
 
     const geoAreasList = useMemo(() => (
-        tempGeoAreas
-            ?.map((val: string) => geoAreaOptions?.find((v) => v.id === val))
-            .filter(isDefined)
+        geoAreaOptions?.filter((item) => tempGeoAreas?.includes(item.id))
     ), [geoAreaOptions, tempGeoAreas]);
 
     return (

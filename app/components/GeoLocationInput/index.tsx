@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
@@ -20,6 +20,8 @@ interface Props<N extends string> {
     error?: string;
     readOnly?: boolean;
     disabled?: boolean;
+    geoAreas: GeoArea[] | undefined | null;
+    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function GeoLocationInput<N extends string>(props: Props<N>) {
@@ -30,6 +32,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         error,
+        geoAreas,
+        onGeoAreasChange,
     } = props;
 
     const [
@@ -37,11 +41,6 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         showGeoLocationModal,
         hideGeoLocationModal,
     ] = useModalState(false);
-
-    const [
-        geoAreaOptions,
-        setGeoAreaOptions,
-    ] = useState<GeoArea[] | undefined | null>(undefined);
 
     const handleGeoAreasSelection = useCallback((geoAreaIds: string[] | undefined) => {
         onChange(geoAreaIds, name);
@@ -60,8 +59,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                         onChange={handleGeoAreasSelection}
                         label=" Geo Locations"
                         projectId={project.id}
-                        options={geoAreaOptions}
-                        onOptionsChange={setGeoAreaOptions}
+                        options={geoAreas}
+                        onOptionsChange={onGeoAreasChange}
                         disabled={disabled}
                         placeholder="Select geo locations"
                         readOnly={readOnly}
@@ -84,8 +83,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                             onModalClose={hideGeoLocationModal}
                             projectId={project.id}
                             selectedGeoAreas={value}
-                            geoAreaOptions={geoAreaOptions}
-                            onGeoAreaOptionsChange={setGeoAreaOptions}
+                            geoAreaOptions={geoAreas}
+                            onGeoAreaOptionsChange={onGeoAreasChange}
                             onChange={handleGeoAreasSelection}
                         />
                     )}

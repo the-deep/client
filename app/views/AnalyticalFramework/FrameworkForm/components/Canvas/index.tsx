@@ -21,6 +21,9 @@ import AttributeInput, { PartialWidget } from '#components/framework/AttributeIn
 
 import styles from './styles.css';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
 interface WidgetProps {
     isSecondary: boolean;
     widget: PartialWidget;
@@ -64,6 +67,8 @@ function WidgetWrapper(props: WidgetProps) {
             widget={widget}
             readOnly
             error={undefined}
+            geoAreas={undefined}
+            onGeoAreasChange={noop}
             actions={(
                 <>
                     {showWidgetEdit && (
