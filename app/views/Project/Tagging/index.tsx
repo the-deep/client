@@ -109,13 +109,21 @@ function Tagging(props: Props) {
                         route={routes.sources}
                         className={styles.link}
                     />
-                    {project?.isVisualizationEnabled && (
-                        <SmartNavLink
-                            exact
-                            route={routes.dashboard}
-                            className={styles.link}
-                        />
-                    )}
+                    <SmartNavLink
+                        exact
+                        route={routes.leadGroups}
+                        className={styles.link}
+                    />
+                    <SmartNavLink
+                        exact
+                        route={routes.assessments}
+                        className={styles.link}
+                    />
+                    <SmartNavLink
+                        exact
+                        route={routes.dashboard}
+                        className={styles.link}
+                    />
                     <SmartNavLink
                         exact
                         route={routes.export}
@@ -129,14 +137,24 @@ function Tagging(props: Props) {
                     >
                         {subNavbarComponents}
                     </Route>
-                    {project?.isVisualizationEnabled && (
-                        <Route
-                            exact
-                            path={routes.dashboard.path}
-                        >
-                            {subNavbarComponents}
-                        </Route>
-                    )}
+                    <Route
+                        exact
+                        path={routes.assessments.path}
+                    >
+                        {subNavbarComponents}
+                    </Route>
+                    <Route
+                        exact
+                        path={routes.leadGroups.path}
+                    >
+                        {subNavbarComponents}
+                    </Route>
+                    <Route
+                        exact
+                        path={routes.dashboard.path}
+                    >
+                        {subNavbarComponents}
+                    </Route>
                     <Route
                         exact
                         path={routes.export.path}
@@ -165,14 +183,24 @@ function Tagging(props: Props) {
                         >
                             {routes.sources.load({ className: styles.childView })}
                         </Route>
-                        {project?.isVisualizationEnabled && (
-                            <Route
-                                exact
-                                path={routes.dashboard.path}
-                            >
-                                {routes.dashboard.load({ className: styles.childView })}
-                            </Route>
-                        )}
+                        <Route
+                            exact
+                            path={routes.assessments.path}
+                        >
+                            {routes.assessments.load({ className: styles.childView })}
+                        </Route>
+                        <Route
+                            exact
+                            path={routes.leadGroups.path}
+                        >
+                            {routes.leadGroups.load({ className: styles.childView })}
+                        </Route>
+                        <Route
+                            exact
+                            path={routes.dashboard.path}
+                        >
+                            {routes.dashboard.load({ className: styles.childView })}
+                        </Route>
                         <Route
                             exact
                             path={routes.export.path}

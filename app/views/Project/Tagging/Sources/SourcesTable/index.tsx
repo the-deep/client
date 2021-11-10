@@ -49,6 +49,7 @@ import { organizationTitleSelector } from '#components/selections/NewOrganizatio
 import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLine';
 import {
     calcPercent,
+    convertDateToIsoDateTime,
 } from '#utils/common';
 
 import { transformSourcesFilterToEntiesFilter } from '../utils';
@@ -91,15 +92,15 @@ export const PROJECT_ENTRIES = gql`
         $assignees: [ID!],
         $authoringOrganizationTypes: [ID!],
         $confidentiality: LeadConfidentialityEnum,
-        $createdAt_Gte: DateTime,
-        $createdAt_Lt: DateTime,
+        $createdAtGte: DateTime,
+        $createdAtLte: DateTime,
         $emmEntities: String,
         $emmKeywords: String,
         $emmRiskFactors: String,
         $exists: LeadExistsEnum,
         $priorities: [LeadPriorityEnum!],
-        $publishedOn_Gte: Date,
-        $publishedOn_Lt: Date,
+        $publishedOnGte: Date,
+        $publishedOnLte: Date,
         $search: String,
         $statuses: [LeadStatusEnum!],
         $entriesFilterData: LeadEntriesFilterData,
@@ -113,15 +114,15 @@ export const PROJECT_ENTRIES = gql`
                 assignees: $assignees,
                 authoringOrganizationTypes: $authoringOrganizationTypes,
                 confidentiality: $confidentiality,
-                createdAt_Gte: $createdAt_Gte,
-                createdAt_Lt: $createdAt_Lt,
+                createdAtGte: $createdAtGte,
+                createdAtLte: $createdAtLte,
                 emmEntities: $emmEntities,
                 emmKeywords: $emmKeywords,
                 emmRiskFactors: $emmRiskFactors,
                 exists: $exists,
                 priorities: $priorities,
-                publishedOn_Gte: $publishedOn_Gte,
-                publishedOn_Lt: $publishedOn_Lt,
+                publishedOnGte: $publishedOnGte,
+                publishedOnLte: $publishedOnLte,
                 search: $search,
                 statuses: $statuses,
                 entriesFilterData: $entriesFilterData,
@@ -226,6 +227,8 @@ function SourcesTable(props: Props) {
         (): ProjectSourcesQueryVariables | undefined => (
             (projectId) ? {
                 ...filters,
+                createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
+                createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
                 projectId,
                 page: activePage,
                 pageSize: maxItemsPerPage,

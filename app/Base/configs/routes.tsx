@@ -231,6 +231,44 @@ const sources = wrap({
     },
     visibility: 'is-authenticated',
 });
+const assessments = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/assessments/',
+    title: 'Assessments',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/Assessments')),
+    componentProps: {
+    },
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return project.hasAssessmentTemplate;
+    },
+    visibility: 'is-authenticated',
+});
+const leadGroups = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/lead-groups/',
+    title: 'Lead Groups',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/LeadGroups')),
+    componentProps: {
+    },
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return project.hasAssessmentTemplate;
+    },
+    visibility: 'is-authenticated',
+});
 const dashboard = wrap({
     parent: { path: taggingRoute.path },
     path: '/dashboard/',
@@ -240,6 +278,15 @@ const dashboard = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return project.isVisualizationEnabled && project.isVisualizationAvailable;
+    },
 });
 const exportRoute = wrap({
     parent: { path: taggingRoute.path },
@@ -269,6 +316,8 @@ const routes = {
     projectCreate: projectCreateRoute,
     projectEdit: projectEditRoute,
     sources,
+    assessments,
+    leadGroups,
     fourHundredFour,
     dashboard,
     export: exportRoute,

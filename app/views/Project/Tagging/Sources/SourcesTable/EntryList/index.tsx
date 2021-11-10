@@ -11,17 +11,17 @@ import {
 } from '@togglecorp/toggle-form';
 
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
+import {
+    EntriesByLeadQuery,
+    EntriesByLeadQueryVariables,
+    LeadEntriesQueryVariables,
+} from '#generated/types';
 
 import {
     Framework,
     Entry,
 } from './types';
 import EditableEntry from '../../components/EditableEntry';
-import {
-    EntriesByLeadQuery,
-    EntriesByLeadQueryVariables,
-    LeadEntriesQueryVariables,
-} from '#generated/types';
 
 import styles from './styles.css';
 
@@ -47,16 +47,16 @@ export const LEAD_ENTRIES = gql`
         $authoringOrganizationTypes: [ID!],
         $commentStatus: EntryFilterCommentStatusEnum,
         $controlled: Boolean,
-        $createdAt_Gte: DateTime,
-        $createdAt_Lt: DateTime,
+        $createdAtGte: DateTime,
+        $createdAtLte: DateTime,
         $createdBy: [ID!],
         $entryTypes: [EntryTagTypeEnum!],
         $filterableData: [EntryFilterDataType!]
         $leadAssignees: [ID!],
         $leadConfidentialities: [LeadConfidentialityEnum!],
         $leadPriorities: [LeadPriorityEnum!],
-        $leadPublishedOn_Gte: Date,
-        $leadPublishedOn_Lt: Date,
+        $leadPublishedOnGte: Date,
+        $leadPublishedOnLte: Date,
         $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
@@ -67,16 +67,16 @@ export const LEAD_ENTRIES = gql`
                 authoringOrganizationTypes: $authoringOrganizationTypes,
                 commentStatus: $commentStatus,
                 controlled: $controlled,
-                createdAt_Gte: $createdAt_Gte,
-                createdAt_Lt: $createdAt_Lt,
+                createdAtGte: $createdAtGte,
+                createdAtLte: $createdAtLte,
                 createdBy: $createdBy,
                 entryTypes: $entryTypes,
                 filterableData: $filterableData,
                 leadAssignees: $leadAssignees,
                 leadConfidentialities: $leadConfidentialities,
                 leadPriorities: $leadPriorities,
-                leadPublishedOn_Gte: $leadPublishedOn_Gte,
-                leadPublishedOn_Lt: $leadPublishedOn_Lt,
+                leadPublishedOnGte: $leadPublishedOnGte,
+                leadPublishedOnLte: $leadPublishedOnLte,
                 leadStatuses: $leadStatuses,
             ) {
                 totalCount
@@ -186,6 +186,13 @@ function EntryList(props: Props) {
                 leadId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
+                /*
+                createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
+                createdAtLte: convertDateToIsoDateTime(
+                    filters?.createdAtLte,
+                    { endOfDay: true },
+                ),
+                */
                 ...filters,
             } : undefined
         ),

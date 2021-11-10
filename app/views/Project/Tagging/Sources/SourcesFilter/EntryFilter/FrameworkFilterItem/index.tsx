@@ -89,7 +89,10 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         ...oldVal,
                         filterKey: filter.key,
                         valueGte: convertDateToIsoDateTime(dateRangeValue.startDate),
-                        valueLte: convertDateToIsoDateTime(dateRangeValue.endDate),
+                        valueLte: convertDateToIsoDateTime(
+                            dateRangeValue.endDate,
+                            { endOfDay: true },
+                        ),
                     }),
                     name,
                 );
