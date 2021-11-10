@@ -103,7 +103,7 @@ function Comment(props: Props) {
                 <DateOutput
                     className={styles.date}
                     value={createdAt}
-                    format="MMM dd, yyyy . hh:mm aaa"
+                    format="hh:mm aaa, MMM dd, yyyy"
                 />
                 {isEditable && (
                     <QuickActionButton

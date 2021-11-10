@@ -127,7 +127,8 @@ function CommentForm(props: Props) {
                     onChange={setFieldValue}
                     error={error?.text}
                     autoFocus
-                    // TODO: remove the underlining border of this text input
+                    // TODO: create a new variant for input container
+                    // with removed border and filled background
                 />
                 <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
