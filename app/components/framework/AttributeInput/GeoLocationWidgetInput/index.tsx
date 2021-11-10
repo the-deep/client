@@ -29,8 +29,8 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 
     widget: PartialGeoLocationWidget;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
@@ -44,14 +44,15 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         error: riskyError,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
         (val: GeoLocationValue['value'] | undefined, inputName: N) => {
+            // TODO: Handle points and polygons
             if (isNotDefined(val)) {
                 onChangeFromProps(undefined, inputName);
             } else {
@@ -76,8 +77,8 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
                 disabled={disabled || readOnly}
                 readOnly={readOnly}
                 error={getErrorString(error?.value)}
-                geoAreas={geoAreas}
-                onGeoAreasChange={onGeoAreasChange}
+                geoAreaOptions={geoAreaOptions}
+                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
             />
         </WidgetWrapper>
     );

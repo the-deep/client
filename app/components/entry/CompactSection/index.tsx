@@ -34,8 +34,8 @@ export interface Props {
     entryClientId: string;
     sectionId?: string;
     onAddButtonClick: (entryId: string, sectionId?: string) => void;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function CompactSection(props: Props) {
@@ -52,8 +52,8 @@ function CompactSection(props: Props) {
         disabled,
         error: riskyError,
         onAddButtonClick,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -82,8 +82,8 @@ function CompactSection(props: Props) {
                 readOnly,
                 disabled,
                 error: err,
-                geoAreas,
-                onGeoAreasChange,
+                geoAreaOptions,
+                onGeoAreaOptionsChange,
             };
         },
         [
@@ -92,8 +92,8 @@ function CompactSection(props: Props) {
             readOnly,
             disabled,
             error,
-            geoAreas,
-            onGeoAreasChange,
+            geoAreaOptions,
+            onGeoAreaOptionsChange,
         ],
     );
 

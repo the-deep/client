@@ -61,8 +61,8 @@ interface EntryInputProps<T extends string | number | undefined> {
     compact?: boolean;
 
     entryImage: Entry['image'] | undefined | null;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -83,8 +83,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         compact,
         entryImage,
         error: riskyError,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -130,11 +130,11 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         error: error?.attributes,
         onAddButtonClick,
         entryClientId: value.clientId,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     }), [
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
         onAddButtonClick,
         emptyValueHidden,
         onAttributeChange,
@@ -195,8 +195,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 emptyValueHidden={emptyValueHidden}
                 widgets={secondaryTagging}
                 error={error?.attributes}
-                geoAreas={geoAreas}
-                onGeoAreasChange={onGeoAreasChange}
+                geoAreaOptions={geoAreaOptions}
+                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 entryClientId={value.clientId}
             />
         </div>
