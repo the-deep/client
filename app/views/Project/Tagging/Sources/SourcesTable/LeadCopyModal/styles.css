@@ -1,0 +1,21 @@
+.lead-copy-modal {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    height: 40vh;
+    gap: var(--dui-spacing-medium);
+
+    .search-input {
+        display: flex;
+        margin: var(--dui-spacing-medium) 0;
+    }
+    .list {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        margin: var(--dui-spacing-medium) 0;
+        overflow-y: auto;
+        gap: var(--dui-spacing-medium);
+    }
+
+}
