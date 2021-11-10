@@ -1,6 +1,5 @@
 import React, { useContext, useMemo, useState, useCallback } from 'react';
 import {
-    encodeDate,
     _cs,
 } from '@togglecorp/fujs';
 import {
@@ -42,7 +41,7 @@ import ProjectSwitcher from '#components/general/ProjectSwitcher';
 import RechartsLegend from '#components/RechartsLegend';
 import { ProjectContext } from '#base/context/ProjectContext';
 import {
-    getDateWithTimezone,
+    convertDateToIsoDateTime,
     shortMonthNamesMap,
     calcPercent,
 } from '#utils/common';
@@ -160,20 +159,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [analysisToEdit, setAnalysisToEdit] = useState();
     const [dateRangeFilter, setDateRangeFilter] = useState<Filter | undefined>(undefined);
 
-    const analysisQueryOptions = useMemo(() => {
-        const endDate = dateRangeFilter?.endDate ? new Date(dateRangeFilter?.endDate) : new Date();
-        endDate.setDate(endDate.getDate() + 1);
-        // A day added to include 24 hours of endDate
-
-        return ({
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-            created_at__gte: dateRangeFilter?.startDate
-                ? getDateWithTimezone(dateRangeFilter.startDate) : undefined,
-            created_at__lt: dateRangeFilter?.endDate
-                ? getDateWithTimezone(encodeDate(endDate)) : undefined,
-        });
-    }, [activePage, dateRangeFilter]);
+    const analysisQueryOptions = useMemo(() => ({
+        offset: (activePage - 1) * maxItemsPerPage,
+        limit: maxItemsPerPage,
+        created_at__gte: convertDateToIsoDateTime(dateRangeFilter?.startDate),
+        created_at__lte: convertDateToIsoDateTime(dateRangeFilter?.endDate, { endOfDay: true }),
+    }), [activePage, dateRangeFilter]);
 
     const {
         pending: pendingAnalyses,

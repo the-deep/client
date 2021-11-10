@@ -510,6 +510,7 @@ function PillarAnalysis() {
         (entryId: string) => {
             const entry = entriesResponse?.results?.find((item) => item.id === entryId);
             if (!entry) {
+                // eslint-disable-next-line no-console
                 console.error('Me no understand how this entry came from', entryId);
                 return;
             }

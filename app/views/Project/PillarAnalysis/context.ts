@@ -14,7 +14,8 @@ interface ContextProps {
 const context = React.createContext<ContextProps>({
     entries: {},
     setEntries: (value: unknown) => {
-        console.warn('Tryping to set entries', value);
+        // eslint-disable-next-line no-console
+        console.warn('Trying to set entries', value);
     },
 });
 
