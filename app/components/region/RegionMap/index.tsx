@@ -120,7 +120,7 @@ interface Props {
     showTooltip?: boolean;
     title?: string;
     navigationDisabled?: boolean;
-    selectedGeoAreas?: string[];
+    selectedGeoAreas?: string[] | null ;
     onGeoAreasSelectionChange?: (value: string[]) => void;
 
     triggerId?: number;
