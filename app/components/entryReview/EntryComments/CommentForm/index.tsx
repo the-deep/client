@@ -121,14 +121,17 @@ function CommentForm(props: Props) {
             >
                 <TextArea
                     name="text"
+                    className={styles.commentArea}
                     rows={3}
                     value={value.text}
                     onChange={setFieldValue}
                     error={error?.text}
                     autoFocus
+                    // TODO: remove the underlining border of this text input
                 />
                 <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
+                    inputSectionClassName={styles.selectInput}
                     label="Assignees"
                     value={value.mentionedUsers}
                     projectId={projectId}
@@ -136,6 +139,7 @@ function CommentForm(props: Props) {
                     options={members}
                     onOptionsChange={setMembers}
                     error={getErrorString(error?.mentionedUsers)}
+                    variant="general"
                 />
             </Container>
         </form>

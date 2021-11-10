@@ -62,69 +62,60 @@ function Comment(props: Props) {
             headingClassName={styles.heading}
             heading={(
                 <>
-                    {createdByDetails?.name}
-                    &nbsp;
-                    <span className={styles.details}>
-                        {`${commentTypeToTextMap[commentType]} the entry on`}
+                    <span className={styles.userName}>
+                        {createdByDetails?.name}
                     </span>
-                </>
-            )}
-            headerActions={(
-                <>
-                    <DateOutput
-                        value={createdAt}
-                        format="hh:mm aaa, MMM dd, yyyy"
-                    />
-                    {isEditable && (
-                        <QuickActionButton
-                            className={styles.button}
-                            name="editButton"
-                            onClick={showEditModal}
-                            title="Edit comment"
-                        >
-                            <FiEdit2 />
-                        </QuickActionButton>
+                    &nbsp;
+                    {commentType !== 0 && (
+                        <span className={styles.details}>
+                            {`${commentTypeToTextMap[commentType]} the entry.`}
+                        </span>
                     )}
+                    {isEditModalVisible ? (
+                        <EditCommentForm
+                            className={styles.comment}
+                            comment={comment}
+                            onEditSuccess={handleSuccess}
+                            onEditCancel={hideEditModal}
+                        />
+                    ) : (latest?.text && (
+                        <Card
+                            className={styles.comment}
+                        >
+                            {latest.text}
+                        </Card>
+                    ))}
                 </>
             )}
-            footerContentClassName={styles.footerContent}
-            footerContent={mentionedUsersDetails.length > 0 && (
+            footerActionsContainerClassName={styles.footerActions}
+            footerActions={mentionedUsersDetails.length > 0 && (
                 <>
                     Assigned to
-                    &nbsp;
                     <CommaSeparateItems
                         className={styles.users}
                         items={mentionedUsersDetails}
                     />
                 </>
             )}
-            footerActionsContainerClassName={styles.footerActions}
-            footerActions={textHistory.length > 1 && (
-                <span className={styles.modified}>
-                    &nbsp;
-                    Last modified on
-                    &nbsp;
-                    <DateOutput
-                        value={latest.createdAt}
-                        format="hh:mm aaa, MMM dd, yyyy"
-                    />
-                </span>
-            )}
+            contentClassName={styles.content}
         >
-            {isEditModalVisible ? (
-                <EditCommentForm
-                    className={styles.comment}
-                    comment={comment}
-                    onEditSuccess={handleSuccess}
-                    onEditCancel={hideEditModal}
+            <>
+                <DateOutput
+                    className={styles.date}
+                    value={createdAt}
+                    format="MMM dd, yyyy . hh:mm aaa"
                 />
-            ) : (latest?.text && (
-                <Card
-                    className={styles.comment}
-                >
-                    {latest.text}
-                </Card>
-            ))}
+                {isEditable && (
+                    <QuickActionButton
+                        className={styles.button}
+                        name="editButton"
+                        onClick={showEditModal}
+                        title="Edit comment"
+                    >
+                        <FiEdit2 />
+                    </QuickActionButton>
+                )}
+            </>
         </Container>
     );
 }

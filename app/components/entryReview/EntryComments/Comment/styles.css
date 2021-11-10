@@ -1,7 +1,8 @@
 .comment-container {
     display: flex;
-    margin: var(--dui-spacing-medium);
     background-color: var(--dui-color-white);
+    padding: var(--dui-spacing-large) 0;
+    gap: var(--dui-spacing-small);
 
     .header {
         display: flex;
@@ -14,10 +15,17 @@
             .heading {
                 display: flex;
                 align-items: center;
+                font-size: var(--font-size-small);
+                font-weight: var(--dui-font-weight-light);
+                gap: var(--dui-spacing-extra-small);
+
+                .user-name {
+                    font-size: var(--font-size-medium);
+                    font-weight: var(--dui-font-weight-bold);
+                }
 
                 .details {
                     color: var(--dui-color-text);
-                    font-weight: var(--dui-font-weight-medium);
                 }
             }
         }
@@ -27,21 +35,30 @@
         }
     }
 
-    .footer-content {
-        color: var(--dui-color-text);
-        .users {
-            color: var(--dui-color-black);
-        }
+    .content {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--dui-color-separator);
+        padding: var(--dui-spacing-small) 0;
     }
 
-    .footer-actions {
-        .modified {
-            display: flex;
-        }
+    .footer-actions{
+        color: var(--dui-color-accent);
+    }
+
+    .modified {
+        display: flex;
+        color: var(--dui-color-text-description);
+        font-size: var(--dui-font-size-medium);
     }
 
     .comment {
-        background-color: var(--dui-color-background-information);
+        padding: unset;
         color: var(--dui-color-text);
+    }
+
+    .date {
+        color: var(--dui-color-text-description);
+        font-size: var(--dui-font-size-medium);
     }
 }

@@ -106,17 +106,18 @@ function EntryComments(props: Props) {
                         />
                     )}
                 >
-                    <CommentForm
-                        entryId={entryId}
-                        projectId={projectId}
-                        onSave={getComments}
-                    />
                     <ListView
                         data={commentsResponse?.results}
+                        className={styles.commentList}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
                         renderer={Comment}
                         pending={commentsPending}
+                    />
+                    <CommentForm
+                        entryId={entryId}
+                        projectId={projectId}
+                        onSave={getComments}
                     />
                 </Modal>
             )}

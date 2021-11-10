@@ -14,8 +14,10 @@
 }
 .entry-comment-modal {
     display: flex;
+    padding: var(--dui-spacing-large);
 
-    .modal-body {
-        background-color: var(--dui-color-background);
+    .comment-list {
+        height: 400px;
+        overflow-y: auto;
     }
 }
