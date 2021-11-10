@@ -494,6 +494,7 @@ function SourcesTable(props: Props) {
             cellRenderer: Actions,
             cellRendererParams: (_, data) => ({
                 id: data.id,
+                title: data.title,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
                 entriesCount: data.entriesCounts?.total ?? 0,

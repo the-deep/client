@@ -14,11 +14,13 @@ import {
     useConfirmation,
     Button,
     RowExpansionContext,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+import LeadCopyModal from '../LeadCopyModal';
 
 import styles from './styles.css';
 
@@ -48,6 +50,12 @@ function Actions<T extends string>(props: Props<T>) {
     const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
     const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
 
+    const [
+        leadCopyModalShown,
+        showLeadCopyModal,
+        hideLeadCopyModal,
+    ] = useModalState(false);
+
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
     }, [onDeleteClick, id]);
@@ -75,6 +83,10 @@ function Actions<T extends string>(props: Props<T>) {
         onConfirm: handleDeleteConfirm,
         message: 'Are you sure you want to delete this lead?',
     });
+
+    const onMoveLeadToOtherProjectsClick = useCallback(() => {
+        showLeadCopyModal();
+    }, []);
 
     const isExpanded = id === expandedRowKey;
     const isDisabled = entriesCount < 1;
@@ -114,6 +126,12 @@ function Actions<T extends string>(props: Props<T>) {
                         )}
                         variant="secondary"
                     >
+                        <DropdownMenuItem
+                            onClick={onMoveLeadToOtherProjectsClick}
+                            name={undefined}
+                        >
+                            Move to other project
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={onDeleteLeadClick}
                             name={undefined}
@@ -156,6 +174,13 @@ function Actions<T extends string>(props: Props<T>) {
                 {/* TODO: Update entriesCount when parent has graphql */}
             </div>
             {modal}
+            {leadCopyModalShown && (
+                <LeadCopyModal
+                    projectId={projectId}
+                    onClose={hideLeadCopyModal}
+                    leadId={[id]}
+                />
+            )}
         </div>
     );
 }
