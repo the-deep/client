@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { _cs, isDefined } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { useLazyQuery, useQuery, gql } from '@apollo/client';
 import {
     Container,
@@ -16,9 +16,9 @@ import {
 } from '#generated/types';
 
 import { breadcrumb } from '#utils/common';
+import RegionMap from '#components/region/RegionMap';
 
 import GeoAreaListItem from './GeoAreaListItem';
-import GeoLocationMap from './GeoLocationMap';
 
 import styles from './styles.css';
 
@@ -58,14 +58,6 @@ const PROJECT_REGIONS = gql`
                     id
                     level
                     title
-                    geojsonFile {
-                        name
-                        url
-                    }
-                    boundsFile {
-                        name
-                        url
-                    }
                 }
             }
         }
@@ -103,7 +95,10 @@ function GeoLocationMapInput(props: Props) {
     } = props;
 
     const [selectedRegion, setSelectedRegion] = useState<string>();
-    const [selectedAdminLevel, setSelectedAdminLevel] = useState<AdminLevel>();
+    const [
+        activeAdminLevel,
+        setActiveAdminLevel,
+    ] = useState<string | undefined>();
 
     const [
         getGeoAreas,
@@ -133,18 +128,10 @@ function GeoLocationMapInput(props: Props) {
                 const [topRegion] = data.project?.regions ?? [];
                 const [topAdminLevel] = topRegion?.adminLevels ?? [];
                 setSelectedRegion(topRegion?.id);
-                setSelectedAdminLevel(topAdminLevel);
+                setActiveAdminLevel(topAdminLevel?.id);
             },
         },
     );
-
-    const adminLevels = useMemo(() => (
-        projectRegions?.project?.regions
-            ?.filter((v) => v.id === selectedRegion)
-            .map((r) => r.adminLevels)
-            .flat()
-            .filter(isDefined)
-    ), [projectRegions, selectedRegion]);
 
     const handleGeoAreasMapSelection = useCallback((values: string[]) => {
         onChange(values);
@@ -160,13 +147,8 @@ function GeoLocationMapInput(props: Props) {
         setSelectedRegion(newRegion);
         const selectedRegionDetails = projectRegions
             ?.project?.regions?.find((region) => region.id === newRegion);
-        setSelectedAdminLevel(selectedRegionDetails?.adminLevels?.[0]);
+        setActiveAdminLevel(selectedRegionDetails?.adminLevels?.[0]?.id);
     }, [projectRegions]);
-
-    const handleAdminLevelChange = useCallback((value: string) => {
-        const adminLevel = adminLevels?.find((v) => v.id === value);
-        setSelectedAdminLevel(adminLevel);
-    }, [adminLevels]);
 
     const handleRemoveItem = useCallback((value: string) => {
         const newValues = tempGeoAreas?.filter((v) => (v !== value));
@@ -216,14 +198,13 @@ function GeoLocationMapInput(props: Props) {
                         placeholder="Select geo locations"
                     />
                 </div>
-                <GeoLocationMap
+                <RegionMap
                     className={styles.map}
-                    adminLevel={selectedAdminLevel}
-                    onAdminLevelChange={handleAdminLevelChange}
-                    adminLevels={adminLevels}
+                    adminLevel={activeAdminLevel}
+                    regionId={selectedRegion}
+                    onAdminLevelChange={setActiveAdminLevel}
                     selectedGeoAreas={tempGeoAreas}
                     onGeoAreasSelectionChange={handleGeoAreasMapSelection}
-                    pending={projectRegionsPending}
                 />
             </div>
             <Container

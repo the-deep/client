@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
 import Map, {
     MapBounds,
@@ -8,6 +8,7 @@ import Map, {
     MapTooltip,
     MapState,
 } from '@togglecorp/re-map';
+import { useQuery, gql } from '@apollo/client';
 import {
     Spinner,
     SegmentInput,
@@ -28,9 +29,12 @@ import {
     GeoAreaBounds,
 } from '#types';
 import { useRequest } from '#base/utils/restRequest';
+import {
+    SelectedRegionQuery,
+    SelectedRegionQueryVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
-import { AdminLevel } from '../index';
 import styles from './styles.css';
 
 const scaleFactor = 1;
@@ -67,10 +71,34 @@ const tooltipOptions: PopupOptions = {
     offset: 12,
 };
 
+const SELECTED_REGION = gql`
+    query SelectedRegion($regionId: ID!) {
+        region(id: $regionId) {
+            title
+            id
+            adminLevels {
+                id
+                level
+                title
+                geojsonFile {
+                    name
+                    url
+                }
+                boundsFile {
+                    name
+                    url
+                }
+            }
+        }
+    }
+`;
+
 interface KeyValue {
     key: string;
     value: string;
 }
+type AdminLevel = NonNullable<NonNullable<SelectedRegionQuery['region']>['adminLevels']>[number];
+
 const keySelector = (d: KeyValue) => d.key;
 const adminLevelKeySelector = (d: AdminLevel) => d.id;
 const adminLevelLabelSelector = (d: AdminLevel) => d.title;
@@ -86,27 +114,28 @@ interface GeoAreaBoundsResponse {
 
 interface Props {
     className?: string;
-    adminLevel?: AdminLevel;
-    onAdminLevelChange: (value: string) => void;
+    regionId?: string;
+    adminLevel: string | undefined;
+    onAdminLevelChange: (value: string | undefined) => void | undefined;
     showTooltip?: boolean;
     title?: string;
     navigationDisabled?: boolean;
-    adminLevels?: AdminLevel[];
     selectedGeoAreas?: string[];
-    onGeoAreasSelectionChange: (value: string[]) => void;
-    pending?: boolean;
+    onGeoAreasSelectionChange?: (value: string[]) => void;
+
+    triggerId?: number;
 }
 
-function GeoLocationMap(props: Props) {
+function RegionMap(props: Props) {
     const {
         className,
+        regionId,
         showTooltip,
         adminLevel,
         onAdminLevelChange,
         title,
         navigationDisabled,
-        adminLevels,
-        pending,
+        triggerId,
         selectedGeoAreas,
         onGeoAreasSelectionChange,
     } = props;
@@ -114,12 +143,41 @@ function GeoLocationMap(props: Props) {
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
 
+    const variables = useMemo(() => (regionId ? ({
+        regionId,
+    }) : undefined
+    ), [regionId]);
+
+    const {
+        data: selectedRegion,
+        loading: selectedRegionPending,
+        refetch: adminLevelRetrigger,
+    } = useQuery<SelectedRegionQuery, SelectedRegionQueryVariables>(
+        SELECTED_REGION,
+        {
+            skip: !regionId,
+            variables,
+        },
+    );
+
+    useEffect(
+        () => {
+            adminLevelRetrigger();
+        },
+        [triggerId, adminLevelRetrigger],
+    );
+
+    const adminLevels = selectedRegion?.region?.adminLevels;
+
+    const activeAdminLevel = adminLevel ? adminLevels?.find(
+        (item) => item.id.toString() === adminLevel,
+    ) : undefined;
+
     const {
         pending: geoJsonPending,
         response: geoJsonResponse,
     } = useRequest<MapboxGeoJSONFeature>({
-        // skip: isNotDefined(adminLevel) || !ready,
-        url: adminLevel?.geojsonFile?.url ?? undefined,
+        url: activeAdminLevel?.geojsonFile?.url ?? undefined,
         method: 'GET',
         failureHeader: _ts('geoAreas', 'title'),
     });
@@ -128,19 +186,22 @@ function GeoLocationMap(props: Props) {
         pending: boundsPending,
         response: boundsResponse,
     } = useRequest<GeoAreaBoundsResponse>({
-        // skip: isNotDefined(adminLevel) || !ready,
-        url: adminLevel?.boundsFile?.url ?? undefined,
+        url: activeAdminLevel?.boundsFile?.url ?? undefined,
         method: 'GET',
         failureHeader: _ts('geoAreas', 'title'),
     });
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(() => {
         const noOfAdminLevels = adminLevels?.length;
+        const selectedAdminLevel = adminLevels?.find(
+            (item) => item.id.toString() === adminLevel,
+        );
         const thickness = (
-            isDefined(noOfAdminLevels) && isDefined(adminLevel)
-            && noOfAdminLevels > (adminLevel.level || 0)
+            isDefined(noOfAdminLevels) && isDefined(selectedAdminLevel)
+            && noOfAdminLevels > (selectedAdminLevel?.level ?? 0)
         )
-            ? (1 + (scaleFactor * ((noOfAdminLevels - (adminLevel.level || 0)) / noOfAdminLevels)))
+            // eslint-disable-next-line max-len
+            ? (1 + (scaleFactor * ((noOfAdminLevels - (selectedAdminLevel?.level ?? 0)) / noOfAdminLevels)))
             : 1;
 
         return {
@@ -157,6 +218,9 @@ function GeoLocationMap(props: Props) {
     }, [adminLevels, adminLevel]);
 
     const handleAreaClick = useCallback((feature: MapboxGeoJSONFeature) => {
+        if (!onGeoAreasSelectionChange) {
+            return false;
+        }
         const { id } = feature;
         const selection = String(id);
 
@@ -234,13 +298,13 @@ function GeoLocationMap(props: Props) {
                 className={styles.adminLevels}
                 name="adminLevels"
                 onChange={onAdminLevelChange}
-                options={adminLevels}
+                options={adminLevels ?? undefined}
                 keySelector={adminLevelKeySelector}
                 labelSelector={adminLevelLabelSelector}
-                value={adminLevel?.id}
+                value={adminLevel ?? undefined}
                 disabled={navigationDisabled}
             />
-            {(pending || geoJsonPending || boundsPending) && (
+            {(selectedRegionPending || geoJsonPending || boundsPending) && (
                 <Spinner className={styles.spinner} />
             )}
             <Map
@@ -296,4 +360,4 @@ function GeoLocationMap(props: Props) {
     );
 }
 
-export default GeoLocationMap;
+export default RegionMap;
