@@ -52,6 +52,8 @@ import {
     ProjectEntriesForAnalysisQueryVariables,
 } from '#generated/types';
 
+import { FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+
 import _ts from '#ts';
 
 import {
@@ -96,16 +98,16 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $authoringOrganizationTypes: [ID!],
             $commentStatus: EntryFilterCommentStatusEnum,
             $controlled: Boolean,
-            $createdAt_Gte: DateTime,
-            $createdAt_Lt: DateTime,
+            $createdAtGte: DateTime,
+            $createdAtLte: DateTime,
             $createdBy: [ID!],
             $entryTypes: [EntryTagTypeEnum!],
             $filterableData: [EntryFilterDataType!]
             $leadAssignees: [ID!],
             $leadConfidentialities: [LeadConfidentialityEnum!],
             $leadPriorities: [LeadPriorityEnum!],
-            $leadPublishedOn_Gte: Date,
-            $leadPublishedOn_Lt: Date,
+            $leadPublishedOnGte: Date,
+            $leadPublishedOnLte: Date,
             $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
@@ -116,16 +118,16 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     authoringOrganizationTypes: $authoringOrganizationTypes,
                     commentStatus: $commentStatus,
                     controlled: $controlled,
-                    createdAt_Gte: $createdAt_Gte,
-                    createdAt_Lt: $createdAt_Lt,
+                    createdAtGte: $createdAtGte,
+                    createdAtLte: $createdAtLte,
                     createdBy: $createdBy,
                     entryTypes: $entryTypes,
                     filterableData: $filterableData,
                     leadAssignees: $leadAssignees,
                     leadConfidentialities: $leadConfidentialities,
                     leadPriorities: $leadPriorities,
-                    leadPublishedOn_Gte: $leadPublishedOn_Gte,
-                    leadPublishedOn_Lt: $leadPublishedOn_Lt,
+                    leadPublishedOnGte: $leadPublishedOnGte,
+                    leadPublishedOnLte: $leadPublishedOnLte,
                     leadStatuses: $leadStatuses,
                 ) {
                     totalCount
@@ -192,21 +194,7 @@ const entryMap = {
     dataSeries: 'DATA_SERIES',
 } as const;
 
-interface DateValue {
-    startDate: string;
-    endDate: string;
-}
-
-interface TimeValue {
-    startTime: string;
-    endTime: string;
-}
-
-// FIXME: remove this
-export interface FaramValues {
-    // eslint-disable-next-line
-    [key: string]: string | string[] | FaramValues | boolean | undefined | DateValue | TimeValue;
-}
+type FaramValues = Omit<FilterFormType, 'projectId'>;
 
 const maxItemsPerPage = 25;
 
@@ -283,6 +271,7 @@ function PillarAnalysis() {
     // FIXME: please use new form
     const [filtersValue, setFiltersValue] = useState<FaramValues>({});
     const [activePage, setActivePage] = useState(1);
+
     const entriesFilter = useMemo(
         () => transformSourcesFilterToEntriesFilter(filtersValue),
         [filtersValue],
@@ -387,6 +376,7 @@ function PillarAnalysis() {
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
         method: 'GET',
         onSuccess: (response) => {
+            // FIXME: how to handle PillarFilterItem
             const newFilters = listToGroupList(
                 response.filters,
                 (o) => o.key,
@@ -394,6 +384,7 @@ function PillarAnalysis() {
             );
             setPillarAnalysis(response);
             setFiltersValue(newFilters);
+
             // eslint-disable-next-line max-len
             let analyticalStatements: PartialAnalyticalStatementType[] = response.analyticalStatements ?? [];
             if (
