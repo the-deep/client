@@ -6,15 +6,18 @@ import {
 import {
     IoClose,
     IoTrashBinOutline,
+    IoCopy,
 } from 'react-icons/io5';
 import {
     Button,
     ConfirmButton,
     PendingMessage,
     useAlert,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#base/utils/restRequest';
+import LeadCopyModal from '../LeadCopyModal';
 import { Lead } from '../types';
 import _ts from '#ts';
 
@@ -36,6 +39,12 @@ function BulkActions(props: Props) {
     } = props;
 
     const alert = useAlert();
+
+    const [
+        leadCopyModalShown,
+        showLeadCopyModal,
+        hideLeadCopyModal,
+    ] = useModalState(false);
 
     const {
         pending: bulkDeletePending,
@@ -70,6 +79,10 @@ function BulkActions(props: Props) {
         bulkLeadDeleteTrigger(selectedLeads.map((lead) => lead.id));
     }, [bulkLeadDeleteTrigger, selectedLeads]);
 
+    const handleBulkCopyClick = useCallback(() => {
+        showLeadCopyModal();
+    }, []);
+
     return (
         <div className={styles.bulkActionsBar}>
             {bulkDeletePending && <PendingMessage />}
@@ -85,6 +98,16 @@ function BulkActions(props: Props) {
                 className={styles.button}
             >
                 {_ts('leads', 'clearSelectionButtonTitle')}
+            </Button>
+            <Button
+                name="bulk-copy"
+                className={styles.bulkCopy}
+                title="Copy to Projects"
+                icons={<IoCopy />}
+                variant="general"
+                onClick={handleBulkCopyClick}
+            >
+                Copy to Projects
             </Button>
             <ConfirmButton
                 name="bulk-delete"
@@ -113,6 +136,13 @@ function BulkActions(props: Props) {
             >
                 {_ts('leads', 'bulkDeleteButtonText')}
             </ConfirmButton>
+            {leadCopyModalShown && (
+                <LeadCopyModal
+                    projectId={activeProject}
+                    onClose={hideLeadCopyModal}
+                    leadId={selectedLeads}
+                />
+            )}
         </div>
     );
 }
