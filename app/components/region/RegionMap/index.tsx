@@ -121,7 +121,7 @@ interface Props {
     title?: string;
     navigationDisabled?: boolean;
     selectedGeoAreas?: string[] | null ;
-    onGeoAreasSelectionChange?: (value: string[]) => void;
+    onSelectedGeoAreasChange?: (value: string[]) => void;
 
     triggerId?: number;
 }
@@ -137,7 +137,7 @@ function RegionMap(props: Props) {
         navigationDisabled,
         triggerId,
         selectedGeoAreas,
-        onGeoAreasSelectionChange,
+        onSelectedGeoAreasChange,
     } = props;
 
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
@@ -218,7 +218,7 @@ function RegionMap(props: Props) {
     }, [adminLevels, adminLevel]);
 
     const handleAreaClick = useCallback((feature: MapboxGeoJSONFeature) => {
-        if (!onGeoAreasSelectionChange) {
+        if (!onSelectedGeoAreasChange) {
             return false;
         }
         const { id } = feature;
@@ -233,9 +233,9 @@ function RegionMap(props: Props) {
             selections.splice(index, 1);
         }
 
-        onGeoAreasSelectionChange(selections);
+        onSelectedGeoAreasChange(selections);
         return true;
-    }, [onGeoAreasSelectionChange, selectedGeoAreas]);
+    }, [onSelectedGeoAreasChange, selectedGeoAreas]);
 
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
         setHoverLngLat(lngLat);

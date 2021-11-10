@@ -241,8 +241,8 @@ function SourcesGrid(props: Props) {
         className: _cs(styles.entry, expandedEntry === key && styles.expanded),
         controlled: entry.controlled,
         onEntryDataChange: getEntries,
-        geoAreas: geoAreaOptions,
-        onGeoAreasChange: setGeoAreaOptions,
+        geoAreaOptions,
+        onGeoAreaOptionsChange: setGeoAreaOptions,
     }), [
         geoAreaOptions,
         getEntries,

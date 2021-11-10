@@ -21,8 +21,8 @@ interface Props {
     attributesMap: Partial<Record<string, { index: number, value: WidgetAttribute }>>;
     readOnly?: boolean;
     disabled?: boolean;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function Section(props: Props) {
@@ -33,8 +33,8 @@ function Section(props: Props) {
         readOnly,
         disabled,
         error: riskyError,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -57,8 +57,8 @@ function Section(props: Props) {
                 readOnly,
                 disabled,
                 error: err,
-                geoAreas,
-                onGeoAreasChange,
+                geoAreaOptions,
+                onGeoAreaOptionsChange,
             };
         },
         [
@@ -67,8 +67,8 @@ function Section(props: Props) {
             readOnly,
             disabled,
             error,
-            geoAreas,
-            onGeoAreasChange,
+            geoAreaOptions,
+            onGeoAreaOptionsChange,
         ],
     );
 

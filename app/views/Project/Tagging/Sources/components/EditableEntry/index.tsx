@@ -87,8 +87,8 @@ interface Props {
     compact?: boolean;
     entryImage: Entry['image'] | undefined | null;
     onEntryDataChange: () => void;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EditableEntry(props: Props) {
@@ -105,8 +105,8 @@ function EditableEntry(props: Props) {
         verifiedBy,
         entryImage,
         onEntryDataChange,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const history = useHistory();
@@ -281,8 +281,8 @@ function EditableEntry(props: Props) {
             leadId={leadId}
             entryImage={entryImage}
             error={error}
-            geoAreas={geoAreas}
-            onGeoAreasChange={onGeoAreasChange}
+            geoAreaOptions={geoAreaOptions}
+            onGeoAreaOptionsChange={onGeoAreaOptionsChange}
         />
     );
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
@@ -20,8 +20,8 @@ interface Props<N extends string> {
     error?: string;
     readOnly?: boolean;
     disabled?: boolean;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function GeoLocationInput<N extends string>(props: Props<N>) {
@@ -32,8 +32,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         error,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const [
@@ -42,26 +42,18 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         hideGeoLocationModal,
     ] = useModalState(false);
 
-    const [
-        tempGeoAreas,
-        setTempGeoAreas,
-    ] = useState<string[] | null | undefined>(value);
-
     const handleGeoAreasSelection = useCallback((geoAreaIds: string[] | null | undefined) => {
         onChange(geoAreaIds ?? undefined, name);
-        setTempGeoAreas(geoAreaIds);
     }, [name, onChange]);
 
     const handleModalClose = useCallback(() => {
-        setTempGeoAreas(value);
         hideGeoLocationModal();
-    }, [hideGeoLocationModal, value]);
+    }, [hideGeoLocationModal]);
 
-    const handleModalSubmit = useCallback(() => {
-        onChange(tempGeoAreas ?? undefined, name);
-        setTempGeoAreas(undefined);
+    const handleModalSubmit = useCallback((newVal: string[] | undefined) => {
+        onChange(newVal, name);
         hideGeoLocationModal();
-    }, [onChange, hideGeoLocationModal, name, tempGeoAreas]);
+    }, [onChange, hideGeoLocationModal, name]);
 
     const { project } = React.useContext(ProjectContext);
 
@@ -77,8 +69,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                         onChange={handleGeoAreasSelection}
                         label=" Geo Locations"
                         projectId={project.id}
-                        options={geoAreas}
-                        onOptionsChange={onGeoAreasChange}
+                        options={geoAreaOptions}
+                        onOptionsChange={onGeoAreaOptionsChange}
                         disabled={disabled}
                         placeholder="Select geo locations"
                         readOnly={readOnly}
@@ -100,10 +92,9 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                         <GeoLocationModal
                             onModalClose={handleModalClose}
                             projectId={project.id}
-                            tempGeoAreas={tempGeoAreas ?? value}
-                            onTempGeoAreasChange={setTempGeoAreas}
-                            geoAreaOptions={geoAreas}
-                            onGeoAreaOptionsChange={onGeoAreasChange}
+                            initialValue={value}
+                            geoAreaOptions={geoAreaOptions}
+                            onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                             onSubmit={handleModalSubmit}
                         />
                     )}

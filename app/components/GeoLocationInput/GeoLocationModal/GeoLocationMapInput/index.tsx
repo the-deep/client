@@ -78,7 +78,7 @@ function regionLabelSelector(d: ProjectRegion) {
 interface Props {
     className?: string;
     projectId: string;
-    tempGeoAreas?: string[] | null | undefined;
+    value?: string[] | null | undefined;
     onChange: (value: string[] | undefined) => void,
     geoAreaOptions: GeoArea[] | null | undefined;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>;
@@ -88,7 +88,7 @@ function GeoLocationMapInput(props: Props) {
     const {
         projectId,
         className,
-        tempGeoAreas,
+        value,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onChange,
@@ -156,10 +156,10 @@ function GeoLocationMapInput(props: Props) {
         setActiveAdminLevel(topAdminLevel?.id);
     }, [projectRegions]);
 
-    const handleRemoveItem = useCallback((value: string) => {
-        const newValues = tempGeoAreas?.filter((v) => (v !== value));
+    const handleRemoveItem = useCallback((valueToRemove: string) => {
+        const newValues = value?.filter((v) => (v !== valueToRemove));
         onChange(newValues);
-    }, [onChange, tempGeoAreas]);
+    }, [onChange, value]);
 
     const geoAreaGroupRendererParams = useCallback((key: string) => ({
         heading: key,
@@ -173,8 +173,8 @@ function GeoLocationMapInput(props: Props) {
     }), [handleRemoveItem]);
 
     const geoAreasList = useMemo(() => (
-        geoAreaOptions?.filter((item) => tempGeoAreas?.includes(item.id))
-    ), [geoAreaOptions, tempGeoAreas]);
+        geoAreaOptions?.filter((item) => value?.includes(item.id))
+    ), [geoAreaOptions, value]);
 
     return (
         <div className={_cs(className, styles.geoLocationMapInput)}>
@@ -195,7 +195,7 @@ function GeoLocationMapInput(props: Props) {
                     />
                     <GeoMultiSelectInput
                         name="geoSelection"
-                        value={tempGeoAreas}
+                        value={value}
                         onChange={onChange}
                         label=" Geo Locations"
                         projectId={projectId}
@@ -209,8 +209,8 @@ function GeoLocationMapInput(props: Props) {
                     adminLevel={activeAdminLevel}
                     regionId={selectedRegion}
                     onAdminLevelChange={setActiveAdminLevel}
-                    selectedGeoAreas={tempGeoAreas}
-                    onGeoAreasSelectionChange={handleGeoAreasMapSelection}
+                    selectedGeoAreas={value}
+                    onSelectedGeoAreasChange={handleGeoAreasMapSelection}
                 />
             </div>
             <Container

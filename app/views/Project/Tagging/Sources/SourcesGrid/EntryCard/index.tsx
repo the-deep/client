@@ -65,8 +65,8 @@ interface Props {
     onViewTagsButtonClick?: (entryId: string) => void;
     onHideTagsButtonClick?: (entryId: string) => void;
     onEntryDataChange: () => void;
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EntryCard(props: Props) {
@@ -80,8 +80,8 @@ function EntryCard(props: Props) {
         onViewTagsButtonClick,
         onHideTagsButtonClick,
         onEntryDataChange,
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const alert = useAlert();
@@ -239,8 +239,8 @@ function EntryCard(props: Props) {
                         compact
                         entryImage={entry.image}
                         onEntryDataChange={onEntryDataChange}
-                        geoAreas={geoAreas}
-                        onGeoAreasChange={onGeoAreasChange}
+                        geoAreaOptions={geoAreaOptions}
+                        onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                     />
                 </>
             )}

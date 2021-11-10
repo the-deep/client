@@ -260,8 +260,8 @@ function EntryList(props: Props) {
         verifiedBy: data.verifiedBy,
         entryImage: data.image,
         onEntryDataChange: getEntries,
-        geoAreas: geoAreaOptions,
-        onGeoAreasChange: setGeoAreaOptions,
+        geoAreaOptions,
+        onGeoAreaOptionsChange: setGeoAreaOptions,
     }), [
         geoAreaOptions,
         getEntries,

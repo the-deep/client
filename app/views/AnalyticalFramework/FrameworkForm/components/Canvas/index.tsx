@@ -68,7 +68,7 @@ function WidgetWrapper(props: WidgetProps) {
             readOnly
             error={undefined}
             geoAreas={undefined}
-            onGeoAreasChange={noop}
+            onGeoAreaOptionsChange={noop}
             actions={(
                 <>
                     {showWidgetEdit && (

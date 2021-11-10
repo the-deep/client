@@ -873,8 +873,8 @@ function EntryEdit(props: Props) {
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
-            geoAreas: geoAreaOptions,
-            onGeoAreasChange: setGeoAreaOptions,
+            geoAreaOptions,
+            onGeoAreaOptionsChange: setGeoAreaOptions,
         }),
         [
             geoAreaOptions,
@@ -1085,8 +1085,8 @@ function EntryEdit(props: Props) {
                                                     onAttributeChange={onAttributeChange}
                                                     readOnly={!currentEntry}
                                                     error={currentEntryError?.attributes}
-                                                    geoAreas={geoAreaOptions}
-                                                    onGeoAreasChange={setGeoAreaOptions}
+                                                    geoAreaOptions={geoAreaOptions}
+                                                    onGeoAreaOptionsChange={setGeoAreaOptions}
                                                 />
                                             </TabPanel>
                                         ))}
@@ -1137,8 +1137,8 @@ function EntryEdit(props: Props) {
                                         onAttributeChange={onAttributeChange}
                                         readOnly={!currentEntry}
                                         error={currentEntryError?.attributes}
-                                        geoAreas={geoAreaOptions}
-                                        onGeoAreasChange={setGeoAreaOptions}
+                                        geoAreaOptions={geoAreaOptions}
+                                        onGeoAreaOptionsChange={setGeoAreaOptions}
                                     />
                                 </Container>
                             </div>

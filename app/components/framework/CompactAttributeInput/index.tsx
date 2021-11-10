@@ -73,8 +73,8 @@ export interface Props<N extends string | number | undefined> {
     readOnly?: boolean;
     disabled?: boolean;
 
-    geoAreas: GeoArea[] | undefined | null;
-    onGeoAreasChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -89,8 +89,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         disabled,
         error: riskyError,
 
-        geoAreas,
-        onGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -297,8 +297,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
-                geoAreas={geoAreas}
-                onGeoAreasChange={onGeoAreasChange}
+                geoAreaOptions={geoAreaOptions}
+                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
             />
         );
     } else {

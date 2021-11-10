@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Modal,
@@ -12,10 +12,9 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     projectId: string;
-    onSubmit: () => void;
-    tempGeoAreas?: string[] | null | undefined;
+    onSubmit: (newVal: string[] | undefined) => void;
+    initialValue: string[] | null | undefined;
     geoAreaOptions: GeoArea[] | null | undefined;
-    onTempGeoAreasChange: React.Dispatch<React.SetStateAction<string[] | null | undefined>>;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>;
     onModalClose: () => void;
 }
@@ -24,12 +23,20 @@ function GeoLocationModal(props: Props) {
         className,
         projectId,
         onModalClose,
-        tempGeoAreas,
         geoAreaOptions,
         onGeoAreaOptionsChange,
-        onTempGeoAreasChange,
+        initialValue,
         onSubmit,
     } = props;
+
+    const [
+        tempGeoAreas,
+        setTempGeoAreas,
+    ] = useState<string[] | null | undefined>(initialValue);
+
+    const handleSubmit = useCallback(() => {
+        onSubmit(tempGeoAreas ?? undefined);
+    }, [onSubmit, tempGeoAreas]);
 
     return (
         <Modal
@@ -48,7 +55,7 @@ function GeoLocationModal(props: Props) {
                     <Button
                         name={undefined}
                         disabled={!tempGeoAreas}
-                        onClick={onSubmit}
+                        onClick={handleSubmit}
                         variant="primary"
                     >
                         Apply
@@ -58,8 +65,8 @@ function GeoLocationModal(props: Props) {
         >
             <GeoLocationMapInput
                 projectId={projectId}
-                onChange={onTempGeoAreasChange}
-                tempGeoAreas={tempGeoAreas}
+                onChange={setTempGeoAreas}
+                value={tempGeoAreas}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
             />
