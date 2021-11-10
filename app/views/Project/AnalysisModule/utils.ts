@@ -10,9 +10,11 @@ import {
 export type MatrixPillarWidgetType = Pick<WidgetType, 'id' | 'title' | 'properties' | 'widgetId'>;
 
 export type MatrixPillar = {
+    // id refers to current pillar/sector's unique key
     id: string;
     title: string;
     uniqueId: string;
+    // Key refers to parent widget's unique key
     key?: string;
     altTitle?: string;
     children?: MatrixPillar[];

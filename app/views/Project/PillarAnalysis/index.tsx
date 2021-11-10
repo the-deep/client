@@ -5,6 +5,7 @@ import { useQuery, gql } from '@apollo/client';
 import {
     unique,
     isDefined,
+    mapToList,
     isNotDefined,
     listToGroupList,
     randomString,
@@ -52,8 +53,6 @@ import {
     ProjectEntriesForAnalysisQueryVariables,
 } from '#generated/types';
 
-import { FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
-
 import _ts from '#ts';
 
 import {
@@ -72,7 +71,12 @@ import {
     setPillarAnalysisDataAction,
 } from '#redux';
 */
-import FilterForm from '#views/Project/Tagging/Sources/SourcesFilter';
+import FilterForm, { getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
+import {
+    FormType as FilterFormType,
+    PartialFormType as PartialFilterFormType,
+} from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+
 import { transformSourcesFilterToEntriesFilter } from '#views/Project/Tagging/Sources/utils';
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem, { Props as SourceEntryItemProps } from './SourceEntryItem';
@@ -194,8 +198,6 @@ const entryMap = {
     dataSeries: 'DATA_SERIES',
 } as const;
 
-type FaramValues = Omit<FilterFormType, 'projectId'>;
-
 const maxItemsPerPage = 25;
 
 const entryKeySelector = (d: EntryMin) => d.id;
@@ -269,11 +271,16 @@ function PillarAnalysis() {
     const [activeTab, setActiveTab] = useState<TabNames | undefined>('entries');
 
     // FIXME: please use new form
-    const [filtersValue, setFiltersValue] = useState<FaramValues>({});
+    const [filtersValue, setFiltersValue] = useState<PartialFilterFormType>({});
     const [activePage, setActivePage] = useState(1);
 
     const entriesFilter = useMemo(
-        () => transformSourcesFilterToEntriesFilter(filtersValue),
+        () => {
+            const transformedFilters = getProjectSourcesQueryVariables(
+                filtersValue as Omit<FilterFormType, 'projectId'>,
+            );
+            return transformSourcesFilterToEntriesFilter(transformedFilters);
+        },
         [filtersValue],
     );
 
@@ -382,8 +389,19 @@ function PillarAnalysis() {
                 (o) => o.key,
                 (o) => o.id,
             );
+            const filtersList = mapToList(
+                newFilters,
+                (d, k) => ({
+                    filterKey: k,
+                    valueList: d,
+                }),
+            );
             setPillarAnalysis(response);
-            setFiltersValue(newFilters);
+            setFiltersValue({
+                entriesFilterData: {
+                    filterableData: filtersList,
+                },
+            });
 
             // eslint-disable-next-line max-len
             let analyticalStatements: PartialAnalyticalStatementType[] = response.analyticalStatements ?? [];
@@ -714,6 +732,7 @@ function PillarAnalysis() {
                 {projectId && (
                     <FilterForm
                         className={styles.entriesFilter}
+                        value={filtersValue}
                         onFilterApply={setFiltersValue}
                         projectId={projectId}
                     />
