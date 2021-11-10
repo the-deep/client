@@ -40,10 +40,9 @@ import {
 } from '#generated/types';
 
 import {
-    SourcesFilterFields,
     SourceFilterOptions,
 } from './types';
-import schema, { PartialFormType } from './schema';
+import schema, { FormType, PartialFormType } from './schema';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
@@ -147,8 +146,8 @@ function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'tit
 }
 
 function getProjectSourcesQueryVariables(
-    filters: SourcesFilterFields,
-) {
+    filters: Omit<FormType, 'projectId'>,
+): Omit<FormType, 'projectId'> {
     const isEntriesFilterDataEmpty = doesObjectHaveNoData(filters.entriesFilterData, ['', null]);
 
     return {
@@ -180,7 +179,7 @@ interface Props {
     disabled?: boolean;
     projectId: string;
     filterOnlyUnprotected?: boolean;
-    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
+    onFilterApply: (value: Omit<FormType, 'projectId'>) => void;
 }
 
 function SourcesFilter(props: Props) {
@@ -219,8 +218,8 @@ function SourcesFilter(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const handleSubmit = useCallback((values) => {
-        const finalValues = getProjectSourcesQueryVariables(values);
+    const handleSubmit = useCallback((values: PartialFormType) => {
+        const finalValues = getProjectSourcesQueryVariables(values as Omit<FormType, 'projectId'>);
         onFilterApply(finalValues);
     }, [onFilterApply]);
 

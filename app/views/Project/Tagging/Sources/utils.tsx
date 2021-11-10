@@ -1,12 +1,11 @@
-import {
-    ProjectSourcesQueryVariables,
-} from '#generated/types';
-import {
-    convertDateToIsoDateTime,
-} from '#utils/common';
+import { convertDateToIsoDateTime } from '#utils/common';
+
+import { FormType } from './SourcesFilter/schema';
+
+type FaramValues = Omit<FormType, 'projectId'>;
 
 // eslint-disable-next-line import/prefer-default-export
-export function transformSourcesFilterToEntriesFilter(filters: Omit<ProjectSourcesQueryVariables, 'projectId'>) {
+export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
     const {
         assignees,
         confidentiality,
@@ -24,7 +23,9 @@ export function transformSourcesFilterToEntriesFilter(filters: Omit<ProjectSourc
         ...entriesFilterData,
         createdAtGte: convertDateToIsoDateTime(createdAtGte),
         createdAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
+
         authoringOrganizationTypes,
+
         leadAssignees: assignees,
         leadConfidentialities: confidentiality && [confidentiality],
         leadPriorities: priorities,
