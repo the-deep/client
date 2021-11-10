@@ -188,11 +188,29 @@ export function convertDateToIsoDateTime(dateString: string | undefined | null, 
     return date.toISOString();
 }
 
+export function flatten<A, K>(
+    lst: A[],
+    valueSelector: (item: A) => K,
+    childSelector: (item: A) => A[] | undefined,
+): K[] {
+    if (lst.length <= 0) {
+        return [];
+    }
+    const itemsByParent = lst.map(valueSelector);
+    const itemsByChildren = lst.map(childSelector).filter(isDefined).flat();
+    return [
+        ...itemsByParent,
+        ...flatten(itemsByChildren, valueSelector, childSelector),
+    ];
+}
+
+/*
 export function flatten<A>(a: A[], childSelector: (item: A) => A[] | undefined): A[];
 export function flatten<A>(a: A, childSelector: (item: A) => A[] | undefined): A;
 export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefined): A[] | A {
     if (Array.isArray(a)) {
-        return a.map((v) => flatten(v, childSelector));
+        const t = a.map((v) => flatten(v, childSelector));
+        return t;
     }
     const child = childSelector(a);
     if (Array.isArray(child)) {
@@ -203,3 +221,4 @@ export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefin
     }
     return a;
 }
+*/
