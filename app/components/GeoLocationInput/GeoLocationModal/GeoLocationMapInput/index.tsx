@@ -78,7 +78,7 @@ function regionLabelSelector(d: ProjectRegion) {
 interface Props {
     className?: string;
     projectId: string;
-    tempGeoAreas?: string[] | undefined;
+    tempGeoAreas?: string[] | null | undefined;
     onChange: (value: string[] | undefined) => void,
     geoAreaOptions: GeoArea[] | null | undefined;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>;
@@ -126,7 +126,9 @@ function GeoLocationMapInput(props: Props) {
             variables,
             onCompleted: (data) => {
                 const [topRegion] = data.project?.regions ?? [];
-                const [topAdminLevel] = topRegion?.adminLevels ?? [];
+                const topAdminLevel = topRegion?.adminLevels?.find((v) => v.level === 0)
+                    ?? topRegion?.adminLevels?.[0];
+
                 setSelectedRegion(topRegion?.id);
                 setActiveAdminLevel(topAdminLevel?.id);
             },
@@ -145,9 +147,13 @@ function GeoLocationMapInput(props: Props) {
 
     const handleRegionChange = useCallback((newRegion: string | undefined) => {
         setSelectedRegion(newRegion);
+
         const selectedRegionDetails = projectRegions
             ?.project?.regions?.find((region) => region.id === newRegion);
-        setActiveAdminLevel(selectedRegionDetails?.adminLevels?.[0]?.id);
+        const topAdminLevel = selectedRegionDetails?.adminLevels?.find((v) => v.level === 0)
+            ?? selectedRegionDetails?.adminLevels?.[0];
+
+        setActiveAdminLevel(topAdminLevel?.id);
     }, [projectRegions]);
 
     const handleRemoveItem = useCallback((value: string) => {

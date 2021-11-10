@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
@@ -42,11 +42,29 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         hideGeoLocationModal,
     ] = useModalState(false);
 
-    const handleGeoAreasSelection = useCallback((geoAreaIds: string[] | undefined) => {
-        onChange(geoAreaIds, name);
+    const [
+        tempGeoAreas,
+        setTempGeoAreas,
+    ] = useState<string[] | null | undefined>(value);
+
+    const handleGeoAreasSelection = useCallback((geoAreaIds: string[] | null | undefined) => {
+        onChange(geoAreaIds ?? undefined, name);
+        setTempGeoAreas(geoAreaIds);
     }, [name, onChange]);
 
+    const handleModalClose = useCallback(() => {
+        setTempGeoAreas(value);
+        hideGeoLocationModal();
+    }, [hideGeoLocationModal, value]);
+
+    const handleModalSubmit = useCallback(() => {
+        onChange(tempGeoAreas ?? undefined, name);
+        setTempGeoAreas(undefined);
+        hideGeoLocationModal();
+    }, [onChange, hideGeoLocationModal, name, tempGeoAreas]);
+
     const { project } = React.useContext(ProjectContext);
+
     return (
         <div className={styles.geoLocationInput}>
             <NonFieldError error={error} />
@@ -80,12 +98,13 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                     />
                     {isGeoLocationModalVisible && (
                         <GeoLocationModal
-                            onModalClose={hideGeoLocationModal}
+                            onModalClose={handleModalClose}
                             projectId={project.id}
-                            selectedGeoAreas={value}
+                            tempGeoAreas={tempGeoAreas ?? value}
+                            onTempGeoAreasChange={setTempGeoAreas}
                             geoAreaOptions={geoAreas}
                             onGeoAreaOptionsChange={onGeoAreasChange}
-                            onChange={handleGeoAreasSelection}
+                            onSubmit={handleModalSubmit}
                         />
                     )}
                 </>
