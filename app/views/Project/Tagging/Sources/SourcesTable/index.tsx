@@ -53,6 +53,11 @@ import {
 } from '#utils/common';
 
 import { transformSourcesFilterToEntriesFilter } from '../utils';
+import { getProjectSourcesQueryVariables } from '../SourcesFilter';
+import {
+    PartialFormType as PartialFilterFormType,
+    FormType as FilterFormType,
+} from '../SourcesFilter/schema';
 import { Lead } from './types';
 import Actions, { Props as ActionsProps } from './Actions';
 import LeadEditModal from '../LeadEditModal';
@@ -201,15 +206,21 @@ const DELETE_LEAD = gql`
 interface Props {
     className?: string;
     projectId: string;
-    filters: Omit<ProjectSourcesQueryVariables, 'projectId'>;
+    filters: PartialFilterFormType;
 }
 
 function SourcesTable(props: Props) {
     const {
         className,
         projectId,
-        filters,
+        filters: rawFilters,
     } = props;
+
+    const filters = useMemo(() => (
+        getProjectSourcesQueryVariables(
+            rawFilters as Omit<FilterFormType, 'projectId'>,
+        )
+    ), [rawFilters]);
 
     const [activePage, setActivePage] = useState<number>(1);
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
@@ -224,8 +235,11 @@ function SourcesTable(props: Props) {
         : `-${validSorting.name}`;
 
     const variables = useMemo(
-        (): ProjectSourcesQueryVariables | undefined => (
-            (projectId) ? {
+        (): ProjectSourcesQueryVariables | undefined => {
+            if (!projectId) {
+                return undefined;
+            }
+            return ({
                 ...filters,
                 createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
                 createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
@@ -233,8 +247,8 @@ function SourcesTable(props: Props) {
                 page: activePage,
                 pageSize: maxItemsPerPage,
                 ordering,
-            } : undefined
-        ),
+            });
+        },
         [projectId, activePage, ordering, filters],
     );
 

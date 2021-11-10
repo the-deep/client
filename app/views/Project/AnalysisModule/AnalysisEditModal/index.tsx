@@ -235,7 +235,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             ...(primaryWidgets ?? []),
             ...(secondaryWidgets ?? []),
         ]);
-        return flatten(matrixItems, (item) => item, childrenSelector);
+        return flatten(matrixItems, (item) => item, childrenSelector)
+            .filter((item) => isDefined(item.key));
     }, [projectWithFramework]);
 
     const alert = useAlert();
