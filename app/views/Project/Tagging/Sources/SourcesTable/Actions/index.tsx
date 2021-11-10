@@ -18,10 +18,12 @@ import {
     useConfirmation,
     Button,
     RowExpansionContext,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+import LeadCopyModal from '../LeadCopyModal';
 
 import styles from './styles.css';
 
@@ -40,6 +42,7 @@ function Actions<T extends string>(props: Props<T>) {
     const {
         className,
         id,
+        title,
         onEditClick,
         disabled,
         isAssessmentLead,
@@ -53,6 +56,12 @@ function Actions<T extends string>(props: Props<T>) {
     const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
     const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
+
+    const [
+        leadCopyModalShown,
+        showLeadCopyModal,
+        hideLeadCopyModal,
+    ] = useModalState(false);
 
     const entryEditLink = useMemo(() => ({
         pathname: generatePath(
@@ -93,6 +102,10 @@ function Actions<T extends string>(props: Props<T>) {
         message: 'Are you sure you want to delete this lead?',
     });
 
+    const onMoveLeadToOtherProjectsClick = useCallback(() => {
+        showLeadCopyModal();
+    }, []);
+
     const isExpanded = id === expandedRowKey;
     const isDisabled = entriesCount < 1;
 
@@ -129,6 +142,12 @@ function Actions<T extends string>(props: Props<T>) {
                         )}
                         variant="secondary"
                     >
+                        <DropdownMenuItem
+                            onClick={onMoveLeadToOtherProjectsClick}
+                            name={undefined}
+                        >
+                            Move to other project
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={onDeleteLeadClick}
                             name={undefined}
@@ -169,6 +188,13 @@ function Actions<T extends string>(props: Props<T>) {
 
             </div>
             {modal}
+            {leadCopyModalShown && (
+                <LeadCopyModal
+                    projectId={projectId}
+                    onClose={hideLeadCopyModal}
+                    leadId={[id]}
+                />
+            )}
         </div>
     );
 }
