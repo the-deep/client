@@ -1,11 +1,13 @@
 import {
-    ProjectSourcesQueryVariables,
-} from '#generated/types';
-import {
     ObjectSchema,
     ArraySchema,
     PartialForm,
 } from '@togglecorp/toggle-form';
+
+import {
+    ProjectSourcesQueryVariables,
+} from '#generated/types';
+
 import { SourcesFilterFields } from './types';
 
 export type FormType = ProjectSourcesQueryVariables;
