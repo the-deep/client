@@ -1,7 +1,7 @@
 .widget-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-small);
 
     &.errored {
         /* FIXME: add proper styling */

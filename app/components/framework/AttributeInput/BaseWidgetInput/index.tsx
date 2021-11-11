@@ -8,6 +8,8 @@ export interface Props{
     className?: string;
     actions?: React.ReactNode,
     error?: unknown;
+    disabled?: boolean;
+    readOnly?: boolean;
 }
 
 function BaseWidgetInput(props: Props) {
@@ -16,6 +18,8 @@ function BaseWidgetInput(props: Props) {
         title,
         actions,
         error,
+        disabled,
+        readOnly,
     } = props;
 
     return (
@@ -24,6 +28,8 @@ function BaseWidgetInput(props: Props) {
             title={title}
             actions={actions}
             error={error}
+            disabled={disabled}
+            readOnly={readOnly}
         >
             <Card>
                 {/* FIXME: use strings */}

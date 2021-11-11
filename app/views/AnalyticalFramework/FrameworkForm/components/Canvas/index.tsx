@@ -67,12 +67,13 @@ function WidgetWrapper(props: WidgetProps) {
             widget={widget}
             readOnly
             error={undefined}
-            geoAreas={undefined}
+            geoAreaOptions={undefined}
             onGeoAreaOptionsChange={noop}
             actions={(
                 <>
                     {showWidgetEdit && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             onClick={onWidgetEditClick}
                             // FIXME: use translation
@@ -84,6 +85,7 @@ function WidgetWrapper(props: WidgetProps) {
                     )}
                     {showWidgetClone && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             onClick={onWidgetCloneClick}
                             // FIXME: use translation
@@ -95,6 +97,7 @@ function WidgetWrapper(props: WidgetProps) {
                     )}
                     {showWidgetDelete && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             onClick={onWidgetDeleteClick}
                             // FIXME: use translation
@@ -106,6 +109,7 @@ function WidgetWrapper(props: WidgetProps) {
                     )}
                     {!editMode && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             // FIXME: use translation
                             title="Drag"

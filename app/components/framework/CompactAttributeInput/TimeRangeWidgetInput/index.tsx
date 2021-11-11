@@ -78,9 +78,9 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             childrenContainerClassName={styles.content}
+            error={error}
             disabled={disabled}
             readOnly={readOnly}
-            error={error}
         >
             {readOnly ? (
                 <TimeRangeOutput
