@@ -126,7 +126,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 options={members}
                 onOptionsChange={setMembers}
                 label="Entry created by"
-                placeholder="Entry created by"
                 disabled={disabled}
             />
             <DateDualRangeInput
@@ -159,7 +158,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 options={options?.commentStatusOptions?.enumValues}
                 label="Entry comment status"
-                placeholder="Entry comment status"
                 disabled={disabled || optionsDisabled}
             />
             <BooleanInput
@@ -173,7 +171,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 value={value?.controlled}
                 onChange={setFieldValue}
                 label="Entry controlled status"
-                placeholder="Entry controlled status"
                 disabled={disabled}
             />
             <MultiSelectInput<string, 'entryTypes', { name: string, description?: string | null }, { containerClassName?: string, title?: string; }>
@@ -191,7 +188,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 options={options?.entryTypeOptions?.enumValues}
                 disabled={disabled || optionsDisabled}
                 label="Entry type"
-                placeholder="Entry type"
             />
             <List
                 data={options?.project?.analysisFramework?.filters ?? undefined}

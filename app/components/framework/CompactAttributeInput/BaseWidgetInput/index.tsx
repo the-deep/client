@@ -7,6 +7,8 @@ export interface Props{
     title: string | undefined;
     className?: string;
     error?: unknown;
+    disabled?: boolean;
+    readOnly?: boolean;
 }
 
 function BaseWidgetInput(props: Props) {
@@ -14,6 +16,8 @@ function BaseWidgetInput(props: Props) {
         className,
         title,
         error,
+        disabled,
+        readOnly,
     } = props;
 
     return (
@@ -21,6 +25,8 @@ function BaseWidgetInput(props: Props) {
             className={className}
             title={title}
             error={error}
+            disabled={disabled}
+            readOnly={readOnly}
         >
             <Card>
                 {/* FIXME: use strings */}

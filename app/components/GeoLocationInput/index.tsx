@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import {
-    QuickActionButton,
+    Button,
 } from '@the-deep/deep-ui';
 import { IoEarth } from 'react-icons/io5';
 import NonFieldError from '#components/NonFieldError';
@@ -67,25 +67,24 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                         name="geoMultiSelect"
                         value={value}
                         onChange={handleGeoAreasSelection}
-                        label=" Geo Locations"
+                        // label=" Geo Locations"
                         projectId={project.id}
                         options={geoAreaOptions}
                         onOptionsChange={onGeoAreaOptionsChange}
                         disabled={disabled}
-                        placeholder="Select geo locations"
+                        // placeholder="Select geo locations"
                         readOnly={readOnly}
                         actionsContainerClassName={styles.showGeoLocationModalButton}
-                        actions={(
-                            <QuickActionButton
+                        actions={!readOnly && (
+                            <Button
                                 title="Show Geo Location Modal"
-                                name="geoLocationModalButton"
+                                name={undefined}
                                 variant="action"
                                 disabled={disabled}
-                                readOnly={readOnly}
                                 onClick={showGeoLocationModal}
                             >
                                 <IoEarth />
-                            </QuickActionButton>
+                            </Button>
                         )}
                     />
                     {isGeoLocationModalVisible && (

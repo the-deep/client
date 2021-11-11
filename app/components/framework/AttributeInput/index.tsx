@@ -321,6 +321,8 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 title={widget.title}
                 actions={actions}
                 error={error?.data}
+                disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }

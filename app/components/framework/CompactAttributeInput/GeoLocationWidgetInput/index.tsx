@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
+import React, { useCallback, useMemo } from 'react';
+import { listToMap, isNotDefined } from '@togglecorp/fujs';
 import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
-import NonFieldError from '#components/NonFieldError';
 
+import { breadcrumb } from '#utils/common';
+import NonFieldError from '#components/NonFieldError';
 import { GeoLocationWidget } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { GeoLocationWidgetAttribute } from '#types/newEntry';
@@ -59,23 +60,43 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
 
+    const selectedValues = useMemo(() => {
+        const optionsMap = listToMap(
+            geoAreaOptions,
+            (d) => d.id, (d) => breadcrumb(d.regionTitle, d.adminLevelTitle, d.title),
+        );
+        return value?.value?.map((v) => optionsMap?.[v]);
+    }, [geoAreaOptions, value]);
+
     return (
         <WidgetWrapper
             className={className}
             title={title}
             error={error}
+            disabled={disabled}
+            readOnly={readOnly}
         >
-            <NonFieldError error={error} />
-            <GeoLocationInput
-                name={name}
-                value={value?.value}
-                onChange={onChange}
-                disabled={disabled || readOnly}
-                readOnly={readOnly}
-                error={getErrorString(error?.value)}
-                geoAreaOptions={geoAreaOptions}
-                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
-            />
+            {readOnly ? (
+                selectedValues?.map((val) => (
+                    <div key={val}>
+                        {val}
+                    </div>
+                )) ?? (<div>-</div>)
+            ) : (
+                <>
+                    <NonFieldError error={error} />
+                    <GeoLocationInput
+                        name={name}
+                        value={value?.value}
+                        onChange={onChange}
+                        disabled={disabled || readOnly}
+                        readOnly={readOnly}
+                        error={getErrorString(error?.value)}
+                        geoAreaOptions={geoAreaOptions}
+                        onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                    />
+                </>
+            )}
         </WidgetWrapper>
     );
 }

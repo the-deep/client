@@ -307,6 +307,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 className={className}
                 title={widget.title}
                 error={error?.data}
+                disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }

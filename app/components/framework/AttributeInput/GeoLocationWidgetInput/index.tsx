@@ -74,7 +74,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
                 name={name}
                 value={value?.value}
                 onChange={onChange}
-                disabled={disabled || readOnly}
+                disabled={disabled}
                 readOnly={readOnly}
                 error={getErrorString(error?.value)}
                 geoAreaOptions={geoAreaOptions}

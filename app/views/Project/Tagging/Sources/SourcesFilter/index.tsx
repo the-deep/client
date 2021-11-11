@@ -266,6 +266,7 @@ function SourcesFilter(props: Props) {
                     error={error?.search}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'search')}
+                    placeholder="Lead title or Entry excerpt"
                 />
                 <MultiSelectInput
                     className={styles.input}
@@ -277,6 +278,21 @@ function SourcesFilter(props: Props) {
                     value={value.statuses}
                     error={getErrorString(error?.statuses)}
                     label={_ts('sourcesFilter', 'status')}
+                    disabled={disabled || loading || !!sourceFilterOptionsError}
+                />
+                <SelectInput
+                    className={_cs(
+                        styles.input,
+                        (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
+                    )}
+                    name="exists"
+                    onChange={setFieldValue}
+                    options={existsOptions}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.exists}
+                    error={error?.exists}
+                    label="Exists"
                     disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <DateDualRangeInput
@@ -314,23 +330,7 @@ function SourcesFilter(props: Props) {
                     options={members}
                     onOptionsChange={setMembers}
                     label="Assignees"
-                    placeholder="Assignees"
                     disabled={disabled}
-                />
-                <SelectInput
-                    className={_cs(
-                        styles.input,
-                        (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
-                    )}
-                    name="exists"
-                    onChange={setFieldValue}
-                    options={existsOptions}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                    value={value.exists}
-                    error={error?.exists}
-                    label={_ts('sourcesFilter', 'exists')}
-                    disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
                 <MultiSelectInput
                     className={_cs(

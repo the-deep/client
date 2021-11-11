@@ -74,21 +74,23 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(widgetOptions, (d) => d.key, (d) => d.label);
-        return value?.value?.map((v) => optionsMap?.[v])?.join(', ');
+        return value?.value?.map((v) => optionsMap?.[v]);
     }, [widgetOptions, value]);
 
     return (
         <WidgetWrapper
             className={className}
             title={title}
+            error={error}
             disabled={disabled}
             readOnly={readOnly}
-            error={error}
         >
             {readOnly ? (
-                <div>
-                    {selectedValues}
-                </div>
+                selectedValues?.map((val) => (
+                    <div key={val}>
+                        {val}
+                    </div>
+                )) ?? (<div>-</div>)
             ) : (
                 <>
                     <NonFieldError
