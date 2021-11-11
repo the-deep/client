@@ -122,9 +122,13 @@
                 margin: var(--dui-spacing-extra-large);
             }
 
+            .collapse-entry-list-button {
+                padding: var(--dui-spacing-small);
+            }
+
             .right-container {
                 display: flex;
-                flex-basis: calc(100% - var(--width-left-container));
+                flex-grow: 1;
                 padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
                 overflow: auto;
 

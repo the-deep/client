@@ -56,6 +56,7 @@ interface Props {
     className?: string;
     pillarId: number;
     discardedTags?: DiscardedTags[];
+    onUndiscardSuccess: () => void;
 }
 
 function DiscardedEntries(props: Props) {
@@ -63,6 +64,7 @@ function DiscardedEntries(props: Props) {
         className,
         pillarId,
         discardedTags,
+        onUndiscardSuccess,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
@@ -88,6 +90,11 @@ function DiscardedEntries(props: Props) {
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
     });
 
+    const handleEntryUndiscard = useCallback(() => {
+        triggerEntriesPull();
+        onUndiscardSuccess();
+    }, [triggerEntriesPull, onUndiscardSuccess]);
+
     const entryCardRendererParams = useCallback(
         (_: number, data: DiscardedEntry): DiscardedEntryProps => ({
             entryId: data.entry,
@@ -102,9 +109,9 @@ function DiscardedEntries(props: Props) {
             }) : undefined,
             entryType: entryMap[data.entryDetails.entryType],
             pillarId,
-            onEntryUndiscard: triggerEntriesPull,
+            onEntryUndiscard: handleEntryUndiscard,
         }),
-        [pillarId, triggerEntriesPull],
+        [pillarId, handleEntryUndiscard],
     );
 
     const handleDiscardedTagFilterChange = useCallback((newValue: number[]) => {

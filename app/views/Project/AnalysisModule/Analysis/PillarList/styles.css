@@ -1,14 +1,15 @@
 .container {
     background-color: var(--dui-color-foreground);
-    padding: 0;
 
     .content {
-        padding: 0;
 
         .pillar-list {
             .pillar {
-                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 background-color: transparent;
+
+                &:not(:last-child) {
+                    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                }
             }
         }
     }

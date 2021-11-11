@@ -105,7 +105,7 @@ function AnalysisPillar(props: Props) {
         <Container
             className={_cs(styles.analysisPillar, className)}
             heading={title}
-            headerClassName={styles.header}
+            headingSize="small"
             headingDescription={(
                 <Tag variant={isAnalysisCompleted ? 'accent' : 'gradient1'}>
                     {statusLabel}
@@ -139,10 +139,10 @@ function AnalysisPillar(props: Props) {
             )}
             headerDescription={(
                 <TextOutput
-                    className={styles.createdAt}
                     label={_ts('analysis', 'creationDate')}
                     value={createdAt}
                     valueType="date"
+                    hideLabelColon
                 />
             )}
             contentClassName={styles.content}

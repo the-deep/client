@@ -1,21 +1,21 @@
 .analysis-pillar {
-    .header {
-        padding: var(--dui-spacing-small) var(--dui-spacing-large);
-    }
-    .created-at {
-        margin: calc(-1 * var(--dui-spacing-small)) calc(-1 * var(--dui-spacing-medium));
-    }
+    padding: var(--dui-spacing-small);
+
     .content {
         display: flex;
+        gap: var(--dui-spacing-medium);
 
         .left-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-small);
             flex-shrink: 0;
 
             .completion {
                 display: flex;
+                gap: var(--dui-spacing-small);
 
                 .label {
-                    padding: 0 var(--dui-spacing-medium);
                     color: var(--dui-color-text-label);
                     font-weight: var(--dui-font-weight-regular);
                 }

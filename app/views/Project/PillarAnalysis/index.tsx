@@ -698,10 +698,10 @@ function PillarAnalysis() {
                     </>
                 )}
             >
-                {breadcrumb(
+                {breadcrumb([
                     pillarAnalysisFromState?.analysisTitle,
                     pillarAnalysisFromState?.title ?? '',
-                )}
+                ])}
             </SubNavbar>
             <div className={styles.content}>
                 {pending && <PendingMessage />}
@@ -755,6 +755,7 @@ function PillarAnalysis() {
                         <CollapsibleContainer
                             className={styles.entryListSection}
                             expandButtonClassName={styles.expandEntryListButton}
+                            collapseButtonClassName={styles.collapseEntryListButton}
                             headerClassName={styles.entryListHeader}
                             headingClassName={styles.tabListHeading}
                             headingSize="small"
@@ -804,6 +805,7 @@ function PillarAnalysis() {
                                     className={styles.discardedEntriesContainer}
                                     pillarId={+pillarId}
                                     discardedTags={discardedTags}
+                                    onUndiscardSuccess={getEntries}
                                 />
                             </TabPanel>
                         </CollapsibleContainer>

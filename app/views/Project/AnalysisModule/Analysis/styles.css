@@ -10,32 +10,34 @@
     overflow-y: auto;
 
     .content {
+        display: flex;
+        flex-direction: column;
         padding-bottom: 0;
         overflow: unset;
+        gap: var(--dui-spacing-medium);
 
         .analysis-details {
             display: flex;
             height: 16rem;
+            gap: var(--dui-spacing-medium);
             overflow: auto;
 
             .meta-section {
                 display: flex;
                 flex-basis: 25%;
                 flex-direction: column;
+                gap: var(--dui-spacing-medium);
                 flex-grow: 1;
-                padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium)) 0;
                 overflow: auto;
 
                 .team-lead-name {
                     flex-shrink: 0;
-                    margin: calc(var(--spacing-medium) - var(--spacing-small)) 0;
                 }
 
                 .pillar-assignments {
                     display: flex;
                     flex-direction: column;
                     flex-grow: 1;
-                    margin: calc(var(--spacing-extra-large) - var(--spacing-small)) 0;
                     overflow: auto;
 
                     .overflow-wrapper {
@@ -57,11 +59,12 @@
                 flex-basis: 25%;
                 flex-grow: 1;
                 justify-content: center;
-                margin: var(--dui-spacing-large);
                 background-color: var(--dui-color-background-information);
 
-                .overview-header {
-                    border: none;
+                .overview-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-medium);
                 }
             }
 
@@ -69,7 +72,6 @@
                 flex-basis: 40%;
                 flex-grow: 1;
                 justify-content: center;
-                margin: var(--dui-spacing-large);
                 background-color: var(--dui-color-foreground);
                 overflow: unset;
 
@@ -99,8 +101,7 @@
             .pillar-analyses-header {
                 border-top: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                padding-top: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
-                padding-bottom: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+                background-color: var(--dui-color-foreground);
             }
 
             .pillar-analysis-list {

@@ -29,8 +29,8 @@ export function reorder<T extends { order: number }>(data: T[]) {
     return data.map((v, i) => ({ ...v, order: i }));
 }
 
-export function breadcrumb(...args: (string | undefined)[]) {
-    return args.filter((arg) => isDefined(arg)).join(' » ');
+export function breadcrumb(args: (string | undefined)[], symbol = ' » ') {
+    return args.filter((arg) => isDefined(arg)).join(symbol);
 }
 
 type MonthNameMap = {
