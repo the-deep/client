@@ -109,18 +109,17 @@
                 }
 
                 &:last-child {
-                    .label {
+                    .axis-label {
                         right: 0;
                         left: unset;
                     }
                 }
 
                 &:not(:first-child):not(:last-child) {
-                    .label {
+                    .axis-label {
                         transform: translateX(-50%);
                     }
                 }
-
             }
         }
     }

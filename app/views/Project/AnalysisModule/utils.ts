@@ -50,7 +50,7 @@ export function getMatrixPillars(widgets: MatrixPillarWidgetType[]): MatrixPilla
                 id: cellKey,
                 key,
                 title: label,
-                altTitle: breadcrumb(title, rowTitle, label),
+                altTitle: breadcrumb([title, rowTitle, label]),
                 uniqueId: `${key}-${cellKey}`,
             }));
 
@@ -58,7 +58,7 @@ export function getMatrixPillars(widgets: MatrixPillarWidgetType[]): MatrixPilla
                 id: rowKey,
                 key,
                 title: rowTitle,
-                altTitle: breadcrumb(title, rowTitle),
+                altTitle: breadcrumb([title, rowTitle]),
                 children: transformedCells,
                 uniqueId: `${key}-${rowKey}`,
             });
@@ -102,7 +102,7 @@ export function getMatrixPillars(widgets: MatrixPillarWidgetType[]): MatrixPilla
                     id: subRowId,
                     key: rowKey,
                     title: subRowTitle,
-                    altTitle: breadcrumb(title, rowTitle, subRowTitle),
+                    altTitle: breadcrumb([title, rowTitle, subRowTitle]),
                     uniqueId: `${rowKey}-${subRowId}`,
                 }),
             );
@@ -111,7 +111,7 @@ export function getMatrixPillars(widgets: MatrixPillarWidgetType[]): MatrixPilla
                 id: rowId,
                 key: rowKey,
                 title: rowTitle,
-                altTitle: breadcrumb(title, rowTitle),
+                altTitle: breadcrumb([title, rowTitle]),
                 children: transformedSubRows,
                 uniqueId: `${rowKey}-${rowId}`,
             });
@@ -132,7 +132,7 @@ export function getMatrixPillars(widgets: MatrixPillarWidgetType[]): MatrixPilla
                     id: subColumnId,
                     key: columnKey,
                     title: subColumnTitle,
-                    altTitle: breadcrumb(title, columnTitle, subColumnTitle),
+                    altTitle: breadcrumb([title, columnTitle, subColumnTitle]),
                     uniqueId: `${columnKey}-${subColumnId}`,
                 }),
             );
@@ -141,7 +141,7 @@ export function getMatrixPillars(widgets: MatrixPillarWidgetType[]): MatrixPilla
                 id: columnId,
                 key: columnKey,
                 title: columnTitle,
-                altTitle: breadcrumb(title, columnTitle),
+                altTitle: breadcrumb([title, columnTitle]),
                 children: transformedSubColumns,
                 uniqueId: `${columnKey}-${columnId}`,
             });

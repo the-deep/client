@@ -338,6 +338,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         <ContainerCard
                             className={styles.pieChartContainer}
                             footerContent={_ts('analysis', 'sourcesByTypeLabel')}
+                            contentClassName={styles.pieChartContent}
                         >
                             { piechartData?.length > 0 ? (
                                 <ResponsiveContainer>

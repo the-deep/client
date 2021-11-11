@@ -110,6 +110,7 @@ function AnalysisDetails(props: Props) {
     return (
         <Container
             className={_cs(className, styles.container)}
+            spacing="none"
             contentClassName={styles.content}
             footerActions={((pillarResponse?.count ?? 0) / MAX_ITEMS_PER_PAGE) > 1 ? (
                 <Pager

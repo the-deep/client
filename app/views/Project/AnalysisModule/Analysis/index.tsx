@@ -244,8 +244,8 @@ function Analysis(props: ComponentProps) {
                 <ContainerCard
                     className={styles.overviewContainer}
                     heading={_ts('analysis', 'overviewSectionHeader')}
-                    headerClassName={styles.overviewHeader}
-                    headingSize="small"
+                    headingSize="extraSmall"
+                    contentClassName={styles.overviewContent}
                 >
                     <ProgressLine
                         progress={(analyzedSources / totalSources) * 100}
@@ -261,7 +261,7 @@ function Analysis(props: ComponentProps) {
                 <Container
                     className={styles.frameworkOverviewContainer}
                     heading={_ts('analysis', 'frameworkOverviewHeader')}
-                    headingSize="small"
+                    headingSize="extraSmall"
                     contentClassName={styles.frameworkOverviewContent}
                 >
                     <ResponsiveContainer className={styles.responsiveContainer}>

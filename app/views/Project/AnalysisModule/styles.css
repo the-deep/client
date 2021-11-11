@@ -57,6 +57,10 @@
                 min-width: 280px;
                 max-width: 320px;
                 min-height: var(--height-charts);
+
+                .pie-chart-content {
+                    overflow: unset;
+                }
             }
 
             .analyses-timeline-container {
@@ -102,6 +106,8 @@
             overflow: unset;
 
             .analysis-list {
+                display: flex;
+                flex-direction: column;
                 flex-grow: 1;
                 padding: 0;
                 min-height: 320px;
