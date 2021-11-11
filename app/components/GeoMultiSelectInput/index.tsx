@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
+import { breadcrumb } from '#utils/common';
 import {
     GeoAreaOptionsQuery,
     GeoAreaOptionsQueryVariables,
@@ -30,7 +31,7 @@ const GEOAREAS = gql`
 export type GeoArea = NonNullable<NonNullable<NonNullable<NonNullable<GeoAreaOptionsQuery['project']>>['geoAreas']>['results']>[number];
 
 const keySelector = (d: GeoArea) => d.id;
-const labelSelector = (d: GeoArea) => d.title;
+const labelSelector = (d: GeoArea) => breadcrumb(d.regionTitle, d.adminLevelTitle, d.title);
 type Def = { containerClassName?: string };
 type GeoSelectInputProps<K extends string> = SearchMultiSelectInputProps<
     string,

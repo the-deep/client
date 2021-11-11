@@ -16,6 +16,7 @@ import {
 import { Widget } from '#types/newAnalyticalFramework';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import NonFieldError from '#components/NonFieldError';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import TextWidgetInput from './TextWidgetInput';
 import DateWidgetInput from './DateWidgetInput';
@@ -30,6 +31,7 @@ import MultiSelectWidgetInput from './MultiSelectWidgetInput';
 import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 import OrganigramWidgetInput from './OrganigramWidgetInput';
+import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 
 // FIXME: move this to utils later on
 export function getErrorObject<T extends ArrayError<T>>(
@@ -69,7 +71,9 @@ export interface Props<N extends string | number | undefined> {
     widget: PartialWidget,
     readOnly?: boolean;
     disabled?: boolean;
-    actions?: React.ReactNode,
+    actions?: React.ReactNode;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function AttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -84,6 +88,9 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
         disabled,
         actions,
         error: riskyError,
+
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -289,6 +296,24 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
+    } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
+        const data = value?.data;
+        component = (
+            <GeoLocationWidgetInput
+                className={className}
+                title={widget.title}
+                name="data"
+                onChange={onFieldChange}
+                value={data}
+                readOnly={readOnly}
+                disabled={disabled}
+                widget={widget}
+                actions={actions}
+                error={error?.data as Error<typeof data> | undefined}
+                geoAreaOptions={geoAreaOptions}
+                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+            />
+        );
     } else {
         component = (
             <BaseWidgetInput
@@ -296,6 +321,8 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 title={widget.title}
                 actions={actions}
                 error={error?.data}
+                disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }

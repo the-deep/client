@@ -26,6 +26,7 @@ import {
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 
 import { Entry } from '#views/Project/EntryEdit/types';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import { Widget } from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
@@ -60,6 +61,8 @@ interface EntryInputProps<T extends string | number | undefined> {
     compact?: boolean;
 
     entryImage: Entry['image'] | undefined | null;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -80,6 +83,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         compact,
         entryImage,
         error: riskyError,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -125,7 +130,11 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         error: error?.attributes,
         onAddButtonClick,
         entryClientId: value.clientId,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     }), [
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
         onAddButtonClick,
         emptyValueHidden,
         onAttributeChange,
@@ -186,6 +195,8 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 emptyValueHidden={emptyValueHidden}
                 widgets={secondaryTagging}
                 error={error?.attributes}
+                geoAreaOptions={geoAreaOptions}
+                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 entryClientId={value.clientId}
             />
         </div>

@@ -38,6 +38,7 @@ import {
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import { Widget } from '#types/newAnalyticalFramework';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import routes from '#base/configs/routes';
 import EntryInput from '#components/entry/EntryInput';
 import EntryComments from '#components/entryReview/EntryComments';
@@ -86,6 +87,8 @@ interface Props {
     compact?: boolean;
     entryImage: Entry['image'] | undefined | null;
     onEntryDataChange: () => void;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function EditableEntry(props: Props) {
@@ -102,24 +105,32 @@ function EditableEntry(props: Props) {
         verifiedBy,
         entryImage,
         onEntryDataChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const history = useHistory();
 
-    // FIXME: memoize this
-    const widgetsMapping = listToMap(
-        [
-            ...(primaryTagging?.flatMap((item) => (item.widgets ?? [])) ?? []),
-            ...(secondaryTagging ?? []),
-        ],
-        (item) => item.id,
-        (item) => item,
+    const schema = useMemo(
+        () => {
+            const widgetsMapping = listToMap(
+                [
+                    ...(primaryTagging?.flatMap((item) => (item.widgets ?? [])) ?? []),
+                    ...(secondaryTagging ?? []),
+                ],
+                (item) => item.id,
+                (item) => item,
+            );
+            return getEntrySchema(widgetsMapping);
+        },
+        [primaryTagging, secondaryTagging],
     );
-    const schema = getEntrySchema(widgetsMapping);
 
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
     const [editMode, setEditModeTrue, setEditModeFalse] = useBooleanState(false);
+
+    // TODO: handle pristine
     const {
         setValue,
         value,
@@ -145,6 +156,7 @@ function EditableEntry(props: Props) {
                         'Tags updated successfully!',
                         { variant: 'success' },
                     );
+                    // FIXME: update form data from server
                     setEditModeFalse();
                 } else {
                     const formError = transformToFormError(
@@ -194,11 +206,17 @@ function EditableEntry(props: Props) {
         },
     );
 
-    const handleEntryChange = useCallback((v) => {
-        setValue(v);
-    }, [setValue]);
+    const handleEntryChange = setValue;
 
     const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
+
+    const handleEditCancel = useCallback(
+        () => {
+            setEditModeFalse();
+            setValue(entry);
+        },
+        [entry, setEditModeFalse, setValue],
+    );
 
     const handleSaveButtonClick = useCallback(() => {
         const submit = createSubmitHandler(
@@ -276,6 +294,8 @@ function EditableEntry(props: Props) {
             leadId={leadId}
             entryImage={entryImage}
             error={error}
+            geoAreaOptions={geoAreaOptions}
+            onGeoAreaOptionsChange={onGeoAreaOptionsChange}
         />
     );
 
@@ -390,7 +410,7 @@ function EditableEntry(props: Props) {
                     {saveButton}
                     <Button
                         name={undefined}
-                        onClick={setEditModeFalse}
+                        onClick={handleEditCancel}
                         variant="secondary"
                         disabled={updateEntryPending}
                     >

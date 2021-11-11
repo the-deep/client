@@ -4,7 +4,7 @@ import {
     TabPanel,
 } from '@the-deep/deep-ui';
 
-import RegionMap from './RegionMap';
+import RegionMap from '#components/region/RegionMap';
 import styles from './styles.css';
 
 interface Props {

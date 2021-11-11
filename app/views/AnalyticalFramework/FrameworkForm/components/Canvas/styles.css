@@ -7,6 +7,17 @@
     .widget-container {
         flex-basis: 100%;
 
+        .action-button {
+            transition: var(--dui-duration-transition-medium) opacity ease-in-out;
+            opacity: 0;
+        }
+
+        &:hover {
+            .action-button {
+                opacity: 1;
+            }
+        }
+
         &.half-widget {
             flex-basis: calc(50% - var(--dui-spacing-large) / 2);
         }

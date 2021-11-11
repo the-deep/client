@@ -51,9 +51,9 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         <WidgetWrapper
             className={className}
             title={title}
+            error={error}
             disabled={disabled}
             readOnly={readOnly}
-            error={error}
         >
             {readOnly ? (
                 <NumberOutput

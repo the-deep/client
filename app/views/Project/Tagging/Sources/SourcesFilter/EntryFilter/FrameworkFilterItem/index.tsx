@@ -17,17 +17,18 @@ import {
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
-    FrameworkFilterType,
-    KeyLabelEntity,
-    KeyLabel,
-} from '../../types';
-import {
     hasNoData,
     convertDateToIsoDateTime,
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
 import { PartialEntriesFilterDataType } from '../../schema';
+import {
+    FrameworkFilterType,
+    KeyLabelEntity,
+    KeyLabel,
+} from '../../types';
+import SubRegionCheckmark from './SubRegionCheckmark';
 import styles from './styles.css';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
@@ -287,14 +288,17 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     options={geoAreaOptions}
                     onOptionsChange={setGeoAreaOptions}
                     disabled={disabled}
-                    placeholder={title}
-                    actions={(
+                    // NOTE: we can hide includeSubRegions option because
+                    // includeSubRegions will not be sent to server if some
+                    // valueList is selected
+                    actions={(value?.valueList?.length ?? 0) > 0 && (
                         <Checkbox
                             name="includeSubRegions"
+                            tooltip={value?.includeSubRegions ? 'Exclude sub regions' : 'Include sub regions'}
                             disabled={disabled}
+                            checkmark={SubRegionCheckmark}
                             onChange={onFieldChange}
                             value={value?.includeSubRegions}
-                            label="Include sub regions"
                         />
                     )}
                 />
@@ -336,7 +340,6 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     options={filter.properties?.options}
                     keySelector={filterClientIdSelector}
                     labelSelector={filterLabelSelector}
-                    placeholder={title}
                     disabled={disabled || optionsDisabled}
                 />
             );
@@ -357,7 +360,6 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
-                    placeholder={title}
                     disabled={disabled || optionsDisabled}
                 />
             );
@@ -378,7 +380,6 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
-                    placeholder={title}
                     disabled={disabled || optionsDisabled}
                 />
             );
@@ -399,7 +400,6 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
-                    placeholder={title}
                     disabled={disabled || optionsDisabled}
                 />
             );
@@ -417,7 +417,6 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     value={value?.value}
                     onChange={onFieldChange}
                     label={title}
-                    placeholder={title}
                     disabled={disabled}
                 />
             );

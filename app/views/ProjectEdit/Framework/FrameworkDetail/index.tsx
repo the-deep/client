@@ -405,6 +405,8 @@ function FrameworkDetail(props: Props) {
                                                         onAttributeChange={noop}
                                                         attributesMap={emptyObject}
                                                         error={undefined}
+                                                        onGeoAreaOptionsChange={noop}
+                                                        geoAreaOptions={undefined}
                                                     />
                                                 </TabPanel>
                                             ))
@@ -428,6 +430,8 @@ function FrameworkDetail(props: Props) {
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}
                                 error={undefined}
+                                onGeoAreaOptionsChange={noop}
+                                geoAreaOptions={undefined}
                             />
                         </TabPanel>
                     </Card>

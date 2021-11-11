@@ -75,6 +75,8 @@ function Review(props: Props) {
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}
                                 error={undefined}
+                                geoAreaOptions={undefined}
+                                onGeoAreaOptionsChange={noop}
                             />
                         </TabPanel>
                     ))}
@@ -89,6 +91,8 @@ function Review(props: Props) {
                     onAttributeChange={noop}
                     attributesMap={emptyObject}
                     error={undefined}
+                    geoAreaOptions={undefined}
+                    onGeoAreaOptionsChange={noop}
                 />
             </ContainerCard>
         </div>

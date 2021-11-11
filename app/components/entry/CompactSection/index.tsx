@@ -9,8 +9,9 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
-
 import { IoAdd } from 'react-icons/io5';
+
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import { Widget } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
@@ -33,6 +34,8 @@ export interface Props {
     entryClientId: string;
     sectionId?: string;
     onAddButtonClick: (entryId: string, sectionId?: string) => void;
+    geoAreaOptions: GeoArea[] | undefined | null;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
 
 function CompactSection(props: Props) {
@@ -49,6 +52,8 @@ function CompactSection(props: Props) {
         disabled,
         error: riskyError,
         onAddButtonClick,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -77,9 +82,19 @@ function CompactSection(props: Props) {
                 readOnly,
                 disabled,
                 error: err,
+                geoAreaOptions,
+                onGeoAreaOptionsChange,
             };
         },
-        [onAttributeChange, attributesMap, readOnly, disabled, error],
+        [
+            onAttributeChange,
+            attributesMap,
+            readOnly,
+            disabled,
+            error,
+            geoAreaOptions,
+            onGeoAreaOptionsChange,
+        ],
     );
 
     const handleAddButtonClick = useCallback(() => {

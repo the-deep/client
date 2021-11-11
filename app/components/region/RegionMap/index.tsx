@@ -6,7 +6,9 @@ import Map, {
     MapSource,
     MapLayer,
     MapTooltip,
+    MapState,
 } from '@togglecorp/re-map';
+import { useQuery, gql } from '@apollo/client';
 import {
     Spinner,
     SegmentInput,
@@ -24,11 +26,13 @@ import {
     LngLatLike,
 } from 'mapbox-gl';
 import {
-    MultiResponse,
-    AdminLevelGeoArea,
     GeoAreaBounds,
 } from '#types';
 import { useRequest } from '#base/utils/restRequest';
+import {
+    SelectedRegionQuery,
+    SelectedRegionQueryVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import styles from './styles.css';
@@ -67,13 +71,37 @@ const tooltipOptions: PopupOptions = {
     offset: 12,
 };
 
+const SELECTED_REGION = gql`
+    query SelectedRegion($regionId: ID!) {
+        region(id: $regionId) {
+            title
+            id
+            adminLevels {
+                id
+                level
+                title
+                geojsonFile {
+                    name
+                    url
+                }
+                boundsFile {
+                    name
+                    url
+                }
+            }
+        }
+    }
+`;
+
 interface KeyValue {
     key: string;
     value: string;
 }
+type AdminLevel = NonNullable<NonNullable<SelectedRegionQuery['region']>['adminLevels']>[number];
+
 const keySelector = (d: KeyValue) => d.key;
-const adminLevelKeySelector = (d: AdminLevelGeoArea) => d.id;
-const adminLevelLabelSelector = (d: AdminLevelGeoArea) => d.title;
+const adminLevelKeySelector = (d: AdminLevel) => d.id;
+const adminLevelLabelSelector = (d: AdminLevel) => d.title;
 
 const defaultGeoJson: GeoJSON.FeatureCollection<GeoJSON.Geometry> = {
     type: 'FeatureCollection',
@@ -86,12 +114,14 @@ interface GeoAreaBoundsResponse {
 
 interface Props {
     className?: string;
-    regionId: string;
+    regionId?: string;
     adminLevel: string | undefined;
     onAdminLevelChange: (value: string | undefined) => void | undefined;
     showTooltip?: boolean;
     title?: string;
     navigationDisabled?: boolean;
+    selectedGeoAreas?: string[] | null ;
+    onSelectedGeoAreasChange?: (value: string[]) => void;
 
     triggerId?: number;
 }
@@ -106,42 +136,29 @@ function RegionMap(props: Props) {
         title,
         navigationDisabled,
         triggerId,
+        selectedGeoAreas,
+        onSelectedGeoAreasChange,
     } = props;
 
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
     const [hoverLngLat, setHoverLngLat] = useState<LngLatLike>();
 
-    const myQuery = useMemo(
-        () => ({
-            region: regionId,
-        }),
-        [regionId],
-    );
+    const variables = useMemo(() => (regionId ? ({
+        regionId,
+    }) : undefined
+    ), [regionId]);
 
     const {
-        pending,
-        response: adminLevelGeoAreas,
-        retrigger: adminLevelRetrigger,
-    } = useRequest<MultiResponse<AdminLevelGeoArea>>({
-        url: 'server://admin-levels/',
-        query: myQuery,
-        method: 'GET',
-        preserveResponse: true,
-        shouldPoll: (response) => (
-            response?.results.some((v) => v.staleGeoAreas) ? 5000 : -1
-        ),
-        onSuccess: (response) => {
-            const stale = response?.results.some((v) => v.staleGeoAreas);
-            if (stale) {
-                return;
-            }
-            const [topAdminLevel] = response.results;
-            if (!adminLevel) {
-                onAdminLevelChange(topAdminLevel?.id.toString());
-            }
+        data: selectedRegion,
+        loading: selectedRegionPending,
+        refetch: adminLevelRetrigger,
+    } = useQuery<SelectedRegionQuery, SelectedRegionQueryVariables>(
+        SELECTED_REGION,
+        {
+            skip: !regionId,
+            variables,
         },
-        failureHeader: _ts('geoAreas', 'title'),
-    });
+    );
 
     useEffect(
         () => {
@@ -150,18 +167,17 @@ function RegionMap(props: Props) {
         [triggerId, adminLevelRetrigger],
     );
 
-    const activeAdminLevel = adminLevel ? adminLevelGeoAreas?.results?.find(
+    const adminLevels = selectedRegion?.region?.adminLevels;
+
+    const activeAdminLevel = adminLevel ? adminLevels?.find(
         (item) => item.id.toString() === adminLevel,
     ) : undefined;
-
-    // const ready = adminLevelGeoAreas && !adminLevelGeoAreas.results.some(v => v.staleGeoAreas);
 
     const {
         pending: geoJsonPending,
         response: geoJsonResponse,
     } = useRequest<MapboxGeoJSONFeature>({
-        // skip: isNotDefined(adminLevel) || !ready,
-        url: activeAdminLevel?.geojsonFile,
+        url: activeAdminLevel?.geojsonFile?.url ?? undefined,
         method: 'GET',
         failureHeader: _ts('geoAreas', 'title'),
     });
@@ -170,23 +186,22 @@ function RegionMap(props: Props) {
         pending: boundsPending,
         response: boundsResponse,
     } = useRequest<GeoAreaBoundsResponse>({
-        // skip: isNotDefined(adminLevel) || !ready,
-        url: activeAdminLevel?.boundsFile,
-        // url: `server://admin-levels/${adminLevel}/geojson/bounds/`,
+        url: activeAdminLevel?.boundsFile?.url ?? undefined,
         method: 'GET',
         failureHeader: _ts('geoAreas', 'title'),
     });
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(() => {
-        const noOfAdminLevels = adminLevelGeoAreas?.results.length;
-        const selectedAdminLevel = adminLevelGeoAreas?.results.find(
+        const noOfAdminLevels = adminLevels?.length;
+        const selectedAdminLevel = adminLevels?.find(
             (item) => item.id.toString() === adminLevel,
         );
         const thickness = (
             isDefined(noOfAdminLevels) && isDefined(selectedAdminLevel)
-            && noOfAdminLevels > selectedAdminLevel.level
+            && noOfAdminLevels > (selectedAdminLevel?.level ?? 0)
         )
-            ? (1 + (scaleFactor * ((noOfAdminLevels - selectedAdminLevel.level) / noOfAdminLevels)))
+            // eslint-disable-next-line max-len
+            ? (1 + (scaleFactor * ((noOfAdminLevels - (selectedAdminLevel?.level ?? 0)) / noOfAdminLevels)))
             : 1;
 
         return {
@@ -200,7 +215,27 @@ function RegionMap(props: Props) {
                 ],
             },
         };
-    }, [adminLevelGeoAreas?.results, adminLevel]);
+    }, [adminLevels, adminLevel]);
+
+    const handleAreaClick = useCallback((feature: MapboxGeoJSONFeature) => {
+        if (!onSelectedGeoAreasChange) {
+            return false;
+        }
+        const { id } = feature;
+        const selection = String(id);
+
+        const selections = [...selectedGeoAreas ?? []];
+
+        const index = selections.indexOf(selection);
+        if (index === -1) {
+            selections.push(selection);
+        } else {
+            selections.splice(index, 1);
+        }
+
+        onSelectedGeoAreasChange(selections);
+        return true;
+    }, [onSelectedGeoAreasChange, selectedGeoAreas]);
 
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
         setHoverLngLat(lngLat);
@@ -222,13 +257,6 @@ function RegionMap(props: Props) {
         label: data.key,
         value: data.value,
     }), []);
-
-    const handleAdminLevelChange = useCallback(
-        (value: number) => {
-            onAdminLevelChange(value.toString());
-        },
-        [onAdminLevelChange],
-    );
 
     const bounds: [number, number, number, number] | undefined = useMemo(() => {
         if (!boundsResponse?.bounds) {
@@ -253,6 +281,11 @@ function RegionMap(props: Props) {
 
     const myGeoJson = geoJsonResponse ?? defaultGeoJson;
 
+    const attributes = useMemo(() => selectedGeoAreas?.map((selection) => ({
+        id: +selection,
+        value: true,
+    })), [selectedGeoAreas]);
+
     return (
         <Container
             className={_cs(styles.container, className)}
@@ -264,14 +297,14 @@ function RegionMap(props: Props) {
             <SegmentInput
                 className={styles.adminLevels}
                 name="adminLevels"
-                onChange={handleAdminLevelChange}
-                options={adminLevelGeoAreas?.results}
+                onChange={onAdminLevelChange}
+                options={adminLevels ?? undefined}
                 keySelector={adminLevelKeySelector}
                 labelSelector={adminLevelLabelSelector}
-                value={adminLevel ? +adminLevel : undefined}
+                value={adminLevel ?? undefined}
                 disabled={navigationDisabled}
             />
-            {(pending || geoJsonPending || boundsPending) && (
+            {(selectedRegionPending || geoJsonPending || boundsPending) && (
                 <Spinner className={styles.spinner} />
             )}
             <Map
@@ -295,12 +328,17 @@ function RegionMap(props: Props) {
                     <MapLayer
                         layerKey="fill"
                         layerOptions={fillLayerOptions}
+                        onClick={handleAreaClick}
                         onMouseEnter={showTooltip ? handleMouseEnter : undefined}
                         onMouseLeave={showTooltip ? handleMouseLeave : undefined}
                     />
                     <MapLayer
                         layerKey="line"
                         layerOptions={lineLayerOptions}
+                    />
+                    <MapState
+                        attributes={attributes}
+                        attributeKey="selected"
                     />
                     {showTooltip && hoverLngLat && (
                         <MapTooltip

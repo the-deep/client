@@ -21,6 +21,9 @@ import AttributeInput, { PartialWidget } from '#components/framework/AttributeIn
 
 import styles from './styles.css';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
 interface WidgetProps {
     isSecondary: boolean;
     widget: PartialWidget;
@@ -64,10 +67,13 @@ function WidgetWrapper(props: WidgetProps) {
             widget={widget}
             readOnly
             error={undefined}
+            geoAreaOptions={undefined}
+            onGeoAreaOptionsChange={noop}
             actions={(
                 <>
                     {showWidgetEdit && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             onClick={onWidgetEditClick}
                             // FIXME: use translation
@@ -79,6 +85,7 @@ function WidgetWrapper(props: WidgetProps) {
                     )}
                     {showWidgetClone && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             onClick={onWidgetCloneClick}
                             // FIXME: use translation
@@ -90,6 +97,7 @@ function WidgetWrapper(props: WidgetProps) {
                     )}
                     {showWidgetDelete && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             onClick={onWidgetDeleteClick}
                             // FIXME: use translation
@@ -101,6 +109,7 @@ function WidgetWrapper(props: WidgetProps) {
                     )}
                     {!editMode && (
                         <QuickActionButton
+                            className={styles.actionButton}
                             name={clientId}
                             // FIXME: use translation
                             title="Drag"

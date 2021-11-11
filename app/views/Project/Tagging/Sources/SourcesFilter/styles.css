@@ -10,6 +10,8 @@
         gap: var(--dui-spacing-medium);
 
         .input {
+            width: 22rem;
+
             &.hidden {
                 display: none;
             }
