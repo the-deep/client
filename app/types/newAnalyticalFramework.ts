@@ -243,7 +243,9 @@ export interface KeyLabelEntity {
     label: string;
     tooltip?: string;
     order: number;
+    clientId: string;
 }
+
 export interface KeyLabelColorEntity extends KeyLabelEntity {
     color: string;
 }
@@ -318,7 +320,7 @@ export interface Matrix2dColumns extends KeyLabelEntity {
     subColumns: KeyLabelEntity[]
 }
 
-interface Matrix2dProperties extends BaseProperties<undefined> {
+export interface Matrix2dProperties extends BaseProperties<undefined> {
     rows: Matrix2dRows[];
     columns: Matrix2dColumns[];
 }

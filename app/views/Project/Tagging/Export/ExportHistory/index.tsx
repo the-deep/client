@@ -1,8 +1,9 @@
 import React, { useState, useMemo, ReactElement } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
 import { RiFileExcel2Fill, RiFileWord2Fill } from 'react-icons/ri';
+import { FaFilePdf } from 'react-icons/fa';
 import {
     Pager,
     TableView,
@@ -20,59 +21,119 @@ import {
     TextInput,
     DateRangeInput,
 } from '@the-deep/deep-ui';
+import { useQuery, gql, useMutation } from '@apollo/client';
+
 import {
-    MultiResponse,
-    Export,
-} from '#types';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
-import { getDateWithTimezone } from '#utils/common';
-import useDebouncedValue from '#hooks/useDebouncedValue';
+    ProjectExportsQuery,
+    ProjectExportsQueryVariables,
+    ExportDataTypeEnum,
+    DeleteExportMutation,
+    DeleteExportMutationVariables,
+} from '#generated/types';
 import { createDateColumn } from '#components/tableHelpers';
 import _ts from '#ts';
 
+import {
+    Export,
+} from '../types';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
 
 const statusIconMap: Record<Export['status'], ReactElement> = {
-    pending: <VscLoading />,
-    started: <VscLoading />,
-    success: <IoDownloadOutline />,
-    failure: <IoClose />,
+    PENDING: <VscLoading />,
+    STARTED: <VscLoading />,
+    SUCCESS: <IoDownloadOutline />,
+    FAILURE: <IoClose />,
+    CANCELED: <IoClose />, // TODO approprite icon
 };
 
-const statusVariantMap: Record<Export['status'], 'default' | 'accent' | 'complement1'> = {
-    pending: 'default',
-    started: 'default',
-    success: 'accent',
-    failure: 'complement1',
+const statusVariantMap: Record<Export['status'], 'default' | 'accent' | 'complement1' | 'complement2'> = {
+    PENDING: 'default',
+    STARTED: 'default',
+    SUCCESS: 'accent',
+    FAILURE: 'complement1',
+    CANCELED: 'complement2',
 };
 const statusLabelMap: Record<Export['status'], string> = {
-    pending: 'In queue to be exported',
-    started: 'Generating the file',
-    success: 'Download',
-    failure: 'Failed',
+    PENDING: 'In queue to be exported',
+    STARTED: 'Generating the file',
+    SUCCESS: 'Download',
+    FAILURE: 'Failed',
+    CANCELED: 'Canceled',
 };
-const exportTypeIconMap: Record<Export['exportType'], ReactElement> = {
-    report: <RiFileWord2Fill />, // TODO: report can be pdf or word (use specify icon)
-    excel: <RiFileExcel2Fill />,
-    json: <IoDocument />,
+const exportFormatIconMap: Record<Export['format'], ReactElement> = {
+    DOCX: <RiFileWord2Fill />, // TODO: report can be pdf or word (use specify icon)
+    PDF: <FaFilePdf />,
+    XLSX: <RiFileExcel2Fill />,
+    JSON: <IoDocument />,
 };
 const maxItemsPerPage = 25;
-const exportKeySelector = (d: Export) => d.id;
+const pollInterval = 5000;
+function exportKeySelector(d: Export) {
+    return d.id;
+}
+
 const defaultSorting = {
-    name: 'exported_at',
+    name: 'exportedAt',
     direction: 'asc',
 };
+
 interface DateRangeValue {
     startDate: string;
     endDate: string;
 }
 
+const PROJECT_EXPORTS = gql`
+    query ProjectExports(
+        $projectId: ID!,
+        $page: Int,
+        $pageSize: Int,
+        $ordering: String,
+        $type: [ExportDataTypeEnum!],
+    ) {
+        project(id: $projectId) {
+            exports (
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+                type: $type,
+            ) {
+                totalCount
+                page
+                pageSize
+                results {
+                    id
+                    title
+                    exportType
+                    exportedAt
+                    status
+                    format
+                    file
+                }
+            }
+        }
+    }
+`;
+
+const DELETE_EXPORT = gql`
+    mutation DeleteExport(
+        $projectId: ID!,
+        $exportId: ID!,
+    ) {
+        project(id: $projectId) {
+            exportDelete(id: $exportId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
+
 interface Props {
-    projectId: number;
+    projectId: string;
     className?: string;
-    type: 'entries' | 'assessments';
+    type: ExportDataTypeEnum[];
 }
 
 function ExportHistory(props: Props) {
@@ -83,11 +144,10 @@ function ExportHistory(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState(1);
-    const [exportedAt, setExportedAt] = useState<DateRangeValue>();
-    const [searchText, setSearchText] = useState<string>();
+    const [exportedAt, setExportedAt] = useState<DateRangeValue>(); // TODO use in filter
+    const [searchText, setSearchText] = useState<string>(); // TODO use in filter
 
     const alert = useAlert();
-    const debouncedSearchText = useDebouncedValue(searchText);
     const sortState = useSortState();
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
@@ -97,59 +157,73 @@ function ExportHistory(props: Props) {
             : `-${validSorting.name}`
     ), [validSorting]);
 
-    const queryOptions = useMemo(() => ({
-        projects: projectId,
-        ordering,
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-        type: type === 'entries' ? 'entries' : 'assessments,planned_assessments',
-        title: debouncedSearchText, // FIXME: filter by search text is unsupported in server
-        exported_at__gte: exportedAt?.startDate && getDateWithTimezone(exportedAt.startDate),
-        exported_at__lt: exportedAt?.endDate && getDateWithTimezone(exportedAt.endDate),
-    }), [
-        projectId,
-        activePage,
-        ordering,
-        debouncedSearchText,
-        exportedAt,
-        type,
-    ]);
-
-    const {
-        pending: getExportPending,
-        response: exportListResponse,
-        retrigger: getExportList,
-    } = useRequest<MultiResponse<Export>>({
-        url: 'server://exports/',
-        query: queryOptions,
-        method: 'GET',
-        shouldPoll: (response) => (
-            (response?.results.some((v) => v.status === 'pending')) ? 5000 : -1
+    const variables = useMemo(
+        (): ProjectExportsQueryVariables | undefined => (
+            (projectId) ? {
+                projectId,
+                page: activePage,
+                pageSize: maxItemsPerPage,
+                ordering,
+                type,
+            } : undefined
         ),
-        failureHeader: 'Export History',
-    });
+        [projectId, activePage, ordering, type],
+    );
 
     const {
-        pending: deleteExportPending,
-        trigger: deleteExport,
-    } = useLazyRequest<Export, number>({
-        url: (ctx) => `server://exports/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            getExportList();
-            alert.show(
-                _ts('export', 'deleteExportSuccess'),
-                { variant: 'success' },
-            );
+        data: projectExportsResponse,
+        loading: projectExportsPending,
+        refetch: getProjectExports,
+        startPolling,
+        stopPolling,
+    } = useQuery<ProjectExportsQuery, ProjectExportsQueryVariables>(
+        PROJECT_EXPORTS,
+        {
+            skip: isNotDefined(variables),
+            variables,
+            onCompleted: (response) => {
+                if (response.project?.exports?.results?.some((v) => v.status === 'PENDING')) {
+                    startPolling(pollInterval);
+                } else {
+                    stopPolling();
+                }
+            },
         },
-        failureHeader: _ts('export', 'userExportsTitle'),
-    });
+    );
+
+    const [
+        deleteExport,
+        {
+            loading: deleteExportPending,
+        },
+    ] = useMutation<DeleteExportMutation, DeleteExportMutationVariables>(
+        DELETE_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportDelete?.ok) {
+                    alert.show(
+                        _ts('export', 'deleteExportSuccess'),
+                        { variant: 'success' },
+                    );
+                    getProjectExports();
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
 
     const columns = useMemo(() => {
         const exportTypeColumn: TableColumn<
-        Export, number, IconsProps, TableHeaderCellProps
+        Export, string, IconsProps, TableHeaderCellProps
         > = {
-            id: 'export_type',
+            id: 'format',
             title: 'Export Type',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -159,12 +233,12 @@ function ExportHistory(props: Props) {
             cellRendererClassName: styles.icons,
             cellRendererParams: (_, data) => ({
                 children: (
-                    exportTypeIconMap[data.exportType]
+                    exportFormatIconMap[data.format]
                 ),
             }),
         };
         const statusColumn: TableColumn<
-        Export, number, StatusProps, TableHeaderCellProps
+        Export, string, StatusProps, TableHeaderCellProps
         > = {
             id: 'status',
             title: 'Status',
@@ -182,7 +256,7 @@ function ExportHistory(props: Props) {
             }),
         };
         const actionsColumn: TableColumn<
-        Export, number, TableActionsProps, TableHeaderCellProps
+        Export, string, TableActionsProps, TableHeaderCellProps
         > = {
             id: 'actions',
             title: '',
@@ -193,20 +267,27 @@ function ExportHistory(props: Props) {
             cellRenderer: TableActions,
             cellRendererParams: (_, data) => ({
                 id: data.id,
-                onDeleteClick: deleteExport,
+                onDeleteClick: () => {
+                    deleteExport({
+                        variables: {
+                            projectId,
+                            exportId: data.id,
+                        },
+                    });
+                },
             }),
         };
         return ([
             exportTypeColumn,
-            createDateColumn<Export, number>(
-                'exported_at',
+            createDateColumn<Export, string>(
+                'exportedAt',
                 'Exported At',
                 (item) => item.exportedAt,
                 {
                     sortable: true,
                 },
             ),
-            createStringColumn<Export, number>(
+            createStringColumn<Export, string>(
                 'title',
                 'Title',
                 (item) => item.title,
@@ -218,16 +299,16 @@ function ExportHistory(props: Props) {
             statusColumn,
             actionsColumn,
         ]);
-    }, [deleteExport]);
+    }, [deleteExport, projectId]);
 
-    const pending = getExportPending || deleteExportPending;
+    const pending = projectExportsPending || deleteExportPending;
 
     return (
         <Container
             className={_cs(styles.exportHistoryContainer, className)}
             contentClassName={styles.content}
             headerClassName={styles.header}
-            headerActions={(
+            headerIcons={(
                 <>
                     <DateRangeInput
                         name="exportedAt"
@@ -250,7 +331,7 @@ function ExportHistory(props: Props) {
             footerActions={(
                 <Pager
                     activePage={activePage}
-                    itemsCount={exportListResponse?.count ?? 0}
+                    itemsCount={projectExportsResponse?.project?.exports?.totalCount ?? 0}
                     maxItemsPerPage={maxItemsPerPage}
                     onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
@@ -261,7 +342,7 @@ function ExportHistory(props: Props) {
             <SortContext.Provider value={sortState}>
                 <TableView
                     className={styles.table}
-                    data={exportListResponse?.results}
+                    data={projectExportsResponse?.project?.exports?.results}
                     keySelector={exportKeySelector}
                     columns={columns}
                 />

@@ -1,12 +1,13 @@
 .export-type-select {
-    display: block;
     outline: 0;
     border: 0;
-    background-color: transparent;
+    background-color: var(--dui-color-background-disabled);
     cursor: pointer;
     padding: var(--dui-spacing-medium);
+    color: var(--dui-color-text-disabled);
 
     &.active {
-        background-color: var(--dui-color-background-accent-hint);
+        background-color: var(--dui-color-foreground);
+        color: var(--dui-color-accent);
     }
 }

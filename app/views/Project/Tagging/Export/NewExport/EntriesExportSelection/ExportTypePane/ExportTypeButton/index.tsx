@@ -1,17 +1,20 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import {
+    QuickActionButton,
+} from '@the-deep/deep-ui';
 
 import {
-    ExportType,
-} from '#types';
+    ExportFormatEnum,
+} from '#generated/types';
 
 import styles from './styles.css';
 
 interface Props {
-    buttonKey: ExportType;
+    buttonKey: ExportFormatEnum;
     className?: string;
     title: string;
-    onExportTypeChange: (key: ExportType) => void;
+    onActiveExportFormatChange: (key: ExportFormatEnum) => void;
     isActive: boolean;
     icon?: React.ReactNode;
 }
@@ -23,26 +26,28 @@ function ExportTypePaneButton(props: Props) {
         title,
         icon,
         isActive,
-        onExportTypeChange,
+        onActiveExportFormatChange,
     } = props;
 
     const handleExportTypeClick = useCallback(() => {
-        onExportTypeChange(buttonKey);
-    }, [buttonKey, onExportTypeChange]);
+        onActiveExportFormatChange(buttonKey);
+    }, [buttonKey, onActiveExportFormatChange]);
 
     return (
-        <button
+        <QuickActionButton
+            name={undefined}
             className={_cs(
                 className,
                 styles.exportTypeSelect,
                 isActive && styles.active,
             )}
-            title={title}
+            spacing="loose"
             onClick={handleExportTypeClick}
-            type="button"
+            big
+            title={title}
         >
             {icon}
-        </button>
+        </QuickActionButton>
     );
 }
 

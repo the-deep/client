@@ -1,13 +1,30 @@
+import { isDefined } from '@togglecorp/fujs';
 import _ts from '#ts';
+
+import { Matrix2dProperties } from '#types/newAnalyticalFramework';
 import {
-    FrameworkFields,
-    Matrix2dWidgetElement,
     Level,
     ReportStructure,
 } from '#types';
+import { AnalysisFramework } from './types';
 
 export const SECTOR_FIRST = 'sectorFirst' as const;
 export const DIMENSION_FIRST = 'rowFirst' as const;
+
+export function getWidgets(framework: AnalysisFramework | undefined | null) {
+    if (!framework) {
+        return undefined;
+    }
+    const primaryWidgets = framework.primaryTagging?.map((v) => v.widgets)
+        .flat().filter(isDefined);
+    const secondaryWidgets = framework.secondaryTagging;
+    const allWidgets = [
+        ...(primaryWidgets || []),
+        ...(secondaryWidgets || []),
+    ];
+
+    return allWidgets;
+}
 
 function createId<T extends string | number>(...args: [T, T, ...T[]]) {
     return args.join('-');
@@ -15,39 +32,38 @@ function createId<T extends string | number>(...args: [T, T, ...T[]]) {
 
 // NOTE: This function generates row first level
 const transformLevelsRowFirst = (
-    {
-        rows: widgetDim,
-        columns: widgetSec,
-    }: Matrix2dWidgetElement['properties'],
+    matrix2dProperties: Matrix2dProperties,
     includeSubColumn: boolean,
 ) => {
-    const rowFirstLevels = widgetDim.map((d) => {
-        const subDims = d.subRows;
-
-        const sublevels = subDims.map((sd) => {
-            const columns = widgetSec.map((s) => {
-                const { subColumns } = s;
-                return ({
-                    id: createId(s.clientId, d.clientId, sd.clientId),
-                    title: s.label,
+    const rowFirstLevels = matrix2dProperties.rows.map((row) => {
+        const sublevels = row.subRows.map((subRow) => {
+            const columns = matrix2dProperties.columns.map((column) => (
+                {
+                    id: createId(column.clientId, row.clientId, subRow.clientId),
+                    title: column.label,
                     sublevels: includeSubColumn
-                        ? subColumns.map((ss) => ({
-                            id: createId(s.clientId, ss.clientId, d.clientId, sd.clientId),
-                            title: ss.label,
+                        ? column.subColumns.map((subColumn) => ({
+                            id: createId(
+                                column.clientId,
+                                subColumn.clientId,
+                                row.clientId,
+                                subRow.clientId,
+                            ),
+                            title: subColumn.label,
                         }))
                         : undefined,
-                });
-            });
+                }));
+
             return ({
-                id: createId(d.clientId, sd.clientId),
-                title: sd.label,
+                id: createId(row.clientId, subRow.clientId),
+                title: subRow.label,
                 sublevels: columns,
             });
         });
 
         return ({
-            id: d.clientId,
-            title: d.label,
+            id: row.clientId,
+            title: row.label,
             sublevels,
         });
     });
@@ -55,51 +71,50 @@ const transformLevelsRowFirst = (
     return rowFirstLevels;
 };
 
-const transformLevelsColumnFirst = ({
-    rows: widgetDim,
-    columns: widgetSec,
-}: Matrix2dWidgetElement['properties']) => {
-    const sectorFirstLevels = widgetSec.map((s) => {
-        const { subColumns } = s;
+const transformLevelsColumnFirst = (matrix2dProperties: Matrix2dProperties) => {
+    const sectorFirstLevels = matrix2dProperties.columns.map((column) => {
         let sublevels: Level[] = [];
-        if (subColumns) {
-            sublevels = subColumns.map((ss) => {
-                const rows = widgetDim.map((d) => {
-                    const { subRows } = d;
-                    const subRowsLevel = subRows.map((sd) => ({
-                        id: createId(s.clientId, ss.clientId, d.clientId, sd.clientId),
-                        title: sd.label,
+        if (column.subColumns) {
+            sublevels = column.subColumns.map((subColumn) => {
+                const rows = matrix2dProperties.rows.map((row) => {
+                    const subRowsLevel = row.subRows.map((subRow) => ({
+                        id: createId(
+                            column.clientId,
+                            subColumn.clientId,
+                            row.clientId,
+                            subRow.clientId,
+                        ),
+                        title: subRow.label,
                     }));
                     return ({
-                        id: createId(s.clientId, ss.clientId, d.clientId),
-                        title: d.label,
+                        id: createId(column.clientId, subColumn.clientId, row.clientId),
+                        title: row.label,
                         sublevels: subRowsLevel,
                     });
                 });
                 return ({
-                    id: createId(s.clientId, ss.clientId),
-                    title: ss.label,
+                    id: createId(column.clientId, subColumn.clientId),
+                    title: subColumn.label,
                     sublevels: rows,
                 });
             });
         } else {
-            sublevels = widgetDim.map((d) => {
-                const { subRows } = d;
-                const subRowsLevel = subRows.map((sd) => ({
-                    id: createId(s.clientId, d.clientId, sd.clientId),
-                    title: sd.label,
+            sublevels = matrix2dProperties.rows.map((row) => {
+                const subRowsLevel = row.subRows.map((subRow) => ({
+                    id: createId(column.clientId, row.clientId, subRow.clientId),
+                    title: subRow.label,
                 }));
                 return ({
-                    id: createId(s.clientId, d.clientId),
-                    title: d.label,
+                    id: createId(column.clientId, row.clientId),
+                    title: row.label,
                     sublevels: subRowsLevel,
                 });
             });
         }
 
         return ({
-            id: s.clientId,
-            title: s.label,
+            id: column.clientId,
+            title: column.label,
             sublevels,
         });
     });
@@ -120,13 +135,14 @@ export function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
 export const createReportStructure = (
     reportStructureVariant: string = SECTOR_FIRST,
     includeSubColumn: boolean,
-    analysisFramework?: FrameworkFields,
+    analysisFramework: AnalysisFramework | null | undefined,
 ) => {
     if (!analysisFramework) {
         return [];
     }
 
-    const { exportables, widgets } = analysisFramework;
+    const { exportables } = analysisFramework;
+    const widgets = getWidgets(analysisFramework);
     if (!exportables || !widgets) {
         return [];
     }
@@ -141,13 +157,11 @@ export const createReportStructure = (
             return;
         }
 
-        if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
+        if (widget.widgetId === 'MATRIX2D' && reportStructureVariant === DIMENSION_FIRST) {
             if (!widget.properties) {
                 return;
             }
-            const { properties } = widget as Matrix2dWidgetElement;
-            // console.warn('data', data);
-            const newLevels = transformLevelsRowFirst(properties, includeSubColumn);
+            const newLevels = transformLevelsRowFirst(widget.properties, includeSubColumn);
             nodes.push({
                 title: widget.title,
                 key: String(exportable.id),
@@ -155,12 +169,11 @@ export const createReportStructure = (
                 draggable: true,
                 nodes: mapReportLevelsToNodes(newLevels),
             });
-        } else if (includeSubColumn && widget.widgetId === 'matrix2dWidget' && reportStructureVariant === SECTOR_FIRST) {
+        } else if (includeSubColumn && widget.widgetId === 'MATRIX2D' && reportStructureVariant === SECTOR_FIRST) {
             if (!widget.properties) {
                 return;
             }
-            const { properties } = widget as Matrix2dWidgetElement;
-            const newLevels = transformLevelsColumnFirst(properties);
+            const newLevels = transformLevelsColumnFirst(widget.properties);
             nodes.push({
                 title: widget.title,
                 key: String(exportable.id),
@@ -174,7 +187,7 @@ export const createReportStructure = (
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
-                nodes: mapReportLevelsToNodes(levels as Level[]),
+                nodes: mapReportLevelsToNodes(levels),
             });
         }
     });

@@ -19,14 +19,14 @@ import {
 import { useQuery, gql } from '@apollo/client';
 
 import {
-    ProjectSourcesQuery,
-    ProjectSourcesQueryVariables,
+    ProjectSourceListQuery,
+    ProjectSourceListQueryVariables,
     SourceFilterOptionsQueryVariables,
 } from '#generated/types';
 import SourcesFilter from '../../Sources/SourcesFilter';
 import styles from './styles.css';
 
-type Project = NonNullable<ProjectSourcesQuery['project']>;
+type Project = NonNullable<ProjectSourceListQuery['project']>;
 type Lead = NonNullable<NonNullable<NonNullable<Project['leads']>['results']>[number]>;
 
 const defaultSorting = {
@@ -39,8 +39,8 @@ function leadsKeySelector(d: Lead) {
 }
 const maxItemsPerPage = 10;
 
-export const PROJECT_LEADS = gql`
-    query ProjectSources(
+const PROJECT_LEADS = gql`
+    query ProjectSourceList(
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
@@ -48,15 +48,15 @@ export const PROJECT_LEADS = gql`
         $assignees: [ID!],
         $authoringOrganizationTypes: [ID!],
         $confidentiality: LeadConfidentialityEnum,
-        $createdAt_Gte: DateTime,
-        $createdAt_Lt: DateTime,
+        $createdAtGte: DateTime,
+        $createdAtLte: DateTime,
         $emmEntities: String,
         $emmKeywords: String,
         $emmRiskFactors: String,
         $exists: LeadExistsEnum,
         $priorities: [LeadPriorityEnum!],
-        $publishedOn_Gte: Date,
-        $publishedOn_Lt: Date,
+        $publishedOnGte: Date,
+        $publishedOnLte: Date,
         $search: String,
         $statuses: [LeadStatusEnum!],
         $entriesFilterData: LeadEntriesFilterData,
@@ -70,15 +70,15 @@ export const PROJECT_LEADS = gql`
                 assignees: $assignees,
                 authoringOrganizationTypes: $authoringOrganizationTypes,
                 confidentiality: $confidentiality,
-                createdAt_Gte: $createdAt_Gte,
-                createdAt_Lt: $createdAt_Lt,
+                createdAtGte: $createdAtGte,
+                createdAtLte: $createdAtLte,
                 emmEntities: $emmEntities,
                 emmKeywords: $emmKeywords,
                 emmRiskFactors: $emmRiskFactors,
                 exists: $exists,
                 priorities: $priorities,
-                publishedOn_Gte: $publishedOn_Gte,
-                publishedOn_Lt: $publishedOn_Lt,
+                publishedOnGte: $publishedOnGte,
+                publishedOnLte: $publishedOnLte,
                 search: $search,
                 statuses: $statuses,
                 entriesFilterData: $entriesFilterData,
@@ -162,10 +162,9 @@ function LeadsSelection(props: Props) {
         filterValues,
         onFilterApply,
         filterOnlyUnprotected,
-        hasAssessment, // TODO If hasAssessment don't show entry filters
+        hasAssessment,
     } = props;
 
-    console.warn('filterOnlyUnprotected', filterOnlyUnprotected, hasAssessment);
     const sortState = useSortState();
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
@@ -176,7 +175,7 @@ function LeadsSelection(props: Props) {
     const [activePage, setActivePage] = useState<number>(1);
 
     const variables = useMemo(
-        (): ProjectSourcesQueryVariables | undefined => (
+        (): ProjectSourceListQueryVariables | undefined => (
             (projectId) ? {
                 ...filterValues,
                 projectId,
@@ -191,7 +190,7 @@ function LeadsSelection(props: Props) {
     const {
         data: projectSourcesResponse,
         loading: projectSourcesPending,
-    } = useQuery<ProjectSourcesQuery, ProjectSourcesQueryVariables>(
+    } = useQuery<ProjectSourceListQuery, ProjectSourceListQueryVariables>(
         PROJECT_LEADS,
         {
             skip: isNotDefined(variables),
@@ -319,6 +318,8 @@ function LeadsSelection(props: Props) {
                 className={styles.sourceEntryFilter}
                 onFilterApply={onFilterApply}
                 projectId={projectId}
+                filterOnlyUnprotected={filterOnlyUnprotected}
+                hasAssessment={hasAssessment}
             />
             <div className={styles.tableContainer}>
                 {projectSourcesPending && (<PendingMessage />)}

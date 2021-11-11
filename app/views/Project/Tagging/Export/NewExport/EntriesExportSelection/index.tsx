@@ -1,36 +1,39 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { _cs, isDefined } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     useAlert,
     ExpandableContainer,
     TextInput,
 } from '@the-deep/deep-ui';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 import {
     Lead,
-    ExportType,
     EntryOptions,
-    FrameworkFields,
 } from '#types';
 import {
     ProjectFrameworkDetailsQuery,
     ProjectFrameworkDetailsQueryVariables,
     SourceFilterOptionsQueryVariables,
+    CreateExportMutation,
+    CreateExportMutationVariables,
+    ExportExportTypeEnum,
+    ExportFormatEnum,
 } from '#generated/types';
 import ProjectContext from '#base/context/ProjectContext';
 import {
     Node,
     TreeSelectableWidget,
-    AnalysisFramework,
     Widget,
+    AnalysisFramework,
 } from '../../types';
 import {
     SECTOR_FIRST,
     createReportStructure,
+    getWidgets,
 } from '../../utils';
 import ExportPreview from '../../ExportPreview';
 import LeadsSelection from '../../LeadsSelection';
@@ -43,6 +46,15 @@ const PROJECT_FRAMEWORK_DETAILS = gql`
         project(id: $projectId) {
             analysisFramework {
                 id
+                exportables {
+                    data
+                    id
+                    inline
+                    order
+                    widgetKey
+                    widgetType
+                    widgetTypeDisplay
+                }
                 primaryTagging {
                     widgets {
                         id
@@ -52,6 +64,7 @@ const PROJECT_FRAMEWORK_DETAILS = gql`
                         properties
                         title
                         widgetId
+                        width
                     }
                     clientId
                     id
@@ -67,21 +80,48 @@ const PROJECT_FRAMEWORK_DETAILS = gql`
                     title
                     properties
                     widgetId
+                    width
                 }
             }
         }
     }
 `;
 
+const CREATE_EXPORT = gql`
+    mutation CreateExport(
+        $projectId: ID!,
+        $data: ExportCreateInputType!,
+    ) {
+        project(id: $projectId) {
+            exportCreate(data: $data) {
+                ok
+                errors
+                result {
+                    id
+                    title
+                    isPreview
+                }
+            }
+        }
+    }
+`;
+
+const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
+    DOCX: 'REPORT',
+    PDF: 'REPORT',
+    JSON: 'JSON',
+    XLSX: 'EXCEL',
+};
+
 interface ExportReportStructure {
     id: string;
-    levels?: ExportReportStructure[];
+    levels: ExportReportStructure[];
 }
 
 interface ReportStructureLevel {
     id: string;
     title: string;
-    sublevels?: ReportStructureLevel[];
+    sublevels: ReportStructureLevel[];
 }
 
 const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] => (
@@ -90,31 +130,28 @@ const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] 
             id: node.key,
             levels: node.nodes
                 ? createReportStructureForExport(node.nodes)
-                : undefined,
+                : [],
         }))
 );
 
-const createReportStructureLevelForExport = (nodes: Node[]): ReportStructureLevel[] => (
+const createReportLevels = (nodes: Node[]): ReportStructureLevel[] => (
     nodes
         .filter((node) => node.selected)
         .map((node) => ({
             id: node.key,
             title: node.title,
             sublevels: node.nodes
-                ? createReportStructureLevelForExport(node.nodes)
-                : undefined,
+                ? createReportLevels(node.nodes)
+                : [],
         }))
 );
 
 const createWidgetIds = (widgets: TreeSelectableWidget<string>[]) => (
     widgets
         .filter((widget) => widget.selected)
-        .map((widget) => (widget.id))
-);
+        .map((widget) => +(widget.id))
 
-interface ExportTriggerResponse {
-    exportTriggered: number;
-}
+);
 
 export interface SelectedLead extends Lead {
     selected: boolean;
@@ -124,23 +161,8 @@ interface Props {
     projectId: string;
 }
 
-function getWidgets(framework: AnalysisFramework | undefined | null) {
-    if (!framework) {
-        return [];
-    }
-    const primaryWidgets = framework.primaryTagging?.map((v) => v.widgets)
-        .flat().filter(isDefined);
-    const secondaryWidgets = framework.secondaryTagging;
-    const allWidgets = [
-        ...(primaryWidgets || []),
-        ...(secondaryWidgets || []),
-    ];
-
-    return allWidgets;
-}
-
-function filterContexualWidgets(widgets: Widget[]) {
-    const contextualWidgets = widgets.filter((v) => v.widgetId === 'SELECT'
+function filterContexualWidgets(widgets: Widget[] | undefined) {
+    const contextualWidgets = widgets?.filter((v) => v.widgetId === 'SELECT'
         || 'MULTISELECT'
         || 'SCALE'
         || 'GEO'
@@ -161,22 +183,21 @@ function EntriesExportSelection(props: Props) {
     const alert = useAlert();
 
     const { project } = React.useContext(ProjectContext);
-    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('CREATE_UNPROTECTED');
+    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
     const [queryTitle, setQueryTitle] = useState<string>();
-    const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-    const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
-    const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
+    const [previewId, setPreviewId] = useState<string | undefined>(undefined);
+    const [activeExportFormat, setActiveExportFormat] = useState<ExportFormatEnum>('DOCX');
+    const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string>[]>([]);
-    const [showGroups, setShowGroups] = useState<boolean>(true);
-    const [showEntryId, setShowEntryId] = useState<boolean>(true);
-    const [showAryDetails, setShowAryDetails] = useState<boolean>(true);
-    const [showAdditionalMetadata, setShowAdditionalMetadata] = useState<boolean>(true);
+    const [reportShowGroups, setReportShowGroups] = useState<boolean>(true);
+    const [reportShowLeadEntryId, setReportShowLeadEntryId] = useState<boolean>(true);
+    const [reportShowAssessmentData, setReportShowAssessmentData] = useState<boolean>(true);
+    const [reportShowEntryWidgetData, setReportShowEntryWidgetData] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
-    const [isPreview, setIsPreview] = useState<boolean>(false);
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-    const [selectAll, setSelectAll] = useState<boolean>(true);
+    const [selectAll, setSelectAll] = useState<boolean>(true); // TODO use this value in export
     const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [
@@ -204,21 +225,53 @@ function EntriesExportSelection(props: Props) {
             variables,
             onCompleted: (response) => {
                 // TODO handle for conditional widgets
-                const widgets = getWidgets(response.project?.analysisFramework);
+                const widgets = getWidgets(
+                    response.project?.analysisFramework as AnalysisFramework,
+                );
                 const textWidgetList = widgets
-                    .filter((v) => v.widgetId === 'TEXT')
+                    ?.filter((v) => v.widgetId === 'TEXT')
                     .map((v) => ({ ...v, selected: true }));
 
                 const contextualWidgetList = filterContexualWidgets(widgets)
-                    .map((v) => ({ ...v, selected: true }));
-                setTextWidgets(textWidgetList);
-                setContextualWidgets(contextualWidgetList);
+                    ?.map((v) => ({ ...v, selected: true }));
+
+                setTextWidgets(textWidgetList ?? []);
+                setContextualWidgets(contextualWidgetList ?? []);
             },
         },
     );
 
-    const analysisFramework = frameworkResponse?.project?.analysisFramework;
-    console.warn('frameworkPending', frameworkGetPending, frameworkResponse);
+    const [
+        createExport,
+        {
+            loading: createExportPending,
+        },
+    ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
+        CREATE_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportCreate?.ok) {
+                    if (response.project.exportCreate.result?.isPreview) {
+                        setPreviewId(response.project.exportCreate.result?.id);
+                    } else {
+                        alert.show(
+                            _ts('export', 'exportStartedNotifyMessage'),
+                            { variant: 'success' },
+                        );
+                    }
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
     const entryOptionsQueryParams = useMemo(() => ({
         project: projectId,
     }), [projectId]);
@@ -233,118 +286,80 @@ function EntriesExportSelection(props: Props) {
         failureHeader: 'Entry Options',
     });
 
-    const {
-        response: af,
-    } = useRequest<FrameworkFields>({
-        url: `server://projects/${projectId}/analysis-framework/`,
-        method: 'GET',
-        failureHeader: _ts('export', 'afLabel'),
-    });
-
+    const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
     useEffect(() => {
         const structure = createReportStructure(
             reportStructureVariant,
             includeSubSector,
-            af,
+            analysisFramework,
         );
         setReportStructure(structure);
-    }, [af, reportStructureVariant, includeSubSector]);
+    }, [
+        analysisFramework,
+        reportStructureVariant,
+        includeSubSector,
+    ]);
 
-    console.warn('structure', reportStructure);
     const handleReportStructureVariantChange = useCallback((value: string) => {
         setReportStructureVariant(value);
     }, []);
 
-    const {
-        pending: exportPending,
-        trigger: getExport,
-    } = useLazyRequest<ExportTriggerResponse, unknown>({
-        url: 'server://export-trigger/',
-        method: 'POST',
-        body: (ctx) => ({ filters: ctx }),
-        onSuccess: (response) => {
-            if (isPreview) {
-                setPreviewId(response.exportTriggered);
-            } else {
-                alert.show(
-                    _ts('export', 'exportStartedNotifyMessage'),
-                    { variant: 'success' },
-                );
-            }
-        },
-        failureHeader: _ts('export', 'headerExport'),
-    });
-
     const startExport = useCallback((preview: boolean) => {
-        const isWord = activeExportTypeKey === 'word';
-        const isPdf = activeExportTypeKey === 'pdf';
-
-        const exportType = ((isWord || isPdf) && 'report') || activeExportTypeKey;
+        const exportType = mapExportType[activeExportFormat];
         // NOTE: structure and level depict the same thing but are different in structure
         // levels require the sublevels to be named sublevels whereas structure requires
         // sublevels to be names levels
         // This cannot be fixed immediately in server as it requires migration
-        const reportLevels = createReportStructureLevelForExport(reportStructure)
+        const reportLevels = createReportLevels(
+            reportStructure,
+        )
             .map((node) => ({
                 id: node.id,
                 levels: node.sublevels,
             }));
-        const newReportStructure = createReportStructureForExport(reportStructure);
-        const textWidgetIds = createWidgetIds(textWidgets);
-        let contextualWidgetIds;
-        if (isWord || isPdf) {
-            contextualWidgetIds = createWidgetIds(contextualWidgets);
-        }
+        const generatedReportStructure = createReportStructureForExport(reportStructure);
+        const reportTextWidgetIds = createWidgetIds(textWidgets);
+        const reportExportingWidgets = createWidgetIds(contextualWidgets);
 
-        const filters = {
-            project: projectId,
-            include_leads: !selectAll,
-            lead: selectedLeads,
-
-            export_type: exportType,
-            // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
-            pdf: isPdf,
-
-            // for excel
-            decoupled: decoupledEntries,
-
-            // for pdf or word
-            report_levels: reportLevels,
-            report_structure: newReportStructure,
-            text_widget_ids: textWidgetIds,
-            show_groups: showGroups,
-
-            // entry or assessment
-            export_item: 'entry',
-            report_show_lead_entry_id: showEntryId,
-            report_show_assessment_data: showAryDetails,
-            report_show_entry_widget_data: showAdditionalMetadata,
-
-            // temporary or permanent
-            is_preview: preview,
-
-            // for word
-            exporting_widgets: contextualWidgetIds,
-            ...filterValues,
+        const data = {
+            excelDecoupled,
+            exportType,
+            filters: {
+                ...filterValues,
+                ids: selectedLeads,
+            },
+            format: activeExportFormat,
+            isPreview: preview,
+            reportExportingWidgets,
+            reportLevels,
+            reportShowAssessmentData,
+            reportShowEntryWidgetData,
+            reportShowGroups,
+            reportShowLeadEntryId,
+            reportStructure: generatedReportStructure,
+            reportTextWidgetIds,
+            type: 'ENTRIES' as const,
         };
-
-        setIsPreview(preview);
-        getExport(filters);
+        createExport({
+            variables: {
+                projectId,
+                data,
+            },
+        });
     }, [
-        selectAll,
-        activeExportTypeKey,
+        activeExportFormat,
         contextualWidgets,
-        decoupledEntries,
-        projectId,
+        createExport,
+        excelDecoupled,
+        filterValues,
+        reportShowAssessmentData,
+        reportShowEntryWidgetData,
+        reportShowGroups,
+        reportShowLeadEntryId,
         reportStructure,
         selectedLeads,
-        showGroups,
-        showEntryId,
-        showAryDetails,
-        showAdditionalMetadata,
         textWidgets,
-        getExport,
-        filterValues,
+        projectId,
     ]);
 
     const handleEntryExport = useCallback(() => {
@@ -364,7 +379,7 @@ function EntriesExportSelection(props: Props) {
                 return false;
             }
             const widgets = getWidgets(analysisFramework);
-            return widgets.some((widget) => widget.widgetId === 'MATRIX2D'); // TODO check for conditional widgets
+            return widgets?.some((widget) => widget.widgetId === 'MATRIX2D') ?? false; // TODO check for conditional widgets
         },
         [analysisFramework, requestsPending],
     );
@@ -414,23 +429,23 @@ function EntriesExportSelection(props: Props) {
                         )}
                     >
                         <ExportTypePane
-                            activeExportTypeKey={activeExportTypeKey}
+                            activeExportFormat={activeExportFormat}
                             reportStructure={reportStructure}
                             reportStructureVariant={reportStructureVariant}
-                            decoupledEntries={decoupledEntries}
-                            showGroups={showGroups}
-                            showEntryId={showEntryId}
-                            showAryDetails={showAryDetails}
-                            showAdditionalMetadata={showAdditionalMetadata}
-                            onExportTypeChange={setActiveExportTypeKey}
-                            onReportStructureChange={setReportStructure}
+                            excelDecoupled={excelDecoupled}
+                            reportShowGroups={reportShowGroups}
+                            reportShowLeadEntryId={reportShowLeadEntryId}
+                            reportShowAssessmentData={reportShowAssessmentData}
+                            reportShowEntryWidgetData={reportShowEntryWidgetData}
                             entryFilterOptions={entryOptions}
-                            onShowGroupsChange={setShowGroups}
-                            onShowEntryIdChange={setShowEntryId}
-                            onShowAryDetailsChange={setShowAryDetails}
-                            onShowAdditionalMetadataChange={setShowAdditionalMetadata}
+                            onActiveExportFormatChange={setActiveExportFormat}
+                            onReportStructureChange={setReportStructure}
+                            onReportShowGroupsChange={setReportShowGroups}
+                            onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
+                            onReportShowAssessmentDataChange={setReportShowAssessmentData}
+                            onReportShowEntryWidgetDataChange={setReportShowEntryWidgetData}
                             onReportStructureVariantChange={handleReportStructureVariantChange}
-                            onDecoupledEntriesChange={setDecoupledEntries}
+                            onExcelDecoupledChange={setExcelDecoupled}
                             onIncludeSubSectorChange={setIncludeSubSector}
                             includeSubSector={includeSubSector}
                             showMatrix2dOptions={showMatrix2dOptions}
@@ -477,7 +492,7 @@ function EntriesExportSelection(props: Props) {
                     variant="primary"
                     className={styles.exportButton}
                     onClick={handleEntryExport}
-                    disabled={requestsPending || exportPending}
+                    disabled={requestsPending || createExportPending}
                 >
                     Export
                 </Button>

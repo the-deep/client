@@ -16,8 +16,10 @@ import {
 
 import {
     EntryOptions,
-    ExportType,
 } from '#types';
+import {
+    ExportFormatEnum,
+} from '#generated/types';
 
 import _ts from '#ts';
 import {
@@ -33,7 +35,7 @@ import ExportTypePaneButton from './ExportTypeButton';
 import styles from './styles.css';
 
 interface ExportTypeItem {
-    key: ExportType;
+    key: ExportFormatEnum;
     icon: React.ReactNode;
     title: string;
 }
@@ -41,21 +43,21 @@ interface ExportTypeItem {
 interface Props {
     reportStructure?: Node[];
     entryFilterOptions?: EntryOptions;
-    activeExportTypeKey: ExportType;
+    activeExportFormat: ExportFormatEnum;
     reportStructureVariant: string;
-    decoupledEntries: boolean;
-    showGroups: boolean;
-    showEntryId: boolean;
-    showAryDetails: boolean;
-    showAdditionalMetadata: boolean;
-    onShowGroupsChange: (show: boolean) => void;
-    onShowEntryIdChange: (show: boolean) => void;
-    onShowAryDetailsChange: (show: boolean) => void;
-    onShowAdditionalMetadataChange: (show: boolean) => void;
-    onExportTypeChange: (type: ExportType) => void;
+    excelDecoupled: boolean;
+    reportShowGroups: boolean;
+    reportShowLeadEntryId: boolean;
+    reportShowAssessmentData: boolean;
+    reportShowEntryWidgetData: boolean;
+    onReportShowGroupsChange: (show: boolean) => void;
+    onReportShowLeadEntryIdChange: (show: boolean) => void;
+    onReportShowAssessmentDataChange: (show: boolean) => void;
+    onReportShowEntryWidgetDataChange: (show: boolean) => void;
+    onActiveExportFormatChange: (type: ExportFormatEnum) => void;
     onReportStructureChange: (reports: Node[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
-    onDecoupledEntriesChange: (value: boolean) => void;
+    onExcelDecoupledChange: (value: boolean) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
@@ -67,22 +69,22 @@ interface Props {
 
 const exportTypes: ExportTypeItem[] = [
     {
-        key: 'word',
+        key: 'DOCX',
         icon: <AiFillFileWord />,
         title: _ts('export', 'docxLabel'),
     },
     {
-        key: 'pdf',
+        key: 'PDF',
         icon: <AiFillFilePdf />,
         title: _ts('export', 'pdfLabel'),
     },
     {
-        key: 'excel',
+        key: 'XLSX',
         icon: <AiFillFileExcel />,
         title: _ts('export', 'xlsxLabel'),
     },
     {
-        key: 'json',
+        key: 'JSON',
         icon: <AiFillFileText />,
         title: _ts('export', 'jsonLabel'),
     },
@@ -97,16 +99,16 @@ interface RenderWordProps {
     showMatrix2dOptions: boolean;
     onReportStructureChange: (reports: Node[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
-    onShowGroupsChange: (show: boolean) => void;
-    onShowEntryIdChange: (show: boolean) => void;
-    onShowAryDetailsChange: (show: boolean) => void;
-    onShowAdditionalMetadataChange: (show: boolean) => void;
+    onReportShowGroupsChange: (show: boolean) => void;
+    onReportShowLeadEntryIdChange: (show: boolean) => void;
+    onReportShowAssessmentDataChange: (show: boolean) => void;
+    onReportShowEntryWidgetDataChange: (show: boolean) => void;
     reportStructure?: Node[];
     reportStructureVariant: string;
-    showGroups: boolean;
-    showEntryId: boolean;
-    showAryDetails: boolean;
-    showAdditionalMetadata: boolean;
+    reportShowGroups: boolean;
+    reportShowLeadEntryId: boolean;
+    reportShowAssessmentData: boolean;
+    reportShowEntryWidgetData: boolean;
     contextualWidgets: TreeSelectableWidget<string>[];
     onSetContextualWidgets: (value: TreeSelectableWidget<string>[]) => void;
     textWidgets: TreeSelectableWidget<string>[];
@@ -118,16 +120,16 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         entryFilterOptions,
         onReportStructureChange,
         onReportStructureVariantChange,
-        onShowGroupsChange,
-        onShowEntryIdChange,
-        onShowAryDetailsChange,
-        onShowAdditionalMetadataChange,
+        onReportShowGroupsChange,
+        onReportShowLeadEntryIdChange,
+        onReportShowAssessmentDataChange,
+        onReportShowEntryWidgetDataChange,
         reportStructure,
         reportStructureVariant,
-        showGroups,
-        showEntryId,
-        showAryDetails,
-        showAdditionalMetadata,
+        reportShowGroups,
+        reportShowLeadEntryId,
+        reportShowAssessmentData,
+        reportShowEntryWidgetData,
         includeSubSector,
         onIncludeSubSectorChange,
         showMatrix2dOptions,
@@ -169,32 +171,32 @@ function RenderWordPdfOptions(props: RenderWordProps) {
             >
                 {showEntryGroupsSelection && (
                     <Checkbox
-                        name="showGroups"
+                        name="reportShowGroups"
                         label={_ts('export', 'showEntryGroupsLabel')}
-                        value={showGroups}
-                        onChange={onShowGroupsChange}
+                        value={reportShowGroups}
+                        onChange={onReportShowGroupsChange}
                         className={styles.checkbox}
                     />
                 )}
                 <Checkbox
-                    name="showEntryId"
+                    name="reportShowLeadEntryId"
                     label={_ts('export', 'showEntryIdLabel')}
-                    value={showEntryId}
-                    onChange={onShowEntryIdChange}
+                    value={reportShowLeadEntryId}
+                    onChange={onReportShowLeadEntryIdChange}
                     className={styles.checkbox}
                 />
                 <Checkbox
-                    name="showAryDetails"
+                    name="reportShowAssessmentData"
                     label={_ts('export', 'showAryDetailLabel')}
-                    value={showAryDetails}
-                    onChange={onShowAryDetailsChange}
+                    value={reportShowAssessmentData}
+                    onChange={onReportShowAssessmentDataChange}
                     className={styles.checkbox}
                 />
                 <Checkbox
                     name="showAdditionalMetaData"
                     label={_ts('export', 'showAdditionalMetadataLabel')}
-                    value={showAdditionalMetadata}
-                    onChange={onShowAdditionalMetadataChange}
+                    value={reportShowEntryWidgetData}
+                    onChange={onReportShowEntryWidgetDataChange}
                     className={styles.checkbox}
                 />
             </Container>
@@ -234,7 +236,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 heading="Additional Metadata"
                 contentClassName={styles.content}
             >
-                {contextualWidgets.length > 0 && showAdditionalMetadata && (
+                {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
                     <>
                         <Heading
                             size="extraSmall"
@@ -272,23 +274,23 @@ function RenderWordPdfOptions(props: RenderWordProps) {
 }
 
 interface RenderExcelProps {
-    decoupledEntries: boolean;
-    onDecoupledEntriesChange: (value: boolean) => void;
+    excelDecoupled: boolean;
+    onExcelDecoupledChange: (value: boolean) => void;
 }
 
 function RenderExcelOptions(props: RenderExcelProps) {
     const {
-        decoupledEntries,
-        onDecoupledEntriesChange,
+        excelDecoupled,
+        onExcelDecoupledChange,
     } = props;
 
     return (
         <>
             <Checkbox
-                name="decoupledEntries"
+                name="excelDecoupled"
                 label={_ts('export', 'decoupledEntriesLabel')}
-                value={decoupledEntries}
-                onChange={onDecoupledEntriesChange}
+                value={excelDecoupled}
+                onChange={onExcelDecoupledChange}
             />
             <div
                 key="info"
@@ -303,94 +305,24 @@ function RenderExcelOptions(props: RenderExcelProps) {
     );
 }
 
-function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
-    const {
-        activeExportTypeKey,
-        reportStructure,
-        reportStructureVariant,
-        onReportStructureChange,
-        onReportStructureVariantChange,
-        showGroups,
-        showEntryId,
-        showAryDetails,
-        showAdditionalMetadata,
-        onShowGroupsChange,
-        onShowEntryIdChange,
-        onShowAryDetailsChange,
-        onShowAdditionalMetadataChange,
-        decoupledEntries,
-        onDecoupledEntriesChange,
-        entryFilterOptions,
-        includeSubSector,
-        onIncludeSubSectorChange,
-        showMatrix2dOptions,
-        contextualWidgets,
-        onSetContextualWidgets,
-        textWidgets,
-        onSetTextWidgets,
-    } = props;
-
-    switch (activeExportTypeKey) {
-        case 'word':
-        case 'pdf':
-            return (
-                <RenderWordPdfOptions
-                    entryFilterOptions={entryFilterOptions}
-                    includeSubSector={includeSubSector}
-                    onIncludeSubSectorChange={onIncludeSubSectorChange}
-                    onReportStructureChange={onReportStructureChange}
-                    onReportStructureVariantChange={onReportStructureVariantChange}
-                    onShowGroupsChange={onShowGroupsChange}
-                    onShowEntryIdChange={onShowEntryIdChange}
-                    onShowAryDetailsChange={onShowAryDetailsChange}
-                    onShowAdditionalMetadataChange={onShowAdditionalMetadataChange}
-                    showMatrix2dOptions={showMatrix2dOptions}
-                    reportStructure={reportStructure}
-                    reportStructureVariant={reportStructureVariant}
-                    showGroups={showGroups}
-                    showEntryId={showEntryId}
-                    showAryDetails={showAryDetails}
-                    showAdditionalMetadata={showAdditionalMetadata}
-                    contextualWidgets={contextualWidgets}
-                    onSetContextualWidgets={onSetContextualWidgets}
-                    textWidgets={textWidgets}
-                    onSetTextWidgets={onSetTextWidgets}
-                />
-            );
-        case 'excel':
-            return (
-                <RenderExcelOptions
-                    decoupledEntries={decoupledEntries}
-                    onDecoupledEntriesChange={onDecoupledEntriesChange}
-                />
-            );
-        default:
-            return (
-                <p>
-                    { _ts('export', 'noOptionsAvailable') }
-                </p>
-            );
-    }
-}
-
 function ExportTypePane(props: Props) {
     const {
-        onExportTypeChange,
-        activeExportTypeKey,
+        onActiveExportFormatChange,
+        activeExportFormat,
         reportStructure,
         reportStructureVariant,
         onReportStructureChange,
         onReportStructureVariantChange,
-        showGroups,
-        showEntryId,
-        showAryDetails,
-        showAdditionalMetadata,
-        onShowGroupsChange,
-        onShowEntryIdChange,
-        onShowAryDetailsChange,
-        onShowAdditionalMetadataChange,
-        decoupledEntries,
-        onDecoupledEntriesChange,
+        reportShowGroups,
+        reportShowLeadEntryId,
+        reportShowAssessmentData,
+        reportShowEntryWidgetData,
+        onReportShowGroupsChange,
+        onReportShowLeadEntryIdChange,
+        onReportShowAssessmentDataChange,
+        onReportShowEntryWidgetDataChange,
+        excelDecoupled,
+        onExcelDecoupledChange,
         entryFilterOptions,
         includeSubSector,
         onIncludeSubSectorChange,
@@ -401,7 +333,7 @@ function ExportTypePane(props: Props) {
         onSetTextWidgets,
     } = props;
 
-    const exportTypeRendererParams = useCallback((key: ExportType, data: ExportTypeItem) => {
+    const exportTypeRendererParams = useCallback((key: ExportFormatEnum, data: ExportTypeItem) => {
         const {
             title,
             icon,
@@ -412,10 +344,10 @@ function ExportTypePane(props: Props) {
             className: styles.exportType,
             title,
             icon,
-            isActive: activeExportTypeKey === key,
-            onExportTypeChange,
+            isActive: activeExportFormat === key,
+            onActiveExportFormatChange,
         });
-    }, [activeExportTypeKey, onExportTypeChange]);
+    }, [activeExportFormat, onActiveExportFormatChange]);
 
     return (
         <section className={styles.exportTypePane}>
@@ -439,31 +371,41 @@ function ExportTypePane(props: Props) {
                 heading="Advanced"
                 defaultVisibility
             >
-                <RenderOptions
-                    activeExportTypeKey={activeExportTypeKey}
-                    entryFilterOptions={entryFilterOptions}
-                    reportStructure={reportStructure}
-                    reportStructureVariant={reportStructureVariant}
-                    onReportStructureChange={onReportStructureChange}
-                    onReportStructureVariantChange={onReportStructureVariantChange}
-                    showGroups={showGroups}
-                    showEntryId={showEntryId}
-                    showAryDetails={showAryDetails}
-                    showAdditionalMetadata={showAdditionalMetadata}
-                    onShowGroupsChange={onShowGroupsChange}
-                    onShowEntryIdChange={onShowEntryIdChange}
-                    onShowAryDetailsChange={onShowAryDetailsChange}
-                    onShowAdditionalMetadataChange={onShowAdditionalMetadataChange}
-                    decoupledEntries={decoupledEntries}
-                    onDecoupledEntriesChange={onDecoupledEntriesChange}
-                    includeSubSector={includeSubSector}
-                    onIncludeSubSectorChange={onIncludeSubSectorChange}
-                    showMatrix2dOptions={showMatrix2dOptions}
-                    contextualWidgets={contextualWidgets}
-                    onSetContextualWidgets={onSetContextualWidgets}
-                    textWidgets={textWidgets}
-                    onSetTextWidgets={onSetTextWidgets}
-                />
+                {activeExportFormat === ('DOCX' || 'PDF') && (
+                    <RenderWordPdfOptions
+                        entryFilterOptions={entryFilterOptions}
+                        includeSubSector={includeSubSector}
+                        onIncludeSubSectorChange={onIncludeSubSectorChange}
+                        onReportStructureChange={onReportStructureChange}
+                        onReportStructureVariantChange={onReportStructureVariantChange}
+                        onReportShowGroupsChange={onReportShowGroupsChange}
+                        onReportShowLeadEntryIdChange={onReportShowLeadEntryIdChange}
+                        onReportShowAssessmentDataChange={onReportShowAssessmentDataChange}
+                        onReportShowEntryWidgetDataChange={onReportShowEntryWidgetDataChange}
+                        showMatrix2dOptions={showMatrix2dOptions}
+                        reportStructure={reportStructure}
+                        reportStructureVariant={reportStructureVariant}
+                        reportShowGroups={reportShowGroups}
+                        reportShowLeadEntryId={reportShowLeadEntryId}
+                        reportShowAssessmentData={reportShowAssessmentData}
+                        reportShowEntryWidgetData={reportShowEntryWidgetData}
+                        contextualWidgets={contextualWidgets}
+                        onSetContextualWidgets={onSetContextualWidgets}
+                        textWidgets={textWidgets}
+                        onSetTextWidgets={onSetTextWidgets}
+                    />
+                )}
+                {activeExportFormat === 'XLSX' && (
+                    <RenderExcelOptions
+                        excelDecoupled={excelDecoupled}
+                        onExcelDecoupledChange={onExcelDecoupledChange}
+                    />
+                )}
+                {activeExportFormat === 'JSON' && (
+                    <p>
+                        { _ts('export', 'noOptionsAvailable') }
+                    </p>
+                )}
             </ExpandableContainer>
         </section>
     );
