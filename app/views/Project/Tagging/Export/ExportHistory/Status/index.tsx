@@ -10,10 +10,10 @@ import styles from './styles.css';
 
 export interface Props {
     className?: string;
-    file?: string;
+    file: string | null | undefined;
     icon: ReactElement;
     status: string;
-    tagVariant: 'default' | 'accent' | 'complement1';
+    tagVariant: 'default' | 'accent' | 'complement1' | 'complement2';
 }
 
 function Status(props: Props) {

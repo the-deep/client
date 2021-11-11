@@ -11,8 +11,8 @@ import styles from './styles.css';
 
 export interface Props {
     className?: string;
-    id: number;
-    onDeleteClick: (key: number) => void;
+    id: string;
+    onDeleteClick: (key: string) => void;
     disabled?: boolean;
 }
 

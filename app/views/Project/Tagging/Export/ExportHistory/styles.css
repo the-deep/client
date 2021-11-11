@@ -4,9 +4,10 @@
 
     .header {
         display: flex;
-        align-items: center;
-        justify-content: flex-start;
+        align-items: start;
+        justify-content: center;
     }
+
     .content {
         display: flex;
         align-items: flex-start;

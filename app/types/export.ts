@@ -1,4 +1,4 @@
-export type ExportType = 'word' | 'pdf' | 'excel' | 'json';
+export type ExportType = 'WORD' | 'PDF' | 'EXCEL' | 'JSON';
 export type ExportStatus = 'pending' | 'started' | 'success' | 'failure';
 export interface Export {
     id: number;

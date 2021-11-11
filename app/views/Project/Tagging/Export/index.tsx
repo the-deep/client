@@ -8,8 +8,11 @@ import {
     Container,
     Button,
 } from '@the-deep/deep-ui';
-import { useModalState } from '#hooks/stateManagement';
 
+import {
+    ExportDataTypeEnum,
+} from '#generated/types';
+import { useModalState } from '#hooks/stateManagement';
 import ProjectContext from '#base/context/ProjectContext';
 
 import ExportHistory from './ExportHistory';
@@ -18,6 +21,9 @@ import NewExport from './NewExport';
 import styles from './styles.css';
 
 type ExportType = 'export-entry-history' | 'export-assessment-history';
+
+const entryType: ExportDataTypeEnum[] = ['ENTRIES'];
+const assessmentType: ExportDataTypeEnum[] = ['PLANNED_ASSESSMENTS', 'ASSESSMENTS'];
 
 function Export() {
     const { project } = React.useContext(ProjectContext);
@@ -82,7 +88,7 @@ function Export() {
                         {activeProject && (
                             <ExportHistory
                                 projectId={activeProject}
-                                type="entries"
+                                type={entryType}
                             />
                         )}
                     </TabPanel>
@@ -90,7 +96,7 @@ function Export() {
                         {activeProject && (
                             <ExportHistory
                                 projectId={activeProject}
-                                type="assessments"
+                                type={assessmentType}
                             />
                         )}
                     </TabPanel>

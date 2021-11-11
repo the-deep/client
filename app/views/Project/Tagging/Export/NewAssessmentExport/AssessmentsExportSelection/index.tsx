@@ -7,30 +7,37 @@ import {
     Button,
     ExpandableContainer,
 } from '@the-deep/deep-ui';
-
-import ProjectContext from '#base/context/ProjectContext';
-import { useLazyRequest } from '#base/utils/restRequest';
-import _ts from '#ts';
+import { gql, useMutation } from '@apollo/client';
 import {
+    CreateExportMutation,
+    CreateExportMutationVariables,
     SourceFilterOptionsQueryVariables,
+    ExportDataTypeEnum,
 } from '#generated/types';
+import ProjectContext from '#base/context/ProjectContext';
+import _ts from '#ts';
 import ExportPreview from '../../ExportPreview';
 import LeadsSelection from '../../LeadsSelection';
 import styles from './styles.css';
 
-interface ExportItem {
-    assessment: string;
-    plannedAssessment: string;
-}
-
-const exportItems: ExportItem = {
-    assessment: 'assessment',
-    plannedAssessment: 'planned_assessment',
-};
-
-interface ExportTriggerResponse {
-    exportTriggered: number;
-}
+const CREATE_EXPORT = gql`
+    mutation CreateExport(
+        $projectId: ID!,
+        $data: ExportCreateInputType!,
+    ) {
+        project(id: $projectId) {
+            exportCreate(data: $data) {
+                ok
+                errors
+                result {
+                    id
+                    title
+                    isPreview
+                }
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -46,56 +53,76 @@ function AssessmentsExportSelection(props: Props) {
     const alert = useAlert();
 
     const { project } = React.useContext(ProjectContext);
-    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('CREATE_UNPROTECTED');
+    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
     const [queryTitle, setQueryTitle] = useState<string>();
-    const [previewId, setPreviewId] = useState<number | undefined>(undefined);
+    const [previewId, setPreviewId] = useState<string | undefined>(undefined);
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-    const [selectAll, setSelectAll] = useState<boolean>(true);
+    const [selectAll, setSelectAll] = useState<boolean>(true); // TODO pass this to API
     const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
-    const {
-        pending: exportPending,
-        trigger: getExport,
-    } = useLazyRequest<ExportTriggerResponse, { preview: boolean, type: string }>({
-        url: 'server://export-trigger/',
-        method: 'POST',
-        body: (ctx) => ({
-            filters: {
-                project: projectId,
-                include_leads: !selectAll,
-                export_type: 'excel',
-                pdf: false,
-                export_item: ctx.type,
-                is_preview: ctx.preview,
-                lead: selectedLeads,
-                ...filterValues,
-            },
-        }),
-        onSuccess: (response, ctx) => {
-            if (ctx.preview) {
-                setPreviewId(response.exportTriggered);
-            }
-            alert.show(
-                _ts('export', 'exportStartedNotifyMessage'),
-                { variant: 'success' },
-            );
+    const [
+        createExport,
+        {
+            loading: createExportPending,
         },
-        failureHeader: _ts('export', 'headerExport'),
-    });
+    ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
+        CREATE_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportCreate?.ok) {
+                    if (response.project.exportCreate.result?.isPreview) {
+                        setPreviewId(response.project.exportCreate.result?.id);
+                    } else {
+                        alert.show(
+                            _ts('export', 'exportStartedNotifyMessage'),
+                            { variant: 'success' },
+                        );
+                    }
+                }
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const startExport = useCallback((preview: boolean, type: Exclude<ExportDataTypeEnum, 'ENTRIES'>) => {
+        const data = {
+            exportType: 'EXCEL' as const,
+            format: 'XLSX' as const,
+            isPreview: preview,
+            type,
+            filters: {
+                ...filterValues,
+                ids: selectedLeads,
+            },
+        };
+        createExport({
+            variables: {
+                projectId,
+                data,
+            },
+        });
+    }, [createExport, projectId, filterValues, selectedLeads]);
 
     const handleAssessmentExportClick = useCallback(() => {
-        getExport({ preview: false, type: exportItems.assessment });
-    }, [getExport]);
+        startExport(false, 'ASSESSMENTS');
+    }, [startExport]);
 
     const handlePlannedAssessmentExportClick = useCallback(() => {
-        getExport({ preview: false, type: exportItems.plannedAssessment });
-    }, [getExport]);
+        startExport(false, 'PLANNED_ASSESSMENTS');
+    }, [startExport]);
 
     const handlePreviewClick = useCallback(() => {
         setPreviewId(undefined);
-        getExport({ preview: true, type: exportItems.assessment });
-    }, [getExport]);
+        startExport(false, 'ASSESSMENTS');
+    }, [startExport]);
 
     const handleSaveAndExport = () => {
         console.warn('Clicked on save and export');
@@ -169,14 +196,14 @@ function AssessmentsExportSelection(props: Props) {
                             <Button
                                 name="startAssessmentExport"
                                 onClick={handleAssessmentExportClick}
-                                disabled={exportPending}
+                                disabled={createExportPending}
                             >
                                 {_ts('export', 'startAssessmentExportButtonLabel')}
                             </Button>
                             <Button
                                 name="startPlannedAssessmentExport"
                                 onClick={handlePlannedAssessmentExportClick}
-                                disabled={exportPending}
+                                disabled={createExportPending}
                             >
                                 {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
                             </Button>
