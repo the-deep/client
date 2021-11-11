@@ -168,7 +168,7 @@ function GeoLocationMapInput(props: Props) {
 
     const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => ({
         id: `${geoArea.id}`,
-        value: breadcrumb(geoArea.regionTitle, geoArea.adminLevelTitle, geoArea.title),
+        value: breadcrumb([geoArea.regionTitle, geoArea.adminLevelTitle, geoArea.title]),
         onDismiss: handleRemoveItem,
     }), [handleRemoveItem]);
 

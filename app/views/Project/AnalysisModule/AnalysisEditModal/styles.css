@@ -1,0 +1,30 @@
+.analysis-edit-modal {
+    max-height: 800px;
+
+    .input {
+        margin: var(--dui-spacing-medium) 0;
+    }
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .analysis-pillar-list-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: auto;
+
+            .analysis-pillar-list {
+                flex-grow: 1;
+                overflow: auto;
+            }
+
+            .actions {
+                flex-shrink: 0;
+                padding: var(--dui-spacing-medium) 0;
+            }
+        }
+    }
+}

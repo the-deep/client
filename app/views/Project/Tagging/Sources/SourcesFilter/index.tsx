@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import {
     _cs,
     isDefined,
@@ -40,10 +40,9 @@ import {
 } from '#generated/types';
 
 import {
-    SourcesFilterFields,
     SourceFilterOptions,
 } from './types';
-import schema, { PartialFormType } from './schema';
+import schema, { FormType, PartialFormType } from './schema';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
@@ -146,31 +145,32 @@ function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'tit
     return value.title;
 }
 
-function getProjectSourcesQueryVariables(
-    filters: SourcesFilterFields,
-) {
-    const isEntriesFilterDataEmpty = doesObjectHaveNoData(filters.entriesFilterData, ['', null]);
+export function getProjectSourcesQueryVariables(
+    filters: Omit<FormType, 'projectId'>,
+): Omit<FormType, 'projectId'> {
+    const entriesFilterData = filters.entriesFilterData ? {
+        ...filters.entriesFilterData,
+        createdAtGte: convertDateToIsoDateTime(filters.entriesFilterData.createdAtGte),
+        createdAtLte: convertDateToIsoDateTime(
+            filters.entriesFilterData.createdAtLte,
+            { endOfDay: true },
+        ),
+        filterableData: filters.entriesFilterData.filterableData
+            ? filters.entriesFilterData.filterableData.filter((filterable) => (
+                isDefined(filterable.value)
+                || isDefined(filterable.valueGte)
+                || isDefined(filterable.valueLte)
+                || (isDefined(filterable.valueList) && filterable.valueList.length > 0)
+            ))
+            : undefined,
+    } : undefined;
+    const isEntriesFilterDataEmpty = doesObjectHaveNoData(entriesFilterData, ['', null]);
 
     return {
         ...filters,
         createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
         createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
-        entriesFilterData: (filters.entriesFilterData && !isEntriesFilterDataEmpty) ? {
-            ...filters.entriesFilterData,
-            createdAtGte: convertDateToIsoDateTime(filters.entriesFilterData.createdAtGte),
-            createdAtLte: convertDateToIsoDateTime(
-                filters.entriesFilterData.createdAtLte,
-                { endOfDay: true },
-            ),
-            filterableData: filters.entriesFilterData.filterableData
-                ? filters.entriesFilterData.filterableData.filter((filterable) => (
-                    isDefined(filterable.value)
-                    || isDefined(filterable.valueGte)
-                    || isDefined(filterable.valueLte)
-                    || isDefined(filterable.valueList)
-                ))
-                : undefined,
-        } : undefined,
+        entriesFilterData,
         customFilters: isEntriesFilterDataEmpty ? undefined : 'EXCLUDE_EMPTY_FILTERED_ENTRIES',
     };
 }
@@ -179,8 +179,9 @@ interface Props {
     className?: string;
     disabled?: boolean;
     projectId: string;
+    value: PartialFormType;
     filterOnlyUnprotected?: boolean;
-    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
+    onFilterApply: (value: PartialFormType) => void;
 }
 
 function SourcesFilter(props: Props) {
@@ -189,6 +190,7 @@ function SourcesFilter(props: Props) {
         onFilterApply,
         projectId,
         filterOnlyUnprotected,
+        value: valueFromProps,
         disabled,
     } = props;
 
@@ -203,6 +205,12 @@ function SourcesFilter(props: Props) {
         setError,
         setValue,
     } = useForm(schema, initialValue);
+
+    useEffect(() => {
+        if (valueFromProps) {
+            setValue(valueFromProps);
+        }
+    }, [valueFromProps, setValue]);
 
     const {
         data: sourceFilterOptions,
@@ -219,9 +227,8 @@ function SourcesFilter(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const handleSubmit = useCallback((values) => {
-        const finalValues = getProjectSourcesQueryVariables(values);
-        onFilterApply(finalValues);
+    const handleSubmit = useCallback((values: PartialFormType) => {
+        onFilterApply(values);
     }, [onFilterApply]);
 
     const handleApply = useCallback(() => {
@@ -252,6 +259,8 @@ function SourcesFilter(props: Props) {
     const confidentialityOptions = sourceFilterOptions
         ?.sourceConfidentialityOptions?.enumValues;
     const organizationTypeOptions = sourceFilterOptions?.organizationTypes?.results;
+
+    const isFilterEmpty = doesObjectHaveNoData(value, ['', null]);
 
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
@@ -401,7 +410,7 @@ function SourcesFilter(props: Props) {
                         {_ts('sourcesFilter', 'apply')}
                     </Button>
                     <Button
-                        disabled={disabled || pristine}
+                        disabled={isFilterEmpty}
                         name="clearFilter"
                         variant="transparent"
                         actions={<IoClose />}

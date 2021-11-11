@@ -3,10 +3,17 @@ import {
     ArraySchema,
     PartialForm,
 } from '@togglecorp/toggle-form';
+
+import {
+    ProjectSourcesQueryVariables,
+} from '#generated/types';
+
 import { SourcesFilterFields } from './types';
 
-type FormType = SourcesFilterFields;
-export type PartialFormType = PartialForm<FormType, 'filterKey'>;
+export type FormType = ProjectSourcesQueryVariables;
+type FormTypeInternal = SourcesFilterFields;
+
+export type PartialFormType = PartialForm<FormTypeInternal, 'filterKey'>;
 export type PartialEntriesFilterDataType = NonNullable<PartialFormType['entriesFilterData']>;
 
 type PartialFrameworkFilterType = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];

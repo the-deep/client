@@ -10,10 +10,12 @@ import {
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
-import { SourceFilterOptionsQueryVariables } from '#generated/types';
 
 import SourcesStats from './SourcesStats';
 import SourcesFilter from './SourcesFilter';
+import {
+    PartialFormType as PartialFilterFormType,
+} from './SourcesFilter/schema';
 import SourcesTable from './SourcesTable';
 import SourcesGrid from './SourcesGrid';
 import styles from './styles.css';
@@ -27,7 +29,7 @@ function Sources(props: Props) {
     const { className } = props;
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
-    const [sourcesFilters, setSourcesFilters] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
+    const [sourcesFilters, setSourcesFilters] = useState<PartialFilterFormType>({});
 
     const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
 
@@ -85,6 +87,7 @@ function Sources(props: Props) {
                 {activeProject && (
                     <SourcesFilter
                         className={styles.filter}
+                        value={sourcesFilters}
                         onFilterApply={setSourcesFilters}
                         projectId={activeProject}
                     />

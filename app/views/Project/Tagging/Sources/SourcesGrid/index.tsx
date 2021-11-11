@@ -19,12 +19,16 @@ import {
 import {
     ProjectEntriesQuery,
     ProjectEntriesQueryVariables,
-    LeadEntriesQueryVariables,
 } from '#generated/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import {
+    PartialFormType as PartialFilterFormType,
+    FormType as FilterFormType,
+} from '../SourcesFilter/schema';
+import { getProjectSourcesQueryVariables } from '../SourcesFilter';
 
 import EntryCard from './EntryCard';
-import { transformSourcesFilterToEntiesFilter } from '../utils';
+import { transformSourcesFilterToEntriesFilter } from '../utils';
 import styles from './styles.css';
 
 const maxItemsPerPage = 50;
@@ -160,17 +164,23 @@ export const PROJECT_ENTRIES = gql`
 interface Props {
     className?: string;
     projectId: string;
-    filters: Omit<LeadEntriesQueryVariables, 'projectId' | 'leadId'>;
+    filters: PartialFilterFormType;
 }
 
 function SourcesGrid(props: Props) {
     const {
         className,
         projectId,
-        filters,
+        filters: rawFilters,
     } = props;
 
-    const entriesFilter = useMemo(() => transformSourcesFilterToEntiesFilter(filters), [filters]);
+    const entriesFilter = useMemo(() => {
+        const transformedFilters = getProjectSourcesQueryVariables(
+            rawFilters as Omit<FilterFormType, 'projectId'>,
+        );
+        return transformSourcesFilterToEntriesFilter(transformedFilters);
+    }, [rawFilters]);
+
     const [activePage, setActivePage] = useState(1);
 
     const [
