@@ -3,6 +3,19 @@
 
     .map {
         width: 100%;
-        height: 60vh;
+        height: 80vh;
+    }
+
+    :global {
+        .mapboxgl-popup {
+            width: 400px;
+            max-width: 400px !important;
+            height: calc(40vh - 100px);
+
+            .mapboxgl-popup-content {
+                overflow-y: auto !important;
+            }
+        }
     }
 }
+
