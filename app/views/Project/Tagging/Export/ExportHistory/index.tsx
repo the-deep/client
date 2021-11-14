@@ -63,7 +63,7 @@ const statusLabelMap: Record<Export['status'], string> = {
     CANCELED: 'Canceled',
 };
 const exportFormatIconMap: Record<Export['format'], ReactElement> = {
-    DOCX: <RiFileWord2Fill />, // TODO: report can be pdf or word (use specify icon)
+    DOCX: <RiFileWord2Fill />,
     PDF: <FaFilePdf />,
     XLSX: <RiFileExcel2Fill />,
     JSON: <IoDocument />,

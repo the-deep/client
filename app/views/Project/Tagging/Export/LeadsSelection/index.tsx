@@ -319,6 +319,7 @@ function LeadsSelection(props: Props) {
                 onFilterApply={onFilterApply}
                 projectId={projectId}
                 filterOnlyUnprotected={filterOnlyUnprotected}
+                value={filterValues}
                 hasAssessment={hasAssessment}
             />
             <div className={styles.tableContainer}>

@@ -8,11 +8,9 @@ import {
 } from '@the-deep/deep-ui';
 import { gql, useQuery, useMutation } from '@apollo/client';
 
-import { useRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 import {
     Lead,
-    EntryOptions,
 } from '#types';
 import {
     ProjectFrameworkDetailsQuery,
@@ -272,20 +270,6 @@ function EntriesExportSelection(props: Props) {
         },
     );
 
-    const entryOptionsQueryParams = useMemo(() => ({
-        project: projectId,
-    }), [projectId]);
-
-    const {
-        pending: entryOptionsPending,
-        response: entryOptions,
-    } = useRequest<EntryOptions>({
-        url: 'server://entry-options/',
-        query: entryOptionsQueryParams,
-        method: 'GET',
-        failureHeader: 'Entry Options',
-    });
-
     const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
     useEffect(() => {
         const structure = createReportStructure(
@@ -339,6 +323,7 @@ function EntriesExportSelection(props: Props) {
             reportStructure: generatedReportStructure,
             reportTextWidgetIds,
             type: 'ENTRIES' as const,
+            title: queryTitle ?? 'export', // TODO make it options in server
         };
         createExport({
             variables: {
@@ -352,6 +337,7 @@ function EntriesExportSelection(props: Props) {
         createExport,
         excelDecoupled,
         filterValues,
+        queryTitle,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
         reportShowGroups,
@@ -371,21 +357,16 @@ function EntriesExportSelection(props: Props) {
         startExport(true);
     }, [setPreviewId, startExport]);
 
-    const requestsPending = frameworkGetPending || entryOptionsPending;
-
     const showMatrix2dOptions = useMemo(
         () => {
-            if (requestsPending || !analysisFramework) {
+            if (frameworkGetPending || !analysisFramework) {
                 return false;
             }
             const widgets = getWidgets(analysisFramework);
             return widgets?.some((widget) => widget.widgetId === 'MATRIX2D') ?? false; // TODO check for conditional widgets
         },
-        [analysisFramework, requestsPending],
+        [analysisFramework, frameworkGetPending],
     );
-    const handleSaveAndExport = () => {
-        console.warn('Clicked on save and export');
-    }; // TODO add this feature later
 
     return (
         <div className={_cs(className, styles.export)}>
@@ -437,7 +418,6 @@ function EntriesExportSelection(props: Props) {
                             reportShowLeadEntryId={reportShowLeadEntryId}
                             reportShowAssessmentData={reportShowAssessmentData}
                             reportShowEntryWidgetData={reportShowEntryWidgetData}
-                            entryFilterOptions={entryOptions}
                             onActiveExportFormatChange={setActiveExportFormat}
                             onReportStructureChange={setReportStructure}
                             onReportShowGroupsChange={setReportShowGroups}
@@ -479,8 +459,9 @@ function EntriesExportSelection(props: Props) {
                             <Button
                                 name="startExport"
                                 variant="tertiary"
-                                onClick={handleSaveAndExport}
+                                onClick={handleEntryExport}
                                 className={styles.saveAndExport}
+                                disabled={!queryTitle}
                             >
                                 Save & Export
                             </Button>
@@ -492,7 +473,7 @@ function EntriesExportSelection(props: Props) {
                     variant="primary"
                     className={styles.exportButton}
                     onClick={handleEntryExport}
-                    disabled={requestsPending || createExportPending}
+                    disabled={frameworkGetPending || createExportPending}
                 >
                     Export
                 </Button>

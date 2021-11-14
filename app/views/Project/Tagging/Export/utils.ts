@@ -51,7 +51,7 @@ const transformLevelsRowFirst = (
                             ),
                             title: subColumn.label,
                         }))
-                        : undefined,
+                        : [],
                 }));
 
             return ({

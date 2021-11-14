@@ -102,6 +102,7 @@ function AssessmentsExportSelection(props: Props) {
                 ...filterValues,
                 ids: selectedLeads,
             },
+            title: queryTitle ?? 'export', // TODO make title options in API
         };
         createExport({
             variables: {
@@ -109,7 +110,13 @@ function AssessmentsExportSelection(props: Props) {
                 data,
             },
         });
-    }, [createExport, projectId, filterValues, selectedLeads]);
+    }, [
+        createExport,
+        projectId,
+        filterValues,
+        selectedLeads,
+        queryTitle,
+    ]);
 
     const handleAssessmentExportClick = useCallback(() => {
         startExport(false, 'ASSESSMENTS');
@@ -125,8 +132,8 @@ function AssessmentsExportSelection(props: Props) {
     }, [startExport]);
 
     const handleSaveAndExport = () => {
-        console.warn('Clicked on save and export');
-    }; // TODO add this feature later
+        startExport(false, 'ASSESSMENTS'); // TODO here type is hard coded. handle planed assesssments. needs designer perspective
+    };
 
     return (
         <div className={_cs(className, styles.export)}>
@@ -183,7 +190,7 @@ function AssessmentsExportSelection(props: Props) {
                             variant="tertiary"
                             onClick={handleSaveAndExport}
                             className={styles.saveAndExport}
-                            disabled
+                            disabled={!queryTitle}
                         >
                             Save & Export
                         </Button>
