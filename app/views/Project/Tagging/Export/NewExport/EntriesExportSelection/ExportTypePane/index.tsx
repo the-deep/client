@@ -15,9 +15,6 @@ import {
 } from 'react-icons/ai';
 
 import {
-    EntryOptions,
-} from '#types';
-import {
     ExportFormatEnum,
 } from '#generated/types';
 
@@ -42,7 +39,6 @@ interface ExportTypeItem {
 
 interface Props {
     reportStructure?: Node[];
-    entryFilterOptions?: EntryOptions;
     activeExportFormat: ExportFormatEnum;
     reportStructureVariant: string;
     excelDecoupled: boolean;
@@ -93,7 +89,6 @@ const exportTypes: ExportTypeItem[] = [
 const exportTypeKeyExtractor = (d: ExportTypeItem) => d.key;
 
 interface RenderWordProps {
-    entryFilterOptions?: EntryOptions;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
@@ -117,7 +112,6 @@ interface RenderWordProps {
 
 function RenderWordPdfOptions(props: RenderWordProps) {
     const {
-        entryFilterOptions,
         onReportStructureChange,
         onReportStructureVariantChange,
         onReportShowGroupsChange,
@@ -158,9 +152,8 @@ function RenderWordPdfOptions(props: RenderWordProps) {
             </p>
         );
     }
-
-    const showEntryGroupsSelection = entryFilterOptions?.projectEntryLabel
-        && entryFilterOptions?.projectEntryLabel.length > 0;
+    // TODO previously true when entryFilterOptions had projectLabels;
+    const showEntryGroupsSelection = false;
 
     return (
         <>
@@ -323,7 +316,6 @@ function ExportTypePane(props: Props) {
         onReportShowEntryWidgetDataChange,
         excelDecoupled,
         onExcelDecoupledChange,
-        entryFilterOptions,
         includeSubSector,
         onIncludeSubSectorChange,
         showMatrix2dOptions,
@@ -373,7 +365,6 @@ function ExportTypePane(props: Props) {
             >
                 {activeExportFormat === ('DOCX' || 'PDF') && (
                     <RenderWordPdfOptions
-                        entryFilterOptions={entryFilterOptions}
                         includeSubSector={includeSubSector}
                         onIncludeSubSectorChange={onIncludeSubSectorChange}
                         onReportStructureChange={onReportStructureChange}
