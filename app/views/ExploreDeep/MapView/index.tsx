@@ -10,14 +10,11 @@ import {
 import Map, {
     MapContainer,
     MapSource,
-    MapTooltip,
     MapLayer,
 } from '@togglecorp/re-map';
 import {
     MapboxGeoJSONFeature,
     LngLat,
-    LngLatLike,
-    PopupOptions,
     MapboxOptions,
 } from 'mapbox-gl';
 
@@ -26,10 +23,11 @@ import {
     ProjectsByRegionQueryVariables,
     ProjectDetailsForMapViewQuery,
     ProjectDetailsForMapViewQueryVariables,
-    // ProjectListQueryVariables,
+    ProjectListQueryVariables,
 } from '#generated/types';
+import { convertDateToIsoDateTime } from '#utils/common';
 
-import MapTooltipDetails from './MapTooltipDetails';
+import ProjectList from './ProjectList';
 import styles from './styles.css';
 
 const sourceOptions: mapboxgl.GeoJSONSourceRaw & { clusterProperties: unknown } = {
@@ -37,12 +35,6 @@ const sourceOptions: mapboxgl.GeoJSONSourceRaw & { clusterProperties: unknown } 
     cluster: true,
     clusterRadius: 100,
     clusterProperties: {},
-};
-
-const tooltipOptions: PopupOptions = {
-    closeOnClick: false,
-    closeButton: false,
-    offset: 12,
 };
 
 const white = '#ffffff';
@@ -84,11 +76,17 @@ const mapOptions: Partial<MapboxOptions> = {
 };
 
 const PROJECT_LIST = gql`
-    query ProjectsByRegion {
-        projectsByRegion {
-            centroid
-            id
-            projectsId
+    query ProjectsByRegion(
+        $projectFilter: RegionProjectFilterData,
+    ) {
+        projectsByRegion(
+            projectFilter: $projectFilter,
+        ) {
+            results {
+                centroid
+                id
+                projectsId
+            }
         }
     }
 `;
@@ -126,18 +124,28 @@ const PROJECT_DETAILS = gql`
     }
 `;
 
-export type Project = NonNullable<NonNullable<ProjectsByRegionQuery['projectsByRegion']>[number]>;
+export type Project = NonNullable<NonNullable<NonNullable<ProjectsByRegionQuery['projectsByRegion']>['results']>[number]>;
 
 interface Props {
     className?: string;
-    // filters: ProjectListQueryVariables | undefined;
+    filters: ProjectListQueryVariables | undefined;
 }
 
 function ExploreDeepMapView(props: Props) {
     const {
         className,
-        // filters,
+        filters,
     } = props;
+
+    // FIXME: rename startDate to createdAtGte
+    // FIXME: rename endDate to createdAtLte
+    const variables = useMemo(() => ({
+        projectFilter: {
+            ...filters,
+            startDate: convertDateToIsoDateTime(filters?.startDate),
+            endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
+        },
+    }), [filters]);
 
     const {
         data,
@@ -145,13 +153,11 @@ function ExploreDeepMapView(props: Props) {
     } = useQuery<ProjectsByRegionQuery, ProjectsByRegionQueryVariables>(
         PROJECT_LIST,
         {
-            // variables: filters,
-            variables: undefined,
+            variables,
         },
     );
 
     const [clickedFeatureProperties, setClickedFeatureProperties] = useState<string[]>([]);
-    const [clickedLngLat, setClickedLngLat] = useState<LngLatLike>();
     const [clusterClicked, setClusterClicked] = useState<boolean>(false);
 
     const [page, setPage] = useState<number>(1);
@@ -180,7 +186,7 @@ function ExploreDeepMapView(props: Props) {
         if (!data) {
             return undefined;
         }
-        const projects = data.projectsByRegion?.map((projectByRegion) => (
+        const projects = data.projectsByRegion?.results?.map((projectByRegion) => (
             projectByRegion.projectsId?.map((project) => ({
                 id: project,
                 type: 'Feature' as const,
@@ -200,11 +206,10 @@ function ExploreDeepMapView(props: Props) {
 
     const handleClick = useCallback((
         feature: MapboxGeoJSONFeature,
-        lngLat: LngLat,
-        _: mapboxgl.Point,
+        _: LngLat,
+        __: mapboxgl.Point,
         map: mapboxgl.Map,
     ) => {
-        setClickedLngLat(lngLat);
         interface ClusterProperties {
             // eslint-disable-next-line camelcase
             cluster_id: number;
@@ -221,7 +226,7 @@ function ExploreDeepMapView(props: Props) {
                     cluster_id,
                     point_count,
                     0,
-                    (__: unknown, aFeatures: mapboxgl.MapboxGeoJSONFeature[]) => {
+                    (___: unknown, aFeatures: mapboxgl.MapboxGeoJSONFeature[]) => {
                         if (aFeatures) {
                             const projectIds = aFeatures
                                 .map((f) => f?.properties?.projectId)
@@ -249,13 +254,23 @@ function ExploreDeepMapView(props: Props) {
         return true;
     }, [clusterClicked]);
 
-    const handleTooltipClose = useCallback(() => {
-        setClickedLngLat(undefined);
+    const handleListClose = useCallback(() => {
         setClusterClicked(false);
     }, []);
 
     return (
         <div className={_cs(className, styles.mapView)}>
+            {clusterClicked && (
+                <ProjectList
+                    projectDetails={projectDetails?.projects?.results ?? undefined}
+                    onListCloseButtonClick={handleListClose}
+                    page={page}
+                    pageSize={pageSize}
+                    setPage={setPage}
+                    setPageSize={setPageSize}
+                    totalCount={projectDetails?.projects?.totalCount ?? 0}
+                />
+            )}
             {loading && projectDetailsPending && (<PendingMessage />)}
             <Map
                 mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
@@ -286,22 +301,6 @@ function ExploreDeepMapView(props: Props) {
                             layout: clusterPointTextLayout,
                         }}
                     />
-                    {clusterClicked && clickedLngLat && (
-                        <MapTooltip
-                            coordinates={clickedLngLat}
-                            tooltipOptions={tooltipOptions}
-                        >
-                            <MapTooltipDetails
-                                projectDetails={projectDetails?.projects?.results ?? undefined}
-                                onTooltipCloseButtonClick={handleTooltipClose}
-                                page={page}
-                                pageSize={pageSize}
-                                setPage={setPage}
-                                setPageSize={setPageSize}
-                                totalCount={projectDetails?.projects?.totalCount ?? 0}
-                            />
-                        </MapTooltip>
-                    )}
                 </MapSource>
             </Map>
         </div>
