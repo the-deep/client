@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     TextArea,
@@ -18,6 +18,7 @@ import {
 import NonFieldError from '#components/NonFieldError';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { EntryAction } from '#components/entryReview/commentConstants';
+import UserContext from '#base/context/UserContext';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import {
     EntryComment,
@@ -61,6 +62,9 @@ function CommentForm(props: Props) {
     } = props;
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const {
+        user,
+    } = useContext(UserContext);
 
     const {
         pristine,
@@ -104,9 +108,6 @@ function CommentForm(props: Props) {
             className={_cs(styles.commentForm, className)}
             onSubmit={createSubmitHandler(validate, setError, editComment)}
         >
-            <NonFieldError
-                error={error}
-            />
             <Container
                 className={styles.container}
                 footerActions={(
@@ -119,20 +120,21 @@ function CommentForm(props: Props) {
                     </Button>
                 )}
             >
+                <NonFieldError
+                    error={error}
+                />
                 <TextArea
                     name="text"
-                    className={styles.commentArea}
-                    rows={3}
+                    inputSectionClassName={styles.commentArea}
+                    rows={5}
                     value={value.text}
                     onChange={setFieldValue}
+                    label={user?.displayName}
                     error={error?.text}
                     autoFocus
-                    // TODO: create a new variant for input container
-                    // with removed border and filled background
                 />
                 <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
-                    inputSectionClassName={styles.selectInput}
                     label="Assignees"
                     value={value.mentionedUsers}
                     projectId={projectId}
@@ -140,7 +142,6 @@ function CommentForm(props: Props) {
                     options={members}
                     onOptionsChange={setMembers}
                     error={getErrorString(error?.mentionedUsers)}
-                    variant="general"
                 />
             </Container>
         </form>

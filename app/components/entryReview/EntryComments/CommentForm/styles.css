@@ -1,18 +1,14 @@
 .comment-form {
     display: flex;
-    background-color: var(--dui-color-background);
+    gap: var(--dui-spacing-medium);
 
     .container {
         display: flex;
         flex-grow: 1;
         background-color: var(--dui-color-white);
-        padding: unset;
 
         .comment-area {
             background-color: var(--dui-color-background-information);
-        }
-        .select-input {
-            border-radius: unset;
         }
     }
 }

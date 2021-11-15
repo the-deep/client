@@ -1,64 +1,58 @@
 .comment-container {
     display: flex;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     background-color: var(--dui-color-white);
-    padding: var(--dui-spacing-large) 0;
     gap: var(--dui-spacing-small);
-
-    .header {
-        display: flex;
-
-        .heading-container {
-            display: flex;
-            align-self: stretch;
-            justify-content: center;
-
-            .heading {
-                display: flex;
-                align-items: center;
-                font-size: var(--font-size-small);
-                font-weight: var(--dui-font-weight-light);
-                gap: var(--dui-spacing-extra-small);
-
-                .user-name {
-                    font-size: var(--font-size-medium);
-                    font-weight: var(--dui-font-weight-bold);
-                }
-
-                .details {
-                    color: var(--dui-color-text);
-                }
-            }
-        }
-
-        .button {
-            margin-left: var(--dui-spacing-small);
-        }
-    }
 
     .content {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        border-bottom: 1px solid var(--dui-color-separator);
-        padding: var(--dui-spacing-small) 0;
+
+        .user-name {
+            font-size: var(--font-size-medium);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .details {
+            color: var(--dui-color-text);
+        }
+
+        .comment-section {
+            display: flex;
+            align-items: center;
+
+            &.inline {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+        .info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
     }
 
-    .footer-actions{
+    .header-actions{
         color: var(--dui-color-accent);
     }
 
-    .modified {
-        display: flex;
-        color: var(--dui-color-text-description);
-        font-size: var(--dui-font-size-medium);
+    .comment {
+        background-color: transparent;
+        color: var(--dui-color-text);
     }
 
-    .comment {
-        padding: unset;
-        color: var(--dui-color-text);
+    .edit-comment {
+        background-color: var(--dui-color-background-information);
     }
 
     .date {
         color: var(--dui-color-text-description);
         font-size: var(--dui-font-size-medium);
+    }
+
+    &:hover {
+        background-color: var(--dui-color-background-hover);
     }
 }
