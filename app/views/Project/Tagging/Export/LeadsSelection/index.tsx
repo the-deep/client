@@ -141,8 +141,8 @@ const PROJECT_LEADS = gql`
 interface Props {
     className?: string;
     projectId: string;
-    filterOnlyUnprotected: boolean; // TODO handle this
-    hasAssessment?: boolean; // TODO handle this
+    filterOnlyUnprotected: boolean;
+    hasAssessment?: boolean;
     onSelectLeadChange: (values: string[]) => void;
     selectedLeads: string[];
     selectAll: boolean;
@@ -200,7 +200,13 @@ function LeadsSelection(props: Props) {
 
     const handleSelectAll = useCallback((value: boolean) => {
         onSelectAllChange(value);
-        onSelectLeadChange([]);
+        if (value) {
+            onSelectLeadChange([]);
+        } else {
+            // NOTE no leads selected in this case. If we set []
+            // all the leads will be selected which we don't want.
+            onSelectLeadChange(['-1']);
+        }
     }, [onSelectAllChange, onSelectLeadChange]);
 
     const handleSelection = useCallback((_: boolean, id: string) => {

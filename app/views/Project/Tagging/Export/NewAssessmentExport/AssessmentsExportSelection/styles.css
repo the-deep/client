@@ -30,11 +30,6 @@
                     flex-basis: 50%;
                     flex-direction: column;
                 }
-
-                .save-and-export {
-                    display: flex;
-                    align-self: flex-end;
-                }
             }
         }
 

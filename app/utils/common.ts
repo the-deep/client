@@ -8,6 +8,7 @@ import {
     isNotDefined,
     compareNumber,
     isTruthyString,
+    formatDateToString,
     padStart,
 } from '@togglecorp/fujs';
 
@@ -174,15 +175,15 @@ export function convertDateToIsoDateTime(dateString: string | undefined | null, 
     }
     const date = new Date(dateString);
     if (opts?.endOfDay) {
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-    } else {
         date.setHours(23);
         date.setMinutes(59);
         date.setSeconds(59);
         date.setMilliseconds(999);
+    } else {
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
     }
 
     return date.toISOString();
@@ -203,3 +204,25 @@ export function flatten<A, K>(
         ...flatten(itemsByChildren, valueSelector, childSelector),
     ];
 }
+export function generateFilename(title: string, format: string) {
+    return `${formatDateToString(new Date(), 'yyyyMMdd')}_DEEP_${title}.${format}`;
+}
+
+/*
+export function flatten<A>(a: A[], childSelector: (item: A) => A[] | undefined): A[];
+export function flatten<A>(a: A, childSelector: (item: A) => A[] | undefined): A;
+export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefined): A[] | A {
+    if (Array.isArray(a)) {
+        const t = a.map((v) => flatten(v, childSelector));
+        return t;
+    }
+    const child = childSelector(a);
+    if (Array.isArray(child)) {
+        return [
+            a,
+            ...child.map((v) => flatten(v, childSelector)),
+        ];
+    }
+    return a;
+}
+*/
