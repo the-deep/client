@@ -14,8 +14,10 @@ import {
     SourceFilterOptionsQueryVariables,
     ExportDataTypeEnum,
 } from '#generated/types';
+import { generateFilename } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import _ts from '#ts';
+
 import ExportPreview from '../../ExportPreview';
 import LeadsSelection from '../../LeadsSelection';
 import styles from './styles.css';
@@ -58,7 +60,7 @@ function AssessmentsExportSelection(props: Props) {
     const [queryTitle, setQueryTitle] = useState<string>();
     const [previewId, setPreviewId] = useState<string | undefined>(undefined);
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-    const [selectAll, setSelectAll] = useState<boolean>(true); // TODO pass this to API
+    const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [
@@ -69,6 +71,9 @@ function AssessmentsExportSelection(props: Props) {
     ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
         CREATE_EXPORT,
         {
+            refetchQueries: [
+                'ProjectExports',
+            ],
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {
@@ -93,6 +98,7 @@ function AssessmentsExportSelection(props: Props) {
     );
 
     const startExport = useCallback((preview: boolean, type: Exclude<ExportDataTypeEnum, 'ENTRIES'>) => {
+        const defaultTitle = generateFilename('Assessments_Export', 'xlsx');
         const data = {
             exportType: 'EXCEL' as const,
             format: 'XLSX' as const,
@@ -101,9 +107,11 @@ function AssessmentsExportSelection(props: Props) {
             filters: {
                 ...filterValues,
                 ids: selectedLeads,
+                excludeProvidedLeadsId: selectAll,
             },
-            title: queryTitle ?? 'export', // TODO make title options in API
+            title: queryTitle ?? defaultTitle,
         };
+
         createExport({
             variables: {
                 projectId,
@@ -115,6 +123,7 @@ function AssessmentsExportSelection(props: Props) {
         projectId,
         filterValues,
         selectedLeads,
+        selectAll,
         queryTitle,
     ]);
 
@@ -130,10 +139,6 @@ function AssessmentsExportSelection(props: Props) {
         setPreviewId(undefined);
         startExport(false, 'ASSESSMENTS');
     }, [startExport]);
-
-    const handleSaveAndExport = () => {
-        startExport(false, 'ASSESSMENTS'); // TODO here type is hard coded. handle planed assesssments. needs designer perspective
-    };
 
     return (
         <div className={_cs(className, styles.export)}>
@@ -185,15 +190,6 @@ function AssessmentsExportSelection(props: Props) {
                             label="Query title"
                             placeholder="Query title"
                         />
-                        <Button
-                            name="startExport"
-                            variant="tertiary"
-                            onClick={handleSaveAndExport}
-                            className={styles.saveAndExport}
-                            disabled={!queryTitle}
-                        >
-                            Save & Export
-                        </Button>
                     </div>
                 </ExpandableContainer>
                 <Footer
@@ -210,7 +206,7 @@ function AssessmentsExportSelection(props: Props) {
                             <Button
                                 name="startPlannedAssessmentExport"
                                 onClick={handlePlannedAssessmentExportClick}
-                                disabled={createExportPending}
+                                disabled={createExportPending || true}
                             >
                                 {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
                             </Button>

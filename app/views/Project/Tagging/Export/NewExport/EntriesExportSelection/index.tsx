@@ -21,6 +21,7 @@ import {
     ExportExportTypeEnum,
     ExportFormatEnum,
 } from '#generated/types';
+import { generateFilename } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import {
     Node,
@@ -113,22 +114,20 @@ const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
 
 interface ExportReportStructure {
     id: string;
-    levels: ExportReportStructure[];
+    levels?: ExportReportStructure[];
 }
 
 interface ReportStructureLevel {
     id: string;
     title: string;
-    sublevels: ReportStructureLevel[];
+    sublevels?: ReportStructureLevel[];
 }
 
 const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] => (
     nodes.filter((node) => node.selected)
         .map((node) => ({
             id: node.key,
-            levels: node.nodes
-                ? createReportStructureForExport(node.nodes)
-                : [],
+            ...(node.nodes && { levels: createReportStructureForExport(node.nodes) }),
         }))
 );
 
@@ -138,9 +137,7 @@ const createReportLevels = (nodes: Node[]): ReportStructureLevel[] => (
         .map((node) => ({
             id: node.key,
             title: node.title,
-            sublevels: node.nodes
-                ? createReportLevels(node.nodes)
-                : [],
+            ...(node.nodes && { sublevels: createReportLevels(node.nodes) }),
         }))
 );
 
@@ -195,7 +192,7 @@ function EntriesExportSelection(props: Props) {
     const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-    const [selectAll, setSelectAll] = useState<boolean>(true); // TODO use this value in export
+    const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     const [
@@ -247,6 +244,9 @@ function EntriesExportSelection(props: Props) {
     ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
         CREATE_EXPORT,
         {
+            refetchQueries: [
+                'ProjectExports',
+            ],
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {
@@ -284,10 +284,6 @@ function EntriesExportSelection(props: Props) {
         includeSubSector,
     ]);
 
-    const handleReportStructureVariantChange = useCallback((value: string) => {
-        setReportStructureVariant(value);
-    }, []);
-
     const startExport = useCallback((preview: boolean) => {
         const exportType = mapExportType[activeExportFormat];
         // NOTE: structure and level depict the same thing but are different in structure
@@ -304,6 +300,7 @@ function EntriesExportSelection(props: Props) {
         const generatedReportStructure = createReportStructureForExport(reportStructure);
         const reportTextWidgetIds = createWidgetIds(textWidgets);
         const reportExportingWidgets = createWidgetIds(contextualWidgets);
+        const defaultTitle = generateFilename('Entries_Export', activeExportFormat.toLowerCase());
 
         const data = {
             excelDecoupled,
@@ -311,6 +308,7 @@ function EntriesExportSelection(props: Props) {
             filters: {
                 ...filterValues,
                 ids: selectedLeads,
+                excludeProvidedLeadsId: selectAll,
             },
             format: activeExportFormat,
             isPreview: preview,
@@ -323,8 +321,9 @@ function EntriesExportSelection(props: Props) {
             reportStructure: generatedReportStructure,
             reportTextWidgetIds,
             type: 'ENTRIES' as const,
-            title: queryTitle ?? 'export', // TODO make it options in server
+            title: queryTitle ?? defaultTitle,
         };
+
         createExport({
             variables: {
                 projectId,
@@ -343,6 +342,7 @@ function EntriesExportSelection(props: Props) {
         reportShowGroups,
         reportShowLeadEntryId,
         reportStructure,
+        selectAll,
         selectedLeads,
         textWidgets,
         projectId,
@@ -424,7 +424,7 @@ function EntriesExportSelection(props: Props) {
                             onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
                             onReportShowAssessmentDataChange={setReportShowAssessmentData}
                             onReportShowEntryWidgetDataChange={setReportShowEntryWidgetData}
-                            onReportStructureVariantChange={handleReportStructureVariantChange}
+                            onReportStructureVariantChange={setReportStructureVariant}
                             onExcelDecoupledChange={setExcelDecoupled}
                             onIncludeSubSectorChange={setIncludeSubSector}
                             includeSubSector={includeSubSector}
@@ -456,15 +456,6 @@ function EntriesExportSelection(props: Props) {
                                 placeholder="Query title"
                                 className={styles.queryInput}
                             />
-                            <Button
-                                name="startExport"
-                                variant="tertiary"
-                                onClick={handleEntryExport}
-                                className={styles.saveAndExport}
-                                disabled={!queryTitle}
-                            >
-                                Save & Export
-                            </Button>
                         </div>
                     </ExpandableContainer>
                 </div>

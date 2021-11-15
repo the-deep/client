@@ -3,6 +3,7 @@ import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
 import { RiFileExcel2Fill, RiFileWord2Fill } from 'react-icons/ri';
+import { AiOutlineRedo } from 'react-icons/ai';
 import { FaFilePdf } from 'react-icons/fa';
 import {
     Pager,
@@ -30,6 +31,10 @@ import {
     DeleteExportMutation,
     DeleteExportMutationVariables,
 } from '#generated/types';
+import {
+    convertDateToIsoDateTime,
+} from '#utils/common';
+import useDebouncedValue from '#hooks/useDebouncedValue';
 import { createDateColumn } from '#components/tableHelpers';
 import _ts from '#ts';
 
@@ -45,9 +50,8 @@ const statusIconMap: Record<Export['status'], ReactElement> = {
     STARTED: <VscLoading />,
     SUCCESS: <IoDownloadOutline />,
     FAILURE: <IoClose />,
-    CANCELED: <IoClose />, // TODO approprite icon
+    CANCELED: <AiOutlineRedo />,
 };
-
 const statusVariantMap: Record<Export['status'], 'default' | 'accent' | 'complement1' | 'complement2'> = {
     PENDING: 'default',
     STARTED: 'default',
@@ -70,14 +74,14 @@ const exportFormatIconMap: Record<Export['format'], ReactElement> = {
 };
 const maxItemsPerPage = 25;
 const pollInterval = 5000;
-function exportKeySelector(d: Export) {
-    return d.id;
-}
-
 const defaultSorting = {
     name: 'exportedAt',
     direction: 'asc',
 };
+
+function exportKeySelector(d: Export) {
+    return d.id;
+}
 
 interface DateRangeValue {
     startDate: string;
@@ -90,6 +94,9 @@ const PROJECT_EXPORTS = gql`
         $page: Int,
         $pageSize: Int,
         $ordering: String,
+        $exportedAtGte: DateTime,
+        $exportedAtLte: DateTime,
+        $search: String,
         $type: [ExportDataTypeEnum!],
     ) {
         project(id: $projectId) {
@@ -97,6 +104,9 @@ const PROJECT_EXPORTS = gql`
                 page: $page,
                 pageSize: $pageSize,
                 ordering: $ordering,
+                exportedAtGte: $exportedAtGte,
+                exportedAtLte: $exportedAtLte,
+                search: $search,
                 type: $type,
             ) {
                 totalCount
@@ -130,6 +140,8 @@ const DELETE_EXPORT = gql`
     }
 `;
 
+const debounceTime = 500;
+
 interface Props {
     projectId: string;
     className?: string;
@@ -144,8 +156,9 @@ function ExportHistory(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState(1);
-    const [exportedAt, setExportedAt] = useState<DateRangeValue>(); // TODO use in filter
-    const [searchText, setSearchText] = useState<string>(); // TODO use in filter
+    const [exportedAt, setExportedAt] = useState<DateRangeValue>();
+    const [searchText, setSearchText] = useState<string>();
+    const debouncedSearchText = useDebouncedValue(searchText, debounceTime);
 
     const alert = useAlert();
     const sortState = useSortState();
@@ -164,10 +177,23 @@ function ExportHistory(props: Props) {
                 page: activePage,
                 pageSize: maxItemsPerPage,
                 ordering,
+                exportedAtGte: convertDateToIsoDateTime(exportedAt?.startDate),
+                exportedAtLte: convertDateToIsoDateTime(
+                    exportedAt?.endDate,
+                    { endOfDay: true },
+                ),
+                search: debouncedSearchText,
                 type,
             } : undefined
         ),
-        [projectId, activePage, ordering, type],
+        [
+            projectId,
+            activePage,
+            ordering,
+            type,
+            exportedAt,
+            debouncedSearchText,
+        ],
     );
 
     const {
@@ -182,7 +208,7 @@ function ExportHistory(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                if (response.project?.exports?.results?.some((v) => v.status === 'PENDING')) {
+                if (response.project?.exports?.results?.some((v) => v.status === 'PENDING' || 'STARTED')) {
                     startPolling(pollInterval);
                 } else {
                     stopPolling();
@@ -319,6 +345,7 @@ function ExportHistory(props: Props) {
                     />
                     <TextInput
                         name="searchText"
+                        autoFocus
                         icons={<IoSearch />}
                         label="Search"
                         placeholder="Search"
