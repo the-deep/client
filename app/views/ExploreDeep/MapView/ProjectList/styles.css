@@ -1,0 +1,48 @@
+.project-list {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+    background-color: var(--dui-color-foreground);
+    width: 100%;
+    max-width: 450px;
+    height: 100%;
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
+
+        .project-list-container {
+            .heading {
+                color: var(--dui-color-brand);
+            }
+
+            .date {
+                line-height: 2;
+                color: var(--dui-color-text-description);
+                font-weight: var(--dui-font-weight-regular);
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: unset;
+
+        .pager {
+            display: flex;
+            justify-content: center;
+            overflow: auto;
+        }
+    }
+
+    .inline {
+        display: flex;
+        justify-content: space-between;
+        margin: var(--dui-spacing-small) 0;
+    }
+}
