@@ -14,6 +14,7 @@ import CommaSeparateItems from '#components/CommaSeparateItems';
 import { commentTypeToTextMap } from '#components/entryReview/commentConstants';
 import { EntryComment } from '#types';
 import EditCommentForm from './EditCommentForm';
+
 import styles from './styles.css';
 
 interface Props {
@@ -56,12 +57,24 @@ function Comment(props: Props) {
     return (
         <Container
             className={_cs(styles.commentContainer, className)}
-            headerClassName={styles.header}
             headingSize="extraSmall"
-            headingContainerClassName={styles.headingContainer}
-            headingClassName={styles.heading}
-            heading={(
+            headerActionsContainerClassName={styles.headerActions}
+            headerActions={mentionedUsersDetails.length > 0 && (
                 <>
+                    Assigned to
+                    <CommaSeparateItems
+                        items={mentionedUsersDetails}
+                    />
+                </>
+            )}
+            contentClassName={styles.content}
+        >
+            <>
+                <div className={_cs(
+                    styles.commentSection,
+                    isEditModalVisible && styles.inline,
+                )}
+                >
                     <span className={styles.userName}>
                         {createdByDetails?.name}
                     </span>
@@ -73,7 +86,7 @@ function Comment(props: Props) {
                     )}
                     {isEditModalVisible ? (
                         <EditCommentForm
-                            className={styles.comment}
+                            className={styles.editComment}
                             comment={comment}
                             onEditSuccess={handleSuccess}
                             onEditCancel={hideEditModal}
@@ -85,36 +98,23 @@ function Comment(props: Props) {
                             {latest.text}
                         </Card>
                     ))}
-                </>
-            )}
-            footerActionsContainerClassName={styles.footerActions}
-            footerActions={mentionedUsersDetails.length > 0 && (
-                <>
-                    Assigned to
-                    <CommaSeparateItems
-                        className={styles.users}
-                        items={mentionedUsersDetails}
+                </div>
+                <div className={styles.info}>
+                    <DateOutput
+                        className={styles.date}
+                        value={createdAt}
+                        format="hh:mm aaa, MMM dd, yyyy"
                     />
-                </>
-            )}
-            contentClassName={styles.content}
-        >
-            <>
-                <DateOutput
-                    className={styles.date}
-                    value={createdAt}
-                    format="hh:mm aaa, MMM dd, yyyy"
-                />
-                {isEditable && (
-                    <QuickActionButton
-                        className={styles.button}
-                        name="editButton"
-                        onClick={showEditModal}
-                        title="Edit comment"
-                    >
-                        <FiEdit2 />
-                    </QuickActionButton>
-                )}
+                    {isEditable && !isEditModalVisible && (
+                        <QuickActionButton
+                            name="editButton"
+                            onClick={showEditModal}
+                            title="Edit comment"
+                        >
+                            <FiEdit2 />
+                        </QuickActionButton>
+                    )}
+                </div>
             </>
         </Container>
     );

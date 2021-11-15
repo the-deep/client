@@ -88,7 +88,7 @@ function ListRenderer(props: ProjectListProps) {
             <TextOutput
                 value={frameworkTitle}
             />
-            <div className={styles.description}>
+            <div>
                 {description}
             </div>
         </ControlledExpandableContainer>
