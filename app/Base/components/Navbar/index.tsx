@@ -17,6 +17,7 @@ import {
 } from 'react-icons/io5';
 
 import Svg from '#components/Svg';
+import Notifications from '#components/Notifications';
 import SmartNavLink from '#base/components/SmartNavLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
@@ -108,9 +109,10 @@ function Navbar(props: Props) {
                     </QuickActionLink>
                     <QuickActionDropdownMenu
                         label={<IoNotificationsOutline />}
-                        popupContentClassName={styles.notificationContent}
+                        popupClassName={styles.popup}
+                        persistent
                     >
-                        You don&apos;t have any notification
+                        <Notifications />
                     </QuickActionDropdownMenu>
                 </div>
             </div>
