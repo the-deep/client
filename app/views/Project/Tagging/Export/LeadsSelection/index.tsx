@@ -18,6 +18,7 @@ import {
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
+import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import {
     ProjectSourceListQuery,
     ProjectSourceListQueryVariables,
@@ -200,13 +201,7 @@ function LeadsSelection(props: Props) {
 
     const handleSelectAll = useCallback((value: boolean) => {
         onSelectAllChange(value);
-        if (value) {
-            onSelectLeadChange([]);
-        } else {
-            // NOTE no leads selected in this case. If we set []
-            // all the leads will be selected which we don't want.
-            onSelectLeadChange(['-1']);
-        }
+        onSelectLeadChange([]);
     }, [onSelectAllChange, onSelectLeadChange]);
 
     const handleSelection = useCallback((_: boolean, id: string) => {
@@ -286,7 +281,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, string>(
                 'source',
                 'Publisher',
-                (item) => item?.source?.title ?? item?.source?.mergedAs?.title,
+                (item) => item.source && organizationTitleSelector(item.source),
                 {
                     sortable: true,
                     columnWidth: 160,
@@ -295,7 +290,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, string>(
                 'authors',
                 'Authors',
-                (item) => item?.authors?.map((v) => v.title ?? v.mergedAs?.title).join(','),
+                (item) => item?.authors?.map((v) => organizationTitleSelector(v)).join(','),
                 {
                     sortable: false,
                     columnWidth: 144,

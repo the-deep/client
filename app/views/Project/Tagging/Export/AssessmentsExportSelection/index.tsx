@@ -18,8 +18,8 @@ import { generateFilename } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import _ts from '#ts';
 
-import ExportPreview from '../../ExportPreview';
-import LeadsSelection from '../../LeadsSelection';
+import ExportPreview from '../ExportPreview';
+import LeadsSelection from '../LeadsSelection';
 import styles from './styles.css';
 
 const CREATE_EXPORT = gql`
@@ -206,7 +206,7 @@ function AssessmentsExportSelection(props: Props) {
                             <Button
                                 name="startPlannedAssessmentExport"
                                 onClick={handlePlannedAssessmentExportClick}
-                                disabled={createExportPending || true}
+                                disabled
                             >
                                 {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
                             </Button>

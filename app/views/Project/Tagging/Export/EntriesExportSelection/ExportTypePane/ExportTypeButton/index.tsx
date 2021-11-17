@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
@@ -29,20 +29,16 @@ function ExportTypePaneButton(props: Props) {
         onActiveExportFormatChange,
     } = props;
 
-    const handleExportTypeClick = useCallback(() => {
-        onActiveExportFormatChange(buttonKey);
-    }, [buttonKey, onActiveExportFormatChange]);
-
     return (
         <QuickActionButton
-            name={undefined}
+            name={buttonKey}
             className={_cs(
                 className,
                 styles.exportTypeSelect,
                 isActive && styles.active,
             )}
             spacing="loose"
-            onClick={handleExportTypeClick}
+            onClick={onActiveExportFormatChange}
             big
             title={title}
         >
