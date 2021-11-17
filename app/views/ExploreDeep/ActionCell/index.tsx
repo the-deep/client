@@ -4,6 +4,7 @@ import {
     Button,
     ConfirmButton,
     useAlert,
+    ButtonProps,
 } from '@the-deep/deep-ui';
 import { useMutation, gql } from '@apollo/client';
 
@@ -26,7 +27,7 @@ export interface Props {
     membershipPending: boolean;
     isMember: boolean;
     onMemberStatusChange: () => void;
-    variant?: 'general' | 'action' | 'primary' | 'secondary' | 'tertiary' | 'transparent';
+    variant?: ButtonProps<string>['variant'];
 }
 
 const CANCEL_JOIN_PROJECT = gql`

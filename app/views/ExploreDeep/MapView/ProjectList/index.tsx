@@ -101,7 +101,7 @@ function ListRenderer(props: ProjectListProps) {
                 className={styles.joinButton}
                 projectId={projectId}
                 membershipPending={projectDetails?.membershipPending}
-                isMember={!projectDetails?.currentUserRole}
+                isMember={!!projectDetails?.currentUserRole}
                 onMemberStatusChange={refetchProjectDetails}
                 variant="primary"
             />
