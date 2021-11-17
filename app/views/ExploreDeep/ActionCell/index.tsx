@@ -26,7 +26,7 @@ export interface Props {
     membershipPending: boolean;
     isMember: boolean;
     onMemberStatusChange: () => void;
-    variant: 'general' | 'action' | 'primary' | 'secondary' | 'tertiary' | 'transparent' | undefined;
+    variant?: 'general' | 'action' | 'primary' | 'secondary' | 'tertiary' | 'transparent';
 }
 
 const CANCEL_JOIN_PROJECT = gql`
