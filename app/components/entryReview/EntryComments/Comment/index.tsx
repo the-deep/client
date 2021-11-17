@@ -14,6 +14,7 @@ import CommaSeparateItems from '#components/CommaSeparateItems';
 import { commentTypeToTextMap } from '#components/entryReview/commentConstants';
 import { EntryComment } from '#types';
 import EditCommentForm from './EditCommentForm';
+
 import styles from './styles.css';
 
 interface Props {
@@ -56,28 +57,56 @@ function Comment(props: Props) {
     return (
         <Container
             className={_cs(styles.commentContainer, className)}
-            headerClassName={styles.header}
             headingSize="extraSmall"
-            headingContainerClassName={styles.headingContainer}
-            headingClassName={styles.heading}
-            heading={(
+            headerActionsContainerClassName={styles.headerActions}
+            headerActions={mentionedUsersDetails.length > 0 && (
                 <>
-                    {createdByDetails?.name}
-                    &nbsp;
-                    <span className={styles.details}>
-                        {`${commentTypeToTextMap[commentType]} the entry on`}
-                    </span>
+                    Assigned to
+                    <CommaSeparateItems
+                        items={mentionedUsersDetails}
+                    />
                 </>
             )}
-            headerActions={(
-                <>
+            contentClassName={styles.content}
+        >
+            <>
+                <div className={_cs(
+                    styles.commentSection,
+                    isEditModalVisible && styles.inline,
+                )}
+                >
+                    <span className={styles.userName}>
+                        {createdByDetails?.name}
+                    </span>
+                    &nbsp;
+                    {commentType !== 0 && (
+                        <span className={styles.details}>
+                            {`${commentTypeToTextMap[commentType]} the entry.`}
+                        </span>
+                    )}
+                    {isEditModalVisible ? (
+                        <EditCommentForm
+                            className={styles.editComment}
+                            comment={comment}
+                            onEditSuccess={handleSuccess}
+                            onEditCancel={hideEditModal}
+                        />
+                    ) : (latest?.text && (
+                        <Card
+                            className={styles.comment}
+                        >
+                            {latest.text}
+                        </Card>
+                    ))}
+                </div>
+                <div className={styles.info}>
                     <DateOutput
+                        className={styles.date}
                         value={createdAt}
                         format="hh:mm aaa, MMM dd, yyyy"
                     />
-                    {isEditable && (
+                    {isEditable && !isEditModalVisible && (
                         <QuickActionButton
-                            className={styles.button}
                             name="editButton"
                             onClick={showEditModal}
                             title="Edit comment"
@@ -85,46 +114,8 @@ function Comment(props: Props) {
                             <FiEdit2 />
                         </QuickActionButton>
                     )}
-                </>
-            )}
-            footerContentClassName={styles.footerContent}
-            footerContent={mentionedUsersDetails.length > 0 && (
-                <>
-                    Assigned to
-                    &nbsp;
-                    <CommaSeparateItems
-                        className={styles.users}
-                        items={mentionedUsersDetails}
-                    />
-                </>
-            )}
-            footerActionsContainerClassName={styles.footerActions}
-            footerActions={textHistory.length > 1 && (
-                <span className={styles.modified}>
-                    &nbsp;
-                    Last modified on
-                    &nbsp;
-                    <DateOutput
-                        value={latest.createdAt}
-                        format="hh:mm aaa, MMM dd, yyyy"
-                    />
-                </span>
-            )}
-        >
-            {isEditModalVisible ? (
-                <EditCommentForm
-                    className={styles.comment}
-                    comment={comment}
-                    onEditSuccess={handleSuccess}
-                    onEditCancel={hideEditModal}
-                />
-            ) : (latest?.text && (
-                <Card
-                    className={styles.comment}
-                >
-                    {latest.text}
-                </Card>
-            ))}
+                </div>
+            </>
         </Container>
     );
 }

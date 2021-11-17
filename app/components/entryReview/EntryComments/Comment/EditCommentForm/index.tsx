@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     TextArea,
     Button,
-    Container,
+    ContainerCard,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -89,10 +89,7 @@ function EditCommentForm(props: Props) {
             className={_cs(styles.editCommentForm, className)}
             onSubmit={createSubmitHandler(validate, setError, editComment)}
         >
-            <NonFieldError
-                error={error}
-            />
-            <Container
+            <ContainerCard
                 className={styles.container}
                 footerActions={(
                     <>
@@ -113,6 +110,9 @@ function EditCommentForm(props: Props) {
                     </>
                 )}
             >
+                <NonFieldError
+                    error={error}
+                />
                 <TextArea
                     name="text"
                     rows={3}
@@ -120,7 +120,7 @@ function EditCommentForm(props: Props) {
                     onChange={setFieldValue}
                     error={error?.text}
                 />
-            </Container>
+            </ContainerCard>
         </form>
     );
 }

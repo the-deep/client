@@ -1,47 +1,58 @@
 .comment-container {
     display: flex;
-    margin: var(--dui-spacing-medium);
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     background-color: var(--dui-color-white);
+    gap: var(--dui-spacing-small);
 
-    .header {
+    .content {
         display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-        .heading-container {
+        .user-name {
+            font-size: var(--font-size-medium);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .details {
+            color: var(--dui-color-text);
+        }
+
+        .comment-section {
             display: flex;
-            align-self: stretch;
-            justify-content: center;
+            align-items: center;
 
-            .heading {
-                display: flex;
-                align-items: center;
-
-                .details {
-                    color: var(--dui-color-text);
-                    font-weight: var(--dui-font-weight-medium);
-                }
+            &.inline {
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
-
-        .button {
-            margin-left: var(--dui-spacing-small);
-        }
-    }
-
-    .footer-content {
-        color: var(--dui-color-text);
-        .users {
-            color: var(--dui-color-black);
-        }
-    }
-
-    .footer-actions {
-        .modified {
+        .info {
             display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+    }
+
+    .header-actions{
+        color: var(--dui-color-accent);
     }
 
     .comment {
-        background-color: var(--dui-color-background-information);
+        background-color: transparent;
         color: var(--dui-color-text);
+    }
+
+    .edit-comment {
+        background-color: var(--dui-color-background-information);
+    }
+
+    .date {
+        color: var(--dui-color-text-description);
+        font-size: var(--dui-font-size-medium);
+    }
+
+    &:hover {
+        background-color: var(--dui-color-background-hover);
     }
 }

@@ -1,11 +1,14 @@
 .comment-form {
     display: flex;
-    margin: var(--dui-spacing-medium);
-    background-color: var(--dui-color-white);
+    gap: var(--dui-spacing-medium);
 
     .container {
         display: flex;
         flex-grow: 1;
         background-color: var(--dui-color-white);
+
+        .comment-area {
+            background-color: var(--dui-color-background-information);
+        }
     }
 }
