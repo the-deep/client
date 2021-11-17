@@ -4,6 +4,7 @@
 
     .stats-container {
         display: flex;
+        height: 40vh;
         gap: var(--dui-spacing-large);
 
         .left-container {
@@ -37,6 +38,19 @@
                 .info-item {
                     flex-basis: calc(100% / 3 - var(--dui-spacing-large));
                 }
+            }
+
+            .framework-container {
+                display: flex;
+                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                height: 100%;
+                overflow-y: auto;
+
+                .framework-list-container {
+                    padding: 0;
+                    gap: var(--dui-spacing-large);
+                }
+
             }
         }
 
