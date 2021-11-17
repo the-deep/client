@@ -14,12 +14,14 @@ import {
 
 import { ProjectDetailsForMapViewQuery } from '#generated/types';
 
+import ActionCell from '../../ActionCell';
 import styles from './styles.css';
 
 type ProjectDetail = NonNullable<NonNullable<NonNullable<ProjectDetailsForMapViewQuery['projects']>['results']>[number]>;
 
 interface ProjectListProps {
     projectId: string;
+    projectDetails: ProjectDetail;
     projectTitle: string;
     frameworkTitle?: string;
     description: string;
@@ -29,11 +31,13 @@ interface ProjectListProps {
     numberOfEntries?: number;
     expanded: boolean;
     onExpansionChange: (_: boolean, name: string) => void;
+    refetchProjectDetails: () => void;
 }
 
 function ListRenderer(props: ProjectListProps) {
     const {
         projectId,
+        projectDetails,
         projectTitle,
         frameworkTitle,
         startDate,
@@ -43,6 +47,7 @@ function ListRenderer(props: ProjectListProps) {
         numberOfUsers,
         expanded,
         onExpansionChange,
+        refetchProjectDetails,
     } = props;
 
     return (
@@ -63,6 +68,7 @@ function ListRenderer(props: ProjectListProps) {
                 />
             )}
             headingClassName={styles.heading}
+            contentClassName={styles.content}
             expansionTriggerArea="arrow"
             onExpansionChange={onExpansionChange}
             expanded={expanded}
@@ -91,6 +97,14 @@ function ListRenderer(props: ProjectListProps) {
             <div>
                 {description}
             </div>
+            <ActionCell
+                className={styles.joinButton}
+                projectId={projectId}
+                membershipPending={projectDetails?.membershipPending}
+                isMember={!projectDetails?.currentUserRole}
+                onMemberStatusChange={refetchProjectDetails}
+                variant="primary"
+            />
         </ControlledExpandableContainer>
     );
 }
@@ -105,6 +119,7 @@ interface Props {
     setPageSize: (pageSize: number) => void;
     onListCloseButtonClick: () => void;
     totalCount: number;
+    refetchProjectDetails: () => void;
 }
 
 function ProjectList(props: Props) {
@@ -116,6 +131,7 @@ function ProjectList(props: Props) {
         setPageSize,
         onListCloseButtonClick,
         totalCount,
+        refetchProjectDetails,
     } = props;
 
     const [
@@ -129,6 +145,7 @@ function ProjectList(props: Props) {
 
     const rendererParams = useCallback((_: string, datum: ProjectDetail): ProjectListProps => ({
         projectId: datum?.id,
+        projectDetails: datum,
         projectTitle: datum?.title,
         description: datum?.description,
         frameworkTitle: datum?.analysisFramework?.title,
@@ -138,9 +155,11 @@ function ProjectList(props: Props) {
         numberOfUsers: datum?.stats?.numberOfUsers ?? 0,
         onExpansionChange: handleExpansionChange,
         expanded: expandedProjectId === datum.id,
+        refetchProjectDetails,
     }), [
         handleExpansionChange,
         expandedProjectId,
+        refetchProjectDetails,
     ]);
 
     return (
