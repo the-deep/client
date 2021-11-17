@@ -109,7 +109,14 @@ function ProjectJoinModal(props: Props) {
 
                 if (!ok) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
-                    setError(formError);
+                    if (formError?.project) {
+                        setError({
+                            ...formError,
+                            [internal]: formError?.project as string,
+                        });
+                    } else {
+                        setError(formError);
+                    }
                 } else {
                     alert.show(
                         'Successfully sent join request.',

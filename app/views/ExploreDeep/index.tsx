@@ -113,10 +113,6 @@ function ExploreDeep(props: Props) {
         removeNull(data?.projectExploreStats?.topActiveProjects)
     ), [data?.projectExploreStats?.topActiveProjects]);
 
-    const frameworkList = useMemo(() => (
-        removeNull(data?.projectExploreStats?.topActiveFrameworks)
-    ), [data?.projectExploreStats?.topActiveFrameworks]);
-
     return (
         <Container
             className={_cs(styles.exploreDeep, className)}
@@ -175,14 +171,17 @@ function ExploreDeep(props: Props) {
                         className={styles.frameworkContainer}
                         heading="Top 5 most used frameworks"
                         headingDescription="Last 3 months"
+                        spacing="none"
                         headingSize="medium"
                         borderBelowHeader
                         borderBelowHeaderWidth="thin"
                         inlineHeadingDescription
+                        headerClassName={styles.header}
+                        headingContainerClassName={styles.heading}
                         contentClassName={styles.frameworkListContainer}
                     >
                         <ListView
-                            data={frameworkList ?? undefined}
+                            data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
                             keySelector={activeFrameworkKeySelector}
                             renderer={ActiveFrameworkItem}
                             rendererParams={activeFrameworkRendererParams}
@@ -194,6 +193,9 @@ function ExploreDeep(props: Props) {
                     heading="Top 5 most active project"
                     headingDescription="Last 3 months"
                     headingSize="medium"
+                    spacing="none"
+                    headerClassName={styles.header}
+                    headingContainerClassName={styles.heading}
                     borderBelowHeader
                     borderBelowHeaderWidth="thin"
                     inlineHeadingDescription
