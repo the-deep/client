@@ -204,7 +204,9 @@ function ExploreDeep(props: Props) {
                         />
                     </TabPanel>
                     <TabPanel name="map">
-                        <MapView />
+                        <MapView
+                            filters={filters}
+                        />
                     </TabPanel>
                 </Container>
             </Tabs>
