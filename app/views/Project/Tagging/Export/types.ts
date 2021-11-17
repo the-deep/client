@@ -57,10 +57,24 @@ export interface TreeSelectableWidget<T extends string> extends Node {
     id: T;
 }
 
+export interface Level {
+    id: string;
+    title: string;
+    sublevels?: Level[];
+}
+
+export interface ReportStructure {
+    title: string;
+    key: string;
+    selected: boolean;
+    draggable: boolean;
+    nodes?: ReportStructure[];
+}
+
 type AnalysisFrameworkRaw = NonNullable<NonNullable<ProjectFrameworkDetailsQuery['project']>['analysisFramework']>;
 
 export type AnalysisFramework = DeepReplace<AnalysisFrameworkRaw, Omit<WidgetType, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
 
 export type Widget = Pick<WidgetType, 'id' | 'title' | 'widgetId' | 'clientId' | 'order' | 'properties' | 'key'>;
 
-export type Export = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
+export type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];

@@ -28,14 +28,14 @@ import {
     TreeSelectableWidget,
     Widget,
     AnalysisFramework,
-} from '../../types';
+} from '../types';
 import {
     SECTOR_FIRST,
     createReportStructure,
     getWidgets,
-} from '../../utils';
-import ExportPreview from '../../ExportPreview';
-import LeadsSelection from '../../LeadsSelection';
+} from '../utils';
+import ExportPreview from '../ExportPreview';
+import LeadsSelection from '../LeadsSelection';
 import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.css';

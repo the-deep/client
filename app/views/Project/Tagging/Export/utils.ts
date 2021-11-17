@@ -5,8 +5,8 @@ import { Matrix2dProperties } from '#types/newAnalyticalFramework';
 import {
     Level,
     ReportStructure,
-} from '#types';
-import { AnalysisFramework } from './types';
+    AnalysisFramework,
+} from './types';
 
 export const SECTOR_FIRST = 'sectorFirst' as const;
 export const DIMENSION_FIRST = 'rowFirst' as const;
@@ -39,15 +39,15 @@ const transformLevelsRowFirst = (
         const sublevels = row.subRows.map((subRow) => {
             const columns = matrix2dProperties.columns.map((column) => (
                 {
-                    id: createId(column.clientId, row.clientId, subRow.clientId),
+                    id: createId(column.key, row.key, subRow.key),
                     title: column.label,
                     sublevels: includeSubColumn
                         ? column.subColumns.map((subColumn) => ({
                             id: createId(
-                                column.clientId,
-                                subColumn.clientId,
-                                row.clientId,
-                                subRow.clientId,
+                                column.key,
+                                subColumn.key,
+                                row.key,
+                                subRow.key,
                             ),
                             title: subColumn.label,
                         }))
@@ -55,14 +55,14 @@ const transformLevelsRowFirst = (
                 }));
 
             return ({
-                id: createId(row.clientId, subRow.clientId),
+                id: createId(row.key, subRow.key),
                 title: subRow.label,
                 sublevels: columns,
             });
         });
 
         return ({
-            id: row.clientId,
+            id: row.key,
             title: row.label,
             sublevels,
         });
@@ -79,21 +79,21 @@ const transformLevelsColumnFirst = (matrix2dProperties: Matrix2dProperties) => {
                 const rows = matrix2dProperties.rows.map((row) => {
                     const subRowsLevel = row.subRows.map((subRow) => ({
                         id: createId(
-                            column.clientId,
-                            subColumn.clientId,
-                            row.clientId,
-                            subRow.clientId,
+                            column.key,
+                            subColumn.key,
+                            row.key,
+                            subRow.key,
                         ),
                         title: subRow.label,
                     }));
                     return ({
-                        id: createId(column.clientId, subColumn.clientId, row.clientId),
+                        id: createId(column.key, subColumn.key, row.key),
                         title: row.label,
                         sublevels: subRowsLevel,
                     });
                 });
                 return ({
-                    id: createId(column.clientId, subColumn.clientId),
+                    id: createId(column.key, subColumn.key),
                     title: subColumn.label,
                     sublevels: rows,
                 });
@@ -101,11 +101,11 @@ const transformLevelsColumnFirst = (matrix2dProperties: Matrix2dProperties) => {
         } else {
             sublevels = matrix2dProperties.rows.map((row) => {
                 const subRowsLevel = row.subRows.map((subRow) => ({
-                    id: createId(column.clientId, row.clientId, subRow.clientId),
+                    id: createId(column.key, row.key, subRow.key),
                     title: subRow.label,
                 }));
                 return ({
-                    id: createId(column.clientId, row.clientId),
+                    id: createId(column.key, row.key),
                     title: row.label,
                     sublevels: subRowsLevel,
                 });
@@ -113,7 +113,7 @@ const transformLevelsColumnFirst = (matrix2dProperties: Matrix2dProperties) => {
         }
 
         return ({
-            id: column.clientId,
+            id: column.key,
             title: column.label,
             sublevels,
         });

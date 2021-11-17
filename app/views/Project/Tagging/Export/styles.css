@@ -23,5 +23,20 @@
                 }
             }
         }
+
+        .modal {
+            width: 96vw;
+            height: 96vh;
+
+            .body {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+
+                .selection {
+                    flex-grow: 1;
+                }
+            }
+        }
     }
 }

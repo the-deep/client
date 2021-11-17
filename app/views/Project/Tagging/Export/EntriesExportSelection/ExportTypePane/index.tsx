@@ -22,11 +22,11 @@ import _ts from '#ts';
 import {
     SECTOR_FIRST,
     DIMENSION_FIRST,
-} from '../../../utils';
+} from '../../utils';
 
 import TreeSelection from '#components/TreeSelection';
 
-import { Node, TreeSelectableWidget } from '../../../types';
+import { Node, TreeSelectableWidget } from '../../types';
 import ExportTypePaneButton from './ExportTypeButton';
 
 import styles from './styles.css';
@@ -152,7 +152,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
             </p>
         );
     }
-    // TODO previously true when entryFilterOptions had projectLabels;
+    // TODO: previously true when entryFilterOptions had projectLabels;
     const showEntryGroupsSelection = false;
 
     return (

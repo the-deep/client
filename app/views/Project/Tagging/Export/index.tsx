@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import {
+    Modal,
     Tabs,
     Tab,
     TabList,
@@ -16,8 +17,8 @@ import { useModalState } from '#hooks/stateManagement';
 import ProjectContext from '#base/context/ProjectContext';
 
 import ExportHistory from './ExportHistory';
-import NewAssessmentExport from './NewAssessmentExport';
-import NewExport from './NewExport';
+import AssessmentsExportSelection from './AssessmentsExportSelection';
+import EntriesExportSelection from './EntriesExportSelection';
 import styles from './styles.css';
 
 type ExportType = 'export-entry-history' | 'export-assessment-history';
@@ -102,16 +103,30 @@ function Export() {
                     </TabPanel>
                 </Tabs>
                 {newExportModalShown && activeProject && (
-                    <NewExport
-                        projectId={activeProject}
-                        onClose={hideCreateNewExportModal}
-                    />
+                    <Modal
+                        className={styles.modal}
+                        heading="Setup new export file"
+                        onCloseButtonClick={hideCreateNewExportModal}
+                        bodyClassName={styles.body}
+                    >
+                        <EntriesExportSelection
+                            className={styles.selection}
+                            projectId={activeProject}
+                        />
+                    </Modal>
                 )}
                 {newAssessmentModalShown && activeProject && (
-                    <NewAssessmentExport
-                        onClose={hideNewAssessmentModal}
-                        projectId={activeProject}
-                    />
+                    <Modal
+                        className={styles.modal}
+                        heading="Setup new assessment export file"
+                        onCloseButtonClick={hideNewAssessmentModal}
+                        bodyClassName={styles.body}
+                    >
+                        <AssessmentsExportSelection
+                            className={styles.selection}
+                            projectId={activeProject}
+                        />
+                    </Modal>
                 )}
             </div>
         </Container>

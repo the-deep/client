@@ -1,4 +1,4 @@
-import React, { useState, useMemo, ReactElement } from 'react';
+import React, { useState, useMemo, ReactElement, useCallback } from 'react';
 import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
@@ -39,34 +39,34 @@ import { createDateColumn } from '#components/tableHelpers';
 import _ts from '#ts';
 
 import {
-    Export,
+    ExportItem,
 } from '../types';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
 
-const statusIconMap: Record<Export['status'], ReactElement> = {
+const statusIconMap: Record<ExportItem['status'], ReactElement> = {
     PENDING: <VscLoading />,
     STARTED: <VscLoading />,
     SUCCESS: <IoDownloadOutline />,
     FAILURE: <IoClose />,
     CANCELED: <AiOutlineRedo />,
 };
-const statusVariantMap: Record<Export['status'], 'default' | 'accent' | 'complement1' | 'complement2'> = {
+const statusVariantMap: Record<ExportItem['status'], 'default' | 'accent' | 'complement1' | 'complement2'> = {
     PENDING: 'default',
     STARTED: 'default',
     SUCCESS: 'accent',
     FAILURE: 'complement1',
     CANCELED: 'complement2',
 };
-const statusLabelMap: Record<Export['status'], string> = {
+const statusLabelMap: Record<ExportItem['status'], string> = {
     PENDING: 'In queue to be exported',
     STARTED: 'Generating the file',
     SUCCESS: 'Download',
     FAILURE: 'Failed',
     CANCELED: 'Canceled',
 };
-const exportFormatIconMap: Record<Export['format'], ReactElement> = {
+const exportFormatIconMap: Record<ExportItem['format'], ReactElement> = {
     DOCX: <RiFileWord2Fill />,
     PDF: <FaFilePdf />,
     XLSX: <RiFileExcel2Fill />,
@@ -79,7 +79,7 @@ const defaultSorting = {
     direction: 'asc',
 };
 
-function exportKeySelector(d: Export) {
+function exportKeySelector(d: ExportItem) {
     return d.id;
 }
 
@@ -245,9 +245,16 @@ function ExportHistory(props: Props) {
         },
     );
 
+    const handleDeleteExport = useCallback((id: string) => deleteExport({
+        variables: {
+            projectId,
+            exportId: id,
+        },
+    }), [deleteExport, projectId]);
+
     const columns = useMemo(() => {
         const exportTypeColumn: TableColumn<
-        Export, string, IconsProps, TableHeaderCellProps
+        ExportItem, string, IconsProps, TableHeaderCellProps
         > = {
             id: 'format',
             title: 'Export Type',
@@ -264,7 +271,7 @@ function ExportHistory(props: Props) {
             }),
         };
         const statusColumn: TableColumn<
-        Export, string, StatusProps, TableHeaderCellProps
+        ExportItem, string, StatusProps, TableHeaderCellProps
         > = {
             id: 'status',
             title: 'Status',
@@ -282,7 +289,7 @@ function ExportHistory(props: Props) {
             }),
         };
         const actionsColumn: TableColumn<
-        Export, string, TableActionsProps, TableHeaderCellProps
+        ExportItem, string, TableActionsProps, TableHeaderCellProps
         > = {
             id: 'actions',
             title: '',
@@ -293,19 +300,12 @@ function ExportHistory(props: Props) {
             cellRenderer: TableActions,
             cellRendererParams: (_, data) => ({
                 id: data.id,
-                onDeleteClick: () => {
-                    deleteExport({
-                        variables: {
-                            projectId,
-                            exportId: data.id,
-                        },
-                    });
-                },
+                onDeleteClick: () => handleDeleteExport(data.id),
             }),
         };
         return ([
             exportTypeColumn,
-            createDateColumn<Export, string>(
+            createDateColumn<ExportItem, string>(
                 'exportedAt',
                 'Exported At',
                 (item) => item.exportedAt,
@@ -313,7 +313,7 @@ function ExportHistory(props: Props) {
                     sortable: true,
                 },
             ),
-            createStringColumn<Export, string>(
+            createStringColumn<ExportItem, string>(
                 'title',
                 'Title',
                 (item) => item.title,
@@ -325,7 +325,7 @@ function ExportHistory(props: Props) {
             statusColumn,
             actionsColumn,
         ]);
-    }, [deleteExport, projectId]);
+    }, [handleDeleteExport]);
 
     const pending = projectExportsPending || deleteExportPending;
 
