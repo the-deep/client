@@ -25,6 +25,9 @@ export type Framework = Omit<FrameworkWithWidgets, 'properties'> & { properties?
 
 export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order'>;
 type FrameworkInputWithWidgets = DeepReplace<FrameworkInputRaw, WidgetInputRaw, WidgetFromAF>;
-export type FrameworkInput = Omit<FrameworkInputWithWidgets, 'properties'> & { properties?: FrameworkProperties };
+export type FrameworkInput = Omit<FrameworkInputWithWidgets, 'properties' | 'previewImage'> & {
+    properties?: FrameworkProperties,
+    previewImage?: File | null,
+};
 export type Section = NonNullable<NonNullable<FrameworkInput['primaryTagging']>[number]>;
 export type Widget = WidgetFromAF;
