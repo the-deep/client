@@ -8,6 +8,7 @@
         flex-direction: column;
         background-color: var(--dui-color-background-information);
         max-height: calc(10em + 25vh);
+        overflow-y: auto;
         gap: var(--dui-spacing-medium);
     }
 }

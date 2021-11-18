@@ -1,13 +1,10 @@
 import { ApolloClientOptions, NormalizedCacheObject, InMemoryCache, ApolloLink as ApolloLinkFromClient, HttpLink } from '@apollo/client';
+import { ApolloLink } from 'apollo-link';
+import { RetryLink } from 'apollo-link-retry';
+import { createUploadLink } from 'apollo-upload-client';
 
 const GRAPHQL_ENDPOINT = process.env.REACT_APP_GRAPHQL_ENDPOINT as string;
 
-const link = new HttpLink({
-    uri: GRAPHQL_ENDPOINT,
-    credentials: 'include',
-}) as unknown as ApolloLinkFromClient;
-
-/*
 const link: ApolloLinkFromClient = ApolloLink.from([
     new RetryLink(),
     ApolloLink.split(
@@ -16,18 +13,13 @@ const link: ApolloLinkFromClient = ApolloLink.from([
             uri: GRAPHQL_ENDPOINT,
             credentials: 'include',
         }) as unknown as ApolloLink,
-        ApolloLink.from([
-            new RestLink({
-                uri: 'https://osmnames.idmcdb.org',
-            }) as unknown as ApolloLink,
-            new BatchHttpLink({
-                uri: GRAPHQL_ENDPOINT,
-                credentials: 'include',
-            }),
-        ]),
+        new HttpLink({
+            uri: GRAPHQL_ENDPOINT,
+            credentials: 'include',
+        }) as unknown as ApolloLink,
     ),
+
 ]) as unknown as ApolloLinkFromClient;
-*/
 
 const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
     link,

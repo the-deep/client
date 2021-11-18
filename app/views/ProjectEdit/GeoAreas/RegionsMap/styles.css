@@ -14,7 +14,6 @@
 
 .regions-pane {
     display: flex;
-    position: relative;
     flex-direction: column;
     flex-grow: 1;
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
@@ -47,13 +46,14 @@
 
     .region {
         position: absolute;
-        top: var(--dui-spacing-extra-large);
-        left: var(--dui-spacing-extra-large);
+        top: var(--dui-spacing-large);
+        left: var(--dui-spacing-large);
         z-index: 1;
     }
 
     .tab-panel-container {
         display: flex;
+        position: relative;
         flex-grow: 1;
         padding: 0;
         overflow-y: auto;

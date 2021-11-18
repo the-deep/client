@@ -13,7 +13,7 @@ interface Props<N> {
     className?: string;
     alt: string;
     name: N;
-    image: string | undefined;
+    image: string | null | undefined;
     value: File | null | undefined;
     onChange: (files: File | undefined, name: N) => void;
 }
@@ -32,13 +32,14 @@ function UploadImage<N extends string>(props: Props<N>) {
         <Container
             className={_cs(className, styles.uploadImage)}
             heading={_ts('analyticalFramework', 'previewImageHeading')}
+            headingSize="small"
             contentClassName={styles.container}
         >
             {(isDefined(value) || isDefined(image)) ? (
                 <div className={styles.content}>
                     <ImagePreview
                         className={styles.imagePreview}
-                        src={value ? URL.createObjectURL(value) : image}
+                        src={value ? URL.createObjectURL(value) : (image ?? undefined)}
                         hideTools
                         alt={alt}
                     />

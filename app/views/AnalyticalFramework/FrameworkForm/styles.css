@@ -45,6 +45,7 @@
             flex-basis: 50%;
             border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             padding: var(--dui-spacing-large);
+            height: 40vh;
         }
     }
 
