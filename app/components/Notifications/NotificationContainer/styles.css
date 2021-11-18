@@ -3,6 +3,7 @@
 
     .content {
         display: flex;
+        align-items: flex-start;
         gap: var(--dui-spacing-medium);
 
         .display-picture {
@@ -12,14 +13,15 @@
             --size: 2rem;
         }
 
-        .main-text {
-            display: inline;
+        .button {
+            flex-shrink: 0;
         }
     }
 
     .mid-container {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         gap: var(--dui-spacing-small);
 
         .date-container {
@@ -33,6 +35,10 @@
             }
         }
 
+        .main-text {
+            display: inline;
+        }
+
         .description {
             color: var(--dui-color-text-label);
             font-size: var(--dui-font-size-medium);
@@ -41,5 +47,9 @@
 
     &:hover {
         background-color: var(--dui-color-background-hover);
+    }
+
+    &.seen-notification {
+        opacity: 0.5;
     }
 }

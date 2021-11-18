@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     ListView,
     Tabs,
     PendingMessage,
+    Pager,
     Tab,
     TabList,
     Container,
@@ -20,6 +21,7 @@ import { Notification } from './types';
 
 import styles from './styles.css';
 
+/*
 interface NotificationGroupProps {
     title: string;
     children: React.ReactNode;
@@ -44,14 +46,22 @@ function NotificationGroup(props: NotificationGroupProps) {
     );
 }
 
-const notificationKeySelector = (n: Notification) => n.id;
 const notificationGroupKeySelector = (n: Notification) => n.status;
+*/
+const notificationKeySelector = (n: Notification) => n.id;
 
 const USER_NOTIFICATIONS = gql`
     query UserNotifications(
         $isPending: Boolean,
+        $page: Int,
+        $pageSize: Int,
     ) {
-        notifications(isPending: $isPending) {
+        notifications(
+            isPending: $isPending,
+            page: $page,
+            pageSize: $pageSize,
+        ) {
+            totalCount
             results {
                 id
                 notificationType
@@ -68,6 +78,8 @@ const USER_NOTIFICATIONS = gql`
     }
 `;
 
+const PAGE_SIZE = 25;
+
 interface Props {
     className?: string;
 }
@@ -78,10 +90,13 @@ function Notifications(props: Props) {
     } = props;
 
     const [activeView, setActiveView] = React.useState<'notifications' | 'requests' | undefined>('notifications');
+    const [page, setPage] = useState<number>(1);
 
     const variables = useMemo(() => ({
         isPending: activeView === 'requests',
-    }), [activeView]);
+        page,
+        pageSize: PAGE_SIZE,
+    }), [activeView, page]);
 
     const {
         data,
@@ -98,9 +113,11 @@ function Notifications(props: Props) {
         notification: item,
     }), []);
 
+    /*
     const notificationGroupRendererParams = useCallback((key: string) => ({
         title: key === 'UNSEEN' ? 'Pending' : 'Completed',
     }), []);
+    */
 
     const notifications = data?.notifications?.results as Notification[];
 
@@ -131,16 +148,28 @@ function Notifications(props: Props) {
                     </TabList>
                 )}
                 borderBelowHeader
+                footerActions={(
+                    <Pager
+                        activePage={page}
+                        itemsCount={(data?.notifications?.totalCount) ?? 0}
+                        maxItemsPerPage={PAGE_SIZE}
+                        onActivePageChange={setPage}
+                        itemsPerPageControlHidden
+                        hideInfo
+                    />
+                )}
             >
                 <ListView
                     data={notifications}
                     renderer={NotificationItem}
-                    groupKeySelector={notificationGroupKeySelector}
-                    groupRenderer={NotificationGroup}
-                    groupRendererParams={notificationGroupRendererParams}
-                    grouped
                     rendererParams={notificationRendererParams}
                     keySelector={notificationKeySelector}
+                    /*
+                        grouped
+                        groupRendererParams={notificationGroupRendererParams}
+                        groupKeySelector={notificationGroupKeySelector}
+                        groupRenderer={NotificationGroup}
+                    */
                 />
             </Container>
         </Tabs>
