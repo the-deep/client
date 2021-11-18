@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
+import { gql, useMutation } from '@apollo/client';
 import {
     IoChevronDown,
     IoChevronUp,
+    IoCheckmark,
+    IoArrowUndoSharp,
 } from 'react-icons/io5';
 import {
     Button,
+    QuickActionButton,
+    useAlert,
     Container,
     DateOutput,
 } from '@the-deep/deep-ui';
@@ -16,8 +21,33 @@ import {
 import Avatar from '#components/Avatar';
 import { useModalState } from '#hooks/stateManagement';
 
+import {
+    NotificationStatusUpdateMutation,
+    NotificationStatusUpdateMutationVariables,
+} from '#generated/types';
+
 import { Notification } from '../types';
 import styles from './styles.css';
+
+const NOTIFICATION_STATUS_UPDATE = gql`
+mutation NotificationStatusUpdate($notificationId: ID!, $newStatus: NotificationStatusEnum!) {
+    notificationStatusUpdate(data: { id: $notificationId, status: $newStatus }) {
+        ok
+        result {
+            id
+            notificationType
+            notificationTypeDisplay
+            data
+            project {
+                id
+                title
+            }
+            status
+            timestamp
+        }
+    }
+}
+`;
 
 interface Props {
     className?: string;
@@ -34,7 +64,9 @@ function NotificationContainer(props: Props) {
         className,
         userName,
         notification: {
+            id: notificationId,
             timestamp,
+            status,
         },
         description,
         descriptionLabel,
@@ -45,9 +77,51 @@ function NotificationContainer(props: Props) {
         toggleDescriptionVisibility,
     ] = useModalState(false);
 
+    const alert = useAlert();
+
+    const [
+        updateStatus,
+    ] = useMutation<NotificationStatusUpdateMutation, NotificationStatusUpdateMutationVariables>(
+        NOTIFICATION_STATUS_UPDATE,
+        {
+            onCompleted: (response) => {
+                if (response?.notificationStatusUpdate?.ok) {
+                    alert.show(
+                        'Successfully changed url status.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                }
+            },
+        },
+    );
+
+    const handleUnseenClick = useCallback(() => {
+        updateStatus({
+            variables: {
+                notificationId,
+                newStatus: 'UNSEEN',
+            },
+        });
+    }, [updateStatus, notificationId]);
+
+    const handleSeenClick = useCallback(() => {
+        updateStatus({
+            variables: {
+                notificationId,
+                newStatus: 'SEEN',
+            },
+        });
+    }, [updateStatus, notificationId]);
+
     return (
         <Container
-            className={_cs(className, styles.notificationContainer)}
+            className={_cs(
+                className,
+                styles.notificationContainer,
+                status === 'SEEN' && styles.seenNotification,
+            )}
             contentClassName={styles.content}
         >
             <Avatar
@@ -83,6 +157,13 @@ function NotificationContainer(props: Props) {
                     </div>
                 )}
             </div>
+            <QuickActionButton
+                name={undefined}
+                className={styles.button}
+                onClick={status === 'SEEN' ? handleUnseenClick : handleSeenClick}
+            >
+                {status === 'SEEN' ? <IoArrowUndoSharp /> : <IoCheckmark />}
+            </QuickActionButton>
         </Container>
     );
 }
