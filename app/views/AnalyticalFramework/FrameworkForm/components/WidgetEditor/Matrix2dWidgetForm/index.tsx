@@ -210,10 +210,10 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultSubRowVal: PartialSubRowType = {
-    key: 'random',
+const defaultSubRowVal = (): PartialSubRowType => ({
+    key: randomString(),
     order: -1,
-};
+});
 interface SubRowInputProps {
     className?: string;
     value: PartialSubRowType;
@@ -308,10 +308,10 @@ function SubRowInput(props: SubRowInputProps) {
     );
 }
 
-const defaultRowVal: PartialRowType = {
-    key: 'random',
+const defaultRowVal = (): PartialRowType => ({
+    key: randomString(),
     order: -1,
-};
+});
 interface RowInputProps {
     className?: string;
     value: PartialRowType;
@@ -499,10 +499,10 @@ function RowInput(props: RowInputProps) {
     );
 }
 
-const defaultSubColumnVal: PartialSubColumnType = {
-    key: 'random',
+const defaultSubColumnVal = (): PartialSubColumnType => ({
+    key: randomString(),
     order: -1,
-};
+});
 interface SubColumnInputProps {
     className?: string;
     value: PartialSubColumnType;
@@ -597,10 +597,10 @@ function SubColumnInput(props: SubColumnInputProps) {
     );
 }
 
-const defaultColumnVal: PartialColumnType = {
-    key: 'random',
+const defaultColumnVal = (): PartialColumnType => ({
+    key: randomString(),
     order: -1,
-};
+});
 interface ColumnInputProps {
     className?: string;
     value: PartialColumnType;

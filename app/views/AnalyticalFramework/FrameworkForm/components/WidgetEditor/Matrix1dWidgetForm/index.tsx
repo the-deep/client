@@ -138,10 +138,10 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultCellVal: PartialCellType = {
-    key: 'random',
+const defaultCellVal = (): PartialCellType => ({
+    key: randomString(),
     order: -1,
-};
+});
 
 const rowKeySelector = (row: PartialRowType) => row.key;
 const cellKeySelector = (cell: PartialCellType) => cell.key;
@@ -241,10 +241,10 @@ function CellInput(props: CellInputProps) {
     );
 }
 
-const defaultRowVal: PartialRowType = {
-    key: 'random',
+const defaultRowVal = (): PartialRowType => ({
+    key: randomString(),
     order: -1,
-};
+});
 interface RowInputProps {
     className?: string;
     value: PartialRowType;

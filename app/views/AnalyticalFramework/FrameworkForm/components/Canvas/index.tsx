@@ -5,6 +5,7 @@ import {
 } from '@the-deep/deep-ui';
 import { GrDrag } from 'react-icons/gr';
 import {
+    IoGitBranchOutline,
     IoCreateOutline,
     IoCopyOutline,
     IoTrashBinOutline,
@@ -30,9 +31,11 @@ interface WidgetProps {
     clientId: string;
     onWidgetValueChange: (value: unknown, widgetName: string) => void;
     onWidgetEditClick: (widgetName: string) => void;
+    onWidgetConditionEditClick: (widgetName: string) => void;
     onWidgetDeleteClick: (widgetName: string) => void;
     onWidgetCloneClick: (widgetName: string) => void;
     showWidgetEdit: boolean | undefined;
+    showWidgetConditionEdit: boolean | undefined;
     showWidgetDelete: boolean | undefined;
     showWidgetClone: boolean | undefined;
     editMode: boolean | undefined;
@@ -47,8 +50,10 @@ function WidgetWrapper(props: WidgetProps) {
         clientId,
         onWidgetValueChange,
         onWidgetEditClick,
+        onWidgetConditionEditClick,
         onWidgetCloneClick,
         showWidgetEdit,
+        showWidgetConditionEdit,
         showWidgetClone,
         showWidgetDelete,
         editMode,
@@ -58,6 +63,7 @@ function WidgetWrapper(props: WidgetProps) {
         disabled,
     } = props;
 
+    // TODO: style conditional widgets differently
     return (
         <AttributeInput<string>
             key={clientId}
@@ -81,6 +87,18 @@ function WidgetWrapper(props: WidgetProps) {
                             disabled={editMode || disabled}
                         >
                             <IoCreateOutline />
+                        </QuickActionButton>
+                    )}
+                    {showWidgetConditionEdit && (
+                        <QuickActionButton
+                            className={styles.actionButton}
+                            name={clientId}
+                            onClick={onWidgetConditionEditClick}
+                            // FIXME: use translation
+                            title={widget.conditional ? 'Edit Widget Conditions' : 'Add Widget Conditions'}
+                            disabled={editMode || disabled}
+                        >
+                            <IoGitBranchOutline />
                         </QuickActionButton>
                     )}
                     {showWidgetClone && (
@@ -140,6 +158,7 @@ type Props<T> = {
     onWidgetOrderChange?: (widgets: Widget[]) => void;
     onWidgetDelete?: (widgetId: string, name: T) => void;
     onWidgetEdit?: (widgetId: string, name: T) => void;
+    onWidgetConditionEdit?: (widgetId: string, name: T) => void;
     onWidgetClone?: (widgetId: string, name: T) => void;
 } | {
     editMode: true;
@@ -147,6 +166,7 @@ type Props<T> = {
     onWidgetOrderChange?: never;
     onWidgetDelete?: never;
     onWidgetEdit?: never;
+    onWidgetConditionEdit?: never;
     onWidgetClone?: never;
 })
 
@@ -187,6 +207,15 @@ function Canvas<T>(props: Props<T>) {
         // eslint-disable-next-line react/destructuring-assignment
         [props.editMode, props.onWidgetEdit, name],
     );
+    const handleWidgetConditionEditClick = useCallback(
+        (widgetId: string) => {
+            if (!props.editMode && props.onWidgetConditionEdit) {
+                props.onWidgetConditionEdit(widgetId, name);
+            }
+        },
+        // eslint-disable-next-line react/destructuring-assignment
+        [props.editMode, props.onWidgetConditionEdit, name],
+    );
 
     const handleWidgetOrderChange = useCallback(
         (value: Widget[]) => {
@@ -214,7 +243,9 @@ function Canvas<T>(props: Props<T>) {
         widget: data,
         onWidgetValueChange: handleWidgetValueChange,
         showWidgetEdit: !props.editMode,
+        showWidgetConditionEdit: !props.editMode,
         onWidgetEditClick: handleWidgetEditClick,
+        onWidgetConditionEditClick: handleWidgetConditionEditClick,
         showWidgetDelete: !props.editMode,
         onWidgetDeleteClick: handleWidgetDeleteClick,
         showWidgetClone: !props.editMode,
@@ -225,6 +256,7 @@ function Canvas<T>(props: Props<T>) {
         isSecondary,
         handleWidgetValueChange,
         handleWidgetEditClick,
+        handleWidgetConditionEditClick,
         handleWidgetDeleteClick,
         handleWidgetCloneClick,
         // eslint-disable-next-line react/destructuring-assignment

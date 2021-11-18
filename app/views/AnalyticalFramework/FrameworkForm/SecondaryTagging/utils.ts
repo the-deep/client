@@ -5,6 +5,12 @@ import { Widget } from '#types/newAnalyticalFramework';
 
 import { PartialWidget } from '#components/framework/AttributeInput';
 
+export interface TempConditional {
+    widgetId: string,
+    title?: string;
+    value: NonNullable<Widget['conditional']> | undefined,
+}
+
 export function findWidget(
     widgets: Widget[] | undefined = [],
     widgetId: string,
@@ -33,15 +39,32 @@ export function injectWidget(
 
         if (isNotDefined(widgetIndex) || widgetIndex === -1) {
             const orderList = safeWidgets.map((w) => w.order);
-            Math.max(...orderList, 0);
+            const maxOrder = Math.max(...orderList, 0);
 
             safeWidgets.push({
                 ...widget,
-                order: safeWidgets.length,
+                order: maxOrder + 1,
             });
         } else {
             safeWidgets.splice(widgetIndex, 1, widget);
         }
+    });
+}
+
+export function injectWidgetConditional(
+    widgets: Widget[] | undefined = [],
+    conditional: TempConditional,
+) {
+    return produce(widgets, (safeWidgets) => {
+        const widgetIndex = safeWidgets.findIndex(
+            (w) => w.clientId === conditional.widgetId,
+        );
+
+        if (isNotDefined(widgetIndex) || widgetIndex === -1) {
+            return;
+        }
+        // eslint-disable-next-line no-param-reassign
+        safeWidgets[widgetIndex].conditional = conditional.value;
     });
 }
 

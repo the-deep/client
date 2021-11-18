@@ -19,6 +19,7 @@ function cloneWidgetSuperficially<T extends BaseWidget>(value: T): T {
         key: randKey,
         clientId: randKey,
         id: undefined,
+        conditional: undefined,
     };
 }
 

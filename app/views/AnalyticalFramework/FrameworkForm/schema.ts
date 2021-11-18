@@ -36,6 +36,7 @@ const widgetSchema: WidgetSchema = {
         key: [],
         order: [],
         properties: [],
+        conditional: [],
         title: [],
         widgetId: [],
         width: [],

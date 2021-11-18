@@ -91,10 +91,10 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultVal: PartialSectionType = {
-    clientId: 'random',
+const defaultVal = (): PartialSectionType => ({
+    clientId: randomString(),
     order: -1,
-};
+});
 
 const sectionKeySelector = (d: PartialSectionType) => d.clientId;
 

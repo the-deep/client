@@ -17,13 +17,16 @@ import _ts from '#ts';
 import { PartialWidget } from '#components/framework/AttributeInput';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
+import WidgetConditionalEditor from '../components/WidgetConditionalEditor';
 import WidgetList from '../components/WidgetList';
 import { cloneWidget } from '../../utils';
 
 import {
     findWidget,
     injectWidget,
+    injectWidgetConditional,
     deleteWidget,
+    TempConditional,
 } from './utils';
 
 import { WidgetsType } from '../schema';
@@ -66,6 +69,8 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         onTempStateChange(!!tempWidget);
     }, [tempWidget, onTempStateChange]);
 
+    const [conditional, setConditional] = useState<TempConditional | undefined>();
+
     const handleWidgetAdd = useCallback(
         (value: PartialWidget) => {
             setTempWidget(value);
@@ -85,6 +90,20 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
             const widget = findWidget(widgets, widgetId);
             if (widget) {
                 setTempWidget(widget);
+            }
+        },
+        [widgets],
+    );
+
+    const handleWidgetConditionEditClick = useCallback(
+        (widgetId: string) => {
+            const widget = findWidget(widgets, widgetId);
+            if (widget) {
+                setConditional({
+                    widgetId,
+                    value: widget.conditional,
+                    title: widget.title,
+                });
             }
         },
         [widgets],
@@ -133,6 +152,34 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         [setWidgets, name],
     );
 
+    const handleConditionalEditCancel = useCallback(
+        () => {
+            setConditional(undefined);
+        },
+        [],
+    );
+
+    const handleConditionalChange = useCallback(
+        (value: TempConditional['value'] | undefined, meta: { widgetId: string, title?: string }) => {
+            setConditional({ ...meta, value });
+        },
+        [],
+    );
+
+    const handleConditionalSave = useCallback(
+        (value: TempConditional['value'], meta: { widgetId: string, title?: string }) => {
+            setWidgets((oldWidgets) => {
+                const newValue = injectWidgetConditional(
+                    oldWidgets,
+                    { widgetId: meta.widgetId, value },
+                );
+                return newValue;
+            }, name);
+            setConditional(undefined);
+        },
+        [setWidgets, name],
+    );
+
     type AppliedWidgets = {
         editMode: false;
         appliedWidgets: Widget[];
@@ -143,6 +190,12 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
 
     const widgetsState: AppliedWidgets = useMemo(
         () => {
+            if (conditional) {
+                return {
+                    editMode: true,
+                    appliedWidgets: injectWidgetConditional(widgets, conditional),
+                };
+            }
             if (tempWidget) {
                 return {
                     editMode: true,
@@ -154,7 +207,17 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                 appliedWidgets: widgets,
             };
         },
-        [tempWidget, widgets],
+        [tempWidget, widgets, conditional],
+    );
+
+    // NOTE: filtering out child conditions and self
+    // TODO: move child widget after parent
+    const parentWidgets = useMemo(
+        () => widgets.filter((widget) => (
+            !widget.conditional
+            && (!conditional || widget.clientId !== conditional.widgetId)
+        )),
+        [widgets, conditional],
     );
 
     return (
@@ -179,6 +242,18 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                         onChange={handleTempWidgetChange}
                         onSave={handleTempWidgetSave}
                         onCancel={handleWidgetEditCancel}
+                    />
+                )}
+                {widgetsState.editMode && conditional && (
+                    // NOTE: no need to disable as this is used as modal
+                    <WidgetConditionalEditor
+                        widgets={parentWidgets}
+                        name={conditional}
+                        title={conditional.title}
+                        value={conditional.value}
+                        onChange={handleConditionalChange}
+                        onSave={handleConditionalSave}
+                        onCancel={handleConditionalEditCancel}
                     />
                 )}
             </Container>
@@ -218,6 +293,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                         onWidgetEdit={handleWidgetEditClick}
                         onWidgetOrderChange={handleWidgetOrderChange}
                         onWidgetClone={handleWidgetCloneClick}
+                        onWidgetConditionEdit={handleWidgetConditionEditClick}
                         editMode={false}
                         isSecondary
                         disabled={disabled}
