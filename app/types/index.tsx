@@ -1,6 +1,5 @@
 export * from './common';
 export * from './regions';
-export * from './questionnaire';
 export * from './project';
 export * from './lead';
 export * from './entry';

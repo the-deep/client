@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Button,
     useAlert,
-    ExpandableContainer,
+    ControlledExpandableContainer,
     TextInput,
 } from '@the-deep/deep-ui';
 import { gql, useQuery, useMutation } from '@apollo/client';
@@ -368,97 +368,112 @@ function EntriesExportSelection(props: Props) {
         [analysisFramework, frameworkGetPending],
     );
 
+    const [expandedStep, setExpandedStep] = useState<'step1' | 'step2' | 'step3' | undefined>('step1');
+
+    const handleStepExpansionChange = useCallback((newState: boolean, step: 'step1' | 'step2' | 'step3') => {
+        setExpandedStep(newState ? step : undefined);
+    }, []);
+
     return (
         <div className={_cs(className, styles.export)}>
             <div className={styles.left}>
-                <div className={styles.leftControls}>
-                    <ExpandableContainer
-                        className={styles.section}
-                        headingSize="small"
-                        heading={(
-                            <div className={styles.heading}>
-                                {_ts('export', 'selectSourcesStepHeading')}
-                                <span className={styles.subHeading}>
-                                    {_ts('export', 'selectSourcesHeading')}
-                                </span>
-                            </div>
-                        )}
-                        defaultVisibility
-                    >
-                        <LeadsSelection
-                            className={styles.leadsTableContainer}
-                            projectId={projectId}
-                            filterOnlyUnprotected={filterOnlyUnprotected}
-                            selectedLeads={selectedLeads}
-                            onSelectLeadChange={setSelectedLeads}
-                            selectAll={selectAll}
-                            onSelectAllChange={setSelectAll}
-                            filterValues={filterValues}
-                            onFilterApply={setFilterValues}
-                        />
-                    </ExpandableContainer>
-                    <ExpandableContainer
-                        className={styles.section}
-                        headingSize="small"
-                        heading={(
-                            <div className={styles.heading}>
-                                {_ts('export', 'selectFormatStylingStepHeading')}
-                                <span className={styles.subHeading}>
-                                    {_ts('export', 'selectFormatStylingHeading')}
-                                </span>
-                            </div>
-                        )}
-                    >
-                        <ExportTypePane
-                            activeExportFormat={activeExportFormat}
-                            reportStructure={reportStructure}
-                            reportStructureVariant={reportStructureVariant}
-                            excelDecoupled={excelDecoupled}
-                            reportShowGroups={reportShowGroups}
-                            reportShowLeadEntryId={reportShowLeadEntryId}
-                            reportShowAssessmentData={reportShowAssessmentData}
-                            reportShowEntryWidgetData={reportShowEntryWidgetData}
-                            onActiveExportFormatChange={setActiveExportFormat}
-                            onReportStructureChange={setReportStructure}
-                            onReportShowGroupsChange={setReportShowGroups}
-                            onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
-                            onReportShowAssessmentDataChange={setReportShowAssessmentData}
-                            onReportShowEntryWidgetDataChange={setReportShowEntryWidgetData}
-                            onReportStructureVariantChange={setReportStructureVariant}
-                            onExcelDecoupledChange={setExcelDecoupled}
-                            onIncludeSubSectorChange={setIncludeSubSector}
-                            includeSubSector={includeSubSector}
-                            showMatrix2dOptions={showMatrix2dOptions}
-                            contextualWidgets={contextualWidgets}
-                            onSetContextualWidgets={setContextualWidgets}
-                            textWidgets={textWidgets}
-                            onSetTextWidgets={setTextWidgets}
-                        />
-                    </ExpandableContainer>
-                    <ExpandableContainer
-                        className={styles.section}
-                        headingSize="small"
-                        heading={(
-                            <div className={styles.heading}>
-                                Step 3.
-                                <span className={styles.subHeading}>
-                                    (Optional) Save your query
-                                </span>
-                            </div>
-                        )}
-                    >
-                        <div className={styles.content}>
-                            <TextInput
-                                name="queryTitle"
-                                value={queryTitle}
-                                onChange={setQueryTitle}
-                                label="Query title"
-                                placeholder="Query title"
-                                className={styles.queryInput}
-                            />
-                        </div>
-                    </ExpandableContainer>
-                </div>
+                <ControlledExpandableContainer
+                    headingSize="small"
+                    className={styles.section}
+                    headerClassName={styles.header}
+                    headingClassName={styles.heading}
+                    name="step1"
+                    expanded={expandedStep === 'step1'}
+                    onExpansionChange={handleStepExpansionChange}
+                    heading={(
+                        <>
+                            {_ts('export', 'selectSourcesStepHeading')}
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectSourcesHeading')}
+                            </span>
+                        </>
+                    )}
+                >
+                    <LeadsSelection
+                        className={styles.leadsTableContainer}
+                        projectId={projectId}
+                        filterOnlyUnprotected={filterOnlyUnprotected}
+                        selectedLeads={selectedLeads}
+                        onSelectLeadChange={setSelectedLeads}
+                        selectAll={selectAll}
+                        onSelectAllChange={setSelectAll}
+                        filterValues={filterValues}
+                        onFilterApply={setFilterValues}
+                    />
+                </ControlledExpandableContainer>
+                <ControlledExpandableContainer
+                    name="step2"
+                    expanded={expandedStep === 'step2'}
+                    onExpansionChange={handleStepExpansionChange}
+                    className={styles.section}
+                    headerClassName={styles.header}
+                    headingSize="small"
+                    headingClassName={styles.heading}
+                    heading={(
+                        <>
+                            {_ts('export', 'selectFormatStylingStepHeading')}
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectFormatStylingHeading')}
+                            </span>
+                        </>
+                    )}
+                >
+                    <ExportTypePane
+                        activeExportFormat={activeExportFormat}
+                        reportStructure={reportStructure}
+                        reportStructureVariant={reportStructureVariant}
+                        excelDecoupled={excelDecoupled}
+                        reportShowGroups={reportShowGroups}
+                        reportShowLeadEntryId={reportShowLeadEntryId}
+                        reportShowAssessmentData={reportShowAssessmentData}
+                        reportShowEntryWidgetData={reportShowEntryWidgetData}
+                        onActiveExportFormatChange={setActiveExportFormat}
+                        onReportStructureChange={setReportStructure}
+                        onReportShowGroupsChange={setReportShowGroups}
+                        onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
+                        onReportShowAssessmentDataChange={setReportShowAssessmentData}
+                        onReportShowEntryWidgetDataChange={setReportShowEntryWidgetData}
+                        onReportStructureVariantChange={setReportStructureVariant}
+                        onExcelDecoupledChange={setExcelDecoupled}
+                        onIncludeSubSectorChange={setIncludeSubSector}
+                        includeSubSector={includeSubSector}
+                        showMatrix2dOptions={showMatrix2dOptions}
+                        contextualWidgets={contextualWidgets}
+                        onSetContextualWidgets={setContextualWidgets}
+                        textWidgets={textWidgets}
+                        onSetTextWidgets={setTextWidgets}
+                    />
+                </ControlledExpandableContainer>
+                <ControlledExpandableContainer
+                    name="step3"
+                    expanded={expandedStep === 'step3'}
+                    onExpansionChange={handleStepExpansionChange}
+                    className={styles.section}
+                    headingSize="small"
+                    headerClassName={styles.header}
+                    headingClassName={styles.heading}
+                    heading={(
+                        <>
+                            Step 3.
+                            <span className={styles.subHeading}>
+                                (Optional) Save your query
+                            </span>
+                        </>
+                    )}
+                >
+                    <TextInput
+                        name="queryTitle"
+                        value={queryTitle}
+                        onChange={setQueryTitle}
+                        label="Query title"
+                        placeholder="Query title"
+                    />
+                </ControlledExpandableContainer>
                 <Button
                     name="startExport"
                     variant="primary"

@@ -333,16 +333,8 @@ function ExportHistory(props: Props) {
         <Container
             className={_cs(styles.exportHistoryContainer, className)}
             contentClassName={styles.content}
-            headerClassName={styles.header}
             headerIcons={(
-                <>
-                    <DateRangeInput
-                        name="exportedAt"
-                        label="Exported At"
-                        value={exportedAt}
-                        onChange={setExportedAt}
-                        disabled={pending}
-                    />
+                <div className={styles.headerIcons}>
                     <TextInput
                         name="searchText"
                         autoFocus
@@ -353,7 +345,14 @@ function ExportHistory(props: Props) {
                         onChange={setSearchText}
                         disabled={pending}
                     />
-                </>
+                    <DateRangeInput
+                        name="exportedAt"
+                        label="Exported At"
+                        value={exportedAt}
+                        onChange={setExportedAt}
+                        disabled={pending}
+                    />
+                </div>
             )}
             footerActions={(
                 <Pager

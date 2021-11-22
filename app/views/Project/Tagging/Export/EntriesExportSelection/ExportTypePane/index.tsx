@@ -5,6 +5,7 @@ import {
     List,
     ExpandableContainer,
     Container,
+    ContainerCard,
     Heading,
 } from '@the-deep/deep-ui';
 import {
@@ -156,8 +157,8 @@ function RenderWordPdfOptions(props: RenderWordProps) {
     const showEntryGroupsSelection = false;
 
     return (
-        <>
-            <Container
+        <div className={styles.reportOptions}>
+            <ContainerCard
                 className={styles.contentSettings}
                 headingSize="extraSmall"
                 heading={_ts('export', 'contentSettingsText')}
@@ -192,11 +193,11 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                     onChange={onReportShowEntryWidgetDataChange}
                     className={styles.checkbox}
                 />
-            </Container>
-            <Container
+            </ContainerCard>
+            <ContainerCard
                 className={styles.reportStructure}
                 headingSize="extraSmall"
-                heading={_ts('export', 'reportStructureLabel')}
+                heading="Structure"
                 contentClassName={styles.content}
             >
                 <TreeSelection
@@ -222,8 +223,8 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                         />
                     </div>
                 )}
-            </Container>
-            <Container
+            </ContainerCard>
+            <ContainerCard
                 className={styles.additional}
                 headingSize="extraSmall"
                 heading="Additional Metadata"
@@ -261,8 +262,8 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                         />
                     </>
                 )}
-            </Container>
-        </>
+            </ContainerCard>
+        </div>
     );
 }
 
@@ -359,11 +360,11 @@ function ExportTypePane(props: Props) {
             </Container>
             <ExpandableContainer
                 className={styles.advanced}
+                headerClassName={styles.header}
                 headingSize="extraSmall"
                 heading="Advanced"
-                defaultVisibility
             >
-                {activeExportFormat === ('DOCX' || 'PDF') && (
+                {(activeExportFormat === 'DOCX' || activeExportFormat === 'PDF') && (
                     <RenderWordPdfOptions
                         includeSubSector={includeSubSector}
                         onIncludeSubSectorChange={onIncludeSubSectorChange}

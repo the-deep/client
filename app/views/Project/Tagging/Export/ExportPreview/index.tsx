@@ -60,8 +60,11 @@ function ExportPreview(props: OwnProps) {
     return (
         <Container
             className={_cs(className, styles.exportPreview)}
-            headingSize="extraSmall"
+            headingSize="small"
             heading="Preview"
+            spacing="none"
+            headerClassName={styles.header}
+            headingClassName={styles.heading}
             headerActions={isDefined(onPreviewClick) && (
                 <Button
                     name="showPreview"
@@ -77,6 +80,7 @@ function ExportPreview(props: OwnProps) {
             {pending && <PendingMessage />}
             {isDefined(exportResponse) ? (
                 <LeadPreview
+                    className={styles.leadPreview}
                     url={exportResponse?.file}
                 />
             ) : (
