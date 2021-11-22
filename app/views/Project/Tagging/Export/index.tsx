@@ -94,7 +94,10 @@ function Export() {
                 )}
                 contentClassName={styles.content}
             >
-                <TabPanel name="export-entry-history">
+                <TabPanel
+                    name="export-entry-history"
+                    className={styles.tabPanel}
+                >
                     {activeProject && (
                         <ExportHistory
                             projectId={activeProject}
@@ -102,7 +105,10 @@ function Export() {
                         />
                     )}
                 </TabPanel>
-                <TabPanel name="export-assessment-history">
+                <TabPanel
+                    name="export-assessment-history"
+                    className={styles.tabPanel}
+                >
                     {activeProject && (
                         <ExportHistory
                             projectId={activeProject}

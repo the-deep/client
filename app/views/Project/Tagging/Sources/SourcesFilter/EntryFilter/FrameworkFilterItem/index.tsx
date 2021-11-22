@@ -25,16 +25,13 @@ import NumberButStringInput from '#components/NumberButStringInput';
 import { PartialEntriesFilterDataType } from '../../schema';
 import {
     FrameworkFilterType,
-    KeyLabelEntity,
     KeyLabel,
-} from '../../types';
+} from '#types/newAnalyticalFramework';
 import SubRegionCheckmark from './SubRegionCheckmark';
 import styles from './styles.css';
 
 const filterKeySelector = (d: KeyLabel) => d.key;
-
-const filterClientIdSelector = (d: KeyLabelEntity) => d.key;
-const filterLabelSelector = (d: KeyLabelEntity | KeyLabel) => d.label;
+const filterLabelSelector = (d: KeyLabel) => d.label;
 
 type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
 
@@ -318,7 +315,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     label={title}
                     onChange={handleSingleSelect}
                     options={filter.properties?.options}
-                    keySelector={filterClientIdSelector}
+                    keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
                     disabled={disabled || optionsDisabled}
                 />
@@ -338,7 +335,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     onChange={onFieldChange}
                     label={title}
                     options={filter.properties?.options}
-                    keySelector={filterClientIdSelector}
+                    keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}
                     disabled={disabled || optionsDisabled}
                 />

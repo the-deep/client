@@ -85,6 +85,7 @@ const SOURCE_FILTER_OPTIONS = gql`
         project(id: $projectId) {
             analysisFramework {
                 filters {
+                    id
                     filterType
                     key
                     properties

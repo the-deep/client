@@ -4,6 +4,7 @@ import {
     IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
+    Button,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 
@@ -13,6 +14,7 @@ export interface Props {
     className?: string;
     id: string;
     onDeleteClick: (key: string) => void;
+    onViewExportClick: (key: string) => void;
     disabled?: boolean;
 }
 
@@ -22,6 +24,7 @@ function TableActions(props: Props) {
         id,
         disabled,
         onDeleteClick,
+        onViewExportClick,
     } = props;
 
     const handleDeleteClick = useCallback(() => {
@@ -41,6 +44,14 @@ function TableActions(props: Props) {
             >
                 <IoTrashBinOutline />
             </QuickActionConfirmButton>
+            <Button
+                name="viewExport"
+                onClick={onViewExportClick}
+                variant="secondary"
+                disabled={disabled}
+            >
+                View
+            </Button>
         </div>
     );
 }

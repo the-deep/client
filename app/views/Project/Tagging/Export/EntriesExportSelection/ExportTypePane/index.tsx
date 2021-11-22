@@ -58,10 +58,10 @@ interface Props {
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    contextualWidgets: TreeSelectableWidget<string>[];
-    onSetContextualWidgets: (value: TreeSelectableWidget<string>[]) => void;
-    textWidgets: TreeSelectableWidget<string>[];
-    onSetTextWidgets: (value: TreeSelectableWidget<string>[]) => void;
+    contextualWidgets: TreeSelectableWidget[];
+    onSetContextualWidgets: (value: TreeSelectableWidget[]) => void;
+    textWidgets: TreeSelectableWidget[];
+    onSetTextWidgets: (value: TreeSelectableWidget[]) => void;
 }
 
 const exportTypes: ExportTypeItem[] = [
@@ -105,10 +105,10 @@ interface RenderWordProps {
     reportShowLeadEntryId: boolean;
     reportShowAssessmentData: boolean;
     reportShowEntryWidgetData: boolean;
-    contextualWidgets: TreeSelectableWidget<string>[];
-    onSetContextualWidgets: (value: TreeSelectableWidget<string>[]) => void;
-    textWidgets: TreeSelectableWidget<string>[];
-    onSetTextWidgets: (value: TreeSelectableWidget<string>[]) => void;
+    contextualWidgets: TreeSelectableWidget[];
+    onSetContextualWidgets: (value: TreeSelectableWidget[]) => void;
+    textWidgets: TreeSelectableWidget[];
+    onSetTextWidgets: (value: TreeSelectableWidget[]) => void;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
