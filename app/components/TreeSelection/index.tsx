@@ -22,7 +22,7 @@ interface Node {
     nodes?: this[] | undefined;
 }
 
-const keySelector = (d: Node) => d.key;
+const keySelector = <T extends Node>(d: T) => d.key;
 
 // Set selected state for a particular node where selected = true/false
 // and do it for all the children.
@@ -93,6 +93,7 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
             expansionTriggerArea="arrow"
             disabled={!nodes || nodes.length === 0}
         >
+            {/* eslint-disable-next-line @typescript-eslint/no-use-before-define */}
             <TreeSelection
                 name={key}
                 value={nodes}

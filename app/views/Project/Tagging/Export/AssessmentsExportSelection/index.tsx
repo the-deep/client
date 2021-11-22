@@ -140,7 +140,7 @@ function AssessmentsExportSelection(props: Props) {
 
     const handlePreviewClick = useCallback(() => {
         setPreviewId(undefined);
-        startExport(false, 'ASSESSMENTS');
+        startExport(true, 'ASSESSMENTS');
     }, [startExport]);
 
     const [expandedStep, setExpandedStep] = useState<'step1' | 'step2' | undefined>('step1');

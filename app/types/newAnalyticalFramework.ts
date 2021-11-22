@@ -2,6 +2,7 @@ import {
     // NOTE: Taking WidgetType instead of WidgetInputType
     WidgetType as WidgetRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
+    AnalysisFrameworkFilterType as AnalysisFrameworkFilterTypeRaw,
 } from '#generated/types';
 
 export type Types = WidgetTypes;
@@ -243,7 +244,6 @@ export interface KeyLabelEntity {
     label: string;
     tooltip?: string;
     order: number;
-    clientId: string;
 }
 
 export interface KeyLabelColorEntity extends KeyLabelEntity {
@@ -391,6 +391,201 @@ export type Widget = TextWidget
     | GeoLocationWidget
     | Matrix1dWidget
     | Matrix2dWidget;
+
+type BaseFilterType = Omit<AnalysisFrameworkFilterTypeRaw, 'properties' | 'widgetType'>;
+
+export interface KeyLabel {
+    key: string;
+    label: string;
+}
+
+interface BaseFilterProperties<T> {
+    type: string;
+    options?: T[];
+}
+
+interface TextFilterType extends BaseFilterType {
+    widgetType: 'TEXT';
+    properties?: unknown;
+}
+
+interface NumberFilterType extends BaseFilterType {
+    widgetType: 'NUMBER';
+    properties?: unknown;
+}
+
+interface TimeFilterType extends BaseFilterType {
+    widgetType: 'TIME';
+    properties?: unknown;
+}
+
+interface DateFilterType extends BaseFilterType {
+    widgetType: 'DATE';
+    properties?: unknown;
+}
+
+interface TimeRangeFilterType extends BaseFilterType {
+    widgetType: 'TIME_RANGE';
+    properties?: unknown;
+}
+
+interface DateRangeFilterType extends BaseFilterType {
+    widgetType: 'DATE_RANGE';
+    properties?: unknown;
+}
+
+interface SingleSelectFilterType extends BaseFilterType {
+    widgetType: 'SELECT';
+    properties?: BaseFilterProperties<KeyLabel>;
+}
+
+interface MultiSelectFilterType extends BaseFilterType {
+    widgetType: 'MULTISELECT';
+    properties?: BaseFilterProperties<KeyLabel>;
+}
+
+interface ScaleFilterType extends BaseFilterType {
+    widgetType: 'SCALE';
+    properties?: BaseFilterProperties<KeyLabel>;
+}
+
+interface OrganigramFilterType extends BaseFilterType {
+    widgetType: 'ORGANIGRAM';
+    properties?: BaseFilterProperties<KeyLabel>;
+}
+
+interface GeoLocationFilterType extends BaseFilterType {
+    widgetType: 'GEO';
+    properties?: unknown;
+}
+
+interface Matrix1dFilterType extends BaseFilterType {
+    widgetType: 'MATRIX1D';
+    properties?: BaseFilterProperties<KeyLabel>;
+}
+
+interface Matrix2dFilterType extends BaseFilterType {
+    widgetType: 'MATRIX2D';
+    properties?: BaseFilterProperties<KeyLabel>;
+}
+
+export type FrameworkFilterType = TextFilterType
+    | NumberFilterType
+    | TimeFilterType
+    | DateFilterType
+    | TimeRangeFilterType
+    | DateRangeFilterType
+    | SingleSelectFilterType
+    | MultiSelectFilterType
+    | ScaleFilterType
+    | OrganigramFilterType
+    | GeoLocationFilterType
+    | Matrix1dFilterType
+    | Matrix2dFilterType;
+
+interface BaseExportableType {
+    id: string;
+    inline: boolean;
+    order: number;
+    widgetKey: string;
+    // widgetType
+    // data
+}
+
+interface TextExportableType extends BaseExportableType {
+    widgetType: 'TEXT';
+    data?: unknown;
+}
+
+interface NumberExportableType extends BaseExportableType {
+    widgetType: 'NUMBER';
+    data?: unknown;
+}
+
+interface TimeExportableType extends BaseExportableType {
+    widgetType: 'TIME';
+    data?: unknown;
+}
+
+interface DateExportableType extends BaseExportableType {
+    widgetType: 'DATE';
+    data?: unknown;
+}
+
+interface TimeRangeExportableType extends BaseExportableType {
+    widgetType: 'TIME_RANGE';
+    data?: unknown;
+}
+
+interface DateRangeExportableType extends BaseExportableType {
+    widgetType: 'DATE_RANGE';
+    data?: unknown;
+}
+
+interface SingleSelectExportableType extends BaseExportableType {
+    widgetType: 'SELECT';
+    data?: unknown;
+}
+
+interface MultiSelectExportableType extends BaseExportableType {
+    widgetType: 'MULTISELECT';
+    data?: unknown;
+}
+
+interface ScaleExportableType extends BaseExportableType {
+    widgetType: 'SCALE';
+    data?: unknown;
+}
+
+interface OrganigramExportableType extends BaseExportableType {
+    widgetType: 'ORGANIGRAM';
+    data?: unknown;
+}
+
+interface GeoLocationExportableType extends BaseExportableType {
+    widgetType: 'GEO';
+    data?: unknown;
+}
+
+// FIXME: rename Level
+export interface Level {
+    // NOTE: `id` should be `key`
+    id: string;
+    title: string;
+    sublevels?: Level[];
+}
+
+interface Matrix1dExportableType extends BaseExportableType {
+    widgetType: 'MATRIX1D';
+    data?: {
+        report: {
+            levels: Level[];
+        }
+    };
+}
+
+interface Matrix2dExportableType extends BaseExportableType {
+    widgetType: 'MATRIX2D';
+    data?: {
+        report?: {
+            levels: Level[] | undefined;
+        }
+    };
+}
+
+export type FrameworkExportableType = TextExportableType
+    | NumberExportableType
+    | TimeExportableType
+    | DateExportableType
+    | TimeRangeExportableType
+    | DateRangeExportableType
+    | SingleSelectExportableType
+    | MultiSelectExportableType
+    | ScaleExportableType
+    | OrganigramExportableType
+    | GeoLocationExportableType
+    | Matrix1dExportableType
+    | Matrix2dExportableType;
 
 export interface FrameworkProperties {
     // eslint-disable-next-line camelcase

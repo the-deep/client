@@ -26,7 +26,6 @@ import ProjectContext from '#base/context/ProjectContext';
 import {
     Node,
     TreeSelectableWidget,
-    Widget,
     AnalysisFramework,
 } from '../types';
 import {
@@ -34,6 +33,7 @@ import {
     createReportStructure,
     getWidgets,
 } from '../utils';
+import { Widget, Level } from '#types/newAnalyticalFramework';
 import ExportPreview from '../ExportPreview';
 import LeadsSelection from '../LeadsSelection';
 import ExportTypePane from './ExportTypePane';
@@ -117,12 +117,6 @@ interface ExportReportStructure {
     levels?: ExportReportStructure[];
 }
 
-interface ReportStructureLevel {
-    id: string;
-    title: string;
-    sublevels?: ReportStructureLevel[];
-}
-
 const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] => (
     nodes.filter((node) => node.selected)
         .map((node) => ({
@@ -131,7 +125,7 @@ const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] 
         }))
 );
 
-const createReportLevels = (nodes: Node[]): ReportStructureLevel[] => (
+const createReportLevels = (nodes: Node[]): Level[] => (
     nodes
         .filter((node) => node.selected)
         .map((node) => ({
@@ -141,11 +135,11 @@ const createReportLevels = (nodes: Node[]): ReportStructureLevel[] => (
         }))
 );
 
-const createWidgetIds = (widgets: TreeSelectableWidget<string>[]) => (
+const createWidgetIds = (widgets: TreeSelectableWidget[]) => (
+    // FIXME: we should not cast this value, fix this server
     widgets
         .filter((widget) => widget.selected)
         .map((widget) => +(widget.id))
-
 );
 
 export interface SelectedLead extends Lead {
@@ -157,15 +151,17 @@ interface Props {
 }
 
 function filterContexualWidgets(widgets: Widget[] | undefined) {
-    const contextualWidgets = widgets?.filter((v) => v.widgetId === 'SELECT'
-        || 'MULTISELECT'
-        || 'SCALE'
-        || 'GEO'
-        || 'TIME'
-        || 'DATE'
-        || 'ORGANIGRAM'
-        || 'DATE_RANGE'
-        || 'TIME_RANGE');
+    const contextualWidgets = widgets?.filter((v) => (
+        v.widgetId === 'SELECT'
+        || v.widgetId === 'MULTISELECT'
+        || v.widgetId === 'SCALE'
+        || v.widgetId === 'GEO'
+        || v.widgetId === 'TIME'
+        || v.widgetId === 'DATE'
+        || v.widgetId === 'ORGANIGRAM'
+        || v.widgetId === 'DATE_RANGE'
+        || v.widgetId === 'TIME_RANGE'
+    ));
 
     return contextualWidgets;
 }
@@ -184,7 +180,7 @@ function EntriesExportSelection(props: Props) {
     const [previewId, setPreviewId] = useState<string | undefined>(undefined);
     const [activeExportFormat, setActiveExportFormat] = useState<ExportFormatEnum>('DOCX');
     const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
-    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string>[]>([]);
+    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget[]>([]);
     const [reportShowGroups, setReportShowGroups] = useState<boolean>(true);
     const [reportShowLeadEntryId, setReportShowLeadEntryId] = useState<boolean>(true);
     const [reportShowAssessmentData, setReportShowAssessmentData] = useState<boolean>(true);
@@ -202,7 +198,7 @@ function EntriesExportSelection(props: Props) {
     const [
         contextualWidgets,
         setContextualWidgets,
-    ] = useState<TreeSelectableWidget<string>[]>([]);
+    ] = useState<TreeSelectableWidget[]>([]);
 
     const variables = useMemo(
         (): ProjectFrameworkDetailsQueryVariables => ({

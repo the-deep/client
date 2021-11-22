@@ -1,9 +1,11 @@
 import { isDefined } from '@togglecorp/fujs';
 import _ts from '#ts';
 
-import { Matrix2dProperties } from '#types/newAnalyticalFramework';
 import {
+    Matrix2dProperties,
     Level,
+} from '#types/newAnalyticalFramework';
+import {
     ReportStructure,
     AnalysisFramework,
 } from './types';
@@ -31,10 +33,10 @@ function createId<T extends string | number>(...args: [T, T, ...T[]]) {
 }
 
 // NOTE: This function generates row first level
-const transformLevelsRowFirst = (
+function transformLevelsRowFirst(
     matrix2dProperties: Matrix2dProperties,
     includeSubColumn: boolean,
-) => {
+): Level[] {
     const rowFirstLevels = matrix2dProperties.rows.map((row) => {
         const sublevels = row.subRows.map((subRow) => {
             const columns = matrix2dProperties.columns.map((column) => (
@@ -69,9 +71,11 @@ const transformLevelsRowFirst = (
     });
 
     return rowFirstLevels;
-};
+}
 
-const transformLevelsColumnFirst = (matrix2dProperties: Matrix2dProperties) => {
+function transformLevelsColumnFirst(
+    matrix2dProperties: Matrix2dProperties,
+): Level[] {
     const sectorFirstLevels = matrix2dProperties.columns.map((column) => {
         let sublevels: Level[] = [];
         if (column.subColumns) {
@@ -120,9 +124,9 @@ const transformLevelsColumnFirst = (matrix2dProperties: Matrix2dProperties) => {
     });
 
     return sectorFirstLevels;
-};
+}
 
-export function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
+function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
     return levels.map((level) => ({
         key: level.id,
         title: level.title,
@@ -136,68 +140,69 @@ export const createReportStructure = (
     reportStructureVariant: string = SECTOR_FIRST,
     includeSubColumn: boolean,
     analysisFramework: AnalysisFramework | null | undefined,
-) => {
-    if (!analysisFramework) {
+): ReportStructure[] => {
+    if (!analysisFramework || !analysisFramework.exportables) {
         return [];
     }
 
     const { exportables } = analysisFramework;
+
     const widgets = getWidgets(analysisFramework);
-    if (!exportables || !widgets) {
+    if (!widgets) {
         return [];
     }
 
-    const nodes = [];
-    exportables.forEach((exportable) => {
-        const levels = exportable.data && exportable.data.report
-            && exportable.data.report.levels;
-        const widget = widgets.find((w) => w.key === exportable.widgetKey);
-
-        if (!levels || !widget) {
-            return;
-        }
-
-        if (widget.widgetId === 'MATRIX2D' && reportStructureVariant === DIMENSION_FIRST) {
-            if (!widget.properties) {
-                return;
+    // FIXME: we are creating exportable for Matrix2d,
+    // if we create exportable for Matrix1d we can just not read exportable on
+    // client at all
+    const nodes = exportables.map((exportable) => {
+        if (exportable.widgetType === 'MATRIX2D') {
+            const widget = widgets.find((w) => w.key === exportable.widgetKey);
+            if (!widget || widget.widgetId !== exportable.widgetType || !widget.properties) {
+                return undefined;
             }
-            const newLevels = transformLevelsRowFirst(widget.properties, includeSubColumn);
-            nodes.push({
+            const { properties } = widget;
+            const newLevels = reportStructureVariant === DIMENSION_FIRST
+                ? transformLevelsRowFirst(properties, includeSubColumn)
+                : transformLevelsColumnFirst(properties);
+            return {
                 title: widget.title,
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
                 nodes: mapReportLevelsToNodes(newLevels),
-            });
-        } else if (includeSubColumn && widget.widgetId === 'MATRIX2D' && reportStructureVariant === SECTOR_FIRST) {
-            if (!widget.properties) {
-                return;
+            };
+        }
+        if (exportable.widgetType === 'MATRIX1D') {
+            const widget = widgets.find((w) => w.key === exportable.widgetKey);
+            if (!widget || widget.widgetId !== exportable.widgetType) {
+                return undefined;
             }
-            const newLevels = transformLevelsColumnFirst(widget.properties);
-            nodes.push({
+            const newLevels = exportable?.data?.report?.levels;
+            if (!newLevels) {
+                return undefined;
+            }
+            return {
                 title: widget.title,
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
                 nodes: mapReportLevelsToNodes(newLevels),
-            });
-        } else {
-            nodes.push({
-                title: widget.title,
-                key: String(exportable.id),
-                selected: true,
-                draggable: true,
-                nodes: mapReportLevelsToNodes(levels),
-            });
+            };
         }
-    });
+        return undefined;
+    }).filter(isDefined);
 
-    nodes.push({
-        title: _ts('export', 'uncategorizedTitle'),
-        key: 'uncategorized',
-        selected: true,
-        draggable: true,
-    });
+    if (nodes.length > 0) {
+        nodes.push({
+            title: _ts('export', 'uncategorizedTitle'),
+            key: 'uncategorized',
+            selected: true,
+            draggable: true,
+            // FIXME: added line below, check if this works
+            nodes: [],
+        });
+    }
 
     return nodes;
 };

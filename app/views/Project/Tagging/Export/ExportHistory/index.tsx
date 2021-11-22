@@ -1,5 +1,5 @@
 import React, { useState, useMemo, ReactElement, useCallback } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
 import { RiFileExcel2Fill, RiFileWord2Fill } from 'react-icons/ri';
@@ -36,14 +36,15 @@ import {
 } from '#utils/common';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import { createDateColumn } from '#components/tableHelpers';
+import LeadPreview from '#components/lead/LeadPreview';
+
 import _ts from '#ts';
 
-import {
-    ExportItem,
-} from '../types';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
+
+type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
 
 const statusIconMap: Record<ExportItem['status'], ReactElement> = {
     PENDING: <VscLoading />,
@@ -119,7 +120,10 @@ const PROJECT_EXPORTS = gql`
                     exportedAt
                     status
                     format
-                    file
+                    file {
+                        name
+                        url
+                    }
                 }
             }
         }
@@ -155,6 +159,7 @@ function ExportHistory(props: Props) {
         type,
     } = props;
 
+    const [selectedExportFile, setSelectedExportFile] = useState<ExportItem['file']>();
     const [activePage, setActivePage] = useState(1);
     const [exportedAt, setExportedAt] = useState<DateRangeValue>();
     const [searchText, setSearchText] = useState<string>();
@@ -285,7 +290,8 @@ function ExportHistory(props: Props) {
                 icon: statusIconMap[data.status],
                 tagVariant: statusVariantMap[data.status],
                 status: statusLabelMap[data.status],
-                file: data.file,
+                file: data.file?.url,
+                children: data.file?.name,
             }),
         };
         const actionsColumn: TableColumn<
@@ -301,6 +307,7 @@ function ExportHistory(props: Props) {
             cellRendererParams: (_, data) => ({
                 id: data.id,
                 onDeleteClick: () => handleDeleteExport(data.id),
+                onViewExportClick: () => setSelectedExportFile(data.file),
             }),
         };
         return ([
@@ -373,6 +380,26 @@ function ExportHistory(props: Props) {
                     columns={columns}
                 />
             </SortContext.Provider>
+            <Container
+                className={styles.exportPreview}
+                headingSize="small"
+                heading="Preview"
+                spacing="none"
+                headerClassName={styles.header}
+                headingClassName={styles.heading}
+                contentClassName={styles.mainContent}
+            >
+                {isDefined(selectedExportFile?.url) ? (
+                    <LeadPreview
+                        className={styles.preview}
+                        url={selectedExportFile?.url}
+                    />
+                ) : (
+                    <div className={styles.label}>
+                        {selectedExportFile ? 'Preview not available.' : 'Select an export to preview  it.'}
+                    </div>
+                )}
+            </Container>
         </Container>
     );
 }
