@@ -13,6 +13,8 @@ import { Widget } from '#types/newAnalyticalFramework';
 import GeoLocationConditionalWidgetForm from './GeoLocationConditionalWidgetForm';
 import TextConditionalWidgetForm from './TextConditionalWidgetForm';
 import SingleSelectConditionalWidgetForm from './SingleSelectConditionalWidgetForm';
+import MultiSelectConditionalWidgetForm from './MultiSelectConditionalWidgetForm';
+import OrganigramConditionalWidgetForm from './OrganigramConditionalWidgetForm';
 import ScaleConditionalWidgetForm from './ScaleConditionalWidgetForm';
 import NumberConditionalWidgetForm from './NumberConditionalWidgetForm';
 import DateConditionalWidgetForm from './DateConditionalWidgetForm';
@@ -273,6 +275,34 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
                 >
                     {parentSwitcher}
                 </SingleSelectConditionalWidgetForm>
+            );
+        }
+        case 'MULTISELECT': {
+            return (
+                <MultiSelectConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                    parentWidget={parentWidget?.widgetId === 'MULTISELECT' ? parentWidget : undefined}
+                >
+                    {parentSwitcher}
+                </MultiSelectConditionalWidgetForm>
+            );
+        }
+        case 'ORGANIGRAM': {
+            return (
+                <OrganigramConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                    parentWidget={parentWidget?.widgetId === 'ORGANIGRAM' ? parentWidget : undefined}
+                >
+                    {parentSwitcher}
+                </OrganigramConditionalWidgetForm>
             );
         }
         case 'SCALE': {

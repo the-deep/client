@@ -64,13 +64,19 @@ export interface SingleSelectSelectedCondition extends BaseCondition {
     value: string[];
 }
 
-export interface MultiSelectionSelected extends BaseCondition {
+export interface MultiSelectSelectedCondition extends BaseCondition {
     operator: 'multi-selection-selected';
     operatorModifier: 'every' | 'some';
     value: string[];
 }
 
-export interface OrganigramDescendentSelected extends BaseCondition {
+export interface OrganigramSelectedCondition extends BaseCondition {
+    operator: 'organigram-selected';
+    operatorModifier: 'every' | 'some';
+    value: string[];
+};
+
+export interface OrganigramDescendentSelectedCondition extends BaseCondition {
     operator: 'organigram-descendent-selected';
     operatorModifier: 'every' | 'some';
     value: string[];
@@ -211,11 +217,11 @@ export type TimeRangeCondition = EmptyCondition
     | TimeRangeIncludesCondition;
 
 export type MultiSelectCondition = EmptyCondition
-    | MultiSelectionSelected;
+    | MultiSelectSelectedCondition;
 
 export type OrganigramCondition = EmptyCondition
-    | MultiSelectionSelected
-    | OrganigramDescendentSelected;
+    | OrganigramSelectedCondition
+    | OrganigramDescendentSelectedCondition;
 
 export type Matrix1dCondition = EmptyCondition
     | Matrix1dRowsSelectedCondition
