@@ -58,9 +58,9 @@ interface Option {
 }
 
 const options: Option[] = [
-    { key: 'number-greater-than', label: 'Greater than', invertedLabel: 'Less than or equal to' },
-    { key: 'number-less-than', label: 'Less than', invertedLabel: 'Greater than or equal to' },
-    { key: 'number-equal-to', label: 'Equal to', invertedLabel: 'Not equal to' },
+    { key: 'number-greater-than', label: 'Is greater than', invertedLabel: 'Is Less than or equal to' },
+    { key: 'number-less-than', label: 'Is Less than', invertedLabel: 'Is greater than or equal to' },
+    { key: 'number-equal-to', label: 'Is equal to', invertedLabel: 'Is not equal to' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {

@@ -57,9 +57,9 @@ interface Option {
 }
 
 const options: Option[] = [
-    { key: 'date-after', label: 'After', invertedLabel: 'Not after' },
-    { key: 'date-before', label: 'Before', invertedLabel: 'Not before' },
-    { key: 'date-equal-to', label: 'Equal to', invertedLabel: 'Not equal to' },
+    { key: 'date-after', label: 'Is after', invertedLabel: 'Is not after' },
+    { key: 'date-before', label: 'Is before', invertedLabel: 'Is not before' },
+    { key: 'date-equal-to', label: 'Is equal to', invertedLabel: 'Is not equal to' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {

@@ -57,8 +57,8 @@ interface Option {
 }
 
 const options: Option[] = [
-    { key: 'date-range-after', label: 'After', invertedLabel: 'Not after' },
-    { key: 'date-range-before', label: 'Before', invertedLabel: 'Not before' },
+    { key: 'date-range-after', label: 'Is after', invertedLabel: 'Is not after' },
+    { key: 'date-range-before', label: 'Is before', invertedLabel: 'Is not before' },
     { key: 'date-range-includes', label: 'Includes', invertedLabel: 'Does not include' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];

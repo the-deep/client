@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
     Button,
     Container,
@@ -9,7 +9,11 @@ import {
 } from '@togglecorp/fujs';
 
 import { Widget } from '#types/newAnalyticalFramework';
+
+import GeoLocationConditionalWidgetForm from './GeoLocationConditionalWidgetForm';
 import TextConditionalWidgetForm from './TextConditionalWidgetForm';
+import SingleSelectConditionalWidgetForm from './SingleSelectConditionalWidgetForm';
+import ScaleConditionalWidgetForm from './ScaleConditionalWidgetForm';
 import NumberConditionalWidgetForm from './NumberConditionalWidgetForm';
 import DateConditionalWidgetForm from './DateConditionalWidgetForm';
 import TimeConditionalWidgetForm from './TimeConditionalWidgetForm';
@@ -57,12 +61,10 @@ function BaseFormContainer(props: BaseFormContainerProps) {
     );
 }
 
-type MiniWidget = Pick<Widget, 'clientId' | 'widgetId' | 'title' | 'conditional'>;
-
-function widgetKeySelector(value: MiniWidget) {
+function widgetKeySelector(value: Widget) {
     return value.clientId;
 }
-function widgetLabelSelector(value: MiniWidget) {
+function widgetLabelSelector(value: Widget) {
     return value.title;
 }
 
@@ -70,7 +72,7 @@ interface Props<T> {
     name: T;
     value: Widget['conditional'],
     title: string | undefined,
-    widgets: MiniWidget[];
+    widgets: Widget[];
     onChange: (value: Widget['conditional'], name: T) => void;
     onSave: (value: Widget['conditional'], name: T) => void;
     onCancel: () => void;
@@ -133,6 +135,15 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
         [widgets, onChange, name],
     );
 
+    const parentWidget = useMemo(
+        () => (
+            value
+                ? widgets.find((widget) => widget.clientId === value.parentClientId)
+                : undefined
+        ),
+        [widgets, value],
+    );
+
     const parentSwitcher = (
         <SelectInput
             label="Parent Widget"
@@ -185,6 +196,19 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
                 </NumberConditionalWidgetForm>
             );
         }
+        case 'GEO': {
+            return (
+                <GeoLocationConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                >
+                    {parentSwitcher}
+                </GeoLocationConditionalWidgetForm>
+            );
+        }
         case 'DATE': {
             return (
                 <DateConditionalWidgetForm
@@ -235,6 +259,34 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
                 >
                     {parentSwitcher}
                 </TimeRangeConditionalWidgetForm>
+            );
+        }
+        case 'SELECT': {
+            return (
+                <SingleSelectConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                    parentWidget={parentWidget?.widgetId === 'SELECT' ? parentWidget : undefined}
+                >
+                    {parentSwitcher}
+                </SingleSelectConditionalWidgetForm>
+            );
+        }
+        case 'SCALE': {
+            return (
+                <ScaleConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                    parentWidget={parentWidget?.widgetId === 'SCALE' ? parentWidget : undefined}
+                >
+                    {parentSwitcher}
+                </ScaleConditionalWidgetForm>
             );
         }
         default: {

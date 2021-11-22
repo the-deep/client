@@ -38,28 +38,20 @@ import SortableList, { Attributes, Listeners } from '#components/SortableList';
 import { reorder } from '#utils/common';
 
 import {
-    TimeRangeConditional,
-    TimeRangeCondition,
-    TimeRangeAfterCondition,
-    TimeRangeBeforeCondition,
-    TimeRangeIncludesCondition,
+    GeoLocationConditional,
+    GeoLocationCondition,
     Conjunction,
 } from '#types/newAnalyticalFramework';
-
-import SimpleTimeRangeConditionInput from './SimpleTimeRangeConditionInput';
 
 import styles from './styles.css';
 
 interface Option {
-    key: TimeRangeCondition['operator'],
+    key: GeoLocationCondition['operator'],
     label: string,
     invertedLabel: string,
 }
 
 const options: Option[] = [
-    { key: 'time-range-after', label: 'Is after', invertedLabel: 'Is not after' },
-    { key: 'time-range-before', label: 'Is Before', invertedLabel: 'Is not before' },
-    { key: 'time-range-includes', label: 'Includes', invertedLabel: 'Does not include' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {
@@ -74,7 +66,7 @@ function optionInvertedLabelSelector(value: Option) {
 
 const CONDITIONS_LIMIT = 10;
 
-type FormType = TimeRangeConditional;
+type FormType = GeoLocationConditional;
 type PartialFormType = PartialForm<
     FormType,
     'operator' | 'conjunctionOperator' | 'key' | 'order'
@@ -89,15 +81,10 @@ export type PartialConditionType = PartialForm<
     'operator' | 'conjunctionOperator' | 'key' | 'order'
 >;
 
-type PartialConditionTypeNew = PartialForm<
-    TimeRangeAfterCondition | TimeRangeBeforeCondition | TimeRangeIncludesCondition,
-    'operator' | 'conjunctionOperator' | 'key' | 'order'
->;
-
 type ConditionSchema = ObjectSchema<PartialConditionType, PartialFormType>;
 type ConditionSchemaFields = ReturnType<ConditionSchema['fields']>;
 const conditionSchema: ConditionSchema = {
-    fields: (val): ConditionSchemaFields => {
+    fields: (): ConditionSchemaFields => {
         const basicValidation = {
             key: [],
             conjunctionOperator: [],
@@ -105,22 +92,6 @@ const conditionSchema: ConditionSchema = {
             order: [],
             invert: [],
         };
-        if (!val) {
-            return basicValidation;
-        }
-        if (
-            val.operator === 'time-range-after'
-            || val.operator === 'time-range-before'
-            || val.operator === 'time-range-includes'
-        ) {
-            return {
-                ...basicValidation,
-                value: [requiredStringCondition],
-            };
-        }
-        if (val.operator === 'empty') {
-            return basicValidation;
-        }
         return basicValidation;
     },
 };
@@ -275,27 +246,11 @@ function ConditionInput(props: ConditionInputProps) {
                     />
                 )}
             />
-            {(
-                value.operator === 'time-range-after'
-                || value.operator === 'time-range-before'
-                || value.operator === 'time-range-includes'
-            ) && (
-                <SimpleTimeRangeConditionInput
-                    index={index}
-                    value={value}
-                    // NOTE: we need to cast here as TS is not smart enough to
-                    // identify onChange as valid because of discriminated
-                    // unions
-                    // eslint-disable-next-line max-len
-                    onChange={onChange as (v: SetValueArg<PartialConditionTypeNew>, index: number) => void}
-                    error={error}
-                />
-            )}
         </Container>
     );
 }
 
-interface TimeRangeConditionalWidgetFormProps {
+interface GeoLocationConditionalWidgetFormProps {
     onCancel: () => void;
     onSave: (value: FormType) => void;
     initialValue: PartialFormType;
@@ -304,7 +259,7 @@ interface TimeRangeConditionalWidgetFormProps {
     title: string | undefined;
 }
 
-function TimeRangeConditionalWidgetForm(props: TimeRangeConditionalWidgetFormProps) {
+function GeoLocationConditionalWidgetForm(props: GeoLocationConditionalWidgetFormProps) {
     const {
         onSave,
         onCancel,
@@ -452,4 +407,4 @@ function TimeRangeConditionalWidgetForm(props: TimeRangeConditionalWidgetFormPro
     );
 }
 
-export default TimeRangeConditionalWidgetForm;
+export default GeoLocationConditionalWidgetForm;

@@ -58,9 +58,10 @@ export interface TextContainsCondition extends BaseCondition {
     value: string;
 }
 
-export interface SingleSelectionSelected extends BaseCondition {
+export interface SingleSelectSelectedCondition extends BaseCondition {
     operator: 'single-selection-selected';
-    value: string;
+    // operatorModifier: 'some';
+    value: string[];
 }
 
 export interface MultiSelectionSelected extends BaseCondition {
@@ -75,16 +76,18 @@ export interface OrganigramDescendentSelected extends BaseCondition {
     value: string[];
 }
 
-export interface ScaleEqualToCondition extends BaseCondition {
-    operator: 'scale-equal-to';
-    value: string;
+export interface ScaleSelectedCondition extends BaseCondition {
+    operator: 'scale-selected';
+    // operatorModifier: 'some';
+    value: string[];
 }
 export interface ScaleAtLeastCondition extends BaseCondition {
-    operator: 'scale-at-least';
+    operator: 'scale-more-than';
     value: string;
 }
 export interface ScaleAtMostCondition extends BaseCondition {
-    operator: 'scale-at-most';
+    operator: 'scale-less-than';
+    value: string;
 }
 export interface DateAfterCondition extends BaseCondition {
     operator: 'date-after';
@@ -172,28 +175,20 @@ export type NumberCondition = EmptyCondition
     | NumberLessThanCondition
     | NumberEqualToCondition;
 
-// FIXME: rename 
 export type TextCondition = EmptyCondition
     | TextStartsWithCondition
     | TextEndsWithCondition
     | TextContainsCondition;
 
 export type SingleSelectCondition = EmptyCondition
-    | SingleSelectionSelected;
-
-export type MultiSelectCondition = EmptyCondition
-    | MultiSelectionSelected;
+    | SingleSelectSelectedCondition;
 
 export type GeoLocationCondition = EmptyCondition;
-
-export type OrganigramCondition = EmptyCondition
-    | MultiSelectionSelected
-    | OrganigramDescendentSelected;
 
 export type ScaleCondition = EmptyCondition
     | ScaleAtLeastCondition
     | ScaleAtMostCondition
-    | ScaleEqualToCondition;
+    | ScaleSelectedCondition;
 
 export type DateCondition = EmptyCondition
     | DateAfterCondition
@@ -214,6 +209,13 @@ export type TimeRangeCondition = EmptyCondition
     | TimeRangeAfterCondition
     | TimeRangeBeforeCondition
     | TimeRangeIncludesCondition;
+
+export type MultiSelectCondition = EmptyCondition
+    | MultiSelectionSelected;
+
+export type OrganigramCondition = EmptyCondition
+    | MultiSelectionSelected
+    | OrganigramDescendentSelected;
 
 export type Matrix1dCondition = EmptyCondition
     | Matrix1dRowsSelectedCondition

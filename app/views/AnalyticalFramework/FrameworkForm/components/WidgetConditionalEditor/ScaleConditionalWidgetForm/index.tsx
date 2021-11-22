@@ -23,6 +23,7 @@ import {
     analyzeErrors,
     Error,
     requiredStringCondition,
+    requiredListCondition,
     PartialForm,
     getErrorObject,
     defaultUndefinedType,
@@ -38,28 +39,30 @@ import SortableList, { Attributes, Listeners } from '#components/SortableList';
 import { reorder } from '#utils/common';
 
 import {
-    TimeRangeConditional,
-    TimeRangeCondition,
-    TimeRangeAfterCondition,
-    TimeRangeBeforeCondition,
-    TimeRangeIncludesCondition,
+    ScaleConditional,
+    ScaleCondition,
+    ScaleSelectedCondition,
+    ScaleAtLeastCondition,
+    ScaleAtMostCondition,
     Conjunction,
+    ScaleWidget,
 } from '#types/newAnalyticalFramework';
 
-import SimpleTimeRangeConditionInput from './SimpleTimeRangeConditionInput';
+import SimpleScaleConditionInput from './SimpleScaleConditionInput';
+import ComparisonScaleConditionInput from './ComparisonScaleConditionInput';
 
 import styles from './styles.css';
 
 interface Option {
-    key: TimeRangeCondition['operator'],
+    key: ScaleCondition['operator'],
     label: string,
     invertedLabel: string,
 }
 
 const options: Option[] = [
-    { key: 'time-range-after', label: 'Is after', invertedLabel: 'Is not after' },
-    { key: 'time-range-before', label: 'Is Before', invertedLabel: 'Is not before' },
-    { key: 'time-range-includes', label: 'Includes', invertedLabel: 'Does not include' },
+    { key: 'scale-selected', label: 'Is selected', invertedLabel: 'Is not selected' },
+    { key: 'scale-more-than', label: 'Is more than', invertedLabel: 'Is less than or equal to' },
+    { key: 'scale-less-than', label: 'Is less than', invertedLabel: 'Is more than or equal to' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {
@@ -74,7 +77,7 @@ function optionInvertedLabelSelector(value: Option) {
 
 const CONDITIONS_LIMIT = 10;
 
-type FormType = TimeRangeConditional;
+type FormType = ScaleConditional;
 type PartialFormType = PartialForm<
     FormType,
     'operator' | 'conjunctionOperator' | 'key' | 'order'
@@ -90,7 +93,12 @@ export type PartialConditionType = PartialForm<
 >;
 
 type PartialConditionTypeNew = PartialForm<
-    TimeRangeAfterCondition | TimeRangeBeforeCondition | TimeRangeIncludesCondition,
+    ScaleSelectedCondition,
+    'operator' | 'conjunctionOperator' | 'key' | 'order'
+>;
+
+type PartialConditionTypeNewer = PartialForm<
+    ScaleAtLeastCondition | ScaleAtMostCondition,
     'operator' | 'conjunctionOperator' | 'key' | 'order'
 >;
 
@@ -109,9 +117,16 @@ const conditionSchema: ConditionSchema = {
             return basicValidation;
         }
         if (
-            val.operator === 'time-range-after'
-            || val.operator === 'time-range-before'
-            || val.operator === 'time-range-includes'
+            val.operator === 'scale-selected'
+        ) {
+            return {
+                ...basicValidation,
+                value: [requiredListCondition],
+            };
+        }
+        if (
+            val.operator === 'scale-more-than'
+            || val.operator === 'scale-less-than'
         ) {
             return {
                 ...basicValidation,
@@ -169,6 +184,7 @@ interface ConditionInputProps {
     conjunctionOperatorHidden?: boolean;
     listeners?: Listeners,
     attributes?: Attributes,
+    parentWidget: ScaleWidget | undefined;
 }
 
 function ConditionInput(props: ConditionInputProps) {
@@ -182,6 +198,7 @@ function ConditionInput(props: ConditionInputProps) {
         listeners,
         attributes,
         conjunctionOperatorHidden,
+        parentWidget,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultConditionVal);
@@ -276,11 +293,9 @@ function ConditionInput(props: ConditionInputProps) {
                 )}
             />
             {(
-                value.operator === 'time-range-after'
-                || value.operator === 'time-range-before'
-                || value.operator === 'time-range-includes'
+                value.operator === 'scale-selected'
             ) && (
-                <SimpleTimeRangeConditionInput
+                <SimpleScaleConditionInput
                     index={index}
                     value={value}
                     // NOTE: we need to cast here as TS is not smart enough to
@@ -289,22 +304,40 @@ function ConditionInput(props: ConditionInputProps) {
                     // eslint-disable-next-line max-len
                     onChange={onChange as (v: SetValueArg<PartialConditionTypeNew>, index: number) => void}
                     error={error}
+                    parentWidget={parentWidget}
+                />
+            )}
+            {(
+                value.operator === 'scale-less-than'
+                || value.operator === 'scale-more-than'
+            ) && (
+                <ComparisonScaleConditionInput
+                    index={index}
+                    value={value}
+                    // NOTE: we need to cast here as TS is not smart enough to
+                    // identify onChange as valid because of discriminated
+                    // unions
+                    // eslint-disable-next-line max-len
+                    onChange={onChange as (v: SetValueArg<PartialConditionTypeNewer>, index: number) => void}
+                    error={error}
+                    parentWidget={parentWidget}
                 />
             )}
         </Container>
     );
 }
 
-interface TimeRangeConditionalWidgetFormProps {
+interface ScaleConditionalWidgetFormProps {
     onCancel: () => void;
     onSave: (value: FormType) => void;
     initialValue: PartialFormType;
     className?: string;
     children?: React.ReactNode;
     title: string | undefined;
+    parentWidget: ScaleWidget | undefined;
 }
 
-function TimeRangeConditionalWidgetForm(props: TimeRangeConditionalWidgetFormProps) {
+function ScaleConditionalWidgetForm(props: ScaleConditionalWidgetFormProps) {
     const {
         onSave,
         onCancel,
@@ -312,6 +345,7 @@ function TimeRangeConditionalWidgetForm(props: TimeRangeConditionalWidgetFormPro
         className,
         children,
         title,
+        parentWidget,
     } = props;
 
     const {
@@ -385,11 +419,13 @@ function TimeRangeConditionalWidgetForm(props: TimeRangeConditionalWidgetFormPro
         value: condition,
         conjunctionOperatorHidden: index + 1 === totalConditions,
         index,
+        parentWidget,
     }), [
         onConditionChange,
         onConditionRemove,
         arrayError,
         totalConditions,
+        parentWidget,
     ]);
 
     return (
@@ -452,4 +488,4 @@ function TimeRangeConditionalWidgetForm(props: TimeRangeConditionalWidgetFormPro
     );
 }
 
-export default TimeRangeConditionalWidgetForm;
+export default ScaleConditionalWidgetForm;
