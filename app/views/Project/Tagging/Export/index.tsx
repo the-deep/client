@@ -6,7 +6,7 @@ import {
     Tab,
     TabList,
     TabPanel,
-    Container,
+    ContainerCard,
     Button,
 } from '@the-deep/deep-ui';
 
@@ -19,6 +19,7 @@ import ProjectContext from '#base/context/ProjectContext';
 import ExportHistory from './ExportHistory';
 import AssessmentsExportSelection from './AssessmentsExportSelection';
 import EntriesExportSelection from './EntriesExportSelection';
+
 import styles from './styles.css';
 
 type ExportType = 'export-entry-history' | 'export-assessment-history';
@@ -44,64 +45,71 @@ function Export() {
     ] = useModalState(false);
 
     return (
-        <Container
-            className={styles.container}
+        <Tabs
+            onChange={setActiveTab}
+            value={activeTab}
         >
-            <div className={styles.content}>
-                <Tabs
-                    onChange={setActiveTab}
-                    value={activeTab}
-                >
-                    <div className={styles.top}>
-                        <TabList
-                            className={styles.tabList}
+            <ContainerCard
+                className={styles.container}
+                headingSize="extraSmall"
+                headerClassName={styles.header}
+                heading={(
+                    <TabList
+                        className={styles.tabList}
+                    >
+                        <Tab
+                            name="export-entry-history"
+                            transparentBorder
                         >
-                            <Tab name="export-entry-history">
-                                Export History
-                            </Tab>
-                            <Tab name="export-assessment-history">
-                                Export Assessment History
-                            </Tab>
-                        </TabList>
-
-                        <div className={styles.actionButtons}>
-                            <Button
-                                name="export-entry"
-                                className={styles.button}
-                                onClick={showCreateNewExportModal}
-                                icons={<IoAdd />}
-                                variant="secondary"
-                            >
-                                New Export
-                            </Button>
-                            <Button // TODO: properly check permissions
-                                name="export-assessment"
-                                className={styles.button}
-                                onClick={showNewAssessmentModal}
-                                icons={<IoAdd />}
-                                variant="secondary"
-                            >
-                                New Assessment Export
-                            </Button>
-                        </div>
-                    </div>
-                    <TabPanel name="export-entry-history">
-                        {activeProject && (
-                            <ExportHistory
-                                projectId={activeProject}
-                                type={entryType}
-                            />
-                        )}
-                    </TabPanel>
-                    <TabPanel name="export-assessment-history">
-                        {activeProject && (
-                            <ExportHistory
-                                projectId={activeProject}
-                                type={assessmentType}
-                            />
-                        )}
-                    </TabPanel>
-                </Tabs>
+                            Export History
+                        </Tab>
+                        <Tab
+                            name="export-assessment-history"
+                            transparentBorder
+                        >
+                            Export Assessment History
+                        </Tab>
+                    </TabList>
+                )}
+                headingContainerClassName={styles.actionButtons}
+                headerActions={(
+                    <>
+                        <Button
+                            name="export-entry"
+                            onClick={showCreateNewExportModal}
+                            icons={<IoAdd />}
+                            variant="primary"
+                        >
+                            New Export
+                        </Button>
+                        <Button // TODO: properly check permissions
+                            name="export-assessment"
+                            onClick={showNewAssessmentModal}
+                            icons={<IoAdd />}
+                            variant="secondary"
+                        >
+                            New Assessment Export
+                        </Button>
+                    </>
+                )}
+                contentClassName={styles.content}
+            >
+                <TabPanel name="export-entry-history">
+                    {activeProject && (
+                        <ExportHistory
+                            projectId={activeProject}
+                            type={entryType}
+                        />
+                    )}
+                </TabPanel>
+                <TabPanel name="export-assessment-history">
+                    {activeProject && (
+                        <ExportHistory
+                            projectId={activeProject}
+                            type={assessmentType}
+                        />
+                    )}
+                </TabPanel>
                 {newExportModalShown && activeProject && (
                     <Modal
                         className={styles.modal}
@@ -128,8 +136,8 @@ function Export() {
                         />
                     </Modal>
                 )}
-            </div>
-        </Container>
+            </ContainerCard>
+        </Tabs>
     );
 }
 

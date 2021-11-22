@@ -18,10 +18,21 @@
 
     .advanced {
         display: flex;
-        background-color: var(--dui-color-background);
+        border: 0;
+        background-color: var(--dui-color-foreground);
+
+        .header {
+            align-items: flex-start;
+            background-color: transparent;
+        }
+
+        .report-options {
+            display: flex;
+            gap: var(--dui-spacing-medium);
+        }
 
         .content-settings {
-            background-color: var(--dui-color-foreground);
+            background-color: var(--dui-color-surface-information);
 
             .checkbox {
                 padding: var(--dui-spacing-extra-small);
@@ -30,7 +41,7 @@
 
         .report-structure {
             display: flex;
-            background-color: var(--dui-color-foreground);
+            background-color: var(--dui-color-surface-information);
 
             .content {
                 display: flex;
@@ -45,7 +56,7 @@
 
         .additional {
             display: flex;
-            background-color: var(--dui-color-foreground);
+            background-color: var(--dui-color-surface-information);
 
             .content {
                 display: flex;

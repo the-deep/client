@@ -5,7 +5,7 @@ import {
     useAlert,
     TextInput,
     Button,
-    ExpandableContainer,
+    ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
 import {
@@ -20,6 +20,7 @@ import _ts from '#ts';
 
 import ExportPreview from '../ExportPreview';
 import LeadsSelection from '../LeadsSelection';
+
 import styles from './styles.css';
 
 const CREATE_EXPORT = gql`
@@ -131,21 +132,31 @@ function AssessmentsExportSelection(props: Props) {
         startExport(false, 'ASSESSMENTS');
     }, [startExport]);
 
+    /* NOTE: Planned assessment is not needed right now
     const handlePlannedAssessmentExportClick = useCallback(() => {
         startExport(false, 'PLANNED_ASSESSMENTS');
     }, [startExport]);
+    */
 
     const handlePreviewClick = useCallback(() => {
         setPreviewId(undefined);
         startExport(false, 'ASSESSMENTS');
     }, [startExport]);
 
+    const [expandedStep, setExpandedStep] = useState<'step1' | 'step2' | undefined>('step1');
+
+    const handleStepExpansionChange = useCallback((newState: boolean, step: 'step1' | 'step2') => {
+        setExpandedStep(newState ? step : undefined);
+    }, []);
+
     return (
         <div className={_cs(className, styles.export)}>
             <div className={styles.left}>
-                <ExpandableContainer
+                <ControlledExpandableContainer
                     className={styles.section}
                     headingSize="small"
+                    headerClassName={styles.header}
+                    headingClassName={styles.heading}
                     heading={(
                         <div className={styles.heading}>
                             Step 1.
@@ -154,7 +165,9 @@ function AssessmentsExportSelection(props: Props) {
                             </span>
                         </div>
                     )}
-                    defaultVisibility
+                    name="step1"
+                    expanded={expandedStep === 'step1'}
+                    onExpansionChange={handleStepExpansionChange}
                 >
                     <LeadsSelection
                         className={styles.leadsTableContainer}
@@ -168,10 +181,12 @@ function AssessmentsExportSelection(props: Props) {
                         onFilterApply={setFilterValues}
                         hasAssessment
                     />
-                </ExpandableContainer>
-                <ExpandableContainer
+                </ControlledExpandableContainer>
+                <ControlledExpandableContainer
                     className={styles.section}
                     headingSize="small"
+                    headerClassName={styles.header}
+                    headingClassName={styles.heading}
                     heading={(
                         <div className={styles.heading}>
                             Step 2.
@@ -180,20 +195,19 @@ function AssessmentsExportSelection(props: Props) {
                             </span>
                         </div>
                     )}
+                    name="step2"
+                    expanded={expandedStep === 'step2'}
+                    onExpansionChange={handleStepExpansionChange}
                 >
-                    <div className={styles.content}>
-                        <TextInput
-                            className={styles.queryInput}
-                            name="queryTitle"
-                            value={queryTitle}
-                            onChange={setQueryTitle}
-                            label="Query title"
-                            placeholder="Query title"
-                        />
-                    </div>
-                </ExpandableContainer>
+                    <TextInput
+                        name="queryTitle"
+                        value={queryTitle}
+                        onChange={setQueryTitle}
+                        label="Query title"
+                        placeholder="Query title"
+                    />
+                </ControlledExpandableContainer>
                 <Footer
-                    className={styles.footer}
                     actions={(
                         <>
                             <Button
@@ -203,6 +217,7 @@ function AssessmentsExportSelection(props: Props) {
                             >
                                 {_ts('export', 'startAssessmentExportButtonLabel')}
                             </Button>
+                            {/*
                             <Button
                                 name="startPlannedAssessmentExport"
                                 onClick={handlePlannedAssessmentExportClick}
@@ -210,6 +225,7 @@ function AssessmentsExportSelection(props: Props) {
                             >
                                 {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
                             </Button>
+                            */}
                         </>
                     )}
                 />
