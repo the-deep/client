@@ -1,7 +1,6 @@
 .export-type-pane {
     display: flex;
     flex-direction: column;
-    padding: var(--dui-spacing-medium);
 
     .export-types-container {
         display: flex;
@@ -28,20 +27,27 @@
 
         .report-options {
             display: flex;
+            flex-wrap: wrap;
             gap: var(--dui-spacing-medium);
         }
 
         .content-settings {
-            background-color: var(--dui-color-surface-information);
+            flex-shrink: 0;
+            background-color: var(--dui-color-background-information);
 
             .checkbox {
                 padding: var(--dui-spacing-extra-small);
+            }
+
+            .metadata-content {
+                display: flex;
             }
         }
 
         .report-structure {
             display: flex;
-            background-color: var(--dui-color-surface-information);
+            flex-shrink: 0;
+            background-color: var(--dui-color-background-information);
 
             .content {
                 display: flex;
@@ -50,22 +56,6 @@
 
                 .checkbox {
                     padding: var(--dui-spacing-extra-small);
-                }
-            }
-        }
-
-        .additional {
-            display: flex;
-            background-color: var(--dui-color-surface-information);
-
-            .content {
-                display: flex;
-                flex-direction: column;
-                margin: 0 var(--dui-spacing-small);
-
-                .widget-selection {
-                    display: flex;
-                    flex-wrap: wrap;
                 }
             }
         }

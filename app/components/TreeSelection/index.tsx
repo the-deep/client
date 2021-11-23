@@ -89,7 +89,9 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
             )}
             heading={title}
             headingSize="extraSmall"
+            spacing="compact"
             contentClassName={styles.sortableContent}
+            headerClassName={styles.header}
             expansionTriggerArea="arrow"
             disabled={!nodes || nodes.length === 0}
         >

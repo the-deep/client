@@ -11,7 +11,6 @@ import {
     FrameworkFilterType,
 } from '#types/newAnalyticalFramework';
 
-
 export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
     'statuses'
     | 'confidentiality'

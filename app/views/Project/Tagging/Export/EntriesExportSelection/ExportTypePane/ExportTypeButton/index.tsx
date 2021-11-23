@@ -38,6 +38,7 @@ function ExportTypePaneButton(props: Props) {
                 isActive && styles.active,
             )}
             spacing="loose"
+            variant="secondary"
             onClick={onActiveExportFormatChange}
             big
             title={title}

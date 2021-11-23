@@ -457,7 +457,7 @@ function EntriesExportSelection(props: Props) {
                         <>
                             Step 3.
                             <span className={styles.subHeading}>
-                                (Optional) Save your query
+                                Name your export
                             </span>
                         </>
                     )}
