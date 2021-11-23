@@ -39,8 +39,8 @@ import {
 } from '#types';
 
 import {
-    BulkProjectMembershipMutation,
-    BulkProjectMembershipMutationVariables,
+    ProjectMembershipBulkUpdateMutation,
+    ProjectMembershipBulkUpdateMutationVariables,
     UserBadgeOptionsQuery,
     UserBadgeOptionsQueryVariables,
 } from '#generated/types';
@@ -53,7 +53,7 @@ import styles from './styles.css';
 const roleKeySelector = (d: ProjectRole) => d.id.toString();
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
-type FormType = NonNullable<EnumFix<BulkProjectMembershipMutationVariables['items'], 'badges'>>[number];
+type FormType = NonNullable<EnumFix<ProjectMembershipBulkUpdateMutationVariables['items'], 'badges'>>[number];
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>
@@ -78,8 +78,8 @@ const USER_BADGE_OPTIONS = gql`
     }
 `;
 
-const PROJECT_USER_MEMBERSHIP_BULK = gql`
-    mutation BulkProjectMembership($projectId:ID!, $items: [BulkProjectMembershipInputType!]) {
+const PROJECT_MEMBERSHIP_BULK = gql`
+    mutation ProjectMembershipBulkUpdate($projectId:ID!, $items: [BulkProjectMembershipInputType!]) {
         project(id: $projectId) {
             projectUserMembershipBulk(items: $items) {
                 errors
@@ -160,8 +160,11 @@ function AddUserModal(props: Props) {
     const [
         bulkEditProjectMembership,
         { loading: bulkEditProjectMembershipPending },
-    ] = useMutation<BulkProjectMembershipMutation, BulkProjectMembershipMutationVariables>(
-        PROJECT_USER_MEMBERSHIP_BULK,
+    ] = useMutation<
+        ProjectMembershipBulkUpdateMutation,
+        ProjectMembershipBulkUpdateMutationVariables
+    >(
+        PROJECT_MEMBERSHIP_BULK,
         {
             onCompleted: (response) => {
                 if (!response?.project?.projectUserMembershipBulk) {
@@ -208,7 +211,7 @@ function AddUserModal(props: Props) {
                 (val) => bulkEditProjectMembership({
                     variables: {
                         projectId,
-                        items: [val as NonNullable<BulkProjectMembershipMutationVariables['items']>[number]],
+                        items: [val as NonNullable<ProjectMembershipBulkUpdateMutationVariables['items']>[number]],
                     },
                 }),
             );
