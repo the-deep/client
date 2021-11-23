@@ -11,17 +11,20 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
     createStringColumn,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useQuery,
+    useMutation,
     gql,
 } from '@apollo/client';
 import { createDateColumn } from '#components/tableHelpers';
-import { useLazyRequest } from '#base/utils/restRequest';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import _ts from '#ts';
 
 import {
+    ProjectMembershipBulkRemoveMutation,
+    ProjectMembershipBulkRemoveMutationVariables,
     ProjectUsersQuery,
     ProjectUsersQueryVariables,
 } from '#generated/types';
@@ -29,6 +32,23 @@ import { useModalState } from '#hooks/stateManagement';
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';
+
+const PROJECT_MEMBERSHIP_BULK_REMOVE = gql`
+    mutation ProjectMembershipBulkRemove($projectId:ID!, $deleteIds: [ID!]) {
+        project(id: $projectId) {
+            projectUserMembershipBulk(deleteIds: $deleteIds) {
+                errors
+                deletedResult {
+                    id
+                    member {
+                        displayName
+                        id
+                    }
+                }
+            }
+        }
+    }
+`;
 
 const PROJECT_USERS = gql`
     query ProjectUsers(
@@ -88,6 +108,7 @@ function UserList(props: Props) {
 
     const [activePage, setActivePage] = useState<number>(1);
     const [projectUserToEdit, setProjectUserToEdit] = useState<ProjectUser>();
+    const alert = useAlert();
 
     const [
         showAddUserModal,
@@ -119,16 +140,46 @@ function UserList(props: Props) {
         },
     );
 
-    const {
-        trigger: triggerProjectUserDelete,
-    } = useLazyRequest<unknown, string>({
-        url: (ctx) => `server://projects/${projectId}/project-memberships/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            refetch();
+    const [
+        bulkDeleteProjectMembership,
+        { loading: bulkDeleteProjectMembershipPending },
+    ] = useMutation<
+        ProjectMembershipBulkRemoveMutation,
+        ProjectMembershipBulkRemoveMutationVariables
+    >(
+        PROJECT_MEMBERSHIP_BULK_REMOVE,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.projectUserMembershipBulk) {
+                    return;
+                }
+                const {
+                    deletedResult,
+                } = response.project.projectUserMembershipBulk;
+
+                const [deletedUser] = deletedResult ?? [];
+                alert.show(
+                    `Successfully deleted ${deletedUser?.member.displayName}`,
+                    { variant: 'success' },
+                );
+                refetch();
+            },
+            onError: (gqlError) => {
+                alert.show(
+                    gqlError.message,
+                    { variant: 'error' },
+                );
+            },
         },
-        failureHeader: _ts('projectEdit', 'membershipDeleteFailed'),
-    });
+    );
+    const handleRemoveUserFromProject = useCallback((id: string) => {
+        bulkDeleteProjectMembership({
+            variables: {
+                projectId,
+                deleteIds: [id],
+            },
+        });
+    }, [bulkDeleteProjectMembership, projectId]);
 
     const handleEditProjectUserClick = useCallback((user: ProjectUser) => {
         setProjectUserToEdit(user);
@@ -149,11 +200,12 @@ function UserList(props: Props) {
             cellRendererParams: (userId, data) => ({
                 itemKey: userId,
                 onEditClick: () => handleEditProjectUserClick(data),
-                onDeleteClick: () => triggerProjectUserDelete(data.id),
+                onDeleteClick: () => handleRemoveUserFromProject(data.id),
                 disabled: (
                     data.member.id === activeUserId
                     || isNotDefined(activeUserRoleLevel)
                     || data.role.level < activeUserRoleLevel
+                    || bulkDeleteProjectMembershipPending
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUserLabel'),
                 deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
@@ -194,7 +246,13 @@ function UserList(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [triggerProjectUserDelete, handleEditProjectUserClick, activeUserId, activeUserRoleLevel]);
+    }, [
+        handleEditProjectUserClick,
+        activeUserId,
+        activeUserRoleLevel,
+        handleRemoveUserFromProject,
+        bulkDeleteProjectMembershipPending,
+    ]);
 
     const handleAddUserClick = setModalShow;
 
