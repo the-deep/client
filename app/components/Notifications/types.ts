@@ -4,7 +4,7 @@ import {
 
 export type NotificationFromServer = NonNullable<NonNullable<NonNullable<UserNotificationsQuery>['notifications']>['results']>[number];
 
-type BaseNotification = Omit<NotificationFromServer, 'data' | 'notificationType'>;
+export type BaseNotification = Omit<NotificationFromServer, 'data' | 'notificationType'>;
 
 interface ReviewEntryCommentAdd {
     notificationType: 'ENTRY_REVIEW_COMMENT_ADD';
@@ -54,7 +54,7 @@ interface ReviewEntryCommentModify {
     };
 }
 
-interface ProjectJoinRequest {
+export interface ProjectJoinRequest {
     notificationType: 'PROJECT_JOIN_REQUEST';
     data: {
         // eslint-disable-next-line camelcase
@@ -71,6 +71,7 @@ interface ProjectJoinRequest {
             id: number;
             title: string;
         };
+        status: 'accepted' | 'pending' | 'rejected';
     };
 }
 

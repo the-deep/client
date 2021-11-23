@@ -101,6 +101,7 @@ function Notifications(props: Props) {
     const {
         data,
         loading,
+        refetch,
     } = useQuery<UserNotificationsQuery, UserNotificationsQueryVariables>(
         USER_NOTIFICATIONS,
         {
@@ -111,7 +112,8 @@ function Notifications(props: Props) {
     const notificationRendererParams = useCallback((key: string, item: Notification) => ({
         notificationId: key,
         notification: item,
-    }), []);
+        onNotificationUpdate: refetch,
+    }), [refetch]);
 
     /*
     const notificationGroupRendererParams = useCallback((key: string) => ({
@@ -160,9 +162,11 @@ function Notifications(props: Props) {
                 )}
             >
                 <ListView
+                    className={styles.notificationList}
                     data={notifications}
                     renderer={NotificationItem}
                     rendererParams={notificationRendererParams}
+                    rendererClassName={styles.notificationItem}
                     keySelector={notificationKeySelector}
                     /*
                         grouped
