@@ -15,18 +15,14 @@ import {
     AiFillFileText,
 } from 'react-icons/ai';
 
-import {
-    ExportFormatEnum,
-} from '#generated/types';
-
+import { ExportFormatEnum } from '#generated/types';
+import TreeSelection from '#components/TreeSelection';
 import _ts from '#ts';
+
 import {
     SECTOR_FIRST,
     DIMENSION_FIRST,
 } from '../../utils';
-
-import TreeSelection from '#components/TreeSelection';
-
 import { Node, TreeSelectableWidget } from '../../types';
 import ExportTypePaneButton from './ExportTypeButton';
 
@@ -162,37 +158,72 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 className={styles.contentSettings}
                 headingSize="extraSmall"
                 heading={_ts('export', 'contentSettingsText')}
+                contentClassName={styles.metadataContent}
             >
-                {showEntryGroupsSelection && (
+                <div>
+                    {showEntryGroupsSelection && (
+                        <Checkbox
+                            name="reportShowGroups"
+                            label={_ts('export', 'showEntryGroupsLabel')}
+                            value={reportShowGroups}
+                            onChange={onReportShowGroupsChange}
+                            className={styles.checkbox}
+                        />
+                    )}
                     <Checkbox
-                        name="reportShowGroups"
-                        label={_ts('export', 'showEntryGroupsLabel')}
-                        value={reportShowGroups}
-                        onChange={onReportShowGroupsChange}
+                        name="reportShowLeadEntryId"
+                        label={_ts('export', 'showEntryIdLabel')}
+                        value={reportShowLeadEntryId}
+                        onChange={onReportShowLeadEntryIdChange}
                         className={styles.checkbox}
                     />
-                )}
-                <Checkbox
-                    name="reportShowLeadEntryId"
-                    label={_ts('export', 'showEntryIdLabel')}
-                    value={reportShowLeadEntryId}
-                    onChange={onReportShowLeadEntryIdChange}
-                    className={styles.checkbox}
-                />
-                <Checkbox
-                    name="reportShowAssessmentData"
-                    label={_ts('export', 'showAryDetailLabel')}
-                    value={reportShowAssessmentData}
-                    onChange={onReportShowAssessmentDataChange}
-                    className={styles.checkbox}
-                />
-                <Checkbox
-                    name="showAdditionalMetaData"
-                    label={_ts('export', 'showAdditionalMetadataLabel')}
-                    value={reportShowEntryWidgetData}
-                    onChange={onReportShowEntryWidgetDataChange}
-                    className={styles.checkbox}
-                />
+                    <Checkbox
+                        name="reportShowAssessmentData"
+                        label={_ts('export', 'showAryDetailLabel')}
+                        value={reportShowAssessmentData}
+                        onChange={onReportShowAssessmentDataChange}
+                        className={styles.checkbox}
+                    />
+                    <Checkbox
+                        name="showAdditionalMetaData"
+                        label={_ts('export', 'showAdditionalMetadataLabel')}
+                        value={reportShowEntryWidgetData}
+                        onChange={onReportShowEntryWidgetDataChange}
+                        className={styles.checkbox}
+                    />
+                </div>
+                <div>
+                    {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
+                        <>
+                            <Heading
+                                size="extraSmall"
+                            >
+                                Contextual Widgets
+                            </Heading>
+                            <TreeSelection
+                                name="contextualWidgets"
+                                value={contextualWidgets}
+                                onChange={onSetContextualWidgets}
+                                direction="vertical"
+                            />
+                        </>
+                    )}
+                    {textWidgets.length > 0 && (
+                        <>
+                            <Heading
+                                size="extraSmall"
+                            >
+                                Free Text Widgets
+                            </Heading>
+                            <TreeSelection
+                                name="freeTextWidgets"
+                                value={textWidgets}
+                                onChange={onSetTextWidgets}
+                                direction="vertical"
+                            />
+                        </>
+                    )}
+                </div>
             </ContainerCard>
             <ContainerCard
                 className={styles.reportStructure}
@@ -222,45 +253,6 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                             className={styles.checkbox}
                         />
                     </div>
-                )}
-            </ContainerCard>
-            <ContainerCard
-                className={styles.additional}
-                headingSize="extraSmall"
-                heading="Additional Metadata"
-                contentClassName={styles.content}
-            >
-                {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
-                    <>
-                        <Heading
-                            size="extraSmall"
-                        >
-                            Contextual Widgets
-                        </Heading>
-                        <TreeSelection
-                            className={styles.widgetSelection}
-                            name="contextualWidgets"
-                            value={contextualWidgets}
-                            onChange={onSetContextualWidgets}
-                            direction="horizontal"
-                        />
-                    </>
-                )}
-                {textWidgets.length > 0 && (
-                    <>
-                        <Heading
-                            size="extraSmall"
-                        >
-                            Free Text Widgets
-                        </Heading>
-                        <TreeSelection
-                            className={styles.widgetSelection}
-                            name="freeTextWidgets"
-                            value={textWidgets}
-                            onChange={onSetTextWidgets}
-                            direction="horizontal"
-                        />
-                    </>
                 )}
             </ContainerCard>
         </div>
@@ -361,6 +353,7 @@ function ExportTypePane(props: Props) {
             <ExpandableContainer
                 className={styles.advanced}
                 headerClassName={styles.header}
+                spacing="compact"
                 headingSize="extraSmall"
                 heading="Advanced"
             >
