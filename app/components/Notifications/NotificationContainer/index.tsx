@@ -53,9 +53,10 @@ interface Props {
     className?: string;
     content?: React.ReactNode;
     userName: string;
-    notification: Notification;
+    notification: Omit<Notification, 'notificationType'>;
     description?: string;
     descriptionLabel?: string;
+    actions?: React.ReactNode;
 }
 
 function NotificationContainer(props: Props) {
@@ -69,6 +70,7 @@ function NotificationContainer(props: Props) {
             status,
         },
         description,
+        actions,
         descriptionLabel,
     } = props;
 
@@ -87,7 +89,7 @@ function NotificationContainer(props: Props) {
             onCompleted: (response) => {
                 if (response?.notificationStatusUpdate?.ok) {
                     alert.show(
-                        'Successfully changed url status.',
+                        'Successfully updated notification seen status.',
                         {
                             variant: 'success',
                         },
@@ -123,6 +125,7 @@ function NotificationContainer(props: Props) {
                 status === 'SEEN' && styles.seenNotification,
             )}
             contentClassName={styles.content}
+            footerActions={actions}
         >
             <Avatar
                 className={styles.displayPicture}

@@ -11,38 +11,28 @@ import routes from '#base/configs/routes';
 
 import { Notification } from '../types';
 import NotificationContainer from '../NotificationContainer';
+import ProjectJoinRequestItem from './ProjectJoinRequestItem';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     notification: Notification;
+    onNotificationUpdate: () => void;
 }
 
 function NotificationItem(props: Props) {
     const {
         className,
         notification,
+        onNotificationUpdate,
     } = props;
 
     if (notification.notificationType === 'PROJECT_JOIN_REQUEST') {
-        const { data } = notification;
-
         return (
-            <NotificationContainer
+            <ProjectJoinRequestItem
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.requested_by?.display_name}
-                descriptionLabel="Reason"
-                description={data?.reason}
-                content={
-                    generateString(
-                        '{requestorName} requested to join the project {projectTitle}.',
-                        {
-                            requestorName: (<b>{data?.requested_by?.display_name}</b>),
-                            projectTitle: (<b>{data?.project?.title}</b>),
-                        },
-                    )
-                }
+                onNotificationUpdate={onNotificationUpdate}
             />
         );
     }
@@ -95,8 +85,6 @@ function NotificationItem(props: Props) {
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
                 userName={data?.requested_by?.display_name}
-                descriptionLabel="Reason"
-                description={data?.reason}
                 content={content}
             />
         );
