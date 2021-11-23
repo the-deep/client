@@ -179,7 +179,7 @@ const initialValue: FormType = {
 };
 
 interface Props {
-    projectId: number | undefined;
+    projectId: string | undefined;
     onCreate: (value: ProjectDetails) => void;
 }
 

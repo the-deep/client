@@ -53,10 +53,8 @@ function ProjectEdit() {
 
     const history = useHistory();
 
-    const { projectId: projectIdFromRoute } = useParams<{ projectId: string | undefined }>();
-
-    const projectId = projectIdFromRoute ? +projectIdFromRoute : undefined;
-    const userId = user ? +user.id : undefined;
+    const { projectId } = useParams<{ projectId: string | undefined }>();
+    const userId = user?.id;
 
     const handleCreate = useCallback(
         (response: ProjectDetails) => {
@@ -68,7 +66,7 @@ function ProjectEdit() {
         [history],
     );
 
-    const heading = project && project.id === projectIdFromRoute
+    const heading = project && project.id === projectId
         ? project.title
         : _ts('projectEdit', 'createProjectLabel');
 
