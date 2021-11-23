@@ -1,0 +1,55 @@
+.notification-container {
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .content {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--dui-spacing-medium);
+
+        .display-picture {
+            align-self: flex-start;
+            flex-shrink: 0;
+            background: var(--color-foreground);
+            --size: 2rem;
+        }
+
+        .button {
+            flex-shrink: 0;
+        }
+    }
+
+    .mid-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: var(--dui-spacing-small);
+
+        .date-container {
+            display: flex;
+            align-items: center;
+            gap: var(--dui-spacing-large);
+
+            >* {
+                color: var(--dui-color-text-label);
+                font-size: var(--dui-font-size-medium);
+            }
+        }
+
+        .main-text {
+            display: inline;
+        }
+
+        .description {
+            color: var(--dui-color-text-label);
+            font-size: var(--dui-font-size-medium);
+        }
+    }
+
+    &:hover {
+        background-color: var(--dui-color-background-hover);
+    }
+
+    &.seen-notification {
+        opacity: 0.5;
+    }
+}

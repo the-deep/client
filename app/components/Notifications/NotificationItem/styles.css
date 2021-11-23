@@ -1,0 +1,7 @@
+.notification-item {
+    background-color: var(--dui-color-foreground);
+
+    .link {
+        display: inline-block;
+    }
+}

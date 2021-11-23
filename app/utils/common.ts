@@ -203,22 +203,3 @@ export function flatten<A, K>(
         ...flatten(itemsByChildren, valueSelector, childSelector),
     ];
 }
-
-/*
-export function flatten<A>(a: A[], childSelector: (item: A) => A[] | undefined): A[];
-export function flatten<A>(a: A, childSelector: (item: A) => A[] | undefined): A;
-export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefined): A[] | A {
-    if (Array.isArray(a)) {
-        const t = a.map((v) => flatten(v, childSelector));
-        return t;
-    }
-    const child = childSelector(a);
-    if (Array.isArray(child)) {
-        return [
-            a,
-            ...child.map((v) => flatten(v, childSelector)),
-        ];
-    }
-    return a;
-}
-*/

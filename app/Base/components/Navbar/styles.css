@@ -65,6 +65,6 @@
     }
 }
 
-.notification-content {
-    padding: var(--dui-spacing-large);
+.popup {
+    max-height: unset!important;
 }
