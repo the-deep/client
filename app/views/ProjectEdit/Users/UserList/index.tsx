@@ -12,28 +12,67 @@ import {
     TableHeaderCellProps,
     createStringColumn,
 } from '@the-deep/deep-ui';
-
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 import { createDateColumn } from '#components/tableHelpers';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import _ts from '#ts';
 
-import { useModalState } from '#hooks/stateManagement';
 import {
-    Membership,
-    MultiResponse,
-} from '#types';
+    ProjectUsersQuery,
+    ProjectUsersQueryVariables,
+} from '#generated/types';
+import { useModalState } from '#hooks/stateManagement';
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';
 
+const PROJECT_USERS = gql`
+    query ProjectUsers(
+        $projectId: ID!
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        project(id: $projectId) {
+            userMembers(page: $page, pageSize: $pageSize) {
+                results {
+                    badges
+                    id
+                    joinedAt
+                    member {
+                        displayName
+                        id
+                        organization
+                        firstName
+                        lastName
+                    }
+                    role {
+                        id
+                        level
+                        title
+                    }
+                    addedBy {
+                        displayName
+                        id
+                    }
+                }
+                totalCount
+            }
+        }
+    }
+`;
+
+export type ProjectUser = NonNullable<NonNullable<NonNullable<ProjectUsersQuery['project']>['userMembers']>['results']>[number];
 const maxItemsPerPage = 10;
-const userKeySelector = (d: Membership) => d.id;
+const userKeySelector = (d: ProjectUser) => d.id;
 
 interface Props{
     className?: string;
-    projectId: number;
-    activeUserId?: number;
+    projectId: string;
+    activeUserId?: string;
     activeUserRoleLevel?: number;
     pending?: boolean;
 }
@@ -48,7 +87,7 @@ function UserList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [membershipIdToEdit, setMembershipIdToEdit] = useState<number | undefined>(undefined);
+    const [projectUserToEdit, setProjectUserToEdit] = useState<ProjectUser>();
 
     const [
         showAddUserModal,
@@ -57,44 +96,48 @@ function UserList(props: Props) {
     ] = useModalState(false);
 
     const handleModalClose = useCallback(() => {
-        setMembershipIdToEdit(undefined);
+        setProjectUserToEdit(undefined);
         setModalHidden();
     }, [setModalHidden]);
 
-    const queryForRequest = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-    }), [activePage]);
-    const {
-        pending: usersPending,
-        response: usersResponse,
-        retrigger: triggerGetUsers,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://projects/${projectId}/project-memberships/`,
-        method: 'GET',
-        query: queryForRequest,
-        failureHeader: _ts('projectEdit', 'userFetchFailed'),
-    });
+    const variables = useMemo(() => ({
+        projectId,
+        page: activePage,
+        pageSize: maxItemsPerPage,
+
+    }
+    ), [projectId, activePage]);
 
     const {
-        trigger: triggerMembershipDelete,
-    } = useLazyRequest<unknown, number>({
+        data: projectUsersResponse,
+        loading: projectUsersPending,
+        refetch,
+    } = useQuery<ProjectUsersQuery, ProjectUsersQueryVariables>(
+        PROJECT_USERS,
+        {
+            variables,
+        },
+    );
+
+    const {
+        trigger: triggerProjectUserDelete,
+    } = useLazyRequest<unknown, string>({
         url: (ctx) => `server://projects/${projectId}/project-memberships/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
-            triggerGetUsers();
+            refetch();
         },
         failureHeader: _ts('projectEdit', 'membershipDeleteFailed'),
     });
 
-    const handleEditMembershipClick = useCallback((membershipId) => {
-        setMembershipIdToEdit(membershipId);
+    const handleEditProjectUserClick = useCallback((user: ProjectUser) => {
+        setProjectUserToEdit(user);
         setModalShow();
     }, [setModalShow]);
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
-            Membership, number, ActionCellProps<number>, TableHeaderCellProps
+            ProjectUser, string, ActionCellProps<string>, TableHeaderCellProps
         > = {
             id: 'action',
             title: 'Actions',
@@ -105,12 +148,12 @@ function UserList(props: Props) {
             cellRenderer: ActionCell,
             cellRendererParams: (userId, data) => ({
                 itemKey: userId,
-                onEditClick: handleEditMembershipClick,
-                onDeleteClick: triggerMembershipDelete,
+                onEditClick: () => handleEditProjectUserClick(data),
+                onDeleteClick: () => triggerProjectUserDelete(data.id),
                 disabled: (
-                    data.member === activeUserId
+                    data.member.id === activeUserId
                     || isNotDefined(activeUserRoleLevel)
-                    || data.roleDetails.level < activeUserRoleLevel
+                    || data.role.level < activeUserRoleLevel
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUserLabel'),
                 deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
@@ -119,43 +162,39 @@ function UserList(props: Props) {
         };
 
         return ([
-            createStringColumn<Membership, number>(
+            createStringColumn<ProjectUser, string>(
                 'memberName',
                 _ts('projectEdit', 'memberName'),
-                (item) => item.memberName,
+                (item) => item.member.displayName,
             ),
-            createStringColumn<Membership, number>(
+            createStringColumn<ProjectUser, string>(
                 'memberEmail',
                 _ts('projectEdit', 'memberEmail'),
-                (item) => item.memberEmail,
+                (item) => item.member.displayName, // member email
             ),
-            createStringColumn<Membership, number>(
+            createStringColumn<ProjectUser, string>(
                 'memberOrganization',
                 _ts('projectEdit', 'memberOrganization'),
-                (item) => item.memberOrganization,
+                (item) => item.member.organization,
             ),
-            createStringColumn<Membership, number>(
+            createStringColumn<ProjectUser, string>(
                 'addedByName',
                 _ts('projectEdit', 'addedByName'),
-                (item) => item.addedByName,
+                (item) => item.addedBy?.displayName,
             ),
-            createDateColumn<Membership, number>(
+            createDateColumn<ProjectUser, string>(
                 'joinedAt',
                 _ts('projectEdit', 'addedOn'),
                 (item) => item.joinedAt,
             ),
-            createStringColumn<Membership, number>(
+            createStringColumn<ProjectUser, string>(
                 'role',
                 'Assigned Role',
-                (item) => item?.roleDetails.title,
+                (item) => item?.role.title,
             ),
             actionColumn,
         ]);
-    }, [triggerMembershipDelete, handleEditMembershipClick, activeUserId, activeUserRoleLevel]);
-
-    const membershipToEdit = useMemo(() => (
-        usersResponse?.results?.find((d) => d.id === membershipIdToEdit)
-    ), [usersResponse?.results, membershipIdToEdit]);
+    }, [triggerProjectUserDelete, handleEditProjectUserClick, activeUserId, activeUserRoleLevel]);
 
     const handleAddUserClick = setModalShow;
 
@@ -178,9 +217,9 @@ function UserList(props: Props) {
                 </Button>
             )}
         >
-            {(usersPending || pending) && (<PendingMessage />)}
+            {(projectUsersPending || pending) && (<PendingMessage />)}
             <TableView
-                data={usersResponse?.results}
+                data={projectUsersResponse?.project?.userMembers?.results}
                 keySelector={userKeySelector}
                 emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
                 rowClassName={styles.tableRow}
@@ -189,7 +228,7 @@ function UserList(props: Props) {
             <Pager
                 activePage={activePage}
                 className={styles.pager}
-                itemsCount={usersResponse?.count ?? 0}
+                itemsCount={projectUsersResponse?.project?.userMembers?.totalCount ?? 0}
                 maxItemsPerPage={maxItemsPerPage}
                 onActivePageChange={setActivePage}
                 itemsPerPageControlHidden
@@ -198,8 +237,8 @@ function UserList(props: Props) {
                 <AddUserModal
                     onModalClose={handleModalClose}
                     projectId={projectId}
-                    onTableReload={triggerGetUsers}
-                    userValue={membershipToEdit}
+                    onProjectUserChange={refetch}
+                    projectUserToEdit={projectUserToEdit}
                     activeUserRoleLevel={activeUserRoleLevel}
                 />
             )}

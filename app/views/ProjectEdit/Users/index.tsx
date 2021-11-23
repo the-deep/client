@@ -12,8 +12,8 @@ import UserGroupList from './UserGroupList';
 import styles from './styles.css';
 
 interface Props {
-    projectId: number;
-    activeUserId?: number;
+    projectId: string;
+    activeUserId?: string;
 }
 
 function Users(props: Props) {

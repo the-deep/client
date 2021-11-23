@@ -1,6 +1,7 @@
 import { BasicElement } from '.';
 import { OrganizationDetails } from './organization';
 
+type badges = 'QA';
 export interface ProjectElement {
     id: number;
     title: string;
@@ -29,7 +30,7 @@ export interface Membership {
         level: number;
     };
     joinedAt: string;
-    badges: number[];
+    badges: badges[];
     userGroupOptions: BasicElement[];
 }
 
