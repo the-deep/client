@@ -37,6 +37,10 @@ const FRAMEWORK = gql`
                 title
             }
         }
+        previewImage {
+            name
+            url
+        }
         title
         properties
         id

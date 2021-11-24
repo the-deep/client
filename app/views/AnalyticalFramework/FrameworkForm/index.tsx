@@ -49,7 +49,7 @@ import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
-// import UploadImage from './UploadImage';
+import UploadImage from './UploadImage';
 import PrimaryTagging from './PrimaryTagging';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
@@ -125,6 +125,10 @@ function FrameworkForm(props: FrameworkFormProps) {
         [framework],
     );
 
+    const [
+        frameworkImage,
+        setFrameworkImage,
+    ] = useState<Framework['previewImage']>(framework?.previewImage);
     const [
         organizationOptions,
         setOrganizationOptions,
@@ -227,6 +231,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                             variant: 'success',
                         },
                     );
+                    setFrameworkImage(result.previewImage);
                     setValue(transformFramework(result as Framework));
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
@@ -292,11 +297,17 @@ function FrameworkForm(props: FrameworkFormProps) {
                                 id: String(frameworkId),
                                 data,
                             },
+                            context: {
+                                hasUpload: true,
+                            },
                         });
                     } else {
                         createAnalysisFramework({
                             variables: {
                                 data,
+                            },
+                            context: {
+                                hasUpload: true,
                             },
                         });
                     }
@@ -549,18 +560,14 @@ function FrameworkForm(props: FrameworkFormProps) {
                             label="Is Visualization Enabled"
                         />
                     </div>
-                    <div className={styles.imagePreview} />
-                    {/*
                     <UploadImage
                         className={styles.imagePreview}
-                        alt={_ts('analyticalFramework', 'previewImage')}
+                        alt={frameworkImage?.name ?? _ts('analyticalFramework', 'previewImage')}
                         name="previewImage"
                         value={value.previewImage}
-                        image={framework?.previewImage}
+                        image={frameworkImage?.url}
                         onChange={setFieldValue}
-                        disabled={pending}
                     />
-                    */}
                 </div>
                 {framework && (
                     <UserTable

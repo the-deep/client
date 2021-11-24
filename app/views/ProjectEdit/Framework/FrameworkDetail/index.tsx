@@ -422,9 +422,7 @@ function FrameworkDetail(props: Props) {
                                 )}
                             </Tabs>
                         </TabPanel>
-                        <TabPanel
-                            name="secondary"
-                        >
+                        <TabPanel name="secondary">
                             <Section
                                 widgets={frameworkDetails?.secondaryTagging}
                                 onAttributeChange={noop}

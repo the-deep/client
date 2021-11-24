@@ -1,23 +1,28 @@
 .upload-image {
     display: flex;
+    background-color: var(--dui-color-foreground);
     padding: 0;
+    overflow-y: auto;
 
     .container {
         display: flex;
+        position: relative;
         align-items: center;
         flex-direction: column;
         justify-content: center;
+        overflow-y: auto;
 
         .content {
             display: flex;
-            position: relative;
             align-items: center;
             flex-direction: column;
             flex-grow: 1;
+            overflow-y: auto;
 
             .image-preview {
                 display: flex;
                 flex-grow: 1;
+                overflow-y: auto;
             }
 
             .input {

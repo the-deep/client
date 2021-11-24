@@ -12,7 +12,7 @@ import { FrameworkInput } from '../types';
 
 type FormType = FrameworkInput & { isVisualizationEnabled?: boolean };
 // NOTE: they will be handled internally
-export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging'>;
+export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage'>;
 
 export type WidgetsType = NonNullable<PartialFormType['secondaryTagging']>;
 export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
@@ -78,9 +78,7 @@ export const defaultFormValues: PartialFormType = {
 const schema: FormSchema = {
     fields: (value): FormSchemaFields => {
         let baseSchema: FormSchemaFields = {
-            // TODO: does not work right now
-            // previewImage: [],
-
+            previewImage: [],
             title: [requiredStringCondition],
             description: [],
             isPrivate: [],
