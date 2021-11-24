@@ -37,6 +37,7 @@ import {
 
 import ProjectFilterForm from './ProjectFilterForm';
 import ActiveProjectItem, { Props as ActiveProjectItemProps } from './ActiveProject';
+import ActiveFrameworkItem, { Props as ActiveFrameworkItemProps } from './ActiveFramework';
 import TableView from './TableView';
 import MapView from './MapView';
 
@@ -57,13 +58,21 @@ const PROJECT_EXPLORE_STATS = gql`
                 projectId
                 projectTitle
             }
+            topActiveFrameworks {
+                analysisFrameworkId
+                analysisFrameworkTitle
+                projectCount
+                sourceCount
+            }
         }
     }
 `;
 
 type ActiveProject = NonNullable<NonNullable<ProjectExploreStatsQuery['projectExploreStats']>['topActiveProjects']>[number];
+type ActiveFramework = NonNullable<NonNullable<ProjectExploreStatsQuery['projectExploreStats']>['topActiveFrameworks']>[number];
 
 const activeProjectKeySelector = (project: ActiveProject) => project.projectId;
+const activeFrameworkKeySelector = (framework: ActiveFramework) => framework.analysisFrameworkId;
 
 interface Props {
     className?: string;
@@ -87,6 +96,15 @@ function ExploreDeep(props: Props) {
         (_:string, datum: ActiveProject): ActiveProjectItemProps => ({
             projectTitle: datum.projectTitle ?? undefined,
             frameworkTitle: datum.analysisFrameworkTitle ?? undefined,
+        }),
+        [],
+    );
+
+    const activeFrameworkRendererParams = useCallback(
+        (_: string, datum: ActiveFramework): ActiveFrameworkItemProps => ({
+            frameworkTitle: datum.analysisFrameworkTitle ?? undefined,
+            projectCount: datum.projectCount ?? undefined,
+            sourceCount: datum.sourceCount ?? undefined,
         }),
         [],
     );
@@ -149,12 +167,35 @@ function ExploreDeep(props: Props) {
                             value={data?.projectExploreStats?.generatedExportsMonthly ?? 0}
                         />
                     </Card>
+                    <ContainerCard
+                        className={styles.frameworkContainer}
+                        heading="Top 5 most used frameworks"
+                        headingDescription="Last 3 months"
+                        spacing="none"
+                        headingSize="medium"
+                        borderBelowHeader
+                        borderBelowHeaderWidth="thin"
+                        inlineHeadingDescription
+                        headerClassName={styles.header}
+                        headingContainerClassName={styles.heading}
+                        contentClassName={styles.frameworkListContainer}
+                    >
+                        <ListView
+                            data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
+                            keySelector={activeFrameworkKeySelector}
+                            renderer={ActiveFrameworkItem}
+                            rendererParams={activeFrameworkRendererParams}
+                        />
+                    </ContainerCard>
                 </div>
                 <ContainerCard
                     className={styles.rightContainer}
                     heading="Top 5 most active project"
                     headingDescription="Last 3 months"
                     headingSize="medium"
+                    spacing="none"
+                    headerClassName={styles.header}
+                    headingContainerClassName={styles.heading}
                     borderBelowHeader
                     borderBelowHeaderWidth="thin"
                     inlineHeadingDescription

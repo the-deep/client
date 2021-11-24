@@ -110,6 +110,8 @@ const PROJECT_DETAILS = gql`
                 title
                 description
                 startDate
+                membershipPending
+                currentUserRole
                 stats {
                     numberOfUsers
                     numberOfLeads
@@ -175,6 +177,7 @@ function ExploreDeepMapView(props: Props) {
     const {
         data: projectDetails,
         loading: projectDetailsPending,
+        refetch: refetchProjectDetails,
     } = useQuery<ProjectDetailsForMapViewQuery, ProjectDetailsForMapViewQueryVariables>(
         PROJECT_DETAILS,
         {
@@ -269,6 +272,7 @@ function ExploreDeepMapView(props: Props) {
                     setPage={setPage}
                     setPageSize={setPageSize}
                     totalCount={projectDetails?.projects?.totalCount ?? 0}
+                    refetchProjectDetails={refetchProjectDetails}
                 />
             )}
             {loading && projectDetailsPending && (<PendingMessage />)}

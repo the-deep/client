@@ -4,6 +4,7 @@ import {
     Button,
     ConfirmButton,
     useAlert,
+    ButtonProps,
 } from '@the-deep/deep-ui';
 import { useMutation, gql } from '@apollo/client';
 
@@ -26,6 +27,7 @@ export interface Props {
     membershipPending: boolean;
     isMember: boolean;
     onMemberStatusChange: () => void;
+    variant?: ButtonProps<string>['variant'];
 }
 
 const CANCEL_JOIN_PROJECT = gql`
@@ -46,6 +48,7 @@ function ActionCell(props: Props) {
         membershipPending,
         isMember,
         onMemberStatusChange,
+        variant,
     } = props;
 
     const [
@@ -94,7 +97,7 @@ function ActionCell(props: Props) {
                 <Button
                     name={undefined}
                     onClick={showJoinModal}
-                    variant="secondary"
+                    variant={variant}
                     disabled={disabled}
                 >
                     Join
