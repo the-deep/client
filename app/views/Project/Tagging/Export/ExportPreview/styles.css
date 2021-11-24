@@ -1,0 +1,32 @@
+.export-preview {
+    background-color: var(--dui-color-foreground);
+
+    .header {
+        border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+
+        .heading {
+            color: var(--dui-color-accent);
+        }
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: var(--dui-color-foreground);
+
+        .label {
+            display: flex;
+            align-self: center;
+            color: var(--dui-color-text-label);
+            font-size: var(--dui-font-size-medium);
+        }
+
+        .lead-preview {
+            flex-grow: 1;
+            width: 100%;
+        }
+    }
+}

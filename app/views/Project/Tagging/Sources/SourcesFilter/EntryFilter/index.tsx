@@ -21,9 +21,13 @@ import {
 } from '#utils/common';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
+import {
+    FrameworkFilterType,
+} from '#types/newAnalyticalFramework';
 
 import FrameworkFilterItem from './FrameworkFilterItem';
-import { SourceFilterOptions, FrameworkFilterType } from '../types';
+import { SourceFilterOptions } from '../types';
+
 import { PartialEntriesFilterDataType } from '../schema';
 
 import styles from './styles.css';

@@ -85,6 +85,7 @@ const SOURCE_FILTER_OPTIONS = gql`
         project(id: $projectId) {
             analysisFramework {
                 filters {
+                    id
                     filterType
                     key
                     properties
@@ -181,6 +182,7 @@ interface Props {
     projectId: string;
     value: PartialFormType;
     filterOnlyUnprotected?: boolean;
+    hasAssessment?: boolean;
     onFilterApply: (value: PartialFormType) => void;
 }
 
@@ -190,6 +192,7 @@ function SourcesFilter(props: Props) {
         onFilterApply,
         projectId,
         filterOnlyUnprotected,
+        hasAssessment,
         value: valueFromProps,
         disabled,
     } = props;
@@ -390,16 +393,18 @@ function SourcesFilter(props: Props) {
                         disabled={disabled || loading || !!sourceFilterOptionsError}
                     />
                 )}
-                <EntryFilter
-                    name="entriesFilterData"
-                    value={value.entriesFilterData}
-                    onChange={setFieldValue}
-                    projectId={projectId}
-                    options={sourceFilterOptions}
-                    optionsDisabled={loading || !!sourceFilterOptionsError}
-                    allFiltersVisible={allFiltersVisible}
-                    disabled={disabled}
-                />
+                {!hasAssessment && (
+                    <EntryFilter
+                        name="entriesFilterData"
+                        value={value.entriesFilterData}
+                        onChange={setFieldValue}
+                        projectId={projectId}
+                        options={sourceFilterOptions}
+                        optionsDisabled={loading || !!sourceFilterOptionsError}
+                        allFiltersVisible={allFiltersVisible}
+                        disabled={disabled}
+                    />
+                )}
                 <div className={styles.actions}>
                     <Button
                         disabled={disabled || pristine}
