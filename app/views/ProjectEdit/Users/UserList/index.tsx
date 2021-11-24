@@ -207,10 +207,11 @@ function UserList(props: Props) {
         });
     }, [bulkDeleteProjectMembership, projectId]);
 
-    const handleEditProjectUserClick = useCallback((user: ProjectUser) => {
+    const handleEditProjectUserClick = useCallback((id: string) => {
+        const user = projectUsersResponse?.project?.userMembers?.results?.find((v) => v.id === id);
         setProjectUserToEdit(user);
         setModalShow();
-    }, [setModalShow]);
+    }, [setModalShow, projectUsersResponse?.project?.userMembers?.results]);
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
@@ -225,8 +226,8 @@ function UserList(props: Props) {
             cellRenderer: ActionCell,
             cellRendererParams: (userId, data) => ({
                 itemKey: userId,
-                onEditClick: () => handleEditProjectUserClick(data),
-                onDeleteClick: () => handleRemoveUserFromProject(data.id),
+                onEditClick: handleEditProjectUserClick,
+                onDeleteClick: handleRemoveUserFromProject,
                 disabled: (
                     data.member.id === activeUserId
                     || isNotDefined(activeUserRoleLevel)
