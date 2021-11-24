@@ -229,7 +229,7 @@ function AddUserModal(props: Props) {
         ? [
             {
                 id: +projectUserToEdit.member.id,
-                displayName: projectUserToEdit.member?.displayName
+                displayName: projectUserToEdit.member.displayName
                     ?? `${projectUserToEdit.member.firstName} ${projectUserToEdit.member.lastName}`,
             },
         ]

@@ -10,6 +10,7 @@ import {
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
+    Tag,
     createStringColumn,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -88,6 +89,31 @@ const PROJECT_USERS = gql`
 export type ProjectUser = NonNullable<NonNullable<NonNullable<ProjectUsersQuery['project']>['userMembers']>['results']>[number];
 const maxItemsPerPage = 10;
 const userKeySelector = (d: ProjectUser) => d.id;
+
+interface BadgeListProps {
+    className?: string;
+    badges?: string[];
+}
+
+function BadgeList(props: BadgeListProps) {
+    const { badges, className } = props;
+
+    return (
+        <div className={className}>
+            {
+                badges?.map((v) => (
+                    <Tag
+                        key={v}
+                        className={styles.tag}
+                        variant="complement1"
+                    >
+                        {v}
+                    </Tag>
+                ))
+            }
+        </div>
+    );
+}
 
 interface Props{
     className?: string;
@@ -212,6 +238,21 @@ function UserList(props: Props) {
                 deleteConfirmationMessage: _ts('projectEdit', 'removeUserConfirmation'),
             }),
         };
+        const badgeColumn: TableColumn<
+            ProjectUser, string, BadgeListProps, TableHeaderCellProps
+        > = {
+            id: 'badges',
+            title: 'Badges',
+            headerCellRenderer: TableHeaderCell,
+            headerCellRendererParams: {
+                sortable: false,
+            },
+            cellRenderer: BadgeList,
+            cellRendererClassName: styles.badgeContainer,
+            cellRendererParams: (_, data) => ({
+                badges: data.badges ?? undefined,
+            }),
+        };
 
         return ([
             createStringColumn<ProjectUser, string>(
@@ -244,6 +285,7 @@ function UserList(props: Props) {
                 'Assigned Role',
                 (item) => item?.role.title,
             ),
+            badgeColumn,
             actionColumn,
         ]);
     }, [
