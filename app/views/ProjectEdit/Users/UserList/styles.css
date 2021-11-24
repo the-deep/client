@@ -8,6 +8,15 @@
             background-color: var(--dui-color-foreground);
         }
 
+        .badge-container {
+            display: flex;
+            gap: var(--dui-spacing-extra-small);
+
+            .tag {
+                padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+            }
+        }
+
         .pager {
             align-self: flex-end;
             flex-shrink: 0;
