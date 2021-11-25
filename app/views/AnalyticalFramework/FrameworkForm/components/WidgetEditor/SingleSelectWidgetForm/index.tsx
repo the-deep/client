@@ -7,7 +7,6 @@ import { GrDrag } from 'react-icons/gr';
 import {
     Button,
     TextInput,
-    TextArea,
     QuickActionButton,
     ControlledExpandableContainer,
     Container,
@@ -195,6 +194,8 @@ function OptionInput(props: OptionInputProps) {
                 error={error?.label}
                 className={styles.optionInput}
             />
+            {/*
+                NOTE: We'll need to remove tooltip from types later
             <TextArea
                 // FIXME: use translation
                 label="Tooltip"
@@ -205,6 +206,7 @@ function OptionInput(props: OptionInputProps) {
                 error={error?.tooltip}
                 className={styles.optionInput}
             />
+            */}
         </ControlledExpandableContainer>
     );
 }

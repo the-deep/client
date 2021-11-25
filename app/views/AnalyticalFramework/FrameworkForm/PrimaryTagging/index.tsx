@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
     Button,
     Container,
@@ -51,6 +51,7 @@ interface PrimaryTaggingInput<K extends string> {
     error: Error<SectionsType> | undefined;
     onChange: (value: SetValueArg<SectionsType | undefined>, name: K) => void;
     disabled?: boolean;
+    onTempStateChange: (disabled: boolean) => void;
 }
 
 function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
@@ -62,6 +63,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         onChange: setSectionsFromProps,
         disabled,
         error: errorFromProps,
+        onTempStateChange,
     } = props;
 
     const sections = sectionsFromProps;
@@ -80,6 +82,10 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
     const [tempWidget, setTempWidget] = useState<TempWidget | undefined>();
 
     const [sectionToEdit, setSectionToEdit] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        onTempStateChange(!!(tempSections || tempWidget));
+    }, [tempSections, tempWidget, onTempStateChange]);
 
     const handleSectionsAdd = useCallback(
         () => {

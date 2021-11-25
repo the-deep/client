@@ -22,11 +22,13 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    // refreshTimestamp?: number;
 }
 
 function Sources(props: Props) {
-    const { className } = props;
+    const {
+        className,
+    } = props;
+
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
     const [sourcesFilters, setSourcesFilters] = useState<PartialFilterFormType>({});
@@ -99,8 +101,6 @@ function Sources(props: Props) {
                         className={styles.table}
                         filters={sourcesFilters}
                         projectId={activeProject}
-                        // FIXME: support refreshing table
-                        // refreshTimestamp={refreshTimestamp}
                     />
                 )}
                 {activeView === 'grid' && activeProject && (

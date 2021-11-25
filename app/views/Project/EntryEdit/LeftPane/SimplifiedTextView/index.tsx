@@ -26,6 +26,7 @@ interface Props {
     onApproveButtonClick?: (entryClientId: string) => void;
     onDiscardButtonClick?: (entryClientId: string) => void;
     onEntryDelete?: (entryId: string) => void;
+    onEntryRestore?: (entryId: string) => void;
     disableExcerptClick?: boolean;
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
@@ -44,6 +45,7 @@ function SimplifiedTextView(props: Props) {
         onApproveButtonClick,
         onDiscardButtonClick,
         onEntryDelete,
+        onEntryRestore,
         disableExcerptClick,
         disableApproveButton,
         disableDiscardButton,
@@ -73,6 +75,7 @@ function SimplifiedTextView(props: Props) {
                 entryType: entry.entryType,
                 lead: entry.lead,
                 clientId: entry.clientId,
+                deleted: entry.deleted,
             });
         })
             .filter(isDefined)
@@ -110,10 +113,12 @@ function SimplifiedTextView(props: Props) {
                             disableClick={disableExcerptClick}
                             isActive={activeEntryClientId === split.entryId}
                             excerpt={split.excerpt}
+                            deleted={split.deleted}
                             entryType={split.entryType}
                             droppedExcerpt={split.droppedExcerpt}
                             onExcerptChange={onExcerptChange}
                             onEntryDelete={onEntryDelete}
+                            onEntryRestore={onEntryRestore}
                             onApproveButtonClick={onApproveButtonClick}
                             onDiscardButtonClick={onDiscardButtonClick}
                             disableApproveButton={disableApproveButton}

@@ -3,6 +3,7 @@ import {
     IoClose,
     IoCheckmark,
     IoPencil,
+    IoArrowUndoSharp,
     IoTrashBinOutline,
 } from 'react-icons/io5';
 import { BsFileDiff } from 'react-icons/bs';
@@ -91,6 +92,7 @@ interface EntryItemProps extends EntryInput {
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
     onEntryDelete?: (entryId: string) => void;
+    onEntryRestore?: (entryId: string) => void;
     entryImage: Entry['image'];
     disableClick?: boolean;
     errored?: boolean;
@@ -111,6 +113,7 @@ function EntryItem(props: EntryItemProps) {
         disableDiscardButton,
         disableClick,
         onEntryDelete,
+        onEntryRestore,
         imageRaw,
         entryImage,
         entryType,
@@ -233,16 +236,26 @@ function EntryItem(props: EntryItemProps) {
                             onComplete={handleExcerptChange}
                         />
                     </QuickActionDropdownMenu>
-                    <QuickActionButton
-                        name={entryId}
-                        onClick={onEntryDelete}
-                    >
-                        <IoTrashBinOutline />
-                    </QuickActionButton>
+                    {deleted ? (
+                        <QuickActionButton
+                            name={entryId}
+                            onClick={onEntryRestore}
+                        >
+                            <IoArrowUndoSharp />
+                        </QuickActionButton>
+                    ) : (
+                        <QuickActionButton
+                            name={entryId}
+                            onClick={onEntryDelete}
+                        >
+                            <IoTrashBinOutline />
+                        </QuickActionButton>
+                    )}
                 </>
             )}
         >
             <div
+                className={styles.content}
                 onClick={handleClick}
                 role="presentation"
             >

@@ -929,7 +929,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             newlyCreatedOptionIdRef.current = key;
             const newColumn: PartialColumnType = {
                 key,
-                order: -1,
+                order: oldColumns.length,
             };
             onFieldChange(
                 [...reorder(oldColumns), newColumn],

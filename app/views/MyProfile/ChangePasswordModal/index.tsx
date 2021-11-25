@@ -53,18 +53,18 @@ const changePasswordSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
         oldPassword: [
             requiredStringCondition,
-            lengthGreaterThanCondition(4),
+            lengthGreaterThanCondition(7),
             lengthSmallerThanCondition(129),
         ],
         newPassword: [
             requiredStringCondition,
-            lengthGreaterThanCondition(4),
+            lengthGreaterThanCondition(7),
             lengthSmallerThanCondition(129),
         ],
         confirmPassword: [
             requiredStringCondition,
             sameWithPasswordCondition,
-            lengthGreaterThanCondition(4),
+            lengthGreaterThanCondition(7),
             lengthSmallerThanCondition(129),
         ],
     }),

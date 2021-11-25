@@ -77,6 +77,7 @@ function OrganigramInput<N extends string>(props: Props<N>) {
         (data: OrganigramDatum) => (
             <Card
                 className={_cs(styles.card, isSelected(data) && styles.selected)}
+                // title={data.tooltip}
             >
                 { data.label }
             </Card>
