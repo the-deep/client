@@ -30,12 +30,11 @@ import {
     enumLabelSelector,
 } from '#utils/common';
 import NonFieldError from '#components/NonFieldError';
-import UserSelectInput from '#components/selections/UserSelectInput';
+import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
 import { useRequest } from '#base/utils/restRequest';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import {
     MultiResponse,
-    BasicUser,
 } from '#types';
 
 import {
@@ -133,14 +132,10 @@ function AddUserModal(props: Props) {
     const error = getErrorObject(riskyError);
     const alert = useAlert();
 
-    const queryForUsers = useMemo(() => ({
-        members_exclude_project: projectId,
-    }), [projectId]);
-
     const [
         userOptions,
         setUserOptions,
-    ] = useState<BasicUser[] | undefined | null>();
+    ] = useState<User[] | undefined | null>();
 
     const {
         pending: pendingRoles,
@@ -177,14 +172,14 @@ function AddUserModal(props: Props) {
 
                 const [err] = errors ?? [];
                 const [user] = result ?? [];
-                if (errors && errors[0]) {
+                if (err) {
                     const formError = transformToFormError(removeNull(err) as ObjectError[]);
                     setError(formError);
-                } else {
+                } else if (user) {
                     alert.show(
                         projectUserToEdit
-                            ? `Successfully updated ${user?.member.displayName}`
-                            : `Successfully added ${user?.member.displayName}`,
+                            ? `Successfully updated ${user.member.displayName}`
+                            : `Successfully added ${user.member.displayName}`,
                         { variant: 'success' },
                     );
                     onProjectUserChange();
@@ -225,16 +220,9 @@ function AddUserModal(props: Props) {
         ],
     );
 
-    const currentUser = useMemo(() => (projectUserToEdit
-        ? [
-            {
-                id: +projectUserToEdit.member.id,
-                displayName: projectUserToEdit.member.displayName
-                    ?? `${projectUserToEdit.member.firstName} ${projectUserToEdit.member.lastName}`,
-            },
-        ]
-        : []
-    ), [projectUserToEdit]);
+    const currentUser = useMemo(() => (
+        projectUserToEdit?.member ? [projectUserToEdit?.member] : []
+    ), [projectUserToEdit?.member]);
 
     const roles = isDefined(activeUserRoleLevel)
         ? projectRolesResponse?.results.filter(
@@ -266,8 +254,7 @@ function AddUserModal(props: Props) {
         >
             {bulkEditProjectMembershipPending && (<PendingMessage />)}
             <NonFieldError error={error} />
-            <UserSelectInput
-                queryParams={queryForUsers}
+            <NewUserSelectInput
                 name="member"
                 readOnly={isDefined(projectUserToEdit)}
                 value={value.member}
@@ -277,6 +264,7 @@ function AddUserModal(props: Props) {
                 error={error?.member}
                 label={_ts('projectEdit', 'userLabel')}
                 placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
+                membersExcludeProject={projectId}
             />
             <SelectInput
                 name="role"

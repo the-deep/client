@@ -42,7 +42,7 @@ const usergroupKeySelector = (d: UserGroup) => d.id;
 
 interface Props{
     className?: string;
-    projectId: number;
+    projectId: string;
     activeUserRoleLevel?: number;
     pending?: boolean;
 }

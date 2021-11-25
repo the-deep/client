@@ -24,7 +24,7 @@ import styles from './styles.css';
 
 type FormType = {
     title: string;
-    project: number;
+    project: string;
     code?: string;
     public?: boolean;
     isPublished?: boolean;
@@ -43,7 +43,7 @@ const schema: FormSchema = {
 };
 
 interface Props {
-    projectId: number;
+    projectId: string;
     onSuccess: (value: Region) => void;
     onModalClose: () => void;
 }
