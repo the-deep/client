@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import { generatePath } from 'react-router-dom';
 
@@ -8,12 +9,15 @@ import deepLogo from '#resources/img/deep-logo-new.svg';
 import Svg from '#components/Svg';
 import routes from '#base/configs/routes';
 
+import waterLevelImage from './water-level.png';
+
 import styles from './styles.css';
 
 interface Props {
     errorTitle?: string;
-    errorMessage?: React.ReactNode;
     errorImage?: string;
+    errorMessage?: React.ReactNode;
+    className?: string;
 }
 
 function FullPageErrorMessage(props: Props) {
@@ -21,10 +25,11 @@ function FullPageErrorMessage(props: Props) {
         errorTitle,
         errorMessage,
         errorImage,
+        className,
     } = props;
-    console.info(errorImage);
+
     return (
-        <div className={styles.errorPage}>
+        <div className={_cs(styles.errorPage, className)}>
             <div className={styles.logoContainer}>
                 <Svg
                     src={deepLogo}
@@ -32,6 +37,11 @@ function FullPageErrorMessage(props: Props) {
                 />
             </div>
             <div className={styles.background}>
+                <img
+                    src={waterLevelImage}
+                    className={styles.backgroundImage}
+                    alt=""
+                />
                 <img
                     className={styles.kraken}
                     alt=""
