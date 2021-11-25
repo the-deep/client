@@ -78,7 +78,7 @@ const defaultFormValue: PartialForm<FormType> = {};
 
 interface Props {
     onModalClose: () => void;
-    projectId: number;
+    projectId: string;
     onTableReload: () => void;
     usergroupValue?: UserGroupMembership;
     activeUserRoleLevel?: number;

@@ -28,7 +28,7 @@ const regionKeySelector = (d: Region) => d.id.toString();
 
 interface Props {
     className?: string;
-    projectId: number;
+    projectId: string;
 
     regions?: Region[];
     onRegionAdd: () => void;
@@ -164,7 +164,7 @@ function RegionsMap(props: Props) {
                     <RegionSelectInput
                         className={styles.region}
                         name="regions"
-                        projectId={projectId}
+                        projectId={+projectId}
                         value={undefined}
                         onChange={onRegionSelect}
                         options={regionOptions}

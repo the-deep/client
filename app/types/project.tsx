@@ -29,7 +29,6 @@ export interface Membership {
         level: number;
     };
     joinedAt: string;
-    badges: number[];
     userGroupOptions: BasicElement[];
 }
 

@@ -32,7 +32,7 @@ type PartialAdminLevel = PartialForm<AdminLevel, 'clientId' | 'geoShapeFileDetai
 
 interface Props {
     className?: string;
-    activeProject: number;
+    activeProject: string;
 }
 
 function GeoAreas(props: Props) {
