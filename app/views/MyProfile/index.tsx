@@ -1,5 +1,5 @@
 import React, { useContext, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     TextInput,
@@ -185,6 +185,7 @@ function MyProfile(props: Props) {
     }, [setFieldValue]);
 
     const disabled = userGetPending || userPatchPending || languagesPending;
+
     return (
         <form
             className={_cs(styles.form, className)}
@@ -214,7 +215,13 @@ function MyProfile(props: Props) {
                         showStatus={false}
                         onOptionChange={handleDisplayPictureOptionChange}
                         labelClassName={styles.label}
+                        actionsContainerClassName={_cs(
+                            (pristine || isNotDefined(value.displayPicture))
+                                ? styles.noAction : styles.action,
+                        )}
                         fileInputClassName={styles.fileInput}
+                        inputSectionClassName={styles.inputSection}
+                        variant="general"
                     >
                         <FiEdit2 />
                     </DeepImageInput>
