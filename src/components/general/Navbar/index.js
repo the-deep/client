@@ -54,10 +54,9 @@ import {
 import Cloak from '#components/general/Cloak';
 import NavMenu from './NavMenu';
 import NavDrop from './NavDrop';
-import Community from './Community';
-import Notifica from './Notifica';
 import HelpLink from './HelpLink';
 import ThemeMenu from './ThemeMenu';
+
 import styles from './styles.scss';
 
 export const SubNavbar = ({
@@ -318,8 +317,6 @@ function Navbar(props) {
                         className={styles.helpLink}
                         currentPath={currentPath}
                     />
-                    <Community className={styles.communityDropdown} />
-                    <Notifica className={styles.notificationDropdown} />
                     <Cloak
                         hide={shouldHideThemeMenu}
                         render={

@@ -6,11 +6,6 @@
     display: flex;
     padding: 0 calc(var(--spacing-medium) - var(--spacing-small));
 
-    .display-picture {
-        flex-shrink: 0;
-        --size: var(--width-navbar-avatar);
-    }
-
     :global {
         .title {
             flex-grow: 1;

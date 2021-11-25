@@ -27,8 +27,8 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import Avatar from '#newComponents/ui/Avatar';
 import Cloak from '#components/general/Cloak';
+
 import styles from './styles.scss';
 
 const AdminPanelLink = ({ disabled }) => (
@@ -189,21 +189,9 @@ export default class NavDrop extends React.PureComponent {
             _ts('components.navbar', 'anonymousLabel')
         );
 
-        const displayPicture = (
-            userInformation.displayPictureUrl ||
-            activeUser.displayPictureUrl
-        );
-
         return (
             <DropdownMenu
                 className={_cs(styles.dropdownMenu, className)}
-                leftComponent={
-                    <Avatar
-                        className={styles.displayPicture}
-                        src={displayPicture}
-                        name={userName}
-                    />
-                }
                 title={userName}
                 dropdownClassName={styles.userDropdown}
                 closeOnClick
