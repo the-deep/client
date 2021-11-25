@@ -15,14 +15,6 @@
             font-size: var(--dui-font-size-large);
             font-weight: var(--dui-font-weight-bold);
         }
-
-        .actions {
-            display: flex;
-            align-items: center;
-            color: var(--dui-color-accent);
-            font-size: var(--dui-font-size-large);
-            font-weight: var(--dui-font-weight-bold);
-        }
     }
 
     .content {

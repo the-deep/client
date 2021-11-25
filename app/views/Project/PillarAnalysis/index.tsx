@@ -628,7 +628,7 @@ function PillarAnalysis() {
         || pendingDiscardedTags;
 
     const handleNgramChange = useCallback((val: string | undefined) => {
-        setFiltersValue(filterVal => ({
+        setFiltersValue((filterVal) => ({
             ...filterVal,
             search: val,
         }));

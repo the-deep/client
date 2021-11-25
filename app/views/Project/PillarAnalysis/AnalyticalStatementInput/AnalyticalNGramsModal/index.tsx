@@ -22,15 +22,18 @@ import {
     Legend,
 } from 'recharts';
 
-import { useRequest } from '#utils/request';
-import ExcerptOutput from '#newComponents/viewer/ExcerptOutput';
+import { useRequest } from '#base/utils/restRequest';
+import ExcerptInput from '#components/entry/ExcerptInput';
 
 import {
     PartialAnalyticalStatementType,
 } from '../../schema';
-import EntryContext, { EntryFieldsMin } from '../../context';
+import EntryContext, { EntryMin } from '../../context';
 
-import styles from './styles.scss';
+import styles from './styles.css';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
 
 const chartMargins = {
     top: 0,
@@ -55,7 +58,7 @@ interface NgramsResponse {
     }
 }
 
-const keySelector = (item: EntryFieldsMin) => item.id;
+const keySelector = (item: EntryMin) => item.id;
 
 interface Props {
     onModalClose: () => void,
@@ -91,12 +94,12 @@ function AnalyticalNGramsModal(props: Props) {
 
     const entriesForNgrams = useMemo(() => (
         analyticalEntries?.map(
-            ae => (ae.entry ? entries?.[ae.entry] : undefined),
+            (ae) => (ae.entry ? entries?.[ae.entry] : undefined),
         ).filter(isDefined) ?? []
     ), [entries, analyticalEntries]);
 
     const entryPayload = useMemo(() => {
-        const excerptTexts = entriesForNgrams.map(ae => ae.excerpt);
+        const excerptTexts = entriesForNgrams.map((ae) => ae.excerpt);
 
         return ({
             entries: excerptTexts.filter(isDefined),
@@ -145,12 +148,16 @@ function AnalyticalNGramsModal(props: Props) {
         setTempMainStatement(newVal);
     }, []);
 
-    const entriesRendererParams = useCallback((_: number, data: EntryFieldsMin) => ({
+    const entriesRendererParams = useCallback((_: string, data: EntryMin) => ({
         className: styles.excerpt,
-        excerpt: data.excerpt,
-        imageDetails: data.imageDetails,
-        tabularFieldData: data.tabularFieldData,
+        value: data.excerpt,
         entryType: data.entryType,
+        image: data.image,
+        imageRaw: undefined,
+        leadImageUrl: undefined,
+        readOnly: true,
+        name: 'excerpt',
+        onChange: noop,
     }), []);
 
     return (
@@ -185,13 +192,12 @@ function AnalyticalNGramsModal(props: Props) {
                 <Container
                     className={styles.entriesContainer}
                     heading={`Selected Entries ${analyticalEntries?.length ?? 0}`}
-                    sub
                 >
                     <ListView
                         className={styles.list}
                         data={entriesForNgrams}
                         keySelector={keySelector}
-                        renderer={ExcerptOutput}
+                        renderer={ExcerptInput}
                         rendererParams={entriesRendererParams}
                     />
                 </Container>
