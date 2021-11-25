@@ -1,13 +1,14 @@
 import React, { useEffect, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import PreloadMessage from '#base/components/PreloadMessage';
+import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { UserContext } from '#base/context/UserContext';
 import { NavbarContext } from '#base/context/NavbarContext';
 import { ProjectContext } from '#base/context/ProjectContext';
 import PageTitle from '#base/components/PageTitle';
 import { Project } from '#base/types/project';
 import ErrorBoundary from '#base/components/ErrorBoundary';
+import divingKraken from '#resources/img/diving-kraken.png';
 
 import styles from './styles.css';
 
@@ -95,9 +96,10 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         return (
             <>
                 <PageTitle value={`403 - ${title}`} />
-                <PreloadMessage
-                    heading="Oh no!"
-                    content="The page does not exist or you do not have permissions to view this page."
+                <FullPageErrorMessage
+                    errorTitle="403"
+                    errorMessage="You do not have permission to access this page"
+                    errorImage={divingKraken}
                 />
             </>
         );

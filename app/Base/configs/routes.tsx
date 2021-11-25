@@ -1,18 +1,26 @@
-import { lazy } from 'react';
+import React, { lazy } from 'react';
 import { isNotDefined } from '@togglecorp/fujs';
 
+import flyingKraken from '#resources/img/flying-kraken.png';
 import { wrap } from '#base/utils/routes';
 
 const fourHundredFour = wrap({
     path: '*',
     title: '404',
-    component: lazy(() => import('#base/components/PreloadMessage')),
+    component: lazy(() => import('#views/FullPageErrorMessage')),
     componentProps: {
-        heading: '404',
-        content: 'What you are looking for does not exist.',
+        errorImage: flyingKraken,
+        errorTitle: '404',
+        errorMessage: (
+            <>
+                Sorry, the requested page does not exist
+                <br />
+                You have come too DEEP, this is where the DEEP Kraken rests.
+            </>
+        ),
     },
     visibility: 'is-anything',
-    navbarVisibility: true,
+    navbarVisibility: false,
 });
 const login = wrap({
     path: '/login/',
