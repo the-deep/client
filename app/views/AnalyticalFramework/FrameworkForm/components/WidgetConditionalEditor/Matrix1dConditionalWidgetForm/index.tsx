@@ -167,6 +167,7 @@ interface ConditionInputProps {
     onRemove: (index: number) => void;
     index: number;
     conjunctionOperatorHidden?: boolean;
+    removeDisabled?: boolean,
     listeners?: Listeners,
     attributes?: Attributes,
     parentWidget: Matrix1dWidget | undefined;
@@ -183,6 +184,7 @@ function ConditionInput(props: ConditionInputProps) {
         listeners,
         attributes,
         conjunctionOperatorHidden,
+        removeDisabled,
         parentWidget,
     } = props;
 
@@ -252,6 +254,7 @@ function ConditionInput(props: ConditionInputProps) {
                     onClick={onRemove}
                     // FIXME: use translation
                     title="Remove Condition"
+                    disabled={removeDisabled}
                 >
                     <IoTrashBinOutline />
                 </QuickActionButton>
@@ -389,6 +392,7 @@ function Matrix1dConditionalWidgetForm(props: Matrix1dConditionalWidgetFormProps
         error: arrayError?.[key],
         value: condition,
         conjunctionOperatorHidden: index + 1 === totalConditions,
+        removeDisabled: totalConditions <= 1,
         index,
         parentWidget,
     }), [

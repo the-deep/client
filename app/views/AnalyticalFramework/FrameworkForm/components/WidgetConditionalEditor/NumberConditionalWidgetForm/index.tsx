@@ -168,6 +168,7 @@ interface ConditionInputProps {
     onRemove: (index: number) => void;
     index: number;
     conjunctionOperatorHidden?: boolean;
+    removeDisabled?: boolean,
     listeners?: Listeners,
     attributes?: Attributes,
 }
@@ -183,6 +184,7 @@ function ConditionInput(props: ConditionInputProps) {
         listeners,
         attributes,
         conjunctionOperatorHidden,
+        removeDisabled,
     } = props;
 
     const onFieldChange = useFormObject(index, onChange, defaultConditionVal);
@@ -251,6 +253,7 @@ function ConditionInput(props: ConditionInputProps) {
                     onClick={onRemove}
                     // FIXME: use translation
                     title="Remove Condition"
+                    disabled={removeDisabled}
                 >
                     <IoTrashBinOutline />
                 </QuickActionButton>
@@ -385,6 +388,7 @@ function NumberConditionalWidgetForm(props: NumberConditionalWidgetFormProps) {
         error: arrayError?.[key],
         value: condition,
         conjunctionOperatorHidden: index + 1 === totalConditions,
+        removeDisabled: totalConditions <= 1,
         index,
     }), [
         onConditionChange,
