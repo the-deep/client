@@ -64,17 +64,15 @@ function ComparisonScaleConditionInput(props: ScaleContainsConditionInputProps) 
     const options = parentWidget?.properties?.options;
 
     return (
-        <>
-            <SelectInput
-                name="value"
-                value={value.value}
-                onChange={onFieldChange}
-                error={arrayError}
-                options={options}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-            />
-        </>
+        <SelectInput
+            name="value"
+            value={value.value}
+            onChange={onFieldChange}
+            error={arrayError}
+            options={options}
+            keySelector={optionKeySelector}
+            labelSelector={optionLabelSelector}
+        />
     );
 }
 

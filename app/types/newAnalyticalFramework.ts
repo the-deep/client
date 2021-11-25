@@ -74,7 +74,7 @@ export interface OrganigramSelectedCondition extends BaseCondition {
     operator: 'organigram-selected';
     operatorModifier: 'every' | 'some';
     value: string[];
-};
+}
 
 export interface OrganigramDescendentSelectedCondition extends BaseCondition {
     operator: 'organigram-descendent-selected';

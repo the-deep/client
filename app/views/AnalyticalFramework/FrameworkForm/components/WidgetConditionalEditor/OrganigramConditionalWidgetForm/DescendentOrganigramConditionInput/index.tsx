@@ -82,17 +82,15 @@ function DescendentOrganigramConditionInput(props: OrganigramContainsConditionIn
     );
 
     return (
-        <>
-            <MultiSelectInput
-                name="value"
-                value={value.value}
-                onChange={onFieldChange}
-                error={arrayError}
-                options={valueOptions}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-            />
-        </>
+        <MultiSelectInput
+            name="value"
+            value={value.value}
+            onChange={onFieldChange}
+            error={arrayError}
+            options={valueOptions}
+            keySelector={optionKeySelector}
+            labelSelector={optionLabelSelector}
+        />
     );
 }
 

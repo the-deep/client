@@ -53,14 +53,12 @@ function SimpleTextConditionInput(props: TextContainsConditionInputProps) {
     const error = getErrorObject(riskyError);
 
     return (
-        <>
-            <TimeInput
-                name="value"
-                value={value.value}
-                onChange={onFieldChange}
-                error={error?.value}
-            />
-        </>
+        <TimeInput
+            name="value"
+            value={value.value}
+            onChange={onFieldChange}
+            error={error?.value}
+        />
     );
 }
 

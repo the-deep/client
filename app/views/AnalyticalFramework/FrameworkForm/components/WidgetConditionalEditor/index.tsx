@@ -14,6 +14,8 @@ import GeoLocationConditionalWidgetForm from './GeoLocationConditionalWidgetForm
 import TextConditionalWidgetForm from './TextConditionalWidgetForm';
 import SingleSelectConditionalWidgetForm from './SingleSelectConditionalWidgetForm';
 import MultiSelectConditionalWidgetForm from './MultiSelectConditionalWidgetForm';
+import Matrix1dConditionalWidgetForm from './Matrix1dConditionalWidgetForm';
+import Matrix2dConditionalWidgetForm from './Matrix2dConditionalWidgetForm';
 import OrganigramConditionalWidgetForm from './OrganigramConditionalWidgetForm';
 import ScaleConditionalWidgetForm from './ScaleConditionalWidgetForm';
 import NumberConditionalWidgetForm from './NumberConditionalWidgetForm';
@@ -289,6 +291,34 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
                 >
                     {parentSwitcher}
                 </MultiSelectConditionalWidgetForm>
+            );
+        }
+        case 'MATRIX1D': {
+            return (
+                <Matrix1dConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                    parentWidget={parentWidget?.widgetId === 'MATRIX1D' ? parentWidget : undefined}
+                >
+                    {parentSwitcher}
+                </Matrix1dConditionalWidgetForm>
+            );
+        }
+        case 'MATRIX2D': {
+            return (
+                <Matrix2dConditionalWidgetForm
+                    className={className}
+                    initialValue={value}
+                    title={title}
+                    onSave={handleSave}
+                    onCancel={onCancel}
+                    parentWidget={parentWidget?.widgetId === 'MATRIX2D' ? parentWidget : undefined}
+                >
+                    {parentSwitcher}
+                </Matrix2dConditionalWidgetForm>
             );
         }
         case 'ORGANIGRAM': {

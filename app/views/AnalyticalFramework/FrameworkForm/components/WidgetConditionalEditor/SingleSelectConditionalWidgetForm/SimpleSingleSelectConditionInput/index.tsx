@@ -63,17 +63,15 @@ function SimpleSingleSelectConditionInput(props: SingleSelectContainsConditionIn
     const options = parentWidget?.properties?.options;
 
     return (
-        <>
-            <MultiSelectInput
-                name="value"
-                value={value.value}
-                onChange={onFieldChange}
-                error={arrayError}
-                options={options}
-                keySelector={optionKeySelector}
-                labelSelector={optionLabelSelector}
-            />
-        </>
+        <MultiSelectInput
+            name="value"
+            value={value.value}
+            onChange={onFieldChange}
+            error={arrayError}
+            options={options}
+            keySelector={optionKeySelector}
+            labelSelector={optionLabelSelector}
+        />
     );
 }
 
