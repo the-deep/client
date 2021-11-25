@@ -740,6 +740,15 @@ function EntryEdit(props: Props) {
         [onEntryFieldChange, clearRestorePoint],
     );
 
+    const handleEntryRestore = useCallback(
+        () => {
+            clearRestorePoint();
+            onEntryFieldChange(false, 'deleted');
+            setSelectedEntry(undefined);
+        },
+        [onEntryFieldChange, clearRestorePoint],
+    );
+
     // NOTE: we are creating a map of index and value because we are iterating
     // over widgets but modifying attributes
     const attributesMap = useMemo(() => (
@@ -1030,6 +1039,7 @@ function EntryEdit(props: Props) {
                                     onApproveButtonClick={handleEntryChangeApprove}
                                     onDiscardButtonClick={handleEntryChangeDiscard}
                                     onEntryDelete={handleEntryDelete}
+                                    onEntryRestore={handleEntryRestore}
                                     onExcerptChange={handleExcerptChange}
                                     lead={lead}
                                     leadId={leadId}
@@ -1108,6 +1118,7 @@ function EntryEdit(props: Props) {
                                     onEntryClick={handleEntryClick}
                                     onEntryCreate={handleEntryCreate}
                                     onEntryDelete={handleEntryDelete}
+                                    onEntryRestore={handleEntryRestore}
                                     onExcerptChange={handleExcerptChange}
                                     onApproveButtonClick={handleEntryChangeApprove}
                                     onDiscardButtonClick={handleEntryChangeDiscard}

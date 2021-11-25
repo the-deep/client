@@ -77,6 +77,7 @@ function Review(props: Props) {
                                 error={undefined}
                                 geoAreaOptions={undefined}
                                 onGeoAreaOptionsChange={noop}
+                                disabled
                             />
                         </TabPanel>
                     ))}
@@ -93,6 +94,7 @@ function Review(props: Props) {
                     error={undefined}
                     geoAreaOptions={undefined}
                     onGeoAreaOptionsChange={noop}
+                    disabled
                 />
             </ContainerCard>
         </div>

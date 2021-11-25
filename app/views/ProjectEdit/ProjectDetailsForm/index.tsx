@@ -280,6 +280,8 @@ function ProjectDetailsForm(props: Props) {
         method: 'DELETE',
         onSuccess: () => {
             const homePath = generatePath(routes.home.path, {});
+            // NOTE: Pristine is set as if the project is deleted, we don't want confirm prompt
+            setPristine(true);
             history.replace(homePath);
         },
         failureHeader: _ts('projectEdit', 'deleteProject'),

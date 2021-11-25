@@ -5,7 +5,6 @@ import {
     unique,
     isNotDefined,
 } from '@togglecorp/fujs';
-
 import {
     Checkbox,
     CheckboxProps,
@@ -17,7 +16,7 @@ import {
     Pager,
     PendingMessage,
     SortContext,
-    Table,
+    TableView,
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
@@ -303,7 +302,8 @@ function SourcesTable(props: Props) {
 
     const handleBulkSourcesRemoveSuccess = useCallback(() => {
         setSelectedLeads([]);
-    }, []);
+        getProjectSources();
+    }, [getProjectSources]);
 
     const handleSelectAll = useCallback((value: boolean) => {
         setSelectedLeads((oldLeads) => {
@@ -456,6 +456,7 @@ function SourcesTable(props: Props) {
             },
             cellRenderer: Link,
             cellRendererParams: (_, data) => ({
+                linkElementClassName: _cs(!data.source?.url && styles.emptyLink),
                 children: data.source?.title,
                 to: data.source?.url ?? '#',
             }),
@@ -523,7 +524,6 @@ function SourcesTable(props: Props) {
                     return `${item.leadPreview.pageCount} ${item.leadPreview.pageCount > 1 ? 'pages' : 'page'}`;
                 },
                 {
-                    sortable: true,
                     columnWidth: 96,
                 },
             ),
@@ -603,7 +603,7 @@ function SourcesTable(props: Props) {
                     value={{ expandedRowKey, setExpandedRowKey }}
                 >
                     <SortContext.Provider value={sortState}>
-                        <Table
+                        <TableView
                             className={styles.table}
                             data={sources}
                             keySelector={sourcesKeySelector}

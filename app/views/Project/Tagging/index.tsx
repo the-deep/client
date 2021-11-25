@@ -38,8 +38,6 @@ function Tagging(props: Props) {
 
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
-    // FIXME: use refreshTimestamp to refetch the table
-    const [, setRefreshTimestamp] = useState<number | undefined>();
 
     const [
         isSingleSourceModalShown,
@@ -64,13 +62,8 @@ function Tagging(props: Props) {
     );
 
     const handleSingleLeadSaveSuccess = useCallback(() => {
-        setRefreshTimestamp(new Date().getTime());
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
-
-    const handleLeadsAdd = useCallback(() => {
-        setRefreshTimestamp(new Date().getTime());
-    }, []);
 
     const subNavbarComponents = (
         <>
@@ -226,7 +219,6 @@ function Tagging(props: Props) {
             {isBulkModalShown && project?.id && (
                 <BulkUpload
                     onClose={hideBulkUploadModal}
-                    onLeadsAdd={handleLeadsAdd}
                     projectId={project.id}
                 />
             )}

@@ -33,11 +33,13 @@ import {
     LeadCreateMutationVariables,
 } from '#generated/types';
 import { ProjectContext } from '#base/context/ProjectContext';
+import { UserContext } from '#base/context/UserContext';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import LeadInput from '#components/lead/LeadInput';
+
 import styles from './styles.css';
 
 // TODO: Show attachment's title and link if lead is attachment type
@@ -232,6 +234,7 @@ function LeadEditModal(props: Props) {
     } = props;
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
+    const { user } = useContext(UserContext);
 
     const initialValue: PartialFormType = useMemo(() => ({
         clientId: randomString(),
@@ -239,12 +242,13 @@ function LeadEditModal(props: Props) {
         priority: 'LOW',
         confidentiality: 'UNPROTECTED',
         isAssessmentLead: false,
-    }), []);
+        assignee: user?.id,
+    }), [user]);
 
     const [
         projectUserOptions,
         setProjectUserOptions,
-    ] = useState<BasicProjectUser[] | undefined | null>();
+    ] = useState<BasicProjectUser[] | undefined | null>(user ? [user] : undefined);
 
     const [
         sourceOrganizationOptions,
@@ -344,6 +348,7 @@ function LeadEditModal(props: Props) {
     ] = useMutation<LeadUpdateMutation, LeadUpdateMutationVariables>(
         LEAD_UPDATE,
         {
+            refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
                 if (!response?.project?.leadUpdate) {
                     return;
@@ -383,6 +388,7 @@ function LeadEditModal(props: Props) {
     ] = useMutation<LeadCreateMutation, LeadCreateMutationVariables>(
         LEAD_CREATE,
         {
+            refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
                 if (!response?.project?.leadCreate) {
                     return;
