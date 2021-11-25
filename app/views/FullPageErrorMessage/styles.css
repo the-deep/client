@@ -1,0 +1,68 @@
+.error-page{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    background-color: var(--dui-color-foreground);
+    width: 100vw;
+
+    --height-logo-container: 15vh;
+    --height-footer: 55px;
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        padding: 0 calc(2 * var(--dui-spacing-super-large));
+        height: var(--height-logo-container);
+        overflow: auto;
+        color: var(--dui-color-brand);
+
+        .logo {
+            height: var(--dui-font-size-mega-large);
+        }
+    }
+
+    .background {
+        display: flex;
+        position: relative;
+        z-index: 1;
+        background: url(./water-level.png) no-repeat top left;
+        background-size: cover;
+        height: calc(100vh - (var(--height-logo-container) + var(--height-footer)));
+
+        .kraken {
+            display: block;
+            position: absolute;
+            top: -100px;
+            right: 10vh;
+        }
+        .content {
+            display: flex;
+            align-self: center;
+            flex-direction: column;
+            padding: 0 calc(2 * var(--dui-spacing-super-large));
+            color: var(--dui-color-brand);
+            font-weight: var(--dui-font-weight-bold);
+            gap: var(--dui-spacing-large);
+
+            .error-message-title {
+                font-size: var(--dui-font-size-ultra-large);
+            }
+
+            .error-message {
+                line-height: 2;
+                font-size: var(--dui-font-size-extra-large);
+            }
+
+            .button {
+                margin-top: var(--dui-spacing-super-large);
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--height-footer);
+    }
+}
