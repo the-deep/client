@@ -180,15 +180,25 @@ function UserList(props: Props) {
                     return;
                 }
                 const {
+                    errors,
                     deletedResult,
                 } = response.project.projectUserMembershipBulk;
 
+                const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
-                alert.show(
-                    `Successfully deleted ${deletedUser?.member.displayName}`,
-                    { variant: 'success' },
-                );
-                refetch();
+                if (err) {
+                    alert.show(
+                        err,
+                        { variant: 'error' },
+                    );
+                }
+                if (deletedUser) {
+                    alert.show(
+                        `Successfully deleted ${deletedUser.member.displayName}`,
+                        { variant: 'success' },
+                    );
+                    refetch();
+                }
             },
             onError: (gqlError) => {
                 alert.show(

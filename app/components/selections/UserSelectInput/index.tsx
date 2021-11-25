@@ -8,7 +8,7 @@ import _ts from '#ts';
 
 type Def = { containerClassName?: string };
 type UserSelectInputProps<K extends string> = SearchSelectInputProps<
-    string,
+    number,
     K,
     BasicUser,
     Def,

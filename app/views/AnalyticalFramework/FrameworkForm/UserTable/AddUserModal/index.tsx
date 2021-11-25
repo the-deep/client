@@ -46,6 +46,7 @@ const schema: FormSchema = {
     fields: (value): FormSchemaFields => {
         if (isDefined(value?.id)) {
             return ({
+                member: [],
                 role: [requiredCondition],
             });
         }
