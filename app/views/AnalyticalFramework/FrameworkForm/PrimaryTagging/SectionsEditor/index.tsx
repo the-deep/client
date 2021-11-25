@@ -134,6 +134,10 @@ function SectionInput(props: SectionInputProps) {
     const errored = analyzeErrors(error);
     const heading = value.title ?? `Section ${index + 1}`;
 
+    const handleSectionRemoveConfirmClick = useCallback(() => {
+        onRemove(index);
+    }, [onRemove, index]);
+
     return (
         <ControlledExpandableContainer
             name={value.clientId}
@@ -156,7 +160,7 @@ function SectionInput(props: SectionInputProps) {
             headerActions={(
                 <QuickActionConfirmButton
                     name={index}
-                    onClick={onRemove}
+                    onConfirm={handleSectionRemoveConfirmClick}
                     message="Are you sure you want to remove this section? Removing the section will remove all widgets within the section."
                     // FIXME: use translation
                     title="Remove Title"

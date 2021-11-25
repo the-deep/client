@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import {
     Button,
     Container,
@@ -39,6 +39,7 @@ interface Props<K extends string> {
     onChange: (value: SetValueArg<WidgetsType | undefined>, name: K) => void;
     error: Error<WidgetsType> | undefined;
     disabled?: boolean;
+    onTempStateChange: (disabled: boolean) => void;
 }
 
 function SecondaryTagging<K extends string>(props: Props<K>) {
@@ -51,6 +52,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         name,
         disabled,
         error: errorFromProps,
+        onTempStateChange,
     } = props;
 
     // NOTE: we are casting to a more stricter version of Widget
@@ -59,6 +61,10 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
     const error = errorFromProps;
 
     const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
+
+    useEffect(() => {
+        onTempStateChange(!!tempWidget);
+    }, [tempWidget, onTempStateChange]);
 
     const handleWidgetAdd = useCallback(
         (value: PartialWidget) => {

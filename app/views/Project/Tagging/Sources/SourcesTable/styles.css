@@ -23,6 +23,14 @@
                 background-color: var(--dui-color-foreground);
             }
 
+            .empty-link {
+                color: var(--dui-color-text);
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+
             .expanded-row {
                 .expanded-cell {
                     border-bottom: 0;

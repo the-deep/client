@@ -39,6 +39,7 @@ import {
     SubNavbarActions,
     SubNavbarChildren,
 } from '#components/SubNavbar';
+import BackLink from '#components/BackLink';
 import routes from '#base/configs/routes';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
@@ -129,6 +130,12 @@ function FrameworkForm(props: FrameworkFormProps) {
         frameworkImage,
         setFrameworkImage,
     ] = useState<Framework['previewImage']>(framework?.previewImage);
+
+    const [
+        isNavigationDisabled,
+        setNavigationDisableState,
+    ] = useState(false);
+
     const [
         organizationOptions,
         setOrganizationOptions,
@@ -444,8 +451,14 @@ function FrameworkForm(props: FrameworkFormProps) {
                 </div>
             </SubNavbarIcons>
             <SubNavbarActions>
+                <BackLink
+                    defaultLink="/"
+                    disabled={isNavigationDisabled}
+                >
+                    {_ts('analyticalFramework', 'closeButtonLabel')}
+                </BackLink>
                 <Button
-                    disabled={pristine || pending}
+                    disabled={pristine || pending || isNavigationDisabled}
                     name="login"
                     onClick={handleSubmit}
                 >
@@ -457,6 +470,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     name="framework-details"
                     transparentBorder
                     className={_cs(detailsErrored && styles.erroredTab)}
+                    disabled={isNavigationDisabled}
                 >
                     {_ts('analyticalFramework', 'frameworkDetails')}
                 </Tab>
@@ -464,6 +478,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     name="primary-tagging"
                     transparentBorder
                     className={_cs(primaryTaggingErrored && styles.erroredTab)}
+                    disabled={isNavigationDisabled}
                 >
                     {_ts('analyticalFramework', 'primaryTagging')}
                 </Tab>
@@ -471,12 +486,14 @@ function FrameworkForm(props: FrameworkFormProps) {
                     name="secondary-tagging"
                     transparentBorder
                     className={_cs(secondaryTaggingErrored && styles.erroredTab)}
+                    disabled={isNavigationDisabled}
                 >
                     {_ts('analyticalFramework', 'secondaryTagging')}
                 </Tab>
                 <Tab
                     name="review"
                     transparentBorder
+                    disabled={isNavigationDisabled}
                 >
                     {_ts('analyticalFramework', 'review')}
                 </Tab>
@@ -485,6 +502,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                         name="viz-settings"
                         transparentBorder
                         className={_cs(propertiesErrored && styles.erroredTab)}
+                        disabled={isNavigationDisabled}
                     >
                         5. Visualization Settings
                     </Tab>
@@ -584,6 +602,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     name="primaryTagging"
                     value={value.primaryTagging}
                     onChange={handlePrimaryTaggingChange}
+                    onTempStateChange={setNavigationDisableState}
                     className={styles.view}
                     frameworkId={frameworkId}
                     disabled={pending}
@@ -599,6 +618,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     value={value.secondaryTagging}
                     onChange={handleSecondaryTaggingChange}
                     className={styles.view}
+                    onTempStateChange={setNavigationDisableState}
                     frameworkId={frameworkId}
                     disabled={pending}
                     error={error?.secondaryTagging}

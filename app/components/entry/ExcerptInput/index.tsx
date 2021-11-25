@@ -50,13 +50,13 @@ function ExcerptInput<N extends string>(props: Props<N>) {
             <div className={_cs(className, styles.excerptInput)}>
                 {imageSrc ? (
                     <ImagePreview
-                        className={imageClassName}
+                        className={_cs(imageClassName, styles.image)}
                         alt=""
                         src={imageSrc}
                     />
                 ) : (
                     <Message
-                        className={_cs(excerptForImageClassName, styles.emptyImage)}
+                        className={_cs(excerptForImageClassName, styles.image)}
                         message="Image data is not available."
                     />
                 )}
@@ -79,8 +79,12 @@ function ExcerptInput<N extends string>(props: Props<N>) {
     }
     if (entryType === 'EXCERPT') {
         return props.readOnly ? (
-            <div className={className}>
-                { value }
+            <div className={_cs(className, styles.excerptInput)}>
+                {value || (
+                    <div className={styles.emptyExcerpt}>
+                        There is no excerpt.
+                    </div>
+                )}
             </div>
         ) : (
             <div className={_cs(className, styles.excerptInput)}>
