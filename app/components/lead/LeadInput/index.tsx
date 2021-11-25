@@ -494,13 +494,13 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     options={sourceOrganizationOptions}
                     onOptionsChange={onSourceOrganizationOptionsChange}
                     disabled={pendingLeadOptions || disabled}
-                    label="Publishing Organizations"
+                    label="Publishing Organization"
                     // eslint-disable-next-line max-len
                     // hint={isTruthyString(value.sourceRaw) && `Previous organization: ${value.sourceRaw}`}
                     error={error?.source}
                     actions={(
                         <QuickActionButton
-                            name="add organizations"
+                            name="Add organizations"
                             variant="transparent"
                             onClick={handleAddPublishingOrganizationsClick}
                             disabled={pendingLeadOptions || disabled}

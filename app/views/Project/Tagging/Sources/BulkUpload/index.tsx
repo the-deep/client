@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useContext, useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -29,6 +29,7 @@ import {
     BulkCreateLeadsMutationVariables,
     LeadInputType,
 } from '#generated/types';
+import { UserContext } from '#base/context/UserContext';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
 import {
@@ -63,7 +64,6 @@ export const BULK_CREATE_LEADS = gql`
 interface Props {
     className?: string;
     onClose: () => void;
-    onLeadsAdd: () => void;
     projectId: string;
 }
 
@@ -72,22 +72,14 @@ function BulkUpload(props: Props) {
         className,
         onClose,
         projectId,
-        onLeadsAdd,
     } = props;
 
     // NOTE: If a lead is removed or saved, uploaded files are not being removed at the moment
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
-    // NOTE: leadsAdded is a boolean set when at least on lead was successfully added
-    const [leadsAdded, setLeadsAdded] = useState<boolean>(false);
     const [selectedLead, setSelectedLead] = useState<string | undefined>();
     const [leadClientIds, setLeadClientIds] = useState<string[] | undefined>();
 
-    const handleModalClose = useCallback(() => {
-        onClose();
-        if (leadsAdded) {
-            onLeadsAdd();
-        }
-    }, [onClose, onLeadsAdd, leadsAdded]);
+    const { user } = useContext(UserContext);
 
     const alert = useAlert();
 
@@ -115,6 +107,7 @@ function BulkUpload(props: Props) {
     ] = useMutation<BulkCreateLeadsMutation, BulkCreateLeadsMutationVariables>(
         BULK_CREATE_LEADS,
         {
+            refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
                 const leadBulk = response.project?.leadBulk;
                 if (!leadBulk) {
@@ -174,7 +167,6 @@ function BulkUpload(props: Props) {
                             `${uploadedLeads.length} leads were successfully added!`,
                             { variant: 'success' },
                         );
-                        setLeadsAdded(true);
                         setFormFieldValue((oldValues) => (
                             oldValues?.filter((lead) => !uploadedLeads.includes(lead.clientId))
                         ), 'leads');
@@ -228,6 +220,7 @@ function BulkUpload(props: Props) {
             isAssessmentLead: false,
             attachment: String(value.id),
             title: value.title,
+            assignee: user?.id,
         };
         setFormFieldValue(
             (oldVal: PartialFormType['leads']) => [
@@ -239,7 +232,7 @@ function BulkUpload(props: Props) {
         if (!selectedLead) {
             setSelectedLead(newLead.clientId);
         }
-    }, [setUploadedFiles, setFormFieldValue, selectedLead]);
+    }, [setUploadedFiles, setFormFieldValue, selectedLead, user]);
 
     const handleLeadRemove = useCallback((clientId: string) => {
         setFormFieldValue((oldVal) => oldVal?.filter((lead) => lead.clientId !== clientId), 'leads');
@@ -298,7 +291,7 @@ function BulkUpload(props: Props) {
         <Modal
             className={_cs(className, styles.bulkUploadModal)}
             heading={_ts('bulkUpload', 'title')}
-            onCloseButtonClick={handleModalClose}
+            onCloseButtonClick={onClose}
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button

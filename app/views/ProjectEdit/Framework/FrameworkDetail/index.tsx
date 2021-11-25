@@ -407,6 +407,7 @@ function FrameworkDetail(props: Props) {
                                                         error={undefined}
                                                         onGeoAreaOptionsChange={noop}
                                                         geoAreaOptions={undefined}
+                                                        disabled
                                                     />
                                                 </TabPanel>
                                             ))
@@ -430,6 +431,7 @@ function FrameworkDetail(props: Props) {
                                 error={undefined}
                                 onGeoAreaOptionsChange={noop}
                                 geoAreaOptions={undefined}
+                                disabled
                             />
                         </TabPanel>
                     </Card>

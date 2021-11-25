@@ -3,7 +3,6 @@
     position: relative;
     border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
     background-color: var(--dui-color-foreground);
-    cursor: pointer;
     max-height: 480px;
     font-weight: var(--dui-font-weight-bold);
     user-select: none;
@@ -22,6 +21,10 @@
             background-color: var(--dui-color-accent);
             animation: grow var(--dui-duration-transition-medium) ease-in forwards;
         }
+    }
+
+    .content {
+        cursor: pointer;
     }
 }
 

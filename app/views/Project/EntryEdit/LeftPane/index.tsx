@@ -61,6 +61,7 @@ interface Props {
     onEntryClick?: (entryId: string) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     onEntryDelete?: (entryClientId: string) => void;
+    onEntryRestore?: (entryClientId: string) => void;
     onApproveButtonClick?: (entryClientId: string) => void;
     onDiscardButtonClick?: (entryClientId: string) => void;
     lead?: Lead | null;
@@ -85,6 +86,7 @@ function LeftPane(props: Props) {
         onApproveButtonClick,
         onDiscardButtonClick,
         onEntryDelete,
+        onEntryRestore,
         hideSimplifiedPreview = false,
         hideOriginalPreview = false,
         entryImagesMap,
@@ -209,6 +211,7 @@ function LeftPane(props: Props) {
         onClick: onEntryClick,
         onExcerptChange,
         onEntryDelete,
+        onEntryRestore,
         entryImage: entry?.image ? entryImagesMap?.[entry.image] : undefined,
         onApproveButtonClick,
         onDiscardButtonClick,
@@ -222,6 +225,7 @@ function LeftPane(props: Props) {
         onEntryClick,
         onExcerptChange,
         onEntryDelete,
+        onEntryRestore,
         entryImagesMap,
         isEntrySelectionActive,
     ]);
@@ -317,6 +321,7 @@ function LeftPane(props: Props) {
                     isActive
                     onExcerptChange={onExcerptChange}
                     onEntryDelete={onEntryDelete}
+                    onEntryRestore={onEntryRestore}
                     onApproveButtonClick={onApproveButtonClick}
                     onDiscardButtonClick={onDiscardButtonClick}
                     // eslint-disable-next-line max-len
@@ -401,6 +406,7 @@ function LeftPane(props: Props) {
                                 onApproveButtonClick={onApproveButtonClick}
                                 onDiscardButtonClick={onDiscardButtonClick}
                                 onEntryDelete={onEntryDelete}
+                                onEntryRestore={onEntryRestore}
                                 disableAddButton={isEntrySelectionActive}
                                 disableExcerptClick={isEntrySelectionActive}
                             />

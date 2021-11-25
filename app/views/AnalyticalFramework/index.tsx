@@ -5,7 +5,6 @@ import { useQuery } from '@apollo/client';
 import { Tabs } from '@the-deep/deep-ui';
 
 import PreloadMessage from '#base/components/PreloadMessage';
-import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import SubNavbarContext from '#components/SubNavbar/context';
 import _ts from '#ts';
@@ -103,13 +102,6 @@ function AnalyticalFramework(props: Props) {
                             createMode
                                 ? _ts('analyticalFramework', 'addNewAnalyticalFramework')
                                 : framework?.title
-                        )}
-                        defaultActions={(
-                            <BackLink
-                                defaultLink="/"
-                            >
-                                Close
-                            </BackLink>
                         )}
                     />
                     {!hasPermission ? (
