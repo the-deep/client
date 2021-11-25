@@ -4,6 +4,8 @@
     flex-direction: column;
     background-color: var(--dui-color-foreground);
     width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 
     --height-logo-container: 15vh;
     --height-footer: 55px;
@@ -25,16 +27,45 @@
         display: flex;
         position: relative;
         z-index: 1;
-        background: url(./water-level.png) no-repeat top left;
-        background-size: cover;
         height: calc(100vh - (var(--height-logo-container) + var(--height-footer)));
 
+        .background-image {
+            position: absolute;
+            z-index: -1;
+            animation: wave 4s linear infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: scaleX(1);
+            }
+            50% {
+                transform: scaleX(1.2) translateX(-100px);
+            }
+            100% {
+                transform: scaleX(1);
+            }
+        }
         .kraken {
             display: block;
             position: absolute;
             top: -100px;
             right: 10vh;
+            animation: wiggle-vertically 4s 1s linear infinite;
         }
+
+        @keyframes wiggle-vertically {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
         .content {
             display: flex;
             align-self: center;
@@ -61,8 +92,14 @@
 
     .footer {
         display: flex;
+        position: absolute;
+        bottom: 0;
         align-items: center;
         justify-content: center;
+        z-index: 1;
+        background-color: var(--dui-color-foreground);
+        width: 100vw;
         height: var(--height-footer);
     }
 }
+
