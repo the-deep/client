@@ -18,7 +18,7 @@ import styles from './styles.css';
 
 export interface Props {
     className?: string;
-    entryId: number;
+    discardedEntryId: number;
     pillarId: number;
     tagDisplay: string;
     onEntryUndiscard: () => void;
@@ -31,7 +31,7 @@ export interface Props {
 function DiscardedEntry(props: Props) {
     const {
         className,
-        entryId,
+        discardedEntryId,
         pillarId,
         onEntryUndiscard,
         tagDisplay,
@@ -44,7 +44,7 @@ function DiscardedEntry(props: Props) {
         pending,
         trigger,
     } = useLazyRequest<unknown>({
-        url: `server://analysis-pillar/${pillarId}/discarded-entries/${entryId}/`,
+        url: `server://analysis-pillar/${pillarId}/discarded-entries/${discardedEntryId}/`,
         method: 'DELETE',
         failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
         onSuccess: () => {

@@ -76,6 +76,7 @@ function PillarAnalysisRow(props: Props) {
     return (
         <div className={_cs(className, styles.pillarAnalysisRow)}>
             <TextInput
+                className={styles.input}
                 error={error?.title}
                 label={_ts('analysis.editModal', 'pillarAnalysisTitleLabel')}
                 name="title"
@@ -85,6 +86,7 @@ function PillarAnalysisRow(props: Props) {
                 disabled={pending}
             />
             <SelectInput
+                className={styles.input}
                 error={error?.assignee}
                 keySelector={userKeySelector}
                 label={_ts('analysis.editModal', 'pillarAnalysisAssigneeLabel')}
@@ -97,6 +99,7 @@ function PillarAnalysisRow(props: Props) {
                 disabled={pending}
             />
             <MultiSelectInput
+                className={styles.input}
                 error={getErrorString(error?.filters)}
                 keySelector={idSelector}
                 label={_ts('analysis.editModal', 'pillarAnalysisPillarTitle')}
@@ -113,7 +116,7 @@ function PillarAnalysisRow(props: Props) {
                 optionsPopupContentClassName={styles.optionsPopup}
             />
             <QuickActionButton
-                className={styles.removeButton}
+                className={styles.button}
                 name={index}
                 onClick={onRemove}
                 disabled={pending}

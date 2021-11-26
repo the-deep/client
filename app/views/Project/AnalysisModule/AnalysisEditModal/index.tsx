@@ -27,7 +27,7 @@ import {
     TextInput,
     SelectInput,
     DateInput,
-    List,
+    ListView,
 } from '@the-deep/deep-ui';
 import { IoAdd } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
@@ -371,7 +371,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             {analysisGetPending && <PendingMessage />}
             <NonFieldError error={error} />
             <TextInput
-                className={styles.input}
                 label={_ts('analysis.editModal', 'analysisTitleLabel')}
                 name="title"
                 placeholder={_ts('analysis.editModal', 'analysisTitlePlaceholder')}
@@ -381,7 +380,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 onChange={setFieldValue}
             />
             <SelectInput
-                className={styles.input}
                 keySelector={userKeySelector}
                 label={_ts('analysis.editModal', 'teamLeadLabel')}
                 labelSelector={userLabelSelector}
@@ -394,7 +392,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 disabled={pending}
             />
             <DateInput
-                className={styles.input}
                 name="startDate"
                 label={_ts('analysis.editModal', 'startDateLabel')}
                 value={value.startDate}
@@ -403,7 +400,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 disabled={pending}
             />
             <DateInput
-                className={styles.input}
                 name="endDate"
                 label={_ts('analysis.editModal', 'endDateLabel')}
                 value={value.endDate}
@@ -413,25 +409,23 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             />
             <div className={styles.analysisPillarListContainer}>
                 <NonFieldError error={apError} />
-                <div className={styles.analysisPillarList}>
-                    <List
-                        data={value.analysisPillar}
-                        renderer={PillarAnalysisRow}
-                        keySelector={analysisPillarKeySelector}
-                        rendererParams={rowRendererParams}
-                    />
-                </div>
-                <div className={styles.actions}>
-                    <Button
-                        name={undefined}
-                        onClick={handleAddRowButtonClick}
-                        icons={<IoAdd />}
-                        variant="tertiary"
-                        disabled={pending}
-                    >
-                        {_ts('analysis.editModal', 'addAnAnalystButtonLabel')}
-                    </Button>
-                </div>
+                <ListView
+                    className={styles.analysisPillarList}
+                    data={value.analysisPillar}
+                    renderer={PillarAnalysisRow}
+                    keySelector={analysisPillarKeySelector}
+                    rendererParams={rowRendererParams}
+                />
+                <Button
+                    className={styles.actionButton}
+                    name={undefined}
+                    onClick={handleAddRowButtonClick}
+                    icons={<IoAdd />}
+                    variant="tertiary"
+                    disabled={pending}
+                >
+                    {_ts('analysis.editModal', 'addAnAnalystButtonLabel')}
+                </Button>
             </div>
         </Modal>
     );
