@@ -1,13 +1,14 @@
 import React, { useState, useMemo, useCallback } from 'react';
 
 import { _cs } from '@togglecorp/fujs';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import {
     Modal,
     ListView,
     SearchMultiSelectInput,
     TextOutput,
     ConfirmButton,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import {
@@ -15,6 +16,8 @@ import {
     ProjectListForLeadCopyQueryVariables,
     ProjectDetailsForLeadCopyQuery,
     ProjectDetailsForLeadCopyQueryVariables,
+    LeadCopyMutation,
+    LeadCopyMutationVariables,
 } from '#generated/types';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
@@ -43,6 +46,24 @@ const PROJECT_DETAILS_FOR_LEAD_COPY = gql`
     }
 `;
 
+const LEAD_COPY = gql`
+    mutation LeadCopy(
+        $activeProjectId: ID!,
+        $projectIds: [ID!]!,
+        $leadIds: [ID!]!,
+    ) {
+        project(id: $activeProjectId) {
+            leadCopy(data: {
+                projects: $projectIds,
+                leads: $leadIds,
+            }) {
+                errors
+                ok
+            }
+        }
+    }
+`;
+
 type ProjectItem = NonNullable<NonNullable<NonNullable<ProjectListForLeadCopyQuery['projects']>['results']>[number]>;
 
 const searchProjectsKeySelector = (d: ProjectItem) => d.id;
@@ -57,9 +78,9 @@ function SelectedProjectsRenderer(props: SelectedProjectsProps) {
         title,
     } = props;
     return (
-        <div className={styles.listItem}>
+        <>
             {title}
-        </div>
+        </>
     );
 }
 
@@ -79,6 +100,7 @@ function LeadCopyModal(props: Props) {
     const [opened, setOpened] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
+    const alert = useAlert();
 
     const searchProjectsVariables = useMemo(() => ({
         search: debouncedSearchText,
@@ -105,6 +127,30 @@ function LeadCopyModal(props: Props) {
         },
     );
 
+    const [
+        leadCopy,
+    ] = useMutation<LeadCopyMutation, LeadCopyMutationVariables>(
+        LEAD_COPY,
+        {
+            onCompleted: () => {
+                alert.show(
+                    'Successfully copied leads to projects',
+                    {
+                        variant: 'success',
+                    },
+                );
+            },
+            onError: () => {
+                alert.show(
+                    'Failure copying leads',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
     const projectDetailsVariables = useMemo(() => ({
         ids: selectedProjects,
     }), [selectedProjects]);
@@ -118,22 +164,26 @@ function LeadCopyModal(props: Props) {
             variables: projectDetailsVariables,
         },
     );
-    const selectedUserProjects = projectDetailData?.projects?.results;
+    const selectedUserProjects = projectDetailData?.projects?.results ?? [];
     const selectedProjectsRendererParams = useCallback((_, datum) => ({
         title: datum?.title,
     }), []);
 
     const handleCopyLeadsClick = useCallback(() => {
-        console.warn('I need to be handled');
-    }, []);
+        leadCopy({
+            variables: {
+                activeProjectId: projectId,
+                leadIds: leadId,
+                projectIds: selectedProjects,
+            },
+        });
+    }, [leadId, selectedProjects, leadCopy, projectId]);
 
     return (
         <Modal
             className={styles.leadCopyModal}
             onCloseButtonClick={onClose}
             heading="Copy leads to projects"
-            footerClassName={styles.footer}
-            footerActionsContainerClassName={styles.footerActions}
             footerActions={(
                 <ConfirmButton
                     name="leads-copy"
@@ -152,7 +202,6 @@ function LeadCopyModal(props: Props) {
             )}
         >
             <TextOutput
-                className={styles.leadsSection}
                 label="No. of leads to be copied"
                 value={leadId?.length}
             />
