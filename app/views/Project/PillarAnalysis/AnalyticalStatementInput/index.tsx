@@ -64,10 +64,10 @@ export interface AnalyticalStatementInputProps {
     onSelectedNgramChange: (item: string | undefined) => void;
 }
 
-const defaultVal: AnalyticalStatementType = {
-    clientId: '123',
+const defaultVal = (): AnalyticalStatementType => ({
+    clientId: randomString(),
     analyticalEntries: [],
-};
+});
 
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {

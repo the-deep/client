@@ -8,6 +8,13 @@ import { PartialWidget } from '#components/framework/AttributeInput';
 import { Section, Widget } from '../../types';
 import { PartialSectionType } from './SectionsEditor';
 
+export interface TempConditional {
+    widgetId: string,
+    title?: string;
+    sectionId: string;
+    value: NonNullable<Widget['conditional']> | undefined,
+}
+
 export interface TempWidget {
     sectionId: string;
     widget: PartialWidget;
@@ -124,5 +131,35 @@ export function deleteWidget(
         }
 
         selectedSection.widgets.splice(widgetIndex, 1);
+    });
+}
+
+export function injectWidgetConditional(
+    sections: Section[] | undefined = [],
+    conditional: TempConditional,
+) {
+    const selectedSectionIndex = sections.findIndex((s) => s.clientId === conditional.sectionId);
+    if (selectedSectionIndex === -1) {
+        // eslint-disable-next-line no-console
+        console.error('The selected section does not exist:', conditional.sectionId);
+        return sections;
+    }
+
+    return produce(sections, (safeSections) => {
+        const selectedSection = safeSections[selectedSectionIndex];
+
+        if (!selectedSection.widgets) {
+            return;
+        }
+
+        const widgetIndex = selectedSection.widgets.findIndex(
+            (w) => w.clientId === conditional.widgetId,
+        );
+
+        if (isNotDefined(widgetIndex) || widgetIndex === -1) {
+            return;
+        }
+
+        selectedSection.widgets[widgetIndex].conditional = conditional.value;
     });
 }

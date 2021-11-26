@@ -94,10 +94,10 @@ const schema: FormSchema = {
         properties: dataSchema,
     }),
 };
-const defaultNodeVal: PartialNodeType = {
-    key: 'random',
+const defaultNodeVal = (): PartialNodeType => ({
+    key: randomString(),
     order: -1,
-};
+});
 
 const optionKeySelector = (o: PartialRootType) => o.key;
 

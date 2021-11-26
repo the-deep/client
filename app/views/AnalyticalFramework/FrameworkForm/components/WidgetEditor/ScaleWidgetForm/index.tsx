@@ -109,10 +109,10 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultOptionVal: PartialOptionType = {
-    key: 'random',
+const defaultOptionVal = (): PartialOptionType => ({
+    key: randomString(),
     order: -1,
-};
+});
 
 const optionKeySelector = (o: PartialOptionType) => o.key;
 const optionLabelSelector = (o: PartialOptionType) => o.label ?? 'Unnamed';

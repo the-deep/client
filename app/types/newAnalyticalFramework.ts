@@ -7,7 +7,7 @@ import {
 
 export type Types = WidgetTypes;
 
-type Conjunction = 'XOR' | 'OR' | 'AND' | 'NOR' | 'NAND' | 'NXOR';
+export type Conjunction = 'XOR' | 'OR' | 'AND';
 
 interface BaseCondition {
     key: string;
@@ -17,151 +17,221 @@ interface BaseCondition {
 }
 
 interface BaseConditional {
-    id: string;
+    // FIXME: id is undefined only for input
+    id: string | undefined;
     clientId: string;
 
+    // key of parent widget
+    parentClientId: string;
+    // FIXME: id is undefined only for input
     // id of parent widget
-    parentId: string;
+    parentId: string | undefined;
 }
 
-type NumberCondition = BaseCondition & ({
-    operator: 'greater-than';
+export interface EmptyCondition extends BaseCondition {
+    operator: 'empty';
+}
+
+export interface NumberGreaterThanCondition extends BaseCondition {
+    operator: 'number-greater-than';
     value: number;
-} | {
-    operator: 'less-than';
+}
+export interface NumberLessThanCondition extends BaseCondition {
+    operator: 'number-less-than';
     value: number;
-} | {
-    operator: 'equal-to';
+}
+export interface NumberEqualToCondition extends BaseCondition {
+    operator: 'number-equal-to';
     value: number;
-} | {
-    operator: 'empty';
-});
+}
 
-type TextCondition = BaseCondition & ({
-    operator: 'starts-with';
+export interface TextStartsWithCondition extends BaseCondition {
+    operator: 'text-starts-with';
     value: string;
-} | {
-    operator: 'ends-with';
+}
+export interface TextEndsWithCondition extends BaseCondition {
+    operator: 'text-ends-with';
     value: string;
-} | {
-    operator: 'contains';
+}
+export interface TextContainsCondition extends BaseCondition {
+    operator: 'text-contains';
     value: string;
-} | {
-    operator: 'empty';
-});
+}
 
-// NOTE: single select doesn't need to implement array-every-selected as it is
-// not possible in most cases
-type SelectCondition = BaseCondition & ({
-    operator: 'one-selected';
-    value: string;
-} | {
-    operator: 'some-selected';
+export interface SingleSelectSelectedCondition extends BaseCondition {
+    operator: 'single-selection-selected';
+    // operatorModifier: 'some';
     value: string[];
-} | {
-    operator: 'every-selected';
+}
+
+export interface MultiSelectSelectedCondition extends BaseCondition {
+    operator: 'multi-selection-selected';
+    operatorModifier: 'every' | 'some';
     value: string[];
-} | {
-    operator: 'empty';
-});
+}
 
-// NOTE: we can add array selections here
-type OrganigramCondition = BaseCondition & ({
-    operator: 'one-selected';
-    value: string;
-} | {
-    operator: 'some-descendent-selected';
-    value: string;
-} | {
-    operator: 'empty';
-});
-
-type ScaleCondition = BaseCondition & ({
-    operator: 'equal-to';
-    value: string;
-} | {
-    operator: 'at-least';
-    value: string;
-} | {
-    operator: 'at-most';
-    value: string;
-} | {
-    operator: 'empty';
-});
-
-type Matrix1dCondition = BaseCondition & ({
-    operator: 'some-cell-selected';
+export interface OrganigramSelectedCondition extends BaseCondition {
+    operator: 'organigram-selected';
+    operatorModifier: 'every' | 'some';
     value: string[];
-} | {
-    operator: 'some-row-selected';
-    value: string[];
-});
+}
 
-type Matrix2dCondition = BaseCondition & ({
-    operator: 'some-row-selected';
+export interface OrganigramDescendentSelectedCondition extends BaseCondition {
+    operator: 'organigram-descendent-selected';
+    operatorModifier: 'every' | 'some';
     value: string[];
-} | {
-    operator: 'some-sub-row-selected';
+}
+
+export interface ScaleSelectedCondition extends BaseCondition {
+    operator: 'scale-selected';
+    // operatorModifier: 'some';
     value: string[];
-} | {
-    operator: 'some-column-selected';
+}
+export interface ScaleAtLeastCondition extends BaseCondition {
+    operator: 'scale-more-than';
+    value: string;
+}
+export interface ScaleAtMostCondition extends BaseCondition {
+    operator: 'scale-less-than';
+    value: string;
+}
+export interface DateAfterCondition extends BaseCondition {
+    operator: 'date-after';
+    value: string;
+}
+export interface DateBeforeCondition extends BaseCondition {
+    operator: 'date-before';
+    value: string;
+}
+export interface DateEqualToCondition extends BaseCondition {
+    operator: 'date-equal-to';
+    value: string;
+}
+export interface TimeAfterCondition extends BaseCondition {
+    operator: 'time-after';
+    value: string;
+}
+export interface TimeBeforeCondition extends BaseCondition {
+    operator: 'time-before';
+    value: string;
+}
+export interface TimeEqualToCondition extends BaseCondition {
+    operator: 'time-equal-to';
+    value: string;
+}
+export interface DateRangeAfterCondition extends BaseCondition {
+    operator: 'date-range-after';
+    value: string;
+}
+export interface DateRangeBeforeCondition extends BaseCondition {
+    operator: 'date-range-before';
+    value: string;
+}
+export interface DateRangeIncludesCondition extends BaseCondition {
+    operator: 'date-range-includes';
+    value: string;
+}
+export interface TimeRangeAfterCondition extends BaseCondition {
+    operator: 'time-range-after';
+    value: string;
+}
+export interface TimeRangeBeforeCondition extends BaseCondition {
+    operator: 'time-range-before';
+    value: string;
+}
+export interface TimeRangeIncludesCondition extends BaseCondition {
+    operator: 'time-range-includes';
+    value: string;
+}
+
+export interface Matrix1dCellsSelectedCondition extends BaseCondition {
+    operator: 'matrix1d-cells-selected';
+    operatorModifier: 'every' | 'some';
     value: string[];
-} | {
-    operator: 'some-sub-column-selected';
+}
+export interface Matrix1dRowsSelectedCondition extends BaseCondition {
+    operator: 'matrix1d-rows-selected';
+    operatorModifier: 'every' | 'some';
     value: string[];
-});
+}
 
-type DateCondition = BaseCondition & ({
-    operator: 'after';
-    value: string;
-} | {
-    operator: 'before';
-    value: string;
-} | {
-    operator: 'equal-to';
-    value: string;
-} | {
-    operator: 'empty';
-});
+export interface Matrix2dColumnsSelectedCondition extends BaseCondition {
+    operator: 'matrix2d-columns-selected';
+    operatorModifier: 'every' | 'some';
+    value: string[];
+}
+export interface Matrix2dRowsSelectedCondition extends BaseCondition {
+    operator: 'matrix2d-rows-selected';
+    operatorModifier: 'every' | 'some';
+    value: string[];
+}
+export interface Matrix2dSubColumnsSelectedCondition extends BaseCondition {
+    operator: 'matrix2d-sub-columns-selected';
+    operatorModifier: 'every' | 'some';
+    value: string[];
+}
+export interface Matrix2dSubRowsSelectedCondition extends BaseCondition {
+    operator: 'matrix2d-sub-rows-selected';
+    operatorModifier: 'every' | 'some';
+    value: string[];
+}
 
-type TimeCondition = BaseCondition & ({
-    operator: 'after';
-    value: string;
-} | {
-    operator: 'before';
-    value: string;
-} | {
-    operator: 'equal-to';
-    value: string;
-} | {
-    operator: 'empty';
-});
+export type NumberCondition = EmptyCondition
+    | NumberGreaterThanCondition
+    | NumberLessThanCondition
+    | NumberEqualToCondition;
 
-type DateRangeCondition = BaseCondition & ({
-    operator: 'after';
-    value: string;
-} | {
-    operator: 'before';
-    value: string;
-} | {
-    operator: 'includes';
-    value: string;
-} | {
-    operator: 'empty';
-})
+export type TextCondition = EmptyCondition
+    | TextStartsWithCondition
+    | TextEndsWithCondition
+    | TextContainsCondition;
 
-type TimeRangeCondition = BaseCondition & ({
-    operator: 'after';
-    value: string;
-} | {
-    operator: 'before';
-    value: string;
-} | {
-    operator: 'includes';
-    value: string;
-} | {
-    operator: 'empty';
-})
+export type SingleSelectCondition = EmptyCondition
+    | SingleSelectSelectedCondition;
+
+export type GeoLocationCondition = EmptyCondition;
+
+export type ScaleCondition = EmptyCondition
+    | ScaleAtLeastCondition
+    | ScaleAtMostCondition
+    | ScaleSelectedCondition;
+
+export type DateCondition = EmptyCondition
+    | DateAfterCondition
+    | DateBeforeCondition
+    | DateEqualToCondition;
+
+export type TimeCondition = EmptyCondition
+    | TimeAfterCondition
+    | TimeBeforeCondition
+    | TimeEqualToCondition;
+
+export type DateRangeCondition = EmptyCondition
+    | DateRangeAfterCondition
+    | DateRangeBeforeCondition
+    | DateRangeIncludesCondition;
+
+export type TimeRangeCondition = EmptyCondition
+    | TimeRangeAfterCondition
+    | TimeRangeBeforeCondition
+    | TimeRangeIncludesCondition;
+
+export type MultiSelectCondition = EmptyCondition
+    | MultiSelectSelectedCondition;
+
+export type OrganigramCondition = EmptyCondition
+    | OrganigramSelectedCondition
+    | OrganigramDescendentSelectedCondition;
+
+export type Matrix1dCondition = EmptyCondition
+    | Matrix1dRowsSelectedCondition
+    | Matrix1dCellsSelectedCondition;
+
+export type Matrix2dCondition = EmptyCondition
+    | Matrix2dColumnsSelectedCondition
+    | Matrix2dRowsSelectedCondition
+    | Matrix2dSubColumnsSelectedCondition
+    | Matrix2dSubRowsSelectedCondition;
 
 export interface NumberConditional extends BaseConditional {
     parentWidgetId: 'NUMBER';
@@ -170,14 +240,6 @@ export interface NumberConditional extends BaseConditional {
 export interface TextConditional extends BaseConditional {
     parentWidgetId: 'TEXT';
     conditions: TextCondition[];
-}
-export interface SingleSelectConditional extends BaseConditional {
-    parentWidgetId: 'SELECT';
-    conditions: SelectCondition[];
-}
-export interface MultiSelectConditional extends BaseConditional {
-    parentWidgetId: 'MULTISELECT';
-    conditions: SelectCondition[];
 }
 export interface DateConditional extends BaseConditional {
     parentWidgetId: 'DATE';
@@ -195,6 +257,18 @@ export interface DateRangeConditional extends BaseConditional {
     parentWidgetId: 'DATE_RANGE';
     conditions: DateRangeCondition[];
 }
+export interface GeoLocationConditional extends BaseConditional {
+    parentWidgetId: 'GEO';
+    conditions: GeoLocationCondition[];
+}
+export interface SingleSelectConditional extends BaseConditional {
+    parentWidgetId: 'SELECT';
+    conditions: SingleSelectCondition[];
+}
+export interface MultiSelectConditional extends BaseConditional {
+    parentWidgetId: 'MULTISELECT';
+    conditions: MultiSelectCondition[];
+}
 export interface Matrix1dConditional extends BaseConditional {
     parentWidgetId: 'MATRIX1D';
     conditions: Matrix1dCondition[];
@@ -210,10 +284,6 @@ export interface OrganigramConditional extends BaseConditional {
 export interface ScaleConditional extends BaseConditional {
     parentWidgetId: 'SCALE';
     conditions: ScaleCondition[];
-}
-export interface GeoLocationConditional extends BaseConditional {
-    parentWidgetId: 'GEO';
-    conditions: SelectCondition[];
 }
 
 type Conditional = NumberConditional
@@ -232,7 +302,7 @@ type Conditional = NumberConditional
 
 // NOTE: we are replacing these with more strict types
 export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'> & {
-    conditional?: Conditional | undefined;
+    conditional?: Conditional;
 };
 
 interface BaseProperties<T> {

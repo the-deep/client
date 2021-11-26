@@ -24,6 +24,7 @@ import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import NonFieldError from '#components/NonFieldError';
 import { PartialWidget } from '#components/framework/AttributeInput';
 
+import WidgetConditionalEditor from '../components/WidgetConditionalEditor';
 import { SectionsType } from '../schema';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
@@ -38,6 +39,8 @@ import {
     injectWidget,
     orderWidgets,
     deleteWidget,
+    injectWidgetConditional,
+    TempConditional,
 } from './utils';
 
 import styles from './styles.css';
@@ -79,13 +82,11 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
 
     const [tempSections, setTempSections] = useState<PartialSectionType[] | undefined>();
 
+    const [conditional, setConditional] = useState<TempConditional | undefined>();
+
     const [tempWidget, setTempWidget] = useState<TempWidget | undefined>();
 
     const [sectionToEdit, setSectionToEdit] = useState<string | undefined>(undefined);
-
-    useEffect(() => {
-        onTempStateChange(!!(tempSections || tempWidget));
-    }, [tempSections, tempWidget, onTempStateChange]);
 
     const handleSectionsAdd = useCallback(
         () => {
@@ -142,6 +143,21 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
             setSections((oldSections) => deleteWidget(oldSections, sectionId, widgetId), name);
         },
         [setSections, name],
+    );
+
+    const handleWidgetConditionEditClick = useCallback(
+        (widgetId: string, sectionId: string) => {
+            const widget = findWidget(sections, sectionId, widgetId);
+            if (widget) {
+                setConditional({
+                    widgetId,
+                    sectionId,
+                    value: widget.conditional,
+                    title: widget.title,
+                });
+            }
+        },
+        [sections],
     );
 
     const handleWidgetEditClick = useCallback(
@@ -210,6 +226,38 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         [setSections, name],
     );
 
+    const handleConditionalEditCancel = useCallback(
+        () => {
+            setConditional(undefined);
+        },
+        [],
+    );
+
+    const handleConditionalChange = useCallback(
+        (value: TempConditional['value'] | undefined, meta: { widgetId: string, sectionId: string, title?: string }) => {
+            setConditional({ ...meta, value });
+        },
+        [],
+    );
+
+    const handleConditionalSave = useCallback(
+        (value: TempConditional['value'], meta: { widgetId: string, sectionId: string, title?: string }) => {
+            setSections((oldSections) => {
+                const newValue = injectWidgetConditional(
+                    oldSections,
+                    {
+                        widgetId: meta.widgetId,
+                        sectionId: meta.sectionId,
+                        value,
+                    },
+                );
+                return newValue;
+            }, name);
+            setConditional(undefined);
+        },
+        [setSections, name],
+    );
+
     type AppliedSections = {
         editMode: false;
         appliedSections: Section[];
@@ -220,6 +268,12 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
 
     const sectionsState = useMemo(
         (): AppliedSections => {
+            if (conditional) {
+                return {
+                    editMode: true,
+                    appliedSections: injectWidgetConditional(sections, conditional),
+                };
+            }
             if (tempSections) {
                 const mySections = sortByOrder(tempSections);
                 if (tempWidget) {
@@ -253,8 +307,12 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                 appliedSections: mySections,
             };
         },
-        [sections, tempSections, tempWidget],
+        [sections, tempSections, tempWidget, conditional],
     );
+
+    useEffect(() => {
+        onTempStateChange(sectionsState.editMode);
+    }, [sectionsState.editMode, onTempStateChange]);
 
     const handleSectionEditClick: ButtonProps<string>['onClick'] = useCallback((newSectionToEdit, event) => {
         event.stopPropagation();
@@ -266,15 +324,29 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         setSelectedSection(newSelection);
     }, []);
 
-    const sectionEditMode = !!tempSections && !tempWidget;
-    const widgetEditMode = !tempSections && !!tempWidget;
+    const sectionEditMode = !!tempSections && !tempWidget && !conditional;
+    const widgetEditMode = !tempSections && !!tempWidget && !conditional;
+    const conditionalEditMode = !tempSections && !tempWidget && !!conditional;
 
-    const validSectionSelected = useMemo(
+    const selectedSectionItem = useMemo(
         () => (
-            !!selectedSection
-            && !!sections.find((section) => section.clientId === selectedSection)
+            selectedSection
+                ? sections.find((section) => section.clientId === selectedSection)
+                : undefined
         ),
         [sections, selectedSection],
+    );
+
+    const validSectionSelected = !!selectedSectionItem;
+
+    // NOTE: filtering out child conditions and self
+    // TODO: move child widget after parent
+    const parentWidgets = useMemo(
+        () => selectedSectionItem?.widgets?.filter((widget) => (
+            !widget.conditional
+            && (!conditional || widget.clientId !== conditional.widgetId)
+        )) ?? [],
+        [selectedSectionItem, conditional],
     );
 
     return (
@@ -293,7 +365,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         widgetsDisabled={!validSectionSelected}
                     />
                 )}
-                {sectionEditMode && tempSections && (
+                {sectionsState.editMode && sectionEditMode && tempSections && (
                     // NOTE: no need to disable as this is used as modal
                     <SectionsEditor
                         initialValue={tempSections}
@@ -304,7 +376,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         onCancel={handleSectionsEditCancel}
                     />
                 )}
-                {widgetEditMode && tempWidget && (
+                {sectionsState.editMode && widgetEditMode && tempWidget && (
                     <WidgetEditor
                         className={styles.widgetEditor}
                         name={tempWidget.sectionId}
@@ -312,6 +384,17 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         onChange={handleTempWidgetChange}
                         onSave={handleTempWidgetSave}
                         onCancel={handleWidgetEditCancel}
+                    />
+                )}
+                {sectionsState.editMode && conditionalEditMode && conditional && (
+                    <WidgetConditionalEditor
+                        widgets={parentWidgets}
+                        name={conditional}
+                        title={conditional.title}
+                        value={conditional.value}
+                        onChange={handleConditionalChange}
+                        onSave={handleConditionalSave}
+                        onCancel={handleConditionalEditCancel}
                     />
                 )}
             </Container>
@@ -422,6 +505,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                     widgets={section.widgets}
                                     onWidgetDelete={handleWidgetDeleteClick}
                                     onWidgetEdit={handleWidgetEditClick}
+                                    onWidgetConditionEdit={handleWidgetConditionEditClick}
                                     onWidgetOrderChange={handleWidgetOrderChange}
                                     onWidgetClone={handleWidgetClone}
                                     editMode={false}

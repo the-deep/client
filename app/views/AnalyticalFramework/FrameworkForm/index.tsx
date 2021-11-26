@@ -140,7 +140,7 @@ function FrameworkForm(props: FrameworkFormProps) {
         organizationOptions,
         setOrganizationOptions,
     ] = useState<BasicOrganization[] | null | undefined>(
-        [framework?.organization].filter(isDefined),
+        framework?.organization ? [framework.organization] : [],
     );
 
     const [

@@ -1,16 +1,12 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import { generatePath } from 'react-router-dom';
-
 import { ButtonLikeLink } from '@the-deep/deep-ui';
 
 import deepLogo from '#resources/img/deep-logo-new.svg';
 import Svg from '#components/Svg';
-import routes from '#base/configs/routes';
 
 import waterLevelImage from './water-level.png';
-
 import styles from './styles.css';
 
 interface Props {
@@ -57,7 +53,7 @@ function FullPageErrorMessage(props: Props) {
                     <ButtonLikeLink
                         className={styles.button}
                         variant="primary"
-                        to={generatePath(routes.home.path)}
+                        to="/"
                     >
                         Go to Home
                     </ButtonLikeLink>
