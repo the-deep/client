@@ -42,6 +42,7 @@ const getAttributeSchema = (widgets: Partial<Record<string, Widget>>): Attribute
             widget: [],
             data: [],
 
+            widgetVersion: [],
             // NOTE: widgetType this one is not needed on server
             widgetType: [],
         };

@@ -199,6 +199,7 @@ function WidgetEditor<T>(props: Props<T>) {
             );
         }
         default: {
+            // FIXME: add "not implemented"
             return null;
         }
     }

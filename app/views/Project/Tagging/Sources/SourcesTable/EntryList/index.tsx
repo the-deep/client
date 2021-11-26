@@ -124,6 +124,7 @@ export const LEAD_ENTRIES = gql`
                         id
                         widget
                         widgetType
+                        widgetVersion
                         geoSelectedOptions {
                             id
                             adminLevelTitle

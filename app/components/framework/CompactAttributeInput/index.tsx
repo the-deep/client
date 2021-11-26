@@ -13,7 +13,7 @@ import {
     isNotDefined,
 } from '@togglecorp/fujs';
 
-import { Widget } from '#types/newAnalyticalFramework';
+import { Widget, getWidgetVersion } from '#types/newAnalyticalFramework';
 
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import NonFieldError from '#components/NonFieldError';
@@ -102,6 +102,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
             // NOTE: widget.id should always be defined before an attribute can be saved
             widget: widget.id ?? 'not-random',
             data: undefined,
+            widgetVersion: getWidgetVersion(widget.widgetId),
         }),
         [widget],
     );

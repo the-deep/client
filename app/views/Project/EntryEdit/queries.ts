@@ -14,6 +14,7 @@ const ENTRY_FRAGMENT = gql`
             id
             widget
             widgetType
+            widgetVersion
             geoSelectedOptions {
                 id
                 adminLevelTitle

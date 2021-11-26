@@ -12,6 +12,7 @@ const FRAMEWORK = gql`
                 title
                 widgetId
                 width
+                version
             }
             clientId
             id
@@ -28,6 +29,7 @@ const FRAMEWORK = gql`
             properties
             widgetId
             width
+            version
         }
         organization {
             id

@@ -40,6 +40,7 @@ const widgetSchema: WidgetSchema = {
         // conditional: [],
         title: [],
         widgetId: [],
+        version: [],
         width: [],
     }),
 };

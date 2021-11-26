@@ -114,6 +114,7 @@ export const PROJECT_ENTRIES = gql`
                         id
                         widget
                         widgetType
+                        widgetVersion
                         geoSelectedOptions {
                             id
                             adminLevelTitle
