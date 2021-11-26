@@ -81,7 +81,9 @@ function BulkActions(props: Props) {
 
     const handleBulkCopyClick = useCallback(() => {
         showLeadCopyModal();
-    }, []);
+    }, [showLeadCopyModal]);
+
+    const selectedLeadsIds = selectedLeads.map((lead) => lead.id);
 
     return (
         <div className={styles.bulkActionsBar}>
@@ -101,7 +103,6 @@ function BulkActions(props: Props) {
             </Button>
             <Button
                 name="bulk-copy"
-                className={styles.bulkCopy}
                 title="Copy to Projects"
                 icons={<IoCopy />}
                 variant="general"
@@ -140,7 +141,7 @@ function BulkActions(props: Props) {
                 <LeadCopyModal
                     projectId={activeProject}
                     onClose={hideLeadCopyModal}
-                    leadId={selectedLeads}
+                    leadId={selectedLeadsIds}
                 />
             )}
         </div>

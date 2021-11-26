@@ -86,7 +86,7 @@ function Actions<T extends string>(props: Props<T>) {
 
     const onMoveLeadToOtherProjectsClick = useCallback(() => {
         showLeadCopyModal();
-    }, []);
+    }, [showLeadCopyModal]);
 
     const isExpanded = id === expandedRowKey;
     const isDisabled = entriesCount < 1;
@@ -174,9 +174,9 @@ function Actions<T extends string>(props: Props<T>) {
                 {/* TODO: Update entriesCount when parent has graphql */}
             </div>
             {modal}
-            {leadCopyModalShown && (
+            {leadCopyModalShown && project?.id && (
                 <LeadCopyModal
-                    projectId={projectId}
+                    projectId={project.id}
                     onClose={hideLeadCopyModal}
                     leadId={[id]}
                 />
