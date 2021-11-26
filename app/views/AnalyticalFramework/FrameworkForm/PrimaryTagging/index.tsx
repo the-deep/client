@@ -88,10 +88,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
 
     const [sectionToEdit, setSectionToEdit] = useState<string | undefined>(undefined);
 
-    useEffect(() => {
-        onTempStateChange(!!(tempSections || tempWidget));
-    }, [tempSections, tempWidget, onTempStateChange]);
-
     const handleSectionsAdd = useCallback(
         () => {
             const newClientId = randomString();
@@ -313,6 +309,10 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         },
         [sections, tempSections, tempWidget, conditional],
     );
+
+    useEffect(() => {
+        onTempStateChange(sectionsState.editMode);
+    }, [sectionsState.editMode, onTempStateChange]);
 
     const handleSectionEditClick: ButtonProps<string>['onClick'] = useCallback((newSectionToEdit, event) => {
         event.stopPropagation();

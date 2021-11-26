@@ -65,10 +65,6 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
 
     const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
 
-    useEffect(() => {
-        onTempStateChange(!!tempWidget);
-    }, [tempWidget, onTempStateChange]);
-
     const [conditional, setConditional] = useState<TempConditional | undefined>();
 
     const handleWidgetAdd = useCallback(
@@ -209,6 +205,10 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         },
         [tempWidget, widgets, conditional],
     );
+
+    useEffect(() => {
+        onTempStateChange(widgetsState.editMode);
+    }, [widgetsState.editMode, onTempStateChange]);
 
     // NOTE: filtering out child conditions and self
     // TODO: move child widget after parent
