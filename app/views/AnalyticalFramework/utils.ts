@@ -157,6 +157,7 @@ export function cloneWidget(
         case 'TEXT':
             return cloneWidgetSuperficially(widget);
         default:
+            // FIXME: add "not implemented" console
             return undefined;
     }
 }

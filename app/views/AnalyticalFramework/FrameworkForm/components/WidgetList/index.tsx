@@ -7,7 +7,22 @@ import {
     Element,
 } from '@the-deep/deep-ui';
 
-import { Types } from '#types/newAnalyticalFramework';
+import {
+    Types,
+    TEXT_WIDGET_VERSION,
+    NUMBER_WIDGET_VERSION,
+    TIME_WIDGET_VERSION,
+    DATE_WIDGET_VERSION,
+    TIME_RANGE_WIDGET_VERSION,
+    DATE_RANGE_WIDGET_VERSION,
+    SINGLE_SELECT_WIDGET_VERSION,
+    MULTI_SELECT_WIDGET_VERSION,
+    SCALE_WIDGET_VERSION,
+    ORGANIGRAM_WIDGET_VERSION,
+    GEOLOCATION_WIDGET_VERSION,
+    MATRIX1D_WIDGET_VERSION,
+    MATRIX2D_WIDGET_VERSION,
+} from '#types/newAnalyticalFramework';
 import { PartialWidget } from '#components/framework/AttributeInput';
 import styles from './styles.css';
 
@@ -18,6 +33,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: TEXT_WIDGET_VERSION,
     },
     {
         widgetId: 'NUMBER',
@@ -25,6 +41,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: NUMBER_WIDGET_VERSION,
     },
     {
         widgetId: 'DATE',
@@ -32,6 +49,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: DATE_WIDGET_VERSION,
     },
     {
         widgetId: 'DATE_RANGE',
@@ -39,6 +57,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: DATE_RANGE_WIDGET_VERSION,
     },
     {
         widgetId: 'TIME',
@@ -46,6 +65,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: TIME_WIDGET_VERSION,
     },
     {
         widgetId: 'TIME_RANGE',
@@ -53,6 +73,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: TIME_RANGE_WIDGET_VERSION,
     },
     {
         widgetId: 'MATRIX1D',
@@ -60,6 +81,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: MATRIX1D_WIDGET_VERSION,
     },
     {
         widgetId: 'MATRIX2D',
@@ -67,6 +89,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: MATRIX2D_WIDGET_VERSION,
     },
     {
         widgetId: 'SCALE',
@@ -74,6 +97,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: SCALE_WIDGET_VERSION,
     },
     {
         widgetId: 'SELECT',
@@ -81,6 +105,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: SINGLE_SELECT_WIDGET_VERSION,
     },
     {
         widgetId: 'MULTISELECT',
@@ -88,6 +113,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: MULTI_SELECT_WIDGET_VERSION,
     },
     {
         widgetId: 'ORGANIGRAM',
@@ -95,6 +121,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: ORGANIGRAM_WIDGET_VERSION,
     },
     {
         widgetId: 'GEO',
@@ -102,6 +129,7 @@ const partialWidgets: PartialWidget[] = [
         clientId: 'random',
         order: -1,
         width: 'FULL',
+        version: GEOLOCATION_WIDGET_VERSION,
     },
 ];
 

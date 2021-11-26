@@ -462,6 +462,41 @@ export type Widget = TextWidget
     | Matrix1dWidget
     | Matrix2dWidget;
 
+export const TEXT_WIDGET_VERSION = 1;
+export const NUMBER_WIDGET_VERSION = 1;
+export const TIME_WIDGET_VERSION = 1;
+export const DATE_WIDGET_VERSION = 1;
+export const TIME_RANGE_WIDGET_VERSION = 1;
+export const DATE_RANGE_WIDGET_VERSION = 1;
+export const SINGLE_SELECT_WIDGET_VERSION = 1;
+export const MULTI_SELECT_WIDGET_VERSION = 1;
+export const SCALE_WIDGET_VERSION = 1;
+export const ORGANIGRAM_WIDGET_VERSION = 1;
+export const GEOLOCATION_WIDGET_VERSION = 1;
+export const MATRIX1D_WIDGET_VERSION = 1;
+export const MATRIX2D_WIDGET_VERSION = 1;
+
+export function getWidgetVersion(type: Widget['widgetId']) {
+    const mapping: {
+        [key in Widget['widgetId']]: number
+    } = {
+        TEXT: TEXT_WIDGET_VERSION,
+        NUMBER: NUMBER_WIDGET_VERSION,
+        TIME: TIME_WIDGET_VERSION,
+        DATE: DATE_WIDGET_VERSION,
+        TIME_RANGE: TIME_RANGE_WIDGET_VERSION,
+        DATE_RANGE: DATE_RANGE_WIDGET_VERSION,
+        SELECT: SINGLE_SELECT_WIDGET_VERSION,
+        MULTISELECT: MULTI_SELECT_WIDGET_VERSION,
+        SCALE: SCALE_WIDGET_VERSION,
+        ORGANIGRAM: ORGANIGRAM_WIDGET_VERSION,
+        GEO: GEOLOCATION_WIDGET_VERSION,
+        MATRIX1D: MATRIX1D_WIDGET_VERSION,
+        MATRIX2D: MATRIX2D_WIDGET_VERSION,
+    };
+    return mapping[type];
+}
+
 type BaseFilterType = Omit<AnalysisFrameworkFilterTypeRaw, 'properties' | 'widgetType'>;
 
 export interface KeyLabel {
