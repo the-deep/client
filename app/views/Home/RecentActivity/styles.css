@@ -3,7 +3,9 @@
     padding: 0;
 
     .content {
+        border-radius: var(--dui-border-radius-card);
         background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-medium);
         max-height: calc(10em + 25vh);
         overflow-y: auto;
 

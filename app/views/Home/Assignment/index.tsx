@@ -3,7 +3,6 @@ import {
     Container,
     Button,
     Pager,
-    Card,
     ListView,
 } from '@the-deep/deep-ui';
 import { IoCheckmarkDone } from 'react-icons/io5';
@@ -124,17 +123,17 @@ function Assignments() {
                     hidePrevAndNext
                 />
             )}
+            contentClassName={styles.content}
         >
-            <Card className={styles.content}>
-                <ListView
-                    data={assignmentsResponse?.results}
-                    keySelector={keySelector}
-                    renderer={AssignmentItem}
-                    rendererParams={rendererParams}
-                    emptyMessage="You do not have any assignments."
-                    pending={pending}
-                />
-            </Card>
+            <ListView
+                className={styles.assignmentList}
+                data={assignmentsResponse?.results}
+                keySelector={keySelector}
+                renderer={AssignmentItem}
+                rendererParams={rendererParams}
+                emptyMessage="You do not have any assignments."
+                pending={pending}
+            />
         </Container>
     );
 }

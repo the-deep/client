@@ -2,6 +2,13 @@
     background-color: var(--dui-color-foreground);
     padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 
+    .content {
+        display: flex;
+        flex-direction: column;
+        overflow: unset;
+        gap: var(--dui-spacing-medium);
+    }
+
     .stats-container {
         display: flex;
         min-height: 40vh;

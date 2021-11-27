@@ -116,6 +116,8 @@ function ExploreDeep(props: Props) {
     return (
         <Container
             className={_cs(styles.exploreDeep, className)}
+            contentClassName={styles.content}
+            headingSize="large"
             heading="Explore DEEP"
         >
             {loading && <PendingMessage />}
@@ -172,7 +174,7 @@ function ExploreDeep(props: Props) {
                         heading="Top 5 most used frameworks"
                         headingDescription="Last 3 months"
                         spacing="none"
-                        headingSize="medium"
+                        headingSize="small"
                         borderBelowHeader
                         borderBelowHeaderWidth="thin"
                         inlineHeadingDescription
@@ -192,7 +194,7 @@ function ExploreDeep(props: Props) {
                     className={styles.rightContainer}
                     heading="Top 5 most active project"
                     headingDescription="Last 3 months"
-                    headingSize="medium"
+                    headingSize="small"
                     spacing="none"
                     headerClassName={styles.header}
                     headingContainerClassName={styles.heading}

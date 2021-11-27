@@ -4,7 +4,7 @@ import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     useAlert,
-    QuickActionLink,
+    QuickActionButton,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
@@ -34,6 +34,7 @@ export interface Props {
     projectId?: string;
     className?: string;
     disabled?: boolean;
+    onLeadGroupEditClick: (leadGroupToEdit: string) => void;
     onDeleteSuccess: () => void;
 }
 
@@ -43,6 +44,7 @@ function ActionCell(props: Props) {
         projectId,
         leadGroupId,
         onDeleteSuccess,
+        onLeadGroupEditClick,
         disabled,
     } = props;
 
@@ -86,15 +88,15 @@ function ActionCell(props: Props) {
 
     return (
         <div className={_cs(styles.actionCell, className)}>
-            <QuickActionLink
+            <QuickActionButton
                 className={styles.button}
-                // TODO: Link this to actual leadGroup edit page
-                to="#"
+                name={leadGroupId}
+                onClick={onLeadGroupEditClick}
                 disabled={disabled}
                 title="Edit"
             >
                 <FiEdit2 />
-            </QuickActionLink>
+            </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"

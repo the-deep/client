@@ -113,6 +113,13 @@ function LeadGroups(props: Props) {
 
     const canEditLead = project?.allowedPermissions.includes('UPDATE_LEAD');
 
+    const [leadGroupToEdit, setLeadGroupToEdit] = useState<string | undefined>(undefined);
+
+    const handleLeadGroupEditClick = useCallback((leadGroupId: string | undefined) => {
+        setLeadGroupToEdit(leadGroupId);
+        showAddLeadGroupModal();
+    }, [showAddLeadGroupModal]);
+
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
             LeadGroup, string, ActionCellProps, TableHeaderCellProps
@@ -126,6 +133,7 @@ function LeadGroups(props: Props) {
             cellRenderer: ActionCell,
             cellRendererParams: (leadGroupId) => ({
                 leadGroupId,
+                onLeadGroupEditClick: handleLeadGroupEditClick,
                 projectId: project?.id,
                 onDeleteSuccess: refetch,
                 disabled: !canEditLead,
@@ -158,10 +166,16 @@ function LeadGroups(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [canEditLead, refetch, project?.id]);
+    }, [
+        canEditLead,
+        refetch,
+        project?.id,
+        handleLeadGroupEditClick,
+    ]);
 
     const handleLeadGroupAddSuccess = useCallback(() => {
         refetch();
+        setLeadGroupToEdit(undefined);
     }, [refetch]);
 
     return (
@@ -174,7 +188,7 @@ function LeadGroups(props: Props) {
             headerActions={canEditLead && (
                 <Button
                     name={undefined}
-                    onClick={showAddLeadGroupModal}
+                    onClick={handleLeadGroupEditClick}
                 >
                     Add Lead Group
                 </Button>
@@ -205,6 +219,7 @@ function LeadGroups(props: Props) {
             {addLeadGroupModalShown && (
                 <AddLeadGroupModal
                     onModalClose={hideAddLeadGroupModal}
+                    leadGroupToEdit={leadGroupToEdit}
                     onLeadGroupAdd={handleLeadGroupAddSuccess}
                 />
             )}
