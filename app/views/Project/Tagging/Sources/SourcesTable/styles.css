@@ -23,11 +23,12 @@
                 background-color: var(--dui-color-foreground);
             }
 
-            .empty-link {
-                color: var(--dui-color-text);
+            .link {
+                cursor: ;
+                pointer-events: none;
 
-                &:hover {
-                    text-decoration: none;
+                .empty-link {
+                    color: var(--dui-color-text);
                 }
             }
 

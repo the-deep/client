@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import {
-    Card,
     Container,
     ListView,
 } from '@the-deep/deep-ui';
@@ -40,18 +39,17 @@ function RecentActivities() {
         <Container
             className={styles.recentActivity}
             heading={_ts('recentActivity', 'recentActivitiesHeading')}
+            contentClassName={styles.content}
         >
-            <Card className={styles.content}>
-                <ListView
-                    className={styles.activities}
-                    data={recentActivitiesResponse?.results}
-                    renderer={ActivityItem}
-                    keySelector={keySelector}
-                    rendererParams={activityRendererParams}
-                    pending={pending}
-                    emptyMessage="You do not have any recent activity"
-                />
-            </Card>
+            <ListView
+                className={styles.activities}
+                data={recentActivitiesResponse?.results}
+                renderer={ActivityItem}
+                keySelector={keySelector}
+                rendererParams={activityRendererParams}
+                pending={pending}
+                emptyMessage="You do not have any recent activity"
+            />
         </Container>
     );
 }

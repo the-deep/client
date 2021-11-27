@@ -455,6 +455,7 @@ function SourcesTable(props: Props) {
                 sortable: true,
             },
             cellRenderer: Link,
+            cellRendererClassName: styles.link,
             cellRendererParams: (_, data) => ({
                 linkElementClassName: _cs(!data.source?.url && styles.emptyLink),
                 children: data.source?.title,
