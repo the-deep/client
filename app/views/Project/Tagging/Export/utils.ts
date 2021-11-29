@@ -78,7 +78,7 @@ function transformLevelsColumnFirst(
 ): Level[] {
     const sectorFirstLevels = matrix2dProperties.columns.map((column) => {
         let sublevels: Level[] = [];
-        if (column.subColumns) {
+        if (column.subColumns.length > 0) {
             sublevels = column.subColumns.map((subColumn) => {
                 const rows = matrix2dProperties.rows.map((row) => {
                     const subRowsLevel = row.subRows.map((subRow) => ({
@@ -162,9 +162,18 @@ export const createReportStructure = (
                 return undefined;
             }
             const { properties } = widget;
-            const newLevels = reportStructureVariant === DIMENSION_FIRST
-                ? transformLevelsRowFirst(properties, includeSubColumn)
-                : transformLevelsColumnFirst(properties);
+
+            let newLevels = exportable?.data?.report?.levels;
+            if (reportStructureVariant === DIMENSION_FIRST) {
+                newLevels = transformLevelsRowFirst(properties, includeSubColumn);
+            } else if (includeSubColumn) {
+                newLevels = transformLevelsColumnFirst(properties);
+            }
+
+            if (!newLevels) {
+                return undefined;
+            }
+
             return {
                 title: widget.title,
                 key: String(exportable.id),
