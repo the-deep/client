@@ -1,33 +1,70 @@
 .explore-deep {
-    background-color: var(--dui-color-foreground);
-    padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+    padding: var(--dui-spacing-medium) 0 0;
+
+    .header {
+        padding: 0 var(--dui-spacing-super-large);
+    }
 
     .content {
         display: flex;
         flex-direction: column;
         overflow: unset;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-large);
     }
 
     .stats-container {
         display: flex;
+        padding: 0 var(--dui-spacing-super-large);
         min-height: 40vh;
         gap: var(--dui-spacing-large);
 
         .left-container {
             display: flex;
-            flex-basis: calc(100% / 3 - var(--dui-spacing-large));
-            flex-wrap: wrap;
+            flex-basis: calc(100% / 3 * 2 - var(--dui-spacing-large) / 2);
+            flex-direction: column;
             gap: var(--dui-spacing-large);
 
-            .info-item {
-                flex-basis: calc(100% / 2 - var(--dui-spacing-large));
+            .info-items-container {
+                display: flex;
+                gap: var(--dui-spacing-large);
+
+                .info-item {
+                    flex-basis: calc(25% - var(--dui-spacing-large) / 3 * 2);
+                }
+
+                .stats-by-time-container {
+                    display: flex;
+                    flex-basis: calc(50% - var(--dui-spacing-large) / 3);
+                    gap: var(--dui-spacing-large);
+                    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+                    .info-item {
+                        flex-basis: calc(100% / 3 - var(--dui-spacing-large));
+                    }
+                }
             }
 
-            .playback-card {
-                flex-basis: 100%;
-                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                height: 240px;
+            .playback-framework-container {
+                display: flex;
+                gap: var(--dui-spacing-large);
+
+                .playback-card {
+                    flex-basis: calc(50% - var(--dui-spacing-large) / 2);
+                    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                }
+
+                .framework-container {
+                    display: flex;
+                    flex-basis: calc(50% - var(--dui-spacing-large) / 2);
+                    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                    height: 100%;
+                    overflow-y: auto;
+
+                    .framework-list-container {
+                        padding: 0;
+                        gap: var(--dui-spacing-large);
+                    }
+                }
             }
         }
 
@@ -39,38 +76,8 @@
             }
         }
 
-        .mid-container {
-            display: flex;
-            flex-basis: calc(100% / 3 - var(--dui-spacing-large));
-            flex-direction: column;
-            gap: var(--dui-spacing-large);
-
-            .stats-by-time-container {
-                display: flex;
-                gap: var(--dui-spacing-large);
-                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-
-                .info-item {
-                    flex-basis: calc(100% / 3 - var(--dui-spacing-large));
-                }
-            }
-
-            .framework-container {
-                display: flex;
-                border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                height: 100%;
-                overflow-y: auto;
-
-                .framework-list-container {
-                    padding: 0;
-                    gap: var(--dui-spacing-large);
-                }
-
-            }
-        }
-
         .right-container {
-            flex-basis: calc(100% / 3 - var(--dui-spacing-large));
+            flex-basis: calc(100% / 3 - var(--dui-spacing-large) / 2);
             border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
             .project-list-container {
@@ -80,7 +87,29 @@
     }
 
     .tabs-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
         background-color: var(--dui-color-foreground);
-        padding: 0;
+        padding: 0 var(--dui-spacing-super-large) var(--dui-spacing-large);
+
+        .filters-container {
+            display: flex;
+            align-items: center;
+            gap: var(--dui-spacing-medium);
+
+            .filters {
+                flex-grow: 1;
+            }
+
+            .tabs {
+                flex-shrink: 0;
+
+                .tab {
+                    padding: var(--dui-spacing-small);
+                    font-size: var(--dui-font-size-extra-large);
+                }
+            }
+        }
     }
 }

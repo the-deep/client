@@ -12,6 +12,7 @@ import {
     TextOutput,
 } from '@the-deep/deep-ui';
 
+import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import { ProjectDetailsForMapViewQuery } from '#generated/types';
 
 import ActionCell from '../../ActionCell';
@@ -24,6 +25,7 @@ interface ProjectListProps {
     projectDetails: ProjectDetail;
     projectTitle: string;
     frameworkTitle?: string;
+    frameworkId?: string;
     description: string;
     startDate?: string;
     numberOfUsers?: number;
@@ -40,6 +42,7 @@ function ListRenderer(props: ProjectListProps) {
         projectDetails,
         projectTitle,
         frameworkTitle,
+        frameworkId,
         startDate,
         description,
         numberOfEntries,
@@ -53,7 +56,7 @@ function ListRenderer(props: ProjectListProps) {
     return (
         <ControlledExpandableContainer
             name={projectId}
-            className={styles.projectListContainer}
+            className={styles.projectContainer}
             spacing="compact"
             headingSize="extraSmall"
             heading={(
@@ -61,12 +64,13 @@ function ListRenderer(props: ProjectListProps) {
                     value={projectTitle}
                 />
             )}
-            headingDescription={(
+            headingDescription={startDate && (
                 <DateOutput
                     className={styles.date}
                     value={startDate}
                 />
             )}
+            headerClassName={styles.header}
             headingClassName={styles.heading}
             contentClassName={styles.content}
             expansionTriggerArea="arrow"
@@ -91,12 +95,17 @@ function ListRenderer(props: ProjectListProps) {
                     hideLabelColon
                 />
             </div>
-            <TextOutput
-                value={frameworkTitle}
-            />
-            <div>
-                {description}
-            </div>
+            {frameworkTitle && (
+                <FrameworkImageButton
+                    frameworkId={frameworkId}
+                    label={frameworkTitle}
+                />
+            )}
+            {description && (
+                <div>
+                    {description}
+                </div>
+            )}
             <ActionCell
                 className={styles.joinButton}
                 projectId={projectId}
@@ -148,6 +157,7 @@ function ProjectList(props: Props) {
         projectDetails: datum,
         projectTitle: datum?.title,
         description: datum?.description,
+        frameworkId: datum?.analysisFramework?.id,
         frameworkTitle: datum?.analysisFramework?.title,
         startDate: datum?.startDate ?? undefined,
         numberOfEntries: datum?.stats?.numberOfEntries ?? 0,
@@ -166,7 +176,7 @@ function ProjectList(props: Props) {
         <Container
             className={styles.projectList}
             heading={_cs('Projects: ', totalCount.toString())}
-            headingSize="extraSmall"
+            headingSize="small"
             headerActions={(
                 <QuickActionButton
                     name={undefined}

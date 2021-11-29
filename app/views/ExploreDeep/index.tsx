@@ -34,6 +34,9 @@ import {
     ProjectListQueryVariables,
     ProjectExploreStatsQuery,
 } from '#generated/types';
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import routes from '#base/configs/routes';
+import _ts from '#ts';
 
 import ProjectFilterForm from './ProjectFilterForm';
 import ActiveProjectItem, { Props as ActiveProjectItemProps } from './ActiveProject';
@@ -117,91 +120,104 @@ function ExploreDeep(props: Props) {
         <Container
             className={_cs(styles.exploreDeep, className)}
             contentClassName={styles.content}
+            headerClassName={styles.header}
+            headerActions={(
+                <SmartButtonLikeLink
+                    variant="primary"
+                    route={routes.projectCreate}
+                >
+                    {_ts('home', 'setupNewProjectButtonLabel')}
+                </SmartButtonLikeLink>
+            )}
             headingSize="large"
             heading="Explore DEEP"
         >
             {loading && <PendingMessage />}
             <div className={styles.statsContainer}>
                 <div className={styles.leftContainer}>
-                    <InformationCard
-                        className={styles.infoItem}
-                        icon={<IoDocumentText />}
-                        label="Projects"
-                        value={data?.projectExploreStats?.totalProjects ?? 0}
-                        variant="complement1"
-                        coloredBackground
-                    />
-                    <InformationCard
-                        className={styles.infoItem}
-                        icon={<IoPersonSharp />}
-                        label="Active Users"
-                        value={data?.projectExploreStats?.totalUsers ?? 0}
-                        variant="accent"
-                        coloredBackground
-                    />
-                    <Card className={styles.playbackCard}>
-                        <Message message="DEEP tutorials go here" />
-                    </Card>
-                </div>
-                <div className={styles.midContainer}>
-                    <Card className={styles.statsByTimeContainer}>
-                        <CompactInformationCard
+                    <div className={styles.infoItemsContainer}>
+                        <InformationCard
                             className={styles.infoItem}
-                            icon={<IoBookmarks />}
-                            label="Sources added weekly"
-                            valuePrecision={2}
-                            value={data?.projectExploreStats?.leadsAddedWeekly ?? 0}
+                            icon={<IoDocumentText />}
+                            label="Projects"
+                            value={data?.projectExploreStats?.totalProjects ?? 0}
+                            variant="complement1"
+                            coloredBackground
                         />
-                        <CompactInformationCard
+                        <InformationCard
                             className={styles.infoItem}
-                            icon={<IoPricetag />}
-                            label="Daily average sources tagged per project"
-                            valuePrecision={2}
-                            value={
-                                data?.projectExploreStats?.dailyAverageLeadsTaggedPerProject ?? 0
-                            }
+                            icon={<IoPersonSharp />}
+                            label="Active Users"
+                            value={data?.projectExploreStats?.totalUsers ?? 0}
+                            variant="accent"
+                            coloredBackground
                         />
-                        <CompactInformationCard
-                            className={styles.infoItem}
-                            icon={<IoDocuments />}
-                            label="Generated reports monthly"
-                            valuePrecision={2}
-                            value={data?.projectExploreStats?.generatedExportsMonthly ?? 0}
-                        />
-                    </Card>
-                    <ContainerCard
-                        className={styles.frameworkContainer}
-                        heading="Top 5 most used frameworks"
-                        headingDescription="Last 3 months"
-                        spacing="none"
-                        headingSize="small"
-                        borderBelowHeader
-                        borderBelowHeaderWidth="thin"
-                        inlineHeadingDescription
-                        headerClassName={styles.header}
-                        headingContainerClassName={styles.heading}
-                        contentClassName={styles.frameworkListContainer}
-                    >
-                        <ListView
-                            data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
-                            keySelector={activeFrameworkKeySelector}
-                            renderer={ActiveFrameworkItem}
-                            rendererParams={activeFrameworkRendererParams}
-                        />
-                    </ContainerCard>
+                        <Card className={styles.statsByTimeContainer}>
+                            <CompactInformationCard
+                                className={styles.infoItem}
+                                icon={<IoBookmarks />}
+                                label="Sources added weekly"
+                                valuePrecision={2}
+                                value={data?.projectExploreStats?.leadsAddedWeekly ?? 0}
+                            />
+                            <CompactInformationCard
+                                className={styles.infoItem}
+                                icon={<IoPricetag />}
+                                label="Daily average sources tagged per project"
+                                valuePrecision={2}
+                                value={
+                                    data
+                                        ?.projectExploreStats
+                                        ?.dailyAverageLeadsTaggedPerProject ?? 0
+                                }
+                            />
+                            <CompactInformationCard
+                                className={styles.infoItem}
+                                icon={<IoDocuments />}
+                                label="Generated reports monthly"
+                                valuePrecision={2}
+                                value={data?.projectExploreStats?.generatedExportsMonthly ?? 0}
+                            />
+                        </Card>
+                    </div>
+                    <div className={styles.playbackFrameworkContainer}>
+                        <Card className={styles.playbackCard}>
+                            <Message message="DEEP tutorials go here" />
+                        </Card>
+                        <ContainerCard
+                            className={styles.frameworkContainer}
+                            heading="Top 5 most used frameworks"
+                            headingDescription="Last 3 months"
+                            spacing="none"
+                            headingSize="small"
+                            borderBelowHeader
+                            borderBelowHeaderWidth="thin"
+                            inlineHeadingDescription
+                            headerClassName={styles.header}
+                            headingContainerClassName={styles.heading}
+                            contentClassName={styles.frameworkListContainer}
+                        >
+                            <ListView
+                                data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
+                                keySelector={activeFrameworkKeySelector}
+                                renderer={ActiveFrameworkItem}
+                                rendererParams={activeFrameworkRendererParams}
+                            />
+                        </ContainerCard>
+                    </div>
                 </div>
                 <ContainerCard
                     className={styles.rightContainer}
+                    headerClassName={styles.header}
+                    headingContainerClassName={styles.heading}
+                    contentClassName={styles.projectListContainer}
+                    spacing="none"
                     heading="Top 5 most active project"
                     headingDescription="Last 3 months"
                     headingSize="small"
-                    spacing="none"
-                    headerClassName={styles.header}
-                    headingContainerClassName={styles.heading}
                     borderBelowHeader
                     borderBelowHeaderWidth="thin"
                     inlineHeadingDescription
-                    contentClassName={styles.projectListContainer}
                 >
                     <ListView
                         data={projectList ?? undefined}
@@ -215,32 +231,30 @@ function ExploreDeep(props: Props) {
                 useHash
                 defaultHash="table"
             >
-                <Container
-                    className={styles.tabsContainer}
-                    headerDescription={(
+                <div className={styles.tabsContainer}>
+                    <div className={styles.filtersContainer}>
                         <ProjectFilterForm
+                            className={styles.filters}
                             filters={filters}
                             onFiltersChange={setFilters}
                         />
-                    )}
-                    headerActions={(
-                        <TabList>
+                        <TabList className={styles.tabs}>
                             <Tab
                                 name="table"
+                                className={styles.tab}
                                 transparentBorder
                             >
                                 <IoList />
                             </Tab>
                             <Tab
                                 name="map"
+                                className={styles.tab}
                                 transparentBorder
                             >
                                 <IoMapOutline />
                             </Tab>
                         </TabList>
-                    )}
-                    spacing="compact"
-                >
+                    </div>
                     <TabPanel name="table">
                         <TableView
                             filters={filters}
@@ -251,7 +265,7 @@ function ExploreDeep(props: Props) {
                             filters={filters}
                         />
                     </TabPanel>
-                </Container>
+                </div>
             </Tabs>
         </Container>
     );

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
+import { _cs } from '@togglecorp/fujs';
 import {
     PendingMessage,
     TableView,
@@ -20,7 +21,9 @@ import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#compo
 import { convertDateToIsoDateTime } from '#utils/common';
 import { createDateColumn } from '#components/tableHelpers';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+
 import ActionCell, { Props as ActionCellProps } from '../ActionCell';
+import styles from './styles.css';
 
 const PROJECT_LIST = gql`
     query ProjectList(
@@ -205,7 +208,7 @@ function ExploreDeepTableView(props: Props) {
         <>
             {loading && (<PendingMessage />)}
             <TableView
-                className={className}
+                className={_cs(className, styles.table)}
                 columns={columns}
                 keySelector={projectKeySelector}
                 data={data?.projects?.results}
