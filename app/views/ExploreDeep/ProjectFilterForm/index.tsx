@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { doesObjectHaveNoData } from '@togglecorp/fujs';
+import {
+    _cs,
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 import { IoClose } from 'react-icons/io5';
 import {
     TextInput,
@@ -41,12 +44,14 @@ const schema: FormSchema = {
 const initialValue: FormType = {};
 
 interface Props {
+    className?: string;
     filters: ProjectListQueryVariables | undefined;
     onFiltersChange: (filters: ProjectListQueryVariables | undefined) => void;
 }
 
 function ProjectFilterForm(props: Props) {
     const {
+        className,
         filters,
         onFiltersChange,
     } = props;
@@ -87,65 +92,61 @@ function ProjectFilterForm(props: Props) {
     }, [onFiltersChange, value]);
 
     return (
-        <div className={styles.content}>
-            <div className={styles.filters}>
-                <TextInput
-                    name="search"
-                    label="Search"
-                    value={value?.search}
-                    onChange={setFieldValue}
-                    placeholder="any"
-                />
-                <DateInput
-                    name="startDate"
-                    label="Start Date"
-                    value={value?.startDate}
-                    onChange={setFieldValue}
-                />
-                <DateInput
-                    name="endDate"
-                    label="End Date"
-                    value={value?.endDate}
-                    onChange={setFieldValue}
-                />
-                <OrganizationMultiSelectInput
-                    name="organizations"
-                    label="Organizations"
-                    value={value?.organizations}
-                    onChange={setFieldValue}
-                    options={organizationOptions}
-                    onOptionsChange={setOrganizationOptions}
-                    placeholder="any"
-                />
-                <FrameworkMultiSelectInput
-                    name="analysisFrameworks"
-                    label="Analysis Frameworks"
-                    placeholder="any"
-                    value={value?.analysisFrameworks}
-                    onChange={setFieldValue}
-                    options={analysisFrameworkOptions}
-                    onOptionsChange={setAnalysisFrameworkOptions}
-                />
-            </div>
-            <div className={styles.buttonContainer}>
-                <Button
-                    name={undefined}
-                    onClick={handleSubmit}
-                    disabled={pristine}
-                    variant="transparent"
-                >
-                    Apply
-                </Button>
-                <Button
-                    name={undefined}
-                    disabled={isClearDisabled}
-                    onClick={handleClearFilters}
-                    actions={<IoClose />}
-                    variant="transparent"
-                >
-                    Clear All
-                </Button>
-            </div>
+        <div className={_cs(styles.content, className)}>
+            <TextInput
+                name="search"
+                label="Search"
+                value={value?.search}
+                onChange={setFieldValue}
+                placeholder="any"
+            />
+            <DateInput
+                name="startDate"
+                label="Start Date"
+                value={value?.startDate}
+                onChange={setFieldValue}
+            />
+            <DateInput
+                name="endDate"
+                label="End Date"
+                value={value?.endDate}
+                onChange={setFieldValue}
+            />
+            <OrganizationMultiSelectInput
+                name="organizations"
+                label="Organizations"
+                value={value?.organizations}
+                onChange={setFieldValue}
+                options={organizationOptions}
+                onOptionsChange={setOrganizationOptions}
+                placeholder="any"
+            />
+            <FrameworkMultiSelectInput
+                name="analysisFrameworks"
+                label="Analysis Frameworks"
+                placeholder="any"
+                value={value?.analysisFrameworks}
+                onChange={setFieldValue}
+                options={analysisFrameworkOptions}
+                onOptionsChange={setAnalysisFrameworkOptions}
+            />
+            <Button
+                name={undefined}
+                onClick={handleSubmit}
+                disabled={pristine}
+                variant="transparent"
+            >
+                Apply
+            </Button>
+            <Button
+                name={undefined}
+                disabled={isClearDisabled}
+                onClick={handleClearFilters}
+                actions={<IoClose />}
+                variant="transparent"
+            >
+                Clear All
+            </Button>
         </div>
     );
 }
