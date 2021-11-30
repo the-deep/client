@@ -339,11 +339,12 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
 
     const validSectionSelected = !!selectedSectionItem;
 
-    // NOTE: filtering out child conditions and self
+    // NOTE: filtering out child widgets, unsaved widgets and self
     // TODO: move child widget after parent
     const parentWidgets = useMemo(
         () => selectedSectionItem?.widgets?.filter((widget) => (
-            !widget.conditional
+            widget.id
+            && !widget.conditional
             && (!conditional || widget.clientId !== conditional.widgetId)
         )) ?? [],
         [selectedSectionItem, conditional],

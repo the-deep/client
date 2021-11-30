@@ -16,7 +16,7 @@ type MultiSelectValue = NonNullable<MultiSelectWidgetAttribute['data']>;
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type Option = NonNullable<NonNullable<

@@ -46,7 +46,7 @@ type FormType = {
 };
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -55,7 +55,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 type SectionType = NonNullable<NonNullable<FormType['sections']>>[number];
 export type PartialSectionType = PartialForm<
     SectionType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'
 >;
 // type PartialWidgetType = NonNullable<PartialSectionType['widgets']>[number];
 

@@ -23,7 +23,7 @@ import styles from './styles.css';
 type FormType = DateRangeWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'
 >;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;

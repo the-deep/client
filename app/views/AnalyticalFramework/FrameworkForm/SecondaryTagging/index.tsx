@@ -210,11 +210,12 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         onTempStateChange(widgetsState.editMode);
     }, [widgetsState.editMode, onTempStateChange]);
 
-    // NOTE: filtering out child conditions and self
+    // NOTE: filtering out child widgets, unsaved widgets and self
     // TODO: move child widget after parent
     const parentWidgets = useMemo(
         () => widgets.filter((widget) => (
-            !widget.conditional
+            widget.id
+            && !widget.conditional
             && (!conditional || widget.clientId !== conditional.widgetId)
         )),
         [widgets, conditional],

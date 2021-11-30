@@ -23,7 +23,7 @@ export type FrameworkRaw = DeepMandatory<NonNullable<CurrentFrameworkQuery['anal
 type FrameworkWithWidgets = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
 export type Framework = Omit<FrameworkWithWidgets, 'properties'> & { properties?: FrameworkProperties };
 
-export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order'>;
+export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'>;
 type FrameworkInputWithWidgets = DeepReplace<FrameworkInputRaw, WidgetInputRaw, WidgetFromAF>;
 export type FrameworkInput = Omit<FrameworkInputWithWidgets, 'properties' | 'previewImage'> & {
     properties?: FrameworkProperties,

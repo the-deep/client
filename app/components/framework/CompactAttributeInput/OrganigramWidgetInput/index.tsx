@@ -16,7 +16,7 @@ import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialOrganigramWidget = PartialForm<
     OrganigramWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type OrganigramValue = NonNullable<OrganigramWidgetAttribute['data']>;

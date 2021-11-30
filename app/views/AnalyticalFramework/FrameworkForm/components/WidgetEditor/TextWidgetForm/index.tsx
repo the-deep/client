@@ -27,7 +27,7 @@ import styles from './styles.css';
 type FormType = TextWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
