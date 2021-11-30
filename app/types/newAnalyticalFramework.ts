@@ -41,15 +41,12 @@ interface BaseCondition {
 }
 
 interface BaseConditional {
-    // FIXME: id is undefined only for input
-    id: string | undefined;
-    clientId: string;
-
-    // key of parent widget
-    parentClientId: string;
+    // Rename parentId to parentWidget
     // FIXME: id is undefined only for input
     // id of parent widget
-    parentId: string | undefined;
+    parentWidget: string | undefined;
+    parentWidgetId: string;
+    conditions: unknown[];
 }
 
 export interface EmptyCondition extends BaseCondition {
@@ -239,6 +236,7 @@ export type Matrix2dCondition = EmptyCondition
     | Matrix2dSubColumnsSelectedCondition
     | Matrix2dSubRowsSelectedCondition;
 
+    // FIXME: change parentWidgetId to parentWidgetType
 export interface NumberConditional extends BaseConditional {
     parentWidgetId: 'NUMBER';
     conditions: NumberCondition[];
@@ -307,7 +305,7 @@ type Conditional = NumberConditional
     | GeoLocationConditional;
 
 // NOTE: we are replacing these with more strict types
-export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'> & {
+export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay' | 'conditional'> & {
     conditional?: Conditional;
 };
 
@@ -1141,7 +1139,7 @@ export function filterWidgets(widgets: Widget[], attributes: WidgetAttribute[]):
             return true;
         }
         // All conditional widgets should have parentId
-        const parentId = widget.conditional.parentId;
+        const parentId = widget.conditional.parentWidget;
         if (!parentId) {
             return false;
         }

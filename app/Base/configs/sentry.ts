@@ -8,6 +8,7 @@ import {
     isBeta,
     isAlpha,
     isNightly,
+    isDev,
 } from '#base/configs/env';
 
 const appCommitHash = process.env.REACT_APP_COMMITHASH;
@@ -22,10 +23,13 @@ const sentryConfig: BrowserOptions | undefined = sentryDsn ? {
     dsn: sentryDsn,
     release: `${appName}@${appCommitHash}`,
     environment: env,
+    debug: isDev,
     // sendDefaultPii: true,
     normalizeDepth: 5,
+    tracesSampleRate: 0.2,
     integrations: [
         new Integrations.BrowserTracing({
+            tracingOrigins: ['localhost', process.env.REACT_APP_API_END as string],
             routingInstrumentation: reactRouterV5Instrumentation(
                 browserHistory,
                 Object.entries(routes),
