@@ -10,8 +10,8 @@ import GeoLocationInput from '#components/GeoLocationInput';
 import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialGeoLocationWidget = PartialForm<
-GeoLocationWidget,
-    'key' | 'widgetId' | 'order'
+    GeoLocationWidget,
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type GeoLocationValue = NonNullable<GeoLocationWidgetAttribute['data']>;

@@ -17,7 +17,7 @@ type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
 
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];

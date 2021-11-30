@@ -58,7 +58,7 @@ type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
 export type PartialWidget = PartialForm<
     Widget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'clientId' | 'order' | 'conditional'
 >;
 
 export interface Props<N extends string | number | undefined> {
@@ -110,6 +110,9 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
     const onFieldChange = useFormObject(name, onChange, defaultOptionVal);
 
     let component: JSX.Element;
+
+    // TODO: hide attribute input
+    // TODO: check widget and attribute version
 
     if (widget.widgetId === 'TEXT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;

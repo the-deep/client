@@ -12,7 +12,7 @@ import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialGeoLocationWidget = PartialForm<
 GeoLocationWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type GeoLocationValue = NonNullable<GeoLocationWidgetAttribute['data']>;

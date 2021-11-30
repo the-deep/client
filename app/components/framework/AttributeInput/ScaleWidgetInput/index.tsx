@@ -16,7 +16,7 @@ type ScaleValue = NonNullable<ScaleWidgetAttribute['data']>;
 
 export type PartialScaleWidget = PartialForm<
     ScaleWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type Option = NonNullable<NonNullable<

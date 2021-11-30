@@ -19,7 +19,7 @@ import GeoLocationWidgetForm from './GeoWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
-    'key' | 'widgetId' | 'clientId' | 'order'
+    'key' | 'widgetId' | 'clientId' | 'order' | 'conditional'
 >;
 
 interface Props<T> {
