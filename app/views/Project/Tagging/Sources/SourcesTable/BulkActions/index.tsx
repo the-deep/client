@@ -79,11 +79,9 @@ function BulkActions(props: Props) {
         bulkLeadDeleteTrigger(selectedLeads.map((lead) => lead.id));
     }, [bulkLeadDeleteTrigger, selectedLeads]);
 
-    const handleBulkCopyClick = useCallback(() => {
-        showLeadCopyModal();
-    }, [showLeadCopyModal]);
-
-    const selectedLeadsIds = selectedLeads.map((lead) => lead.id);
+    const selectedLeadsIds = useMemo(() => (
+        selectedLeads.map((lead) => lead.id)
+    ), [selectedLeads]);
 
     return (
         <div className={styles.bulkActionsBar}>
@@ -106,7 +104,7 @@ function BulkActions(props: Props) {
                 title="Copy to Projects"
                 icons={<IoCopy />}
                 variant="general"
-                onClick={handleBulkCopyClick}
+                onClick={showLeadCopyModal}
             >
                 Copy to Projects
             </Button>
@@ -141,7 +139,7 @@ function BulkActions(props: Props) {
                 <LeadCopyModal
                     projectId={activeProject}
                     onClose={hideLeadCopyModal}
-                    leadId={selectedLeadsIds}
+                    leadIds={selectedLeadsIds}
                 />
             )}
         </div>
