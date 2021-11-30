@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
     Switch,
@@ -17,11 +17,7 @@ import PrivateRoute from '#rscg/PrivateRoute';
 import Toast from '#rscv/Toast';
 
 import RouteSynchronizer from '#components/general/RouteSynchronizer';
-import NavbarContext from '#components/NavbarContext';
-import Navbar from '#components/general/Navbar';
-
 import { mapObjectToObject } from '#utils/common';
-import BrowserWarning from '#components/general/BrowserWarning';
 
 import {
     pathNames,
@@ -145,7 +141,6 @@ function Multiplexer(props) {
         }
     }, [authenticated]);
 
-    const [parentNode, setParentNode] = useState(null);
     const currentMatch = useMemo(() => getCurrentMatch(location), [location]);
 
     const currentPath = useMemo(() => (
@@ -154,19 +149,7 @@ function Multiplexer(props) {
     ), [currentMatch]);
 
     return (
-        <NavbarContext.Provider
-            value={{
-                parentNode,
-                setParentNode,
-            }}
-        >
-            <BrowserWarning />
-            <Navbar
-                className={_cs(
-                    'navbar',
-                    showSubNavbar[currentPath] && 'show-sub-navbar',
-                )}
-            />
+        <div>
             <Toast
                 notification={lastNotify}
                 onClose={handleToastClose}
@@ -181,7 +164,7 @@ function Multiplexer(props) {
                     { routesOrder.map(renderRoute) }
                 </Switch>
             </div>
-        </NavbarContext.Provider>
+        </div>
     );
 }
 

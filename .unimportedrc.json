@@ -1,7 +1,7 @@
 {
   "entry": "src/index.js",
-  "extensions": [".ts", ".js", ".tsx", ".jsx"],
-  "ignorePatterns": ["**/node_modules/**"],
+  "extensions": [".ts", ".js", ".tsx", ".jsx", ".scss"],
+  "ignorePatterns": ["**/node_modules/**", "**/react-store/**", "**/redux/**", "**/vendor/**"],
   "aliases": {
     "#components/*": ["./src/components/*"],
     "#dui/*": ["./src/components/ui/*"],
@@ -38,5 +38,5 @@
     "#typings": ["./src/typings"],
     "#typings/*": ["./src/typings/*"],
     "#qbc/*": ["./src/components/questionnaire-builder/*"]
-  }
+  },
 }

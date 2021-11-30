@@ -1,0 +1,16 @@
+.highlightable-text-output {
+    .start {
+        display: inline;
+    }
+
+    .highlight {
+        display: inline;
+        background-color: var(--color-highlight);
+        color: var(--color-text-on-highlight);
+        // background-color: yellow;
+    }
+
+    .end {
+        display: inline;
+    }
+}
