@@ -45,6 +45,7 @@ export const LEAD_ENTRIES = gql`
         project(id: $projectId) {
             id
             lead(id: $leadId) {
+                id
                 title
                 leadGroup {
                     id

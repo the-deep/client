@@ -51,6 +51,7 @@ import {
     ProjectFrameworkQueryVariables,
     LeadEntriesQuery,
     LeadEntriesQueryVariables,
+    LeadInputType,
     BulkUpdateEntriesMutation,
     BulkUpdateEntriesMutationVariables,
     LeadUpdateMutation,
@@ -169,9 +170,13 @@ function EntryEdit(props: Props) {
     );
 
     const {
+        pristine: leadPristine,
         value: leadValue,
         setValue: setLeadValue,
+        setPristine: setLeadPristine,
+        setError: setLeadError,
         error: leadFormError,
+        validate: leadFormValidate,
     } = useForm(leadSchema, leadInitialValue);
 
     // ENTRY FORM
@@ -243,7 +248,7 @@ function EntryEdit(props: Props) {
     } = useForm(schema, defaultFormValues);
 
     const formStale = formValue?.entries?.some((entry) => entry.stale) ?? false;
-    const formPristine = !formStale;
+    const formPristine = !formStale && leadPristine;
 
     const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
     const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
@@ -292,6 +297,38 @@ function EntryEdit(props: Props) {
             },
         },
     );
+
+    const handleLeadSave = useCallback((finalized: boolean) => {
+        if (!projectId || (!finalized && leadPristine)) {
+            return;
+        }
+        setIsFinalizeClicked(false);
+        const submit = createSubmitHandler(
+            leadFormValidate,
+            setLeadError,
+            (val) => {
+                const data = { ...val } as LeadInputType;
+                updateLead({
+                    variables: {
+                        data: {
+                            ...data,
+                            status: finalized ? 'TAGGED' : undefined,
+                        },
+                        leadId,
+                        projectId,
+                    },
+                });
+            },
+        );
+        submit();
+    }, [
+        leadFormValidate,
+        setLeadError,
+        leadPristine,
+        leadId,
+        projectId,
+        updateLead,
+    ]);
 
     const [
         bulkUpdateEntries,
@@ -435,21 +472,11 @@ function EntryEdit(props: Props) {
 
                 if (projectId && isFinalizeClicked) {
                     if (saveErrorsCount < 1 && deleteErrorsCount < 1) {
-                        setIsFinalizeClicked(false);
-                        updateLead({
-                            variables: {
-                                data: {
-                                    title: leadValue?.title || '',
-                                    status: 'TAGGED',
-                                },
-                                leadId,
-                                projectId,
-                            },
-                        });
+                        handleLeadSave(true);
                     } else {
-                        setIsFinalizeClicked(false);
+                        handleLeadSave(false);
                         alert.show(
-                            'Failed to change lead status!',
+                            'Lead cannot be finalized due to some errors in entries.',
                             { variant: 'error' },
                         );
                     }
@@ -469,6 +496,7 @@ function EntryEdit(props: Props) {
                 // eslint-disable-next-line no-console
                 console.error(gqlError);
 
+                handleLeadSave(isFinalizeClicked);
                 if (isFinalizeClicked) {
                     setIsFinalizeClicked(false);
                     alert.show(
@@ -568,8 +596,14 @@ function EntryEdit(props: Props) {
     );
 
     const handleFinalizeClick = useCallback(
-        () => { handleSubmit(true); },
-        [handleSubmit],
+        () => {
+            if (!formStale) {
+                handleLeadSave(true);
+            } else {
+                handleSubmit(true);
+            }
+        },
+        [handleSubmit, formStale, handleLeadSave],
     );
 
     const handleEntryClick = useCallback((entryId: string) => {
@@ -942,28 +976,15 @@ function EntryEdit(props: Props) {
                             </Button>
                             <Button
                                 name={undefined}
-                                disabled={formPristine || !!selectedEntry}
+                                // NOTE: Enable when lead form is edited
+                                disabled={(
+                                    !formStale && leadValue.status === 'TAGGED'
+                                ) || !!selectedEntry}
                                 variant="primary"
                                 onClick={handleFinalizeClick}
                             >
                                 Finalize
                             </Button>
-                            {/*
-                            <Button
-                                name={undefined}
-                                // NOTE: To be fixed later
-                                disabled
-                            >
-                                Save Source
-                            </Button>
-                            <Button
-                                name={undefined}
-                                // NOTE: To be fixed later
-                                disabled
-                            >
-                                Finalize
-                            </Button>
-                            */}
                         </>
                     )}
                 >
@@ -1008,6 +1029,7 @@ function EntryEdit(props: Props) {
                             <SourceDetails
                                 leadValue={leadValue}
                                 setValue={setLeadValue}
+                                setPristine={setLeadPristine}
                                 defaultValue={leadInitialValue}
                                 leadFormError={leadFormError}
                                 pending={loading}

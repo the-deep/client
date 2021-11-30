@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Card } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
@@ -12,6 +12,7 @@ import {
     LeadOptionsQuery,
     LeadOptionsQueryVariables,
 } from '#generated/types';
+import { ProjectContext } from '#base/context/ProjectContext';
 import LeadPreview from '#components/lead/LeadPreview';
 import LeadInput from '#components/lead/LeadInput';
 import { PartialFormType } from '#components/lead/LeadInput/schema';
@@ -38,6 +39,7 @@ interface Props {
     leadValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
     setValue: (value: SetBaseValueArg<PartialFormType>) => void;
+    setPristine: (value: boolean) => void;
     defaultValue: PartialFormType;
     projectId: string;
     disabled?: boolean;
@@ -62,6 +64,7 @@ function SourceDetails(props: Props) {
         leadValue,
         defaultValue,
         setValue,
+        setPristine,
         leadFormError,
         pending,
         projectId,
@@ -77,12 +80,19 @@ function SourceDetails(props: Props) {
         onAssigneeOptionChange,
     } = props;
 
+    const { project } = useContext(ProjectContext);
+
     const {
         loading: leadOptionsLoading,
         data: leadOptions,
     } = useQuery<LeadOptionsQuery, LeadOptionsQueryVariables>(
         LEAD_OPTIONS,
     );
+
+    const handleLeadChange = useCallback((newValue: SetBaseValueArg<PartialFormType>) => {
+        setValue(newValue);
+        setPristine(false);
+    }, [setValue, setPristine]);
 
     return (
         <div className={_cs(className, styles.sourceDetails)}>
@@ -100,7 +110,7 @@ function SourceDetails(props: Props) {
                     value={leadValue}
                     defaultValue={defaultValue}
                     error={leadFormError}
-                    onChange={setValue}
+                    onChange={handleLeadChange}
                     projectId={projectId}
                     disabled={disabled}
                     sourceOrganizationOptions={sourceOrganizationOptions}
@@ -113,6 +123,7 @@ function SourceDetails(props: Props) {
                     onAssigneeOptionChange={onAssigneeOptionChange}
                     attachment={attachment}
                     priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
+                    hasAssessment={project?.hasAssessmentTemplate}
                 />
             </Card>
         </div>
