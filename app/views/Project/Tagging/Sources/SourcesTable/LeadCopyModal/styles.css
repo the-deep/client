@@ -3,19 +3,10 @@
     flex-direction: column;
     width: 40vw;
     height: 40vh;
-    gap: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-large);
 
     .search-input {
         display: flex;
-        margin: var(--dui-spacing-medium) 0;
+        margin: var(--dui-spacing-large) 0;
     }
-    .list {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        margin: var(--dui-spacing-medium) 0;
-        overflow-y: auto;
-        gap: var(--dui-spacing-medium);
-    }
-
 }

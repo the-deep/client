@@ -84,10 +84,6 @@ function Actions<T extends string>(props: Props<T>) {
         message: 'Are you sure you want to delete this lead?',
     });
 
-    const onMoveLeadToOtherProjectsClick = useCallback(() => {
-        showLeadCopyModal();
-    }, [showLeadCopyModal]);
-
     const isExpanded = id === expandedRowKey;
     const isDisabled = entriesCount < 1;
 
@@ -127,7 +123,7 @@ function Actions<T extends string>(props: Props<T>) {
                         variant="secondary"
                     >
                         <DropdownMenuItem
-                            onClick={onMoveLeadToOtherProjectsClick}
+                            onClick={showLeadCopyModal}
                             name={undefined}
                         >
                             Move to other project
@@ -178,7 +174,7 @@ function Actions<T extends string>(props: Props<T>) {
                 <LeadCopyModal
                     projectId={project.id}
                     onClose={hideLeadCopyModal}
-                    leadId={[id]}
+                    leadIds={[id]}
                 />
             )}
         </div>
