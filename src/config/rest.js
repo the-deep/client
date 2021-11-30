@@ -1,5 +1,16 @@
 import { prepareUrlParams } from '@togglecorp/react-rest-request';
 
+export function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+
+    if (parts.length === 2) {
+        const part = parts.pop();
+        return part && part.split(';').shift();
+    }
+    return undefined;
+}
+
 export function getVersionedUrl(endpoint, url) {
     const oldVersionString = '/v1';
     const versionString = '/v2';
@@ -63,17 +74,22 @@ export const deeplEndPoint = (() => {
 
 // COMMON HEADERS - POST
 
+const csrftoken = getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
+
 export const commonHeaderForPostExternal = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'X-CSRFToken': csrftoken,
 };
 
 export const authorizationHeaderForPost = {
+    'X-CSRFToken': csrftoken,
 };
 
 export const commonHeaderForPost = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'X-CSRFToken': csrftoken,
 };
 
 // COMMON HEADERS - GET
@@ -81,11 +97,13 @@ export const commonHeaderForPost = {
 export const commonHeaderForGet = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'X-CSRFToken': csrftoken,
 };
 
 export const commonHeaderForGetExternal = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'X-CSRFToken': csrftoken,
 };
 
 // ALIAS

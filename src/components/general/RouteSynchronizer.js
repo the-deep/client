@@ -13,8 +13,6 @@ import {
 } from '@togglecorp/fujs';
 
 import AppError from '#components/error/AppError';
-import Cloak from '#components/general/Cloak';
-import { routes } from '#constants/routes';
 import viewsAcl from '#constants/viewsAcl';
 
 import {
@@ -31,32 +29,16 @@ import _ts from '#ts';
 
 const ErrorBoundBundle = boundError(AppError)(Bundle);
 
-const PageError = ({ noProjectPermission }) => {
-    const name = noProjectPermission
-        ? 'projectDenied'
-        : 'fourHundredThree';
-
-    return (
-        <Fragment>
-            <Helmet>
-                <meta charSet="utf-8" />
-                <title>
-                    { _ts('pageTitle', name) }
-                </title>
-            </Helmet>
-            <ErrorBoundBundle
-                key={name}
-                load={routes[name].loader}
-            />
-        </Fragment>
-    );
-};
-PageError.propTypes = {
-    noProjectPermission: PropTypes.bool,
-};
-PageError.defaultProps = {
-    noProjectPermission: false,
-};
+const PageError = () => (
+    <Fragment>
+        <Helmet>
+            <meta charSet="utf-8" />
+            <title>
+                { _ts('pageTitle', 'fourHundredThree') }
+            </title>
+        </Helmet>
+    </Fragment>
+);
 
 const PageNormal = ({ name, disabled, noProjectPermission, ...otherProps }) => {
     // NOTE: don't show page if it is disabled as well
@@ -319,21 +301,13 @@ class RouteSynchronizer extends React.PureComponent {
         }
 
         return (
-            <Cloak
-                {...viewsAcl[name]}
-                render={
-                    <Fragment>
-                        <PageNormal
-                            name={name}
-                            noProjectPermission={noProjectPermission}
-                            {...otherProps}
-                        />
-                    </Fragment>
-                }
-                renderOnHide={
-                    <PageError noProjectPermission={noProjectPermission} />
-                }
-            />
+            <Fragment>
+                <PageNormal
+                    name={name}
+                    noProjectPermission={noProjectPermission}
+                    {...otherProps}
+                />
+            </Fragment>
         );
     }
 }

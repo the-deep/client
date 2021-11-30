@@ -17,9 +17,6 @@ import Sharks from '#resources/404/sharks.svg';
 import HiddenImage from '#resources/404/hidden-image.png';
 import Diver from '#resources/404/Diver.svg';
 
-import BackLink from '#components/general/BackLink';
-import { pathNames } from '#constants';
-
 import styles from './styles.scss';
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -94,11 +91,6 @@ export default class FourHundredFour extends React.PureComponent {
                                 <br />
                                 {_ts('fourHundredFour', 'message2')}
                             </p>
-                            <BackLink
-                                defaultLink={pathNames.landingPage}
-                            >
-                                {_ts('fourHundredFour', 'backToDeep')}
-                            </BackLink>
                         </div>
                     </React.Fragment>
                 }

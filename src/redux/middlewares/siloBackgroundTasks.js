@@ -1,12 +1,5 @@
 import SiloTasksManager from '#utils/SiloTasksManager';
 
-import TokenRefresher from './tasks/TokenRefresher';
-// import TabStatusManager from './tasks/TabStatusManager';
-import ProjectGet from './tasks/ProjectGet';
-import ProjectRolesGet from './tasks/ProjectRolesGet';
-import PreferencesGet from './tasks/PreferencesGet';
-import LanguagesGet from './tasks/LanguagesGet';
-
 export const START_SILO_BACKGROUND_TASKS = 'siloBgTasks/START';
 export const STOP_SILO_BACKGROUND_TASKS = 'siloBgTasks/STOP';
 
@@ -21,17 +14,8 @@ export const stopSiloBackgroundTasksAction = () => ({
 });
 
 
-const siloBackgroundTasks = (store) => {
-    const projectGetter = new ProjectGet(store);
-    const projectRolesGetter = new ProjectRolesGet(store);
-    const preferencesGetter = new PreferencesGet(store);
-    const languagesGetter = new LanguagesGet(store);
-
-    const tokenRefresher = new TokenRefresher(store);
-    // const tabStatusManager = new TabStatusManager(store);
-
+const siloBackgroundTasks = () => {
     const siloBackgroundTaskManager = new SiloTasksManager('background');
-    siloBackgroundTaskManager.addTask(tokenRefresher);
     // siloBackgroundTaskManager.addTask(tabStatusManager);
 
     return next => (action) => {
@@ -45,18 +29,9 @@ const siloBackgroundTasks = (store) => {
                         }
                     });
 
-                projectGetter.start();
-                projectRolesGetter.start();
-                preferencesGetter.start();
-                languagesGetter.start();
                 break;
             case STOP_SILO_BACKGROUND_TASKS:
                 siloBackgroundTaskManager.stop();
-
-                projectGetter.stop();
-                projectRolesGetter.stop();
-                preferencesGetter.stop();
-                languagesGetter.stop();
                 break;
             default:
         }

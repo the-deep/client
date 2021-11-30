@@ -119,7 +119,7 @@ Preview.propTypes = {
     url: PropTypes.string,
     mimeType: PropTypes.string,
     canShowIframe: PropTypes.bool,
-    previewError: PropTypes.string,
+    previewError: PropTypes.bool,
     isHttps: PropTypes.bool,
     cannotPreviewUrlMessage: PropTypes.string,
     invalidUrlMessage: PropTypes.string,

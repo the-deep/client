@@ -9,6 +9,17 @@ type Literal = string | number | boolean | File;
 
 type FormDataCompatibleObj = Record<string, Literal | Literal[] | null | undefined>;
 
+function getCookie(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+
+    if (parts.length === 2) {
+        const part = parts.pop();
+        return part && part.split(';').shift();
+    }
+    return undefined;
+}
+
 function getFormData(jsonData: FormDataCompatibleObj) {
     const formData = new FormData();
     Object.keys(jsonData || {}).forEach(
@@ -91,52 +102,54 @@ export const processDeepUrls: DeepContextInterface['transformUrl'] = (url) => {
     return url;
 };
 
-export const processDeepOptions = (access: string | undefined) => {
-    const callback: DeepContextInterface['transformOptions'] = (
-        url,
-        options,
-        requestOptions,
-    ) => {
-        const {
-            body,
-            headers,
-            ...otherOptions
-        } = options;
+export const processDeepOptions: DeepContextInterface['transformOptions'] = (
+    url,
+    options,
+    requestOptions,
+) => {
+    const {
+        body,
+        headers,
+        ...otherOptions
+    } = options;
 
-        const isInternalRequest = url.startsWith(serverPrefix) || url.startsWith(serverlessPrefix);
-        if (requestOptions.formData) {
-            const requestBody = getFormData(body as FormDataCompatibleObj);
-            return {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: access && isInternalRequest
-                        ? `Bearer ${access}`
-                        : '',
-                    ...headers,
-                },
-                body: requestBody,
-                ...otherOptions,
-            };
-        }
-
-        const requestBody = body ? JSON.stringify(body) : undefined;
-        return {
+    let finalOptions;
+    if (requestOptions.formData) {
+        const requestBody = getFormData(body as FormDataCompatibleObj);
+        finalOptions = {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
-                Authorization: access && isInternalRequest
-                    ? `Bearer ${access}`
-                    : '',
+                ...headers,
+            },
+            body: requestBody,
+            ...otherOptions,
+        };
+    } else {
+        const requestBody = body ? JSON.stringify(body) : undefined;
+        finalOptions = {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
                 'Content-Type': 'application/json; charset=utf-8',
                 ...headers,
             },
             body: requestBody,
             ...otherOptions,
         };
-    };
-    return callback;
+    }
+
+    // NOTE: token is sent to all request
+    const csrftoken = getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
+
+    finalOptions.credentials = 'include';
+    if (finalOptions.headers) {
+        finalOptions.headers['X-CSRFToken'] = csrftoken;
+    }
+
+    return finalOptions;
 };
+
 
 export const processDeepResponse: DeepContextInterface['transformResponse'] = async (
     res,

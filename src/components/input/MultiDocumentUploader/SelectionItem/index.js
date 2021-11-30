@@ -17,7 +17,9 @@ const propTypes = {
     selectionKey: PropTypes.string.isRequired,
     onRemoveClick: PropTypes.func.isRequired,
     onStartPageChange: PropTypes.func.isRequired,
-    attachment: PropTypes.number.isRequired,
+    attachment: PropTypes.shape({
+        title: PropTypes.string,
+    }),
     onEndPageChange: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -36,6 +38,7 @@ const defaultProps = {
     readOnly: false,
     endPage: undefined,
     url: undefined,
+    attachment: undefined,
 };
 
 const ModalButton = modalize(Button);

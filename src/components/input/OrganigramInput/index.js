@@ -55,7 +55,7 @@ const propTypes = {
     title: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,
-    value: PropTypes.arrayOf(PropTypes.string),
+    value: PropTypes.arrayOf(PropTypes.string || PropTypes.number),
     idSelector: PropTypes.func,
     labelSelector: PropTypes.func,
     childSelector: PropTypes.func,

@@ -126,7 +126,7 @@ const acl = {
 
     arys: { hide: notAssessmentViewable },
     plannedArys: { hide: notAssessmentViewable },
-    editAry: { hide: notAssessmentViewable },
+    editAry: { hide: false }, // TODO pull permission from server
     editLeadGroupAssessment: { hide: notAssessmentViewable },
 
     export: { hide: notExportCreatable },

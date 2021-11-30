@@ -3,8 +3,6 @@ import React from 'react';
 import _ts from '#ts';
 import Page from '#rscv/Page';
 import Icon from '#rscg/Icon';
-import BackLink from '#components/general/BackLink';
-import { pathNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -28,11 +26,6 @@ export default class FourHundredThree extends React.PureComponent {
                             <br />
                             {_ts('fourHundredThree', 'message2')}
                         </p>
-                        <BackLink
-                            defaultLink={pathNames.landingPage}
-                        >
-                            {_ts('fourHundredThree', 'backToDeep')}
-                        </BackLink>
                     </React.Fragment>
                 }
             />

@@ -1,11 +1,19 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
+import { BrowserRouter } from 'react-router-dom';
 
+import { RequestContext } from '#utils/request';
 import styleProperties from '#constants/styleProperties';
-
 import { startActionsSync } from '#rsu/redux-sync';
+import getUserConfirmation from '#utils/getUserConfirmation';
 import { addIcon } from '#rscg/Icon';
+import {
+    processDeepUrls,
+    processDeepOptions,
+    processDeepResponse,
+    processDeepError,
+} from '#utils/request/deep';
 import {
     iconNames,
     svgPaths,
@@ -57,9 +65,20 @@ export default class Root extends React.Component {
             return <div />;
         }
 
+        const requestContextValue = {
+            transformUrl: processDeepUrls,
+            transformOptions: processDeepOptions,
+            transformResponse: processDeepResponse,
+            transformError: processDeepError,
+        };
+
         return (
             <Provider store={this.store}>
-                <App />
+                <BrowserRouter getUserConfirmation={getUserConfirmation}>
+                    <RequestContext.Provider value={requestContextValue}>
+                        <App />
+                    </RequestContext.Provider>
+                </BrowserRouter>
             </Provider>
         );
     }

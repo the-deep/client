@@ -167,7 +167,9 @@ export const entryFilterOptionsForProjectSelector = createSelector(
 export const projectDetailsSelector = createSelector(
     projectsSelector,
     projectIdFromRoute,
-    (projects, activeProject) => projects[activeProject] || emptyObject,
+    (projects, activeProject) => (
+        projects[activeProject] || emptyObject
+    ),
 );
 
 // projectIdFromRoute

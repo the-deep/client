@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import MultiSelectInput from '#rsci/MultiSelectInput';
@@ -20,7 +20,7 @@ const widgets = {
     select: SelectInput,
 };
 
-const BaseWidget = ({ fieldType, hidden, ...otherProps }) => {
+function BaseWidget({ fieldType, hidden, ...otherProps }) {
     const Component = widgets[fieldType];
 
     if (!Component) {
@@ -37,7 +37,7 @@ const BaseWidget = ({ fieldType, hidden, ...otherProps }) => {
             {...otherProps}
         />
     );
-};
+}
 
 BaseWidget.propTypes = {
     fieldType: PropTypes.string.isRequired,
@@ -48,4 +48,4 @@ BaseWidget.defaultProps = {
     hidden: false,
 };
 
-export default memo(BaseWidget);
+export default BaseWidget;

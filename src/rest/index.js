@@ -36,11 +36,13 @@ export * from './users';
 
 export const createParamsForGet = () => ({
     method: GET,
+    credentials: 'include',
     headers: commonHeaderForGet,
 });
 
 export const createParamsForDelete = () => ({
     method: DELETE,
+    credentials: 'include',
     headers: commonHeaderForPost,
 });
 

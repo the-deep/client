@@ -1,6 +1,5 @@
 @import '~base-scss/utils';
 
-
 .entries-listing {
     display: flex;
     position: relative;
@@ -66,11 +65,6 @@
                     content: ':';
                 }
             }
-        }
-
-        .edit-entries-link {
-            @include button-like-link(var(--color-accent));
-            flex-shrink: 0;
         }
     }
 }

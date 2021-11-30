@@ -99,6 +99,7 @@ const setUserPreferences = (state, action) => {
     const { userPreferences } = action;
     const settings = {
         activeUser: { $merge: userPreferences },
+        authenticated: { $set: true },
     };
     return update(state, settings);
 };

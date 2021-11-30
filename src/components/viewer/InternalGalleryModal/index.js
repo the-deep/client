@@ -13,12 +13,16 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     name: PropTypes.string.isRequired,
-    attachment: PropTypes.number.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    attachment: PropTypes.shape({
+        title: PropTypes.string,
+    }),
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
     className: undefined,
+    attachment: undefined,
+    closeModal: () => {},
 };
 
 export default class Selection extends React.PureComponent {

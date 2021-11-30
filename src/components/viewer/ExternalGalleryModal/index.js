@@ -14,11 +14,12 @@ const propTypes = {
     className: PropTypes.string,
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
     className: undefined,
+    closeModal: () => {},
 };
 
 export default class Selection extends React.PureComponent {

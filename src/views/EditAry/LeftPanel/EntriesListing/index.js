@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '@togglecorp/fujs';
 import Label from '#rsci/Label';
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -13,7 +11,6 @@ import {
     setEntriesForEditAryAction,
     projectIdFromRouteSelector,
 } from '#redux';
-import { pathNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -24,7 +21,6 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     setEntries: PropTypes.func.isRequired,
-    activeProjectId: PropTypes.number.isRequired,
     activeSector: PropTypes.string,
     className: PropTypes.string,
 };
@@ -195,13 +191,6 @@ export default class EntriesListing extends React.PureComponent {
 
     render() {
         const { className } = this.props;
-        const linkToEditEntries = reverseRoute(
-            pathNames.editEntries,
-            {
-                projectId: this.props.activeProjectId,
-                leadId: this.props.leadId,
-            },
-        );
         const {
             entries = [],
             pendingEntries,
@@ -226,12 +215,6 @@ export default class EntriesListing extends React.PureComponent {
                         />
                         {noOfEntries}
                     </div>
-                    <Link
-                        to={linkToEditEntries}
-                        className={styles.editEntriesLink}
-                    >
-                        {_ts('editAssessment.entriesListing', 'editEntriesText')}
-                    </Link>
                 </div>
             </div>
         );

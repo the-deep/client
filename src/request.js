@@ -1,5 +1,3 @@
-import { compose } from 'redux';
-import { connect } from 'react-redux';
 import {
     createRequestCoordinator,
     createRequestClient,
@@ -11,16 +9,12 @@ import {
     wsEndpoint,
     serverlessEndpoint,
     getVersionedUrl,
+    getCookie,
 } from '#config/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
-import { tokenSelector } from '#redux';
 
 export { methods, RequestHandler } from '@togglecorp/react-rest-request';
-
-const mapStateToProps = state => ({
-    myToken: tokenSelector(state),
-});
 
 const getFormData = (jsonData) => {
     const formData = new FormData();
@@ -38,7 +32,7 @@ const getFormData = (jsonData) => {
 };
 
 const coordinatorOptions = {
-    transformParams: (data, props) => {
+    transformParams: (data) => {
         const {
             body,
             method,
@@ -49,41 +43,30 @@ const coordinatorOptions = {
             ? getFormData(body)
             : JSON.stringify(body);
 
+        const csrftoken = getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
         const newHeaders = extras.hasFile
             ? {
                 Accept: 'application/json',
+                'X-CSRFToken': csrftoken,
             }
             : {
                 Accept: 'application/json',
                 'Content-Type': 'application/json; charset=utf-8',
+                'X-CSRFToken': csrftoken,
             };
 
         const params = {
             method: method || methods.GET,
             body: newBody,
+            credentials: 'include',
             headers: newHeaders,
         };
-
-        // NOTE: This is a hack to bypass auth for S3 requests
-        // Need to fix this through use of new react-rest-request@2
-        // FIXME: react-rest-request@2 has been used
-        // need to fix this using extras
-        const doNotAuth = body && body.$noAuth;
-
-        const {
-            myToken: { access },
-        } = props;
-
-        if (access && !doNotAuth) {
-            params.headers.Authorization = `Bearer ${access}`;
-        }
 
         return params;
     },
 
     transformProps: (props) => {
         const {
-            myToken, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = props;
         return otherProps;
@@ -146,9 +129,6 @@ const coordinatorOptions = {
     },
 };
 
-export const RequestCoordinator = compose(
-    connect(mapStateToProps),
-    createRequestCoordinator(coordinatorOptions),
-);
+export const RequestCoordinator = createRequestCoordinator(coordinatorOptions);
 
 export const RequestClient = createRequestClient;
