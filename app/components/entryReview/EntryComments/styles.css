@@ -1,12 +1,15 @@
 .comment-button {
+    position: relative;
     overflow: visible;
 
     .comment-count {
         position: absolute;
-        top: 0;
+        /* NOTE: Want to move this a bit up */
+        top: -1em;
         right: 0;
         border-radius: 1em;
         background-color: var(--dui-color-danger);
+        padding: 1px;
         color: var(--dui-color-text-on-dark);
         font-size: var(--dui-font-size-extra-small);
     }

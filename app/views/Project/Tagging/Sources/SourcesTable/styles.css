@@ -5,7 +5,6 @@
     flex-shrink: 0;
     z-index: 0;
     padding: 0;
-    min-height: 50vh;
 
     .content {
         display: flex;
@@ -14,6 +13,7 @@
 
         .table {
             width: 100%;
+            min-height: 50vh;
 
             .title-column {
                 min-width: 196px;
@@ -23,11 +23,12 @@
                 background-color: var(--dui-color-foreground);
             }
 
-            .empty-link {
-                color: var(--dui-color-text);
+            .link {
+                cursor: ;
+                pointer-events: none;
 
-                &:hover {
-                    text-decoration: none;
+                .empty-link {
+                    color: var(--dui-color-text);
                 }
             }
 

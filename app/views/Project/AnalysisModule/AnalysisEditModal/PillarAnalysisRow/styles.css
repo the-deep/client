@@ -1,10 +1,17 @@
 .pillar-analysis-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    flex-shrink: 0;
     gap: var(--dui-spacing-medium);
 
-    .remove-button {
-        margin: 0 var(--dui-spacing-small);
+    .input {
+        flex-basis: 30%;
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+
+    .button {
+        flex-shrink: 0;
     }
 }
 

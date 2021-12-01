@@ -93,7 +93,7 @@ const explore = wrap({
     component: lazy(() => import('#views/ExploreDeep')),
     componentProps: {
     },
-    visibility: 'is-authenticated',
+    visibility: 'is-anything',
 });
 const analyticalFrameworkCreateRoute = wrap({
     path: '/frameworks/new/',

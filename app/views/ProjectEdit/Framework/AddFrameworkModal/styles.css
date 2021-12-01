@@ -2,11 +2,6 @@
     .modal-body {
         display: flex;
         flex-direction: column;
-        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
-        width: clamp(480px, 50vh, 720px);
-
-        .input {
-            margin: var(--dui-spacing-medium);
-        }
+        gap: var(--dui-spacing-medium);
     }
 }

@@ -231,6 +231,7 @@ function CanvasDraw(props: Props) {
             className={_cs(styles.canvasDrawModal, className)}
             heading={_ts('components.canvasDrawModal', 'modalHeading')}
             onCloseButtonClick={handleCloseButtonClick}
+            size="large"
             footerActions={(
                 <>
                     <Button

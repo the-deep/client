@@ -7,6 +7,7 @@ const ENTRY_FRAGMENT = gql`
         entryType
         droppedExcerpt
         excerpt
+        reviewCommentsCount
         attributes {
             clientId
             data
@@ -45,6 +46,7 @@ export const LEAD_ENTRIES = gql`
         project(id: $projectId) {
             id
             lead(id: $leadId) {
+                id
                 title
                 leadGroup {
                     id

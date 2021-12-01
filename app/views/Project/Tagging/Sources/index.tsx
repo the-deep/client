@@ -17,7 +17,7 @@ import {
     PartialFormType as PartialFilterFormType,
 } from './SourcesFilter/schema';
 import SourcesTable from './SourcesTable';
-import SourcesGrid from './SourcesGrid';
+import EntriesGrid from './EntriesGrid';
 import styles from './styles.css';
 
 interface Props {
@@ -104,7 +104,7 @@ function Sources(props: Props) {
                     />
                 )}
                 {activeView === 'grid' && activeProject && (
-                    <SourcesGrid
+                    <EntriesGrid
                         projectId={String(activeProject)}
                         filters={sourcesFilters}
                     />

@@ -291,6 +291,7 @@ function BulkUpload(props: Props) {
         <Modal
             className={_cs(className, styles.bulkUploadModal)}
             heading={_ts('bulkUpload', 'title')}
+            size="cover"
             onCloseButtonClick={onClose}
             bodyClassName={styles.modalBody}
             footerActions={(

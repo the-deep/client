@@ -140,6 +140,8 @@ function AnalysisCloneModal(props: Props) {
             onCloseButtonClick={onClose}
             heading={_ts('analysis.cloneModal', 'cloneModalHeading')}
             className={styles.modal}
+            size="small"
+            freeHeight
             bodyClassName={styles.body}
             footerActions={(
                 <Button

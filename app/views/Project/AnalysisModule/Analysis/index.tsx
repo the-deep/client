@@ -312,7 +312,7 @@ function Analysis(props: ComponentProps) {
                 headerClassName={styles.pillarAnalysesHeader}
                 heading={_ts('analysis', 'pillarAnalysisCount', { count: pillars.length })}
                 headingSize="extraSmall"
-                alwaysMountContent={false}
+                alwaysMountedContent={false}
                 contentClassName={styles.pillarAnalysisList}
             >
                 {activeProject && (

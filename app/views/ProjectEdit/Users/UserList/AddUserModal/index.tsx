@@ -239,6 +239,7 @@ function AddUserModal(props: Props) {
                     : _ts('projectEdit', 'addUserHeading')
             }
             onCloseButtonClick={onModalClose}
+            freeHeight
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button

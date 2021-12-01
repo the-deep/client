@@ -136,6 +136,7 @@ function VisualizationShareModal(props: ShareModalProps) {
             className={styles.modal}
             heading="Share Public Link"
             bodyClassName={styles.modalBody}
+            freeHeight
             onCloseButtonClick={onClose}
         >
             <Checkbox

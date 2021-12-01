@@ -266,7 +266,7 @@ function LeadEditModal(props: Props) {
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const {
-        // pristine,
+        pristine,
         value,
         setValue,
         error: riskyError,
@@ -460,14 +460,13 @@ function LeadEditModal(props: Props) {
         <Modal
             className={_cs(className, styles.leadEditModal)}
             onCloseButtonClick={onClose}
+            size="cover"
             heading={leadId ? 'Edit source' : 'Add a source'}
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button
                     name="save"
-                    // FIXME: Add disabled during pristine later
-                    // disabled={pristine || pending}
-                    disabled={pending}
+                    disabled={pristine || pending}
                     onClick={handleSubmit}
                 >
                     Save

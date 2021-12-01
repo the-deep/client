@@ -87,7 +87,7 @@ function SourcesStats(props: Props) {
                     // FIXME: Use translation
                     title="Sources In Progress"
                     variant="complement1"
-                    size="small"
+                    size="large"
                 />
                 <ProgressLine
                     progress={calcPercent(

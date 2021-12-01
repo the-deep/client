@@ -69,6 +69,7 @@ function FrameworkImageButton(props: Props) {
                 <Modal
                     className={styles.modal}
                     heading={label}
+                    size="large"
                     onCloseButtonClick={hideModal}
                     bodyClassName={styles.content}
                 >

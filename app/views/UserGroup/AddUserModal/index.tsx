@@ -138,6 +138,8 @@ function AddUserModal(props: Props) {
             )}
             onCloseButtonClick={onModalClose}
             className={styles.modal}
+            size="small"
+            freeHeight
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button

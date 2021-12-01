@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import {
     _cs,
     isNotDefined,
+    listToMap,
     isDefined,
     unique,
 } from '@togglecorp/fujs';
@@ -17,9 +18,16 @@ import {
 
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
 import {
+    CountMap,
+    CommentCountContext,
+    CommentCountContextInterface,
+} from '#components/entryReview/EntryCommentWrapper/CommentContext';
+import {
     EntriesByLeadQuery,
     EntriesByLeadQueryVariables,
     LeadEntriesQueryVariables,
+    ProjectFrameworkForCardsQuery,
+    ProjectFrameworkForCardsQueryVariables,
 } from '#generated/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 
@@ -90,6 +98,7 @@ export const LEAD_ENTRIES = gql`
                     clientId
                     id
                     entryType
+                    reviewCommentsCount
                     droppedExcerpt
                     excerpt
                     lead {
@@ -138,6 +147,15 @@ export const LEAD_ENTRIES = gql`
                     }
                 }
             }
+        }
+    }
+`;
+
+export const PROJECT_FRAMEWORK = gql`
+    query ProjectFrameworkForCards(
+        $projectId: ID!,
+    ) {
+        project(id: $projectId) {
             analysisFramework {
                 primaryTagging {
                     widgets {
@@ -195,6 +213,16 @@ function EntryList(props: Props) {
         setGeoAreaOptions,
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
+    const [
+        commentsCountMap,
+        setCommentsCountMap,
+    ] = useState<CountMap>({});
+
+    const commentCountContext: CommentCountContextInterface = useMemo(() => ({
+        commentsCountMap,
+        setCommentsCountMap,
+    }), [commentsCountMap]);
+
     const [activePage, setActivePage] = useState(1);
     const variables = useMemo(
         (): EntriesByLeadQueryVariables | undefined => (
@@ -230,6 +258,13 @@ function EntryList(props: Props) {
                 if (!projectFromResponse) {
                     return;
                 }
+                setCommentsCountMap(
+                    listToMap(
+                        projectFromResponse.entries?.results ?? [],
+                        (entry) => entry.id,
+                        (entry) => entry.reviewCommentsCount,
+                    ),
+                );
                 const geoData = projectFromResponse.entries?.results
                     ?.map((entry) => entry?.attributes)
                     .flat()
@@ -243,8 +278,26 @@ function EntryList(props: Props) {
         },
     );
 
+    const frameworkVariables = useMemo(
+        (): ProjectFrameworkForCardsQueryVariables | undefined => (
+            projectId ? ({ projectId }) : undefined
+        ),
+        [projectId],
+    );
+
+    const {
+        data: projectFrameworkResponse,
+        loading: projectFrameworkLoading,
+    } = useQuery<ProjectFrameworkForCardsQuery, ProjectFrameworkForCardsQueryVariables>(
+        PROJECT_FRAMEWORK,
+        {
+            skip: isNotDefined(frameworkVariables),
+            variables: frameworkVariables,
+        },
+    );
+
     // eslint-disable-next-line max-len
-    const frameworkDetails = leadEntriesResponse?.project?.analysisFramework as Framework | undefined | null;
+    const frameworkDetails = projectFrameworkResponse?.project?.analysisFramework as Framework | undefined | null;
 
     const entriesResponse = leadEntriesResponse?.project?.entries;
     const entries = entriesResponse?.results as Entry[] | undefined | null;
@@ -286,15 +339,17 @@ function EntryList(props: Props) {
                 />
             )}
         >
-            <ListView
-                className={styles.entryList}
-                keySelector={entryKeySelector}
-                renderer={EditableEntry}
-                data={entries ?? undefined}
-                rendererParams={entryDataRendererParams}
-                rendererClassName={styles.entryItem}
-                pending={entryListPending}
-            />
+            <CommentCountContext.Provider value={commentCountContext}>
+                <ListView
+                    className={styles.entryList}
+                    keySelector={entryKeySelector}
+                    renderer={EditableEntry}
+                    data={entries ?? undefined}
+                    rendererParams={entryDataRendererParams}
+                    rendererClassName={styles.entryItem}
+                    pending={entryListPending || projectFrameworkLoading}
+                />
+            </CommentCountContext.Provider>
         </Container>
     );
 }

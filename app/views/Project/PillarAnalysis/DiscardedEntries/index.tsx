@@ -97,7 +97,7 @@ function DiscardedEntries(props: Props) {
 
     const entryCardRendererParams = useCallback(
         (_: number, data: DiscardedEntry): DiscardedEntryProps => ({
-            entryId: data.entry,
+            discardedEntryId: data.id,
             tagDisplay: data.tagDisplay,
             excerpt: data.entryDetails.excerpt ?? '',
             image: data.entryDetails?.imageDetails?.file ? ({

@@ -104,6 +104,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
     return (
         <Modal
             className={styles.addStakeholderModal}
+            size="cover"
             heading={
                 initialValue?.length === 0
                     ? _ts('project.detail.stakeholders', 'addStakeholder')

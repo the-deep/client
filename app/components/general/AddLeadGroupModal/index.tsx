@@ -15,7 +15,10 @@ import {
 } from '@the-deep/deep-ui';
 
 import ProjectContext from '#base/context/ProjectContext';
-import { useLazyRequest } from '#base/utils/restRequest';
+import {
+    useLazyRequest,
+    useRequest,
+} from '#base/utils/restRequest';
 import { LeadGroup } from '#types';
 import _ts from '#ts';
 
@@ -31,6 +34,7 @@ const leadGroupSchema: FormSchema = {
 
 export interface Props {
     onModalClose: () => void;
+    leadGroupToEdit?: string;
     // FIXME: Replace with graphql mutation
     onLeadGroupAdd?: (leadGroup: { id: string; title: string }) => void;
 }
@@ -38,30 +42,12 @@ export interface Props {
 function AddLeadGroupModal(props: Props) {
     const {
         onModalClose,
+        leadGroupToEdit,
         onLeadGroupAdd,
     } = props;
 
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? +project.id : undefined;
-
-    const {
-        trigger: leadGroupAddTrigger,
-        pending: leadGroupAddPending,
-    } = useLazyRequest<LeadGroup, FormType>({
-        url: 'server://lead-groups/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            if (onLeadGroupAdd) {
-                onLeadGroupAdd({
-                    id: String(response.id),
-                    title: response.title,
-                });
-            }
-            onModalClose();
-        },
-        failureHeader: _ts('addLeadGroup', 'title'),
-    });
 
     const defaultFormValue: FormType = useMemo(() => ({
         project: activeProject,
@@ -74,7 +60,42 @@ function AddLeadGroupModal(props: Props) {
         setFieldValue,
         validate,
         setError,
+        setValue,
     } = useForm(leadGroupSchema, defaultFormValue);
+
+    const {
+        pending: leadGroupFetchPending,
+    } = useRequest<LeadGroup>({
+        skip: !leadGroupToEdit,
+        url: `server://lead-groups/${leadGroupToEdit}/`,
+        method: 'GET',
+        onSuccess: (response) => {
+            setValue({
+                ...value,
+                title: response?.title,
+            });
+        },
+        failureHeader: _ts('addLeadGroup', 'title'),
+    });
+
+    const {
+        trigger: leadGroupAddTrigger,
+        pending: leadGroupAddPending,
+    } = useLazyRequest<LeadGroup, FormType>({
+        url: leadGroupToEdit ? `server://lead-groups/${leadGroupToEdit}/` : 'server://lead-groups/',
+        method: leadGroupToEdit ? 'PATCH' : 'POST',
+        body: (ctx) => ctx,
+        onSuccess: (response) => {
+            if (onLeadGroupAdd) {
+                onLeadGroupAdd({
+                    id: String(response.id),
+                    title: response.title,
+                });
+            }
+            onModalClose();
+        },
+        failureHeader: _ts('addLeadGroup', 'title'),
+    });
 
     const error = getErrorObject(riskyError);
 
@@ -93,6 +114,8 @@ function AddLeadGroupModal(props: Props) {
     return (
         <Modal
             heading={_ts('addLeadGroup', 'addLeadGroupHeading')}
+            freeHeight
+            size="small"
             onCloseButtonClick={onModalClose}
             footerActions={(
                 <Button
@@ -106,7 +129,7 @@ function AddLeadGroupModal(props: Props) {
                 </Button>
             )}
         >
-            {leadGroupAddPending && <PendingMessage />}
+            {(leadGroupFetchPending || leadGroupAddPending) && <PendingMessage />}
             <TextInput
                 name="title"
                 value={value?.title}

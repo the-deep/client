@@ -2,10 +2,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
-import { generatePath } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import {
-    ButtonLikeLink,
     Container,
     PendingMessage,
     ListView,
@@ -27,6 +25,7 @@ import {
     FetchProjectQueryVariables,
 } from '#generated/types';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { ProjectsSummary } from '#types';
 
 import ProjectItem, { RecentProjectItemProps } from './ProjectItem';
@@ -262,12 +261,12 @@ function Home(props: ViewProps) {
                             onChange={setSelectedProject}
                             variant="general"
                         />
-                        <ButtonLikeLink
+                        <SmartButtonLikeLink
                             variant="primary"
-                            to={generatePath(routes.projectCreate.path, {})}
+                            route={routes.projectCreate}
                         >
                             {_ts('home', 'setupNewProjectButtonLabel')}
-                        </ButtonLikeLink>
+                        </SmartButtonLikeLink>
                     </>
                 )}
             >

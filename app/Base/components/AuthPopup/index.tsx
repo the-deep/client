@@ -19,6 +19,8 @@ function AuthPopup() {
     return (
         <Modal
             heading="Invalid Session"
+            size="extraSmall"
+            freeHeight
             onCloseButtonClick={onCancel}
             footerClassName={styles.actionButtonsRow}
             footer={(

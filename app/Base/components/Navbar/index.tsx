@@ -13,12 +13,14 @@ import {
     IoHelp,
     IoCompassOutline,
     IoNotificationsOutline,
+    IoLogInOutline,
     IoLogOutOutline,
 } from 'react-icons/io5';
 
 import Svg from '#components/Svg';
 import Notifications from '#components/Notifications';
 import SmartNavLink from '#base/components/SmartNavLink';
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
@@ -102,18 +104,29 @@ function Navbar(props: Props) {
                     >
                         Explore DEEP
                     </ButtonLikeLink>
+                    <SmartButtonLikeLink
+                        route={route.login}
+                        variant="tertiary"
+                        icons={(
+                            <IoLogInOutline />
+                        )}
+                    >
+                        Login
+                    </SmartButtonLikeLink>
                     <QuickActionLink
                         to="https://deephelp.zendesk.com/hc/en-us"
                     >
                         <IoHelp />
                     </QuickActionLink>
-                    <QuickActionDropdownMenu
-                        label={<IoNotificationsOutline />}
-                        popupClassName={styles.popup}
-                        persistent
-                    >
-                        <Notifications />
-                    </QuickActionDropdownMenu>
+                    {authenticated && (
+                        <QuickActionDropdownMenu
+                            label={<IoNotificationsOutline />}
+                            popupClassName={styles.popup}
+                            persistent
+                        >
+                            <Notifications />
+                        </QuickActionDropdownMenu>
+                    )}
                 </div>
             </div>
             {authenticated && user && (
