@@ -24,11 +24,12 @@ import Comment from './Comment';
 import CommentForm from './CommentForm';
 import styles from './styles.css';
 
-interface Props {
+export interface Props {
     className?: string;
     activityCount?: number;
     entryId: number;
     projectId: string;
+    onEntryCommentAdd?: () => void;
 }
 
 interface MultiResponseWithSummary<T> extends MultiResponse<T> {
@@ -44,6 +45,7 @@ function EntryComments(props: Props) {
         entryId,
         projectId,
         activityCount = 0,
+        onEntryCommentAdd,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -68,6 +70,13 @@ function EntryComments(props: Props) {
         },
         failureHeader: 'Entry Comment',
     });
+
+    const handleEntryCommentSave = useCallback(() => {
+        getComments();
+        if (onEntryCommentAdd) {
+            onEntryCommentAdd();
+        }
+    }, [getComments, onEntryCommentAdd]);
 
     const commentRendererParams = useCallback((_, comment: EntryComment) => ({
         comment,
@@ -117,7 +126,7 @@ function EntryComments(props: Props) {
                     <CommentForm
                         entryId={entryId}
                         projectId={projectId}
-                        onSave={getComments}
+                        onSave={handleEntryCommentSave}
                     />
                 </Modal>
             )}

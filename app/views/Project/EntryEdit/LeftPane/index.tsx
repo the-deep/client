@@ -71,6 +71,7 @@ interface Props {
     entryImagesMap: EntryImagesMap | undefined;
     isEntrySelectionActive?: boolean;
     entriesError: Partial<Record<string, boolean>> | undefined;
+    projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original';
 }
 
@@ -94,6 +95,7 @@ function LeftPane(props: Props) {
         isEntrySelectionActive,
         entriesError,
         defaultTab = 'simplified',
+        projectId,
     } = props;
 
     const alert = useAlert();
@@ -207,7 +209,9 @@ function LeftPane(props: Props) {
     const entryItemRendererParams = React.useCallback((entryId: string, entry: EntryInput) => ({
         ...entry,
         entryId: entry.clientId,
+        entryServerId: entry.id,
         isActive: activeEntry === entry.clientId,
+        projectId,
         onClick: onEntryClick,
         onExcerptChange,
         onEntryDelete,
@@ -218,6 +222,7 @@ function LeftPane(props: Props) {
         disableClick: isEntrySelectionActive,
         errored: entriesError?.[entryId],
     }), [
+        projectId,
         onApproveButtonClick,
         entriesError,
         onDiscardButtonClick,
@@ -318,6 +323,8 @@ function LeftPane(props: Props) {
                 <EntryItem
                     {...activeEntryDetails}
                     entryId={activeEntry}
+                    entryServerId={activeEntryDetails?.id}
+                    projectId={projectId}
                     isActive
                     onExcerptChange={onExcerptChange}
                     onEntryDelete={onEntryDelete}
@@ -398,6 +405,7 @@ function LeftPane(props: Props) {
                             <SimplifiedTextView
                                 className={styles.simplifiedTextView}
                                 activeEntryClientId={activeEntry}
+                                projectId={projectId}
                                 onExcerptClick={onEntryClick}
                                 entries={entries}
                                 onAddButtonClick={handleExcerptAddFromSimplified}

@@ -63,6 +63,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     entryImage: Entry['image'] | undefined | null;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    excerptHeaderActions?: React.ReactNode;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -85,6 +86,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        excerptHeaderActions,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -158,6 +160,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                     className={styles.excerpt}
                     heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
                     headingSize="extraSmall"
+                    headerActions={excerptHeaderActions}
                     contentClassName={styles.excerptContent}
                 >
                     <ExcerptInput
