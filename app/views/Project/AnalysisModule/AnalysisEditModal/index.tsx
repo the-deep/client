@@ -347,6 +347,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     : _ts('analysis.editModal', 'addAnalysisModalHeading')
             }
             onCloseButtonClick={onModalClose}
+            size="large"
             bodyClassName={styles.modalBody}
             footerActions={(
                 <>

@@ -183,6 +183,8 @@ function AddUserGroupModal(props: Props) {
     return (
         <Modal
             className={styles.modal}
+            freeHeight
+            size="small"
             heading={
                 isDefined(usergroupValue)
                     ? _ts('projectEdit', 'editUsergroupHeading')

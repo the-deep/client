@@ -498,6 +498,8 @@ function ProjectDetailsForm(props: Props) {
                         <Modal
                             onCloseButtonClick={handleProjectDeleteConfirmCancel}
                             heading={_ts('projectEdit', 'deleteProject')}
+                            size="small"
+                            freeHeight
                             footerActions={(
                                 <>
                                     <Button

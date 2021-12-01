@@ -105,6 +105,8 @@ function CustomGeoAddModal(props: Props) {
         <Modal
             heading="Add Custom Geo Area"
             onCloseButtonClick={onModalClose}
+            size="small"
+            freeHeight
             footerActions={(
                 <Button
                     name="submit"

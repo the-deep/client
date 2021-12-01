@@ -184,6 +184,8 @@ function AddUserModal(props: Props) {
                     : _ts('analyticalFramework.addUser', 'addUserHeading')
             }
             onCloseButtonClick={onModalClose}
+            size="small"
+            freeHeight
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button

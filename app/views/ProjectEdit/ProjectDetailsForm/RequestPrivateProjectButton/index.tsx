@@ -80,6 +80,8 @@ function RequestPrivateProjectButton(props: Props) {
                 <Modal
                     className={styles.requestPrivateProjectModal}
                     heading={_ts('requestPrivateProject', 'title')}
+                    size="small"
+                    freeHeight
                     bodyClassName={styles.modalBody}
                     onCloseButtonClick={hideModal}
                     footerActions={(

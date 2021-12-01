@@ -1,7 +1,4 @@
 .bulk-upload-modal {
-    width: 90vw;
-    height: 90vh;
-
     .modal-body {
         display: flex;
 

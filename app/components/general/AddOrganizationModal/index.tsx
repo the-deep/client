@@ -111,6 +111,7 @@ function AddOrganizationModal(props: Props) {
             className={styles.addOrganizationModal}
             heading={_ts('addOrganizationModal', 'title')}
             onCloseButtonClick={onModalClose}
+            freeHeight
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button

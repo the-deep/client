@@ -32,9 +32,6 @@
 }
 
 .modal {
-    width: 96vw;
-    height: 96vh;
-
     .body {
         display: flex;
         flex-direction: column;

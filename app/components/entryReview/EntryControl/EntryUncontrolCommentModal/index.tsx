@@ -112,6 +112,8 @@ function EntryUncontrolCommentModal(props: Props) {
         <Modal
             onCloseButtonClick={onModalClose}
             className={_cs(styles.modal, className)}
+            freeHeight
+            size="small"
             heading="Reason to uncontrol entry"
             bodyClassName={styles.modalBody}
             footerIcons={(

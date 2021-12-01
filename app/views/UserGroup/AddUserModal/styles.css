@@ -4,9 +4,6 @@
     .modal-body {
         display: flex;
         align-items: flex-end;
-
-        .input {
-            padding: var(--spacing-medium);
-        }
+        gap: var(--dui-spacing-medium);
     }
 }
