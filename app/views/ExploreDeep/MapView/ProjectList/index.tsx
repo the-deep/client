@@ -70,7 +70,6 @@ function ListRenderer(props: ProjectListProps) {
                     value={startDate}
                 />
             )}
-            headerClassName={styles.header}
             headingClassName={styles.heading}
             contentClassName={styles.content}
             expansionTriggerArea="arrow"

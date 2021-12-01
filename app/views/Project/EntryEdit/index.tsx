@@ -65,6 +65,11 @@ import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import EntryInput from '#components/entry/EntryInput';
 import Section from '#components/entry/Section';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
+import {
+    CountMap,
+    CommentCountContext,
+    CommentCountContextInterface,
+} from '#components/entryReview/EntryCommentWrapper/CommentContext';
 import _ts from '#ts';
 
 import {
@@ -76,13 +81,9 @@ import {
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
-import {
-    CommentCountContext,
-    CommentCountContextInterface,
-} from './CommentContext';
+import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
-import EntryCommentWrapper from './EntryCommentWrapper';
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
@@ -117,7 +118,7 @@ function EntryEdit(props: Props) {
     const [
         commentsCountMap,
         setCommentsCountMap,
-    ] = useState<{ [key in string]: number } | undefined>(undefined);
+    ] = useState<CountMap>({});
 
     const commentCountContext: CommentCountContextInterface = useMemo(() => ({
         commentsCountMap,
@@ -188,7 +189,6 @@ function EntryEdit(props: Props) {
         pristine: leadPristine,
         value: leadValue,
         setValue: setLeadValue,
-        setPristine: setLeadPristine,
         setError: setLeadError,
         error: leadFormError,
         validate: leadFormValidate,
@@ -262,8 +262,12 @@ function EntryEdit(props: Props) {
         error: formError,
     } = useForm(schema, defaultFormValues);
 
-    const formStale = formValue?.entries?.some((entry) => entry.stale) ?? false;
-    const formPristine = !formStale && leadPristine;
+    const entriesFormStale = useMemo(
+        () => (formValue?.entries?.some((entry) => entry.stale) ?? false),
+        [formValue?.entries],
+    );
+
+    const formPristine = !entriesFormStale && leadPristine;
 
     const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
     const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
@@ -322,7 +326,7 @@ function EntryEdit(props: Props) {
             leadFormValidate,
             setLeadError,
             (val) => {
-                const data = { ...val } as LeadInputType;
+                const data = val as LeadInputType;
                 updateLead({
                     variables: {
                         data: {
@@ -612,13 +616,13 @@ function EntryEdit(props: Props) {
 
     const handleFinalizeClick = useCallback(
         () => {
-            if (!formStale) {
+            if (!entriesFormStale) {
                 handleLeadSave(true);
             } else {
                 handleSubmit(true);
             }
         },
-        [handleSubmit, formStale, handleLeadSave],
+        [handleSubmit, entriesFormStale, handleLeadSave],
     );
 
     const handleEntryClick = useCallback((entryId: string) => {
@@ -966,6 +970,30 @@ function EntryEdit(props: Props) {
     const lead = data?.project?.lead;
     const loading = frameworkLoading || entriesLoading;
 
+    const disableFinalizeButton = useMemo(() => {
+        // NOTE: If any entry is selected, we'll disable the button
+        if (selectedEntry) {
+            return true;
+        }
+
+        if ((formValue.entries?.length ?? 0) < 1) {
+            return true;
+        }
+
+        // NOTE: If entries form is not edited and lead's status is already tagged
+        // we don't need to finalize the lead
+        if (!entriesFormStale && leadValue.status === 'TAGGED') {
+            return true;
+        }
+
+        return false;
+    }, [
+        selectedEntry,
+        entriesFormStale,
+        leadValue.status,
+        formValue.entries,
+    ]);
+
     return (
         <div className={_cs(styles.entryEdit, className)}>
             <Prompt
@@ -1006,10 +1034,7 @@ function EntryEdit(props: Props) {
                             </Button>
                             <Button
                                 name={undefined}
-                                // NOTE: Enable when lead form is edited
-                                disabled={(
-                                    !formStale && leadValue.status === 'TAGGED'
-                                ) || !!selectedEntry}
+                                disabled={disableFinalizeButton}
                                 variant="primary"
                                 onClick={handleFinalizeClick}
                             >
@@ -1060,7 +1085,6 @@ function EntryEdit(props: Props) {
                                 <SourceDetails
                                     leadValue={leadValue}
                                     setValue={setLeadValue}
-                                    setPristine={setLeadPristine}
                                     defaultValue={leadInitialValue}
                                     leadFormError={leadFormError}
                                     pending={loading}

@@ -14,7 +14,6 @@ import {
     Link,
     LinkProps,
     Pager,
-    PendingMessage,
     SortContext,
     TableView,
     TableColumn,
@@ -599,7 +598,6 @@ function SourcesTable(props: Props) {
                     />
                 )}
             >
-                {pending && (<PendingMessage />)}
                 <RowExpansionContext.Provider
                     value={{ expandedRowKey, setExpandedRowKey }}
                 >
@@ -612,6 +610,7 @@ function SourcesTable(props: Props) {
                             columns={columns}
                             rowModifier={rowModifier}
                             variant="large"
+                            pending={pending}
                         />
                     </SortContext.Provider>
                 </RowExpansionContext.Provider>

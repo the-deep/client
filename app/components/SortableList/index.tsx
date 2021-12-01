@@ -124,7 +124,7 @@ export type Props<
     GP extends GroupCommonProps,
     GK extends OptionKey,
     ItemContainerParams,
-> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer'> & {
+> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer' | 'direction'> & {
     name: N;
     keySelector: (val: D) => K;
     renderer: (props: P & {

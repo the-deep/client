@@ -202,6 +202,7 @@ function ExploreDeep(props: Props) {
                                 keySelector={activeFrameworkKeySelector}
                                 renderer={ActiveFrameworkItem}
                                 rendererParams={activeFrameworkRendererParams}
+                                spacing="none"
                             />
                         </ContainerCard>
                     </div>
@@ -212,7 +213,7 @@ function ExploreDeep(props: Props) {
                     headingContainerClassName={styles.heading}
                     contentClassName={styles.projectListContainer}
                     spacing="none"
-                    heading="Top 5 most active project"
+                    heading="Top 5 most active projects"
                     headingDescription="Last 3 months"
                     headingSize="small"
                     borderBelowHeader
@@ -224,6 +225,7 @@ function ExploreDeep(props: Props) {
                         keySelector={activeProjectKeySelector}
                         renderer={ActiveProjectItem}
                         rendererParams={activeProjectsRendererParams}
+                        spacing="none"
                     />
                 </ContainerCard>
             </div>
