@@ -58,6 +58,8 @@
                         overflow-y: auto;
 
                         .tabs {
+                            flex-shrink: 0;
+
                             .border-wrapper {
                                 display: flex;
                                 flex-grow: 1;

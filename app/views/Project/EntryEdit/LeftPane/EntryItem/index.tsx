@@ -155,6 +155,8 @@ function EntryItem(props: EntryItemProps) {
                 className,
                 isActive && styles.active,
             )}
+            visibleOverflow
+            headingSectionClassName={styles.headingSection}
             headerActions={entryServerId && projectId && (
                 <EntryCommentWrapper
                     // FIXME: Remove cast after entry comments
