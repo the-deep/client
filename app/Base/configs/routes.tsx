@@ -353,6 +353,17 @@ const exportRoute = wrap({
     visibility: 'is-authenticated',
 });
 
+const assessmentEditRoute = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/assessments/:leadId(\\d+)/',
+    title: 'Assessment Edit',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/Assessments/EditAssessment')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated', // TODO handle permission
+});
+
 const routes = {
     login,
     register,
@@ -378,5 +389,6 @@ const routes = {
     aryDashboard,
     export: exportRoute,
     entryEdit: entryEditRoute,
+    assessmentEdit: assessmentEditRoute,
 };
 export default routes;
