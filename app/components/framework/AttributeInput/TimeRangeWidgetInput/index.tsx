@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
-import { TimeRangeInput, QuickActionButton } from '@the-deep/deep-ui';
+import { TimeRangeInput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
-import { IoSwapHorizontal } from 'react-icons/io5';
 import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -53,20 +52,6 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         },
         [onChangeFromProps],
     );
-    const handleValueSwap = useCallback(
-        () => {
-            if (value?.value) {
-                onChange(
-                    {
-                        startTime: value.value.endTime,
-                        endTime: value.value.startTime,
-                    },
-                    name,
-                );
-            }
-        },
-        [onChange, value, name],
-    );
 
     const valueErrorString = getErrorString(error?.value);
     const valueErrorObject = getErrorObject(error?.value);
@@ -94,16 +79,6 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={valueError}
-                actions={value?.value && (
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={handleValueSwap}
-                        title="Swap Values" // FIXME: use translations
-                        variant="transparent"
-                    >
-                        <IoSwapHorizontal />
-                    </QuickActionButton>
-                )}
             />
         </WidgetWrapper>
     );
