@@ -61,9 +61,15 @@ const PROJECT_FRAMEWORK_DETAILS = gql`
                         key
                         order
                         properties
+                        conditional {
+                            parentWidget
+                            parentWidgetType
+                            conditions
+                        }
                         title
                         widgetId
                         width
+                        version
                     }
                     clientId
                     id
@@ -78,8 +84,14 @@ const PROJECT_FRAMEWORK_DETAILS = gql`
                     order
                     title
                     properties
+                    conditional {
+                        parentWidget
+                        parentWidgetType
+                        conditions
+                    }
                     widgetId
                     width
+                    version
                 }
             }
         }

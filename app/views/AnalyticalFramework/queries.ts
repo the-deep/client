@@ -9,6 +9,11 @@ const FRAMEWORK = gql`
                 key
                 order
                 properties
+                conditional {
+                    parentWidget
+                    parentWidgetType
+                    conditions
+                }
                 title
                 widgetId
                 width
@@ -27,6 +32,11 @@ const FRAMEWORK = gql`
             order
             title
             properties
+            conditional {
+                parentWidget
+                parentWidgetType
+                conditions
+            }
             widgetId
             width
             version

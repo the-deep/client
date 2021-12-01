@@ -68,6 +68,12 @@ const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
                         title
                         widgetId
                         properties
+                        conditional {
+                            parentWidget
+                            parentWidgetType
+                            conditions
+                        }
+                        version
                     }
                     clientId
                     id
@@ -79,6 +85,12 @@ const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
                     title
                     widgetId
                     properties
+                    conditional {
+                        parentWidget
+                        parentWidgetType
+                        conditions
+                    }
+                    version
                 }
             }
         }

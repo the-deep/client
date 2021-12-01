@@ -113,7 +113,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
             if (!widgetId) {
                 onChange(undefined, name);
             }
-            const widget = widgets.find((w) => w.clientId === widgetId);
+            const widget = widgets.find((w) => w.id === widgetId);
             if (!widget) {
                 // eslint-disable-next-line no-console
                 console.error('Widget not found');
@@ -122,8 +122,8 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
             // NOTE: we are passing changed value to parent because we aren't
             // storing this value locally on this component
             onChange({
-                parentWidget: undefined,
-                parentWidgetId: widget.widgetId,
+                parentWidget: widget.id,
+                parentWidgetType: widget.widgetId,
                 conditions: [{
                     key: randomString(),
                     order: 1,
@@ -170,7 +170,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
         );
     }
 
-    switch (value.parentWidgetId) {
+    switch (value.parentWidgetType) {
         case 'TEXT': {
             return (
                 <TextConditionalWidgetForm

@@ -148,7 +148,7 @@ const conditionsSchema: ConditionsSchema = {
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         parentWidget: [defaultUndefinedType],
-        parentWidgetId: [],
+        parentWidgetType: [],
         conditions: conditionsSchema,
     }),
 };

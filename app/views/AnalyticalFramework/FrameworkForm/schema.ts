@@ -36,12 +36,11 @@ const widgetSchema: WidgetSchema = {
         key: [],
         order: [],
         properties: [],
-        // FIXME: Enable this after this has been implemented on the server side
-        // conditional: [],
+        version: [],
         title: [],
         widgetId: [],
-        version: [],
         width: [],
+        conditional: [],
     }),
 };
 

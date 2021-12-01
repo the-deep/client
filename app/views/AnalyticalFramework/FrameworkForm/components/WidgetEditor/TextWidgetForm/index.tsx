@@ -55,6 +55,8 @@ const schema: FormSchema = {
         width: [],
 
         properties: dataSchema,
+        conditional: [],
+        version: [],
     }),
 };
 

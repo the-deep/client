@@ -6,9 +6,16 @@ import {
     isDev,
 } from './env';
 
-export const trackingId = isBeta || isAlpha || isNightly
-    ? 'UA-112330910-1'
-    : 'UA-112330910-2';
+export const trackingId = (() => {
+    const keyFromEnv = process.env.REACT_APP_GA_TRACKING_ID;
+    if (keyFromEnv) {
+        return keyFromEnv;
+    }
+    if (isBeta || isAlpha || isNightly) {
+        return 'UA-112330910-1';
+    }
+    return 'UA-112330910-2';
+})();
 
 export const gaConfig: InitializeOptions = {
     debug: isDev,
