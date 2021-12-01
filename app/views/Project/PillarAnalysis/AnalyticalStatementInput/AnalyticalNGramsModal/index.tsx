@@ -165,6 +165,7 @@ function AnalyticalNGramsModal(props: Props) {
             className={styles.analyticalModal}
             heading="Data Aggregation Column"
             onCloseButtonClick={onModalClose}
+            size="cover"
             bodyClassName={styles.modalBody}
         >
             {pending && <PendingMessage />}

@@ -164,6 +164,8 @@ function ProjectJoinModal(props: Props) {
             heading="Send project join request"
             className={_cs(className, styles.projectJoinModal)}
             onCloseButtonClick={onModalClose}
+            size="small"
+            freeHeight
             footerActions={(
                 <>
                     <Button

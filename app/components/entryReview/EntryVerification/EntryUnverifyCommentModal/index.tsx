@@ -107,6 +107,8 @@ function EntryUnverifyCommentModal(props: Props) {
             onCloseButtonClick={onModalClose}
             className={_cs(styles.modal, className)}
             heading="Reason for unverify"
+            size="small"
+            freeHeight
             bodyClassName={styles.modalBody}
             footerIcons={(
                 <ProjectMemberMultiSelectInput

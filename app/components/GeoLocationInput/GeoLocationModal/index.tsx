@@ -42,6 +42,7 @@ function GeoLocationModal(props: Props) {
         <Modal
             heading="Select Geo Areas"
             className={_cs(className, styles.geoLocationModal)}
+            size="cover"
             onCloseButtonClick={onModalClose}
             footerActions={(
                 <>

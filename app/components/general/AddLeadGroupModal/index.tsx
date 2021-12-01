@@ -114,6 +114,8 @@ function AddLeadGroupModal(props: Props) {
     return (
         <Modal
             heading={_ts('addLeadGroup', 'addLeadGroupHeading')}
+            freeHeight
+            size="small"
             onCloseButtonClick={onModalClose}
             footerActions={(
                 <Button

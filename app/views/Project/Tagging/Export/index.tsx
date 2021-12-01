@@ -120,6 +120,7 @@ function Export() {
                     <Modal
                         className={styles.modal}
                         heading="Setup new export file"
+                        size="cover"
                         onCloseButtonClick={hideCreateNewExportModal}
                         bodyClassName={styles.body}
                     >
@@ -132,6 +133,7 @@ function Export() {
                 {newAssessmentModalShown && activeProject && (
                     <Modal
                         className={styles.modal}
+                        size="cover"
                         heading="Setup new assessment export file"
                         onCloseButtonClick={hideNewAssessmentModal}
                         bodyClassName={styles.body}

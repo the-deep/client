@@ -129,6 +129,8 @@ function AddFrameworkModal(props: Props) {
     return (
         <Modal
             className={_cs(className, styles.modal)}
+            size="small"
+            freeHeight
             heading={
                 isDefined(frameworkToClone)
                     ? _ts('projectEdit', 'cloneFrameworkHeading')
@@ -151,7 +153,6 @@ function AddFrameworkModal(props: Props) {
             {pendingRequests && <PendingMessage />}
             <TextInput
                 name="title"
-                className={styles.input}
                 onChange={setFieldValue}
                 value={value.title}
                 label={_ts('projectEdit', 'titleLabel')}
@@ -162,7 +163,6 @@ function AddFrameworkModal(props: Props) {
             <TextArea
                 name="description"
                 rows={5}
-                className={styles.input}
                 onChange={setFieldValue}
                 value={value.description}
                 label={_ts('projectEdit', 'descriptionLabel')}

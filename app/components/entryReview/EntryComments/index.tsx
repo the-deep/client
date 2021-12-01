@@ -100,6 +100,7 @@ function EntryComments(props: Props) {
                 <Modal
                     className={styles.entryCommentModal}
                     heading="Entry Comments"
+                    freeHeight
                     onCloseButtonClick={hideCommentModal}
                     bodyClassName={styles.modalBody}
                     footerActions={(

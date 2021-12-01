@@ -121,6 +121,8 @@ function AddUserGroupModal(props: Props) {
         <Modal
             heading={_ts('usergroup.editModal', 'addUsergroupHeading')}
             onCloseButtonClick={onModalClose}
+            size="extraSmall"
+            freeHeight
             footerActions={(
                 <Button
                     name="submit"
