@@ -231,10 +231,7 @@ function EditableEntry(props: Props) {
                         ?.filter((attribute) => isDefined(attribute.data))
                         .map((attribute) => ({
                             ...attribute,
-                            // NOTE: setting widgetVersion to 0
-                            // means the widget version is not
-                            // supported
-                            widgetVersion: attribute.widgetVersion ?? 0,
+                            widgetVersion: attribute.widgetVersion,
                             widgetType: undefined,
                         })),
                 };
