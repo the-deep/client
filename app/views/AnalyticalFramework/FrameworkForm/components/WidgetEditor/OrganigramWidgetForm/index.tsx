@@ -92,6 +92,8 @@ const schema: FormSchema = {
         width: [],
 
         properties: dataSchema,
+        conditional: [],
+        version: [],
     }),
 };
 const defaultNodeVal = (): PartialNodeType => ({

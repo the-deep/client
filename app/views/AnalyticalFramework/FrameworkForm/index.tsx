@@ -93,7 +93,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         properties,
     } = framework;
 
-    return removeNull({
+    const newValues = removeNull({
         title,
         description,
         isPrivate,
@@ -103,6 +103,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         properties,
         isVisualizationEnabled: isDefined(properties),
     });
+    return newValues;
 }
 
 function FrameworkForm(props: FrameworkFormProps) {
@@ -285,18 +286,34 @@ function FrameworkForm(props: FrameworkFormProps) {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                (val) => {
-                    // NOTE: clearing out these data so they don't override
-                    const cleanData = { ...val };
-                    delete cleanData.isVisualizationEnabled;
+                (val: PartialFormType) => {
+                    const newData = {
+                        ...val,
+                        isVisualizationEnabled: undefined,
+                        primaryTagging: primaryTaggingPristine
+                            ? undefined
+                            : val.primaryTagging?.map((section) => ({
+                                ...section,
+                                widgets: section.widgets?.map((widget) => ({
+                                    ...widget,
+                                    conditional: widget.conditional ? {
+                                        ...widget.conditional,
+                                        parentWidgetType: undefined,
+                                    } : undefined,
+                                })),
+                            })),
+                        secondaryTagging: secondaryTaggingPristine
+                            ? undefined
+                            : val.secondaryTagging?.map((widget) => ({
+                                ...widget,
+                                conditional: widget.conditional ? {
+                                    ...widget.conditional,
+                                    parentWidgetType: undefined,
+                                } : undefined,
+                            })),
+                    };
 
-                    const data = cleanData as AnalysisFrameworkInputType;
-                    if (primaryTaggingPristine) {
-                        delete data.primaryTagging;
-                    }
-                    if (secondaryTaggingPristine) {
-                        delete data.secondaryTagging;
-                    }
+                    const data = newData as AnalysisFrameworkInputType;
 
                     if (frameworkId) {
                         updateAnalysisFramework({

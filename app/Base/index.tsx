@@ -213,4 +213,4 @@ function Base() {
     );
 }
 
-export default withProfiler(Base, { name: 'Base'});
+export default withProfiler(Base, { name: 'Base' });
