@@ -26,7 +26,7 @@ import {
 import ExcerptInput from '#components/entry/ExcerptInput';
 
 import { PartialEntryType as EntryInput } from '../../schema';
-import EntryCommentWrapper from '../../EntryCommentWrapper';
+import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import { Entry } from '../../types';
 
 import styles from './styles.css';

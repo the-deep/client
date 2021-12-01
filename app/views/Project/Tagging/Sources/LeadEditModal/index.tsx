@@ -269,7 +269,6 @@ function LeadEditModal(props: Props) {
         pristine,
         value,
         setValue,
-        setPristine,
         error: riskyError,
         validate,
         setError,
@@ -455,8 +454,7 @@ function LeadEditModal(props: Props) {
 
     const handleLeadChange = useCallback((newValue: SetValueArg<PartialFormType>) => {
         setValue(newValue, true);
-        setPristine(false);
-    }, [setValue, setPristine]);
+    }, [setValue]);
 
     return (
         <Modal
@@ -467,8 +465,6 @@ function LeadEditModal(props: Props) {
             footerActions={(
                 <Button
                     name="save"
-                    // FIXME: Add disabled during pristine later
-                    // disabled={pristine || pending}
                     disabled={pristine || pending}
                     onClick={handleSubmit}
                 >

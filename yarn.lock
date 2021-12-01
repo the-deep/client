@@ -2402,21 +2402,24 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@the-deep/deep-ui@^1.5.12":
-  version "1.5.12"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.12.tgz#685db5ecaaf75cb62ab9b1ab95a4a949ece6dd1b"
-  integrity sha512-d6nCv/9giCoLtIZUUPe8doGcwIhBM8U6LTkOIx3xd9iUdhnP8gICb7d7Ka9rI71fRiBdN5Sj2QLT99Qv9zNjHg==
+"@the-deep/deep-ui@^1.5.14-beta.0":
+  version "1.5.14-beta.0"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.14-beta.0.tgz#caaf9fbc85577137cac53fb7ef56df0711a1a1c4"
+  integrity sha512-75mysHDqfXCTMkFAvPkobffDg73iQcT1nExgejxJ+WSRENenm5O21wxM4/nbCyG2kzRjd2MUPJjlkk7XKc7iSg==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
     "@togglecorp/fujs" "^1.9.2-beta.0"
     "@types/react-color" "^3.0.5"
     "@types/requestidlecallback" "^0.3.1"
+    "@types/svg-injector" "^0.0.29"
     d3-shape "^2.1.0"
     react-color "^2.19.3"
     react-icons "^4.2.0"
+    react-textarea-autosize "^8.3.3"
     react-zoom-pan-pinch "^1.6.1"
     resize-observer-polyfill "^1.5.1"
+    svg-injector "^1.1.3"
 
 "@togglecorp/fujs@^1.8.0":
   version "1.9.1"
@@ -2448,10 +2451,10 @@
     immer "^7.0.5"
     resize-observer-polyfill "^1.5.1"
 
-"@togglecorp/toggle-form@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@togglecorp/toggle-form/-/toggle-form-1.2.1.tgz#43145c3e61bf910916edb73fd735eb2dd5cdbef6"
-  integrity sha512-YzjbiC2+E6aZOb2T57bkhcTG7Iq03dn53Yw/Ve2k/rBY6BNLLrFJaePbfAXe5on7rO+57/RVkqpO46FTFAjfRw==
+"@togglecorp/toggle-form@^1.2.2-beta.2":
+  version "1.2.2-beta.2"
+  resolved "https://registry.yarnpkg.com/@togglecorp/toggle-form/-/toggle-form-1.2.2-beta.2.tgz#904bc7b540d4dd5e532497b64d838ded4edd32cb"
+  integrity sha512-9mK+lu7ZBruIcGE9AWmHyUIF8u1uyTzdTyRNskvSGiuymm2JkVhZeZJUy0b3uTzVkpRBbfHIP6ackAn6hYpDSw==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
@@ -9924,6 +9927,15 @@ react-smooth@^2.0.0:
     raf "^3.4.0"
     react-transition-group "2.9.0"
 
+react-textarea-autosize@^8.3.3:
+  version "8.3.3"
+  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-8.3.3.tgz#f70913945369da453fd554c168f6baacd1fa04d8"
+  integrity sha512-2XlHXK2TDxS6vbQaoPbMOfQ8GK7+irc2fVK6QFIcC8GOnH3zI/v481n+j1L0WaPVvKxwesnY93fEfH++sus2rQ==
+  dependencies:
+    "@babel/runtime" "^7.10.2"
+    use-composed-ref "^1.0.0"
+    use-latest "^1.0.0"
+
 react-transition-group@2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.9.0.tgz#df9cdb025796211151a436c69a8f3b97b5b07c8d"
@@ -11540,6 +11552,11 @@ ts-dedent@^2.0.0:
   resolved "https://registry.yarnpkg.com/ts-dedent/-/ts-dedent-2.1.1.tgz#6dd56870bb5493895171334fa5d7e929107e5bbc"
   integrity sha512-riHuwnzAUCfdIeTBNUq7+Yj+ANnrMXo/7+Z74dIdudS7ys2k8aSGMzpJRMFDF7CLwUTbtvi1ZZff/Wl+XxmqIA==
 
+ts-essentials@^2.0.3:
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-2.0.12.tgz#c9303f3d74f75fa7528c3d49b80e089ab09d8745"
+  integrity sha512-3IVX4nI6B5cc31/GFFE+i8ey/N2eA0CZDbo6n0yrz0zDX8ZJ8djmU1p+XRz7G3is0F3bB3pu2pAroFdAWQKU3w==
+
 ts-invariant@^0.3.2:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/ts-invariant/-/ts-invariant-0.3.3.tgz#b5742b1885ecf9e29c31a750307480f045ec0b16"
@@ -11855,6 +11872,25 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-composed-ref@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/use-composed-ref/-/use-composed-ref-1.1.0.tgz#9220e4e94a97b7b02d7d27eaeab0b37034438bbc"
+  integrity sha512-my1lNHGWsSDAhhVAT4MKs6IjBUtG6ZG11uUqexPH9PptiIZDQOzaF4f5tEbJ2+7qvNbtXNBbU3SfmN+fXlWDhg==
+  dependencies:
+    ts-essentials "^2.0.3"
+
+use-isomorphic-layout-effect@^1.0.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.1.tgz#7bb6589170cd2987a152042f9084f9effb75c225"
+  integrity sha512-L7Evj8FGcwo/wpbv/qvSfrkHFtOpCzvM5yl2KVyDJoylVuSvzphiiasmjgQPttIGBAy2WKiBNR98q8w7PiNgKQ==
+
+use-latest@^1.0.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-latest/-/use-latest-1.2.0.tgz#a44f6572b8288e0972ec411bdd0840ada366f232"
+  integrity sha512-d2TEuG6nSLKQLAfW3By8mKr8HurOlTkul0sOpxbClIv4SQ4iOd7BYr7VIzdbktUCnv7dua/60xzd8igMU6jmyw==
+  dependencies:
+    use-isomorphic-layout-effect "^1.0.0"
 
 use@^3.1.0:
   version "3.1.1"

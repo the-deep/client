@@ -4,6 +4,7 @@
 
     .comment-count {
         position: absolute;
+        /* NOTE: Want to move this a bit up */
         top: -1em;
         right: 0;
         border-radius: 1em;

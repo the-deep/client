@@ -261,7 +261,7 @@ function RegionCard(props: Props) {
             name={region.id.toString()}
             className={_cs(className, styles.region)}
             heading={region.title}
-            contentAlwaysMounted={false}
+            alwaysMountedContent={false}
             expanded={isExpanded}
             withoutBorder
             disabled={navigationDisabled}

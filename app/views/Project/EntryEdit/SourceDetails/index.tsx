@@ -38,8 +38,7 @@ interface Props {
     pending: boolean;
     leadValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
-    setValue: (value: SetBaseValueArg<PartialFormType>) => void;
-    setPristine: (value: boolean) => void;
+    setValue: (value: SetBaseValueArg<PartialFormType>, reset?: boolean) => void;
     defaultValue: PartialFormType;
     projectId: string;
     disabled?: boolean;
@@ -64,7 +63,6 @@ function SourceDetails(props: Props) {
         leadValue,
         defaultValue,
         setValue,
-        setPristine,
         leadFormError,
         pending,
         projectId,
@@ -90,9 +88,8 @@ function SourceDetails(props: Props) {
     );
 
     const handleLeadChange = useCallback((newValue: SetBaseValueArg<PartialFormType>) => {
-        setValue(newValue);
-        setPristine(false);
-    }, [setValue, setPristine]);
+        setValue(newValue, true);
+    }, [setValue]);
 
     return (
         <div className={_cs(className, styles.sourceDetails)}>

@@ -2,6 +2,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import {
     _cs,
     isNotDefined,
+    listToMap,
     isDefined,
     unique,
 } from '@togglecorp/fujs';
@@ -19,8 +20,16 @@ import {
 import {
     ProjectEntriesQuery,
     ProjectEntriesQueryVariables,
+    ProjectFrameworkForCardsQuery,
+    ProjectFrameworkForCardsQueryVariables,
 } from '#generated/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import {
+    CountMap,
+    CommentCountContext,
+    CommentCountContextInterface,
+} from '#components/entryReview/EntryCommentWrapper/CommentContext';
+
 import {
     PartialFormType as PartialFilterFormType,
     FormType as FilterFormType,
@@ -81,6 +90,7 @@ export const PROJECT_ENTRIES = gql`
                     entryType
                     droppedExcerpt
                     excerpt
+                    reviewCommentsCount
                     lead {
                         id
                         title
@@ -127,6 +137,15 @@ export const PROJECT_ENTRIES = gql`
                     }
                 }
             }
+        }
+    }
+`;
+
+export const PROJECT_FRAMEWORK = gql`
+    query ProjectFrameworkForCards(
+        $projectId: ID!,
+    ) {
+        project(id: $projectId) {
             analysisFramework {
                 primaryTagging {
                     widgets {
@@ -174,6 +193,16 @@ function SourcesGrid(props: Props) {
         filters: rawFilters,
     } = props;
 
+    const [
+        commentsCountMap,
+        setCommentsCountMap,
+    ] = useState<CountMap>({});
+
+    const commentCountContext: CommentCountContextInterface = useMemo(() => ({
+        commentsCountMap,
+        setCommentsCountMap,
+    }), [commentsCountMap]);
+
     const entriesFilter = useMemo(() => {
         const transformedFilters = getProjectSourcesQueryVariables(
             rawFilters as Omit<FilterFormType, 'projectId'>,
@@ -200,6 +229,13 @@ function SourcesGrid(props: Props) {
         [projectId, activePage, entriesFilter],
     );
 
+    const frameworkVariables = useMemo(
+        (): ProjectFrameworkForCardsQueryVariables | undefined => (
+            projectId ? ({ projectId }) : undefined
+        ),
+        [projectId],
+    );
+
     const {
         data: projectEntriesResponse,
         loading,
@@ -214,6 +250,13 @@ function SourcesGrid(props: Props) {
                 if (!projectFromResponse) {
                     return;
                 }
+                setCommentsCountMap(
+                    listToMap(
+                        projectFromResponse.entries?.results ?? [],
+                        (entry) => entry.id,
+                        (entry) => entry.reviewCommentsCount,
+                    ),
+                );
                 const geoData = projectFromResponse.entries?.results
                     ?.map((entry) => entry?.attributes)
                     .flat()
@@ -227,8 +270,19 @@ function SourcesGrid(props: Props) {
         },
     );
 
+    const {
+        data: projectFrameworkResponse,
+        loading: projectFrameworkLoading,
+    } = useQuery<ProjectFrameworkForCardsQuery, ProjectFrameworkForCardsQueryVariables>(
+        PROJECT_FRAMEWORK,
+        {
+            skip: isNotDefined(frameworkVariables),
+            variables: frameworkVariables,
+        },
+    );
+
     // eslint-disable-next-line max-len
-    const frameworkDetails = projectEntriesResponse?.project?.analysisFramework as Framework | undefined | null;
+    const frameworkDetails = projectFrameworkResponse?.project?.analysisFramework as Framework | undefined | null;
 
     const entriesResponse = projectEntriesResponse?.project?.entries;
 
@@ -277,14 +331,16 @@ function SourcesGrid(props: Props) {
                 />
             )}
         >
-            <ListView
-                className={_cs(styles.sourcesGrid, className)}
-                data={entries ?? undefined}
-                renderer={EntryCard}
-                rendererParams={entryRendererParams}
-                keySelector={entryKeySelector}
-                pending={loading}
-            />
+            <CommentCountContext.Provider value={commentCountContext}>
+                <ListView
+                    className={_cs(styles.sourcesGrid, className)}
+                    data={entries ?? undefined}
+                    renderer={EntryCard}
+                    rendererParams={entryRendererParams}
+                    keySelector={entryKeySelector}
+                    pending={loading || projectFrameworkLoading}
+                />
+            </CommentCountContext.Provider>
         </Container>
     );
 }

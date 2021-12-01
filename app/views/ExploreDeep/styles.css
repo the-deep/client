@@ -46,6 +46,7 @@
 
             .playback-framework-container {
                 display: flex;
+                flex-grow: 1;
                 gap: var(--dui-spacing-large);
 
                 .playback-card {

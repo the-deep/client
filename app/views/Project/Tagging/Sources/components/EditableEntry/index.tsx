@@ -41,7 +41,7 @@ import { Widget } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import routes from '#base/configs/routes';
 import EntryInput from '#components/entry/EntryInput';
-import EntryComments from '#components/entryReview/EntryComments';
+import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import EntryControl from '#components/entryReview/EntryControl';
 import EntryVerification from '#components/entryReview/EntryVerification';
 import ProjectContext from '#base/context/ProjectContext';
@@ -284,7 +284,6 @@ function EditableEntry(props: Props) {
     const entryInput = (
         <EntryInput
             name={undefined}
-            projectId={projectId}
             value={value}
             onChange={handleEntryChange}
             onAddButtonClick={handleAddButtonClick}
@@ -322,7 +321,7 @@ function EditableEntry(props: Props) {
     );
 
     const entryComments = (
-        <EntryComments
+        <EntryCommentWrapper
             // FIXME: Remove cast after entry comments
             // is switched to gql
             entryId={+entryId}

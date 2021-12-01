@@ -78,6 +78,7 @@ function transformLevelsColumnFirst(
 ): Level[] {
     const sectorFirstLevels = matrix2dProperties.columns.map((column) => {
         let sublevels: Level[] = [];
+        // NOTE: Subcolumns always is an empty list
         if (column.subColumns.length > 0) {
             sublevels = column.subColumns.map((subColumn) => {
                 const rows = matrix2dProperties.rows.map((row) => {

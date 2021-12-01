@@ -1,8 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 
 import EntryComments, { Props as EntryCommentsProps } from '#components/entryReview/EntryComments';
-
-import CommentCountContext from '../CommentContext';
+import CommentCountContext from '#components/entryReview/EntryCommentWrapper/CommentContext';
 
 function EntryCommentWrapper(props: EntryCommentsProps) {
     const {
