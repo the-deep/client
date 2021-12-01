@@ -26,6 +26,7 @@ import {
 import ExcerptInput from '#components/entry/ExcerptInput';
 
 import { PartialEntryType as EntryInput } from '../../schema';
+import EntryCommentWrapper from '../../EntryCommentWrapper';
 import { Entry } from '../../types';
 
 import styles from './styles.css';
@@ -96,16 +97,20 @@ interface EntryItemProps extends EntryInput {
     entryImage: Entry['image'];
     disableClick?: boolean;
     errored?: boolean;
+    projectId: string | undefined;
+    entryServerId: string | undefined;
 }
 
 function EntryItem(props: EntryItemProps) {
     const {
         className,
+        entryServerId,
         droppedExcerpt,
         entryId,
         excerpt,
         isActive,
         onClick,
+        projectId,
         onApproveButtonClick,
         onDiscardButtonClick,
         onExcerptChange,
@@ -149,6 +154,14 @@ function EntryItem(props: EntryItemProps) {
                 styles.taggedExcerpt,
                 className,
                 isActive && styles.active,
+            )}
+            headerActions={entryServerId && projectId && (
+                <EntryCommentWrapper
+                    // FIXME: Remove cast after entry comments
+                    // is switched to gql
+                    entryId={+entryServerId}
+                    projectId={projectId}
+                />
             )}
             footerIcons={(
                 <>

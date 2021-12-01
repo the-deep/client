@@ -76,8 +76,13 @@ import {
 
 import SourceDetails from './SourceDetails';
 import LeftPane from './LeftPane';
+import {
+    CommentCountContext,
+    CommentCountContextInterface,
+} from './CommentContext';
 
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
+import EntryCommentWrapper from './EntryCommentWrapper';
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
@@ -109,6 +114,16 @@ function EntryEdit(props: Props) {
     const { className } = props;
     const { project } = React.useContext(ProjectContext);
     const { leadId } = useParams<{ leadId: string }>();
+    const [
+        commentsCountMap,
+        setCommentsCountMap,
+    ] = useState<{ [key in string]: number } | undefined>(undefined);
+
+    const commentCountContext: CommentCountContextInterface = useMemo(() => ({
+        commentsCountMap,
+        setCommentsCountMap,
+    }), [commentsCountMap]);
+
     const projectId = project ? project.id : undefined;
 
     const [
@@ -839,6 +854,13 @@ function EntryEdit(props: Props) {
                     const entries = leadFromResponse.entries?.map(
                         (entry) => transformEntry(entry as Entry),
                     );
+                    setCommentsCountMap(
+                        listToMap(
+                            leadFromResponse.entries ?? [],
+                            (entry) => entry.id,
+                            (entry) => entry.reviewCommentsCount,
+                        ),
+                    );
                     const geoData = leadFromResponse.entries
                         ?.map((entry) => entry?.attributes)
                         .flat()
@@ -906,13 +928,21 @@ function EntryEdit(props: Props) {
         (entryId: string, datum: PartialEntryType, index: number) => ({
             value: datum,
             name: index,
+            projectId,
             index,
             onChange: handleEntryChange,
             secondaryTagging: frameworkDetails?.secondaryTagging,
             onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
+            excerptHeaderActions: datum.id && projectId && (
+                <EntryCommentWrapper
+                    // FIXME: Remove cast after entry comments
+                    // is switched to gql
+                    entryId={+datum.id}
+                    projectId={projectId}
+                />
+            ),
             leadId,
-            projectId,
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
@@ -1019,190 +1049,197 @@ function EntryEdit(props: Props) {
                         </Tab>
                     </TabList>
                 </SubNavbar>
-                <div className={styles.tabPanelContainer}>
-                    {loading && <PendingMessage />}
-                    <TabPanel
-                        className={styles.tabPanel}
-                        name="source-details"
-                    >
-                        {projectId && (
-                            <SourceDetails
-                                leadValue={leadValue}
-                                setValue={setLeadValue}
-                                setPristine={setLeadPristine}
-                                defaultValue={leadInitialValue}
-                                leadFormError={leadFormError}
-                                pending={loading}
-                                projectId={projectId}
-                                sourceOrganizationOptions={sourceOrganizationOptions}
-                                onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
-                                authorOrganizationOptions={authorOrganizationOptions}
-                                onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                                leadGroupOptions={leadGroupOptions}
-                                onLeadGroupOptionsChange={setLeadGroupOptions}
-                                assigneeOptions={projectUserOptions}
-                                onAssigneeOptionChange={setProjectUserOptions}
-                                attachment={lead?.attachment}
-                            />
-                        )}
-                    </TabPanel>
-                    <TabPanel
-                        className={styles.tabPanel}
-                        name="primary-tagging"
-                    >
-                        {frameworkDetails && (
-                            <div className={styles.primaryTagging}>
-                                <LeftPane
-                                    className={styles.sourcePreview}
-                                    entries={formValue.entries}
-                                    activeEntry={selectedEntry}
-                                    onEntryClick={handleEntryClick}
-                                    onEntryCreate={handleEntryCreate}
-                                    onApproveButtonClick={handleEntryChangeApprove}
-                                    onDiscardButtonClick={handleEntryChangeDiscard}
-                                    onEntryDelete={handleEntryDelete}
-                                    onEntryRestore={handleEntryRestore}
-                                    onExcerptChange={handleExcerptChange}
-                                    lead={lead}
-                                    leadId={leadId}
-                                    entryImagesMap={entryImagesMap}
-                                    isEntrySelectionActive={isEntrySelectionActive}
-                                    entriesError={entriesErrorStateMap}
-                                    // NOTE: If entry Id comes from state, we need to
-                                    // show entries tab as it always has the entry
-                                    defaultTab={!entryIdFromState ? 'entries' : undefined}
+                <CommentCountContext.Provider value={commentCountContext}>
+                    <div className={styles.tabPanelContainer}>
+                        {loading && <PendingMessage />}
+                        <TabPanel
+                            className={styles.tabPanel}
+                            name="source-details"
+                        >
+                            {projectId && (
+                                <SourceDetails
+                                    leadValue={leadValue}
+                                    setValue={setLeadValue}
+                                    setPristine={setLeadPristine}
+                                    defaultValue={leadInitialValue}
+                                    leadFormError={leadFormError}
+                                    pending={loading}
+                                    projectId={projectId}
+                                    sourceOrganizationOptions={sourceOrganizationOptions}
+                                    onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
+                                    authorOrganizationOptions={authorOrganizationOptions}
+                                    onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
+                                    leadGroupOptions={leadGroupOptions}
+                                    onLeadGroupOptionsChange={setLeadGroupOptions}
+                                    assigneeOptions={projectUserOptions}
+                                    onAssigneeOptionChange={setProjectUserOptions}
+                                    attachment={lead?.attachment}
                                 />
-                                <Container
-                                    className={_cs(className, styles.sections)}
-                                    headerActions={(
-                                        <FrameworkImageButton
-                                            frameworkId={frameworkDetails.id}
-                                            label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
-                                            variant="secondary"
-                                        />
-                                    )}
-                                    contentClassName={styles.content}
-                                >
-                                    <Tabs
-                                        value={selectedSection}
-                                        onChange={setSelectedSection}
-                                        variant="step"
+                            )}
+                        </TabPanel>
+                        <TabPanel
+                            className={styles.tabPanel}
+                            name="primary-tagging"
+                        >
+                            {frameworkDetails && (
+                                <div className={styles.primaryTagging}>
+                                    <LeftPane
+                                        className={styles.sourcePreview}
+                                        projectId={projectId}
+                                        entries={formValue.entries}
+                                        activeEntry={selectedEntry}
+                                        onEntryClick={handleEntryClick}
+                                        onEntryCreate={handleEntryCreate}
+                                        onApproveButtonClick={handleEntryChangeApprove}
+                                        onDiscardButtonClick={handleEntryChangeDiscard}
+                                        onEntryDelete={handleEntryDelete}
+                                        onEntryRestore={handleEntryRestore}
+                                        onExcerptChange={handleExcerptChange}
+                                        lead={lead}
+                                        leadId={leadId}
+                                        entryImagesMap={entryImagesMap}
+                                        isEntrySelectionActive={isEntrySelectionActive}
+                                        entriesError={entriesErrorStateMap}
+                                        // NOTE: If entry Id comes from state, we need to
+                                        // show entries tab as it always has the entry
+                                        defaultTab={!entryIdFromState ? 'entries' : undefined}
+                                    />
+                                    <Container
+                                        className={_cs(className, styles.sections)}
+                                        headerActions={(
+                                            <FrameworkImageButton
+                                                frameworkId={frameworkDetails.id}
+                                                label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                                                variant="secondary"
+                                            />
+                                        )}
+                                        contentClassName={styles.content}
                                     >
-                                        <TabList className={styles.tabs}>
+                                        <Tabs
+                                            value={selectedSection}
+                                            onChange={setSelectedSection}
+                                            variant="step"
+                                        >
+                                            <TabList className={styles.tabs}>
+                                                {frameworkDetails.primaryTagging?.map((section) => (
+                                                    <Tab
+                                                        key={section.clientId}
+                                                        name={section.clientId}
+                                                        borderWrapperClassName={
+                                                            styles.borderWrapper
+                                                        }
+                                                        className={_cs(
+                                                            styles.tab,
+                                                            // analyzeErrors(
+                                                            // error?.[section.clientId])
+                                                            // && styles.errored,
+                                                        )}
+                                                        title={section.tooltip ?? undefined}
+                                                    >
+                                                        {section.title}
+                                                    </Tab>
+                                                ))}
+                                            </TabList>
                                             {frameworkDetails.primaryTagging?.map((section) => (
-                                                <Tab
+                                                <TabPanel
                                                     key={section.clientId}
                                                     name={section.clientId}
-                                                    borderWrapperClassName={styles.borderWrapper}
-                                                    className={_cs(
-                                                        styles.tab,
-                                                        // analyzeErrors(error?.[section.clientId])
-                                                        // && styles.errored,
-                                                    )}
-                                                    title={section.tooltip ?? undefined}
+                                                    className={styles.panel}
                                                 >
-                                                    {section.title}
-                                                </Tab>
+                                                    <Section
+                                                        widgets={section.widgets}
+                                                        attributesMap={attributesMap}
+                                                        onAttributeChange={onAttributeChange}
+                                                        readOnly={!currentEntry}
+                                                        error={currentEntryError?.attributes}
+                                                        geoAreaOptions={geoAreaOptions}
+                                                        onGeoAreaOptionsChange={setGeoAreaOptions}
+                                                    />
+                                                </TabPanel>
                                             ))}
-                                        </TabList>
-                                        {frameworkDetails.primaryTagging?.map((section) => (
-                                            <TabPanel
-                                                key={section.clientId}
-                                                name={section.clientId}
-                                                className={styles.panel}
-                                            >
-                                                <Section
-                                                    widgets={section.widgets}
-                                                    attributesMap={attributesMap}
-                                                    onAttributeChange={onAttributeChange}
-                                                    readOnly={!currentEntry}
-                                                    error={currentEntryError?.attributes}
-                                                    geoAreaOptions={geoAreaOptions}
-                                                    onGeoAreaOptionsChange={setGeoAreaOptions}
-                                                />
-                                            </TabPanel>
-                                        ))}
-                                    </Tabs>
-                                </Container>
-                            </div>
-                        )}
-                    </TabPanel>
-                    <TabPanel
-                        className={styles.tabPanel}
-                        name="secondary-tagging"
-                    >
-                        {frameworkDetails && (
-                            <div className={styles.secondaryTagging}>
-                                <LeftPane
-                                    className={styles.sourcePreview}
-                                    entries={formValue.entries}
-                                    activeEntry={selectedEntry}
-                                    onEntryClick={handleEntryClick}
-                                    onEntryCreate={handleEntryCreate}
-                                    onEntryDelete={handleEntryDelete}
-                                    onEntryRestore={handleEntryRestore}
-                                    onExcerptChange={handleExcerptChange}
-                                    onApproveButtonClick={handleEntryChangeApprove}
-                                    onDiscardButtonClick={handleEntryChangeDiscard}
-                                    lead={lead}
-                                    leadId={leadId}
-                                    hideSimplifiedPreview
-                                    hideOriginalPreview
-                                    entryImagesMap={entryImagesMap}
-                                    isEntrySelectionActive={isEntrySelectionActive}
-                                    entriesError={entriesErrorStateMap}
-                                    defaultTab={!entryIdFromState ? 'entries' : undefined}
-                                />
+                                        </Tabs>
+                                    </Container>
+                                </div>
+                            )}
+                        </TabPanel>
+                        <TabPanel
+                            className={styles.tabPanel}
+                            name="secondary-tagging"
+                        >
+                            {frameworkDetails && (
+                                <div className={styles.secondaryTagging}>
+                                    <LeftPane
+                                        className={styles.sourcePreview}
+                                        projectId={projectId}
+                                        entries={formValue.entries}
+                                        activeEntry={selectedEntry}
+                                        onEntryClick={handleEntryClick}
+                                        onEntryCreate={handleEntryCreate}
+                                        onEntryDelete={handleEntryDelete}
+                                        onEntryRestore={handleEntryRestore}
+                                        onExcerptChange={handleExcerptChange}
+                                        onApproveButtonClick={handleEntryChangeApprove}
+                                        onDiscardButtonClick={handleEntryChangeDiscard}
+                                        lead={lead}
+                                        leadId={leadId}
+                                        hideSimplifiedPreview
+                                        hideOriginalPreview
+                                        entryImagesMap={entryImagesMap}
+                                        isEntrySelectionActive={isEntrySelectionActive}
+                                        entriesError={entriesErrorStateMap}
+                                        defaultTab={!entryIdFromState ? 'entries' : undefined}
+                                    />
+                                    <Container
+                                        className={styles.rightContainer}
+                                        contentClassName={styles.frameworkOutput}
+                                        headerActions={(
+                                            <FrameworkImageButton
+                                                frameworkId={frameworkDetails.id}
+                                                label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                                                variant="secondary"
+                                            />
+                                        )}
+                                    >
+                                        <Section
+                                            widgets={frameworkDetails.secondaryTagging}
+                                            attributesMap={attributesMap}
+                                            onAttributeChange={onAttributeChange}
+                                            readOnly={!currentEntry}
+                                            error={currentEntryError?.attributes}
+                                            geoAreaOptions={geoAreaOptions}
+                                            onGeoAreaOptionsChange={setGeoAreaOptions}
+                                        />
+                                    </Container>
+                                </div>
+                            )}
+                        </TabPanel>
+                        <TabPanel
+                            name="review"
+                            className={styles.tabPanel}
+                        >
+                            {frameworkDetails && (
                                 <Container
-                                    className={styles.rightContainer}
-                                    contentClassName={styles.frameworkOutput}
+                                    className={styles.review}
                                     headerActions={(
                                         <FrameworkImageButton
                                             frameworkId={frameworkDetails.id}
-                                            label={_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
+                                            label="View framework image for reference"
                                             variant="secondary"
                                         />
                                     )}
                                 >
-                                    <Section
-                                        widgets={frameworkDetails.secondaryTagging}
-                                        attributesMap={attributesMap}
-                                        onAttributeChange={onAttributeChange}
-                                        readOnly={!currentEntry}
-                                        error={currentEntryError?.attributes}
-                                        geoAreaOptions={geoAreaOptions}
-                                        onGeoAreaOptionsChange={setGeoAreaOptions}
+                                    <ListView
+                                        className={styles.entries}
+                                        keySelector={entryKeySelector}
+                                        renderer={EntryInput}
+                                        data={formValue.entries}
+                                        rendererParams={entryDataRendererParams}
                                     />
                                 </Container>
-                            </div>
-                        )}
-                    </TabPanel>
-                    <TabPanel
-                        name="review"
-                        className={styles.tabPanel}
-                    >
-                        {frameworkDetails && (
-                            <Container
-                                className={styles.review}
-                                headerActions={(
-                                    <FrameworkImageButton
-                                        frameworkId={frameworkDetails.id}
-                                        label="View framework image for reference"
-                                        variant="secondary"
-                                    />
-                                )}
-                            >
-                                <ListView
-                                    className={styles.entries}
-                                    keySelector={entryKeySelector}
-                                    renderer={EntryInput}
-                                    data={formValue.entries}
-                                    rendererParams={entryDataRendererParams}
-                                />
-                            </Container>
-                        )}
-                    </TabPanel>
-                </div>
+                            )}
+                        </TabPanel>
+                    </div>
+                </CommentCountContext.Provider>
             </Tabs>
         </div>
     );

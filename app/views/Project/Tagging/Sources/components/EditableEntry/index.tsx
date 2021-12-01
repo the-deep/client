@@ -284,6 +284,7 @@ function EditableEntry(props: Props) {
     const entryInput = (
         <EntryInput
             name={undefined}
+            projectId={projectId}
             value={value}
             onChange={handleEntryChange}
             onAddButtonClick={handleAddButtonClick}

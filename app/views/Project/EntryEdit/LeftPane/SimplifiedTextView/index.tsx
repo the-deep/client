@@ -31,6 +31,7 @@ interface Props {
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
     disableAddButton?: boolean;
+    projectId: string | undefined;
 }
 
 function SimplifiedTextView(props: Props) {
@@ -43,6 +44,7 @@ function SimplifiedTextView(props: Props) {
         activeEntryClientId,
         onExcerptClick,
         onApproveButtonClick,
+        projectId,
         onDiscardButtonClick,
         onEntryDelete,
         onEntryRestore,
@@ -74,6 +76,7 @@ function SimplifiedTextView(props: Props) {
                 droppedExcerpt: entry.droppedExcerpt,
                 entryType: entry.entryType,
                 lead: entry.lead,
+                entryServerId: entry.id,
                 clientId: entry.clientId,
                 deleted: entry.deleted,
             });
@@ -82,7 +85,10 @@ function SimplifiedTextView(props: Props) {
             .sort((a: Split, b: Split) => (
                 a.startIndex - b.startIndex
             )) ?? []
-    ), [text, entries]);
+    ), [
+        text,
+        entries,
+    ]);
 
     let children: React.ReactNode = null;
     if (!text || splits.length === 0) {
@@ -107,6 +113,8 @@ function SimplifiedTextView(props: Props) {
                         <EntryItem
                             className={styles.entry}
                             clientId={split.clientId}
+                            entryServerId={split.entryServerId}
+                            projectId={projectId}
                             lead={split.lead}
                             entryId={split.entryId}
                             onClick={onExcerptClick}

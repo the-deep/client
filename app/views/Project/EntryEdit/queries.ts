@@ -7,6 +7,7 @@ const ENTRY_FRAGMENT = gql`
         entryType
         droppedExcerpt
         excerpt
+        reviewCommentsCount
         attributes {
             clientId
             data
