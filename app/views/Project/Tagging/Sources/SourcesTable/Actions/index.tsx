@@ -65,6 +65,16 @@ function Actions<T extends string>(props: Props<T>) {
         hash: '#/primary-tagging',
     }), [projectId, id]);
 
+    const assessmentEditLink = useMemo(() => ({
+        pathname: generatePath(
+            routes.assessmentEdit.path,
+            {
+                projectId,
+                leadId: id,
+            },
+        ),
+    }), [projectId, id]);
+
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
     }, [onDeleteClick, id]);
@@ -143,7 +153,7 @@ function Actions<T extends string>(props: Props<T>) {
                         variant="secondary"
                         title="assessment"
                         disabled={disabled}
-                        to="#"
+                        to={assessmentEditLink}
                         icons={<IoAdd />}
                     >
                         Assessment
