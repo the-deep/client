@@ -413,6 +413,7 @@ function FrameworkDetail(props: Props) {
                                                     className={styles.panel}
                                                 >
                                                     <Section
+                                                        allWidgets={undefined}
                                                         widgets={section.widgets}
                                                         onAttributeChange={noop}
                                                         attributesMap={emptyObject}
@@ -437,6 +438,7 @@ function FrameworkDetail(props: Props) {
                         </TabPanel>
                         <TabPanel name="secondary">
                             <Section
+                                allWidgets={undefined}
                                 widgets={frameworkDetails?.secondaryTagging}
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}

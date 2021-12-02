@@ -240,13 +240,15 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
 
     const matrixPillars: MatrixPillar[] = React.useMemo(() => {
         const framework = projectWithFramework?.project?.analysisFramework;
-        const primaryWidgets = framework?.primaryTagging?.map((section) => section.widgets)
-            ?.flat().filter(isDefined);
-        const secondaryWidgets = framework?.secondaryTagging?.filter(isDefined);
-        const matrixItems = getMatrixPillars([
-            ...(primaryWidgets ?? []),
-            ...(secondaryWidgets ?? []),
-        ]);
+        const widgetsFromPrimary = framework?.primaryTagging?.flatMap(
+            (item) => (item.widgets ?? []),
+        ) ?? [];
+        const widgetsFromSecondary = framework?.secondaryTagging ?? [];
+        const allWidgets = [
+            ...widgetsFromPrimary,
+            ...widgetsFromSecondary,
+        ];
+        const matrixItems = getMatrixPillars(allWidgets);
         return flatten(matrixItems, (item) => item, childrenSelector)
             .filter((item) => isDefined(item.key));
     }, [projectWithFramework]);
