@@ -1,18 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
     _cs,
     isDefined,
     isNotDefined,
 } from '@togglecorp/fujs';
-import { IoShareSocialOutline } from 'react-icons/io5';
 import {
     PendingMessage,
     Kraken,
     Message,
-    Button,
     Container,
 } from '@the-deep/deep-ui';
-import { removeNull } from '@togglecorp/toggle-form';
 import {
     prepareUrlParams,
 } from '@togglecorp/toggle-request';
@@ -22,17 +19,14 @@ import {
 } from '@apollo/client';
 
 import ProjectContext from '#base/context/ProjectContext';
-import { useModalState } from '#hooks/stateManagement';
 import {
     ProjectVizQuery,
     ProjectVizQueryVariables,
 } from '#generated/types';
 
-import VisualizationShareModal from './VisualizationShareModal';
-
 import styles from './styles.css';
 
-const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz-entries/';
+const vizRendererUrl = process.env.REACT_APP_ASSESSMENT_VIZ_URL || 'https://the-deep.github.io/deepviz-assessmente/';
 
 const PROJECT_VIZ = gql`
     query ProjectViz($projectId: ID!) {
@@ -52,15 +46,13 @@ interface Props {
     className?: string;
 }
 
-function Dashboard(props: Props) {
+function AryDashboard(props: Props) {
     const {
         className,
     } = props;
 
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
-    const [publicUrl, setPublicUrl] = useState<string | undefined>();
-    const [publicShareEnabled, setPublicShareEnabled] = useState<boolean | undefined>();
 
     const variables = useMemo(() => (activeProject ? ({
         projectId: activeProject,
@@ -74,40 +66,19 @@ function Dashboard(props: Props) {
         {
             skip: !activeProject,
             variables,
-            onCompleted: (result) => {
-                const cleanResult = removeNull(result);
-                setPublicUrl(cleanResult?.project?.vizData?.publicUrl);
-                setPublicShareEnabled(cleanResult?.project?.vizData?.publicShare);
-            },
         },
     );
-
-    const [
-        isShareModalShown,
-        showShareModal,
-        hideShareModal,
-    ] = useModalState(false);
-
-    const status = data?.project?.vizData?.status;
-    const dataUrl = data?.project?.vizData?.dataUrl;
 
     const vizUrl = useMemo(() => (
         `${vizRendererUrl}?${prepareUrlParams({ dataUrl: data?.project?.vizData?.dataUrl })}`
     ), [data]);
 
+    const status = data?.project?.vizData?.status;
+    const dataUrl = data?.project?.vizData?.dataUrl;
+
     return (
         <Container
             className={_cs(styles.dashboard, className)}
-            headerClassName={styles.header}
-            headerActions={(publicUrl || project?.allowedPermissions.includes('UPDATE_PROJECT')) && (
-                <Button
-                    name={undefined}
-                    icons={(<IoShareSocialOutline />)}
-                    onClick={showShareModal}
-                >
-                    Share
-                </Button>
-            )}
             contentClassName={styles.content}
         >
             {loading && <PendingMessage />}
@@ -134,28 +105,17 @@ function Dashboard(props: Props) {
             {(status === 'PENDING' && isNotDefined(dataUrl)) && (
                 <Message
                     className={styles.message}
-                    message="DEEP is currently processing your data. Please check again later."
                     icon={(
                         <Kraken
                             variant="experiment"
                             size="large"
                         />
                     )}
-                />
-            )}
-            {isShareModalShown && activeProject && publicUrl && (
-                <VisualizationShareModal
-                    url={publicUrl}
-                    projectId={activeProject}
-                    publicShareEnabled={publicShareEnabled}
-                    onPublicShareEnabledChange={setPublicShareEnabled}
-                    onPublicUrlChange={setPublicUrl}
-                    onClose={hideShareModal}
-                    isAdmin={!!project?.allowedPermissions.includes('UPDATE_PROJECT')}
+                    message="DEEP is currently processing your data. Please check again later."
                 />
             )}
         </Container>
     );
 }
 
-export default Dashboard;
+export default AryDashboard;

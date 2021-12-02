@@ -317,6 +317,31 @@ const dashboard = wrap({
         return project.isVisualizationEnabled && project.isVisualizationAvailable;
     },
 });
+
+const aryDashboard = wrap({
+    parent: { path: taggingRoute.path },
+    path: '/ary-dashboard/',
+    title: 'Assessments Dashboard',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/AryDashboard')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        return (
+            project.isVisualizationEnabled
+            && project.isVisualizationAvailable
+            && project.hasAssessmentTemplate
+        );
+    },
+});
+
 const exportRoute = wrap({
     parent: { path: taggingRoute.path },
     path: '/export/',
@@ -350,6 +375,7 @@ const routes = {
     leadGroups,
     fourHundredFour,
     dashboard,
+    aryDashboard,
     export: exportRoute,
     entryEdit: entryEditRoute,
 };

@@ -104,6 +104,11 @@ function Tagging(props: Props) {
                     />
                     <SmartNavLink
                         exact
+                        route={routes.dashboard}
+                        className={styles.link}
+                    />
+                    <SmartNavLink
+                        exact
                         route={routes.leadGroups}
                         className={styles.link}
                     />
@@ -114,7 +119,7 @@ function Tagging(props: Props) {
                     />
                     <SmartNavLink
                         exact
-                        route={routes.dashboard}
+                        route={routes.aryDashboard}
                         className={styles.link}
                     />
                     <SmartNavLink
@@ -145,6 +150,12 @@ function Tagging(props: Props) {
                     <Route
                         exact
                         path={routes.dashboard.path}
+                    >
+                        {subNavbarComponents}
+                    </Route>
+                    <Route
+                        exact
+                        path={routes.aryDashboard.path}
                     >
                         {subNavbarComponents}
                     </Route>
@@ -193,6 +204,12 @@ function Tagging(props: Props) {
                             path={routes.dashboard.path}
                         >
                             {routes.dashboard.load({ className: styles.childView })}
+                        </Route>
+                        <Route
+                            exact
+                            path={routes.aryDashboard.path}
+                        >
+                            {routes.aryDashboard.load({ className: styles.childView })}
                         </Route>
                         <Route
                             exact
