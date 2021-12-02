@@ -190,7 +190,7 @@ function Canvas<T>(props: Props<T>) {
             // NOTE: when we start work on tagging page, we need to handle this
             // for preview page, we can skip this as the components are disabled any way
             // eslint-disable-next-line no-console
-            console.warn(`Trying to edit widget ${widgetName} from section ${name}`);
+            console.error(`Trying to edit widget ${widgetName} from section ${name}`);
         },
         [name],
     );

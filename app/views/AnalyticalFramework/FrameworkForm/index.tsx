@@ -422,13 +422,14 @@ function FrameworkForm(props: FrameworkFormProps) {
     }, [onStatsConfigChange]);
 
     const allWidgets = useMemo(() => {
-        const widgets = [
-            ...(value.primaryTagging?.map((d) => d.widgets)?.flat() ?? []),
-            ...(value.secondaryTagging ?? []),
+        const widgetsFromPrimary = value.primaryTagging?.flatMap(
+            (item) => (item.widgets ?? []),
+        ) ?? [];
+        const widgetsFromSecondary = value.secondaryTagging ?? [];
+        return [
+            ...widgetsFromPrimary,
+            ...widgetsFromSecondary,
         ];
-
-        const createdWidgets = widgets.filter(isDefined);
-        return createdWidgets;
     }, [value.primaryTagging, value.secondaryTagging]);
 
     const allParentWidget = useMemo(

@@ -6,6 +6,9 @@ import {
     mapToList,
 } from '@togglecorp/fujs';
 import {
+    PartialForm,
+} from '@togglecorp/toggle-form';
+import {
     // NOTE: Taking WidgetType instead of WidgetInputType
     WidgetType as WidgetRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
@@ -28,6 +31,10 @@ import {
     Matrix2dWidgetAttribute,
     OrganigramWidgetAttribute,
 } from './newEntry';
+
+type PartializeAttribute<T> = PartialForm<T, 'clientId' | 'widgetType' | 'widget' | 'data' | 'widgetVersion'>;
+
+type PartialWidgetAttribute = PartializeAttribute<WidgetAttribute>;
 
 export type Types = WidgetTypes;
 
@@ -781,7 +788,7 @@ function isSomeSelected<T>(options: T[], value: T[]) {
 
 function validateNumberCondition(
     condition: NumberCondition,
-    attribute: NumberWidgetAttribute | undefined,
+    attribute: PartializeAttribute<NumberWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -799,7 +806,7 @@ function validateNumberCondition(
 }
 function validateTextCondition(
     condition: TextCondition,
-    attribute: TextWidgetAttribute | undefined,
+    attribute: PartializeAttribute<TextWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value.toLowerCase();
     switch (condition.operator) {
@@ -817,7 +824,7 @@ function validateTextCondition(
 }
 function validateDateCondition(
     condition: DateCondition,
-    attribute: DateWidgetAttribute | undefined,
+    attribute: PartializeAttribute<DateWidgetAttribute> | undefined,
 ) {
     const value = convertDateStringToTimestamp(attribute?.data?.value);
     switch (condition.operator) {
@@ -835,7 +842,7 @@ function validateDateCondition(
 }
 function validateTimeCondition(
     condition: TimeCondition,
-    attribute: TimeWidgetAttribute | undefined,
+    attribute: PartializeAttribute<TimeWidgetAttribute> | undefined,
 ) {
     const value = convertTimeStringToSeconds(attribute?.data?.value);
     switch (condition.operator) {
@@ -853,7 +860,7 @@ function validateTimeCondition(
 }
 function validateDateRangeCondition(
     condition: DateRangeCondition,
-    attribute: DateRangeWidgetAttribute | undefined,
+    attribute: PartializeAttribute<DateRangeWidgetAttribute> | undefined,
 ) {
     const startValue = convertDateStringToTimestamp(attribute?.data?.value?.startDate);
     const endValue = convertDateStringToTimestamp(attribute?.data?.value?.endDate);
@@ -877,7 +884,7 @@ function validateDateRangeCondition(
 }
 function validateTimeRangeCondition(
     condition: TimeRangeCondition,
-    attribute: TimeRangeWidgetAttribute | undefined,
+    attribute: PartializeAttribute<TimeRangeWidgetAttribute> | undefined,
 ) {
     const startValue = convertTimeStringToSeconds(attribute?.data?.value?.startTime);
     const endValue = convertTimeStringToSeconds(attribute?.data?.value?.endTime);
@@ -901,7 +908,7 @@ function validateTimeRangeCondition(
 }
 function validateGeoLocationCondition(
     condition: GeoLocationCondition,
-    attribute: GeoLocationWidgetAttribute | undefined,
+    attribute: PartializeAttribute<GeoLocationWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -913,7 +920,7 @@ function validateGeoLocationCondition(
 }
 function validateScaleCondition(
     condition: ScaleCondition,
-    attribute: ScaleWidgetAttribute | undefined,
+    attribute: PartializeAttribute<ScaleWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -927,7 +934,7 @@ function validateScaleCondition(
 }
 function validateSingleSelectCondition(
     condition: SingleSelectCondition,
-    attribute: SingleSelectWidgetAttribute | undefined,
+    attribute: PartializeAttribute<SingleSelectWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -941,7 +948,7 @@ function validateSingleSelectCondition(
 }
 function validateMultiSelectCondition(
     condition: MultiSelectCondition,
-    attribute: MultiSelectWidgetAttribute | undefined,
+    attribute: PartializeAttribute<MultiSelectWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -959,7 +966,7 @@ function validateMultiSelectCondition(
 }
 function validateMatrix1dCondition(
     condition: Matrix1dCondition,
-    attribute: Matrix1dWidgetAttribute | undefined,
+    attribute: PartializeAttribute<Matrix1dWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -996,7 +1003,7 @@ function validateMatrix1dCondition(
 }
 function validateMatrix2dCondition(
     condition: Matrix2dCondition,
-    attribute: Matrix2dWidgetAttribute | undefined,
+    attribute: PartializeAttribute<Matrix2dWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -1066,7 +1073,7 @@ function validateMatrix2dCondition(
 }
 function validateOrganigramCondition(
     condition: OrganigramCondition,
-    attribute: OrganigramWidgetAttribute | undefined,
+    attribute: PartializeAttribute<OrganigramWidgetAttribute> | undefined,
 ) {
     const value = attribute?.data?.value;
     switch (condition.operator) {
@@ -1085,7 +1092,7 @@ function validateOrganigramCondition(
 
 function validateFirstCondition(
     conditional: Conditional,
-    attribute: WidgetAttribute | undefined,
+    attribute: PartialWidgetAttribute | undefined,
 ): boolean {
     // If there is no condition, the child widget is always valid
     if (!conditional.conditions[0]) {
@@ -1149,7 +1156,7 @@ function validateFirstCondition(
 
 function validateConditions(
     conditional: Conditional,
-    attribute: WidgetAttribute | undefined,
+    attribute: PartialWidgetAttribute | undefined,
 ): boolean {
     const firstConditionValue = validateFirstCondition(conditional, attribute);
     if (conditional.conditions.length <= 1) {
@@ -1174,10 +1181,10 @@ function validateConditions(
     }
 }
 
-export function filterWidgets(
+export function getHiddenWidgetIds(
     widgets: Widget[],
-    attributes: WidgetAttribute[],
-): Widget[] {
+    attributes: PartialWidgetAttribute[],
+) {
     /*
     const supportedWidgets = widgets.filter((widget) => {
         // Filter out un-supported widgets
@@ -1199,21 +1206,22 @@ export function filterWidgets(
     */
     const parentAttributes = listToMap(
         attributes,
-        (attribute) => attribute.widget, // FIXME: check if this is widget id
+        (attribute) => attribute.widget,
         (attribute) => attribute,
     );
 
-    return widgets.filter((widget) => {
+    const widgetsToHide = widgets.filter((widget) => {
         // All widgets without conditional are non-conditional widgets
         if (!widget.conditional) {
-            return true;
+            return false;
         }
+        // FIXME: make parentWidget mandatory
         // All conditional widgets should have parentId
         const parentId = widget.conditional.parentWidget;
         if (!parentId) {
-            return false;
+            return true;
         }
-        const value: WidgetAttribute | undefined = parentAttributes[parentId];
+        const value: PartialWidgetAttribute | undefined = parentAttributes[parentId];
         /*
         // All conditional widgets should have parentWidget
         const parentWidget = parentWidgets[parentId];
@@ -1227,6 +1235,12 @@ export function filterWidgets(
         }
        */
 
-        return validateConditions(widget.conditional, value);
+        return !validateConditions(widget.conditional, value);
     });
+
+    return listToMap(
+        widgetsToHide,
+        (item) => item.id,
+        () => true,
+    );
 }

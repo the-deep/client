@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useMemo } from 'react';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import { ListView } from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
+import { IoExtensionPuzzleOutline } from 'react-icons/io5';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
-import { Widget } from '#types/newAnalyticalFramework';
+import { Widget, getHiddenWidgetIds } from '#types/newAnalyticalFramework';
 import AttributeInput, { Props as AttributeInputProps } from '#components/framework/AttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 
@@ -15,6 +16,9 @@ const widgetKeySelector = (d: Widget) => d.clientId;
 type WidgetAttribute = NonNullable<PartialEntryType['attributes']>[number];
 
 interface Props {
+    // NOTE: if allWidgets is null/undefined/empty then the conditional widgets will be visible
+    allWidgets: Widget[] | undefined | null;
+
     widgets: Widget[] | undefined | null;
     onAttributeChange: (val: SetValueArg<WidgetAttribute>, index: number | undefined) => void;
     error: Error<WidgetAttribute[]> | undefined;
@@ -27,6 +31,7 @@ interface Props {
 
 function Section(props: Props) {
     const {
+        allWidgets,
         onAttributeChange,
         widgets,
         attributesMap,
@@ -36,6 +41,19 @@ function Section(props: Props) {
         geoAreaOptions,
         onGeoAreaOptionsChange,
     } = props;
+
+    const filteredWidgets = useMemo(
+        () => {
+            const hiddenWidgetIds = getHiddenWidgetIds(
+                allWidgets ?? [],
+                Object.values(attributesMap)
+                    .filter(isDefined)
+                    .map((item) => item.value),
+            );
+            return widgets?.filter((w) => !hiddenWidgetIds[w.id]);
+        },
+        [allWidgets, attributesMap, widgets],
+    );
 
     const error = getErrorObject(riskyError);
 
@@ -48,7 +66,12 @@ function Section(props: Props) {
             return {
                 className: _cs(
                     styles.widgetContainer,
-                    data?.width === 'HALF' && styles.halfWidget,
+                    data.width === 'HALF' && styles.halfWidget,
+                ),
+                icons: data.conditional && (
+                    <IoExtensionPuzzleOutline
+                        title="This is a child widget"
+                    />
                 ),
                 name: attribute?.index,
                 value: attribute?.value,
@@ -78,9 +101,9 @@ function Section(props: Props) {
             <ListView
                 className={_cs(
                     styles.section,
-                    (widgets?.length ?? 0) < 1 && styles.empty,
+                    (filteredWidgets?.length ?? 0) < 1 && styles.empty,
                 )}
-                data={widgets ?? undefined}
+                data={filteredWidgets}
                 keySelector={widgetKeySelector}
                 renderer={AttributeInput}
                 rendererParams={widgetRendererParams}
