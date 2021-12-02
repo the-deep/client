@@ -113,10 +113,15 @@ function EditableEntry(props: Props) {
 
     const schema = useMemo(
         () => {
+            const widgetsFromPrimary = primaryTagging?.flatMap(
+                (item) => (item.widgets ?? []),
+            ) ?? [];
+            const widgetsFromSecondary = secondaryTagging ?? [];
+
             const widgetsMapping = listToMap(
                 [
-                    ...(primaryTagging?.flatMap((item) => (item.widgets ?? [])) ?? []),
-                    ...(secondaryTagging ?? []),
+                    ...widgetsFromPrimary,
+                    ...widgetsFromSecondary,
                 ],
                 (item) => item.id,
                 (item) => item,

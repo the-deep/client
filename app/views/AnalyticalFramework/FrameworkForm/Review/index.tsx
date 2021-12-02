@@ -71,6 +71,7 @@ function Review(props: Props) {
                             name={section.clientId}
                         >
                             <Section
+                                allWidgets={undefined}
                                 widgets={section.widgets}
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}
@@ -88,6 +89,7 @@ function Review(props: Props) {
                 heading={_ts('analyticalFramework.review', 'secondaryTagging')}
             >
                 <Section
+                    allWidgets={undefined}
                     widgets={secondaryTagging}
                     onAttributeChange={noop}
                     attributesMap={emptyObject}

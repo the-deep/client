@@ -37,7 +37,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
-import { getWidgetVersion } from '#types/newAnalyticalFramework';
+import { getHiddenWidgetIds, getWidgetVersion } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
@@ -99,7 +99,6 @@ function transformEntry(entry: Entry): EntryInputType {
         ...entry,
         lead: entry.lead.id,
         image: entry.image?.id,
-        // FIXME: try to filter out un-necessary attributes
         attributes: entry.attributes?.map((attribute) => ({
             ...attribute,
             // NOTE: we don't need this on form
@@ -238,16 +237,32 @@ function EntryEdit(props: Props) {
     // eslint-disable-next-line max-len
     const frameworkDetails = frameworkData?.project?.analysisFramework as Framework | undefined | null;
 
-    // FIXME: memoize this
-    const widgetsMapping = listToMap(
-        [
-            ...(frameworkDetails?.primaryTagging?.flatMap((item) => (item.widgets ?? [])) ?? []),
-            ...(frameworkDetails?.secondaryTagging ?? []),
-        ],
-        (item) => item.id,
-        (item) => item,
+    const allWidgets = useMemo(
+        () => {
+            const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
+                (item) => (item.widgets ?? []),
+            ) ?? [];
+            const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
+            return [
+                ...widgetsFromPrimary,
+                ...widgetsFromSecondary,
+            ];
+        },
+        [frameworkDetails?.primaryTagging, frameworkDetails?.secondaryTagging],
     );
-    const schema = getSchema(widgetsMapping);
+
+    const schema = useMemo(
+        () => {
+            const widgetsMapping = listToMap(
+                allWidgets,
+                (item) => item.id,
+                (item) => item,
+            );
+
+            return getSchema(widgetsMapping);
+        },
+        [allWidgets],
+    );
 
     const {
         value: formValue,
@@ -570,18 +585,26 @@ function EntryEdit(props: Props) {
                             .filter(isDefined);
 
                         const transformedEntries = staleEntries
-                            .map((entry) => ({
-                                ...entry,
-                                deleted: undefined,
-                                stale: undefined,
-                                attributes: entry.attributes
-                                    ?.filter((attribute) => isDefined(attribute.data))
-                                    .map((attribute) => ({
-                                        ...attribute,
-                                        widgetVersion: attribute.widgetVersion,
-                                        widgetType: undefined,
-                                    })),
-                            }));
+                            .map((entry) => {
+                                const hiddenWidgetIds = getHiddenWidgetIds(
+                                    allWidgets,
+                                    entry.attributes ?? [],
+                                );
+
+                                return {
+                                    ...entry,
+                                    deleted: undefined,
+                                    stale: undefined,
+                                    attributes: entry.attributes
+                                        ?.filter((attribute) => isDefined(attribute.data))
+                                        .filter((attribute) => !hiddenWidgetIds[attribute.widget])
+                                        .map((attribute) => ({
+                                            ...attribute,
+                                            widgetVersion: attribute.widgetVersion,
+                                            widgetType: undefined,
+                                        })),
+                                };
+                            });
 
                         setIsFinalizeClicked(shouldSetFinalize);
                         bulkUpdateEntries({
@@ -608,6 +631,7 @@ function EntryEdit(props: Props) {
             projectId,
             alert,
             setFormValue,
+            allWidgets,
         ],
     );
 
@@ -673,15 +697,7 @@ function EntryEdit(props: Props) {
 
     const handleEntryCreate = useCallback(
         (newValue: PartialEntryType) => {
-            const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
-                (section) => section.widgets,
-            ).filter(isDefined) ?? [];
-            const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
-
-            const defaultAttributes = [
-                ...widgetsFromPrimary,
-                ...widgetsFromSecondary,
-            ].map((item) => {
+            const defaultAttributes = allWidgets.map((item) => {
                 let attr: PartialAttributeType | undefined;
                 const clientId = randomString();
                 const widget = item.id;
@@ -757,8 +773,7 @@ function EntryEdit(props: Props) {
         [
             setFormFieldValue,
             createRestorePoint,
-            frameworkDetails?.primaryTagging,
-            frameworkDetails?.secondaryTagging,
+            allWidgets,
         ],
     );
 
@@ -1178,6 +1193,7 @@ function EntryEdit(props: Props) {
                                                     className={styles.panel}
                                                 >
                                                     <Section
+                                                        allWidgets={allWidgets}
                                                         widgets={section.widgets}
                                                         attributesMap={attributesMap}
                                                         onAttributeChange={onAttributeChange}
@@ -1232,6 +1248,7 @@ function EntryEdit(props: Props) {
                                         )}
                                     >
                                         <Section
+                                            allWidgets={allWidgets}
                                             widgets={frameworkDetails.secondaryTagging}
                                             attributesMap={attributesMap}
                                             onAttributeChange={onAttributeChange}
