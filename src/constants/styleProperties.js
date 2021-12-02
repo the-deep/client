@@ -1,12 +1,18 @@
 import defaultColors from '#rsu/styles/default/colors';
 
+const colorAccent = '#1a3ed0';
+const colorBackgroundAccentHint = '#f6f6fa';
+
 const styleProperties = {
     colors: {
+        colorAccent,
+        colorBrand: '#00125b',
+        colorBackgroundAccentHint,
         colorSeparatorOnNavbar: defaultColors.colorSeparator,
         colorSeparatorHoverOnNavbar: defaultColors.colorSeparatorHover,
-        colorNavbarActiveMenuItemBorder: defaultColors.colorAccent,
-        colorNavbarActiveMenuItem: defaultColors.colorAccent,
-        colorNavbarMenuItemHover: defaultColors.colorAccent,
+        colorNavbarActiveMenuItemBorder: colorAccent,
+        colorNavbarActiveMenuItem: colorAccent,
+        colorNavbarMenuItemHover: colorAccent,
         colorBackgroundPrimaryHint: '#ecf3fa',
         colorHighlight: '#ffff8d',
         colorLink: '#187bcd',
@@ -18,7 +24,7 @@ const styleProperties = {
         colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
         colorBackgroundReadNotification: '#f5f5f5',
         colorBackgroundDangerHint: '#fffafa',
-        colorAccentOnHover: '#008975cc',
+        colorAccentOnHover: '#1a3ed0cc',
         colorBackgroundScrollbar: 'transparent',
 
         duiColorSurfaceInformational: '#f5f8fb',

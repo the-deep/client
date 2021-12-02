@@ -25,6 +25,7 @@ export const routes = {
         path: '/projects/:projectId/leads/:leadId/ary/edit/',
         loader: () => import('../views/EditAry'),
         links: allLinks,
+        hideNavbar: true,
     }, // _ts('pageTitle', 'editAry');
 
     editLeadGroupAssessment: {
@@ -33,6 +34,7 @@ export const routes = {
         path: '/projects/:projectId/lead-groups/:leadGroupId/ary/edit/',
         loader: () => import('../views/EditAry'),
         links: allLinks,
+        hideNavbar: true,
     }, // _ts('pageTitle', 'editLeadGroupAssessment');
 
 

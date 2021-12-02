@@ -54,32 +54,18 @@ body {
     h5 {
         margin: 0;
         text-transform: capitalize;
-        color: var(--color-primary);
+        color: var(--color-brand);
         font-family: var(--font-family-heading);
         font-weight: var(--font-weight-heading);
     }
 
     :global {
-        .navbar {
-            position: relative;
-            z-index: 1;
-            height: var(--height-navbar);
-
-            &.show-sub-navbar {
-                height: calc(var(--height-navbar) + var(--height-sub-navbar));
-            }
-        }
-
         .deep-main-content {
             position: relative;
             perspective: 1000px;
             background-color: var(--color-background);
-            height: calc(100vh - var(--height-navbar));
+            height: 100vh;
             overflow-y: auto;
-
-            &.show-sub-navbar {
-                height: calc(100vh - var(--height-navbar) - var(--height-sub-navbar));
-            }
         }
 
         .no-nav + .deep-main-content {

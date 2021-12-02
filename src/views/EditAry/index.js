@@ -465,9 +465,9 @@ export default class EditAry extends React.PureComponent {
                     headerClassName={styles.header}
                     header={
                         <React.Fragment>
-                            <h4 className={styles.heading}>
+                            <h3 className={styles.heading}>
                                 {title}
-                            </h4>
+                            </h3>
                             <div className={styles.actionButtons}>
                                 <DangerButton
                                     disabled={
