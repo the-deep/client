@@ -239,6 +239,7 @@ export interface Props <N extends string>{
     onChange: (value: Matrix2dValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
+    icons?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -256,6 +257,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -325,6 +327,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             childrenContainerClassName={styles.matrix}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError

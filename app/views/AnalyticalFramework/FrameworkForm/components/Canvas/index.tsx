@@ -9,6 +9,7 @@ import {
     IoCreateOutline,
     IoCopyOutline,
     IoTrashBinOutline,
+    IoExtensionPuzzleOutline,
 } from 'react-icons/io5';
 import { Error, getErrorObject, analyzeErrors } from '@togglecorp/toggle-form';
 
@@ -44,7 +45,7 @@ interface WidgetProps {
     disabled?: boolean;
 }
 
-function WidgetWrapper(props: WidgetProps) {
+function AttributeInputWrapper(props: WidgetProps) {
     const {
         widget,
         clientId,
@@ -63,7 +64,6 @@ function WidgetWrapper(props: WidgetProps) {
         disabled,
     } = props;
 
-    // TODO: style conditional widgets differently
     return (
         <AttributeInput<string>
             key={clientId}
@@ -75,6 +75,11 @@ function WidgetWrapper(props: WidgetProps) {
             error={undefined}
             geoAreaOptions={undefined}
             onGeoAreaOptionsChange={noop}
+            icons={widget.conditional && (
+                <IoExtensionPuzzleOutline
+                    title="This is a child widget"
+                />
+            )}
             actions={(
                 <>
                     {showWidgetEdit && (
@@ -268,10 +273,9 @@ function Canvas<T>(props: Props<T>) {
         className: _cs(
             styles.widgetContainer,
             analyzeErrors(error?.[key]) && styles.errored,
-            (isSecondary && data?.width === 'HALF') && styles.halfWidget,
+            data?.width === 'HALF' && styles.halfWidget,
         ),
     }), [
-        isSecondary,
         error,
     ]);
 
@@ -287,7 +291,7 @@ function Canvas<T>(props: Props<T>) {
                     name="widgets"
                     data={props.widgets}
                     keySelector={partialWidgetKeySelector}
-                    renderer={WidgetWrapper}
+                    renderer={AttributeInputWrapper}
                     direction="rect"
                     rendererParams={widgetRendererParams}
                     itemContainerParams={itemContainerParams}
@@ -308,7 +312,7 @@ function Canvas<T>(props: Props<T>) {
                 // eslint-disable-next-line react/destructuring-assignment
                 data={props.widgets}
                 keySelector={widgetKeySelector}
-                renderer={WidgetWrapper}
+                renderer={AttributeInputWrapper}
                 direction="rect"
                 rendererParams={widgetRendererParams}
                 itemContainerParams={itemContainerParams}

@@ -37,6 +37,8 @@ interface Props<K extends string> {
     className?: string;
     frameworkId: number | undefined;
 
+    allWidgets: WidgetsType | undefined;
+
     name: K;
     value: WidgetsType | undefined;
     onChange: (value: SetValueArg<WidgetsType | undefined>, name: K) => void;
@@ -49,6 +51,8 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
     const {
         className,
         frameworkId,
+
+        allWidgets,
 
         value: widgetsFromProps = [],
         onChange: setWidgetsFromProps,
@@ -210,15 +214,12 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         onTempStateChange(widgetsState.editMode);
     }, [widgetsState.editMode, onTempStateChange]);
 
-    // NOTE: filtering out child widgets, unsaved widgets and self
-    // TODO: move child widget after parent
+    // NOTE: filtering out self
     const parentWidgets = useMemo(
-        () => widgets.filter((widget) => (
-            widget.id
-            && !widget.conditional
-            && (!conditional || widget.clientId !== conditional.widgetId)
-        )),
-        [widgets, conditional],
+        () => allWidgets?.filter((widget) => (
+            !conditional || widget.clientId !== conditional.widgetId
+        )) ?? [],
+        [allWidgets, conditional],
     );
 
     return (
