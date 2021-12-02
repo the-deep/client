@@ -3,4 +3,8 @@
     flex-direction: column;
     background-color: var(--dui-color-foreground);
     overflow-y: auto;
+
+    .header {
+        align-items: center;
+    }
 }

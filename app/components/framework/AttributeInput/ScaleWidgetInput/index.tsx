@@ -37,6 +37,7 @@ export interface Props<N extends string>{
     onChange: (value: ScaleValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
+    icons?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -51,6 +52,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         value,
         onChange: onChangeFromProps,
         actions,
+        icons,
         widget,
         disabled,
         readOnly,
@@ -79,6 +81,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError

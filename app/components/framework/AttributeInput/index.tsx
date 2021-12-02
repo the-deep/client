@@ -72,6 +72,7 @@ export interface Props<N extends string | number | undefined> {
     readOnly?: boolean;
     disabled?: boolean;
     actions?: React.ReactNode;
+    icons?: React.ReactNode;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
@@ -87,6 +88,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
         readOnly,
         disabled,
         actions,
+        icons,
         error: riskyError,
 
         geoAreaOptions,
@@ -126,6 +128,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -141,6 +144,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -156,6 +160,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -171,6 +176,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -186,6 +192,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -201,6 +208,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -216,6 +224,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -232,6 +241,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -248,6 +258,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -264,6 +275,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -280,6 +292,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -297,6 +310,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 disabled={disabled}
                 widget={widget}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -313,6 +327,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 disabled={disabled}
                 widget={widget}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
@@ -324,6 +339,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 className={className}
                 title={widget.title}
                 actions={actions}
+                icons={icons}
                 error={error?.data}
                 disabled={disabled}
                 readOnly={readOnly}

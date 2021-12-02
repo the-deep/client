@@ -23,6 +23,7 @@ export interface Props <N extends string>{
         name: N,
     ) => void,
     actions?: React.ReactNode,
+    icons?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 }
@@ -37,6 +38,7 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -66,6 +68,7 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             childrenContainerClassName={styles.content}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError

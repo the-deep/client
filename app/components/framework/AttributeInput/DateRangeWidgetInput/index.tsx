@@ -22,6 +22,7 @@ export interface Props <N extends string>{
     error: Error<DateRangeValue> | undefined;
     onChange: (value: DateRangeValue | undefined, name: N) => void,
     actions?: React.ReactNode,
+    icons?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 }
@@ -36,6 +37,7 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -66,6 +68,7 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             childrenContainerClassName={styles.content}
             error={error}
             actions={actions}
+            icons={icons}
         >
             <NonFieldError
                 error={error}

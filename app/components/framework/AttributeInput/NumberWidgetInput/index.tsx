@@ -19,6 +19,7 @@ export interface Props <N extends string>{
     onChange: (value: NumberValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
+    icons?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 }
@@ -33,6 +34,7 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -54,6 +56,7 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError

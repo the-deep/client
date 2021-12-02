@@ -25,6 +25,7 @@ export interface Props <N extends string>{
     onChange: (value: OrganigramValue | undefined, name: N) => void;
 
     actions?: React.ReactNode;
+    icons?: React.ReactNode;
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -38,6 +39,7 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         name,
         value,
         actions,
+        icons,
         onChange: onChangeFromProps,
         widget,
         disabled,
@@ -63,6 +65,7 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError error={error} />
