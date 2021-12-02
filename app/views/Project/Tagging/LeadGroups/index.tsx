@@ -42,6 +42,7 @@ const ASSESSMENT_LIST = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             leadGroups (
                 search: $search,
                 createdAtLte: $endDate,

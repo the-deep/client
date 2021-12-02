@@ -46,7 +46,6 @@ type EntriesFilterDataSchema = ObjectSchema<PartialEntriesFilterDataType, Partia
 type EntriesFilterDataFields = ReturnType<EntriesFilterDataSchema['fields']>;
 const entriesFilterDataSchema: EntriesFilterDataSchema = {
     fields: (): EntriesFilterDataFields => ({
-        commentStatus: [],
         controlled: [],
         createdAtGte: [],
         createdAtLte: [],

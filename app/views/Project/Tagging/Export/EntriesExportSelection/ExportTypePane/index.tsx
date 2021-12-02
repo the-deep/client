@@ -1,8 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
-import { IoInformationCircleOutline } from 'react-icons/io5';
 import {
     Checkbox,
     List,
+    Card,
     ExpandableContainer,
     Container,
     ContainerCard,
@@ -192,12 +192,10 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                         className={styles.checkbox}
                     />
                 </div>
-                <div>
+                <div className={styles.selections}>
                     {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
-                        <>
-                            <Heading
-                                size="extraSmall"
-                            >
+                        <div className={styles.selectionContainer}>
+                            <Heading size="extraSmall">
                                 Contextual Widgets
                             </Heading>
                             <TreeSelection
@@ -206,13 +204,11 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                                 onChange={onSetContextualWidgets}
                                 direction="vertical"
                             />
-                        </>
+                        </div>
                     )}
                     {textWidgets.length > 0 && (
-                        <>
-                            <Heading
-                                size="extraSmall"
-                            >
+                        <div className={styles.selectionContainer}>
+                            <Heading size="extraSmall">
                                 Free Text Widgets
                             </Heading>
                             <TreeSelection
@@ -221,7 +217,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                                 onChange={onSetTextWidgets}
                                 direction="vertical"
                             />
-                        </>
+                        </div>
                     )}
                 </div>
             </ContainerCard>
@@ -271,23 +267,18 @@ function RenderExcelOptions(props: RenderExcelProps) {
     } = props;
 
     return (
-        <>
+        <Card className={styles.excelOptions}>
             <Checkbox
                 name="excelDecoupled"
                 label={_ts('export', 'decoupledEntriesLabel')}
                 value={excelDecoupled}
                 onChange={onExcelDecoupledChange}
             />
-            <div
-                key="info"
-            >
-                <IoInformationCircleOutline />
-                <div>
-                    <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
-                    <p>{_ts('export', 'decoupledEntriesTitle')}</p>
-                </div>
+            <div key="info">
+                <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
+                <p>{_ts('export', 'decoupledEntriesTitle')}</p>
             </div>
-        </>
+        </Card>
     );
 }
 
@@ -350,48 +341,45 @@ function ExportTypePane(props: Props) {
                     keySelector={exportTypeKeyExtractor}
                 />
             </Container>
-            <ExpandableContainer
-                className={styles.advanced}
-                headerClassName={styles.header}
-                spacing="compact"
-                headingSize="extraSmall"
-                heading="Advanced"
-            >
-                {(activeExportFormat === 'DOCX' || activeExportFormat === 'PDF') && (
-                    <RenderWordPdfOptions
-                        includeSubSector={includeSubSector}
-                        onIncludeSubSectorChange={onIncludeSubSectorChange}
-                        onReportStructureChange={onReportStructureChange}
-                        onReportStructureVariantChange={onReportStructureVariantChange}
-                        onReportShowGroupsChange={onReportShowGroupsChange}
-                        onReportShowLeadEntryIdChange={onReportShowLeadEntryIdChange}
-                        onReportShowAssessmentDataChange={onReportShowAssessmentDataChange}
-                        onReportShowEntryWidgetDataChange={onReportShowEntryWidgetDataChange}
-                        showMatrix2dOptions={showMatrix2dOptions}
-                        reportStructure={reportStructure}
-                        reportStructureVariant={reportStructureVariant}
-                        reportShowGroups={reportShowGroups}
-                        reportShowLeadEntryId={reportShowLeadEntryId}
-                        reportShowAssessmentData={reportShowAssessmentData}
-                        reportShowEntryWidgetData={reportShowEntryWidgetData}
-                        contextualWidgets={contextualWidgets}
-                        onSetContextualWidgets={onSetContextualWidgets}
-                        textWidgets={textWidgets}
-                        onSetTextWidgets={onSetTextWidgets}
-                    />
-                )}
-                {activeExportFormat === 'XLSX' && (
-                    <RenderExcelOptions
-                        excelDecoupled={excelDecoupled}
-                        onExcelDecoupledChange={onExcelDecoupledChange}
-                    />
-                )}
-                {activeExportFormat === 'JSON' && (
-                    <p>
-                        { _ts('export', 'noOptionsAvailable') }
-                    </p>
-                )}
-            </ExpandableContainer>
+            {activeExportFormat !== 'JSON' && (
+                <ExpandableContainer
+                    className={styles.advanced}
+                    headerClassName={styles.header}
+                    spacing="compact"
+                    headingSize="extraSmall"
+                    heading="Advanced"
+                >
+                    {(activeExportFormat === 'DOCX' || activeExportFormat === 'PDF') && (
+                        <RenderWordPdfOptions
+                            includeSubSector={includeSubSector}
+                            onIncludeSubSectorChange={onIncludeSubSectorChange}
+                            onReportStructureChange={onReportStructureChange}
+                            onReportStructureVariantChange={onReportStructureVariantChange}
+                            onReportShowGroupsChange={onReportShowGroupsChange}
+                            onReportShowLeadEntryIdChange={onReportShowLeadEntryIdChange}
+                            onReportShowAssessmentDataChange={onReportShowAssessmentDataChange}
+                            onReportShowEntryWidgetDataChange={onReportShowEntryWidgetDataChange}
+                            showMatrix2dOptions={showMatrix2dOptions}
+                            reportStructure={reportStructure}
+                            reportStructureVariant={reportStructureVariant}
+                            reportShowGroups={reportShowGroups}
+                            reportShowLeadEntryId={reportShowLeadEntryId}
+                            reportShowAssessmentData={reportShowAssessmentData}
+                            reportShowEntryWidgetData={reportShowEntryWidgetData}
+                            contextualWidgets={contextualWidgets}
+                            onSetContextualWidgets={onSetContextualWidgets}
+                            textWidgets={textWidgets}
+                            onSetTextWidgets={onSetTextWidgets}
+                        />
+                    )}
+                    {activeExportFormat === 'XLSX' && (
+                        <RenderExcelOptions
+                            excelDecoupled={excelDecoupled}
+                            onExcelDecoupledChange={onExcelDecoupledChange}
+                        />
+                    )}
+                </ExpandableContainer>
+            )}
         </section>
     );
 }

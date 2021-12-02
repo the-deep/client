@@ -37,6 +37,7 @@ const GEOAREAS = gql`
         $ids: [ID!],
     ) {
         project(id: $projectId) {
+            id
             geoAreas(ids: $ids) {
                 results {
                     adminLevelTitle
@@ -52,6 +53,7 @@ const GEOAREAS = gql`
 const PROJECT_REGIONS = gql`
     query ProjectRegions($projectId: ID!) {
         project(id: $projectId) {
+            id
             regions {
                 title
                 id

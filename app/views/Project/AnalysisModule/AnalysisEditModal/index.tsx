@@ -58,6 +58,7 @@ import styles from './styles.css';
 const FRAMEWORK_DETAILS_FOR_ANALYSIS = gql`
     query FrameworkDetailsForAnalysis($projectId: ID!) {
         project(id: $projectId) {
+            id
             analysisFramework {
                 id
                 primaryTagging {

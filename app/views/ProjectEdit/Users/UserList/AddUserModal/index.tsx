@@ -80,6 +80,7 @@ const USER_BADGE_OPTIONS = gql`
 const PROJECT_MEMBERSHIP_BULK = gql`
     mutation ProjectMembershipBulkUpdate($projectId:ID!, $items: [BulkProjectMembershipInputType!]) {
         project(id: $projectId) {
+            id
             projectUserMembershipBulk(items: $items) {
                 errors
                 result {

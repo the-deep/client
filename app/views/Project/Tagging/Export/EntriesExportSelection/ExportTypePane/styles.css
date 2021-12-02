@@ -5,6 +5,7 @@
     .export-types-container {
         display: flex;
         background-color: var(--dui-color-foreground);
+        color: var(--dui-color-accent);
 
         .content {
             display: flex;
@@ -41,6 +42,18 @@
 
             .metadata-content {
                 display: flex;
+
+                .selections {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-medium);
+
+                    .selection-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: var(--dui-spacing-small);
+                    }
+                }
             }
         }
 
@@ -58,6 +71,10 @@
                     padding: var(--dui-spacing-extra-small);
                 }
             }
+        }
+
+        .excel-options {
+            background-color: var(--dui-color-background-information);
         }
     }
 }

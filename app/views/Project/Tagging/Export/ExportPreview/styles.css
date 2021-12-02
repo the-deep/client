@@ -18,10 +18,10 @@
         background-color: var(--dui-color-foreground);
 
         .label {
-            display: flex;
-            align-self: center;
+            margin: auto;
+            text-align: center;
             color: var(--dui-color-text-label);
-            font-size: var(--dui-font-size-medium);
+            font-size: var(--dui-font-size-large);
         }
 
         .lead-preview {

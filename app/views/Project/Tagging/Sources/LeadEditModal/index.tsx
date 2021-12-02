@@ -58,6 +58,7 @@ const LEAD_OPTIONS = gql`
 const PROJECT_LEAD = gql`
     query ProjectLead($projectId: ID!, $leadId: ID!) {
         project(id: $projectId) {
+            id
             lead (id: $leadId) {
                 id
                 title
@@ -187,6 +188,7 @@ const LEAD_UPDATE = gql`
         $leadId: ID!,
     ) {
         project(id: $projectId) {
+            id
             leadUpdate(id: $leadId, data: $data) {
                 ok
                 errors
@@ -205,6 +207,7 @@ const LEAD_CREATE = gql`
         $data: LeadInputType!,
     ) {
         project(id: $projectId) {
+            id
             leadCreate(data: $data) {
                 ok
                 errors

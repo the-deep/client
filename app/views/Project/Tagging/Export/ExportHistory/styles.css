@@ -1,5 +1,6 @@
 .export-history-container {
     display: flex;
+    flex-grow: 1;
     background-color: var(--dui-color-foreground);
 
     .header-icons {
@@ -9,17 +10,37 @@
 
     .content {
         display: flex;
+        flex-grow: 1;
         gap: var(--dui-spacing-small);
 
-        .table {
+        .table-view {
             display: flex;
+            position: relative;
+            align-items: center;
             flex-basis: 70%;
             flex-direction: column;
+            flex-grow: 1;
             overflow-y: auto;
 
             .icons {
                 display: flex;
                 font-size: var(--dui-font-size-super-large);
+
+                .word {
+                    color: #185abd;
+                }
+
+                .pdf {
+                    color: #F40F02;
+                }
+
+                .excel {
+                    color: #107a40;
+                }
+
+                .json {
+                    color: var(--dui-color-accent);
+                }
             }
 
             .status {
@@ -54,8 +75,10 @@
                 }
 
                 .label {
-                    display: flex;
-                    justify-content: center;
+                    margin: auto;
+                    text-align: center;
+                    color: var(--dui-color-text-label);
+                    font-size: var(--dui-font-size-large);
                 }
             }
         }

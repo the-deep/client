@@ -55,7 +55,6 @@ export const PROJECT_ENTRIES = gql`
         $pageSize: Int,
         $search: String,
         $authoringOrganizationTypes: [ID!],
-        $commentStatus: EntryFilterCommentStatusEnum,
         $controlled: Boolean,
         $createdAtGte: DateTime,
         $createdAtLte: DateTime,
@@ -70,12 +69,12 @@ export const PROJECT_ENTRIES = gql`
         $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
+            id
             entries(
                 page: $page,
                 pageSize: $pageSize,
                 search: $search,
                 authoringOrganizationTypes: $authoringOrganizationTypes,
-                commentStatus: $commentStatus,
                 controlled: $controlled,
                 createdAtGte: $createdAtGte,
                 createdAtLte: $createdAtLte,
@@ -153,6 +152,7 @@ export const PROJECT_FRAMEWORK = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             analysisFramework {
                 primaryTagging {
                     widgets {

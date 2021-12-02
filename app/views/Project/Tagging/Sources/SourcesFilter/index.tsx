@@ -83,7 +83,9 @@ const SOURCE_FILTER_OPTIONS = gql`
             }
         }
         project(id: $projectId) {
+            id
             analysisFramework {
+                id
                 filters {
                     id
                     filterType
@@ -93,7 +95,7 @@ const SOURCE_FILTER_OPTIONS = gql`
                     widgetType
                 }
             }
-        }
+       }
         organizationTypes {
             results {
                 id
@@ -122,13 +124,6 @@ const SOURCE_FILTER_OPTIONS = gql`
             }
         }
         entryTypeOptions: __type(name: "EntryTagTypeEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        commentStatusOptions: __type(name: "EntryFilterCommentStatusEnum") {
             name
             enumValues {
                 name

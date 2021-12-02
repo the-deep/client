@@ -60,7 +60,6 @@ export const LEAD_ENTRIES = gql`
         $page: Int,
         $pageSize: Int,
         $authoringOrganizationTypes: [ID!],
-        $commentStatus: EntryFilterCommentStatusEnum,
         $controlled: Boolean,
         $createdAtGte: DateTime,
         $createdAtLte: DateTime,
@@ -75,12 +74,12 @@ export const LEAD_ENTRIES = gql`
         $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
+            id
             entries(
                 leads: [$leadId],
                 page: $page,
                 pageSize: $pageSize,
                 authoringOrganizationTypes: $authoringOrganizationTypes,
-                commentStatus: $commentStatus,
                 controlled: $controlled,
                 createdAtGte: $createdAtGte,
                 createdAtLte: $createdAtLte,
@@ -158,6 +157,7 @@ export const PROJECT_FRAMEWORK = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             analysisFramework {
                 primaryTagging {
                     widgets {
