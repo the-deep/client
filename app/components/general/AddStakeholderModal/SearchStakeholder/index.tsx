@@ -4,6 +4,7 @@ import {
     ListView,
     TextInput,
     Container,
+    Kraken,
 } from '@the-deep/deep-ui';
 import { Organization, MultiResponse } from '#types';
 
@@ -95,6 +96,20 @@ function SearchStakeholder(props: Props) {
                 renderer={Stakeholder}
                 keySelector={stakeholderKeySelector}
                 rendererParams={stakeholderRendererParams}
+                emptyIcon={(
+                    <Kraken
+                        variant="exercise"
+                    />
+                )}
+                filtered={(searchText?.length ?? 0) > 0}
+                filteredEmptyIcon={(
+                    <Kraken
+                        variant="search"
+                    />
+                )}
+                filteredEmptyMessage="No matching organization found."
+                messageIconShown
+                messageShown
             />
         </Container>
     );

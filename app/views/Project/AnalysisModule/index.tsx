@@ -30,6 +30,7 @@ import {
     InformationCard,
     PercentageInformationCard,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import Timeline from '#components/Timeline';
@@ -438,6 +439,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             pending={pendingAnalyses}
                             filtered={!!dateRangeFilter}
                             emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
+                            emptyIcon={(
+                                <Kraken
+                                    variant="experiment"
+                                />
+                            )}
+                            messageIconShown
+                            messageShown
                         />
                     </Container>
                     {showAnalysisAddModal && activeProject && (

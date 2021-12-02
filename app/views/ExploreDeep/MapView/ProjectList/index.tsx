@@ -7,6 +7,7 @@ import {
     Container,
     DateOutput,
     ListView,
+    Kraken,
     Footer,
     Pager,
     TextOutput,
@@ -192,6 +193,14 @@ function ProjectList(props: Props) {
                 data={projectDetails}
                 renderer={ListRenderer}
                 rendererParams={rendererParams}
+                emptyIcon={(
+                    <Kraken
+                        variant="skydive"
+                    />
+                )}
+                emptyMessage="There doesn't seem to be any projects here."
+                messageIconShown
+                messageShown
             />
             <Footer
                 className={styles.footer}

@@ -24,6 +24,7 @@ import {
     TabPanel,
     Card,
     Message,
+    Kraken,
     Container,
     InformationCard,
     CompactInformationCard,
@@ -203,6 +204,14 @@ function ExploreDeep(props: Props) {
                                 renderer={ActiveFrameworkItem}
                                 rendererParams={activeFrameworkRendererParams}
                                 spacing="none"
+                                emptyMessage="We couldn't find what you're looking for. Please visit again later."
+                                emptyIcon={(
+                                    <Kraken
+                                        variant="work"
+                                    />
+                                )}
+                                messageIconShown
+                                messageShown
                             />
                         </ContainerCard>
                     </div>
@@ -226,6 +235,14 @@ function ExploreDeep(props: Props) {
                         renderer={ActiveProjectItem}
                         rendererParams={activeProjectsRendererParams}
                         spacing="none"
+                        emptyMessage="We couldn't find what you're looking for. Please visit again later."
+                        emptyIcon={(
+                            <Kraken
+                                variant="work"
+                            />
+                        )}
+                        messageIconShown
+                        messageShown
                     />
                 </ContainerCard>
             </div>

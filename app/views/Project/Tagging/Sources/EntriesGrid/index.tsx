@@ -11,6 +11,7 @@ import {
     ListView,
     Pager,
     Container,
+    Kraken,
 } from '@the-deep/deep-ui';
 import {
     Framework,
@@ -352,6 +353,14 @@ function SourcesGrid(props: Props) {
                     rendererParams={entryRendererParams}
                     keySelector={entryKeySelector}
                     pending={loading || projectFrameworkLoading}
+                    emptyIcon={(
+                        <Kraken
+                            variant="work"
+                        />
+                    )}
+                    emptyMessage="Couldn't find any entries to show."
+                    messageIconShown
+                    messageShown
                 />
             </CommentCountContext.Provider>
         </Container>

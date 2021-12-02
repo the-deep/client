@@ -49,6 +49,8 @@ function RecentActivities() {
                 rendererParams={activityRendererParams}
                 pending={pending}
                 emptyMessage="You do not have any recent activity"
+                messageIconShown
+                messageShown
             />
         </Container>
     );

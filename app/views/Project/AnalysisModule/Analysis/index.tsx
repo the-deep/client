@@ -13,6 +13,7 @@ import {
     QuickActionConfirmButton,
     QuickActionButton,
     ExpandableContainer,
+    Kraken,
     TextOutput,
     DateRangeOutput,
     PendingMessage,
@@ -237,6 +238,14 @@ function Analysis(props: ComponentProps) {
                                 renderer={PillarAssignment}
                                 rendererParams={pillarAssignmentRendererParams}
                                 keySelector={pillarSummaryKeySelector}
+                                emptyIcon={(
+                                    <Kraken
+                                        variant="search"
+                                    />
+                                )}
+                                emptyMessage="No Pillar analyses found. Please add new analysis and visit later"
+                                messageShown
+                                messageIconShown
                             />
                         )}
                     />

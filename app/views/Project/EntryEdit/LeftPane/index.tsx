@@ -15,6 +15,7 @@ import {
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
     ListView,
+    Kraken,
     useAlert,
     QuickActionLink,
     PendingMessage,
@@ -449,6 +450,14 @@ function LeftPane(props: Props) {
                         rendererParams={entryItemRendererParams}
                         className={styles.entryList}
                         keySelector={entryKeySelector}
+                        emptyIcon={(
+                            <Kraken
+                                variant="search"
+                            />
+                        )}
+                        emptyMessage="No entries found"
+                        messageShown
+                        messageIconShown
                     />
                 </TabPanel>
             </Tabs>
