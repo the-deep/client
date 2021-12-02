@@ -17,7 +17,7 @@ type Matrix1dValue = NonNullable<Matrix1dWidgetAttribute['data']>;
 
 export type PartialMatrix1dWidget = PartialForm<
     Matrix1dWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
@@ -144,6 +144,7 @@ export interface Props <N extends string>{
     error: Error<Matrix1dValue> | undefined;
 
     actions?: React.ReactNode;
+    icons?: React.ReactNode;
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -161,6 +162,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -218,6 +220,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
             childrenContainerClassName={styles.matrix}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError

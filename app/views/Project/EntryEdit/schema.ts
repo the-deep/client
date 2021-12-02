@@ -20,7 +20,7 @@ type FormType = {
 
 type getType<T, Q> = T extends Q ? T : never;
 
-export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data' | 'entryType' | 'lead'>;
+export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data' | 'entryType' | 'lead' | 'widgetVersion'>;
 
 export type PartialEntryType = NonNullable<PartialFormType['entries']>[number];
 
@@ -42,6 +42,7 @@ const getAttributeSchema = (widgets: Partial<Record<string, Widget>>): Attribute
             widget: [],
             data: [],
 
+            widgetVersion: [],
             // NOTE: widgetType this one is not needed on server
             widgetType: [],
         };

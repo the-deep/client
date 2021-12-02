@@ -231,6 +231,7 @@ function EditableEntry(props: Props) {
                         ?.filter((attribute) => isDefined(attribute.data))
                         .map((attribute) => ({
                             ...attribute,
+                            widgetVersion: attribute.widgetVersion,
                             widgetType: undefined,
                         })),
                 };

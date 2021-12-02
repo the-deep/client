@@ -14,6 +14,9 @@ export interface Props {
     actions?: React.ReactNode,
     actionsContainerClassName?: string;
 
+    icons?: React.ReactNode;
+    iconsContainerClassName?: string;
+
     children?: React.ReactNode,
     childrenContainerClassName?: string;
 
@@ -28,9 +31,11 @@ function WidgetWrapper(props: Props) {
         className,
         title,
         actions,
+        icons,
         children,
         headerClassName,
         actionsContainerClassName,
+        iconsContainerClassName,
         childrenContainerClassName,
     } = props;
 
@@ -46,8 +51,11 @@ function WidgetWrapper(props: Props) {
                 heading={title ?? 'Unnamed'}
                 className={headerClassName}
                 headingSize="extraSmall"
+                headingSectionClassName={styles.header}
                 actionsContainerClassName={actionsContainerClassName}
                 actions={actions}
+                iconsContainerClassName={iconsContainerClassName}
+                icons={icons}
             />
             <div className={childrenContainerClassName}>
                 <ErrorBoundary>

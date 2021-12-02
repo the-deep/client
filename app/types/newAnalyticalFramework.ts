@@ -1,9 +1,33 @@
 import {
+    listToMap,
+    isDefined,
+    isNotDefined,
+    intersection,
+    mapToList,
+} from '@togglecorp/fujs';
+import {
     // NOTE: Taking WidgetType instead of WidgetInputType
     WidgetType as WidgetRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
     AnalysisFrameworkFilterType as AnalysisFrameworkFilterTypeRaw,
 } from '#generated/types';
+
+import {
+    WidgetAttribute,
+    TextWidgetAttribute,
+    NumberWidgetAttribute,
+    DateWidgetAttribute,
+    TimeWidgetAttribute,
+    DateRangeWidgetAttribute,
+    TimeRangeWidgetAttribute,
+    GeoLocationWidgetAttribute,
+    ScaleWidgetAttribute,
+    SingleSelectWidgetAttribute,
+    MultiSelectWidgetAttribute,
+    Matrix1dWidgetAttribute,
+    Matrix2dWidgetAttribute,
+    OrganigramWidgetAttribute,
+} from './newEntry';
 
 export type Types = WidgetTypes;
 
@@ -17,15 +41,12 @@ interface BaseCondition {
 }
 
 interface BaseConditional {
-    // FIXME: id is undefined only for input
-    id: string | undefined;
-    clientId: string;
-
-    // key of parent widget
-    parentClientId: string;
+    // Rename parentId to parentWidget
     // FIXME: id is undefined only for input
     // id of parent widget
-    parentId: string | undefined;
+    parentWidget: string | undefined;
+    parentWidgetType: string;
+    conditions: unknown[];
 }
 
 export interface EmptyCondition extends BaseCondition {
@@ -76,24 +97,9 @@ export interface OrganigramSelectedCondition extends BaseCondition {
     value: string[];
 }
 
-export interface OrganigramDescendentSelectedCondition extends BaseCondition {
-    operator: 'organigram-descendent-selected';
-    operatorModifier: 'every' | 'some';
-    value: string[];
-}
-
 export interface ScaleSelectedCondition extends BaseCondition {
     operator: 'scale-selected';
-    // operatorModifier: 'some';
     value: string[];
-}
-export interface ScaleAtLeastCondition extends BaseCondition {
-    operator: 'scale-more-than';
-    value: string;
-}
-export interface ScaleAtMostCondition extends BaseCondition {
-    operator: 'scale-less-than';
-    value: string;
 }
 export interface DateAfterCondition extends BaseCondition {
     operator: 'date-after';
@@ -192,8 +198,6 @@ export type SingleSelectCondition = EmptyCondition
 export type GeoLocationCondition = EmptyCondition;
 
 export type ScaleCondition = EmptyCondition
-    | ScaleAtLeastCondition
-    | ScaleAtMostCondition
     | ScaleSelectedCondition;
 
 export type DateCondition = EmptyCondition
@@ -220,8 +224,7 @@ export type MultiSelectCondition = EmptyCondition
     | MultiSelectSelectedCondition;
 
 export type OrganigramCondition = EmptyCondition
-    | OrganigramSelectedCondition
-    | OrganigramDescendentSelectedCondition;
+    | OrganigramSelectedCondition;
 
 export type Matrix1dCondition = EmptyCondition
     | Matrix1dRowsSelectedCondition
@@ -234,55 +237,55 @@ export type Matrix2dCondition = EmptyCondition
     | Matrix2dSubRowsSelectedCondition;
 
 export interface NumberConditional extends BaseConditional {
-    parentWidgetId: 'NUMBER';
+    parentWidgetType: 'NUMBER';
     conditions: NumberCondition[];
 }
 export interface TextConditional extends BaseConditional {
-    parentWidgetId: 'TEXT';
+    parentWidgetType: 'TEXT';
     conditions: TextCondition[];
 }
 export interface DateConditional extends BaseConditional {
-    parentWidgetId: 'DATE';
+    parentWidgetType: 'DATE';
     conditions: DateCondition[];
 }
 export interface TimeConditional extends BaseConditional {
-    parentWidgetId: 'TIME';
+    parentWidgetType: 'TIME';
     conditions: TimeCondition[];
 }
 export interface TimeRangeConditional extends BaseConditional {
-    parentWidgetId: 'TIME_RANGE';
+    parentWidgetType: 'TIME_RANGE';
     conditions: TimeRangeCondition[];
 }
 export interface DateRangeConditional extends BaseConditional {
-    parentWidgetId: 'DATE_RANGE';
+    parentWidgetType: 'DATE_RANGE';
     conditions: DateRangeCondition[];
 }
 export interface GeoLocationConditional extends BaseConditional {
-    parentWidgetId: 'GEO';
+    parentWidgetType: 'GEO';
     conditions: GeoLocationCondition[];
 }
 export interface SingleSelectConditional extends BaseConditional {
-    parentWidgetId: 'SELECT';
+    parentWidgetType: 'SELECT';
     conditions: SingleSelectCondition[];
 }
 export interface MultiSelectConditional extends BaseConditional {
-    parentWidgetId: 'MULTISELECT';
+    parentWidgetType: 'MULTISELECT';
     conditions: MultiSelectCondition[];
 }
 export interface Matrix1dConditional extends BaseConditional {
-    parentWidgetId: 'MATRIX1D';
+    parentWidgetType: 'MATRIX1D';
     conditions: Matrix1dCondition[];
 }
 export interface Matrix2dConditional extends BaseConditional {
-    parentWidgetId: 'MATRIX2D';
+    parentWidgetType: 'MATRIX2D';
     conditions: Matrix2dCondition[];
 }
 export interface OrganigramConditional extends BaseConditional {
-    parentWidgetId: 'ORGANIGRAM';
+    parentWidgetType: 'ORGANIGRAM';
     conditions: OrganigramCondition[];
 }
 export interface ScaleConditional extends BaseConditional {
-    parentWidgetId: 'SCALE';
+    parentWidgetType: 'SCALE';
     conditions: ScaleCondition[];
 }
 
@@ -301,7 +304,7 @@ type Conditional = NumberConditional
     | GeoLocationConditional;
 
 // NOTE: we are replacing these with more strict types
-export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay'> & {
+export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay' | 'conditional'> & {
     conditional?: Conditional;
 };
 
@@ -461,6 +464,20 @@ export type Widget = TextWidget
     | GeoLocationWidget
     | Matrix1dWidget
     | Matrix2dWidget;
+
+export const TEXT_WIDGET_VERSION = 1;
+export const NUMBER_WIDGET_VERSION = 1;
+export const TIME_WIDGET_VERSION = 1;
+export const DATE_WIDGET_VERSION = 1;
+export const TIME_RANGE_WIDGET_VERSION = 1;
+export const DATE_RANGE_WIDGET_VERSION = 1;
+export const SINGLE_SELECT_WIDGET_VERSION = 1;
+export const MULTI_SELECT_WIDGET_VERSION = 1;
+export const SCALE_WIDGET_VERSION = 1;
+export const ORGANIGRAM_WIDGET_VERSION = 1;
+export const GEOLOCATION_WIDGET_VERSION = 1;
+export const MATRIX1D_WIDGET_VERSION = 1;
+export const MATRIX2D_WIDGET_VERSION = 1;
 
 type BaseFilterType = Omit<AnalysisFrameworkFilterTypeRaw, 'properties' | 'widgetType'>;
 
@@ -649,11 +666,11 @@ export type FrameworkExportableType = TextExportableType
     | DateExportableType
     | TimeRangeExportableType
     | DateRangeExportableType
+    | GeoLocationExportableType
+    | ScaleExportableType
     | SingleSelectExportableType
     | MultiSelectExportableType
-    | ScaleExportableType
     | OrganigramExportableType
-    | GeoLocationExportableType
     | Matrix1dExportableType
     | Matrix2dExportableType;
 
@@ -687,4 +704,529 @@ export interface FrameworkProperties {
             pk: number;
         };
     };
+}
+
+const widgetVersionMapping: {
+    [key in Widget['widgetId']]: number
+} = {
+    TEXT: TEXT_WIDGET_VERSION,
+    NUMBER: NUMBER_WIDGET_VERSION,
+    TIME: TIME_WIDGET_VERSION,
+    DATE: DATE_WIDGET_VERSION,
+    TIME_RANGE: TIME_RANGE_WIDGET_VERSION,
+    DATE_RANGE: DATE_RANGE_WIDGET_VERSION,
+    GEO: GEOLOCATION_WIDGET_VERSION,
+    SELECT: SINGLE_SELECT_WIDGET_VERSION,
+    MULTISELECT: MULTI_SELECT_WIDGET_VERSION,
+    SCALE: SCALE_WIDGET_VERSION,
+    ORGANIGRAM: ORGANIGRAM_WIDGET_VERSION,
+    MATRIX1D: MATRIX1D_WIDGET_VERSION,
+    MATRIX2D: MATRIX2D_WIDGET_VERSION,
+};
+/*
+const supportedWidgetTypes: Widget['widgetId'][] = [
+    'NUMBER',
+    'TEXT',
+    'DATE',
+    'TIME',
+    'DATE_RANGE',
+    'TIME_RANGE',
+    'GEO',
+    'SELECT',
+    'MULTISELECT',
+    'MATRIX1D',
+    'MATRIX2D',
+    'ORGANIGRAM',
+    'SCALE',
+];
+*/
+
+export function getWidgetVersion(type: Widget['widgetId']) {
+    return widgetVersionMapping[type];
+}
+
+function convertDateStringToTimestamp(value: undefined): undefined;
+function convertDateStringToTimestamp(value: string): number;
+function convertDateStringToTimestamp(value: string | undefined): number | undefined;
+function convertDateStringToTimestamp(value: string | undefined) {
+    if (!value) {
+        return undefined;
+    }
+    return new Date(value).getTime();
+}
+
+function convertTimeStringToSeconds(value: undefined): undefined;
+function convertTimeStringToSeconds(value: string): number;
+function convertTimeStringToSeconds(value: string | undefined): number | undefined;
+function convertTimeStringToSeconds(value: string | undefined) {
+    if (!value) {
+        return undefined;
+    }
+    const [hh = '00', mm = '00', ss = '00'] = value.split(':');
+    return Number(hh) * 60 * 60 + Number(mm) * 60 + Number(ss);
+}
+
+function isEverySelected<T>(options: T[], value: T[]) {
+    const optionsSet = new Set(options);
+    const valueSet = new Set(value);
+    const commonSet = intersection(optionsSet, valueSet);
+    return commonSet.size === valueSet.size;
+}
+function isSomeSelected<T>(options: T[], value: T[]) {
+    const optionsSet = new Set(options);
+    const valueSet = new Set(value);
+    const commonSet = intersection(optionsSet, valueSet);
+    return commonSet.size > 0;
+}
+
+function validateNumberCondition(
+    condition: NumberCondition,
+    attribute: NumberWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'number-greater-than':
+            return isDefined(value) && value > condition.value;
+        case 'number-less-than':
+            return isDefined(value) && value < condition.value;
+        case 'number-equal-to':
+            return isDefined(value) && value === condition.value;
+        default:
+            return false;
+    }
+}
+function validateTextCondition(
+    condition: TextCondition,
+    attribute: TextWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value.toLowerCase();
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'text-starts-with':
+            return isDefined(value) && value.startsWith(condition.value.toLowerCase());
+        case 'text-ends-with':
+            return isDefined(value) && value.endsWith(condition.value.toLowerCase());
+        case 'text-contains':
+            return isDefined(value) && value.includes(condition.value.toLowerCase());
+        default:
+            return false;
+    }
+}
+function validateDateCondition(
+    condition: DateCondition,
+    attribute: DateWidgetAttribute | undefined,
+) {
+    const value = convertDateStringToTimestamp(attribute?.data?.value);
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'date-after':
+            return isDefined(value) && value > convertDateStringToTimestamp(condition.value);
+        case 'date-before':
+            return isDefined(value) && value < convertDateStringToTimestamp(condition.value);
+        case 'date-equal-to':
+            return isDefined(value) && value === convertDateStringToTimestamp(condition.value);
+        default:
+            return false;
+    }
+}
+function validateTimeCondition(
+    condition: TimeCondition,
+    attribute: TimeWidgetAttribute | undefined,
+) {
+    const value = convertTimeStringToSeconds(attribute?.data?.value);
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'time-after':
+            return isDefined(value) && value > convertTimeStringToSeconds(condition.value);
+        case 'time-before':
+            return isDefined(value) && value < convertTimeStringToSeconds(condition.value);
+        case 'time-equal-to':
+            return isDefined(value) && value === convertTimeStringToSeconds(condition.value);
+        default:
+            return false;
+    }
+}
+function validateDateRangeCondition(
+    condition: DateRangeCondition,
+    attribute: DateRangeWidgetAttribute | undefined,
+) {
+    const startValue = convertDateStringToTimestamp(attribute?.data?.value?.startDate);
+    const endValue = convertDateStringToTimestamp(attribute?.data?.value?.endDate);
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(startValue) && isNotDefined(endValue);
+        case 'date-range-after':
+            return isDefined(startValue)
+                && startValue > convertDateStringToTimestamp(condition.value);
+        case 'date-range-before':
+            return isDefined(endValue)
+                && endValue < convertDateStringToTimestamp(condition.value);
+        case 'date-range-includes':
+            return isDefined(startValue)
+                && isDefined(endValue)
+                && endValue >= convertDateStringToTimestamp(condition.value)
+                && startValue <= convertDateStringToTimestamp(condition.value);
+        default:
+            return false;
+    }
+}
+function validateTimeRangeCondition(
+    condition: TimeRangeCondition,
+    attribute: TimeRangeWidgetAttribute | undefined,
+) {
+    const startValue = convertTimeStringToSeconds(attribute?.data?.value?.startTime);
+    const endValue = convertTimeStringToSeconds(attribute?.data?.value?.endTime);
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(startValue) && isNotDefined(endValue);
+        case 'time-range-after':
+            return isDefined(startValue)
+                && startValue > convertTimeStringToSeconds(condition.value);
+        case 'time-range-before':
+            return isDefined(endValue)
+                && endValue < convertTimeStringToSeconds(condition.value);
+        case 'time-range-includes':
+            return isDefined(startValue)
+                && isDefined(endValue)
+                && endValue >= convertTimeStringToSeconds(condition.value)
+                && startValue <= convertTimeStringToSeconds(condition.value);
+        default:
+            return false;
+    }
+}
+function validateGeoLocationCondition(
+    condition: GeoLocationCondition,
+    attribute: GeoLocationWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        default:
+            return false;
+    }
+}
+function validateScaleCondition(
+    condition: ScaleCondition,
+    attribute: ScaleWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'scale-selected':
+            return isDefined(value) && condition.value.includes(value);
+        default:
+            return false;
+    }
+}
+function validateSingleSelectCondition(
+    condition: SingleSelectCondition,
+    attribute: SingleSelectWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'single-selection-selected':
+            return isDefined(value) && condition.value.includes(value);
+        default:
+            return false;
+    }
+}
+function validateMultiSelectCondition(
+    condition: MultiSelectCondition,
+    attribute: MultiSelectWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'multi-selection-selected':
+            return isDefined(value) && (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(value, condition.value)
+                    : isSomeSelected(value, condition.value)
+            );
+        default:
+            return false;
+    }
+}
+function validateMatrix1dCondition(
+    condition: Matrix1dCondition,
+    attribute: Matrix1dWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'matrix1d-rows-selected': {
+            if (isNotDefined(value)) {
+                return false;
+            }
+            const rowsValue = Object.keys(value);
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(rowsValue, condition.value)
+                    : isSomeSelected(rowsValue, condition.value)
+            );
+        }
+        case 'matrix1d-cells-selected': {
+            if (isNotDefined(value)) {
+                return false;
+            }
+            const rowsValue = mapToList(
+                value,
+                (item) => item,
+            ).flatMap((item) => (item ? Object.keys(item) : []));
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(rowsValue, condition.value)
+                    : isSomeSelected(rowsValue, condition.value)
+            );
+        }
+        default:
+            return false;
+    }
+}
+function validateMatrix2dCondition(
+    condition: Matrix2dCondition,
+    attribute: Matrix2dWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'matrix2d-rows-selected': {
+            if (isNotDefined(value)) {
+                return false;
+            }
+            const rowsValue = Object.keys(value);
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(rowsValue, condition.value)
+                    : isSomeSelected(rowsValue, condition.value)
+            );
+        }
+        case 'matrix2d-sub-rows-selected': {
+            if (isNotDefined(value)) {
+                return false;
+            }
+            const rowsValue = mapToList(value)
+                .filter(isDefined)
+                .flatMap((val) => Object.keys(val));
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(rowsValue, condition.value)
+                    : isSomeSelected(rowsValue, condition.value)
+            );
+        }
+        case 'matrix2d-columns-selected': {
+            if (isNotDefined(value)) {
+                return false;
+            }
+            const rowsValue = mapToList(value)
+                .filter(isDefined)
+                .flatMap((val) => mapToList(val))
+                .filter(isDefined)
+                .flatMap((val) => Object.keys(val));
+
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(rowsValue, condition.value)
+                    : isSomeSelected(rowsValue, condition.value)
+            );
+        }
+        case 'matrix2d-sub-columns-selected': {
+            if (isNotDefined(value)) {
+                return false;
+            }
+            const rowsValue = mapToList(value)
+                .filter(isDefined)
+                .flatMap((val) => mapToList(val))
+                .filter(isDefined)
+                .flatMap((val) => mapToList(val))
+                .filter(isDefined)
+                .flat();
+
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(rowsValue, condition.value)
+                    : isSomeSelected(rowsValue, condition.value)
+            );
+        }
+        default:
+            return false;
+    }
+}
+function validateOrganigramCondition(
+    condition: OrganigramCondition,
+    attribute: OrganigramWidgetAttribute | undefined,
+) {
+    const value = attribute?.data?.value;
+    switch (condition.operator) {
+        case 'empty':
+            return isNotDefined(value);
+        case 'organigram-selected':
+            return isDefined(value) && (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(value, condition.value)
+                    : isSomeSelected(value, condition.value)
+            );
+        default:
+            return false;
+    }
+}
+
+function validateFirstCondition(
+    conditional: Conditional,
+    attribute: WidgetAttribute | undefined,
+): boolean {
+    // If there is no condition, the child widget is always valid
+    if (!conditional.conditions[0]) {
+        return true;
+    }
+
+    if (conditional.parentWidgetType === 'NUMBER' && (!attribute || attribute.widgetType === 'NUMBER')) {
+        const firstCondition = conditional.conditions[0];
+        return validateNumberCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'TEXT' && (!attribute || attribute.widgetType === 'TEXT')) {
+        const firstCondition = conditional.conditions[0];
+        return validateTextCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'DATE' && 'DATE' && (!attribute || attribute.widgetType === 'DATE')) {
+        const firstCondition = conditional.conditions[0];
+        return validateDateCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'TIME' && 'TIME' && (!attribute || attribute.widgetType === 'TIME')) {
+        const firstCondition = conditional.conditions[0];
+        return validateTimeCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'DATE_RANGE' && 'DATE_RANGE' && (!attribute || attribute.widgetType === 'DATE_RANGE')) {
+        const firstCondition = conditional.conditions[0];
+        return validateDateRangeCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'TIME_RANGE' && (!attribute || attribute.widgetType === 'TIME_RANGE')) {
+        const firstCondition = conditional.conditions[0];
+        return validateTimeRangeCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'GEO' && (!attribute || attribute.widgetType === 'GEO')) {
+        const firstCondition = conditional.conditions[0];
+        return validateGeoLocationCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'SELECT' && (!attribute || attribute.widgetType === 'SELECT')) {
+        const firstCondition = conditional.conditions[0];
+        return validateSingleSelectCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'MULTISELECT' && (!attribute || attribute.widgetType === 'MULTISELECT')) {
+        const firstCondition = conditional.conditions[0];
+        return validateMultiSelectCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'MATRIX1D' && (!attribute || attribute.widgetType === 'MATRIX1D')) {
+        const firstCondition = conditional.conditions[0];
+        return validateMatrix1dCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'MATRIX2D' && (!attribute || attribute.widgetType === 'MATRIX2D')) {
+        const firstCondition = conditional.conditions[0];
+        return validateMatrix2dCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'SCALE' && (!attribute || attribute.widgetType === 'SCALE')) {
+        const firstCondition = conditional.conditions[0];
+        return validateScaleCondition(firstCondition, attribute);
+    }
+    if (conditional.parentWidgetType === 'ORGANIGRAM' && (!attribute || attribute.widgetType === 'ORGANIGRAM')) {
+        const firstCondition = conditional.conditions[0];
+        return validateOrganigramCondition(firstCondition, attribute);
+    }
+    return false;
+}
+
+function validateConditions(
+    conditional: Conditional,
+    attribute: WidgetAttribute | undefined,
+): boolean {
+    const firstConditionValue = validateFirstCondition(conditional, attribute);
+    if (conditional.conditions.length <= 1) {
+        return firstConditionValue;
+    }
+
+    const [firstCondition, ...otherConditions] = conditional.conditions;
+    const otherConditionValue = validateConditions(
+        { ...conditional, conditions: otherConditions } as Conditional,
+        attribute,
+    );
+    switch (firstCondition.conjunctionOperator) {
+        case 'XOR':
+            return (firstConditionValue && !otherConditionValue)
+                || (!firstConditionValue && otherConditionValue);
+        case 'OR':
+            return firstConditionValue || otherConditionValue;
+        case 'AND':
+            return firstConditionValue && otherConditionValue;
+        default:
+            return firstConditionValue && otherConditionValue;
+    }
+}
+
+export function filterWidgets(
+    widgets: Widget[],
+    attributes: WidgetAttribute[],
+): Widget[] {
+    /*
+    const supportedWidgets = widgets.filter((widget) => {
+        // Filter out un-supported widgets
+        if (!supportedWidgetTypes.includes(widget.widgetId)) {
+            return false;
+        }
+        // Filter out out-of-date widgets
+        if (widget.version != getWidgetVersion(widget.widgetId)) {
+            return false;
+        }
+        return true;
+    });
+
+    const parentWidgets = listToMap(
+        supportedWidgets,
+        (widget) => widget.id,
+        (widget) => widget,
+    );
+    */
+    const parentAttributes = listToMap(
+        attributes,
+        (attribute) => attribute.widget, // FIXME: check if this is widget id
+        (attribute) => attribute,
+    );
+
+    return widgets.filter((widget) => {
+        // All widgets without conditional are non-conditional widgets
+        if (!widget.conditional) {
+            return true;
+        }
+        // All conditional widgets should have parentId
+        const parentId = widget.conditional.parentWidget;
+        if (!parentId) {
+            return false;
+        }
+        const value: WidgetAttribute | undefined = parentAttributes[parentId];
+        /*
+        // All conditional widgets should have parentWidget
+        const parentWidget = parentWidgets[parentId];
+        if (!parentWidget) {
+            return false;
+        }
+        // Clearing out value if version does not match
+        let value: WidgetAttribute | undefined = parentAttributes[parentId];
+        if (value.widgetVersion !== parentWidget.version) {
+            value = undefined;
+        }
+       */
+
+        return validateConditions(widget.conditional, value);
+    });
 }

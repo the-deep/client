@@ -42,14 +42,11 @@ import {
     ScaleConditional,
     ScaleCondition,
     ScaleSelectedCondition,
-    ScaleAtLeastCondition,
-    ScaleAtMostCondition,
     Conjunction,
     ScaleWidget,
 } from '#types/newAnalyticalFramework';
 
 import SimpleScaleConditionInput from './SimpleScaleConditionInput';
-import ComparisonScaleConditionInput from './ComparisonScaleConditionInput';
 
 import styles from './styles.css';
 
@@ -61,8 +58,6 @@ interface Option {
 
 const options: Option[] = [
     { key: 'scale-selected', label: 'Is selected', invertedLabel: 'Is not selected' },
-    { key: 'scale-more-than', label: 'Is more than', invertedLabel: 'Is less than or equal to' },
-    { key: 'scale-less-than', label: 'Is less than', invertedLabel: 'Is more than or equal to' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {
@@ -97,11 +92,6 @@ type PartialConditionTypeNew = PartialForm<
     'operator' | 'conjunctionOperator' | 'key' | 'order'
 >;
 
-type PartialConditionTypeNewer = PartialForm<
-    ScaleAtLeastCondition | ScaleAtMostCondition,
-    'operator' | 'conjunctionOperator' | 'key' | 'order'
->;
-
 type ConditionSchema = ObjectSchema<PartialConditionType, PartialFormType>;
 type ConditionSchemaFields = ReturnType<ConditionSchema['fields']>;
 const conditionSchema: ConditionSchema = {
@@ -122,15 +112,6 @@ const conditionSchema: ConditionSchema = {
             return {
                 ...basicValidation,
                 value: [requiredListCondition],
-            };
-        }
-        if (
-            val.operator === 'scale-more-than'
-            || val.operator === 'scale-less-than'
-        ) {
-            return {
-                ...basicValidation,
-                value: [requiredStringCondition],
             };
         }
         if (val.operator === 'empty') {
@@ -155,10 +136,8 @@ const conditionsSchema: ConditionsSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        id: [defaultUndefinedType],
-        clientId: [],
-        parentClientId: [],
-        parentWidgetId: [],
+        parentWidget: [defaultUndefinedType],
+        parentWidgetType: [],
         conditions: conditionsSchema,
     }),
 };
@@ -306,22 +285,6 @@ function ConditionInput(props: ConditionInputProps) {
                     // unions
                     // eslint-disable-next-line max-len
                     onChange={onChange as (v: SetValueArg<PartialConditionTypeNew>, index: number) => void}
-                    error={error}
-                    parentWidget={parentWidget}
-                />
-            )}
-            {(
-                value.operator === 'scale-less-than'
-                || value.operator === 'scale-more-than'
-            ) && (
-                <ComparisonScaleConditionInput
-                    index={index}
-                    value={value}
-                    // NOTE: we need to cast here as TS is not smart enough to
-                    // identify onChange as valid because of discriminated
-                    // unions
-                    // eslint-disable-next-line max-len
-                    onChange={onChange as (v: SetValueArg<PartialConditionTypeNewer>, index: number) => void}
                     error={error}
                     parentWidget={parentWidget}
                 />

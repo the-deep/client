@@ -25,7 +25,7 @@ import NonFieldError from '#components/NonFieldError';
 import { PartialWidget } from '#components/framework/AttributeInput';
 
 import WidgetConditionalEditor from '../components/WidgetConditionalEditor';
-import { SectionsType } from '../schema';
+import { SectionsType, WidgetsType } from '../schema';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';
@@ -49,6 +49,8 @@ interface PrimaryTaggingInput<K extends string> {
     className?: string;
     frameworkId: number | undefined;
 
+    allWidgets: WidgetsType | undefined;
+
     name: K;
     value: SectionsType | undefined;
     error: Error<SectionsType> | undefined;
@@ -61,6 +63,9 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
     const {
         className,
         frameworkId,
+
+        allWidgets,
+
         name,
         value: sectionsFromProps = [],
         onChange: setSectionsFromProps,
@@ -339,14 +344,12 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
 
     const validSectionSelected = !!selectedSectionItem;
 
-    // NOTE: filtering out child conditions and self
-    // TODO: move child widget after parent
+    // NOTE: filtering out self
     const parentWidgets = useMemo(
-        () => selectedSectionItem?.widgets?.filter((widget) => (
-            !widget.conditional
-            && (!conditional || widget.clientId !== conditional.widgetId)
+        () => allWidgets?.filter((widget) => (
+            !conditional || widget.clientId !== conditional.widgetId
         )) ?? [],
-        [selectedSectionItem, conditional],
+        [allWidgets, conditional],
     );
 
     return (

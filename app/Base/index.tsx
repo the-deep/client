@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Router } from 'react-router-dom';
-import { init, ErrorBoundary, setUser as setUserOnSentry } from '@sentry/react';
+import { init, ErrorBoundary, setUser as setUserOnSentry, withProfiler } from '@sentry/react';
 import { unique, _cs } from '@togglecorp/fujs';
 import { AlertContainer, AlertContext, AlertOptions } from '@the-deep/deep-ui';
 import { ApolloClient, ApolloProvider } from '@apollo/client';
@@ -213,4 +213,4 @@ function Base() {
     );
 }
 
-export default Base;
+export default withProfiler(Base, { name: 'Base' });

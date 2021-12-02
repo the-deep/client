@@ -154,7 +154,6 @@ function AddUserModal(props: Props) {
             )}
         >
             <UserSelectInput
-                className={styles.input}
                 name="member"
                 value={value.member}
                 onChange={setFieldValue}
@@ -167,7 +166,6 @@ function AddUserModal(props: Props) {
             />
             <SelectInput
                 name="role"
-                className={styles.input}
                 labelSelector={labelSelector}
                 keySelector={keySelector}
                 options={roles}

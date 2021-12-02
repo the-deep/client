@@ -16,7 +16,7 @@ type SingleSelectValue = NonNullable<SingleSelectWidgetAttribute['data']>;
 
 export type PartialSingleSelectWidget = PartialForm<
     SingleSelectWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type Option = NonNullable<NonNullable<

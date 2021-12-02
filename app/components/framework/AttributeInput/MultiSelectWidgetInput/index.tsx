@@ -16,7 +16,7 @@ type MultiSelectValue = NonNullable<MultiSelectWidgetAttribute['data']>;
 
 export type PartialMultiSelectWidget = PartialForm<
     MultiSelectWidget,
-    'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type Option = NonNullable<NonNullable<
@@ -36,6 +36,7 @@ export interface Props <N extends string>{
     onChange: (value: MultiSelectValue | undefined, name: N) => void,
 
     actions?: React.ReactNode,
+    icons?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -50,6 +51,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         value,
         onChange: onChangeFromProps,
         actions,
+        icons,
         widget,
         disabled,
         readOnly,
@@ -79,6 +81,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError

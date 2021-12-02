@@ -44,7 +44,7 @@ const OPTIONS_LIMIT = 100;
 type FormType = MultiSelectWidget;
 type PartialFormType = PartialForm<
     FormType,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -102,6 +102,8 @@ const schema: FormSchema = {
         width: [],
 
         properties: dataSchema,
+        conditional: [],
+        version: [],
     }),
 };
 

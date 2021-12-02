@@ -42,13 +42,11 @@ import {
     OrganigramConditional,
     OrganigramCondition,
     OrganigramSelectedCondition,
-    OrganigramDescendentSelectedCondition,
     Conjunction,
     OrganigramWidget,
 } from '#types/newAnalyticalFramework';
 
 import SimpleOrganigramConditionInput from './SimpleOrganigramConditionInput';
-import DescendentOrganigramConditionInput from './DescendentOrganigramConditionInput';
 
 import styles from './styles.css';
 
@@ -60,7 +58,6 @@ interface Option {
 
 const options: Option[] = [
     { key: 'organigram-selected', label: 'Is selected', invertedLabel: 'Is not selected' },
-    { key: 'organigram-descendent-selected', label: 'Is selected (include descendent)', invertedLabel: 'Is not selected (include descendent)' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {
@@ -94,10 +91,6 @@ type PartialConditionTypeNew = PartialForm<
     OrganigramSelectedCondition,
     'operator' | 'conjunctionOperator' | 'key' | 'order'
 >;
-type PartialConditionTypeNewer = PartialForm<
-    OrganigramDescendentSelectedCondition,
-    'operator' | 'conjunctionOperator' | 'key' | 'order'
->;
 
 type ConditionSchema = ObjectSchema<PartialConditionType, PartialFormType>;
 type ConditionSchemaFields = ReturnType<ConditionSchema['fields']>;
@@ -122,14 +115,6 @@ const conditionSchema: ConditionSchema = {
                 operatorModifier: [requiredStringCondition],
             };
         }
-        if (
-            val.operator === 'organigram-descendent-selected'
-        ) {
-            return {
-                ...basicValidation,
-                value: [requiredListCondition],
-            };
-        }
         if (val.operator === 'empty') {
             return basicValidation;
         }
@@ -152,10 +137,8 @@ const conditionsSchema: ConditionsSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        id: [defaultUndefinedType],
-        clientId: [],
-        parentClientId: [],
-        parentWidgetId: [],
+        parentWidget: [defaultUndefinedType],
+        parentWidgetType: [],
         conditions: conditionsSchema,
     }),
 };
@@ -303,21 +286,6 @@ function ConditionInput(props: ConditionInputProps) {
                     // unions
                     // eslint-disable-next-line max-len
                     onChange={onChange as (v: SetValueArg<PartialConditionTypeNew>, index: number) => void}
-                    error={error}
-                    parentWidget={parentWidget}
-                />
-            )}
-            {(
-                value.operator === 'organigram-descendent-selected'
-            ) && (
-                <DescendentOrganigramConditionInput
-                    index={index}
-                    value={value}
-                    // NOTE: we need to cast here as TS is not smart enough to
-                    // identify onChange as valid because of discriminated
-                    // unions
-                    // eslint-disable-next-line max-len
-                    onChange={onChange as (v: SetValueArg<PartialConditionTypeNewer>, index: number) => void}
                     error={error}
                     parentWidget={parentWidget}
                 />

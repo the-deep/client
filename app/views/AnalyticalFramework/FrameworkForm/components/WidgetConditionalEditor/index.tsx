@@ -66,7 +66,7 @@ function BaseFormContainer(props: BaseFormContainerProps) {
 }
 
 function widgetKeySelector(value: Widget) {
-    return value.clientId;
+    return value.id;
 }
 function widgetLabelSelector(value: Widget) {
     return value.title;
@@ -113,7 +113,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
             if (!widgetId) {
                 onChange(undefined, name);
             }
-            const widget = widgets.find((w) => w.clientId === widgetId);
+            const widget = widgets.find((w) => w.id === widgetId);
             if (!widget) {
                 // eslint-disable-next-line no-console
                 console.error('Widget not found');
@@ -122,11 +122,8 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
             // NOTE: we are passing changed value to parent because we aren't
             // storing this value locally on this component
             onChange({
-                id: undefined,
-                parentId: undefined,
-                clientId: randomString(),
-                parentClientId: widget.clientId,
-                parentWidgetId: widget.widgetId,
+                parentWidget: widget.id,
+                parentWidgetType: widget.widgetId,
                 conditions: [{
                     key: randomString(),
                     order: 1,
@@ -142,7 +139,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
     const parentWidget = useMemo(
         () => (
             value
-                ? widgets.find((widget) => widget.clientId === value.parentClientId)
+                ? widgets.find((widget) => widget.id === value.parentWidget)
                 : undefined
         ),
         [widgets, value],
@@ -155,7 +152,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
             options={widgets}
             keySelector={widgetKeySelector}
             labelSelector={widgetLabelSelector}
-            value={value?.parentClientId}
+            value={value?.parentWidget}
             error={undefined}
             onChange={handleWidgetSelection}
         />
@@ -173,7 +170,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
         );
     }
 
-    switch (value.parentWidgetId) {
+    switch (value.parentWidgetType) {
         case 'TEXT': {
             return (
                 <TextConditionalWidgetForm

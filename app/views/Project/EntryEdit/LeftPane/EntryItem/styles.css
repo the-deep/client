@@ -7,6 +7,10 @@
     font-weight: var(--dui-font-weight-bold);
     user-select: none;
 
+    .heading-section {
+        overflow: visible;
+    }
+
     .vertical-border {
         position: absolute;
         top: 0;

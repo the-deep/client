@@ -10,8 +10,8 @@ import GeoLocationInput from '#components/GeoLocationInput';
 import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialGeoLocationWidget = PartialForm<
-GeoLocationWidget,
-    'key' | 'widgetId' | 'order'
+    GeoLocationWidget,
+    'key' | 'widgetId' | 'order' | 'conditional'
 >;
 
 type GeoLocationValue = NonNullable<GeoLocationWidgetAttribute['data']>;
@@ -25,6 +25,7 @@ export interface Props <N extends string>{
     onChange: (value: GeoLocationValue | undefined, name: N) => void;
 
     actions?: React.ReactNode;
+    icons?: React.ReactNode;
     disabled?: boolean;
     readOnly?: boolean;
 
@@ -40,6 +41,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         name,
         value,
         actions,
+        icons,
         onChange: onChangeFromProps,
         disabled,
         readOnly,
@@ -67,6 +69,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
             className={className}
             title={title}
             actions={actions}
+            icons={icons}
             error={error}
         >
             <NonFieldError error={error} />

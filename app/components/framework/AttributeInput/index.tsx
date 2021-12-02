@@ -13,7 +13,7 @@ import {
     isNotDefined,
 } from '@togglecorp/fujs';
 
-import { Widget } from '#types/newAnalyticalFramework';
+import { Widget, getWidgetVersion } from '#types/newAnalyticalFramework';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import NonFieldError from '#components/NonFieldError';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -58,7 +58,7 @@ type PartialAttributeType = NonNullable<PartialEntryType['attributes']>[number];
 
 export type PartialWidget = PartialForm<
     Widget,
-    'clientId' | 'key' | 'widgetId' | 'order'
+    'key' | 'widgetId' | 'clientId' | 'order' | 'conditional'
 >;
 
 export interface Props<N extends string | number | undefined> {
@@ -72,6 +72,7 @@ export interface Props<N extends string | number | undefined> {
     readOnly?: boolean;
     disabled?: boolean;
     actions?: React.ReactNode;
+    icons?: React.ReactNode;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
@@ -87,6 +88,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
         readOnly,
         disabled,
         actions,
+        icons,
         error: riskyError,
 
         geoAreaOptions,
@@ -102,6 +104,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
             // NOTE: widget.id should always be defined before an attribute can be saved
             widget: widget.id ?? 'not-random',
             data: undefined,
+            widgetVersion: getWidgetVersion(widget.widgetId),
         }),
         [widget],
     );
@@ -109,6 +112,9 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
     const onFieldChange = useFormObject(name, onChange, defaultOptionVal);
 
     let component: JSX.Element;
+
+    // TODO: hide attribute input
+    // TODO: check widget and attribute version
 
     if (widget.widgetId === 'TEXT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
@@ -122,6 +128,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -137,6 +144,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -152,6 +160,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -167,6 +176,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -182,6 +192,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -197,6 +208,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -212,6 +224,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -228,6 +241,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -244,6 +258,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -260,6 +275,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -276,6 +292,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+                icons={icons}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
             />
@@ -293,6 +310,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 disabled={disabled}
                 widget={widget}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
             />
         );
@@ -309,6 +327,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 disabled={disabled}
                 widget={widget}
                 actions={actions}
+                icons={icons}
                 error={error?.data as Error<typeof data> | undefined}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
@@ -320,6 +339,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 className={className}
                 title={widget.title}
                 actions={actions}
+                icons={icons}
                 error={error?.data}
                 disabled={disabled}
                 readOnly={readOnly}

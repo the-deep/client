@@ -37,6 +37,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
+import { getWidgetVersion } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
@@ -577,6 +578,7 @@ function EntryEdit(props: Props) {
                                     ?.filter((attribute) => isDefined(attribute.data))
                                     .map((attribute) => ({
                                         ...attribute,
+                                        widgetVersion: attribute.widgetVersion,
                                         widgetType: undefined,
                                     })),
                             }));
@@ -689,6 +691,7 @@ function EntryEdit(props: Props) {
                         clientId,
                         widget,
                         widgetType: item.widgetId,
+                        widgetVersion: getWidgetVersion(item.widgetId),
                         data: {
                             value: item.properties.defaultValue,
                         },
@@ -698,6 +701,7 @@ function EntryEdit(props: Props) {
                         clientId,
                         widget,
                         widgetType: item.widgetId,
+                        widgetVersion: getWidgetVersion(item.widgetId),
                         data: {
                             value: item.properties.defaultValue,
                         },
@@ -707,6 +711,7 @@ function EntryEdit(props: Props) {
                         clientId,
                         widget,
                         widgetType: item.widgetId,
+                        widgetVersion: getWidgetVersion(item.widgetId),
                         data: {
                             value: item.properties.defaultValue,
                         },
@@ -716,6 +721,7 @@ function EntryEdit(props: Props) {
                         clientId,
                         widget,
                         widgetType: item.widgetId,
+                        widgetVersion: getWidgetVersion(item.widgetId),
                         data: {
                             value: item.properties.defaultValue,
                         },
@@ -725,6 +731,7 @@ function EntryEdit(props: Props) {
                         clientId,
                         widget,
                         widgetType: item.widgetId,
+                        widgetVersion: getWidgetVersion(item.widgetId),
                         data: {
                             value: item.properties.defaultValue,
                         },

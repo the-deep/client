@@ -114,6 +114,7 @@ export const PROJECT_ENTRIES = gql`
                         id
                         widget
                         widgetType
+                        widgetVersion
                         geoSelectedOptions {
                             id
                             adminLevelTitle
@@ -154,9 +155,15 @@ export const PROJECT_FRAMEWORK = gql`
                         key
                         order
                         properties
+                        conditional {
+                            parentWidget
+                            parentWidgetType
+                            conditions
+                        }
                         title
                         widgetId
                         width
+                        version
                     }
                     clientId
                     id
@@ -171,8 +178,14 @@ export const PROJECT_FRAMEWORK = gql`
                     order
                     title
                     properties
+                    conditional {
+                        parentWidget
+                        parentWidgetType
+                        conditions
+                    }
                     widgetId
                     width
+                    version
                 }
                 id
             }

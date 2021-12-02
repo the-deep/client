@@ -93,7 +93,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         properties,
     } = framework;
 
-    return removeNull({
+    const newValues = removeNull({
         title,
         description,
         isPrivate,
@@ -103,6 +103,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         properties,
         isVisualizationEnabled: isDefined(properties),
     });
+    return newValues;
 }
 
 function FrameworkForm(props: FrameworkFormProps) {
@@ -285,18 +286,38 @@ function FrameworkForm(props: FrameworkFormProps) {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                (val) => {
-                    // NOTE: clearing out these data so they don't override
-                    const cleanData = { ...val };
-                    delete cleanData.isVisualizationEnabled;
+                (val: PartialFormType) => {
+                    const newData = {
+                        ...val,
+                        isVisualizationEnabled: undefined,
+                        primaryTagging: primaryTaggingPristine
+                            ? undefined
+                            : val.primaryTagging?.map((section) => ({
+                                ...section,
+                                widgets: section.widgets?.map((widget) => ({
+                                    ...widget,
+                                    // NOTE: should set conditional to null
+                                    // else it will not be cleared
+                                    conditional: widget.conditional ? {
+                                        ...widget.conditional,
+                                        parentWidgetType: undefined,
+                                    } : null,
+                                })),
+                            })),
+                        secondaryTagging: secondaryTaggingPristine
+                            ? undefined
+                            : val.secondaryTagging?.map((widget) => ({
+                                ...widget,
+                                // NOTE: should set conditional to null else it
+                                // will not be cleared
+                                conditional: widget.conditional ? {
+                                    ...widget.conditional,
+                                    parentWidgetType: undefined,
+                                } : null,
+                            })),
+                    };
 
-                    const data = cleanData as AnalysisFrameworkInputType;
-                    if (primaryTaggingPristine) {
-                        delete data.primaryTagging;
-                    }
-                    if (secondaryTaggingPristine) {
-                        delete data.secondaryTagging;
-                    }
+                    const data = newData as AnalysisFrameworkInputType;
 
                     if (frameworkId) {
                         updateAnalysisFramework({
@@ -400,6 +421,25 @@ function FrameworkForm(props: FrameworkFormProps) {
         }
     }, [onStatsConfigChange]);
 
+    const allWidgets = useMemo(() => {
+        const widgets = [
+            ...(value.primaryTagging?.map((d) => d.widgets)?.flat() ?? []),
+            ...(value.secondaryTagging ?? []),
+        ];
+
+        const createdWidgets = widgets.filter(isDefined);
+        return createdWidgets;
+    }, [value.primaryTagging, value.secondaryTagging]);
+
+    const allParentWidget = useMemo(
+        () => (
+            // NOTE: filtering out child widgets and unsaved widgets
+            allWidgets
+                .filter((w) => isDefined(w.id) && !w.conditional)
+        ),
+        [allWidgets],
+    );
+
     const {
         matrix1dWidgets,
         matrix2dWidgets,
@@ -408,14 +448,8 @@ function FrameworkForm(props: FrameworkFormProps) {
         organigramWidgets,
         multiSelectWidgets,
     } = useMemo(() => {
-        const widgets = [
-            ...(value.primaryTagging?.map((d) => d.widgets)?.flat() ?? []),
-            ...(value.secondaryTagging ?? []),
-        ];
-
-        const createdWidgets = widgets
-            .filter(isDefined)
-            .filter((w) => isDefined(w?.id))
+        const createdWidgets = allWidgets
+            .filter((w) => isDefined(w.id))
             .map((w) => ({
                 id: +w.id,
                 title: w.title,
@@ -430,7 +464,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             organigramWidgets: createdWidgets.filter((w) => w.widgetId === 'ORGANIGRAM'),
             multiSelectWidgets: createdWidgets.filter((w) => w.widgetId === 'MULTISELECT'),
         });
-    }, [value]);
+    }, [allWidgets]);
 
     return (
         <>
@@ -599,6 +633,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 name="primary-tagging"
             >
                 <PrimaryTagging
+                    allWidgets={allParentWidget}
                     name="primaryTagging"
                     value={value.primaryTagging}
                     onChange={handlePrimaryTaggingChange}
@@ -614,6 +649,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 name="secondary-tagging"
             >
                 <SecondaryTagging
+                    allWidgets={allParentWidget}
                     name="secondaryTagging"
                     value={value.secondaryTagging}
                     onChange={handleSecondaryTaggingChange}
