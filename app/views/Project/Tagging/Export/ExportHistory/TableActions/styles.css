@@ -2,8 +2,6 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-
-    .button {
-        margin: var(--dui-spacing-extra-small);
-    }
+    gap: var(--dui-spacing-extra-small);
+    justify-content: flex-end;
 }

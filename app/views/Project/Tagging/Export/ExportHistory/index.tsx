@@ -1,9 +1,9 @@
 import React, { useState, useMemo, ReactElement, useCallback } from 'react';
 import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
-import { IoDocument, IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
+import { IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
 import { RiFileExcel2Fill, RiFileWord2Fill } from 'react-icons/ri';
-import { AiOutlineRedo } from 'react-icons/ai';
+import { AiOutlineRedo, AiOutlineFileText } from 'react-icons/ai';
 import { FaFilePdf } from 'react-icons/fa';
 import {
     Pager,
@@ -69,10 +69,10 @@ const statusLabelMap: Record<ExportItem['status'], string> = {
     CANCELED: 'Canceled',
 };
 const exportFormatIconMap: Record<ExportItem['format'], ReactElement> = {
-    DOCX: <RiFileWord2Fill />,
-    PDF: <FaFilePdf />,
-    XLSX: <RiFileExcel2Fill />,
-    JSON: <IoDocument />,
+    DOCX: <RiFileWord2Fill className={styles.word} />,
+    PDF: <FaFilePdf className={styles.pdf} />,
+    XLSX: <RiFileExcel2Fill className={styles.excel} />,
+    JSON: <AiOutlineFileText className={styles.json} />,
 };
 const maxItemsPerPage = 25;
 const pollInterval = 5000;
@@ -102,6 +102,7 @@ const PROJECT_EXPORTS = gql`
         $type: [ExportDataTypeEnum!],
     ) {
         project(id: $projectId) {
+            id
             exports (
                 page: $page,
                 pageSize: $pageSize,
@@ -137,6 +138,7 @@ const DELETE_EXPORT = gql`
         $exportId: ID!,
     ) {
         project(id: $projectId) {
+            id
             exportDelete(id: $exportId) {
                 ok
                 errors
@@ -160,7 +162,7 @@ function ExportHistory(props: Props) {
         type,
     } = props;
 
-    const [selectedExportFile, setSelectedExportFile] = useState<ExportItem['file']>();
+    const [selectedExport, setSelectedExport] = useState<ExportItem>();
     const [activePage, setActivePage] = useState(1);
     const [exportedAt, setExportedAt] = useState<DateRangeValue>();
     const [searchText, setSearchText] = useState<string>();
@@ -214,7 +216,10 @@ function ExportHistory(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                if (response.project?.exports?.results?.some((v) => v.status === 'PENDING' || 'STARTED')) {
+                if (response.project?.exports?.results?.some((v) => (
+                    v.status === 'PENDING'
+                    || v.status === 'STARTED'
+                ))) {
                     startPolling(pollInterval);
                 } else {
                     stopPolling();
@@ -251,12 +256,17 @@ function ExportHistory(props: Props) {
         },
     );
 
-    const handleDeleteExport = useCallback((id: string) => deleteExport({
-        variables: {
-            projectId,
-            exportId: id,
-        },
-    }), [deleteExport, projectId]);
+    const handleDeleteExport = useCallback((data: ExportItem) => {
+        if (data.id === selectedExport?.id) {
+            setSelectedExport(undefined);
+        }
+        deleteExport({
+            variables: {
+                projectId,
+                exportId: data.id,
+            },
+        });
+    }, [deleteExport, projectId, selectedExport]);
 
     const columns = useMemo(() => {
         const exportTypeColumn: TableColumn<
@@ -270,6 +280,7 @@ function ExportHistory(props: Props) {
             },
             cellRenderer: Icons,
             cellRendererClassName: styles.icons,
+            columnWidth: '120px',
             cellRendererParams: (_, data) => ({
                 children: (
                     exportFormatIconMap[data.format]
@@ -287,6 +298,7 @@ function ExportHistory(props: Props) {
                 sortable: true,
             },
             cellRenderer: Status,
+            columnWidth: '164px',
             cellRendererParams: (_, data) => ({
                 icon: statusIconMap[data.status],
                 tagVariant: statusVariantMap[data.status],
@@ -305,10 +317,12 @@ function ExportHistory(props: Props) {
                 sortable: false,
             },
             cellRenderer: TableActions,
+            columnWidth: '120px',
             cellRendererParams: (_, data) => ({
-                id: data.id,
-                onDeleteClick: () => handleDeleteExport(data.id),
-                onViewExportClick: () => setSelectedExportFile(data.file),
+                viewDisabled: data.status === 'PENDING' || data.status === 'STARTED' || data.id === selectedExport?.id,
+                data,
+                onDeleteClick: handleDeleteExport,
+                onViewExportClick: setSelectedExport,
             }),
         };
         return ([
@@ -319,6 +333,7 @@ function ExportHistory(props: Props) {
                 (item) => item.exportedAt,
                 {
                     sortable: true,
+                    columnWidth: '120px',
                 },
             ),
             createStringColumn<ExportItem, string>(
@@ -326,14 +341,14 @@ function ExportHistory(props: Props) {
                 'Title',
                 (item) => item.title,
                 {
-                    columnWidth: 300,
+                    columnWidth: '240px',
                     sortable: true,
                 },
             ),
             statusColumn,
             actionsColumn,
         ]);
-    }, [handleDeleteExport]);
+    }, [handleDeleteExport, selectedExport]);
 
     const pending = deleteExportPending;
 
@@ -373,7 +388,8 @@ function ExportHistory(props: Props) {
             {pending && (<PendingMessage />)}
             <SortContext.Provider value={sortState}>
                 <TableView
-                    className={styles.table}
+                    className={styles.tableView}
+                    emptyMessage="Looks like you don't have any exports."
                     data={projectExportsResponse?.project?.exports?.results}
                     keySelector={exportKeySelector}
                     columns={columns}
@@ -386,7 +402,6 @@ function ExportHistory(props: Props) {
                             size="large"
                         />
                     )}
-                    emptyMessage="You have no export history."
                     emptyIcon={(
                         <Kraken
                             variant="coffee"
@@ -406,14 +421,14 @@ function ExportHistory(props: Props) {
                 headingClassName={styles.heading}
                 contentClassName={styles.mainContent}
             >
-                {isDefined(selectedExportFile?.url) ? (
+                {isDefined(selectedExport?.file?.url) ? (
                     <LeadPreview
                         className={styles.preview}
-                        url={selectedExportFile?.url}
+                        url={selectedExport?.file?.url}
                     />
                 ) : (
                     <div className={styles.label}>
-                        {selectedExportFile ? 'Preview not available.' : 'Select an export to preview  it.'}
+                        {selectedExport?.file ? 'Preview not available.' : 'Select an export to preview it.'}
                     </div>
                 )}
             </Container>

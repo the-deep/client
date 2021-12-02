@@ -24,7 +24,7 @@ import {
     SourceFilterOptionsQueryVariables,
 } from '#generated/types';
 import { isFiltered } from '#utils/common';
-import SourcesFilter from '../../Sources/SourcesFilter';
+import SourcesFilter, { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
 import styles from './styles.css';
 
 type Project = NonNullable<ProjectSourceListQuery['project']>;
@@ -64,6 +64,7 @@ const PROJECT_LEADS = gql`
         $customFilters: LeadCustomFilterEnum,
     ) {
         project(id: $projectId) {
+            id
             leads (
                 page: $page,
                 pageSize: $pageSize,
@@ -175,17 +176,21 @@ function LeadsSelection(props: Props) {
 
     const [activePage, setActivePage] = useState<number>(1);
 
+    const filters = useMemo(() => (
+        getProjectSourcesQueryVariables(filterValues)
+    ), [filterValues]);
+
     const variables = useMemo(
         (): ProjectSourceListQueryVariables | undefined => (
             (projectId) ? {
-                ...filterValues,
+                ...filters,
                 projectId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
                 ordering,
             } : undefined
         ),
-        [projectId, activePage, ordering, filterValues],
+        [projectId, activePage, ordering, filters],
     );
 
     const {
@@ -329,12 +334,12 @@ function LeadsSelection(props: Props) {
                         data={projectSourcesResponse?.project?.leads?.results}
                         pending={projectSourcesPending}
                         filtered={isFiltered(filterValues)}
+                        emptyMessage="Looks like there are no sources that match your filtering criteria."
                         keySelector={leadsKeySelector}
                         columns={columns}
                         variant="large"
                         messageShown
                         messageIconShown
-                        emptyMessage="No sources found."
                         filteredEmptyMessage="No matching sources found."
                     />
                 </SortContext.Provider>

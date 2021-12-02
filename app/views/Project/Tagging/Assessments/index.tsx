@@ -40,6 +40,7 @@ const ASSESSMENT_LIST = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             assessments (
                 search: $search,
                 createdAtLte: $endDate,

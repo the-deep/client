@@ -6,7 +6,6 @@ import {
 import {
     DateDualRangeInput,
     MultiSelectInput,
-    SelectInput,
     List,
 } from '@the-deep/deep-ui';
 import {
@@ -148,21 +147,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 toValue={value?.createdAtLte}
                 disabled={disabled}
                 label="Entry created at"
-            />
-            <SelectInput
-                className={_cs(
-                    styles.input,
-                    (hasNoData(value?.commentStatus) && !allFiltersVisible)
-                    && styles.hidden,
-                )}
-                name="commentStatus"
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                value={value?.commentStatus}
-                onChange={setFieldValue}
-                options={options?.commentStatusOptions?.enumValues}
-                label="Entry comment status"
-                disabled={disabled || optionsDisabled}
             />
             <BooleanInput
                 className={_cs(

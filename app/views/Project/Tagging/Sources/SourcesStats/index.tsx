@@ -22,6 +22,7 @@ const PROJECT_SOURCE_STATS = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             stats {
                 numberOfEntries
                 numberOfEntriesControlled

@@ -15,6 +15,7 @@ const GEOAREAS = gql`
         $search: String,
     ) {
         project(id: $projectId) {
+            id
             geoAreas(search: $search) {
                 results {
                     adminLevelTitle

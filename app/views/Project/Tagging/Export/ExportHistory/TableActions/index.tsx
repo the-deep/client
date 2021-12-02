@@ -7,35 +7,42 @@ import {
     Button,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
+import {
+    ProjectExportsQuery,
+} from '#generated/types';
 
 import styles from './styles.css';
 
+type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
+
 export interface Props {
     className?: string;
-    id: string;
-    onDeleteClick: (key: string) => void;
-    onViewExportClick: (key: string) => void;
+    onDeleteClick: (data: ExportItem) => void;
+    onViewExportClick: (data: ExportItem) => void;
+    viewDisabled: boolean;
     disabled?: boolean;
+
+    data: ExportItem;
 }
 
 function TableActions(props: Props) {
     const {
         className,
-        id,
         disabled,
         onDeleteClick,
         onViewExportClick,
+        viewDisabled,
+        data,
     } = props;
 
     const handleDeleteClick = useCallback(() => {
-        onDeleteClick(id);
-    }, [onDeleteClick, id]);
+        onDeleteClick(data);
+    }, [onDeleteClick, data]);
 
     return (
         <div className={_cs(styles.actions, className)}>
             <QuickActionConfirmButton
-                className={styles.button}
-                name="deleteButton"
+                name={undefined}
                 title="Remove export"
                 onConfirm={handleDeleteClick}
                 message="Are you sure you want to remove this export?"
@@ -45,10 +52,10 @@ function TableActions(props: Props) {
                 <IoTrashBinOutline />
             </QuickActionConfirmButton>
             <Button
-                name="viewExport"
+                name={data}
                 onClick={onViewExportClick}
                 variant="secondary"
-                disabled={disabled}
+                disabled={disabled || viewDisabled}
             >
                 View
             </Button>

@@ -15,6 +15,7 @@ import useDebouncedValue from '#hooks/useDebouncedValue';
 const PROJECT_USERS = gql`
     query ProjectUser($search: String, $projectId: ID!) {
         project(id: $projectId) {
+            id
             userMembers(search: $search) {
                 results {
                     id

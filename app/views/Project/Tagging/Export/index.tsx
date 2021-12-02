@@ -127,6 +127,7 @@ function Export() {
                         <EntriesExportSelection
                             className={styles.selection}
                             projectId={activeProject}
+                            onSuccess={hideCreateNewExportModal}
                         />
                     </Modal>
                 )}
@@ -141,6 +142,7 @@ function Export() {
                         <AssessmentsExportSelection
                             className={styles.selection}
                             projectId={activeProject}
+                            onSuccess={hideNewAssessmentModal}
                         />
                     </Modal>
                 )}
