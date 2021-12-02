@@ -27,6 +27,7 @@ import {
     TabList,
     TabPanel,
     ListView,
+    Kraken,
     Pager,
 } from '@the-deep/deep-ui';
 import {
@@ -786,6 +787,14 @@ function PillarAnalysis() {
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
+                                    emptyIcon={(
+                                        <Kraken
+                                            variant="experiment"
+                                        />
+                                    )}
+                                    emptyMessage="Entries not found."
+                                    messageIconShown
+                                    messageShown
                                 />
                                 <Pager
                                     className={styles.pager}

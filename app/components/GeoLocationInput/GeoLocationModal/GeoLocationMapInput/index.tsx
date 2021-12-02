@@ -6,6 +6,7 @@ import {
     SelectInput,
     ListView,
     ContainerCard,
+    Kraken,
 } from '@the-deep/deep-ui';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import {
@@ -227,9 +228,15 @@ function GeoLocationMapInput(props: Props) {
                     data={geoAreasList}
                     renderer={GeoAreaListItem}
                     keySelector={geoAreaKeySelector}
-                    emptyIcon={null}
-                    emptyMessage={null}
                     rendererParams={geoAreasRendererParams}
+                    emptyIcon={(
+                        <Kraken
+                            variant="hi"
+                        />
+                    )}
+                    emptyMessage="No geo areas selected."
+                    messageIconShown
+                    messageShown
                 />
             </Container>
         </div>

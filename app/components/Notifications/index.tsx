@@ -9,6 +9,7 @@ import {
     Tab,
     TabList,
     Container,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import {
@@ -168,6 +169,14 @@ function Notifications(props: Props) {
                     rendererParams={notificationRendererParams}
                     rendererClassName={styles.notificationItem}
                     keySelector={notificationKeySelector}
+                    emptyIcon={(
+                        <Kraken
+                            variant="hi"
+                        />
+                    )}
+                    emptyMessage="You're all caught up."
+                    messageShown
+                    messageIconShown
                     /*
                         grouped
                         groupRendererParams={notificationGroupRendererParams}

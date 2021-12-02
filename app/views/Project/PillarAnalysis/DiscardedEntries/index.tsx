@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     ListView,
+    Kraken,
     MultiSelectInput,
     Pager,
 } from '@the-deep/deep-ui';
@@ -118,6 +119,7 @@ function DiscardedEntries(props: Props) {
         setActivePage(0);
         setSelectedDiscardedTag(newValue);
     }, []);
+    console.warn('here', entriesResponse?.results);
 
     return (
         <div className={_cs(className, styles.discardedEntries)}>
@@ -140,6 +142,21 @@ function DiscardedEntries(props: Props) {
                 renderer={DiscardedEntryItem}
                 rendererParams={entryCardRendererParams}
                 pending={pendingEntries}
+                emptyIcon={(
+                    <Kraken
+                        variant="experiment"
+                    />
+                )}
+                emptyMessage="Entries not found."
+                filtered={isDefined(selectedDiscardedTag)}
+                filteredEmptyIcon={(
+                    <Kraken
+                        variant="search"
+                    />
+                )}
+                filteredEmptyMessage="No matching entries found"
+                messageIconShown
+                messageShown
             />
             <Pager
                 className={styles.footer}

@@ -21,6 +21,7 @@ import {
     TabList,
     TabPanel,
     ListView,
+    Kraken,
     Container,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -1280,8 +1281,16 @@ function EntryEdit(props: Props) {
                                         className={styles.entries}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
-                                        data={formValue.entries}
+                                        data={[]}
                                         rendererParams={entryDataRendererParams}
+                                        emptyIcon={(
+                                            <Kraken
+                                                variant="search"
+                                            />
+                                        )}
+                                        emptyMessage="No entries found"
+                                        messageIconShown
+                                        messageShown
                                     />
                                 </Container>
                             )}

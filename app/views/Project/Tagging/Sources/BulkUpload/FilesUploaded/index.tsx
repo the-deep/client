@@ -9,6 +9,7 @@ import {
     TextInput,
     Container,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
 import { IoSearch } from 'react-icons/io5';
 import {
@@ -138,6 +139,8 @@ function FilesUploaded(props: Props) {
         }
         return leads;
     }, [leads, searchText]);
+    console.warn('searchText', searchText);
+    console.warn('files', searchedFiles);
 
     const selectedLeadIndex = useMemo(() => (
         leads?.findIndex((f) => f.clientId === selectedLead)
@@ -170,6 +173,21 @@ function FilesUploaded(props: Props) {
                     renderer={FileItem}
                     keySelector={keySelector}
                     rendererParams={fileRendererParams}
+                    emptyIcon={(
+                        <Kraken
+                            variant="exercise"
+                        />
+                    )}
+                    emptyMessage="No files to show."
+                    filtered={(searchText?.length ?? 0) > 0}
+                    filteredEmptyIcon={(
+                        <Kraken
+                            variant="search"
+                        />
+                    )}
+                    filteredEmptyMessage="No match found."
+                    messageIconShown
+                    messageShown
                 />
             </Container>
             <div className={styles.rightPane}>

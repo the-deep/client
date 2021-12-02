@@ -7,6 +7,7 @@ import {
     Container,
     PendingMessage,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
 import { GiShrug } from 'react-icons/gi';
 
@@ -276,7 +277,12 @@ function Home(props: ViewProps) {
                     rendererParams={recentProjectsRendererParams}
                     renderer={ProjectItem}
                     keySelector={recentProjectKeySelector}
-                    emptyIcon={(<GiShrug />)}
+                    emptyIcon={(
+                        <Kraken
+                            variant="search"
+                            size="medium"
+                        />
+                    )}
                     emptyMessage={(
                         <div className={styles.emptyText}>
                             {/* FIXME: use strings with appropriate wording */}
@@ -285,6 +291,8 @@ function Home(props: ViewProps) {
                             please select a project to view it&apos;s details
                         </div>
                     )}
+                    messageIconShown
+                    messageShown
                 />
             </Container>
         </PageContent>

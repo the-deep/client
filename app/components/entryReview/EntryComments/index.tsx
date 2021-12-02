@@ -6,6 +6,7 @@ import {
     Pager,
     QuickActionButton,
     ListView,
+    Kraken,
     Modal,
 } from '@the-deep/deep-ui';
 import {
@@ -123,6 +124,14 @@ function EntryComments(props: Props) {
                         rendererParams={commentRendererParams}
                         renderer={Comment}
                         pending={commentsPending}
+                        emptyIcon={(
+                            <Kraken
+                                variant="work"
+                            />
+                        )}
+                        emptyMessage="No comments found"
+                        messageIconShown
+                        messageShown
                     />
                     <CommentForm
                         entryId={entryId}

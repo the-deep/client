@@ -6,6 +6,7 @@ import {
     Pager,
     PendingMessage,
     ListView,
+    Kraken,
     TextOutput,
     NumberOutput,
     DateOutput,
@@ -279,6 +280,14 @@ function UserGroup(props: Props) {
                 data={usergroupResponse?.results}
                 renderer={UserGroupItem}
                 rendererParams={userGroupRendererParams}
+                emptyIcon={(
+                    <Kraken
+                        variant="experiment"
+                    />
+                )}
+                emptyMessage="No usergroups found."
+                messageIconShown
+                messageShown
             />
             {showAddUserGroupModal && (
                 <AddUserGroupModal
