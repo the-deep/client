@@ -48,7 +48,7 @@ function RecentActivities() {
                 keySelector={keySelector}
                 rendererParams={activityRendererParams}
                 pending={pending}
-                emptyMessage="You do not have any recent activity"
+                emptyMessage="You do not have any recent activities."
                 messageIconShown
                 messageShown
             />
