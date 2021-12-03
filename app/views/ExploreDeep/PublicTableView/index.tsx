@@ -13,8 +13,8 @@ import {
 } from '@the-deep/deep-ui';
 
 import {
-    ProjectListQuery,
-    ProjectListQueryVariables,
+    PublicProjectListQuery,
+    PublicProjectListQueryVariables,
 } from '#generated/types';
 import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#components/framework/FrameworkImageButton';
 import {
@@ -22,13 +22,11 @@ import {
     isFiltered,
 } from '#utils/common';
 import { createDateColumn } from '#components/tableHelpers';
-import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 
-import ActionCell, { Props as ActionCellProps } from '../ActionCell';
 import styles from './styles.css';
 
 const PROJECT_LIST = gql`
-    query ProjectList(
+    query PublicProjectList(
         $search: String,
         $organizations: [ID!],
         $analysisFrameworks: [ID!],
@@ -38,7 +36,7 @@ const PROJECT_LIST = gql`
         $pageSize: Int,
 
     ) {
-        projects(
+        publicProjects(
             search: $search,
             organizations: $organizations,
             analysisFrameworks: $analysisFrameworks,
@@ -51,44 +49,24 @@ const PROJECT_LIST = gql`
                 id
                 title
                 createdAt
-                currentUserRole
-                regions {
-                    id
-                    title
-                }
-                analysisFramework {
-                    id
-                    title
-                }
-                stats {
-                    numberOfLeads
-                    numberOfUsers
-                }
-                isRejected
-                membershipPending
-                organizations {
-                    id
-                    organization {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
-                    }
-                }
+                regionsTitle
+                analysisFrameworkTitle
+                analysisFrameworkPreviewImage
+                numberOfLeads
+                numberOfUsers
+                organizationsTitle
             }
             totalCount
         }
     }
 `;
-export type Project = NonNullable<NonNullable<NonNullable<ProjectListQuery['projects']>['results']>[number]>;
+export type Project = NonNullable<NonNullable<NonNullable<PublicProjectListQuery['publicProjects']>['results']>[number]>;
 
 const projectKeySelector = (p: Project) => p.id;
 
 interface Props {
     className?: string;
-    filters: ProjectListQueryVariables | undefined;
+    filters: PublicProjectListQueryVariables | undefined;
 }
 
 function ExploreDeepTableView(props: Props) {
@@ -118,8 +96,7 @@ function ExploreDeepTableView(props: Props) {
     const {
         data,
         loading,
-        refetch,
-    } = useQuery<ProjectListQuery, ProjectListQueryVariables>(
+    } = useQuery<PublicProjectListQuery, PublicProjectListQueryVariables>(
         PROJECT_LIST,
         {
             variables,
@@ -138,29 +115,9 @@ function ExploreDeepTableView(props: Props) {
             },
             cellRenderer: FrameworkImageButton,
             cellRendererParams: (_, project) => ({
-                frameworkId: project?.analysisFramework?.id,
-                label: project?.analysisFramework?.title,
+                label: project?.analysisFrameworkTitle ?? undefined,
+                image: project?.analysisFrameworkPreviewImage ?? undefined,
             }),
-        };
-
-        const actionsColumn: TableColumn<
-            Project, string, ActionCellProps, TableHeaderCellProps
-        > = {
-            id: 'actions',
-            title: '',
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: false,
-            },
-            cellRenderer: ActionCell,
-            cellRendererParams: (projectId, project) => ({
-                projectId,
-                isRejected: project?.isRejected,
-                membershipPending: project?.membershipPending,
-                isMember: !!project?.currentUserRole,
-                onMemberStatusChange: refetch,
-            }),
-            columnWidth: 156,
         };
 
         return ([
@@ -172,7 +129,7 @@ function ExploreDeepTableView(props: Props) {
             createStringColumn<Project, string>(
                 'location',
                 'Location',
-                (item) => item?.regions?.map((region) => region.title)?.join(', '),
+                (item) => item?.regionsTitle,
             ),
             createDateColumn<Project, string>(
                 'created_at',
@@ -186,7 +143,7 @@ function ExploreDeepTableView(props: Props) {
             createNumberColumn<Project, string>(
                 'members_count',
                 'Users',
-                (item) => item?.stats?.numberOfUsers,
+                (item) => item?.numberOfUsers,
                 {
                     columnWidth: 96,
                 },
@@ -194,7 +151,7 @@ function ExploreDeepTableView(props: Props) {
             createNumberColumn<Project, string>(
                 'sources_count',
                 'Sources',
-                (item) => item?.stats?.numberOfLeads,
+                (item) => item?.numberOfLeads,
                 {
                     columnWidth: 96,
                 },
@@ -202,11 +159,10 @@ function ExploreDeepTableView(props: Props) {
             createStringColumn<Project, string>(
                 'organizations',
                 'Organizations',
-                (item) => item?.organizations?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
+                (item) => item?.organizationsTitle,
             ),
-            actionsColumn,
         ]);
-    }, [refetch]);
+    }, []);
 
     return (
         <>
@@ -214,9 +170,9 @@ function ExploreDeepTableView(props: Props) {
                 className={_cs(className, styles.table)}
                 columns={columns}
                 keySelector={projectKeySelector}
-                data={data?.projects?.results}
-                pending={loading}
+                data={data?.publicProjects?.results}
                 filtered={isFiltered(filters)}
+                pending={loading}
                 messageShown
                 messageIconShown
                 emptyMessage="No projects to show."
@@ -225,7 +181,7 @@ function ExploreDeepTableView(props: Props) {
                 actions={(
                     <Pager
                         activePage={page}
-                        itemsCount={(data?.projects?.totalCount) ?? 0}
+                        itemsCount={(data?.publicProjects?.totalCount) ?? 0}
                         maxItemsPerPage={pageSize}
                         onActivePageChange={setPage}
                         onItemsPerPageChange={setPageSize}

@@ -19,11 +19,12 @@ const query = {
     fields: ['title', 'preview_image', 'id'],
 };
 
-export interface Props {
-    frameworkId: number | string | undefined;
+export type Props = {
     label?: string;
     className?: string;
     variant?: ButtonProps<string>['variant'];
+    frameworkId?: number | string;
+    image?: string;
 }
 
 function FrameworkImageButton(props: Props) {
@@ -32,6 +33,7 @@ function FrameworkImageButton(props: Props) {
         frameworkId,
         label,
         variant,
+        image,
     } = props;
 
     const [
@@ -61,7 +63,7 @@ function FrameworkImageButton(props: Props) {
                 )}
                 onClick={showModal}
                 variant={variant ?? 'transparent'}
-                disabled={!frameworkId}
+                disabled={!frameworkId && !image}
             >
                 {label}
             </Button>
@@ -74,10 +76,10 @@ function FrameworkImageButton(props: Props) {
                     bodyClassName={styles.content}
                 >
                     {pending && <PendingMessage />}
-                    {frameworkDetails?.previewImage ? (
+                    {(frameworkDetails?.previewImage || image) ? (
                         <ImagePreview
                             alt={frameworkDetails?.title ?? _ts('projectEdit', 'frameworkReferenceImageAlt')}
-                            src={frameworkDetails.previewImage}
+                            src={image ?? frameworkDetails?.previewImage}
                         />
                     ) : (
                         _ts('analyticalFramework', 'noImageUploaded')

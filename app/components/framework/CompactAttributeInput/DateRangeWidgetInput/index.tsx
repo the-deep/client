@@ -1,11 +1,9 @@
 import React, { useCallback } from 'react';
 import {
-    QuickActionButton,
     DateRangeInput,
     DateRangeOutput,
 } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
-import { IoSwapHorizontal } from 'react-icons/io5';
 import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -53,21 +51,6 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
 
-    const handleValueSwap = useCallback(
-        () => {
-            if (value?.value) {
-                onChange(
-                    {
-                        endDate: value.value.startDate,
-                        startDate: value.value.endDate,
-                    },
-                    name,
-                );
-            }
-        },
-        [onChange, value, name],
-    );
-
     const valueErrorString = getErrorString(error?.value);
     const valueErrorObject = getErrorObject(error?.value);
 
@@ -98,15 +81,6 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
                         disabled={disabled}
                         error={valueError}
                     />
-                    <QuickActionButton
-                        className={styles.button}
-                        name={undefined}
-                        onClick={handleValueSwap}
-                        title="Swap Values" // FIXME: use translations
-                        variant="action"
-                    >
-                        <IoSwapHorizontal />
-                    </QuickActionButton>
                 </>
             ) : (
                 <DateRangeOutput

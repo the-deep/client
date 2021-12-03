@@ -279,7 +279,12 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         failureHeader: 'Raw Web Info Extract',
     });
 
-    const [getUserToken, { loading: pendingUserToken }] = useLazyQuery<TokenQuery>(
+    const [
+        getUserToken,
+        {
+            loading: pendingUserToken,
+        },
+    ] = useLazyQuery<TokenQuery>(
         TOKEN,
         {
             fetchPolicy: 'network-only',
