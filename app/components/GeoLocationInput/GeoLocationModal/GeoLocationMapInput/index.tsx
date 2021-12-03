@@ -103,6 +103,7 @@ function GeoLocationMapInput(props: Props) {
 
     const [
         getGeoAreas,
+        { loading: loadingGeoAreas },
     ] = useLazyQuery<ProjectGeoAreasQuery, ProjectGeoAreasQueryVariables>(
         GEOAREAS,
         {
@@ -229,6 +230,8 @@ function GeoLocationMapInput(props: Props) {
                     renderer={GeoAreaListItem}
                     keySelector={geoAreaKeySelector}
                     rendererParams={geoAreasRendererParams}
+                    pending={loadingGeoAreas}
+                    filtered={false}
                     emptyIcon={(
                         <Kraken
                             variant="hi"

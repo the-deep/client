@@ -3,7 +3,6 @@ import { _cs } from '@togglecorp/fujs';
 import {
     ContainerCard,
     ListView,
-    Kraken,
 } from '@the-deep/deep-ui';
 
 import { IoIosContacts } from 'react-icons/io';
@@ -57,12 +56,14 @@ const stakeholderDetailsRendererParams = (_: number, d: BasicOrganization) => ({
 interface Props {
     className?: string;
     data?: BasicOrganization[];
+    dataPending: boolean;
     title: string;
 }
 function StakeholderList(props: Props) {
     const {
         data,
         title,
+        dataPending,
         className,
     } = props;
 
@@ -80,6 +81,8 @@ function StakeholderList(props: Props) {
                 keySelector={stakeholderDetailsKeySelector}
                 rendererParams={stakeholderDetailsRendererParams}
                 compactAndVerticalEmptyMessage
+                pending={dataPending}
+                filtered={false}
                 emptyMessage="No organizations were added"
                 messageShown
             />

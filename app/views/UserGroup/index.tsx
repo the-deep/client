@@ -4,7 +4,6 @@ import {
     Button,
     Container,
     Pager,
-    PendingMessage,
     ListView,
     Kraken,
     TextOutput,
@@ -273,13 +272,14 @@ function UserGroup(props: Props) {
             )}
             contentClassName={styles.content}
         >
-            {usergroupGetPending && <PendingMessage />}
             <ListView
                 className={styles.userGroupList}
                 keySelector={usergroupKeySelector}
                 data={usergroupResponse?.results}
                 renderer={UserGroupItem}
                 rendererParams={userGroupRendererParams}
+                filtered={false}
+                pending={usergroupGetPending}
                 emptyIcon={(
                     <Kraken
                         variant="experiment"

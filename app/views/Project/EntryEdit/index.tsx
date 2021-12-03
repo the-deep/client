@@ -1281,8 +1281,10 @@ function EntryEdit(props: Props) {
                                         className={styles.entries}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
-                                        data={[]}
+                                        data={formValue.entries}
                                         rendererParams={entryDataRendererParams}
+                                        filtered={false}
+                                        pending={false}
                                         emptyIcon={(
                                             <Kraken
                                                 variant="search"

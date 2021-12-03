@@ -18,6 +18,7 @@ import {
     SortContext,
     useSortState,
     IconsProps,
+    Kraken,
     Icons,
     TextInput,
     DateRangeInput,
@@ -378,6 +379,22 @@ function ExportHistory(props: Props) {
                     data={projectExportsResponse?.project?.exports?.results}
                     keySelector={exportKeySelector}
                     columns={columns}
+                    pending={projectExportsPending}
+                    filtered={isDefined(debouncedSearchText) || isDefined(exportedAt)}
+                    filteredEmptyMessage="No matching exports found."
+                    filteredEmptyIcon={(
+                        <Kraken
+                            variant="coffee"
+                        />
+                    )}
+                    emptyMessage="You have no export history."
+                    emptyIcon={(
+                        <Kraken
+                            variant="coffee"
+                        />
+                    )}
+                    messageShown
+                    messageIconShown
                 />
             </SortContext.Provider>
             <Container

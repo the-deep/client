@@ -64,6 +64,7 @@
                     .framework-list-container {
                         padding: 0;
                         gap: var(--dui-spacing-large);
+
                     }
                 }
             }
@@ -85,6 +86,10 @@
                 padding: 0;
             }
         }
+    }
+
+    .list {
+        min-height: 100%;
     }
 
     .tabs-container {

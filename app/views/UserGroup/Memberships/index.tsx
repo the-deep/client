@@ -180,6 +180,9 @@ function Memberships(props: Props) {
                 keySelector={membershipKeySelector}
                 headerCellClassName={styles.headerCell}
                 data={memberships?.results}
+                pending={membershipsPending}
+                filtered={false}
+                emptyMessage="No users found"
             />
             {showAddUserModal && userGroup && (
                 <AddUserModal

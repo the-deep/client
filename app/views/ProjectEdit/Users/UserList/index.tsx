@@ -335,6 +335,9 @@ function UserList(props: Props) {
                 emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
                 rowClassName={styles.tableRow}
                 columns={columns}
+                filtered={false}
+                pending={projectUsersPending}
+                messageShown
             />
             <Pager
                 activePage={activePage}

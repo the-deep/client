@@ -12,6 +12,7 @@ import {
     Container,
     Button,
     Link,
+    Kraken,
     Pager,
     TableView,
     TableColumn,
@@ -203,6 +204,15 @@ function UserGroupList(props: Props) {
                 columns={columns}
                 emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
                 rowClassName={styles.tableRow}
+                filtered={false}
+                pending={usergroupPending}
+                emptyIcon={(
+                    <Kraken
+                        variant="standby"
+                    />
+                )}
+                messageShown
+                messageIconShown
             />
             <Pager
                 activePage={activePage}

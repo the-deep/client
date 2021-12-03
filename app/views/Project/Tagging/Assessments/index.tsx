@@ -1,13 +1,16 @@
 import React, { useMemo, useState, useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { _cs } from '@togglecorp/fujs';
 import {
-    PendingMessage,
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
+import {
     Container,
     TableView,
     TableColumn,
     TableHeaderCellProps,
     TableHeaderCell,
+    Kraken,
     createStringColumn,
     Pager,
 } from '@the-deep/deep-ui';
@@ -172,12 +175,27 @@ function Assessments(props: Props) {
                 />
             )}
         >
-            {loading && (<PendingMessage />)}
             <TableView
                 className={styles.table}
                 columns={columns}
                 keySelector={assessmentKeySelector}
                 data={data?.project?.assessments?.results}
+                pending={loading}
+                filtered={isDefined(filters)}
+                filteredEmptyMessage="No matching assessments found."
+                filteredEmptyIcon={(
+                    <Kraken
+                        variant="coffee"
+                    />
+                )}
+                emptyMessage="No assessments found"
+                emptyIcon={(
+                    <Kraken
+                        variant="coffee"
+                    />
+                )}
+                messageShown
+                messageIconShown
             />
         </Container>
     );

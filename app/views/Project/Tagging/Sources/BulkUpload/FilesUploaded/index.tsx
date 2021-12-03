@@ -139,8 +139,6 @@ function FilesUploaded(props: Props) {
         }
         return leads;
     }, [leads, searchText]);
-    console.warn('searchText', searchText);
-    console.warn('files', searchedFiles);
 
     const selectedLeadIndex = useMemo(() => (
         leads?.findIndex((f) => f.clientId === selectedLead)
@@ -173,6 +171,7 @@ function FilesUploaded(props: Props) {
                     renderer={FileItem}
                     keySelector={keySelector}
                     rendererParams={fileRendererParams}
+                    pending={false}
                     emptyIcon={(
                         <Kraken
                             variant="exercise"

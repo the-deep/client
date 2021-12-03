@@ -202,6 +202,8 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
                 rendererParams={rowRendererParams}
                 renderer={Row}
                 compactEmptyMessage
+                filtered={false}
+                pending={false}
             />
         </WidgetWrapper>
     );

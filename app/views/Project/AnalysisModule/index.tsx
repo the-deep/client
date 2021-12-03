@@ -256,6 +256,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
         pillars: data.pillars,
+        pillarsPending: pendingAnalyses,
         analyzedSources: data.analyzedSources,
         analyzedEntries: data.analyzedEntries,
         totalSources: data.totalSources,
@@ -269,6 +270,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         handleAnalysisToDeleteClick,
         pendingAnalysisDelete,
         analysisIdToDelete,
+        pendingAnalyses,
     ]);
 
     const canTagEntry = project?.allowedPermissions?.includes('UPDATE_ENTRY');

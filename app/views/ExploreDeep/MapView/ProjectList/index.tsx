@@ -122,6 +122,7 @@ const keySelector = (d: ProjectDetail) => d.id;
 
 interface Props {
     projectDetails?: ProjectDetail[];
+    projectDetailsPending: boolean;
     page: number;
     pageSize: number;
     setPage: (page: number) => void;
@@ -134,6 +135,7 @@ interface Props {
 function ProjectList(props: Props) {
     const {
         projectDetails,
+        projectDetailsPending,
         page,
         pageSize,
         setPage,
@@ -193,12 +195,15 @@ function ProjectList(props: Props) {
                 data={projectDetails}
                 renderer={ListRenderer}
                 rendererParams={rendererParams}
+                // NOTE: Nothing to filter here
+                filtered={false}
+                pending={projectDetailsPending}
                 emptyIcon={(
                     <Kraken
                         variant="skydive"
                     />
                 )}
-                emptyMessage="There doesn't seem to be any projects here."
+                emptyMessage="No projects found"
                 messageIconShown
                 messageShown
             />

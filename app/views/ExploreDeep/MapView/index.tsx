@@ -266,6 +266,7 @@ function ExploreDeepMapView(props: Props) {
             {clusterClicked && (
                 <ProjectList
                     projectDetails={projectDetails?.projects?.results ?? undefined}
+                    projectDetailsPending={projectDetailsPending}
                     onListCloseButtonClick={handleListClose}
                     page={page}
                     pageSize={pageSize}

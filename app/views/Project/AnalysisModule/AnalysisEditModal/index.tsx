@@ -431,6 +431,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     renderer={PillarAnalysisRow}
                     keySelector={analysisPillarKeySelector}
                     rendererParams={rowRendererParams}
+                    pending={pending}
+                    filtered={false}
                     emptyIcon={(
                         <Kraken
                             variant="experiment"

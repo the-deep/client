@@ -91,6 +91,7 @@ interface ComponentProps {
     onDelete: (value: number) => void;
     pendingAnalysisDelete: boolean;
     pillars: PillarSummary[];
+    pillarsPending: boolean;
     totalEntries: number;
     totalSources: number;
     analyzedEntries: number;
@@ -111,6 +112,7 @@ function Analysis(props: ComponentProps) {
         onAnalysisPillarDelete,
         onAnalysisCloseSuccess,
         pillars,
+        pillarsPending,
         createdAt,
         onEdit,
         onDelete,
@@ -238,6 +240,8 @@ function Analysis(props: ComponentProps) {
                                 renderer={PillarAssignment}
                                 rendererParams={pillarAssignmentRendererParams}
                                 keySelector={pillarSummaryKeySelector}
+                                filtered={false}
+                                pending={pillarsPending}
                                 emptyIcon={(
                                     <Kraken
                                         variant="search"

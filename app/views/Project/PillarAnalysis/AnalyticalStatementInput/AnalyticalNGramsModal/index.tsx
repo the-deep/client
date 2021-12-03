@@ -201,6 +201,9 @@ function AnalyticalNGramsModal(props: Props) {
                         keySelector={keySelector}
                         renderer={ExcerptInput}
                         rendererParams={entriesRendererParams}
+                        filtered={false}
+                        pending={false}
+                        // TODO: add pending
                         emptyIcon={(
                             <Kraken
                                 variant="skydive"
