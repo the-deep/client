@@ -26,6 +26,7 @@ export interface Props {
     // or rejected
     membershipPending: boolean;
     isMember: boolean;
+    isRejected: boolean;
     onMemberStatusChange: () => void;
     variant?: ButtonProps<string>['variant'];
 }
@@ -47,6 +48,7 @@ function ActionCell(props: Props) {
         disabled,
         membershipPending,
         isMember,
+        isRejected,
         onMemberStatusChange,
         variant,
     } = props;
@@ -87,7 +89,7 @@ function ActionCell(props: Props) {
         });
     }, [projectId, cancelJoinProject]);
 
-    if (isMember) {
+    if (isMember || isRejected) {
         return null;
     }
 
