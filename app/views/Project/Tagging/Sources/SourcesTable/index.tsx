@@ -4,6 +4,7 @@ import {
     listToMap,
     unique,
     isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     Checkbox,
@@ -11,6 +12,7 @@ import {
     Container,
     DateOutput,
     DateOutputProps,
+    Kraken,
     Link,
     LinkProps,
     Pager,
@@ -611,6 +613,21 @@ function SourcesTable(props: Props) {
                             rowModifier={rowModifier}
                             variant="large"
                             pending={pending}
+                            filtered={isDefined(entriesFilter)}
+                            filteredEmptyMessage="No matching source found"
+                            filteredEmptyIcon={(
+                                <Kraken
+                                    variant="sleep"
+                                />
+                            )}
+                            emptyMessage="No sources found"
+                            emptyIcon={(
+                                <Kraken
+                                    variant="sleep"
+                                />
+                            )}
+                            messageShown
+                            messageIconShown
                         />
                     </SortContext.Provider>
                 </RowExpansionContext.Provider>

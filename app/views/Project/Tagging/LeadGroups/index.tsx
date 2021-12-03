@@ -1,10 +1,14 @@
 import React, { useCallback, useMemo, useState, useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     PendingMessage,
     Button,
     Container,
+    Kraken,
     TableView,
     TableColumn,
     TableHeaderCellProps,
@@ -215,6 +219,22 @@ function LeadGroups(props: Props) {
                 columns={columns}
                 keySelector={leadGroupKeySelector}
                 data={data?.project?.leadGroups?.results}
+                filtered={isDefined(filters)}
+                filteredEmptyMessage="No matching leadgroups found."
+                filteredEmptyIcon={(
+                    <Kraken
+                        variant="hi"
+                    />
+                )}
+                pending={loading}
+                emptyMessage="No leadgroups found."
+                emptyIcon={(
+                    <Kraken
+                        variant="hi"
+                    />
+                )}
+                messageIconShown
+                messageShown
             />
             {addLeadGroupModalShown && (
                 <AddLeadGroupModal

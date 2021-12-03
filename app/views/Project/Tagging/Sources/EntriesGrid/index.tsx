@@ -353,12 +353,14 @@ function SourcesGrid(props: Props) {
                     rendererParams={entryRendererParams}
                     keySelector={entryKeySelector}
                     pending={loading || projectFrameworkLoading}
+                    filtered={false}
+                    // NOTE: The filtered condition is already handled
                     emptyIcon={(
                         <Kraken
                             variant="work"
                         />
                     )}
-                    emptyMessage="Couldn't find any entries to show."
+                    emptyMessage="No entries found"
                     messageIconShown
                     messageShown
                 />

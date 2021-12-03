@@ -11,6 +11,8 @@
         padding: var(--dui-spacing-large);
 
         .user-group-list {
+            min-height: 100%;
+
             .user-group-item {
                 gap: 0;
 

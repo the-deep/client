@@ -169,6 +169,8 @@ function Notifications(props: Props) {
                     rendererParams={notificationRendererParams}
                     rendererClassName={styles.notificationItem}
                     keySelector={notificationKeySelector}
+                    filtered={false}
+                    pending={loading}
                     emptyIcon={(
                         <Kraken
                             variant="hi"

@@ -361,6 +361,7 @@ function EntryList(props: Props) {
                     data={entries ?? undefined}
                     rendererParams={entryDataRendererParams}
                     rendererClassName={styles.entryItem}
+                    filtered={false}
                     pending={entryListPending || projectFrameworkLoading}
                     emptyIcon={(
                         <Kraken

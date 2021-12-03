@@ -130,6 +130,7 @@ function AnalysisDetails(props: Props) {
                 pending={pillarPending}
                 renderer={AnalysisPillar}
                 rendererParams={analysisPillarRendererParams}
+                filtered={false}
                 emptyIcon={(
                     <Kraken
                         variant="exercise"

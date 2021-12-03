@@ -199,12 +199,15 @@ function ExploreDeep(props: Props) {
                             contentClassName={styles.frameworkListContainer}
                         >
                             <ListView
+                                className={styles.list}
                                 data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
                                 keySelector={activeFrameworkKeySelector}
                                 renderer={ActiveFrameworkItem}
                                 rendererParams={activeFrameworkRendererParams}
                                 spacing="none"
-                                emptyMessage="We couldn't find what you're looking for. Please visit again later."
+                                filtered={false}
+                                pending={loading}
+                                emptyMessage="We couldn&apos;t find what you&apos;re looking for. Please visit again later."
                                 emptyIcon={(
                                     <Kraken
                                         variant="work"
@@ -230,12 +233,16 @@ function ExploreDeep(props: Props) {
                     inlineHeadingDescription
                 >
                     <ListView
+                        className={styles.list}
                         data={projectList ?? undefined}
                         keySelector={activeProjectKeySelector}
                         renderer={ActiveProjectItem}
                         rendererParams={activeProjectsRendererParams}
                         spacing="none"
-                        emptyMessage="We couldn't find what you're looking for. Please visit again later."
+                        pending={loading}
+                        // NOTE: Nothing to filter here
+                        filtered={false}
+                        emptyMessage="We couldn&apos;t find what you&apos;re looking for. Please visit again later."
                         emptyIcon={(
                             <Kraken
                                 variant="work"

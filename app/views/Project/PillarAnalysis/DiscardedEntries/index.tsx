@@ -147,7 +147,7 @@ function DiscardedEntries(props: Props) {
                         variant="experiment"
                     />
                 )}
-                emptyMessage="Entries not found."
+                emptyMessage="No entries found"
                 filtered={isDefined(selectedDiscardedTag)}
                 filteredEmptyIcon={(
                     <Kraken

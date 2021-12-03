@@ -787,6 +787,10 @@ function PillarAnalysis() {
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
+                                    /* TODO: figure out why PendingMessage is
+                                     * taking its compact form */
+                                    // NOTE: Nothing to filter here
+                                    filtered={false}
                                     emptyIcon={(
                                         <Kraken
                                             variant="experiment"

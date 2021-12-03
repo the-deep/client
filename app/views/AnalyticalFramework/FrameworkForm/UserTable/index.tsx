@@ -231,6 +231,10 @@ function UserTable(props: Props) {
                     keySelector={userKeySelector}
                     columns={columns}
                     rowClassName={styles.tableRow}
+                    pending={frameworkUsersGetPending}
+                    filtered={false}
+                    emptyMessage="No users found"
+                    messageShown
                 />
             </Container>
             {addUserModalShown && (
