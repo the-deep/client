@@ -5,11 +5,9 @@ import {
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
-    PendingMessage,
     ListView,
     Kraken,
 } from '@the-deep/deep-ui';
-import { GiShrug } from 'react-icons/gi';
 
 import { useRequest } from '#base/utils/restRequest';
 
@@ -174,7 +172,6 @@ function Home(props: ViewProps) {
     );
 
     const {
-        pending: summaryPending,
         response: summaryResponse,
     } = useRequest<ProjectsSummary>({
         url: 'server://projects-stat/summary/',
@@ -205,10 +202,6 @@ function Home(props: ViewProps) {
         [],
     );
 
-    const pageDataPending = summaryPending
-    || recentProjectsPending
-    || selectedProjectPending;
-
     const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
         if (selectedProject && selectedProjectResponse?.project) {
             return [selectedProjectResponse.project];
@@ -231,7 +224,6 @@ function Home(props: ViewProps) {
             )}
             mainContentClassName={styles.mainContent}
         >
-            { pageDataPending && <PendingMessage /> }
             <Summary
                 className={styles.summary}
                 summaryResponse={summaryResponse}
@@ -276,7 +268,9 @@ function Home(props: ViewProps) {
                     data={recentProjects}
                     rendererParams={recentProjectsRendererParams}
                     renderer={ProjectItem}
+                    pending={selectedProjectPending || recentProjectsPending}
                     keySelector={recentProjectKeySelector}
+                    compactEmptyMessage={false}
                     emptyIcon={(
                         <Kraken
                             variant="search"

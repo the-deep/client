@@ -124,7 +124,7 @@ export type Props<
     GP extends GroupCommonProps,
     GK extends OptionKey,
     ItemContainerParams,
-> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer' | 'direction'> & {
+> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer' | 'direction' | 'pending' | 'filtered'> & {
     name: N;
     keySelector: (val: D) => K;
     renderer: (props: P & {
@@ -137,6 +137,8 @@ export type Props<
     direction: 'vertical' | 'horizontal' | 'rect';
     showDragOverlay?: boolean;
     itemContainerParams?: (key: K, datum: D, index: number, data: D[]) => ItemContainerParams;
+    pending?: boolean;
+    filtered?: boolean;
 }
 
 function SortableList<
@@ -161,6 +163,8 @@ function SortableList<
         direction,
         showDragOverlay,
         itemContainerParams,
+        pending = false,
+        filtered = false,
         ...otherProps
     } = props;
     const [activeId, setActiveId] = useState<string | undefined>();
@@ -295,14 +299,14 @@ function SortableList<
                 strategy={sortingStrategy}
             >
                 <ListView
-                    emptyIcon={null}
-                    emptyMessage={null}
                     className={className}
                     data={data}
                     keySelector={keySelector}
                     renderer={MemoizedSortableItem}
                     rendererParams={modifiedRendererParams}
                     {...otherProps}
+                    pending={pending}
+                    filtered={filtered}
                     grouped={false}
                 />
             </SortableContext>

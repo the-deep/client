@@ -3,6 +3,8 @@
     padding: 0;
 
     .content {
+        display: flex;
+        flex-direction: column;
         border-radius: var(--dui-border-radius-card);
         background-color: var(--dui-color-background-information);
         padding: var(--dui-spacing-medium);
