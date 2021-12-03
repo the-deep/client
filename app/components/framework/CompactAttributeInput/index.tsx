@@ -111,7 +111,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
 
     let component: JSX.Element;
 
-    // TODO: hide attribute input
     // TODO: check widget and attribute version
 
     if (widget.widgetId === 'TEXT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {

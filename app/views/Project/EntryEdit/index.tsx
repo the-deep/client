@@ -1149,7 +1149,7 @@ function EntryEdit(props: Props) {
                                         entriesError={entriesErrorStateMap}
                                         // NOTE: If entry Id comes from state, we need to
                                         // show entries tab as it always has the entry
-                                        defaultTab={!entryIdFromState ? 'entries' : undefined}
+                                        defaultTab={entryIdFromState ? 'entries' : undefined}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}
@@ -1235,7 +1235,7 @@ function EntryEdit(props: Props) {
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
-                                        defaultTab={!entryIdFromState ? 'entries' : undefined}
+                                        defaultTab={entryIdFromState ? 'entries' : undefined}
                                     />
                                     <Container
                                         className={styles.rightContainer}
