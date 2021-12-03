@@ -184,8 +184,8 @@ function LeadGroups(props: Props) {
 
     return (
         <Container
-            className={_cs(styles.leadGroups, className)}
-            heading="Lead Groups"
+            className={_cs(styles.sourceGroups, className)}
+            heading="Source Groups"
             headerClassName={styles.header}
             contentClassName={styles.content}
             footerClassName={styles.footer}
@@ -194,7 +194,7 @@ function LeadGroups(props: Props) {
                     name={undefined}
                     onClick={handleLeadGroupEditClick}
                 >
-                    Add Lead Group
+                    Add Source Group
                 </Button>
             )}
             headerDescription={(

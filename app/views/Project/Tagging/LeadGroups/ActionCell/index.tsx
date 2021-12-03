@@ -102,7 +102,7 @@ function ActionCell(props: Props) {
                 name="deleteButton"
                 title="Delete"
                 onConfirm={handleDeleteLeadGroupClick}
-                message="Are you sure you want to delete this lead group?"
+                message="Are you sure you want to delete this source group?"
                 showConfirmationInitially={false}
                 disabled={disabled}
             >

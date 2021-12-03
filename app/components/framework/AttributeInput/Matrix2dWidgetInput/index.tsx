@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { _cs, isNotDefined } from '@togglecorp/fujs';
 import {
     Checkbox,
@@ -33,11 +33,12 @@ interface ColumnProps {
         rowId: string,
         subRowId: string,
         columnId: string,
-        selected: string[] | undefined,
+        selected: (val: string[] | undefined) => string[] | undefined,
     ) => void;
     rowId: string;
     subRowId: string;
     columnId: string;
+    subColumnId?: string;
     disabled?: boolean;
     title?: string;
     selected: boolean;
@@ -47,6 +48,7 @@ function Column(props: ColumnProps) {
         rowId,
         subRowId,
         columnId,
+        subColumnId,
         onSubRowChange,
         disabled,
         title,
@@ -55,7 +57,25 @@ function Column(props: ColumnProps) {
 
     const handleSubRowChange = useCallback(
         (val: boolean) => {
-            onSubRowChange(rowId, subRowId, columnId, val ? [] : undefined);
+            if (subColumnId) {
+                onSubRowChange(
+                    rowId,
+                    subRowId,
+                    columnId,
+                    (oldValue) => {
+                        if (val) {
+                            return [...(oldValue ?? []), subColumnId];
+                        }
+                        const newValue = oldValue?.filter((item) => item !== subColumnId);
+                        if (!newValue || newValue.length <= 0) {
+                            return undefined;
+                        }
+                        return newValue;
+                    },
+                );
+            } else {
+                onSubRowChange(rowId, subRowId, columnId, () => (val ? [] : undefined));
+            }
         },
         [rowId, subRowId, columnId, onSubRowChange],
     );
@@ -90,11 +110,12 @@ interface SubRowProps {
         rowId: string,
         subRowId: string,
         columnId: string,
-        selected: string[] | undefined,
+        selected: (val: string[] | undefined) => string[] | undefined,
     ) => void;
     subRow: SubRow;
     value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
     columns: ColumnType[] | undefined;
+    selectedColumnId: string | undefined;
 }
 
 function SubRow(props: SubRowProps) {
@@ -108,6 +129,8 @@ function SubRow(props: SubRowProps) {
         subRow,
         value,
         columns,
+
+        selectedColumnId,
     } = props;
 
     const {
@@ -115,6 +138,8 @@ function SubRow(props: SubRowProps) {
         label,
         key: subRowId,
     } = subRow;
+
+    const selectedColumn = columns?.find((item) => item.key === selectedColumnId);
 
     return (
         <tr className={_cs(className, styles.tableRow)}>
@@ -124,7 +149,7 @@ function SubRow(props: SubRowProps) {
             >
                 {label ?? 'Unnamed'}
             </td>
-            {columns?.map((column) => (
+            {!selectedColumn && columns?.map((column) => (
                 <Column
                     key={column.key}
                     rowId={rowId}
@@ -133,6 +158,19 @@ function SubRow(props: SubRowProps) {
                     disabled={disabled}
                     title={`${subRow.label} & ${column.label}`}
                     selected={Array.isArray(value?.[column.key])}
+                    onSubRowChange={onSubRowChange}
+                />
+            ))}
+            {selectedColumn && selectedColumn.subColumns?.map((subColumn) => (
+                <Column
+                    key={subColumn.key}
+                    rowId={rowId}
+                    subRowId={subRowId}
+                    columnId={selectedColumn.key}
+                    subColumnId={subColumn.key}
+                    disabled={disabled}
+                    title={`${subRow.label} & ${subColumn.label}`}
+                    selected={value?.[selectedColumn.key]?.includes(subColumn.key) ?? false}
                     onSubRowChange={onSubRowChange}
                 />
             ))}
@@ -150,7 +188,7 @@ interface RowProps {
         rowId: string,
         subRowId: string,
         columnId: string,
-        selected: string[] | undefined,
+        selected: (val: string[] | undefined) => string[] | undefined,
     ) => void;
 }
 
@@ -163,6 +201,10 @@ function Row(props: RowProps) {
         value,
         columns,
     } = props;
+
+    const [selectedColumnKey, setSelectedColumnKey] = useState<string | undefined>(undefined);
+
+    const selectedColumn = columns?.find((item) => item.key === selectedColumnKey);
 
     const {
         key,
@@ -187,8 +229,9 @@ function Row(props: RowProps) {
             subRow,
             rowId: key,
             columns,
+            selectedColumnId: selectedColumnKey,
         }),
-        [disabled, onSubRowChange, readOnly, value, key, columns],
+        [disabled, onSubRowChange, readOnly, value, key, columns, selectedColumnKey],
     );
 
     return (
@@ -203,19 +246,48 @@ function Row(props: RowProps) {
             <table className={styles.table}>
                 <thead>
                     <tr className={_cs(styles.tableRow, styles.tableHead)}>
-                        {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                        <th
-                            className={styles.tableHeader}
-                        />
-                        {columns?.map((column) => (
-                            <th
-                                className={styles.tableHeader}
-                                key={column.key}
-                                title={column.tooltip}
-                            >
-                                {column.label}
-                            </th>
-                        ))}
+                        {!selectedColumn && (
+                            <>
+                                {/* eslint-disable-next-line max-len */}
+                                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                                <th
+                                    className={styles.tableHeader}
+                                />
+                                {columns?.map((column) => (
+                                    <th
+                                        className={styles.tableHeader}
+                                        key={column.key}
+                                        title={column.tooltip}
+                                        onClick={() => {
+                                            if ((column?.subColumns?.length ?? 0) > 0) {
+                                                setSelectedColumnKey(column.key);
+                                            }
+                                        }}
+                                    >
+                                        {column.label}
+                                    </th>
+                                ))}
+                            </>
+                        )}
+                        {selectedColumn && (
+                            <>
+                                <th
+                                    className={styles.tableHeader}
+                                    onClick={() => setSelectedColumnKey(undefined)}
+                                >
+                                    {`Back from ${selectedColumn.label ?? 'Unnamed'}`}
+                                </th>
+                                {selectedColumn?.subColumns?.map((subColumn) => (
+                                    <th
+                                        className={styles.tableHeader}
+                                        key={subColumn.key}
+                                        title={subColumn.tooltip}
+                                    >
+                                        {subColumn.label}
+                                    </th>
+                                ))}
+                            </>
+                        )}
                     </tr>
                 </thead>
                 <List
@@ -279,7 +351,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             rowId: string,
             subRowId: string,
             columnId: string,
-            state: string[] | undefined,
+            state: (val: string[] | undefined) => string[] | undefined,
         ) => {
             const newValue = removeEmptyObject({
                 ...value?.value,
@@ -287,7 +359,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
                     ...value?.value?.[rowId],
                     [subRowId]: {
                         ...value?.value?.[rowId]?.[subRowId],
-                        [columnId]: state,
+                        [columnId]: state(value?.value?.[rowId]?.[subRowId]?.[columnId]),
                     },
                 },
             });
