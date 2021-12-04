@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useContext, useMemo, useCallback, useState } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -38,12 +38,15 @@ import {
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
+import UserContext from '#base/context/UserContext';
 
 import ProjectFilterForm from './ProjectFilterForm';
 import ActiveProjectItem, { Props as ActiveProjectItemProps } from './ActiveProject';
 import ActiveFrameworkItem, { Props as ActiveFrameworkItemProps } from './ActiveFramework';
 import TableView from './TableView';
 import MapView from './MapView';
+import PublicTableView from './PublicTableView';
+import PublicMapView from './PublicMapView';
 
 import styles from './styles.css';
 
@@ -93,6 +96,7 @@ function ExploreDeep(props: Props) {
     } = useQuery<ProjectExploreStatsQuery>(
         PROJECT_EXPLORE_STATS,
     );
+    const { authenticated } = useContext(UserContext);
 
     const [filters, setFilters] = useState<ProjectListQueryVariables | undefined>(undefined);
 
@@ -282,14 +286,26 @@ function ExploreDeep(props: Props) {
                         </TabList>
                     </div>
                     <TabPanel name="table">
-                        <TableView
-                            filters={filters}
-                        />
+                        {authenticated ? (
+                            <TableView
+                                filters={filters}
+                            />
+                        ) : (
+                            <PublicTableView
+                                filters={filters}
+                            />
+                        )}
                     </TabPanel>
                     <TabPanel name="map">
-                        <MapView
-                            filters={filters}
-                        />
+                        {authenticated ? (
+                            <MapView
+                                filters={filters}
+                            />
+                        ) : (
+                            <PublicMapView
+                                filters={filters}
+                            />
+                        )}
                     </TabPanel>
                 </div>
             </Tabs>

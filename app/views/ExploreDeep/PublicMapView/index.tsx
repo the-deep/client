@@ -19,10 +19,10 @@ import {
 } from 'mapbox-gl';
 
 import {
-    ProjectsByRegionQuery,
-    ProjectsByRegionQueryVariables,
-    ProjectDetailsForMapViewQuery,
-    ProjectDetailsForMapViewQueryVariables,
+    PublicProjectsByRegionQuery,
+    PublicProjectsByRegionQueryVariables,
+    PublicProjectDetailsForMapViewQuery,
+    PublicProjectDetailsForMapViewQueryVariables,
     ProjectListQueryVariables,
 } from '#generated/types';
 import { convertDateToIsoDateTime } from '#utils/common';
@@ -76,10 +76,10 @@ const mapOptions: Partial<MapboxOptions> = {
 };
 
 const PROJECT_LIST = gql`
-    query ProjectsByRegion(
+    query PublicProjectsByRegion(
         $projectFilter: RegionProjectFilterData,
     ) {
-        projectsByRegion(
+        publicProjectsByRegion(
             projectFilter: $projectFilter,
         ) {
             results {
@@ -92,12 +92,12 @@ const PROJECT_LIST = gql`
 `;
 
 const PROJECT_DETAILS = gql`
-    query ProjectDetailsForMapView(
+    query PublicProjectDetailsForMapView(
         $projectIdList: [ID!]
         $page: Int
         $pageSize: Int
     ) {
-        projects(
+        publicProjects(
             ids: $projectIdList,
             page: $page,
             pageSize: $pageSize,
@@ -110,24 +110,17 @@ const PROJECT_DETAILS = gql`
                 title
                 description
                 createdAt
-                membershipPending
-                currentUserRole
-                isRejected
-                stats {
-                    numberOfUsers
-                    numberOfLeads
-                    numberOfEntries
-                }
-                analysisFramework {
-                    id
-                    title
-                }
+                numberOfUsers
+                numberOfLeads
+                numberOfEntries
+                analysisFrameworkTitle
+                analysisFrameworkPreviewImage
             }
         }
     }
 `;
 
-export type Project = NonNullable<NonNullable<NonNullable<ProjectsByRegionQuery['projectsByRegion']>['results']>[number]>;
+export type Project = NonNullable<NonNullable<NonNullable<PublicProjectsByRegionQuery['publicProjectsByRegion']>['results']>[number]>;
 
 interface Props {
     className?: string;
@@ -153,7 +146,7 @@ function ExploreDeepMapView(props: Props) {
     const {
         data,
         loading,
-    } = useQuery<ProjectsByRegionQuery, ProjectsByRegionQueryVariables>(
+    } = useQuery<PublicProjectsByRegionQuery, PublicProjectsByRegionQueryVariables>(
         PROJECT_LIST,
         {
             variables,
@@ -178,8 +171,7 @@ function ExploreDeepMapView(props: Props) {
     const {
         data: projectDetails,
         loading: projectDetailsPending,
-        refetch: refetchProjectDetails,
-    } = useQuery<ProjectDetailsForMapViewQuery, ProjectDetailsForMapViewQueryVariables>(
+    } = useQuery<PublicProjectDetailsForMapViewQuery, PublicProjectDetailsForMapViewQueryVariables>(
         PROJECT_DETAILS,
         {
             variables: projectDetailsVariables,
@@ -190,7 +182,7 @@ function ExploreDeepMapView(props: Props) {
         if (!data) {
             return undefined;
         }
-        const projects = data.projectsByRegion?.results?.map((projectByRegion) => (
+        const projects = data.publicProjectsByRegion?.results?.map((projectByRegion) => (
             projectByRegion.projectsId?.map((project) => ({
                 id: project,
                 type: 'Feature' as const,
@@ -259,15 +251,14 @@ function ExploreDeepMapView(props: Props) {
         <div className={_cs(className, styles.mapView)}>
             {clusterClicked && (
                 <ProjectList
-                    projectDetails={projectDetails?.projects?.results ?? undefined}
-                    projectDetailsPending={projectDetailsPending}
+                    projectDetails={projectDetails?.publicProjects?.results ?? undefined}
                     onListCloseButtonClick={handleListClose}
                     page={page}
                     pageSize={pageSize}
                     setPage={setPage}
                     setPageSize={setPageSize}
-                    totalCount={projectDetails?.projects?.totalCount ?? 0}
-                    refetchProjectDetails={refetchProjectDetails}
+                    projectDetailsPending={projectDetailsPending}
+                    totalCount={projectDetails?.publicProjects?.totalCount ?? 0}
                 />
             )}
             {loading && (<PendingMessage />)}
