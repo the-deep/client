@@ -41,7 +41,10 @@ import {
 import SubNavbar from '#components/SubNavbar';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
-import { breadcrumb } from '#utils/common';
+import {
+    breadcrumb,
+    isFiltered,
+} from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import BackLink from '#components/BackLink';
 import NonFieldError from '#components/NonFieldError';
@@ -787,16 +790,14 @@ function PillarAnalysis() {
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
-                                    /* TODO: figure out why PendingMessage is
-                                     * taking its compact form */
-                                    // NOTE: Nothing to filter here
-                                    filtered={false}
+                                    filtered={isFiltered(filtersValue)}
                                     emptyIcon={(
                                         <Kraken
                                             variant="experiment"
                                         />
                                     )}
                                     emptyMessage="Entries not found."
+                                    filteredEmptyMessage="No matching entries were found."
                                     messageIconShown
                                     messageShown
                                 />
@@ -839,8 +840,6 @@ function PillarAnalysis() {
                                 renderer={AnalyticalStatementInput}
                                 direction="horizontal"
                                 rendererParams={analyticalStatementRendererParams}
-                                emptyMessage={null}
-                                emptyIcon={null}
                             />
                             <QuickActionButton
                                 className={styles.addStatementButton}

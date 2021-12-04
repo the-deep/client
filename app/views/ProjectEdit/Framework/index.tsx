@@ -8,8 +8,7 @@ import {
 import {
     Container,
     Button,
-    List,
-    PendingMessage,
+    ListView,
     RawButton,
     TextInput,
     SelectInput,
@@ -29,10 +28,12 @@ import { useRequest } from '#base/utils/restRequest';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import ProjectContext from '#base/context/ProjectContext';
+import { isFiltered } from '#utils/common';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
 
 import FrameworkDetail from './FrameworkDetail';
+
 import styles from './styles.css';
 
 interface FrameworkMini {
@@ -237,38 +238,36 @@ function ProjectFramework(props: Props) {
                         placeholder={_ts('projectEdit', 'searchLabel')}
                     />
                 </div>
-                <div className={styles.frameworkList}>
-                    {frameworksGetPending && <PendingMessage />}
-                    {frameworkList.length > 0 ? (
-                        <>
-                            <List
-                                data={frameworkList}
-                                keySelector={frameworkKeySelector}
-                                renderer={Item}
-                                rendererParams={frameworksRendererParams}
-                            />
-                            {(frameworkList.length < (frameworksResponse?.count ?? 0)) && (
-                                <Button
-                                    className={styles.showMoreButton}
-                                    variant="action"
-                                    name="showMore"
-                                    onClick={handleShowMoreButtonClick}
-                                    actions={(
-                                        <IoChevronForward />
-                                    )}
-                                >
-                                    {/* TODO: Might move to component library, no need to use ts */}
-                                    Show More
-                                </Button>
-                            )}
-                        </>
-                    ) : (
-                        !frameworksGetPending && (
-                            <div className={styles.emptyContainer}>
-                                {_ts('projectEdit', 'noFrameworks')}
-                            </div>
+                <div className={styles.bottomContent}>
+                    <ListView
+                        className={styles.frameworkList}
+                        pending={frameworksGetPending}
+                        data={frameworkList}
+                        keySelector={frameworkKeySelector}
+                        renderer={Item}
+                        filtered={isFiltered(value)}
+                        rendererParams={frameworksRendererParams}
+                        messageShown
+                        messageIconShown
+                    />
+                    {
+                        (!frameworksGetPending
+                        || (frameworkList.length < (frameworksResponse?.count ?? 0)))
+                        && (
+                            <Button
+                                className={styles.showMoreButton}
+                                variant="action"
+                                name="showMore"
+                                onClick={handleShowMoreButtonClick}
+                                actions={(
+                                    <IoChevronForward />
+                                )}
+                            >
+                                {/* TODO: Might move to component library, no need to use ts */}
+                                Show More
+                            </Button>
                         )
-                    )}
+                    }
                 </div>
             </div>
             <Container

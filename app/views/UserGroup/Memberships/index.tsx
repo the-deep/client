@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import {
     Pager,
-    PendingMessage,
     Container,
     TableView,
     TableColumn,
@@ -67,6 +66,7 @@ function Memberships(props: Props) {
         query,
         method: 'GET',
         failureHeader: 'User group memberships',
+        preserveResponse: true,
     });
 
     const {
@@ -173,7 +173,6 @@ function Memberships(props: Props) {
             )}
             contentClassName={styles.content}
         >
-            {membershipsPending && <PendingMessage />}
             <TableView
                 className={styles.expandedTable}
                 columns={membersColumns}
@@ -182,7 +181,6 @@ function Memberships(props: Props) {
                 data={memberships?.results}
                 pending={membershipsPending}
                 filtered={false}
-                emptyMessage="No users found"
             />
             {showAddUserModal && userGroup && (
                 <AddUserModal

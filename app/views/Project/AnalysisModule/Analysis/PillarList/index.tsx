@@ -136,7 +136,7 @@ function AnalysisDetails(props: Props) {
                         variant="exercise"
                     />
                 )}
-                emptyMessage="I tried but couldn't find any pillar analyses. Please add new pillars and come back later."
+                emptyMessage="This analysis doesn't contain any pillar analysis."
                 messageShown
                 messageIconShown
             />

@@ -9,6 +9,7 @@ import {
     compareNumber,
     isTruthyString,
     formatDateToString,
+    doesObjectHaveNoData,
     padStart,
 } from '@togglecorp/fujs';
 
@@ -226,3 +227,7 @@ export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefin
     return a;
 }
 */
+
+export function isFiltered(value: unknown) {
+    return !doesObjectHaveNoData(value, ['']);
+}

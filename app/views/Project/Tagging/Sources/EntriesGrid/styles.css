@@ -1,11 +1,14 @@
 .sources-grid {
     --gap: var(--dui-spacing-extra-large);
 
-    display: flex;
-    flex-wrap: wrap;
     padding: var(--dui-spacing-large) 0;
     min-height: 30rem;
     gap: var(--gap);
+
+    &:not(.empty) {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
     .entry {
         flex-basis: calc(100% / 3 - var(--gap));

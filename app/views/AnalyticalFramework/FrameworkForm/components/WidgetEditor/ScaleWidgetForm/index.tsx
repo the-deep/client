@@ -385,6 +385,8 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     direction="vertical"
                     rendererParams={optionRendererParams}
                     showDragOverlay
+                    messageShown
+                    messageIconShown
                 />
             </Container>
         </>

@@ -203,7 +203,7 @@ function UserTable(props: Props) {
 
     return (
         <>
-            {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
+            {pendingDeleteAction && <PendingMessage />}
             <Container
                 className={_cs(styles.tableContainer, className)}
                 heading={_ts('analyticalFramework', 'frameworkUsersHeading')}

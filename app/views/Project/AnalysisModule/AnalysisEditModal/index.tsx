@@ -28,7 +28,6 @@ import {
     SelectInput,
     DateInput,
     ListView,
-    Kraken,
 } from '@the-deep/deep-ui';
 import { IoAdd } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
@@ -433,14 +432,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     rendererParams={rowRendererParams}
                     pending={pending}
                     filtered={false}
-                    emptyIcon={(
-                        <Kraken
-                            variant="experiment"
-                        />
-                    )}
-                    emptyMessage="Nothing to show here"
-                    messageIconShown
-                    messageShown
                 />
                 <Button
                     className={styles.actionButton}

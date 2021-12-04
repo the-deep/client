@@ -1,4 +1,4 @@
-.analysis {
+.lead-groups {
     padding: 0;
 
     .header {
@@ -10,7 +10,11 @@
         padding: var(--dui-spacing-small) var(--dui-spacing-super-large);
 
         .table {
-            background-color: var(--dui-color-foreground);
+            min-height: 50vh;
+
+            .table-row {
+                background-color: var(--dui-color-foreground);
+            }
         }
     }
 

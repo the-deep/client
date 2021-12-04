@@ -4,7 +4,6 @@ import { useQuery, gql } from '@apollo/client';
 import {
     ListView,
     Tabs,
-    PendingMessage,
     Pager,
     Tab,
     TabList,
@@ -129,7 +128,6 @@ function Notifications(props: Props) {
             value={activeView}
             onChange={setActiveView}
         >
-            {loading && <PendingMessage />}
             <Container
                 className={_cs(styles.notifications, className)}
                 spacing="none"

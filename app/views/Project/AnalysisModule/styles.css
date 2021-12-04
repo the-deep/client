@@ -81,6 +81,7 @@
                 .icon {
                     flex-shrink: 0;
                     padding: var(--dui-spacing-small);
+                    color: var(--dui-color-text-disabled);
                     font-size: 10em;
                 }
 
