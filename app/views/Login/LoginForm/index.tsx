@@ -12,6 +12,7 @@ import {
     PendingMessage,
     ButtonLikeLink,
 } from '@the-deep/deep-ui';
+
 import {
     internal,
     ObjectSchema,
@@ -26,6 +27,7 @@ import {
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { parseUrlParams } from '#utils/common';
 import { UserContext } from '#base/context/UserContext';
 import { ProjectContext } from '#base/context/ProjectContext';
@@ -276,11 +278,6 @@ function LoginForm(props: Props) {
 
     const pending = hidLoginPending || loginPending;
 
-    const forgotPasswordLink = useMemo(() => ({
-        pathname: generatePath(routes.forgotPassword.path, {}),
-        state: { email: value?.email },
-    }), [value?.email]);
-
     return (
         <form
             className={_cs(styles.loginForm, className)}
@@ -323,16 +320,17 @@ function LoginForm(props: Props) {
                     placeholder={_ts('explore.login', 'password')}
                     disabled={pending}
                 />
-                <ButtonLikeLink
+                <SmartButtonLikeLink
                     className={styles.forgetPasswordButton}
-                    to={forgotPasswordLink}
+                    route={routes.forgotPassword}
+                    state={{ email: value?.email }}
                     variant="action"
                     actions={(
                         <IoChevronForwardSharp />
                     )}
                 >
                     {_ts('explore.login', 'forgotPasswordButtonLabel')}
-                </ButtonLikeLink>
+                </SmartButtonLikeLink>
                 {captchaRequired && (
                     <HCaptcha
                         name="captcha"

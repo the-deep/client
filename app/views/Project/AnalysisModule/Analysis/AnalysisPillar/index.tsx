@@ -1,12 +1,10 @@
 import React, { useContext, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { generatePath } from 'react-router-dom';
 import {
     NumberOutput,
     Container,
     Tag,
     QuickActionConfirmButton,
-    ButtonLikeLink,
     PendingMessage,
     TextOutput,
     List,
@@ -16,6 +14,7 @@ import {
     IoTrashBinOutline,
 } from 'react-icons/io5';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import {
     PillarSummary,
     AnalyticalStatementSummary,
@@ -64,8 +63,8 @@ function AnalysisPillar(props: Props) {
         project,
     } = useContext(ProjectContext);
 
-    const canTagEntry = project?.analysisFramework?.id
-        && project?.allowedPermissions?.includes('UPDATE_ENTRY');
+    // NOTE: using entry delete permission for analysis pillar
+    const canDeleteAnalysisPillar = project?.allowedPermissions?.includes('DELETE_ENTRY');
 
     const isAnalysisCompleted = analyzedEntries === totalEntries && totalEntries > 0;
     let statusLabel = _ts('analysis', 'inProgressTagLabel');
@@ -74,12 +73,6 @@ function AnalysisPillar(props: Props) {
     } else if (totalEntries === 0) {
         statusLabel = _ts('analysis', 'noAnalysisTagLabel');
     }
-
-    const editLink = generatePath(routes.pillarAnalysis.path, {
-        projectId,
-        analysisId,
-        pillarAnalysisId: pillarId,
-    });
 
     const disabled = pendingPillarDelete;
 
@@ -112,10 +105,15 @@ function AnalysisPillar(props: Props) {
                 </Tag>
             )}
             inlineHeadingDescription
-            headerActions={canTagEntry && (
+            headerActions={(
                 <>
-                    <ButtonLikeLink
-                        to={editLink}
+                    <SmartButtonLikeLink
+                        route={routes.pillarAnalysis}
+                        attrs={{
+                            projectId,
+                            analysisId,
+                            pillarAnalysisId: pillarId,
+                        }}
                         disabled={disabled}
                         variant="tertiary"
                         icons={(
@@ -123,18 +121,20 @@ function AnalysisPillar(props: Props) {
                         )}
                     >
                         {_ts('analysis', 'continueAnalysisButton')}
-                    </ButtonLikeLink>
-                    <QuickActionConfirmButton
-                        name={pillarId}
-                        onConfirm={onDeleteConfirmClick}
-                        title={_ts('analysis', 'deletePillarButtonTitle')}
-                        message={_ts('analysis', 'deletePillarConfirmMessage')}
-                        disabled={disabled}
-                        showConfirmationInitially={false}
-                        variant="secondary"
-                    >
-                        <IoTrashBinOutline />
-                    </QuickActionConfirmButton>
+                    </SmartButtonLikeLink>
+                    {canDeleteAnalysisPillar && (
+                        <QuickActionConfirmButton
+                            name={pillarId}
+                            onConfirm={onDeleteConfirmClick}
+                            title={_ts('analysis', 'deletePillarButtonTitle')}
+                            message={_ts('analysis', 'deletePillarConfirmMessage')}
+                            disabled={disabled}
+                            showConfirmationInitially={false}
+                            variant="secondary"
+                        >
+                            <IoTrashBinOutline />
+                        </QuickActionConfirmButton>
+                    )}
                 </>
             )}
             headerDescription={(
