@@ -428,6 +428,10 @@ function RowInput(props: RowInputProps) {
                     direction="vertical"
                     rendererParams={cellRendererParams}
                     showDragOverlay
+                    emptyMessage="There are no cells in this row."
+                    messageShown
+                    messageIconShown
+                    compactEmptyMessage
                 />
             </Container>
         </ControlledExpandableContainer>
@@ -551,6 +555,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     direction="vertical"
                     rendererParams={rowRendererParams}
                     showDragOverlay
+                    emptyMessage="No rows found."
+                    messageShown
+                    messageIconShown
                 />
             </Container>
         </>

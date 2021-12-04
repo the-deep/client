@@ -335,7 +335,7 @@ function ExportHistory(props: Props) {
         ]);
     }, [handleDeleteExport]);
 
-    const pending = projectExportsPending || deleteExportPending;
+    const pending = deleteExportPending;
 
     return (
         <Container
@@ -351,14 +351,12 @@ function ExportHistory(props: Props) {
                         placeholder="Search"
                         value={searchText}
                         onChange={setSearchText}
-                        disabled={pending}
                     />
                     <DateRangeInput
                         name="exportedAt"
                         label="Exported At"
                         value={exportedAt}
                         onChange={setExportedAt}
-                        disabled={pending}
                     />
                 </div>
             )}
@@ -385,12 +383,14 @@ function ExportHistory(props: Props) {
                     filteredEmptyIcon={(
                         <Kraken
                             variant="coffee"
+                            size="large"
                         />
                     )}
                     emptyMessage="You have no export history."
                     emptyIcon={(
                         <Kraken
                             variant="coffee"
+                            size="large"
                         />
                     )}
                     messageShown

@@ -28,6 +28,7 @@ import LeadPreview from '#components/lead/LeadPreview';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+import { isFiltered } from '#utils/common';
 import {
     LeadType,
     LeadOptionsQuery,
@@ -178,7 +179,7 @@ function FilesUploaded(props: Props) {
                         />
                     )}
                     emptyMessage="No files to show."
-                    filtered={(searchText?.length ?? 0) > 0}
+                    filtered={isFiltered(searchText)}
                     filteredEmptyIcon={(
                         <Kraken
                             variant="search"

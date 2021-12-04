@@ -3,9 +3,8 @@ import { _cs, isNotDefined } from '@togglecorp/fujs';
 import {
     DateOutput,
     Pager,
-    Table,
+    TableView,
     TableColumn,
-    PendingMessage,
     TableHeaderCell,
     TableHeaderCellProps,
     createStringColumn,
@@ -24,6 +23,7 @@ import {
     ProjectSourceListQueryVariables,
     SourceFilterOptionsQueryVariables,
 } from '#generated/types';
+import { isFiltered } from '#utils/common';
 import SourcesFilter from '../../Sources/SourcesFilter';
 import styles from './styles.css';
 
@@ -324,13 +324,18 @@ function LeadsSelection(props: Props) {
                 hasAssessment={hasAssessment}
             />
             <div className={styles.tableContainer}>
-                {projectSourcesPending && (<PendingMessage />)}
                 <SortContext.Provider value={sortState}>
-                    <Table
+                    <TableView
                         data={projectSourcesResponse?.project?.leads?.results}
+                        pending={projectSourcesPending}
+                        filtered={isFiltered(filterValues)}
                         keySelector={leadsKeySelector}
                         columns={columns}
                         variant="large"
+                        messageShown
+                        messageIconShown
+                        emptyMessage="No sources found."
+                        filteredEmptyMessage="No matching sources found."
                     />
                 </SortContext.Provider>
             </div>

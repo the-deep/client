@@ -443,6 +443,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
                             emptyIcon={(
                                 <Kraken
+                                    size="large"
                                     variant="experiment"
                                 />
                             )}

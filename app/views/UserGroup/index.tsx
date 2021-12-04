@@ -112,7 +112,7 @@ function UserGroupItem(props: UserGroupItemProps) {
                     addButtonTitle={_ts('usergroup', 'addMemberLabel')}
                     editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
                     deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
-                    deleteConfirmationMessage={_ts('usergroup', 'deleteUserGroupConfirmMessage')}
+                    deleteConfirmationMessage="Are you sure you want to remove this user group?"
                     disabled={data.role === 'normal'}
                 />
             )}
@@ -282,6 +282,7 @@ function UserGroup(props: Props) {
                 pending={usergroupGetPending}
                 emptyIcon={(
                     <Kraken
+                        size="large"
                         variant="experiment"
                     />
                 )}

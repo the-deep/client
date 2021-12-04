@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
+    Kraken,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import { GrDrag } from 'react-icons/gr';
@@ -317,6 +318,14 @@ function Canvas<T>(props: Props<T>) {
                 rendererParams={widgetRendererParams}
                 itemContainerParams={itemContainerParams}
                 showDragOverlay
+                emptyIcon={(
+                    <Kraken
+                        variant="sleep"
+                    />
+                )}
+                emptyMessage="No widgets found."
+                messageShown
+                messageIconShown
             />
         </>
     );

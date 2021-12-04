@@ -247,7 +247,7 @@ function Analysis(props: ComponentProps) {
                                         variant="search"
                                     />
                                 )}
-                                emptyMessage="No Pillar analyses found. Please add new analysis and visit later"
+                                emptyMessage="No Pillar analyses found under this analysis."
                                 messageShown
                                 messageIconShown
                             />

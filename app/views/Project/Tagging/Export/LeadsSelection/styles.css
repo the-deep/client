@@ -18,6 +18,7 @@
 
         .title-column {
             min-width: 120px;
+            min-height: 20vh;
         }
     }
 

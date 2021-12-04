@@ -17,10 +17,14 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         entriesFilterData,
         createdAtGte,
         createdAtLte,
+        search,
     } = filters;
 
     return {
         ...entriesFilterData,
+        filterableData: (entriesFilterData?.filterableData?.length ?? 0) > 0
+            ? entriesFilterData?.filterableData
+            : undefined,
         createdAtGte: convertDateToIsoDateTime(createdAtGte),
         createdAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
 
@@ -32,5 +36,6 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         leadPublishedOnGte: publishedOnGte,
         leadPublishedOnLte: publishedOnLte,
         leadStatuses: statuses,
+        search,
     };
 }

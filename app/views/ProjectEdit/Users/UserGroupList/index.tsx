@@ -197,7 +197,7 @@ function UserGroupList(props: Props) {
                 </Button>
             )}
         >
-            {(usergroupPending || pending) && (<PendingMessage />)}
+            {pending && (<PendingMessage />)}
             <TableView
                 data={usergroupResponse?.results}
                 keySelector={usergroupKeySelector}

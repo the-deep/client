@@ -30,6 +30,9 @@ import {
     CommentCountContext,
     CommentCountContextInterface,
 } from '#components/entryReview/EntryCommentWrapper/CommentContext';
+import {
+    isFiltered,
+} from '#utils/common';
 
 import {
     PartialFormType as PartialFilterFormType,
@@ -50,6 +53,7 @@ export const PROJECT_ENTRIES = gql`
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
+        $search: String,
         $authoringOrganizationTypes: [ID!],
         $commentStatus: EntryFilterCommentStatusEnum,
         $controlled: Boolean,
@@ -69,6 +73,7 @@ export const PROJECT_ENTRIES = gql`
             entries(
                 page: $page,
                 pageSize: $pageSize,
+                search: $search,
                 authoringOrganizationTypes: $authoringOrganizationTypes,
                 commentStatus: $commentStatus,
                 controlled: $controlled,
@@ -200,7 +205,7 @@ interface Props {
     filters: PartialFilterFormType;
 }
 
-function SourcesGrid(props: Props) {
+function EntriesGrid(props: Props) {
     const {
         className,
         projectId,
@@ -347,20 +352,31 @@ function SourcesGrid(props: Props) {
         >
             <CommentCountContext.Provider value={commentCountContext}>
                 <ListView
-                    className={_cs(styles.sourcesGrid, className)}
+                    className={_cs(
+                        styles.sourcesGrid,
+                        className,
+                        (entries?.length ?? 0) < 1 && styles.empty,
+                    )}
                     data={entries ?? undefined}
                     renderer={EntryCard}
                     rendererParams={entryRendererParams}
                     keySelector={entryKeySelector}
                     pending={loading || projectFrameworkLoading}
-                    filtered={false}
-                    // NOTE: The filtered condition is already handled
+                    filtered={isFiltered(entriesFilter)}
+                    filteredEmptyMessage="No matching entries found."
+                    filteredEmptyIcon={(
+                        <Kraken
+                            size="large"
+                            variant="search"
+                        />
+                    )}
                     emptyIcon={(
                         <Kraken
+                            size="large"
                             variant="work"
                         />
                     )}
-                    emptyMessage="No entries found"
+                    emptyMessage="No entries found."
                     messageIconShown
                     messageShown
                 />
@@ -369,4 +385,4 @@ function SourcesGrid(props: Props) {
     );
 }
 
-export default SourcesGrid;
+export default EntriesGrid;

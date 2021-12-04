@@ -495,6 +495,10 @@ function RowInput(props: RowInputProps) {
                     renderer={SubRowInput}
                     rendererParams={subRowRendererParams}
                     direction="vertical"
+                    emptyMessage="There are no sub-rows in this row."
+                    messageShown
+                    messageIconShown
+                    compactEmptyMessage
                 />
             </Container>
         </ControlledExpandableContainer>
@@ -787,6 +791,10 @@ function ColumnInput(props: ColumnInputProps) {
                     renderer={SubColumnInput}
                     rendererParams={subColumnRendererParams}
                     direction="vertical"
+                    emptyMessage="There are no sub-columns in this column."
+                    messageShown
+                    messageIconShown
+                    compactEmptyMessage
                 />
             </Container>
         </ControlledExpandableContainer>
@@ -999,6 +1007,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         renderer={RowInput}
                         rendererParams={rowRendererParams}
                         direction="vertical"
+                        emptyMessage="No rows were found."
+                        messageShown
+                        messageIconShown
                     />
                 </Container>
             </TabPanel>
@@ -1030,6 +1041,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         renderer={ColumnInput}
                         rendererParams={columnRendererParams}
                         direction="vertical"
+                        emptyMessage="No columns were found."
+                        messageShown
+                        messageIconShown
                     />
                 </Container>
             </TabPanel>

@@ -4,7 +4,6 @@ import {
     listToMap,
     unique,
     isNotDefined,
-    isDefined,
 } from '@togglecorp/fujs';
 import {
     Checkbox,
@@ -50,6 +49,7 @@ import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLi
 import {
     calcPercent,
     convertDateToIsoDateTime,
+    isFiltered,
 } from '#utils/common';
 
 import { transformSourcesFilterToEntriesFilter } from '../utils';
@@ -613,16 +613,18 @@ function SourcesTable(props: Props) {
                             rowModifier={rowModifier}
                             variant="large"
                             pending={pending}
-                            filtered={isDefined(entriesFilter)}
-                            filteredEmptyMessage="No matching source found"
+                            filtered={isFiltered(entriesFilter)}
+                            filteredEmptyMessage="No matching sources found."
                             filteredEmptyIcon={(
                                 <Kraken
-                                    variant="sleep"
+                                    size="large"
+                                    variant="search"
                                 />
                             )}
-                            emptyMessage="No sources found"
+                            emptyMessage="No sources found."
                             emptyIcon={(
                                 <Kraken
+                                    size="large"
                                     variant="sleep"
                                 />
                             )}

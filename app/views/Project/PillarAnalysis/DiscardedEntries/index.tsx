@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { _cs, isDefined } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
     Kraken,
@@ -8,6 +8,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
+import { isFiltered } from '#utils/common';
 import {
     MultiResponse,
 } from '#types';
@@ -119,7 +120,6 @@ function DiscardedEntries(props: Props) {
         setActivePage(0);
         setSelectedDiscardedTag(newValue);
     }, []);
-    console.warn('here', entriesResponse?.results);
 
     return (
         <div className={_cs(className, styles.discardedEntries)}>
@@ -147,14 +147,14 @@ function DiscardedEntries(props: Props) {
                         variant="experiment"
                     />
                 )}
-                emptyMessage="No entries found"
-                filtered={isDefined(selectedDiscardedTag)}
+                emptyMessage="There aren't any discarded entries."
+                filteredEmptyMessage="There aren't any discarded entries under selected tag."
+                filtered={isFiltered(selectedDiscardedTag)}
                 filteredEmptyIcon={(
                     <Kraken
                         variant="search"
                     />
                 )}
-                filteredEmptyMessage="No matching entries found"
                 messageIconShown
                 messageShown
             />

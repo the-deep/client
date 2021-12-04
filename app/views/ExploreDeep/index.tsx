@@ -207,7 +207,7 @@ function ExploreDeep(props: Props) {
                                 spacing="none"
                                 filtered={false}
                                 pending={loading}
-                                emptyMessage="We couldn&apos;t find what you&apos;re looking for. Please visit again later."
+                                emptyMessage="We couldn&apos;t find what you&apos;re looking for."
                                 emptyIcon={(
                                     <Kraken
                                         variant="work"
@@ -242,7 +242,7 @@ function ExploreDeep(props: Props) {
                         pending={loading}
                         // NOTE: Nothing to filter here
                         filtered={false}
-                        emptyMessage="We couldn&apos;t find what you&apos;re looking for. Please visit again later."
+                        emptyMessage="We couldn&apos;t find what you&apos;re looking for."
                         emptyIcon={(
                             <Kraken
                                 variant="work"
