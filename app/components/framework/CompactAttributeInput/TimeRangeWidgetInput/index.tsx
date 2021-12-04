@@ -24,6 +24,8 @@ export interface Props <N extends string>{
     ) => void,
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 }
 
 function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
@@ -35,6 +37,8 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -66,6 +70,8 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
             error={error}
             disabled={disabled}
             readOnly={readOnly}
+            actions={actions}
+            icons={icons}
         >
             {readOnly ? (
                 <TimeRangeOutput

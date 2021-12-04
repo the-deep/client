@@ -33,6 +33,7 @@ export interface Props {
     disabled?: boolean;
     entryClientId: string;
     sectionId?: string;
+    onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
     onAddButtonClick: (entryId: string, sectionId?: string) => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
@@ -54,6 +55,7 @@ function CompactSection(props: Props) {
         onAddButtonClick,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        onApplyToAll,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -67,6 +69,25 @@ function CompactSection(props: Props) {
             (widget) => isDefined(attributesMap?.[widget.clientId]?.value?.data?.value),
         );
     }, [emptyValueHidden, attributesMap, widgets]);
+
+    const handleApplyBelowClick = useCallback(
+        (widgetId: string) => {
+            if (onApplyToAll) {
+                onApplyToAll(entryClientId, widgetId, true);
+            }
+        },
+        [entryClientId, onApplyToAll],
+    );
+
+    const handleApplyAllClick = useCallback(
+        (widgetId: string) => {
+            console.warn(widgetId, entryClientId, onApplyToAll);
+            if (onApplyToAll) {
+                onApplyToAll(entryClientId, widgetId, false);
+            }
+        },
+        [entryClientId, onApplyToAll],
+    );
 
     const widgetRendererParams = useCallback(
         (key: string, data: Widget): AttributeInputProps<number | undefined> => {
@@ -84,6 +105,8 @@ function CompactSection(props: Props) {
                 error: err,
                 geoAreaOptions,
                 onGeoAreaOptionsChange,
+                onApplyBelowClick: handleApplyBelowClick,
+                onApplyAllClick: handleApplyAllClick,
             };
         },
         [
@@ -94,6 +117,8 @@ function CompactSection(props: Props) {
             error,
             geoAreaOptions,
             onGeoAreaOptionsChange,
+            handleApplyBelowClick,
+            handleApplyAllClick,
         ],
     );
 
