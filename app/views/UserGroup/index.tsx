@@ -4,8 +4,8 @@ import {
     Button,
     Container,
     Pager,
-    PendingMessage,
     ListView,
+    Kraken,
     TextOutput,
     NumberOutput,
     DateOutput,
@@ -112,7 +112,7 @@ function UserGroupItem(props: UserGroupItemProps) {
                     addButtonTitle={_ts('usergroup', 'addMemberLabel')}
                     editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
                     deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
-                    deleteConfirmationMessage={_ts('usergroup', 'deleteUserGroupConfirmMessage')}
+                    deleteConfirmationMessage="Are you sure you want to remove this user group?"
                     disabled={data.role === 'normal'}
                 />
             )}
@@ -272,13 +272,23 @@ function UserGroup(props: Props) {
             )}
             contentClassName={styles.content}
         >
-            {usergroupGetPending && <PendingMessage />}
             <ListView
                 className={styles.userGroupList}
                 keySelector={usergroupKeySelector}
                 data={usergroupResponse?.results}
                 renderer={UserGroupItem}
                 rendererParams={userGroupRendererParams}
+                filtered={false}
+                pending={usergroupGetPending}
+                emptyIcon={(
+                    <Kraken
+                        size="large"
+                        variant="experiment"
+                    />
+                )}
+                emptyMessage="No usergroups found."
+                messageIconShown
+                messageShown
             />
             {showAddUserGroupModal && (
                 <AddUserGroupModal

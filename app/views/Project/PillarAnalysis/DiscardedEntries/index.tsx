@@ -2,11 +2,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ListView,
+    Kraken,
     MultiSelectInput,
     Pager,
 } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
+import { isFiltered } from '#utils/common';
 import {
     MultiResponse,
 } from '#types';
@@ -140,6 +142,21 @@ function DiscardedEntries(props: Props) {
                 renderer={DiscardedEntryItem}
                 rendererParams={entryCardRendererParams}
                 pending={pendingEntries}
+                emptyIcon={(
+                    <Kraken
+                        variant="experiment"
+                    />
+                )}
+                emptyMessage="There aren't any discarded entries."
+                filteredEmptyMessage="There aren't any discarded entries under selected tag."
+                filtered={isFiltered(selectedDiscardedTag)}
+                filteredEmptyIcon={(
+                    <Kraken
+                        variant="search"
+                    />
+                )}
+                messageIconShown
+                messageShown
             />
             <Pager
                 className={styles.footer}

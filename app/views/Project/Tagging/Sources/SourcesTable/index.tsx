@@ -11,6 +11,7 @@ import {
     Container,
     DateOutput,
     DateOutputProps,
+    Kraken,
     Link,
     LinkProps,
     Pager,
@@ -48,6 +49,7 @@ import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLi
 import {
     calcPercent,
     convertDateToIsoDateTime,
+    isFiltered,
 } from '#utils/common';
 
 import { transformSourcesFilterToEntriesFilter } from '../utils';
@@ -611,6 +613,23 @@ function SourcesTable(props: Props) {
                             rowModifier={rowModifier}
                             variant="large"
                             pending={pending}
+                            filtered={isFiltered(entriesFilter)}
+                            filteredEmptyMessage="No matching sources found."
+                            filteredEmptyIcon={(
+                                <Kraken
+                                    size="large"
+                                    variant="search"
+                                />
+                            )}
+                            emptyMessage="No sources found."
+                            emptyIcon={(
+                                <Kraken
+                                    size="large"
+                                    variant="sleep"
+                                />
+                            )}
+                            messageShown
+                            messageIconShown
                         />
                     </SortContext.Provider>
                 </RowExpansionContext.Provider>

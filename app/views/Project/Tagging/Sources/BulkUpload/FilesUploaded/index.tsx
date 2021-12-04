@@ -9,6 +9,7 @@ import {
     TextInput,
     Container,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
 import { IoSearch } from 'react-icons/io5';
 import {
@@ -27,6 +28,7 @@ import LeadPreview from '#components/lead/LeadPreview';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+import { isFiltered } from '#utils/common';
 import {
     LeadType,
     LeadOptionsQuery,
@@ -170,6 +172,22 @@ function FilesUploaded(props: Props) {
                     renderer={FileItem}
                     keySelector={keySelector}
                     rendererParams={fileRendererParams}
+                    pending={false}
+                    emptyIcon={(
+                        <Kraken
+                            variant="exercise"
+                        />
+                    )}
+                    emptyMessage="No files to show."
+                    filtered={isFiltered(searchText)}
+                    filteredEmptyIcon={(
+                        <Kraken
+                            variant="search"
+                        />
+                    )}
+                    filteredEmptyMessage="No match found."
+                    messageIconShown
+                    messageShown
                 />
             </Container>
             <div className={styles.rightPane}>

@@ -45,7 +45,7 @@ function ActivityItem(props: RecentActivityProps) {
                 &nbsp;
                 {(type === 'lead'
                     ? _ts('recentActivity', 'leadAdded')
-                    : _ts('recentActivity', 'entryCommentAdded')
+                    : 'added an entry on'
                 )}
                 &nbsp;
                 <span className={styles.boldText}>

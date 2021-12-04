@@ -30,6 +30,7 @@ import {
     InformationCard,
     PercentageInformationCard,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import Timeline from '#components/Timeline';
@@ -255,6 +256,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
         pillars: data.pillars,
+        pillarsPending: pendingAnalyses,
         analyzedSources: data.analyzedSources,
         analyzedEntries: data.analyzedEntries,
         totalSources: data.totalSources,
@@ -268,6 +270,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         handleAnalysisToDeleteClick,
         pendingAnalysisDelete,
         analysisIdToDelete,
+        pendingAnalyses,
     ]);
 
     const canTagEntry = project?.allowedPermissions?.includes('UPDATE_ENTRY');
@@ -438,6 +441,14 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             pending={pendingAnalyses}
                             filtered={!!dateRangeFilter}
                             emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
+                            emptyIcon={(
+                                <Kraken
+                                    size="large"
+                                    variant="experiment"
+                                />
+                            )}
+                            messageIconShown
+                            messageShown
                         />
                     </Container>
                     {showAnalysisAddModal && activeProject && (

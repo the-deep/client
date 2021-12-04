@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     PendingMessage,
     TableView,
@@ -212,6 +215,9 @@ function ExploreDeepTableView(props: Props) {
                 columns={columns}
                 keySelector={projectKeySelector}
                 data={data?.projects?.results}
+                pending={loading}
+                filtered={isDefined(filters)}
+                emptyMessage="No projects to show."
             />
             <Footer
                 actions={(

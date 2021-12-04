@@ -1,20 +1,25 @@
 import React, { useMemo, useState, useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { _cs } from '@togglecorp/fujs';
 import {
-    PendingMessage,
+    _cs,
+} from '@togglecorp/fujs';
+import {
     Container,
     TableView,
     TableColumn,
     TableHeaderCellProps,
     TableHeaderCell,
+    Kraken,
     createStringColumn,
     Pager,
 } from '@the-deep/deep-ui';
 
 import ProjectContext from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
-import { convertDateToIsoDateTime } from '#utils/common';
+import {
+    convertDateToIsoDateTime,
+    isFiltered,
+} from '#utils/common';
 import {
     AssessmentListQuery,
     AssessmentListQueryVariables,
@@ -151,7 +156,7 @@ function Assessments(props: Props) {
 
     return (
         <Container
-            className={_cs(styles.analysis, className)}
+            className={_cs(styles.assessments, className)}
             heading="All Assessment Sources"
             headerClassName={styles.header}
             contentClassName={styles.content}
@@ -172,12 +177,30 @@ function Assessments(props: Props) {
                 />
             )}
         >
-            {loading && (<PendingMessage />)}
             <TableView
                 className={styles.table}
                 columns={columns}
                 keySelector={assessmentKeySelector}
                 data={data?.project?.assessments?.results}
+                pending={loading}
+                filtered={isFiltered(filters)}
+                filteredEmptyMessage="No matching assessments found."
+                filteredEmptyIcon={(
+                    <Kraken
+                        variant="coffee"
+                        size="large"
+                    />
+                )}
+                rowClassName={styles.tableRow}
+                emptyMessage="No assessments found."
+                emptyIcon={(
+                    <Kraken
+                        size="large"
+                        variant="coffee"
+                    />
+                )}
+                messageShown
+                messageIconShown
             />
         </Container>
     );

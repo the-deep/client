@@ -27,6 +27,7 @@ import {
     TabList,
     TabPanel,
     ListView,
+    Kraken,
     Pager,
 } from '@the-deep/deep-ui';
 import {
@@ -40,7 +41,10 @@ import {
 import SubNavbar from '#components/SubNavbar';
 import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
-import { breadcrumb } from '#utils/common';
+import {
+    breadcrumb,
+    isFiltered,
+} from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import BackLink from '#components/BackLink';
 import NonFieldError from '#components/NonFieldError';
@@ -786,6 +790,16 @@ function PillarAnalysis() {
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
+                                    filtered={isFiltered(filtersValue)}
+                                    emptyIcon={(
+                                        <Kraken
+                                            variant="experiment"
+                                        />
+                                    )}
+                                    emptyMessage="Entries not found."
+                                    filteredEmptyMessage="No matching entries were found."
+                                    messageIconShown
+                                    messageShown
                                 />
                                 <Pager
                                     className={styles.pager}
@@ -826,8 +840,6 @@ function PillarAnalysis() {
                                 renderer={AnalyticalStatementInput}
                                 direction="horizontal"
                                 rendererParams={analyticalStatementRendererParams}
-                                emptyMessage={null}
-                                emptyIcon={null}
                             />
                             <QuickActionButton
                                 className={styles.addStatementButton}

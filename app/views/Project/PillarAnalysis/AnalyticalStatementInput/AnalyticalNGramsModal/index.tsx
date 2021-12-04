@@ -9,6 +9,7 @@ import {
     Modal,
     Button,
     ListView,
+    Kraken,
     Container,
 } from '@the-deep/deep-ui';
 import {
@@ -200,6 +201,17 @@ function AnalyticalNGramsModal(props: Props) {
                         keySelector={keySelector}
                         renderer={ExcerptInput}
                         rendererParams={entriesRendererParams}
+                        filtered={false}
+                        pending={false}
+                        // TODO: add pending
+                        emptyIcon={(
+                            <Kraken
+                                variant="skydive"
+                            />
+                        )}
+                        emptyMessage="Entries not found."
+                        messageIconShown
+                        messageShown
                     />
                 </Container>
                 <div className={styles.chartContainer}>

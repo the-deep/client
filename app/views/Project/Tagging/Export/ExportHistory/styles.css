@@ -13,8 +13,8 @@
 
         .table {
             display: flex;
-            align-items: flex-start;
             flex-basis: 70%;
+            flex-direction: column;
             overflow-y: auto;
 
             .icons {

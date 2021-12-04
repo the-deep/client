@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
-import { ListView } from '@the-deep/deep-ui';
+import {
+    ListView,
+    Kraken,
+} from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { IoExtensionPuzzleOutline } from 'react-icons/io5';
 
@@ -108,6 +111,17 @@ function Section(props: Props) {
                 renderer={AttributeInput}
                 rendererParams={widgetRendererParams}
                 emptyMessage="There are no widgets in this section."
+                filtered={(filteredWidgets?.length ?? 0) > 0}
+                filteredEmptyMessage="No matching widgets found"
+                pending={false}
+                emptyIcon={(
+                    <Kraken
+                        size="large"
+                        variant="sleep"
+                    />
+                )}
+                messageShown
+                messageIconShown
             />
         </>
     );

@@ -7,6 +7,8 @@
     --width-left-container: 320px;
 
     .left-container {
+        display: flex;
+        flex-direction: column;
         flex-shrink: 0;
         background-color: var(--dui-color-background-information);
         padding-left: var(--dui-spacing-super-large);
@@ -17,43 +19,44 @@
         .filters {
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
             padding: var(--dui-spacing-medium) 0;
             padding-right: var(--dui-spacing-medium);
             overflow-y: auto;
             gap: var(--dui-spacing-medium);
         }
 
-        .framework-list {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
+        .bottom-content {
             flex-grow: 1;
-            justify-content: center;
-            padding: var(--dui-spacing-medium) 0;
-            overflow-x: unset;
-            overflow-y: auto;
 
-            .item {
-                display: flex;
-                flex-direction: column;
-                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                background-color: var(--dui-color-background-information);
-                padding: var(--dui-spacing-small) var(--dui-spacing-medium);
-                gap: var(--dui-spacing-small);
-                width: 100%;
-                text-align: left;
+            .framework-list {
+                padding: var(--dui-spacing-medium) 0;
+                min-height: 40vh;
+                overflow-x: unset;
+                overflow-y: auto;
 
-                .title {
-                    font-weight: var(--dui-font-weight-bold);
-                }
+                .item {
+                    display: flex;
+                    flex-direction: column;
+                    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                    background-color: var(--dui-color-background-information);
+                    padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+                    gap: var(--dui-spacing-small);
+                    width: 100%;
+                    text-align: left;
 
-                .created-on {
-                    color: var(--dui-color-text-description);
-                    font-size: var(--dui-font-size-small);
-                }
+                    .title {
+                        font-weight: var(--dui-font-weight-bold);
+                    }
 
-                &.selected {
-                    background-color: var(--dui-color-surface-information);
+                    .created-on {
+                        color: var(--dui-color-text-description);
+                        font-size: var(--dui-font-size-small);
+                    }
+
+                    &.selected {
+                        background-color: var(--dui-color-surface-information);
+                    }
                 }
             }
 
@@ -61,13 +64,6 @@
                 align-self: flex-start;
                 padding: var(--dui-spacing-small) var(--dui-spacing-medium);
                 color: var(--dui-color-accent);
-            }
-
-            .empty-container {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: clamp(320px, 70vh, 720px);
             }
         }
     }

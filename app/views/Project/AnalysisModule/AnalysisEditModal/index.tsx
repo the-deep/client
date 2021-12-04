@@ -430,6 +430,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     renderer={PillarAnalysisRow}
                     keySelector={analysisPillarKeySelector}
                     rendererParams={rowRendererParams}
+                    pending={pending}
+                    filtered={false}
                 />
                 <Button
                     className={styles.actionButton}

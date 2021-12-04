@@ -314,9 +314,10 @@ function ProjectDetailsForm(props: Props) {
                     ?.map((o) => stakeholderOptions.find((option) => option.id === o))
                     .filter(isDefined),
                 title: v.label,
+                dataPending: pendingProjectDetailsGet,
             };
         },
-        [groupedStakeholders, stakeholderOptions],
+        [groupedStakeholders, stakeholderOptions, pendingProjectDetailsGet],
     );
 
     const pending = pendingProjectDetailsGet || projectPatchPending || projectDeletePending;
@@ -415,6 +416,8 @@ function ProjectDetailsForm(props: Props) {
                             renderer={StakeholderList}
                             rendererClassName={styles.organizations}
                             keySelector={stakeholderTypeKeySelector}
+                            pending={false}
+                            filtered={false}
                         />
                     </ContainerCard>
                 </div>

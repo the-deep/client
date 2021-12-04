@@ -4,11 +4,11 @@ import { useQuery, gql } from '@apollo/client';
 import {
     ListView,
     Tabs,
-    PendingMessage,
     Pager,
     Tab,
     TabList,
     Container,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import {
@@ -128,7 +128,6 @@ function Notifications(props: Props) {
             value={activeView}
             onChange={setActiveView}
         >
-            {loading && <PendingMessage />}
             <Container
                 className={_cs(styles.notifications, className)}
                 spacing="none"
@@ -168,6 +167,16 @@ function Notifications(props: Props) {
                     rendererParams={notificationRendererParams}
                     rendererClassName={styles.notificationItem}
                     keySelector={notificationKeySelector}
+                    filtered={false}
+                    pending={loading}
+                    emptyIcon={(
+                        <Kraken
+                            variant="hi"
+                        />
+                    )}
+                    emptyMessage="You're all caught up."
+                    messageShown
+                    messageIconShown
                     /*
                         grouped
                         groupRendererParams={notificationGroupRendererParams}

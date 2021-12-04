@@ -4,6 +4,7 @@ import {
     Pager,
     Container,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -129,6 +130,15 @@ function AnalysisDetails(props: Props) {
                 pending={pillarPending}
                 renderer={AnalysisPillar}
                 rendererParams={analysisPillarRendererParams}
+                filtered={false}
+                emptyIcon={(
+                    <Kraken
+                        variant="exercise"
+                    />
+                )}
+                emptyMessage="This analysis doesn't contain any pillar analysis."
+                messageShown
+                messageIconShown
             />
         </Container>
     );

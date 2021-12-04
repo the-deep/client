@@ -6,7 +6,6 @@ import {
 import { generatePath } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import {
-    IoEarth,
     IoCopyOutline,
     IoCheckmark,
 } from 'react-icons/io5';
@@ -15,6 +14,7 @@ import {
     Card,
     Tabs,
     Tab,
+    Kraken,
     TabList,
     Message,
     TabPanel,
@@ -429,9 +429,12 @@ function FrameworkDetail(props: Props) {
                                 ) : (
                                     <Message
                                         icon={(
-                                            <IoEarth />
+                                            <Kraken
+                                                size="large"
+                                                variant="sleep"
+                                            />
                                         )}
-                                        message="There are no sections in this framework"
+                                        message="There are no sections in this framework."
                                     />
                                 )}
                             </Tabs>

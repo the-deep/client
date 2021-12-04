@@ -439,6 +439,9 @@ function TimeConditionalWidgetForm(props: TimeConditionalWidgetFormProps) {
                         direction="vertical"
                         rendererParams={conditionRendererParams}
                         showDragOverlay
+                        emptyMessage="No conditions were found."
+                        messageShown
+                        messageIconShown
                     />
                     {((value?.conditions?.length ?? 0) > 0) && (
                         <ConjunctionInput

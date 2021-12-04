@@ -127,6 +127,10 @@ function CompactSection(props: Props) {
                 renderer={CompactAttributeInput}
                 rendererParams={widgetRendererParams}
                 compactEmptyMessage
+                pending={false}
+                filtered={false}
+                emptyMessage="There are no widgets in this section"
+                messageShown
             />
         </Container>
     );

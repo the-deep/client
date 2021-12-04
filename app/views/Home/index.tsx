@@ -5,10 +5,9 @@ import {
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
-    PendingMessage,
     ListView,
+    Kraken,
 } from '@the-deep/deep-ui';
-import { GiShrug } from 'react-icons/gi';
 
 import { useRequest } from '#base/utils/restRequest';
 
@@ -173,7 +172,6 @@ function Home(props: ViewProps) {
     );
 
     const {
-        pending: summaryPending,
         response: summaryResponse,
     } = useRequest<ProjectsSummary>({
         url: 'server://projects-stat/summary/',
@@ -204,10 +202,6 @@ function Home(props: ViewProps) {
         [],
     );
 
-    const pageDataPending = summaryPending
-    || recentProjectsPending
-    || selectedProjectPending;
-
     const recentProjects: ProjectDetail[] | undefined = useMemo(() => {
         if (selectedProject && selectedProjectResponse?.project) {
             return [selectedProjectResponse.project];
@@ -230,7 +224,6 @@ function Home(props: ViewProps) {
             )}
             mainContentClassName={styles.mainContent}
         >
-            { pageDataPending && <PendingMessage /> }
             <Summary
                 className={styles.summary}
                 summaryResponse={summaryResponse}
@@ -275,8 +268,15 @@ function Home(props: ViewProps) {
                     data={recentProjects}
                     rendererParams={recentProjectsRendererParams}
                     renderer={ProjectItem}
+                    pending={selectedProjectPending || recentProjectsPending}
                     keySelector={recentProjectKeySelector}
-                    emptyIcon={(<GiShrug />)}
+                    filtered={false}
+                    emptyIcon={(
+                        <Kraken
+                            variant="search"
+                            size="medium"
+                        />
+                    )}
                     emptyMessage={(
                         <div className={styles.emptyText}>
                             {/* FIXME: use strings with appropriate wording */}
@@ -285,6 +285,8 @@ function Home(props: ViewProps) {
                             please select a project to view it&apos;s details
                         </div>
                     )}
+                    messageIconShown
+                    messageShown
                 />
             </Container>
         </PageContent>

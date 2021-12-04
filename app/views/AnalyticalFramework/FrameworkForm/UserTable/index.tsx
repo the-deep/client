@@ -203,7 +203,7 @@ function UserTable(props: Props) {
 
     return (
         <>
-            {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
+            {pendingDeleteAction && <PendingMessage />}
             <Container
                 className={_cs(styles.tableContainer, className)}
                 heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
@@ -231,6 +231,10 @@ function UserTable(props: Props) {
                     keySelector={userKeySelector}
                     columns={columns}
                     rowClassName={styles.tableRow}
+                    pending={frameworkUsersGetPending}
+                    filtered={false}
+                    emptyMessage="No users found"
+                    messageShown
                 />
             </Container>
             {addUserModalShown && (

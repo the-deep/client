@@ -5,6 +5,7 @@ import {
     Container,
     Button,
     Pager,
+    Kraken,
     TableView,
     PendingMessage,
     TableColumn,
@@ -335,6 +336,15 @@ function UserList(props: Props) {
                 emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
                 rowClassName={styles.tableRow}
                 columns={columns}
+                filtered={false}
+                pending={projectUsersPending}
+                emptyIcon={(
+                    <Kraken
+                        variant="standby"
+                    />
+                )}
+                messageShown
+                messageIconShown
             />
             <Pager
                 activePage={activePage}

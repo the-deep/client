@@ -24,6 +24,7 @@ import {
     TabPanel,
     Card,
     Message,
+    Kraken,
     Container,
     InformationCard,
     CompactInformationCard,
@@ -198,11 +199,22 @@ function ExploreDeep(props: Props) {
                             contentClassName={styles.frameworkListContainer}
                         >
                             <ListView
+                                className={styles.list}
                                 data={data?.projectExploreStats?.topActiveFrameworks ?? undefined}
                                 keySelector={activeFrameworkKeySelector}
                                 renderer={ActiveFrameworkItem}
                                 rendererParams={activeFrameworkRendererParams}
                                 spacing="none"
+                                filtered={false}
+                                pending={loading}
+                                emptyMessage="We couldn&apos;t find what you&apos;re looking for."
+                                emptyIcon={(
+                                    <Kraken
+                                        variant="work"
+                                    />
+                                )}
+                                messageIconShown
+                                messageShown
                             />
                         </ContainerCard>
                     </div>
@@ -221,11 +233,23 @@ function ExploreDeep(props: Props) {
                     inlineHeadingDescription
                 >
                     <ListView
+                        className={styles.list}
                         data={projectList ?? undefined}
                         keySelector={activeProjectKeySelector}
                         renderer={ActiveProjectItem}
                         rendererParams={activeProjectsRendererParams}
                         spacing="none"
+                        pending={loading}
+                        // NOTE: Nothing to filter here
+                        filtered={false}
+                        emptyMessage="We couldn&apos;t find what you&apos;re looking for."
+                        emptyIcon={(
+                            <Kraken
+                                variant="work"
+                            />
+                        )}
+                        messageIconShown
+                        messageShown
                     />
                 </ContainerCard>
             </div>

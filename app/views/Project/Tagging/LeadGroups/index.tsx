@@ -2,9 +2,9 @@ import React, { useCallback, useMemo, useState, useContext } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { _cs } from '@togglecorp/fujs';
 import {
-    PendingMessage,
     Button,
     Container,
+    Kraken,
     TableView,
     TableColumn,
     TableHeaderCellProps,
@@ -17,7 +17,10 @@ import {
 import ProjectContext from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
-import { convertDateToIsoDateTime } from '#utils/common';
+import {
+    convertDateToIsoDateTime,
+    isFiltered,
+} from '#utils/common';
 import AddLeadGroupModal from '#components/general/AddLeadGroupModal';
 import {
     LeadGroupListQuery,
@@ -180,7 +183,7 @@ function LeadGroups(props: Props) {
 
     return (
         <Container
-            className={_cs(styles.analysis, className)}
+            className={_cs(styles.leadGroups, className)}
             heading="Lead Groups"
             headerClassName={styles.header}
             contentClassName={styles.content}
@@ -209,12 +212,30 @@ function LeadGroups(props: Props) {
                 />
             )}
         >
-            {loading && (<PendingMessage />)}
             <TableView
                 className={styles.table}
                 columns={columns}
                 keySelector={leadGroupKeySelector}
                 data={data?.project?.leadGroups?.results}
+                filtered={isFiltered(filters)}
+                filteredEmptyMessage="No matching source groups found."
+                filteredEmptyIcon={(
+                    <Kraken
+                        size="large"
+                        variant="hi"
+                    />
+                )}
+                pending={loading}
+                emptyMessage="No source groups found."
+                rowClassName={styles.tableRow}
+                emptyIcon={(
+                    <Kraken
+                        size="large"
+                        variant="hi"
+                    />
+                )}
+                messageIconShown
+                messageShown
             />
             {addLeadGroupModalShown && (
                 <AddLeadGroupModal

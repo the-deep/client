@@ -10,6 +10,7 @@ import { useQuery, gql } from '@apollo/client';
 import {
     Container,
     ListView,
+    Kraken,
     Pager,
 } from '@the-deep/deep-ui';
 import {
@@ -360,7 +361,16 @@ function EntryList(props: Props) {
                     data={entries ?? undefined}
                     rendererParams={entryDataRendererParams}
                     rendererClassName={styles.entryItem}
+                    filtered={false}
                     pending={entryListPending || projectFrameworkLoading}
+                    emptyIcon={(
+                        <Kraken
+                            variant="work"
+                        />
+                    )}
+                    emptyMessage="Couldn't find any entries to show."
+                    messageIconShown
+                    messageShown
                 />
             </CommentCountContext.Provider>
         </Container>
