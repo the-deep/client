@@ -899,7 +899,9 @@ function EntryEdit(props: Props) {
                     setGeoAreaOptions(uniqueGeoData);
                     setFormValue((oldVal) => ({ ...oldVal, entries }));
                     const imagesMap = listToMap(
-                        leadFromResponse.entries?.map((entry) => entry.image).filter(isDefined),
+                        leadFromResponse.entries
+                            ?.map((entry) => entry.image)
+                            .filter(isDefined),
                         (d) => d.id,
                         (d) => d,
                     );
@@ -951,6 +953,58 @@ function EntryEdit(props: Props) {
         },
     );
 
+    const handleApplyToAll = useCallback(
+        (entryId: string, widgetId: string, applyBelowOnly?: boolean) => {
+            console.warn('here', entryId, widgetId, applyBelowOnly);
+            setFormFieldValue(
+                (prevValue: PartialFormType['entries']) => {
+                    if (!prevValue) {
+                        // eslint-disable-next-line no-console
+                        console.error('No entry found');
+                        return prevValue;
+                    }
+                    const referenceEntryIndex = prevValue.findIndex(
+                        (item) => item.clientId === entryId,
+                    );
+                    if (referenceEntryIndex === -1) {
+                        // eslint-disable-next-line no-console
+                        console.error('No entry found');
+                        return prevValue;
+                    }
+                    const referenceEntry = prevValue[referenceEntryIndex];
+                    const referenceAttribute = referenceEntry.attributes?.find(
+                        (item) => item.widget === widgetId,
+                    );
+                    // iterate over entries,
+                    // update stale and inject attributes
+
+                    return prevValue.map((entry, index) => {
+                        if (entry.clientId === entryId) {
+                            return entry;
+                        }
+                        if (applyBelowOnly && index <= referenceEntryIndex) {
+                            return entry;
+                        }
+                        const newAttributes = entry.attributes
+                            ?.filter((attribute) => attribute.widget !== widgetId) ?? [];
+
+                        if (referenceAttribute) {
+                            newAttributes.push(referenceAttribute);
+                        }
+
+                        return {
+                            ...entry,
+                            stale: true,
+                            attributes: newAttributes,
+                        };
+                    });
+                },
+                'entries',
+            );
+        },
+        [setFormFieldValue],
+    );
+
     const entryDataRendererParams = useCallback(
         (entryId: string, datum: PartialEntryType, index: number) => ({
             value: datum,
@@ -975,6 +1029,7 @@ function EntryEdit(props: Props) {
             error: entriesError?.[entryId],
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,
+            onApplyToAll: handleApplyToAll,
         }),
         [
             geoAreaOptions,
@@ -987,6 +1042,7 @@ function EntryEdit(props: Props) {
             leadId,
             selectedEntry,
             entriesError,
+            handleApplyToAll,
         ],
     );
 

@@ -14,6 +14,8 @@ interface BaseProps {
 
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 
     error: unknown;
 }
@@ -35,6 +37,8 @@ function WidgetWrapper(props: Props) {
         childrenContainerClassName,
         hideTitle,
         readOnly,
+        actions,
+        icons,
         error,
     } = props;
 
@@ -47,12 +51,16 @@ function WidgetWrapper(props: Props) {
             )}
         >
             {!hideTitle && (
-                <div
-                    className={_cs(headerClassName, styles.header)}
-                    // FIXME: use strings
-                >
-                    {title ?? 'Unnamed'}
-                </div>
+                <>
+                    {icons}
+                    <div
+                        className={_cs(headerClassName, styles.header)}
+                        // FIXME: use strings
+                    >
+                        {title ?? 'Unnamed'}
+                    </div>
+                    {actions}
+                </>
             )}
             <div
                 className={_cs(

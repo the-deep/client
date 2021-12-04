@@ -77,7 +77,7 @@ function Column(props: ColumnProps) {
                 onSubRowChange(rowId, subRowId, columnId, () => (val ? [] : undefined));
             }
         },
-        [rowId, subRowId, columnId, onSubRowChange],
+        [rowId, subRowId, columnId, subColumnId, onSubRowChange],
     );
 
     return (

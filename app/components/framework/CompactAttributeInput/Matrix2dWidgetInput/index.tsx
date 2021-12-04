@@ -259,9 +259,10 @@ export interface Props <N extends string>{
     error: Error<Matrix2dValue> | undefined;
     onChange: (value: Matrix2dValue | undefined, name: N) => void,
 
-    actions?: React.ReactNode,
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 
     widget: PartialMatrix2dWidget,
 }
@@ -275,6 +276,8 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -346,6 +349,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             className={_cs(className, styles.matrix)}
             error={error}
             hideTitle
+            disabled={disabled}
+            readOnly={readOnly}
+            actions={actions}
+            icons={icons}
         >
             <NonFieldError
                 error={error}

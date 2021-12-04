@@ -9,6 +9,12 @@ import {
     internal,
 } from '@togglecorp/toggle-form';
 import {
+    QuickActionButton,
+} from '@the-deep/deep-ui';
+import {
+    IoCreateOutline,
+} from 'react-icons/io5';
+import {
     randomString,
     isNotDefined,
 } from '@togglecorp/fujs';
@@ -75,6 +81,9 @@ export interface Props<N extends string | number | undefined> {
 
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+
+    onApplyBelowClick?: (widgetId: string) => void;
+    onApplyAllClick?: (widgetId: string) => void;
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -91,6 +100,9 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
 
         geoAreaOptions,
         onGeoAreaOptionsChange,
+
+        onApplyBelowClick,
+        onApplyAllClick,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -113,6 +125,28 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
 
     // TODO: check widget and attribute version
 
+    // FIXME: hide this if apply not implemented
+    const icons = !readOnly && (
+        <>
+            <QuickActionButton
+                name={widget.clientId}
+                onClick={onApplyBelowClick}
+                title="Apply below"
+                disabled={disabled}
+            >
+                <IoCreateOutline />
+            </QuickActionButton>
+            <QuickActionButton
+                name={widget.clientId}
+                onClick={onApplyAllClick}
+                title="Apply to all"
+                disabled={disabled}
+            >
+                <IoCreateOutline />
+            </QuickActionButton>
+        </>
+    );
+
     if (widget.widgetId === 'TEXT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
         component = (
@@ -125,6 +159,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'NUMBER' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -139,6 +174,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'DATE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -153,6 +189,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'TIME' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -167,6 +204,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'DATE_RANGE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -181,6 +219,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'TIME_RANGE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -195,6 +234,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'SCALE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -210,6 +250,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'MULTISELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -225,6 +266,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'SELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -240,6 +282,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'MATRIX1D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -255,6 +298,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'MATRIX2D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -270,6 +314,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'ORGANIGRAM' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -285,6 +330,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
+                icons={icons}
             />
         );
     } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -302,6 +348,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 error={error?.data as Error<typeof data> | undefined}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                icons={icons}
             />
         );
     } else {
@@ -312,6 +359,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 error={error?.data}
                 disabled={disabled}
                 readOnly={readOnly}
+                icons={icons}
             />
         );
     }
