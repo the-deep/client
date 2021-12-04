@@ -1,13 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
-import {
-    generatePath,
-} from 'react-router-dom';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     useAlert,
-    QuickActionLink,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
@@ -17,6 +13,7 @@ import {
     AssessmentDeleteMutation,
     AssessmentDeleteMutationVariables,
 } from '#generated/types';
+import SmartQuickActionLink from '#base/components/SmartQuickActionLink';
 
 import styles from './styles.css';
 
@@ -90,27 +87,20 @@ function ActionCell(props: Props) {
         }
     }, [deleteAssessment, projectId, assessmentId]);
 
-    const assessmentEditLink = useMemo(() => ({
-        pathname: generatePath(
-            routes.assessmentEdit.path,
-            {
-                projectId,
-                leadId,
-            },
-        ),
-    }), [projectId, leadId]);
-
     return (
         <div className={_cs(styles.actionCell, className)}>
-            <QuickActionLink
+            <SmartQuickActionLink
                 className={styles.button}
                 // TODO: Link this to actual assessment edit page
-                to={assessmentEditLink}
+                attrs={{
+                    leadId,
+                }}
+                route={routes.assessmentEdit}
                 disabled={disabled}
                 title="Edit"
             >
                 <FiEdit2 />
-            </QuickActionLink>
+            </SmartQuickActionLink>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"

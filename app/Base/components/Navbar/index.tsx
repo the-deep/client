@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { gql, useMutation } from '@apollo/client';
 import {
-    ButtonLikeLink,
     QuickActionLink,
     QuickActionDropdownMenu,
     DropdownMenu,
@@ -97,13 +96,13 @@ function Navbar(props: Props) {
                     />
                 </div>
                 <div className={styles.actions}>
-                    <ButtonLikeLink
-                        to={route.explore.path}
+                    <SmartButtonLikeLink
+                        route={route.explore}
                         variant="tertiary"
                         icons={<IoCompassOutline />}
                     >
                         Explore DEEP
-                    </ButtonLikeLink>
+                    </SmartButtonLikeLink>
                     <SmartButtonLikeLink
                         route={route.login}
                         variant="tertiary"

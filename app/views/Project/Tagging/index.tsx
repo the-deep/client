@@ -137,10 +137,6 @@ function Tagging(props: Props) {
                     </Route>
                     <Route
                         exact
-                        path={routes.assessmentEdit.path}
-                    />
-                    <Route
-                        exact
                         path={routes.assessments.path}
                     >
                         {subNavbarComponents}
@@ -190,12 +186,6 @@ function Tagging(props: Props) {
                             path={routes.sources.path}
                         >
                             {routes.sources.load({ className: styles.childView })}
-                        </Route>
-                        <Route
-                            exact
-                            path={routes.assessmentEdit.path}
-                        >
-                            {routes.assessmentEdit.load({ className: styles.childView })}
                         </Route>
                         <Route
                             exact

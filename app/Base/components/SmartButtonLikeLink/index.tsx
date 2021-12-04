@@ -8,7 +8,10 @@ import useRouteMatching, {
 
 export type Props = Omit<ButtonLikeLinkProps, 'to'> & {
     route: RouteData;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    state?: object;
     attrs?: Attrs;
+    hash?: string;
     children?: React.ReactNode;
 };
 
@@ -17,6 +20,8 @@ function SmartButtonLikeLink(props: Props) {
         route,
         attrs,
         children,
+        state,
+        hash,
         ...otherProps
     } = props;
 
@@ -28,7 +33,7 @@ function SmartButtonLikeLink(props: Props) {
     return (
         <ButtonLikeLink
             {...otherProps}
-            to={routeData.to}
+            to={{ pathname: routeData.to, state, hash }}
         >
             {children ?? routeData.children}
         </ButtonLikeLink>

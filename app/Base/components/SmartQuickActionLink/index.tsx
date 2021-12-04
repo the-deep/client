@@ -9,6 +9,9 @@ import useRouteMatching, {
 export type Props = Omit<QuickActionLinkProps, 'to'> & {
     route: RouteData;
     attrs?: Attrs;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    state?: object;
+    hash?: string;
     children?: React.ReactNode;
 };
 
@@ -17,6 +20,8 @@ function SmartQuickActionLink(props: Props) {
         route,
         attrs,
         children,
+        state,
+        hash,
         ...otherProps
     } = props;
 
@@ -28,7 +33,7 @@ function SmartQuickActionLink(props: Props) {
     return (
         <QuickActionLink
             {...otherProps}
-            to={routeData.to}
+            to={{ pathname: routeData.to, state, hash }}
         >
             {children ?? routeData.children}
         </QuickActionLink>
