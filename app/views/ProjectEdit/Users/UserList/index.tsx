@@ -38,6 +38,7 @@ import styles from './styles.css';
 const PROJECT_MEMBERSHIP_BULK_REMOVE = gql`
     mutation ProjectMembershipBulkRemove($projectId:ID!, $deleteIds: [ID!]) {
         project(id: $projectId) {
+            id
             projectUserMembershipBulk(deleteIds: $deleteIds) {
                 errors
                 deletedResult {
@@ -59,6 +60,7 @@ const PROJECT_USERS = gql`
         $pageSize: Int,
     ) {
         project(id: $projectId) {
+            id
             userMembers(page: $page, pageSize: $pageSize) {
                 results {
                     badges

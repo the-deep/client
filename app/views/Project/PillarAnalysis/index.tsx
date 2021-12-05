@@ -104,7 +104,6 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $page: Int,
             $pageSize: Int,
             $authoringOrganizationTypes: [ID!],
-            $commentStatus: EntryFilterCommentStatusEnum,
             $controlled: Boolean,
             $createdAtGte: DateTime,
             $createdAtLte: DateTime,
@@ -119,12 +118,13 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
+            id
             analysisPillar(id: $pillarId) {
+                id
                 entries(
                     page: $page,
                     pageSize: $pageSize,
                     authoringOrganizationTypes: $authoringOrganizationTypes,
-                    commentStatus: $commentStatus,
                     controlled: $controlled,
                     createdAtGte: $createdAtGte,
                     createdAtLte: $createdAtLte,

@@ -34,6 +34,7 @@ import {
     getWidgets,
 } from '../utils';
 import { Widget, Level } from '#types/newAnalyticalFramework';
+import { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
 import ExportPreview from '../ExportPreview';
 import LeadsSelection from '../LeadsSelection';
 import ExportTypePane from './ExportTypePane';
@@ -43,6 +44,7 @@ import styles from './styles.css';
 const PROJECT_FRAMEWORK_DETAILS = gql`
     query ProjectFrameworkDetails($projectId: ID!) {
         project(id: $projectId) {
+            id
             analysisFramework {
                 id
                 exportables {
@@ -104,6 +106,7 @@ const CREATE_EXPORT = gql`
         $data: ExportCreateInputType!,
     ) {
         project(id: $projectId) {
+            id
             exportCreate(data: $data) {
                 ok
                 errors
@@ -160,6 +163,7 @@ export interface SelectedLead extends Lead {
 interface Props {
     className?: string;
     projectId: string;
+    onSuccess: () => void;
 }
 
 function filterContexualWidgets(widgets: Widget[] | undefined) {
@@ -182,7 +186,9 @@ function EntriesExportSelection(props: Props) {
     const {
         className,
         projectId,
+        onSuccess,
     } = props;
+
     const alert = useAlert();
 
     const { project } = React.useContext(ProjectContext);
@@ -218,6 +224,10 @@ function EntriesExportSelection(props: Props) {
         }),
         [projectId],
     );
+
+    const filters = useMemo(() => (
+        getProjectSourcesQueryVariables(filterValues)
+    ), [filterValues]);
 
     const {
         loading: frameworkGetPending,
@@ -264,6 +274,7 @@ function EntriesExportSelection(props: Props) {
                             _ts('export', 'exportStartedNotifyMessage'),
                             { variant: 'success' },
                         );
+                        onSuccess();
                     }
                 }
             },
@@ -314,7 +325,7 @@ function EntriesExportSelection(props: Props) {
             excelDecoupled,
             exportType,
             filters: {
-                ...filterValues,
+                ...filters,
                 ids: selectedLeads,
                 excludeProvidedLeadsId: selectAll,
             },
@@ -343,7 +354,7 @@ function EntriesExportSelection(props: Props) {
         contextualWidgets,
         createExport,
         excelDecoupled,
-        filterValues,
+        filters,
         queryTitle,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
@@ -478,8 +489,7 @@ function EntriesExportSelection(props: Props) {
                         name="queryTitle"
                         value={queryTitle}
                         onChange={setQueryTitle}
-                        label="Query title"
-                        placeholder="Query title"
+                        label="Export Title"
                     />
                 </ControlledExpandableContainer>
                 <Button

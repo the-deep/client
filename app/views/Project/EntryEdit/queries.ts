@@ -166,6 +166,7 @@ export const BULK_UPDATE_ENTRIES = gql`
     ${ENTRY_FRAGMENT}
     mutation BulkUpdateEntries($projectId:ID!, $deleteIds:[ID!], $entries: [BulkEntryInputType!]) {
         project(id: $projectId) {
+            id
             entryBulk(deleteIds: $deleteIds, items: $entries) {
                 errors
                 result {
@@ -182,6 +183,7 @@ export const BULK_UPDATE_ENTRIES = gql`
 export const UPDATE_LEAD = gql`
     mutation UpdateLead($projectId:ID!, $leadId:ID!, $data: LeadInputType!) {
         project(id: $projectId) {
+            id
             leadUpdate(data: $data, id: $leadId) {
                 result {
                     title,

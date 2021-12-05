@@ -48,7 +48,6 @@ import { organizationTitleSelector } from '#components/selections/NewOrganizatio
 import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLine';
 import {
     calcPercent,
-    convertDateToIsoDateTime,
     isFiltered,
 } from '#utils/common';
 
@@ -112,6 +111,7 @@ export const PROJECT_SOURCES = gql`
         $customFilters: LeadCustomFilterEnum,
     ) {
         project(id: $projectId) {
+            id
             leads (
                 page: $page,
                 pageSize: $pageSize,
@@ -194,6 +194,7 @@ const DELETE_LEAD = gql`
         $leadId: ID!,
     ) {
         project(id: $projectId) {
+            id
             leadDelete(id: $leadId) {
                 ok
                 errors
@@ -240,8 +241,6 @@ function SourcesTable(props: Props) {
             }
             return ({
                 ...filters,
-                createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
-                createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
                 projectId,
                 page: activePage,
                 pageSize: maxItemsPerPage,

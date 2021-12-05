@@ -29,6 +29,7 @@ const CREATE_EXPORT = gql`
         $data: ExportCreateInputType!,
     ) {
         project(id: $projectId) {
+            id
             exportCreate(data: $data) {
                 ok
                 errors
@@ -45,12 +46,14 @@ const CREATE_EXPORT = gql`
 interface Props {
     className?: string;
     projectId: string;
+    onSuccess: () => void;
 }
 
 function AssessmentsExportSelection(props: Props) {
     const {
         className,
         projectId,
+        onSuccess,
     } = props;
 
     const alert = useAlert();
@@ -84,6 +87,7 @@ function AssessmentsExportSelection(props: Props) {
                             _ts('export', 'exportStartedNotifyMessage'),
                             { variant: 'success' },
                         );
+                        onSuccess();
                     }
                 }
             },

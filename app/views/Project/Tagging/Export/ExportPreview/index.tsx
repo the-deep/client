@@ -78,18 +78,18 @@ function ExportPreview(props: OwnProps) {
             contentClassName={styles.mainContent}
         >
             {pending && <PendingMessage />}
-            {isDefined(exportResponse) ? (
+            {!pending && isDefined(exportResponse) ? (
                 <LeadPreview
                     className={styles.leadPreview}
                     url={exportResponse?.file}
                 />
-            ) : (
+            ) : (!pending && (
                 <div className={styles.label}>
                     {
-                        error ?? 'Select your desired export settings on the left and click the preview button to see the preview of your document'
+                        error ?? 'Select your desired export settings on the left and click the preview button to see the preview of your document.'
                     }
                 </div>
-            )}
+            ))}
         </Container>
     );
 }
