@@ -205,8 +205,8 @@ export function flatten<A, K>(
         ...flatten(itemsByChildren, valueSelector, childSelector),
     ];
 }
-export function generateFilename(title: string, format: string) {
-    return `${formatDateToString(new Date(), 'yyyyMMdd')}_DEEP_${title}.${format}`;
+export function generateFilename(title: string) {
+    return `${formatDateToString(new Date(), 'yyyyMMdd')} DEEP ${title}`;
 }
 
 /*
