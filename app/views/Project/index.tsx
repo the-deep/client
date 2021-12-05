@@ -135,6 +135,12 @@ function Project(props: Props) {
                     {routes.pillarAnalysis.load({ className })}
                 </Route>
                 <Route
+                    exact
+                    path={routes.assessmentEdit.path}
+                >
+                    {routes.assessmentEdit.load({ className })}
+                </Route>
+                <Route
                     path={routes.projectEdit.path}
                 >
                     {routes.projectEdit.load({ className })}

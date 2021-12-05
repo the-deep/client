@@ -320,7 +320,7 @@ const dashboard = wrap({
 
 const aryDashboard = wrap({
     parent: { path: taggingRoute.path },
-    path: '/ary-dashboard/',
+    path: '/assessment-dashboard/',
     title: 'Assessments Dashboard',
     navbarVisibility: true,
     component: lazy(() => import('#views/Project/Tagging/AryDashboard')),
@@ -353,6 +353,30 @@ const exportRoute = wrap({
     visibility: 'is-authenticated',
 });
 
+const assessmentEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/assessments/:leadId(\\d+)/',
+    title: 'Edit Assessment',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/Project/EditAssessment')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated', // TODO handle permission
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        // NOTE: using permission for LEAD as we don't have one for assessment
+        return project.hasAssessmentTemplate && (
+            project.allowedPermissions.includes('CREATE_LEAD')
+            || project.allowedPermissions.includes('UPDATE_LEAD')
+        );
+    },
+});
+
 const routes = {
     login,
     register,
@@ -378,5 +402,6 @@ const routes = {
     aryDashboard,
     export: exportRoute,
     entryEdit: entryEditRoute,
+    assessmentEdit: assessmentEditRoute,
 };
 export default routes;

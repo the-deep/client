@@ -498,7 +498,6 @@ function SourcesTable(props: Props) {
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
                 entriesCount: data.entriesCounts?.total ?? 0,
-                projectId: data.project.id,
                 isAssessmentLead: data.isAssessmentLead,
             }),
             columnWidth: 196,

@@ -4,15 +4,16 @@ import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     useAlert,
-    QuickActionLink,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
+import routes from '#base/configs/routes';
 
 import {
     AssessmentDeleteMutation,
     AssessmentDeleteMutationVariables,
 } from '#generated/types';
+import SmartQuickActionLink from '#base/components/SmartQuickActionLink';
 
 import styles from './styles.css';
 
@@ -32,6 +33,7 @@ const ASSESSMENT_DELETE = gql`
 export interface Props {
     assessmentId: string;
     projectId?: string;
+    leadId?: string;
     className?: string;
     disabled?: boolean;
     onDeleteSuccess: () => void;
@@ -41,6 +43,7 @@ function ActionCell(props: Props) {
     const {
         className,
         projectId,
+        leadId,
         assessmentId,
         onDeleteSuccess,
         disabled,
@@ -86,15 +89,18 @@ function ActionCell(props: Props) {
 
     return (
         <div className={_cs(styles.actionCell, className)}>
-            <QuickActionLink
+            <SmartQuickActionLink
                 className={styles.button}
                 // TODO: Link this to actual assessment edit page
-                to="#"
+                attrs={{
+                    leadId,
+                }}
+                route={routes.assessmentEdit}
                 disabled={disabled}
                 title="Edit"
             >
                 <FiEdit2 />
-            </QuickActionLink>
+            </SmartQuickActionLink>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"

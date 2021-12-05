@@ -1,7 +1,4 @@
-import React, { useMemo, useCallback, useContext } from 'react';
-import {
-    generatePath,
-} from 'react-router-dom';
+import React, { useCallback, useContext } from 'react';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
@@ -12,7 +9,6 @@ import { _cs } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
 import {
     QuickActionButton,
-    ButtonLikeLink,
     QuickActionDropdownMenu,
     DropdownMenuItem,
     useConfirmation,
@@ -20,6 +16,7 @@ import {
     RowExpansionContext,
 } from '@the-deep/deep-ui';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
 
@@ -32,7 +29,6 @@ export interface Props<T extends string> {
     onDeleteClick: (key: T) => void;
     disabled?: boolean;
     isAssessmentLead?: boolean;
-    projectId: string;
     entriesCount: number;
 }
 
@@ -44,7 +40,6 @@ function Actions<T extends string>(props: Props<T>) {
         disabled,
         isAssessmentLead,
         onDeleteClick,
-        projectId,
         entriesCount,
     } = props;
 
@@ -52,18 +47,6 @@ function Actions<T extends string>(props: Props<T>) {
 
     const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
     const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
-    const canEditEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
-
-    const entryEditLink = useMemo(() => ({
-        pathname: generatePath(
-            routes.entryEdit.path,
-            {
-                projectId,
-                leadId: id,
-            },
-        ),
-        hash: '#/primary-tagging',
-    }), [projectId, id]);
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
@@ -110,18 +93,20 @@ function Actions<T extends string>(props: Props<T>) {
                         <MdModeEdit />
                     </QuickActionButton>
                 )}
-                {canEditEntry && (
-                    <ButtonLikeLink
-                        className={styles.button}
-                        variant="primary"
-                        title="tag"
-                        disabled={disabled}
-                        to={entryEditLink}
-                        icons={<IoAdd />}
-                    >
-                        Tag
-                    </ButtonLikeLink>
-                )}
+                <SmartButtonLikeLink
+                    className={styles.button}
+                    variant="primary"
+                    title="tag"
+                    disabled={disabled}
+                    route={routes.entryEdit}
+                    attrs={{
+                        leadId: id,
+                    }}
+                    hash="#/primary-tagging"
+                    icons={<IoAdd />}
+                >
+                    Tag
+                </SmartButtonLikeLink>
                 {canDeleteSource && (
                     <QuickActionDropdownMenu
                         label={(
@@ -137,17 +122,20 @@ function Actions<T extends string>(props: Props<T>) {
                         </DropdownMenuItem>
                     </QuickActionDropdownMenu>
                 )}
-                {isAssessmentLead && canEditEntry && project?.hasAssessmentTemplate && (
-                    <ButtonLikeLink
+                {isAssessmentLead && (
+                    <SmartButtonLikeLink
                         className={styles.button}
                         variant="secondary"
                         title="assessment"
                         disabled={disabled}
-                        to="#"
+                        route={routes.assessmentEdit}
+                        attrs={{
+                            leadId: id,
+                        }}
                         icons={<IoAdd />}
                     >
                         Assessment
-                    </ButtonLikeLink>
+                    </SmartButtonLikeLink>
                 )}
             </div>
             <div className={styles.row}>
@@ -166,7 +154,6 @@ function Actions<T extends string>(props: Props<T>) {
                     {`${entriesCount} ${entriesCount === 1 ? 'Entry' : 'Entries'}`}
                 </Button>
                 {/* TODO: Update entriesCount when parent has graphql */}
-
             </div>
             {modal}
         </div>
