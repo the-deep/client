@@ -4,6 +4,7 @@
     .widget-list {
         display: flex;
         flex-direction: column;
+        padding: var(--dui-spacing-small);
         gap: var(--dui-spacing-large);
     }
 }

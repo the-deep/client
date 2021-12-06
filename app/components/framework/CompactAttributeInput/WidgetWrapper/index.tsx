@@ -1,11 +1,13 @@
 import React from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 
+import { Header } from '@the-deep/deep-ui';
+
 import ErrorBoundary from '#base/components/ErrorBoundary';
 
 import styles from './styles.css';
 
-interface BaseProps {
+export interface Props {
     className?: string;
     headerClassName?: string;
 
@@ -18,15 +20,8 @@ interface BaseProps {
     icons?: React.ReactNode;
 
     error: unknown;
-}
-
-export type Props = BaseProps & ({
     title: string | undefined;
-    hideTitle?: false;
-} | {
-    title?: string;
-    hideTitle: true;
-});
+}
 
 function WidgetWrapper(props: Props) {
     const {
@@ -35,7 +30,6 @@ function WidgetWrapper(props: Props) {
         children,
         headerClassName,
         childrenContainerClassName,
-        hideTitle,
         readOnly,
         actions,
         icons,
@@ -50,18 +44,15 @@ function WidgetWrapper(props: Props) {
                 isDefined(error) && styles.errored,
             )}
         >
-            {!hideTitle && (
-                <>
-                    {icons}
-                    <div
-                        className={_cs(headerClassName, styles.header)}
-                        // FIXME: use strings
-                    >
-                        {title ?? 'Unnamed'}
-                    </div>
-                    {actions}
-                </>
-            )}
+            <Header
+                className={_cs(styles.header, headerClassName)}
+                icons={icons}
+                headingClassName={_cs(headerClassName, styles.heading)}
+                spacing="compact"
+                actionsContainerClassName={styles.actions}
+                heading={title ?? 'Unnamed'}
+                actions={actions}
+            />
             <div
                 className={_cs(
                     childrenContainerClassName,

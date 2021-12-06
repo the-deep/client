@@ -272,6 +272,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         className,
         widget,
         name,
+        title,
         value,
         onChange: onChangeFromProps,
         disabled,
@@ -348,7 +349,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         <WidgetWrapper
             className={_cs(className, styles.matrix)}
             error={error}
-            hideTitle
+            title={title}
             disabled={disabled}
             readOnly={readOnly}
             actions={actions}

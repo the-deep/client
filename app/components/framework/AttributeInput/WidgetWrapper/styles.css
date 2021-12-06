@@ -1,10 +1,13 @@
 .widget-wrapper {
     display: flex;
     flex-direction: column;
-    background-color: var(--dui-color-foreground);
     overflow-y: auto;
 
     .header {
         align-items: center;
+    }
+
+    .children {
+        padding: var(--dui-spacing-small);
     }
 }

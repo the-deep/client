@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
     isDefined,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     QuickActionButton,
@@ -66,7 +67,23 @@ function CompactSection(props: Props) {
         }
         return widgets?.filter(
             // FIXME: should only check into data, not value
-            (widget) => isDefined(attributesMap?.[widget.clientId]?.value?.data?.value),
+            (widget) => {
+                if (widget.widgetId === 'MATRIX1D') {
+                    return !doesObjectHaveNoData(
+                        attributesMap?.[widget.clientId]?.value?.data?.value,
+                        [''],
+                    );
+                }
+
+                if (widget.widgetId === 'MATRIX2D') {
+                    return !doesObjectHaveNoData(
+                        attributesMap?.[widget.clientId]?.value?.data?.value,
+                        [],
+                    );
+                }
+
+                return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);
+            },
         );
     }, [emptyValueHidden, attributesMap, widgets]);
 
@@ -81,7 +98,6 @@ function CompactSection(props: Props) {
 
     const handleApplyAllClick = useCallback(
         (widgetId: string) => {
-            console.warn(widgetId, entryClientId, onApplyToAll);
             if (onApplyToAll) {
                 onApplyToAll(entryClientId, widgetId, false);
             }
@@ -105,11 +121,13 @@ function CompactSection(props: Props) {
                 error: err,
                 geoAreaOptions,
                 onGeoAreaOptionsChange,
+                applyButtonsHidden: !onApplyToAll,
                 onApplyBelowClick: handleApplyBelowClick,
                 onApplyAllClick: handleApplyAllClick,
             };
         },
         [
+            onApplyToAll,
             onAttributeChange,
             attributesMap,
             readOnly,
@@ -154,8 +172,9 @@ function CompactSection(props: Props) {
                 compactEmptyMessage
                 pending={false}
                 filtered={false}
-                emptyMessage="There are no widgets in this section"
+                emptyMessage="No widgets were tagged under this section."
                 messageShown
+                messageIconShown
             />
         </Container>
     );

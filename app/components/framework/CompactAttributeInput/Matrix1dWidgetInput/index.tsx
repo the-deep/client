@@ -128,6 +128,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         widget,
         name,
         value,
+        title,
         onChange: onChangeFromProps,
         disabled,
         readOnly,
@@ -187,17 +188,15 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         [disabled, readOnly, handleCellsChange, value],
     );
 
-    // FIXME: handle finer level errors
-
     return (
         <WidgetWrapper
             className={_cs(className, styles.matrix)}
             error={error}
-            hideTitle
             disabled={disabled}
             readOnly={readOnly}
             actions={actions}
             icons={icons}
+            title={title}
         >
             <NonFieldError
                 error={error}
@@ -209,6 +208,8 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
                 rendererParams={rowRendererParams}
                 renderer={Row}
                 compactEmptyMessage
+                emptyMessage="-"
+                messageShown
                 filtered={false}
                 pending={false}
             />

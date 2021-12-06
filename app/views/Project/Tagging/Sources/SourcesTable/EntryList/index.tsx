@@ -341,7 +341,8 @@ function EntryList(props: Props) {
         <Container
             className={_cs(className, styles.entryListContainer)}
             contentClassName={styles.content}
-            spacing="compact"
+            spacing="none"
+            footerClassName={styles.footer}
             footerActions={(
                 <Pager
                     activePage={activePage}

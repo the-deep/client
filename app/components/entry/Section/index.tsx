@@ -5,7 +5,9 @@ import {
     Kraken,
 } from '@the-deep/deep-ui';
 import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
-import { IoExtensionPuzzleOutline } from 'react-icons/io5';
+import {
+    IoGitBranchOutline,
+} from 'react-icons/io5';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
@@ -66,13 +68,15 @@ function Section(props: Props) {
             const err = attribute
                 ? error?.[attribute.value.clientId]
                 : undefined;
+
             return {
                 className: _cs(
                     styles.widgetContainer,
                     data.width === 'HALF' && styles.halfWidget,
+                    data.conditional && styles.conditional,
                 ),
                 icons: data.conditional && (
-                    <IoExtensionPuzzleOutline
+                    <IoGitBranchOutline
                         title="This is a child widget"
                     />
                 ),
