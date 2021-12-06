@@ -30,17 +30,17 @@ type FormType = {
 };
 
 export interface Membership {
-    id: number;
-    member: number;
+    id: string;
+    member: string;
     memberName: string;
     memberEmail: string;
     role: 'admin' | 'normal';
-    group: number;
+    group: string;
     joinedAt: string;
 }
 
 export interface UserGroup {
-    id: number;
+    id: string;
     title: string;
     description: string;
     role: 'admin' | 'normal';
@@ -64,7 +64,7 @@ const defaultFormValue: PartialForm<FormType> = {};
 
 interface Props {
     onModalClose: () => void;
-    onSuccess: (userGroupId: number) => void;
+    onSuccess: (userGroupId: string) => void;
     value?: UserGroup,
 }
 function AddUserGroupModal(props: Props) {

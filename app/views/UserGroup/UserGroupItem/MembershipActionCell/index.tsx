@@ -11,48 +11,42 @@ import styles from './styles.css';
 
 export interface Props {
     className?: string;
-    itemKey: number;
-    groupKey: number;
-    member: number;
+    membershipId: string;
+    groupKey: string;
+    member: string;
     memberRole: 'admin' | 'normal';
     onAddClick?: (key: number) => void;
     onEditClick: (
-        user: { id: number; member: number; role: 'admin' | 'normal' },
-        group: number,
+        user: { id: string; member: string; role: 'admin' | 'normal' },
+        group: string,
     ) => void;
-    onDeleteClick: (key: number) => void;
+    onDeleteClick: (key: string) => void;
     disabled?: boolean;
-    editButtonTitle?: string;
-    deleteButtonTitle?: string;
-    deleteConfirmationMessage?: string;
 }
 
 function ActionCell(props: Props) {
     const {
         className,
-        itemKey,
+        membershipId,
         groupKey,
         member,
         onEditClick,
         onDeleteClick,
         disabled,
-        editButtonTitle,
-        deleteButtonTitle,
-        deleteConfirmationMessage,
         memberRole,
     } = props;
 
     const handleEditButtonClick = useCallback(() => {
         onEditClick({
-            id: itemKey,
+            id: membershipId,
             member,
             role: memberRole,
         }, groupKey);
-    }, [itemKey, onEditClick, groupKey, member, memberRole]);
+    }, [membershipId, onEditClick, groupKey, member, memberRole]);
 
     const handleDeleteUserGroupClick = useCallback(() => {
-        onDeleteClick(itemKey);
-    }, [itemKey, onDeleteClick]);
+        onDeleteClick(membershipId);
+    }, [membershipId, onDeleteClick]);
 
     return (
         <div className={_cs(styles.actionCell, className)}>
@@ -61,16 +55,16 @@ function ActionCell(props: Props) {
                 name="editButton"
                 onClick={handleEditButtonClick}
                 disabled={disabled}
-                title={editButtonTitle}
+                title="Edit user"
             >
                 <FiEdit2 />
             </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"
-                title={deleteButtonTitle}
+                title="Remove user"
                 onConfirm={handleDeleteUserGroupClick}
-                message={deleteConfirmationMessage}
+                message="Are you sure you want to remove this member from this usergroup?"
                 showConfirmationInitially={false}
                 disabled={disabled}
             >

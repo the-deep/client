@@ -11,11 +11,11 @@ import styles from './styles.css';
 
 export interface Props {
     className?: string;
-    itemKey: number;
-    member?: number;
-    onAddClick?: (key: number) => void;
-    onEditClick: (group: number) => void;
-    onDeleteClick: (key: number) => void;
+    itemKey: string;
+    member?: string;
+    onAddClick?: () => void;
+    onEditClick: (group: string) => void;
+    onDeleteClick: (key: string) => void;
     disabled?: boolean;
     addButtonTitle?: string;
     editButtonTitle?: string;
@@ -31,17 +31,13 @@ function UserGroupActionCell(props: Props) {
         onEditClick,
         onDeleteClick,
         disabled,
-        addButtonTitle,
-        editButtonTitle,
-        deleteButtonTitle,
-        deleteConfirmationMessage,
     } = props;
 
     const handleAddButtonClick = useCallback(() => {
         if (onAddClick) {
-            onAddClick(itemKey);
+            onAddClick();
         }
-    }, [itemKey, onAddClick]);
+    }, [onAddClick]);
 
     const handleEditButtonClick = useCallback(() => {
         onEditClick(itemKey);
@@ -59,7 +55,7 @@ function UserGroupActionCell(props: Props) {
                     name="addButton"
                     onClick={handleAddButtonClick}
                     disabled={disabled}
-                    title={addButtonTitle}
+                    title="Add user group member"
                 >
                     <IoAdd />
                 </QuickActionButton>
@@ -69,16 +65,16 @@ function UserGroupActionCell(props: Props) {
                 name="editButton"
                 onClick={handleEditButtonClick}
                 disabled={disabled}
-                title={editButtonTitle}
+                title="Edit user group"
             >
                 <FiEdit2 />
             </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"
-                title={deleteButtonTitle}
+                title="Delete user group"
                 onConfirm={handleDeleteUserGroupClick}
-                message={deleteConfirmationMessage}
+                message="Are you sure you want to delete this usergroup?"
                 showConfirmationInitially={false}
                 disabled={disabled}
             >

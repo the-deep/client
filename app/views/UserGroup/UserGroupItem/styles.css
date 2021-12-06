@@ -1,0 +1,54 @@
+.user-group-item {
+    gap: 0;
+
+    .user-group-header {
+        border: none;
+        background-color: var(--dui-color-background);
+
+        .heading-container {
+            .heading {
+                width: auto;
+                color: var(--dui-color-text);
+            }
+        }
+    }
+
+    .heading-description-container {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-large);
+
+        .members-value {
+            order: 1;
+        }
+        .members-label {
+            order: 2;
+        }
+    }
+
+    .user-group-content {
+        border: none;
+        padding: 0;
+
+        .memberships-container {
+            background-color: var(--dui-color-foreground);
+            padding: 0;
+
+            .header-cell {
+                background-color: var(--dui-color-foreground);
+            }
+
+            .content {
+                padding: 0;
+            }
+
+            .expanded-table {
+                width: 100%;
+
+                .role {
+                    text-transform: capitalize;
+                }
+            }
+        }
+    }
+}
