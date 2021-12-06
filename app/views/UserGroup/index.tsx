@@ -6,10 +6,6 @@ import {
     Pager,
     ListView,
     Kraken,
-    TextOutput,
-    NumberOutput,
-    DateOutput,
-    ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -25,107 +21,12 @@ import UserContext from '#base/context/UserContext';
 import _ts from '#ts';
 
 import AddUserGroupModal, { UserGroup as UserGroupType } from './AddUsergroupModal';
-import AddUserModal from './AddUserModal';
-import Memberships from './Memberships';
-import UserGroupActionCell from './UserGroupActionCell';
+import UserGroupItem from './UserGroupItem';
 
 import styles from './styles.css';
 
 const MAX_ITEMS_PER_PAGE = 10;
 const usergroupKeySelector = (d: UserGroupType) => d.id;
-
-interface UserGroupItemProps {
-    userGroupId: number;
-    activeUserId?: number;
-    onUserDeleteSuccess: () => void;
-    onEditClick: (id: number) => void;
-    onDeleteClick: (id: number) => void;
-    onAddClick: (id: number) => void;
-    data: UserGroupType;
-    onExpansionChange: (usergroupExpanded: boolean, usergroupId: number) => void;
-    expanded?: boolean;
-    autoFocus?: boolean;
-}
-
-function UserGroupItem(props: UserGroupItemProps) {
-    const {
-        userGroupId,
-        onEditClick,
-        onDeleteClick,
-        onAddClick,
-        data,
-        activeUserId,
-        onUserDeleteSuccess,
-        onExpansionChange,
-        expanded,
-        autoFocus,
-    } = props;
-
-    return (
-        <ControlledExpandableContainer
-            name={userGroupId}
-            className={styles.userGroupItem}
-            heading={data.title}
-            autoFocus={autoFocus}
-            withoutBorder
-            spacing="comfortable"
-            expansionTriggerArea="arrow"
-            onExpansionChange={onExpansionChange}
-            expanded={expanded}
-            inlineHeadingDescription
-            headerClassName={styles.userGroupHeader}
-            headingContainerClassName={styles.headingContainer}
-            headingClassName={styles.heading}
-            headerDescriptionClassName={styles.headingDescriptionContainer}
-            contentClassName={styles.userGroupContent}
-            headingDescription={(
-                <>
-                    <TextOutput
-                        label="Created On"
-                        value={(
-                            <DateOutput
-                                value={data.createdAt}
-                                format="hh:mm aaa, MMM dd, yyyy"
-                            />
-                        )}
-                        hideLabelColon
-                    />
-                    <TextOutput
-                        label="Members"
-                        labelContainerClassName={styles.membersLabel}
-                        valueContainerClassName={styles.membersValue}
-                        value={(
-                            <NumberOutput
-                                value={data.membersCount ?? 0}
-                            />
-                        )}
-                        hideLabelColon
-                    />
-                </>
-            )}
-            headerActions={(
-                <UserGroupActionCell
-                    itemKey={userGroupId}
-                    onEditClick={onEditClick}
-                    onDeleteClick={onDeleteClick}
-                    onAddClick={onAddClick}
-                    addButtonTitle={_ts('usergroup', 'addMemberLabel')}
-                    editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
-                    deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
-                    deleteConfirmationMessage="Are you sure you want to remove this user group?"
-                    disabled={data.role === 'normal'}
-                />
-            )}
-        >
-            <Memberships
-                userGroup={userGroupId}
-                canEdit={data.role === 'admin'}
-                activeUserId={activeUserId}
-                onUserDeleteSuccess={onUserDeleteSuccess}
-            />
-        </ControlledExpandableContainer>
-    );
-}
 
 interface Props {
     className?: string;
@@ -140,24 +41,17 @@ function UserGroup(props: Props) {
         user,
     } = useContext(UserContext);
 
-    const userId = user ? +user?.id : undefined;
+    const userId = user ? user?.id : undefined;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [expandedUserGroupId, setExpandedUserGroupId] = useState<number | undefined>();
+    const [expandedUserGroupId, setExpandedUserGroupId] = useState<string>();
 
-    const [activeUserGroupId, setActiveUserGroupId] = useState<number | undefined>();
-    const [usergroupToEdit, setUserGroupToEdit] = useState<number | undefined>();
+    const [userGroupToEdit, setUserGroupToEdit] = useState<string>();
 
     const [
         showAddUserGroupModal,
         setUserGroupModalShow,
         setUserGroupModalHidden,
-    ] = useModalState(false);
-
-    const [
-        showAddUserModal,
-        setUserModalShow,
-        setUserModalHidden,
     ] = useModalState(false);
 
     const usergroupQuery = useMemo(() => ({
@@ -176,7 +70,7 @@ function UserGroup(props: Props) {
     const {
         pending: usergroupGetPending,
         response: usergroupResponse,
-        retrigger: usergroupResponseTrigger,
+        retrigger: usergroupGetRetrigger,
     } = useRequest<MultiResponse<UserGroupType>>({
         url: 'server://user-groups/member-of/',
         method: 'GET',
@@ -186,18 +80,18 @@ function UserGroup(props: Props) {
 
     const {
         trigger: usergroupDeleteTrigger,
-    } = useLazyRequest<unknown, number>({
+    } = useLazyRequest<unknown, string>({
         url: (ctx) => `server://user-groups/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
-            usergroupResponseTrigger();
+            usergroupGetRetrigger();
         },
         failureHeader: _ts('usergroup', 'usergroupDeleteFailed'),
     });
 
     const usergroupObjectToEdit = useMemo(() => (
-        usergroupResponse?.results?.find((a) => a.id === usergroupToEdit)
-    ), [usergroupResponse?.results, usergroupToEdit]);
+        usergroupResponse?.results?.find((a) => a.id === userGroupToEdit)
+    ), [usergroupResponse?.results, userGroupToEdit]);
 
     const handleAddUserGroupClick = useCallback(() => {
         setUserGroupToEdit(undefined);
@@ -209,41 +103,34 @@ function UserGroup(props: Props) {
         setUserGroupModalShow();
     }, [setUserGroupModalShow]);
 
-    const [autoFocusUserGroup, setAutoFocusUserGroup] = useState<number>();
+    const [autoFocusUserGroup, setAutoFocusUserGroup] = useState<string>();
 
-    const handleEditUserGroupSuccess = useCallback((newItemId: number) => {
+    const handleEditUserGroupSuccess = useCallback((newItemId: string) => {
         setAutoFocusUserGroup(newItemId);
-        usergroupResponseTrigger();
+        usergroupGetRetrigger();
         setUserGroupModalHidden();
-    }, [setUserGroupModalHidden, usergroupResponseTrigger]);
+    }, [setUserGroupModalHidden, usergroupGetRetrigger]);
 
-    const handleMemberAddClick = useCallback((value) => {
-        setActiveUserGroupId(value);
-        setUserModalShow();
-    }, [setUserModalShow]);
-
-    const handleExpansionChange = useCallback((usergroupExpanded: boolean, usergroupId: number) => {
+    const handleExpansionChange = useCallback((usergroupExpanded: boolean, usergroupId: string) => {
         setExpandedUserGroupId(usergroupExpanded ? usergroupId : undefined);
     }, []);
 
-    const userGroupRendererParams = useCallback((key: number, datum: UserGroupType) => ({
+    const userGroupRendererParams = useCallback((key: string, datum: UserGroupType) => ({
         userGroupId: key,
         activeUserId: userId,
-        onUserDeleteSuccess: usergroupResponseTrigger,
+        onUserDeleteSuccess: usergroupGetRetrigger,
         onDeleteClick: usergroupDeleteTrigger,
         onEditClick: handleEditUserGroupClick,
-        onAddClick: handleMemberAddClick,
-        data: datum,
+        userGroup: datum,
         onExpansionChange: handleExpansionChange,
         autoFocus: autoFocusUserGroup === datum.id,
         expanded: expandedUserGroupId === datum.id,
     }), [
         autoFocusUserGroup,
         userId,
-        usergroupResponseTrigger,
+        usergroupGetRetrigger,
         usergroupDeleteTrigger,
         handleEditUserGroupClick,
-        handleMemberAddClick,
         handleExpansionChange,
         expandedUserGroupId,
     ]);
@@ -295,13 +182,6 @@ function UserGroup(props: Props) {
                     onModalClose={setUserGroupModalHidden}
                     onSuccess={handleEditUserGroupSuccess}
                     value={usergroupObjectToEdit}
-                />
-            )}
-            {showAddUserModal && activeUserGroupId && (
-                <AddUserModal
-                    onModalClose={setUserModalHidden}
-                    group={activeUserGroupId}
-                    onUserAddSuccess={usergroupResponseTrigger}
                 />
             )}
         </Container>
