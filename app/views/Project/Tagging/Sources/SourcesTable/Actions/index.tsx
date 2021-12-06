@@ -14,11 +14,13 @@ import {
     useConfirmation,
     Button,
     RowExpansionContext,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+import LeadCopyModal from '../LeadCopyModal';
 
 import styles from './styles.css';
 
@@ -47,6 +49,12 @@ function Actions<T extends string>(props: Props<T>) {
 
     const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
     const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
+
+    const [
+        leadCopyModalShown,
+        showLeadCopyModal,
+        hideLeadCopyModal,
+    ] = useModalState(false);
 
     const handleDeleteConfirm = useCallback(() => {
         onDeleteClick(id);
@@ -115,6 +123,12 @@ function Actions<T extends string>(props: Props<T>) {
                         variant="secondary"
                     >
                         <DropdownMenuItem
+                            onClick={showLeadCopyModal}
+                            name={undefined}
+                        >
+                            Move to other project
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                             onClick={onDeleteLeadClick}
                             name={undefined}
                         >
@@ -156,6 +170,13 @@ function Actions<T extends string>(props: Props<T>) {
                 {/* TODO: Update entriesCount when parent has graphql */}
             </div>
             {modal}
+            {leadCopyModalShown && project?.id && (
+                <LeadCopyModal
+                    projectId={project.id}
+                    onClose={hideLeadCopyModal}
+                    leadIds={[id]}
+                />
+            )}
         </div>
     );
 }

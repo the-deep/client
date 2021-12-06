@@ -6,15 +6,18 @@ import {
 import {
     IoClose,
     IoTrashBinOutline,
+    IoCopy,
 } from 'react-icons/io5';
 import {
     Button,
     ConfirmButton,
     PendingMessage,
     useAlert,
+    useModalState,
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#base/utils/restRequest';
+import LeadCopyModal from '../LeadCopyModal';
 import { Lead } from '../types';
 import _ts from '#ts';
 
@@ -37,6 +40,12 @@ function BulkActions(props: Props) {
 
     const alert = useAlert();
 
+    const [
+        leadCopyModalShown,
+        showLeadCopyModal,
+        hideLeadCopyModal,
+    ] = useModalState(false);
+
     const {
         pending: bulkDeletePending,
         trigger: bulkLeadDeleteTrigger,
@@ -46,12 +55,12 @@ function BulkActions(props: Props) {
         body: (ctx) => ({ leads: ctx }),
         onSuccess: () => {
             alert.show(
-                'Leads deleted successfully!',
+                'Sources deleted successfully!',
                 { variant: 'success' },
             );
             onRemoveSuccess();
         },
-        failureHeader: _ts('leads', 'leads'),
+        failureHeader: 'Sources',
     });
 
     const entriesCount = useMemo(() => (
@@ -70,6 +79,10 @@ function BulkActions(props: Props) {
         bulkLeadDeleteTrigger(selectedLeads.map((lead) => lead.id));
     }, [bulkLeadDeleteTrigger, selectedLeads]);
 
+    const selectedLeadsIds = useMemo(() => (
+        selectedLeads.map((lead) => lead.id)
+    ), [selectedLeads]);
+
     return (
         <div className={styles.bulkActionsBar}>
             {bulkDeletePending && <PendingMessage />}
@@ -86,6 +99,15 @@ function BulkActions(props: Props) {
             >
                 {_ts('leads', 'clearSelectionButtonTitle')}
             </Button>
+            <Button
+                name="bulk-copy"
+                title="Copy to Projects"
+                icons={<IoCopy />}
+                variant="general"
+                onClick={showLeadCopyModal}
+            >
+                Copy to Other Projects
+            </Button>
             <ConfirmButton
                 name="bulk-delete"
                 title={_ts('leads', 'removeLeadLeadButtonTitle')}
@@ -96,7 +118,7 @@ function BulkActions(props: Props) {
                 message={_ts('leads', 'removeMultipleLeadsConfirm', {
                     leadsCount: (
                         <b>
-                            {`${selectedLeads.length} Leads`}
+                            {`${selectedLeads.length} Sources`}
                         </b>
                     ),
                     entriesCount: (
@@ -113,6 +135,13 @@ function BulkActions(props: Props) {
             >
                 {_ts('leads', 'bulkDeleteButtonText')}
             </ConfirmButton>
+            {leadCopyModalShown && (
+                <LeadCopyModal
+                    projectId={activeProject}
+                    onClose={hideLeadCopyModal}
+                    leadIds={selectedLeadsIds}
+                />
+            )}
         </div>
     );
 }

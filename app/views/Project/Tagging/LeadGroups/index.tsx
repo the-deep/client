@@ -157,7 +157,7 @@ function LeadGroups(props: Props) {
             ),
             createNumberColumn<LeadGroup, string>(
                 'leadCounts',
-                'No. of Leads',
+                'No. of Sources',
                 (item) => item?.leadCounts,
             ),
             createDateColumn<LeadGroup, string>(
