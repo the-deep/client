@@ -450,16 +450,16 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     options={leadGroupOptions}
                     onOptionsChange={onLeadGroupOptionsChange}
                     disabled={disabled}
-                    label="Lead Group"
+                    label="Source Group"
                     error={error?.leadGroup}
                     projectId={projectId}
                     actions={(
                         <QuickActionButton
-                            name="add-lead-group"
+                            name={undefined}
                             variant="transparent"
                             onClick={handleAddLeadGroupClick}
                             disabled={disabled}
-                            title="Add lead group"
+                            title="Add source group"
                         >
                             <IoAdd />
 

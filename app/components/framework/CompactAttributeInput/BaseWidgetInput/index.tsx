@@ -9,6 +9,8 @@ export interface Props{
     error?: unknown;
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 }
 
 function BaseWidgetInput(props: Props) {
@@ -18,6 +20,8 @@ function BaseWidgetInput(props: Props) {
         error,
         disabled,
         readOnly,
+        actions,
+        icons,
     } = props;
 
     return (
@@ -27,6 +31,8 @@ function BaseWidgetInput(props: Props) {
             error={error}
             disabled={disabled}
             readOnly={readOnly}
+            actions={actions}
+            icons={icons}
         >
             <Card>
                 {/* FIXME: use strings */}

@@ -296,6 +296,7 @@ function EditableEntry(props: Props) {
             primaryTagging={primaryTagging}
             secondaryTagging={secondaryTagging}
             readOnly={!editMode}
+            emptyValueHidden={!editMode}
             compact={compact}
             leadId={leadId}
             entryImage={entryImage}

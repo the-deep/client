@@ -9,11 +9,26 @@
     }
 
     .header {
-        display: flex;
-        align-items: flex-end;
-        text-transform: capitalize;
-        color: var(--dui-color-brand);
-        font-weight: var(--dui-font-weight-bold);
+        .heading {
+            display: flex;
+            align-items: flex-end;
+            text-transform: capitalize;
+            color: var(--dui-color-brand);
+            font-size: var(--dui-font-size-medium);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .actions {
+            opacity: 0;
+        }
+    }
+
+    &:hover {
+        .header {
+            .actions {
+                opacity: 1;
+            }
+        }
     }
 
     .children {

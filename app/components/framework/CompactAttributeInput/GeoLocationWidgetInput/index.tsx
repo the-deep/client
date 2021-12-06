@@ -27,6 +27,8 @@ export interface Props <N extends string>{
 
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 
     widget: PartialGeoLocationWidget;
     geoAreaOptions: GeoArea[] | undefined | null;
@@ -42,6 +44,8 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        actions,
+        icons,
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -75,6 +79,8 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
             error={error}
             disabled={disabled}
             readOnly={readOnly}
+            actions={actions}
+            icons={icons}
         >
             {readOnly ? (
                 selectedValues?.map((val) => (

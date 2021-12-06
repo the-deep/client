@@ -64,6 +64,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     excerptHeaderActions?: React.ReactNode;
+    onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
@@ -87,6 +88,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         geoAreaOptions,
         onGeoAreaOptionsChange,
         excerptHeaderActions,
+        onApplyToAll,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -134,6 +136,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         entryClientId: value.clientId,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        onApplyToAll,
     }), [
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -144,6 +147,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         readOnly,
         error?.attributes,
         value.clientId,
+        onApplyToAll,
     ]);
 
     return (
@@ -161,6 +165,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                     heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
                     headingSize="extraSmall"
                     headerActions={excerptHeaderActions}
+                    headingSectionClassName={styles.headingSection}
                     contentClassName={styles.excerptContent}
                 >
                     <ExcerptInput
@@ -200,6 +205,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 error={error?.attributes}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                onApplyToAll={onApplyToAll}
                 entryClientId={value.clientId}
             />
         </div>

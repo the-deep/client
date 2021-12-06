@@ -114,9 +114,10 @@ export interface Props <N extends string>{
     onChange: (value: Matrix1dValue | undefined, name: N) => void;
     error: Error<Matrix1dValue> | undefined;
 
-    actions?: React.ReactNode;
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 
     widget: PartialMatrix1dWidget;
 }
@@ -127,9 +128,12 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         widget,
         name,
         value,
+        title,
         onChange: onChangeFromProps,
         disabled,
         readOnly,
+        actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -184,13 +188,15 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         [disabled, readOnly, handleCellsChange, value],
     );
 
-    // FIXME: handle finer level errors
-
     return (
         <WidgetWrapper
             className={_cs(className, styles.matrix)}
             error={error}
-            hideTitle
+            disabled={disabled}
+            readOnly={readOnly}
+            actions={actions}
+            icons={icons}
+            title={title}
         >
             <NonFieldError
                 error={error}
@@ -202,6 +208,8 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
                 rendererParams={rowRendererParams}
                 renderer={Row}
                 compactEmptyMessage
+                emptyMessage="-"
+                messageShown
                 filtered={false}
                 pending={false}
             />

@@ -12,6 +12,10 @@
         flex-direction: column;
     }
 
+    .heading-section {
+        overflow: visible;
+    }
+
     .excerpt {
         background-color: var(--dui-color-foreground);
         width: var(--inner-width);

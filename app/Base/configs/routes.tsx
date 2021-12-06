@@ -281,8 +281,8 @@ const assessments = wrap({
 });
 const leadGroups = wrap({
     parent: { path: taggingRoute.path },
-    path: '/lead-groups/',
-    title: 'Lead Groups',
+    path: '/source-groups/',
+    title: 'Source Groups',
     navbarVisibility: true,
     component: lazy(() => import('#views/Project/Tagging/LeadGroups')),
     componentProps: {

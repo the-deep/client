@@ -37,6 +37,8 @@ export interface Props <N extends string>{
 
     disabled?: boolean;
     readOnly?: boolean;
+    actions?: React.ReactNode;
+    icons?: React.ReactNode;
 
     widget: PartialMultiSelectWidget,
 }
@@ -51,6 +53,8 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         widget,
         disabled,
         readOnly,
+        actions,
+        icons,
         error: riskyError,
     } = props;
 
@@ -84,6 +88,8 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
             error={error}
             disabled={disabled}
             readOnly={readOnly}
+            actions={actions}
+            icons={icons}
         >
             {readOnly ? (
                 selectedValues?.map((val) => (

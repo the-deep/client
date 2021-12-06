@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
     isDefined,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     QuickActionButton,
@@ -33,6 +34,7 @@ export interface Props {
     disabled?: boolean;
     entryClientId: string;
     sectionId?: string;
+    onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
     onAddButtonClick: (entryId: string, sectionId?: string) => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
@@ -54,6 +56,7 @@ function CompactSection(props: Props) {
         onAddButtonClick,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        onApplyToAll,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -64,9 +67,43 @@ function CompactSection(props: Props) {
         }
         return widgets?.filter(
             // FIXME: should only check into data, not value
-            (widget) => isDefined(attributesMap?.[widget.clientId]?.value?.data?.value),
+            (widget) => {
+                if (widget.widgetId === 'MATRIX1D') {
+                    return !doesObjectHaveNoData(
+                        attributesMap?.[widget.clientId]?.value?.data?.value,
+                        [''],
+                    );
+                }
+
+                if (widget.widgetId === 'MATRIX2D') {
+                    return !doesObjectHaveNoData(
+                        attributesMap?.[widget.clientId]?.value?.data?.value,
+                        [],
+                    );
+                }
+
+                return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);
+            },
         );
     }, [emptyValueHidden, attributesMap, widgets]);
+
+    const handleApplyBelowClick = useCallback(
+        (widgetId: string) => {
+            if (onApplyToAll) {
+                onApplyToAll(entryClientId, widgetId, true);
+            }
+        },
+        [entryClientId, onApplyToAll],
+    );
+
+    const handleApplyAllClick = useCallback(
+        (widgetId: string) => {
+            if (onApplyToAll) {
+                onApplyToAll(entryClientId, widgetId, false);
+            }
+        },
+        [entryClientId, onApplyToAll],
+    );
 
     const widgetRendererParams = useCallback(
         (key: string, data: Widget): AttributeInputProps<number | undefined> => {
@@ -84,9 +121,13 @@ function CompactSection(props: Props) {
                 error: err,
                 geoAreaOptions,
                 onGeoAreaOptionsChange,
+                applyButtonsHidden: !onApplyToAll,
+                onApplyBelowClick: handleApplyBelowClick,
+                onApplyAllClick: handleApplyAllClick,
             };
         },
         [
+            onApplyToAll,
             onAttributeChange,
             attributesMap,
             readOnly,
@@ -94,6 +135,8 @@ function CompactSection(props: Props) {
             error,
             geoAreaOptions,
             onGeoAreaOptionsChange,
+            handleApplyBelowClick,
+            handleApplyAllClick,
         ],
     );
 
@@ -129,8 +172,9 @@ function CompactSection(props: Props) {
                 compactEmptyMessage
                 pending={false}
                 filtered={false}
-                emptyMessage="There are no widgets in this section"
+                emptyMessage="No widgets were tagged under this section."
                 messageShown
+                messageIconShown
             />
         </Container>
     );
