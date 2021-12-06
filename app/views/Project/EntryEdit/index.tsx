@@ -955,7 +955,6 @@ function EntryEdit(props: Props) {
 
     const handleApplyToAll = useCallback(
         (entryId: string, widgetId: string, applyBelowOnly?: boolean) => {
-            console.warn('here', entryId, widgetId, applyBelowOnly);
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => {
                     if (!prevValue) {
