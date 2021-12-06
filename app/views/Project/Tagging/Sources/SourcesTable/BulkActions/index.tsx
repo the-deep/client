@@ -55,12 +55,12 @@ function BulkActions(props: Props) {
         body: (ctx) => ({ leads: ctx }),
         onSuccess: () => {
             alert.show(
-                'Leads deleted successfully!',
+                'Sources deleted successfully!',
                 { variant: 'success' },
             );
             onRemoveSuccess();
         },
-        failureHeader: _ts('leads', 'leads'),
+        failureHeader: 'Sources',
     });
 
     const entriesCount = useMemo(() => (
@@ -106,7 +106,7 @@ function BulkActions(props: Props) {
                 variant="general"
                 onClick={showLeadCopyModal}
             >
-                Copy to Projects
+                Copy to Other Projects
             </Button>
             <ConfirmButton
                 name="bulk-delete"
@@ -118,7 +118,7 @@ function BulkActions(props: Props) {
                 message={_ts('leads', 'removeMultipleLeadsConfirm', {
                     leadsCount: (
                         <b>
-                            {`${selectedLeads.length} Leads`}
+                            {`${selectedLeads.length} Sources`}
                         </b>
                     ),
                     entriesCount: (

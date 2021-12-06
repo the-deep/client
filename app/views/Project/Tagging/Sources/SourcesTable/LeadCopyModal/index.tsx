@@ -67,22 +67,24 @@ function LeadCopyModal(props: Props) {
 
                 if (!ok) {
                     alert.show(
-                        'Failure copying leads',
+                        'Failed to move sources to desired projects.',
                         {
                             variant: 'error',
                         },
                     );
+                } else {
+                    alert.show(
+                        `Successfully copied desired sources to ${selectedProjects.length.toString()} projects.`,
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    onClose();
                 }
-                alert.show(
-                    `Successfully copied ${leadIds.length.toString()} leads to ${selectedProjects.length.toString()} projects`,
-                    {
-                        variant: 'success',
-                    },
-                );
             },
             onError: () => {
                 alert.show(
-                    'Failure copying leads',
+                    'Failed to move sources to desired projects.',
                     {
                         variant: 'error',
                     },
@@ -105,7 +107,7 @@ function LeadCopyModal(props: Props) {
         <Modal
             className={styles.leadCopyModal}
             onCloseButtonClick={onClose}
-            heading="Copy leads to projects"
+            heading="Copy sources to projects"
             size="small"
             footerActions={(
                 <ConfirmButton
@@ -114,7 +116,7 @@ function LeadCopyModal(props: Props) {
                     onConfirm={handleCopyLeadsClick}
                     message={`
                         Are you sure you want to copy
-                        ${leadIds?.length.toString()} leads to
+                        ${leadIds?.length.toString()} sources to
                         ${selectedProjects?.length.toString()} projects?
                     `}
                 >
@@ -123,7 +125,7 @@ function LeadCopyModal(props: Props) {
             )}
         >
             <TextOutput
-                label="No. of leads to be copied"
+                label="No. of sources to be copied"
                 value={leadIds?.length ?? 0}
             />
             <ProjectMultiSelectInput
