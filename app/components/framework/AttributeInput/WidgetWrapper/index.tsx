@@ -49,6 +49,7 @@ function WidgetWrapper(props: Props) {
             <Header
                 // FIXME: use strings
                 heading={title ?? 'Unnamed'}
+                spacing="compact"
                 className={headerClassName}
                 headingSize="extraSmall"
                 headingSectionClassName={styles.header}
@@ -57,7 +58,7 @@ function WidgetWrapper(props: Props) {
                 iconsContainerClassName={iconsContainerClassName}
                 icons={icons}
             />
-            <div className={childrenContainerClassName}>
+            <div className={_cs(childrenContainerClassName, styles.children)}>
                 <ErrorBoundary>
                     {children}
                 </ErrorBoundary>

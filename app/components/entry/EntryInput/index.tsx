@@ -165,6 +165,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                     heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
                     headingSize="extraSmall"
                     headerActions={excerptHeaderActions}
+                    headingSectionClassName={styles.headingSection}
                     contentClassName={styles.excerptContent}
                 >
                     <ExcerptInput

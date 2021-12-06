@@ -1,12 +1,10 @@
 .matrix {
     display: flex;
     flex-direction: column;
-    margin: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
 
     .matrix-row {
         display: flex;
         flex-direction: column;
-        padding: var(--dui-spacing-small);
 
         .title {
             padding: var(--dui-spacing-medium) 0;
@@ -16,9 +14,29 @@
             border-collapse: collapse;
 
             .table-head {
+                .first-column {
+                    width: 10em;
+                }
+
+                .back {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--dui-spacing-extra-small);
+                }
+
                 .table-header {
                     background-color: var(--dui-color-background);
+                    cursor: not-allowed;
                     padding: var(--dui-spacing-medium);
+
+                    &.clickable {
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: var(--dui-color-surface-information);
+                        }
+                    }
                 }
             }
 

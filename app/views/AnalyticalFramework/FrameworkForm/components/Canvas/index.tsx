@@ -10,7 +10,6 @@ import {
     IoCreateOutline,
     IoCopyOutline,
     IoTrashBinOutline,
-    IoExtensionPuzzleOutline,
 } from 'react-icons/io5';
 import { Error, getErrorObject, analyzeErrors } from '@togglecorp/toggle-form';
 
@@ -77,7 +76,7 @@ function AttributeInputWrapper(props: WidgetProps) {
             geoAreaOptions={undefined}
             onGeoAreaOptionsChange={noop}
             icons={widget.conditional && (
-                <IoExtensionPuzzleOutline
+                <IoGitBranchOutline
                     title="This is a child widget"
                 />
             )}
@@ -275,6 +274,7 @@ function Canvas<T>(props: Props<T>) {
             styles.widgetContainer,
             analyzeErrors(error?.[key]) && styles.errored,
             data?.width === 'HALF' && styles.halfWidget,
+            data?.conditional && styles.conditional,
         ),
     }), [
         error,

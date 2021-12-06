@@ -5,6 +5,7 @@ import {
     Heading,
     List,
 } from '@the-deep/deep-ui';
+import { IoArrowBackOutline } from 'react-icons/io5';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
 import { removeEmptyObject } from '#utils/unsafeCommon';
@@ -251,15 +252,19 @@ function Row(props: RowProps) {
                                 {/* eslint-disable-next-line max-len */}
                                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
                                 <th
-                                    className={styles.tableHeader}
+                                    className={_cs(styles.tableHeader, styles.firstColumn)}
                                 />
                                 {columns?.map((column) => (
                                     <th
-                                        className={styles.tableHeader}
+                                        className={_cs(
+                                            styles.tableHeader,
+                                            (column.subColumns?.length ?? 0) > 0
+                                                && styles.clickable,
+                                        )}
                                         key={column.key}
                                         title={column.tooltip}
                                         onClick={() => {
-                                            if ((column?.subColumns?.length ?? 0) > 0) {
+                                            if ((column.subColumns?.length ?? 0) > 0) {
                                                 setSelectedColumnKey(column.key);
                                             }
                                         }}
@@ -272,12 +277,19 @@ function Row(props: RowProps) {
                         {selectedColumn && (
                             <>
                                 <th
-                                    className={styles.tableHeader}
+                                    className={_cs(
+                                        styles.tableHeader,
+                                        styles.firstColumn,
+                                        styles.clickable,
+                                    )}
                                     onClick={() => setSelectedColumnKey(undefined)}
                                 >
-                                    {`Back from ${selectedColumn.label ?? 'Unnamed'}`}
+                                    <div className={styles.back}>
+                                        <IoArrowBackOutline />
+                                        Back
+                                    </div>
                                 </th>
-                                {selectedColumn?.subColumns?.map((subColumn) => (
+                                {selectedColumn.subColumns?.map((subColumn) => (
                                     <th
                                         className={styles.tableHeader}
                                         key={subColumn.key}

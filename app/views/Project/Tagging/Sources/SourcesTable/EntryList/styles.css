@@ -1,6 +1,10 @@
 .entry-list-container {
     background-color: var(--dui-color-white);
 
+    .footer {
+        padding: var(--dui-spacing-small);
+    }
+
     .content {
         display: flex;
 
