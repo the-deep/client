@@ -19,6 +19,7 @@ import {
     ListView,
     SegmentInput,
     Modal,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     isDefined,
@@ -202,6 +203,8 @@ function ProjectDetailsForm(props: Props) {
         setValue,
     } = useForm(schema, initialValue);
 
+    const alert = useAlert();
+
     const {
         user,
     } = useContext(UserContext);
@@ -247,7 +250,6 @@ function ProjectDetailsForm(props: Props) {
             setStakeholderOptions(options);
             setError({});
         },
-        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
     const {
@@ -268,8 +270,16 @@ function ProjectDetailsForm(props: Props) {
                 const options = getOrganizationOptions(response);
                 setStakeholderOptions(options);
             }
+            alert.show(
+                projectId
+                    ? 'Successfully updated changes.'
+                    : 'Successfully created project.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
+        failureMessage: projectId
+            ? 'Failed to update changes.'
+            : 'Failed to create project.',
     });
 
     const {
@@ -283,8 +293,12 @@ function ProjectDetailsForm(props: Props) {
             // NOTE: Pristine is set as if the project is deleted, we don't want confirm prompt
             setPristine(true);
             history.replace(homePath);
+            alert.show(
+                'Successfully deleted project.',
+                { variant: 'error' },
+            );
         },
-        failureHeader: _ts('projectEdit', 'deleteProject'),
+        failureMessage: 'Failed to delete project.',
     });
 
     const handleProjectDeleteConfirmCancel = useCallback(() => {

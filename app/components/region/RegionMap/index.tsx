@@ -33,7 +33,6 @@ import {
     SelectedRegionQuery,
     SelectedRegionQueryVariables,
 } from '#generated/types';
-import _ts from '#ts';
 
 import styles from './styles.css';
 
@@ -196,7 +195,6 @@ function RegionMap(props: Props) {
     } = useRequest<MapboxGeoJSONFeature>({
         url: activeAdminLevel?.geojsonFile?.url ?? undefined,
         method: 'GET',
-        failureHeader: _ts('geoAreas', 'title'),
     });
 
     const {
@@ -205,7 +203,6 @@ function RegionMap(props: Props) {
     } = useRequest<GeoAreaBoundsResponse>({
         url: activeAdminLevel?.boundsFile?.url ?? undefined,
         method: 'GET',
-        failureHeader: _ts('geoAreas', 'title'),
     });
 
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(() => {

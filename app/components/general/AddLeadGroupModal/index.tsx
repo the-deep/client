@@ -12,6 +12,7 @@ import {
     TextInput,
     Button,
     PendingMessage,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import ProjectContext from '#base/context/ProjectContext';
@@ -46,6 +47,7 @@ function AddLeadGroupModal(props: Props) {
         onLeadGroupAdd,
     } = props;
 
+    const alert = useAlert();
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? +project.id : undefined;
 
@@ -75,7 +77,6 @@ function AddLeadGroupModal(props: Props) {
                 title: response?.title,
             });
         },
-        failureHeader: _ts('addLeadGroup', 'title'),
     });
 
     const {
@@ -92,9 +93,19 @@ function AddLeadGroupModal(props: Props) {
                     title: response.title,
                 });
             }
+            alert.show(
+                leadGroupToEdit
+                    ? 'Successfully updated source group.'
+                    : 'Successfully added source group.',
+                {
+                    variant: 'success',
+                },
+            );
             onModalClose();
         },
-        failureHeader: _ts('addLeadGroup', 'title'),
+        failureMessage: leadGroupToEdit
+            ? 'Failed to update source group.'
+            : 'Failed to create source group.',
     });
 
     const error = getErrorObject(riskyError);

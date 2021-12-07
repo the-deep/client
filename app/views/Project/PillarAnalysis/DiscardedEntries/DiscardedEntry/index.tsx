@@ -7,6 +7,7 @@ import {
     PendingMessage,
     Tag,
     QuickActionConfirmButton,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#base/utils/restRequest';
@@ -40,17 +41,23 @@ function DiscardedEntry(props: Props) {
         image,
     } = props;
 
+    const alert = useAlert();
+
     const {
         pending,
         trigger,
     } = useLazyRequest<unknown>({
         url: `server://analysis-pillar/${pillarId}/discarded-entries/${discardedEntryId}/`,
         method: 'DELETE',
-        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
+        failureMessage: 'Failed to delete discarded entry.',
         onSuccess: () => {
             if (onEntryUndiscard) {
                 onEntryUndiscard();
             }
+            alert.show(
+                'Successfully deleted discarded entry.',
+                { variant: 'success' },
+            );
         },
     });
 

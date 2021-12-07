@@ -65,6 +65,13 @@ function ActionCell(props: Props) {
                             variant: 'success',
                         },
                     );
+                } else {
+                    alert.show(
+                        'Failed to delete assessment.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
             onError: (gqlError) => {

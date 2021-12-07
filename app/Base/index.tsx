@@ -28,6 +28,7 @@ import {
     processDeepResponse,
     processDeepError,
     RequestContext,
+    DeepContextInterface,
 } from '#base/utils/restRequest';
 import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
 
@@ -47,13 +48,6 @@ browserHistory.listen((location) => {
 });
 
 const apolloClient = new ApolloClient(apolloConfig);
-
-const requestContextValue = {
-    transformUrl: processDeepUrls,
-    transformOptions: processDeepOptions,
-    transformResponse: processDeepResponse,
-    transformError: processDeepError,
-};
 
 function Base() {
     const [user, setUser] = useState<User | undefined>();
@@ -168,6 +162,22 @@ function Base() {
             removeAlert,
         }),
         [alerts, addAlert, updateAlertContent, removeAlert],
+    );
+
+    const requestContextValue = useMemo(
+        () => {
+            const transformError: DeepContextInterface['transformError'] = (...args) => (
+                processDeepError(addAlert)(...args)
+            );
+
+            return {
+                transformUrl: processDeepUrls,
+                transformOptions: processDeepOptions,
+                transformResponse: processDeepResponse,
+                transformError,
+            };
+        },
+        [addAlert],
     );
 
     return (

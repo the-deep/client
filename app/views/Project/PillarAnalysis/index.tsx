@@ -379,7 +379,6 @@ function PillarAnalysis() {
                 ),
             }));
         },
-        failureHeader: _ts('pillarAnalysis', 'analysisPillarEntriesTitle'),
     });
 
     const {
@@ -485,7 +484,6 @@ function PillarAnalysis() {
                 );
             }
         },
-        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
     });
 
     const {
@@ -514,7 +512,7 @@ function PillarAnalysis() {
                 setError(transformErrorToToggleFormError(schema, ctx, response.value.errors));
             }
         },
-        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
+        failureMessage: 'Failed to update pillar analysis.',
     });
 
     const entriesResponse = useMemo(() => (
@@ -526,7 +524,7 @@ function PillarAnalysis() {
         response: discardedTags,
     } = useRequest<DiscardedTags[]>({
         url: 'server://discarded-entry-options/',
-        failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
+        method: 'GET',
     });
 
     const handleEntryDrop = useCallback(

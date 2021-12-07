@@ -7,6 +7,7 @@ import {
     DropdownMenu,
     DropdownMenuItem,
     useConfirmation,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     IoHelp,
@@ -58,6 +59,7 @@ interface Props {
 
 function Navbar(props: Props) {
     const { className } = props;
+    const alert = useAlert();
 
     const {
         authenticated,
@@ -80,10 +82,19 @@ function Navbar(props: Props) {
             onCompleted: (data) => {
                 if (data.logout?.ok) {
                     setUser(undefined);
+                } else {
+                    alert.show(
+                        'Failed to logout.',
+                        { variant: 'error' },
+                    );
                 }
-                // FIXME: handle failure
             },
-            // FIXME: handle failure
+            onError: () => {
+                alert.show(
+                    'Failed to logout.',
+                    { variant: 'error' },
+                );
+            },
         },
     );
 

@@ -101,7 +101,7 @@ function CloneFrameworkModal(props: Props) {
                 { variant: 'success' },
             );
         },
-        failureHeader: _ts('projectEdit', 'projectMembershipPostFailed'),
+        failureMessage: _ts('projectEdit', 'projectMembershipPostFailed'),
     });
 
     const handleSubmit = useCallback(

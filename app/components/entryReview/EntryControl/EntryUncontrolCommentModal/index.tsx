@@ -15,6 +15,7 @@ import {
     Modal,
     TextArea,
     Button,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#base/utils/restRequest';
@@ -62,6 +63,7 @@ function EntryUncontrolCommentModal(props: Props) {
     } = props;
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const alert = useAlert();
 
     const {
         pristine,
@@ -82,6 +84,10 @@ function EntryUncontrolCommentModal(props: Props) {
         onSuccess: (response) => {
             onControlStatusChange(response.entry);
             onModalClose();
+            alert.show(
+                'Successfully posted comment.',
+                { variant: 'success' },
+            );
         },
         onFailure: ({ value: errorValue }) => {
             const {
@@ -94,7 +100,7 @@ function EntryUncontrolCommentModal(props: Props) {
                 [internal]: $internal,
             });
         },
-        failureHeader: 'Entry Control',
+        failureMessage: 'Failed to post comment.',
     });
 
     const error = getErrorObject(riskyError);

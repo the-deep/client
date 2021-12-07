@@ -50,7 +50,6 @@ function FrameworkImageButton(props: Props) {
         url: `server://analysis-frameworks/${frameworkId}/`,
         query,
         method: 'GET',
-        failureHeader: _ts('analyticalFramework', 'title'),
     });
 
     return (

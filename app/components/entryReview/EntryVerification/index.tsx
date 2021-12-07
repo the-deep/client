@@ -61,7 +61,7 @@ function EntryVerification(props: Props) {
         onSuccess: (response) => {
             onVerificationChange(response.entry);
         },
-        failureHeader: 'Entry Verification',
+        failureMessage: 'Entry Verification',
     });
 
     const handleClick = useCallback(() => {

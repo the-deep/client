@@ -20,6 +20,7 @@ import {
     TableHeaderCellProps,
     createStringColumn,
     PendingMessage,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import { createDateColumn } from '#components/tableHelpers';
@@ -58,6 +59,7 @@ function UserGroupList(props: Props) {
 
     const [activePage, setActivePage] = useState<number>(1);
     const [usergroupIdToEdit, setUsergroupIdToEdit] = useState<number | undefined>(undefined);
+    const alert = useAlert();
 
     const [
         showAddUserGroupModal,
@@ -84,7 +86,6 @@ function UserGroupList(props: Props) {
         method: 'GET',
         query: queryForRequest,
         preserveResponse: true,
-        failureHeader: _ts('projectEdit', 'usergroupFetchFailed'),
     });
 
     const {
@@ -94,8 +95,12 @@ function UserGroupList(props: Props) {
         method: 'DELETE',
         onSuccess: () => {
             triggerUsergroupResponse();
+            alert.show(
+                'Successfully deleted usergroup.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: _ts('projectEdit', 'usergroupDeleteFailed'),
+        failureMessage: 'Failed to delete usergroup.',
     });
 
     const handleEditUsergroupClick = useCallback((usergroupId) => {

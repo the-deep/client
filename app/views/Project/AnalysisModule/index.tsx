@@ -175,7 +175,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         url: `server://projects/${activeProject}/analysis/summary/`,
         method: 'GET',
         query: analysisQueryOptions,
-        failureHeader: _ts('analysis', 'analysisModule'),
         preserveResponse: true,
     });
 
@@ -186,7 +185,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         {
             url: `server://projects/${activeProject}/analysis-overview/`,
             method: 'GET',
-            failureHeader: _ts('analysis', 'analysisModule'),
         },
     );
 
@@ -212,6 +210,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     },
                 );
             },
+            failureMessage: 'Failed to delete analysis.',
         },
     );
 

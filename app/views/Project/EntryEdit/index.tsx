@@ -310,11 +310,12 @@ function EntryEdit(props: Props) {
                         'Failed to change lead status!',
                         { variant: 'error' },
                     );
+                } else {
+                    alert.show(
+                        'Successfully marked lead as tagged!',
+                        { variant: 'success' },
+                    );
                 }
-                alert.show(
-                    'Successfully marked lead as tagged!',
-                    { variant: 'success' },
-                );
                 const leadData = removeNull(result);
                 setLeadValue({
                     ...leadData,

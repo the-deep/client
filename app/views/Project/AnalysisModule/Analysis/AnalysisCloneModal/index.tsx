@@ -102,7 +102,6 @@ function AnalysisCloneModal(props: Props) {
                 endDate: response.endDate,
             });
         },
-        failureHeader: _ts('analysis.cloneModal', 'anaylsisDetailsFetchFailed'),
     });
 
     const {
@@ -121,7 +120,7 @@ function AnalysisCloneModal(props: Props) {
             );
             onClone();
         },
-        failureHeader: _ts('analysis.cloneModal', 'anaylsisCloneFailed'),
+        failureMessage: _ts('analysis.cloneModal', 'analysisCloneFailed'),
     });
 
     const handleSubmitButtonClick = useCallback(() => {

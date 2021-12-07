@@ -4,6 +4,7 @@ import {
     TextArea,
     Button,
     ContainerCard,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -49,6 +50,8 @@ function EditCommentForm(props: Props) {
     const [initialFormValue] = useState<FormType>({
         text: comment.textHistory[0]?.text ?? '',
     });
+    const alert = useAlert();
+
     const {
         pristine,
         value,
@@ -69,6 +72,10 @@ function EditCommentForm(props: Props) {
         body: (ctx) => ctx,
         onSuccess: (response) => {
             onEditSuccess(response);
+            alert.show(
+                'Successfully edited comment.',
+                { variant: 'success' },
+            );
         },
         onFailure: ({ value: errorValue }) => {
             const {
@@ -81,7 +88,7 @@ function EditCommentForm(props: Props) {
                 [internal]: $internal,
             });
         },
-        failureHeader: 'Entry comment edit',
+        failureMessage: 'Failed to edit comment.',
     });
 
     return (

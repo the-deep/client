@@ -17,8 +17,6 @@ import {
     TabularDataFields,
 } from '#types/entry';
 
-import _ts from '#ts';
-
 import DiscardedEntryItem, { Props as DiscardedEntryProps } from './DiscardedEntry';
 import { DiscardedTags } from '../index';
 import styles from './styles.css';
@@ -90,7 +88,6 @@ function DiscardedEntries(props: Props) {
             setEntriesCount(response.count);
         },
         preserveResponse: true,
-        failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
     });
 
     const handleEntryUndiscard = useCallback(() => {

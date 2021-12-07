@@ -73,7 +73,6 @@ function GeoAreas(props: Props) {
     } = useRequest<{ regions: Region[] }>({
         url: `server://projects/${activeProject}/regions/`,
         method: 'GET',
-        failureHeader: 'Regions List',
         preserveResponse: true,
     });
 

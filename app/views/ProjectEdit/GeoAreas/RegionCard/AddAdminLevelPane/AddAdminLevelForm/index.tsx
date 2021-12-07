@@ -11,6 +11,7 @@ import {
     SelectInput,
     ContainerCard,
     ConfirmButton,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -92,6 +93,7 @@ function AddAdminLevelForm(props: Props) {
     } = useForm(schema, valueFromProps);
 
     const error = getErrorObject(riskyError);
+    const alert = useAlert();
 
     const {
         pending,
@@ -107,8 +109,14 @@ function AddAdminLevelForm(props: Props) {
         onSuccess: (response) => {
             onSave(response);
             setPristine(true);
+            alert.show(
+                isDefined(valueFromProps.id)
+                    ? 'Successfully updated admin level.'
+                    : 'Successfully created admin level.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: isDefined(valueFromProps.id)
+        failureMessage: isDefined(valueFromProps.id)
             ? 'Failed to  update admin level'
             : 'Failed to create admin level',
     });

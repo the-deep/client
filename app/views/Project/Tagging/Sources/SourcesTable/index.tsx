@@ -275,6 +275,13 @@ function SourcesTable(props: Props) {
                         },
                     );
                     getProjectSources();
+                } else {
+                    alert.show(
+                        'Failed to delete lead.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
             onError: (gqlError) => {
