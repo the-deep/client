@@ -114,19 +114,23 @@ function GeoAreas(props: Props) {
                 region: data,
                 activeProject,
                 isExpanded,
+                isPublished: data.isPublished,
                 handleExpansion,
                 onActiveAdminLevelChange: isExpanded ? setActiveAdminLevel : undefined,
                 activeAdminLevel: isExpanded ? activeAdminLevel : undefined,
                 tempAdminLevel: isExpanded ? tempAdminLevel : undefined,
                 onTempAdminLevelChange: isExpanded ? setTempAdminLevel : undefined,
                 onAdminLevelUpdate: isExpanded ? updateMapTriggerId : undefined,
+                onRegionPublishSuccess: regionsGetTrigger,
+                onRegionRemoveSuccess: regionsGetTrigger,
+                regions: regionResponse?.regions,
                 navigationDisabled,
             };
         },
         [
             activeProject, activeRegion, activeAdminLevel,
             handleExpansion, tempAdminLevel, navigationDisabled,
-            updateMapTriggerId,
+            updateMapTriggerId, regionsGetTrigger, regionResponse?.regions,
         ],
     );
 

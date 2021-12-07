@@ -118,9 +118,7 @@ function CustomGeoAddModal(props: Props) {
                 </Button>
             )}
         >
-            <NonFieldError
-                error={error}
-            />
+            <NonFieldError error={error} />
             <div className={styles.row}>
                 <TextInput
                     name="title"

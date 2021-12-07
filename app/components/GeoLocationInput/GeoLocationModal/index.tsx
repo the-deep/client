@@ -63,6 +63,7 @@ function GeoLocationModal(props: Props) {
                     </Button>
                 </>
             )}
+            bodyClassName={styles.content}
         >
             <GeoLocationMapInput
                 projectId={projectId}

@@ -20,6 +20,7 @@ interface Props<N extends string> {
     error?: string;
     readOnly?: boolean;
     disabled?: boolean;
+    showList?: boolean;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
@@ -32,6 +33,7 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         disabled,
         readOnly,
         error,
+        showList,
         geoAreaOptions,
         onGeoAreaOptionsChange,
     } = props;
@@ -86,6 +88,7 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                                 <IoEarth />
                             </Button>
                         )}
+                        selectionListShown={showList}
                     />
                     {isGeoLocationModalVisible && (
                         <GeoLocationModal

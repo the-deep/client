@@ -1,3 +1,5 @@
 .geo-location-modal {
-    display: flex;
+    .content {
+        display: flex;
+    }
 }
