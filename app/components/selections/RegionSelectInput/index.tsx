@@ -50,7 +50,6 @@ function RegionSelectInput<K extends string>(props: RegionSelectInputProps<K>) {
             method: 'GET',
             skip: !opened,
             query: searchQueryParams,
-            failureHeader: 'Region select',
         },
     );
 

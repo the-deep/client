@@ -14,6 +14,7 @@ import {
     TextInput,
     Button,
     Modal,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import _ts from '#ts';
@@ -58,13 +59,14 @@ function AddOrganizationModal(props: Props) {
         onOrganizationAdd,
     } = props;
 
+    const alert = useAlert();
+
     const {
         pending: organizationTypesPending,
         response: organizatonTypesResponse,
     } = useRequest<MultiResponse<OrganizationType>>({
         url: 'server://organization-types/',
         method: 'GET',
-        failureHeader: _ts('addOrganizationModal', 'title'),
     });
     const {
         pending: organizationPostPending,
@@ -77,9 +79,15 @@ function AddOrganizationModal(props: Props) {
             if (onOrganizationAdd) {
                 onOrganizationAdd(response);
             }
+            alert.show(
+                'Organization created successfully.',
+                {
+                    variant: 'success',
+                },
+            );
             onModalClose();
         },
-        failureHeader: _ts('addOrganizationModal', 'title'),
+        failureMessage: 'Failed to create organization.',
     });
 
     const {

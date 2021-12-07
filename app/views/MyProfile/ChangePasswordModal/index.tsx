@@ -110,6 +110,10 @@ function ChangePasswordModal(props: Props) {
                 { variant: 'success' },
             );
             onModalClose();
+            alert.show(
+                'Successfully updated password.',
+                { variant: 'success' },
+            );
         },
         onFailure: ({ value: errorValue }) => {
             const {
@@ -121,7 +125,7 @@ function ChangePasswordModal(props: Props) {
                 [internal]: $internal,
             });
         },
-        failureHeader: _ts('changePassword', 'title'),
+        failureMessage: 'Failed to change password.',
     });
 
     const handleSubmitButtonClick = useCallback(() => {

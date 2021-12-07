@@ -130,6 +130,7 @@ function LeftPane(props: Props) {
     } = useRequest<LeadPreview>({
         skip: !lead,
         url: `server://lead-previews/${leadId}/`,
+        failureMessage: 'Failed to preview lead.',
     });
 
     const handleScreenshotCaptureError = useCallback((message: React.ReactNode) => {

@@ -14,6 +14,7 @@ import {
     Modal,
     TextArea,
     Button,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#base/utils/restRequest';
@@ -66,6 +67,8 @@ function EntryUnverifyCommentModal(props: Props) {
         entryId,
     } = props;
 
+    const alert = useAlert();
+
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
@@ -78,8 +81,12 @@ function EntryUnverifyCommentModal(props: Props) {
         onSuccess: (response) => {
             onVerificationChange(response.entry);
             onModalClose();
+            alert.show(
+                'Successfully posted review comment.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: 'Entry Verification',
+        failureMessage: 'Failed to post review comment.',
     });
 
     const {

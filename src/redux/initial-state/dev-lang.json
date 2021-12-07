@@ -1344,7 +1344,7 @@
         "-89164075": "Failed to fetch framework roles.",
         "-26472388": "Are you sure you want to remove this user from the framework?",
         "-53075174": "Are you sure you want to remove this entry from discarded entries list?",
-        "-810289191": "User Profile",
+        "-810289191": "Failed User Profile",
         "-91292812": "Add Stakeholder",
         "-91928382": "Edit Stakeholder",
         "-91293882": "Search Stakeholder",
@@ -3816,7 +3816,7 @@
             "usersTitle": 1119,
             "pillarAnalysisTitlePlaceholder": 14,
             "addAnAnalystButtonLabel": -76422871,
-            "anaylsisEditModal": -88197654,
+            "analysisEditModal": -88197654,
             "editButtonLabel": 363,
             "editAnalysisModalHeading": -30091387,
             "pillarAnalysisRequired": -91939891,
@@ -4228,13 +4228,13 @@
             "analysisCloneStartDateLabel": 185,
             "analysisCloneTitleLabel": 13,
             "analysisCloneTitlePlaceholder": 13,
-            "anaylsisCloneFailed": -77826051,
+            "analysisCloneFailed": -77826051,
             "cloneButtonLabel": 826,
             "cloneModalHeading": -94707190,
             "endDateGreaterThanStartDate": -46389656,
             "analysisClone": -48458934,
             "analysisCloneSuccessful": -53893586,
-            "anaylsisDetailsFetchFailed": -26439393
+            "analysisDetailsFetchFailed": -26439393
         },
         "bulkUpload": {
             "title": -198131283,

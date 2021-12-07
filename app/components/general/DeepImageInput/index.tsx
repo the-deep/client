@@ -58,7 +58,7 @@ function DeepImageInput<T extends string>(props: Props<T>) {
             onChange(response.id, name);
             onOptionChange(response);
         },
-        failureHeader: _ts('deepImageInput', 'title'),
+        failureMessage: _ts('deepImageInput', 'title'),
     });
     const handleChange = useCallback(
         (file: File | undefined) => {

@@ -65,13 +65,22 @@ function ActionCell(props: Props) {
     ] = useMutation<CancelJoinProjectMutation, CancelJoinProjectMutationVariables>(
         CANCEL_JOIN_PROJECT,
         {
-            onCompleted: () => {
-                alert.show(
-                    'Successfully cancelled project join request.',
-                    {
-                        variant: 'success',
-                    },
-                );
+            onCompleted: (response) => {
+                if (response.projectJoinRequestDelete?.ok) {
+                    alert.show(
+                        'Successfully cancelled project join request.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to cancel project join request.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
                 onMemberStatusChange();
             },
             onError: (gqlError) => {

@@ -23,7 +23,6 @@ function RecentActivities() {
     } = useRequest<MultiResponse<RecentActivityItem>>({
         url: 'server://projects/recent-activities/',
         method: 'GET',
-        failureHeader: _ts('recentActivity', 'recentActivitiesFetchFailed'),
     });
 
     const activityRendererParams = useCallback((_: string, info: RecentActivityItem) => ({

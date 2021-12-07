@@ -100,7 +100,7 @@ function CommentForm(props: Props) {
                 [internal]: $internal,
             });
         },
-        failureHeader: 'Entry comment edit',
+        failureMessage: 'Entry comment edit',
     });
 
     return (

@@ -4,7 +4,6 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { useRequest } from '#base/utils/restRequest';
 import { ProjectMemberships } from '#types/project';
 import { MultiResponse } from '#types';
-import _ts from '#ts';
 
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
@@ -33,7 +32,6 @@ function Users(props: Props) {
             member: activeUserId,
         },
         method: 'GET',
-        failureHeader: _ts('projectEdit', 'projectMembershipFetchFailed'),
     });
 
     const activeUserMembership = projectMembershipsResponse?.results?.[0];

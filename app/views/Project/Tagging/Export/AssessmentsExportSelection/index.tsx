@@ -88,6 +88,13 @@ function AssessmentsExportSelection(props: Props) {
                         );
                         onSuccess();
                     }
+                } else {
+                    alert.show(
+                        'Error during export.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
             onError: (gqlError) => {

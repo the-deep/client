@@ -244,7 +244,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                 ...response,
             });
         },
-        failureHeader: 'Web Info Extract',
+        failureMessage: 'Failed to extract Web Info.',
     });
 
     const {
@@ -276,7 +276,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                 });
             }
         },
-        failureHeader: 'Raw Web Info Extract',
     });
 
     const [

@@ -187,7 +187,6 @@ function ProjectFramework(props: Props) {
                 ...response.results,
             ]);
         },
-        failureHeader: _ts('projectEdit', 'frameworkDetails'),
         preserveResponse: true,
     });
 

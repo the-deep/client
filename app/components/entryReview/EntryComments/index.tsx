@@ -69,7 +69,6 @@ function EntryComments(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        failureHeader: 'Entry Comment',
     });
 
     const handleEntryCommentSave = useCallback(() => {

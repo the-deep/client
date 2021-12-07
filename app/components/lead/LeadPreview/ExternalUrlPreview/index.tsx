@@ -82,6 +82,7 @@ function ExternalUrlPreview(props: Props) {
 
             setCanShowIframe(tempCanShowIframe);
         },
+        failureMessage: 'Failed to preview URL.',
     });
 
     if (pending) {

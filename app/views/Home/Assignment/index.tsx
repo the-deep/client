@@ -47,7 +47,6 @@ function Assignments() {
             url: 'server://assignments/',
             method: 'GET',
             query: assignmentsQuery,
-            failureHeader: _ts('assignment', 'assignmentListFetchFailed'),
             preserveResponse: true,
         },
     );
@@ -63,7 +62,7 @@ function Assignments() {
             onSuccess: () => {
                 getAssignments();
             },
-            failureHeader: _ts('assignment', 'markAsDoneFailed'),
+            failureMessage: _ts('assignment', 'markAsDoneFailed'),
         },
     );
 
@@ -78,7 +77,7 @@ function Assignments() {
             onSuccess: () => {
                 getAssignments();
             },
-            failureHeader: _ts('assignment', 'markBulkAsDoneFailed'),
+            failureMessage: _ts('assignment', 'markBulkAsDoneFailed'),
         },
     );
 

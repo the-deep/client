@@ -198,7 +198,7 @@ function FrameworkDetail(props: Props) {
                 });
             });
         },
-        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
+        failureMessage: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
     const itemRendererParams = useCallback((_, data) => ({

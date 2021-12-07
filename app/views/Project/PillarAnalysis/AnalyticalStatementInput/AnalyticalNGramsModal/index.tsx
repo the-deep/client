@@ -123,7 +123,6 @@ function AnalyticalNGramsModal(props: Props) {
         url: 'serverless://ngram-process/',
         method: 'POST',
         body: entryPayload,
-        failureHeader: 'Failed to get ngrams',
     });
 
     const {

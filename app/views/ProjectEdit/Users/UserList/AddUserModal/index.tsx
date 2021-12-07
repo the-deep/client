@@ -144,7 +144,6 @@ function AddUserModal(props: Props) {
     } = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
-        failureHeader: _ts('projectEdit', 'projectRoleFetchFailed'),
     });
 
     const {
@@ -176,6 +175,12 @@ function AddUserModal(props: Props) {
                 if (err) {
                     const formError = transformToFormError(removeNull(err) as ObjectError[]);
                     setError(formError);
+                    alert.show(
+                        projectUserToEdit
+                            ? 'Failed to update member.'
+                            : 'Failed to add member.',
+                        { variant: 'error' },
+                    );
                 } else if (user) {
                     alert.show(
                         projectUserToEdit

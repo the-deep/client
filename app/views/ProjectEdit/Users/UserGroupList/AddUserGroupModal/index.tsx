@@ -16,6 +16,7 @@ import {
     SelectInput,
     Button,
     PendingMessage,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -94,6 +95,7 @@ function AddUserGroupModal(props: Props) {
     } = props;
 
     const formValue: PartialForm<FormType> = usergroupValue ?? defaultFormValue;
+    const alert = useAlert();
 
     const {
         pristine,
@@ -116,7 +118,6 @@ function AddUserGroupModal(props: Props) {
     } = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
-        failureHeader: _ts('projectEdit', 'projectRoleFetchFailed'),
     });
 
     const {
@@ -126,7 +127,6 @@ function AddUserGroupModal(props: Props) {
         url: 'server://user-groups/',
         method: 'GET',
         query: queryForUsergroups,
-        failureHeader: _ts('projectEdit', 'usergroupFetchFailed'),
     });
 
     const {
@@ -143,8 +143,16 @@ function AddUserGroupModal(props: Props) {
         onSuccess: () => {
             onTableReload();
             onModalClose();
+            alert.show(
+                isDefined(usergroupValue)
+                    ? 'Successfully updated usergroup.'
+                    : 'Successfully created usergroup.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: _ts('projectEdit', 'projectUsergroupPostFailedLabel'),
+        failureMessage: isDefined(usergroupValue)
+            ? 'Failed to update usergroup'
+            : 'Failed to create usergroup',
     });
 
     const handleSubmit = useCallback(
