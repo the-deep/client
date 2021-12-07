@@ -137,6 +137,8 @@ function LeadCopyModal(props: Props) {
                 options={projectOptions}
                 onOptionsChange={setProjectOptions}
                 selectionListShown
+                permissionAccess="CREATE_LEAD"
+                myProjectsShown
             />
         </Modal>
     );

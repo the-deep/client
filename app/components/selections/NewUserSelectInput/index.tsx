@@ -13,8 +13,12 @@ import {
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
 const USERS = gql`
-    query Users($membersExcludeProject: ID, $search: String) {
-        users(membersExcludeProject: $membersExcludeProject, search: $search) {
+    query Users($search: String, $membersExcludeProject: ID, $membersExcludeUsergroup: ID) {
+        users(
+            membersExcludeProject: $membersExcludeProject,
+            membersExcludeUsergroup: $membersExcludeUsergroup,
+            search: $search,
+        ) {
             results {
                 displayName
                 id
@@ -37,6 +41,7 @@ string,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & {
     membersExcludeProject?: string;
+    membersExcludeUsergroup?: string;
 };
 function keySelector(d: User) {
     return d.id;
@@ -50,6 +55,7 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
     const {
         className,
         membersExcludeProject,
+        membersExcludeUsergroup,
         ...otherProps
     } = props;
 
@@ -59,8 +65,9 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
 
     const variables = useMemo(() => ({
         membersExcludeProject,
+        membersExcludeUsergroup,
         search: debouncedSearchText,
-    }), [membersExcludeProject, debouncedSearchText]);
+    }), [membersExcludeProject, debouncedSearchText, membersExcludeUsergroup]);
 
     const { data, loading } = useQuery<UsersQuery, UsersQueryVariables>(
         USERS,
