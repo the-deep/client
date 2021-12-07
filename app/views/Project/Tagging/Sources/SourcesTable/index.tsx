@@ -150,9 +150,7 @@ export const PROJECT_SOURCES = gql`
                         id
                         displayName
                     }
-                    project {
-                        id
-                    }
+                    project
                     authors {
                         id
                         title
@@ -335,7 +333,7 @@ function SourcesTable(props: Props) {
         ({ datum }) => (
             <EntryList
                 leadId={datum.id}
-                projectId={datum.project.id}
+                projectId={datum.project}
                 filters={entriesFilter}
             />
         ),

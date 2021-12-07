@@ -103,9 +103,7 @@ const PROJECT_LEADS = gql`
                         id
                         displayName
                     }
-                    project {
-                        id
-                    }
+                    project
                     authors {
                         id
                         title
