@@ -39,6 +39,7 @@ interface User {
 
 interface Props {
     className?: string;
+    activeUserGroupId?: string;
     userGroupId: string;
     activeUserId?: string;
     onUserDeleteSuccess: () => void;
@@ -53,6 +54,7 @@ interface Props {
 function UserGroupItem(props: Props) {
     const {
         className,
+        activeUserGroupId,
         userGroupId,
         onEditClick,
         onDeleteClick,
@@ -78,6 +80,7 @@ function UserGroupItem(props: Props) {
         retrigger: usersGetTrigger,
     } = useRequest<MultiResponse<Membership>>({
         url: `server://user-groups/${userGroupId}/memberships/`,
+        skip: activeUserGroupId !== userGroupId,
         query,
         method: 'GET',
         failureHeader: 'User group memberships',
@@ -174,7 +177,7 @@ function UserGroupItem(props: Props) {
     }, [activeUserId, handleEditMemberClick, memberDeleteTrigger, userGroup]);
 
     const users = useMemo(() => (
-        memberships?.results.map((d) => ({
+        (memberships?.results ?? []).map((d) => ({
             id: d.member,
             displayName: d.memberName,
             firstName: d.memberName,

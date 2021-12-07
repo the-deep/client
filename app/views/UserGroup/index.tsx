@@ -116,6 +116,7 @@ function UserGroup(props: Props) {
     }, []);
 
     const userGroupRendererParams = useCallback((key: string, datum: UserGroupType) => ({
+        activeUserGroupId: expandedUserGroupId,
         userGroupId: key,
         activeUserId: userId,
         onUserDeleteSuccess: usergroupGetRetrigger,
