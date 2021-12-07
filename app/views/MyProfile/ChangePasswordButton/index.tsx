@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext, useCallback } from 'react';
 import { IoArrowForward } from 'react-icons/io5';
 import { Button } from '@the-deep/deep-ui';
 
+import { UserContext } from '#base/context/UserContext';
 import { useModalState } from '#hooks/stateManagement';
 import ChangePasswordModal, { Props as ChangePasswordModalProps } from '../ChangePasswordModal';
 import _ts from '#ts';
@@ -18,11 +19,20 @@ function ChangePasswordButton(props: Props) {
         ...modalProps
     } = props;
 
+    const {
+        setUser,
+    } = useContext(UserContext);
+
     const [
         isShown,
         showModal,
         hideModal,
     ] = useModalState(false);
+
+    const handleSuccess = useCallback(() => {
+        hideModal();
+        setUser(undefined);
+    }, [hideModal, setUser]);
 
     return (
         <>
@@ -39,6 +49,7 @@ function ChangePasswordButton(props: Props) {
             {isShown && (
                 <ChangePasswordModal
                     {...modalProps}
+                    onSuccess={handleSuccess}
                     onModalClose={hideModal}
                 />
             )}
