@@ -32,6 +32,13 @@ import {
     OrganigramWidgetAttribute,
 } from './newEntry';
 
+function invertBoolean(value: boolean | undefined, invert: boolean) {
+    if (value === undefined) {
+        return false;
+    }
+    return invert ? !value : value;
+}
+
 type PartializeAttribute<T> = PartialForm<T, 'clientId' | 'widgetType' | 'widget' | 'data' | 'widgetVersion'>;
 
 type PartialWidgetAttribute = PartializeAttribute<WidgetAttribute>;
@@ -801,7 +808,7 @@ function validateNumberCondition(
         case 'number-equal-to':
             return isDefined(value) && value === condition.value;
         default:
-            return false;
+            return undefined;
     }
 }
 function validateTextCondition(
@@ -811,7 +818,7 @@ function validateTextCondition(
     const value = attribute?.data?.value.toLowerCase();
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(value) || value === '';
         case 'text-starts-with':
             return isDefined(value) && value.startsWith(condition.value.toLowerCase());
         case 'text-ends-with':
@@ -819,7 +826,7 @@ function validateTextCondition(
         case 'text-contains':
             return isDefined(value) && value.includes(condition.value.toLowerCase());
         default:
-            return false;
+            return undefined;
     }
 }
 function validateDateCondition(
@@ -837,7 +844,7 @@ function validateDateCondition(
         case 'date-equal-to':
             return isDefined(value) && value === convertDateStringToTimestamp(condition.value);
         default:
-            return false;
+            return undefined;
     }
 }
 function validateTimeCondition(
@@ -855,7 +862,7 @@ function validateTimeCondition(
         case 'time-equal-to':
             return isDefined(value) && value === convertTimeStringToSeconds(condition.value);
         default:
-            return false;
+            return undefined;
     }
 }
 function validateDateRangeCondition(
@@ -879,7 +886,7 @@ function validateDateRangeCondition(
                 && endValue >= convertDateStringToTimestamp(condition.value)
                 && startValue <= convertDateStringToTimestamp(condition.value);
         default:
-            return false;
+            return undefined;
     }
 }
 function validateTimeRangeCondition(
@@ -903,7 +910,7 @@ function validateTimeRangeCondition(
                 && endValue >= convertTimeStringToSeconds(condition.value)
                 && startValue <= convertTimeStringToSeconds(condition.value);
         default:
-            return false;
+            return undefined;
     }
 }
 function validateGeoLocationCondition(
@@ -913,9 +920,9 @@ function validateGeoLocationCondition(
     const value = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(value) || value.length <= 0;
         default:
-            return false;
+            return undefined;
     }
 }
 function validateScaleCondition(
@@ -925,11 +932,11 @@ function validateScaleCondition(
     const value = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(value) || value.length <= 0;
         case 'scale-selected':
             return isDefined(value) && condition.value.includes(value);
         default:
-            return false;
+            return undefined;
     }
 }
 function validateSingleSelectCondition(
@@ -939,11 +946,11 @@ function validateSingleSelectCondition(
     const value = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(value) || value.length <= 0;
         case 'single-selection-selected':
             return isDefined(value) && condition.value.includes(value);
         default:
-            return false;
+            return undefined;
     }
 }
 function validateMultiSelectCondition(
@@ -953,7 +960,7 @@ function validateMultiSelectCondition(
     const value = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(value) || value.length <= 0;
         case 'multi-selection-selected':
             return isDefined(value) && (
                 condition.operatorModifier === 'every'
@@ -961,7 +968,7 @@ function validateMultiSelectCondition(
                     : isSomeSelected(value, condition.value)
             );
         default:
-            return false;
+            return undefined;
     }
 }
 function validateMatrix1dCondition(
@@ -998,7 +1005,7 @@ function validateMatrix1dCondition(
             );
         }
         default:
-            return false;
+            return undefined;
     }
 }
 function validateMatrix2dCondition(
@@ -1068,7 +1075,7 @@ function validateMatrix2dCondition(
             );
         }
         default:
-            return false;
+            return undefined;
     }
 }
 function validateOrganigramCondition(
@@ -1078,7 +1085,7 @@ function validateOrganigramCondition(
     const value = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(value) || value.length <= 0;
         case 'organigram-selected':
             return isDefined(value) && (
                 condition.operatorModifier === 'every'
@@ -1086,7 +1093,7 @@ function validateOrganigramCondition(
                     : isSomeSelected(value, condition.value)
             );
         default:
-            return false;
+            return undefined;
     }
 }
 
@@ -1099,58 +1106,101 @@ function validateFirstCondition(
         return true;
     }
 
+    // NOTE: invertBoolean will treat 'undefined' as false and will not be inverted
     if (conditional.parentWidgetType === 'NUMBER' && (!attribute || attribute.widgetType === 'NUMBER')) {
         const firstCondition = conditional.conditions[0];
-        return validateNumberCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateNumberCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'TEXT' && (!attribute || attribute.widgetType === 'TEXT')) {
         const firstCondition = conditional.conditions[0];
-        return validateTextCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateTextCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'DATE' && 'DATE' && (!attribute || attribute.widgetType === 'DATE')) {
         const firstCondition = conditional.conditions[0];
-        return validateDateCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateDateCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'TIME' && 'TIME' && (!attribute || attribute.widgetType === 'TIME')) {
         const firstCondition = conditional.conditions[0];
-        return validateTimeCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateTimeCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'DATE_RANGE' && 'DATE_RANGE' && (!attribute || attribute.widgetType === 'DATE_RANGE')) {
         const firstCondition = conditional.conditions[0];
-        return validateDateRangeCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateDateRangeCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'TIME_RANGE' && (!attribute || attribute.widgetType === 'TIME_RANGE')) {
         const firstCondition = conditional.conditions[0];
-        return validateTimeRangeCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateTimeRangeCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'GEO' && (!attribute || attribute.widgetType === 'GEO')) {
         const firstCondition = conditional.conditions[0];
-        return validateGeoLocationCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateGeoLocationCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'SELECT' && (!attribute || attribute.widgetType === 'SELECT')) {
         const firstCondition = conditional.conditions[0];
-        return validateSingleSelectCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateSingleSelectCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'MULTISELECT' && (!attribute || attribute.widgetType === 'MULTISELECT')) {
         const firstCondition = conditional.conditions[0];
-        return validateMultiSelectCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateMultiSelectCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'MATRIX1D' && (!attribute || attribute.widgetType === 'MATRIX1D')) {
         const firstCondition = conditional.conditions[0];
-        return validateMatrix1dCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateMatrix1dCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'MATRIX2D' && (!attribute || attribute.widgetType === 'MATRIX2D')) {
         const firstCondition = conditional.conditions[0];
-        return validateMatrix2dCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateMatrix2dCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'SCALE' && (!attribute || attribute.widgetType === 'SCALE')) {
         const firstCondition = conditional.conditions[0];
-        return validateScaleCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateScaleCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
     if (conditional.parentWidgetType === 'ORGANIGRAM' && (!attribute || attribute.widgetType === 'ORGANIGRAM')) {
         const firstCondition = conditional.conditions[0];
-        return validateOrganigramCondition(firstCondition, attribute);
+        return invertBoolean(
+            validateOrganigramCondition(firstCondition, attribute),
+            firstCondition.invert,
+        );
     }
+
+    // If there is not parentWidgetType or attribute doesn't match,
+    // the child widget is always invalid
     return false;
 }
 
