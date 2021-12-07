@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 import {
+    ProjectPermission,
     ProjectsListQuery,
     ProjectsListQueryVariables,
 } from '#generated/types';
@@ -12,10 +13,13 @@ const PROJECTS_LIST = gql`
     query ProjectsList(
         $search: String,
         $excludedProjects: [ID!],
+        $permissionAccess: ProjectPermission,
+        $myProjectsShown: Boolean,
     ) {
         projects(
             search: $search,
-            isCurrentUserMember: true,
+            isCurrentUserMember: $myProjectsShown,
+            hasPermissionAccess: $permissionAccess,
             excludeIds: $excludedProjects,
         ) {
             results {
@@ -39,7 +43,11 @@ type ProjectMultiSelectInputProps<K extends string> = SearchMultiSelectInputProp
     BasicProject,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
-> & { excludedProjects?: string[] };
+> & {
+    excludedProjects?: string[],
+    permissionAccess?: ProjectPermission,
+    myProjectsShown?: boolean,
+};
 
 const keySelector = (d: BasicProject) => d.id;
 const labelSelector = (d: BasicProject) => d.title;
@@ -47,6 +55,8 @@ function ProjectMultiSelectInput<K extends string>(props: ProjectMultiSelectInpu
     const {
         className,
         excludedProjects,
+        permissionAccess,
+        myProjectsShown,
         ...otherProps
     } = props;
 
@@ -58,8 +68,15 @@ function ProjectMultiSelectInput<K extends string>(props: ProjectMultiSelectInpu
         (): ProjectsListQueryVariables => ({
             search: debouncedSearchText,
             excludedProjects,
+            permissionAccess,
+            myProjectsShown,
         }),
-        [debouncedSearchText, excludedProjects],
+        [
+            debouncedSearchText,
+            excludedProjects,
+            permissionAccess,
+            myProjectsShown,
+        ],
     );
 
     const { data, loading } = useQuery<ProjectsListQuery, ProjectsListQueryVariables>(

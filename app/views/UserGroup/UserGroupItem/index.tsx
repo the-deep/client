@@ -2,7 +2,6 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Pager,
-    PendingMessage,
     Container,
     TableView,
     TextOutput,
@@ -252,13 +251,16 @@ function UserGroupItem(props: Props) {
                 )}
                 contentClassName={styles.content}
             >
-                {membershipsPending && <PendingMessage />}
                 <TableView
                     className={styles.expandedTable}
                     columns={membersColumns}
                     keySelector={membershipKeySelector}
                     headerCellClassName={styles.headerCell}
                     data={memberships?.results}
+                    filtered={false}
+                    pending={membershipsPending}
+                    messageShown
+                    messageIconShown
                 />
                 {showAddUserModal && (
                     <AddUserModal
