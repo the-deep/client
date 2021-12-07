@@ -10,6 +10,7 @@ import {
     TextInput,
     SelectInput,
     ContainerCard,
+    ConfirmButton,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -85,6 +86,7 @@ function AddAdminLevelForm(props: Props) {
         value,
         error: riskyError,
         setFieldValue,
+        setPristine,
         validate,
         setError,
     } = useForm(schema, valueFromProps);
@@ -104,16 +106,12 @@ function AddAdminLevelForm(props: Props) {
         body: (ctx) => ctx,
         onSuccess: (response) => {
             onSave(response);
+            setPristine(true);
         },
         failureHeader: isDefined(valueFromProps.id)
             ? 'Failed to  update admin level'
             : 'Failed to create admin level',
     });
-
-    const handleDelete = useCallback(() => {
-        // NOTE: if no id is defined, just remove the temporary form
-        onDelete(valueFromProps.id);
-    }, [onDelete, valueFromProps.id]);
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
@@ -126,19 +124,24 @@ function AddAdminLevelForm(props: Props) {
 
     const parentOptions = adminLevelOptions?.filter((v) => v.id !== valueFromProps.id);
 
+    const handleAdminLevelDelete = useCallback(() => {
+        onDelete(valueFromProps.id);
+    }, [onDelete, valueFromProps.id]);
+
     return (
         <ContainerCard
             className={styles.form}
             footerActions={!isPublished && (
                 <>
-                    <Button
-                        name="delete"
-                        onClick={handleDelete}
+                    <ConfirmButton
+                        name={undefined}
+                        onConfirm={handleAdminLevelDelete}
+                        message="Are you sure you want to remove this admin level?"
                         disabled={pending}
                         variant="transparent"
                     >
                         {value.id ? 'Delete' : 'Cancel'}
-                    </Button>
+                    </ConfirmButton>
                     <Button
                         name="submit"
                         onClick={handleSubmit}
@@ -151,19 +154,21 @@ function AddAdminLevelForm(props: Props) {
             )}
         >
             <NonFieldError error={error} />
-            <DeepFileInput
-                name="geoShapeFile"
-                className={styles.input}
-                label="Upload a file and select the corresponding field names from your file"
-                onChange={setFieldValue}
-                option={fileUploadOption}
-                setOption={setFileUploadOption}
-                value={value.geoShapeFile}
-                readOnly={isPublished}
-                disabled={pending}
-            >
-                <MdFileUpload />
-            </DeepFileInput>
+            {!isPublished && (
+                <DeepFileInput
+                    name="geoShapeFile"
+                    className={styles.input}
+                    label="Upload a file and select the corresponding field names from your file"
+                    onChange={setFieldValue}
+                    option={fileUploadOption}
+                    setOption={setFileUploadOption}
+                    value={value.geoShapeFile}
+                    readOnly={isPublished}
+                    disabled={pending}
+                >
+                    <MdFileUpload />
+                </DeepFileInput>
+            )}
             <div className={styles.row}>
                 <NumberInput
                     name="level"

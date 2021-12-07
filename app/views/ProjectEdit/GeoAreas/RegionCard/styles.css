@@ -1,10 +1,30 @@
 .region {
     background-color: var(--dui-color-background);
 
+    .heading {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-small);
+
+        .heading-description {
+            display: flex;
+            align-items: flex-end;
+            gap: var(--dui-spacing-extra-small);
+            color: var(--dui-color-text-disabled);
+            font-size: var(--dui-font-size-small);
+            font-style: italic;
+        }
+    }
+
+    .message {
+        text-align: left;
+    }
+
     .add-admin-level {
         display: flex;
         flex-grow: 1;
         background-color: var(--dui-color-background);
+        min-height: 30vh;
 
         .content {
             display: flex;

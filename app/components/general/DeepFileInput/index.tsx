@@ -28,6 +28,7 @@ function DeepFileInput<T extends string>(props: Props<T>) {
         disabled,
         name,
         onChange,
+        readOnly,
         isPublic = true,
         ...otherProps
     } = props;
@@ -84,7 +85,8 @@ function DeepFileInput<T extends string>(props: Props<T>) {
     return (
         <FileInput
             {...otherProps}
-            disabled={disabled || pending}
+            readOnly={readOnly}
+            disabled={disabled || pending || readOnly}
             name={name}
             overrideStatus
             status={currentStatus}
