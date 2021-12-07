@@ -212,6 +212,7 @@ interface Props {
     leadId: string;
     projectId: string;
     filters: Omit<LeadEntriesQueryVariables, 'projectId' | 'leadId'>
+    getProjectSources: () => void;
 }
 
 function EntryList(props: Props) {
@@ -220,6 +221,7 @@ function EntryList(props: Props) {
         projectId,
         className,
         filters,
+        getProjectSources,
     } = props;
 
     const [
@@ -310,6 +312,11 @@ function EntryList(props: Props) {
         },
     );
 
+    const handleEntryDataChange = useCallback(() => {
+        getProjectSources();
+        getEntries();
+    }, [getEntries, getProjectSources]);
+
     // eslint-disable-next-line max-len
     const frameworkDetails = projectFrameworkResponse?.project?.analysisFramework as Framework | undefined | null;
 
@@ -326,15 +333,15 @@ function EntryList(props: Props) {
         controlled: data.controlled,
         verifiedBy: data.verifiedBy,
         entryImage: data.image,
-        onEntryDataChange: getEntries,
+        onEntryDataChange: handleEntryDataChange,
         geoAreaOptions,
         onGeoAreaOptionsChange: setGeoAreaOptions,
     }), [
         geoAreaOptions,
-        getEntries,
         leadId,
         projectId,
         frameworkDetails,
+        handleEntryDataChange,
     ]);
 
     return (

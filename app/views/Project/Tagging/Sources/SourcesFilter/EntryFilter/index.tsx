@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     _cs,
     listToMap,
@@ -6,7 +6,6 @@ import {
 import {
     DateDualRangeInput,
     MultiSelectInput,
-    List,
 } from '@the-deep/deep-ui';
 import {
     useFormArray,
@@ -20,9 +19,6 @@ import {
 } from '#utils/common';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
-import {
-    FrameworkFilterType,
-} from '#types/newAnalyticalFramework';
 
 import FrameworkFilterItem from './FrameworkFilterItem';
 import { SourceFilterOptions } from '../types';
@@ -30,8 +26,6 @@ import { SourceFilterOptions } from '../types';
 import { PartialEntriesFilterDataType } from '../schema';
 
 import styles from './styles.css';
-
-const filterKeySelector = (d: FrameworkFilterType) => d.key;
 
 const controlledStatusOptions: Option[] = [
     {
@@ -88,31 +82,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
             }),
         )
     ), [value?.filterableData]);
-
-    const frameworkFilterRendererParams = useCallback(
-        (key: string, data: FrameworkFilterType) => {
-            const filterValue = filterValuesMap[key];
-            return {
-                name: filterValue?.index,
-                title: data.title,
-                value: filterValue?.value,
-                filter: data,
-                projectId,
-                onChange: onFrameworkFilterChange,
-                optionsDisabled,
-                allFiltersVisible,
-                disabled,
-            };
-        },
-        [
-            onFrameworkFilterChange,
-            optionsDisabled,
-            disabled,
-            filterValuesMap,
-            allFiltersVisible,
-            projectId,
-        ],
-    );
 
     return (
         <>
@@ -177,13 +146,25 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled || optionsDisabled}
                 label="Entry type"
             />
-            <List
-                data={options?.project?.analysisFramework?.filters ?? undefined}
-                keySelector={filterKeySelector}
-                renderer={FrameworkFilterItem}
-                rendererClassName={styles.input}
-                rendererParams={frameworkFilterRendererParams}
-            />
+            {
+                options?.project?.analysisFramework?.filters?.map((filter) => {
+                    const filterValue = filterValuesMap[filter.key];
+                    return (
+                        <FrameworkFilterItem
+                            key={filter.id}
+                            name={filterValue?.index}
+                            title={filter.title}
+                            value={filterValue?.value}
+                            filter={filter}
+                            projectId={projectId}
+                            onChange={onFrameworkFilterChange}
+                            optionsDisabled={optionsDisabled}
+                            allFiltersVisible={allFiltersVisible}
+                            disabled={disabled}
+                        />
+                    );
+                })
+            }
         </>
     );
 }
