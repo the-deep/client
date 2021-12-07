@@ -34,6 +34,7 @@ import styles from './styles.css';
 const DELETE_ENTRY = gql`
 mutation DeleteEntry($projectId:ID!, $entryId:ID!) {
     project(id: $projectId) {
+        id
         entryDelete(id: $entryId) {
             ok
             errors

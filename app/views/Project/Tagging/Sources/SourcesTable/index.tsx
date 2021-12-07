@@ -330,13 +330,20 @@ function SourcesTable(props: Props) {
         expandedRowKey,
         setExpandedRowKey,
     ] = useRowExpansion<Lead, string>(
-        ({ datum }) => (
-            <EntryList
-                leadId={datum.id}
-                projectId={datum.project}
-                filters={entriesFilter}
-            />
-        ),
+        ({ datum }) => {
+            if ((datum?.entriesCounts?.total ?? 0) > 0) {
+                return (
+                    <EntryList
+                        key={datum.id}
+                        leadId={datum.id}
+                        projectId={datum.project}
+                        filters={entriesFilter}
+                        getProjectSources={getProjectSources}
+                    />
+                );
+            }
+            return null;
+        },
         {
             expandedRowClassName: styles.expandedRow,
             expandedCellClassName: styles.expandedCell,
