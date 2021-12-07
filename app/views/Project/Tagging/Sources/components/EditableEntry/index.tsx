@@ -53,6 +53,7 @@ type Section = NonNullable<Framework['primaryTagging']>[number];
 const UPDATE_ENTRY = gql`
 mutation UpdateEntry($projectId:ID!, $entryId:ID!, $entryData: EntryInputType!) {
     project(id: $projectId) {
+        id
         entryUpdate(id: $entryId, data: $entryData) {
             ok
             errors
@@ -64,6 +65,7 @@ mutation UpdateEntry($projectId:ID!, $entryId:ID!, $entryData: EntryInputType!) 
 const DELETE_ENTRY = gql`
 mutation DeleteEntry($projectId:ID!, $entryId:ID!) {
     project(id: $projectId) {
+        id
         entryDelete(id: $entryId) {
             ok
             errors
@@ -150,6 +152,7 @@ function EditableEntry(props: Props) {
     ] = useMutation<UpdateEntryMutation, UpdateEntryMutationVariables>(
         UPDATE_ENTRY,
         {
+            refetchQueries: ['ProjectSources'],
             onCompleted: (gqlResponse) => {
                 const response = gqlResponse?.project?.entryUpdate;
                 if (!response) {
@@ -193,6 +196,7 @@ function EditableEntry(props: Props) {
     ] = useMutation(
         DELETE_ENTRY,
         {
+            refetchQueries: ['ProjectSources'],
             onCompleted: () => {
                 alert.show(
                     'Successfully deleted entry.',
