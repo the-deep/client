@@ -15,6 +15,7 @@ import {
     Button,
     Modal,
     PasswordInput,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import NonFieldError from '#components/NonFieldError';
@@ -93,6 +94,7 @@ function ChangePasswordModal(props: Props) {
         setError,
     } = useForm(changePasswordSchema, defaultFormValue);
 
+    const alert = useAlert();
     const error = getErrorObject(riskyError);
 
     const {
@@ -103,6 +105,10 @@ function ChangePasswordModal(props: Props) {
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: () => {
+            alert.show(
+                'Password changed successfully.',
+                { variant: 'success' },
+            );
             onModalClose();
         },
         onFailure: ({ value: errorValue }) => {
