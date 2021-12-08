@@ -63,6 +63,7 @@ function Comment(props: Props) {
                 <>
                     Assigned to
                     <CommaSeparateItems
+                        className={styles.assignees}
                         items={mentionedUsersDetails}
                     />
                 </>
@@ -75,15 +76,17 @@ function Comment(props: Props) {
                     isEditModalVisible && styles.inline,
                 )}
                 >
-                    <span className={styles.userName}>
-                        {createdByDetails?.name}
-                    </span>
-                    &nbsp;
-                    {commentType !== 0 && (
-                        <span className={styles.details}>
-                            {`${commentTypeToTextMap[commentType]} the entry.`}
+                    <div className={styles.userAction}>
+                        <span className={styles.userName}>
+                            {createdByDetails?.name}
                         </span>
-                    )}
+                        &nbsp;
+                        {commentType !== 0 && (
+                            <span className={styles.details}>
+                                {`${commentTypeToTextMap[commentType]} the entry.`}
+                            </span>
+                        )}
+                    </div>
                     {isEditModalVisible ? (
                         <EditCommentForm
                             className={styles.editComment}

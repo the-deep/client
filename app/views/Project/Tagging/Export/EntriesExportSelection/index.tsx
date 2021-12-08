@@ -21,7 +21,6 @@ import {
     ExportExportTypeEnum,
     ExportFormatEnum,
 } from '#generated/types';
-import { generateFilename } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import {
     Node,
@@ -194,7 +193,7 @@ function EntriesExportSelection(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
-    const [queryTitle, setQueryTitle] = useState<string | undefined>(() => generateFilename('Entries Export'));
+    const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [previewId, setPreviewId] = useState<string | undefined>(undefined);
     const [activeExportFormat, setActiveExportFormat] = useState<ExportFormatEnum>('DOCX');
     const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
@@ -319,7 +318,6 @@ function EntriesExportSelection(props: Props) {
         const generatedReportStructure = createReportStructureForExport(reportStructure);
         const reportTextWidgetIds = createWidgetIds(textWidgets);
         const reportExportingWidgets = createWidgetIds(contextualWidgets);
-        const defaultTitle = generateFilename('Entries Export');
 
         const data = {
             excelDecoupled,
@@ -340,7 +338,7 @@ function EntriesExportSelection(props: Props) {
             reportStructure: generatedReportStructure,
             reportTextWidgetIds,
             type: 'ENTRIES' as const,
-            title: queryTitle || defaultTitle,
+            title: queryTitle,
         };
 
         createExport({

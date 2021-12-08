@@ -162,14 +162,14 @@ function ExploreDeep(props: Props) {
                                 className={styles.infoItem}
                                 icon={<IoBookmarks />}
                                 label="Sources added weekly"
-                                valuePrecision={2}
+                                valuePrecision={0}
                                 value={data?.projectExploreStats?.leadsAddedWeekly ?? 0}
                             />
                             <CompactInformationCard
                                 className={styles.infoItem}
                                 icon={<IoPricetag />}
                                 label="Daily average sources tagged per project"
-                                valuePrecision={2}
+                                valuePrecision={0}
                                 value={
                                     data
                                         ?.projectExploreStats
@@ -180,7 +180,7 @@ function ExploreDeep(props: Props) {
                                 className={styles.infoItem}
                                 icon={<IoDocuments />}
                                 label="Generated reports monthly"
-                                valuePrecision={2}
+                                valuePrecision={0}
                                 value={data?.projectExploreStats?.generatedExportsMonthly ?? 0}
                             />
                         </Card>
