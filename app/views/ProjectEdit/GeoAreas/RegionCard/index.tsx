@@ -129,7 +129,7 @@ function RegionCard(props: Props) {
             }));
             setAdminLevels(adminLevelsWithClientId);
 
-            if (!activeAdminLevel && onActiveAdminLevelChange) {
+            if (onActiveAdminLevelChange) {
                 const [first] = adminLevelsWithClientId;
                 if (first) {
                     onActiveAdminLevelChange(first.id.toString());
@@ -146,11 +146,8 @@ function RegionCard(props: Props) {
         method: 'DELETE',
         onSuccess: () => {
             getAdminLevels();
-            if (onActiveAdminLevelChange) {
-                const [first] = adminLevels;
-                if (first) {
-                    onActiveAdminLevelChange(first.id.toString());
-                }
+            if (onAdminLevelUpdate) {
+                onAdminLevelUpdate();
             }
         },
     });
