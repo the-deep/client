@@ -144,7 +144,7 @@ function UserGroupItem(props: Props) {
                 membershipId,
                 onEditClick: handleEditMemberClick,
                 onDeleteClick: memberDeleteTrigger,
-                disabled: (userGroup.role !== 'admin') || data.member === activeUserId,
+                disabled: (userGroup.role !== 'admin') || String(data.member) === activeUserId,
             }),
             columnWidth: 96,
         };
