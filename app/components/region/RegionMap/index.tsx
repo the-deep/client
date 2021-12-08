@@ -38,6 +38,7 @@ import _ts from '#ts';
 import styles from './styles.css';
 
 const scaleFactor = 1;
+
 const sourceOptions: AnySourceData = {
     type: 'geojson',
     // FIXME: we need to think about this
@@ -152,12 +153,28 @@ function RegionMap(props: Props) {
         data: selectedRegion,
         loading: selectedRegionPending,
         refetch: adminLevelRetrigger,
+        startPolling,
+        stopPolling,
     } = useQuery<SelectedRegionQuery, SelectedRegionQueryVariables>(
         SELECTED_REGION,
         {
             skip: !regionId,
             variables,
         },
+    );
+
+    useEffect(
+        () => {
+            const adminLevels = selectedRegion?.region?.adminLevels;
+            if (adminLevels?.some(
+                (v) => (isNotDefined(v.boundsFile) || isNotDefined(v.geojsonFile)),
+            )) {
+                startPolling(5000);
+            } else {
+                stopPolling();
+            }
+        },
+        [selectedRegion, startPolling, stopPolling],
     );
 
     useEffect(

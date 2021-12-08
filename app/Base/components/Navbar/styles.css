@@ -44,10 +44,28 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        padding: 0 calc(var(--dui-spacing-large) - var(--dui-spacing-small));
+        padding: var(--dui-spacing-large);
+        gap: var(--dui-spacing-small);
 
-        >* {
-            margin: 0 var(--dui-spacing-small);
+        .notification-button {
+            position: relative;
+            overflow: visible;
+
+            .notification-count {
+                display: flex;
+                position: absolute;
+                top: -0.5em;
+                right: -0.5em;
+                align-items: center;
+                justify-content: center;
+                /* NOTE: Want to move this a bit up */
+                border-radius: 1em;
+                background-color: var(--dui-color-danger);
+                width: 1.3em;
+                height: 1.3em;
+                color: var(--dui-color-text-on-dark);
+                font-size: var(--dui-font-size-extra-small);
+            }
         }
     }
 
