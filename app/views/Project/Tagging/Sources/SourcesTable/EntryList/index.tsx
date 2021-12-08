@@ -261,7 +261,8 @@ function EntryList(props: Props) {
     );
 
     const {
-        data: leadEntriesResponse,
+        previousData,
+        data: leadEntriesResponse = previousData,
         loading: entryListPending,
         refetch: getEntries,
     } = useQuery<EntriesByLeadQuery, EntriesByLeadQueryVariables>(

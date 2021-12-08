@@ -94,7 +94,8 @@ function ExploreDeepTableView(props: Props) {
     }), [page, pageSize, filters]);
 
     const {
-        data,
+        previousData,
+        data = previousData,
         loading,
     } = useQuery<PublicProjectListQuery, PublicProjectListQueryVariables>(
         PROJECT_LIST,

@@ -83,6 +83,7 @@ function UserGroupList(props: Props) {
         url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
         query: queryForRequest,
+        preserveResponse: true,
         failureHeader: _ts('projectEdit', 'usergroupFetchFailed'),
     });
 

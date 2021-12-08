@@ -89,6 +89,7 @@ function DiscardedEntries(props: Props) {
         onSuccess: (response) => {
             setEntriesCount(response.count);
         },
+        preserveResponse: true,
         failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
     });
 

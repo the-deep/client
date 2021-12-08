@@ -99,7 +99,8 @@ function Assessments(props: Props) {
     );
 
     const {
-        data,
+        previousData,
+        data = previousData,
         loading,
         refetch,
     } = useQuery<AssessmentListQuery, AssessmentListQueryVariables>(

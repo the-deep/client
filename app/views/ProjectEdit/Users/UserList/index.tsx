@@ -159,7 +159,8 @@ function UserList(props: Props) {
     ), [projectId, activePage]);
 
     const {
-        data: projectUsersResponse,
+        previousData,
+        data: projectUsersResponse = previousData,
         loading: projectUsersPending,
         refetch,
     } = useQuery<ProjectUsersQuery, ProjectUsersQueryVariables>(
