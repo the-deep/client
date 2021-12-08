@@ -58,6 +58,7 @@ function AnalysisDetails(props: Props) {
             url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/summary/`,
             method: 'GET',
             query: queryOptions,
+            preserveResponse: true,
         },
     );
 

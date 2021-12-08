@@ -176,6 +176,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         method: 'GET',
         query: analysisQueryOptions,
         failureHeader: _ts('analysis', 'analysisModule'),
+        preserveResponse: true,
     });
 
     const {

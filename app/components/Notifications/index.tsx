@@ -99,7 +99,8 @@ function Notifications(props: Props) {
     }), [activeView, page]);
 
     const {
-        data,
+        previousData,
+        data = previousData,
         loading,
         refetch,
     } = useQuery<UserNotificationsQuery, UserNotificationsQueryVariables>(

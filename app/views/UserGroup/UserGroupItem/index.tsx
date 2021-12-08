@@ -84,6 +84,7 @@ function UserGroupItem(props: Props) {
         query,
         method: 'GET',
         failureHeader: 'User group memberships',
+        preserveResponse: true,
     });
 
     const {

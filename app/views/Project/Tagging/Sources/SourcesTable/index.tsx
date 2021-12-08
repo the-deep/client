@@ -249,7 +249,8 @@ function SourcesTable(props: Props) {
     );
 
     const {
-        data: projectSourcesResponse,
+        previousData,
+        data: projectSourcesResponse = previousData,
         loading: projectSourcesPending,
         refetch: getProjectSources,
     } = useQuery<ProjectSourcesQuery, ProjectSourcesQueryVariables>(

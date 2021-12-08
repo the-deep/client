@@ -302,7 +302,8 @@ function PillarAnalysis() {
     );
 
     const {
-        data: projectEntriesResponse,
+        previousData,
+        data: projectEntriesResponse = previousData,
         loading: pendingEntries,
         refetch: getEntries,
     } = useQuery<ProjectEntriesForAnalysisQuery, ProjectEntriesForAnalysisQueryVariables>(
