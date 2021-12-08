@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { useMutation, gql } from '@apollo/client';
 import {
     TextInput,
     Link,
@@ -12,13 +13,15 @@ import {
     ObjectSchema,
     useForm,
     emailCondition,
+    removeNull,
     createSubmitHandler,
     requiredStringCondition,
     internal,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
-import { useLazyRequest } from '#base/utils/restRequest';
+
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
 import HCaptchaSiteKey from '#base/configs/hCaptcha';
@@ -27,27 +30,35 @@ import balloonKraken from '#resources/img/balloon-kraken.png';
 
 import _ts from '#ts';
 
+import {
+    RegisterMutation,
+    RegisterMutationVariables,
+    RegisterInputType,
+} from '#generated/types';
+
 import styles from './styles.css';
 
-interface RegisterFields {
-    username: string;
-    firstName: string;
-    lastName: string;
-    organization: string;
-    hcaptchaResponse: string;
-}
+const REGISTER = gql`
+    mutation Register($input: RegisterInputType!) {
+        register(data: $input) {
+            captchaRequired
+            errors
+            ok
+        }
+    }
+`;
 
-type FormType = Partial<RegisterFields>;
+type FormType = Partial<RegisterInputType>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        username: [emailCondition, requiredStringCondition],
+        email: [emailCondition, requiredStringCondition],
         firstName: [requiredStringCondition],
         lastName: [requiredStringCondition],
         organization: [requiredStringCondition],
-        hcaptchaResponse: [requiredStringCondition],
+        captcha: [requiredStringCondition],
     }),
 };
 
@@ -74,40 +85,40 @@ function RegisterModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: registerPending,
-        trigger: triggerRegister,
-        context,
-    } = useLazyRequest<unknown, RegisterFields>({
-        url: 'server://users/',
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: () => {
-            setSuccess(true);
-        },
-        onFailure: ({ errorCode, value: errorValue }) => {
-            const {
-                $internal,
-                ...otherErrors
-            } = errorValue.faramErrors;
+    const [
+        triggerRegister,
+        { loading: registerPending },
+    ] = useMutation<RegisterMutation, RegisterMutationVariables>(
+        REGISTER,
+        {
+            onCompleted: (response) => {
+                const { register: registerRes } = response;
+                if (!registerRes) {
+                    return;
+                }
+                const {
+                    errors,
+                    ok,
+                } = registerRes;
 
-            if (errorCode === 4004) {
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                } else if (ok) {
+                    setSuccess(true);
+                }
+            },
+            onError: (errors) => {
                 setError({
-                    ...otherErrors,
-                    [internal]: _ts('explore.register', 'retryRecaptcha'),
+                    [internal]: errors.message,
                 });
-            } else {
-                setError({
-                    ...otherErrors,
-                    [internal]: $internal,
-                });
-            }
+            },
         },
-    });
+    );
 
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
-        triggerRegister(finalValue);
+        triggerRegister({ variables: { input: finalValue } });
     }, [triggerRegister]);
 
     return (
@@ -136,7 +147,7 @@ function RegisterModal(props: Props) {
             >
                 {success ? (
                     <div className={styles.registerSuccess}>
-                        {_ts('explore.register', 'checkYourEmailText', { email: context?.username })}
+                        {_ts('explore.register', 'checkYourEmailText', { email: value?.email })}
                     </div>
                 ) : (
                     <>
@@ -166,19 +177,19 @@ function RegisterModal(props: Props) {
                             disabled={registerPending}
                         />
                         <TextInput
-                            name="username"
+                            name="email"
                             onChange={setFieldValue}
-                            value={value?.username}
-                            error={error?.username}
+                            value={value?.email}
+                            error={error?.email}
                             placeholder={_ts('explore.register', 'emailPlaceholder')}
                             disabled={registerPending}
                         />
                         <HCaptcha
-                            name="hcaptchaResponse"
+                            name="captcha"
                             elementRef={elementRef}
                             siteKey={HCaptchaSiteKey}
                             onChange={setFieldValue}
-                            error={error?.hcaptchaResponse}
+                            error={error?.captcha}
                             disabled={registerPending}
                         />
                         <Button
