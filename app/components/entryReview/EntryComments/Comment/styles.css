@@ -10,17 +10,23 @@
         justify-content: space-between;
 
         .user-name {
+            display: inline;
             font-size: var(--font-size-medium);
             font-weight: var(--dui-font-weight-bold);
         }
 
         .details {
+            display: inline;
             color: var(--dui-color-text);
         }
 
         .comment-section {
             display: flex;
             align-items: center;
+
+            .user-action {
+                display: inline;
+            }
 
             &.inline {
                 align-items: flex-start;
@@ -36,6 +42,13 @@
 
     .header-actions{
         color: var(--dui-color-accent);
+
+        .assignees {
+            max-width: 14rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .comment {

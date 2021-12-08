@@ -464,7 +464,7 @@ function LeadEditModal(props: Props) {
             className={_cs(className, styles.leadEditModal)}
             onCloseButtonClick={onClose}
             size="cover"
-            heading={leadId ? 'Edit source' : 'Add a source'}
+            heading={leadId ? 'Edit source' : 'Add a website'}
             bodyClassName={styles.modalBody}
             footerActions={(
                 <Button
