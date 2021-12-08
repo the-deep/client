@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { IoStatsChart } from 'react-icons/io5';
 import {
     _cs,
     compareDate,
@@ -15,10 +14,15 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 
-import { Card } from '@the-deep/deep-ui';
+import {
+    Card,
+    Message,
+    Kraken,
+} from '@the-deep/deep-ui';
 
 import RechartsLegend from '#components/RechartsLegend';
 import { ProjectRecentActivity } from '#types';
+
 import styles from './styles.css';
 
 const colorScheme = [
@@ -73,7 +77,7 @@ function Activity(props: Props) {
     return (
         <Card className={_cs(className, styles.activity)}>
             <ResponsiveContainer className={styles.container}>
-                { (data?.activities?.length ?? 0) > 0 ? (
+                {((data?.activities?.length ?? 0) > 0) ? (
                     <AreaChart>
                         <defs>
                             {colorScheme.map((color) => (
@@ -134,15 +138,12 @@ function Activity(props: Props) {
                         })}
                     </AreaChart>
                 ) : (
-                    <div className={styles.emptyChart}>
-                        <IoStatsChart
-                            className={styles.icon}
-                        />
-                        <div className={styles.text}>
-                            {/* FIXME: use strings with appropriate wording */}
-                            Chart not available
-                        </div>
-                    </div>
+                    <Message
+                        icon={
+                            <Kraken variant="sleep" />
+                        }
+                        message="Chart not available"
+                    />
                 )}
             </ResponsiveContainer>
         </Card>

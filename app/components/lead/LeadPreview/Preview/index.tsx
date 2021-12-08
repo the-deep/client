@@ -5,6 +5,8 @@ import {
 } from '@togglecorp/fujs';
 import {
     ImagePreview,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import { isHttps } from '#utils/common';
@@ -63,17 +65,31 @@ function Preview(props: Props) {
 
     // NOTE: When hosted in http, we cannot use iframe or image to preview
     const httpsError = (
-        <div className={_cs(styles.viewer, className)}>
-            Cannot preview https content.
-        </div>
+        <Message
+            className={_cs(styles.viewer, className)}
+            message="Cannot preview https content."
+            icon={(
+                <Kraken
+                    size="large"
+                    variant="move"
+                />
+            )}
+        />
     );
 
     // NOTE: Generally check for X-Frame-Options or CSP to identify if content
     // can be embedded
     const iframeError = (
-        <div className={_cs(styles.viewer, className)}>
-            Cannot preview in iframe.
-        </div>
+        <Message
+            className={_cs(styles.viewer, className)}
+            message="This website has blocked us from viewing it inside DEEP."
+            icon={(
+                <Kraken
+                    size="large"
+                    variant="move"
+                />
+            )}
+        />
     );
 
     if (url.endsWith('txt')) {
@@ -148,9 +164,16 @@ function Preview(props: Props) {
         );
     }
     return (
-        <div className={_cs(styles.viewer, className)}>
-            Cannot preview for this filetype.
-        </div>
+        <Message
+            className={_cs(styles.viewer, className)}
+            message="We are unable to generate preview for this filetype."
+            icon={(
+                <Kraken
+                    size="large"
+                    variant="move"
+                />
+            )}
+        />
     );
 }
 
