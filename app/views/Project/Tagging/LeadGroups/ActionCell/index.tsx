@@ -73,9 +73,9 @@ function ActionCell(props: Props) {
                     );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete sourece group.',
                     { variant: 'error' },
                 );
             },

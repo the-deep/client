@@ -200,7 +200,6 @@ function EditableEntry(props: Props) {
             onCompleted: (response) => {
                 const {
                     ok,
-                    errors,
                 } = response.project.entryDelete;
                 if (ok) {
                     alert.show(
@@ -212,16 +211,16 @@ function EditableEntry(props: Props) {
                     onEntryDataChange();
                 } else {
                     alert.show(
-                        errors,
+                        'Failed to delete entry.',
                         {
                             variant: 'error',
                         },
                     );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete entry.',
                     { variant: 'error' },
                 );
             },
