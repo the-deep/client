@@ -267,9 +267,10 @@ function EntryItem(props: EntryItemProps) {
                     )}
                 </>
             )}
+            contentClassName={styles.content}
         >
             <div
-                className={styles.content}
+                className={styles.clickableArea}
                 onClick={handleClick}
                 role="presentation"
             >
