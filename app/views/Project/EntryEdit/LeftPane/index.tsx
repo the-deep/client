@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
     _cs,
+    isNotDefined,
+    isDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -32,7 +34,6 @@ import {
 
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
-import FullScreen from '#components/FullScreen';
 import { useRequest } from '#base/utils/restRequest';
 
 import { PartialEntryType as EntryInput } from '../schema';
@@ -101,14 +102,14 @@ function LeftPane(props: Props) {
 
     const alert = useAlert();
 
-    const [activeTab, setActiveTab] = React.useState<'simplified' | 'original' | 'entries' | undefined>(
+    const [activeTab, setActiveTab] = useState<'simplified' | 'original' | 'entries' | undefined>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
             ? 'entries'
             : defaultTab,
     );
 
     // FIXME: we shouldn't need these values here
-    const [capturedImageUrl, setCapturedImageUrl] = React.useState<string | undefined>();
+    const [capturedImageUrl, setCapturedImageUrl] = useState<string | undefined>();
 
     const [
         showScreenshot,
@@ -116,16 +117,12 @@ function LeftPane(props: Props) {
         setShowScreenshotFalse,
     ] = useBooleanState(false);
     const [
-        showSourcePreviewInFullScreen,,,,
-        toggleShowSourcePreviewInFullScreen,
-    ] = useBooleanState(false);
-    const [
         showCanvasDrawModal,
         setShowCanvasDrawModalTrue,
         setShowCanvasDrawModalFalse,
     ] = useBooleanState(false);
 
-    const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
+    const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
 
     const {
         pending: leadPreviewPending,
@@ -135,7 +132,7 @@ function LeftPane(props: Props) {
         url: `server://lead-previews/${leadId}/`,
     });
 
-    const handleScreenshotCaptureError = React.useCallback((message) => {
+    const handleScreenshotCaptureError = useCallback((message) => {
         alert.show(
             message,
             { variant: 'error' },
@@ -144,15 +141,15 @@ function LeftPane(props: Props) {
         setShowScreenshotFalse();
     }, [setShowScreenshotFalse, alert]);
 
-    const handleScreenshotCancel = React.useCallback(() => {
+    const handleScreenshotCancel = useCallback(() => {
         setCapturedImageUrl(undefined);
         setShowScreenshotFalse();
     }, [setShowScreenshotFalse]);
 
-    const handleCreateEntryButtonClick = React.useCallback(() => {
-        setCapturedImageUrl(undefined);
+    const handleCreateEntryButtonClick = useCallback(() => {
         setShowCanvasDrawModalFalse();
         setShowScreenshotFalse();
+        setCapturedImageUrl(undefined);
 
         if (onEntryCreate) {
             onEntryCreate({
@@ -169,16 +166,32 @@ function LeftPane(props: Props) {
         leadId,
         onEntryCreate,
         setShowCanvasDrawModalFalse,
-        setCapturedImageUrl,
         setShowScreenshotFalse,
     ]);
 
-    const handleCanvasDrawDone = React.useCallback((newImageUrl: string) => {
-        setCapturedImageUrl(newImageUrl);
-        handleCreateEntryButtonClick();
-    }, [handleCreateEntryButtonClick]);
+    const handleCanvasDrawDone = useCallback((newImageUrl: string) => {
+        setShowCanvasDrawModalFalse();
+        setShowScreenshotFalse();
+        setCapturedImageUrl(undefined);
 
-    const handleExcerptAddFromSimplified = React.useCallback((selectedText: string) => {
+        if (onEntryCreate) {
+            onEntryCreate({
+                clientId: randomString(),
+                excerpt: '',
+                droppedExcerpt: '',
+                entryType: 'IMAGE',
+                lead: leadId,
+                imageRaw: newImageUrl,
+            });
+        }
+    }, [
+        leadId,
+        onEntryCreate,
+        setShowCanvasDrawModalFalse,
+        setShowScreenshotFalse,
+    ]);
+
+    const handleExcerptAddFromSimplified = useCallback((selectedText: string) => {
         if (onEntryCreate) {
             onEntryCreate({
                 clientId: randomString(),
@@ -190,7 +203,7 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const handleExcerptAddFromOriginal = React.useCallback((selectedText: string | undefined) => {
+    const handleExcerptAddFromOriginal = useCallback((selectedText: string | undefined) => {
         if (onEntryCreate) {
             onEntryCreate({
                 clientId: randomString(),
@@ -207,7 +220,7 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const entryItemRendererParams = React.useCallback((entryId: string, entry: EntryInput) => ({
+    const entryItemRendererParams = useCallback((entryId: string, entry: EntryInput) => ({
         ...entry,
         entryId: entry.clientId,
         entryServerId: entry.id,
@@ -243,8 +256,45 @@ function LeftPane(props: Props) {
         activeEntry,
     ]);
 
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const [fullScreenMode, setFullScreenMode] = useState(false);
+
+    const handleFullScreenChange = useCallback(() => {
+        setFullScreenMode(isDefined(document.fullscreenElement));
+    }, []);
+
+    useEffect(() => {
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+        return (() => {
+            document.removeEventListener('fullscreenchange', handleFullScreenChange);
+        });
+    }, [handleFullScreenChange]);
+
+    const handleFullScreenToggleClick = useCallback(() => {
+        if (isNotDefined(containerRef.current)) {
+            return;
+        }
+        const { current: viewerContainer } = containerRef;
+        if (!fullScreenMode && isDefined(viewerContainer?.requestFullscreen)) {
+            viewerContainer?.requestFullscreen();
+        } else if (fullScreenMode && isDefined(document.exitFullscreen)) {
+            document.exitFullscreen();
+        }
+    }, [fullScreenMode]);
+
+    const handleCanvasDrawClick = useCallback(() => {
+        setShowScreenshotFalse();
+        if (fullScreenMode && isDefined(document.exitFullscreen)) {
+            document.exitFullscreen();
+        }
+        setShowCanvasDrawModalTrue();
+    }, [fullScreenMode, setShowCanvasDrawModalTrue, setShowScreenshotFalse]);
+
     const originalTabContent = (
         <Container
+            elementRef={containerRef}
             className={styles.originalPreviewContainer}
             headingSize="extraSmall"
             headingClassName={styles.leadUrlContainer}
@@ -290,7 +340,7 @@ function LeftPane(props: Props) {
                                 <>
                                     <QuickActionButton
                                         name={undefined}
-                                        onClick={setShowCanvasDrawModalTrue}
+                                        onClick={handleCanvasDrawClick}
                                     >
                                         <IoBrush />
                                     </QuickActionButton>
@@ -314,7 +364,7 @@ function LeftPane(props: Props) {
                     )}
                     <QuickActionButton
                         name={undefined}
-                        onClick={toggleShowSourcePreviewInFullScreen}
+                        onClick={handleFullScreenToggleClick}
                     >
                         <IoExpand />
                     </QuickActionButton>
@@ -434,11 +484,6 @@ function LeftPane(props: Props) {
                         )}
                         {originalTabContent}
                     </TabPanel>
-                )}
-                {showSourcePreviewInFullScreen && (
-                    <FullScreen className={styles.originalTab}>
-                        {originalTabContent}
-                    </FullScreen>
                 )}
                 <TabPanel
                     name="entries"

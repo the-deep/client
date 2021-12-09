@@ -29,7 +29,17 @@
     }
 
     .content {
-        cursor: pointer;
+        display: flex;
+        flex-direction:column;
+        overflow-y: auto;
+
+        .clickable-area {
+            display: flex;
+            flex-direction:column;
+            flex-grow: 1;
+            cursor: pointer;
+            overflow-y: auto;
+        }
     }
 }
 
