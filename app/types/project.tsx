@@ -224,6 +224,7 @@ export interface AdminLevel {
 export interface BasicRegion {
     id: number;
     title: string;
+    isPublished: boolean;
 }
 
 export interface Region extends BasicRegion {

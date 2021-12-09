@@ -13,6 +13,8 @@ import {
     QuickActionButton,
     QuickActionLink,
     TextInput,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import ExternalUrlPreview from './ExternalUrlPreview';
@@ -75,9 +77,16 @@ function LeadPreview(props: Props) {
 
     if (!url && !attachment) {
         return (
-            <div className={_cs(styles.leadPreview, className)}>
-                Preview not available
-            </div>
+            <Message
+                className={_cs(styles.leadPreview, className)}
+                message="We couldn't find anything to preview."
+                icon={(
+                    <Kraken
+                        size="large"
+                        variant="hi"
+                    />
+                )}
+            />
         );
     }
 

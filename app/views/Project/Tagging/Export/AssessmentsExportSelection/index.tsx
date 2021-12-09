@@ -14,7 +14,6 @@ import {
     SourceFilterOptionsQueryVariables,
     ExportDataTypeEnum,
 } from '#generated/types';
-import { generateFilename } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import _ts from '#ts';
 
@@ -61,7 +60,7 @@ function AssessmentsExportSelection(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
-    const [queryTitle, setQueryTitle] = useState<string | undefined>(() => generateFilename('Assessments Export'));
+    const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [previewId, setPreviewId] = useState<string | undefined>(undefined);
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
@@ -103,7 +102,6 @@ function AssessmentsExportSelection(props: Props) {
     );
 
     const startExport = useCallback((preview: boolean, type: Exclude<ExportDataTypeEnum, 'ENTRIES'>) => {
-        const defaultTitle = generateFilename('Assessments Export');
         const data = {
             exportType: 'EXCEL' as const,
             format: 'XLSX' as const,
@@ -114,7 +112,7 @@ function AssessmentsExportSelection(props: Props) {
                 ids: selectedLeads,
                 excludeProvidedLeadsId: selectAll,
             },
-            title: queryTitle || defaultTitle,
+            title: queryTitle,
         };
 
         createExport({

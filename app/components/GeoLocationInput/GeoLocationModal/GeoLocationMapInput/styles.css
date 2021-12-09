@@ -1,11 +1,10 @@
 .geo-location-map-input {
     display: flex;
     flex-grow: 1;
-    width: 80vw;
-    height: 70vh;
 
     .map-selection {
         display: flex;
+        align-self: stretch;
         flex-basis: 75%;
         flex-direction: column;
 

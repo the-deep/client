@@ -57,6 +57,7 @@ const PROJECT_REGIONS = gql`
             regions {
                 title
                 id
+                isPublished
                 adminLevels {
                     id
                     level
@@ -180,6 +181,10 @@ function GeoLocationMapInput(props: Props) {
         geoAreaOptions?.filter((item) => value?.includes(item.id))
     ), [geoAreaOptions, value]);
 
+    const filteredProjectRegions = useMemo(() => (
+        projectRegions?.project?.regions?.filter((region) => region.isPublished)
+    ), [projectRegions?.project?.regions]);
+
     return (
         <div className={_cs(className, styles.geoLocationMapInput)}>
             <div className={styles.mapSelection}>
@@ -190,7 +195,7 @@ function GeoLocationMapInput(props: Props) {
                         )}
                         name="regionSelect"
                         onChange={handleRegionChange}
-                        options={projectRegions?.project?.regions}
+                        options={filteredProjectRegions}
                         keySelector={regionKeySelector}
                         labelSelector={regionLabelSelector}
                         value={selectedRegion}

@@ -6,9 +6,12 @@ import {
 import { PartialForm } from '@togglecorp/toggle-form';
 import {
     IoTrashBinOutline,
+    IoInformationCircleOutline,
     IoAdd,
 } from 'react-icons/io5';
 import {
+    ListView,
+    Message,
     ControlledExpandableContainer,
     QuickActionConfirmButton,
     ContainerCard,
@@ -19,12 +22,13 @@ import {
     Tab,
     List,
 } from '@the-deep/deep-ui';
-import { useRequest } from '#base/utils/restRequest';
+import {
+    useRequest,
+    useLazyRequest,
+} from '#base/utils/restRequest';
 
-import _ts from '#ts';
 import {
     BasicRegion,
-    Region,
     MultiResponse,
     AdminLevelGeoArea,
 } from '#types';
@@ -42,6 +46,8 @@ const tabKeySelector = (d: AdminLevel) => d.clientId;
 interface Props {
     region: BasicRegion;
     className?: string;
+    regions?: BasicRegion[];
+    activeProject: string;
     isExpanded: boolean;
     handleExpansion: (_: boolean, name: string) => void;
     activeAdminLevel: string | undefined;
@@ -50,20 +56,28 @@ interface Props {
     onTempAdminLevelChange?: (value: PartialAdminLevel | undefined) => void;
     onAdminLevelUpdate?: () => void;
     navigationDisabled?: boolean;
+    isPublished: boolean;
+    onRegionPublishSuccess: () => void;
+    onRegionRemoveSuccess: () => void;
 }
 
 function RegionCard(props: Props) {
     const {
+        regions,
         handleExpansion,
         isExpanded,
+        isPublished,
         className,
         region,
         activeAdminLevel,
         onActiveAdminLevelChange,
+        activeProject,
         tempAdminLevel,
         onTempAdminLevelChange,
         navigationDisabled,
         onAdminLevelUpdate,
+        onRegionPublishSuccess,
+        onRegionRemoveSuccess,
     } = props;
 
     // setting this so that when user add an admin level, it is updated
@@ -89,17 +103,6 @@ function RegionCard(props: Props) {
         ? tempAdminLevel.clientId
         : activeAdminLevel;
 
-    // FIXME: we don't even need this request when moving to gql
-    const {
-        response: regionResponse,
-        pending: regionPending,
-    } = useRequest<Region>({
-        url: `server://regions/${region.id}/`,
-        skip: !isExpanded,
-        method: 'GET',
-        failureHeader: _ts('geoAreas', 'title'),
-    });
-
     const adminLevelQuery = useMemo(
         () => ({
             region: region.id,
@@ -108,15 +111,15 @@ function RegionCard(props: Props) {
     );
 
     const {
-        response: adminLevelsResponse,
         pending: adminLevelsPending,
+        retrigger: getAdminLevels,
     } = useRequest<MultiResponse<AdminLevelGeoArea>>({
         url: 'server://admin-levels/',
         skip: !isExpanded,
         query: adminLevelQuery,
         method: 'GET',
         onSuccess: (response) => {
-            if (response.results.length <= 0) {
+            if (response.results.length < 0) {
                 return;
             }
             // NOTE: this will be fixed on graphql endpoint
@@ -126,21 +129,53 @@ function RegionCard(props: Props) {
             }));
             setAdminLevels(adminLevelsWithClientId);
 
-            if (!activeAdminLevel && onActiveAdminLevelChange) {
+            if (onActiveAdminLevelChange) {
                 const [first] = adminLevelsWithClientId;
-                onActiveAdminLevelChange(first.id.toString());
+                if (first) {
+                    onActiveAdminLevelChange(first.id.toString());
+                }
             }
         },
         failureHeader: 'Failed to fetch admin levels',
     });
 
+    const {
+        trigger: deleteAdminLevel,
+    } = useLazyRequest<unknown, number>({
+        url: (ctx) => `server://admin-levels/${ctx}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            getAdminLevels();
+            if (onAdminLevelUpdate) {
+                onAdminLevelUpdate();
+            }
+        },
+    });
+
+    const {
+        trigger: removeRegion,
+    } = useLazyRequest<unknown, unknown>({
+        url: `server://projects/${activeProject}/`,
+        method: 'PATCH',
+        body: () => ({
+            regions: regions
+                ?.filter((r) => r.id !== region.id)
+                ?.map((r) => ({
+                    id: r.id,
+                })),
+        }),
+        onSuccess: () => {
+            onRegionRemoveSuccess();
+        },
+    });
+
     const handleDeleteRegionClick = useCallback(
         () => {
-            // TODO: this will be added later
-            // eslint-disable-next-line no-console
-            console.warn('to be implemented');
+            if (regions) {
+                removeRegion(null);
+            }
         },
-        [],
+        [removeRegion, regions],
     );
 
     const handleAdminLevelAdd = useCallback(
@@ -198,37 +233,28 @@ function RegionCard(props: Props) {
                 if (onTempAdminLevelChange) {
                     onTempAdminLevelChange(undefined);
                 }
+            } else {
+                deleteAdminLevel(id);
             }
-            /*
-            // TODO: actually delete admin level
-            else {
-                setAdminLevels((oldAdminLevels) => {
-                    const newAdminLevels = [
-                        ...oldAdminLevels,
-                    ];
-                    const index = newAdminLevels.findIndex(item => item.id === id);
-                    if (index !== -1) {
-                        newAdminLevels.splice(index);
-                    }
-                    return newAdminLevels;
-                });
-                if (onAdminLevelUpdate) {
-                    onAdminLevelUpdate();
-                }
-            }
-             */
         },
-        [onTempAdminLevelChange],
+        [onTempAdminLevelChange, deleteAdminLevel],
     );
 
-    const handlePublishGeoArea = useCallback(
-        () => {
-            // TODO add this later
-            // eslint-disable-next-line no-console
-            console.warn('to be implemented');
+    const {
+        pending: pendingPublishRegion,
+        trigger: publishRegion,
+    } = useLazyRequest<unknown>({
+        url: `server://region/${region.id}/publish/`,
+        method: 'POST',
+        onSuccess: () => {
+            onRegionPublishSuccess();
         },
-        [],
-    );
+        failureHeader: 'Failed to publish selected region.',
+    });
+
+    const handlePublishRegionClick = useCallback(() => {
+        publishRegion(null);
+    }, [publishRegion]);
 
     const tabListRendererParams = useCallback(
         (key: string, data: PartialAdminLevel) => ({
@@ -245,93 +271,123 @@ function RegionCard(props: Props) {
             value: data,
             onSave: handleAdminLevelSave,
             onDelete: handleAdminLevelDelete,
-            isPublished: regionResponse?.isPublished,
+            isPublished,
             adminLevelOptions: adminLevels,
         }),
         [
-            regionResponse?.isPublished,
+            isPublished,
             adminLevels,
             handleAdminLevelSave,
             handleAdminLevelDelete,
         ],
     );
 
+    const pending = adminLevelsPending || pendingPublishRegion;
+
     return (
         <ControlledExpandableContainer
             name={region.id.toString()}
             className={_cs(className, styles.region)}
-            heading={region.title}
+            headingClassName={styles.heading}
+            heading={(
+                <>
+                    {region.title}
+                    {!isPublished && (
+                        <span className={styles.headingDescription}>
+                            (In progress)
+                        </span>
+                    )}
+                </>
+            )}
             alwaysMountedContent={false}
             expanded={isExpanded}
             withoutBorder
             disabled={navigationDisabled}
             onExpansionChange={handleExpansion}
+            expansionTriggerArea="arrow"
             headerActions={(
                 <QuickActionConfirmButton
                     name="deleteButton"
-                    title={_ts('geoAreas', 'deleteGeoArea')}
+                    title="Remove geo area from this project"
                     onConfirm={handleDeleteRegionClick}
-                    message={_ts('geoAreas', 'deleteGeoAreaConfirm')}
+                    message="Removing the geo area will remove all the tagged geo data under your project.
+                    The removal of tags cannot be undone.
+                    Are you sure you want to remove this geo area from the project?"
                     showConfirmationInitially={false}
-                    disabled
-                    // disabled={navigationDisabled}
+                    disabled={navigationDisabled}
                 >
                     <IoTrashBinOutline />
                 </QuickActionConfirmButton>
             )}
         >
-            {regionResponse && adminLevelsResponse && !regionPending && !adminLevelsPending && (
-                <ContainerCard
-                    className={_cs(className, styles.addAdminLevel)}
-                    heading="Custom Admin Levels"
-                    headingSize="extraSmall"
-                    contentClassName={styles.content}
-                    headerActions={!regionResponse.isPublished && (
-                        <Button
-                            name="addAdminLevel"
-                            className={styles.submit}
-                            onClick={handleAdminLevelAdd}
-                            variant="tertiary"
-                            icons={<IoAdd />}
-                            disabled={navigationDisabled}
-                        >
-                            Add Admin Level
-                        </Button>
-                    )}
-                    footerActions={!regionResponse.isPublished && (
-                        <ConfirmButton
-                            name="submit"
-                            onClick={handlePublishGeoArea}
-                            variant="secondary"
-                            disabled
-                            // disabled={navigationDisabled}
-                        >
-                            Publish Area
-                        </ConfirmButton>
-                    )}
-                >
-                    <Tabs
-                        onChange={onActiveAdminLevelChange}
-                        value={activeAdminLevelWithTempAdminLevel}
+            {!isPublished && (
+                <Message
+                    icon={(<IoInformationCircleOutline />)}
+                    message="This geo area has not been published yet.
+                    You won't see this geo area in your project while tagging."
+                    className={styles.message}
+                    compact
+                />
+            )}
+            <ContainerCard
+                className={_cs(className, styles.addAdminLevel)}
+                heading="Custom Admin Levels"
+                headingSize="extraSmall"
+                contentClassName={styles.content}
+                headerActions={!isPublished && (
+                    <Button
+                        name="addAdminLevel"
+                        className={styles.submit}
+                        onClick={handleAdminLevelAdd}
+                        variant="tertiary"
+                        icons={<IoAdd />}
                         disabled={navigationDisabled}
                     >
-                        <TabList className={styles.tabs}>
-                            <List
-                                data={adminLevelsWithTempAdminLevel}
-                                keySelector={tabKeySelector}
-                                rendererParams={tabListRendererParams}
-                                renderer={Tab}
-                            />
-                        </TabList>
+                        Add Admin Level
+                    </Button>
+                )}
+                footerActions={!isPublished && (
+                    <ConfirmButton
+                        name={undefined}
+                        onConfirm={handlePublishRegionClick}
+                        message="Are you sure you want to publish this geo area?
+                        After you publish the geo area you cannot make any changes to the admin levels."
+                        disabled={(
+                            navigationDisabled
+                            || pendingPublishRegion
+                            || adminLevels.length < 1
+                        )}
+                    >
+                        Publish Area
+                    </ConfirmButton>
+                )}
+            >
+                <Tabs
+                    onChange={onActiveAdminLevelChange}
+                    value={activeAdminLevelWithTempAdminLevel}
+                    disabled={navigationDisabled}
+                >
+                    <TabList className={styles.tabs}>
                         <List
                             data={adminLevelsWithTempAdminLevel}
                             keySelector={tabKeySelector}
-                            rendererParams={tabPanelRendererParams}
-                            renderer={AddAdminLevelPane}
+                            rendererParams={tabListRendererParams}
+                            renderer={Tab}
                         />
-                    </Tabs>
-                </ContainerCard>
-            )}
+                    </TabList>
+                    <ListView
+                        data={adminLevelsWithTempAdminLevel}
+                        keySelector={tabKeySelector}
+                        rendererParams={tabPanelRendererParams}
+                        pending={pending}
+                        filtered={false}
+                        messageShown
+                        messageIconShown
+                        emptyMessage="There are no admin levels in this region."
+                        renderer={AddAdminLevelPane}
+                    />
+                </Tabs>
+            </ContainerCard>
         </ControlledExpandableContainer>
     );
 }

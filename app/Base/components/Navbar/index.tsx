@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { gql, useMutation } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
 import {
     QuickActionLink,
     QuickActionDropdownMenu,
@@ -23,15 +23,31 @@ import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
-import { LogoutMutation } from '#generated/types';
+import {
+    LogoutMutation,
+    UserNotificationsCountQuery,
+    UserNotificationsCountQueryVariables,
+} from '#generated/types';
 import deepLogo from '#resources/img/deep-logo-new.svg';
 
 import styles from './styles.css';
+
+const NOTIFICATION_POLL_INTERVAL = 60000;
 
 const LOGOUT = gql`
     mutation Logout {
         logout {
             ok
+        }
+    }
+`;
+
+const USER_NOTIFICATIONS_COUNT = gql`
+    query UserNotificationsCount {
+        notifications(
+            status: UNSEEN,
+        ) {
+            totalCount
         }
     }
 `;
@@ -48,6 +64,15 @@ function Navbar(props: Props) {
         user,
         setUser,
     } = useContext(UserContext);
+
+    const {
+        data: notifications,
+    } = useQuery<UserNotificationsCountQuery, UserNotificationsCountQueryVariables>(
+        USER_NOTIFICATIONS_COUNT,
+        {
+            pollInterval: NOTIFICATION_POLL_INTERVAL,
+        },
+    );
 
     const [logout] = useMutation<LogoutMutation>(
         LOGOUT,
@@ -119,8 +144,11 @@ function Navbar(props: Props) {
                     </QuickActionLink>
                     {authenticated && (
                         <QuickActionDropdownMenu
-                            label={<IoNotificationsOutline />}
+                            label={(<IoNotificationsOutline />)}
+                            className={styles.notificationButton}
+                            actions={notifications?.notifications?.totalCount}
                             popupClassName={styles.popup}
+                            actionsContainerClassName={styles.notificationCount}
                             persistent
                         >
                             <Notifications />

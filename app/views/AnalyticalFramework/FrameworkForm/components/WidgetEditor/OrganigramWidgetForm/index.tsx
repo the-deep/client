@@ -156,12 +156,18 @@ function NodeInput(props: NodeInputProps) {
                 order: oldNodes.length,
             };
             setExpandedNodeId(newNode.key);
+            onExpansionChange(true, value?.key);
             onFieldChange(
                 [...reorder(oldNodes), newNode],
                 'children' as const,
             );
         },
-        [onFieldChange, value?.children],
+        [
+            onFieldChange,
+            value?.children,
+            onExpansionChange,
+            value?.key,
+        ],
     );
 
     const handleNodeExpansionChange = useCallback(
