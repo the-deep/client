@@ -48,6 +48,7 @@ function Assignments() {
             method: 'GET',
             query: assignmentsQuery,
             failureHeader: _ts('assignment', 'assignmentListFetchFailed'),
+            preserveResponse: true,
         },
     );
 

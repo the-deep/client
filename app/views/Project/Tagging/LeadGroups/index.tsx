@@ -104,7 +104,8 @@ function LeadGroups(props: Props) {
     );
 
     const {
-        data,
+        previousData,
+        data = previousData,
         loading,
         refetch,
     } = useQuery<LeadGroupListQuery, LeadGroupListQueryVariables>(

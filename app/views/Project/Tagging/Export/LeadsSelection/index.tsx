@@ -192,7 +192,8 @@ function LeadsSelection(props: Props) {
     );
 
     const {
-        data: projectSourcesResponse,
+        previousData,
+        data: projectSourcesResponse = previousData,
         loading: projectSourcesPending,
     } = useQuery<ProjectSourceListQuery, ProjectSourceListQueryVariables>(
         PROJECT_LEADS,

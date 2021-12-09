@@ -169,7 +169,8 @@ function ExploreDeepMapView(props: Props) {
     );
 
     const {
-        data: projectDetails,
+        previousData,
+        data: projectDetails = previousData,
         loading: projectDetailsPending,
     } = useQuery<PublicProjectDetailsForMapViewQuery, PublicProjectDetailsForMapViewQueryVariables>(
         PROJECT_DETAILS,

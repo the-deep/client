@@ -76,6 +76,7 @@ function UserGroup(props: Props) {
         method: 'GET',
         query: usergroupQuery,
         failureHeader: _ts('usergroup', 'fetchUserGroupFailed'),
+        preserveResponse: true,
     });
 
     const {

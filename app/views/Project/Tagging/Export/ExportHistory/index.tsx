@@ -205,7 +205,8 @@ function ExportHistory(props: Props) {
     );
 
     const {
-        data: projectExportsResponse,
+        previousData,
+        data: projectExportsResponse = previousData,
         loading: projectExportsPending,
         refetch: getProjectExports,
         startPolling,

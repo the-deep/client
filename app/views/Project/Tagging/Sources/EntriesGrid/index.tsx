@@ -256,7 +256,8 @@ function EntriesGrid(props: Props) {
     );
 
     const {
-        data: projectEntriesResponse,
+        previousData,
+        data: projectEntriesResponse = previousData,
         loading,
         refetch: getEntries,
     } = useQuery<ProjectEntriesQuery, ProjectEntriesQueryVariables>(
