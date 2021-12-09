@@ -172,6 +172,7 @@ function FilesUploaded(props: Props) {
                     renderer={FileItem}
                     keySelector={keySelector}
                     rendererParams={fileRendererParams}
+                    errored={false}
                     pending={false}
                     emptyIcon={(
                         <Kraken

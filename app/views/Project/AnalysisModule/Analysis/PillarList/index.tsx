@@ -132,6 +132,7 @@ function AnalysisDetails(props: Props) {
                 renderer={AnalysisPillar}
                 rendererParams={analysisPillarRendererParams}
                 filtered={false}
+                errored={false}
                 emptyIcon={(
                     <Kraken
                         variant="exercise"

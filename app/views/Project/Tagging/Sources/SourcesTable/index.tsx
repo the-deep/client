@@ -619,6 +619,7 @@ function SourcesTable(props: Props) {
                             variant="large"
                             pending={pending}
                             filtered={isFiltered(entriesFilter)}
+                            errored={false}
                             filteredEmptyMessage="No matching sources found."
                             filteredEmptyIcon={(
                                 <Kraken

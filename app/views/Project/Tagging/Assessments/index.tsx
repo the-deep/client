@@ -186,6 +186,7 @@ function Assessments(props: Props) {
                 data={data?.project?.assessments?.results}
                 pending={loading}
                 filtered={isFiltered(filters)}
+                errored={false}
                 filteredEmptyMessage="No matching assessments found."
                 filteredEmptyIcon={(
                     <Kraken

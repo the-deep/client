@@ -340,6 +340,7 @@ function UserList(props: Props) {
                 rowClassName={styles.tableRow}
                 columns={columns}
                 filtered={false}
+                errored={false}
                 pending={projectUsersPending}
                 emptyIcon={(
                     <Kraken

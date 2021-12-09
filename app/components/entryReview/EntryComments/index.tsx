@@ -125,6 +125,7 @@ function EntryComments(props: Props) {
                         renderer={Comment}
                         pending={commentsPending}
                         filtered={false}
+                        errored={false}
                         emptyIcon={(
                             <Kraken
                                 variant="work"

@@ -451,6 +451,7 @@ function LeftPane(props: Props) {
                         className={styles.entryList}
                         keySelector={entryKeySelector}
                         filtered={false}
+                        errored={false}
                         pending={false}
                         emptyIcon={(
                             <Kraken

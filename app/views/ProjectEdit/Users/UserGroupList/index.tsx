@@ -206,6 +206,7 @@ function UserGroupList(props: Props) {
                 emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
                 rowClassName={styles.tableRow}
                 filtered={false}
+                errored={false}
                 pending={usergroupPending}
                 emptyIcon={(
                     <Kraken

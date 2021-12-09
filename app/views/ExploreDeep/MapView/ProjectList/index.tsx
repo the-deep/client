@@ -201,6 +201,7 @@ function ProjectList(props: Props) {
                 rendererParams={rendererParams}
                 // NOTE: Nothing to filter here
                 filtered={false}
+                errored={false}
                 pending={projectDetailsPending}
                 emptyIcon={(
                     <Kraken

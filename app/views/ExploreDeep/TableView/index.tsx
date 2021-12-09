@@ -218,6 +218,7 @@ function ExploreDeepTableView(props: Props) {
                 data={data?.projects?.results}
                 pending={loading}
                 filtered={isFiltered(filters)}
+                errored={false}
                 messageShown
                 messageIconShown
                 emptyMessage="No projects to show."

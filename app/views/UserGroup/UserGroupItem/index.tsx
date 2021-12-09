@@ -261,6 +261,7 @@ function UserGroupItem(props: Props) {
                     keySelector={membershipKeySelector}
                     headerCellClassName={styles.headerCell}
                     data={memberships?.results}
+                    errored={false}
                     filtered={false}
                     pending={membershipsPending}
                     messageShown

@@ -159,6 +159,7 @@ function Timeline<T>(props: TimelineProps<T>) {
                     keySelector={keySelector}
                     rendererParams={timeElementRendererParams}
                     filtered={false}
+                    errored={false}
                     pending={false}
                 />
                 <ListView
@@ -168,6 +169,7 @@ function Timeline<T>(props: TimelineProps<T>) {
                     keySelector={axisTickKeySelector}
                     rendererParams={axisTickRendererParams}
                     filtered={false}
+                    errored={false}
                     pending={false}
                 />
             </div>

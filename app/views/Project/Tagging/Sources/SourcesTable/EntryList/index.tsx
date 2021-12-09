@@ -369,6 +369,7 @@ function EntryList(props: Props) {
                     renderer={EditableEntry}
                     data={entries ?? undefined}
                     rendererParams={entryDataRendererParams}
+                    errored={false}
                     rendererClassName={styles.entryItem}
                     filtered={false}
                     pending={entryListPending || projectFrameworkLoading}

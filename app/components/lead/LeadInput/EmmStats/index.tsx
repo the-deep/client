@@ -61,6 +61,7 @@ function EmmStatsModal(props: Props) {
                         rendererParams={emmTriggerRendererParams}
                         pending={false}
                         filtered={false}
+                        errored={false}
                     />
                 </ContainerCard>
             )}
@@ -78,6 +79,7 @@ function EmmStatsModal(props: Props) {
                         rendererParams={emmEntitiesRendererParams}
                         pending={false}
                         filtered={false}
+                        errored={false}
                     />
                 </ContainerCard>
             )}
