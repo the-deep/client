@@ -8,7 +8,7 @@ import {
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { sortByOrder } from '#utils/common';
-import { removeEmptyObject } from '#utils/unsafeCommon';
+import { removeUndefinedKeys, removeEmptyObject } from '#utils/unsafeCommon';
 
 import NonFieldError from '#components/NonFieldError';
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
@@ -365,7 +365,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             columnId: string,
             state: (val: string[] | undefined) => string[] | undefined,
         ) => {
-            const newValue = removeEmptyObject({
+            const newValue = removeEmptyObject(removeUndefinedKeys({
                 ...value?.value,
                 [rowId]: {
                     ...value?.value?.[rowId],
@@ -374,7 +374,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
                         [columnId]: state(value?.value?.[rowId]?.[subRowId]?.[columnId]),
                     },
                 },
-            });
+            }));
             onChange(newValue, name);
         },
         [value, name, onChange],
