@@ -151,6 +151,7 @@ function DiscardedEntries(props: Props) {
                 emptyMessage="There aren't any discarded entries."
                 filteredEmptyMessage="There aren't any discarded entries under selected tag."
                 filtered={isFiltered(selectedDiscardedTag)}
+                errored={false}
                 filteredEmptyIcon={(
                     <Kraken
                         variant="search"

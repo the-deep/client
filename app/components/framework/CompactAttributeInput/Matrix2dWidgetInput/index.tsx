@@ -367,6 +367,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
                 compactEmptyMessage
                 pending={false}
                 filtered={false}
+                errored={false}
             />
         </WidgetWrapper>
     );

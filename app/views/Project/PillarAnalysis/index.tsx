@@ -791,6 +791,7 @@ function PillarAnalysis() {
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
+                                    errored={false}
                                     filtered={isFiltered(filtersValue)}
                                     emptyIcon={(
                                         <Kraken

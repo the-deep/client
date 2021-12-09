@@ -1339,6 +1339,7 @@ function EntryEdit(props: Props) {
                                         data={formValue.entries}
                                         rendererParams={entryDataRendererParams}
                                         filtered={false}
+                                        errored={false}
                                         pending={false}
                                         emptyIcon={(
                                             <Kraken

@@ -180,6 +180,7 @@ function ProjectList(props: Props) {
                 // NOTE: Nothing to filter here
                 filtered={false}
                 pending={projectDetailsPending}
+                errored={false}
                 emptyIcon={(
                     <Kraken
                         variant="skydive"

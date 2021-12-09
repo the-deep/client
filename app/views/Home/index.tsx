@@ -271,6 +271,7 @@ function Home(props: ViewProps) {
                     pending={selectedProjectPending || recentProjectsPending}
                     keySelector={recentProjectKeySelector}
                     filtered={false}
+                    errored={false}
                     emptyIcon={(
                         <Kraken
                             variant="search"

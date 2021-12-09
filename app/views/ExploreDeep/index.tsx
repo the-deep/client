@@ -209,6 +209,7 @@ function ExploreDeep(props: Props) {
                                 renderer={ActiveFrameworkItem}
                                 rendererParams={activeFrameworkRendererParams}
                                 spacing="none"
+                                errored={false}
                                 filtered={false}
                                 pending={loading}
                                 emptyMessage="We couldn&apos;t find what you&apos;re looking for."
@@ -242,6 +243,7 @@ function ExploreDeep(props: Props) {
                         keySelector={activeProjectKeySelector}
                         renderer={ActiveProjectItem}
                         rendererParams={activeProjectsRendererParams}
+                        errored={false}
                         spacing="none"
                         pending={loading}
                         // NOTE: Nothing to filter here

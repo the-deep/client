@@ -433,6 +433,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     rendererParams={rowRendererParams}
                     pending={pending}
                     filtered={false}
+                    errored={false}
                 />
                 <Button
                     className={styles.actionButton}

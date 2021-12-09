@@ -134,6 +134,7 @@ function Assignments() {
                 rendererParams={rendererParams}
                 emptyMessage="You do not have any assignments."
                 pending={pending}
+                errored={false}
                 // NOTE: Nothing to filter here
                 filtered={false}
                 messageIconShown

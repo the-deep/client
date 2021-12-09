@@ -232,6 +232,7 @@ function UserTable(props: Props) {
                     columns={columns}
                     rowClassName={styles.tableRow}
                     pending={frameworkUsersGetPending}
+                    errored={false}
                     filtered={false}
                     emptyMessage="No users found"
                     messageShown

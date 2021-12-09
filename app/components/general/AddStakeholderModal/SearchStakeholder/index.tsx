@@ -95,6 +95,7 @@ function SearchStakeholder(props: Props) {
                 data={stakeholders?.results}
                 renderer={Stakeholder}
                 keySelector={stakeholderKeySelector}
+                errored={false}
                 rendererParams={stakeholderRendererParams}
                 emptyIcon={(
                     <Kraken

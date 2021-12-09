@@ -220,6 +220,7 @@ function LeadGroups(props: Props) {
                 keySelector={leadGroupKeySelector}
                 data={data?.project?.leadGroups?.results}
                 filtered={isFiltered(filters)}
+                errored={false}
                 filteredEmptyMessage="No matching source groups found."
                 filteredEmptyIcon={(
                     <Kraken
