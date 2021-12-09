@@ -47,7 +47,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
     if (entryType === 'IMAGE') {
         const imageSrc = image?.file?.url ?? leadImageUrl ?? imageRaw;
         return (
-            <div className={_cs(className, styles.excerptInput)}>
+            <div className={_cs(className, styles.excerptInput, styles.imageExcerptContainer)}>
                 {imageSrc ? (
                     <ImagePreview
                         className={_cs(imageClassName, styles.image)}
@@ -63,13 +63,13 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                 {!props.readOnly && (
                     <TextArea
                         label="Additional Context"
-                        className={_cs(excerptForImageClassName, styles.textArea)}
+                        className={_cs(excerptForImageClassName, styles.textAreaForImage)}
                         value={value}
                         name={props.name}
                         onChange={props.onChange}
                     />
                 )}
-                {value && !props.readOnly && (
+                {value && props.readOnly && (
                     <div className={excerptForImageClassName}>
                         {value}
                     </div>
