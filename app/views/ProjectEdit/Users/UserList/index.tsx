@@ -204,9 +204,9 @@ function UserList(props: Props) {
                     refetch();
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete membership(s).',
                     { variant: 'error' },
                 );
             },

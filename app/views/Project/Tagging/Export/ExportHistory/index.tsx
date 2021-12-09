@@ -253,9 +253,9 @@ function ExportHistory(props: Props) {
                     );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete export.',
                     {
                         variant: 'error',
                     },

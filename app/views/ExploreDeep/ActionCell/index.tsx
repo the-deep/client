@@ -83,9 +83,9 @@ function ActionCell(props: Props) {
                 }
                 onMemberStatusChange();
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to cancel join request.',
                     { variant: 'error' },
                 );
             },

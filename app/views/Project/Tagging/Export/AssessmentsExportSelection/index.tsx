@@ -97,9 +97,9 @@ function AssessmentsExportSelection(props: Props) {
                     );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Error during export.',
                     {
                         variant: 'error',
                     },

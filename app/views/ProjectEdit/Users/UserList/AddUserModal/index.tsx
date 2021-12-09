@@ -197,7 +197,9 @@ function AddUserModal(props: Props) {
                     [internal]: gqlError.message,
                 });
                 alert.show(
-                    gqlError.message,
+                    projectUserToEdit
+                        ? 'Failed to update member.'
+                        : 'Failed to add member.',
                     { variant: 'error' },
                 );
             },

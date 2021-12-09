@@ -284,9 +284,9 @@ function SourcesTable(props: Props) {
                     );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete lead.',
                     {
                         variant: 'error',
                     },

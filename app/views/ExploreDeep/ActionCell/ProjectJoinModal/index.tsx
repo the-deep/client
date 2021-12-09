@@ -133,7 +133,7 @@ function ProjectJoinModal(props: Props) {
                     [internal]: gqlError.message,
                 });
                 alert.show(
-                    gqlError.message,
+                    'Failed to send join request.',
                     { variant: 'error' },
                 );
             },
