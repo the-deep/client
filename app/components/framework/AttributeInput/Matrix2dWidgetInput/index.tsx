@@ -143,7 +143,9 @@ function SubRow(props: SubRowProps) {
     const selectedColumn = columns?.find((item) => item.key === selectedColumnId);
 
     return (
-        <tr className={_cs(className, styles.tableRow)}>
+        <tr
+            className={_cs(className, styles.tableRow)}
+        >
             <td
                 className={_cs(styles.tableRow, styles.subRowHeading)}
                 title={title ?? ''}
@@ -248,12 +250,12 @@ function Row(props: RowProps) {
                 <thead>
                     <tr className={_cs(styles.tableRow, styles.tableHead)}>
                         {!selectedColumn && (
-                            <>
+                            <React.Fragment
+                                key={`${row.key}-column`}
+                            >
                                 {/* eslint-disable-next-line max-len */}
                                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                                <th
-                                    className={_cs(styles.tableHeader, styles.firstColumn)}
-                                />
+                                <th className={_cs(styles.tableHeader, styles.firstColumn)} />
                                 {columns?.map((column) => (
                                     <th
                                         className={_cs(
@@ -272,10 +274,12 @@ function Row(props: RowProps) {
                                         {column.label}
                                     </th>
                                 ))}
-                            </>
+                            </React.Fragment>
                         )}
                         {selectedColumn && (
-                            <>
+                            <React.Fragment
+                                key={`${row.key}-${selectedColumn}`}
+                            >
                                 <th
                                     className={_cs(
                                         styles.tableHeader,
@@ -298,16 +302,18 @@ function Row(props: RowProps) {
                                         {subColumn.label}
                                     </th>
                                 ))}
-                            </>
+                            </React.Fragment>
                         )}
                     </tr>
                 </thead>
-                <List
-                    data={orderedSubRows}
-                    keySelector={subRowKeySelector}
-                    rendererParams={subRowRendererParams}
-                    renderer={SubRow}
-                />
+                <tbody>
+                    <List
+                        data={orderedSubRows}
+                        keySelector={subRowKeySelector}
+                        rendererParams={subRowRendererParams}
+                        renderer={SubRow}
+                    />
+                </tbody>
             </table>
         </div>
     );
