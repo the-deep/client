@@ -112,12 +112,12 @@ function LeadCopyModal(props: Props) {
             footerActions={(
                 <ConfirmButton
                     name={undefined}
-                    title="Export selected sources to selected projects"
+                    title="Export selected sources to selected project(s)"
                     onConfirm={handleCopyLeadsClick}
                     message={`
                         Are you sure you want to copy
-                        ${leadIds?.length.toString()} sources to
-                        ${selectedProjects?.length.toString()} projects?
+                        ${leadIds?.length.toString()} source(s) to
+                        ${selectedProjects?.length.toString()} project(s)?
                     `}
                 >
                     Export

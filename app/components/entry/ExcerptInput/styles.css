@@ -11,11 +11,24 @@
         font-style: italic;
     }
 
-    .image {
-        background-color: var(--dui-color-background-information);
-    }
-
     .text-area {
         flex-grow: 1;
     }
 }
+
+.image-excerpt-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .image {
+        flex-grow: 1;
+        background-color: var(--dui-color-background-information);
+        overflow-y: auto;
+    }
+
+    .text-area-for-image {
+        flex-shrink: 0;
+    }
+}
+
