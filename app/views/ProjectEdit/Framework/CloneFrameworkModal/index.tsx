@@ -53,32 +53,27 @@ interface ValueToSend {
 
 interface Props {
     className?: string;
-    frameworkToClone?: FormType;
-    onActionSuccess: (newFrameworkId: string) => void;
+    frameworkToClone: string;
+    frameworkTitle?: string;
+    frameworkDescription?: string;
+    onCloneSuccess: (newFrameworkId: string) => void;
     onModalClose: () => void;
 }
 
-function addCloneLabel(details: FormType | undefined) {
-    if (!details) {
-        return undefined;
-    }
-
-    return ({
-        title: `${details.title} (cloned)`,
-        description: details.description,
-    });
-}
-
-function AddFrameworkModal(props: Props) {
+function CloneFrameworkModal(props: Props) {
     const {
         className,
         frameworkToClone,
-        onActionSuccess,
+        frameworkTitle,
+        frameworkDescription,
+        onCloneSuccess,
         onModalClose,
     } = props;
 
-    const formValueFromProps: PartialForm<FormType> = addCloneLabel(frameworkToClone)
-        ?? defaultFormValue;
+    const formValueFromProps: PartialForm<FormType> = frameworkTitle ? {
+        title: `${frameworkTitle} (cloned)`,
+        description: frameworkDescription,
+    } : defaultFormValue;
 
     const {
         pristine,
@@ -93,19 +88,16 @@ function AddFrameworkModal(props: Props) {
     const error = getErrorObject(riskyError);
 
     const {
-        pending: pendingAddAction,
+        pending: pendingCloneAction,
         trigger: triggerCreateFramework,
     } = useLazyRequest<Framework, ValueToSend>({
-        url: 'server://analysis-frameworks/',
+        url: `server://clone-analysis-framework/${frameworkToClone}/`,
         method: 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            onActionSuccess(String(response.id));
-            const message = isDefined(frameworkToClone)
-                ? _ts('projectEdit', 'cloneFrameworkSuccessMessage')
-                : _ts('projectEdit', 'createFrameworkSuccessMessage');
+            onCloneSuccess(String(response.id));
             alert.show(
-                message,
+                _ts('projectEdit', 'cloneFrameworkSuccessMessage'),
                 { variant: 'success' },
             );
         },
@@ -124,7 +116,7 @@ function AddFrameworkModal(props: Props) {
         [setError, validate, triggerCreateFramework],
     );
 
-    const pendingRequests = pendingAddAction;
+    const pendingRequests = pendingCloneAction;
 
     return (
         <Modal
@@ -143,7 +135,7 @@ function AddFrameworkModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingAddAction}
+                    disabled={pristine || pendingCloneAction}
                     onClick={handleSubmit}
                 >
                     {_ts('projectEdit', 'submitLabel')}
@@ -174,4 +166,4 @@ function AddFrameworkModal(props: Props) {
     );
 }
 
-export default AddFrameworkModal;
+export default CloneFrameworkModal;

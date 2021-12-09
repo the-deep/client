@@ -50,7 +50,7 @@ import {
     WidgetType as WidgetRaw,
 } from '#generated/types';
 
-import AddFrameworkModal from '../AddFrameworkModal';
+import CloneFrameworkModal from '../CloneFrameworkModal';
 import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -207,14 +207,10 @@ function FrameworkDetail(props: Props) {
         to: '',
     }), []);
 
-    const [frameworkToClone, setFrameworkToClone] = useState<
-        { title: string; description?: string } | undefined
-    >();
-
     const [
-        frameworkAddModalShown,
-        showFrameworkAddModal,
-        hideFrameworkAddModal,
+        frameworkCloneModalShown,
+        showFrameworkCloneModal,
+        hideFrameworkCloneModal,
     ] = useModalState(false);
 
     const handleUseFrameworkClick = useCallback(() => {
@@ -222,15 +218,13 @@ function FrameworkDetail(props: Props) {
     }, [projectPatch]);
 
     const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: string) => {
-        setFrameworkToClone(undefined);
         onFrameworkCreate(newFrameworkId);
-        hideFrameworkAddModal();
-    }, [hideFrameworkAddModal, onFrameworkCreate]);
+        hideFrameworkCloneModal();
+    }, [hideFrameworkCloneModal, onFrameworkCreate]);
 
     const handleFrameworkCloneClick = useCallback(() => {
-        setFrameworkToClone(frameworkDetails);
-        showFrameworkAddModal();
-    }, [frameworkDetails, showFrameworkAddModal]);
+        showFrameworkCloneModal();
+    }, [showFrameworkCloneModal]);
 
     const disableAllButtons = projectPatchPending;
     const frameworkRoute = generatePath(routes.analyticalFrameworkEdit.path, {
@@ -454,11 +448,13 @@ function FrameworkDetail(props: Props) {
                     </Card>
                 </ContainerCard>
             </Tabs>
-            {frameworkAddModalShown && (
-                <AddFrameworkModal
-                    frameworkToClone={frameworkToClone}
-                    onActionSuccess={handleNewFrameworkAddSuccess}
-                    onModalClose={hideFrameworkAddModal}
+            {frameworkCloneModalShown && (
+                <CloneFrameworkModal
+                    frameworkToClone={frameworkId}
+                    frameworkTitle={frameworkDetails?.title}
+                    frameworkDescription={frameworkDetails?.description}
+                    onCloneSuccess={handleNewFrameworkAddSuccess}
+                    onModalClose={hideFrameworkCloneModal}
                 />
             )}
         </div>
