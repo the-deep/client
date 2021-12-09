@@ -2,11 +2,19 @@ import { ApolloClientOptions, NormalizedCacheObject, InMemoryCache, ApolloLink a
 import { ApolloLink } from 'apollo-link';
 import { RetryLink } from 'apollo-link-retry';
 import { createUploadLink } from 'apollo-upload-client';
+import { isDefined } from '@togglecorp/fujs';
 
 const GRAPHQL_ENDPOINT = process.env.REACT_APP_GRAPHQL_ENDPOINT as string;
 
 const link: ApolloLinkFromClient = ApolloLink.from([
-    new RetryLink(),
+    new RetryLink({
+        attempts: {
+            max: 5,
+            retryIf: (error: { statusCode: number | undefined }) => (
+                isDefined(error.statusCode) && error.statusCode < 400
+            ),
+        },
+    }),
     ApolloLink.split(
         (operation) => operation.getContext().hasUpload,
         createUploadLink({

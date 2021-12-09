@@ -38,6 +38,7 @@ const schema: FormSchema = {
         order: [],
         width: [],
         version: [],
+        conditional: [],
     }),
 };
 

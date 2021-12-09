@@ -39,6 +39,8 @@ const schema: FormSchema = {
         widgetId: [],
         order: [],
         width: [],
+        version: [],
+        conditional: [],
     }),
 };
 
