@@ -202,6 +202,7 @@ function AnalyticalNGramsModal(props: Props) {
                         renderer={ExcerptInput}
                         rendererParams={entriesRendererParams}
                         filtered={false}
+                        errored={false}
                         pending={false}
                         // TODO: add pending
                         emptyIcon={(

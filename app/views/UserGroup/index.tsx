@@ -169,6 +169,7 @@ function UserGroup(props: Props) {
                 rendererParams={userGroupRendererParams}
                 filtered={false}
                 pending={usergroupGetPending}
+                errored={false}
                 emptyIcon={(
                     <Kraken
                         size="large"

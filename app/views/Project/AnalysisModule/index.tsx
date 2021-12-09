@@ -441,6 +441,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             keySelector={analysisKeySelector}
                             pending={pendingAnalyses}
                             filtered={!!dateRangeFilter}
+                            errored={false}
                             emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
                             emptyIcon={(
                                 <Kraken

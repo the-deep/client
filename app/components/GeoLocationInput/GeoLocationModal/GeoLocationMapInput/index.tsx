@@ -239,6 +239,7 @@ function GeoLocationMapInput(props: Props) {
                     rendererParams={geoAreasRendererParams}
                     pending={loadingGeoAreas}
                     filtered={false}
+                    errored={false}
                     emptyIcon={(
                         <Kraken
                             variant="hi"

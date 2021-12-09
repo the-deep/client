@@ -172,6 +172,7 @@ function CompactSection(props: Props) {
                 compactEmptyMessage
                 pending={false}
                 filtered={false}
+                errored={false}
                 emptyMessage="No widgets were tagged under this section."
                 messageShown
                 messageIconShown

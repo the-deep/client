@@ -124,7 +124,7 @@ export type Props<
     GP extends GroupCommonProps,
     GK extends OptionKey,
     ItemContainerParams,
-> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer' | 'direction' | 'pending' | 'filtered'> & {
+> = Omit<ListViewProps<D, P, K, GP, GK>, 'keySelector' | 'renderer' | 'direction' | 'pending' | 'filtered' | 'errored'> & {
     name: N;
     keySelector: (val: D) => K;
     renderer: (props: P & {
@@ -139,6 +139,7 @@ export type Props<
     itemContainerParams?: (key: K, datum: D, index: number, data: D[]) => ItemContainerParams;
     pending?: boolean;
     filtered?: boolean;
+    errored?: boolean;
 }
 
 function SortableList<
@@ -165,6 +166,7 @@ function SortableList<
         itemContainerParams,
         pending = false,
         filtered = false,
+        errored = false,
         ...otherProps
     } = props;
     const [activeId, setActiveId] = useState<string | undefined>();
@@ -307,6 +309,7 @@ function SortableList<
                     {...otherProps}
                     pending={pending}
                     filtered={filtered}
+                    errored={errored}
                     grouped={false}
                 />
             </SortableContext>

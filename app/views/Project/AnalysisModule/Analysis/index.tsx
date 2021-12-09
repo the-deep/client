@@ -241,6 +241,7 @@ function Analysis(props: ComponentProps) {
                                 rendererParams={pillarAssignmentRendererParams}
                                 keySelector={pillarSummaryKeySelector}
                                 filtered={false}
+                                errored={false}
                                 pending={pillarsPending}
                                 emptyIcon={(
                                     <Kraken

@@ -332,6 +332,7 @@ function LeadsSelection(props: Props) {
                     <TableView
                         data={projectSourcesResponse?.project?.leads?.results}
                         pending={projectSourcesPending}
+                        errored={false}
                         filtered={isFiltered(filterValues)}
                         emptyMessage="Looks like there are no sources that match your filtering criteria."
                         keySelector={leadsKeySelector}

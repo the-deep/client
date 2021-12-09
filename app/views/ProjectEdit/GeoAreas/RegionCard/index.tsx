@@ -378,6 +378,7 @@ function RegionCard(props: Props) {
                     <ListView
                         data={adminLevelsWithTempAdminLevel}
                         keySelector={tabKeySelector}
+                        errored={false}
                         rendererParams={tabPanelRendererParams}
                         pending={pending}
                         filtered={false}

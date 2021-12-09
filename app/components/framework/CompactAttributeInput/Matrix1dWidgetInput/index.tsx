@@ -210,6 +210,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
                 compactEmptyMessage
                 emptyMessage="-"
                 messageShown
+                errored={false}
                 filtered={false}
                 pending={false}
             />

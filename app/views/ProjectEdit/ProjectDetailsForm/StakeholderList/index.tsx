@@ -76,6 +76,7 @@ function StakeholderList(props: Props) {
         >
             <ListView
                 className={styles.content}
+                errored={false}
                 data={data}
                 renderer={StakeholderDetail}
                 keySelector={stakeholderDetailsKeySelector}

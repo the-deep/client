@@ -395,6 +395,7 @@ function ExportHistory(props: Props) {
                     keySelector={exportKeySelector}
                     columns={columns}
                     pending={projectExportsPending}
+                    errored={false}
                     filtered={isDefined(debouncedSearchText) || isDefined(exportedAt)}
                     filteredEmptyMessage="No matching exports found."
                     filteredEmptyIcon={(

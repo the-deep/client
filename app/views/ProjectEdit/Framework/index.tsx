@@ -242,6 +242,7 @@ function ProjectFramework(props: Props) {
                     <ListView
                         className={styles.frameworkList}
                         pending={frameworksGetPending}
+                        errored={false}
                         data={frameworkList}
                         keySelector={frameworkKeySelector}
                         renderer={Item}

@@ -364,6 +364,7 @@ function EntriesGrid(props: Props) {
                     keySelector={entryKeySelector}
                     pending={loading || projectFrameworkLoading}
                     filtered={isFiltered(entriesFilter)}
+                    errored={false}
                     filteredEmptyMessage="No matching entries found."
                     filteredEmptyIcon={(
                         <Kraken
