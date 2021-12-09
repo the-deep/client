@@ -4,7 +4,7 @@ import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
 
 import { sortByOrder } from '#utils/common';
-import { removeEmptyObject } from '#utils/unsafeCommon';
+import { removeUndefinedKeys, removeEmptyObject } from '#utils/unsafeCommon';
 
 import NonFieldError from '#components/NonFieldError';
 import { Matrix1dWidget } from '#types/newAnalyticalFramework';
@@ -185,13 +185,13 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
 
     const handleCellChange = useCallback(
         (rowId: string, cellId: string, state: boolean | undefined) => {
-            const newValue = removeEmptyObject({
+            const newValue = removeEmptyObject(removeUndefinedKeys({
                 ...value?.value,
                 [rowId]: {
                     ...value?.value?.[rowId],
                     [cellId]: state,
                 },
-            });
+            }));
             onChange(newValue, name);
         },
         [value, name, onChange],
