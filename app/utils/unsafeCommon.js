@@ -1,11 +1,16 @@
 import {
     isObject,
+    isList,
+    isNotDefined,
     mapToMap,
     isDefined,
 } from '@togglecorp/fujs';
 
-// eslint-disable-next-line import/prefer-default-export
 export function removeEmptyObject(value) {
+    if (isList(value)) {
+        return value.map(removeEmptyObject);
+    }
+
     if (!isObject(value)) {
         return value;
     }
@@ -19,5 +24,25 @@ export function removeEmptyObject(value) {
     if (definedValues.length <= 0) {
         return undefined;
     }
+    return newValue;
+}
+
+export function removeUndefinedKeys(value) {
+    if (isList(value)) {
+        return value.map(removeUndefinedKeys);
+    }
+    if (!isObject(value)) {
+        return value;
+    }
+    const newValue = mapToMap(
+        value,
+        (key) => key,
+        (val) => removeUndefinedKeys(val),
+    );
+    Object.entries(newValue)
+        .filter(([, val]) => isNotDefined(val))
+        .forEach(([key]) => {
+            delete newValue[key];
+        });
     return newValue;
 }
