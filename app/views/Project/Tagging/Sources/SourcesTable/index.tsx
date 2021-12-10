@@ -44,6 +44,7 @@ import {
     DeleteLeadMutationVariables,
 } from '#generated/types';
 import _ts from '#ts';
+import { useLazyRequest } from '#base/utils/restRequest';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLine';
 import {
@@ -306,11 +307,6 @@ function SourcesTable(props: Props) {
         setSelectedLeads([]);
     }, []);
 
-    const handleBulkSourcesRemoveSuccess = useCallback(() => {
-        setSelectedLeads([]);
-        getProjectSources();
-    }, [getProjectSources]);
-
     const handleSelectAll = useCallback((value: boolean) => {
         setSelectedLeads((oldLeads) => {
             if (value) {
@@ -382,6 +378,24 @@ function SourcesTable(props: Props) {
         setLeadToEdit(leadId);
         setShowSingleSourceModalTrue();
     }, [setShowSingleSourceModalTrue]);
+
+    const {
+        pending: bulkDeletePending,
+        trigger: bulkLeadDeleteTrigger,
+    } = useLazyRequest<unknown, string[]>({
+        url: `server://project/${projectId}/leads/bulk-delete/`,
+        method: 'POST',
+        body: (ctx) => ({ leads: ctx }),
+        onSuccess: () => {
+            alert.show(
+                'Sources deleted successfully!',
+                { variant: 'success' },
+            );
+            setSelectedLeads([]);
+            getProjectSources();
+        },
+        failureMessage: 'Failed to delete leads.',
+    });
 
     const columns = useMemo(() => {
         const selectedLeadsMap = listToMap(selectedLeads, (d) => d.id, () => true);
@@ -595,7 +609,7 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalFalse();
     }, [setShowSingleSourceModalFalse]);
 
-    const pending = projectSourcesPending;
+    const pending = projectSourcesPending || bulkDeletePending;
 
     return (
         <>
@@ -655,11 +669,11 @@ function SourcesTable(props: Props) {
                     />
                 )}
             </Container>
-            {selectedLeads.length > 0 && (
+            {(selectedLeads.length > 0 && !bulkDeletePending) && (
                 <BulkActions
                     selectedLeads={selectedLeads}
                     activeProject={projectId}
-                    onRemoveSuccess={handleBulkSourcesRemoveSuccess}
+                    onRemoveClick={bulkLeadDeleteTrigger}
                     onClearSelection={clearSelection}
                 />
             )}

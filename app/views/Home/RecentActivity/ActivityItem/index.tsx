@@ -5,6 +5,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import Avatar from '#components/Avatar';
+import generateString from '#utils/string';
 
 import styles from './styles.css';
 
@@ -14,66 +15,6 @@ interface RecentActivityProps {
     createdByDisplayName: string;
     createdByDisplayPicture?: string;
     type: string;
-}
-
-interface messageProps {
-    createdByDisplayName: string;
-    projectDisplayName: string;
-    type: string;
-}
-
-function ActionMessage(props: messageProps) {
-    const {
-        createdByDisplayName,
-        projectDisplayName,
-        type,
-    } = props;
-    if (type === 'lead') {
-        return (
-            <>
-                <span className={styles.boldText}>
-                    {createdByDisplayName}
-                </span>
-                &nbsp;
-                added a source on
-                &nbsp;
-                <span className={styles.boldText}>
-                    {projectDisplayName}
-                </span>
-            </>
-        );
-    }
-    if (type === 'entry') {
-        return (
-            <>
-                <span className={styles.boldText}>
-                    {createdByDisplayName}
-                </span>
-                &nbsp;
-                added an entry on
-                &nbsp;
-                <span className={styles.boldText}>
-                    {projectDisplayName}
-                </span>
-            </>
-        );
-    }
-    if (type === 'entry-comment') {
-        return (
-            <div className={styles.description}>
-                <span className={styles.boldText}>
-                    {createdByDisplayName}
-                </span>
-                &nbsp;
-                added a comment on an entry on
-                &nbsp;
-                <span className={styles.boldText}>
-                    {projectDisplayName}
-                </span>
-            </div>
-        );
-    }
-    return null;
 }
 
 function ActivityItem(props: RecentActivityProps) {
@@ -97,11 +38,25 @@ function ActivityItem(props: RecentActivityProps) {
             )}
             childrenContainerClassName={styles.mainContent}
         >
-            <ActionMessage
-                createdByDisplayName={createdByDisplayName}
-                projectDisplayName={projectDisplayName}
-                type={type}
-            />
+            <div className={styles.description}>
+                {generateString(
+                    '{createdByDisplayName} added {article} {type} on {projectDisplayName}',
+                    {
+                        createdByDisplayName: (
+                            <span className={styles.boldText}>
+                                {createdByDisplayName}
+                            </span>
+                        ),
+                        article: (type === 'lead' ? 'a' : 'an'),
+                        type,
+                        projectDisplayName: (
+                            <span className={styles.boldText}>
+                                {projectDisplayName}
+                            </span>
+                        ),
+                    },
+                )}
+            </div>
             <DateOutput
                 className={styles.createdDate}
                 value={createdAt}

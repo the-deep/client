@@ -27,7 +27,6 @@ function RecentActivities() {
 
     const activityRendererParams = useCallback((_: string, info: RecentActivityItem) => ({
         activityId: keySelector(info),
-        activity: info,
         projectDisplayName: info.projectDisplayName,
         createdAt: info.createdAt,
         createdByDisplayName: info.createdByDisplayName,
