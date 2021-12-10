@@ -107,6 +107,8 @@ function Navbar(props: Props) {
         message: 'Are you sure you want to logout?',
     });
 
+    const notificationsCount = notifications?.notifications?.totalCount;
+
     return (
         <nav className={_cs(className, styles.navbar)}>
             <div className={styles.appBrand}>
@@ -157,7 +159,7 @@ function Navbar(props: Props) {
                         <QuickActionDropdownMenu
                             label={(<IoNotificationsOutline />)}
                             className={styles.notificationButton}
-                            actions={notifications?.notifications?.totalCount}
+                            actions={notificationsCount !== 0 ? notificationsCount : undefined}
                             popupClassName={styles.popup}
                             actionsContainerClassName={styles.notificationCount}
                             persistent
