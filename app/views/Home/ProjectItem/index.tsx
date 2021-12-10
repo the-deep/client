@@ -329,9 +329,12 @@ function ProjectItem(props: RecentProjectItemProps) {
                             <XAxis
                                 dataKey="date"
                                 type="number"
+                                scale="time"
                                 domain={['dataMin', 'dataMax']}
+                                allowDuplicatedCategory={false}
                                 tick={{ strokeWidth: 1 }}
                                 tickFormatter={minTickFormatter}
+                                interval="preserveStartEnd"
                                 padding={{ left: 10, right: 10 }}
                             />
                             <YAxis hide />
