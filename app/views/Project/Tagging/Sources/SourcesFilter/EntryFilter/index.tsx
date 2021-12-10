@@ -68,9 +68,12 @@ function EntryFilter<K extends string>(props: Props<K>) {
     const setFieldValue = useFormObject(name, onChange, defaultValue);
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+
+    type FilterableData = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
+
     const {
         setValue: onFrameworkFilterChange,
-    } = useFormArray('filterableData', setFieldValue);
+    } = useFormArray<'filterableData', FilterableData>('filterableData', setFieldValue);
 
     const filterValuesMap = useMemo(() => (
         listToMap(
@@ -93,7 +96,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 )}
                 name="createdBy"
                 projectId={projectId}
-                value={value?.createdBy} // FIXME: fix type issue from server
+                value={value?.createdBy}
                 onChange={setFieldValue}
                 options={members}
                 onOptionsChange={setMembers}
@@ -130,8 +133,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Entry controlled status"
                 disabled={disabled}
             />
-            <MultiSelectInput<string, 'entryTypes', { name: string, description?: string | null }, { containerClassName?: string, title?: string; }>
-                // FIXME: ts couldn't properly infer type for this MultiSelectInput
+            <MultiSelectInput
                 className={_cs(
                     styles.input,
                     (hasNoData(value?.entryTypes) && !allFiltersVisible)
@@ -139,7 +141,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 )}
                 name="entryTypes"
                 value={value?.entryTypes}
-                onChange={setFieldValue} // FIXME: fix type issue
+                onChange={setFieldValue}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
                 options={options?.entryTypeOptions?.enumValues}

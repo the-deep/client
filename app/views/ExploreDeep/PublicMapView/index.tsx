@@ -217,13 +217,13 @@ function ExploreDeepMapView(props: Props) {
         if (feature.properties) {
             // eslint-disable-next-line camelcase
             const { cluster_id, point_count } = feature.properties as ClusterProperties;
-            const clusterSource = map.getSource('region');
+            const clusterSource = map.getSource('region') as mapboxgl.GeoJSONSource;
             if (clusterSource) {
                 clusterSource.getClusterLeaves(
                     cluster_id,
                     point_count,
                     0,
-                    (___: unknown, aFeatures: mapboxgl.MapboxGeoJSONFeature[]) => {
+                    (___, aFeatures) => {
                         if (aFeatures) {
                             const projectIds = aFeatures
                                 .map((f) => f?.properties?.projectId)
