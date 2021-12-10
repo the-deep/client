@@ -69,7 +69,22 @@ function ProjectJoinRequestItem(props: Props) {
                         },
                     );
                     onNotificationUpdate();
+                } else {
+                    alert.show(
+                        'Failed to update notification status.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to update notification status.',
+                    {
+                        variant: 'error',
+                    },
+                );
             },
         },
     );

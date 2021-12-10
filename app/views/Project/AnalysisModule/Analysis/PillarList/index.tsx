@@ -5,6 +5,7 @@ import {
     Container,
     ListView,
     Kraken,
+    useAlert,
 } from '@the-deep/deep-ui';
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -44,6 +45,8 @@ function AnalysisDetails(props: Props) {
 
     const [activePage, setActivePage] = useState(1);
 
+    const alert = useAlert();
+
     const queryOptions = useMemo(() => ({
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
         limit: MAX_ITEMS_PER_PAGE,
@@ -80,7 +83,12 @@ function AnalysisDetails(props: Props) {
             onSuccess: () => {
                 onAnalysisPillarDelete();
                 pillarGetTrigger();
+                alert.show(
+                    'Successfully deleted pillar analysis.',
+                    { variant: 'success' },
+                );
             },
+            failureMessage: 'Failed to delete the pillar analysis.',
         },
     );
 

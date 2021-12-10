@@ -94,7 +94,23 @@ function NotificationContainer(props: Props) {
                             variant: 'success',
                         },
                     );
+                } else {
+                    alert.show(
+                        'Failed to update notification status.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
+            },
+
+            onError: () => {
+                alert.show(
+                    'Failed to update notification status.',
+                    {
+                        variant: 'error',
+                    },
+                );
             },
         },
     );

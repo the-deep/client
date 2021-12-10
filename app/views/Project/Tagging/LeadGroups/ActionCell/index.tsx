@@ -59,16 +59,23 @@ function ActionCell(props: Props) {
                 if (result?.project?.leadGroupDelete?.ok) {
                     onDeleteSuccess();
                     alert.show(
-                        'Successfully deleted leadGroup.',
+                        'Successfully deleted source group.',
                         {
                             variant: 'success',
                         },
                     );
+                } else {
+                    alert.show(
+                        'Failed to delete source group.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete sourece group.',
                     { variant: 'error' },
                 );
             },

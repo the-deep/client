@@ -136,7 +136,6 @@ function RegionCard(props: Props) {
                 }
             }
         },
-        failureHeader: 'Failed to fetch admin levels',
     });
 
     const {
@@ -249,7 +248,7 @@ function RegionCard(props: Props) {
         onSuccess: () => {
             onRegionPublishSuccess();
         },
-        failureHeader: 'Failed to publish selected region.',
+        failureMessage: 'Failed to publish selected region.',
     });
 
     const handlePublishRegionClick = useCallback(() => {

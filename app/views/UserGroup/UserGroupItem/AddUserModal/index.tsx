@@ -115,7 +115,7 @@ function AddUserModal(props: Props) {
             onUserAddSuccess();
             onModalClose();
         },
-        failureHeader: _ts('usergroup.memberEditModal', 'memberAddFailed'),
+        failureMessage: _ts('usergroup.memberEditModal', 'memberAddFailed'),
     });
 
     const handleSubmit = useCallback(() => {

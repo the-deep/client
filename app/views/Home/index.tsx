@@ -176,7 +176,6 @@ function Home(props: ViewProps) {
     } = useRequest<ProjectsSummary>({
         url: 'server://projects-stat/summary/',
         method: 'GET',
-        failureHeader: _ts('home', 'summaryOfMyProjectsHeading'),
     });
 
     const recentProjectsRendererParams = useCallback(

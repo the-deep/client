@@ -263,7 +263,6 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         url: `server://projects/${projectId}/members/`,
         query: usersQueryFields,
         method: 'GET',
-        failureHeader: _ts('analysis.editModal', 'usersTitle'),
     });
 
     const {
@@ -281,15 +280,17 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             }
             alert.show(
                 isDefined(analysisToEdit)
-                    ? _ts('analysis.editModal', 'analysisEdit')
-                    : _ts('analysis.editModal', 'analysisCreate'),
+                    ? 'Successfully updated analysis'
+                    : 'Successfully created analysis',
                 {
                     variant: 'success',
                 },
             );
             onModalClose();
         },
-        failureHeader: _ts('analysis.editModal', 'anaylsisEditModal'),
+        failureMessage: isDefined(analysisToEdit)
+            ? 'Failed to edit analysis.'
+            : 'Failed to create new analysis',
     });
 
     const pending = pendingFramework || pendingUsersList || pendingAnalysisEdit;

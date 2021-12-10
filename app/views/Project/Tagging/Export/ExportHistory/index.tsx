@@ -244,11 +244,18 @@ function ExportHistory(props: Props) {
                         { variant: 'success' },
                     );
                     getProjectExports();
+                } else {
+                    alert.show(
+                        'Failed to delete export.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete export.',
                     {
                         variant: 'error',
                     },

@@ -97,18 +97,30 @@ function EntryCard(props: Props) {
     ] = useMutation(
         DELETE_ENTRY,
         {
-            onCompleted: () => {
-                alert.show(
-                    'Successfully deleted entry.',
-                    {
-                        variant: 'success',
-                    },
-                );
-                onEntryDataChange();
+            onCompleted: (response) => {
+                const {
+                    ok,
+                } = response.project.entryDelete;
+                if (ok) {
+                    alert.show(
+                        'Successfully deleted entry.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                    onEntryDataChange();
+                } else {
+                    alert.show(
+                        'Failed to delete entry.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to delete entry.',
                     { variant: 'error' },
                 );
             },

@@ -4,7 +4,6 @@ import { MultiResponse, BasicUser } from '#types';
 
 import { useRequest } from '#base/utils/restRequest';
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import _ts from '#ts';
 
 type Def = { containerClassName?: string };
 type UserSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -46,7 +45,6 @@ function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
             method: 'GET',
             skip: !opened,
             query: searchQueryParams,
-            failureHeader: _ts('components.userSelectInput', 'title'),
         },
     );
 

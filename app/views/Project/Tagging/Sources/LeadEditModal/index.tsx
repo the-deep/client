@@ -376,7 +376,7 @@ function LeadEditModal(props: Props) {
                     [internal]: errors.message,
                 });
                 alert.show(
-                    'There was an issue updated the selected lead!',
+                    'There was an issue updating the selected lead!',
                     { variant: 'error' },
                 );
             },

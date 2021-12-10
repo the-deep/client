@@ -93,9 +93,9 @@ function VisualizationShareModal(props: ShareModalProps) {
                     );
                 }
             },
-            onError: (gqlError) => {
+            onError: () => {
                 alert.show(
-                    gqlError.message,
+                    'Failed to change url status.',
                     { variant: 'error' },
                 );
             },

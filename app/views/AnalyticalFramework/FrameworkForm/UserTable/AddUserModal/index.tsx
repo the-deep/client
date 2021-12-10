@@ -118,7 +118,6 @@ function AddUserModal(props: Props) {
             : 'server://public-framework-roles/',
         method: 'GET',
         query: queryForRoles,
-        failureHeader: _ts('analyticalFramework.addUser', 'roleFetchFailed'),
     });
 
     const {
@@ -133,25 +132,18 @@ function AddUserModal(props: Props) {
             : 'POST',
         body: (ctx) => ctx,
         onSuccess: () => {
-            if (userValue?.id) {
-                alert.show(
-                    'Successfully updated user permissions.',
-                    {
-                        variant: 'success',
-                    },
-                );
-            } else {
-                alert.show(
-                    'Successfully added user to the analytical framework.',
-                    {
-                        variant: 'success',
-                    },
-                );
-            }
+            alert.show(
+                userValue?.id
+                    ? 'Successfully updated user permissions.'
+                    : 'Successfully added user to the analytical framework.',
+                {
+                    variant: 'success',
+                },
+            );
             onTableReload();
             onModalClose();
         },
-        failureHeader: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
+        failureMessage: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
     });
 
     const handleSubmit = useCallback(

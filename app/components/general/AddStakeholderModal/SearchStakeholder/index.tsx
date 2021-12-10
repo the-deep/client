@@ -45,7 +45,6 @@ function SearchStakeholder(props: Props) {
             method: 'GET',
             skip: !searchText,
             query: searchQueryParams,
-            failureHeader: _ts('project.detail.stakeholders', 'stakeholdersModalTitle'),
         },
     );
 

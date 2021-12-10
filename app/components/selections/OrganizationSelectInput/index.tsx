@@ -4,7 +4,6 @@ import { BasicOrganization, MultiResponse } from '#types';
 
 import { useRequest } from '#base/utils/restRequest';
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import _ts from '#ts';
 
 type Def = { containerClassName?: string };
 type OrganizationSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -40,7 +39,6 @@ function OrganizationSelectInput<K extends string>(props: OrganizationSelectInpu
             method: 'GET',
             skip: !opened,
             query: searchQueryParams,
-            failureHeader: _ts('components.organizationSelectInput', 'title'),
         },
     );
 

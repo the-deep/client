@@ -47,7 +47,7 @@ function ExportPreview(props: OwnProps) {
             const isPending = response?.pending;
             return isPending ? 2000 : -1;
         },
-        failureHeader: 'Export Preview',
+        failureMessage: 'Failed to preview export.',
     });
 
     const handlePreviewClick = useCallback(() => {

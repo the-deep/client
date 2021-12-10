@@ -58,7 +58,7 @@ function SourceEntryItem(props: Props) {
         url: `server://analysis-pillar/${pillarId}/discarded-entries/`,
         method: 'POST',
         body: (ctx) => ctx,
-        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
+        failureMessage: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
         onSuccess: () => {
             if (onEntryDiscard) {
                 onEntryDiscard();

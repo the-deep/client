@@ -9,6 +9,7 @@ import {
     Checkbox,
     Button,
     List,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -103,6 +104,8 @@ function MyProfile(props: Props) {
         setUser,
     } = useContext(UserContext);
 
+    const alert = useAlert();
+
     const {
         pristine,
         value,
@@ -129,7 +132,6 @@ function MyProfile(props: Props) {
                 displayPictureUrl: response.displayPictureUrl,
             });
         },
-        failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
     const {
         pending: languagesPending,
@@ -137,7 +139,6 @@ function MyProfile(props: Props) {
     } = useRequest<MultiResponse<LanguagePreference>>({
         url: 'server://languages/',
         method: 'GET',
-        failureHeader: _ts('myProfile', 'myProfileTitle'),
     });
 
     const {
@@ -155,8 +156,12 @@ function MyProfile(props: Props) {
                 displayName: response.displayName,
                 displayPictureUrl: response.displayPictureUrl,
             });
+            alert.show(
+                'Successfully updated changes.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: _ts('myProfile', 'myProfileTitle'),
+        failureMessage: 'Failed to update changes.',
     });
 
     const handleCheck = useCallback((checked: boolean, name: EmailOptOut) => {

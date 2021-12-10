@@ -55,7 +55,7 @@ function EntryControl(props: Props) {
         onSuccess: (response) => {
             onChange(response.entry);
         },
-        failureHeader: 'Entry Control',
+        failureMessage: 'Entry Control',
     });
 
     const handleClick = React.useCallback(() => {

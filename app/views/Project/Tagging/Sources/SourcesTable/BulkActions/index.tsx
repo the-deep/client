@@ -60,7 +60,7 @@ function BulkActions(props: Props) {
             );
             onRemoveSuccess();
         },
-        failureHeader: 'Sources',
+        failureMessage: 'Failed to delete leads.',
     });
 
     const entriesCount = useMemo(() => (

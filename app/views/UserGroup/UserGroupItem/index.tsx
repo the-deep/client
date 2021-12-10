@@ -83,7 +83,6 @@ function UserGroupItem(props: Props) {
         skip: activeUserGroupId !== userGroupId,
         query,
         method: 'GET',
-        failureHeader: 'User group memberships',
         preserveResponse: true,
     });
 
@@ -96,7 +95,7 @@ function UserGroupItem(props: Props) {
             usersGetTrigger();
             onUserDeleteSuccess();
         },
-        failureHeader: _ts('usergroup', 'memberDeleteFailed'),
+        failureMessage: _ts('usergroup', 'memberDeleteFailed'),
     });
 
     const [

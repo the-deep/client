@@ -6,7 +6,8 @@ import {
     LazyRequestOptions,
     ContextInterface,
 } from '@togglecorp/toggle-request';
-import { mapToMap, isDefined } from '@togglecorp/fujs';
+import { AlertOptions } from '@the-deep/deep-ui';
+import { mapToMap, isDefined, randomString } from '@togglecorp/fujs';
 import {
     serverlessEndpoint,
     wsEndpoint,
@@ -93,10 +94,10 @@ function alterResponse(errors: ErrorFromServer['errors']): Error['value']['faram
 
 export interface OptionBase {
     formData?: boolean;
-    failureHeader?: React.ReactNode;
+    failureMessage?: React.ReactNode;
 }
 
-type DeepContextInterface = ContextInterface<
+export type DeepContextInterface = ContextInterface<
     // eslint-disable-next-line @typescript-eslint/ban-types
     object,
     ErrorFromServer | undefined,
@@ -211,7 +212,9 @@ export const processDeepResponse: DeepContextInterface['transformResponse'] = as
     return undefined;
 };
 
-export const processDeepError: DeepContextInterface['transformError'] = (
+export const processDeepError = (
+    addAlert: (alert: AlertOptions) => void,
+): DeepContextInterface['transformError'] => (
     res,
     _,
     __,
@@ -278,13 +281,19 @@ export const processDeepError: DeepContextInterface['transformError'] = (
         };
     }
 
-    const { failureHeader } = ctx;
+    const { failureMessage } = ctx;
 
-    if (failureHeader) {
-        // FIXME: use notify
+    if (failureMessage) {
+        // NOTE: failureMessage is not used
+        addAlert({
+            children: error.value.messageForNotification,
+            variant: 'error',
+            duration: 3000,
+            name: randomString(),
+        });
         // eslint-disable-next-line no-console
         console.error(
-            failureHeader,
+            failureMessage,
             error.value.messageForNotification,
         );
     }

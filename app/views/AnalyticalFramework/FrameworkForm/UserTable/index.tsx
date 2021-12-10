@@ -98,7 +98,6 @@ function UserTable(props: Props) {
         query: frameworkUsersQuery,
         method: 'GET',
         preserveResponse: true,
-        failureHeader: _ts('analyticalFramework', 'title'),
     });
 
     const [
@@ -122,7 +121,7 @@ function UserTable(props: Props) {
             );
             triggerMembersList();
         },
-        failureHeader: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
+        failureMessage: 'Failed to remove user from the analytical framework.',
     });
 
     const [userToEdit, setUserToEdit] = useState<UserToEdit | undefined>(undefined);

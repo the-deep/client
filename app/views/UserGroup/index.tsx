@@ -6,6 +6,7 @@ import {
     Pager,
     ListView,
     Kraken,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -40,6 +41,7 @@ function UserGroup(props: Props) {
     const {
         user,
     } = useContext(UserContext);
+    const alert = useAlert();
 
     const userId = user ? user?.id : undefined;
 
@@ -75,7 +77,6 @@ function UserGroup(props: Props) {
         url: 'server://user-groups/member-of/',
         method: 'GET',
         query: usergroupQuery,
-        failureHeader: _ts('usergroup', 'fetchUserGroupFailed'),
         preserveResponse: true,
     });
 
@@ -86,8 +87,12 @@ function UserGroup(props: Props) {
         method: 'DELETE',
         onSuccess: () => {
             usergroupGetRetrigger();
+            alert.show(
+                'Usergroup deleted successfully.',
+                { variant: 'success' },
+            );
         },
-        failureHeader: _ts('usergroup', 'usergroupDeleteFailed'),
+        failureMessage: 'Failed to delete usergroup.',
     });
 
     const usergroupObjectToEdit = useMemo(() => (
