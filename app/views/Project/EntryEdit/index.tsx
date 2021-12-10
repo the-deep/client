@@ -15,6 +15,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
+    ConfirmButton,
     Button,
     Tabs,
     Tab,
@@ -1111,14 +1112,16 @@ function EntryEdit(props: Props) {
                             >
                                 Save
                             </Button>
-                            <Button
+                            <ConfirmButton
                                 name={undefined}
                                 disabled={disableFinalizeButton}
                                 variant="primary"
-                                onClick={handleFinalizeClick}
+                                onConfirm={handleFinalizeClick}
+                                message="Finalizing the source will mark it as tagged.
+                                Are you sure you want to finalize the source and all its entries?"
                             >
                                 Finalize
-                            </Button>
+                            </ConfirmButton>
                         </>
                     )}
                 >

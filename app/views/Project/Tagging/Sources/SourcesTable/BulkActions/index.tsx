@@ -11,12 +11,9 @@ import {
 import {
     Button,
     ConfirmButton,
-    PendingMessage,
-    useAlert,
     useModalState,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#base/utils/restRequest';
 import LeadCopyModal from '../LeadCopyModal';
 import { Lead } from '../types';
 import _ts from '#ts';
@@ -27,7 +24,7 @@ interface Props {
     selectedLeads: Lead[];
     onClearSelection: () => void;
     activeProject: string;
-    onRemoveSuccess: () => void;
+    onRemoveClick: (leadsToDelete: string[]) => void;
 }
 
 function BulkActions(props: Props) {
@@ -35,33 +32,14 @@ function BulkActions(props: Props) {
         selectedLeads,
         onClearSelection,
         activeProject,
-        onRemoveSuccess,
+        onRemoveClick,
     } = props;
-
-    const alert = useAlert();
 
     const [
         leadCopyModalShown,
         showLeadCopyModal,
         hideLeadCopyModal,
     ] = useModalState(false);
-
-    const {
-        pending: bulkDeletePending,
-        trigger: bulkLeadDeleteTrigger,
-    } = useLazyRequest<unknown, string[]>({
-        url: `server://project/${activeProject}/leads/bulk-delete/`,
-        method: 'POST',
-        body: (ctx) => ({ leads: ctx }),
-        onSuccess: () => {
-            alert.show(
-                'Sources deleted successfully!',
-                { variant: 'success' },
-            );
-            onRemoveSuccess();
-        },
-        failureMessage: 'Failed to delete leads.',
-    });
 
     const entriesCount = useMemo(() => (
         sum(selectedLeads.map((lead) => lead.entriesCounts?.total).filter(isDefined))
@@ -76,8 +54,10 @@ function BulkActions(props: Props) {
     const assessmentsCount = 'Some';
 
     const onRemoveBulkLead = useCallback(() => {
-        bulkLeadDeleteTrigger(selectedLeads.map((lead) => lead.id));
-    }, [bulkLeadDeleteTrigger, selectedLeads]);
+        if (onRemoveClick) {
+            onRemoveClick(selectedLeads.map((lead) => lead.id));
+        }
+    }, [onRemoveClick, selectedLeads]);
 
     const selectedLeadsIds = useMemo(() => (
         selectedLeads.map((lead) => lead.id)
@@ -85,7 +65,6 @@ function BulkActions(props: Props) {
 
     return (
         <div className={styles.bulkActionsBar}>
-            {bulkDeletePending && <PendingMessage />}
             <div className={styles.text}>
                 {_ts('leads', 'selectedLeadsCount', { count: selectedLeads.length })}
             </div>
