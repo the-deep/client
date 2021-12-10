@@ -243,7 +243,8 @@ function RegionCard(props: Props) {
         pending: pendingPublishRegion,
         trigger: publishRegion,
     } = useLazyRequest<unknown>({
-        url: `server://region/${region.id}/publish/`,
+        url: `server://regions/${region.id}/publish/`,
+        body: {},
         method: 'POST',
         onSuccess: () => {
             onRegionPublishSuccess();
