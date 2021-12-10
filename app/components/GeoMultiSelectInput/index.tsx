@@ -32,7 +32,7 @@ const GEOAREAS = gql`
 export type GeoArea = NonNullable<NonNullable<NonNullable<NonNullable<GeoAreaOptionsQuery['project']>>['geoAreas']>['results']>[number];
 
 const keySelector = (d: GeoArea) => d.id;
-const labelSelector = (d: GeoArea) => breadcrumb([d.regionTitle, d.adminLevelTitle, d.title]);
+const labelSelector = (d: GeoArea) => breadcrumb([d.adminLevelTitle, d.title]);
 type Def = { containerClassName?: string };
 type GeoSelectInputProps<K extends string> = SearchMultiSelectInputProps<
     string,
