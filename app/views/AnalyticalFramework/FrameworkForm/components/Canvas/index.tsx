@@ -65,7 +65,7 @@ function AttributeInputWrapper(props: WidgetProps) {
     } = props;
 
     return (
-        <AttributeInput<string>
+        <AttributeInput
             key={clientId}
             name={clientId}
             value={undefined}
@@ -181,6 +181,7 @@ function Canvas<T>(props: Props<T>) {
         disabled,
         isSecondary = false,
         error: riskyError,
+        editMode,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -196,50 +197,45 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetDeleteClick = useCallback(
         (widgetId: string) => {
-            if (!props.editMode && props.onWidgetDelete) {
+            if (!editMode && props.onWidgetDelete) {
                 props.onWidgetDelete(widgetId, name);
             }
         },
-        // eslint-disable-next-line react/destructuring-assignment
-        [props.editMode, props.onWidgetDelete, name],
+        [editMode, props.onWidgetDelete, name],
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
-            if (!props.editMode && props.onWidgetEdit) {
+            if (!editMode && props.onWidgetEdit) {
                 props.onWidgetEdit(widgetId, name);
             }
         },
-        // eslint-disable-next-line react/destructuring-assignment
-        [props.editMode, props.onWidgetEdit, name],
+        [editMode, props.onWidgetEdit, name],
     );
     const handleWidgetConditionEditClick = useCallback(
         (widgetId: string) => {
-            if (!props.editMode && props.onWidgetConditionEdit) {
+            if (!editMode && props.onWidgetConditionEdit) {
                 props.onWidgetConditionEdit(widgetId, name);
             }
         },
-        // eslint-disable-next-line react/destructuring-assignment
-        [props.editMode, props.onWidgetConditionEdit, name],
+        [editMode, props.onWidgetConditionEdit, name],
     );
 
     const handleWidgetOrderChange = useCallback(
         (value: Widget[]) => {
-            if (!props.editMode && props.onWidgetOrderChange) {
+            if (!editMode && props.onWidgetOrderChange) {
                 props.onWidgetOrderChange(value);
             }
         },
-        // eslint-disable-next-line react/destructuring-assignment
-        [props.editMode, props.onWidgetOrderChange],
+        [editMode, props.onWidgetOrderChange],
     );
 
     const handleWidgetCloneClick = useCallback(
         (widgetId: string) => {
-            if (!props.editMode && props.onWidgetClone) {
+            if (!editMode && props.onWidgetClone) {
                 props.onWidgetClone(widgetId, name);
             }
         },
-        // eslint-disable-next-line react/destructuring-assignment
-        [props.editMode, props.onWidgetClone, name],
+        [editMode, props.onWidgetClone, name],
     );
 
     const widgetRendererParams = useCallback((key: string, data: Widget | PartialWidget) => ({
@@ -247,15 +243,15 @@ function Canvas<T>(props: Props<T>) {
         isSecondary,
         widget: data,
         onWidgetValueChange: handleWidgetValueChange,
-        showWidgetEdit: !props.editMode,
-        showWidgetConditionEdit: !props.editMode,
+        showWidgetEdit: !editMode,
+        showWidgetConditionEdit: !editMode,
         onWidgetEditClick: handleWidgetEditClick,
         onWidgetConditionEditClick: handleWidgetConditionEditClick,
-        showWidgetDelete: !props.editMode,
+        showWidgetDelete: !editMode,
         onWidgetDeleteClick: handleWidgetDeleteClick,
-        showWidgetClone: !props.editMode,
+        showWidgetClone: !editMode,
         onWidgetCloneClick: handleWidgetCloneClick,
-        editMode: props.editMode,
+        editMode,
         disabled,
     }), [
         isSecondary,
@@ -264,8 +260,7 @@ function Canvas<T>(props: Props<T>) {
         handleWidgetConditionEditClick,
         handleWidgetDeleteClick,
         handleWidgetCloneClick,
-        // eslint-disable-next-line react/destructuring-assignment
-        props.editMode,
+        editMode,
         disabled,
     ]);
 
@@ -280,8 +275,7 @@ function Canvas<T>(props: Props<T>) {
         error,
     ]);
 
-    // eslint-disable-next-line react/destructuring-assignment
-    if (props.editMode) {
+    if (editMode) {
         return (
             <>
                 <NonFieldError
@@ -310,7 +304,6 @@ function Canvas<T>(props: Props<T>) {
                 className={styles.canvas}
                 name="widgets"
                 onChange={handleWidgetOrderChange}
-                // eslint-disable-next-line react/destructuring-assignment
                 data={props.widgets}
                 keySelector={widgetKeySelector}
                 renderer={AttributeInputWrapper}

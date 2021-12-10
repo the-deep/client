@@ -82,7 +82,8 @@ function useAuthSync() {
 
     const handleConfirmModalConfirm = useCallback(
         () => {
-            window.location.reload(true);
+            // NOTE: Pass true to force-reload window on firefox
+            window.location.reload();
         },
         [],
     );

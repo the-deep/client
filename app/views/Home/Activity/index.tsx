@@ -1,9 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-    _cs,
-    compareDate,
-    listToGroupList,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     AreaChart,
     XAxis,
@@ -25,16 +21,30 @@ import { ProjectRecentActivity } from '#types';
 
 import styles from './styles.css';
 
+function mergeItems<T>(
+    list: T[],
+    keySelector: (a: T) => string | number,
+    merge: (a: T, b: T) => T,
+) {
+    const items: { [key: string]: T } = {
+    };
+    list.forEach((item) => {
+        const key = keySelector(item);
+        const oldItem = items[key];
+        if (oldItem) {
+            items[key] = merge(oldItem, item);
+        } else {
+            items[key] = item;
+        }
+    });
+    return Object.values(items);
+}
+
 const colorScheme = [
     '#a6aff4',
     '#796ec6',
     '#fb8a91',
 ];
-
-interface Props {
-    className?: string;
-    data?: ProjectRecentActivity;
-}
 
 const minTickFormatter = (value: number | string) => {
     const date = new Date(value);
@@ -53,32 +63,45 @@ const dateFormatter = (value: number | string) => {
     return date.toDateString();
 };
 
+interface Props {
+    className?: string;
+    data?: ProjectRecentActivity;
+}
+
 function Activity(props: Props) {
     const {
         className,
         data,
     } = props;
 
-    const projectList = useMemo(() => {
-        const sortedActivities = data?.activities.map((a) => ({
-            date: new Date(a.date).getTime(),
-            value: a.count,
-            project: a.project,
-        })).sort((a, b) => compareDate(a.date, b.date)) ?? [];
+    const areaData = useMemo(
+        () => {
+            const activitiesByDate: {
+                date: number;
+                [key: number]: number;
+            }[] = data?.activities.map((item) => ({
+                [+item.project]: item.count,
+                date: new Date(item.date).getTime(),
+            })) ?? [];
 
-        const groupedList = listToGroupList(sortedActivities, (d) => d.project, (d) => d);
-        return data?.projects.map((d) => ({
-            id: d.id,
-            title: d.title,
-            data: groupedList[d.id],
-        })) ?? [];
-    }, [data]);
+            // NOTE: using projectId as key to read multiple projects' count
+            return mergeItems(
+                activitiesByDate,
+                (item) => item.date,
+                (foo, bar) => ({
+                    ...foo,
+                    ...bar,
+                }),
+            );
+        },
+        [data?.activities],
+    );
 
     return (
         <Card className={_cs(className, styles.activity)}>
             <ResponsiveContainer className={styles.container}>
-                {((data?.activities?.length ?? 0) > 0) ? (
-                    <AreaChart>
+                {(areaData.length > 0) ? (
+                    <AreaChart data={areaData}>
                         <defs>
                             {colorScheme.map((color) => (
                                 <linearGradient
@@ -104,10 +127,7 @@ function Activity(props: Props) {
                             interval="preserveStartEnd"
                             padding={{ left: 10, right: 10 }}
                         />
-                        <YAxis
-                            dataKey="value"
-                            hide
-                        />
+                        <YAxis hide />
                         <Tooltip
                             labelFormatter={dateFormatter}
                             isAnimationActive={false}
@@ -117,16 +137,15 @@ function Activity(props: Props) {
                             align="left"
                             content={RechartsLegend}
                         />
-                        {projectList.map((p, index) => {
+                        {data?.projects.map((p, index) => {
                             const color = colorScheme[index % colorScheme.length];
                             const fillColorScheme = `${color.substring(1)}-gradient`;
 
                             return (
                                 <Area
-                                    key={p.id}
-                                    data={p.data}
+                                    key={String(p.id)}
                                     name={p.title}
-                                    dataKey="value"
+                                    dataKey={String(p.id)}
                                     stroke={color}
                                     fillOpacity={1}
                                     fill={`url(#${fillColorScheme})`}
