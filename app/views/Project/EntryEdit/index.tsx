@@ -308,12 +308,12 @@ function EntryEdit(props: Props) {
 
                 if (!ok) {
                     alert.show(
-                        'Failed to change lead status!',
+                        'Failed to change source status!',
                         { variant: 'error' },
                     );
                 } else {
                     alert.show(
-                        'Successfully marked lead as tagged!',
+                        'Successfully marked source as tagged!',
                         { variant: 'success' },
                     );
                 }
@@ -329,7 +329,7 @@ function EntryEdit(props: Props) {
             },
             onError: () => {
                 alert.show(
-                    'Failed to change lead status!',
+                    'Failed to change source status!',
                     { variant: 'error' },
                 );
             },
@@ -514,7 +514,7 @@ function EntryEdit(props: Props) {
                     } else {
                         handleLeadSave(false);
                         alert.show(
-                            'Lead cannot be finalized due to some errors in entries.',
+                            'Source cannot be finalized due to some errors in entries.',
                             { variant: 'error' },
                         );
                     }
@@ -618,6 +618,7 @@ function EntryEdit(props: Props) {
                             },
                         });
                     } else {
+                        handleLeadSave(shouldSetFinalize);
                         alert.show(
                             'Entries updated successfully!',
                             { variant: 'success' },
@@ -628,6 +629,7 @@ function EntryEdit(props: Props) {
             submit();
         },
         [
+            handleLeadSave,
             setFormError,
             formValidate,
             bulkUpdateEntries,
@@ -639,8 +641,14 @@ function EntryEdit(props: Props) {
     );
 
     const handleSaveClick = useCallback(
-        () => handleSubmit(false),
-        [handleSubmit],
+        () => {
+            if (!entriesFormStale) {
+                handleLeadSave(false);
+            } else {
+                handleSubmit(false);
+            }
+        },
+        [handleSubmit, handleLeadSave, entriesFormStale],
     );
 
     const handleFinalizeClick = useCallback(

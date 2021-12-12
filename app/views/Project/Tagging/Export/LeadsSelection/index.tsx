@@ -1,5 +1,9 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import {
+    _cs,
+    isNotDefined,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     DateOutput,
     Pager,
@@ -285,7 +289,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, string>(
                 'source',
                 'Publisher',
-                (item) => item.source && organizationTitleSelector(item.source),
+                (item) => (item.source ? organizationTitleSelector(item.source) : undefined),
                 {
                     sortable: true,
                     columnWidth: 160,
@@ -294,7 +298,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, string>(
                 'authors',
                 'Authors',
-                (item) => item?.authors?.map((v) => organizationTitleSelector(v)).join(','),
+                (item) => item?.authors?.map((v) => organizationTitleSelector(v)).filter(isDefined).join(','),
                 {
                     sortable: false,
                     columnWidth: 144,
