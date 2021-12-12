@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
     compareDate,
@@ -7,6 +7,7 @@ import { IoTrashBinOutline } from 'react-icons/io5';
 import {
     Tag,
     DraggableContent,
+    useConfirmation,
     QuickActionDropdownMenu,
     DropdownMenuItem,
 } from '@the-deep/deep-ui';
@@ -16,8 +17,10 @@ import ExcerptInput from '#components/entry/ExcerptInput';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { genericMemo } from '#utils/common';
 import _ts from '#ts';
+
 import { EntryMin } from '../context';
 import { DiscardedTags } from '../index';
+
 import styles from './styles.css';
 
 export interface Props {
@@ -51,6 +54,7 @@ function SourceEntryItem(props: Props) {
     } = props;
 
     const value = useMemo(() => ({ entryId }), [entryId]);
+    const [selectedDiscardType, setSelectedDiscardType] = useState<number | undefined>();
 
     const {
         trigger,
@@ -66,12 +70,29 @@ function SourceEntryItem(props: Props) {
         },
     });
 
-    const handleDiscardClick = useCallback((tagKey: number) => {
-        trigger({
-            entry: +entryId,
-            tag: tagKey,
-        });
-    }, [trigger, entryId]);
+    const handleDiscardConfirm = useCallback(() => {
+        if (selectedDiscardType) {
+            trigger({
+                entry: +entryId,
+                tag: selectedDiscardType,
+            });
+            setSelectedDiscardType(undefined);
+        }
+    }, [trigger, selectedDiscardType, entryId]);
+
+    const [
+        modal,
+        onDiscardButtonClick,
+    ] = useConfirmation<undefined>({
+        showConfirmationInitially: false,
+        onConfirm: handleDiscardConfirm,
+        message: 'Are you sure you want to discard this entry?',
+    });
+
+    const handleDiscardButtonClick = useCallback((tagKey: number) => {
+        setSelectedDiscardType(tagKey);
+        onDiscardButtonClick();
+    }, [onDiscardButtonClick]);
 
     const isNewEntry = compareDate(createdAt, pillarModifiedDate) > 0;
 
@@ -99,12 +120,13 @@ function SourceEntryItem(props: Props) {
             footerActions={(
                 <QuickActionDropdownMenu
                     label={(<IoTrashBinOutline />)}
+                    title="Discard entry"
                 >
                     {discardedTags && discardedTags.map((tag) => (
                         <DropdownMenuItem
                             key={tag.key}
                             name={tag.key}
-                            onClick={handleDiscardClick}
+                            onClick={handleDiscardButtonClick}
                         >
                             {tag.value}
                         </DropdownMenuItem>
@@ -120,6 +142,7 @@ function SourceEntryItem(props: Props) {
                 leadImageUrl={undefined}
                 readOnly
             />
+            {modal}
         </DraggableContent>
     );
 }

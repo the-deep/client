@@ -107,6 +107,7 @@ function LeadPreview(props: Props) {
                                 <IoOpenOutline />
                             </QuickActionLink>
                             <QuickActionButton
+                                title={fullScreenMode ? 'Exit fullscreen' : 'Enter fullscreen'}
                                 className={styles.button}
                                 name={undefined}
                                 onClick={handleFullScreenToggleClick}

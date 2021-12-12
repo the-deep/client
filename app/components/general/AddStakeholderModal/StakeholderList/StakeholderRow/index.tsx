@@ -29,6 +29,7 @@ function StakeholderRow(props: Props) {
             <ElementFragments
                 actions={(
                     <QuickActionButton
+                        title="Remove"
                         name={undefined}
                         onClick={handleClick}
                     >

@@ -147,6 +147,7 @@ export const PROJECT_SOURCES = gql`
                     title
                     publishedOn
                     priority
+                    priorityDisplay
                     createdBy {
                         id
                         displayName
@@ -290,6 +291,9 @@ function SourcesTable(props: Props) {
 
     const [
         deleteLead,
+        {
+            loading: leadDeletePending,
+        },
     ] = useMutation<DeleteLeadMutation, DeleteLeadMutationVariables>(
         DELETE_LEAD,
         {
@@ -611,7 +615,7 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, string>(
                 'priority',
                 _ts('sourcesTable', 'priority'),
-                (item) => item.priority,
+                (item) => item.priorityDisplay,
                 {
                     sortable: true,
                     columnWidth: 96,
@@ -633,7 +637,7 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalFalse();
     }, [setShowSingleSourceModalFalse]);
 
-    const pending = projectSourcesPending || bulkDeletePending;
+    const pending = projectSourcesPending || bulkDeletePending || leadDeletePending;
 
     return (
         <>

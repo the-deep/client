@@ -80,6 +80,7 @@ function DiscardedEntry(props: Props) {
             footerActions={(
                 <QuickActionConfirmButton
                     name="undiscard"
+                    title="Undiscard entry"
                     disabled={pending}
                     onConfirm={handleUndiscardClick}
                     message={_ts('pillarAnalysis', 'confirmUndiscardEntryMessage')}

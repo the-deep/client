@@ -95,14 +95,10 @@ const PROJECT_LEADS = gql`
                 pageSize
                 results {
                     id
-                    confidentiality
                     clientId
-                    status
-                    statusDisplay
                     createdAt
                     title
                     publishedOn
-                    priority
                     createdBy {
                         id
                         displayName

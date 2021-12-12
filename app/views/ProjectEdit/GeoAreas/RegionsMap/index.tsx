@@ -78,7 +78,7 @@ function RegionsMap(props: Props) {
         body: (ctx) => ctx.body,
         onSuccess: (_, ctx) => {
             alert.show(
-                'Successfully added regions',
+                'Successfully added geo area to the project.',
                 { variant: 'success' },
             );
             onActiveRegionChange(ctx.newRegion.toString());
@@ -109,7 +109,7 @@ function RegionsMap(props: Props) {
     ] = useConfirmation<number>({
         showConfirmationInitially: false,
         onConfirm: handleAddRegionConfirm,
-        message: 'Are you sure you want to add this region?',
+        message: 'Are you sure you want to add this geo area to the project?',
     });
 
     const tabRendererParams = useCallback(

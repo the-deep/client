@@ -480,7 +480,7 @@ function EntryEdit(props: Props) {
                 const deleteSuccessCount = entryBulk?.deletedResult?.filter(isDefined).length ?? 0;
                 if (deleteSuccessCount > 0) {
                     alert.show(
-                        `${deleteSuccessCount} entries deleted successfully!`,
+                        `${deleteSuccessCount} entry(s) deleted successfully!`,
                         { variant: 'success' },
                     );
                 }
@@ -488,14 +488,14 @@ function EntryEdit(props: Props) {
                 const saveErrorsCount = entryBulk?.result?.filter(isNotDefined).length ?? 0;
                 if (saveErrorsCount > 0) {
                     alert.show(
-                        `Failed to save ${saveErrorsCount} entries!`,
+                        `Failed to save ${saveErrorsCount} entry(s)!`,
                         { variant: 'error' },
                     );
                 }
                 const saveSuccessCount = entryBulk?.result?.filter(isDefined).length ?? 0;
                 if (saveSuccessCount > 0) {
                     alert.show(
-                        `${saveSuccessCount} entries saved successfully!`,
+                        `${saveSuccessCount} entry(s) saved successfully!`,
                         { variant: 'success' },
                     );
                 }

@@ -144,6 +144,7 @@ function AddUserGroupModal(props: Props) {
                 onChange={setFieldValue}
                 label="Title"
                 placeholder={_ts('usergroup.editModal', 'usergroupTitlePlaceholder')}
+                autoFocus
             />
         </Modal>
     );

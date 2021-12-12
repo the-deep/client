@@ -1,6 +1,6 @@
 .pillar-analysis-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-shrink: 0;
     gap: var(--dui-spacing-medium);
 
@@ -11,6 +11,7 @@
     }
 
     .button {
+        align-self: center;
         flex-shrink: 0;
     }
 }

@@ -3,7 +3,6 @@ import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
     ElementFragments,
-    useAlert,
 } from '@the-deep/deep-ui';
 import { AiOutlineRedo } from 'react-icons/ai';
 import { IoDocumentOutline, IoLogoDropbox } from 'react-icons/io5';
@@ -76,7 +75,6 @@ function UploadItem(props: Props) {
     } = props;
 
     const params = getRequestParams(data);
-    const alert = useAlert();
 
     const {
         pending,
@@ -88,10 +86,6 @@ function UploadItem(props: Props) {
         body: params?.body,
         onSuccess: (response) => {
             onSuccess(data.key, { ...response, sourceType: data.fileType });
-            alert.show(
-                'Successfully uploaded file.',
-                { variant: 'success' },
-            );
         },
         onFailure: () => {
             if (onFailure) {

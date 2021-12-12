@@ -156,6 +156,7 @@ function CompactSection(props: Props) {
                 <QuickActionButton
                     name="addAttribute"
                     onClick={handleAddButtonClick}
+                    title="Add tags"
                 >
                     <IoAdd />
                 </QuickActionButton>

@@ -85,6 +85,7 @@ function EntryComments(props: Props) {
     return (
         <>
             <QuickActionButton
+                title="Entry comments"
                 className={_cs(styles.commentButton, className)}
                 onClick={showCommentModal}
                 name={entryId}

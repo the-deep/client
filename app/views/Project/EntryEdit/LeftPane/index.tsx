@@ -159,7 +159,10 @@ function LeftPane(props: Props) {
     const handleScreenshotCaptureError = useCallback((message: React.ReactNode) => {
         alert.show(
             message,
-            { variant: 'error' },
+            {
+                variant: 'error',
+                duration: 8000,
+            },
         );
 
         setShowScreenshotFalse();
@@ -356,6 +359,7 @@ function LeftPane(props: Props) {
                         <>
                             <QuickActionButton
                                 name={undefined}
+                                title="Close"
                                 onClick={setShowScreenshotFalse}
                             >
                                 <IoClose />
@@ -363,6 +367,7 @@ function LeftPane(props: Props) {
                             { capturedImageUrl && (
                                 <>
                                     <QuickActionButton
+                                        title="Draw over screenshot"
                                         name={undefined}
                                         onClick={handleCanvasDrawClick}
                                     >
@@ -370,6 +375,7 @@ function LeftPane(props: Props) {
                                     </QuickActionButton>
                                     <QuickActionButton
                                         name={undefined}
+                                        title="Finalize screenshot"
                                         onClick={handleCreateEntryButtonClick}
                                     >
                                         <IoCheckmark />
@@ -387,6 +393,7 @@ function LeftPane(props: Props) {
                         </QuickActionButton>
                     )}
                     <QuickActionButton
+                        title={fullScreenMode ? 'Exit fullscreen' : 'Enter fullscreen'}
                         name={undefined}
                         onClick={handleFullScreenToggleClick}
                     >

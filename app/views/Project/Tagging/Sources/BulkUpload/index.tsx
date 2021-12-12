@@ -164,7 +164,7 @@ function BulkUpload(props: Props) {
 
                     if (uploadedLeads.length > 0) {
                         alert.show(
-                            `${uploadedLeads.length} leads were successfully added!`,
+                            `${uploadedLeads.length} sources were successfully added!`,
                             { variant: 'success' },
                         );
                         setFormFieldValue((oldValues) => (
@@ -173,17 +173,20 @@ function BulkUpload(props: Props) {
                     }
 
                     const erroredLeadsCount = result?.length - uploadedLeads.length;
+
                     if (erroredLeadsCount > 0) {
                         alert.show(
-                            `Failed to add ${erroredLeadsCount} leads!`,
+                            `Failed to add ${erroredLeadsCount} sources!`,
                             { variant: 'error' },
                         );
+                    } else {
+                        onClose();
                     }
                 }
             },
             onError: (gqlError) => {
                 alert.show(
-                    'Failed to add leads!',
+                    'Failed to add sources!',
                     { variant: 'error' },
                 );
                 // eslint-disable-next-line no-console
