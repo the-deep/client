@@ -43,6 +43,7 @@ mutation NotificationStatusUpdate($notificationId: ID!, $newStatus: Notification
                 title
             }
             status
+            statusDisplay
             timestamp
         }
     }
@@ -88,8 +89,9 @@ function NotificationContainer(props: Props) {
         {
             onCompleted: (response) => {
                 if (response?.notificationStatusUpdate?.ok) {
+                    const newStatus = response.notificationStatusUpdate?.result?.statusDisplay;
                     alert.show(
-                        'Successfully updated notification seen status.',
+                        `Successfully updated notification status as ${newStatus?.toLowerCase() ?? 'required'}.`,
                         {
                             variant: 'success',
                         },
@@ -179,6 +181,7 @@ function NotificationContainer(props: Props) {
             <QuickActionButton
                 name={undefined}
                 className={styles.button}
+                title={status === 'SEEN' ? 'Mark as unseen' : 'Mark as seen'}
                 onClick={status === 'SEEN' ? handleUnseenClick : handleSeenClick}
             >
                 {status === 'SEEN' ? <IoArrowUndoSharp /> : <IoCheckmark />}

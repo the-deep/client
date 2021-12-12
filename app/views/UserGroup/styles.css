@@ -7,13 +7,23 @@
     overflow-y: auto;
 
     .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
         background-color: var(--dui-color-foreground);
         padding: var(--dui-spacing-large);
+        overflow-y: auto;
 
         .user-group-list {
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
             gap: var(--dui-spacing-small);
+            overflow-y: auto;
+
+            .user-group-item {
+                flex-shrink: 0;
+            }
         }
     }
 }

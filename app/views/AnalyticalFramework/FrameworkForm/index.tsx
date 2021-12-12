@@ -10,6 +10,7 @@ import {
     MultiSelectInput,
     TabPanel,
     Checkbox,
+    PendingMessage,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -469,6 +470,7 @@ function FrameworkForm(props: FrameworkFormProps) {
 
     return (
         <>
+            {pending && <PendingMessage />}
             <Prompt
                 message={(newLocation) => {
                     if (newLocation.pathname !== location.pathname && !pristine) {

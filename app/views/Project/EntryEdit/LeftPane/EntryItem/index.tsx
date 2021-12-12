@@ -200,6 +200,7 @@ function EntryItem(props: EntryItemProps) {
             footerQuickActions={isActive && (
                 <>
                     <QuickActionButton
+                        title="Discard changes"
                         name={entryId}
                         onClick={onDiscardButtonClick}
                         disabled={disableDiscardButton}
@@ -207,6 +208,7 @@ function EntryItem(props: EntryItemProps) {
                         <IoClose />
                     </QuickActionButton>
                     <QuickActionButton
+                        title="Approve changes"
                         name={entryId}
                         onClick={onApproveButtonClick}
                         variant="primary"
@@ -252,6 +254,7 @@ function EntryItem(props: EntryItemProps) {
                     </QuickActionDropdownMenu>
                     {deleted ? (
                         <QuickActionButton
+                            title="Restore entry"
                             name={entryId}
                             onClick={onEntryRestore}
                         >
@@ -259,6 +262,7 @@ function EntryItem(props: EntryItemProps) {
                         </QuickActionButton>
                     ) : (
                         <QuickActionButton
+                            title="Delete entry"
                             name={entryId}
                             onClick={onEntryDelete}
                         >

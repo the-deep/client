@@ -119,6 +119,7 @@ function PillarAnalysisRow(props: Props) {
                 className={styles.button}
                 name={index}
                 onClick={onRemove}
+                title="Remove"
                 disabled={pending}
             >
                 <IoClose />

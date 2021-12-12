@@ -24,6 +24,6 @@
         top: var(--dui-spacing-large);
         right: var(--dui-spacing-large);
         z-index: 1;
-        width: 20rem;
+        width: 24rem;
     }
 }

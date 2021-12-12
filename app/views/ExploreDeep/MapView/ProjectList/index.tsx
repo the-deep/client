@@ -187,6 +187,7 @@ function ProjectList(props: Props) {
                 <QuickActionButton
                     name={undefined}
                     onClick={onListCloseButtonClick}
+                    title="Close"
                 >
                     <IoClose />
                 </QuickActionButton>

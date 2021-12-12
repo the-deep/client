@@ -3,6 +3,7 @@ import { Prompt, useParams } from 'react-router-dom';
 import produce from 'immer';
 import { useQuery, gql } from '@apollo/client';
 import {
+    _cs,
     unique,
     isDefined,
     mapToList,
@@ -667,6 +668,8 @@ function PillarAnalysis() {
         setFieldValue(orderedValues, 'analyticalStatements');
     }, [setFieldValue]);
 
+    const statementsCount = value.analyticalStatements?.length ?? 0;
+
     return (
         <div className={styles.pillarAnalysis}>
             <SubNavbar
@@ -832,7 +835,10 @@ function PillarAnalysis() {
                     >
                         <div className={styles.rightContainer}>
                             <SortableList
-                                className={styles.list}
+                                className={_cs(
+                                    styles.list,
+                                    statementsCount < 1 && styles.empty,
+                                )}
                                 name="analyticalStatements"
                                 onChange={onOrderChange}
                                 data={value.analyticalStatements}
@@ -840,19 +846,37 @@ function PillarAnalysis() {
                                 renderer={AnalyticalStatementInput}
                                 direction="horizontal"
                                 rendererParams={analyticalStatementRendererParams}
+                                messageShown
+                                messageIconShown
+                                emptyMessage="Looks like there aren't any analytical statements in this analysis."
+                                messageActions={(
+                                    <Button
+                                        className={styles.addStatementButton}
+                                        name={undefined}
+                                        onClick={handleAnalyticalStatementAdd}
+                                        title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
+                                        variant="primary"
+                                        icons={(<IoAdd />)}
+                                    >
+                                        Add Analytical Statement
+                                    </Button>
+                                )}
                             />
-                            <QuickActionButton
-                                className={styles.addStatementButton}
-                                name={undefined}
-                                onClick={handleAnalyticalStatementAdd}
-                                title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
-                                variant="primary"
-                                disabled={
-                                    (value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT
-                                }
-                            >
-                                <IoAdd />
-                            </QuickActionButton>
+                            {statementsCount > 0 && (
+                                <QuickActionButton
+                                    className={styles.addStatementButton}
+                                    name={undefined}
+                                    onClick={handleAnalyticalStatementAdd}
+                                    title={(statementsCount < STATEMENTS_LIMIT
+                                        ? _ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')
+                                        : `You cannot add more than ${STATEMENTS_LIMIT} statements.`
+                                    )}
+                                    variant="primary"
+                                    disabled={statementsCount >= STATEMENTS_LIMIT}
+                                >
+                                    <IoAdd />
+                                </QuickActionButton>
+                            )}
                         </div>
                         <Prompt
                             when={!pristine}

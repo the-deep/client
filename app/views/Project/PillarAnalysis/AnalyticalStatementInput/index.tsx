@@ -210,6 +210,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             headerIcons={(
                 <>
                     <QuickActionButton
+                        title="Include in report"
                         name="includeInReport"
                         onClick={handleIncludeInReportChange}
                         big
@@ -220,7 +221,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         )}
                     </QuickActionButton>
                     <QuickActionButton
-                        name="includeInReport"
+                        name="View n-grams analysis"
                         onClick={toggleAnalysisChart}
                         big
                     >
