@@ -365,7 +365,7 @@ function LeadEditModal(props: Props) {
                     setError(formError);
                 } else if (ok) {
                     alert.show(
-                        'Successfully updated lead!',
+                        'Successfully updated source!',
                         { variant: 'success' },
                     );
                     onLeadSaveSuccess();
@@ -376,7 +376,7 @@ function LeadEditModal(props: Props) {
                     [internal]: errors.message,
                 });
                 alert.show(
-                    'There was an issue updating the selected lead!',
+                    'There was an issue updating the selected source!',
                     { variant: 'error' },
                 );
             },
@@ -406,7 +406,7 @@ function LeadEditModal(props: Props) {
                     setError(formError);
                 } else if (ok) {
                     alert.show(
-                        'Successfully created lead!',
+                        'Successfully created source!',
                         { variant: 'success' },
                     );
                     onLeadSaveSuccess();
@@ -417,7 +417,7 @@ function LeadEditModal(props: Props) {
                     [internal]: errors.message,
                 });
                 alert.show(
-                    'There was an issue creating a new lead!',
+                    'There was an issue creating a new source!',
                     { variant: 'error' },
                 );
             },

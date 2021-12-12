@@ -15,6 +15,7 @@ import {
     TextInput,
     QuickActionButton,
     useBooleanState,
+    Button,
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
     ListView,
@@ -29,6 +30,7 @@ import {
     IoOpenOutline,
     IoCameraOutline,
     IoExpand,
+    IoReloadOutline,
     IoClose,
     IoBrush,
     IoCheckmark,
@@ -54,7 +56,10 @@ const LEAD_PREVIEW = gql`
         $projectId: ID!,
     ) {
         project(id: $projectId) {
+            id
             lead(id: $leadId) {
+                id
+                extractionStatus
                 leadPreview {
                     textExtract
                 }
@@ -155,6 +160,7 @@ function LeftPane(props: Props) {
     );
 
     const leadPreview = leadPreviewData?.project?.lead?.leadPreview;
+    const extractionStatus = leadPreviewData?.project?.lead?.extractionStatus;
 
     const handleScreenshotCaptureError = useCallback((message: React.ReactNode) => {
         alert.show(
@@ -506,14 +512,29 @@ function LeftPane(props: Props) {
                                 icon={(
                                     <Kraken variant="work" />
                                 )}
-                                message="Simplified text is currently being extracted from this source."
-                                errored
+                                message={(
+                                    (extractionStatus === 'PENDING'
+                                    || extractionStatus === 'STARTED')
+                                        ? 'Simplified text is currently being extracted from this source. Please retry after few minutes.'
+                                        : 'Oops! Either the source was empty or we couldn\'t extract its text.'
+                                )}
+                                errored={extractionStatus === 'FAILED'}
                                 erroredEmptyIcon={(
                                     <Kraken variant="work" />
                                 )}
                                 erroredEmptyMessage="There was an when issue extracting simplified
                                 text for this source."
-                                onReload={refetch}
+                                actions={(extractionStatus === 'PENDING' || extractionStatus === 'STARTED') && (
+                                    <Button
+                                        name={undefined}
+                                        variant="secondary"
+                                        onClick={refetch}
+                                        icons={(<IoReloadOutline />)}
+                                        disabled={leadPreviewPending}
+                                    >
+                                        Retry
+                                    </Button>
+                                )}
                             />
                         )}
                     </TabPanel>

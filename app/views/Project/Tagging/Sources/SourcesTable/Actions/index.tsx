@@ -81,7 +81,7 @@ function Actions<T extends string>(props: Props<T>) {
     ] = useConfirmation<undefined>({
         showConfirmationInitially: false,
         onConfirm: handleDeleteConfirm,
-        message: 'Are you sure you want to delete this lead?',
+        message: 'Are you sure you want to delete this source?',
     });
 
     const isExpanded = id === expandedRowKey;
