@@ -27,6 +27,7 @@ function AssignmentItem(props: AssignmentItemProps) {
         markAsDonePending,
         createdByDetails,
         contentObjectDetails,
+        contentObjectType,
         projectDetails,
         createdAt,
     } = props;
@@ -56,6 +57,10 @@ function AssignmentItem(props: AssignmentItemProps) {
                 {createdByDetails.displayName}
                 &nbsp;
                 {_ts('assignment', 'assignedYou')}
+                &nbsp;
+                a
+                &nbsp;
+                {contentObjectType}
                 &nbsp;
                 <Link
                     to={generatePath(routes.entryEdit.path, {

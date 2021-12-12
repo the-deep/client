@@ -23,15 +23,6 @@
                 background-color: var(--dui-color-foreground);
             }
 
-            .link {
-                cursor: ;
-                pointer-events: none;
-
-                .empty-link {
-                    color: var(--dui-color-text);
-                }
-            }
-
             .expanded-row {
                 .expanded-cell {
                     border-bottom: 0;

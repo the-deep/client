@@ -5,8 +5,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import Avatar from '#components/Avatar';
-
-import _ts from '#ts';
+import generateString from '#utils/string';
 
 import styles from './styles.css';
 
@@ -33,24 +32,30 @@ function ActivityItem(props: RecentActivityProps) {
             icons={(
                 <Avatar
                     className={styles.displayPicture}
-                    src={createdByDisplayPicture}
+                    src={createdByDisplayPicture ?? undefined}
+                    name={createdByDisplayName}
                 />
             )}
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
-                <span className={styles.boldText}>
-                    {createdByDisplayName}
-                </span>
-                &nbsp;
-                {(type === 'lead'
-                    ? _ts('recentActivity', 'leadAdded')
-                    : 'added an entry on'
+                {generateString(
+                    '{createdByDisplayName} added {article} {type} on {projectDisplayName}',
+                    {
+                        createdByDisplayName: (
+                            <span className={styles.boldText}>
+                                {createdByDisplayName}
+                            </span>
+                        ),
+                        article: (type === 'lead' ? 'a' : 'an'),
+                        type,
+                        projectDisplayName: (
+                            <span className={styles.boldText}>
+                                {projectDisplayName}
+                            </span>
+                        ),
+                    },
                 )}
-                &nbsp;
-                <span className={styles.boldText}>
-                    {projectDisplayName}
-                </span>
             </div>
             <DateOutput
                 className={styles.createdDate}
