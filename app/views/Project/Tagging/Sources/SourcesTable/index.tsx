@@ -13,7 +13,6 @@ import {
     DateOutputProps,
     Kraken,
     Link,
-    LinkProps,
     Pager,
     SortContext,
     TableView,
@@ -63,6 +62,7 @@ import Actions, { Props as ActionsProps } from './Actions';
 import LeadEditModal from '../LeadEditModal';
 import BulkActions from './BulkActions';
 import EntryList from './EntryList';
+
 import styles from './styles.css';
 
 function sourcesKeySelector(d: Lead) {
@@ -186,6 +186,32 @@ export const PROJECT_SOURCES = gql`
         }
     }
 `;
+
+interface SourceLinkProps {
+    title?: string;
+    link?: string;
+}
+
+function SourceLink(props: SourceLinkProps) {
+    const {
+        link,
+        title,
+    } = props;
+
+    if (!link) {
+        return (
+            <div>{title}</div>
+        );
+    }
+
+    return (
+        <Link
+            to={link}
+        >
+            {title}
+        </Link>
+    );
+}
 
 const DELETE_LEAD = gql`
     mutation DeleteLead(
@@ -473,7 +499,7 @@ function SourcesTable(props: Props) {
             columnWidth: 144,
         };
         const publisherColumn: TableColumn<
-            Lead, string, LinkProps, TableHeaderCellProps
+            Lead, string, SourceLinkProps, TableHeaderCellProps
         > = {
             id: 'source',
             title: _ts('sourcesTable', 'publisher'),
@@ -481,12 +507,10 @@ function SourcesTable(props: Props) {
             headerCellRendererParams: {
                 sortable: true,
             },
-            cellRenderer: Link,
-            cellRendererClassName: styles.link,
+            cellRenderer: SourceLink,
             cellRendererParams: (_, data) => ({
-                linkElementClassName: _cs(!data.source?.url && styles.emptyLink),
-                children: data.source?.title,
-                to: data.source?.url ?? '#',
+                title: data.source ? organizationTitleSelector(data.source) : undefined,
+                link: data.source?.url,
             }),
             columnWidth: 160,
         };
