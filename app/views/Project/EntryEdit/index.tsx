@@ -1261,6 +1261,7 @@ function EntryEdit(props: Props) {
                                                     className={styles.panel}
                                                 >
                                                     <Section
+                                                        key={selectedEntry}
                                                         allWidgets={allWidgets}
                                                         widgets={section.widgets}
                                                         attributesMap={attributesMap}
@@ -1316,6 +1317,7 @@ function EntryEdit(props: Props) {
                                         )}
                                     >
                                         <Section
+                                            key={selectedEntry}
                                             allWidgets={allWidgets}
                                             widgets={frameworkDetails.secondaryTagging}
                                             attributesMap={attributesMap}

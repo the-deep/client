@@ -5,6 +5,7 @@ import {
     isDefined,
     randomString,
 } from '@togglecorp/fujs';
+import { gql, useQuery } from '@apollo/client';
 import {
     Tabs,
     Container,
@@ -21,6 +22,7 @@ import {
     useAlert,
     QuickActionLink,
     PendingMessage,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -34,7 +36,10 @@ import {
 
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
-import { useRequest } from '#base/utils/restRequest';
+import {
+    LeadPreviewForTextQuery,
+    LeadPreviewForTextQueryVariables,
+} from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
@@ -43,17 +48,22 @@ import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
 import styles from './styles.css';
 
-const entryKeySelector = (e: EntryInput) => e.clientId;
+const LEAD_PREVIEW = gql`
+    query LeadPreviewForText(
+        $leadId: ID!,
+        $projectId: ID!,
+    ) {
+        project(id: $projectId) {
+            lead(id: $leadId) {
+                leadPreview {
+                    textExtract
+                }
+            }
+        }
+    }
+`;
 
-interface LeadPreview {
-    id: number;
-    previewId: number;
-    text?: string;
-    images?: {
-        id: number;
-        file: string;
-    }[];
-}
+const entryKeySelector = (e: EntryInput) => e.clientId;
 
 interface Props {
     className?: string;
@@ -124,14 +134,27 @@ function LeftPane(props: Props) {
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
 
+    const variables = useMemo(
+        () => ((leadId && projectId) ? ({
+            leadId,
+            projectId,
+        }) : undefined),
+        [leadId, projectId],
+    );
+
     const {
-        pending: leadPreviewPending,
-        response: leadPreview,
-    } = useRequest<LeadPreview>({
-        skip: !lead,
-        url: `server://lead-previews/${leadId}/`,
-        failureMessage: 'Failed to preview lead.',
-    });
+        data: leadPreviewData,
+        loading: leadPreviewPending,
+        refetch,
+    } = useQuery<LeadPreviewForTextQuery, LeadPreviewForTextQueryVariables>(
+        LEAD_PREVIEW,
+        {
+            skip: !variables,
+            variables,
+        },
+    );
+
+    const leadPreview = leadPreviewData?.project?.lead?.leadPreview;
 
     const handleScreenshotCaptureError = useCallback((message: React.ReactNode) => {
         alert.show(
@@ -449,11 +472,7 @@ function LeftPane(props: Props) {
                         name="simplified"
                         className={styles.simplifiedTab}
                     >
-                        {leadPreviewPending ? (
-                            <PendingMessage
-                                message="Fetching simplified text"
-                            />
-                        ) : (
+                        {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                             <SimplifiedTextView
                                 className={styles.simplifiedTextView}
                                 activeEntryClientId={activeEntry}
@@ -461,7 +480,7 @@ function LeftPane(props: Props) {
                                 onExcerptClick={onEntryClick}
                                 entries={entries}
                                 onAddButtonClick={handleExcerptAddFromSimplified}
-                                text={leadPreview?.text}
+                                text={leadPreview?.textExtract}
                                 onExcerptChange={onExcerptChange}
                                 onApproveButtonClick={onApproveButtonClick}
                                 onDiscardButtonClick={onDiscardButtonClick}
@@ -469,6 +488,25 @@ function LeftPane(props: Props) {
                                 onEntryRestore={onEntryRestore}
                                 disableAddButton={isEntrySelectionActive}
                                 disableExcerptClick={isEntrySelectionActive}
+                            />
+                        ) : (
+                            <Message
+                                // NOTE: Pending from server side to get state of extraction
+                                // to properly toggle between whether the source has been
+                                // extracted or not
+                                pending={leadPreviewPending}
+                                pendingMessage="Fetching simplified text"
+                                icon={(
+                                    <Kraken variant="work" />
+                                )}
+                                message="Simplified text is currently being extracted from this source."
+                                errored
+                                erroredEmptyIcon={(
+                                    <Kraken variant="work" />
+                                )}
+                                erroredEmptyMessage="There was an when issue extracting simplified
+                                text for this source."
+                                onReload={refetch}
                             />
                         )}
                     </TabPanel>
