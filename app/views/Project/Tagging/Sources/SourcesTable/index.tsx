@@ -148,6 +148,7 @@ export const PROJECT_SOURCES = gql`
                     publishedOn
                     priority
                     priorityDisplay
+                    assessmentId
                     createdBy {
                         id
                         displayName
