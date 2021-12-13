@@ -1,5 +1,9 @@
 import React, { useContext, useCallback, useMemo, useState } from 'react';
-import { Prompt, useParams } from 'react-router-dom';
+import {
+    Prompt,
+    useParams,
+    useLocation,
+} from 'react-router-dom';
 import produce from 'immer';
 import { useQuery, gql } from '@apollo/client';
 import {
@@ -278,6 +282,8 @@ function PillarAnalysis() {
     // FIXME: please use new form
     const [filtersValue, setFiltersValue] = useState<PartialFilterFormType>({});
     const [activePage, setActivePage] = useState(1);
+
+    const location = useLocation();
 
     const entriesFilter = useMemo(
         () => {
@@ -879,8 +885,12 @@ function PillarAnalysis() {
                             )}
                         </div>
                         <Prompt
-                            when={!pristine}
-                            message={_ts('common', 'youHaveUnsavedChanges')}
+                            message={(newLocation) => {
+                                if (newLocation.pathname !== location.pathname && !pristine) {
+                                    return _ts('common', 'youHaveUnsavedChanges');
+                                }
+                                return true;
+                            }}
                         />
                     </EntryContext.Provider>
                 </div>
