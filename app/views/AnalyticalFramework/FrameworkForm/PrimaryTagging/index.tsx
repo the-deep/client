@@ -64,7 +64,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         className,
         frameworkId,
 
-        allWidgets,
+        allWidgets = [],
 
         name,
         value: sectionsFromProps = [],
@@ -344,14 +344,6 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
 
     const validSectionSelected = !!selectedSectionItem;
 
-    // NOTE: filtering out self
-    const parentWidgets = useMemo(
-        () => allWidgets?.filter((widget) => (
-            !conditional || widget.clientId !== conditional.widgetId
-        )) ?? [],
-        [allWidgets, conditional],
-    );
-
     return (
         <div className={_cs(styles.primaryTagging, className)}>
             <Container
@@ -391,10 +383,12 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                 )}
                 {sectionsState.editMode && conditionalEditMode && conditional && (
                     <WidgetConditionalEditor
-                        widgets={parentWidgets}
+                        widgets={allWidgets}
+                        // FIXME: we may not need to pass conditional as name
                         name={conditional}
                         title={conditional.title}
                         value={conditional.value}
+                        widgetId={conditional.widgetId}
                         onChange={handleConditionalChange}
                         onSave={handleConditionalSave}
                         onCancel={handleConditionalEditCancel}

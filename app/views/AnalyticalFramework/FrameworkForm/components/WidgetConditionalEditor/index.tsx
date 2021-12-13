@@ -6,6 +6,7 @@ import {
 } from '@the-deep/deep-ui';
 import {
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 
 import { Widget } from '#types/newAnalyticalFramework';
@@ -27,7 +28,7 @@ import TimeRangeConditionalWidgetForm from './TimeRangeConditionalWidgetForm';
 interface BaseFormContainerProps {
     title: string | undefined;
     onCancel: () => void;
-    onSave: () => void;
+    onSave: (() => void) | undefined;
     children?: React.ReactNode;
 }
 function BaseFormContainer(props: BaseFormContainerProps) {
@@ -46,17 +47,20 @@ function BaseFormContainer(props: BaseFormContainerProps) {
                         name={undefined}
                         onClick={onCancel}
                         variant="tertiary"
-                    // FIXME: use strings
+                        // FIXME: use strings
                     >
                         Cancel
                     </Button>
-                    <Button
-                        name={undefined}
-                        type="submit"
-                        onClick={onSave}
-                    >
-                        Save
-                    </Button>
+                    {onSave && (
+                        <Button
+                            name={undefined}
+                            type="submit"
+                            onClick={onSave}
+                            // FIXME: use strings
+                        >
+                            Save
+                        </Button>
+                    )}
                 </>
             )}
         >
@@ -75,6 +79,7 @@ function widgetLabelSelector(value: Widget) {
 interface Props<T> {
     name: T;
     value: Widget['conditional'],
+    widgetId: string,
     title: string | undefined,
     widgets: Widget[];
     onChange: (value: Widget['conditional'], name: T) => void;
@@ -92,6 +97,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
         className,
         widgets,
         title,
+        widgetId,
     } = props;
 
     const handleSave = useCallback(
@@ -109,11 +115,11 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
     );
 
     const handleWidgetSelection = useCallback(
-        (widgetId: string | undefined) => {
-            if (!widgetId) {
+        (selectedWidgetId: string | undefined) => {
+            if (!selectedWidgetId) {
                 onChange(undefined, name);
             }
-            const widget = widgets.find((w) => w.id === widgetId);
+            const widget = widgets.find((w) => w.id === selectedWidgetId);
             if (!widget) {
                 // eslint-disable-next-line no-console
                 console.error('Widget not found');
@@ -136,20 +142,56 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
         [widgets, onChange, name],
     );
 
+    const savedWidgets = useMemo(
+        () => widgets.filter((widget) => isDefined(widget.id)),
+        [widgets],
+    );
+
+    const nonChildWidgets = useMemo(
+        () => {
+            const widgetsWithoutSelf = savedWidgets.filter(
+                (widget) => widget.clientId !== widgetId,
+            );
+            return widgetsWithoutSelf.filter((widget) => !widget.conditional);
+        },
+        [savedWidgets, widgetId],
+    );
+
+    const childWidgets = useMemo(
+        () => (
+            savedWidgets.filter((widget) => (
+                widget.conditional && widget.conditional.parentWidget === widgetId
+            )) ?? []
+        ),
+        [savedWidgets, widgetId],
+    );
+
     const parentWidget = useMemo(
         () => (
             value
-                ? widgets.find((widget) => widget.id === value.parentWidget)
+                ? savedWidgets.find((widget) => widget.id === value.parentWidget)
                 : undefined
         ),
-        [widgets, value],
+        [savedWidgets, value],
     );
+
+    if (childWidgets.length > 0) {
+        return (
+            <BaseFormContainer
+                title={title}
+                onSave={undefined}
+                onCancel={onCancel}
+            >
+                {`This widget already has ${childWidgets.length} child widgets.`}
+            </BaseFormContainer>
+        );
+    }
 
     const parentSwitcher = (
         <SelectInput
             label="Parent Widget"
             name={undefined}
-            options={widgets}
+            options={nonChildWidgets}
             keySelector={widgetKeySelector}
             labelSelector={widgetLabelSelector}
             value={value?.parentWidget}

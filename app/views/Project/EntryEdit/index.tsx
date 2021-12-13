@@ -122,6 +122,8 @@ function EntryEdit(props: Props) {
         setCommentsCountMap,
     ] = useState<CountMap>({});
 
+    const [showAllEntriesTab, setShowAllEntriesTab] = useState(false);
+
     const commentCountContext: CommentCountContextInterface = useMemo(() => ({
         commentsCountMap,
         setCommentsCountMap,
@@ -293,7 +295,7 @@ function EntryEdit(props: Props) {
 
     const [
         updateLead,
-        // { loading: leadUpdatePending },
+        { loading: leadUpdatePending },
     ] = useMutation<LeadUpdateMutation, LeadUpdateMutationVariables>(
         UPDATE_LEAD,
         {
@@ -370,7 +372,7 @@ function EntryEdit(props: Props) {
 
     const [
         bulkUpdateEntries,
-        // { loading: bulkUpdateEntriesPending },
+        { loading: bulkUpdateEntriesPending },
     ] = useMutation<BulkUpdateEntriesMutation, BulkUpdateEntriesMutationVariables>(
         BULK_UPDATE_ENTRIES,
         {
@@ -587,6 +589,7 @@ function EntryEdit(props: Props) {
                             // NOTE: we do not need this filter as entry.id is always defined
                             .filter(isDefined);
 
+                        // FIXME: this is repeated
                         const transformedEntries = staleEntries
                             .map((entry) => {
                                 const hiddenWidgetIds = getHiddenWidgetIds(
@@ -855,6 +858,7 @@ function EntryEdit(props: Props) {
     // ENTRY
     const handleAddButtonClick = useCallback((entryId: string, sectionId?: string) => {
         handleEntryClick(entryId);
+        setShowAllEntriesTab(true);
         if (sectionId) {
             window.location.replace('#/primary-tagging');
             setSelectedSection(sectionId);
@@ -1039,8 +1043,10 @@ function EntryEdit(props: Props) {
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,
             onApplyToAll: handleApplyToAll,
+            allWidgets,
         }),
         [
+            allWidgets,
             geoAreaOptions,
             projectId,
             handleAddButtonClick,
@@ -1056,7 +1062,10 @@ function EntryEdit(props: Props) {
     );
 
     const lead = data?.project?.lead;
-    const loading = frameworkLoading || entriesLoading;
+    const loading = frameworkLoading
+        || entriesLoading
+        || bulkUpdateEntriesPending
+        || leadUpdatePending;
 
     const disableFinalizeButton = useMemo(() => {
         // NOTE: If any entry is selected, we'll disable the button
@@ -1216,7 +1225,7 @@ function EntryEdit(props: Props) {
                                         entriesError={entriesErrorStateMap}
                                         // NOTE: If entry Id comes from state, we need to
                                         // show entries tab as it always has the entry
-                                        defaultTab={entryIdFromState ? 'entries' : undefined}
+                                        defaultTab={(entryIdFromState || showAllEntriesTab) ? 'entries' : undefined}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}

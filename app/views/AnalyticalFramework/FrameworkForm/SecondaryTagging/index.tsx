@@ -52,7 +52,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         className,
         frameworkId,
 
-        allWidgets,
+        allWidgets = [],
 
         value: widgetsFromProps = [],
         onChange: setWidgetsFromProps,
@@ -214,14 +214,6 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
         onTempStateChange(widgetsState.editMode);
     }, [widgetsState.editMode, onTempStateChange]);
 
-    // NOTE: filtering out self
-    const parentWidgets = useMemo(
-        () => allWidgets?.filter((widget) => (
-            !conditional || widget.clientId !== conditional.widgetId
-        )) ?? [],
-        [allWidgets, conditional],
-    );
-
     return (
         <div className={_cs(styles.secondaryTagging, className)}>
             <Container
@@ -249,10 +241,12 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
                 {widgetsState.editMode && conditional && (
                     // NOTE: no need to disable as this is used as modal
                     <WidgetConditionalEditor
-                        widgets={parentWidgets}
+                        widgets={allWidgets}
+                        // FIXME: we may not need to pass conditional as name
                         name={conditional}
                         title={conditional.title}
                         value={conditional.value}
+                        widgetId={conditional.widgetId}
                         onChange={handleConditionalChange}
                         onSave={handleConditionalSave}
                         onCancel={handleConditionalEditCancel}

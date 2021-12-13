@@ -3,6 +3,7 @@ import {
     Prompt,
     useHistory,
     generatePath,
+    useLocation,
 } from 'react-router-dom';
 import {
     IoInformationCircleOutline,
@@ -222,6 +223,8 @@ function ProjectDetailsForm(props: Props) {
     const [projectTitleToDelete, setProjectTitleToDelete] = useState<string | undefined>();
     const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
+
+    const location = useLocation();
 
     // FIXME: we may not need this use effect
     useEffect(
@@ -561,8 +564,12 @@ function ProjectDetailsForm(props: Props) {
                 </div>
             </div>
             <Prompt
-                when={!pristine}
-                message={_ts('common', 'youHaveUnsavedChanges')}
+                message={(newLocation) => {
+                    if (newLocation.pathname !== location.pathname && !pristine) {
+                        return _ts('common', 'youHaveUnsavedChanges');
+                    }
+                    return true;
+                }}
             />
         </div>
     );

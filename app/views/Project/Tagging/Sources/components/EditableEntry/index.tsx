@@ -37,7 +37,7 @@ import {
     UpdateEntryMutationVariables,
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
-import { Widget } from '#types/newAnalyticalFramework';
+import { getHiddenWidgetIds, Widget } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import routes from '#base/configs/routes';
 import EntryInput from '#components/entry/EntryInput';
@@ -113,24 +113,30 @@ function EditableEntry(props: Props) {
 
     const history = useHistory();
 
-    const schema = useMemo(
+    const allWidgets = useMemo(
         () => {
             const widgetsFromPrimary = primaryTagging?.flatMap(
                 (item) => (item.widgets ?? []),
             ) ?? [];
             const widgetsFromSecondary = secondaryTagging ?? [];
+            return [
+                ...widgetsFromPrimary,
+                ...widgetsFromSecondary,
+            ];
+        },
+        [primaryTagging, secondaryTagging],
+    );
 
+    const schema = useMemo(
+        () => {
             const widgetsMapping = listToMap(
-                [
-                    ...widgetsFromPrimary,
-                    ...widgetsFromSecondary,
-                ],
+                allWidgets,
                 (item) => item.id,
                 (item) => item,
             );
             return getEntrySchema(widgetsMapping);
         },
-        [primaryTagging, secondaryTagging],
+        [allWidgets],
     );
 
     const alert = useAlert();
@@ -244,12 +250,19 @@ function EditableEntry(props: Props) {
             validate,
             setError,
             (entryData) => {
+                // FIXME: this is repeated
+                const hiddenWidgetIds = getHiddenWidgetIds(
+                    allWidgets,
+                    entry.attributes ?? [],
+                );
+
                 const transformedEntryData = {
                     ...entryData,
                     deleted: undefined,
                     stale: undefined,
                     attributes: entryData.attributes
                         ?.filter((attribute) => isDefined(attribute.data))
+                        .filter((attribute) => !hiddenWidgetIds[attribute.widget])
                         .map((attribute) => ({
                             ...attribute,
                             widgetVersion: attribute.widgetVersion,
@@ -272,7 +285,7 @@ function EditableEntry(props: Props) {
             },
         );
         submit();
-    }, [projectId, validate, setError, updateEntry, entry.id]);
+    }, [allWidgets, projectId, validate, setError, updateEntry, entry.id, entry.attributes]);
 
     const verifiedByIds = useMemo(() => (
         verifiedBy?.map((v) => +v.id) ?? []
@@ -319,6 +332,7 @@ function EditableEntry(props: Props) {
             error={error}
             geoAreaOptions={geoAreaOptions}
             onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+            allWidgets={allWidgets}
         />
     );
 
