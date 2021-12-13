@@ -27,6 +27,8 @@ import {
     TextOutput,
     DateOutput,
     DateRangeOutput,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
@@ -319,39 +321,48 @@ function ProjectItem(props: RecentProjectItemProps) {
                     headingSize="extraSmall"
                 >
                     <ResponsiveContainer className={styles.responsiveContainer}>
-                        <AreaChart data={convertedProjectActivity}>
-                            <defs>
-                                <linearGradient id="entriesActivity" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.2} />
-                                    <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <XAxis
-                                dataKey="date"
-                                type="number"
-                                scale="time"
-                                domain={['dataMin', 'dataMax']}
-                                allowDuplicatedCategory={false}
-                                tick={{ strokeWidth: 1 }}
-                                tickFormatter={minTickFormatter}
-                                interval="preserveStartEnd"
-                                padding={{ left: 10, right: 10 }}
+                        {((convertedProjectActivity?.length ?? 0) > 0) ? (
+                            <AreaChart data={convertedProjectActivity}>
+                                <defs>
+                                    <linearGradient id="entriesActivity" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.2} />
+                                        <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis
+                                    dataKey="date"
+                                    type="number"
+                                    scale="time"
+                                    domain={['dataMin', 'dataMax']}
+                                    allowDuplicatedCategory={false}
+                                    tick={{ strokeWidth: 1 }}
+                                    tickFormatter={minTickFormatter}
+                                    interval="preserveStartEnd"
+                                    padding={{ left: 10, right: 10 }}
+                                />
+                                <YAxis hide />
+                                <Tooltip
+                                    labelFormatter={tickFormatter}
+                                    isAnimationActive={false}
+                                />
+                                <Area
+                                    dataKey="count"
+                                    stroke="var(--dui-color-accent)"
+                                    fillOpacity={1}
+                                    fill="url(#entriesActivity)"
+                                    strokeWidth={2}
+                                    connectNulls
+                                    activeDot
+                                />
+                            </AreaChart>
+                        ) : (
+                            <Message
+                                icon={
+                                    <Kraken variant="sleep" />
+                                }
+                                message="This project does not have any activity."
                             />
-                            <YAxis hide />
-                            <Tooltip
-                                labelFormatter={tickFormatter}
-                                isAnimationActive={false}
-                            />
-                            <Area
-                                dataKey="count"
-                                stroke="var(--dui-color-accent)"
-                                fillOpacity={1}
-                                fill="url(#entriesActivity)"
-                                strokeWidth={2}
-                                connectNulls
-                                activeDot
-                            />
-                        </AreaChart>
+                        )}
                     </ResponsiveContainer>
                 </ContainerCard>
             </div>
