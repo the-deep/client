@@ -433,15 +433,6 @@ function FrameworkForm(props: FrameworkFormProps) {
         ];
     }, [value.primaryTagging, value.secondaryTagging]);
 
-    const allParentWidget = useMemo(
-        () => (
-            // NOTE: filtering out child widgets and unsaved widgets
-            allWidgets
-                .filter((w) => isDefined(w.id) && !w.conditional)
-        ),
-        [allWidgets],
-    );
-
     const {
         matrix1dWidgets,
         matrix2dWidgets,
@@ -636,7 +627,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 name="primary-tagging"
             >
                 <PrimaryTagging
-                    allWidgets={allParentWidget}
+                    allWidgets={allWidgets}
                     name="primaryTagging"
                     value={value.primaryTagging}
                     onChange={handlePrimaryTaggingChange}
@@ -652,7 +643,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 name="secondary-tagging"
             >
                 <SecondaryTagging
-                    allWidgets={allParentWidget}
+                    allWidgets={allWidgets}
                     name="secondaryTagging"
                     value={value.secondaryTagging}
                     onChange={handleSecondaryTaggingChange}

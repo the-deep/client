@@ -13,7 +13,7 @@ import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { IoAdd } from 'react-icons/io5';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import { Widget } from '#types/newAnalyticalFramework';
+import { Widget, getHiddenWidgetIds } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 
@@ -23,6 +23,9 @@ const widgetKeySelector = (d: Widget) => d.clientId;
 type WidgetAttribute = NonNullable<PartialEntryType['attributes']>[number];
 
 export interface Props {
+    // NOTE: if allWidgets is null/undefined/empty then the conditional widgets will be visible
+    allWidgets: Widget[] | undefined | null;
+
     className?: string;
     widgets: Widget[] | undefined | null;
     title?: string;
@@ -42,6 +45,7 @@ export interface Props {
 
 function CompactSection(props: Props) {
     const {
+        allWidgets,
         className,
         title,
         onAttributeChange,
@@ -59,13 +63,26 @@ function CompactSection(props: Props) {
         onApplyToAll,
     } = props;
 
+    const filteredWidgets = useMemo(
+        () => {
+            const hiddenWidgetIds = getHiddenWidgetIds(
+                allWidgets ?? [],
+                Object.values(attributesMap)
+                    .filter(isDefined)
+                    .map((item) => item.value),
+            );
+            return widgets?.filter((w) => !hiddenWidgetIds[w.id]);
+        },
+        [allWidgets, attributesMap, widgets],
+    );
+
     const error = getErrorObject(riskyError);
 
     const widgetsWithValue = useMemo(() => {
         if (!emptyValueHidden) {
-            return widgets;
+            return filteredWidgets;
         }
-        return widgets?.filter(
+        return filteredWidgets?.filter(
             // FIXME: should only check into data, not value
             (widget) => {
                 if (widget.widgetId === 'MATRIX1D') {
@@ -85,7 +102,7 @@ function CompactSection(props: Props) {
                 return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);
             },
         );
-    }, [emptyValueHidden, attributesMap, widgets]);
+    }, [emptyValueHidden, attributesMap, filteredWidgets]);
 
     const handleApplyBelowClick = useCallback(
         (widgetId: string) => {

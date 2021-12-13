@@ -322,7 +322,7 @@ function SingleSelectConditionalWidgetForm(props: SingleSelectConditionalWidgetF
         setFieldValue,
         setValue,
         setError,
-    } = useForm(schema, initialValue);
+    } = useForm(schema, initialValue, false);
 
     const error = getErrorObject(riskyError);
 

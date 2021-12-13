@@ -65,10 +65,13 @@ interface EntryInputProps<T extends string | number | undefined> {
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     excerptHeaderActions?: React.ReactNode;
     onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
+
+    allWidgets: Widget[] | undefined | null;
 }
 
 function EntryInput<T extends string | number | undefined>(props: EntryInputProps<T>) {
     const {
+        allWidgets,
         className,
         value,
         onAddButtonClick,
@@ -137,7 +140,9 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onApplyToAll,
+        allWidgets,
     }), [
+        allWidgets,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onAddButtonClick,
@@ -207,6 +212,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 onApplyToAll={onApplyToAll}
                 entryClientId={value.clientId}
+                allWidgets={allWidgets}
             />
         </div>
     );

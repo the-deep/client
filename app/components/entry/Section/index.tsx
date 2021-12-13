@@ -115,9 +115,8 @@ function Section(props: Props) {
                 renderer={AttributeInput}
                 rendererParams={widgetRendererParams}
                 emptyMessage="There are no widgets in this section."
-                filtered={(filteredWidgets?.length ?? 0) > 0}
+                filtered={false}
                 errored={false}
-                filteredEmptyMessage="No matching widgets found"
                 pending={false}
                 emptyIcon={(
                     <Kraken

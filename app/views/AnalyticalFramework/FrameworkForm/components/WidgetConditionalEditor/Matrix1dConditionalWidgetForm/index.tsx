@@ -328,7 +328,7 @@ function Matrix1dConditionalWidgetForm(props: Matrix1dConditionalWidgetFormProps
         setFieldValue,
         setValue,
         setError,
-    } = useForm(schema, initialValue);
+    } = useForm(schema, initialValue, false);
 
     const error = getErrorObject(riskyError);
 

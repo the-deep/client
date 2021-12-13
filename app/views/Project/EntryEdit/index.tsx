@@ -587,6 +587,7 @@ function EntryEdit(props: Props) {
                             // NOTE: we do not need this filter as entry.id is always defined
                             .filter(isDefined);
 
+                        // FIXME: this is repeated
                         const transformedEntries = staleEntries
                             .map((entry) => {
                                 const hiddenWidgetIds = getHiddenWidgetIds(
@@ -1039,8 +1040,10 @@ function EntryEdit(props: Props) {
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,
             onApplyToAll: handleApplyToAll,
+            allWidgets,
         }),
         [
+            allWidgets,
             geoAreaOptions,
             projectId,
             handleAddButtonClick,
