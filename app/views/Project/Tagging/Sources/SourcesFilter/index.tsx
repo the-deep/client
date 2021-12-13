@@ -179,6 +179,7 @@ interface Props {
     filterOnlyUnprotected?: boolean;
     hasAssessment?: boolean;
     onFilterApply: (value: PartialFormType) => void;
+    isEntriesOnlyFilter?: boolean;
 }
 
 function SourcesFilter(props: Props) {
@@ -190,6 +191,7 @@ function SourcesFilter(props: Props) {
         hasAssessment,
         value: valueFromProps,
         disabled,
+        isEntriesOnlyFilter,
     } = props;
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
@@ -287,21 +289,23 @@ function SourcesFilter(props: Props) {
                     label={_ts('sourcesFilter', 'status')}
                     disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
-                <SelectInput
-                    className={_cs(
-                        styles.input,
-                        (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
-                    )}
-                    name="exists"
-                    onChange={setFieldValue}
-                    options={existsOptions}
-                    keySelector={enumKeySelector}
-                    labelSelector={enumLabelSelector}
-                    value={value.exists}
-                    error={error?.exists}
-                    label="Exists"
-                    disabled={disabled || loading || !!sourceFilterOptionsError}
-                />
+                {!isEntriesOnlyFilter && (
+                    <SelectInput
+                        className={_cs(
+                            styles.input,
+                            (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
+                        )}
+                        name="exists"
+                        onChange={setFieldValue}
+                        options={existsOptions}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
+                        value={value.exists}
+                        error={error?.exists}
+                        label="Exists"
+                        disabled={disabled || loading || !!sourceFilterOptionsError}
+                    />
+                )}
                 <DateDualRangeInput
                     className={styles.input}
                     fromName="publishedOnGte"

@@ -92,6 +92,7 @@ function Sources(props: Props) {
                         value={sourcesFilters}
                         onFilterApply={setSourcesFilters}
                         projectId={activeProject}
+                        isEntriesOnlyFilter={activeView === 'grid'}
                     />
                 )}
             </div>
