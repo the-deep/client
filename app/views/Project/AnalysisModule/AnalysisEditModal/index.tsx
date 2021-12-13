@@ -280,8 +280,8 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             }
             alert.show(
                 isDefined(analysisToEdit)
-                    ? 'Successfully updated analysis'
-                    : 'Successfully created analysis',
+                    ? 'Successfully updated analysis.'
+                    : 'Successfully created new analysis.',
                 {
                     variant: 'success',
                 },

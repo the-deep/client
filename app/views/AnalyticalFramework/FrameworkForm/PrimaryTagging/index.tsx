@@ -442,6 +442,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                                 >
                                     {section.title || 'Unnamed'}
                                     <QuickActionButton
+                                        title="Edit section"
                                         className={styles.sectionEditButton}
                                         name={section.clientId}
                                         onClick={handleSectionEditClick}

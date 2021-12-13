@@ -1,7 +1,11 @@
-.link {
-    padding: 0 var(--dui-spacing-extra-small);
-    text-transform: none;
-    color: var(--dui-color-accent);
+.error {
+    display: inline-block;
+
+    .link {
+        padding: 0 var(--dui-spacing-extra-small);
+        text-transform: none;
+        color: var(--dui-color-text-on-danger);
+    }
 }
 
 .screenshot {

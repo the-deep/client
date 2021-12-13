@@ -135,10 +135,10 @@ function Screenshot(props: Props) {
         }).catch(() => {
             // FIXME: use strings
             const captureError = (
-                <>
+                <div className={styles.error}>
                     In order to use the screenshot functionality,
                     you must have the Chrome extension installed.
-                    You can download it from the Chrome store
+                    You can download it from the chrome web store
                     <a
                         className={styles.link}
                         href="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
@@ -147,7 +147,7 @@ function Screenshot(props: Props) {
                     >
                         here.
                     </a>
-                </>
+                </div>
             );
             if (onCaptureError) {
                 onCaptureError(captureError);

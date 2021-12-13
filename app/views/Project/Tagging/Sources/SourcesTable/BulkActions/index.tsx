@@ -45,13 +45,9 @@ function BulkActions(props: Props) {
         sum(selectedLeads.map((lead) => lead.entriesCounts?.total).filter(isDefined))
     ), [selectedLeads]);
 
-    /*
-    FIXME: get assessment count
     const assessmentsCount = useMemo(() => (
         selectedLeads.filter((lead) => isDefined(lead.assessmentId)).length
     ), [selectedLeads]);
-    */
-    const assessmentsCount = 'Some';
 
     const onRemoveBulkLead = useCallback(() => {
         if (onRemoveClick) {
@@ -97,17 +93,17 @@ function BulkActions(props: Props) {
                 message={_ts('leads', 'removeMultipleLeadsConfirm', {
                     leadsCount: (
                         <b>
-                            {`${selectedLeads.length} Sources`}
+                            {`${selectedLeads.length} Source(s)`}
                         </b>
                     ),
                     entriesCount: (
                         <b>
-                            {`${entriesCount} Entries`}
+                            {`${entriesCount} Entry(s)`}
                         </b>
                     ),
                     assessmentsCount: (
                         <b>
-                            {`${assessmentsCount} Assessments`}
+                            {`${assessmentsCount} Assessment(s)`}
                         </b>
                     ),
                 })}

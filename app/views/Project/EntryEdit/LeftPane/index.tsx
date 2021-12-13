@@ -5,6 +5,7 @@ import {
     isDefined,
     randomString,
 } from '@togglecorp/fujs';
+import { gql, useQuery } from '@apollo/client';
 import {
     Tabs,
     Container,
@@ -14,6 +15,7 @@ import {
     TextInput,
     QuickActionButton,
     useBooleanState,
+    Button,
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
     ListView,
@@ -21,12 +23,14 @@ import {
     useAlert,
     QuickActionLink,
     PendingMessage,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
     IoOpenOutline,
     IoCameraOutline,
     IoExpand,
+    IoReloadOutline,
     IoClose,
     IoBrush,
     IoCheckmark,
@@ -34,7 +38,10 @@ import {
 
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
-import { useRequest } from '#base/utils/restRequest';
+import {
+    LeadPreviewForTextQuery,
+    LeadPreviewForTextQueryVariables,
+} from '#generated/types';
 
 import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
@@ -43,17 +50,25 @@ import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
 import styles from './styles.css';
 
-const entryKeySelector = (e: EntryInput) => e.clientId;
+const LEAD_PREVIEW = gql`
+    query LeadPreviewForText(
+        $leadId: ID!,
+        $projectId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            lead(id: $leadId) {
+                id
+                extractionStatus
+                leadPreview {
+                    textExtract
+                }
+            }
+        }
+    }
+`;
 
-interface LeadPreview {
-    id: number;
-    previewId: number;
-    text?: string;
-    images?: {
-        id: number;
-        file: string;
-    }[];
-}
+const entryKeySelector = (e: EntryInput) => e.clientId;
 
 interface Props {
     className?: string;
@@ -124,19 +139,36 @@ function LeftPane(props: Props) {
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
 
+    const variables = useMemo(
+        () => ((leadId && projectId) ? ({
+            leadId,
+            projectId,
+        }) : undefined),
+        [leadId, projectId],
+    );
+
     const {
-        pending: leadPreviewPending,
-        response: leadPreview,
-    } = useRequest<LeadPreview>({
-        skip: !lead,
-        url: `server://lead-previews/${leadId}/`,
-        failureMessage: 'Failed to preview lead.',
-    });
+        data: leadPreviewData,
+        loading: leadPreviewPending,
+        refetch,
+    } = useQuery<LeadPreviewForTextQuery, LeadPreviewForTextQueryVariables>(
+        LEAD_PREVIEW,
+        {
+            skip: !variables,
+            variables,
+        },
+    );
+
+    const leadPreview = leadPreviewData?.project?.lead?.leadPreview;
+    const extractionStatus = leadPreviewData?.project?.lead?.extractionStatus;
 
     const handleScreenshotCaptureError = useCallback((message: React.ReactNode) => {
         alert.show(
             message,
-            { variant: 'error' },
+            {
+                variant: 'error',
+                duration: 8000,
+            },
         );
 
         setShowScreenshotFalse();
@@ -333,6 +365,7 @@ function LeftPane(props: Props) {
                         <>
                             <QuickActionButton
                                 name={undefined}
+                                title="Close"
                                 onClick={setShowScreenshotFalse}
                             >
                                 <IoClose />
@@ -340,6 +373,7 @@ function LeftPane(props: Props) {
                             { capturedImageUrl && (
                                 <>
                                     <QuickActionButton
+                                        title="Draw over screenshot"
                                         name={undefined}
                                         onClick={handleCanvasDrawClick}
                                     >
@@ -347,6 +381,7 @@ function LeftPane(props: Props) {
                                     </QuickActionButton>
                                     <QuickActionButton
                                         name={undefined}
+                                        title="Finalize screenshot"
                                         onClick={handleCreateEntryButtonClick}
                                     >
                                         <IoCheckmark />
@@ -364,6 +399,7 @@ function LeftPane(props: Props) {
                         </QuickActionButton>
                     )}
                     <QuickActionButton
+                        title={fullScreenMode ? 'Exit fullscreen' : 'Enter fullscreen'}
                         name={undefined}
                         onClick={handleFullScreenToggleClick}
                     >
@@ -449,11 +485,7 @@ function LeftPane(props: Props) {
                         name="simplified"
                         className={styles.simplifiedTab}
                     >
-                        {leadPreviewPending ? (
-                            <PendingMessage
-                                message="Fetching simplified text"
-                            />
-                        ) : (
+                        {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                             <SimplifiedTextView
                                 className={styles.simplifiedTextView}
                                 activeEntryClientId={activeEntry}
@@ -461,7 +493,7 @@ function LeftPane(props: Props) {
                                 onExcerptClick={onEntryClick}
                                 entries={entries}
                                 onAddButtonClick={handleExcerptAddFromSimplified}
-                                text={leadPreview?.text}
+                                text={leadPreview?.textExtract}
                                 onExcerptChange={onExcerptChange}
                                 onApproveButtonClick={onApproveButtonClick}
                                 onDiscardButtonClick={onDiscardButtonClick}
@@ -469,6 +501,40 @@ function LeftPane(props: Props) {
                                 onEntryRestore={onEntryRestore}
                                 disableAddButton={isEntrySelectionActive}
                                 disableExcerptClick={isEntrySelectionActive}
+                            />
+                        ) : (
+                            <Message
+                                // NOTE: Pending from server side to get state of extraction
+                                // to properly toggle between whether the source has been
+                                // extracted or not
+                                pending={leadPreviewPending}
+                                pendingMessage="Fetching simplified text"
+                                icon={(
+                                    <Kraken variant="work" />
+                                )}
+                                message={(
+                                    (extractionStatus === 'PENDING'
+                                    || extractionStatus === 'STARTED')
+                                        ? 'Simplified text is currently being extracted from this source. Please retry after few minutes.'
+                                        : 'Oops! Either the source was empty or we couldn\'t extract its text.'
+                                )}
+                                errored={extractionStatus === 'FAILED'}
+                                erroredEmptyIcon={(
+                                    <Kraken variant="work" />
+                                )}
+                                erroredEmptyMessage="There was an when issue extracting simplified
+                                text for this source."
+                                actions={(extractionStatus === 'PENDING' || extractionStatus === 'STARTED') && (
+                                    <Button
+                                        name={undefined}
+                                        variant="secondary"
+                                        onClick={refetch}
+                                        icons={(<IoReloadOutline />)}
+                                        disabled={leadPreviewPending}
+                                    >
+                                        Retry
+                                    </Button>
+                                )}
                             />
                         )}
                     </TabPanel>

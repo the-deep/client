@@ -172,6 +172,7 @@ function UserGroup(props: Props) {
                 data={usergroupResponse?.results}
                 renderer={UserGroupItem}
                 rendererParams={userGroupRendererParams}
+                rendererClassName={styles.userGroupItem}
                 filtered={false}
                 pending={usergroupGetPending}
                 errored={false}

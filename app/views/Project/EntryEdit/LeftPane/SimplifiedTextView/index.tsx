@@ -196,6 +196,7 @@ function SimplifiedTextView(props: Props) {
                     style={position ? ({ ...position }) : undefined}
                 >
                     <QuickActionButton
+                        title="Add entry"
                         name={textContent}
                         variant="primary"
                         className={styles.addButton}

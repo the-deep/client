@@ -260,13 +260,13 @@ function Row(props: RowProps) {
                                     <th
                                         className={_cs(
                                             styles.tableHeader,
-                                            (column.subColumns?.length ?? 0) > 0
+                                            ((column.subColumns?.length ?? 0) > 0 && !readOnly)
                                                 && styles.clickable,
                                         )}
                                         key={column.key}
                                         title={column.tooltip}
                                         onClick={() => {
-                                            if ((column.subColumns?.length ?? 0) > 0) {
+                                            if ((column.subColumns?.length ?? 0) > 0 && !readOnly) {
                                                 setSelectedColumnKey(column.key);
                                             }
                                         }}

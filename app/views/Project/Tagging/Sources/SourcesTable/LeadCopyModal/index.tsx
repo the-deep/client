@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from 'react';
-
 import { useMutation, gql } from '@apollo/client';
 import {
     Modal,
     TextOutput,
+    PendingMessage,
     ConfirmButton,
     useAlert,
 } from '@the-deep/deep-ui';
 
+import ProjectMultiSelectInput, { BasicProject } from '#components/selections/ProjectMultiSelectInput';
 import {
     LeadCopyMutation,
     LeadCopyMutationVariables,
 } from '#generated/types';
-import ProjectMultiSelectInput, { BasicProject } from '#components/selections/ProjectMultiSelectInput';
 
 import styles from './styles.css';
 
@@ -54,6 +54,9 @@ function LeadCopyModal(props: Props) {
 
     const [
         leadCopy,
+        {
+            loading,
+        },
     ] = useMutation<LeadCopyMutation, LeadCopyMutationVariables>(
         LEAD_COPY,
         {
@@ -124,6 +127,7 @@ function LeadCopyModal(props: Props) {
                 </ConfirmButton>
             )}
         >
+            {loading && <PendingMessage />}
             <TextOutput
                 label="No. of sources to be copied"
                 value={leadIds?.length ?? 0}
