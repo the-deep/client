@@ -49,13 +49,13 @@ function DiscardedEntry(props: Props) {
     } = useLazyRequest<unknown>({
         url: `server://analysis-pillar/${pillarId}/discarded-entries/${discardedEntryId}/`,
         method: 'DELETE',
-        failureMessage: 'Failed to delete discarded entry.',
+        failureMessage: 'Failed to undiscarded entry.',
         onSuccess: () => {
             if (onEntryUndiscard) {
                 onEntryUndiscard();
             }
             alert.show(
-                'Successfully deleted discarded entry.',
+                'Successfully undiscarded the selected entry entry.',
                 { variant: 'success' },
             );
         },

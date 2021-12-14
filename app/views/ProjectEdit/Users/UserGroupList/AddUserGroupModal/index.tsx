@@ -145,14 +145,14 @@ function AddUserGroupModal(props: Props) {
             onModalClose();
             alert.show(
                 isDefined(usergroupValue)
-                    ? 'Successfully updated usergroup.'
-                    : 'Successfully created usergroup.',
+                    ? 'Successfully updated user group.'
+                    : 'Successfully created user group.',
                 { variant: 'success' },
             );
         },
         failureMessage: isDefined(usergroupValue)
-            ? 'Failed to update usergroup'
-            : 'Failed to create usergroup',
+            ? 'Failed to update user group'
+            : 'Failed to create user group',
     });
 
     const handleSubmit = useCallback(
