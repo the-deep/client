@@ -537,7 +537,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 )}
             </SubNavbarChildren>
             <TabPanel
-                className={_cs(styles.tabPanel, styles.detailsTabPanel)}
+                activeClassName={_cs(styles.tabPanel, styles.detailsTabPanel)}
                 name="framework-details"
             >
                 <div className={styles.content}>
@@ -623,7 +623,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 )}
             </TabPanel>
             <TabPanel
-                className={styles.tabPanel}
+                activeClassName={styles.tabPanel}
                 name="primary-tagging"
             >
                 <PrimaryTagging
@@ -639,7 +639,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 />
             </TabPanel>
             <TabPanel
-                className={styles.tabPanel}
+                activeClassName={styles.tabPanel}
                 name="secondary-tagging"
             >
                 <SecondaryTagging
@@ -655,7 +655,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 />
             </TabPanel>
             <TabPanel
-                className={styles.tabPanel}
+                activeClassName={styles.tabPanel}
                 name="review"
             >
                 <Review
@@ -666,7 +666,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             </TabPanel>
             {value.isVisualizationEnabled && (
                 <TabPanel
-                    className={styles.tabPanel}
+                    activeClassName={styles.tabPanel}
                     name="viz-settings"
                 >
                     <Container

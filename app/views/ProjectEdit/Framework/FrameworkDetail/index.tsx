@@ -377,7 +377,7 @@ function FrameworkDetail(props: Props) {
                     <Card className={styles.preview}>
                         <TabPanel
                             name="primary"
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                         >
                             <Tabs
                                 value={selectedSection}
@@ -404,7 +404,7 @@ function FrameworkDetail(props: Props) {
                                                 <TabPanel
                                                     key={section.clientId}
                                                     name={section.clientId}
-                                                    className={styles.panel}
+                                                    activeClassName={styles.panel}
                                                 >
                                                     <Section
                                                         allWidgets={undefined}

@@ -483,7 +483,8 @@ function LeftPane(props: Props) {
                 {!hideSimplifiedPreview && (
                     <TabPanel
                         name="simplified"
-                        className={styles.simplifiedTab}
+                        activeClassName={styles.simplifiedTab}
+                        retainMount="lazy"
                     >
                         {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                             <SimplifiedTextView
@@ -542,7 +543,8 @@ function LeftPane(props: Props) {
                 {!hideOriginalPreview && (
                     <TabPanel
                         name="original"
-                        className={styles.originalTab}
+                        activeClassName={styles.originalTab}
+                        retainMount="lazy"
                     >
                         {leadPreviewPending && (
                             <PendingMessage
@@ -554,7 +556,8 @@ function LeftPane(props: Props) {
                 )}
                 <TabPanel
                     name="entries"
-                    className={styles.entryListTab}
+                    activeClassName={styles.entryListTab}
+                    retainMount="lazy"
                 >
                     <ListView
                         data={entries ?? undefined}

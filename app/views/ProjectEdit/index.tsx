@@ -133,7 +133,7 @@ function ProjectEdit() {
                     </SubNavbarChildren>
                     <div className={styles.tabPanelContainer}>
                         <TabPanel
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                             name="general"
                         >
                             <ProjectDetailsForm
@@ -143,7 +143,7 @@ function ProjectEdit() {
                             />
                         </TabPanel>
                         <TabPanel
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                             name="geo-areas"
                         >
                             {projectId && (
@@ -154,7 +154,7 @@ function ProjectEdit() {
                         </TabPanel>
                         <TabPanel
                             name="users"
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                         >
                             {projectId && (
                                 <Users
@@ -165,7 +165,7 @@ function ProjectEdit() {
                         </TabPanel>
                         <TabPanel
                             name="framework"
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                         >
                             {projectId && (
                                 <Framework

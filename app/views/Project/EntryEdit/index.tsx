@@ -1177,7 +1177,7 @@ function EntryEdit(props: Props) {
                     <div className={styles.tabPanelContainer}>
                         {loading && <PendingMessage />}
                         <TabPanel
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                             name="source-details"
                         >
                             {projectId && (
@@ -1201,7 +1201,7 @@ function EntryEdit(props: Props) {
                             )}
                         </TabPanel>
                         <TabPanel
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                             name="primary-tagging"
                         >
                             {frameworkDetails && (
@@ -1267,7 +1267,7 @@ function EntryEdit(props: Props) {
                                                 <TabPanel
                                                     key={section.clientId}
                                                     name={section.clientId}
-                                                    className={styles.panel}
+                                                    activeClassName={styles.panel}
                                                 >
                                                     <Section
                                                         key={selectedEntry}
@@ -1288,7 +1288,7 @@ function EntryEdit(props: Props) {
                             )}
                         </TabPanel>
                         <TabPanel
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                             name="secondary-tagging"
                         >
                             {frameworkDetails && (
@@ -1342,7 +1342,7 @@ function EntryEdit(props: Props) {
                         </TabPanel>
                         <TabPanel
                             name="review"
-                            className={styles.tabPanel}
+                            activeClassName={styles.tabPanel}
                         >
                             {frameworkDetails && (
                                 <Container
