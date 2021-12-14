@@ -1,6 +1,7 @@
 .geo-location-map-input {
     display: flex;
     flex-grow: 1;
+    gap: var(--dui-spacing-medium);
 
     .map-selection {
         display: flex;

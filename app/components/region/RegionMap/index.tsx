@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
+import { _cs, isDefined, isNotDefined, unique, isTruthyString } from '@togglecorp/fujs';
 import Map, {
     MapBounds,
     MapContainer,
@@ -29,6 +29,7 @@ import {
     GeoAreaBounds,
 } from '#types';
 import { useRequest } from '#base/utils/restRequest';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import {
     SelectedRegionQuery,
     SelectedRegionQueryVariables,
@@ -122,7 +123,9 @@ interface Props {
     navigationDisabled?: boolean;
     selectedGeoAreas?: string[] | null ;
     onSelectedGeoAreasChange?: (value: string[]) => void;
-
+    geoAreaOptions: GeoArea[] | null | undefined;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>
+    | undefined;
     triggerId?: number;
 }
 
@@ -138,6 +141,8 @@ function RegionMap(props: Props) {
         triggerId,
         selectedGeoAreas,
         onSelectedGeoAreasChange,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
     } = props;
 
     const [hoverFeatureProperties, setHoverFeatureProperties] = useState<KeyValue[]>([]);
@@ -205,6 +210,12 @@ function RegionMap(props: Props) {
         method: 'GET',
     });
 
+    const selectedAdminLevelTitle = useMemo(() => (
+        adminLevels?.find(
+            (item) => item.id.toString() === adminLevel,
+        )?.title
+    ), [adminLevels, adminLevel]);
+
     const lineLayerOptions: Omit<Layer, 'id'> = useMemo(() => {
         const noOfAdminLevels = adminLevels?.length;
         const selectedAdminLevel = adminLevels?.find(
@@ -235,28 +246,40 @@ function RegionMap(props: Props) {
         if (!onSelectedGeoAreasChange) {
             return false;
         }
-        const { id } = feature;
+        const { id, properties } = feature;
         const selection = String(id);
-
         const selections = [...selectedGeoAreas ?? []];
 
         const index = selections.indexOf(selection);
-        if (index === -1) {
+        if (index === -1 && onGeoAreaOptionsChange) {
             selections.push(selection);
+            const selectedGeoArea = {
+                id: selection,
+                title: properties?.title as string ?? '',
+                regionTitle: selectedRegion?.region?.title ?? '',
+                adminLevelTitle: selectedAdminLevelTitle ?? '',
+            };
+            const newOptions = unique([...(geoAreaOptions ?? []), selectedGeoArea], (d) => d.id);
+            onGeoAreaOptionsChange(newOptions);
         } else {
             selections.splice(index, 1);
         }
 
         onSelectedGeoAreasChange(selections);
         return true;
-    }, [onSelectedGeoAreasChange, selectedGeoAreas]);
+    }, [
+        onSelectedGeoAreasChange,
+        selectedGeoAreas,
+        geoAreaOptions,
+        onGeoAreaOptionsChange,
+        selectedAdminLevelTitle,
+        selectedRegion,
+    ]);
 
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
-        setHoverLngLat(lngLat);
-        if (feature.properties) {
-            const properties = Object.entries(feature.properties)
-                .map(([key, value]) => ({ key, value }));
-            setHoverFeatureProperties(properties);
+        if (feature.properties && isTruthyString(feature.properties.title)) {
+            setHoverLngLat(lngLat);
+            setHoverFeatureProperties([{ key: 'title', value: feature.properties.title }]);
         } else {
             setHoverFeatureProperties([]);
         }

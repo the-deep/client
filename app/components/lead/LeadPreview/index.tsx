@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import {
     _cs,
     isDefined,
+    isValidUrl,
     isNotDefined,
 } from '@togglecorp/fujs';
 import {
@@ -75,6 +76,19 @@ function LeadPreview(props: Props) {
         }
     }, [fullScreenMode]);
 
+    const finalUrl = useMemo(() => {
+        if (url && isValidUrl(url)) {
+            return url;
+        }
+        if (attachment?.file?.url && isValidUrl(attachment.file.url)) {
+            return attachment.file.url;
+        }
+        return '';
+    }, [
+        url,
+        attachment?.file?.url,
+    ]);
+
     if (!url && !attachment) {
         return (
             <Message
@@ -102,7 +116,7 @@ function LeadPreview(props: Props) {
                         <>
                             <QuickActionLink
                                 className={styles.link}
-                                to={url || attachment?.file?.url || ''}
+                                to={finalUrl}
                             >
                                 <IoOpenOutline />
                             </QuickActionLink>
@@ -120,7 +134,7 @@ function LeadPreview(props: Props) {
                     <TextInput
                         className={styles.url}
                         name="url"
-                        value={url || attachment?.file?.url}
+                        value={finalUrl}
                         variant="general"
                         readOnly
                     />
@@ -129,7 +143,7 @@ function LeadPreview(props: Props) {
             {url && (
                 <ExternalUrlPreview
                     className={_cs(styles.content, className)}
-                    url={url}
+                    url={finalUrl}
                 />
             )}
             {attachment?.file?.url && attachment.mimeType && (

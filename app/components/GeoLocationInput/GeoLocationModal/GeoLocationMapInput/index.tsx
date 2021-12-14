@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { useLazyQuery, useQuery, gql } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 import {
     Container,
     SelectInput,
@@ -10,8 +10,6 @@ import {
 } from '@the-deep/deep-ui';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
 import {
-    ProjectGeoAreasQuery,
-    ProjectGeoAreasQueryVariables,
     ProjectRegionsQuery,
     ProjectRegionsQueryVariables,
 } from '#generated/types';
@@ -30,25 +28,6 @@ function geoAreaGroupKeySelector(geoArea: GeoArea) {
 function geoAreaKeySelector(geoArea: GeoArea) {
     return geoArea.id;
 }
-
-const GEOAREAS = gql`
-    query ProjectGeoAreas(
-        $projectId: ID!,
-        $ids: [ID!],
-    ) {
-        project(id: $projectId) {
-            id
-            geoAreas(ids: $ids) {
-                results {
-                    adminLevelTitle
-                    id
-                    regionTitle
-                    title
-                }
-            }
-        }
-    }
-`;
 
 const PROJECT_REGIONS = gql`
     query ProjectRegions($projectId: ID!) {
@@ -104,18 +83,6 @@ function GeoLocationMapInput(props: Props) {
         setActiveAdminLevel,
     ] = useState<string | undefined>();
 
-    const [
-        getGeoAreas,
-        { loading: loadingGeoAreas },
-    ] = useLazyQuery<ProjectGeoAreasQuery, ProjectGeoAreasQueryVariables>(
-        GEOAREAS,
-        {
-            onCompleted: (data) => {
-                onGeoAreaOptionsChange(data.project?.geoAreas?.results);
-            },
-        },
-    );
-
     const variables = useMemo(() => ({
         projectId,
     }
@@ -130,7 +97,9 @@ function GeoLocationMapInput(props: Props) {
             skip: !projectId,
             variables,
             onCompleted: (data) => {
-                const [topRegion] = data.project?.regions ?? [];
+                const [topRegion] = data.project?.regions?.filter(
+                    (region) => region.isPublished,
+                ) ?? [];
                 const topAdminLevel = topRegion?.adminLevels?.find((v) => v.level === 0)
                     ?? topRegion?.adminLevels?.[0];
 
@@ -139,16 +108,6 @@ function GeoLocationMapInput(props: Props) {
             },
         },
     );
-
-    const handleGeoAreasMapSelection = useCallback((values: string[]) => {
-        onChange(values);
-        getGeoAreas({
-            variables: {
-                ids: values,
-                projectId,
-            },
-        });
-    }, [onChange, getGeoAreas, projectId]);
 
     const handleRegionChange = useCallback((newRegion: string | undefined) => {
         setSelectedRegion(newRegion);
@@ -169,11 +128,12 @@ function GeoLocationMapInput(props: Props) {
     const geoAreaGroupRendererParams = useCallback((key: string) => ({
         heading: key,
         headingSize: 'extraSmall',
+        spacing: 'compact',
     }), []);
 
     const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => ({
         id: `${geoArea.id}`,
-        value: breadcrumb([geoArea.regionTitle, geoArea.adminLevelTitle, geoArea.title]),
+        value: breadcrumb([geoArea.adminLevelTitle, geoArea.title]),
         onDismiss: handleRemoveItem,
     }), [handleRemoveItem]);
 
@@ -219,12 +179,16 @@ function GeoLocationMapInput(props: Props) {
                     regionId={selectedRegion}
                     onAdminLevelChange={setActiveAdminLevel}
                     selectedGeoAreas={value}
-                    onSelectedGeoAreasChange={handleGeoAreasMapSelection}
+                    showTooltip
+                    onSelectedGeoAreasChange={onChange}
+                    geoAreaOptions={geoAreaOptions}
+                    onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 />
             </div>
             <Container
                 className={styles.selectedGeoAreas}
                 heading="Selected Geo Areas"
+                spacing="none"
                 headingSize="small"
             >
                 <ListView
@@ -237,9 +201,9 @@ function GeoLocationMapInput(props: Props) {
                     renderer={GeoAreaListItem}
                     keySelector={geoAreaKeySelector}
                     rendererParams={geoAreasRendererParams}
-                    pending={loadingGeoAreas}
                     filtered={false}
                     errored={false}
+                    pending={false}
                     emptyIcon={(
                         <Kraken
                             variant="hi"
