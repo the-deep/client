@@ -310,15 +310,16 @@ function EntryEdit(props: Props) {
 
                 if (!ok) {
                     alert.show(
-                        'Failed to change source status!',
+                        isFinalizeClicked ? 'Failed to mark source as tagged!' : 'Failed to update source.',
                         { variant: 'error' },
                     );
                 } else {
                     alert.show(
-                        'Successfully marked source as tagged!',
+                        isFinalizeClicked ? 'Successfully marked source as tagged!' : 'Successfully updated source.',
                         { variant: 'success' },
                     );
                 }
+                setIsFinalizeClicked(false);
                 const leadData = removeNull(result);
                 setLeadValue({
                     ...leadData,
@@ -331,7 +332,7 @@ function EntryEdit(props: Props) {
             },
             onError: () => {
                 alert.show(
-                    'Failed to change source status!',
+                    'Failed to update source!',
                     { variant: 'error' },
                 );
             },
@@ -342,7 +343,6 @@ function EntryEdit(props: Props) {
         if (!projectId || (!finalized && leadPristine)) {
             return;
         }
-        setIsFinalizeClicked(false);
         const submit = createSubmitHandler(
             leadFormValidate,
             setLeadError,
