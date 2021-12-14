@@ -124,7 +124,8 @@ interface Props {
     selectedGeoAreas?: string[] | null ;
     onSelectedGeoAreasChange?: (value: string[]) => void;
     geoAreaOptions: GeoArea[] | null | undefined;
-    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>;
+    onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>
+    | undefined;
     triggerId?: number;
 }
 
@@ -250,7 +251,7 @@ function RegionMap(props: Props) {
         const selections = [...selectedGeoAreas ?? []];
 
         const index = selections.indexOf(selection);
-        if (index === -1) {
+        if (index === -1 && onGeoAreaOptionsChange) {
             selections.push(selection);
             const selectedGeoArea = {
                 id: selection,
