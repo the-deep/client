@@ -5,12 +5,12 @@ import {
 } from '@togglecorp/fujs';
 import {
     TextArea,
-    PendingMessage,
     Modal,
     Button,
     ListView,
     Kraken,
     Container,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     ResponsiveContainer,
@@ -168,7 +168,6 @@ function AnalyticalNGramsModal(props: Props) {
             size="cover"
             bodyClassName={styles.modalBody}
         >
-            {pending && <PendingMessage />}
             <Container
                 className={styles.topContainer}
                 footerActions={(
@@ -190,124 +189,134 @@ function AnalyticalNGramsModal(props: Props) {
                 />
             </Container>
             <div className={styles.bottomContainer}>
-                <Container
-                    className={styles.entriesContainer}
-                    heading={`Selected Entries ${analyticalEntries?.length ?? 0}`}
-                >
-                    <ListView
-                        className={styles.list}
-                        data={entriesForNgrams}
-                        keySelector={keySelector}
-                        renderer={ExcerptInput}
-                        rendererParams={entriesRendererParams}
-                        filtered={false}
-                        errored={false}
-                        pending={false}
-                        // TODO: add pending
-                        emptyIcon={(
-                            <Kraken
-                                variant="skydive"
-                            />
+                {entriesForNgrams.length > 0 && (
+                    <Container
+                        className={styles.entriesContainer}
+                        heading={`Selected Entries ${analyticalEntries?.length ?? 0}`}
+                    >
+                        <ListView
+                            className={styles.list}
+                            data={entriesForNgrams}
+                            keySelector={keySelector}
+                            renderer={ExcerptInput}
+                            rendererParams={entriesRendererParams}
+                            filtered={false}
+                            errored={false}
+                            pending={false}
+                        />
+                    </Container>
+                )}
+                {(unigrams.length > 0 || bigrams.length > 0 || trigrams.length > 0) ? (
+                    <div className={styles.chartContainer}>
+                        {unigrams.length > 0 && (
+                            <ResponsiveContainer>
+                                <BarChart
+                                    layout="vertical"
+                                    data={unigrams}
+                                    margin={chartMargins}
+                                >
+                                    <XAxis type="number" />
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        scale="band"
+                                        tickFormatter={emptyTickFormatter}
+                                    />
+                                    <Tooltip />
+                                    <Legend verticalAlign="top" />
+                                    <Bar
+                                        name="Unigrams"
+                                        onClick={handleNgramClick}
+                                        dataKey="count"
+                                        barSize={16}
+                                        fill="#796ec6"
+                                        opacity="0.4"
+                                    >
+                                        <LabelList
+                                            dataKey="name"
+                                            position="insideLeft"
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
                         )}
-                        emptyMessage="Entries not found."
-                        messageIconShown
-                        messageShown
+                        {bigrams.length > 0 && (
+                            <ResponsiveContainer>
+                                <BarChart
+                                    layout="vertical"
+                                    data={bigrams}
+                                    margin={chartMargins}
+                                >
+                                    <XAxis type="number" />
+                                    <YAxis
+                                        dataKey="name"
+                                        type="category"
+                                        scale="band"
+                                        tickFormatter={emptyTickFormatter}
+                                    />
+                                    <Tooltip />
+                                    <Legend verticalAlign="top" />
+                                    <Bar
+                                        name="Bigrams"
+                                        onClick={handleNgramClick}
+                                        dataKey="count"
+                                        barSize={16}
+                                        fill="#FB8A91"
+                                        opacity="0.4"
+                                    >
+                                        <LabelList
+                                            dataKey="name"
+                                            position="insideLeft"
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
+                        {trigrams.length > 0 && (
+                            <ResponsiveContainer>
+                                <BarChart
+                                    layout="vertical"
+                                    data={trigrams}
+                                    margin={chartMargins}
+                                >
+                                    <XAxis type="number" />
+                                    <YAxis
+                                        dataKey="name"
+                                        tickFormatter={emptyTickFormatter}
+                                        type="category"
+                                        scale="band"
+                                    />
+                                    <Tooltip />
+                                    <Legend
+                                        verticalAlign="top"
+                                    />
+                                    <Bar
+                                        name="Trigrams"
+                                        onClick={handleNgramClick}
+                                        dataKey="count"
+                                        barSize={16}
+                                        fill="#4CC1B7"
+                                        opacity="0.4"
+                                    >
+                                        <LabelList
+                                            dataKey="name"
+                                            position="insideLeft"
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
+                    </div>
+                ) : (
+                    <Message
+                        className={styles.message}
+                        erroredEmptyMessage="Failed to generate n-grams from provided entries."
+                        errored={entriesForNgrams.length > 0}
+                        message="There are no entries to generate n-grams from."
+                        pending={pending}
+                        icon={(<Kraken />)}
                     />
-                </Container>
-                <div className={styles.chartContainer}>
-                    <ResponsiveContainer>
-                        <BarChart
-                            layout="vertical"
-                            data={unigrams}
-                            margin={chartMargins}
-                        >
-                            <XAxis type="number" />
-                            <YAxis
-                                dataKey="name"
-                                type="category"
-                                scale="band"
-                                tickFormatter={emptyTickFormatter}
-                            />
-                            <Tooltip />
-                            <Legend verticalAlign="top" />
-                            <Bar
-                                name="Unigrams"
-                                onClick={handleNgramClick}
-                                dataKey="count"
-                                barSize={16}
-                                fill="#796ec6"
-                                opacity="0.4"
-                            >
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                />
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                    <ResponsiveContainer>
-                        <BarChart
-                            layout="vertical"
-                            data={bigrams}
-                            margin={chartMargins}
-                        >
-                            <XAxis type="number" />
-                            <YAxis
-                                dataKey="name"
-                                type="category"
-                                scale="band"
-                                tickFormatter={emptyTickFormatter}
-                            />
-                            <Tooltip />
-                            <Legend verticalAlign="top" />
-                            <Bar
-                                name="Bigrams"
-                                onClick={handleNgramClick}
-                                dataKey="count"
-                                barSize={16}
-                                fill="#FB8A91"
-                                opacity="0.4"
-                            >
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                />
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                    <ResponsiveContainer>
-                        <BarChart
-                            layout="vertical"
-                            data={trigrams}
-                            margin={chartMargins}
-                        >
-                            <XAxis type="number" />
-                            <YAxis
-                                dataKey="name"
-                                tickFormatter={emptyTickFormatter}
-                                type="category"
-                                scale="band"
-                            />
-                            <Tooltip />
-                            <Legend
-                                verticalAlign="top"
-                            />
-                            <Bar
-                                name="Trigrams"
-                                onClick={handleNgramClick}
-                                dataKey="count"
-                                barSize={16}
-                                fill="#4CC1B7"
-                                opacity="0.4"
-                            >
-                                <LabelList
-                                    dataKey="name"
-                                    position="insideLeft"
-                                />
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
+                )}
             </div>
         </Modal>
     );
