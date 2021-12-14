@@ -96,11 +96,11 @@ function UserGroupList(props: Props) {
         onSuccess: () => {
             triggerUsergroupResponse();
             alert.show(
-                'Successfully deleted usergroup.',
+                'Successfully deleted user group.',
                 { variant: 'success' },
             );
         },
-        failureMessage: 'Failed to delete usergroup.',
+        failureMessage: 'Failed to delete user group.',
     });
 
     const handleEditUsergroupClick = useCallback((usergroupId) => {
