@@ -39,6 +39,8 @@ function RegionTabPanel(props: Props) {
                 onAdminLevelChange={onActiveAdminLevelChange}
                 navigationDisabled={navigationDisabled}
                 triggerId={triggerId}
+                geoAreaOptions={undefined}
+                onGeoAreaOptionsChange={undefined}
             />
         </TabPanel>
     );

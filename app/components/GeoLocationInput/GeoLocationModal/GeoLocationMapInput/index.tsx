@@ -128,6 +128,7 @@ function GeoLocationMapInput(props: Props) {
     const geoAreaGroupRendererParams = useCallback((key: string) => ({
         heading: key,
         headingSize: 'extraSmall',
+        spacing: 'compact',
     }), []);
 
     const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => ({
@@ -187,6 +188,7 @@ function GeoLocationMapInput(props: Props) {
             <Container
                 className={styles.selectedGeoAreas}
                 heading="Selected Geo Areas"
+                spacing="none"
                 headingSize="small"
             >
                 <ListView
