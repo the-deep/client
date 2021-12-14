@@ -28,7 +28,7 @@ function RegionTabPanel(props: Props) {
 
     return (
         <TabPanel
-            className={_cs(styles.tabPanel, className)}
+            activeClassName={_cs(styles.tabPanel, className)}
             name={id}
         >
             <RegionMap
