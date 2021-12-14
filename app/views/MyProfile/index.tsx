@@ -6,10 +6,9 @@ import {
     SelectInput,
     PendingMessage,
     Container,
-    Checkbox,
     Button,
-    List,
     useAlert,
+    CheckListInput,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -19,42 +18,39 @@ import {
     defaultEmptyArrayType,
     requiredCondition,
     getErrorObject,
+    removeNull,
+    internal,
+    PartialForm,
 } from '@togglecorp/toggle-form';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
 import Avatar from '#components/Avatar';
-import DeepImageInput from '#components/general/DeepImageInput';
+import DeepImageInput, { Option } from '#components/general/DeepImageInput';
 import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
+import {
+    MeDetailsQuery,
+    MeDetailsQueryVariables,
+    UpdateMeMutation,
+    UpdateMeMutationVariables,
+    UserEmailConditionOptOutEnum,
+} from '#generated/types';
 import {
     LanguagePreference,
     MultiResponse,
 } from '#types';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useRequest } from '#base/utils/restRequest';
 import UserContext from '#base/context/UserContext';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
 import ChangePasswordButton from './ChangePasswordButton';
 
 import styles from './styles.css';
 
-type EmailOptOut = 'news_and_updates' | 'join_requests' | 'email_comment';
+type FormType = PartialForm<UpdateMeMutationVariables['data']> & {
+    displayPictureUrl?: string;
+};
 
-interface User {
-    id: number;
-    username: string;
-    firstName: string;
-    lastName: string;
-    displayName: string;
-    lastActiveProject: number;
-    loginAttempts: number;
-    email: string;
-    organization: string;
-    displayPicture: number;
-    displayPictureUrl: string;
-    language: string;
-    emailOptOuts: EmailOptOut[];
-}
-
-type FormType = Partial<Pick<User, 'firstName' | 'lastName' | 'organization' | 'language' | 'emailOptOuts' | 'displayPicture' | 'displayPictureUrl'>>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -69,30 +65,66 @@ const schema: FormSchema = {
     }),
 };
 
-type EmailOptOutOption = {
-    key: EmailOptOut;
+interface EmailOptOutOption {
+    key: UserEmailConditionOptOutEnum;
     label: string;
 }
 const emailOptOutsOptions: EmailOptOutOption[] = [
-    { key: 'news_and_updates', label: _ts('userProfile', 'newsAndUpdatesInfo') },
-    { key: 'join_requests', label: _ts('userProfile', 'joinRequestsInfo') },
-    { key: 'email_comment', label: _ts('userProfile', 'entryCommentsInfo') },
+    { key: 'NEWS_AND_UPDATES', label: _ts('userProfile', 'newsAndUpdatesInfo') },
+    { key: 'JOIN_REQUESTS', label: _ts('userProfile', 'joinRequestsInfo') },
+    { key: 'EMAIL_COMMENT', label: _ts('userProfile', 'entryCommentsInfo') },
 ];
 const emailOptOutKeySelector = (d: EmailOptOutOption) => d.key;
+const emailOptOutLabelSelector = (d: EmailOptOutOption) => d.label;
 const languageKeySelector = (d: LanguagePreference) => d.code;
 const languageLabelSelector = (d: LanguagePreference) => d.title;
 
 const initialValue: FormType = {};
 
-interface Option {
-    id: number;
-    title: string;
-    file: string;
-}
-
 interface Props {
     className?: string;
 }
+
+const ME_DETAILS = gql`
+    query MeDetails {
+        me {
+            displayName
+            displayPicture
+            displayPictureUrl
+            emailOptOuts
+            firstName
+            id
+            language
+            organization
+            lastName
+        }
+    }
+`;
+
+const UPDATE_ME = gql`
+    mutation UpdateMe($data: UserMeInputType!) {
+        updateMe(data: $data) {
+            errors
+            ok
+            result {
+                email
+                id
+                displayName
+                displayPictureUrl
+                lastActiveProject {
+                    allowedPermissions
+                    currentUserRole
+                    id
+                    hasAssessmentTemplate
+                    isPrivate
+                    title
+                    isVisualizationEnabled
+                    isVisualizationAvailable
+                }
+            }
+        }
+    }
+`;
 
 function MyProfile(props: Props) {
     const {
@@ -100,7 +132,6 @@ function MyProfile(props: Props) {
     } = props;
 
     const {
-        user,
         setUser,
     } = useContext(UserContext);
 
@@ -119,20 +150,62 @@ function MyProfile(props: Props) {
     const error = getErrorObject(riskyError);
 
     const {
-        pending: userGetPending,
-    } = useRequest<User>({
-        url: user ? `server://users/${user.id}/` : undefined,
-        method: 'GET',
-        onSuccess: (response: User) => {
-            setValue(response);
-            setError({});
-            setUser({
-                id: String(response.id),
-                displayName: response.displayName,
-                displayPictureUrl: response.displayPictureUrl,
-            });
+        loading: userGetPending,
+    } = useQuery<MeDetailsQuery, MeDetailsQueryVariables>(
+        ME_DETAILS,
+        {
+            onCompleted: (response) => {
+                const safeMe = removeNull(response.me);
+                if (safeMe) {
+                    setValue(safeMe);
+                    setUser(safeMe);
+                }
+            },
         },
-    });
+    );
+
+    const [
+        updateUser,
+        {
+            loading: userUpdatePending,
+        },
+    ] = useMutation<UpdateMeMutation, UpdateMeMutationVariables>(
+        UPDATE_ME,
+        {
+            onCompleted: (response) => {
+                const { updateMe } = response;
+                if (!updateMe) {
+                    return;
+                }
+
+                const {
+                    errors,
+                    ok,
+                } = updateMe;
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                } else if (ok) {
+                    const safeMe = removeNull(response.updateMe.result);
+                    setUser(safeMe);
+                    alert.show(
+                        'Successfully updated your profile!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+                alert.show(
+                    'There was an error updating your profile!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
     const {
         pending: languagesPending,
         response: languageResponse,
@@ -141,55 +214,15 @@ function MyProfile(props: Props) {
         method: 'GET',
     });
 
-    const {
-        pending: userPatchPending,
-        trigger: userPatch,
-    } = useLazyRequest<User, FormType>({
-        url: user ? `server://users/${user.id}/` : undefined,
-        method: 'PATCH',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            setValue(response);
-            setError({});
-            setUser({
-                id: String(response.id),
-                displayName: response.displayName,
-                displayPictureUrl: response.displayPictureUrl,
-            });
-            alert.show(
-                'Successfully updated changes.',
-                { variant: 'success' },
-            );
-        },
-        failureMessage: 'Failed to update changes.',
-    });
+    const handleSubmit = useCallback((finalValue) => {
+        updateUser({ variables: { data: finalValue } });
+    }, [updateUser]);
 
-    const handleCheck = useCallback((checked: boolean, name: EmailOptOut) => {
-        if (checked) {
-            setFieldValue((oldValue: EmailOptOut[] | undefined) => ([
-                ...(oldValue ?? []),
-                name]), 'emailOptOuts' as const);
-        } else {
-            setFieldValue((oldValue: EmailOptOut[] | undefined) => ([
-                ...(oldValue ?? []).filter((v) => v !== name),
-            ]), 'emailOptOuts' as const);
-        }
+    const handleDisplayPictureOptionChange = useCallback((option: Option<string>) => {
+        setFieldValue(option.file, 'displayPictureUrl' as const);
     }, [setFieldValue]);
 
-    const rowRendererParams = useCallback((key: EmailOptOut, data: EmailOptOutOption) => ({
-        name: key,
-        value: value.emailOptOuts?.some((v) => v === key),
-        onChange: handleCheck,
-        label: data.label,
-    }), [value, handleCheck]);
-
-    const handleSubmit = userPatch;
-
-    const handleDisplayPictureOptionChange = useCallback((option: Option) => {
-        setFieldValue(() => option.file, 'displayPictureUrl' as const);
-    }, [setFieldValue]);
-
-    const disabled = userGetPending || userPatchPending || languagesPending;
+    const disabled = userGetPending || languagesPending || userUpdatePending;
 
     return (
         <form
@@ -289,19 +322,18 @@ function MyProfile(props: Props) {
                             labelSelector={languageLabelSelector}
                             options={languageResponse?.results}
                         />
-                        <Container
+                        <CheckListInput
                             className={styles.emailPreferences}
-                            heading="Email Notifications"
-                            headingSize="extraSmall"
-                            contentClassName={styles.inputContainer}
-                        >
-                            <List // FIXME:  use ListSelection component when available
-                                data={emailOptOutsOptions}
-                                renderer={Checkbox}
-                                keySelector={emailOptOutKeySelector}
-                                rendererParams={rowRendererParams}
-                            />
-                        </Container>
+                            label="Email Notifications"
+                            name="emailOptOuts"
+                            value={value.emailOptOuts}
+                            options={emailOptOutsOptions}
+                            keySelector={emailOptOutKeySelector}
+                            labelSelector={emailOptOutLabelSelector}
+                            onChange={setFieldValue}
+                            disabled={disabled}
+                            error={error?.emailOptOuts}
+                        />
                     </Container>
                 </div>
                 <div className={styles.buttonContainer}>
