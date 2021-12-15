@@ -140,12 +140,13 @@ function MyProfile(props: Props) {
     const {
         pristine,
         value,
+        setPristine,
         error: riskyError,
         setFieldValue,
         validate,
         setError,
         setValue,
-    } = useForm(schema, initialValue);
+    } = useForm(schema, initialValue, false);
 
     const error = getErrorObject(riskyError);
 
@@ -186,8 +187,9 @@ function MyProfile(props: Props) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok) {
-                    const safeMe = removeNull(response.updateMe.result);
+                    const safeMe = removeNull(response.updateMe?.result);
                     setUser(safeMe);
+                    setPristine(true);
                     alert.show(
                         'Successfully updated your profile!',
                         { variant: 'success' },
