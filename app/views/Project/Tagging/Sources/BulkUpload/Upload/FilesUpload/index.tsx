@@ -34,19 +34,18 @@ function FilesUpload(props: Props) {
 
     return (
         <div className={_cs(styles.filesUpload, className)}>
+            <div className={styles.iconContainer}>
+                <IoCloudUpload className={styles.icon} />
+            </div>
             <FileInput
                 className={styles.fileInput}
+                inputSectionClassName={styles.inputSection}
+                inputContainerClassName={styles.inputContainer}
                 name="uploadFiles"
                 value={null}
                 onChange={handleFileInputChange}
-                labelContainerClassName={styles.labelContainer}
-                label={(
-                    <>
-                        <IoCloudUpload className={styles.icon} />
-                        Drag and Drop Files Here
-                    </>
-                )}
-                showStatus={false}
+                status="Drag and drop files here"
+                overrideStatus
                 multiple
             >
                 Browse Files
