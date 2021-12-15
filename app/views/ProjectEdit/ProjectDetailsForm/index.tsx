@@ -298,7 +298,7 @@ function ProjectDetailsForm(props: Props) {
             history.replace(homePath);
             alert.show(
                 'Successfully deleted project.',
-                { variant: 'error' },
+                { variant: 'success' },
             );
         },
         failureMessage: 'Failed to delete project.',

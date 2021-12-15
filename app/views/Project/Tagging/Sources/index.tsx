@@ -6,7 +6,11 @@ import {
 } from 'react-icons/io5';
 import {
     Header,
-    QuickActionButton,
+    useHash,
+    Tabs,
+    Tab,
+    TabList,
+    TabPanel,
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
@@ -18,6 +22,7 @@ import {
 } from './SourcesFilter/schema';
 import SourcesTable from './SourcesTable';
 import EntriesGrid from './EntriesGrid';
+
 import styles from './styles.css';
 
 interface Props {
@@ -32,85 +37,71 @@ function Sources(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
     const [sourcesFilters, setSourcesFilters] = useState<PartialFilterFormType>({});
-
-    const [activeView, setActiveView] = React.useState<'table' | 'grid'>('table');
-
-    const handleGridButtonClick = React.useCallback(() => {
-        setActiveView('grid');
-    }, []);
-
-    const handleTableButtonClick = React.useCallback(() => {
-        setActiveView('table');
-    }, []);
+    const activeView = useHash();
 
     return (
         <div className={_cs(styles.sources, className)}>
-            <div className={styles.topSection}>
-                {activeProject && (
-                    <SourcesStats
-                        className={styles.stats}
-                        projectId={activeProject}
-                    />
-                )}
-                <Header
-                    heading={_ts('sourcesFilter', 'title')}
-                    headingSize="medium"
-                    actions={(
-                        <>
-                            <QuickActionButton
-                                className={_cs(
-                                    styles.switchButton,
-                                    activeView === 'table' && styles.active,
-                                )}
-                                title="Table View"
-                                name="switch"
-                                variant="action"
-                                onClick={handleTableButtonClick}
-                                big
-                            >
-                                <IoList />
-                            </QuickActionButton>
-                            <QuickActionButton
-                                name="switch"
-                                title="Grid View"
-                                className={_cs(
-                                    styles.switchButton,
-                                    activeView === 'grid' && styles.active,
-                                )}
-                                variant="action"
-                                onClick={handleGridButtonClick}
-                                big
-                            >
-                                <IoGridOutline />
-                            </QuickActionButton>
-                        </>
+            <Tabs
+                useHash
+                defaultHash="table"
+            >
+                <div className={styles.topSection}>
+                    {activeProject && (
+                        <SourcesStats
+                            className={styles.stats}
+                            projectId={activeProject}
+                        />
                     )}
-                />
+                    <Header
+                        heading={_ts('sourcesFilter', 'title')}
+                        headingSize="medium"
+                        actions={(
+                            <TabList className={styles.tabs}>
+                                <Tab
+                                    name="table"
+                                    className={styles.tab}
+                                    transparentBorder
+                                >
+                                    <IoList />
+                                </Tab>
+                                <Tab
+                                    name="grid"
+                                    className={styles.tab}
+                                    transparentBorder
+                                >
+                                    <IoGridOutline />
+                                </Tab>
+                            </TabList>
+                        )}
+                    />
+                    {activeProject && (
+                        <SourcesFilter
+                            className={styles.filter}
+                            value={sourcesFilters}
+                            onFilterApply={setSourcesFilters}
+                            projectId={activeProject}
+                            isEntriesOnlyFilter={activeView === 'grid'}
+                        />
+                    )}
+                </div>
                 {activeProject && (
-                    <SourcesFilter
-                        className={styles.filter}
-                        value={sourcesFilters}
-                        onFilterApply={setSourcesFilters}
-                        projectId={activeProject}
-                        isEntriesOnlyFilter={activeView === 'grid'}
-                    />
+                    <div className={styles.leads}>
+                        <TabPanel name="table">
+                            <SourcesTable
+                                className={styles.table}
+                                filters={sourcesFilters}
+                                projectId={activeProject}
+                            />
+                        </TabPanel>
+                        <TabPanel name="grid">
+                            <EntriesGrid
+                                projectId={String(activeProject)}
+                                filters={sourcesFilters}
+                            />
+                        </TabPanel>
+                    </div>
                 )}
-            </div>
-            <div className={styles.leads}>
-                {activeView === 'table' && activeProject && (
-                    <SourcesTable
-                        className={styles.table}
-                        filters={sourcesFilters}
-                        projectId={activeProject}
-                    />
-                )}
-                {activeView === 'grid' && activeProject && (
-                    <EntriesGrid
-                        projectId={String(activeProject)}
-                        filters={sourcesFilters}
-                    />
-                )}
-            </div>
+            </Tabs>
         </div>
     );
 }
