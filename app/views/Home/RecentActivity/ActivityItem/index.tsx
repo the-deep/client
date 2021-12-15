@@ -40,7 +40,7 @@ function ActivityItem(props: RecentActivityProps) {
         >
             <div className={styles.description}>
                 {generateString(
-                    '{createdByDisplayName} added {article} {type} on {projectDisplayName}',
+                    '{createdByDisplayName} added {article} {type} on {projectDisplayName}.',
                     {
                         createdByDisplayName: (
                             <span className={styles.boldText}>

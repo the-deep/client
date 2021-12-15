@@ -146,7 +146,7 @@ function MyProfile(props: Props) {
         validate,
         setError,
         setValue,
-    } = useForm(schema, initialValue, false);
+    } = useForm(schema, initialValue);
 
     const error = getErrorObject(riskyError);
 
@@ -187,7 +187,7 @@ function MyProfile(props: Props) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok) {
-                    const safeMe = removeNull(response.updateMe?.result);
+                    const safeMe = removeNull(updateMe.result);
                     setUser(safeMe);
                     setPristine(true);
                     alert.show(
