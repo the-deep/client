@@ -56,10 +56,9 @@ export interface Assignment {
     contentObjectDetails: {
         id: number;
         title: string;
+        lead?: string;
+        entry?: string;
     };
     isDone: boolean;
-    contentObjectType: {
-        id: number;
-        title: string;
-    };
+    contentObjectType: 'lead' | 'entryreviewcomment' | 'entrycomment';
 }

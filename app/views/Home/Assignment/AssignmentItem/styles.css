@@ -10,17 +10,10 @@
         gap: var(--dui-spacing-small);
 
         .description {
-            display: inline-block;
-
-            >* {
-                display: inline;
-                padding: 0;
-                word-break: break-all;
-
-                >* {
-                    display: inline;
-                    padding: 0;
-                }
+            .link {
+                display: inline-block;
+                color: var(--dui-color-brand);
+                font-weight: var(--dui-font-weight-bold);
             }
         }
 
@@ -30,10 +23,6 @@
             font-size: var(--dui-font-size-small);
         }
 
-        .link {
-            color: var(--dui-color-brand);
-            font-weight: var(--dui-font-weight-bold);
-        }
     }
 
     .mark-as-done-button {

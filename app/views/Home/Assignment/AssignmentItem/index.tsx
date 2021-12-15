@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import { generatePath } from 'react-router-dom';
 import {
@@ -9,8 +9,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import { Assignment } from '#types';
-
-import _ts from '#ts';
+import generateString from '#utils/string';
 import routes from '#base/configs/routes';
 
 import styles from './styles.css';
@@ -36,6 +35,60 @@ function AssignmentItem(props: AssignmentItemProps) {
         handleClickFromProps(id);
     }, [id, handleClickFromProps]);
 
+    const contentLink = useMemo(() => {
+        if (contentObjectType === 'lead') {
+            return (
+                <>
+                    <span>
+                        lead
+                    </span>
+                    {contentObjectDetails?.id && projectDetails?.id && (
+                        <Link
+                            to={generatePath(routes.entryEdit.path, {
+                                projectId: projectDetails.id,
+                                leadId: contentObjectDetails.id,
+                            })}
+                            className={styles.link}
+                        >
+                            {contentObjectDetails.title}
+                        </Link>
+                    )}
+                </>
+            );
+        }
+        if (contentObjectType === 'entryreviewcomment') {
+            if (!projectDetails?.id && contentObjectDetails?.lead) {
+                return (
+                    <span>
+                        an entry
+                    </span>
+                );
+            }
+            const editEntryLink = {
+                pathname: (generatePath(routes.entryEdit.path, {
+                    projectId: projectDetails.id,
+                    leadId: contentObjectDetails.lead,
+                })),
+                state: {
+                    entryId: contentObjectDetails.entry,
+                },
+            };
+            return (
+                <Link
+                    className={styles.link}
+                    to={editEntryLink}
+                >
+                    an entry
+                </Link>
+            );
+        }
+        return null;
+    }, [
+        contentObjectType,
+        contentObjectDetails,
+        projectDetails,
+    ]);
+
     return (
         <Element
             className={styles.assignmentItem}
@@ -54,32 +107,24 @@ function AssignmentItem(props: AssignmentItemProps) {
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
-                {createdByDetails.displayName}
-                &nbsp;
-                {_ts('assignment', 'assignedYou')}
-                &nbsp;
-                a
-                &nbsp;
-                {contentObjectType}
-                &nbsp;
-                <Link
-                    to={generatePath(routes.entryEdit.path, {
-                        projectId: projectDetails?.id,
-                        leadId: contentObjectDetails?.id,
-                    })}
-                    className={styles.link}
-                >
-                    {contentObjectDetails?.title}
-                </Link>
-                &nbsp;
-                {_ts('assignment', 'in')}
-                &nbsp;
-                <Link
-                    to={generatePath(routes.tagging.path, { projectId: projectDetails?.id })}
-                    className={styles.link}
-                >
-                    {projectDetails?.title}
-                </Link>
+                {generateString(
+                    '{createdByName} assigned you to {linkToItem} in {project}.',
+                    {
+                        createdByName: createdByDetails.displayName,
+                        linkToItem: contentLink,
+                        project: (
+                            <Link
+                                to={generatePath(
+                                    routes.tagging.path,
+                                    { projectId: projectDetails?.id },
+                                )}
+                                className={styles.link}
+                            >
+                                {projectDetails?.title}
+                            </Link>
+                        ),
+                    },
+                )}
             </div>
             <DateOutput
                 className={styles.createdDate}

@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    compareDate,
+} from '@togglecorp/fujs';
 import {
     AreaChart,
     XAxis,
@@ -92,7 +95,7 @@ function Activity(props: Props) {
                     ...foo,
                     ...bar,
                 }),
-            );
+            ).sort((a, b) => compareDate(a.date, b.date));
         },
         [data?.activities],
     );
