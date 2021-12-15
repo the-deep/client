@@ -75,7 +75,7 @@ export interface RecentProjectItemProps {
     totalUsers: number | null | undefined;
     totalSources: number | null | undefined;
     totalSourcesTagged: number | null | undefined;
-    totalSourcesValidated: number | null | undefined;
+    totalSourcesInProgress: number | null | undefined;
     entriesActivity: DateCountType[] | null | undefined;
     topTaggers: UserEntityCountType[] | null | [] | undefined;
     topSourcers: UserEntityCountType[] | null | [] | undefined;
@@ -97,7 +97,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         totalUsers,
         totalSources = 0,
         totalSourcesTagged = 0,
-        totalSourcesValidated = 0,
+        totalSourcesInProgress = 0,
         topTaggers,
         topSourcers,
         entriesActivity,
@@ -296,21 +296,21 @@ function ProjectItem(props: RecentProjectItemProps) {
                 />
                 <Card className={styles.progressLines}>
                     <ProgressLine
-                        progress={((totalSourcesValidated ?? 0) / (totalSources ?? 0)) * 100}
-                        title={_ts('home.recentProjects', 'sourcesTaggedValidatedLabel')}
+                        progress={((totalSourcesTagged ?? 0) / (totalSources ?? 0)) * 100}
+                        title="Sources tagged"
                         variant="complement1"
                     />
                     <ProgressLine
-                        progress={((totalSourcesTagged ?? 0) / (totalSources ?? 0)) * 100}
-                        title={_ts('home.recentProjects', 'sourcesTaggedLabel')}
+                        progress={((totalSourcesInProgress ?? 0) / (totalSources ?? 0)) * 100}
+                        title="Sources in progress"
                         variant="complement2"
                     />
                     <ProgressLine
                         progress={
                             // eslint-disable-next-line max-len
-                            (((totalSources ?? 0) - (totalSourcesTagged ?? 0)) / (totalSources ?? 0)) * 100
+                            (((totalSources ?? 0) - (totalSourcesTagged ?? 0) - (totalSourcesInProgress ?? 0)) / (totalSources ?? 0)) * 100
                         }
-                        title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
+                        title="Sources not tagged"
                         variant="complement3"
                     />
                 </Card>

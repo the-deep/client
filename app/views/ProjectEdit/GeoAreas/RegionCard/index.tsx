@@ -139,6 +139,7 @@ function RegionCard(props: Props) {
     });
 
     const {
+        pending: deleteAdminLevelPending,
         trigger: deleteAdminLevel,
     } = useLazyRequest<unknown, number>({
         url: (ctx) => `server://admin-levels/${ctx}/`,
@@ -282,7 +283,7 @@ function RegionCard(props: Props) {
         ],
     );
 
-    const pending = adminLevelsPending || pendingPublishRegion;
+    const pending = adminLevelsPending || pendingPublishRegion || deleteAdminLevelPending;
 
     return (
         <ControlledExpandableContainer

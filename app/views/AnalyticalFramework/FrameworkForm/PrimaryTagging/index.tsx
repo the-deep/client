@@ -478,7 +478,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                             <TabPanel
                                 key={section.clientId}
                                 name={section.clientId}
-                                className={styles.panel}
+                                activeClassName={styles.panel}
                             >
                                 <Canvas
                                     name={section.clientId}
@@ -496,7 +496,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                             <TabPanel
                                 key={section.clientId}
                                 name={section.clientId}
-                                className={styles.panel}
+                                activeClassName={styles.panel}
                             >
                                 <Canvas
                                     name={section.clientId}

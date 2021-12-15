@@ -789,7 +789,7 @@ function PillarAnalysis() {
                         >
                             <TabPanel
                                 name="entries"
-                                className={styles.tabPanel}
+                                activeClassName={styles.tabPanel}
                             >
                                 <ListView
                                     className={styles.entriesList}
@@ -822,7 +822,7 @@ function PillarAnalysis() {
                             </TabPanel>
                             <TabPanel
                                 name="discarded"
-                                className={styles.tabPanel}
+                                activeClassName={styles.tabPanel}
                             >
                                 <DiscardedEntries
                                     className={styles.discardedEntriesContainer}

@@ -88,11 +88,11 @@ function UserGroup(props: Props) {
         onSuccess: () => {
             usergroupGetRetrigger();
             alert.show(
-                'Usergroup deleted successfully.',
+                'User group deleted successfully.',
                 { variant: 'success' },
             );
         },
-        failureMessage: 'Failed to delete usergroup.',
+        failureMessage: 'Failed to delete user group.',
     });
 
     const usergroupObjectToEdit = useMemo(() => (
@@ -182,7 +182,7 @@ function UserGroup(props: Props) {
                         variant="experiment"
                     />
                 )}
-                emptyMessage="No usergroups found."
+                emptyMessage="No user groups found."
                 messageIconShown
                 messageShown
             />

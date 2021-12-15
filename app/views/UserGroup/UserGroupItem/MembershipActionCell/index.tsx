@@ -64,7 +64,7 @@ function ActionCell(props: Props) {
                 name="deleteButton"
                 title="Remove user"
                 onConfirm={handleDeleteUserGroupClick}
-                message="Are you sure you want to remove this member from this usergroup?"
+                message="Are you sure you want to remove this member from this user group?"
                 showConfirmationInitially={false}
                 disabled={disabled}
             >

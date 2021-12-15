@@ -1,12 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
+    isDefined,
     compareDate,
 } from '@togglecorp/fujs';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import {
     Tag,
     DraggableContent,
+    PendingMessage,
     useConfirmation,
     QuickActionDropdownMenu,
     DropdownMenuItem,
@@ -57,6 +59,7 @@ function SourceEntryItem(props: Props) {
     const [selectedDiscardType, setSelectedDiscardType] = useState<number | undefined>();
 
     const {
+        pending: disardPending,
         trigger,
     } = useLazyRequest<unknown, { entry: number; tag: number }>({
         url: `server://analysis-pillar/${pillarId}/discarded-entries/`,
@@ -71,7 +74,7 @@ function SourceEntryItem(props: Props) {
     });
 
     const handleDiscardConfirm = useCallback(() => {
-        if (selectedDiscardType) {
+        if (isDefined(selectedDiscardType)) {
             trigger({
                 entry: +entryId,
                 tag: selectedDiscardType,
@@ -121,6 +124,7 @@ function SourceEntryItem(props: Props) {
                 <QuickActionDropdownMenu
                     label={(<IoTrashBinOutline />)}
                     title="Discard entry"
+                    disabled={disardPending}
                 >
                     {discardedTags && discardedTags.map((tag) => (
                         <DropdownMenuItem
@@ -134,6 +138,7 @@ function SourceEntryItem(props: Props) {
                 </QuickActionDropdownMenu>
             )}
         >
+            {disardPending && <PendingMessage />}
             <ExcerptInput
                 entryType={entryType}
                 image={image}
