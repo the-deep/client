@@ -10,14 +10,12 @@
         padding: var(--dui-spacing-medium);
         height: calc(10em + 25vh);
         overflow-y: auto;
-        gap: var(--dui-spacing-medium);
 
         .assignment-list {
             display: flex;
             position: relative;
             flex-direction: column;
             flex-grow: 1;
-            overflow-y: auto;
             gap: var(--dui-spacing-medium);
         }
     }

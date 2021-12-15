@@ -41,8 +41,4 @@
             font-weight: var(--dui-font-weight-bold);
         }
     }
-
-    &:hover {
-        background-color: var(--dui-color-background-hover);
-    }
 }

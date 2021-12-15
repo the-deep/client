@@ -16,9 +16,9 @@ import {
     IoPersonSharp,
 } from 'react-icons/io5';
 import {
-    Tabs,
     PendingMessage,
     ListView,
+    Tabs,
     Tab,
     TabList,
     TabPanel,

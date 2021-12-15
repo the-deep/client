@@ -56,7 +56,7 @@ function AssignmentItem(props: AssignmentItemProps) {
                 </>
             );
         }
-        if (contentObjectType === 'entryreviewcomment') {
+        if (contentObjectType === 'entryreviewcomment' || contentObjectType === 'entrycomment') {
             if (!projectDetails?.id && contentObjectDetails?.lead) {
                 return (
                     <span>

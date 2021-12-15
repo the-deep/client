@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
     Container,
-    Button,
+    ConfirmButton,
     Pager,
     ListView,
 } from '@the-deep/deep-ui';
@@ -99,15 +99,16 @@ function Assignments() {
             heading={_ts('assignment', 'myAssignments')}
             headerActions={(
                 assignmentsResponse && assignmentsResponse.count > 0 && (
-                    <Button
+                    <ConfirmButton
                         name={undefined}
-                        onClick={handleBulkActionClick}
+                        onConfirm={handleBulkActionClick}
+                        message="Are you sure you want to clear all your assignments? This cannot be undone."
                         disabled={bulkPending}
                         variant="action"
                         title={_ts('assignment', 'markAllAsDone')}
                     >
                         <IoCheckmarkDone />
-                    </Button>
+                    </ConfirmButton>
                 )
             )}
             className={styles.assignments}

@@ -2,12 +2,6 @@
     display: flex;
     flex-direction: column;
 
-    .switch-button {
-        &.active {
-            color: var(--dui-color-accent);
-        }
-    }
-
     .top-section {
         display: flex;
         flex-direction: column;
@@ -23,6 +17,15 @@
         .filter {
             display: flex;
             flex-shrink: 0;
+        }
+    }
+
+    .tabs {
+        flex-shrink: 0;
+
+        .tab {
+            padding: var(--dui-spacing-small);
+            font-size: var(--dui-font-size-extra-large);
         }
     }
 
