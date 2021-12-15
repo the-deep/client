@@ -3,28 +3,28 @@ import { FileInput, FileInputProps, ImagePreview } from '@the-deep/deep-ui';
 import { useLazyRequest } from '#base/utils/restRequest';
 import _ts from '#ts';
 
-interface Option {
-    id: number;
+export interface Option<N extends string | number> {
+    id: N;
     title: string;
     file: string;
     mimeType?: string;
     metadata?: unknown;
 }
 
-interface Props<T extends string> extends Omit<FileInputProps<T>, 'overrideStatus' | 'status' | 'value' | 'onChange' | 'multiple' | 'className'> {
+interface Props<T extends string, N extends number | string> extends Omit<FileInputProps<T>, 'overrideStatus' | 'status' | 'value' | 'onChange' | 'multiple' | 'className'> {
     className?: string;
     previewClassName?: string;
     fileInputClassName?: string;
-    value?: number;
-    onChange: (value: number | undefined, name: T) => void;
+    value: N | null | undefined;
+    onChange: (value: N | null | undefined, name: T) => void;
 
-    option?: Option;
-    onOptionChange: (value: Option) => void;
+    option?: Option<N>;
+    onOptionChange: (value: Option<N>) => void;
     isPrivate?: boolean;
     previewVisible?: boolean;
 }
 
-function DeepImageInput<T extends string>(props: Props<T>) {
+function DeepImageInput<T extends string, N extends number | string>(props: Props<T, N>) {
     const {
         className,
         previewClassName,
@@ -45,7 +45,7 @@ function DeepImageInput<T extends string>(props: Props<T>) {
     const {
         pending,
         trigger,
-    } = useLazyRequest<Option, File>({
+    } = useLazyRequest<Option<N>, File>({
         formData: true,
         url: 'server://files/',
         method: 'POST',
