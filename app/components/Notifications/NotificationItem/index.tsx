@@ -95,7 +95,7 @@ function NotificationItem(props: Props) {
             project,
         } = notification;
 
-        const editEntryLink = {
+        const editEntryLink = (project?.id && data?.lead) ? ({
             pathname: (generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
                 leadId: data?.lead,
@@ -103,7 +103,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
-        };
+        }) : undefined;
 
         return (
             <NotificationContainer
@@ -117,13 +117,15 @@ function NotificationItem(props: Props) {
                         '{createdByName} assigned you to a comment in the {entryLink} in the project {projectTitle}.',
                         {
                             createdByName: (<b>{data?.created_by_detail?.name}</b>),
-                            entryLink: (
+                            entryLink: editEntryLink ? (
                                 <Link
                                     className={styles.link}
                                     to={editEntryLink}
                                 >
                                     entry
                                 </Link>
+                            ) : (
+                                'entry'
                             ),
                             projectTitle: (<b>{project?.title}</b>),
                         },
@@ -138,7 +140,7 @@ function NotificationItem(props: Props) {
             project,
         } = notification;
 
-        const editEntryLink = {
+        const editEntryLink = (project?.id && data?.lead) ? ({
             pathname: (generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
                 leadId: data?.lead,
@@ -146,7 +148,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
-        };
+        }) : undefined;
 
         return (
             <NotificationContainer
@@ -160,13 +162,15 @@ function NotificationItem(props: Props) {
                         '{createdByName} modified the comment you were assigned to in the {entryLink} in the project {projectTitle}.',
                         {
                             createdByName: (<b>{data?.created_by_detail?.name}</b>),
-                            entryLink: (
+                            entryLink: editEntryLink ? (
                                 <Link
                                     className={styles.link}
                                     to={editEntryLink}
                                 >
                                     entry
                                 </Link>
+                            ) : (
+                                'entry'
                             ),
                             projectTitle: (<b>{project?.title}</b>),
                         },
