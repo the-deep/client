@@ -220,13 +220,13 @@ function EntryItem(props: EntryItemProps) {
                         label={<BsFileDiff />}
                         disabled={
                             droppedExcerpt === excerpt
-                            || (droppedExcerpt?.length ?? '') > 0
-                            || (excerpt?.length ?? '') > 0
+                            || (droppedExcerpt?.length ?? 0) > 0
+                            || (excerpt?.length ?? 0) > 0
                         }
                         popupClassName={styles.diffExcerptPopup}
                         popupContentClassName={styles.content}
                     >
-                        {(droppedExcerpt?.length ?? '') > 0 && (
+                        {(droppedExcerpt?.length ?? 0) > 0 && (
                             <div className={styles.excerpt}>
                                 <Heading size="small">
                                     Original
@@ -236,7 +236,7 @@ function EntryItem(props: EntryItemProps) {
                                 </div>
                             </div>
                         )}
-                        {(excerpt?.length ?? '') > 0 && (
+                        {(excerpt?.length ?? 0) > 0 && (
                             <div className={styles.excerpt}>
                                 <Heading size="small">
                                     Modified
