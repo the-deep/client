@@ -163,7 +163,7 @@ function NotificationContainer(props: Props) {
                 </div>
                 <div className={styles.dateContainer}>
                     <DateOutput
-                        format="dd-MM-yyyy at hh:mm AAA"
+                        format="dd-MM-yyyy at hh:mm aaa"
                         value={timestamp}
                     />
                     {isDefined(description) && (
