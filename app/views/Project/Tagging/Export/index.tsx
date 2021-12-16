@@ -63,12 +63,14 @@ function Export() {
                         >
                             Export History
                         </Tab>
-                        <Tab
-                            name="export-assessment-history"
-                            transparentBorder
-                        >
-                            Export Assessment History
-                        </Tab>
+                        {project?.hasAssessmentTemplate && (
+                            <Tab
+                                name="export-assessment-history"
+                                transparentBorder
+                            >
+                                Export Assessment History
+                            </Tab>
+                        )}
                     </TabList>
                 )}
                 headingContainerClassName={styles.actionButtons}
@@ -82,14 +84,16 @@ function Export() {
                         >
                             New Export
                         </Button>
-                        <Button // TODO: properly check permissions
-                            name="export-assessment"
-                            onClick={showNewAssessmentModal}
-                            icons={<IoAdd />}
-                            variant="secondary"
-                        >
-                            New Assessment Export
-                        </Button>
+                        {project?.hasAssessmentTemplate && (
+                            <Button // TODO: properly check permissions
+                                name="export-assessment"
+                                onClick={showNewAssessmentModal}
+                                icons={<IoAdd />}
+                                variant="secondary"
+                            >
+                                New Assessment Export
+                            </Button>
+                        )}
                     </>
                 )}
                 contentClassName={styles.content}
@@ -105,17 +109,19 @@ function Export() {
                         />
                     )}
                 </TabPanel>
-                <TabPanel
-                    name="export-assessment-history"
-                    activeClassName={styles.tabPanel}
-                >
-                    {activeProject && (
-                        <ExportHistory
-                            projectId={activeProject}
-                            type={assessmentType}
-                        />
-                    )}
-                </TabPanel>
+                {project?.hasAssessmentTemplate && (
+                    <TabPanel
+                        name="export-assessment-history"
+                        activeClassName={styles.tabPanel}
+                    >
+                        {activeProject && (
+                            <ExportHistory
+                                projectId={activeProject}
+                                type={assessmentType}
+                            />
+                        )}
+                    </TabPanel>
+                )}
                 {newExportModalShown && activeProject && (
                     <Modal
                         className={styles.modal}
