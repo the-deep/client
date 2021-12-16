@@ -37,12 +37,10 @@ function AssignmentItem(props: AssignmentItemProps) {
 
     const contentLink = useMemo(() => {
         if (contentObjectType === 'lead') {
-            return (
-                <>
-                    <span>
-                        lead
-                    </span>
-                    {contentObjectDetails?.id && projectDetails?.id && (
+            return (generateString(
+                'lead {link}',
+                {
+                    link: (contentObjectDetails?.id && projectDetails?.id && (
                         <Link
                             to={generatePath(routes.entryEdit.path, {
                                 projectId: projectDetails.id,
@@ -52,8 +50,13 @@ function AssignmentItem(props: AssignmentItemProps) {
                         >
                             {contentObjectDetails.title}
                         </Link>
-                    )}
-                </>
+                    )),
+                },
+            ));
+            return (
+                <span>
+                    lead
+                </span>
             );
         }
         if (contentObjectType === 'entryreviewcomment' || contentObjectType === 'entrycomment') {

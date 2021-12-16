@@ -218,26 +218,34 @@ function EntryItem(props: EntryItemProps) {
                     </QuickActionButton>
                     <QuickActionDropdownMenu
                         label={<BsFileDiff />}
-                        disabled={droppedExcerpt === excerpt}
+                        disabled={
+                            droppedExcerpt === excerpt
+                            || (droppedExcerpt?.length ?? '') > 0
+                            || (excerpt?.length ?? '') > 0
+                        }
                         popupClassName={styles.diffExcerptPopup}
                         popupContentClassName={styles.content}
                     >
-                        <div className={styles.excerpt}>
-                            <Heading size="small">
-                                Original
-                            </Heading>
-                            <div className={styles.text}>
-                                {droppedExcerpt}
+                        {(droppedExcerpt?.length ?? '') > 0 && (
+                            <div className={styles.excerpt}>
+                                <Heading size="small">
+                                    Original
+                                </Heading>
+                                <div className={styles.text}>
+                                    {droppedExcerpt}
+                                </div>
                             </div>
-                        </div>
-                        <div className={styles.excerpt}>
-                            <Heading size="small">
-                                Modified
-                            </Heading>
-                            <div className={styles.text}>
-                                {excerpt}
+                        )}
+                        {(excerpt?.length ?? '') > 0 && (
+                            <div className={styles.excerpt}>
+                                <Heading size="small">
+                                    Modified
+                                </Heading>
+                                <div className={styles.text}>
+                                    {excerpt}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </QuickActionDropdownMenu>
                     <QuickActionDropdownMenu
                         label={<IoPencil />}

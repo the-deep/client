@@ -482,7 +482,7 @@ function EntryEdit(props: Props) {
                 const deleteSuccessCount = entryBulk?.deletedResult?.filter(isDefined).length ?? 0;
                 if (deleteSuccessCount > 0) {
                     alert.show(
-                        `${deleteSuccessCount} entry(s) deleted successfully!`,
+                        `Successfully deleted ${deleteSuccessCount} entry(s)!`,
                         { variant: 'success' },
                     );
                 }
@@ -497,7 +497,7 @@ function EntryEdit(props: Props) {
                 const saveSuccessCount = entryBulk?.result?.filter(isDefined).length ?? 0;
                 if (saveSuccessCount > 0) {
                     alert.show(
-                        `${saveSuccessCount} entry(s) saved successfully!`,
+                        `Successfully saved ${saveSuccessCount} entry(s)!`,
                         { variant: 'success' },
                     );
                 }
@@ -623,7 +623,7 @@ function EntryEdit(props: Props) {
                     } else {
                         handleLeadSave(shouldSetFinalize);
                         alert.show(
-                            'Entries updated successfully!',
+                            'Successfully updated entries!',
                             { variant: 'success' },
                         );
                     }
@@ -1068,6 +1068,10 @@ function EntryEdit(props: Props) {
         || leadUpdatePending;
 
     const disableFinalizeButton = useMemo(() => {
+        if (loading) {
+            return true;
+        }
+
         // NOTE: If any entry is selected, we'll disable the button
         if (selectedEntry) {
             return true;
@@ -1087,6 +1091,7 @@ function EntryEdit(props: Props) {
     }, [
         selectedEntry,
         entriesFormStale,
+        loading,
         leadValue.status,
         formValue.entries,
     ]);
@@ -1124,7 +1129,7 @@ function EntryEdit(props: Props) {
                             </BackLink>
                             <Button
                                 name={undefined}
-                                disabled={formPristine || !!selectedEntry}
+                                disabled={formPristine || !!selectedEntry || loading}
                                 onClick={handleSaveClick}
                             >
                                 Save

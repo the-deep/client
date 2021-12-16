@@ -167,7 +167,7 @@ function EditableEntry(props: Props) {
 
                 if (response.ok) {
                     alert.show(
-                        'Tags updated successfully!',
+                        'Successfully updated tags!',
                         { variant: 'success' },
                     );
                     // FIXME: update form data from server

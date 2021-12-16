@@ -185,7 +185,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     setError(formError);
                 } else if (ok && result) {
                     alert.show(
-                        'New analytical framework was successfully created.',
+                        'Successfully created new analytical framework.',
                         {
                             variant: 'success',
                         },
@@ -235,7 +235,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     setError(formError);
                 } else if (ok && result) {
                     alert.show(
-                        'The analytical framework was successfully updated.',
+                        'Successfully updated the analytical framework.',
                         {
                             variant: 'success',
                         },

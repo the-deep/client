@@ -106,7 +106,7 @@ function ChangePasswordModal(props: Props) {
         body: (ctx) => ctx,
         onSuccess: () => {
             alert.show(
-                'Password changed successfully.',
+                'Successfully changed password.',
                 { variant: 'success' },
             );
             onModalClose();

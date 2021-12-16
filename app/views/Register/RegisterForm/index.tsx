@@ -7,6 +7,7 @@ import {
     Button,
     PendingMessage,
     Container,
+    Kraken,
 } from '@the-deep/deep-ui';
 import { generatePath } from 'react-router-dom';
 import {
@@ -26,7 +27,6 @@ import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
 import HCaptchaSiteKey from '#base/configs/hCaptcha';
 import routes from '#base/configs/routes';
-import balloonKraken from '#resources/img/balloon-kraken.png';
 
 import _ts from '#ts';
 
@@ -203,10 +203,10 @@ function RegisterModal(props: Props) {
                     </>
                 )}
             </Container>
-            <img
-                alt=""
+            <Kraken
                 className={styles.kraken}
-                src={balloonKraken}
+                variant="ballon"
+                size="extraLarge"
             />
         </form>
     );

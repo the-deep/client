@@ -96,7 +96,7 @@ function Routes(props: Props) {
                     exact
                     path={routes.fourHundredFour.path}
                 >
-                    {routes.fourHundredFour.load({ className })}
+                    {routes.fourHundredFour.load({})}
                 </Route>
             </Switch>
         </Suspense>

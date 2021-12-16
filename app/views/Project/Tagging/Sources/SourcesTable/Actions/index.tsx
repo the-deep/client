@@ -32,6 +32,7 @@ export interface Props<T extends string> {
     disabled?: boolean;
     isAssessmentLead?: boolean;
     entriesCount: number;
+    hasAssessment: boolean;
 }
 
 function Actions<T extends string>(props: Props<T>) {
@@ -43,6 +44,7 @@ function Actions<T extends string>(props: Props<T>) {
         isAssessmentLead,
         onDeleteClick,
         entriesCount,
+        hasAssessment,
     } = props;
 
     const { project } = useContext(ProjectContext);
@@ -81,7 +83,7 @@ function Actions<T extends string>(props: Props<T>) {
     ] = useConfirmation<undefined>({
         showConfirmationInitially: false,
         onConfirm: handleDeleteConfirm,
-        message: 'Are you sure you want to delete this source?',
+        message: `Are you sure you want to delete this source? ${entriesCount} entry(s) ${hasAssessment ? 'and associated assessment' : ''} will be removed as well.`,
     });
 
     const isExpanded = id === expandedRowKey;

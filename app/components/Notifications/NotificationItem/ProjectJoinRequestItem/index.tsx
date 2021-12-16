@@ -31,7 +31,12 @@ mutation JoinRequestAcceptReject(
     $status: ProjectJoinRequestStatusEnum,
 ) {
     project(id: $projectId) {
+        id
         acceptRejectProject(id: $requestId, data: { status: $status }) {
+            result {
+                id
+                status
+            }
             ok
             errors
         }
@@ -57,13 +62,18 @@ function ProjectJoinRequestItem(props: Props) {
 
     const [
         updateStatus,
+        { loading },
     ] = useMutation<JoinRequestAcceptRejectMutation, JoinRequestAcceptRejectMutationVariables>(
         JOIN_REQUEST_ACCEPT_REJECT,
         {
+            refetchQueries: ['UserNotificationsCount'],
             onCompleted: (response) => {
                 if (response?.project?.acceptRejectProject?.ok) {
+                    const status = response.project.acceptRejectProject?.result?.status;
                     alert.show(
-                        'Successfully updated notification status.',
+                        status === 'ACCEPTED'
+                            ? 'Successfully added user to the project.'
+                            : 'Successfully rejected the request to join the project.',
                         {
                             variant: 'success',
                         },
@@ -122,6 +132,7 @@ function ProjectJoinRequestItem(props: Props) {
             userName={data?.requested_by?.display_name}
             descriptionLabel="Reason"
             description={data?.reason}
+            pendingRequests={loading}
             content={
                 generateString(
                     '{requestorName} requested to join the project {projectTitle}.',
@@ -141,6 +152,7 @@ function ProjectJoinRequestItem(props: Props) {
                         )}
                         spacing="compact"
                         variant="secondary"
+                        disabled={loading}
                     >
                         Reject
                     </Button>
@@ -151,6 +163,7 @@ function ProjectJoinRequestItem(props: Props) {
                         icons={(
                             <IoCheckmark />
                         )}
+                        disabled={loading}
                     >
                         Accept
                     </Button>

@@ -54,18 +54,21 @@ function FrameworkImageButton(props: Props) {
 
     return (
         <>
-            <Button
-                name={frameworkId}
-                className={_cs(
-                    !variant && styles.frameworkImageButton,
-                    className,
-                )}
-                onClick={showModal}
-                variant={variant ?? 'transparent'}
-                disabled={!frameworkId && !image}
-            >
-                {label}
-            </Button>
+            {(!frameworkId && !image) ? (
+                label
+            ) : (
+                <Button
+                    name={frameworkId}
+                    className={_cs(
+                        !variant && styles.frameworkImageButton,
+                        className,
+                    )}
+                    onClick={showModal}
+                    variant={variant ?? 'transparent'}
+                >
+                    {label}
+                </Button>
+            )}
             {isModalVisible && (
                 <Modal
                     className={styles.modal}
