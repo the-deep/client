@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { Link } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {
     QuickActionLink,
@@ -111,12 +112,15 @@ function Navbar(props: Props) {
 
     return (
         <nav className={_cs(className, styles.navbar)}>
-            <div className={styles.appBrand}>
+            <Link
+                to={route.home.path}
+                className={styles.appBrand}
+            >
                 <Svg
                     className={styles.logo}
                     src={deepLogo}
                 />
-            </div>
+            </Link>
             <div className={styles.main}>
                 <div className={styles.navLinks}>
                     <SmartNavLink
