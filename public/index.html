@@ -25,11 +25,6 @@
             font-size: 1.25rem;
         }
     </style>
-    <style id="anti-click-jacking">
-      body {
-        display:none !important;
-      }
-    </style>
   </head>
   <body style="background-color: #f0f0f0;">
     <noscript>
@@ -50,17 +45,6 @@
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css" type="text/css" />
 
     <!-- End -->
-
-    <!-- Start of anti-click-jacking -->
-    <script type="text/javascript"> //NOTE disable anti-click-jacking for localhost and deep domain
-    if (self.location.hostname === "localhost" || self.location.hostname === process.env.REACT_APP_CLIENT_DOMAIN) {
-      var antiClickjack = document.getElementById("anti-click-jacking");
-      antiClickjack.parentNode.removeChild(antiClickjack);
-    } else {
-      top.location = self.location;
-    }
-    </script>
-    <!-- End of anti-click-jacking -->
 
     <!-- Start of deephelp Zendesk Widget -->
     <script>/*<![CDATA[*/window.zE||(function(e,t,s){var n=window.zE=window.zEmbed=function(){n._.push(arguments)}, a=n.s=e.createElement(t),r=e.getElementsByTagName(t)[0];n.set=function(e){ n.set._.push(e)},n._=[],n.set._=[],a.async=true,a.setAttribute("charset","utf-8"), a.src="https://static.zdassets.com/ekr/asset_composer.js?key="+s, n.t=+new Date,a.type="text/javascript",r.parentNode.insertBefore(a,r)})(document,"script","c203955c-2d20-4d54-814b-4247caf4340f");/*]]>*/</script>
