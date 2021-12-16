@@ -40,7 +40,7 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
         },
         watchQuery: {
             fetchPolicy: 'cache-and-network',
-            nextFetchPolicy: 'cache-first',
+            nextFetchPolicy: 'cache-and-network',
             errorPolicy: 'all',
         },
     },
