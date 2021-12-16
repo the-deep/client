@@ -184,8 +184,8 @@ function AddUserModal(props: Props) {
                 } else if (user) {
                     alert.show(
                         projectUserToEdit
-                            ? `Successfully updated ${user.member.displayName}`
-                            : `Successfully added ${user.member.displayName}`,
+                            ? `Successfully updated ${user.member.displayName}.`
+                            : `Successfully added ${user.member.displayName}.`,
                         { variant: 'success' },
                     );
                     onProjectUserChange();

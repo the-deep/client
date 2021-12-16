@@ -5,6 +5,7 @@ import { IoChevronForwardSharp } from 'react-icons/io5';
 import { generatePath } from 'react-router-dom';
 import {
     Link,
+    Kraken,
     TextInput,
     Button,
     Container,
@@ -35,7 +36,6 @@ import { hidUrl } from '#base/configs/hid';
 import NonFieldError from '#components/NonFieldError';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import routes from '#base/configs/routes';
-import flyingKraken from '#resources/img/flying-kraken.png';
 
 import _ts from '#ts';
 import {
@@ -355,10 +355,10 @@ function LoginForm(props: Props) {
                     {_ts('explore.login', 'loginWithHid')}
                 </ButtonLikeLink>
             </Container>
-            <img
-                alt=""
+            <Kraken
                 className={styles.kraken}
-                src={flyingKraken}
+                variant="skydive"
+                size="large"
             />
         </form>
     );

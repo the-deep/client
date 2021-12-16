@@ -137,6 +137,8 @@ function LeftPane(props: Props) {
         setShowCanvasDrawModalFalse,
     ] = useBooleanState(false);
 
+    const [fullScreenMode, setFullScreenMode] = useState(false);
+
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = useRef(null);
 
     const variables = useMemo(
@@ -194,7 +196,11 @@ function LeftPane(props: Props) {
                 imageRaw: capturedImageUrl,
             });
         }
+        if (fullScreenMode && isDefined(document.exitFullscreen)) {
+            document.exitFullscreen();
+        }
     }, [
+        fullScreenMode,
         capturedImageUrl,
         leadId,
         onEntryCreate,
@@ -291,8 +297,6 @@ function LeftPane(props: Props) {
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const [fullScreenMode, setFullScreenMode] = useState(false);
-
     const handleFullScreenChange = useCallback(() => {
         setFullScreenMode(isDefined(document.fullscreenElement));
     }, []);
@@ -357,6 +361,7 @@ function LeftPane(props: Props) {
                         />
                     </QuickActionDropdownMenu>
                     <QuickActionLink
+                        title="Open external"
                         to={lead?.url || lead?.attachment?.file?.url || ''}
                     >
                         <IoOpenOutline />

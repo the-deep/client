@@ -43,7 +43,7 @@ const LOGOUT = gql`
     }
 `;
 
-const USER_NOTIFICATIONS_COUNT = gql`
+export const USER_NOTIFICATIONS_COUNT = gql`
     query UserNotificationsCount {
         notifications(
             status: UNSEEN,
@@ -151,6 +151,7 @@ function Navbar(props: Props) {
                         Login
                     </SmartButtonLikeLink>
                     <QuickActionLink
+                        title="DEEP Support"
                         to="https://deephelp.zendesk.com/hc/en-us"
                     >
                         <IoHelp />

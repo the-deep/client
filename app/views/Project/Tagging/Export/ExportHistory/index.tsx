@@ -2,9 +2,13 @@ import React, { useState, useMemo, ReactElement, useCallback } from 'react';
 import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
-import { RiFileExcel2Fill, RiFileWord2Fill } from 'react-icons/ri';
-import { AiOutlineRedo, AiOutlineFileText } from 'react-icons/ai';
-import { FaFilePdf } from 'react-icons/fa';
+import {
+    AiOutlineRedo,
+    AiFillFilePdf,
+    AiFillFileExcel,
+    AiFillFileWord,
+    AiFillFileText,
+} from 'react-icons/ai';
 import {
     Pager,
     TableView,
@@ -69,10 +73,10 @@ const statusLabelMap: Record<ExportItem['status'], string> = {
     CANCELED: 'Canceled',
 };
 const exportFormatIconMap: Record<ExportItem['format'], ReactElement> = {
-    DOCX: <RiFileWord2Fill className={styles.word} />,
-    PDF: <FaFilePdf className={styles.pdf} />,
-    XLSX: <RiFileExcel2Fill className={styles.excel} />,
-    JSON: <AiOutlineFileText className={styles.json} />,
+    DOCX: <AiFillFileWord title="Word export" className={styles.icon} />,
+    PDF: <AiFillFilePdf title="PDF export" className={styles.icon} />,
+    XLSX: <AiFillFileExcel title="Excel export" className={styles.icon} />,
+    JSON: <AiFillFileText title="JSON export" className={styles.icon} />,
 };
 const maxItemsPerPage = 25;
 const pollInterval = 5000;
@@ -407,7 +411,7 @@ function ExportHistory(props: Props) {
                     filteredEmptyMessage="No matching exports found."
                     filteredEmptyIcon={(
                         <Kraken
-                            variant="coffee"
+                            variant="search"
                             size="large"
                         />
                     )}

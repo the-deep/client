@@ -419,7 +419,7 @@ function SourcesTable(props: Props) {
         body: (ctx) => ({ leads: ctx }),
         onSuccess: () => {
             alert.show(
-                'Sources deleted successfully!',
+                'Successfully deleted sources!',
                 { variant: 'success' },
             );
             setSelectedLeads([]);
@@ -554,6 +554,7 @@ function SourcesTable(props: Props) {
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
                 entriesCount: data.entriesCounts?.total ?? 0,
+                hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
             }),
             columnWidth: 196,

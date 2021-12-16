@@ -8,7 +8,6 @@ import { ProjectContext } from '#base/context/ProjectContext';
 import PageTitle from '#base/components/PageTitle';
 import { Project } from '#base/types/project';
 import ErrorBoundary from '#base/components/ErrorBoundary';
-import divingKraken from '#resources/img/diving-kraken.png';
 
 import styles from './styles.css';
 
@@ -99,7 +98,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
                 <FullPageErrorMessage
                     errorTitle="403"
                     errorMessage="You do not have permission to access this page"
-                    errorImage={divingKraken}
+                    krakenVariant="hi"
                 />
             </>
         );

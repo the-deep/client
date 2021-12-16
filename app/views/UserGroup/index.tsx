@@ -88,7 +88,7 @@ function UserGroup(props: Props) {
         onSuccess: () => {
             usergroupGetRetrigger();
             alert.show(
-                'User group deleted successfully.',
+                'Successfully deleted user group.',
                 { variant: 'success' },
             );
         },

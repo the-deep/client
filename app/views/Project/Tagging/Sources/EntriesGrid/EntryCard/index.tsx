@@ -167,6 +167,7 @@ function EntryCard(props: Props) {
                 footerQuickActions={canEditEntry && (
                     <>
                         <QuickActionLink
+                            title="Edit entry"
                             to={editEntryLink}
                         >
                             <IoPencil />

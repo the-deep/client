@@ -26,19 +26,7 @@
                 display: flex;
                 font-size: var(--dui-font-size-super-large);
 
-                .word {
-                    color: #185abd;
-                }
-
-                .pdf {
-                    color: #F40F02;
-                }
-
-                .excel {
-                    color: #107a40;
-                }
-
-                .json {
+                .icon {
                     color: var(--dui-color-accent);
                 }
             }

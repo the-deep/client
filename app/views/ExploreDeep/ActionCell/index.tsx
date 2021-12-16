@@ -118,6 +118,7 @@ function ActionCell(props: Props) {
                     name={undefined}
                     onConfirm={handleCancelJoinProjectClick}
                     variant="secondary"
+                    message="Are you sure you want to cancel your join request?"
                     disabled={disabled}
                 >
                     Cancel Join

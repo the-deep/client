@@ -7,7 +7,6 @@ import {
     Pager,
     Kraken,
     TableView,
-    PendingMessage,
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
@@ -132,7 +131,7 @@ function UserList(props: Props) {
         className,
         activeUserId,
         activeUserRoleLevel,
-        pending,
+        pending = false,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -332,7 +331,6 @@ function UserList(props: Props) {
                 </Button>
             )}
         >
-            {(projectUsersPending || pending) && (<PendingMessage />)}
             <TableView
                 data={projectUsersResponse?.project?.userMembers?.results}
                 keySelector={userKeySelector}
@@ -341,7 +339,7 @@ function UserList(props: Props) {
                 columns={columns}
                 filtered={false}
                 errored={false}
-                pending={projectUsersPending}
+                pending={projectUsersPending || pending}
                 emptyIcon={(
                     <Kraken
                         variant="standby"

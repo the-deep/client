@@ -60,6 +60,7 @@ function Sources(props: Props) {
                                 <Tab
                                     name="table"
                                     className={styles.tab}
+                                    title="Sources Table"
                                     transparentBorder
                                 >
                                     <IoList />
@@ -67,6 +68,7 @@ function Sources(props: Props) {
                                 <Tab
                                     name="grid"
                                     className={styles.tab}
+                                    title="Entries Cards"
                                     transparentBorder
                                 >
                                     <IoGridOutline />

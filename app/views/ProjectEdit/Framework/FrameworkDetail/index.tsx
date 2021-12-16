@@ -204,7 +204,7 @@ function FrameworkDetail(props: Props) {
     const itemRendererParams = useCallback((_, data) => ({
         className: styles.projectTitle,
         children: data.title,
-        to: '',
+        to: generatePath(routes.tagging.path, { projectId: data.id }),
     }), []);
 
     const [

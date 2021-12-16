@@ -164,7 +164,7 @@ function BulkUpload(props: Props) {
 
                     if (uploadedLeads.length > 0) {
                         alert.show(
-                            `${uploadedLeads.length} sources were successfully added!`,
+                            `Successfully added ${uploadedLeads.length} sources!`,
                             { variant: 'success' },
                         );
                         setFormFieldValue((oldValues) => (
