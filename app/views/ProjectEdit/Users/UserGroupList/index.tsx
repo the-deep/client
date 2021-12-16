@@ -19,7 +19,6 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
     createStringColumn,
-    PendingMessage,
     useAlert,
 } from '@the-deep/deep-ui';
 
@@ -54,7 +53,7 @@ function UserGroupList(props: Props) {
         className,
         projectId,
         activeUserRoleLevel,
-        pending,
+        pending = false,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -203,7 +202,6 @@ function UserGroupList(props: Props) {
                 </Button>
             )}
         >
-            {pending && (<PendingMessage />)}
             <TableView
                 data={usergroupResponse?.results}
                 keySelector={usergroupKeySelector}
@@ -212,7 +210,7 @@ function UserGroupList(props: Props) {
                 rowClassName={styles.tableRow}
                 filtered={false}
                 errored={false}
-                pending={usergroupPending}
+                pending={usergroupPending || pending}
                 emptyIcon={(
                     <Kraken
                         variant="standby"

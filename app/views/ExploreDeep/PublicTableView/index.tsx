@@ -4,9 +4,6 @@ import { _cs } from '@togglecorp/fujs';
 import {
     TableView,
     Footer,
-    TableColumn,
-    TableHeaderCellProps,
-    TableHeaderCell,
     createStringColumn,
     createNumberColumn,
     Pager,
@@ -16,7 +13,6 @@ import {
     PublicProjectListQuery,
     PublicProjectListQueryVariables,
 } from '#generated/types';
-import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#components/framework/FrameworkImageButton';
 import {
     convertDateToIsoDateTime,
     isFiltered,
@@ -104,66 +100,52 @@ function ExploreDeepTableView(props: Props) {
         },
     );
 
-    const columns = useMemo(() => {
-        const frameworkColumn: TableColumn<
-            Project, string, FrameworkImageButtonProps, TableHeaderCellProps
-        > = {
-            id: 'framework',
-            title: 'Framework',
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: true,
+    const columns = useMemo(() => ([
+        createStringColumn<Project, string>(
+            'title',
+            'Title',
+            (item) => item.title,
+        ),
+        createStringColumn<Project, string>(
+            'location',
+            'Location',
+            (item) => item?.regionsTitle,
+        ),
+        createDateColumn<Project, string>(
+            'created_at',
+            'Created At',
+            (item) => item?.createdAt,
+            {
+                columnWidth: 116,
             },
-            cellRenderer: FrameworkImageButton,
-            cellRendererParams: (_, project) => ({
-                label: project?.analysisFrameworkTitle ?? undefined,
-                image: project?.analysisFrameworkPreviewImage ?? undefined,
-            }),
-        };
-
-        return ([
-            createStringColumn<Project, string>(
-                'title',
-                'Title',
-                (item) => item.title,
-            ),
-            createStringColumn<Project, string>(
-                'location',
-                'Location',
-                (item) => item?.regionsTitle,
-            ),
-            createDateColumn<Project, string>(
-                'created_at',
-                'Created At',
-                (item) => item?.createdAt,
-                {
-                    columnWidth: 116,
-                },
-            ),
-            frameworkColumn,
-            createNumberColumn<Project, string>(
-                'members_count',
-                'Users',
-                (item) => item?.numberOfUsers,
-                {
-                    columnWidth: 96,
-                },
-            ),
-            createNumberColumn<Project, string>(
-                'sources_count',
-                'Sources',
-                (item) => item?.numberOfLeads,
-                {
-                    columnWidth: 96,
-                },
-            ),
-            createStringColumn<Project, string>(
-                'organizations',
-                'Organizations',
-                (item) => item?.organizationsTitle,
-            ),
-        ]);
-    }, []);
+        ),
+        createStringColumn<Project, string>(
+            'framework',
+            'Analytical Framework',
+            (item) => item?.analysisFrameworkTitle,
+        ),
+        createNumberColumn<Project, string>(
+            'members_count',
+            'Users',
+            (item) => item?.numberOfUsers,
+            {
+                columnWidth: 96,
+            },
+        ),
+        createNumberColumn<Project, string>(
+            'sources_count',
+            'Sources',
+            (item) => item?.numberOfLeads,
+            {
+                columnWidth: 96,
+            },
+        ),
+        createStringColumn<Project, string>(
+            'organizations',
+            'Organizations',
+            (item) => item?.organizationsTitle,
+        ),
+    ]), []);
 
     return (
         <>

@@ -80,7 +80,7 @@ function AddOrganizationModal(props: Props) {
                 onOrganizationAdd(response);
             }
             alert.show(
-                'Organization created successfully.',
+                'Successfully created new organization.',
                 {
                     variant: 'success',
                 },

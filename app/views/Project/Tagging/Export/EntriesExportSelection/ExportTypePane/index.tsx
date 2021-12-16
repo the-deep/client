@@ -63,22 +63,22 @@ interface Props {
 const exportTypes: ExportTypeItem[] = [
     {
         key: 'DOCX',
-        icon: <AiFillFileWord />,
+        icon: <AiFillFileWord title="Word export" />,
         title: _ts('export', 'docxLabel'),
     },
     {
         key: 'PDF',
-        icon: <AiFillFilePdf />,
+        icon: <AiFillFilePdf title="PDF export" />,
         title: _ts('export', 'pdfLabel'),
     },
     {
         key: 'XLSX',
-        icon: <AiFillFileExcel />,
+        icon: <AiFillFileExcel title="Excel export" />,
         title: _ts('export', 'xlsxLabel'),
     },
     {
         key: 'JSON',
-        icon: <AiFillFileText />,
+        icon: <AiFillFileText title="JSON Export" />,
         title: _ts('export', 'jsonLabel'),
     },
 ];

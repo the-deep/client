@@ -115,6 +115,7 @@ function LeadPreview(props: Props) {
                     actions={(
                         <>
                             <QuickActionLink
+                                title="Open external"
                                 className={styles.link}
                                 to={finalUrl}
                             >

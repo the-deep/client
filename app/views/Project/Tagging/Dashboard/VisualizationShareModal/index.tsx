@@ -124,7 +124,7 @@ function VisualizationShareModal(props: ShareModalProps) {
         navigator.clipboard.writeText(url ?? '');
 
         alert.show(
-            'Url was successfully copied to the clipboard',
+            'Successfully copied URL to clipboard.',
             {
                 variant: 'info',
             },

@@ -252,7 +252,9 @@ function SectionsEditor(props: Props) {
         removeValue: onSectionsRemove,
     } = useFormArray('sections', setFieldValue);
 
-    const [expandedSectionId, setExpandedSectionId] = useState<string | undefined>();
+    const [expandedSectionId, setExpandedSectionId] = useState<string | undefined>(
+        focusedSection ?? undefined,
+    );
 
     const handleExpansionChange = useCallback((sectionExpanded: boolean, sectionId) => {
         setExpandedSectionId(sectionExpanded ? sectionId : undefined);
@@ -277,6 +279,7 @@ function SectionsEditor(props: Props) {
                 'sections' as const,
             );
             onFocusChange(clientId);
+            setExpandedSectionId(clientId);
         },
         [setFieldValue, value.sections, onFocusChange],
     );

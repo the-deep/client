@@ -13,6 +13,7 @@ import {
 import {
     Button,
     QuickActionButton,
+    PendingMessage,
     useAlert,
     Container,
     DateOutput,
@@ -58,6 +59,7 @@ interface Props {
     description?: string;
     descriptionLabel?: string;
     actions?: React.ReactNode;
+    pendingRequests?: boolean;
 }
 
 function NotificationContainer(props: Props) {
@@ -72,6 +74,7 @@ function NotificationContainer(props: Props) {
         },
         description,
         actions,
+        pendingRequests = false,
         descriptionLabel,
     } = props;
 
@@ -84,9 +87,11 @@ function NotificationContainer(props: Props) {
 
     const [
         updateStatus,
+        { loading },
     ] = useMutation<NotificationStatusUpdateMutation, NotificationStatusUpdateMutationVariables>(
         NOTIFICATION_STATUS_UPDATE,
         {
+            refetchQueries: ['UserNotificationsCount'],
             onCompleted: (response) => {
                 if (response?.notificationStatusUpdate?.ok) {
                     const newStatus = response.notificationStatusUpdate?.result?.statusDisplay;
@@ -145,6 +150,7 @@ function NotificationContainer(props: Props) {
             contentClassName={styles.content}
             footerActions={actions}
         >
+            {(loading || pendingRequests) && (<PendingMessage />)}
             <Avatar
                 className={styles.displayPicture}
                 // NOTE: We'll add user profiles later after we fix it from server side

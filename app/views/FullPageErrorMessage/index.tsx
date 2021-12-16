@@ -1,7 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import { ButtonLikeLink } from '@the-deep/deep-ui';
+import {
+    ButtonLikeLink,
+    KrakenProps,
+    Kraken,
+} from '@the-deep/deep-ui';
 
 import deepLogo from '#resources/img/deep-logo-new.svg';
 import Svg from '#components/Svg';
@@ -11,7 +15,7 @@ import styles from './styles.css';
 
 interface Props {
     errorTitle?: string;
-    errorImage?: string;
+    krakenVariant?: KrakenProps['variant'];
     errorMessage?: React.ReactNode;
     className?: string;
 }
@@ -20,7 +24,7 @@ function FullPageErrorMessage(props: Props) {
     const {
         errorTitle,
         errorMessage,
-        errorImage,
+        krakenVariant,
         className,
     } = props;
 
@@ -38,10 +42,9 @@ function FullPageErrorMessage(props: Props) {
                     className={styles.backgroundImage}
                     alt=""
                 />
-                <img
+                <Kraken
                     className={styles.kraken}
-                    alt=""
-                    src={errorImage}
+                    variant={krakenVariant}
                 />
                 <div className={styles.content}>
                     <h2 className={styles.errorMessageTitle}>

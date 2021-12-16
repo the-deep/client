@@ -1,7 +1,6 @@
 import React, { lazy } from 'react';
 import { isNotDefined } from '@togglecorp/fujs';
 
-import flyingKraken from '#resources/img/flying-kraken.png';
 import { wrap } from '#base/utils/routes';
 
 const fourHundredFour = wrap({
@@ -9,7 +8,7 @@ const fourHundredFour = wrap({
     title: '404',
     component: lazy(() => import('#views/FullPageErrorMessage')),
     componentProps: {
-        errorImage: flyingKraken,
+        krakenVariant: 'skydive',
         errorTitle: '404',
         errorMessage: (
             <>

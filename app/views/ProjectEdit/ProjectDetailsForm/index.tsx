@@ -337,7 +337,7 @@ function ProjectDetailsForm(props: Props) {
         [groupedStakeholders, stakeholderOptions, pendingProjectDetailsGet],
     );
 
-    const pending = pendingProjectDetailsGet || projectPatchPending || projectDeletePending;
+    const pending = pendingProjectDetailsGet || projectPatchPending;
     const disabled = pending;
 
     const handleSubmit = useCallback(
@@ -526,6 +526,7 @@ function ProjectDetailsForm(props: Props) {
                                     <Button
                                         name="cancel"
                                         onClick={handleProjectDeleteConfirmCancel}
+                                        disabled={projectDeletePending}
                                         variant="secondary"
                                     >
                                         {_ts('projectEdit', 'cancelButtonLabel')}
@@ -533,13 +534,15 @@ function ProjectDetailsForm(props: Props) {
                                     <Button
                                         name="delete"
                                         onClick={handleProjectDeleteConfirm}
-                                        disabled={projectDetails?.title !== projectTitleToDelete}
+                                        disabled={projectDetails?.title !== projectTitleToDelete
+                                        || projectDeletePending}
                                     >
                                         {_ts('projectEdit', 'deleteProjectButtonLabel')}
                                     </Button>
                                 </>
                             )}
                         >
+                            {projectDeletePending && <PendingMessage />}
                             <p>
                                 {_ts(
                                     'projectEdit',

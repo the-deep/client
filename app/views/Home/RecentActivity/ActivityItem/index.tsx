@@ -9,12 +9,18 @@ import generateString from '#utils/string';
 
 import styles from './styles.css';
 
+const activityTypeMap = {
+    lead: 'a lead',
+    entry: 'an entry',
+    'entry-comment': 'a comment to an entry',
+};
+
 interface RecentActivityProps {
     projectDisplayName: string;
     createdAt: string;
     createdByDisplayName: string;
     createdByDisplayPicture?: string;
-    type: string;
+    type: 'lead' | 'entry' | 'entry-comment';
 }
 
 function ActivityItem(props: RecentActivityProps) {
@@ -40,15 +46,14 @@ function ActivityItem(props: RecentActivityProps) {
         >
             <div className={styles.description}>
                 {generateString(
-                    '{createdByDisplayName} added {article} {type} on {projectDisplayName}.',
+                    '{createdByDisplayName} added {type} on {projectDisplayName}.',
                     {
                         createdByDisplayName: (
                             <span className={styles.boldText}>
                                 {createdByDisplayName}
                             </span>
                         ),
-                        article: (type === 'lead' ? 'a' : 'an'),
-                        type,
+                        type: activityTypeMap[type],
                         projectDisplayName: (
                             <span className={styles.boldText}>
                                 {projectDisplayName}

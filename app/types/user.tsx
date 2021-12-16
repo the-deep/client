@@ -41,7 +41,7 @@ export interface RecentActivityItem {
     id: number;
     project: number;
     projectDisplayName: string;
-    type: string;
+    type: 'lead' | 'entry' | 'entry-comment';
 }
 
 export interface Assignment {

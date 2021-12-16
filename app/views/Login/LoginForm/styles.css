@@ -29,10 +29,7 @@
     }
 
     .kraken {
+        align-self: flex-start;
         margin: calc(-1 * var(--dui-spacing-extra-large));
-        width: 200px;
-        height: auto;
-        object-fit: contain;
-        object-position: top;
     }
 }

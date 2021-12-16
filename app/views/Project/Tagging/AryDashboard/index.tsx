@@ -26,7 +26,7 @@ import {
 
 import styles from './styles.css';
 
-const vizRendererUrl = process.env.REACT_APP_ASSESSMENT_VIZ_URL || 'https://the-deep.github.io/deepviz-assessmente/';
+const vizRendererUrl = process.env.REACT_APP_ASSESSMENT_VIZ_URL || 'https://the-deep.github.io/deepviz-assessments/';
 
 const PROJECT_VIZ = gql`
     query ProjectViz($projectId: ID!) {
