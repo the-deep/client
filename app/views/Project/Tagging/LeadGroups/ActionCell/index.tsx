@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoTrashBinOutline } from 'react-icons/io5';
+import { IoAdd, IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     useAlert,
@@ -9,6 +9,8 @@ import {
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
 
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import routes from '#base/configs/routes';
 import {
     LeadGroupDeleteMutation,
     LeadGroupDeleteMutationVariables,
@@ -104,6 +106,19 @@ function ActionCell(props: Props) {
             >
                 <FiEdit2 />
             </QuickActionButton>
+            <SmartButtonLikeLink
+                className={styles.button}
+                variant="secondary"
+                title="assessment"
+                disabled={disabled}
+                route={routes.groupAssessmentEdit}
+                attrs={{
+                    leadGroupId,
+                }}
+                icons={<IoAdd />}
+            >
+                Assessment
+            </SmartButtonLikeLink>
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"

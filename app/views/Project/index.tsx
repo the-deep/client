@@ -139,6 +139,12 @@ function Project(props: Props) {
                     {routes.assessmentEdit.load({ className })}
                 </Route>
                 <Route
+                    exact
+                    path={routes.groupAssessmentEdit.path}
+                >
+                    {routes.groupAssessmentEdit.load({ className })}
+                </Route>
+                <Route
                     path={routes.projectEdit.path}
                 >
                     {routes.projectEdit.load({ className })}
