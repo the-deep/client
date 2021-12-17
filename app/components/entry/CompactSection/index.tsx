@@ -93,10 +93,8 @@ function CompactSection(props: Props) {
                 }
 
                 if (widget.widgetId === 'MATRIX2D') {
-                    return !doesObjectHaveNoData(
-                        attributesMap?.[widget.clientId]?.value?.data?.value,
-                        [],
-                    );
+                    const val = attributesMap?.[widget.clientId]?.value?.data?.value;
+                    return Object.keys(val ?? {}).length > 0;
                 }
 
                 return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);

@@ -365,6 +365,8 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
                 rendererParams={rowRendererParams}
                 renderer={Row}
                 compactEmptyMessage
+                emptyMessage="-"
+                messageShown
                 pending={false}
                 filtered={false}
                 errored={false}
