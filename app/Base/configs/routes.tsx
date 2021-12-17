@@ -354,13 +354,37 @@ const exportRoute = wrap({
 
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/assessments/:leadId(\\d+)/',
+    path: '/assessments/leads/:leadId(\\d+)/',
     title: 'Edit Assessment',
     navbarVisibility: false,
     component: lazy(() => import('#views/Project/EditAssessment')),
     componentProps: {
     },
-    visibility: 'is-authenticated', // TODO handle permission
+    visibility: 'is-authenticated',
+    checkPermissions: (project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project) {
+            return false;
+        }
+        // NOTE: using permission for LEAD as we don't have one for assessment
+        return project.hasAssessmentTemplate && (
+            project.allowedPermissions.includes('CREATE_LEAD')
+            || project.allowedPermissions.includes('UPDATE_LEAD')
+        );
+    },
+});
+
+const groupAssessmentEditRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/assessments/lead-groups/:leadGroupId(\\d+)/',
+    title: 'Edit Source Group Assessment',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/Project/EditGroupAssessment')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
     checkPermissions: (project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
@@ -402,5 +426,6 @@ const routes = {
     export: exportRoute,
     entryEdit: entryEditRoute,
     assessmentEdit: assessmentEditRoute,
+    groupAssessmentEdit: groupAssessmentEditRoute,
 };
 export default routes;

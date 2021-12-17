@@ -1,0 +1,32 @@
+.app-brand {
+    overflow: auto;
+    color: var(--dui-color-brand);
+
+    .logo {
+        height: var(--dui-font-size-super-large);
+    }
+}
+
+.edit-assessment {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .iframe {
+            flex-grow: 1;
+            border: 0;
+            object-fit: contain;
+            object-position: center center;
+        }
+    }
+}
