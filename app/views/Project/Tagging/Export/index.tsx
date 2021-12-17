@@ -63,12 +63,14 @@ function Export() {
                         >
                             Export History
                         </Tab>
-                        <Tab
-                            name="export-assessment-history"
-                            transparentBorder
-                        >
-                            Export Assessment History
-                        </Tab>
+                        {project?.hasAssessmentTemplate && (
+                            <Tab
+                                name="export-assessment-history"
+                                transparentBorder
+                            >
+                                Export Assessment History
+                            </Tab>
+                        )}
                     </TabList>
                 )}
                 headingContainerClassName={styles.actionButtons}
@@ -79,17 +81,20 @@ function Export() {
                             onClick={showCreateNewExportModal}
                             icons={<IoAdd />}
                             variant="primary"
+                            hidden
                         >
                             New Export
                         </Button>
-                        <Button // TODO: properly check permissions
-                            name="export-assessment"
-                            onClick={showNewAssessmentModal}
-                            icons={<IoAdd />}
-                            variant="secondary"
-                        >
-                            New Assessment Export
-                        </Button>
+                        {project?.hasAssessmentTemplate && (
+                            <Button
+                                name="export-assessment"
+                                onClick={showNewAssessmentModal}
+                                icons={<IoAdd />}
+                                variant="secondary"
+                            >
+                                New Assessment Export
+                            </Button>
+                        )}
                     </>
                 )}
                 contentClassName={styles.content}
