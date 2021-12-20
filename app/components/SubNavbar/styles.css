@@ -2,6 +2,8 @@
     display: flex;
     position: relative;
     padding: 0 var(--dui-spacing-super-large);
+    min-height: 60px;
+
     --gap: var(--dui-spacing-large);
     gap: var(--gap);
 

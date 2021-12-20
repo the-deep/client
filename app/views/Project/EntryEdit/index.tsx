@@ -21,7 +21,8 @@ import {
     Tab,
     TabList,
     TabPanel,
-    VirtualizedListView,
+    // VirtualizedListView,
+    ListView,
     Kraken,
     Container,
     useAlert,
@@ -1380,9 +1381,9 @@ function EntryEdit(props: Props) {
                                     )}
                                     contentClassName={styles.reviewContent}
                                 >
-                                    <VirtualizedListView
-                                        itemHeight={360}
-                                        buffer={0}
+                                    <ListView
+                                        // itemHeight={360}
+                                        className={styles.entries}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
                                         data={formValue.entries}

@@ -7,9 +7,12 @@
 
     .navbar {
         flex-shrink: 0;
+        transition: 200ms margin-top ease-in-out;
+        margin-top: 0;
+        height: 64px;
 
         &.hidden {
-            display: none;
+            margin-top: -64px;
         }
     }
 
