@@ -21,7 +21,7 @@ import {
     Tab,
     TabList,
     TabPanel,
-    ListView,
+    VirtualizedListView,
     Kraken,
     Container,
     useAlert,
@@ -998,11 +998,30 @@ function EntryEdit(props: Props) {
                         if (applyBelowOnly && index <= referenceEntryIndex) {
                             return entry;
                         }
-                        const newAttributes = entry.attributes
-                            ?.filter((attribute) => attribute.widget !== widgetId) ?? [];
 
-                        if (referenceAttribute) {
-                            newAttributes.push(referenceAttribute);
+                        const newAttributes = [...(entry.attributes ?? [])];
+
+                        const attributeIndex = newAttributes.findIndex(
+                            (attribute) => attribute.widget === widgetId,
+                        );
+
+                        if (attributeIndex !== -1) {
+                            if (referenceAttribute) {
+                                const oldValue = newAttributes[attributeIndex];
+                                newAttributes.splice(attributeIndex, 1, {
+                                    ...referenceAttribute,
+                                    id: oldValue.id,
+                                    clientId: oldValue.clientId,
+                                });
+                            } else {
+                                delete newAttributes[attributeIndex];
+                            }
+                        } else if (referenceAttribute) {
+                            newAttributes.push({
+                                ...referenceAttribute,
+                                id: undefined,
+                                clientId: randomString(),
+                            });
                         }
 
                         return {
@@ -1360,7 +1379,8 @@ function EntryEdit(props: Props) {
                                         />
                                     )}
                                 >
-                                    <ListView
+                                    <VirtualizedListView
+                                        itemHeight={360}
                                         className={styles.entries}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
