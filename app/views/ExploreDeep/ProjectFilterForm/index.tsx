@@ -14,13 +14,13 @@ import {
     useForm,
 } from '@togglecorp/toggle-form';
 
-import OrganizationMultiSelectInput, {
+import PublicOrganizationMultiSelectInput, {
     BasicOrganization,
-} from '#components/selections/NewOrganizationMultiSelectInput';
+} from '#components/selections/PublicOrganizationMultiSelectInput';
 
-import FrameworkMultiSelectInput, {
+import PublicFrameworkMultiSelectInput, {
     AnalysisFramework,
-} from '#components/selections/FrameworkMultiSelectInput';
+} from '#components/selections/PublicFrameworkMultiSelectInput';
 import {
     ProjectListQueryVariables,
 } from '#generated/types';
@@ -112,7 +112,7 @@ function ProjectFilterForm(props: Props) {
                 value={value?.endDate}
                 onChange={setFieldValue}
             />
-            <OrganizationMultiSelectInput
+            <PublicOrganizationMultiSelectInput
                 name="organizations"
                 label="Organizations"
                 value={value?.organizations}
@@ -121,7 +121,7 @@ function ProjectFilterForm(props: Props) {
                 onOptionsChange={setOrganizationOptions}
                 placeholder="any"
             />
-            <FrameworkMultiSelectInput
+            <PublicFrameworkMultiSelectInput
                 name="analysisFrameworks"
                 label="Analysis Frameworks"
                 placeholder="any"
