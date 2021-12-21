@@ -333,13 +333,14 @@ function LeadsSelection(props: ComponentProps) {
                 hasAssessment={hasAssessment}
             />
             <RawTable
-                data={leadsResponse?.results ?? []}
+                data={leadsResponse?.results ?? undefined}
                 dataModifier={dataModifier}
                 headerModifier={headerModifier}
                 headers={headers}
                 onHeaderClick={handleTableHeaderClick}
                 keySelector={leadKeyExtractor}
                 className={styles.table}
+                // FIXME: this is not how we identify pending status
                 pending={leadsPending && (leadsResponse?.results ?? []).length < 1}
             />
             <Pager
