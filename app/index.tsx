@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDom from 'react-dom';
 import Base from './Base';
 
-ReactDom.render(<Base />, document.getElementById('app-container'));
+ReactDom.render(
+    <StrictMode>
+        <Base />
+    </StrictMode>,
+    document.getElementById('app-container'),
+);
