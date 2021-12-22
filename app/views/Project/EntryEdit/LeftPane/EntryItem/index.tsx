@@ -18,12 +18,12 @@ import {
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
     Heading,
-    TextArea,
     useInputState,
     Button,
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
+import ExcerptTextArea from '#components/entry/ExcerptTextArea';
 
 import { PartialEntryType as EntryInput } from '../../schema';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
@@ -60,7 +60,7 @@ export function ExcerptModal(props: ExcerptModalProps) {
             <Heading size="small">
                 {title}
             </Heading>
-            <TextArea
+            <ExcerptTextArea
                 className={styles.excerptTextArea}
                 name="modified-excerpt"
                 value={excerpt}
