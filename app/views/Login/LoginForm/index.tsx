@@ -49,12 +49,12 @@ import HCaptchaSiteKey from '#base/configs/hCaptcha';
 import styles from './styles.css';
 
 interface HidQuery {
-    // eslint-disable-next-line camelcase
+
     access_token: string;
-    // eslint-disable-next-line camelcase
+
     expires_in: number;
     state: number;
-    // eslint-disable-next-line camelcase
+
     token_type: string;
 }
 
@@ -247,7 +247,7 @@ function LoginForm(props: Props) {
     useEffect(() => {
         // Get params from the current url
         // NOTE: hid provides query as hash
-        // eslint-disable-next-line camelcase
+
         const query = parseUrlParams(window.location?.hash?.replace('#', '')) as { access_token?: string };
         // Login User with HID access_token
         if (query.access_token) {

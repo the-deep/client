@@ -108,7 +108,10 @@ const drawImage = (
         if (context) {
             context.drawImage(
                 img,
-                0, 0, img.width * scale, img.height * scale,
+                0,
+                0,
+                img.width * scale,
+                img.height * scale,
             );
         }
     }

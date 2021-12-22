@@ -1,12 +1,3 @@
-.app-brand {
-    overflow: auto;
-    color: var(--dui-color-brand);
-
-    .logo {
-        height: var(--dui-font-size-super-large);
-    }
-}
-
 .entry-edit {
     display: flex;
     flex-direction: column;

@@ -13,11 +13,8 @@ import {
 } from '@the-deep/deep-ui';
 
 import SubNavbar, {
-    SubNavbarIcons,
     SubNavbarChildren,
 } from '#components/SubNavbar';
-import Svg from '#components/Svg';
-import deepLogo from '#resources/img/deep-logo-new.svg';
 import SubNavbarContext from '#components/SubNavbar/context';
 import { UserContext } from '#base/context/UserContext';
 import { ProjectContext } from '#base/context/ProjectContext';
@@ -80,6 +77,7 @@ function ProjectEdit() {
                     <SubNavbar
                         className={styles.header}
                         heading={heading}
+                        homeLinkShown
                         defaultActions={(
                             <BackLink
                                 defaultLink="/"
@@ -88,14 +86,6 @@ function ProjectEdit() {
                             </BackLink>
                         )}
                     />
-                    <SubNavbarIcons>
-                        <div className={styles.appBrand}>
-                            <Svg
-                                className={styles.logo}
-                                src={deepLogo}
-                            />
-                        </div>
-                    </SubNavbarIcons>
                     <SubNavbarChildren>
                         <TabList className={styles.tabList}>
                             <Tab

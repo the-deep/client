@@ -9,7 +9,7 @@ import useRouteMatching, {
 export type Props = Omit<QuickActionLinkProps, 'to'> & {
     route: RouteData;
     attrs?: Attrs;
-    // eslint-disable-next-line @typescript-eslint/ban-types
+
     state?: object;
     hash?: string;
     children?: React.ReactNode;

@@ -412,15 +412,11 @@ function EditableEntry(props: Props) {
             <Container
                 elementRef={firstElementRef}
                 className={className}
-                footerActions={(
+                footerActions={canEditEntry && (
                     <>
-                        {canEditEntry && (
-                            <>
-                                {editMode ? saveButton : editTagsButton}
-                                {entryComments}
-                                {entryVerification}
-                            </>
-                        )}
+                        {editMode ? saveButton : editTagsButton}
+                        {entryComments}
+                        {entryVerification}
                     </>
                 )}
             >

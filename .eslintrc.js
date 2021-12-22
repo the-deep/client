@@ -38,6 +38,7 @@ const config = {
     },
     rules: {
         strict: 1,
+        'default-param-last': 0,
 
         'no-unused-vars': 0,
         '@typescript-eslint/no-unused-vars': 1,
@@ -100,6 +101,11 @@ const config = {
             allowRequiredDefaults: true,
         }],
 
+
+        'react/function-component-definition': [2, {
+            'namedComponents': 'function-declaration',
+            'unnamedComponents': 'function-expression',
+        }],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
 

@@ -366,20 +366,18 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             size="large"
             bodyClassName={styles.modalBody}
             footerActions={(
-                <>
-                    <Button
-                        name={undefined}
-                        variant="primary"
-                        disabled={pristine || pendingAnalysisEdit}
-                        onClick={handleSubmitButtonClick}
-                    >
-                        {
-                            isDefined(analysisToEdit)
-                                ? _ts('analysis.editModal', 'editButtonLabel')
-                                : _ts('analysis.editModal', 'createButtonLabel')
-                        }
-                    </Button>
-                </>
+                <Button
+                    name={undefined}
+                    variant="primary"
+                    disabled={pristine || pendingAnalysisEdit}
+                    onClick={handleSubmitButtonClick}
+                >
+                    {
+                        isDefined(analysisToEdit)
+                            ? _ts('analysis.editModal', 'editButtonLabel')
+                            : _ts('analysis.editModal', 'createButtonLabel')
+                    }
+                </Button>
             )}
         >
             {/*

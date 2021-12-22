@@ -200,6 +200,7 @@ function Canvas<T>(props: Props<T>) {
             if (editMode) {
                 return;
             }
+            // eslint-disable-next-line react/destructuring-assignment
             const handleWidgetDelete = props.onWidgetDelete;
             if (handleWidgetDelete) {
                 handleWidgetDelete(widgetId, name);
@@ -213,6 +214,7 @@ function Canvas<T>(props: Props<T>) {
             if (editMode) {
                 return;
             }
+            // eslint-disable-next-line react/destructuring-assignment
             const handleWidgetEdit = props.onWidgetEdit;
             if (handleWidgetEdit) {
                 handleWidgetEdit(widgetId, name);
@@ -226,6 +228,7 @@ function Canvas<T>(props: Props<T>) {
             if (editMode) {
                 return;
             }
+            // eslint-disable-next-line react/destructuring-assignment
             const handleWidgetConditionEdit = props.onWidgetConditionEdit;
             if (handleWidgetConditionEdit) {
                 handleWidgetConditionEdit(widgetId, name);
@@ -240,6 +243,7 @@ function Canvas<T>(props: Props<T>) {
             if (editMode) {
                 return;
             }
+            // eslint-disable-next-line react/destructuring-assignment
             const handleWidgetOrderChange = props.onWidgetOrderChange;
             if (handleWidgetOrderChange) {
                 handleWidgetOrderChange(value);
@@ -254,6 +258,7 @@ function Canvas<T>(props: Props<T>) {
             if (editMode) {
                 return;
             }
+            // eslint-disable-next-line react/destructuring-assignment
             const handleWidgetClone = props.onWidgetClone;
             if (handleWidgetClone) {
                 handleWidgetClone(widgetId, name);
@@ -309,6 +314,7 @@ function Canvas<T>(props: Props<T>) {
                 <SortableList
                     className={styles.canvas}
                     name="widgets"
+                    // eslint-disable-next-line react/destructuring-assignment
                     data={props.widgets}
                     keySelector={partialWidgetKeySelector}
                     renderer={AttributeInputWrapper}

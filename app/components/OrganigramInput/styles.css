@@ -6,6 +6,13 @@
         }
     }
 }
+.disabled {
+    :global {
+        .org-tree-node-label {
+            pointer-events: none;
+        }
+    }
+}
 
 .card {
     display: flex;
@@ -17,13 +24,5 @@
     &.selected {
         background-color: var(--dui-color-accent);
         color: var(--dui-color-text-on-accent);
-    }
-}
-
-.disabled {
-    :global {
-        .org-tree-node-label {
-            pointer-events: none;
-        }
     }
 }

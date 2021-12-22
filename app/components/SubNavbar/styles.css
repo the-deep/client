@@ -1,49 +1,60 @@
 .sub-navbar {
     display: flex;
     position: relative;
+    justify-content: space-between;
     padding: 0 var(--dui-spacing-super-large);
     min-height: 60px;
+    gap: var(--gap);
 
     --gap: var(--dui-spacing-large);
-    gap: var(--gap);
 
     .children {
         display: flex;
-        flex-grow: 1;
         justify-content: center;
-    }
-
-    .heading {
-        align-self: center;
-        flex-shrink: unset;
-        padding: var(--dui-spacing-medium) 0;
-    }
-
-    .description-container {
-        align-self: center;
-        flex-shrink: unset;
-        overflow: auto;
-
-        .description {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
     }
 
     .icons {
         display: flex;
         align-self: center;
-        flex-shrink: 0;
-        padding: var(--dui-spacing-medium) 0;
-        gap: var(--dui-spacing-small);
+        flex-basis: 0;
+        flex-grow: 1;
+        gap: var(--dui-spacing-medium);
+
+        .app-brand {
+            align-self: center;
+            overflow: auto;
+            color: var(--dui-color-brand);
+
+            .logo {
+                height: var(--dui-font-size-super-large);
+            }
+        }
+
+        .heading {
+            align-self: baseline;
+            flex-shrink: unset;
+            padding: var(--dui-spacing-medium) 0;
+        }
+
+        .description-container {
+            align-self: baseline;
+            flex-shrink: unset;
+            overflow: auto;
+
+            .description {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
     }
 
     .actions {
         display: flex;
         align-self: center;
-        flex-shrink: 0;
-        padding: var(--dui-spacing-medium) 0;
+        flex-basis: 0;
+        flex-grow: 1;
+        justify-content: end;
         gap: var(--dui-spacing-small);
 
         >* {

@@ -129,7 +129,7 @@ const projectCreateRoute = wrap({
 const projectRoute = wrap({
     path: '/projects/:projectId(\\d+)/',
     title: 'Project',
-    navbarVisibility: true,
+    navbarVisibility: undefined,
     component: lazy(() => import('#views/Project')),
     componentProps: { },
     visibility: 'is-authenticated',
@@ -141,7 +141,7 @@ const taggingRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/tagging/',
     title: 'Tagging',
-    navbarVisibility: true,
+    navbarVisibility: undefined,
     component: lazy(() => import('#views/Project/Tagging')),
     componentProps: {
     },
@@ -207,7 +207,7 @@ const entryEditRoute = wrap({
     },
 });
 const analysis = wrap({
-    parent: projectRoute,
+    parent: { path: projectRoute.path },
     path: '/analysis/',
     title: 'Analysis',
     navbarVisibility: true,
@@ -228,7 +228,7 @@ const analysis = wrap({
     },
 });
 const pillarAnalysis = wrap({
-    parent: projectRoute,
+    parent: { path: projectRoute.path },
     path: '/analysis/:analysisId(\\d+)/pillar/:pillarAnalysisId(\\d+)/',
     title: 'Pillar Analysis',
     navbarVisibility: false,

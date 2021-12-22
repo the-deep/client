@@ -150,9 +150,7 @@ function SortableList<
     GP extends GroupCommonProps,
     GK extends OptionKey,
     ItemContainerParams,
->(
-    props: Props<N, D, P, K, GP, GK, ItemContainerParams>,
-) {
+>(props: Props<N, D, P, K, GP, GK, ItemContainerParams>) {
     const {
         className,
         name,
