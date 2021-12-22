@@ -6,7 +6,7 @@ export type NotificationFromServer = NonNullable<NonNullable<NonNullable<UserNot
 
 export type BaseNotification = Omit<NotificationFromServer, 'data' | 'notificationType'>;
 
-interface ReviewEntryCommentAdd {
+export interface ReviewEntryCommentAdd {
     notificationType: 'ENTRY_REVIEW_COMMENT_ADD';
     data: {
         // eslint-disable-next-line camelcase
