@@ -34,6 +34,7 @@ export interface Props {
     assessmentId: string;
     projectId?: string;
     leadId?: string;
+    leadGroupId?: string;
     className?: string;
     disabled?: boolean;
     onDeleteSuccess: () => void;
@@ -44,6 +45,7 @@ function ActionCell(props: Props) {
         className,
         projectId,
         leadId,
+        leadGroupId,
         assessmentId,
         onDeleteSuccess,
         disabled,
@@ -96,18 +98,34 @@ function ActionCell(props: Props) {
 
     return (
         <div className={_cs(styles.actionCell, className)}>
-            <SmartQuickActionLink
-                className={styles.button}
-                // TODO: Link this to actual assessment edit page
-                attrs={{
-                    leadId,
-                }}
-                route={routes.assessmentEdit}
-                disabled={disabled}
-                title="Edit"
-            >
-                <FiEdit2 />
-            </SmartQuickActionLink>
+            {leadId && (
+                <SmartQuickActionLink
+                    className={styles.button}
+                    // TODO: Link this to actual assessment edit page
+                    attrs={{
+                        leadId,
+                    }}
+                    route={routes.assessmentEdit}
+                    disabled={disabled}
+                    title="Edit"
+                >
+                    <FiEdit2 />
+                </SmartQuickActionLink>
+            )}
+            {leadGroupId && (
+                <SmartQuickActionLink
+                    className={styles.button}
+                    // TODO: Link this to actual assessment edit page
+                    attrs={{
+                        leadGroupId,
+                    }}
+                    route={routes.groupAssessmentEdit}
+                    disabled={disabled}
+                    title="Edit"
+                >
+                    <FiEdit2 />
+                </SmartQuickActionLink>
+            )}
             <QuickActionConfirmButton
                 className={styles.button}
                 name="deleteButton"
