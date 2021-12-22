@@ -488,6 +488,7 @@ function EntriesExportSelection(props: Props) {
                         value={queryTitle}
                         onChange={setQueryTitle}
                         label="Export Title"
+                        placeholder="Export Title"
                     />
                 </ControlledExpandableContainer>
                 <Button
