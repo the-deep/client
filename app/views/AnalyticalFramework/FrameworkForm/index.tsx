@@ -36,14 +36,11 @@ import {
 } from '@apollo/client';
 
 import {
-    SubNavbarIcons,
     SubNavbarActions,
     SubNavbarChildren,
 } from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import routes from '#base/configs/routes';
-import Svg from '#components/Svg';
-import deepLogo from '#resources/img/deep-logo-new.svg';
 import {
     FrameworkProperties,
 } from '#types/newAnalyticalFramework';
@@ -470,20 +467,12 @@ function FrameworkForm(props: FrameworkFormProps) {
                     return true;
                 }}
             />
-            <SubNavbarIcons>
-                <div className={styles.appBrand}>
-                    <Svg
-                        src={deepLogo}
-                        className={styles.logo}
-                    />
-                </div>
-            </SubNavbarIcons>
             <SubNavbarActions>
                 <BackLink
                     defaultLink="/"
                     disabled={isNavigationDisabled}
                 >
-                    {_ts('analyticalFramework', 'closeButtonLabel')}
+                    Close
                 </BackLink>
                 <Button
                     disabled={pristine || pending || isNavigationDisabled}

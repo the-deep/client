@@ -67,7 +67,8 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(
             geoAreaOptions,
-            (d) => d.id, (d) => breadcrumb([d.regionTitle, d.adminLevelTitle, d.title]),
+            (d) => d.id,
+            (d) => breadcrumb([d.regionTitle, d.adminLevelTitle, d.title]),
         );
         return value?.value?.map((v) => optionsMap?.[v]);
     }, [geoAreaOptions, value]);

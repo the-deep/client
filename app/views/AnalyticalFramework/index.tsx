@@ -103,6 +103,7 @@ function AnalyticalFramework(props: Props) {
                                 ? _ts('analyticalFramework', 'addNewAnalyticalFramework')
                                 : framework?.title
                         )}
+                        homeLinkShown
                     />
                     {!hasPermission ? (
                         <PreloadMessage

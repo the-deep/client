@@ -149,13 +149,3 @@
         }
     }
 }
-
-.app-brand {
-    overflow: auto;
-    color: var(--dui-color-brand);
-
-    .logo {
-        height: var(--dui-font-size-super-large);
-    }
-}
-

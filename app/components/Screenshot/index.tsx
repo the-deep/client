@@ -31,8 +31,14 @@ function getCroppedImage(
 
     context.drawImage(
         image,
-        startX, startY, canvas.width, canvas.height,
-        0, 0, canvas.width, canvas.height,
+        startX,
+        startY,
+        canvas.width,
+        canvas.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
     );
 
     const croppedImage = canvas.toDataURL('image/jpeg');

@@ -79,7 +79,6 @@ const exportFormatIconMap: Record<ExportItem['format'], ReactElement> = {
     JSON: <AiFillFileText title="JSON export" className={styles.icon} />,
 };
 const maxItemsPerPage = 25;
-const pollInterval = 5000;
 const defaultSorting = {
     name: 'exportedAt',
     direction: 'Descending',
@@ -238,23 +237,21 @@ function ExportHistory(props: Props) {
         },
     );
 
+    // FIXME: memoize this
+    const exports = projectExportsResponse?.project?.exports?.results;
+    const shouldPoll = exports?.some(
+        (v) => (v.status === 'PENDING' || v.status === 'STARTED'),
+    );
+
     useEffect(
         () => {
-            if (projectExportsResponse?.project?.exports?.results?.some((v) => (
-                v.status === 'PENDING'
-                || v.status === 'STARTED'
-            ))) {
-                startPolling(pollInterval);
+            if (shouldPoll) {
+                startPolling(5000);
             } else {
                 stopPolling();
             }
-            return stopPolling;
         },
-        [
-            projectExportsResponse?.project?.exports?.results,
-            startPolling,
-            stopPolling,
-        ],
+        [shouldPoll, startPolling, stopPolling],
     );
 
     const [

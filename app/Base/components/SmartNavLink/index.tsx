@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
 import { Border } from '@the-deep/deep-ui';
@@ -26,6 +26,14 @@ function SmartNavLink(props: Props) {
         ...otherProps
     } = props;
 
+    const classNameCallback = useCallback(
+        (active: boolean) => _cs(
+            styles.smartNavLink,
+            typeof className === 'function' ? className(active) : className,
+        ),
+        [className],
+    );
+
     const routeData = useRouteMatching(route, attrs);
     if (!routeData) {
         return null;
@@ -35,7 +43,7 @@ function SmartNavLink(props: Props) {
         <NavLink
             {...otherProps}
             to={routeData.to}
-            className={_cs(styles.smartNavLink, className)}
+            className={classNameCallback}
             activeClassName={_cs(styles.active, activeClassName)}
         >
             {children ?? routeData.children}

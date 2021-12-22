@@ -2,15 +2,6 @@
     color: var(--dui-color-danger);
 }
 
-.app-brand {
-    overflow: auto;
-    color: var(--dui-color-brand);
-
-    .logo {
-        height: var(--dui-font-size-super-large);
-    }
-}
-
 .details-tab-panel {
     display: flex;
     flex-direction: column;

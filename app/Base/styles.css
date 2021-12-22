@@ -7,17 +7,25 @@
 
     .navbar {
         flex-shrink: 0;
-        transition: 200ms margin-top ease-in-out;
-        margin-top: 0;
         height: 64px;
 
+        &:not(.hidden) {
+            transition: 200ms margin-top ease-in;
+            margin-top: 0;
+        }
+
         &.hidden {
+            transition: 200ms margin-top ease-out;
             margin-top: -64px;
         }
     }
 
-    .view,
     .init {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    .view {
         flex-grow: 1;
         overflow: auto;
     }

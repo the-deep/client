@@ -216,6 +216,8 @@ function ProjectFramework(props: Props) {
         offset,
     ]);
 
+    const totalFrameworksCount = frameworksResponse?.count ?? 0;
+
     return (
         <div className={_cs(styles.framework, className)}>
             <div className={styles.leftContainer}>
@@ -250,24 +252,24 @@ function ProjectFramework(props: Props) {
                         messageShown
                         messageIconShown
                     />
-                    {
-                        (frameworkList.length < (frameworksResponse?.count ?? 0))
-                        && (
-                            <Button
-                                className={styles.showMoreButton}
-                                variant="action"
-                                name="showMore"
-                                onClick={handleShowMoreButtonClick}
-                                disabled={frameworksGetPending}
-                                actions={(
-                                    <IoChevronForward />
-                                )}
-                            >
-                                {/* TODO: Might move to component library, no need to use ts */}
-                                Show More
-                            </Button>
-                        )
-                    }
+                    {(
+                        totalFrameworksCount > 0
+                        && (frameworkList.length < totalFrameworksCount)
+                    ) && (
+                        <Button
+                            className={styles.showMoreButton}
+                            variant="action"
+                            name={undefined}
+                            onClick={handleShowMoreButtonClick}
+                            disabled={frameworksGetPending}
+                            actions={(
+                                <IoChevronForward />
+                            )}
+                        >
+                            {/* TODO: Might move to component library, no need to use ts */}
+                            Show More
+                        </Button>
+                    )}
                 </div>
             </div>
             <Container

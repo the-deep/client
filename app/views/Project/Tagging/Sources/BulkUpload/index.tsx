@@ -172,7 +172,7 @@ function BulkUpload(props: Props) {
                         ), 'leads');
                     }
 
-                    const erroredLeadsCount = result?.length - uploadedLeads.length;
+                    const erroredLeadsCount = (result?.length ?? 0) - uploadedLeads.length;
 
                     if (erroredLeadsCount > 0) {
                         alert.show(

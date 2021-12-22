@@ -98,7 +98,7 @@ export interface OptionBase {
 }
 
 export type DeepContextInterface = ContextInterface<
-    // eslint-disable-next-line @typescript-eslint/ban-types
+
     object,
     ErrorFromServer | undefined,
     Error,

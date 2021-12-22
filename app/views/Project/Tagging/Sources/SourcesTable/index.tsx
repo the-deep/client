@@ -640,6 +640,11 @@ function SourcesTable(props: Props) {
 
     const pending = projectSourcesPending || bulkDeletePending || leadDeletePending;
 
+    const expandedContextValue = useMemo(
+        () => ({ expandedRowKey, setExpandedRowKey }),
+        [expandedRowKey, setExpandedRowKey],
+    );
+
     return (
         <>
             <Container
@@ -656,7 +661,7 @@ function SourcesTable(props: Props) {
                 )}
             >
                 <RowExpansionContext.Provider
-                    value={{ expandedRowKey, setExpandedRowKey }}
+                    value={expandedContextValue}
                 >
                     <SortContext.Provider value={sortState}>
                         <TableView

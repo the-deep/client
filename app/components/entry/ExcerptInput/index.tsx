@@ -60,7 +60,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         message="Image data is not available."
                     />
                 )}
-                {!props.readOnly && (
+                {!props.readOnly && ( // eslint-disable-line react/destructuring-assignment
                     <ExcerptTextArea
                         label="Additional Context"
                         className={_cs(
@@ -68,12 +68,14 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                             styles.textAreaForImage,
                         )}
                         value={value}
+                        // eslint-disable-next-line react/destructuring-assignment
                         name={props.name}
+                        // eslint-disable-next-line react/destructuring-assignment
                         onChange={props.onChange}
                         autoSize
                     />
                 )}
-                {value && props.readOnly && (
+                {props.readOnly && value && ( // eslint-disable-line react/destructuring-assignment
                     <div className={excerptForImageClassName}>
                         {value}
                     </div>
@@ -82,6 +84,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
         );
     }
     if (entryType === 'EXCERPT') {
+        // eslint-disable-next-line react/destructuring-assignment
         return props.readOnly ? (
             <div className={_cs(className, styles.excerptInput)}>
                 {value || (
@@ -95,7 +98,9 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                 <ExcerptTextArea
                     className={_cs(className, styles.textArea)}
                     value={value}
+                    // eslint-disable-next-line react/destructuring-assignment
                     onChange={props.onChange}
+                    // eslint-disable-next-line react/destructuring-assignment
                     name={props.name}
                     autoSize
                 />
