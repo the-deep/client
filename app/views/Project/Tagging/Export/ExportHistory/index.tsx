@@ -82,7 +82,7 @@ const maxItemsPerPage = 25;
 const pollInterval = 5000;
 const defaultSorting = {
     name: 'exportedAt',
-    direction: 'asc',
+    direction: 'Descending',
 };
 
 function exportKeySelector(d: ExportItem) {
@@ -331,7 +331,10 @@ function ExportHistory(props: Props) {
             cellRenderer: TableActions,
             columnWidth: '120px',
             cellRendererParams: (_, data) => ({
-                viewDisabled: data.status === 'PENDING' || data.status === 'STARTED' || data.id === selectedExport?.id,
+                viewDisabled: data.status === 'PENDING'
+                    || data.status === 'STARTED'
+                    || data.status === 'FAILURE'
+                    || data.id === selectedExport?.id,
                 data,
                 onDeleteClick: handleDeleteExport,
                 onViewExportClick: setSelectedExport,

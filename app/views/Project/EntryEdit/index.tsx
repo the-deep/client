@@ -779,7 +779,7 @@ function EntryEdit(props: Props) {
                         stale: true,
                         attributes: defaultAttributes,
                     },
-                ],
+                ].reverse(),
                 'entries',
             );
             setSelectedEntry(newValue.clientId);

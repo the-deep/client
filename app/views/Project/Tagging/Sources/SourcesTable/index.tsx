@@ -85,7 +85,7 @@ const maxItemsPerPage = 10;
 
 const defaultSorting = {
     name: 'createdAt',
-    direction: 'Ascending',
+    direction: 'Descending',
 };
 
 export const PROJECT_SOURCES = gql`
