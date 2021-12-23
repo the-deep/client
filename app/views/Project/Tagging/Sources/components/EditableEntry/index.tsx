@@ -91,6 +91,7 @@ interface Props {
     onEntryDataChange: () => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    firstElementRef?: React.RefObject<HTMLDivElement>;
 }
 
 function EditableEntry(props: Props) {
@@ -109,6 +110,7 @@ function EditableEntry(props: Props) {
         onEntryDataChange,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        firstElementRef,
     } = props;
 
     const history = useHistory();
@@ -408,6 +410,7 @@ function EditableEntry(props: Props) {
     if (compact) {
         return (
             <Container
+                elementRef={firstElementRef}
                 className={className}
                 footerActions={(
                     <>
@@ -428,6 +431,7 @@ function EditableEntry(props: Props) {
 
     return (
         <Container
+            elementRef={firstElementRef}
             className={className}
             headerIcons={(
                 <>
