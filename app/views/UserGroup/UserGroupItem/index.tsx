@@ -11,7 +11,10 @@ import {
     TableColumn,
     TableHeaderCellProps,
     TableHeaderCell,
+    TableCell,
+    TableCellProps,
     createStringColumn,
+    useAlert,
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
 import {
@@ -67,6 +70,7 @@ function UserGroupItem(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const alert = useAlert();
 
     const [userToEdit, setUserToEdit] = useState<User | undefined>();
     const query = useMemo(() => ({
@@ -94,8 +98,17 @@ function UserGroupItem(props: Props) {
         onSuccess: () => {
             usersGetTrigger();
             onUserDeleteSuccess();
+            alert.show(
+                'Successfully removed user from user group.',
+                { variant: 'success' },
+            );
         },
-        failureMessage: _ts('usergroup', 'memberDeleteFailed'),
+        onFailure: () => {
+            alert.show(
+                'Failed to  remove user from user group.',
+                { variant: 'error' },
+            );
+        },
     });
 
     const [
@@ -135,7 +148,6 @@ function UserGroupItem(props: Props) {
                 sortable: false,
             },
             cellRenderer: MembershipActionCell,
-            columnClassName: styles.role,
             cellRendererParams: (membershipId, data) => ({
                 member: data.member,
                 memberRole: data.role,
@@ -147,7 +159,24 @@ function UserGroupItem(props: Props) {
             }),
             columnWidth: 96,
         };
-
+        const roleColumn: TableColumn<
+            Membership,
+            string,
+            TableCellProps<string>,
+            TableHeaderCellProps
+        > = {
+            id: 'role',
+            title: 'Role',
+            headerCellRenderer: TableHeaderCell,
+            headerCellRendererParams: {
+                sortable: false,
+            },
+            cellRenderer: TableCell,
+            cellRendererClassName: styles.role,
+            cellRendererParams: (_, data) => ({
+                value: data.role,
+            }),
+        };
         return ([
             createStringColumn<Membership, string>(
                 'name',
@@ -164,14 +193,7 @@ function UserGroupItem(props: Props) {
                 _ts('usergroup', 'addedOnLabel'),
                 (item) => item.joinedAt,
             ),
-            createStringColumn<Membership, string>(
-                'role',
-                _ts('usergroup', 'roleLabel'),
-                (item) => item.role,
-                {
-                    columnStyle: { textTransform: 'uppercase', border: '1px solid red' },
-                },
-            ),
+            roleColumn,
             actionColumn,
         ]);
     }, [activeUserId, handleEditMemberClick, memberDeleteTrigger, userGroup]);

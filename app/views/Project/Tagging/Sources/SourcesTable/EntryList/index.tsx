@@ -346,7 +346,7 @@ function EntryList(props: Props) {
         onEntryDataChange: handleEntryDataChange,
         geoAreaOptions,
         onGeoAreaOptionsChange: setGeoAreaOptions,
-        firstElementRef: data.id === entries?.[0].id ? ref : null,
+        firstElementRef: data.id === entries?.[0].id ? ref : undefined,
     }), [
         geoAreaOptions,
         leadId,

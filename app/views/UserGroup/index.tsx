@@ -92,7 +92,12 @@ function UserGroup(props: Props) {
                 { variant: 'success' },
             );
         },
-        failureMessage: 'Failed to delete user group.',
+        onFailure: () => {
+            alert.show(
+                'Failed to delete user group.',
+                { variant: 'error' },
+            );
+        },
     });
 
     const usergroupObjectToEdit = useMemo(() => (
