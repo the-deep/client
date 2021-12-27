@@ -107,15 +107,18 @@
             }
 
             .review {
+                display: flex;
+                flex-direction: column;
                 padding-right: var(--dui-spacing-super-large);
                 padding-left: var(--dui-spacing-super-large);
                 width: 100%;
+                overflow: auto;
 
-                .entries {
+                .review-content {
                     display: flex;
                     flex-direction: column;
-                    gap: var(--dui-spacing-large);
-                    overflow-y: auto;
+                    flex-grow: 1;
+                    overflow: auto;
                 }
             }
         }
