@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, createRef, useEffect } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -229,6 +229,15 @@ function EntryList(props: Props) {
         setGeoAreaOptions,
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
+    const ref = createRef<HTMLDivElement>();
+
+    useEffect(() => {
+        ref.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    }, [ref]);
+
     const [
         commentsCountMap,
         setCommentsCountMap,
@@ -337,12 +346,15 @@ function EntryList(props: Props) {
         onEntryDataChange: handleEntryDataChange,
         geoAreaOptions,
         onGeoAreaOptionsChange: setGeoAreaOptions,
+        firstElementRef: data.id === entries?.[0].id ? ref : undefined,
     }), [
         geoAreaOptions,
         leadId,
         projectId,
         frameworkDetails,
         handleEntryDataChange,
+        entries,
+        ref,
     ]);
 
     return (

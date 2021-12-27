@@ -1,13 +1,11 @@
 import React, { useMemo, useCallback, useState } from 'react';
-
 import { isDefined } from '@togglecorp/fujs';
-
 import {
     Modal,
     Button,
     SelectInput,
+    useAlert,
 } from '@the-deep/deep-ui';
-
 import {
     ObjectSchema,
     PartialForm,
@@ -81,6 +79,7 @@ function AddUserModal(props: Props) {
         users,
     } = props;
 
+    const alert = useAlert();
     const [userOptions, setUserOptions] = useState<User[] | null | undefined>(users);
 
     const formValue: PartialForm<FormType> = useMemo(() => ({
@@ -114,8 +113,31 @@ function AddUserModal(props: Props) {
         onSuccess: () => {
             onUserAddSuccess();
             onModalClose();
+            if (isDefined(userToEdit?.id)) {
+                alert.show(
+                    'Successfully edited user membership.',
+                    { variant: 'success' },
+                );
+            } else {
+                alert.show(
+                    'Successfully added user to user group.',
+                    { variant: 'success' },
+                );
+            }
         },
-        failureMessage: _ts('usergroup.memberEditModal', 'memberAddFailed'),
+        onFailure: () => {
+            if (isDefined(userToEdit?.id)) {
+                alert.show(
+                    'Failed to change user membership.',
+                    { variant: 'error' },
+                );
+            } else {
+                alert.show(
+                    'Failed to add user to user group.',
+                    { variant: 'error' },
+                );
+            }
+        },
     });
 
     const handleSubmit = useCallback(() => {

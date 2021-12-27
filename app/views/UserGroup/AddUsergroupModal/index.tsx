@@ -5,6 +5,7 @@ import {
     Button,
     PendingMessage,
     TextInput,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -74,6 +75,8 @@ function AddUserGroupModal(props: Props) {
         value: initialValue,
     } = props;
 
+    const alert = useAlert();
+
     const [initialFormValue] = useState<PartialForm<FormType>>(
         isDefined(initialValue) ? ({
             title: initialValue.title,
@@ -105,9 +108,33 @@ function AddUserGroupModal(props: Props) {
         onSuccess: (response) => {
             onSuccess(response.id);
             onModalClose();
+            if (isDefined(initialValue?.id)) {
+                alert.show(
+                    'Successfully edited user group.',
+                    { variant: 'success' },
+                );
+            } else {
+                alert.show(
+                    'Successfully created user group.',
+                    { variant: 'success' },
+                );
+            }
         },
-        failureMessage: _ts('usergroup.editModal', 'addUsergroupFailed'),
+        onFailure: () => {
+            if (isDefined(initialValue?.id)) {
+                alert.show(
+                    'Failed to edit user group.',
+                    { variant: 'error' },
+                );
+            } else {
+                alert.show(
+                    'Failed to create user group.',
+                    { variant: 'error' },
+                );
+            }
+        },
     });
+
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
