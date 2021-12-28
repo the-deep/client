@@ -70,6 +70,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                         value={value}
                         name={props.name}
                         onChange={props.onChange}
+                        autoSize
                     />
                 )}
                 {value && props.readOnly && (
@@ -96,6 +97,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                     value={value}
                     onChange={props.onChange}
                     name={props.name}
+                    autoSize
                 />
             </div>
         );

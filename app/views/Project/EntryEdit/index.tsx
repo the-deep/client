@@ -1378,13 +1378,17 @@ function EntryEdit(props: Props) {
                                             variant="secondary"
                                         />
                                     )}
+                                    contentClassName={styles.reviewContent}
                                 >
                                     <VirtualizedListView
                                         itemHeight={360}
-                                        className={styles.entries}
+                                        borderBetweenItem
+                                        buffer={0}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
                                         data={formValue.entries}
+                                        direction="vertical"
+                                        spacing="comfortable"
                                         rendererParams={entryDataRendererParams}
                                         filtered={false}
                                         errored={false}

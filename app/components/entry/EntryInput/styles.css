@@ -1,5 +1,6 @@
 .entry-input {
     display: flex;
+    flex-shrink: 0;
     background-color: var(--dui-color-foreground);
     height: var(--height-entry-item);
     overflow-y: auto;
