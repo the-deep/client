@@ -2,12 +2,12 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ImagePreview,
-    TextArea,
     Message,
 } from '@the-deep/deep-ui';
 import { genericMemo } from '#utils/common';
 
 import { EntryType } from '#generated/types';
+import ExcerptTextArea from '#components/entry/ExcerptTextArea';
 import _ts from '#ts';
 
 import styles from './styles.css';
@@ -61,9 +61,12 @@ function ExcerptInput<N extends string>(props: Props<N>) {
                     />
                 )}
                 {!props.readOnly && (
-                    <TextArea
+                    <ExcerptTextArea
                         label="Additional Context"
-                        className={_cs(excerptForImageClassName, styles.textAreaForImage)}
+                        className={_cs(
+                            excerptForImageClassName,
+                            styles.textAreaForImage,
+                        )}
                         value={value}
                         name={props.name}
                         onChange={props.onChange}
@@ -88,7 +91,7 @@ function ExcerptInput<N extends string>(props: Props<N>) {
             </div>
         ) : (
             <div className={_cs(className, styles.excerptInput)}>
-                <TextArea
+                <ExcerptTextArea
                     className={_cs(className, styles.textArea)}
                     value={value}
                     onChange={props.onChange}

@@ -345,21 +345,23 @@ function LeftPane(props: Props) {
             )}
             headerActions={(
                 <>
-                    <QuickActionDropdownMenu
-                        label={<IoAdd />}
-                        variant="primary"
-                        disabled={showScreenshot || isEntrySelectionActive}
-                        popupClassName={styles.createExcerptPopup}
-                        popupContentClassName={styles.createExcerptContent}
-                        persistent
-                        componentRef={editExcerptDropdownRef}
-                    >
-                        <ExcerptModal
-                            title="Add Excerpt"
-                            excerpt=""
-                            onComplete={handleExcerptAddFromOriginal}
-                        />
-                    </QuickActionDropdownMenu>
+                    {!fullScreenMode && (
+                        <QuickActionDropdownMenu
+                            label={<IoAdd />}
+                            variant="primary"
+                            disabled={showScreenshot || isEntrySelectionActive}
+                            popupClassName={styles.createExcerptPopup}
+                            popupContentClassName={styles.createExcerptContent}
+                            persistent
+                            componentRef={editExcerptDropdownRef}
+                        >
+                            <ExcerptModal
+                                title="Add Excerpt"
+                                excerpt=""
+                                onComplete={handleExcerptAddFromOriginal}
+                            />
+                        </QuickActionDropdownMenu>
+                    )}
                     <QuickActionLink
                         title="Open external"
                         to={lead?.url || lead?.attachment?.file?.url || ''}
