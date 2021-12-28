@@ -9,15 +9,35 @@ import { generatePath } from 'react-router-dom';
 import generateString from '#utils/string';
 import routes from '#base/configs/routes';
 
-import { Notification } from '../types';
+import { Notification, ReviewEntryCommentAdd } from '../types';
 import NotificationContainer from '../NotificationContainer';
 import ProjectJoinRequestItem from './ProjectJoinRequestItem';
+import { EntryAction } from '#components/entryReview/commentConstants';
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     notification: Notification;
     onNotificationUpdate: () => void;
+}
+
+function getCommentTokenString(data: ReviewEntryCommentAdd['data']) {
+    if (data?.comment_type === EntryAction.COMMENT) {
+        return '{createdByName} assigned you to a comment in an {entryLink} in the project {projectTitle}.';
+    }
+    if (data?.comment_type === EntryAction.VERIFY) {
+        return '{createdByName} verified an {entryLink} in the project {projectTitle}.';
+    }
+    if (data?.comment_type === EntryAction.UNVERIFY) {
+        return '{createdByName} unverified an {entryLink} in the project {projectTitle}.';
+    }
+    if (data?.comment_type === EntryAction.CONTROL) {
+        return '{createdByName} controlled an {entryLink} in the project {projectTitle}.';
+    }
+    if (data?.comment_type === EntryAction.UNCONTROL) {
+        return '{createdByName} uncontrolled an {entryLink} in the project {projectTitle}.';
+    }
+    return '';
 }
 
 function NotificationItem(props: Props) {
@@ -363,7 +383,21 @@ function NotificationItem(props: Props) {
                 entryId: data?.entry,
             },
         };
-
+        const content = generateString(
+            getCommentTokenString(data),
+            {
+                createdByName: (<b>{data?.created_by_details?.name}</b>),
+                entryLink: (
+                    <Link
+                        className={styles.link}
+                        to={editEntryLink}
+                    >
+                        entry
+                    </Link>
+                ),
+                projectTitle: (<b>{data?.project_details?.title}</b>),
+            },
+        );
         return (
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
@@ -371,26 +405,11 @@ function NotificationItem(props: Props) {
                 userName={data?.created_by_details?.name}
                 descriptionLabel="Comment"
                 description={data?.text}
-                content={
-                    generateString(
-                        '{createdByName} assigned you to a comment in the {entryLink} in the project {projectTitle}.',
-                        {
-                            createdByName: (<b>{data?.created_by_details?.name}</b>),
-                            entryLink: (
-                                <Link
-                                    className={styles.link}
-                                    to={editEntryLink}
-                                >
-                                    entry
-                                </Link>
-                            ),
-                            projectTitle: (<b>{data?.project_details?.title}</b>),
-                        },
-                    )
-                }
+                content={content}
             />
         );
     }
+
     if (notification.notificationType === 'ENTRY_REVIEW_COMMENT_MODIFY') {
         const { data } = notification;
 
