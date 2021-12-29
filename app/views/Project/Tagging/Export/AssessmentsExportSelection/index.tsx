@@ -212,8 +212,8 @@ function AssessmentsExportSelection(props: Props) {
                         name="queryTitle"
                         value={queryTitle}
                         onChange={setQueryTitle}
-                        label="Query title"
-                        placeholder="Query title"
+                        label="Assessment export title"
+                        placeholder="Assessment export title"
                     />
                 </ControlledExpandableContainer>
                 <Footer

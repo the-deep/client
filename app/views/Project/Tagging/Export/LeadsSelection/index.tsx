@@ -36,7 +36,7 @@ type Lead = NonNullable<NonNullable<NonNullable<Project['leads']>['results']>[nu
 
 const defaultSorting = {
     name: 'createdAt',
-    direction: 'Ascending',
+    direction: 'Descending',
 };
 
 function leadsKeySelector(d: Lead) {
