@@ -234,6 +234,8 @@ interface Props {
     className?: string;
     projectId: string;
     filters: PartialFilterFormType;
+    activePage: number;
+    setActivePage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function SourcesTable(props: Props) {
@@ -241,6 +243,8 @@ function SourcesTable(props: Props) {
         className,
         projectId,
         filters: rawFilters,
+        activePage,
+        setActivePage,
     } = props;
 
     const filters = useMemo(() => (
@@ -249,7 +253,6 @@ function SourcesTable(props: Props) {
         )
     ), [rawFilters]);
 
-    const [activePage, setActivePage] = useState<number>(1);
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
     const alert = useAlert();
@@ -329,10 +332,6 @@ function SourcesTable(props: Props) {
 
     const sourcesResponse = projectSourcesResponse?.project?.leads;
     const sources = sourcesResponse?.results;
-
-    const handlePageChange = useCallback((page: number) => {
-        setActivePage(page);
-    }, []);
 
     const clearSelection = useCallback(() => {
         setSelectedLeads([]);
@@ -651,7 +650,7 @@ function SourcesTable(props: Props) {
                         activePage={activePage}
                         itemsCount={sourcesResponse?.totalCount ?? 0}
                         maxItemsPerPage={maxItemsPerPage}
-                        onActivePageChange={handlePageChange}
+                        onActivePageChange={setActivePage}
                         itemsPerPageControlHidden
                     />
                 )}

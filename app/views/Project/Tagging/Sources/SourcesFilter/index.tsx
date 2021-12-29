@@ -275,7 +275,7 @@ function SourcesFilter(props: Props) {
                     error={error?.search}
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'search')}
-                    placeholder="Lead title or Entry excerpt"
+                    placeholder="Source title or Entry excerpt"
                 />
                 <MultiSelectInput
                     className={styles.input}
