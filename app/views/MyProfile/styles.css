@@ -58,7 +58,9 @@
                         --spacing: 0;
 
                     }
+
                     .file-input {
+                        align-items: flex-start;
                         padding: 0;
                         --height-border: 0;
                     }

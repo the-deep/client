@@ -37,6 +37,7 @@ function DeepImageInput<T extends string, N extends number | string>(props: Prop
         onChange,
         isPrivate,
         previewVisible,
+        maxFileSize = 2,
         ...otherProps
     } = props;
 
@@ -106,6 +107,7 @@ function DeepImageInput<T extends string, N extends number | string>(props: Prop
                 value={value}
                 onChange={handleChange}
                 multiple={false}
+                maxFileSize={maxFileSize}
             />
             { previewVisible && src && (
                 <ImagePreview
