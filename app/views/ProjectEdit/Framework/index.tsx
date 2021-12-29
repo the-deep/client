@@ -251,14 +251,14 @@ function ProjectFramework(props: Props) {
                         messageIconShown
                     />
                     {
-                        (!frameworksGetPending
-                        || (frameworkList.length < (frameworksResponse?.count ?? 0)))
+                        (frameworkList.length < (frameworksResponse?.count ?? 0))
                         && (
                             <Button
                                 className={styles.showMoreButton}
                                 variant="action"
                                 name="showMore"
                                 onClick={handleShowMoreButtonClick}
+                                disabled={frameworksGetPending}
                                 actions={(
                                     <IoChevronForward />
                                 )}
