@@ -177,6 +177,7 @@ function RegionMap(props: Props) {
             } else {
                 stopPolling();
             }
+            return stopPolling;
         },
         [selectedRegion, startPolling, stopPolling],
     );

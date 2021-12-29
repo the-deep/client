@@ -1,4 +1,4 @@
-import React, { useState, useMemo, ReactElement, useCallback } from 'react';
+import React, { useState, useMemo, ReactElement, useCallback, useEffect } from 'react';
 import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
 import { VscLoading } from 'react-icons/vsc';
 import { IoDownloadOutline, IoClose, IoSearch } from 'react-icons/io5';
@@ -172,6 +172,16 @@ function ExportHistory(props: Props) {
     const [searchText, setSearchText] = useState<string>();
     const debouncedSearchText = useDebouncedValue(searchText, debounceTime);
 
+    const handleSetSearchText = useCallback((search: string | undefined) => {
+        setSearchText(search);
+        setActivePage(1);
+    }, []);
+
+    const handleSetExportedAt = useCallback((date: DateRangeValue | undefined) => {
+        setExportedAt(date);
+        setActivePage(1);
+    }, []);
+
     const alert = useAlert();
     const sortState = useSortState();
     const { sorting } = sortState;
@@ -221,16 +231,30 @@ function ExportHistory(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                if (response.project?.exports?.results?.some((v) => (
-                    v.status === 'PENDING'
-                    || v.status === 'STARTED'
-                ))) {
-                    startPolling(pollInterval);
-                } else {
-                    stopPolling();
+                if ((response.project?.exports?.totalCount ?? 0) < (activePage * maxItemsPerPage)) {
+                    setActivePage(1);
                 }
             },
         },
+    );
+
+    useEffect(
+        () => {
+            if (projectExportsResponse?.project?.exports?.results?.some((v) => (
+                v.status === 'PENDING'
+                || v.status === 'STARTED'
+            ))) {
+                startPolling(pollInterval);
+            } else {
+                stopPolling();
+            }
+            return stopPolling;
+        },
+        [
+            projectExportsResponse?.project?.exports?.results,
+            startPolling,
+            stopPolling,
+        ],
     );
 
     const [
@@ -380,13 +404,13 @@ function ExportHistory(props: Props) {
                         label="Search"
                         placeholder="Search"
                         value={searchText}
-                        onChange={setSearchText}
+                        onChange={handleSetSearchText}
                     />
                     <DateRangeInput
                         name="exportedAt"
                         label="Exported At"
                         value={exportedAt}
-                        onChange={setExportedAt}
+                        onChange={handleSetExportedAt}
                     />
                 </div>
             )}
