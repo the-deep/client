@@ -173,6 +173,7 @@ function AddAdminLevelForm(props: Props) {
                     value={value.geoShapeFile}
                     readOnly={isPublished}
                     disabled={pending}
+                    maxFileSize={25}
                 >
                     <MdFileUpload />
                 </DeepFileInput>

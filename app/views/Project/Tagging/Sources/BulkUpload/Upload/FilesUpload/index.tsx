@@ -46,6 +46,7 @@ function FilesUpload(props: Props) {
                 onChange={handleFileInputChange}
                 status="Drag and drop files here"
                 overrideStatus
+                maxFileSize={100}
                 multiple
             >
                 Browse Files
