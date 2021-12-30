@@ -773,13 +773,13 @@ function EntryEdit(props: Props) {
             createRestorePoint();
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
-                    ...(prevValue ?? []),
                     {
                         ...newValue,
                         stale: true,
                         attributes: defaultAttributes,
                     },
-                ].reverse(),
+                    ...(prevValue ?? []),
+                ],
                 'entries',
             );
             setSelectedEntry(newValue.clientId);

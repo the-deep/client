@@ -38,10 +38,12 @@ import {
     getErrorObject,
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
+import { useLazyQuery, gql } from '@apollo/client';
 
 import { SubNavbarActions } from '#components/SubNavbar';
 import NonFieldError from '#components/NonFieldError';
 import UserContext from '#base/context/UserContext';
+import ProjectContext from '#base/context/ProjectContext';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
 import {
@@ -50,6 +52,10 @@ import {
     ProjectDetails,
     OrganizationTypes,
 } from '#types';
+import {
+    UserLastActiveProjectQuery,
+    UserLastActiveProjectQueryVariables,
+} from '#generated/types';
 import routes from '#base/configs/routes';
 import { useModalState } from '#hooks/stateManagement';
 
@@ -180,6 +186,32 @@ const initialValue: FormType = {
     hasAssessments: false,
 };
 
+const LAST_ACTIVE_PROJECT = gql`
+    query UserLastActiveProject {
+        me {
+            id
+            displayName
+            displayPictureUrl
+            accessibleFeatures {
+                key
+            }
+            lastActiveProject {
+                allowedPermissions
+                hasAssessmentTemplate
+                analysisFramework {
+                    id
+                }
+                currentUserRole
+                id
+                isPrivate
+                title
+                isVisualizationEnabled
+                isVisualizationAvailable
+            }
+        }
+    }
+`;
+
 interface Props {
     projectId: string | undefined;
     onCreate: (value: ProjectDetails) => void;
@@ -209,6 +241,7 @@ function ProjectDetailsForm(props: Props) {
     const {
         user,
     } = useContext(UserContext);
+    const { setProject } = React.useContext(ProjectContext);
 
     const accessPrivateProject = !!user?.accessibleFeatures?.some((f) => f.key === 'PRIVATE_PROJECT');
 
@@ -285,6 +318,23 @@ function ProjectDetailsForm(props: Props) {
             : 'Failed to create project.',
     });
 
+    const [
+        getUserLastActiveProject,
+        {
+            loading: userLastActiveProjectPending,
+        },
+    ] = useLazyQuery<UserLastActiveProjectQuery, UserLastActiveProjectQueryVariables>(
+        LAST_ACTIVE_PROJECT,
+        {
+            onCompleted: (response) => {
+                setProject(response.me?.lastActiveProject ?? undefined);
+                const homePath = generatePath(routes.home.path, {});
+                // NOTE: Pristine is set as if the project is deleted, we don't want confirm prompt
+                setPristine(true);
+                history.replace(homePath);
+            },
+        },
+    );
     const {
         pending: projectDeletePending,
         trigger: triggerProjectDelete,
@@ -292,14 +342,11 @@ function ProjectDetailsForm(props: Props) {
         url: projectId ? `server://projects/${projectId}/` : undefined,
         method: 'DELETE',
         onSuccess: () => {
-            const homePath = generatePath(routes.home.path, {});
-            // NOTE: Pristine is set as if the project is deleted, we don't want confirm prompt
-            setPristine(true);
-            history.replace(homePath);
             alert.show(
                 'Successfully deleted project.',
                 { variant: 'success' },
             );
+            getUserLastActiveProject();
         },
         failureMessage: 'Failed to delete project.',
     });
@@ -507,7 +554,11 @@ function ProjectDetailsForm(props: Props) {
                     </div>
                     <Button
                         name="deleteProject"
-                        disabled={!projectId || projectDeletePending}
+                        disabled={(
+                            !projectId
+                            || projectDeletePending
+                            || userLastActiveProjectPending
+                        )}
                         onClick={showDeleteProjectConfirmation}
                         icons={(
                             <IoTrashBinOutline />
@@ -542,7 +593,10 @@ function ProjectDetailsForm(props: Props) {
                                 </>
                             )}
                         >
-                            {projectDeletePending && <PendingMessage />}
+                            {
+                                (projectDeletePending || userLastActiveProjectPending)
+                                && <PendingMessage />
+                            }
                             <p>
                                 {_ts(
                                     'projectEdit',
