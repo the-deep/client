@@ -381,7 +381,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                                 name="leadExtract"
                                 variant="action"
                                 onClick={handleLeadDataExtract}
-                                title="Auto-fill lead information"
+                                title="Auto-fill source information"
                                 disabled={disabled}
                             >
                                 <IoEye />
@@ -428,7 +428,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                         <>
                             <QuickActionButton
                                 name="fileExtract"
-                                title="Auto-fill lead information"
+                                title="Auto-fill source information"
                                 variant="action"
                                 onClick={handleFileExtractClick}
                                 disabled={disabled}
