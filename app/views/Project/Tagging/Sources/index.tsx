@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoGridOutline,
@@ -37,7 +37,13 @@ function Sources(props: Props) {
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
     const [sourcesFilters, setSourcesFilters] = useState<PartialFilterFormType>({});
+    const [activePage, setActivePage] = useState<number>(1);
     const activeView = useHash();
+
+    const handleSetSourcesFilters = useCallback((filters: PartialFilterFormType) => {
+        setSourcesFilters(filters);
+        setActivePage(1);
+    }, []);
 
     return (
         <div className={_cs(styles.sources, className)}>
@@ -80,7 +86,7 @@ function Sources(props: Props) {
                         <SourcesFilter
                             className={styles.filter}
                             value={sourcesFilters}
-                            onFilterApply={setSourcesFilters}
+                            onFilterApply={handleSetSourcesFilters}
                             projectId={activeProject}
                             isEntriesOnlyFilter={activeView === 'grid'}
                         />
@@ -93,6 +99,8 @@ function Sources(props: Props) {
                                 className={styles.table}
                                 filters={sourcesFilters}
                                 projectId={activeProject}
+                                activePage={activePage}
+                                setActivePage={setActivePage}
                             />
                         </TabPanel>
                         <TabPanel name="grid">
