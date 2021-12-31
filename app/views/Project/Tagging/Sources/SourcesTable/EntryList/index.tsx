@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, createRef, useEffect } from 'react';
+import React, { useMemo, useCallback, useState, createRef } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -231,13 +231,6 @@ function EntryList(props: Props) {
 
     const ref = createRef<HTMLDivElement>();
 
-    useEffect(() => {
-        ref.current?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-        });
-    }, [ref]);
-
     const [
         commentsCountMap,
         setCommentsCountMap,
@@ -322,6 +315,14 @@ function EntryList(props: Props) {
         },
     );
 
+    const handleSetActivePage = useCallback((page: number) => {
+        setActivePage(page);
+        ref.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    }, [ref]);
+
     const handleEntryDataChange = useCallback(() => {
         getProjectSources();
         getEntries();
@@ -368,7 +369,7 @@ function EntryList(props: Props) {
                     activePage={activePage}
                     itemsCount={entriesResponse?.totalCount ?? 0}
                     maxItemsPerPage={maxItemsPerPage}
-                    onActivePageChange={setActivePage}
+                    onActivePageChange={handleSetActivePage}
                     itemsPerPageControlHidden
                     hideInfo
                 />
