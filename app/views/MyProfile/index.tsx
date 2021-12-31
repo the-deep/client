@@ -261,7 +261,7 @@ function MyProfile(props: Props) {
                         )}
                         fileInputClassName={styles.fileInput}
                         inputSectionClassName={styles.inputSection}
-                        maxFileSize={0.2}
+                        maxFileSize={1}
                         variant="general"
                     >
                         <FiEdit2 />
