@@ -65,6 +65,7 @@ function UploadImage<N extends string>(props: Props<N>) {
                         onChange={onChange}
                         showStatus={false}
                         accept="image/*"
+                        maxFileSize={5}
                     >
                         <MdFileUpload />
                         {_ts('analyticalFramework', 'uploadFrameworkImage')}

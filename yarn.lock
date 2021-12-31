@@ -2418,10 +2418,10 @@
     content-type "^1.0.4"
     tslib "^2.3.1"
 
-"@the-deep/deep-ui@^1.5.18":
-  version "1.5.18"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.18.tgz#3ea5601339ac6271802d57bbd8a81468b08af978"
-  integrity sha512-wwEnxgFz7Q121wvuj4GXEQqsLHMPoQvtwHmJASwX+2T4QmqH/nej60Otii/EU36TbvrwO5Y1AO61ENkvOt+wQQ==
+"@the-deep/deep-ui@1.5.19-beta.0":
+  version "1.5.19-beta.0"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.19-beta.0.tgz#0da558a99dd7f8e364838543b16e8050b6356a8f"
+  integrity sha512-Uhl38ZkPqk5Qvo+hv4aEENL80JSt48dJ/4CCLrrlPtGErX7c11DnuOHzfiG2i8l+0XsyjXUKQXEXfB6GwciruQ==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@tanem/svg-injector" "^10.1.12"
