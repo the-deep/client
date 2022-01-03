@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useContext } from 'react';
+import { useQuery, gql } from '@apollo/client';
 import {
     isDefined,
     mapToList,
@@ -23,18 +24,33 @@ import {
     Legend,
 } from 'recharts';
 
-import { useRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import ExcerptInput from '#components/entry/ExcerptInput';
 
 import {
     PartialAnalyticalStatementType,
 } from '../../schema';
 import EntryContext, { EntryMin } from '../../context';
+import {
+    TokenQuery,
+} from '#generated/types';
 
 import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}
+function noop() { }
+
+const TOKEN = gql`
+    query Token {
+        me {
+            id
+            jwtToken {
+                accessToken
+                expiresIn
+            }
+        }
+    }
+`;
 
 const chartMargins = {
     top: 0,
@@ -57,6 +73,7 @@ interface NgramsResponse {
             [key in string]: number;
         };
     }
+    token: string;
 }
 
 const keySelector = (item: EntryMin) => item.id;
@@ -117,13 +134,35 @@ function AnalyticalNGramsModal(props: Props) {
     }, [entriesForNgrams]);
 
     const {
-        pending,
+        pending: ngramsPending,
         response: ngramsResponse,
-    } = useRequest<NgramsResponse>({
-        url: 'serverless://ngram-process/',
+        trigger: getNgramsData,
+    } = useLazyRequest<NgramsResponse, string>({
         method: 'POST',
+        url: 'serverless://ngram-process/',
         body: entryPayload,
+        other: (ctx) => ({
+            headers: {
+                Authorization: `Bearer ${ctx}`,
+            },
+        }),
     });
+
+    const {
+        loading: pendingUserToken,
+    } = useQuery<TokenQuery>(
+        TOKEN,
+        {
+            fetchPolicy: 'network-only',
+            onCompleted: (data) => {
+                const token = data.me?.jwtToken?.accessToken;
+                if (!token) {
+                    return;
+                }
+                getNgramsData(token);
+            },
+        },
+    );
 
     const {
         unigrams,
@@ -159,6 +198,8 @@ function AnalyticalNGramsModal(props: Props) {
         name: 'excerpt',
         onChange: noop,
     }), []);
+
+    const pending = ngramsPending || pendingUserToken;
 
     return (
         <Modal
