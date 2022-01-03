@@ -10,7 +10,7 @@ import generateString from '#utils/string';
 import styles from './styles.css';
 
 const activityTypeMap = {
-    lead: 'a lead',
+    lead: 'a source',
     entry: 'an entry',
     'entry-comment': 'a comment to an entry',
 };

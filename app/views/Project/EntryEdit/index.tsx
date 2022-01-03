@@ -380,8 +380,12 @@ function EntryEdit(props: Props) {
                     return;
                 }
                 const errors = entryBulk?.errors;
-                const deletedResult = response.project?.entryBulk?.deletedResult;
-                const saveResult = response.project?.entryBulk?.result;
+                const deletedResult = [
+                    ...response?.project?.entryBulk?.deletedResult ?? [],
+                ].reverse();
+                const saveResult = [
+                    ...response?.project?.entryBulk?.result ?? [],
+                ].reverse();
 
                 const entriesError = errors?.map((item, index) => {
                     if (isNotDefined(item)) {
@@ -453,6 +457,7 @@ function EntryEdit(props: Props) {
                         const newEntry = savedEntriesMapping[item.clientId];
                         return newEntry ?? item;
                     });
+
                     return {
                         entries: mappedEntries,
                     };
@@ -615,7 +620,7 @@ function EntryEdit(props: Props) {
                             variables: {
                                 projectId,
                                 deleteIds: entryDeleteIds,
-                                entries: transformedEntries,
+                                entries: transformedEntries.reverse(),
                             },
                         });
                     } else {
@@ -893,6 +898,7 @@ function EntryEdit(props: Props) {
                     const entries = leadFromResponse.entries?.map(
                         (entry) => transformEntry(entry as Entry),
                     );
+
                     setCommentsCountMap(
                         listToMap(
                             leadFromResponse.entries ?? [],
