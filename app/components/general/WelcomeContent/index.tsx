@@ -1,12 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { Heading } from '@the-deep/deep-ui';
+import { Heading, Svg } from '@the-deep/deep-ui';
 import {
     IoCompassOutline,
 } from 'react-icons/io5';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
-import Svg from '#components/Svg';
 import deepLogo from '#resources/img/logo.svg';
 import routes from '#base/configs/routes';
 import _ts from '#ts';

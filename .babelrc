@@ -5,8 +5,16 @@
         "@babel/preset-typescript",
     ],
     "plugins": [
-        // Reuse babel"s injected headers
+        // Reuse babel's injected headers
         "@babel/plugin-transform-runtime",
+
+        // Polyfill
+        ["polyfill-corejs3", {
+            "method": "usage-global",
+        }],
+        ["polyfill-regenerator", {
+            "method": "usage-global",
+        }],
 
         // Handle absolute imports
         ["babel-plugin-module-resolver", {
@@ -27,7 +35,6 @@
 
         // Extends javascript support
         "@babel/plugin-syntax-dynamic-import",
-        "@babel/plugin-proposal-do-expressions",
 
         // Extends react support
         "@babel/plugin-transform-react-constant-elements",
@@ -35,13 +42,5 @@
 
         // Extends graphql support
         'babel-plugin-graphql-tag',
-
-        // Polyfill
-        ["polyfill-corejs3", {
-            "method": "usage-global",
-        }],
-        ["polyfill-regenerator", {
-            "method": "usage-global",
-        }],
     ],
 }

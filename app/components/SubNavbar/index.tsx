@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useRef } from 'react';
 import {
     Heading,
     Border,
+    Svg,
 } from '@the-deep/deep-ui';
 import { Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
-import Svg from '#components/Svg';
 import deepLogo from '#resources/img/deep-logo-new.svg';
 import route from '#base/configs/routes';
 
