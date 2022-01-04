@@ -1294,3 +1294,58 @@ export function getHiddenWidgetIds(
         () => true,
     );
 }
+
+// TODO: List all tags from NLP framework
+type NlpTag = 'CONTEXT' | 'ENVIRONMENTAL';
+
+interface MappingItemBase {
+    tag: NlpTag;
+    widgetId: string;
+}
+
+export interface Matrix1dMappingItem extends MappingItemBase {
+    widgetType: 'MATRIX1D';
+    mapping: {
+        rowId: string;
+        subRowId: string;
+    }
+}
+
+export interface Matrix2dMappingItem extends MappingItemBase {
+    widgetType: 'MATRIX2D';
+    mapping: {
+        rowId: string;
+        subRowId: string;
+    } | {
+        columnId: string;
+        subColumnId?: string;
+    };
+}
+
+export interface ScaleMappingItem extends MappingItemBase {
+    widgetType: 'SCALE';
+    mapping: {
+        optionId: string;
+    };
+}
+
+export interface SelectMappingItem extends MappingItemBase {
+    widgetType: 'SELECT';
+    mapping: {
+        optionId: string;
+    };
+}
+
+export interface MultiSelectMappingItem extends MappingItemBase {
+    widgetType: 'MULTISELECT';
+    mapping: {
+        optionId: string;
+    };
+}
+
+export interface OrganigramMappingItem extends MappingItemBase {
+    widgetType: 'ORGANIGRAM';
+    mapping: {
+        optionId: string;
+    };
+}
