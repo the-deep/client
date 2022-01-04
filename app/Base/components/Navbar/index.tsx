@@ -9,6 +9,7 @@ import {
     DropdownMenuItem,
     useConfirmation,
     useAlert,
+    Svg,
 } from '@the-deep/deep-ui';
 import {
     IoHelp,
@@ -18,7 +19,6 @@ import {
     IoLogOutOutline,
 } from 'react-icons/io5';
 
-import Svg from '#components/Svg';
 import Notifications from '#components/Notifications';
 import SmartNavLink from '#base/components/SmartNavLink';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';

@@ -528,6 +528,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             <TabPanel
                 activeClassName={_cs(styles.tabPanel, styles.detailsTabPanel)}
                 name="framework-details"
+                retainMount="lazy"
             >
                 <div className={styles.content}>
                     <div className={styles.details}>
@@ -614,6 +615,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             <TabPanel
                 activeClassName={styles.tabPanel}
                 name="primary-tagging"
+                retainMount="lazy"
             >
                 <PrimaryTagging
                     allWidgets={allWidgets}
@@ -630,6 +632,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             <TabPanel
                 activeClassName={styles.tabPanel}
                 name="secondary-tagging"
+                retainMount="lazy"
             >
                 <SecondaryTagging
                     allWidgets={allWidgets}
@@ -646,6 +649,7 @@ function FrameworkForm(props: FrameworkFormProps) {
             <TabPanel
                 activeClassName={styles.tabPanel}
                 name="review"
+                retainMount="lazy"
             >
                 <Review
                     className={styles.view}
@@ -657,6 +661,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                 <TabPanel
                     activeClassName={styles.tabPanel}
                     name="viz-settings"
+                    retainMount="lazy"
                 >
                     <Container
                         heading="Visualization Settings"

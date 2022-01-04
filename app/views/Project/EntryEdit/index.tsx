@@ -1117,6 +1117,7 @@ function EntryEdit(props: Props) {
         <div className={_cs(styles.entryEdit, className)}>
             <Prompt
                 message={(newLocation) => {
+                    console.warn(newLocation, location);
                     if (newLocation.pathname !== location.pathname && !formPristine) {
                         return _ts('common', 'youHaveUnsavedChanges');
                     }
@@ -1194,6 +1195,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="source-details"
+                            retainMount="lazy"
                         >
                             {projectId && (
                                 <SourceDetails
@@ -1218,6 +1220,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="primary-tagging"
+                            retainMount="lazy"
                         >
                             {frameworkDetails && (
                                 <div className={styles.primaryTagging}>
@@ -1305,6 +1308,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="secondary-tagging"
+                            retainMount="lazy"
                         >
                             {frameworkDetails && (
                                 <div className={styles.secondaryTagging}>
@@ -1358,6 +1362,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             name="review"
                             activeClassName={styles.tabPanel}
+                            retainMount="lazy"
                         >
                             {frameworkDetails && (
                                 <Container
