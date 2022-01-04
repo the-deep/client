@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     ListView,
+    Checkbox,
     Tabs,
     Pager,
     Tab,
@@ -54,11 +55,13 @@ const USER_NOTIFICATIONS = gql`
     query UserNotifications(
         $isPending: Boolean,
         $page: Int,
+        $status: NotificationStatusEnum,
         $pageSize: Int,
     ) {
         notifications(
             isPending: $isPending,
             page: $page,
+            status: $status,
             pageSize: $pageSize,
         ) {
             totalCount
@@ -89,14 +92,17 @@ function Notifications(props: Props) {
         className,
     } = props;
 
+    const [doneNotificationsHidden, onDoneNotificationsHiddenChange] = useState(true);
+
     const [activeView, setActiveView] = React.useState<'notifications' | 'requests' | undefined>('notifications');
     const [page, setPage] = useState<number>(1);
 
     const variables = useMemo(() => ({
         isPending: activeView === 'requests',
         page,
+        status: doneNotificationsHidden ? 'UNSEEN' as const : undefined,
         pageSize: PAGE_SIZE,
-    }), [activeView, page]);
+    }), [activeView, page, doneNotificationsHidden]);
 
     const {
         previousData,
@@ -148,6 +154,15 @@ function Notifications(props: Props) {
                             Requests
                         </Tab>
                     </TabList>
+                )}
+                headerActionsContainerClassName={styles.headerActions}
+                headerActions={(
+                    <Checkbox
+                        name={undefined}
+                        label="Hide seen notifications"
+                        value={doneNotificationsHidden}
+                        onChange={onDoneNotificationsHiddenChange}
+                    />
                 )}
                 borderBelowHeader
                 footerActions={(
