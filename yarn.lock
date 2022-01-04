@@ -3329,10 +3329,10 @@
     content-type "^1.0.4"
     tslib "^2.3.1"
 
-"@the-deep/deep-ui@1.5.19-beta.0":
-  version "1.5.19-beta.0"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.19-beta.0.tgz#0da558a99dd7f8e364838543b16e8050b6356a8f"
-  integrity sha512-Uhl38ZkPqk5Qvo+hv4aEENL80JSt48dJ/4CCLrrlPtGErX7c11DnuOHzfiG2i8l+0XsyjXUKQXEXfB6GwciruQ==
+"@the-deep/deep-ui@^1.5.19-beta.2":
+  version "1.5.19-beta.2"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.5.19-beta.2.tgz#9ceddc67a40eb5d208ce9a11d5d882ce0d916694"
+  integrity sha512-LL4H+qmqjw2pknVFE+/spbYcln7WAy2qxz5FIOpDam5h5SFwjzSoT94/wHxYsI/w6jIaaVW6wEyGG5n8lj4yCQ==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@tanem/svg-injector" "^10.1.12"
