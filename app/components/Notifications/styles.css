@@ -8,6 +8,10 @@
         background-color: var(--dui-color-foreground);
     }
     */
+    .header-actions {
+        align-self: center;
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+    }
 
     .notification-list {
         display: flex;

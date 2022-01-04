@@ -1382,7 +1382,6 @@ function EntryEdit(props: Props) {
                                 >
                                     <VirtualizedListView
                                         itemHeight={360}
-                                        borderBetweenItem
                                         buffer={0}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
