@@ -70,6 +70,7 @@ function TextWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.value}
+                autoSize
             />
         </WidgetWrapper>
     );

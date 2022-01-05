@@ -979,7 +979,9 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     Columns
                 </Tab>
             </TabList>
-            <TabPanel name="rows">
+            <TabPanel
+                name="rows"
+            >
                 <Container
                     className={_cs(styles.container, className)}
                     contentClassName={styles.containerContent}
@@ -1013,7 +1015,10 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     />
                 </Container>
             </TabPanel>
-            <TabPanel name="columns">
+            <TabPanel
+                name="columns"
+                retainMount="lazy"
+            >
                 <Container
                     className={_cs(styles.container, className)}
                     headingSize="small"

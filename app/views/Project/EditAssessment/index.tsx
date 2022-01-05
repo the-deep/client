@@ -2,8 +2,6 @@ import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
 
-import deepLogo from '#resources/img/deep-logo-new.svg';
-import Svg from '#components/Svg';
 import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
@@ -33,14 +31,7 @@ function EditAssessment(props: Props) {
             <SubNavbar
                 className={styles.header}
                 heading="Assessment"
-                defaultIcons={(
-                    <div className={styles.appBrand}>
-                        <Svg
-                            src={deepLogo}
-                            className={styles.logo}
-                        />
-                    </div>
-                )}
+                homeLinkShown
                 defaultActions={(
                     <BackLink defaultLink="/">
                         Close

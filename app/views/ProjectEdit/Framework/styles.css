@@ -31,7 +31,6 @@
 
             .framework-list {
                 padding: var(--dui-spacing-medium) 0;
-                min-height: 40vh;
                 overflow-x: unset;
                 overflow-y: auto;
 

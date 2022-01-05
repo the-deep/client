@@ -287,7 +287,9 @@ function ExploreDeep(props: Props) {
                             </Tab>
                         </TabList>
                     </div>
-                    <TabPanel name="table">
+                    <TabPanel
+                        name="table"
+                    >
                         {authenticated ? (
                             <TableView
                                 filters={filters}
@@ -298,7 +300,9 @@ function ExploreDeep(props: Props) {
                             />
                         )}
                     </TabPanel>
-                    <TabPanel name="map">
+                    <TabPanel
+                        name="map"
+                    >
                         {authenticated ? (
                             <MapView
                                 filters={filters}

@@ -30,6 +30,7 @@
     }
 
     .leads {
+        flex-grow: 1;
         background-color: var(--dui-color-background);
         padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 

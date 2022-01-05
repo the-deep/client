@@ -5,6 +5,7 @@ import { select } from 'd3-selection';
 import { _cs } from '@togglecorp/fujs';
 
 import { getScreenshot } from '#utils/browserExtension';
+
 import styles from './styles.css';
 
 function getCroppedImage(
@@ -31,8 +32,14 @@ function getCroppedImage(
 
     context.drawImage(
         image,
-        startX, startY, canvas.width, canvas.height,
-        0, 0, canvas.width, canvas.height,
+        startX,
+        startY,
+        canvas.width,
+        canvas.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
     );
 
     const croppedImage = canvas.toDataURL('image/jpeg');

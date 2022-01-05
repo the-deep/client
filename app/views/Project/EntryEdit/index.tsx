@@ -60,8 +60,6 @@ import {
     LeadUpdateMutation,
     LeadUpdateMutationVariables,
 } from '#generated/types';
-import Svg from '#components/Svg';
-import deepLogo from '#resources/img/deep-logo-new.svg';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -1133,14 +1131,7 @@ function EntryEdit(props: Props) {
                     className={styles.header}
                     heading="Source"
                     description={lead?.title}
-                    defaultIcons={(
-                        <div className={styles.appBrand}>
-                            <Svg
-                                src={deepLogo}
-                                className={styles.logo}
-                            />
-                        </div>
-                    )}
+                    homeLinkShown
                     defaultActions={(
                         <>
                             <BackLink defaultLink="/">
@@ -1203,6 +1194,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="source-details"
+                            retainMount="lazy"
                         >
                             {projectId && (
                                 <SourceDetails
@@ -1227,6 +1219,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="primary-tagging"
+                            retainMount="lazy"
                         >
                             {frameworkDetails && (
                                 <div className={styles.primaryTagging}>
@@ -1314,6 +1307,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="secondary-tagging"
+                            retainMount="lazy"
                         >
                             {frameworkDetails && (
                                 <div className={styles.secondaryTagging}>
@@ -1367,6 +1361,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             name="review"
                             activeClassName={styles.tabPanel}
+                            retainMount="lazy"
                         >
                             {frameworkDetails && (
                                 <Container
@@ -1382,7 +1377,6 @@ function EntryEdit(props: Props) {
                                 >
                                     <VirtualizedListView
                                         itemHeight={360}
-                                        buffer={0}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
                                         data={formValue.entries}

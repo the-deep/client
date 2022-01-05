@@ -8,7 +8,7 @@ import useRouteMatching, {
 
 export type Props = Omit<ButtonLikeLinkProps, 'to'> & {
     route: RouteData;
-    // eslint-disable-next-line @typescript-eslint/ban-types
+
     state?: object;
     attrs?: Attrs;
     hash?: string;

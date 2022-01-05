@@ -94,7 +94,9 @@ function Sources(props: Props) {
                 </div>
                 {activeProject && (
                     <div className={styles.leads}>
-                        <TabPanel name="table">
+                        <TabPanel
+                            name="table"
+                        >
                             <SourcesTable
                                 className={styles.table}
                                 filters={sourcesFilters}
@@ -103,7 +105,9 @@ function Sources(props: Props) {
                                 setActivePage={setActivePage}
                             />
                         </TabPanel>
-                        <TabPanel name="grid">
+                        <TabPanel
+                            name="grid"
+                        >
                             <EntriesGrid
                                 projectId={String(activeProject)}
                                 filters={sourcesFilters}

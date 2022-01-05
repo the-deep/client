@@ -9,20 +9,20 @@ export type BaseNotification = Omit<NotificationFromServer, 'data' | 'notificati
 export interface ReviewEntryCommentAdd {
     notificationType: 'ENTRY_REVIEW_COMMENT_ADD';
     data: {
-        // eslint-disable-next-line camelcase
+
         comment_type: number;
-        // eslint-disable-next-line camelcase
+
         created_at: string;
         entry: number;
         lead: number;
         id: number;
         text: string;
-        // eslint-disable-next-line camelcase
+
         created_by_details: {
             id: number;
             name: string;
         };
-        // eslint-disable-next-line camelcase
+
         project_details: {
             id: number;
             title: string;
@@ -33,20 +33,20 @@ export interface ReviewEntryCommentAdd {
 interface ReviewEntryCommentModify {
     notificationType: 'ENTRY_REVIEW_COMMENT_MODIFY';
     data: {
-        // eslint-disable-next-line camelcase
+
         comment_type: number;
-        // eslint-disable-next-line camelcase
+
         created_at: string;
         entry: number;
         lead: number;
         id: number;
         text: string;
-        // eslint-disable-next-line camelcase
+
         created_by_details: {
             id: number;
             name: string;
         };
-        // eslint-disable-next-line camelcase
+
         project_details: {
             id: number;
             title: string;
@@ -57,13 +57,13 @@ interface ReviewEntryCommentModify {
 export interface ProjectJoinRequest {
     notificationType: 'PROJECT_JOIN_REQUEST';
     data: {
-        // eslint-disable-next-line camelcase
+
         requested_at: string;
         id: number;
-        // eslint-disable-next-line camelcase
+
         requested_by: {
             id: number;
-            // eslint-disable-next-line camelcase
+
             display_name: string;
         };
         reason: string;
@@ -80,16 +80,16 @@ interface ProjectJoinResponse {
     data: {
         id: number;
         status: 'rejected' | 'accepted';
-        // eslint-disable-next-line camelcase
+
         requested_by: {
             id: number;
-            // eslint-disable-next-line camelcase
+
             display_name: string;
         };
-        // eslint-disable-next-line camelcase
+
         responded_by: {
             id: number;
-            // eslint-disable-next-line camelcase
+
             display_name: string;
         };
         reason: string;
@@ -104,10 +104,10 @@ interface ProjectJoinRequestAbort {
     notificationType: 'PROJECT_JOIN_REQUEST_ABORT';
     data: {
         id: number;
-        // eslint-disable-next-line camelcase
+
         requested_by: {
             id: number;
-            // eslint-disable-next-line camelcase
+
             display_name: string;
         };
         reason: string;
@@ -129,7 +129,7 @@ interface EntryCommentGeneral {
 
     data: {
         id: number;
-        // eslint-disable-next-line camelcase
+
         created_by_detail: {
             id: number;
             name: string;

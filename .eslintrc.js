@@ -38,6 +38,7 @@ const config = {
     },
     rules: {
         strict: 1,
+        'default-param-last': 0,
 
         'no-unused-vars': 0,
         '@typescript-eslint/no-unused-vars': 1,
@@ -76,6 +77,12 @@ const config = {
         'react/jsx-indent': [2, 4],
         'react/jsx-indent-props': [2, 4],
         'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
+        'react/jsx-props-no-spreading': 0,
+        'react/jsx-key': ['warn', {
+            checkFragmentShorthand: true,
+            checkKeyMustBeforeSpread: true,
+        }],
+
         'react/prop-types': [1, { ignore: [], customValidators: [], skipUndeclared: false }],
         'react/forbid-prop-types': [1],
         'react/destructuring-assignment': [1, 'always', { ignoreClassFields: true }],
@@ -89,12 +96,16 @@ const config = {
             ],
         }],
         'react/no-unused-state': 'warn',
-        'react/jsx-props-no-spreading': 0,
         'react/require-default-props': ['warn', { ignoreFunctionalComponents: true }],
         'react/default-props-match-prop-types': ['warn', {
             allowRequiredDefaults: true,
         }],
 
+
+        'react/function-component-definition': [2, {
+            'namedComponents': 'function-declaration',
+            'unnamedComponents': 'function-expression',
+        }],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
 

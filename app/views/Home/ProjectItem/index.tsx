@@ -77,8 +77,8 @@ export interface RecentProjectItemProps {
     totalSourcesTagged: number | null | undefined;
     totalSourcesInProgress: number | null | undefined;
     entriesActivity: DateCountType[] | null | undefined;
-    topTaggers: UserEntityCountType[] | null | [] | undefined;
-    topSourcers: UserEntityCountType[] | null | [] | undefined;
+    topTaggers: UserEntityCountType[] | null | undefined;
+    topSourcers: UserEntityCountType[] | null | undefined;
     allowedPermissions: ProjectPermission[] | null | undefined;
 }
 
@@ -104,7 +104,7 @@ function ProjectItem(props: RecentProjectItemProps) {
         allowedPermissions,
     } = props;
 
-    const topTaggersRendererParams = useCallback((_, data) => ({
+    const topTaggersRendererParams = useCallback((_: unknown, data: UserEntityCountType) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
         labelContainerClassName: styles.recentlyActiveUserName,
@@ -112,14 +112,14 @@ function ProjectItem(props: RecentProjectItemProps) {
         value: (
             <DateOutput
                 className={styles.recentActivityDate}
-                // FIXME: Remove this fallback
-                value={data.date ?? Date.now()}
+                // FIXME: Get this information from server
+                value={null}
                 format="hh:mm aaa, MMM dd, yyyy"
             />
         ),
     }), []);
 
-    const userStatsRendererParams = useCallback((_, data) => ({
+    const userStatsRendererParams = useCallback((_: unknown, data: UserEntityCountType) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
         labelContainerClassName: styles.recentlyActiveUserName,
@@ -242,7 +242,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                             valueContainerClassName={styles.recentlyActiveList}
                             value={(
                                 <List
-                                    data={topTaggers ?? []}
+                                    data={topTaggers ?? undefined}
                                     keySelector={topUserKeySelector}
                                     rendererParams={topTaggersRendererParams}
                                     renderer={TextOutput}
@@ -258,7 +258,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                     valueContainerClassName={styles.recentlyActiveList}
                                     value={(
                                         <List
-                                            data={topTaggers ?? []}
+                                            data={topTaggers ?? undefined}
                                             keySelector={topUserKeySelector}
                                             rendererParams={userStatsRendererParams}
                                             renderer={TextOutput}
@@ -272,7 +272,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                     valueContainerClassName={styles.recentlyActiveList}
                                     value={(
                                         <List
-                                            data={topSourcers ?? []}
+                                            data={topSourcers ?? undefined}
                                             keySelector={topUserKeySelector}
                                             rendererParams={userStatsRendererParams}
                                             renderer={TextOutput}

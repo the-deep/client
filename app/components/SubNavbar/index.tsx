@@ -2,9 +2,13 @@ import React, { useContext, useEffect, useRef } from 'react';
 import {
     Heading,
     Border,
+    Svg,
 } from '@the-deep/deep-ui';
+import { Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import { _cs } from '@togglecorp/fujs';
+import deepLogo from '#resources/img/deep-logo-new.svg';
+import route from '#base/configs/routes';
 
 import NavbarContext from './context';
 import styles from './styles.css';
@@ -81,6 +85,8 @@ interface SubNavbarProps {
 
     heading?: string;
     description?: string;
+
+    homeLinkShown?: boolean;
 }
 function SubNavbar(props: SubNavbarProps) {
     const {
@@ -96,6 +102,7 @@ function SubNavbar(props: SubNavbarProps) {
         descriptionClassName,
         descriptionContainerClassName,
         description,
+        homeLinkShown,
     } = props;
 
     const { setActionsNode, setIconsNode, setChildrenNode } = useContext(NavbarContext);
@@ -132,34 +139,50 @@ function SubNavbar(props: SubNavbarProps) {
     return (
         <nav className={_cs(className, styles.subNavbar)}>
             <div
+                key="icons"
                 ref={iconsRef}
                 className={_cs(styles.icons, iconsClassName)}
             >
+                {homeLinkShown && (
+                    <Link
+                        to={route.home.path}
+                        className={styles.appBrand}
+                    >
+                        <Svg
+                            className={styles.logo}
+                            src={deepLogo}
+                        />
+                    </Link>
+                )}
                 {defaultIcons}
-            </div>
-            {heading && (
-                <Heading
-                    size="medium"
-                    className={_cs(styles.heading, headingClassName)}
-                >
-                    {heading}
-                </Heading>
-            )}
-            {description && (
-                <div className={_cs(styles.descriptionContainer, descriptionContainerClassName)}>
-                    <div className={_cs(styles.description, descriptionClassName)}>
-                        {description}
+                {heading && (
+                    <Heading
+                        size="medium"
+                        className={_cs(styles.heading, headingClassName)}
+                    >
+                        {heading}
+                    </Heading>
+                )}
+                {description && (
+                    <div
+                        className={_cs(styles.descriptionContainer, descriptionContainerClassName)}
+                    >
+                        <div className={_cs(styles.description, descriptionClassName)}>
+                            {description}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
             <div
                 ref={childrenRef}
+                key="children"
                 className={_cs(styles.children, childrenClassName)}
             >
                 {children}
             </div>
             <div
                 ref={actionsRef}
+                key="actions"
                 className={_cs(styles.actions, actionsClassName)}
             >
                 {defaultActions}

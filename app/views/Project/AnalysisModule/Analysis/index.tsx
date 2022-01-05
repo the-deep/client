@@ -126,7 +126,8 @@ function Analysis(props: ComponentProps) {
     const {
         project,
     } = useContext(ProjectContext);
-    const activeProject = project?.id ? +project?.id : undefined;
+
+    const activeProject = project?.id ? +project.id : undefined;
 
     const [
         showCloneModal,

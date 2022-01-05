@@ -208,9 +208,9 @@ function ExploreDeepMapView(props: Props) {
         map: mapboxgl.Map,
     ) => {
         interface ClusterProperties {
-            // eslint-disable-next-line camelcase
+
             cluster_id: number;
-            // eslint-disable-next-line camelcase
+
             point_count: number;
         }
 

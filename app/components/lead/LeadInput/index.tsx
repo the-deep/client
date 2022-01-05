@@ -425,17 +425,15 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                         || value.sourceType === 'DROPBOX'
                         || value.sourceType === 'GOOGLE_DRIVE'
                     ) && attachment?.file && (
-                        <>
-                            <QuickActionButton
-                                name="fileExtract"
-                                title="Auto-fill source information"
-                                variant="action"
-                                onClick={handleFileExtractClick}
-                                disabled={disabled}
-                            >
-                                <IoEye />
-                            </QuickActionButton>
-                        </>
+                        <QuickActionButton
+                            name="fileExtract"
+                            title="Auto-fill source information"
+                            variant="action"
+                            onClick={handleFileExtractClick}
+                            disabled={disabled}
+                        >
+                            <IoEye />
+                        </QuickActionButton>
                     )
                 }
             />

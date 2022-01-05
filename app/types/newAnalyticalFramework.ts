@@ -689,7 +689,7 @@ export type FrameworkExportableType = TextExportableType
     | Matrix2dExportableType;
 
 export interface FrameworkProperties {
-    // eslint-disable-next-line camelcase
+
     stats_config: {
         matrix1d?: {
             pk: number;
@@ -697,23 +697,23 @@ export interface FrameworkProperties {
         matrix2d?: {
             pk: number;
         }[];
-        // eslint-disable-next-line camelcase
+
         geo_widget?: {
             pk: number;
         };
-        // eslint-disable-next-line camelcase
+
         severity_widget?: {
             pk: number;
         };
-        // eslint-disable-next-line camelcase
+
         reliability_widget?: {
             pk: number;
         };
-        // eslint-disable-next-line camelcase
+
         affected_groups_widget?: {
             pk: number;
         };
-        // eslint-disable-next-line camelcase
+
         specific_needs_groups_widgets?: {
             pk: number;
         };

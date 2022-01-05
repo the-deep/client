@@ -5,10 +5,10 @@ import {
     ButtonLikeLink,
     KrakenProps,
     Kraken,
+    Svg,
 } from '@the-deep/deep-ui';
 
 import deepLogo from '#resources/img/deep-logo-new.svg';
-import Svg from '#components/Svg';
 
 import waterLevelImage from './water-level.png';
 import styles from './styles.css';

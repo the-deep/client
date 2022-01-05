@@ -44,8 +44,6 @@ import {
 } from '@togglecorp/toggle-form';
 
 import SubNavbar from '#components/SubNavbar';
-import Svg from '#components/Svg';
-import deepLogo from '#resources/img/deep-logo-new.svg';
 import {
     breadcrumb,
     isFiltered,
@@ -676,20 +674,21 @@ function PillarAnalysis() {
 
     const statementsCount = value.analyticalStatements?.length ?? 0;
 
+    const entryContextValue = useMemo(
+        () => ({
+            entries: entriesMapping,
+            setEntries: setEntriesMapping,
+        }),
+        [entriesMapping, setEntriesMapping],
+    );
+
     return (
         <div className={styles.pillarAnalysis}>
             <SubNavbar
                 className={styles.header}
                 heading={project?.title}
                 childrenClassName={styles.breadcrumb}
-                defaultIcons={(
-                    <div className={styles.appBrand}>
-                        <Svg
-                            src={deepLogo}
-                            className={styles.logo}
-                        />
-                    </div>
-                )}
+                homeLinkShown
                 defaultActions={(
                     <>
                         <BackLink
@@ -834,10 +833,7 @@ function PillarAnalysis() {
                         </CollapsibleContainer>
                     </Tabs>
                     <EntryContext.Provider
-                        value={{
-                            entries: entriesMapping,
-                            setEntries: setEntriesMapping,
-                        }}
+                        value={entryContextValue}
                     >
                         <div className={styles.rightContainer}>
                             <SortableList

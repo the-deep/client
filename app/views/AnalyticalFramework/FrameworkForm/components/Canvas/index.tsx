@@ -197,44 +197,74 @@ function Canvas<T>(props: Props<T>) {
     );
     const handleWidgetDeleteClick = useCallback(
         (widgetId: string) => {
-            if (!editMode && props.onWidgetDelete) {
-                props.onWidgetDelete(widgetId, name);
+            if (editMode) {
+                return;
+            }
+            // eslint-disable-next-line react/destructuring-assignment
+            const handleWidgetDelete = props.onWidgetDelete;
+            if (handleWidgetDelete) {
+                handleWidgetDelete(widgetId, name);
             }
         },
+        // eslint-disable-next-line react/destructuring-assignment
         [editMode, props.onWidgetDelete, name],
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
-            if (!editMode && props.onWidgetEdit) {
-                props.onWidgetEdit(widgetId, name);
+            if (editMode) {
+                return;
+            }
+            // eslint-disable-next-line react/destructuring-assignment
+            const handleWidgetEdit = props.onWidgetEdit;
+            if (handleWidgetEdit) {
+                handleWidgetEdit(widgetId, name);
             }
         },
+        // eslint-disable-next-line react/destructuring-assignment
         [editMode, props.onWidgetEdit, name],
     );
     const handleWidgetConditionEditClick = useCallback(
         (widgetId: string) => {
-            if (!editMode && props.onWidgetConditionEdit) {
-                props.onWidgetConditionEdit(widgetId, name);
+            if (editMode) {
+                return;
+            }
+            // eslint-disable-next-line react/destructuring-assignment
+            const handleWidgetConditionEdit = props.onWidgetConditionEdit;
+            if (handleWidgetConditionEdit) {
+                handleWidgetConditionEdit(widgetId, name);
             }
         },
+        // eslint-disable-next-line react/destructuring-assignment
         [editMode, props.onWidgetConditionEdit, name],
     );
 
-    const handleWidgetOrderChange = useCallback(
+    const handleWidgetOrderChangeComplete = useCallback(
         (value: Widget[]) => {
-            if (!editMode && props.onWidgetOrderChange) {
-                props.onWidgetOrderChange(value);
+            if (editMode) {
+                return;
+            }
+            // eslint-disable-next-line react/destructuring-assignment
+            const handleWidgetOrderChange = props.onWidgetOrderChange;
+            if (handleWidgetOrderChange) {
+                handleWidgetOrderChange(value);
             }
         },
+        // eslint-disable-next-line react/destructuring-assignment
         [editMode, props.onWidgetOrderChange],
     );
 
     const handleWidgetCloneClick = useCallback(
         (widgetId: string) => {
-            if (!editMode && props.onWidgetClone) {
-                props.onWidgetClone(widgetId, name);
+            if (editMode) {
+                return;
+            }
+            // eslint-disable-next-line react/destructuring-assignment
+            const handleWidgetClone = props.onWidgetClone;
+            if (handleWidgetClone) {
+                handleWidgetClone(widgetId, name);
             }
         },
+        // eslint-disable-next-line react/destructuring-assignment
         [editMode, props.onWidgetClone, name],
     );
 
@@ -284,6 +314,7 @@ function Canvas<T>(props: Props<T>) {
                 <SortableList
                     className={styles.canvas}
                     name="widgets"
+                    // eslint-disable-next-line react/destructuring-assignment
                     data={props.widgets}
                     keySelector={partialWidgetKeySelector}
                     renderer={AttributeInputWrapper}
@@ -303,7 +334,8 @@ function Canvas<T>(props: Props<T>) {
             <SortableList
                 className={styles.canvas}
                 name="widgets"
-                onChange={handleWidgetOrderChange}
+                onChange={handleWidgetOrderChangeComplete}
+                // eslint-disable-next-line react/destructuring-assignment
                 data={props.widgets}
                 keySelector={widgetKeySelector}
                 renderer={AttributeInputWrapper}

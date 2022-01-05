@@ -378,6 +378,7 @@ function FrameworkDetail(props: Props) {
                         <TabPanel
                             name="primary"
                             activeClassName={styles.tabPanel}
+                            retainMount="lazy"
                         >
                             <Tabs
                                 value={selectedSection}
@@ -433,7 +434,10 @@ function FrameworkDetail(props: Props) {
                                 )}
                             </Tabs>
                         </TabPanel>
-                        <TabPanel name="secondary">
+                        <TabPanel
+                            name="secondary"
+                            retainMount="lazy"
+                        >
                             <Section
                                 allWidgets={undefined}
                                 widgets={frameworkDetails?.secondaryTagging}

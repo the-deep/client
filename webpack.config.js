@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { HotModuleReplacementPlugin, EnvironmentPlugin } = require('webpack');
+const { EnvironmentPlugin } = require('webpack');
 const Dotenv = require('dotenv-webpack');
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
@@ -253,22 +253,31 @@ module.exports = () => {
     return merge(
         config,
         {
+            /*
+            watchOptions: {
+                ignored: /node_modules/,
+            },
+            watchContentBase: true,
+            */
             devServer: {
                 host: '0.0.0.0',
                 port: 3000,
-                watchContentBase: true,
-                overlay: true,
                 hot: true,
                 liveReload: false,
                 historyApiFallback: true,
-                watchOptions: {
-                    ignored: /node_modules/,
+                client: {
+                    overlay: {
+                        warnings: false,
+                        errors: true
+                    },
+                    logging: 'none',
                 },
-                clientLogLevel: 'none',
-                publicPath: '/',
+                static: {
+                    directory: getPath('build/'),
+                    publicPath: '/',
+                },
             },
             plugins: [
-                new HotModuleReplacementPlugin(),
                 new ReactRefreshWebpackPlugin(),
             ],
             /*
