@@ -7,6 +7,7 @@ import routes from '#base/configs/routes';
 import {
     isBeta,
     isAlpha,
+    isStaging,
     isNightly,
     isDev,
 } from '#base/configs/env';
@@ -19,7 +20,7 @@ const sentryDsn = (() => {
     if (keyFromEnv) {
         return keyFromEnv;
     }
-    if (isBeta || isAlpha || isNightly) {
+    if (isBeta || isAlpha || isStaging || isNightly) {
         return 'https://9a60f35c6a1c45fe999727c5f6f7229c@sentry.io/1220157';
     }
     return undefined;
@@ -33,7 +34,7 @@ const sentryConfig: BrowserOptions | undefined = sentryDsn ? {
     debug: isDev,
     // sendDefaultPii: true,
     normalizeDepth: 5,
-    tracesSampleRate: 0.2,
+    tracesSampleRate: +(process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE || 0.2),
     integrations: [
         new Integrations.BrowserTracing({
             // NOTE: process.env.REACT_APP_API_END is actually the domain

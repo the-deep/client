@@ -497,6 +497,7 @@
         "1238": "ALPHA",
         "1239": "NIGHTLY",
         "1240": "DEV",
+        "1241": "STAGING",
         "1300": "Are you sure you want to leave? You may lose your unsaved changes.",
         "1301": "Oops! File not found",
         "1302": "Upload file",
@@ -1747,6 +1748,7 @@
             "deepLabel": 876,
             "betaLabel": 1237,
             "alphaLabel": 1238,
+            "stagingLabel": 1241,
             "nightlyLabel": 1239,
             "devLabel": 1240,
             "selectEventPlaceholder": 1219,
@@ -3247,6 +3249,7 @@
         },
         "home": {
             "alphaLabel": 1238,
+            "stagingLabel": 1241,
             "betaLabel": 1237,
             "devLabel": 1240,
             "nightlyLabel": 1239,

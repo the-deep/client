@@ -1,6 +1,6 @@
 FROM node:lts-alpine
 
-MAINTAINER togglecorp info@togglecorp.com
+LABEL maintainer="Deep Dev dev@thedeep.com"
 
 RUN apk update\
     && apk add --no-cache git bash python3 g++ make

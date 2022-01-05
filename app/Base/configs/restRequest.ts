@@ -1,6 +1,6 @@
 export const reactAppApiHttps = location.protocol === 'https:' // eslint-disable-line no-restricted-globals
     ? 'https'
-    : process.env.REACT_APP_API_HTTPS;
+    : (process.env.REACT_APP_API_HTTPS || 'http');
 
 export const wsEndpoint = !process.env.REACT_APP_API_END
     ? 'http://localhost:8000/api/v1'

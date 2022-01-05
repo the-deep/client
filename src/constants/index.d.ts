@@ -6,6 +6,7 @@ declare const viewsAcl: { [key: string]: {
         isDevMode: boolean;
         isBeta: boolean;
         isAlpha: boolean;
+        isStaging: boolean;
         isNightly: boolean;
         hasProjects: boolean;
         isLoggedIn: boolean;
