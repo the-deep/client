@@ -1117,7 +1117,6 @@ function EntryEdit(props: Props) {
         <div className={_cs(styles.entryEdit, className)}>
             <Prompt
                 message={(newLocation) => {
-                    console.warn(newLocation, location);
                     if (newLocation.pathname !== location.pathname && !formPristine) {
                         return _ts('common', 'youHaveUnsavedChanges');
                     }
@@ -1378,7 +1377,6 @@ function EntryEdit(props: Props) {
                                 >
                                     <VirtualizedListView
                                         itemHeight={360}
-                                        className={styles.entries}
                                         keySelector={entryKeySelector}
                                         renderer={EntryInput}
                                         data={formValue.entries}

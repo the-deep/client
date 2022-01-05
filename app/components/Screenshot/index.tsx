@@ -5,6 +5,7 @@ import { select } from 'd3-selection';
 import { _cs } from '@togglecorp/fujs';
 
 import { getScreenshot } from '#utils/browserExtension';
+
 import styles from './styles.css';
 
 function getCroppedImage(
