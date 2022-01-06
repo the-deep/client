@@ -124,7 +124,7 @@ function AddLeadGroupModal(props: Props) {
 
     return (
         <Modal
-            heading={_ts('addLeadGroup', 'addLeadGroupHeading')}
+            heading={leadGroupToEdit ? 'Edit Source Group' : 'Add Source Group'}
             freeHeight
             size="small"
             onCloseButtonClick={onModalClose}

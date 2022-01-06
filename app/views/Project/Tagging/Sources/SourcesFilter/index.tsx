@@ -289,23 +289,6 @@ function SourcesFilter(props: Props) {
                     label={_ts('sourcesFilter', 'status')}
                     disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
-                {!isEntriesOnlyFilter && (
-                    <SelectInput
-                        className={_cs(
-                            styles.input,
-                            (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
-                        )}
-                        name="exists"
-                        onChange={setFieldValue}
-                        options={existsOptions}
-                        keySelector={enumKeySelector}
-                        labelSelector={enumLabelSelector}
-                        value={value.exists}
-                        error={error?.exists}
-                        label="Exists"
-                        disabled={disabled || loading || !!sourceFilterOptionsError}
-                    />
-                )}
                 <DateDualRangeInput
                     className={styles.input}
                     fromName="publishedOnGte"
@@ -328,6 +311,23 @@ function SourcesFilter(props: Props) {
                     disabled={disabled}
                     label={_ts('sourcesFilter', 'addedOn')}
                 />
+                {!isEntriesOnlyFilter && (
+                    <SelectInput
+                        className={_cs(
+                            styles.input,
+                            (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
+                        )}
+                        name="exists"
+                        onChange={setFieldValue}
+                        options={existsOptions}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
+                        value={value.exists}
+                        error={error?.exists}
+                        label="Exists"
+                        disabled={disabled || loading || !!sourceFilterOptionsError}
+                    />
+                )}
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
