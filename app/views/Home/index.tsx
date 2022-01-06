@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useContext } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -14,6 +14,7 @@ import { useRequest } from '#base/utils/restRequest';
 import { Project } from '#base/types/project';
 import PageContent from '#components/PageContent';
 import ProjectSelectInput from '#components/selections/ProjectSelectInput';
+import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
 
 import _ts from '#ts';
@@ -22,6 +23,8 @@ import {
     RecentProjectsQueryVariables,
     FetchProjectQuery,
     FetchProjectQueryVariables,
+    UserLastActiveProjectQuery,
+    UserLastActiveProjectQueryVariables,
 } from '#generated/types';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
@@ -129,6 +132,31 @@ query FetchProject($projectId: ID!) {
 }
 `;
 
+const LAST_ACTIVE_PROJECT = gql`
+    query UserLastActiveProject {
+        me {
+            id
+            displayName
+            displayPictureUrl
+            accessibleFeatures {
+                key
+            }
+            lastActiveProject {
+                allowedPermissions
+                hasAssessmentTemplate
+                analysisFramework {
+                    id
+                }
+                currentUserRole
+                id
+                isPrivate
+                title
+                isVisualizationEnabled
+                isVisualizationAvailable
+            }
+        }
+    }
+`;
 type ProjectDetail = NonNullable<FetchProjectQuery>['project'];
 
 const recentProjectKeySelector = (d: ProjectDetail) => d?.id ?? '';
@@ -142,11 +170,21 @@ function Home(props: ViewProps) {
         className,
     } = props;
 
+    const { setProject } = useContext(ProjectContext);
     const [selectedProject, setSelectedProject] = useState<string | undefined>(undefined);
     const [projects, setProjects] = useState<
         Pick<Project, 'id' | 'title' | 'isPrivate'>[] | undefined | null
+
     >(undefined);
 
+    useQuery<UserLastActiveProjectQuery, UserLastActiveProjectQueryVariables>(
+        LAST_ACTIVE_PROJECT,
+        {
+            onCompleted: (response) => {
+                setProject(response.me?.lastActiveProject ?? undefined);
+            },
+        },
+    );
     const {
         data: recentProjectsResponse,
         loading: recentProjectsPending,
