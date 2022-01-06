@@ -1,6 +1,7 @@
 import { InitializeOptions } from 'react-ga';
 import {
     isBeta,
+    isProd,
     isAlpha,
     isStaging,
     isNightly,
@@ -12,7 +13,7 @@ export const trackingId = (() => {
     if (keyFromEnv) {
         return keyFromEnv;
     }
-    if (isBeta || isAlpha || isStaging || isNightly) {
+    if (isBeta || isProd || isAlpha || isStaging || isNightly) {
         return 'UA-112330910-1';
     }
     return 'UA-112330910-2';

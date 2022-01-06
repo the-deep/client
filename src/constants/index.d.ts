@@ -5,6 +5,7 @@ declare const viewsAcl: { [key: string]: {
     hide?: (options: {
         isDevMode: boolean;
         isBeta: boolean;
+        isProd: boolean;
         isAlpha: boolean;
         isStaging: boolean;
         isNightly: boolean;

@@ -23,8 +23,8 @@ const notLeadEditable = ({ isLoggedIn, leadPermissions }) => (
     !isLoggedIn || !(leadPermissions.create || leadPermissions.modify)
 );
 
-const notLeadVizViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
-    !isLoggedIn || !leadPermissions.view || isBeta
+const notLeadVizViewable = ({ isLoggedIn, leadPermissions, isBeta, isProd }) => (
+    !isLoggedIn || !leadPermissions.view || isBeta || isProd
 );
 
 const notClusteringViewable = ({ isLoggedIn, leadPermissions }) => (

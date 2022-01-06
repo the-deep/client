@@ -13,7 +13,7 @@ import {
     activeProjectRoleSelector,
 } from '#redux';
 
-import { isDev, isAlpha, isStaging, isBeta, isNightly } from '#config/env';
+import { isDev, isAlpha, isStaging, isBeta, isProd, isNightly } from '#config/env';
 
 const mapStateToProps = state => ({
     projectRole: activeProjectRoleSelector(state),
@@ -136,6 +136,7 @@ export default class Cloak extends React.Component {
         const params = {
             isDevMode: isDev,
             isBeta,
+            isProd,
             isAlpha,
             isStaging,
             isNightly,

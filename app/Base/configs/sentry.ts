@@ -6,6 +6,7 @@ import browserHistory from '#base/configs/history';
 import routes from '#base/configs/routes';
 import {
     isBeta,
+    isProd,
     isAlpha,
     isStaging,
     isNightly,
@@ -20,7 +21,7 @@ const sentryDsn = (() => {
     if (keyFromEnv) {
         return keyFromEnv;
     }
-    if (isBeta || isAlpha || isStaging || isNightly) {
+    if (isBeta || isProd || isAlpha || isStaging || isNightly) {
         return 'https://9a60f35c6a1c45fe999727c5f6f7229c@sentry.io/1220157';
     }
     return undefined;

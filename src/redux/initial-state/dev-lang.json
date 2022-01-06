@@ -498,6 +498,7 @@
         "1239": "NIGHTLY",
         "1240": "DEV",
         "1241": "STAGING",
+        "1242": "PROD",
         "1300": "Are you sure you want to leave? You may lose your unsaved changes.",
         "1301": "Oops! File not found",
         "1302": "Upload file",
@@ -1747,6 +1748,7 @@
         "components.navbar": {
             "deepLabel": 876,
             "betaLabel": 1237,
+            "prodLabel": 1242,
             "alphaLabel": 1238,
             "stagingLabel": 1241,
             "nightlyLabel": 1239,
@@ -3251,6 +3253,7 @@
             "alphaLabel": 1238,
             "stagingLabel": 1241,
             "betaLabel": 1237,
+            "prodLabel": 1242,
             "devLabel": 1240,
             "nightlyLabel": 1239,
             "privateProjectBadgeTooltip": -64655622,

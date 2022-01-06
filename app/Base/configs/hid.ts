@@ -1,5 +1,6 @@
 import {
     isBeta,
+    isProd,
     isAlpha,
     isStaging,
     isNightly,
@@ -8,7 +9,7 @@ import {
 let clientId;
 let redirectUrl;
 let hidAuthUrl;
-if (isBeta || isAlpha || isStaging || isNightly) {
+if (isBeta || isProd || isAlpha || isStaging || isNightly) {
     clientId = process.env.REACT_APP_HID_CLIENT_ID;
     redirectUrl = process.env.REACT_APP_HID_CLIENT_REDIRECT_URL;
     hidAuthUrl = process.env.REACT_APP_HID_AUTH_URI;

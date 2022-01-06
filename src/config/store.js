@@ -6,7 +6,10 @@ import {
 import produce from 'immer';
 import { randomString } from '@togglecorp/fujs';
 
-import { isBeta } from './env';
+import {
+    isBeta,
+    isProd,
+} from './env';
 
 // FIXME: move to config/env
 export const uniqueTabId = randomString(64);
@@ -55,7 +58,7 @@ const storeConfig = {
     version: 4,
     storage: localforage,
     transforms: [myTransform],
-    migrate: createMigrate(migrations, { debug: !isBeta }),
+    migrate: createMigrate(migrations, { debug: !isBeta || !isProd }),
 };
 
 

@@ -127,8 +127,9 @@ const userDefinedSchemas = [];
 
 
 const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
+const isProd = process.env.REACT_APP_DEEP_ENVIRONMENT === 'prod';
 const dict = new Dict(
-    isBeta ? { warning: false } : { warning: true },
+    isBeta || isProd ? { warning: false } : { warning: true },
 );
 
 [

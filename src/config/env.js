@@ -3,10 +3,11 @@ export const isProduction = process.env.NODE_ENV === 'production';
 export const isTesting = process.env.NODE_ENV === 'test';
 
 export const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
+export const isProd = process.env.REACT_APP_DEEP_ENVIRONMENT === 'prod';
 export const isAlpha = process.env.REACT_APP_DEEP_ENVIRONMENT === 'alpha';
 export const isStaging = process.env.REACT_APP_DEEP_ENVIRONMENT === 'staging';
 export const isNightly = process.env.REACT_APP_DEEP_ENVIRONMENT === 'nightly';
-export const isDev = !isBeta && !isAlpha && !isNightly && !isStaging;
+export const isDev = !isBeta && !isProd && !isAlpha && !isNightly && !isStaging;
 
 export const commitHash = process.env.REACT_APP_DEEP_COMMIT_SHA;
 
@@ -20,6 +21,7 @@ export const commitHash = process.env.REACT_APP_DEEP_COMMIT_SHA;
 // _ts('home', 'devLabel')
 export const envText = (
     (isBeta && 'betaLabel')
+    (isProd && 'prodLabel')
     || (isAlpha && 'alphaLabel')
     || (isStaging && 'stagingLabel')
     || (isNightly && 'nightlyLabel')
