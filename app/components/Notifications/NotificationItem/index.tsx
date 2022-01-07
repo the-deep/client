@@ -116,10 +116,10 @@ function NotificationItem(props: Props) {
         } = notification;
 
         const editEntryLink = (project?.id && data?.lead) ? ({
-            pathname: (generatePath(routes.entryEdit.path, {
+            pathname: generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
                 leadId: data?.lead,
-            })),
+            }),
             state: {
                 entryId: data?.entry,
             },

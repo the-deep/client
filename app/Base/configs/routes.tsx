@@ -105,7 +105,7 @@ const analyticalFrameworkCreateRoute = wrap({
     // as this route manages all the data load
 });
 const analyticalFrameworkEditRoute = wrap({
-    path: '/frameworks/:frameworkId(\\d+)/',
+    path: '/frameworks/:frameworkId/',
     title: 'Analytical Framework',
     navbarVisibility: false,
     component: lazy(() => import('#views/AnalyticalFramework')),
@@ -127,7 +127,7 @@ const projectCreateRoute = wrap({
 });
 
 const projectRoute = wrap({
-    path: '/projects/:projectId(\\d+)/',
+    path: '/projects/:projectId/*',
     title: 'Project',
     navbarVisibility: undefined,
     component: lazy(() => import('#views/Project')),
@@ -139,7 +139,7 @@ const projectRoute = wrap({
 
 const taggingRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/tagging/',
+    path: '/tagging/*',
     title: 'Tagging',
     navbarVisibility: undefined,
     component: lazy(() => import('#views/Project/Tagging')),
@@ -179,7 +179,7 @@ const projectEditRoute = wrap({
 });
 const entryEditRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/leads/:leadId(\\d+)/',
+    path: '/leads/:leadId/',
     title: 'Edit Entry',
     navbarVisibility: false,
     component: lazy(() => import('#views/Project/EntryEdit')),
@@ -229,7 +229,7 @@ const analysis = wrap({
 });
 const pillarAnalysis = wrap({
     parent: { path: projectRoute.path },
-    path: '/analysis/:analysisId(\\d+)/pillar/:pillarAnalysisId(\\d+)/',
+    path: '/analysis/:analysisId/pillar/:pillarAnalysisId/',
     title: 'Pillar Analysis',
     navbarVisibility: false,
     component: lazy(() => import('#views/Project/PillarAnalysis')),
@@ -354,7 +354,7 @@ const exportRoute = wrap({
 
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/assessments/leads/:leadId(\\d+)/',
+    path: '/assessments/leads/:leadId/',
     title: 'Edit Assessment',
     navbarVisibility: false,
     component: lazy(() => import('#views/Project/EditAssessment')),
@@ -378,7 +378,7 @@ const assessmentEditRoute = wrap({
 
 const groupAssessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/assessments/lead-groups/:leadGroupId(\\d+)/',
+    path: '/assessments/lead-groups/:leadGroupId/',
     title: 'Edit Source Group Assessment',
     navbarVisibility: false,
     component: lazy(() => import('#views/Project/EditGroupAssessment')),

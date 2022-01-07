@@ -5,7 +5,7 @@ import {
     removeNull,
 } from '@togglecorp/toggle-form';
 import {
-    useHistory,
+    useNavigate,
     generatePath,
 } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
@@ -113,7 +113,7 @@ function EditableEntry(props: Props) {
         firstElementRef,
     } = props;
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const allWidgets = useMemo(
         () => {
@@ -298,11 +298,13 @@ function EditableEntry(props: Props) {
             projectId,
             leadId,
         });
-        history.push(`${link}${sectionId ? '#/primary-tagging' : '#/secondary-tagging'}`, {
-            entryId: entryIdToAdd,
-            sectionId,
+        navigate(`${link}${sectionId ? '#/primary-tagging' : '#/secondary-tagging'}`, {
+            state: {
+                entryId: entryIdToAdd,
+                sectionId,
+            },
         });
-    }, [projectId, leadId, history]);
+    }, [projectId, leadId, navigate]);
 
     const saveButton = (
         <Button

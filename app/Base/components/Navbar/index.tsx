@@ -124,7 +124,6 @@ function Navbar(props: Props) {
             <div className={styles.main}>
                 <div className={styles.navLinks}>
                     <SmartNavLink
-                        exact
                         route={route.home}
                         className={styles.link}
                     />

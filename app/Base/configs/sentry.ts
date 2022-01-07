@@ -1,9 +1,5 @@
-import { matchPath } from 'react-router-dom';
-import { reactRouterV5Instrumentation, BrowserOptions } from '@sentry/react';
-import { Integrations } from '@sentry/tracing';
+import { BrowserOptions } from '@sentry/react';
 
-import browserHistory from '#base/configs/history';
-import routes from '#base/configs/routes';
 import {
     isBeta,
     isAlpha,
@@ -33,19 +29,9 @@ const sentryConfig: BrowserOptions | undefined = sentryDsn ? {
     debug: isDev,
     // sendDefaultPii: true,
     normalizeDepth: 5,
-    tracesSampleRate: 0.2,
-    integrations: [
-        new Integrations.BrowserTracing({
-            // NOTE: process.env.REACT_APP_API_END is actually the domain
-            // for the api endpoint
-            tracingOrigins: ['localhost', process.env.REACT_APP_API_END as string],
-            routingInstrumentation: reactRouterV5Instrumentation(
-                browserHistory,
-                Object.entries(routes),
-                matchPath,
-            ),
-        }),
-    ],
+    // FIXME: check for proper casts
+    tracesSampleRate: +(process.env.REACT_APP_SENTRY_TRACES_SAMPLE_RATE || 0.2),
+    integrations: [],
 } : undefined;
 
 export default sentryConfig;

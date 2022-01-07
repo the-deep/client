@@ -1,8 +1,8 @@
 import React, { Suspense, useMemo, useState, useCallback } from 'react';
 import {
-    Switch,
+    Routes,
     Route,
-    Redirect,
+    Navigate,
     generatePath,
 } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
@@ -98,74 +98,56 @@ function Tagging(props: Props) {
                     className={styles.subNavbar}
                 >
                     <SmartNavLink
-                        exact
                         route={routes.sources}
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={routes.dashboard}
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={routes.leadGroups}
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={routes.assessments}
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={routes.aryDashboard}
                         className={styles.link}
                     />
                     <SmartNavLink
-                        exact
                         route={routes.export}
                         className={styles.link}
                     />
                 </SubNavbar>
-                <Switch>
+                <Routes>
                     <Route
-                        exact
-                        path={routes.sources.path}
-                    >
-                        {subNavbarComponents}
-                    </Route>
+                        path={routes.sources.pathForRoute}
+                        element={subNavbarComponents}
+                    />
                     <Route
-                        exact
-                        path={routes.assessments.path}
-                    >
-                        {subNavbarComponents}
-                    </Route>
+                        path={routes.assessments.pathForRoute}
+                        element={subNavbarComponents}
+                    />
                     <Route
-                        exact
-                        path={routes.leadGroups.path}
-                    >
-                        {subNavbarComponents}
-                    </Route>
+                        path={routes.leadGroups.pathForRoute}
+                        element={subNavbarComponents}
+                    />
                     <Route
-                        exact
-                        path={routes.dashboard.path}
-                    >
-                        {subNavbarComponents}
-                    </Route>
+                        path={routes.dashboard.pathForRoute}
+                        element={subNavbarComponents}
+                    />
                     <Route
-                        exact
-                        path={routes.aryDashboard.path}
-                    >
-                        {subNavbarComponents}
-                    </Route>
+                        path={routes.aryDashboard.pathForRoute}
+                        element={subNavbarComponents}
+                    />
                     <Route
-                        exact
-                        path={routes.export.path}
-                    >
-                        {subNavbarComponents}
-                    </Route>
-                </Switch>
+                        path={routes.export.pathForRoute}
+                        element={subNavbarComponents}
+                    />
+                </Routes>
                 <Suspense
                     fallback={(
                         <PreloadMessage
@@ -174,56 +156,40 @@ function Tagging(props: Props) {
                         />
                     )}
                 >
-                    <Switch>
+                    <Routes>
                         <Route
-                            exact
-                            path={routes.tagging.path}
-                        >
-                            <Redirect to={defaultRoute} />
-                        </Route>
+                            path=""
+                            element={<Navigate to={defaultRoute} />}
+                        />
                         <Route
-                            exact
-                            path={routes.sources.path}
-                        >
-                            {routes.sources.load({ className: styles.childView })}
-                        </Route>
+                            path={routes.sources.pathForRoute}
+                            element={routes.sources.load({ className: styles.childView })}
+                        />
                         <Route
-                            exact
-                            path={routes.assessments.path}
-                        >
-                            {routes.assessments.load({ className: styles.childView })}
-                        </Route>
+                            path={routes.assessments.pathForRoute}
+                            element={routes.assessments.load({ className: styles.childView })}
+                        />
                         <Route
-                            exact
-                            path={routes.leadGroups.path}
-                        >
-                            {routes.leadGroups.load({ className: styles.childView })}
-                        </Route>
+                            path={routes.leadGroups.pathForRoute}
+                            element={routes.leadGroups.load({ className: styles.childView })}
+                        />
                         <Route
-                            exact
-                            path={routes.dashboard.path}
-                        >
-                            {routes.dashboard.load({ className: styles.childView })}
-                        </Route>
+                            path={routes.dashboard.pathForRoute}
+                            element={routes.dashboard.load({ className: styles.childView })}
+                        />
                         <Route
-                            exact
-                            path={routes.aryDashboard.path}
-                        >
-                            {routes.aryDashboard.load({ className: styles.childView })}
-                        </Route>
+                            path={routes.aryDashboard.pathForRoute}
+                            element={routes.aryDashboard.load({ className: styles.childView })}
+                        />
                         <Route
-                            exact
-                            path={routes.export.path}
-                        >
-                            {routes.export.load({ className: styles.childView })}
-                        </Route>
+                            path={routes.export.pathForRoute}
+                            element={routes.export.load({ className: styles.childView })}
+                        />
                         <Route
-                            exact
-                            path={routes.fourHundredFour.path}
-                        >
-                            {routes.fourHundredFour.load({ className: styles.childView })}
-                        </Route>
-                    </Switch>
+                            path={routes.fourHundredFour.pathForRoute}
+                            element={routes.fourHundredFour.load({ className: styles.childView })}
+                        />
+                    </Routes>
                 </Suspense>
             </div>
             {isSingleSourceModalShown && project?.id && (

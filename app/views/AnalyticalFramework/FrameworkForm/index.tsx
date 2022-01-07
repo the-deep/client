@@ -15,9 +15,7 @@ import {
 } from '@the-deep/deep-ui';
 import {
     generatePath,
-    useHistory,
-    useLocation,
-    Prompt,
+    useNavigate,
 } from 'react-router-dom';
 import { isDefined, _cs } from '@togglecorp/fujs';
 import {
@@ -110,10 +108,8 @@ function FrameworkForm(props: FrameworkFormProps) {
         framework,
     } = props;
 
-    const { replace: replacePath } = useHistory();
+    const navigate = useNavigate();
     const alert = useAlert();
-
-    const location = useLocation();
 
     const initialValue = useMemo(
         (): PartialFormType => {
@@ -195,7 +191,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                         routes.analyticalFrameworkEdit.path,
                         { frameworkId: result.id },
                     );
-                    replacePath(path);
+                    navigate(path, { replace: true });
                 }
             },
             onError: (error) => {
@@ -459,14 +455,6 @@ function FrameworkForm(props: FrameworkFormProps) {
     return (
         <>
             {pending && <PendingMessage />}
-            <Prompt
-                message={(newLocation) => {
-                    if (newLocation.pathname !== location.pathname && !pristine) {
-                        return _ts('common', 'youHaveUnsavedChanges');
-                    }
-                    return true;
-                }}
-            />
             <SubNavbarActions>
                 <BackLink
                     defaultLink="/"

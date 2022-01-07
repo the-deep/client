@@ -10,7 +10,7 @@ import useRouteMatching, {
 
 import styles from './styles.css';
 
-export type Props = Omit<NavLinkProps, 'to'> & {
+export type Props = Omit<NavLinkProps, 'to' | 'children'> & {
     route: RouteData;
     attrs?: Attrs;
     children?: React.ReactNode;
@@ -22,14 +22,14 @@ function SmartNavLink(props: Props) {
         attrs,
         children,
         className,
-        activeClassName,
         ...otherProps
     } = props;
 
     const classNameCallback = useCallback(
-        (active: boolean) => _cs(
+        ({ isActive }: { isActive: boolean }) => _cs(
             styles.smartNavLink,
-            typeof className === 'function' ? className(active) : className,
+            isActive && styles.active,
+            typeof className === 'function' ? className({ isActive }) : className,
         ),
         [className],
     );
@@ -44,7 +44,6 @@ function SmartNavLink(props: Props) {
             {...otherProps}
             to={routeData.to}
             className={classNameCallback}
-            activeClassName={_cs(styles.active, activeClassName)}
         >
             {children ?? routeData.children}
             <Border

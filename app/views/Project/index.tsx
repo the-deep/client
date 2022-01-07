@@ -1,5 +1,5 @@
 import React, { useMemo, useContext, Suspense } from 'react';
-import { Switch, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
 
 import PreloadMessage from '#base/components/PreloadMessage';
@@ -108,54 +108,40 @@ function Project(props: Props) {
                 />
             )}
         >
-            <Switch>
+            <Routes>
                 <Route
-                    exact
-                    path={routes.entryEdit.path}
-                >
-                    {routes.entryEdit.load({ className })}
-                </Route>
+                    path={routes.entryEdit.pathForRoute}
+                    element={routes.entryEdit.load({ className })}
+                />
                 <Route
-                    path={routes.tagging.path}
-                >
-                    {routes.tagging.load({ className })}
-                </Route>
+                    path={routes.tagging.pathForRoute}
+                    element={routes.tagging.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.analysis.path}
-                >
-                    {routes.analysis.load({ className })}
-                </Route>
+                    path={routes.analysis.pathForRoute}
+                    element={routes.analysis.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.pillarAnalysis.path}
-                >
-                    {routes.pillarAnalysis.load({ className })}
-                </Route>
+                    path={routes.pillarAnalysis.pathForRoute}
+                    element={routes.pillarAnalysis.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.assessmentEdit.path}
-                >
-                    {routes.assessmentEdit.load({ className })}
-                </Route>
+                    path={routes.assessmentEdit.pathForRoute}
+                    element={routes.assessmentEdit.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.groupAssessmentEdit.path}
-                >
-                    {routes.groupAssessmentEdit.load({ className })}
-                </Route>
+                    path={routes.groupAssessmentEdit.pathForRoute}
+                    element={routes.groupAssessmentEdit.load({ className })}
+                />
                 <Route
-                    path={routes.projectEdit.path}
-                >
-                    {routes.projectEdit.load({ className })}
-                </Route>
+                    path={routes.projectEdit.pathForRoute}
+                    element={routes.projectEdit.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.fourHundredFour.path}
-                >
-                    {routes.fourHundredFour.load({})}
-                </Route>
-            </Switch>
+                    path={routes.fourHundredFour.pathForRoute}
+                    element={routes.fourHundredFour.load({})}
+                />
+            </Routes>
         </Suspense>
     );
 }

@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import PreloadMessage from '#base/components/PreloadMessage';
 
 import routes from '#base/configs/routes';
@@ -8,7 +8,7 @@ interface Props {
     className?: string;
 }
 
-function Routes(props: Props) {
+function MyRoutes(props: Props) {
     const { className } = props;
 
     return (
@@ -20,86 +20,61 @@ function Routes(props: Props) {
                 />
             )}
         >
-            <Switch>
+            <Routes>
                 <Route
-                    exact
-                    path={routes.home.path}
-                >
-                    {routes.home.load({ className })}
-                </Route>
+                    path={routes.home.pathForRoute}
+                    element={routes.home.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.myProfile.path}
-                >
-                    {routes.myProfile.load({ className })}
-                </Route>
+                    path={routes.myProfile.pathForRoute}
+                    element={routes.myProfile.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.userGroups.path}
-                >
-                    {routes.userGroups.load({ className })}
-                </Route>
+                    path={routes.userGroups.pathForRoute}
+                    element={routes.userGroups.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.explore.path}
-                >
-                    {routes.explore.load({ className })}
-                </Route>
+                    path={routes.explore.pathForRoute}
+                    element={routes.explore.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.projectCreate.path}
-                >
-                    {routes.projectCreate.load({ className })}
-                </Route>
+                    path={routes.projectCreate.pathForRoute}
+                    element={routes.projectCreate.load({ className })}
+                />
                 <Route
-                    path={routes.project.path}
-                >
-                    {routes.project.load({ className })}
-                </Route>
+                    path={routes.project.pathForRoute}
+                    element={routes.project.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.analyticalFrameworkEdit.path}
-                >
-                    {routes.analyticalFrameworkEdit.load({ className })}
-                </Route>
+                    path={routes.analyticalFrameworkEdit.pathForRoute}
+                    element={routes.analyticalFrameworkEdit.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.analyticalFrameworkCreate.path}
-                >
-                    {routes.analyticalFrameworkCreate.load({ className })}
-                </Route>
+                    path={routes.analyticalFrameworkCreate.pathForRoute}
+                    element={routes.analyticalFrameworkCreate.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.login.path}
-                >
-                    {routes.login.load({ className })}
-                </Route>
+                    path={routes.login.pathForRoute}
+                    element={routes.login.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.register.path}
-                >
-                    {routes.register.load({ className })}
-                </Route>
+                    path={routes.register.pathForRoute}
+                    element={routes.register.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.forgotPassword.path}
-                >
-                    {routes.forgotPassword.load({ className })}
-                </Route>
+                    path={routes.forgotPassword.pathForRoute}
+                    element={routes.forgotPassword.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.resetPassword.path}
-                >
-                    {routes.resetPassword.load({ className })}
-                </Route>
+                    path={routes.resetPassword.pathForRoute}
+                    element={routes.resetPassword.load({ className })}
+                />
                 <Route
-                    exact
-                    path={routes.fourHundredFour.path}
-                >
-                    {routes.fourHundredFour.load({})}
-                </Route>
-            </Switch>
+                    path={routes.fourHundredFour.pathForRoute}
+                    element={routes.fourHundredFour.load({})}
+                />
+            </Routes>
         </Suspense>
     );
 }
-export default Routes;
+export default MyRoutes;

@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback } from 'react';
 import {
     useParams,
     useLocation,
-    Prompt,
 } from 'react-router-dom';
 import {
     isNotDefined,
@@ -1115,14 +1114,6 @@ function EntryEdit(props: Props) {
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
-            <Prompt
-                message={(newLocation) => {
-                    if (newLocation.pathname !== location.pathname && !formPristine) {
-                        return _ts('common', 'youHaveUnsavedChanges');
-                    }
-                    return true;
-                }}
-            />
             <Tabs
                 useHash
                 defaultHash="source-details"

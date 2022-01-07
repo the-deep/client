@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { isDefined } from '@togglecorp/fujs';
 
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
@@ -80,14 +80,14 @@ function Page<T extends { className?: string }>(props: Props<T>) {
     if (redirectToSignIn) {
         // console.warn('Redirecting to sign-in');
         return (
-            <Redirect to={loginPage} />
+            <Navigate to={loginPage} />
         );
     }
 
     if (redirectToHome) {
         // console.warn('Redirecting to dashboard');
         return (
-            <Redirect to={defaultPage} />
+            <Navigate to={defaultPage} />
         );
     }
 

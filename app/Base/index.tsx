@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { init, ErrorBoundary, setUser as setUserOnSentry, withProfiler } from '@sentry/react';
 import { unique, _cs } from '@togglecorp/fujs';
 import { AlertContainer, AlertContext, AlertOptions } from '@the-deep/deep-ui';
@@ -11,7 +11,6 @@ import '@the-deep/deep-ui/build/index.css';
 
 import Init from '#base/components/Init';
 import PreloadMessage from '#base/components/PreloadMessage';
-import browserHistory from '#base/configs/history';
 import sentryConfig from '#base/configs/sentry';
 import { UserContext, UserContextInterface } from '#base/context/UserContext';
 import { NavbarContext, NavbarContextInterface } from '#base/context/NavbarContext';
@@ -41,11 +40,6 @@ if (sentryConfig) {
 }
 
 ReactGA.initialize(trackingId, gaConfig);
-browserHistory.listen((location) => {
-    const page = location.pathname ?? window.location.pathname;
-    ReactGA.set({ page });
-    ReactGA.pageview(page);
-});
 
 const apolloClient = new ApolloClient(apolloConfig);
 
@@ -198,7 +192,7 @@ function Base() {
                                 <AlertContext.Provider value={alertContext}>
                                     <AuthPopup />
                                     <AlertContainer className={styles.alertContainer} />
-                                    <Router history={browserHistory}>
+                                    <BrowserRouter>
                                         <Init
                                             className={styles.init}
                                         >
@@ -212,7 +206,7 @@ function Base() {
                                                 className={styles.view}
                                             />
                                         </Init>
-                                    </Router>
+                                    </BrowserRouter>
                                 </AlertContext.Provider>
                             </NavbarContext.Provider>
                         </UserContext.Provider>

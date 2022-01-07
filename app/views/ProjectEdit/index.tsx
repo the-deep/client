@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useContext, useMemo } from 'react';
 import { isNotDefined } from '@togglecorp/fujs';
 import {
-    useHistory,
+    useNavigate,
     generatePath,
     useParams,
 } from 'react-router-dom';
@@ -48,7 +48,7 @@ function ProjectEdit() {
         [childrenNode, actionsNode, iconsNode],
     );
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const { projectId } = useParams<{ projectId: string | undefined }>();
     const userId = user?.id;
@@ -56,11 +56,14 @@ function ProjectEdit() {
     const handleCreate = useCallback(
         (response: ProjectDetails) => {
             const { id } = response;
-            history.replace(generatePath(routes.projectEdit.path, {
-                projectId: id,
-            }));
+            navigate(generatePath(routes.projectEdit.path), {
+                replace: true,
+                state: {
+                    projectId: id,
+                },
+            });
         },
-        [history],
+        [navigate],
     );
 
     const heading = project && project.id === projectId

@@ -60,8 +60,8 @@
         "d3-selection": "^3.0.0",
         "graphql": "^16.2.0",
         "graphql-anywhere": "^4.2.7",
-        "history": "^4.9.0",
         "immer": "^9.0.5",
+        "localforage": "^1.10.0",
         "mapbox-gl": "^2.4.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
@@ -69,7 +69,7 @@
         "react-icons": "^4.2.0",
         "react-org-tree": "^1.0.0",
         "react-resize-detector": "^6.7.4",
-        "react-router-dom": "^5.2.0",
+        "react-router-dom": "^6.2.1",
         "recharts": "^2.1.6"
     },
     "devDependencies": {
@@ -95,7 +95,7 @@
         "@types/mapbox-gl": "^2.6.0",
         "@types/react": "^17.0.37",
         "@types/react-dom": "^17.0.11",
-        "@types/react-router-dom": "^5.1.8",
+        "@types/react-router-dom": "^5.3.2",
         "@types/svg-injector": "^0.0.29",
         "@typescript-eslint/eslint-plugin": "^5.8.0",
         "@typescript-eslint/parser": "^5.8.0",

@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { FiEdit2 } from 'react-icons/fi';
 import { _cs } from '@togglecorp/fujs';
 import {
-    generatePath,
-    useRouteMatch,
-    useHistory,
+    // generatePath,
+    // useMatch,
+    useNavigate,
 } from 'react-router-dom';
 
 import ProjectSelectInput from '#components/selections/ProjectSelectInput';
@@ -25,15 +25,17 @@ function ProjectSwitcher(props: Props) {
 
     const { project } = React.useContext(ProjectContext);
 
-    const { path, params } = useRouteMatch();
-    const { push } = useHistory();
+    // const { path, params } = useMatch();
+    const navigate = useNavigate();
 
     const handleChange = useCallback(
         (value: string) => {
-            const newPath = generatePath(path, { ...params, projectId: value });
-            push(newPath);
+            // const newPath = generatePath(path, { ...params, projectId: value });
+            // navigate(newPath);
+            console.warn(value);
+            navigate('/');
         },
-        [path, params, push],
+        [navigate],
     );
 
     return (

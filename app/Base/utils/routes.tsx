@@ -2,6 +2,13 @@ import React from 'react';
 
 import Page, { Props as PageProps } from '#base/components/Page';
 
+function removeAsterisk(link: string) {
+    if (link.endsWith('*')) {
+        return link.slice(0, link.length - 1);
+    }
+    return link;
+}
+
 function joinUrlPart(foo: string, bar: string) {
     if (foo.endsWith('/')) {
         return foo.substring(0, foo.length - 1) + bar;
@@ -21,11 +28,14 @@ export function wrap<T extends string, K extends { className?: string }>(
         ...otherProps
     } = props;
 
-    const fullPath = parent ? joinUrlPart(parent.path, path) : path;
+    const fullPathForRoute = parent ? joinUrlPart(removeAsterisk(parent.path), path) : path;
+    const fullPath = removeAsterisk(fullPathForRoute);
 
     return {
         ...otherProps,
         path: fullPath,
+        pathForRoute: path,
+        // NOTE: this is not used anywhere
         originalPath: path,
         load: (overrideProps: Partial<typeof componentProps>) => (
             <Page
