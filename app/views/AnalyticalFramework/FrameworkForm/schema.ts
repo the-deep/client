@@ -10,12 +10,14 @@ import {
 
 import { FrameworkInput } from '../types';
 
-type FormType = FrameworkInput & { isVisualizationEnabled?: boolean };
+type FormType = FrameworkInput & { isVisualizationEnabled?: boolean, modifiedAt?: string };
 // NOTE: they will be handled internally
+// FIXME: should previewImage be added here?
 export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage'>;
 
 export type WidgetsType = NonNullable<PartialFormType['secondaryTagging']>;
 export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
+export type PropertiesType = NonNullable<PartialFormType['properties']>;
 
 export type PartialWidgetsType = WidgetsType;
 export type PartialSectionsType = SectionsType;
@@ -75,6 +77,7 @@ export const defaultFormValues: PartialFormType = {
     title: '',
     isPrivate: false,
     isVisualizationEnabled: false,
+    modifiedAt: undefined,
 };
 
 const schema: FormSchema = {
@@ -86,6 +89,7 @@ const schema: FormSchema = {
             isPrivate: [],
             organization: [],
             isVisualizationEnabled: [],
+            modifiedAt: [],
             properties: [forceNullType],
 
             primaryTagging: sectionsSchema,

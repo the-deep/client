@@ -12,9 +12,11 @@ import {
     CurrentFrameworkQuery,
     CurrentFrameworkQueryVariables,
 } from '#generated/types';
+import useAsyncStorage from '#hooks/useAsyncStorage';
 
 import { Framework } from './types';
 import FrameworkForm from './FrameworkForm';
+import { PartialFormType } from './FrameworkForm/schema';
 import { CURRENT_FRAMEWORK } from './queries';
 import styles from './styles.css';
 
@@ -49,6 +51,12 @@ function AnalyticalFramework(props: Props) {
     const frameworkId = !frameworkIdFromParams ? undefined : +frameworkIdFromParams;
     const createMode = !frameworkIdFromParams;
 
+    const [
+        afFromStoragePending,
+        afFromStorage,
+        afFromStorageSync,
+    ] = useAsyncStorage<PartialFormType>(`edit-af:af:${frameworkId ?? 'create'}`, 1);
+
     const variables = useMemo(
         (): CurrentFrameworkQueryVariables => ({
             id: frameworkIdFromParams,
@@ -62,7 +70,7 @@ function AnalyticalFramework(props: Props) {
     } = useQuery<CurrentFrameworkQuery, CurrentFrameworkQueryVariables>(
         CURRENT_FRAMEWORK,
         {
-            skip: createMode,
+            skip: createMode || afFromStoragePending,
             variables,
         },
     );
@@ -77,7 +85,7 @@ function AnalyticalFramework(props: Props) {
         );
     }
 
-    if (loading) {
+    if (afFromStoragePending || loading) {
         return (
             <PreloadMessage
                 className={className}
@@ -114,6 +122,8 @@ function AnalyticalFramework(props: Props) {
                         <FrameworkForm
                             framework={framework as Framework}
                             frameworkId={frameworkId}
+                            initialAf={afFromStorage}
+                            onAfChange={afFromStorageSync}
                         />
                     )}
                 </Tabs>

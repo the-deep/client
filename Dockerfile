@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:17.3.0-alpine
 
 MAINTAINER togglecorp info@togglecorp.com
 
