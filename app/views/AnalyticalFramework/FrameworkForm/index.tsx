@@ -1,13 +1,10 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
     Tab,
     TextArea,
-    SelectInput,
-    Container,
     useAlert,
     TextInput,
     DateInput,
-    MultiSelectInput,
     TabPanel,
     Checkbox,
     PendingMessage,
@@ -24,8 +21,6 @@ import {
     useForm,
     removeNull,
     getErrorObject,
-    getErrorString,
-    useFormObject,
     SetValueArg,
     internal,
     analyzeErrors,
@@ -41,15 +36,13 @@ import {
 } from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import routes from '#base/configs/routes';
-import {
-    FrameworkProperties,
-} from '#types/newAnalyticalFramework';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
 import UploadImage from './UploadImage';
 import PrimaryTagging from './PrimaryTagging';
+import Properties from './Properties';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
 import { Framework, FrameworkInput } from '../types';
@@ -69,15 +62,21 @@ import {
     CREATE_FRAMEWORK,
 } from '../queries';
 
-import schema, { defaultFormValues, PartialFormType, SectionsType, WidgetsType } from './schema';
+import schema, { defaultFormValues, PartialFormType, SectionsType, WidgetsType, PropertiesType } from './schema';
 import styles from './styles.css';
 
-const widgetIdSelector = (w: { id: number }) => w.id;
-const widgetLabelSelector = (w: { id: number; title: string }) => w.title;
+function getTimestamp(dateString: string | undefined) {
+    if (!dateString) {
+        return 0;
+    }
+    return new Date(dateString);
+}
 
 interface FrameworkFormProps {
     frameworkId: number | undefined;
     framework: Framework | undefined;
+    initialAf: PartialFormType | undefined;
+    onAfChange: (value: PartialFormType) => void;
 }
 
 function transformFramework(framework: Framework): FrameworkInput {
@@ -89,6 +88,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         primaryTagging,
         secondaryTagging,
         properties,
+        modifiedAt,
     } = framework;
 
     const newValues = removeNull({
@@ -100,6 +100,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         secondaryTagging,
         properties,
         isVisualizationEnabled: isDefined(properties),
+        modifiedAt,
     });
     return newValues;
 }
@@ -108,6 +109,8 @@ function FrameworkForm(props: FrameworkFormProps) {
     const {
         frameworkId,
         framework,
+        onAfChange,
+        initialAf,
     } = props;
 
     const { replace: replacePath } = useHistory();
@@ -117,12 +120,17 @@ function FrameworkForm(props: FrameworkFormProps) {
 
     const initialValue = useMemo(
         (): PartialFormType => {
-            if (!framework) {
-                return defaultFormValues;
+            // eslint-disable-next-line max-len
+            if (initialAf && (!framework || getTimestamp(initialAf.modifiedAt) >= getTimestamp(framework.modifiedAt))) {
+                return initialAf;
             }
-            return transformFramework(framework);
+            // eslint-disable-next-line max-len
+            if (framework && (!initialAf || getTimestamp(framework.modifiedAt) > getTimestamp(initialAf.modifiedAt))) {
+                return transformFramework(framework);
+            }
+            return defaultFormValues;
         },
-        [framework],
+        [framework, initialAf],
     );
 
     const [
@@ -161,6 +169,13 @@ function FrameworkForm(props: FrameworkFormProps) {
         setValue,
         setPristine,
     } = useForm(schema, initialValue);
+
+    useEffect(
+        () => {
+            onAfChange(value);
+        },
+        [onAfChange, value],
+    );
 
     const [
         createAnalysisFramework,
@@ -260,8 +275,6 @@ function FrameworkForm(props: FrameworkFormProps) {
     const pending = creatingAnalysisFramework || updatingAnalysisFramework;
 
     const error = getErrorObject(riskyError);
-    const frameworkPropertiesError = getErrorObject(error?.properties);
-    const statsConfigError = getErrorObject(frameworkPropertiesError?.stats_config);
 
     const handlePrimaryTaggingChange = useCallback(
         (val: SetValueArg<SectionsType | undefined>, name: 'primaryTagging') => {
@@ -273,7 +286,14 @@ function FrameworkForm(props: FrameworkFormProps) {
 
     const handleSecondaryTaggingChange = useCallback(
         (val: SetValueArg<WidgetsType | undefined>, name: 'secondaryTagging') => {
-            setSecondaryTaggingPristine(false);
+            setFieldValue(val, name);
+        },
+        [setFieldValue],
+    );
+
+    const handlePropertiesChange = useCallback(
+        (val: SetValueArg<PropertiesType | undefined>, name: 'properties') => {
+            // NOTE: inject custom logic here
             setFieldValue(val, name);
         },
         [setFieldValue],
@@ -288,6 +308,7 @@ function FrameworkForm(props: FrameworkFormProps) {
                     const newData = {
                         ...val,
                         isVisualizationEnabled: undefined,
+                        modifiedAt: undefined,
                         primaryTagging: primaryTaggingPristine
                             ? undefined
                             : val.primaryTagging?.map((section) => ({
@@ -370,55 +391,6 @@ function FrameworkForm(props: FrameworkFormProps) {
         [error],
     );
 
-    const onPropertiesChange = useFormObject<'properties', FrameworkProperties>('properties', setFieldValue, {} as FrameworkProperties);
-    const onStatsConfigChange = useFormObject('stats_config', onPropertiesChange, {} as FrameworkProperties['stats_config']);
-
-    const onAffectedGroupsChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'affected_groups_widget');
-    }, [onStatsConfigChange]);
-
-    const onGeoWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'geo_widget');
-    }, [onStatsConfigChange]);
-
-    const onSeverityWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'severity_widget');
-    }, [onStatsConfigChange]);
-
-    const onReliabilityWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'reliability_widget');
-    }, [onStatsConfigChange]);
-
-    const onSpecificNeedsWidgetChange = useCallback((newVal: number | undefined) => {
-        onStatsConfigChange(newVal ? { pk: newVal } : undefined, 'specific_needs_groups_widgets');
-    }, [onStatsConfigChange]);
-
-    const matrix1dValue = useMemo(() => (
-        value.properties?.stats_config?.matrix1d?.map((d) => d.pk).filter(isDefined)
-    ), [value.properties?.stats_config]);
-
-    const matrix2dValue = useMemo(() => (
-        value.properties?.stats_config?.matrix2d?.map((d) => d.pk).filter(isDefined)
-    ), [value.properties?.stats_config]);
-
-    const onMatrix1dValueChange = useCallback((newVal: number[] | undefined) => {
-        if (!newVal) {
-            onStatsConfigChange(undefined, 'matrix1d');
-        } else {
-            const transformedNewVal = newVal.map((d) => ({ pk: d }));
-            onStatsConfigChange(transformedNewVal, 'matrix1d');
-        }
-    }, [onStatsConfigChange]);
-
-    const onMatrix2dValueChange = useCallback((newVal: number[] | undefined) => {
-        if (!newVal) {
-            onStatsConfigChange(undefined, 'matrix1d');
-        } else {
-            const transformedNewVal = newVal.map((d) => ({ pk: d }));
-            onStatsConfigChange(transformedNewVal, 'matrix2d');
-        }
-    }, [onStatsConfigChange]);
-
     const allWidgets = useMemo(() => {
         const widgetsFromPrimary = value.primaryTagging?.flatMap(
             (item) => (item.widgets ?? []),
@@ -429,32 +401,6 @@ function FrameworkForm(props: FrameworkFormProps) {
             ...widgetsFromSecondary,
         ];
     }, [value.primaryTagging, value.secondaryTagging]);
-
-    const {
-        matrix1dWidgets,
-        matrix2dWidgets,
-        scaleWidgets,
-        geoWidgets,
-        organigramWidgets,
-        multiSelectWidgets,
-    } = useMemo(() => {
-        const createdWidgets = allWidgets
-            .filter((w) => isDefined(w.id))
-            .map((w) => ({
-                id: +w.id,
-                title: w.title,
-                widgetId: w.widgetId,
-            }));
-
-        return ({
-            matrix1dWidgets: createdWidgets.filter((w) => w.widgetId === 'MATRIX1D'),
-            matrix2dWidgets: createdWidgets.filter((w) => w.widgetId === 'MATRIX2D'),
-            scaleWidgets: createdWidgets.filter((w) => w.widgetId === 'SCALE'),
-            geoWidgets: createdWidgets.filter((w) => w.widgetId === 'GEO'),
-            organigramWidgets: createdWidgets.filter((w) => w.widgetId === 'ORGANIGRAM'),
-            multiSelectWidgets: createdWidgets.filter((w) => w.widgetId === 'MULTISELECT'),
-        });
-    }, [allWidgets]);
 
     return (
         <>
@@ -663,85 +609,14 @@ function FrameworkForm(props: FrameworkFormProps) {
                     name="viz-settings"
                     retainMount="lazy"
                 >
-                    <Container
-                        heading="Visualization Settings"
-                        headingSize="small"
-                        headingDescription="NOTE: You'll only be able to see widgetsthat are already created and saved."
-                        className={styles.vizSettingsContainer}
-                        contentClassName={styles.vizSettings}
-                    >
-                        <MultiSelectInput
-                            label="Matrix 1D"
-                            options={matrix1dWidgets}
-                            name="matrix1d"
-                            value={matrix1dValue}
-                            error={getErrorString(statsConfigError?.matrix1d)}
-                            onChange={onMatrix1dValueChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                        <MultiSelectInput
-                            label="Matrix 2D"
-                            options={matrix2dWidgets}
-                            name="matrix2d"
-                            value={matrix2dValue}
-                            error={getErrorString(statsConfigError?.matrix2d)}
-                            onChange={onMatrix2dValueChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                        <SelectInput
-                            label="Geo Widget"
-                            options={geoWidgets}
-                            name="geo_widget"
-                            value={value.properties?.stats_config?.geo_widget?.pk}
-                            error={getErrorString(statsConfigError?.geo_widget)}
-                            onChange={onGeoWidgetChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                        <SelectInput
-                            label="Severity Widget"
-                            options={scaleWidgets}
-                            name="severity_widget"
-                            value={value.properties?.stats_config?.severity_widget?.pk}
-                            error={getErrorString(statsConfigError?.severity_widget)}
-                            onChange={onSeverityWidgetChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                        <SelectInput
-                            label="Reliability Widget"
-                            options={scaleWidgets}
-                            name="reliability_widget"
-                            value={value.properties?.stats_config?.reliability_widget?.pk}
-                            error={getErrorString(statsConfigError?.reliability_widget)}
-                            onChange={onReliabilityWidgetChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                        <SelectInput
-                            label="Affected Groups"
-                            options={organigramWidgets}
-                            name="affected_groups_widget"
-                            value={value.properties?.stats_config?.affected_groups_widget?.pk}
-                            error={getErrorString(statsConfigError?.affected_groups_widget)}
-                            onChange={onAffectedGroupsChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                        <SelectInput
-                            label="Specific Needs Groups"
-                            options={multiSelectWidgets}
-                            name="specific_needs_groups_widgets"
-                            value={value.properties
-                                ?.stats_config?.specific_needs_groups_widgets?.pk}
-                            error={getErrorString(statsConfigError?.specific_needs_groups_widgets)}
-                            onChange={onSpecificNeedsWidgetChange}
-                            keySelector={widgetIdSelector}
-                            labelSelector={widgetLabelSelector}
-                        />
-                    </Container>
+                    <Properties
+                        allWidgets={allWidgets}
+                        name="properties"
+                        onChange={handlePropertiesChange}
+                        value={value?.properties}
+                        error={error?.properties}
+                        disabled={pending}
+                    />
                 </TabPanel>
             )}
         </>
