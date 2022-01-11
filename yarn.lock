@@ -3819,6 +3819,11 @@
   resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.2.tgz#fc25ad9943bcac11cceb8168db4f275e0e72e756"
   integrity sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==
 
+"@types/web-locks-api@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@types/web-locks-api/-/web-locks-api-0.0.1.tgz#dddb65801f4dfe0af574e9e50099371955ced877"
+  integrity sha512-4P/20UhasHjJeJQD/j2TTgr2XCriRxowaifoAA5Hk43r5XqZULVp9FXzwct8bkrx5WoL5T65o47AFM94XRNBbQ==
+
 "@types/webpack-env@^1.16.0":
   version "1.16.2"
   resolved "https://registry.yarnpkg.com/@types/webpack-env/-/webpack-env-1.16.2.tgz#8db514b059c1b2ae14ce9d7bb325296de6a9a0fa"

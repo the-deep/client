@@ -54,6 +54,7 @@ import {
     CreateFrameworkMutationVariables,
     AnalysisFrameworkInputType,
 } from '#generated/types';
+import useLock from '#hooks/useLock';
 import useAsyncStorage from '#hooks/useAsyncStorage';
 
 import { Framework, FrameworkInput } from './types';
@@ -112,6 +113,11 @@ function transformFramework(framework: Framework): FrameworkInput {
 }
 
 // TODO: create a parent route for Framework as well
+// TODO: Add a clear button to clear cache
+// TODO: Store pristine state (waiting for batched write)
+// TODO: Store organizations state (waiting for batched write)
+// TODO: only call onStoredAfChange when all cases are validated
+// TODO: show error when page is locked
 
 interface Props {
     className?: string;
@@ -186,12 +192,19 @@ function AnalyticalFramework(props: Props) {
         [alert, setValue],
     );
 
+    const key = frameworkId
+        ? `edit-af:af:${frameworkId}`
+        : 'edit-af:af:new';
+
+    const lockState = useLock(key);
+
     const [
         storedAfPending,
         storedAf,
         onStoredAfChange,
     ] = useAsyncStorage<PartialFormType>(
-        `edit-af:af:${frameworkId ?? 'create'}`,
+        lockState !== 'ACQUIRED',
+        key,
         1,
         handleAsyncAfLoad,
     );
@@ -271,6 +284,9 @@ function AnalyticalFramework(props: Props) {
                         routes.analyticalFrameworkEdit.path,
                         { frameworkId: result.id },
                     );
+
+                    // NOTE: clearing out stored af after save is successful
+                    onStoredAfChange(undefined);
                     replacePath(path);
                 }
             },
@@ -333,7 +349,6 @@ function AnalyticalFramework(props: Props) {
         },
     );
 
-    // FIXME: only set depending on edit/create mode
     useEffect(
         () => {
             onStoredAfChange(value);
