@@ -1,20 +1,28 @@
+import {
+    deepEnvironment,
+    apiEndpoint,
+    deeplEndpoint as deeplEndPointFromEnv,
+    serverlessEndpoint as serverlessEndpointFromEnv,
+    apiHttps,
+} from '#base/configs/env';
+
 export const reactAppApiHttps = location.protocol === 'https:' // eslint-disable-line no-restricted-globals
     ? 'https'
-    : process.env.REACT_APP_API_HTTPS;
+    : apiHttps;
 
-export const wsEndpoint = !process.env.REACT_APP_API_END
+export const wsEndpoint = !apiEndpoint
     ? 'http://localhost:8000/api/v1'
-    : `${reactAppApiHttps}://${process.env.REACT_APP_API_END}/api/v1`;
+    : `${reactAppApiHttps}://${apiEndpoint}/api/v1`;
 
-export const adminEndpoint = !process.env.REACT_APP_ADMIN_END
+export const adminEndpoint = !apiEndpoint
     ? 'http://localhost:8000/admin/'
-    : `${reactAppApiHttps}://${process.env.REACT_APP_ADMIN_END}/admin/`;
+    : `${reactAppApiHttps}://${apiEndpoint}/admin/`;
 
 export const serverlessEndpoint = (() => {
-    if (process.env.REACT_APP_SERVERLESS_DOMAIN) {
-        return process.env.REACT_APP_SERVERLESS_DOMAIN;
+    if (serverlessEndpointFromEnv) {
+        return serverlessEndpointFromEnv;
     }
-    switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
+    switch (deepEnvironment) {
         case 'nightly':
             return 'https://services-nightly.thedeep.io';
         case 'alpha':
@@ -27,7 +35,7 @@ export const serverlessEndpoint = (() => {
 })();
 
 export const deeplEndPoint = (() => {
-    switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
+    switch (deepEnvironment) {
         case 'nightly':
             return 'https://deepl-nightly.thedeep.io';
         case 'alpha':
@@ -35,6 +43,6 @@ export const deeplEndPoint = (() => {
         case 'beta':
             return 'https://deepl.thedeep.io';
         default:
-            return process.env.REACT_APP_DEEPL_END || 'http://localhost:8001/';
+            return deeplEndPointFromEnv || 'http://localhost:8001/';
     }
 })();

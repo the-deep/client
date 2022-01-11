@@ -5,10 +5,9 @@ import { _cs } from '@togglecorp/fujs';
 import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
+import { oldAryEndpoint } from '#base/configs/env';
 
 import styles from './styles.css';
-
-const aryEndpoint = process.env.REACT_APP_ASSESSMENT_REGISTRY_END;
 
 interface Props {
     className?: string;
@@ -22,8 +21,8 @@ function EditGroupAssessment(props: Props) {
 
     const projectId = project?.id;
 
-    const src = aryEndpoint && projectId && leadGroupId
-        ? `${aryEndpoint}/projects/${projectId}/lead-groups/${leadGroupId}/ary/edit/`
+    const src = oldAryEndpoint && projectId && leadGroupId
+        ? `${oldAryEndpoint}/projects/${projectId}/lead-groups/${leadGroupId}/ary/edit/`
         : undefined;
 
     return (

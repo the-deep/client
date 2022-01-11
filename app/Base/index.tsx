@@ -32,9 +32,11 @@ import {
 } from '#base/utils/restRequest';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import { mapboxToken } from '#base/configs/env';
+
 import styles from './styles.css';
 
-setMapboxToken(process.env.REACT_APP_MAPBOX_ACCESS_TOKEN as string);
+setMapboxToken(mapboxToken);
 
 if (sentryConfig) {
     init(sentryConfig);

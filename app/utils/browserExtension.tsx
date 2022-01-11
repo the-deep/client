@@ -1,5 +1,4 @@
-const extensionIdOnChromeStore = 'kafonkgglonkbldmcigbdojiadfcmcdc';
-export const extensionId = process.env.REACT_APP_BROWSER_EXTENSION_ID || extensionIdOnChromeStore;
+import { extensionId } from '#base/configs/env';
 
 // TODO: make common constant for extension as well
 const EXTENSION_GET_SCREENSHOT = 'get-screenshot';

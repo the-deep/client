@@ -4,7 +4,7 @@ import { RetryLink } from 'apollo-link-retry';
 import { createUploadLink } from 'apollo-upload-client';
 import { isDefined } from '@togglecorp/fujs';
 
-const GRAPHQL_ENDPOINT = process.env.REACT_APP_GRAPHQL_ENDPOINT as string;
+import { graphqlEndpoint } from './env';
 
 const link: ApolloLinkFromClient = ApolloLink.from([
     new RetryLink({
@@ -18,11 +18,11 @@ const link: ApolloLinkFromClient = ApolloLink.from([
     ApolloLink.split(
         (operation) => operation.getContext().hasUpload,
         createUploadLink({
-            uri: GRAPHQL_ENDPOINT,
+            uri: graphqlEndpoint,
             credentials: 'include',
         }) as unknown as ApolloLink,
         new HttpLink({
-            uri: GRAPHQL_ENDPOINT,
+            uri: graphqlEndpoint,
             credentials: 'include',
         }) as unknown as ApolloLink,
     ),

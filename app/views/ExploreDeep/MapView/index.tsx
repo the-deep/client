@@ -26,6 +26,7 @@ import {
     ProjectListQueryVariables,
 } from '#generated/types';
 import { convertDateToIsoDateTime } from '#utils/common';
+import { mapboxStyle } from '#base/configs/env';
 
 import ProjectList from './ProjectList';
 import styles from './styles.css';
@@ -273,7 +274,7 @@ function ExploreDeepMapView(props: Props) {
             )}
             {loading && (<PendingMessage />)}
             <Map
-                mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
+                mapStyle={mapboxStyle}
                 mapOptions={mapOptions}
                 scaleControlShown={false}
                 navControlShown={false}
