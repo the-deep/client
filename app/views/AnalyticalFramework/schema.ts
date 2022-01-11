@@ -8,7 +8,7 @@ import {
     PartialForm,
 } from '@togglecorp/toggle-form';
 
-import { FrameworkInput } from '../types';
+import { FrameworkInput } from './types';
 
 type FormType = FrameworkInput & { isVisualizationEnabled?: boolean, modifiedAt?: string };
 // NOTE: they will be handled internally
