@@ -5,7 +5,7 @@ import { reorder } from '#utils/common';
 
 import { PartialWidget } from '#components/framework/AttributeInput';
 
-import { Section, Widget } from '../../types';
+import { Section, Widget } from '../types';
 import { PartialSectionType } from './SectionsEditor';
 
 export interface TempConditional {

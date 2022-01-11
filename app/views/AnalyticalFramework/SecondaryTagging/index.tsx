@@ -19,7 +19,7 @@ import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetConditionalEditor from '../components/WidgetConditionalEditor';
 import WidgetList from '../components/WidgetList';
-import { cloneWidget } from '../../utils';
+import { cloneWidget } from '../utils';
 
 import {
     findWidget,
