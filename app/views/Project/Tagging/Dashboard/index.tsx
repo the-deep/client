@@ -27,12 +27,11 @@ import {
     ProjectVizQuery,
     ProjectVizQueryVariables,
 } from '#generated/types';
+import { entriesVizEndpoint } from '#base/configs/env';
 
 import VisualizationShareModal from './VisualizationShareModal';
 
 import styles from './styles.css';
-
-const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz-entries/';
 
 const PROJECT_VIZ = gql`
     query ProjectViz($projectId: ID!) {
@@ -92,7 +91,7 @@ function Dashboard(props: Props) {
     const dataUrl = data?.project?.vizData?.dataUrl;
 
     const vizUrl = useMemo(() => (
-        `${vizRendererUrl}?${prepareUrlParams({ dataUrl: data?.project?.vizData?.dataUrl })}`
+        `${entriesVizEndpoint}?${prepareUrlParams({ dataUrl: data?.project?.vizData?.dataUrl })}`
     ), [data]);
 
     return (

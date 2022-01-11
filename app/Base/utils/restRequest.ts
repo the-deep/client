@@ -13,6 +13,7 @@ import {
     wsEndpoint,
     // reactAppApiHttps,
 } from '#base/configs/restRequest';
+import { deepEnvironment } from '#base/configs/env';
 
 function getCookie(name: string) {
     const value = `; ${document.cookie}`;
@@ -172,10 +173,10 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         /*
         // TODO: enable this after the feature is enabled in server
         const csrftoken = reactAppApiHttps === 'https'
-            ? getCookie(`__Secure-deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`)
-            : getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
+            ? getCookie(`__Secure-deep-${deepEnvironment}-csrftoken`)
+            : getCookie(`deep-${deepEnvironment}-csrftoken`);
        */
-        const csrftoken = getCookie(`deep-${process.env.REACT_APP_DEEP_ENVIRONMENT}-csrftoken`);
+        const csrftoken = getCookie(`deep-${deepEnvironment}-csrftoken`);
 
         finalOptions.credentials = 'include';
         if (finalOptions.headers) {

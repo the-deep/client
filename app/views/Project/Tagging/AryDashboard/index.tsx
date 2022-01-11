@@ -23,10 +23,9 @@ import {
     ProjectVizQuery,
     ProjectVizQueryVariables,
 } from '#generated/types';
+import { aryVizEndpoint } from '#base/configs/env';
 
 import styles from './styles.css';
-
-const vizRendererUrl = process.env.REACT_APP_ASSESSMENT_VIZ_URL || 'https://the-deep.github.io/deepviz-assessments/';
 
 const PROJECT_VIZ = gql`
     query ProjectViz($projectId: ID!) {
@@ -70,7 +69,7 @@ function AryDashboard(props: Props) {
     );
 
     const vizUrl = useMemo(() => (
-        `${vizRendererUrl}?${prepareUrlParams({ dataUrl: data?.project?.vizData?.dataUrl })}`
+        `${aryVizEndpoint}?${prepareUrlParams({ dataUrl: data?.project?.vizData?.dataUrl })}`
     ), [data]);
 
     const status = data?.project?.vizData?.status;

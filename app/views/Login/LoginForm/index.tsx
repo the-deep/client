@@ -45,7 +45,7 @@ import {
     LoginWithHidMutation,
     LoginWithHidMutationVariables,
 } from '#generated/types';
-import HCaptchaSiteKey from '#base/configs/hCaptcha';
+import { hCaptchaKey } from '#base/configs/env';
 
 import styles from './styles.css';
 
@@ -335,7 +335,7 @@ function LoginForm(props: Props) {
                     <HCaptcha
                         name="captcha"
                         elementRef={elementRef}
-                        siteKey={HCaptchaSiteKey}
+                        siteKey={hCaptchaKey}
                         onChange={setFieldValue}
                         error={error?.captcha}
                     />

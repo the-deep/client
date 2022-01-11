@@ -6,9 +6,9 @@ import BackLink from '#components/BackLink';
 import SubNavbar from '#components/SubNavbar';
 import ProjectContext from '#base/context/ProjectContext';
 
-import styles from './styles.css';
+import { oldAryEndpoint } from '#base/configs/env';
 
-const aryEndpoint = process.env.REACT_APP_ASSESSMENT_REGISTRY_END;
+import styles from './styles.css';
 
 interface Props {
     className?: string;
@@ -22,8 +22,8 @@ function EditAssessment(props: Props) {
 
     const projectId = project?.id;
 
-    const src = aryEndpoint && projectId && leadId
-        ? `${aryEndpoint}/projects/${projectId}/leads/${leadId}/ary/edit/`
+    const src = oldAryEndpoint && projectId && leadId
+        ? `${oldAryEndpoint}/projects/${projectId}/leads/${leadId}/ary/edit/`
         : undefined;
 
     return (

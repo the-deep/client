@@ -25,8 +25,8 @@ import {
 import Captcha from '@hcaptcha/react-hcaptcha';
 
 import NonFieldError from '#components/NonFieldError';
-import HCaptchaSiteKey from '#base/configs/hCaptcha';
 import { useLazyRequest } from '#base/utils/restRequest';
+import { hCaptchaKey } from '#base/configs/env';
 import HCaptcha from '#components/HCaptcha';
 import routes from '#base/configs/routes';
 
@@ -170,7 +170,7 @@ function ForgotPasswordModal(props: Props) {
                         <HCaptcha
                             name="hcaptchaResponse"
                             elementRef={elementRef}
-                            siteKey={HCaptchaSiteKey}
+                            siteKey={hCaptchaKey}
                             onChange={setFieldValue}
                             error={error?.hcaptchaResponse}
                             disabled={resetPending}

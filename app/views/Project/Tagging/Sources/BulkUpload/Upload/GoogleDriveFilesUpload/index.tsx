@@ -4,6 +4,7 @@ import { FaGoogleDrive } from 'react-icons/fa';
 import _ts from '#ts';
 
 import { MimeTypes } from '#components/lead/LeadPreview/Preview/mimeTypes';
+import { isDevelopment } from '#base/configs/env';
 
 import { supportedGoogleDriveMimeTypes } from '../../utils';
 import GoogleDrivePicker from './GoogleDrivePicker';
@@ -11,8 +12,6 @@ import { FileLike } from '../../types';
 
 import styles from './styles.css';
 
-// TODO: Move to config
-export const isDevelopment = process.env.NODE_ENV === 'development';
 const getDeveloperKey = () => {
     if (isDevelopment) {
         return 'AIzaSyDINvjHwIS_HHsb3qCgFm_2GFHKqEUwucE';
