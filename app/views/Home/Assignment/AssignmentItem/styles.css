@@ -12,6 +12,7 @@
         .description {
             .link {
                 display: inline-block;
+                word-break: break-all;
                 color: var(--dui-color-brand);
                 font-weight: var(--dui-font-weight-bold);
             }

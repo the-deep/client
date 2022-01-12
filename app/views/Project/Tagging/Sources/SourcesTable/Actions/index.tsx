@@ -119,6 +119,7 @@ function Actions<T extends string>(props: Props<T>) {
                 </SmartButtonLikeLink>
                 {canDeleteSource && (
                     <QuickActionDropdownMenu
+                        title="More options"
                         label={(
                             <IoEllipsisVerticalSharp />
                         )}
@@ -142,13 +143,13 @@ function Actions<T extends string>(props: Props<T>) {
                     <SmartButtonLikeLink
                         className={styles.button}
                         variant="secondary"
-                        title="assessment"
+                        title={hasAssessment ? 'Edit assessment' : 'Add assessment'}
                         disabled={disabled}
                         route={routes.assessmentEdit}
                         attrs={{
                             leadId: id,
                         }}
-                        icons={<IoAdd />}
+                        icons={hasAssessment ? <MdModeEdit /> : <IoAdd />}
                     >
                         Assessment
                     </SmartButtonLikeLink>

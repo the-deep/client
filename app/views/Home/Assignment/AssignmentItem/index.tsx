@@ -38,7 +38,7 @@ function AssignmentItem(props: AssignmentItemProps) {
     const contentLink = useMemo(() => {
         if (contentObjectType === 'lead') {
             return (generateString(
-                'lead {link}',
+                'source {link}',
                 {
                     link: (contentObjectDetails?.id && projectDetails?.id && (
                         <Link
