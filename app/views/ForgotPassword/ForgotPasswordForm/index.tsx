@@ -26,7 +26,7 @@ import Captcha from '@hcaptcha/react-hcaptcha';
 
 import NonFieldError from '#components/NonFieldError';
 import { useLazyRequest } from '#base/utils/restRequest';
-import { hCaptchaKey } from '#base/configs/env';
+import { hCaptchaKey } from '#base/configs/hCaptcha';
 import HCaptcha from '#components/HCaptcha';
 import routes from '#base/configs/routes';
 

@@ -26,7 +26,7 @@ import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
 import routes from '#base/configs/routes';
-import { hCaptchaKey } from '#base/configs/env';
+import { hCaptchaKey } from '#base/configs/hCaptcha';
 
 import _ts from '#ts';
 
