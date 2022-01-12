@@ -15,7 +15,9 @@ const SCHEMA_VERSION_SUFFIX = ':schema';
 const WRITE_TIMESTAMP_SUFFIX = ':write-timestamp';
 const VALUE_SUFFIX = ':value';
 
-function useAsyncStorage<T>(
+const prefix = '[useAsyncStorage]';
+
+function useAsyncStorage<T extends object>(
     writeLocked: boolean,
     key: string | undefined,
     schemaVersion: number,
@@ -35,6 +37,9 @@ function useAsyncStorage<T>(
             }
             let mounted = true;
             (async () => {
+                console.info(`${prefix} Reading '${key}'`);
+                const startTime = new Date().getTime();
+
                 const storedSchemaVersion: number | null = await localforage.getItem(
                     key + SCHEMA_VERSION_SUFFIX,
                 );
@@ -44,10 +49,12 @@ function useAsyncStorage<T>(
                 const storedValue: T | null = await localforage.getItem(
                     key + VALUE_SUFFIX,
                 );
+
+                const endTime = new Date().getTime();
+                console.info(`${prefix} Read '${key}' in ${endTime - startTime}ms`);
+
                 // FIXME: the types for above variables ignores null/undefined
                 // could be a bug in typescript
-
-                // console.info(`Reading data at ${key}`, storedWriteTimestamp);
 
                 // NOTE: don't load anything if
                 // - version is not defined or version does not match
@@ -65,6 +72,8 @@ function useAsyncStorage<T>(
                     }
                     return;
                 }
+
+                console.info(`${prefix} Read '${key}' commited at ${new Date(storedWriteTimestamp)}`);
 
                 if (mounted) {
                     setInitialState(storedValue ?? undefined);
@@ -90,18 +99,18 @@ function useAsyncStorage<T>(
 
             if (!key) {
                 // eslint-disable-next-line no-console
-                console.warn('Trying to save value when key is not defined');
+                console.warn(`${prefix} Trying to save value when key is not defined`);
                 return;
             }
 
             if (writeLocked) {
                 // eslint-disable-next-line no-console
-                console.warn('Trying to save value when write is locked');
+                console.warn(`${prefix} Trying to save value when write is locked`);
                 return;
             }
             if (readPending) {
                 // eslint-disable-next-line no-console
-                console.warn('Trying to save value before initial read');
+                console.warn(`${prefix} Trying to save value before initial read`);
                 return;
             }
 
@@ -129,7 +138,7 @@ function useAsyncStorage<T>(
                     if (isDefined(storedSchemaVersion) && storedSchemaVersion > schemaVersion) {
                         // eslint-disable-next-line no-console
                         console.error([
-                            'Cannot set data with older schema',
+                            `${prefix} Cannot set data with older schema`,
                             `Stored version: ${storedSchemaVersion}`,
                             `Supported version: ${schemaVersion}`,
                         ].join('\n'));
@@ -139,7 +148,7 @@ function useAsyncStorage<T>(
                     if (isDefined(storedWriteTimestamp) && storedWriteTimestamp > dataQueueTime) {
                         // eslint-disable-next-line no-console
                         console.error([
-                            'Cannot set data older than stored timestamp',
+                            `${prefix} Cannot set data older than stored timestamp`,
                             `Stored timestamp: ${storedWriteTimestamp}`,
                             `Current timestamp: ${dataQueueTime}`,
                         ].join('\n'));
@@ -154,7 +163,7 @@ function useAsyncStorage<T>(
                     if (writeTimestampRef.current && writeTimestampRef.current > dataQueueTime) {
                         // eslint-disable-next-line no-console
                         console.warn([
-                            'Cannot set data older than last write timestamp',
+                            `${prefix} Cannot set data older than last write timestamp`,
                             `Last write timestamp: ${storedWriteTimestamp}`,
                             `Current timestamp: ${dataQueueTime}`,
                         ].join('\n'));
@@ -166,11 +175,15 @@ function useAsyncStorage<T>(
                     // - assuming that these setItems will always succeed
                     writeTimestampRef.current = dataQueueTime;
 
-                    // console.info(`Writing data at ${key}`, dataQueueTime, value);
+                    console.info(`${prefix} Writing '${key}' commited at ${new Date(dataQueueTime)}`);
+                    const startTime = new Date().getTime();
 
                     await localforage.setItem(key + SCHEMA_VERSION_SUFFIX, schemaVersion);
                     await localforage.setItem(key + WRITE_TIMESTAMP_SUFFIX, dataQueueTime);
                     await localforage.setItem(key + VALUE_SUFFIX, value);
+
+                    const endTime = new Date().getTime();
+                    console.info(`${prefix} Written '${key}' in ${endTime - startTime}ms`);
                 },
                 200,
             );
