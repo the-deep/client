@@ -36,7 +36,6 @@ const PROJECT_LIST = gql`
         $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
-
     ) {
         projects(
             search: $search,

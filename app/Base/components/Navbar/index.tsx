@@ -158,6 +158,7 @@ function Navbar(props: Props) {
                     </SmartButtonLikeLink>
                     <QuickActionLink
                         title="DEEP Support"
+                        target="_blank"
                         to="https://deephelp.zendesk.com/hc/en-us"
                     >
                         <IoHelp />

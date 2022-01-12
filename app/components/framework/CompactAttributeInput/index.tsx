@@ -161,7 +161,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 className={styles.button}
                 name={widget.clientId}
                 onConfirm={handleApplyAllClick}
-                message="Are you sure you want to apply this widget's value to all entries in this lead?"
+                message="Are you sure you want to apply this widget's value to all entries in this source?"
                 title="Apply to all"
                 disabled={disabled}
                 spacing="compact"

@@ -18,6 +18,7 @@
 
         .description {
             display: inline-block;
+            word-break: break-all;
 
             >* {
                 display: inline;
