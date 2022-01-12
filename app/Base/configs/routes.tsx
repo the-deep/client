@@ -155,7 +155,7 @@ const taggingRoute = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -176,7 +176,7 @@ const projectEditRoute = wrap({
     component: lazy(() => import('#views/ProjectEdit')),
     componentProps: { },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -195,7 +195,7 @@ const entryEditRoute = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -224,7 +224,12 @@ const analysis = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (user, project, skipProjectPermissionCheck) => {
+        const accessAnalysisModule = !!user?.accessibleFeatures?.some((f) => f.key === 'ANALYSIS');
+        if (!accessAnalysisModule) {
+            return false;
+        }
+
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -245,7 +250,11 @@ const pillarAnalysis = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (user, project, skipProjectPermissionCheck) => {
+        const accessAnalysisModule = !!user?.accessibleFeatures?.some((f) => f.key === 'ANALYSIS');
+        if (!accessAnalysisModule) {
+            return false;
+        }
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -276,7 +285,7 @@ const assessments = wrap({
     component: lazy(() => import('#views/Project/Tagging/Assessments')),
     componentProps: {
     },
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -295,7 +304,7 @@ const leadGroups = wrap({
     component: lazy(() => import('#views/Project/Tagging/LeadGroups')),
     componentProps: {
     },
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -315,7 +324,7 @@ const dashboard = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -335,7 +344,7 @@ const aryDashboard = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -370,7 +379,7 @@ const assessmentEditRoute = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
@@ -394,7 +403,7 @@ const groupAssessmentEditRoute = wrap({
     componentProps: {
     },
     visibility: 'is-authenticated',
-    checkPermissions: (project, skipProjectPermissionCheck) => {
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
             return true;
         }
