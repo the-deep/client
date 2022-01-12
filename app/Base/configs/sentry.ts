@@ -5,22 +5,24 @@ import { Integrations } from '@sentry/tracing';
 import browserHistory from '#base/configs/history';
 import routes from '#base/configs/routes';
 import {
-    isDev,
+    isDebugMode,
     appCommitHash,
-    appName,
+    myApp,
     sentryAppDsn,
     deepEnvironment,
     apiEndpoint,
+    sentryNormalizeDepth,
+    sentryTraceSampleRate,
 } from '#base/configs/env';
 
 const sentryConfig: BrowserOptions | undefined = sentryAppDsn ? {
     dsn: sentryAppDsn,
-    release: `${appName}@${appCommitHash}`,
+    release: `${myApp}@${appCommitHash}`,
     environment: deepEnvironment,
-    debug: isDev,
+    debug: isDebugMode,
     // sendDefaultPii: true,
-    normalizeDepth: 5,
-    tracesSampleRate: 0.2,
+    normalizeDepth: sentryNormalizeDepth,
+    tracesSampleRate: sentryTraceSampleRate,
     integrations: [
         new Integrations.BrowserTracing({
             // NOTE: apiEndpoint is actually the domain for the api endpoint

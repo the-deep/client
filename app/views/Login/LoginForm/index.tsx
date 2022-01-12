@@ -45,7 +45,7 @@ import {
     LoginWithHidMutation,
     LoginWithHidMutationVariables,
 } from '#generated/types';
-import { hCaptchaKey } from '#base/configs/env';
+import { hCaptchaKey } from '#base/configs/hCaptcha';
 
 import styles from './styles.css';
 

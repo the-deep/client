@@ -4,7 +4,10 @@ import { FaGoogleDrive } from 'react-icons/fa';
 import _ts from '#ts';
 
 import { MimeTypes } from '#components/lead/LeadPreview/Preview/mimeTypes';
-import { isDevelopment } from '#base/configs/env';
+import {
+    driveDeveloperKey,
+    driveClientId,
+} from '#base/configs/env';
 
 import { supportedGoogleDriveMimeTypes } from '../../utils';
 import GoogleDrivePicker from './GoogleDrivePicker';
@@ -12,22 +15,6 @@ import { FileLike } from '../../types';
 
 import styles from './styles.css';
 
-const getDeveloperKey = () => {
-    if (isDevelopment) {
-        return 'AIzaSyDINvjHwIS_HHsb3qCgFm_2GFHKqEUwucE';
-    }
-    return 'AIzaSyAcaVOYWk0zGL9TVQfKXdziFI-5pEkw6X4';
-};
-
-const getClientId = () => {
-    if (isDevelopment) {
-        return '642927279233-98drcidvhmudgv9dh70m7k66730n9rjr.apps.googleusercontent.com';
-    }
-    return '642927279233-ht6v3t7h37cc4gjh336sbin6hdlup2vi.apps.googleusercontent.com';
-};
-
-export const googleDriveDeveloperKey = getDeveloperKey();
-export const googleDriveClientId = getClientId();
 interface Props {
     className?: string;
     onAdd: (v: FileLike[]) => void;
@@ -65,8 +52,8 @@ function GoogleDriveFilesUpload(props: Props) {
         <div className={_cs(styles.googleUpload, className)}>
             <GoogleDrivePicker
                 className={styles.googlePicker}
-                clientId={googleDriveClientId}
-                developerKey={googleDriveDeveloperKey}
+                clientId={driveClientId}
+                developerKey={driveDeveloperKey}
                 onAuthenticateSuccess={setAccessToken}
                 onChange={addFilesFromGoogleDrive}
                 mimeTypes={mimeTypes}
