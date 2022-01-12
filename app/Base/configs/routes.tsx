@@ -21,6 +21,15 @@ const fourHundredFour = wrap({
     visibility: 'is-anything',
     navbarVisibility: false,
 });
+const termsOfService = wrap({
+    path: '/terms-of-service/',
+    title: 'Terms of Service',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/TermsOfService')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
 const login = wrap({
     path: '/login/',
     title: 'Login',
@@ -417,6 +426,7 @@ const routes = {
     analyticalFrameworkCreate: analyticalFrameworkCreateRoute,
     projectCreate: projectCreateRoute,
     projectEdit: projectEditRoute,
+    termsOfService,
     sources,
     assessments,
     leadGroups,

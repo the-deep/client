@@ -198,6 +198,11 @@ function Navbar(props: Props) {
                         User Groups
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                        href={route.termsOfService.path}
+                    >
+                        Terms of Service
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                         name={undefined}
                         onClick={onLogoutClick}
                         actions={(

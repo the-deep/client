@@ -70,6 +70,12 @@ function Routes(props: Props) {
                 </Route>
                 <Route
                     exact
+                    path={routes.termsOfService.path}
+                >
+                    {routes.termsOfService.load({ className })}
+                </Route>
+                <Route
+                    exact
                     path={routes.login.path}
                 >
                     {routes.login.load({ className })}

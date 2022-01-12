@@ -27,6 +27,7 @@ import {
 } from '@togglecorp/toggle-form';
 import Captcha from '@hcaptcha/react-hcaptcha';
 
+import SmartLink from '#base/components/SmartLink';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { parseUrlParams } from '#utils/common';
 import { UserContext } from '#base/context/UserContext';
@@ -355,11 +356,19 @@ function LoginForm(props: Props) {
                     {_ts('explore.login', 'loginWithHid')}
                 </ButtonLikeLink>
             </Container>
-            <Kraken
-                className={styles.kraken}
-                variant="skydive"
-                size="large"
-            />
+            <div className={styles.rightContent}>
+                <Kraken
+                    className={styles.kraken}
+                    variant="skydive"
+                    size="large"
+                />
+                <SmartLink
+                    className={styles.link}
+                    route={routes.termsOfService}
+                >
+                    Terms of Service
+                </SmartLink>
+            </div>
         </form>
     );
 }

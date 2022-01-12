@@ -27,5 +27,10 @@
         margin-top: var(--dui-spacing-super-large);
         color: var(--dui-color-text-label);
     }
+
+    .links-container {
+        display: flex;
+        gap: var(--dui-spacing-small);
+    }
 }
 
