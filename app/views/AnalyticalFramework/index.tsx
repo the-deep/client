@@ -112,6 +112,15 @@ function transformFramework(framework: Framework): FrameworkInput {
     return newValues;
 }
 
+interface Stored {
+    pristine: boolean,
+    primaryTaggingPristine: boolean,
+    secondaryTaggingPristine: boolean,
+    framework: PartialFormType,
+    frameworkImage: Framework['previewImage'],
+    organizationOptions: BasicOrganization[] | null | undefined,
+}
+
 // TODO: create a parent route for Framework as well
 // TODO: Add a clear button to clear cache
 // TODO: Store pristine state (waiting for batched write)
@@ -178,9 +187,17 @@ function AnalyticalFramework(props: Props) {
     } = useForm(schema, defaultFormValues);
 
     const handleAsyncAfLoad = useCallback(
-        (storedAfArg: PartialFormType | undefined) => {
+        (storedAfArg: Stored | undefined) => {
             if (storedAfArg) {
-                setValue(storedAfArg);
+                // NOTE: error is not persisted
+                setValue(storedAfArg.framework);
+                setPristine(storedAfArg.pristine);
+
+                setFrameworkImage(storedAfArg.frameworkImage);
+                setOrganizationOptions(storedAfArg.organizationOptions);
+                setPrimaryTaggingPristine(storedAfArg.primaryTaggingPristine);
+                setSecondaryTaggingPristine(storedAfArg.secondaryTaggingPristine);
+
                 alert.show(
                     'Using analytical framework from cache',
                     {
@@ -189,23 +206,23 @@ function AnalyticalFramework(props: Props) {
                 );
             }
         },
-        [alert, setValue],
+        [alert, setValue, setPristine],
     );
 
     const key = frameworkId
-        ? `edit-af:af:${frameworkId}`
-        : 'edit-af:af:new';
+        ? `edit-af:${frameworkId}`
+        : 'edit-af:new';
 
     const lockState = useLock(key);
 
     const [
-        storedAfPending,
-        storedAf,
-        onStoredAfChange,
-    ] = useAsyncStorage<PartialFormType>(
+        storedDataPending,
+        storedData,
+        onStoredDataChange,
+    ] = useAsyncStorage<Stored>(
         lockState !== 'ACQUIRED',
         key,
-        1,
+        2,
         handleAsyncAfLoad,
     );
 
@@ -222,15 +239,28 @@ function AnalyticalFramework(props: Props) {
     } = useQuery<CurrentFrameworkQuery, CurrentFrameworkQueryVariables>(
         CURRENT_FRAMEWORK,
         {
-            skip: createMode || storedAfPending,
+            skip: createMode || storedDataPending,
             variables,
             onCompleted: (response) => {
                 // eslint-disable-next-line max-len
                 const framework = (response.analysisFramework ?? undefined) as Framework | undefined;
+                console.warn(framework, storedData);
                 // eslint-disable-next-line max-len
-                if (framework && (!storedAf || getTimestamp(framework.modifiedAt) > getTimestamp(storedAf.modifiedAt))) {
+                if (framework && (!storedData || getTimestamp(framework.modifiedAt) > getTimestamp(storedData.framework.modifiedAt))) {
                     setValue(transformFramework(framework));
-                    if (storedAf) {
+                    setFrameworkImage(framework?.previewImage);
+                    setOrganizationOptions(
+                        framework?.organization
+                            ? [framework.organization]
+                            : [],
+                    );
+                    setPristine(true);
+                    setPrimaryTaggingPristine(true);
+                    setSecondaryTaggingPristine(true);
+
+                    if (storedData) {
+                        // NOTE: clearing out stored af after save is successful
+                        onStoredDataChange(undefined);
                         alert.show(
                             'Using latest analytical framework from server',
                             {
@@ -238,14 +268,6 @@ function AnalyticalFramework(props: Props) {
                             },
                         );
                     }
-                }
-                if (framework) {
-                    setFrameworkImage(framework?.previewImage);
-                    setOrganizationOptions(
-                        framework?.organization
-                            ? [framework.organization]
-                            : [],
-                    );
                 }
             },
         },
@@ -270,6 +292,8 @@ function AnalyticalFramework(props: Props) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok && result) {
+                    // NOTE: clearing out stored af after save is successful
+                    onStoredDataChange(undefined);
                     alert.show(
                         'Successfully created new analytical framework.',
                         {
@@ -285,8 +309,6 @@ function AnalyticalFramework(props: Props) {
                         { frameworkId: result.id },
                     );
 
-                    // NOTE: clearing out stored af after save is successful
-                    onStoredAfChange(undefined);
                     replacePath(path);
                 }
             },
@@ -323,6 +345,8 @@ function AnalyticalFramework(props: Props) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
                     setError(formError);
                 } else if (ok && result) {
+                    // NOTE: clearing out stored af after save is successful
+                    onStoredDataChange(undefined);
                     alert.show(
                         'Successfully updated the analytical framework.',
                         {
@@ -351,9 +375,35 @@ function AnalyticalFramework(props: Props) {
 
     useEffect(
         () => {
-            onStoredAfChange(value);
+            if (lockState !== 'ACQUIRED') {
+                return;
+            }
+            if (storedDataPending) {
+                return;
+            }
+            if (pristine) {
+                return;
+            }
+            onStoredDataChange({
+                pristine,
+                primaryTaggingPristine,
+                secondaryTaggingPristine,
+                framework: value,
+                frameworkImage,
+                organizationOptions,
+            });
         },
-        [onStoredAfChange, value],
+        [
+            storedDataPending,
+            lockState,
+            pristine,
+            onStoredDataChange,
+            value,
+            primaryTaggingPristine,
+            secondaryTaggingPristine,
+            frameworkImage,
+            organizationOptions,
+        ],
     );
 
     const handlePrimaryTaggingChange = useCallback(
@@ -508,7 +558,7 @@ function AnalyticalFramework(props: Props) {
         );
     }
 
-    if (storedAfPending || frameworkQueryLoading) {
+    if (storedDataPending || frameworkQueryLoading) {
         return (
             <PreloadMessage
                 className={className}
