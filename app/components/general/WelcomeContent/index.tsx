@@ -2,6 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Heading, Svg } from '@the-deep/deep-ui';
 import {
+    IoArrowBack,
     IoCompassOutline,
 } from 'react-icons/io5';
 
@@ -45,15 +46,26 @@ function WelcomeContent(props: Props) {
             >
                 Curious about the platform?
             </Heading>
-            <SmartButtonLikeLink
-                route={routes.explore}
-                variant="tertiary"
-                icons={(
-                    <IoCompassOutline />
-                )}
-            >
-                Explore DEEP
-            </SmartButtonLikeLink>
+            <div className={styles.linksContainer}>
+                <SmartButtonLikeLink
+                    route={routes.home}
+                    variant="tertiary"
+                    icons={(
+                        <IoArrowBack />
+                    )}
+                >
+                    Back to DEEP
+                </SmartButtonLikeLink>
+                <SmartButtonLikeLink
+                    route={routes.explore}
+                    variant="tertiary"
+                    icons={(
+                        <IoCompassOutline />
+                    )}
+                >
+                    Explore DEEP
+                </SmartButtonLikeLink>
+            </div>
         </div>
     );
 }

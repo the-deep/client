@@ -28,8 +28,20 @@
         }
     }
 
-    .kraken {
-        align-self: flex-start;
-        margin: calc(-1 * var(--dui-spacing-extra-large));
+    .right-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .kraken {
+            align-self: flex-start;
+            margin: calc(-1 * var(--dui-spacing-extra-large));
+        }
+
+        .link {
+            align-self: flex-end;
+            margin: calc(-1 * var(--dui-spacing-extra-large));
+            color: var(--dui-color-accent);
+        }
     }
 }
