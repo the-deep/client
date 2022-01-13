@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-type LockState = 'PENDING' | 'ACQUIRED' | 'REJECTED' | 'RELEASED' | 'ABORTED' | 'NOT_SUPPORTED';
+type LockState = 'PENDING' | 'ACQUIRED' | 'REJECTED' | 'RELEASED' | 'NOT_SUPPORTED';
 
 function useLock(key: string | undefined) {
     const [lockState, setLockState] = useState<LockState>(
@@ -24,34 +24,21 @@ function useLock(key: string | undefined) {
                 myResolve = resolve;
             });
 
-            let myAbortController: AbortController | undefined = new AbortController();
-
-            navigator.locks.request(key, { signal: myAbortController.signal }, (lock) => {
-                myAbortController = undefined;
-
-                if (mounted) {
-                    setLockState(lock ? 'ACQUIRED' : 'REJECTED');
-                }
-                return myPromise;
-            }).catch((err: unknown) => {
-                if (myAbortController && myAbortController.signal.aborted) {
-                    // eslint-disable-next-line no-console
-                    console.warn('Lock request was aborted');
-                } else {
-                    // eslint-disable-next-line no-console
-                    console.error('Lock request error', err);
-                }
-            });
+            navigator.locks.request(
+                key,
+                { ifAvailable: true },
+                (lock) => {
+                    if (mounted) {
+                        setLockState(lock ? 'ACQUIRED' : 'REJECTED');
+                    }
+                    return myPromise;
+                },
+            );
 
             return () => {
                 mounted = false;
 
-                // NOTE: if myAbortController is defined then lock was never
-                // acquired to be released
-                if (myAbortController) {
-                    myAbortController.abort();
-                    setLockState('ABORTED');
-                } else if (myResolve) {
+                if (myResolve) {
                     myResolve(key);
                     setLockState('RELEASED');
                 }

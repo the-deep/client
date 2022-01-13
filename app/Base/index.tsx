@@ -107,6 +107,7 @@ function Base() {
 
     const addAlert = React.useCallback(
         (alert: AlertOptions) => {
+            // FIXME: this behavior is faulty
             setAlerts((prevAlerts) => unique(
                 [...prevAlerts, alert],
                 (a) => a.name,
