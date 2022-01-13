@@ -21,9 +21,12 @@ function useAsyncStorage<T extends object>(
     key: string | undefined,
     schemaVersion: number,
     onLoad?: (value: T | undefined) => void,
+    debug = false,
 ) {
     const [readPending, setReadPending] = useState(true);
     const [initialState, setInitialState] = useState<T | undefined>(undefined);
+
+    const [debugMode] = useState(debug);
 
     const writeTimestampRef = useRef<number | undefined>();
     const writeTimeoutRef = useRef<number | undefined>();
@@ -36,7 +39,10 @@ function useAsyncStorage<T extends object>(
             }
             let mounted = true;
             (async () => {
-                console.info(`${prefix} Reading '${key}'`);
+                if (debugMode) {
+                    // eslint-disable-next-line no-console
+                    console.info(`${prefix} Reading '${key}'`);
+                }
                 const startTime = new Date().getTime();
 
                 const storedSchemaVersion: number | null = await localforage.getItem(
@@ -50,7 +56,10 @@ function useAsyncStorage<T extends object>(
                 );
 
                 const endTime = new Date().getTime();
-                console.info(`${prefix} Read '${key}' in ${endTime - startTime}ms`);
+                if (debugMode) {
+                    // eslint-disable-next-line no-console
+                    console.info(`${prefix} Read '${key}' in ${endTime - startTime}ms`);
+                }
 
                 // FIXME: the types for above variables ignores null/undefined
                 // could be a bug in typescript
@@ -72,7 +81,10 @@ function useAsyncStorage<T extends object>(
                     return;
                 }
 
-                console.info(`${prefix} Read '${key}' commited at ${new Date(storedWriteTimestamp)}`);
+                if (debugMode) {
+                    // eslint-disable-next-line no-console
+                    console.info(`${prefix} Read '${key}' commited at ${new Date(storedWriteTimestamp)}`);
+                }
 
                 if (mounted) {
                     setInitialState(storedValue ?? undefined);
@@ -87,7 +99,7 @@ function useAsyncStorage<T extends object>(
                 mounted = false;
             };
         },
-        [key, schemaVersion, onLoad],
+        [key, schemaVersion, onLoad, debugMode],
     );
 
     const handleSave = useCallback(
@@ -98,18 +110,18 @@ function useAsyncStorage<T extends object>(
 
             if (!key) {
                 // eslint-disable-next-line no-console
-                console.warn(`${prefix} Trying to save value when key is not defined`);
+                console.error(`${prefix} Trying to save value when key is not defined`);
                 return;
             }
 
             if (writeLocked) {
                 // eslint-disable-next-line no-console
-                console.warn(`${prefix} Trying to save value when write is locked`);
+                console.error(`${prefix} Trying to save value when write is locked`);
                 return;
             }
             if (readPending) {
                 // eslint-disable-next-line no-console
-                console.warn(`${prefix} Trying to save value before initial read`);
+                console.error(`${prefix} Trying to save value before initial read`);
                 return;
             }
 
@@ -123,7 +135,7 @@ function useAsyncStorage<T extends object>(
 
             const dataQueueTime = new Date().getTime();
 
-            const handler = async () => {
+            const saveHandler = async () => {
                 writeTimeoutRef.current = undefined;
 
                 const storedSchemaVersion: number | null = await localforage.getItem(
@@ -173,7 +185,10 @@ function useAsyncStorage<T extends object>(
                 // - assuming that these setItems will always succeed
                 writeTimestampRef.current = dataQueueTime;
 
-                console.info(`${prefix} Writing '${key}' commited at ${new Date(dataQueueTime)}`);
+                if (debugMode) {
+                    // eslint-disable-next-line no-console
+                    console.info(`${prefix} Writing '${key}' commited at ${new Date(dataQueueTime)}`);
+                }
                 const startTime = new Date().getTime();
 
                 await localforage.setItem(key + SCHEMA_VERSION_SUFFIX, schemaVersion);
@@ -181,19 +196,22 @@ function useAsyncStorage<T extends object>(
                 await localforage.setItem(key + VALUE_SUFFIX, value);
 
                 const endTime = new Date().getTime();
-                console.info(`${prefix} Written '${key}' in ${endTime - startTime}ms`);
+                if (debugMode) {
+                    // eslint-disable-next-line no-console
+                    console.info(`${prefix} Written '${key}' in ${endTime - startTime}ms`);
+                }
             };
 
             if (immediate) {
-                handler();
+                saveHandler();
             } else {
                 writeTimeoutRef.current = window.setTimeout(
-                    handler,
+                    saveHandler,
                     200,
                 );
             }
         },
-        [key, schemaVersion, readPending, writeLocked],
+        [key, schemaVersion, readPending, writeLocked, debugMode],
     );
 
     return [
