@@ -64,6 +64,7 @@ const FRAMEWORK = gql`
             displayName
         }
         createdAt
+        modifiedAt
     }
 `;
 

@@ -36,7 +36,7 @@ import {
 import NonFieldError from '#components/NonFieldError';
 import SortableList, { Attributes, Listeners } from '#components/SortableList';
 
-import { Section } from '../../../types';
+import { Section } from '../../types';
 import styles from './styles.css';
 
 const SECTIONS_LIMIT = 10;

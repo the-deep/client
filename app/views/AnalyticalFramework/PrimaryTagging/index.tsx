@@ -29,8 +29,8 @@ import { SectionsType, WidgetsType } from '../schema';
 import Canvas from '../components/Canvas';
 import WidgetEditor from '../components/WidgetEditor';
 import WidgetList from '../components/WidgetList';
-import { Section, Widget } from '../../types';
-import { cloneWidget } from '../../utils';
+import { Section, Widget } from '../types';
+import { cloneWidget } from '../utils';
 
 import SectionsEditor, { PartialSectionType } from './SectionsEditor';
 import {
