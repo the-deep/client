@@ -25,8 +25,8 @@ import Captcha from '@hcaptcha/react-hcaptcha';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
-import HCaptchaSiteKey from '#base/configs/hCaptcha';
 import routes from '#base/configs/routes';
+import { hCaptchaKey } from '#base/configs/hCaptcha';
 
 import _ts from '#ts';
 
@@ -187,7 +187,7 @@ function RegisterModal(props: Props) {
                         <HCaptcha
                             name="captcha"
                             elementRef={elementRef}
-                            siteKey={HCaptchaSiteKey}
+                            siteKey={hCaptchaKey}
                             onChange={setFieldValue}
                             error={error?.captcha}
                             disabled={registerPending}

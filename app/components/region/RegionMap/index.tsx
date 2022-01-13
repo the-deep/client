@@ -30,6 +30,7 @@ import {
 } from '#types';
 import { useRequest } from '#base/utils/restRequest';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import { mapboxStyle } from '#base/configs/env';
 import {
     SelectedRegionQuery,
     SelectedRegionQueryVariables,
@@ -346,7 +347,7 @@ function RegionMap(props: Props) {
                 <Spinner className={styles.spinner} />
             )}
             <Map
-                mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
+                mapStyle={mapboxStyle}
                 mapOptions={mapOptions}
                 scaleControlShown={false}
                 navControlShown={false}

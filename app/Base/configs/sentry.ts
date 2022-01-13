@@ -5,40 +5,28 @@ import { Integrations } from '@sentry/tracing';
 import browserHistory from '#base/configs/history';
 import routes from '#base/configs/routes';
 import {
-    isBeta,
-    isAlpha,
-    isNightly,
-    isDev,
+    isDebugMode,
+    appCommitHash,
+    myApp,
+    sentryAppDsn,
+    deepEnvironment,
+    apiEndpoint,
+    sentryNormalizeDepth,
+    sentryTraceSampleRate,
 } from '#base/configs/env';
 
-const appCommitHash = process.env.REACT_APP_COMMITHASH;
-const appName = process.env.MY_APP;
-
-const sentryDsn = (() => {
-    const keyFromEnv = process.env.REACT_APP_SENTRY_DSN;
-    if (keyFromEnv) {
-        return keyFromEnv;
-    }
-    if (isBeta || isAlpha || isNightly) {
-        return 'https://9a60f35c6a1c45fe999727c5f6f7229c@sentry.io/1220157';
-    }
-    return undefined;
-})();
-
-const env = process.env.REACT_APP_DEEP_ENVIRONMENT;
-const sentryConfig: BrowserOptions | undefined = sentryDsn ? {
-    dsn: sentryDsn,
-    release: `${appName}@${appCommitHash}`,
-    environment: env,
-    debug: isDev,
+const sentryConfig: BrowserOptions | undefined = sentryAppDsn ? {
+    dsn: sentryAppDsn,
+    release: `${myApp}@${appCommitHash}`,
+    environment: deepEnvironment,
+    debug: isDebugMode,
     // sendDefaultPii: true,
-    normalizeDepth: 5,
-    tracesSampleRate: 0.2,
+    normalizeDepth: sentryNormalizeDepth,
+    tracesSampleRate: sentryTraceSampleRate,
     integrations: [
         new Integrations.BrowserTracing({
-            // NOTE: process.env.REACT_APP_API_END is actually the domain
-            // for the api endpoint
-            tracingOrigins: ['localhost', process.env.REACT_APP_API_END as string],
+            // NOTE: apiEndpoint is actually the domain for the api endpoint
+            tracingOrigins: ['localhost', apiEndpoint],
             routingInstrumentation: reactRouterV5Instrumentation(
                 browserHistory,
                 Object.entries(routes),
