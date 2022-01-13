@@ -8,6 +8,7 @@ import { NavbarContext } from '#base/context/NavbarContext';
 import { ProjectContext } from '#base/context/ProjectContext';
 import PageTitle from '#base/components/PageTitle';
 import { Project } from '#base/types/project';
+import { User } from '#base/types/user';
 import ErrorBoundary from '#base/components/ErrorBoundary';
 
 import styles from './styles.css';
@@ -22,6 +23,7 @@ export interface Props<T extends { className?: string }> {
     overrideProps: Partial<React.PropsWithRef<T>>;
     visibility: Visibility,
     checkPermissions?: (
+        user: User | undefined,
         project: Project | undefined,
         skipProjectPermissionCheck: boolean,
     ) => boolean | undefined,
@@ -48,6 +50,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
     } = props;
 
     const {
+        user,
         authenticated,
     } = useContext(UserContext);
     const {
@@ -94,7 +97,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
     // FIXME: custom error message from checkPermissions
     // FIXME: add a "back to home" or somewhere page
     // FIXME: only hide page if page is successfully mounted
-    if (checkPermissions && !checkPermissions(project, false)) {
+    if (checkPermissions && !checkPermissions(user, project, false)) {
         return (
             <>
                 <PageTitle value={`403 - ${title}`} />

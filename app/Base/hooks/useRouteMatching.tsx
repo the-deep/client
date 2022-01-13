@@ -13,6 +13,7 @@ export type RouteData = ReturnType<typeof wrap>;
 
 function useRouteMatching(route: RouteData, attrs?: Attrs) {
     const {
+        user,
         authenticated,
     } = useContext(UserContext);
     const {
@@ -44,7 +45,7 @@ function useRouteMatching(route: RouteData, attrs?: Attrs) {
         visibility === 'is-authenticated'
             && authenticated
             && checkPermissions
-            && !checkPermissions(project, skipProjectPermissionCheck)
+            && !checkPermissions(user, project, skipProjectPermissionCheck)
     ) {
         return undefined;
     }
