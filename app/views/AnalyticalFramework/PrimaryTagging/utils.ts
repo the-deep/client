@@ -91,11 +91,11 @@ export function injectWidget(
 
         if (isNotDefined(widgetIndex) || widgetIndex === -1) {
             const orderList = selectedSection.widgets.map((w) => w.order);
-            Math.max(...orderList, 0);
+            const maxOrder = Math.max(...orderList, 0);
 
             selectedSection.widgets.push({
                 ...widget,
-                order: selectedSection.widgets.length,
+                order: maxOrder + 1,
             });
         } else {
             selectedSection.widgets.splice(widgetIndex, 1, widget);
