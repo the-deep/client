@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useContext } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     useParams,
@@ -22,6 +22,8 @@ import {
     Checkbox,
     PendingMessage,
     Button,
+    ConfirmButton,
+    ElementFragments,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -39,6 +41,7 @@ import SubNavbar, {
     SubNavbarChildren,
 } from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
+import { UserContext } from '#base/context/UserContext';
 import routes from '#base/configs/routes';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
@@ -122,11 +125,6 @@ interface Stored {
 }
 
 // TODO: create a parent route for Framework as well
-// TODO: Add a clear button to clear cache
-// TODO: Store pristine state (waiting for batched write)
-// TODO: Store organizations state (waiting for batched write)
-// TODO: only call onStoredAfChange when all cases are validated
-// TODO: show error when page is locked
 
 interface Props {
     className?: string;
@@ -138,12 +136,25 @@ function AnalyticalFramework(props: Props) {
     } = props;
 
     const { replace: replacePath } = useHistory();
+
+    const {
+        user,
+    } = useContext(UserContext);
+
     const alert = useAlert();
+
     const location = useLocation();
 
     const { frameworkId: frameworkIdFromParams } = useParams<{ frameworkId: string }>();
     const frameworkId = !frameworkIdFromParams ? undefined : +frameworkIdFromParams;
     const createMode = !frameworkIdFromParams;
+
+    // NOTE: userId should be defined in this page
+    const userId = user?.id ?? 'NULL';
+    // NOTE: no need to set these keys as url but this looks nice
+    const key = frameworkId
+        ? `user/${userId}/framework/${frameworkId}/edit`
+        : `user/${userId}framework/create`;
 
     const [childrenNode, setChildrenNode] = useState<Element | null | undefined>();
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
@@ -175,6 +186,8 @@ function AnalyticalFramework(props: Props) {
         undefined,
     );
 
+    const [cacheUsed, setCacheUsed] = useState(false);
+
     const {
         pristine,
         value,
@@ -185,6 +198,8 @@ function AnalyticalFramework(props: Props) {
         setValue,
         setPristine,
     } = useForm(schema, defaultFormValues);
+
+    const lockState = useLock(key);
 
     const handleAsyncAfLoad = useCallback(
         (storedAfArg: Stored | undefined) => {
@@ -198,35 +213,23 @@ function AnalyticalFramework(props: Props) {
                 setPrimaryTaggingPristine(storedAfArg.primaryTaggingPristine);
                 setSecondaryTaggingPristine(storedAfArg.secondaryTaggingPristine);
 
-                alert.show(
-                    'Using analytical framework from cache',
-                    {
-                        variant: 'info',
-                    },
-                );
+                setCacheUsed(true);
             }
         },
-        [alert, setValue, setPristine],
+        [setValue, setPristine],
     );
-
-    const key = frameworkId
-        ? `edit-af:${frameworkId}`
-        : 'edit-af:new';
-
-    const lockState = useLock(key);
-
     const [
         storedDataPending,
         storedData,
-        onStoredDataChange,
+        updateDataStore,
     ] = useAsyncStorage<Stored>(
         lockState !== 'ACQUIRED',
         key,
-        2,
+        1,
         handleAsyncAfLoad,
     );
 
-    const variables = useMemo(
+    const frameworkQueryVariables = useMemo(
         (): CurrentFrameworkQueryVariables => ({
             id: frameworkIdFromParams,
         }),
@@ -240,11 +243,10 @@ function AnalyticalFramework(props: Props) {
         CURRENT_FRAMEWORK,
         {
             skip: createMode || storedDataPending,
-            variables,
+            variables: frameworkQueryVariables,
             onCompleted: (response) => {
                 // eslint-disable-next-line max-len
                 const framework = (response.analysisFramework ?? undefined) as Framework | undefined;
-                console.warn(framework, storedData);
                 // eslint-disable-next-line max-len
                 if (framework && (!storedData || getTimestamp(framework.modifiedAt) > getTimestamp(storedData.framework.modifiedAt))) {
                     setValue(transformFramework(framework));
@@ -260,9 +262,10 @@ function AnalyticalFramework(props: Props) {
 
                     if (storedData) {
                         // NOTE: clearing out stored af after save is successful
-                        onStoredDataChange(undefined);
+                        updateDataStore(undefined, true);
+                        setCacheUsed(false);
                         alert.show(
-                            'Using latest analytical framework from server',
+                            'Reading data from server',
                             {
                                 variant: 'info',
                             },
@@ -293,7 +296,7 @@ function AnalyticalFramework(props: Props) {
                     setError(formError);
                 } else if (ok && result) {
                     // NOTE: clearing out stored af after save is successful
-                    onStoredDataChange(undefined);
+                    updateDataStore(undefined, true);
                     alert.show(
                         'Successfully created new analytical framework.',
                         {
@@ -346,7 +349,7 @@ function AnalyticalFramework(props: Props) {
                     setError(formError);
                 } else if (ok && result) {
                     // NOTE: clearing out stored af after save is successful
-                    onStoredDataChange(undefined);
+                    updateDataStore(undefined, true);
                     alert.show(
                         'Successfully updated the analytical framework.',
                         {
@@ -375,6 +378,83 @@ function AnalyticalFramework(props: Props) {
 
     useEffect(
         () => {
+            if (lockState === 'NOT_SUPPORTED') {
+                alert.show(
+                    'Unsupported browser! Changes made in this tab will not be locally backed up.',
+                    {
+                        name: 'af-lock-rejected',
+                        variant: 'error',
+                        duration: Infinity,
+                    },
+                );
+            }
+            if (lockState === 'REJECTED') {
+                alert.show(
+                    'This page was already open in another tab. Changes made in this tab will not be locally backed up.',
+                    {
+                        name: 'af-lock-rejected',
+                        variant: 'error',
+                        duration: Infinity,
+                    },
+                );
+            }
+
+            return () => {
+                alert.hide('af-lock-rejected');
+            };
+        },
+        [lockState, alert],
+    );
+
+    useEffect(
+        () => {
+            if (!cacheUsed) {
+                return undefined;
+            }
+            alert.show(
+                (
+                    <ElementFragments
+                        actions={lockState === 'ACQUIRED' && (
+                            <ConfirmButton
+                                name={undefined}
+                                variant="action"
+                                contentEditable
+                                message="Are you sure you want to reset local backup and refresh the page?"
+                                onConfirm={() => {
+                                    updateDataStore(undefined, true);
+                                    // Adding set timeout to be sure
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 0);
+                                }}
+                            >
+                                Reset
+                            </ConfirmButton>
+                        )}
+                    >
+                        Reading data from local backup.
+                    </ElementFragments>
+                ),
+                {
+                    variant: 'info',
+                    duration: Infinity,
+                    name: 'af-cache-used',
+                },
+            );
+            return () => {
+                alert.hide('af-cache-used');
+            };
+        },
+        [
+            alert,
+            cacheUsed,
+            lockState,
+            updateDataStore,
+        ],
+    );
+
+    useEffect(
+        () => {
             if (lockState !== 'ACQUIRED') {
                 return;
             }
@@ -384,7 +464,7 @@ function AnalyticalFramework(props: Props) {
             if (pristine) {
                 return;
             }
-            onStoredDataChange({
+            updateDataStore({
                 pristine,
                 primaryTaggingPristine,
                 secondaryTaggingPristine,
@@ -397,7 +477,7 @@ function AnalyticalFramework(props: Props) {
             storedDataPending,
             lockState,
             pristine,
-            onStoredDataChange,
+            updateDataStore,
             value,
             primaryTaggingPristine,
             secondaryTaggingPristine,

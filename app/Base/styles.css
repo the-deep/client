@@ -32,8 +32,8 @@
 
     .alert-container {
         position: fixed;
-        top: var(--dui-spacing-large);
         right: var(--dui-spacing-large);
+        bottom: var(--dui-spacing-large);
         z-index: 1;
         width: 24rem;
     }
