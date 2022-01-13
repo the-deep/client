@@ -16,21 +16,38 @@ function useLock(key: string | undefined) {
                 return undefined;
             }
 
+            // NOTE: used to prevent calling setState on unmounted hook
             let mounted = true;
-            setLockState('PENDING');
+            // NOTE: used to resolve promise that holds acquired lock
+            let lockPromiseResolver: ((value: string | PromiseLike<string>) => void) | undefined;
 
-            let myResolve: (value: string | PromiseLike<string>) => void;
-            const myPromise = new Promise<string>((resolve) => {
-                myResolve = resolve;
-            });
+            setLockState('PENDING');
 
             navigator.locks.request(
                 key,
+                // NOTE: the lock request will fail immediately if a lock
+                // already exists
                 { ifAvailable: true },
+                // NOTE: this callback is called asynchronously
+                // NOTE: lock if null if the lock was not available
                 (lock) => {
-                    if (mounted) {
-                        setLockState(lock ? 'ACQUIRED' : 'REJECTED');
+                    if (!lock) {
+                        const myPromise = Promise.resolve(key);
+                        lockPromiseResolver = undefined;
+                        if (mounted) {
+                            setLockState('REJECTED');
+                        }
+                        return myPromise;
                     }
+
+                    const myPromise = new Promise<string>((resolve) => {
+                        lockPromiseResolver = resolve;
+                    });
+                    if (mounted) {
+                        setLockState('ACQUIRED');
+                    }
+                    // NOTE: the lock will not be released unless the promise
+                    // resolves
                     return myPromise;
                 },
             );
@@ -38,8 +55,9 @@ function useLock(key: string | undefined) {
             return () => {
                 mounted = false;
 
-                if (myResolve) {
-                    myResolve(key);
+                if (lockPromiseResolver) {
+                    lockPromiseResolver(key);
+                    lockPromiseResolver = undefined;
                     setLockState('RELEASED');
                 }
             };
