@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import localforage from 'localforage';
 import { Router } from 'react-router-dom';
 import { init, ErrorBoundary, setUser as setUserOnSentry, withProfiler } from '@sentry/react';
 import { unique, _cs } from '@togglecorp/fujs';
@@ -32,9 +33,14 @@ import {
 } from '#base/utils/restRequest';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
 
 import styles from './styles.css';
+
+localforageInstance.setDriver(
+    [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE],
+);
 
 setMapboxToken(mapboxToken);
 

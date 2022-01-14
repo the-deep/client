@@ -300,7 +300,7 @@ function RowInput(props: RowInputProps) {
             newlyCreatedOptionIdRef.current = cellClientId;
             const newCell: PartialCellType = {
                 key: cellClientId,
-                order: oldCells.length,
+                order: oldCells.length + 1,
             };
             onFieldChange(
                 [...oldCells, newCell],
@@ -480,7 +480,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             newlyCreatedOptionIdRef.current = key;
             const newRow: PartialRowType = {
                 key,
-                order: oldRows.length,
+                order: oldRows.length + 1,
             };
             onFieldChange(
                 [...oldRows, newRow],

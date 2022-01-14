@@ -27,8 +27,8 @@ export function sortByOrder<T extends { order: number }>(data: T[] | undefined) 
     return [...data].sort((a, b) => compareNumber(a.order, b.order));
 }
 
-export function reorder<T extends { order: number }>(data: T[]) {
-    return data.map((v, i) => ({ ...v, order: i }));
+export function reorder<T extends { order?: number }>(data: T[]) {
+    return data.map((v, i) => ({ ...v, order: i + 1 }));
 }
 
 export function breadcrumb(args: (string | undefined)[], symbol = ' » ') {

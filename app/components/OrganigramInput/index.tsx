@@ -28,7 +28,7 @@ function transformData(data: PartialForm<OrganigramDatum, 'key'>): OrganigramDat
             id: data.key,
             children: data.children.map(transformData) ?? [],
             label: data.label ?? 'Unnamed',
-            order: data.order ?? 0,
+            order: data.order ?? 1,
         };
     }
     return {
@@ -36,7 +36,7 @@ function transformData(data: PartialForm<OrganigramDatum, 'key'>): OrganigramDat
         id: data.key,
         children: [],
         label: data.label ?? 'Unnamed',
-        order: data.order ?? 0,
+        order: data.order ?? 1,
     };
 }
 

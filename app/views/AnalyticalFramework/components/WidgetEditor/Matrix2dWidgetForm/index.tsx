@@ -367,7 +367,7 @@ function RowInput(props: RowInputProps) {
             newlyCreatedOptionIdRef.current = key;
             const newSubRow: PartialSubRowType = {
                 key,
-                order: oldSubRows.length,
+                order: oldSubRows.length + 1,
             };
             onFieldChange(
                 [...reorder(oldSubRows), newSubRow],
@@ -660,7 +660,7 @@ function ColumnInput(props: ColumnInputProps) {
             newlyCreatedOptionIdRef.current = key;
             const newSubColumn: PartialSubColumnType = {
                 key,
-                order: oldSubColumns.length,
+                order: oldSubColumns.length + 1,
             };
             onFieldChange(
                 [...reorder(oldSubColumns), newSubColumn],
@@ -847,7 +847,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             newlyCreatedOptionIdRef.current = key;
             const newRow: PartialRowType = {
                 key,
-                order: oldRows.length,
+                order: oldRows.length + 1,
             };
             onFieldChange(
                 [...reorder(oldRows), newRow],
@@ -939,7 +939,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             newlyCreatedOptionIdRef.current = key;
             const newColumn: PartialColumnType = {
                 key,
-                order: oldColumns.length,
+                order: oldColumns.length + 1,
             };
             onFieldChange(
                 [...reorder(oldColumns), newColumn],

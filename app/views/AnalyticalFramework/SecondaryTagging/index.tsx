@@ -124,7 +124,7 @@ function SecondaryTagging<K extends string>(props: Props<K>) {
 
     const handleWidgetOrderChange = useCallback(
         (newWidgets: Widget[]) => {
-            const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i }));
+            const orderedWidgets = newWidgets.map((v, i) => ({ ...v, order: i + 1 }));
             setWidgets(orderedWidgets, name);
         },
         [setWidgets, name],

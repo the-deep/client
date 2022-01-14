@@ -47,6 +47,7 @@ import SubNavbar from '#components/SubNavbar';
 import {
     breadcrumb,
     isFiltered,
+    reorder,
 } from '#utils/common';
 import ProjectContext from '#base/context/ProjectContext';
 import BackLink from '#components/BackLink';
@@ -560,7 +561,7 @@ function PillarAnalysis() {
             const clientId = randomString();
             const newAnalyticalStatement: PartialAnalyticalStatementType = {
                 clientId,
-                order: oldStatements.length,
+                order: oldStatements.length + 1,
                 includeInReport: false,
             };
             setFieldValue(
@@ -668,7 +669,7 @@ function PillarAnalysis() {
     const onOrderChange = useCallback((
         newValues: PartialAnalyticalStatementType[],
     ) => {
-        const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
+        const orderedValues = reorder(newValues);
         setFieldValue(orderedValues, 'analyticalStatements');
     }, [setFieldValue]);
 
