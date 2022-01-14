@@ -18,15 +18,13 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         this.state = { hasError: false };
     }
 
-    // componentDidCatch(error, errorInfo) { }
-
     render() {
         const { hasError } = this.state;
         const { children } = this.props;
         if (hasError) {
             return (
                 <div>
-                    Some error occurred
+                    Some error occurred!
                 </div>
             );
         }

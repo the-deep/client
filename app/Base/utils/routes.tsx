@@ -2,7 +2,7 @@ import React from 'react';
 
 import Page, { Props as PageProps } from '#base/components/Page';
 
-function joinUrlPart(foo: string, bar: string) {
+export function joinUrlPart(foo: string, bar: string) {
     if (foo.endsWith('/')) {
         return foo.substring(0, foo.length - 1) + bar;
     }
