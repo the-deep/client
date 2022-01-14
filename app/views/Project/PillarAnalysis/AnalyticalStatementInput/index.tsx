@@ -30,7 +30,7 @@ import {
 import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
 import { Attributes, Listeners } from '#components/SortableList';
-import { genericMemo } from '#utils/common';
+import { reorder, genericMemo } from '#utils/common';
 
 import {
     AnalyticalStatementType,
@@ -124,13 +124,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     let newAnalyticalEntry: PartialAnalyticalEntryType = {
                         clientId,
                         entry: +dropValue.entryId,
-                        order: value.order ?? 0,
+                        order: value.order ?? 1,
                     };
 
                     if (value.analyticalEntries && isDefined(movedItem)) {
                         newAnalyticalEntry = {
                             ...movedItem,
-                            order: value.order ?? 0,
+                            order: value.order ?? 1,
                         };
                         const movedItemOldIndex = value.analyticalEntries
                             .findIndex((item) => item.entry === +dropValue.entryId);
@@ -148,7 +148,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     // NOTE: After the newly added entry's order is set and
                     // placed in the desired index, we can change the order of
                     // whole list in bulk
-                    return newAnalyticalEntries.map((v, i) => ({ ...v, order: i }));
+                    return reorder(newAnalyticalEntries);
                 },
                 'analyticalEntries' as const,
             );

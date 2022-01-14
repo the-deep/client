@@ -153,7 +153,7 @@ function NodeInput(props: NodeInputProps) {
             newlyCreatedNodeIdRef.current = key;
             const newNode: PartialNodeType = {
                 key,
-                order: oldNodes.length,
+                order: oldNodes.length + 1,
             };
             setExpandedNodeId(newNode.key);
             onExpansionChange(true, value?.key);
@@ -334,7 +334,7 @@ function RootInput<K extends string>(props: RootInputProps<K>) {
             newlyCreatedNodeIdRef.current = key;
             const newNode: PartialNodeType = {
                 key,
-                order: oldNodes.length,
+                order: oldNodes.length + 1,
             };
             setExpandedRootId(newNode.key);
             onFieldChange(

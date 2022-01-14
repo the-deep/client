@@ -35,6 +35,7 @@ import {
 
 import NonFieldError from '#components/NonFieldError';
 import SortableList, { Attributes, Listeners } from '#components/SortableList';
+import { reorder } from '#utils/common';
 
 import { Section } from '../../types';
 import styles from './styles.css';
@@ -269,10 +270,10 @@ function SectionsEditor(props: Props) {
             }
 
             const clientId = randomString();
-            const sortedItems = oldSections.map((v, i) => ({ ...v, order: i }));
+            const sortedItems = reorder(oldSections);
             const newSection: PartialSectionType = {
                 clientId,
-                order: sortedItems.length,
+                order: sortedItems.length + 1,
             };
             setFieldValue(
                 [...sortedItems, newSection],
@@ -287,7 +288,7 @@ function SectionsEditor(props: Props) {
     const handleOrderChange = useCallback((
         newValues: PartialSectionType[],
     ) => {
-        const orderedValues = newValues.map((v, i) => ({ ...v, order: i }));
+        const orderedValues = reorder(newValues);
         setFieldValue(orderedValues, 'sections');
     }, [setFieldValue]);
 

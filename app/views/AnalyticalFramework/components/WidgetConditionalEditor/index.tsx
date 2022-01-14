@@ -197,6 +197,7 @@ function WidgetConditionalEditor<T>(props: Props<T>) {
             value={value?.parentWidget}
             error={undefined}
             onChange={handleWidgetSelection}
+            hint="Widget that have a parent condition or widget that has not been saved will not be listed here."
         />
     );
 

@@ -369,7 +369,7 @@ function Matrix2dConditionalWidgetForm(props: Matrix2dConditionalWidgetFormProps
                 }
                 safeOldValue.conditions.push({
                     key: randomString(),
-                    order: safeOldValue.conditions.length,
+                    order: safeOldValue.conditions.length + 1,
                     conjunctionOperator: 'AND',
                     invert: false,
                     operator: 'empty',
