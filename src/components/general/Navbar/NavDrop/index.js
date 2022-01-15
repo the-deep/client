@@ -225,7 +225,7 @@ export default class NavDrop extends React.PureComponent {
                     className={styles.dropdownItem}
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
+                    href="https://chrome.google.com/webstore/detail/deep/hkmakfhfikfhllpkfpkkaoonapclfajf"
                 >
                     <Icon
                         className={styles.icon}
