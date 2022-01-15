@@ -5,6 +5,7 @@ import { removeNull } from '@togglecorp/toggle-form';
 import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import { checkErrorCode } from '#base/utils/apollo';
+import localforageInstance from '#base/configs/localforage';
 
 import {
     ProjectContext,
@@ -65,6 +66,7 @@ function Init(props: Props) {
                 setUser(safeMe);
                 setProject(safeMe.lastActiveProject ?? undefined);
             } else {
+                // FIXME: do we need this else block?
                 setUser(undefined);
                 setProject(undefined);
             }
@@ -80,6 +82,10 @@ function Init(props: Props) {
 
             setErrored(!authError);
             setReady(true);
+
+            if (authError) {
+                localforageInstance.clear();
+            }
         },
     });
 

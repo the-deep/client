@@ -256,7 +256,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
             newlyCreatedOptionIdRef.current = key;
             const newOption: PartialOptionType = {
                 key,
-                order: oldOptions.length,
+                order: oldOptions.length + 1,
             };
             setExpandedOptionId(newOption.key);
             onFieldChange(

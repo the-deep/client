@@ -261,8 +261,8 @@ function AnalyticalFramework(props: Props) {
                     setSecondaryTaggingPristine(true);
 
                     if (storedData) {
-                        // NOTE: clearing out stored af after save is successful
-                        updateDataStore(undefined, true);
+                        // NOTE: clearing out stored af after new data is fetched
+                        updateDataStore(undefined, { immediateWrite: true });
                         setCacheUsed(false);
                         alert.show(
                             'Reading data from server',
@@ -296,7 +296,7 @@ function AnalyticalFramework(props: Props) {
                     setError(formError);
                 } else if (ok && result) {
                     // NOTE: clearing out stored af after save is successful
-                    updateDataStore(undefined, true);
+                    updateDataStore(undefined, { immediateWrite: true });
                     alert.show(
                         'Successfully created new analytical framework.',
                         {
@@ -349,7 +349,7 @@ function AnalyticalFramework(props: Props) {
                     setError(formError);
                 } else if (ok && result) {
                     // NOTE: clearing out stored af after save is successful
-                    updateDataStore(undefined, true);
+                    updateDataStore(undefined, { immediateWrite: true });
                     alert.show(
                         'Successfully updated the analytical framework.',
                         {
@@ -421,11 +421,13 @@ function AnalyticalFramework(props: Props) {
                                 contentEditable
                                 message="Are you sure you want to reset local backup and refresh the page?"
                                 onConfirm={() => {
-                                    updateDataStore(undefined, true);
-                                    // Adding set timeout to be sure
-                                    setTimeout(() => {
-                                        window.location.reload();
-                                    }, 0);
+                                    updateDataStore(
+                                        undefined,
+                                        {
+                                            immediateWrite: true,
+                                            onWrite: () => window.location.reload(),
+                                        },
+                                    );
                                 }}
                             >
                                 Reset
@@ -496,6 +498,7 @@ function AnalyticalFramework(props: Props) {
 
     const handleSecondaryTaggingChange = useCallback(
         (val: SetValueArg<WidgetsType | undefined>, name: 'secondaryTagging') => {
+            setSecondaryTaggingPristine(false);
             setFieldValue(val, name);
         },
         [setFieldValue],

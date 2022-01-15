@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { isDefined, isNotDefined } from '@togglecorp/fujs';
-import localforage from 'localforage';
 
-// TODO: setup localforage
-// TODO: clear whole localforage
+import localforageInstance from '#base/configs/localforage';
+
 // TODO: schema/data migration
 // TODO: throttle instead of debouncing
 // TODO: make throttle/debouncing time cutomizable
 // TODO: do we need to read writeTimeout/schema before each write?
 // TODO: store last written value so that diffing is possible on write
+// TODO: use setItems and getItems from localforage
 
 const SCHEMA_VERSION_SUFFIX = ':schema';
 const WRITE_TIMESTAMP_SUFFIX = ':write-timestamp';
@@ -28,7 +28,11 @@ function useAsyncStorage<T extends object>(
 
     const [debugMode] = useState(debug);
 
+    // Remember last written timestamp
     const writeTimestampRef = useRef<number | undefined>();
+    // Identify if hook is mounted
+    const mountedRef = useRef<boolean>(true);
+
     const writeTimeoutRef = useRef<number | undefined>();
 
     useEffect(
@@ -37,7 +41,7 @@ function useAsyncStorage<T extends object>(
                 setReadPending(false);
                 return undefined;
             }
-            let mounted = true;
+            mountedRef.current = true;
             (async () => {
                 if (debugMode) {
                     // eslint-disable-next-line no-console
@@ -45,13 +49,13 @@ function useAsyncStorage<T extends object>(
                 }
                 const startTime = new Date().getTime();
 
-                const storedSchemaVersion: number | null = await localforage.getItem(
+                const storedSchemaVersion: number | null = await localforageInstance.getItem(
                     key + SCHEMA_VERSION_SUFFIX,
                 );
-                const storedWriteTimestamp: number | null = await localforage.getItem(
+                const storedWriteTimestamp: number | null = await localforageInstance.getItem(
                     key + WRITE_TIMESTAMP_SUFFIX,
                 );
-                const storedValue: T | null = await localforage.getItem(
+                const storedValue: T | null = await localforageInstance.getItem(
                     key + VALUE_SUFFIX,
                 );
 
@@ -72,7 +76,7 @@ function useAsyncStorage<T extends object>(
                     || isNotDefined(storedSchemaVersion)
                     || storedSchemaVersion !== schemaVersion
                 ) {
-                    if (mounted) {
+                    if (mountedRef.current) {
                         setReadPending(false);
                         if (onLoad) {
                             onLoad(undefined);
@@ -86,7 +90,7 @@ function useAsyncStorage<T extends object>(
                     console.info(`${prefix} Read '${key}' commited at ${new Date(storedWriteTimestamp)}`);
                 }
 
-                if (mounted) {
+                if (mountedRef.current) {
                     setInitialState(storedValue ?? undefined);
                     setReadPending(false);
                     if (onLoad) {
@@ -96,14 +100,22 @@ function useAsyncStorage<T extends object>(
             })();
 
             return () => {
-                mounted = false;
+                mountedRef.current = false;
             };
         },
         [key, schemaVersion, onLoad, debugMode],
     );
 
     const handleSave = useCallback(
-        (value: T | undefined, immediate = false) => {
+        (
+            value: T | undefined,
+            options?: ({
+                immediateWrite: false | undefined,
+            } | {
+                immediateWrite: true,
+                onWrite?: () => void,
+            }),
+        ) => {
             if (writeTimeoutRef.current) {
                 window.clearTimeout(writeTimeoutRef.current);
             }
@@ -138,10 +150,10 @@ function useAsyncStorage<T extends object>(
             const saveHandler = async () => {
                 writeTimeoutRef.current = undefined;
 
-                const storedSchemaVersion: number | null = await localforage.getItem(
+                const storedSchemaVersion: number | null = await localforageInstance.getItem(
                     key + SCHEMA_VERSION_SUFFIX,
                 );
-                const storedWriteTimestamp: number | null = await localforage.getItem(
+                const storedWriteTimestamp: number | null = await localforageInstance.getItem(
                     key + WRITE_TIMESTAMP_SUFFIX,
                 );
 
@@ -191,18 +203,22 @@ function useAsyncStorage<T extends object>(
                 }
                 const startTime = new Date().getTime();
 
-                await localforage.setItem(key + SCHEMA_VERSION_SUFFIX, schemaVersion);
-                await localforage.setItem(key + WRITE_TIMESTAMP_SUFFIX, dataQueueTime);
-                await localforage.setItem(key + VALUE_SUFFIX, value);
+                await localforageInstance.setItem(key + SCHEMA_VERSION_SUFFIX, schemaVersion);
+                await localforageInstance.setItem(key + WRITE_TIMESTAMP_SUFFIX, dataQueueTime);
+                await localforageInstance.setItem(key + VALUE_SUFFIX, value);
 
                 const endTime = new Date().getTime();
                 if (debugMode) {
                     // eslint-disable-next-line no-console
                     console.info(`${prefix} Written '${key}' in ${endTime - startTime}ms`);
                 }
+
+                if (mountedRef.current && options && options.immediateWrite && options.onWrite) {
+                    options.onWrite();
+                }
             };
 
-            if (immediate) {
+            if (options && options.immediateWrite) {
                 saveHandler();
             } else {
                 writeTimeoutRef.current = window.setTimeout(

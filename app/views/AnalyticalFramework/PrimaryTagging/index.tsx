@@ -101,7 +101,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                 ...sections,
                 {
                     clientId: newClientId,
-                    order: sections.length,
+                    order: sections.length + 1,
                 },
             ]);
         },

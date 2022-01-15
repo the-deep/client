@@ -27,8 +27,8 @@ function ActionCell<T>(props: Props<T>) {
         onEditClick,
         onDeleteClick,
         disabled,
-        editButtonTitle,
-        deleteButtonTitle,
+        editButtonTitle = 'Edit',
+        deleteButtonTitle = 'Delete',
         deleteConfirmationMessage,
     } = props;
 
@@ -44,7 +44,7 @@ function ActionCell<T>(props: Props<T>) {
         <div className={_cs(styles.actionCell, className)}>
             <QuickActionButton
                 className={styles.button}
-                name="editButton"
+                name={undefined}
                 onClick={handleEditButtonClick}
                 disabled={disabled}
                 title={editButtonTitle}
@@ -53,7 +53,7 @@ function ActionCell<T>(props: Props<T>) {
             </QuickActionButton>
             <QuickActionConfirmButton
                 className={styles.button}
-                name="deleteButton"
+                name={undefined}
                 title={deleteButtonTitle}
                 onConfirm={handleDeleteUserGroupClick}
                 message={deleteConfirmationMessage}

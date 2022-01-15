@@ -121,8 +121,8 @@ module.exports = () => {
         },
         plugins: [
             new EnvironmentPlugin({
-                MY_APP: pkg.name,
-                MY_APP_DESCRIPTION: pkg.description,
+                MY_APP_ID: pkg.name,
+                MY_APP_NAME: 'Deep',
 
                 REACT_APP_VERSION: gitRevisionPlugin.version(),
                 REACT_APP_COMMITHASH: gitRevisionPlugin.commithash(),

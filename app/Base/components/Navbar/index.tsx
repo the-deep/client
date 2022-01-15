@@ -25,6 +25,7 @@ import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
+import localforageInstance from '#base/configs/localforage';
 import {
     LogoutMutation,
     UserNotificationsCountQuery,
@@ -83,6 +84,7 @@ function Navbar(props: Props) {
             onCompleted: (data) => {
                 if (data.logout?.ok) {
                     setUser(undefined);
+                    localforageInstance.clear();
                 } else {
                     alert.show(
                         'Failed to logout.',
