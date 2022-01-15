@@ -17,13 +17,14 @@ import {
 } from 'react-icons/io5';
 import {
     PendingMessage,
+    ButtonLikeLink,
+    Heading,
     ListView,
     Tabs,
     Tab,
     TabList,
     TabPanel,
     Card,
-    Message,
     Kraken,
     Container,
     InformationCard,
@@ -187,7 +188,25 @@ function ExploreDeep(props: Props) {
                     </div>
                     <div className={styles.playbackFrameworkContainer}>
                         <Card className={styles.playbackCard}>
-                            <Message message="DEEP tutorials go here" />
+                            <Kraken
+                                variant="read"
+                                size="large"
+                            />
+                            <div className={styles.helpMessage}>
+                                <Heading size="small">Getting Started</Heading>
+                                <p>
+                                    Everything you need to know to get started
+                                    and get to work in DEEP.
+                                </p>
+                                <ButtonLikeLink
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    to="https://deephelp.zendesk.com/hc/en-us"
+                                    variant="secondary"
+                                >
+                                    Visit Zendesk
+                                </ButtonLikeLink>
+                            </div>
                         </Card>
                         <ContainerCard
                             className={styles.frameworkContainer}

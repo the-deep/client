@@ -29,6 +29,7 @@ import { convertDateToIsoDateTime } from '#utils/common';
 import { mapboxStyle } from '#base/configs/env';
 
 import ProjectList from './ProjectList';
+
 import styles from './styles.css';
 
 const sourceOptions: mapboxgl.GeoJSONSourceRaw & { clusterProperties: unknown } = {
@@ -237,6 +238,7 @@ function ExploreDeepMapView(props: Props) {
                             const projectIds = aFeatures
                                 .map((f) => f?.properties?.projectId)
                                 .filter(isDefined);
+                            setPage(1);
                             setClickedFeatureProperties(projectIds);
                         }
                     },

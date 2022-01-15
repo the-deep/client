@@ -50,8 +50,18 @@
                 gap: var(--dui-spacing-large);
 
                 .playback-card {
+                    display: flex;
+                    align-items: center;
                     flex-basis: calc(50% - var(--dui-spacing-large) / 2);
+                    justify-content: center;
                     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                    padding: var(--dui-spacing-large);
+                    gap: var(--dui-spacing-large);
+
+                    .help-message {
+                        max-width: 320px;
+                        line-height: 1.6;
+                    }
                 }
 
                 .framework-container {

@@ -5,6 +5,7 @@ import {
     QuickActionButton,
     ControlledExpandableContainer,
     Container,
+    Message,
     DateOutput,
     ListView,
     Kraken,
@@ -183,6 +184,12 @@ function ProjectList(props: Props) {
             className={styles.projectList}
             heading={_cs('Projects: ', totalCount.toString())}
             headingSize="small"
+            headingDescription={(
+                <Message
+                    className={styles.message}
+                    message="Showing all unique projects within the selected cluster"
+                />
+            )}
             headerActions={(
                 <QuickActionButton
                     name={undefined}
