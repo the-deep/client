@@ -1,7 +1,0 @@
-@import '~base-scss/utils';
-
-.back-link {
-    @extend %transparent-button-like-link;
-    padding: var(--spacing-small) var(--spacing-medium);
-    font-size: var(--font-size-large);
-}
