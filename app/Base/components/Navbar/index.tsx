@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import { Link } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {
+    Border,
     QuickActionLink,
     QuickActionDropdownMenu,
     DropdownMenu,
@@ -25,6 +26,7 @@ import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
+import { zendeskSupportUrl, extensionChromeUrl } from '#base/configs/env';
 import localforageInstance from '#base/configs/localforage';
 import {
     LogoutMutation,
@@ -166,7 +168,8 @@ function Navbar(props: Props) {
                     <QuickActionLink
                         title="DEEP Support"
                         target="_blank"
-                        to="https://deephelp.zendesk.com/hc/en-us"
+                        rel="noopener noreferrer"
+                        to={zendeskSupportUrl}
                     >
                         <IoHelp />
                     </QuickActionLink>
@@ -210,11 +213,30 @@ function Navbar(props: Props) {
                     >
                         User Groups
                     </DropdownMenuItem>
+                    <Border
+                        inline
+                        width="thin"
+                    />
                     <DropdownMenuItem
                         href={route.termsOfService.path}
                     >
                         Terms of Service
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                        href={extensionChromeUrl}
+                        linkProps={{
+                            // FIXME: we shouldn't need to add "to" here
+                            to: extensionChromeUrl,
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        Chrome extension
+                    </DropdownMenuItem>
+                    <Border
+                        inline
+                        width="thin"
+                    />
                     <DropdownMenuItem
                         name={undefined}
                         onClick={onLogoutClick}

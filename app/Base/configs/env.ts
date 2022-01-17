@@ -19,6 +19,10 @@ export const entriesVizEndpoint = process.env.REACT_APP_ENTRY_VIZ_URL || 'https:
 
 // Chrome extension
 export const extensionId = process.env.REACT_APP_BROWSER_EXTENSION_ID || 'hkmakfhfikfhllpkfpkkaoonapclfajf';
+export const extensionChromeUrl = `https://chrome.google.com/webstore/detail/deep/${extensionId}`;
+
+// Zendesk
+export const zendeskSupportUrl = 'https://deephelp.zendesk.com/hc/en-us';
 
 // Mapbox
 export const mapboxStyle = process.env.REACT_APP_MAPBOX_STYLE;
