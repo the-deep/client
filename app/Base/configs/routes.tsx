@@ -30,6 +30,15 @@ const termsOfService = wrap({
     },
     visibility: 'is-anything',
 });
+const extensionPrivacyPolicy = wrap({
+    path: '/extension-privacy-policy/',
+    title: 'DEEP Extension Privacy Policy',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/ExtensionPrivacyPolicy')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
 const login = wrap({
     path: '/login/',
     title: 'Login',
@@ -436,6 +445,7 @@ const routes = {
     projectCreate: projectCreateRoute,
     projectEdit: projectEditRoute,
     termsOfService,
+    extensionPrivacyPolicy,
     sources,
     assessments,
     leadGroups,

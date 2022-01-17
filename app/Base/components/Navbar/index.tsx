@@ -70,8 +70,8 @@ function Navbar(props: Props) {
     } = useContext(UserContext);
 
     const notificationRef = useRef<
-        { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> } | null
-    >();
+        { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
+    >(null);
 
     const {
         data: notifications,

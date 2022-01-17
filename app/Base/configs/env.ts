@@ -19,7 +19,6 @@ export const entriesVizEndpoint = process.env.REACT_APP_ENTRY_VIZ_URL || 'https:
 
 // Chrome extension
 export const extensionId = process.env.REACT_APP_BROWSER_EXTENSION_ID || 'hkmakfhfikfhllpkfpkkaoonapclfajf';
-export const extensionUrl = process.env.REACT_APP_BROWSER_EXTENSION_URL || 'https://chrome.google.com/webstore/detail/deep/hkmakfhfikfhllpkfpkkaoonapclfajf';
 
 // Mapbox
 export const mapboxStyle = process.env.REACT_APP_MAPBOX_STYLE;
