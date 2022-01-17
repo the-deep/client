@@ -1,0 +1,42 @@
+.single-select-widget-form {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: var(--dui-spacing-medium);
+
+    .container {
+        background-color: var(--dui-color-foreground);
+    }
+
+    .error,
+    .input {
+        padding: var(--dui-spacing-small);
+    }
+
+    .editor-content {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        gap: var(dui-spacing-medium);
+
+        .options-list {
+            overflow-y: auto;
+        }
+    }
+
+    .list-container {
+        background-color: var(--dui-color-foreground);
+    }
+
+    .sortable-list {
+        display: flex;
+        flex-direction: column;
+        border-left: var(--dui-width-separator-medium) dotted var(--dui-color-separator);
+        padding-left: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
+    }
+
+    .option-input {
+        margin: var(--dui-spacing-small) 0;
+    }
+}

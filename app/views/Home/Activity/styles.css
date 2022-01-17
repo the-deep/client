@@ -1,0 +1,13 @@
+.activity {
+    display: flex;
+    flex-direction: column;
+    padding: var(--dui-spacing-large);
+    min-height: 300px;
+    overflow-y: none;
+
+    .container {
+        flex-grow: 1;
+        width: 100%;
+        overflow-y: none;
+    }
+}

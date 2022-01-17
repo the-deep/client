@@ -1,0 +1,40 @@
+.base {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    font-size: var(--dui-font-size-medium);
+
+    .navbar {
+        flex-shrink: 0;
+        height: 64px;
+
+        &:not(.hidden) {
+            transition: 200ms margin-top ease-in;
+            margin-top: 0;
+        }
+
+        &.hidden {
+            transition: 200ms margin-top ease-out;
+            margin-top: -64px;
+        }
+    }
+
+    .init {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    .view {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
+    .alert-container {
+        position: fixed;
+        right: var(--dui-spacing-large);
+        bottom: var(--dui-spacing-large);
+        z-index: 1;
+        width: 24rem;
+    }
+}

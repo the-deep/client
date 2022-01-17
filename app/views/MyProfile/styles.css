@@ -1,0 +1,101 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dui-color-background);
+    height: 100%;
+    overflow-y: auto;
+
+    .container {
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: var(--dui-color-foreground);
+
+            .display-picture-container {
+                display: flex;
+                position: relative;
+                align-items: center;
+                flex-direction: column;
+
+                .display-picture {
+                    display: flex;
+                    flex-shrink: 0;
+                    border-radius: 50%;
+                    width: calc(96px + 15vh);
+                    height: calc(96px + 15vh);
+                    --size: calc(96px + 15vh);
+                }
+
+                .change-display-picture {
+                    position: absolute;
+                    bottom: var(--dui-spacing-small);
+                    left: 53%;
+
+                    .label {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 2em;
+                        height: 2em;
+                        font-size: 1.5em;
+                    }
+
+                    .no-action {
+                        display: none;
+                    }
+
+                    .action {
+                        padding-right: var(--dui-spacing-small);
+                    }
+
+                    .input-section {
+                        display: flex;
+                        padding: 0;
+                        --spacing: 0;
+
+                    }
+
+                    .file-input {
+                        align-items: flex-start;
+                        padding: 0;
+                        --height-border: 0;
+                    }
+                }
+            }
+
+            .user-info {
+                display: flex;
+                gap: var(--dui-spacing-extra-large);
+
+                .preferences,
+                .personal-info {
+                    flex: 1;
+                    background-color: var(--dui-color-foreground);
+                    --spacing: var(--dui-spacing-extra-large);
+
+                    .email-preferences {
+                        flex: 1;
+                        background-color: var(--dui-color-foreground);
+                        padding: var(--dui-spacing-medium) 0;
+                    }
+
+                    .input-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: var(--dui-spacing-medium);
+                    }
+                }
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+                padding: 0 var(--dui-spacing-extra-large);
+            }
+        }
+    }
+}

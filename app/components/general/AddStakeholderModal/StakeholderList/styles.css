@@ -1,0 +1,27 @@
+.stakeholder-list {
+    display: flex;
+    position: relative;
+    flex-basis: calc(calc(100% / 3) - var(--dui-spacing-large));
+    flex-direction: column;
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-foreground);
+    min-width: 160px;
+    height: calc(50% - var(--dui-spacing-large));
+    min-height: 240px;
+    overflow-y: auto;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .row {
+            display: flex;
+            padding: var(--dui-spacing-small);
+
+            &:hover {
+                background-color: var(--dui-color-background-hover);
+            }
+        }
+    }
+}

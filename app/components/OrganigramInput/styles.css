@@ -1,0 +1,28 @@
+:global {
+    .org-tree-node-label {
+        .org-tree-node-label-inner {
+            border-radius: var(--dui-border-radius-card);
+            padding: 0;
+        }
+    }
+}
+.disabled {
+    :global {
+        .org-tree-node-label {
+            pointer-events: none;
+        }
+    }
+}
+
+.card {
+    display: flex;
+    flex-grow: 1;
+    cursor: pointer;
+    user-select: none;
+    padding: var(--dui-spacing-medium);
+
+    &.selected {
+        background-color: var(--dui-color-accent);
+        color: var(--dui-color-text-on-accent);
+    }
+}

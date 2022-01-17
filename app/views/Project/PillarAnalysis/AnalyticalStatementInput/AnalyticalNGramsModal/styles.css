@@ -1,0 +1,54 @@
+.analytical-modal {
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .top-container {
+            flex-shrink: 0;
+            background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-medium);
+        }
+
+        .bottom-container {
+            display: flex;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .entries-container {
+                display: flex;
+                flex-basis: 25%;
+                flex-direction: column;
+                background-color: var(--dui-color-foreground);
+                overflow-y: auto;
+
+                .list {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+                    gap: var(--dui-spacing-medium);
+
+                    .excerpt {
+                        margin: 0;
+                        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                        padding: var(--dui-spacing-small);
+                    }
+                }
+            }
+
+            .chart-container {
+                display: flex;
+                flex-basis: 75%;
+                overflow-y: auto;
+            }
+
+            .message {
+                display: flex;
+                align-items: center;
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+    }
+}

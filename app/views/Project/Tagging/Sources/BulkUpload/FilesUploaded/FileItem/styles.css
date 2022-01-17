@@ -1,0 +1,23 @@
+.item-container {
+    .item {
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium);
+        font-size: var(--dui-font-size-small);
+        font-weight: var(--dui-font-weight-regular);
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-medium);
+    }
+
+    &:hover {
+        background-color: var(--dui-color-grey6);
+    }
+
+    &.selected {
+        background-color: var(--dui-color-surface-information);
+    }
+}

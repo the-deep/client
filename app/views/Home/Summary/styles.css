@@ -1,0 +1,16 @@
+.summary {
+    padding: 0;
+
+    .content {
+        --gap: var(--dui-spacing-large);
+
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--gap);
+
+        >* {
+            flex-basis: calc((100% - var(--gap)) / 2);
+            flex-grow: 1;
+        }
+    }
+}

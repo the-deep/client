@@ -1,0 +1,12 @@
+.lead-copy-modal {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    height: 40vh;
+    gap: var(--dui-spacing-large);
+
+    .search-input {
+        display: flex;
+        margin: var(--dui-spacing-large) 0;
+    }
+}

@@ -12,13 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Checkout tools repo
-        uses: actions/checkout@v2
-        with:
-          repository: toggle-corp/react-store
-          ref: develop
-          path: src/vendor/react-store
-
       - name: 🐳 Prepare Docker
         id: prep
         run: |

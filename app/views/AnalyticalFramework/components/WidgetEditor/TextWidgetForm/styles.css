@@ -1,0 +1,8 @@
+.text-widget-form {
+    .container {
+        background-color: var(--dui-color-foreground);
+    }
+    .input {
+        margin: var(--dui-spacing-small) var(--dui-spacing-medium);
+    }
+}

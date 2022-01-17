@@ -1,0 +1,7 @@
+.modal {
+    width: clamp(480px, 60vw, 720px);
+
+    .modal-body {
+        padding: var(--dui-spacing-large) 0;
+    }
+}

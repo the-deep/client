@@ -1,0 +1,7 @@
+.modal {
+    .modal-body {
+        display: flex;
+        padding: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
+    }
+}

@@ -1,0 +1,6 @@
+.modal {
+    .modal-body {
+        display: flex;
+        gap: var(--dui-spacing-medium);
+    }
+}

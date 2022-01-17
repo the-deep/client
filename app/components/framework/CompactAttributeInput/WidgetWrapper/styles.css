@@ -1,0 +1,42 @@
+.widget-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-small);
+
+    &.errored {
+        /* FIXME: add proper styling */
+        background-color: var(--dui-color-danger);
+    }
+
+    .header {
+        .heading {
+            display: flex;
+            align-items: flex-end;
+            text-transform: capitalize;
+            color: var(--dui-color-brand);
+            font-size: var(--dui-font-size-medium);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .actions {
+            opacity: 0;
+        }
+    }
+
+    &:hover {
+        .header {
+            .actions {
+                opacity: 1;
+            }
+        }
+    }
+
+    .children {
+        &.read-only {
+            >* {
+                color: var(--dui-color-accent);
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+    }
+}

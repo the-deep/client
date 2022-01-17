@@ -1,0 +1,9 @@
+.time-range-widget-form {
+    .container {
+        background-color: var(--dui-color-foreground);
+    }
+    .error,
+    .input {
+        margin: var(--dui-spacing-small) var(--dui-spacing-medium);
+    }
+}

@@ -1,0 +1,13 @@
+.search-stakeholder {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dui-color-foreground);
+    overflow-y: auto;
+
+    .items {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+}

@@ -1,0 +1,25 @@
+.forgot-password {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--dui-color-brand);
+    width: 100vw;
+    height: 100vh;
+
+    .card {
+        display: flex;
+        padding: 0;
+
+        .welcome-content {
+            border-top-left-radius: var(--dui-border-radius-card);
+            border-bottom-left-radius: var(--dui-border-radius-card);
+        }
+
+        .right-content {
+            border-top-right-radius: var(--dui-border-radius-card);
+            border-bottom-right-radius: var(--dui-border-radius-card);
+            background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-super-large);
+        }
+    }
+}

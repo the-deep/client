@@ -44,9 +44,8 @@ plugins:
         enabled: false
     config:
       config: .eslintrc
-  scss-lint:
-    enabled: true
-    config: .scss-lint.yml
+  # TODO: add typescript
+  # TODO: add stylelint
 plugins:
   fixme:
     enabled: true
@@ -59,7 +58,6 @@ plugins:
 exclude_patterns:
 - "build/"
 - "coverage/"
-- "config/"
 - "scripts/"
 
 - "node_modules/"
@@ -67,5 +65,4 @@ exclude_patterns:
 - "**/spec/"
 - "**/test/"
 - "**/tests/"
-- "**/vendor/"
 - "**/*.test.js"

@@ -1,0 +1,23 @@
+.matrix {
+    .row-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .row {
+            display: flex;
+            flex-direction: column;
+
+            .title {
+                text-transform: capitalize;
+                color: var(--dui-color-text-label);
+                font-size: var(--dui-font-size-small);
+            }
+
+            .selected-values {
+                color: var(--dui-color-accent);
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+    }
+}

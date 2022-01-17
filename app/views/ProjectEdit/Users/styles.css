@@ -1,0 +1,18 @@
+.users {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: var(--dui-color-background);
+    padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
+    overflow-y: auto;
+
+    .user-list {
+        flex-basis: 50%;
+        flex-grow: 1;
+    }
+
+    .user-group-list {
+        flex-basis: 50%;
+        flex-grow: 1;
+    }
+}

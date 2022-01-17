@@ -1,0 +1,19 @@
+.tagging {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    .sub-navbar {
+        .link {
+            padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+            text-transform: capitalize;
+            font-size: var(--dui-font-size-medium);
+        }
+    }
+
+    .child-view {
+        flex-grow: 1;
+        overflow: auto;
+        scrollbar-gutter: stable;
+    }
+}

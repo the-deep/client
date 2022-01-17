@@ -1,0 +1,19 @@
+.actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-small);
+
+    .row {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: var(--dui-spacing-small);
+
+        .button {
+            flex-shrink: 0;
+        }
+    }
+}

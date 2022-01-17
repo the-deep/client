@@ -1,0 +1,13 @@
+.widget-wrapper {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .header {
+        align-items: center;
+    }
+
+    .children {
+        padding: var(--dui-spacing-small);
+    }
+}

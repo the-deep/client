@@ -1,0 +1,34 @@
+.excerpt-input {
+    display: flex;
+    flex-direction: column;
+    min-height: 64px;
+    overflow-y: auto;
+    gap: var(--dui-spacing-small);
+
+    .empty-excerpt {
+        color: var(--dui-color-text-label);
+        font-weight: var(--dui-font-weight-regular);
+        font-style: italic;
+    }
+
+    .text-area {
+        flex-grow: 1;
+    }
+}
+
+.image-excerpt-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .image {
+        flex-grow: 1;
+        background-color: var(--dui-color-background-information);
+        overflow-y: auto;
+    }
+
+    .text-area-for-image {
+        flex-shrink: 0;
+    }
+}
+

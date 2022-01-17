@@ -1,7 +1,6 @@
-src/vendor/react-store/docs
-src/utils/string_server.js
 node_modules
 build
+generated
 .*
 *.test.js
 *.test.ts

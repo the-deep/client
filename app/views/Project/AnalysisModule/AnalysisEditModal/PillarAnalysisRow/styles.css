@@ -1,0 +1,21 @@
+.pillar-analysis-row {
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+    gap: var(--dui-spacing-medium);
+
+    .input {
+        flex-basis: 30%;
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+
+    .button {
+        align-self: center;
+        flex-shrink: 0;
+    }
+}
+
+.options-popup {
+    width: 480px!important;
+}

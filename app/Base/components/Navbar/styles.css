@@ -1,0 +1,89 @@
+.navbar {
+    display: flex;
+    position: relative;
+    align-items: center;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    background-color: var(--dui-color-foreground);
+    padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
+    overflow: auto;
+    color: var(--dui-color-text);
+
+    .app-brand {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--dui-spacing-medium) var(--dui-spacing-large);
+        color: var(--dui-color-brand);
+
+        .logo {
+            height: var(--dui-font-size-super-large);
+        }
+    }
+
+    .main {
+        display: flex;
+        align-self: stretch;
+        flex-grow: 1;
+        overflow: auto;
+
+        .nav-links {
+            display: flex;
+            flex-grow: 1;
+            justify-content: flex-start;
+            padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
+            overflow: hidden;
+            font-size: var(--dui-font-size-large);
+
+            .link {
+                margin: 0 var(--dui-spacing-large);
+            }
+        }
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--dui-spacing-large);
+        gap: var(--dui-spacing-small);
+
+        .notification-button {
+            position: relative;
+            overflow: visible;
+
+            .notification-count {
+                display: flex;
+                position: absolute;
+                top: -0.5em;
+                right: -0.5em;
+                align-items: center;
+                justify-content: center;
+                /* NOTE: Want to move this a bit up */
+                border-radius: 1em;
+                background-color: var(--dui-color-danger);
+                padding: 2px;
+                min-width: 1.4em;
+                min-height: 1.4em;
+                color: var(--dui-color-text-on-dark);
+                font-size: var(--dui-font-size-extra-small);
+            }
+        }
+    }
+
+    .user-display {
+        display: flex;
+        align-items: stretch;
+        flex-shrink: 0;
+        padding: 0 var(--dui-spacing-large);
+        color: var(--dui-color-text-message);
+        font-weight: var(--dui-font-weight-bold);
+
+        .avatar {
+            --size: 1.8rem;
+        }
+    }
+}
+
+.popup {
+    max-height: unset!important;
+}

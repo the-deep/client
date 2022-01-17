@@ -1,0 +1,71 @@
+.comment-container {
+    display: flex;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    background-color: var(--dui-color-white);
+    gap: var(--dui-spacing-small);
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .user-name {
+            display: inline;
+            font-size: var(--font-size-medium);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .details {
+            display: inline;
+            color: var(--dui-color-text);
+        }
+
+        .comment-section {
+            display: flex;
+            align-items: center;
+
+            .user-action {
+                display: inline;
+            }
+
+            &.inline {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+        .info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .header-actions{
+        color: var(--dui-color-accent);
+
+        .assignees {
+            max-width: 14rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .comment {
+        background-color: transparent;
+        color: var(--dui-color-text);
+    }
+
+    .edit-comment {
+        background-color: var(--dui-color-background-information);
+    }
+
+    .date {
+        color: var(--dui-color-text-description);
+        font-size: var(--dui-font-size-medium);
+    }
+
+    &:hover {
+        background-color: var(--dui-color-background-hover);
+    }
+}

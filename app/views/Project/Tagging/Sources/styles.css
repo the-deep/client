@@ -1,0 +1,43 @@
+.sources {
+    display: flex;
+    flex-direction: column;
+
+    .top-section {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-medium);
+
+        .stats {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .filter {
+            display: flex;
+            flex-shrink: 0;
+        }
+    }
+
+    .tabs {
+        flex-shrink: 0;
+
+        .tab {
+            padding: var(--dui-spacing-small);
+            font-size: var(--dui-font-size-extra-large);
+        }
+    }
+
+    .leads {
+        flex-grow: 1;
+        background-color: var(--dui-color-background);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+
+        .table {
+            display: flex;
+            flex-grow: 1;
+            flex-shrink: 0;
+        }
+    }
+}

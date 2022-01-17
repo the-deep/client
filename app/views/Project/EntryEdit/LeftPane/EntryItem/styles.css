@@ -1,0 +1,82 @@
+.tagged-excerpt {
+    /* NOTE: when user select tagged excerpt, the add button will be visible */
+    position: relative;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+    background-color: var(--dui-color-foreground);
+    max-height: 360px;
+    overflow-y: auto;
+    font-weight: var(--dui-font-weight-bold);
+    user-select: none;
+
+    .heading-section {
+        overflow: visible;
+    }
+
+    .vertical-border {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+        width: var(--dui-width-separator-thick);
+        height: 100%;
+    }
+
+    &.active {
+        .vertical-border {
+            background-color: var(--dui-color-accent);
+            animation: grow var(--dui-duration-transition-medium) ease-in forwards;
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction:column;
+        overflow-y: auto;
+
+        .clickable-area {
+            display: flex;
+            flex-direction:column;
+            flex-grow: 1;
+            cursor: pointer;
+            overflow-y: auto;
+        }
+    }
+}
+
+.excerpt-text-area {
+    margin: var(--dui-spacing-small);
+}
+
+.edit-excerpt-popup {
+    width: 20rem;
+    max-width: unset!important;
+
+    .content {
+        padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+    }
+}
+
+
+.diff-excerpt-popup {
+    width: 20rem;
+    max-width: unset!important;
+
+    .content {
+        padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+        .excerpt {
+            .text {
+                padding: var(--dui-spacing-small);
+            }
+        }
+    }
+}
+
+@keyframes grow {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}

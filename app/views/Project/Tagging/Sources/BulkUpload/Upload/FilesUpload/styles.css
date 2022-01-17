@@ -1,0 +1,36 @@
+.files-upload {
+    display: flex;
+    gap: var(--dui-spacing-small);
+
+    .icon-container {
+        padding: var(--dui-spacing-medium) 0;
+
+        .icon {
+            flex-shrink: 0;
+            color: var(--dui-color-text-label);
+            font-size: var(--dui-font-size-super-large);
+        }
+    }
+
+    .file-input {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        border: none;
+        --height-border: 0;
+
+        .input-section {
+            align-items: flex-start;
+            flex-direction: column-reverse;
+
+            .input-container {
+                font-size: var(--dui-font-size-large);
+                font-weight: var(--dui-font-weight-bold);
+
+                >* {
+                    color: var(--dui-color-text-label);
+                }
+            }
+        }
+    }
+}

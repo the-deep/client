@@ -1,0 +1,35 @@
+.comment-button {
+    position: relative;
+    overflow: visible;
+
+    .comment-count {
+        position: absolute;
+        /* NOTE: Want to move this a bit up */
+        top: -0.5em;
+        right: -0.5em;
+        border-radius: 1em;
+        background-color: var(--dui-color-danger);
+        width: 1.3em;
+        height: 1.3em;
+        color: var(--dui-color-text-on-dark);
+        font-size: var(--dui-font-size-extra-small);
+    }
+}
+
+.entry-comment-modal {
+    display: flex;
+    width: 640px;
+    gap: var(--dui-spacing-medium);
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .comment-list {
+            max-height: 400px;
+            overflow-y: auto;
+            gap: var(--dui-spacing-medium);
+        }
+    }
+}

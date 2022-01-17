@@ -1,0 +1,37 @@
+.register-form {
+    display: flex;
+
+    .register-form-container {
+        margin: auto;
+        background-color: var(--dui-color-foreground);
+        overflow: unset;
+        --spacing: var(--dui-spacing-extra-large);
+
+        .heading-description {
+            display: flex;
+            gap: var(--dui-spacing-large);
+            text-transform: initial;
+
+            >* {
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-large);
+            width: 320px;
+        }
+    }
+
+    .register-success {
+        display: flex;
+        margin: var(--dui-spacing-medium) auto;
+    }
+
+    .kraken {
+        align-self: flex-end;
+        margin: calc(-1 * var(--dui-spacing-extra-large));
+    }
+}

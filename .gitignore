@@ -3,7 +3,6 @@
 # dependencies
 /node_modules
 vendor/
-src/public/
 generated/
 
 # testing

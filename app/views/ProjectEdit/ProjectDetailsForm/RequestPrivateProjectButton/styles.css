@@ -1,0 +1,18 @@
+.request-private-project-modal {
+    display: flex;
+    flex-direction: column;
+    width: clamp(640px, 60vw, 96vw);
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+
+        .input {
+            padding: var(--dui-spacing-medium) 0;
+        }
+
+        .message {
+            padding: var(--dui-spacing-medium) 0;
+        }
+    }
+}

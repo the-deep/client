@@ -1,0 +1,20 @@
+.usergroups {
+    .user-groups-link {
+        margin: 0 var(--dui-spacing-large);
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        overflow-x: auto;
+
+        .table-row {
+            background-color: var(--dui-color-foreground);
+        }
+
+        .pager {
+            align-self: flex-end;
+            flex-shrink: 0;
+        }
+    }
+}

@@ -1,0 +1,45 @@
+.activity-item {
+    &:not(:last-child) {
+        border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
+    }
+
+    .display-picture {
+        align-self: flex-start;
+        flex-shrink: 0;
+        background: var(--color-foreground);
+        --size: 1.8rem;
+    }
+
+    .main-content {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
+
+        .description {
+            display: inline-block;
+            word-break: break-all;
+
+            >* {
+                display: inline;
+                padding: 0;
+
+                >* {
+                    display: inline;
+                    padding: 0;
+                }
+            }
+        }
+
+        .created-date {
+            display: block;
+            color: var(--dui-color-text-label);
+            font-size: var(--dui-font-size-small);
+        }
+
+        .bold-text{
+            color: var(--dui-color-brand);
+            font-weight: var(--dui-font-weight-bold);
+        }
+    }
+}

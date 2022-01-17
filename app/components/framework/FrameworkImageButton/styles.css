@@ -1,0 +1,23 @@
+.framework-image-button {
+    border-radius: 0;
+    padding: 0;
+    text-align: left;
+    color: var(--dui-color-brand);
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.modal {
+    width: 80vw;
+    height: 80vh;
+
+    .content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dui-color-text-label);
+        font-size: var(--dui-font-size-large);
+    }
+}

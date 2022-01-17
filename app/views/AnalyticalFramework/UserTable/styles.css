@@ -1,0 +1,10 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    min-height: clamp(320px, 30vh, 50%);
+
+    .table-row {
+        background-color: var(--dui-color-foreground);
+    }
+}

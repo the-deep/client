@@ -1,0 +1,101 @@
+.progress-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--dui-spacing-medium);
+
+    .number-circle {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+        border-radius: 50%;
+        width: 2.7rem;
+        height: 2.7rem;
+        font-size: var(--dui-font-size-large);
+        font-weight: var(--dui-font-weight-bold);
+
+        &.complement1 {
+            background-color: var(--dui-color-complement1);
+            color: var(--dui-color-text-on-accent);
+        }
+
+        &.complement2 {
+            background-color: var(--dui-color-complement2);
+            color: var(--dui-color-text-on-accent);
+        }
+
+        &.complement3 {
+            background-color: var(--dui-color-complement3);
+            color: var(--dui-color-text-on-accent);
+        }
+    }
+
+
+    .right {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: var(--dui-spacing-small);
+
+        .line {
+            background-color: var(--dui-color-grey6);
+            height: var(--height-bar);
+
+            .progress {
+                transition: var(--dui-duration-transition-slow) width ease-in-out;
+                background-color: var(--dui-color-accent);
+                height: 100%;
+
+                &.complement1 {
+                    background-color: var(--dui-color-complement1);
+                }
+
+                &.complement2 {
+                    background-color: var(--dui-color-complement2);
+                }
+
+                &.complement3 {
+                    background-color: var(--dui-color-complement3);
+                }
+            }
+
+            &.small {
+                --height-bar: 0.6em;
+                border-radius: calc(var(--height-bar) / 2);
+
+                .progress {
+                    border-radius: var(--dui-border-radius-progress-bar);
+                }
+            }
+
+            &.large {
+                --height-bar: 0.8em;
+            }
+        }
+    }
+
+    &.no-circle {
+        flex-direction: column;
+        flex-shrink: 0;
+        justify-content: flex-start;
+        gap: var(--dui-spacing-extra-small);
+
+        .number-circle {
+            justify-content: flex-start;
+            border-radius: unset;
+            background: unset;
+            width: 100%;
+            height: unset;
+            color: var(--dui-color-text);
+            font-size: var(--dui-font-size-medium);
+            font-weight: var(--dui-font-weight-medium);
+        }
+
+        .right {
+            gap: var(--dui-spacing-extra-small);
+            width: 100%;
+            height: auto;
+        }
+    }
+
+}

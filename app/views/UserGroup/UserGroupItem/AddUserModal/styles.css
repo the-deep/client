@@ -1,0 +1,10 @@
+.modal {
+    display: flex;
+
+    .modal-body {
+        display: flex;
+        align-items: flex-start;
+        flex-grow: 1;
+        gap: var(--dui-spacing-large);
+    }
+}

@@ -1,0 +1,22 @@
+.add-stakeholder-modal {
+    .modal-body {
+        display: flex;
+        gap: var(--dui-spacing-large);
+        --width-left-container: 20rem;
+
+        .left {
+            width: var(--width-left-container);
+            overflow-y: auto;
+        }
+
+        .right {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: var(--dui-color-surface-information);
+            gap: var(--dui-spacing-large);
+            padding: var(--dui-spacing-large);
+            width: calc(100% - var(--width-left-container));
+            overflow: auto;
+        }
+    }
+}

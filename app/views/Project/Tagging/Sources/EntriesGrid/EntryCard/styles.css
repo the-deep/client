@@ -1,0 +1,59 @@
+.entry-card {
+    display: flex;
+    position: relative;
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-foreground);
+    --height-entry-card-content: 70vh;
+
+    .source-details {
+        flex-grow: 1;
+        background-color: transparent;
+        padding: var(--dui-spacing-large);
+        max-height: var(--height-entry-card-content);
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--dui-spacing-large);
+
+            .excerpt {
+                padding: var(--dui-spacing-large) 0;
+            }
+
+            .meta-section {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-small);
+            }
+        }
+    }
+
+    &.expanded {
+        border: var(--dui-color-accent) solid var(--dui-width-separator-thin);
+
+        .source-details {
+            flex-basis: 50%;
+            flex-grow: unset;
+        }
+
+        .vertical-separator {
+            --top: var(--dui-spacing-extra-large);
+            margin: var(--top) 0;
+            background-color: var(--dui-color-separator);
+            width: var(--dui-width-separator-thin);
+            height: calc(100% - var(--top) * 2);
+        }
+
+        .entry {
+            flex-basis: 50%;
+            background-color: transparent;
+            max-height: var(--height-entry-card-content);
+        }
+    }
+
+    .close-button {
+        position: absolute;
+        top: var(--dui-spacing-medium);
+        right: var(--dui-spacing-medium);
+    }
+}

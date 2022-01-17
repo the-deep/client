@@ -1,0 +1,5 @@
+.project-switcher {
+    display: flex;
+    align-items: center;
+    gap: var(--dui-spacing-small);
+}

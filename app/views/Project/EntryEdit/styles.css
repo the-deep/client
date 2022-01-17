@@ -1,0 +1,117 @@
+.entry-edit {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .tab-panel-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .tab-panel {
+            display: flex;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .secondary-tagging,
+            .primary-tagging {
+                flex-grow: 1;
+                overflow: auto;
+            }
+
+            .primary-tagging {
+                display: flex;
+                gap: var(--dui-spacing-large);
+                background-color: var(--dui-color-background);
+
+                .source-preview {
+                    flex-shrink: 0;
+                    width: calc(16rem + 16vw);
+                }
+
+                .sections {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    padding-right: var(--dui-spacing-super-large);
+                    overflow-y: auto;
+
+                    .content {
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        background-color: var(--dui-color-foreground);
+                        overflow-y: auto;
+
+                        .tabs {
+                            flex-shrink: 0;
+
+                            .border-wrapper {
+                                display: flex;
+                                flex-grow: 1;
+                            }
+
+                            .tab {
+                                flex-grow: 1;
+
+                                /*
+                                &.errored {
+                                color: var(--dui-color-danger);
+                                }
+                                 */
+                            }
+                        }
+
+                        .panel {
+                            display: flex;
+                            flex-direction: column;
+                            flex-grow: 1;
+                            overflow-y: auto;
+                        }
+                    }
+                }
+            }
+
+            .secondary-tagging {
+                display: flex;
+                gap: var(--dui-spacing-large);
+                background-color: var(--dui-color-background);
+
+                .source-preview {
+                    flex-shrink: 0;
+                    width: calc(16rem + 16vw);
+                }
+
+                .right-container {
+                    flex-grow: 1;
+                    padding-right: var(--dui-spacing-super-large);
+
+                    .framework-output {
+                        background-color: var(--dui-color-foreground);
+                    }
+                }
+            }
+
+            .review {
+                display: flex;
+                flex-direction: column;
+                padding-right: var(--dui-spacing-super-large);
+                padding-left: var(--dui-spacing-super-large);
+                width: 100%;
+                overflow: auto;
+
+                .review-content {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow: auto;
+                }
+            }
+        }
+    }
+}

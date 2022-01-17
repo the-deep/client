@@ -1,0 +1,25 @@
+.notifications {
+    background-color: var(--dui-color-foreground);
+    width: 480px;
+    height: 60vh;
+
+    /*
+    .notification-group {
+        background-color: var(--dui-color-foreground);
+    }
+    */
+    .header-actions {
+        align-self: center;
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+    }
+
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .notification-item {
+            flex-shrink: 0;
+        }
+    }
+}

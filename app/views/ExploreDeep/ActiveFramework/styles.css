@@ -1,0 +1,27 @@
+.active-framework {
+    display: flex;
+    padding: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-medium);
+
+    .framework-title {
+        display: flex;
+        flex-basis: 45%;
+        color: var(--dui-color-brand);
+        font-size: var(--dui-font-size-large);
+        font-weight: var(--dui-font-weight-bold);
+    }
+
+    .count {
+        display: flex;
+        flex-basis: 27.5%;
+        gap: var(--dui-spacing-small);
+
+        .number {
+            font-weight: var(--dui-font-weight-bold);
+        }
+    }
+
+    &:not(:last-child) {
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    }
+}

@@ -1,0 +1,36 @@
+.welcome-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-medium);
+    background-color: var(--dui-color-background-information);
+    padding: var(--dui-spacing-super-large);
+
+    .deep-logo {
+        align-self: flex-start;
+        margin: var(--dui-spacing-large) 0;
+        height: 72px;
+        color: var(--dui-color-brand);
+    }
+
+    .top-text {
+        text-transform: unset;
+        color: var(--dui-color-brand);
+    }
+
+    .bottom-text {
+        width: 18em;
+        text-transform: uppercase;
+        color: var(--dui-color-brand);
+    }
+
+    .explore-heading {
+        margin-top: var(--dui-spacing-super-large);
+        color: var(--dui-color-text-label);
+    }
+
+    .links-container {
+        display: flex;
+        gap: var(--dui-spacing-small);
+    }
+}
+

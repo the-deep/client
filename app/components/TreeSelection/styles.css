@@ -1,0 +1,25 @@
+.tree-selection {
+    .sortable-node {
+        border: 0;
+        background-color: var(--dui-color-foreground);
+
+        .header {
+            margin-bottom: calc(var(--spacing) * -1);
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            background-color: transparent;
+        }
+
+        .drag-handle {
+            padding: var(--dui-spacing-extra-small);
+            font-size: var(--dui-font-size-extra-small);
+        }
+
+        .checkbox {
+            padding: var(--dui-spacing-extra-small);
+        }
+
+        .sortable-content {
+            padding-right: 0;
+        }
+    }
+}

@@ -1,0 +1,16 @@
+.container {
+    background-color: var(--dui-color-foreground);
+
+    .content {
+
+        .pillar-list {
+            .pillar {
+                background-color: transparent;
+
+                &:not(:last-child) {
+                    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                }
+            }
+        }
+    }
+}

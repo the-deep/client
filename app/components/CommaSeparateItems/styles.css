@@ -1,0 +1,5 @@
+.items {
+    .item {
+        font-weight: var(--dui-font-weight-bold);
+    }
+}

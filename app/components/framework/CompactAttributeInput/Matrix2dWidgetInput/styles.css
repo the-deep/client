@@ -1,0 +1,48 @@
+.matrix {
+    .row-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-medium);
+
+        .matrix-row {
+            display: flex;
+            flex-direction:column;
+            gap: var(--dui-spacing-medium);
+
+            .row-title {
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            .column {
+                .column-details {
+                    .column-title {
+                        display: flex;
+                        align-items: center;
+                        gap: var(--dui-spacing-small);
+
+                        .subrow-label {
+                            color: var(--dui-color-text-label);
+                        }
+
+                        .separator-icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: var(--dui-color-text-label);
+                        }
+
+                        .column-label {
+                            color: var(--dui-color-text-label);
+                        }
+
+                    }
+
+
+                    .selected-values {
+                        color: var(--dui-color-accent);
+                    }
+                }
+            }
+        }
+    }
+}

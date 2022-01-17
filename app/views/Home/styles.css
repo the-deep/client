@@ -1,0 +1,53 @@
+.home {
+    display: flex;
+    background-color: var(--dui-color-background);
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+
+    .main-content {
+        display: flex;
+        align-content: flex-start;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-extra-large);
+        padding: var(--dui-spacing-large) 0;
+        padding-left: var(--dui-spacing-super-large);
+
+        .summary {
+            align-self: stretch;
+            flex-basis: 40%;
+        }
+
+        .project-tagging-activity {
+            flex-basis: calc(60% - var(--dui-spacing-extra-large));
+            padding: 0;
+        }
+
+        .recent-projects {
+            flex-basis: 100%;
+            padding: 0;
+
+            .project-list {
+                display: flex;
+                flex-direction: column;
+                gap: var(--dui-spacing-medium);
+                min-height: 40vh;
+            }
+
+            .empty-text {
+                font-size: var(--dui-font-size-large);
+            }
+        }
+    }
+
+    .right-content {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-large) var(--dui-spacing-extra-large);
+        padding-right: var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-extra-large);
+    }
+}

@@ -1,0 +1,17 @@
+.text-area {
+    position: relative;
+
+    .icons {
+        position: absolute;
+        bottom: var(--dui-spacing-small);
+        left: var(--dui-spacing-small);
+        transition: 200ms opacity ease-in-out;
+        opacity: 0;
+    }
+
+    &:hover {
+        .icons {
+            opacity: 1;
+        }
+    }
+}

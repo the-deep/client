@@ -1,0 +1,28 @@
+.leads-selection {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    .source-entry-filter {
+        display: flex;
+        flex-grow: 1;
+        flex-shrink: 0;
+        margin: var(--dui-spacing-small) 0;
+    }
+
+    .table-container {
+        margin: var(--dui-spacing-small);
+        max-height: 50vh;
+        overflow: auto;
+
+        .title-column {
+            min-width: 120px;
+            min-height: 20vh;
+        }
+    }
+
+    .footer {
+        flex-shrink: 0;
+    }
+}

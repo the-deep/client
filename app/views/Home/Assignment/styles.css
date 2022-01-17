@@ -1,0 +1,22 @@
+.assignments {
+    background-color: var(--dui-color-white);
+    padding: 0;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--dui-border-radius-card);
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-medium);
+        height: calc(10em + 25vh);
+        overflow-y: auto;
+
+        .assignment-list {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: var(--dui-spacing-medium);
+        }
+    }
+}
