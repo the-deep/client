@@ -9,7 +9,6 @@ export function joinUrlPart(foo: string, bar: string) {
     return foo + bar;
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export function wrap<T extends string, K extends { className?: string }>(
     props: Omit<PageProps<K>, 'overrideProps' | 'path'> & { path: T, parent?: { path: string } },
 ) {
