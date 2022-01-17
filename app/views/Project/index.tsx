@@ -88,13 +88,27 @@ function Project(props: Props) {
         );
     }
 
-    const inconsistent = project && projectId !== project.id;
-
-    if (loading || inconsistent) {
+    // NOTE: `loading` is set to `true` randomly which dismounts all the
+    // children below so, only show loading if
+    // - there is no project
+    // - or projectId has changed
+    // - and loading is set
+    const wait = !project || project.id !== projectId;
+    if (wait) {
+        if (loading) {
+            return (
+                <PreloadMessage
+                    className={className}
+                    content="Checking project permissions..."
+                />
+            );
+        }
+        // NOTE: this conditional branch should never be executed
         return (
             <PreloadMessage
                 className={className}
-                content="Checking project permissions..."
+                heading="Oh no!"
+                content="Some error occurred"
             />
         );
     }
