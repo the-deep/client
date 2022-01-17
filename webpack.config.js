@@ -186,7 +186,7 @@ module.exports = () => {
             }),
             new ESLintPlugin({
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
-                reportUnusedDisableDirectives: "warn",
+                reportUnusedDisableDirectives: 'warn',
             }),
         ],
     };
@@ -268,7 +268,7 @@ module.exports = () => {
                 client: {
                     overlay: {
                         warnings: false,
-                        errors: true
+                        errors: true,
                     },
                     logging: 'none',
                 },
