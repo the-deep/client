@@ -85,11 +85,13 @@ const PAGE_SIZE = 25;
 
 interface Props {
     className?: string;
+    closeNotification: () => void;
 }
 
 function Notifications(props: Props) {
     const {
         className,
+        closeNotification,
     } = props;
 
     const [doneNotificationsHidden, onDoneNotificationsHiddenChange] = useState(true);
@@ -118,9 +120,10 @@ function Notifications(props: Props) {
 
     const notificationRendererParams = useCallback((key: string, item: Notification) => ({
         notificationId: key,
+        closeNotification,
         notification: item,
         onNotificationUpdate: refetch,
-    }), [refetch]);
+    }), [refetch, closeNotification]);
 
     /*
     const notificationGroupRendererParams = useCallback((key: string) => ({
