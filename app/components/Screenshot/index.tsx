@@ -4,6 +4,8 @@ import { brush as d3Brush } from 'd3-brush';
 import { select } from 'd3-selection';
 import { _cs } from '@togglecorp/fujs';
 
+import { extensionChromeUrl } from '#base/configs/env';
+
 import { getScreenshot } from '#utils/browserExtension';
 
 import styles from './styles.css';
@@ -148,7 +150,8 @@ function Screenshot(props: Props) {
                     You can download it from the chrome web store
                     <a
                         className={styles.link}
-                        href="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
+                        // NOTE: the `deep` username is hardcoded here
+                        href={extensionChromeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                     >

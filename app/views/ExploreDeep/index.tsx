@@ -40,6 +40,7 @@ import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import routes from '#base/configs/routes';
 import _ts from '#ts';
 import UserContext from '#base/context/UserContext';
+import { zendeskSupportUrl } from '#base/configs/env';
 
 import ProjectFilterForm from './ProjectFilterForm';
 import ActiveProjectItem, { Props as ActiveProjectItemProps } from './ActiveProject';
@@ -201,7 +202,7 @@ function ExploreDeep(props: Props) {
                                 <ButtonLikeLink
                                     target="_blank"
                                     rel="noreferrer noopener"
-                                    to="https://deephelp.zendesk.com/hc/en-us"
+                                    to={zendeskSupportUrl}
                                     variant="secondary"
                                 >
                                     Visit Zendesk

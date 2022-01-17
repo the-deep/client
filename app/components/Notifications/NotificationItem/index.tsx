@@ -18,6 +18,7 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     notification: Notification;
+    closeNotification: () => void;
     onNotificationUpdate: () => void;
 }
 
@@ -45,6 +46,7 @@ function NotificationItem(props: Props) {
         className,
         notification,
         onNotificationUpdate,
+        closeNotification,
     } = props;
 
     if (notification.notificationType === 'PROJECT_JOIN_REQUEST') {
@@ -140,6 +142,7 @@ function NotificationItem(props: Props) {
                             entryLink: editEntryLink ? (
                                 <Link
                                     className={styles.link}
+                                    onClick={closeNotification}
                                     to={editEntryLink}
                                 >
                                     entry
@@ -185,6 +188,7 @@ function NotificationItem(props: Props) {
                             entryLink: editEntryLink ? (
                                 <Link
                                     className={styles.link}
+                                    onClick={closeNotification}
                                     to={editEntryLink}
                                 >
                                     entry
@@ -230,6 +234,7 @@ function NotificationItem(props: Props) {
                             entryLink: (
                                 <Link
                                     className={styles.link}
+                                    onClick={closeNotification}
                                     to={editEntryLink}
                                 >
                                     entry
@@ -274,6 +279,7 @@ function NotificationItem(props: Props) {
                                 <Link
                                     className={styles.link}
                                     to={editEntryLink}
+                                    onClick={closeNotification}
                                 >
                                     entry
                                 </Link>
@@ -316,6 +322,7 @@ function NotificationItem(props: Props) {
                             entryLink: (
                                 <Link
                                     className={styles.link}
+                                    onClick={closeNotification}
                                     to={editEntryLink}
                                 >
                                     entry
@@ -360,6 +367,7 @@ function NotificationItem(props: Props) {
                                 <Link
                                     className={styles.link}
                                     to={editEntryLink}
+                                    onClick={closeNotification}
                                 >
                                     entry
                                 </Link>
@@ -391,6 +399,7 @@ function NotificationItem(props: Props) {
                     <Link
                         className={styles.link}
                         to={editEntryLink}
+                        onClick={closeNotification}
                     >
                         entry
                     </Link>
@@ -438,6 +447,7 @@ function NotificationItem(props: Props) {
                             entryLink: (
                                 <Link
                                     className={styles.link}
+                                    onClick={closeNotification}
                                     to={editEntryLink}
                                 >
                                     entry

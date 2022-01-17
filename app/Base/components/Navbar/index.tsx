@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Link } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {
+    Border,
     QuickActionLink,
     QuickActionDropdownMenu,
     DropdownMenu,
@@ -25,6 +26,7 @@ import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
+import { zendeskSupportUrl, extensionChromeUrl } from '#base/configs/env';
 import localforageInstance from '#base/configs/localforage';
 import {
     LogoutMutation,
@@ -69,6 +71,10 @@ function Navbar(props: Props) {
         setUser,
     } = useContext(UserContext);
 
+    const notificationRef = useRef<
+        { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
+    >(null);
+
     const {
         data: notifications,
     } = useQuery<UserNotificationsCountQuery, UserNotificationsCountQueryVariables>(
@@ -111,6 +117,9 @@ function Navbar(props: Props) {
     });
 
     const notificationsCount = notifications?.notifications?.totalCount;
+    const handleCloseNotificationClick = useCallback(() => {
+        notificationRef?.current?.setShowPopup(false);
+    }, []);
 
     return (
         <nav className={_cs(className, styles.navbar)}>
@@ -159,20 +168,24 @@ function Navbar(props: Props) {
                     <QuickActionLink
                         title="DEEP Support"
                         target="_blank"
-                        to="https://deephelp.zendesk.com/hc/en-us"
+                        rel="noopener noreferrer"
+                        to={zendeskSupportUrl}
                     >
                         <IoHelp />
                     </QuickActionLink>
                     {authenticated && (
                         <QuickActionDropdownMenu
                             label={(<IoNotificationsOutline />)}
+                            componentRef={notificationRef}
                             className={styles.notificationButton}
                             actions={notificationsCount !== 0 ? notificationsCount : undefined}
                             popupClassName={styles.popup}
                             actionsContainerClassName={styles.notificationCount}
                             persistent
                         >
-                            <Notifications />
+                            <Notifications
+                                closeNotification={handleCloseNotificationClick}
+                            />
                         </QuickActionDropdownMenu>
                     )}
                 </div>
@@ -200,11 +213,30 @@ function Navbar(props: Props) {
                     >
                         User Groups
                     </DropdownMenuItem>
+                    <Border
+                        inline
+                        width="thin"
+                    />
                     <DropdownMenuItem
                         href={route.termsOfService.path}
                     >
                         Terms of Service
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                        href={extensionChromeUrl}
+                        linkProps={{
+                            // FIXME: we shouldn't need to add "to" here
+                            to: extensionChromeUrl,
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        Chrome extension
+                    </DropdownMenuItem>
+                    <Border
+                        inline
+                        width="thin"
+                    />
                     <DropdownMenuItem
                         name={undefined}
                         onClick={onLogoutClick}
