@@ -18,6 +18,8 @@ export const aryVizEndpoint = process.env.REACT_APP_ASSESSMENT_VIZ_URL || 'https
 export const entriesVizEndpoint = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz-entries/';
 
 // Chrome extension
+export const oldExtensionId = process.env.REACT_APP_OLD_BROWSER_EXTENSION_ID || 'kafonkgglonkbldmcigbdojiadfcmcdc';
+export const oldExtensionChromeUrl = `https://chrome.google.com/webstore/detail/deep-2-add-lead/${oldExtensionId}`;
 export const extensionId = process.env.REACT_APP_BROWSER_EXTENSION_ID || 'hkmakfhfikfhllpkfpkkaoonapclfajf';
 export const extensionChromeUrl = `https://chrome.google.com/webstore/detail/deep/${extensionId}`;
 
