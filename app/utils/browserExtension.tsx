@@ -1,7 +1,12 @@
 import { extensionId } from '#base/configs/env';
 
+// FIXME: Use new extension keys for the following after extension is deployed
+const EXTENSION_GET_SCREENSHOT = 'get-screenshot';
+const EXTENSION_SET_TOKEN = 'set-token';
+/*
 const EXTENSION_GET_SCREENSHOT = 'deep_extension_le_get-screenshot';
 const EXTENSION_SET_TOKEN = 'deep_extension_le_set-token';
+*/
 
 interface ScreenshotResponse {
     image: string;
