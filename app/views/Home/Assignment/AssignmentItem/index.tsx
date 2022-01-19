@@ -40,7 +40,7 @@ function AssignmentItem(props: AssignmentItemProps) {
             return (generateString(
                 'source {link}',
                 {
-                    link: (contentObjectDetails?.id && projectDetails?.id && (
+                    link: (contentObjectDetails.id && projectDetails.id && (
                         <Link
                             to={generatePath(routes.entryEdit.path, {
                                 projectId: projectDetails.id,
@@ -55,7 +55,7 @@ function AssignmentItem(props: AssignmentItemProps) {
             ));
         }
         if (contentObjectType === 'entryreviewcomment' || contentObjectType === 'entrycomment') {
-            if (!projectDetails?.id && contentObjectDetails?.lead) {
+            if (!projectDetails.id && contentObjectDetails.lead) {
                 return (
                     <span>
                         an entry
@@ -114,11 +114,11 @@ function AssignmentItem(props: AssignmentItemProps) {
                             <Link
                                 to={generatePath(
                                     routes.tagging.path,
-                                    { projectId: projectDetails?.id },
+                                    { projectId: projectDetails.id },
                                 )}
                                 className={styles.link}
                             >
-                                {projectDetails?.title}
+                                {projectDetails.title}
                             </Link>
                         ),
                     },

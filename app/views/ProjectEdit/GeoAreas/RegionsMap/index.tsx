@@ -88,7 +88,7 @@ function RegionsMap(props: Props) {
 
     const handleAddRegionConfirm = useCallback(
         (value: number | undefined) => {
-            if (regions && value) {
+            if (value) {
                 regionPatchTrigger({
                     newRegion: value,
                     body: {
@@ -174,14 +174,14 @@ function RegionsMap(props: Props) {
                         nonClearable
                         disabled={navigationDisabled}
                     />
-                    {!regionsPending && (regions.length ?? 0) < 1 && (
+                    {!regionsPending && regions.length < 1 && (
                         <div className={_cs(styles.message, className)}>
                             <IoMapOutline className={styles.icon} />
                             {_ts('geoAreas', 'noGeoAreas')}
                         </div>
                     )}
                     {/* FIXME: show pending message */}
-                    {!regionsPending && (regions.length ?? 0) > 0 && !activeRegion && (
+                    {!regionsPending && regions.length > 0 && !activeRegion && (
                         <div className={_cs(styles.message, className)}>
                             <IoMapOutline className={styles.icon} />
                             No region selected

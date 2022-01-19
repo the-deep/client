@@ -67,9 +67,7 @@ function SourceEntryItem(props: Props) {
         body: (ctx) => ctx,
         failureMessage: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
         onSuccess: () => {
-            if (onEntryDiscard) {
-                onEntryDiscard();
-            }
+            onEntryDiscard();
         },
     });
 

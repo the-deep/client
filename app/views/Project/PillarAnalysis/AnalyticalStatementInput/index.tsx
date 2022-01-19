@@ -113,7 +113,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     // NOTE: Don't let users add more that certain items
                     if (
                         isNotDefined(movedItem)
-                        && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
+                        && (value.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
                     ) {
                         return oldEntries;
                     }

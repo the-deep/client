@@ -242,7 +242,7 @@ function UserGroupItem(props: Props) {
                         valueContainerClassName={styles.membersValue}
                         value={(
                             <NumberOutput
-                                value={userGroup.membersCount ?? 0}
+                                value={userGroup.membersCount}
                             />
                         )}
                         hideLabelColon

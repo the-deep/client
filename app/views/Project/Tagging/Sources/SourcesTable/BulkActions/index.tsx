@@ -50,9 +50,7 @@ function BulkActions(props: Props) {
     ), [selectedLeads]);
 
     const onRemoveBulkLead = useCallback(() => {
-        if (onRemoveClick) {
-            onRemoveClick(selectedLeads.map((lead) => lead.id));
-        }
+        onRemoveClick(selectedLeads.map((lead) => lead.id));
     }, [onRemoveClick, selectedLeads]);
 
     const selectedLeadsIds = useMemo(() => (

@@ -160,7 +160,7 @@ function ForgotPasswordModal(props: Props) {
                         <TextInput
                             name="email"
                             onChange={setFieldValue}
-                            value={value?.email}
+                            value={value.email}
                             error={error?.email}
                             label={_ts('explore.passwordReset', 'emailLabel')}
                             placeholder={_ts('explore.passwordReset', 'emailPlaceholder')}

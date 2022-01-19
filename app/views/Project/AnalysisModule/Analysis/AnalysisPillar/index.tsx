@@ -64,7 +64,7 @@ function AnalysisPillar(props: Props) {
     } = useContext(ProjectContext);
 
     // NOTE: using entry delete permission for analysis pillar
-    const canDeleteAnalysisPillar = project?.allowedPermissions?.includes('DELETE_ENTRY');
+    const canDeleteAnalysisPillar = project?.allowedPermissions.includes('DELETE_ENTRY');
 
     const isAnalysisCompleted = analyzedEntries === totalEntries && totalEntries > 0;
     let statusLabel = _ts('analysis', 'inProgressTagLabel');

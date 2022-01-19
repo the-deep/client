@@ -96,26 +96,26 @@ function ProjectFilterForm(props: Props) {
             <TextInput
                 name="search"
                 label="Search"
-                value={value?.search}
+                value={value.search}
                 onChange={setFieldValue}
                 placeholder="any"
             />
             <DateInput
                 name="startDate"
                 label="Start Date"
-                value={value?.startDate}
+                value={value.startDate}
                 onChange={setFieldValue}
             />
             <DateInput
                 name="endDate"
                 label="End Date"
-                value={value?.endDate}
+                value={value.endDate}
                 onChange={setFieldValue}
             />
             <PublicOrganizationMultiSelectInput
                 name="organizations"
                 label="Organizations"
-                value={value?.organizations}
+                value={value.organizations}
                 onChange={setFieldValue}
                 options={organizationOptions}
                 onOptionsChange={setOrganizationOptions}
@@ -125,7 +125,7 @@ function ProjectFilterForm(props: Props) {
                 name="analysisFrameworks"
                 label="Analysis Frameworks"
                 placeholder="any"
-                value={value?.analysisFrameworks}
+                value={value.analysisFrameworks}
                 onChange={setFieldValue}
                 options={analysisFrameworkOptions}
                 onOptionsChange={setAnalysisFrameworkOptions}

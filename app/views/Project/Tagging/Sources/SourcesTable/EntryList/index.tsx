@@ -205,7 +205,7 @@ export const PROJECT_FRAMEWORK = gql`
 `;
 
 const maxItemsPerPage = 5;
-const entryKeySelector = (e: Entry) => e.clientId ?? e.id;
+const entryKeySelector = (e: Entry) => e.clientId;
 
 interface Props {
     className?: string;
@@ -273,7 +273,7 @@ function EntryList(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                const projectFromResponse = response?.project;
+                const projectFromResponse = response.project;
                 if (!projectFromResponse) {
                     return;
                 }
@@ -285,7 +285,7 @@ function EntryList(props: Props) {
                     ),
                 );
                 const geoData = projectFromResponse.entries?.results
-                    ?.map((entry) => entry?.attributes)
+                    ?.map((entry) => entry.attributes)
                     .flat()
                     .map((attributes) => attributes?.geoSelectedOptions)
                     .flat()

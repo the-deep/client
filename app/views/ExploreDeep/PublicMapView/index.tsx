@@ -218,7 +218,7 @@ function ExploreDeepMapView(props: Props) {
         if (feature.properties) {
             // eslint-disable-next-line camelcase
             const { cluster_id, point_count } = feature.properties as ClusterProperties;
-            const clusterSource = map.getSource('region') as mapboxgl.GeoJSONSource;
+            const clusterSource = map.getSource('region') as mapboxgl.GeoJSONSource | undefined;
             if (clusterSource) {
                 clusterSource.getClusterLeaves(
                     cluster_id,
@@ -227,7 +227,7 @@ function ExploreDeepMapView(props: Props) {
                     (___, aFeatures) => {
                         if (aFeatures) {
                             const projectIds = aFeatures
-                                .map((f) => f?.properties?.projectId)
+                                .map((f) => f.properties?.projectId)
                                 .filter(isDefined);
                             setClickedFeatureProperties(projectIds);
                         }

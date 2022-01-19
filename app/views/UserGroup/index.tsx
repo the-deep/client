@@ -43,7 +43,7 @@ function UserGroup(props: Props) {
     } = useContext(UserContext);
     const alert = useAlert();
 
-    const userId = user ? user?.id : undefined;
+    const userId = user ? user.id : undefined;
 
     const [activePage, setActivePage] = useState<number>(1);
     const [expandedUserGroupId, setExpandedUserGroupId] = useState<string>();
@@ -101,7 +101,7 @@ function UserGroup(props: Props) {
     });
 
     const usergroupObjectToEdit = useMemo(() => (
-        usergroupResponse?.results?.find((a) => a.id === userGroupToEdit)
+        usergroupResponse?.results.find((a) => a.id === userGroupToEdit)
     ), [usergroupResponse?.results, userGroupToEdit]);
 
     const handleAddUserGroupClick = useCallback(() => {

@@ -26,7 +26,7 @@ function transformData(data: PartialForm<OrganigramDatum, 'key'>): OrganigramDat
         return {
             ...data,
             id: data.key,
-            children: data.children.map(transformData) ?? [],
+            children: data.children.map(transformData),
             label: data.label ?? 'Unnamed',
             order: data.order ?? 1,
         };
@@ -59,7 +59,7 @@ function OrganigramInput<N extends string>(props: Props<N>) {
                 return;
             }
             if (value?.some((v) => v === data.key)) {
-                onChange(value?.filter((v) => v !== data.key), name);
+                onChange(value.filter((v) => v !== data.key), name);
             } else {
                 onChange([...(value ?? []), data.key], name);
             }

@@ -147,7 +147,7 @@ function RegisterModal(props: Props) {
             >
                 {success ? (
                     <div className={styles.registerSuccess}>
-                        {_ts('explore.register', 'checkYourEmailText', { email: value?.email })}
+                        {_ts('explore.register', 'checkYourEmailText', { email: value.email })}
                     </div>
                 ) : (
                     <>
@@ -155,7 +155,7 @@ function RegisterModal(props: Props) {
                         <TextInput
                             name="firstName"
                             onChange={setFieldValue}
-                            value={value?.firstName}
+                            value={value.firstName}
                             error={error?.firstName}
                             placeholder={_ts('explore.register', 'firstNamePlaceholder')}
                             disabled={registerPending}
@@ -163,7 +163,7 @@ function RegisterModal(props: Props) {
                         <TextInput
                             name="lastName"
                             onChange={setFieldValue}
-                            value={value?.lastName}
+                            value={value.lastName}
                             error={error?.lastName}
                             placeholder={_ts('explore.register', 'lastNamePlaceholder')}
                             disabled={registerPending}
@@ -171,7 +171,7 @@ function RegisterModal(props: Props) {
                         <TextInput
                             name="organization"
                             onChange={setFieldValue}
-                            value={value?.organization}
+                            value={value.organization}
                             error={error?.organization}
                             placeholder={_ts('explore.register', 'organizationPlaceholder')}
                             disabled={registerPending}
@@ -179,7 +179,7 @@ function RegisterModal(props: Props) {
                         <TextInput
                             name="email"
                             onChange={setFieldValue}
-                            value={value?.email}
+                            value={value.email}
                             error={error?.email}
                             placeholder={_ts('explore.register', 'emailPlaceholder')}
                             disabled={registerPending}

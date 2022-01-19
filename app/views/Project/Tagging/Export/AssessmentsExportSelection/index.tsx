@@ -58,7 +58,7 @@ function AssessmentsExportSelection(props: Props) {
     const alert = useAlert();
 
     const { project } = React.useContext(ProjectContext);
-    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
+    const filterOnlyUnprotected = !!project?.allowedPermissions.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [previewId, setPreviewId] = useState<string | undefined>(undefined);
@@ -78,9 +78,9 @@ function AssessmentsExportSelection(props: Props) {
                 'ProjectExports',
             ],
             onCompleted: (response) => {
-                if (response?.project?.exportCreate?.ok) {
+                if (response.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {
-                        setPreviewId(response.project.exportCreate.result?.id);
+                        setPreviewId(response.project.exportCreate.result.id);
                     } else {
                         alert.show(
                             _ts('export', 'exportStartedNotifyMessage'),

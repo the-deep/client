@@ -62,8 +62,8 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
     const error = getErrorObject(riskyError);
 
     const sortedOptions = useMemo(() => (
-        sortByOrder(widget?.properties?.options)
-    ), [widget?.properties?.options]);
+        sortByOrder(widget.properties?.options)
+    ), [widget.properties?.options]);
 
     const onChange = useCallback(
         (val: ScaleValue['value'] | undefined, inputName: N) => {
@@ -94,7 +94,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 labelSelector={optionLabelSelector}
                 colorSelector={optionColorSelector}
                 onChange={onChange}
-                value={value?.value ?? widget?.properties?.defaultValue}
+                value={value?.value ?? widget.properties?.defaultValue}
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.value}

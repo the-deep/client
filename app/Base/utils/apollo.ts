@@ -6,7 +6,7 @@ export function isArrayEqual<T>(foo: readonly T[], bar: T[]) {
 
 export function checkErrorCode(errors: ApolloError['graphQLErrors'], path: (string | number)[], code: string) {
     return errors.some((error) => (
-        error.path && error.extensions?.code
+        error.path && error.extensions.code
         && isArrayEqual(error.path, path) && code === error.extensions.code
     ));
 }

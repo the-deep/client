@@ -18,10 +18,6 @@ function getCroppedImage(
     endX: number,
     endY: number,
 ) {
-    if (!canvas || !image) {
-        return undefined;
-    }
-
     /* eslint-disable no-param-reassign */
     canvas.width = endX - startX;
     canvas.height = endY - startY;
@@ -85,7 +81,7 @@ function Screenshot(props: Props) {
     });
 
     const handleResize = React.useCallback((width = 0, height = 0) => {
-        if (!firstResizeRef.current && width > 0 && height > 0 && onCancel) {
+        if (!firstResizeRef.current && width > 0 && height > 0) {
             onCancel();
         }
 
@@ -96,10 +92,6 @@ function Screenshot(props: Props) {
     const svgRef = React.useRef<SVGSVGElement>(null);
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const handleBrush = React.useCallback((event) => {
-        if (!onCapture) {
-            return;
-        }
-
         const r = event.selection;
         if (!canvasRef.current || !imageProps.image || !r) {
             onCapture(undefined);
@@ -159,9 +151,7 @@ function Screenshot(props: Props) {
                     </a>
                 </div>
             );
-            if (onCaptureError) {
-                onCaptureError(captureError);
-            }
+            onCaptureError(captureError);
         });
 
         if (!svgRef.current || !brushContainerRef.current) {
@@ -182,9 +172,7 @@ function Screenshot(props: Props) {
         brushGroup.call(brush);
 
         return () => {
-            if (brushGroup) {
-                brushGroup.remove();
-            }
+            brushGroup.remove();
         };
     }, [handleBrush, onCaptureError]);
 

@@ -166,7 +166,7 @@ function Analysis(props: ComponentProps) {
     }, [onAnalysisCloseSuccess, setModalHidden]);
 
     const canTagEntry = project?.analysisFramework?.id
-        && project?.allowedPermissions?.includes('UPDATE_ENTRY');
+        && project.allowedPermissions.includes('UPDATE_ENTRY');
 
     return (
         <ContainerCard

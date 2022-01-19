@@ -32,6 +32,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
 
+        "noUncheckedIndexedAccess": true,
+
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "skipLibCheck": true
@@ -39,6 +41,7 @@
     "include": [
         "./app/index.tsx",
         "./app/declarations",
+        "./app/utils/unsafeCommon.js",
         "./generated/types.tsx"
     ]
 }

@@ -88,8 +88,8 @@ function EntryCard(props: Props) {
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
     const authorsDetailText = useMemo(() => (
-        leadDetails?.authors?.map((a) => a.title)?.join(', ')
-    ), [leadDetails?.authors]);
+        leadDetails.authors?.map((a) => a.title)?.join(', ')
+    ), [leadDetails.authors]);
 
     const [
         deleteEntry,

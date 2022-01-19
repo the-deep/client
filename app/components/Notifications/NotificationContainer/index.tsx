@@ -93,8 +93,8 @@ function NotificationContainer(props: Props) {
         {
             refetchQueries: ['UserNotificationsCount'],
             onCompleted: (response) => {
-                if (response?.notificationStatusUpdate?.ok) {
-                    const newStatus = response.notificationStatusUpdate?.result?.statusDisplay;
+                if (response.notificationStatusUpdate?.ok) {
+                    const newStatus = response.notificationStatusUpdate.result?.statusDisplay;
                     alert.show(
                         `Successfully updated notification status as ${newStatus?.toLowerCase() ?? 'required'}.`,
                         {

@@ -40,7 +40,7 @@ function sameWithPasswordCondition(
     value: PartialForm<FormType>,
 ) {
     if (
-        isTruthyString(value?.newPassword)
+        isTruthyString(value.newPassword)
         && isTruthyString(password)
         && value.newPassword !== password
     ) {

@@ -59,7 +59,7 @@ function ActionCell(props: Props) {
         ASSESSMENT_DELETE,
         {
             onCompleted: (result) => {
-                if (result?.project?.assessmentDelete?.ok) {
+                if (result.project?.assessmentDelete?.ok) {
                     onDeleteSuccess();
                     alert.show(
                         'Successfully deleted assessment.',

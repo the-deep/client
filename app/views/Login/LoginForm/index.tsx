@@ -249,7 +249,7 @@ function LoginForm(props: Props) {
         // Get params from the current url
         // NOTE: hid provides query as hash
 
-        const query = parseUrlParams(window.location?.hash?.replace('#', '')) as { access_token?: string };
+        const query = parseUrlParams(window.location.hash.replace('#', '')) as { access_token?: string };
         // Login User with HID access_token
         if (query.access_token) {
             const hidQuery = query as HidQuery;
@@ -306,7 +306,7 @@ function LoginForm(props: Props) {
                 <TextInput
                     name="email"
                     onChange={setFieldValue}
-                    value={value?.email}
+                    value={value.email}
                     error={error?.email}
                     placeholder={_ts('explore.login', 'emailPlaceholder')}
                     disabled={pending}
@@ -315,7 +315,7 @@ function LoginForm(props: Props) {
                 <PasswordInput
                     name="password"
                     onChange={setFieldValue}
-                    value={value?.password}
+                    value={value.password}
                     error={error?.password}
                     placeholder={_ts('explore.login', 'password')}
                     disabled={pending}
@@ -323,7 +323,7 @@ function LoginForm(props: Props) {
                 <SmartButtonLikeLink
                     className={styles.forgetPasswordButton}
                     route={routes.forgotPassword}
-                    state={{ email: value?.email }}
+                    state={{ email: value.email }}
                     variant="action"
                     actions={(
                         <IoChevronForwardSharp />

@@ -275,9 +275,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         method: isDefined(analysisToEdit) ? 'PATCH' : 'POST',
         body: (ctx) => ctx,
         onSuccess: (response) => {
-            if (response) {
-                onSuccess(response, isDefined(analysisToEdit));
-            }
+            onSuccess(response, isDefined(analysisToEdit));
             alert.show(
                 isDefined(analysisToEdit)
                     ? 'Successfully updated analysis.'
@@ -342,7 +340,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 );
                 triggerAnalysisEdit({
                     ...finalValue,
-                    analysisPillar: finalValue?.analysisPillar?.map((ap) => ({
+                    analysisPillar: finalValue.analysisPillar?.map((ap) => ({
                         ...ap,
                         filters: ap.filters?.map((f) => matrixMap[f]),
                     })),

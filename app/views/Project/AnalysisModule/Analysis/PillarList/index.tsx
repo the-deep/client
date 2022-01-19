@@ -96,7 +96,7 @@ function AnalysisDetails(props: Props) {
         (_, data: PillarSummary): PillarComponentProps => ({
             className: styles.pillar,
             analysisId,
-            assigneeName: data.assigneeDetails?.displayName,
+            assigneeName: data.assigneeDetails.displayName,
             createdAt,
             onDelete: triggerPillarDelete,
             statements: data.analyticalStatements,

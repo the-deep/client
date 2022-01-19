@@ -71,14 +71,14 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
 
-    const widgetOptions = widget?.properties?.options;
+    const widgetOptions = widget.properties?.options;
     const sortedOptions = useMemo(() => (
         sortByOrder(widgetOptions)
     ), [widgetOptions]);
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(widgetOptions, (d) => d.key, (d) => d.label);
-        return value?.value?.map((v) => optionsMap?.[v]);
+        return value?.value.map((v) => optionsMap?.[v]);
     }, [widgetOptions, value]);
 
     return (

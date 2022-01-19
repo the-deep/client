@@ -44,7 +44,7 @@ const schema: FormSchema = {
     validation: (value) => {
         if (
             value?.startDate
-            && value?.endDate
+            && value.endDate
             && (compareDate(value.startDate, value.endDate) > 0)
         ) {
             return (_ts('analysis.cloneModal', 'endDateGreaterThanStartDate'));

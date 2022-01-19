@@ -141,7 +141,7 @@ function EntryItem(props: EntryItemProps) {
                 onExcerptChange(entryId, modifiedExcerpt);
             }
 
-            if (editExcerptDropdownRef?.current) {
+            if (editExcerptDropdownRef.current) {
                 editExcerptDropdownRef.current.setShowPopup(false);
             }
         },

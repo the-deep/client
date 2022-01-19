@@ -164,7 +164,7 @@ export const createReportStructure = (
             }
             const { properties } = widget;
 
-            let newLevels = exportable?.data?.report?.levels;
+            let newLevels = exportable.data?.report?.levels;
             if (reportStructureVariant === DIMENSION_FIRST) {
                 newLevels = transformLevelsRowFirst(properties, includeSubColumn);
             } else if (includeSubColumn) {
@@ -188,7 +188,7 @@ export const createReportStructure = (
             if (!widget || widget.widgetId !== exportable.widgetType) {
                 return undefined;
             }
-            const newLevels = exportable?.data?.report?.levels;
+            const newLevels = exportable.data?.report.levels;
             if (!newLevels) {
                 return undefined;
             }

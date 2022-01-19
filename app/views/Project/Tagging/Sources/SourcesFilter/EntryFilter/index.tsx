@@ -154,9 +154,9 @@ function EntryFilter<K extends string>(props: Props<K>) {
                     return (
                         <FrameworkFilterItem
                             key={filter.id}
-                            name={filterValue?.index}
+                            name={filterValue.index}
                             title={filter.title}
-                            value={filterValue?.value}
+                            value={filterValue.value}
                             filter={filter}
                             projectId={projectId}
                             onChange={onFrameworkFilterChange}

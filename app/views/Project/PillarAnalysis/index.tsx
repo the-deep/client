@@ -444,7 +444,7 @@ function PillarAnalysis() {
 
                 const entryIdsInState = pillarAnalysisFromState?.analyticalStatements
                     ?.map((statement) => (
-                        statement.analyticalEntries?.map((entry) => entry.entry)
+                        statement.analyticalEntries.map((entry) => entry.entry)
                     )).flat().filter(isDefined).flat();
 
                 const allEntryIds = unique(
@@ -535,7 +535,7 @@ function PillarAnalysis() {
 
     const handleEntryDrop = useCallback(
         (entryId: string) => {
-            const entry = entriesResponse?.results?.find((item) => item.id === entryId);
+            const entry = entriesResponse.results?.find((item) => item.id === entryId);
             if (!entry) {
                 // eslint-disable-next-line no-console
                 console.error('Me no understand how this entry came from', entryId);
@@ -546,7 +546,7 @@ function PillarAnalysis() {
                 [entryId]: entry,
             }));
         },
-        [entriesResponse?.results],
+        [entriesResponse.results],
     );
 
     const handleAnalyticalStatementAdd = useCallback(
@@ -656,7 +656,7 @@ function PillarAnalysis() {
         onEntryMove: handleEntryMove,
         onEntryDrop: handleEntryDrop,
         onSelectedNgramChange: handleNgramChange,
-        error: arrayError?.[statement?.clientId],
+        error: arrayError?.[statement.clientId],
     }), [
         handleNgramChange,
         onAnalyticalStatementChange,
@@ -778,7 +778,7 @@ function PillarAnalysis() {
                                         {_ts(
                                             'pillarAnalysis',
                                             'entriesTabLabel',
-                                            { entriesCount: entriesResponse?.totalCount },
+                                            { entriesCount: entriesResponse.totalCount },
                                         )}
                                     </Tab>
                                     <Tab name="discarded">
@@ -793,7 +793,7 @@ function PillarAnalysis() {
                             >
                                 <ListView
                                     className={styles.entriesList}
-                                    data={entriesResponse?.results}
+                                    data={entriesResponse.results}
                                     keySelector={entryKeySelector}
                                     renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
@@ -813,7 +813,7 @@ function PillarAnalysis() {
                                 <Pager
                                     className={styles.pager}
                                     activePage={activePage}
-                                    itemsCount={entriesResponse?.totalCount ?? 0}
+                                    itemsCount={entriesResponse.totalCount ?? 0}
                                     maxItemsPerPage={maxItemsPerPage}
                                     onActivePageChange={setActivePage}
                                     itemsPerPageControlHidden

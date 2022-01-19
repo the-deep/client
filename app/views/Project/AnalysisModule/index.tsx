@@ -219,7 +219,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const timelineData: TimelineData[] = useMemo(
         () => (
-            overviewResponse?.analysisList?.map((d) => ({
+            overviewResponse?.analysisList.map((d) => ({
                 key: d.id,
                 value: new Date(d.createdAt).getTime(),
                 label: d.title,
@@ -253,7 +253,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
-        teamLeadName: data.teamLeadDetails?.displayName,
+        teamLeadName: data.teamLeadDetails.displayName,
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
         pillars: data.pillars,
@@ -274,7 +274,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         pendingAnalyses,
     ]);
 
-    const canTagEntry = project?.allowedPermissions?.includes('UPDATE_ENTRY');
+    const canTagEntry = project?.allowedPermissions.includes('UPDATE_ENTRY');
 
     return (
         <SubNavbarContext.Provider value={navbarContextValue}>
@@ -344,7 +344,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             footerContent={_ts('analysis', 'sourcesByTypeLabel')}
                             contentClassName={styles.pieChartContent}
                         >
-                            { piechartData?.length > 0 ? (
+                            { piechartData.length > 0 ? (
                                 <ResponsiveContainer>
                                     <PieChart>
                                         <Pie
@@ -387,7 +387,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             )}
                         </ContainerCard>
                         <Card className={styles.analysesTimelineContainer}>
-                            {timelineData?.length > 0 ? (
+                            {timelineData.length > 0 ? (
                                 <Timeline
                                     data={timelineData}
                                     labelSelector={timelineLabelSelector}

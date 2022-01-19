@@ -34,7 +34,7 @@ function RechartsLegend(props: Props) {
                     percent?: number;
                 }
 
-                const percent = (localPayload as unknown as LocalPayload)?.percent;
+                const { percent } = localPayload as unknown as LocalPayload;
 
                 const key = `legend-item-${index}`;
 

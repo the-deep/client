@@ -162,7 +162,7 @@ function AddUserModal(props: Props) {
         PROJECT_MEMBERSHIP_BULK,
         {
             onCompleted: (response) => {
-                if (!response?.project?.projectUserMembershipBulk) {
+                if (!response.project?.projectUserMembershipBulk) {
                     return;
                 }
                 const {
@@ -229,7 +229,7 @@ function AddUserModal(props: Props) {
     );
 
     const currentUser = useMemo(() => (
-        projectUserToEdit?.member ? [projectUserToEdit?.member] : []
+        projectUserToEdit?.member ? [projectUserToEdit.member] : []
     ), [projectUserToEdit?.member]);
 
     const roles = isDefined(activeUserRoleLevel)

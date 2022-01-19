@@ -328,7 +328,7 @@ function GeoLocationConditionalWidgetForm(props: GeoLocationConditionalWidgetFor
 
     const arrayError = getErrorObject(error?.conditions);
 
-    const totalConditions = value?.conditions?.length ?? 0;
+    const totalConditions = value.conditions?.length ?? 0;
 
     const conditionRendererParams = useCallback((
         key: string,
@@ -388,7 +388,7 @@ function GeoLocationConditionalWidgetForm(props: GeoLocationConditionalWidgetFor
                     <SortableList
                         name="conditions"
                         onChange={handleOrderChange}
-                        data={value?.conditions}
+                        data={value.conditions}
                         keySelector={conditionKeySelector}
                         renderer={ConditionInput}
                         direction="vertical"
@@ -398,12 +398,12 @@ function GeoLocationConditionalWidgetForm(props: GeoLocationConditionalWidgetFor
                         messageShown
                         messageIconShown
                     />
-                    {((value?.conditions?.length ?? 0) > 0) && (
+                    {((value.conditions?.length ?? 0) > 0) && (
                         <ConjunctionInput
                             name="add-condition"
                             value={undefined}
                             onChange={handleAdd}
-                            disabled={(value?.conditions?.length ?? 0) >= CONDITIONS_LIMIT}
+                            disabled={(value.conditions?.length ?? 0) >= CONDITIONS_LIMIT}
                         />
                     )}
                 </Container>

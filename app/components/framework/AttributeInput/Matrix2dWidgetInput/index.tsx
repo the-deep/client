@@ -374,10 +374,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             const newValue = removeEmptyObject(removeUndefinedKeys({
                 ...value?.value,
                 [rowId]: {
-                    ...value?.value?.[rowId],
+                    ...value?.value[rowId],
                     [subRowId]: {
-                        ...value?.value?.[rowId]?.[subRowId],
-                        [columnId]: state(value?.value?.[rowId]?.[subRowId]?.[columnId]),
+                        ...value?.value[rowId]?.[subRowId],
+                        [columnId]: state(value?.value[rowId]?.[subRowId]?.[columnId]),
                     },
                 },
             }));
@@ -392,14 +392,14 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const columns = useMemo(() => (
-        sortByOrder(widget?.properties?.columns)
-    ), [widget?.properties?.columns]);
+        sortByOrder(widget.properties?.columns)
+    ), [widget.properties?.columns]);
 
     const rowRendererParams = useCallback(
         (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.value?.[key],
+            value: value?.value[key],
             row,
             columns,
             onSubRowChange: handleSubRowChange,
@@ -408,8 +408,8 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const orderedRows = useMemo(() => (
-        sortByOrder(widget?.properties?.rows)
-    ), [widget?.properties?.rows]);
+        sortByOrder(widget.properties?.rows)
+    ), [widget.properties?.rows]);
 
     return (
         <WidgetWrapper

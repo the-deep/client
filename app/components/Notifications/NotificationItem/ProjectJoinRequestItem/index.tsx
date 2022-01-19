@@ -68,8 +68,8 @@ function ProjectJoinRequestItem(props: Props) {
         {
             refetchQueries: ['UserNotificationsCount'],
             onCompleted: (response) => {
-                if (response?.project?.acceptRejectProject?.ok) {
-                    const status = response.project.acceptRejectProject?.result?.status;
+                if (response.project?.acceptRejectProject?.ok) {
+                    const status = response.project.acceptRejectProject.result?.status;
                     alert.show(
                         status === 'ACCEPTED'
                             ? 'Successfully added user to the project.'
@@ -129,20 +129,20 @@ function ProjectJoinRequestItem(props: Props) {
         <NotificationContainer
             className={_cs(className, styles.projectJoinItem)}
             notification={notification}
-            userName={data?.requested_by?.display_name}
+            userName={data.requested_by.display_name}
             descriptionLabel="Reason"
-            description={data?.reason}
+            description={data.reason}
             pendingRequests={loading}
             content={
                 generateString(
                     '{requestorName} requested to join the project {projectTitle}.',
                     {
-                        requestorName: (<b>{data?.requested_by?.display_name}</b>),
-                        projectTitle: (<b>{data?.project?.title}</b>),
+                        requestorName: (<b>{data.requested_by.display_name}</b>),
+                        projectTitle: (<b>{data.project.title}</b>),
                     },
                 )
             }
-            actions={data?.status === 'pending' && (
+            actions={data.status === 'pending' && (
                 <>
                     <Button
                         name={undefined}

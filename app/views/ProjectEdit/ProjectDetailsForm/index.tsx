@@ -156,7 +156,7 @@ const schema: FormSchema = {
     validation: (value) => {
         if (
             value?.startDate
-            && value?.endDate
+            && value.endDate
             && (compareDate(value.startDate, value.endDate) > 0)
         ) {
             return (_ts('projectEdit', 'endDateGreaterThanStartDate'));
@@ -364,7 +364,7 @@ function ProjectDetailsForm(props: Props) {
     const groupedStakeholders = useMemo(
         () => listToGroupList(
 
-            value?.organizations ?? [],
+            value.organizations ?? [],
             (o) => o.organizationType,
             (o) => o.organization,
         ),
@@ -376,7 +376,7 @@ function ProjectDetailsForm(props: Props) {
             const organizations = groupedStakeholders[key];
             return {
                 data: organizations
-                    ?.map((o) => stakeholderOptions.find((option) => option.id === o))
+                    .map((o) => stakeholderOptions.find((option) => option.id === o))
                     .filter(isDefined),
                 title: v.label,
                 dataPending: pendingProjectDetailsGet,
@@ -421,7 +421,7 @@ function ProjectDetailsForm(props: Props) {
                         name="title"
                         disabled={disabled}
                         onChange={setFieldValue}
-                        value={value?.title}
+                        value={value.title}
                         error={error?.title}
                         label={_ts('projectEdit', 'projectTitle')}
                         placeholder={_ts('projectEdit', 'projectTitle')}
@@ -433,7 +433,7 @@ function ProjectDetailsForm(props: Props) {
                             name="startDate"
                             disabled={disabled}
                             onChange={setFieldValue}
-                            value={value?.startDate}
+                            value={value.startDate}
                             error={error?.startDate}
                             label={_ts('projectEdit', 'projectStartDate')}
                             placeholder={_ts('projectEdit', 'projectStartDate')}
@@ -443,7 +443,7 @@ function ProjectDetailsForm(props: Props) {
                             name="endDate"
                             disabled={disabled}
                             onChange={setFieldValue}
-                            value={value?.endDate}
+                            value={value.endDate}
                             error={error?.endDate}
                             label={_ts('projectEdit', 'projectEndDate')}
                             placeholder={_ts('projectEdit', 'projectEndDate')}
@@ -454,7 +454,7 @@ function ProjectDetailsForm(props: Props) {
                         name="description"
                         disabled={disabled}
                         onChange={setFieldValue}
-                        value={value?.description}
+                        value={value.description}
                         error={error?.description}
                         label={_ts('projectEdit', 'projectDescription')}
                         placeholder={_ts('projectEdit', 'projectDescription')}
@@ -467,7 +467,7 @@ function ProjectDetailsForm(props: Props) {
                         headerActions={(
                             <AddStakeholderButton
                                 name="organizations"
-                                value={value?.organizations}
+                                value={value.organizations}
                                 onChange={setFieldValue}
                                 onOptionsChange={setStakeholderOptions}
                                 options={stakeholderOptions}
@@ -505,7 +505,7 @@ function ProjectDetailsForm(props: Props) {
                         <SegmentInput
                             className={styles.segmentInput}
                             name="isPrivate"
-                            value={value?.isPrivate}
+                            value={value.isPrivate}
                             options={projectVisibilityOptions}
                             keySelector={projectVisibilityKeySelector}
                             labelSelector={projectVisibilityLabelSelector}

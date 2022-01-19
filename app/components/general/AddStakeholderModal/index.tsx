@@ -91,7 +91,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
     );
     const handleSubmitButtonClick = () => {
         const organizations = mapToList(value, (v, key) => {
-            const out = v?.map((o) => ({
+            const out = v.map((o) => ({
                 organization: o,
                 organizationType: key as OrganizationTypes,
             }));

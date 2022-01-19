@@ -138,7 +138,7 @@ function AddOrganizationModal(props: Props) {
                 name="title"
                 disabled={pending}
                 onChange={setFieldValue}
-                value={value?.title}
+                value={value.title}
                 error={error?.title}
                 label={_ts('addOrganizationModal', 'titleLabel')}
                 placeholder={_ts('addOrganizationModal', 'titleLabel')}
@@ -148,7 +148,7 @@ function AddOrganizationModal(props: Props) {
                 name="shortName"
                 disabled={pending}
                 onChange={setFieldValue}
-                value={value?.shortName}
+                value={value.shortName}
                 error={error?.shortName}
                 label={_ts('addOrganizationModal', 'shortName')}
                 placeholder={_ts('addOrganizationModal', 'shortName')}
@@ -157,7 +157,7 @@ function AddOrganizationModal(props: Props) {
                 name="url"
                 disabled={pending}
                 onChange={setFieldValue}
-                value={value?.url}
+                value={value.url}
                 error={error?.url}
                 label={_ts('addOrganizationModal', 'url')}
                 placeholder={_ts('addOrganizationModal', 'url')}
@@ -166,7 +166,7 @@ function AddOrganizationModal(props: Props) {
                 name="organizationType"
                 onChange={setFieldValue}
                 options={organizatonTypesResponse?.results}
-                value={value?.organizationType}
+                value={value.organizationType}
                 error={error?.organizationType}
                 keySelector={organizationTypeKeySelector}
                 labelSelector={organizationTypeLabelSelector}

@@ -225,10 +225,10 @@ function RegionMap(props: Props) {
         );
         const thickness = (
             isDefined(noOfAdminLevels) && isDefined(selectedAdminLevel)
-            && noOfAdminLevels > (selectedAdminLevel?.level ?? 0)
+            && noOfAdminLevels > (selectedAdminLevel.level ?? 0)
         )
             // eslint-disable-next-line max-len
-            ? (1 + (scaleFactor * ((noOfAdminLevels - (selectedAdminLevel?.level ?? 0)) / noOfAdminLevels)))
+            ? (1 + (scaleFactor * ((noOfAdminLevels - (selectedAdminLevel.level ?? 0)) / noOfAdminLevels)))
             : 1;
 
         return {
@@ -257,7 +257,7 @@ function RegionMap(props: Props) {
             selections.push(selection);
             const selectedGeoArea = {
                 id: selection,
-                title: properties?.title as string ?? '',
+                title: properties?.title as (string | undefined) ?? '',
                 regionTitle: selectedRegion?.region?.title ?? '',
                 adminLevelTitle: selectedAdminLevelTitle ?? '',
             };

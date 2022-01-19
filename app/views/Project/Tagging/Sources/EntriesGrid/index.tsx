@@ -266,7 +266,7 @@ function EntriesGrid(props: Props) {
             skip: isNotDefined(variables),
             variables,
             onCompleted: (response) => {
-                const projectFromResponse = response?.project;
+                const projectFromResponse = response.project;
                 if (!projectFromResponse) {
                     return;
                 }
@@ -278,7 +278,7 @@ function EntriesGrid(props: Props) {
                     ),
                 );
                 const geoData = projectFromResponse.entries?.results
-                    ?.map((entry) => entry?.attributes)
+                    ?.map((entry) => entry.attributes)
                     .flat()
                     .map((attributes) => attributes?.geoSelectedOptions)
                     .flat()

@@ -302,7 +302,7 @@ function SourcesTable(props: Props) {
         DELETE_LEAD,
         {
             onCompleted: (response) => {
-                if (response?.project?.leadDelete?.ok) {
+                if (response.project?.leadDelete?.ok) {
                     alert.show(
                         'Successfully deleted lead.',
                         {
@@ -365,7 +365,7 @@ function SourcesTable(props: Props) {
         setExpandedRowKey,
     ] = useRowExpansion<Lead, string>(
         ({ datum }) => {
-            if ((datum?.entriesCounts?.total ?? 0) > 0) {
+            if ((datum.entriesCounts?.total ?? 0) > 0) {
                 return (
                     <EntryList
                         key={datum.id}

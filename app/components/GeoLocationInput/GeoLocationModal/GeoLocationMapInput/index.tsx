@@ -97,13 +97,24 @@ function GeoLocationMapInput(props: Props) {
             skip: !projectId,
             variables,
             onCompleted: (data) => {
-                const [topRegion] = data.project?.regions?.filter(
-                    (region) => region.isPublished,
-                ) ?? [];
-                const topAdminLevel = topRegion?.adminLevels?.find((v) => v.level === 0)
-                    ?? topRegion?.adminLevels?.[0];
+                if (!data.project?.regions) {
+                    return;
+                }
 
-                setSelectedRegion(topRegion?.id);
+                const regions = data.project.regions.filter(
+                    (region) => region.isPublished,
+                );
+                const topRegion = regions[0];
+                if (!topRegion) {
+                    // eslint-disable-next-line no-console
+                    console.error('There must be at least on region');
+                    return;
+                }
+
+                const topAdminLevel = topRegion.adminLevels?.find((v) => v.level === 0)
+                    ?? topRegion.adminLevels?.[0];
+
+                setSelectedRegion(topRegion.id);
                 setActiveAdminLevel(topAdminLevel?.id);
             },
         },

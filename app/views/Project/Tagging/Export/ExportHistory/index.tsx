@@ -263,7 +263,7 @@ function ExportHistory(props: Props) {
         DELETE_EXPORT,
         {
             onCompleted: (response) => {
-                if (response?.project?.exportDelete?.ok) {
+                if (response.project?.exportDelete?.ok) {
                     alert.show(
                         _ts('export', 'deleteExportSuccess'),
                         { variant: 'success' },

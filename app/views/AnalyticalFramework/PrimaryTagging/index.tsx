@@ -360,7 +360,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         widgetsDisabled={!validSectionSelected}
                     />
                 )}
-                {sectionsState.editMode && sectionEditMode && tempSections && (
+                {sectionsState.editMode && sectionEditMode && (
                     // NOTE: no need to disable as this is used as modal
                     <SectionsEditor
                         initialValue={tempSections}
@@ -371,7 +371,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         onCancel={handleSectionsEditCancel}
                     />
                 )}
-                {sectionsState.editMode && widgetEditMode && tempWidget && (
+                {sectionsState.editMode && widgetEditMode && (
                     <WidgetEditor
                         className={styles.widgetEditor}
                         name={tempWidget.sectionId}
@@ -381,7 +381,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                         onCancel={handleWidgetEditCancel}
                     />
                 )}
-                {sectionsState.editMode && conditionalEditMode && conditional && (
+                {sectionsState.editMode && conditionalEditMode && (
                     <WidgetConditionalEditor
                         widgets={allWidgets}
                         // FIXME: we may not need to pass conditional as name

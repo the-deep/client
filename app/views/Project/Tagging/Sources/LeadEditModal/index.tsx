@@ -301,15 +301,15 @@ function LeadEditModal(props: Props) {
             skip: !variables,
             variables,
             onCompleted: (response) => {
-                const leadData = removeNull(response?.project?.lead);
+                const leadData = removeNull(response.project?.lead);
                 if (leadData) {
                     setValue({
                         ...leadData,
-                        attachment: leadData?.attachment?.id,
-                        leadGroup: leadData?.leadGroup?.id,
-                        assignee: leadData?.assignee?.id,
-                        source: leadData?.source?.id,
-                        authors: leadData?.authors?.map((author) => author.id),
+                        attachment: leadData.attachment?.id,
+                        leadGroup: leadData.leadGroup?.id,
+                        assignee: leadData.assignee?.id,
+                        source: leadData.source?.id,
+                        authors: leadData.authors?.map((author) => author.id),
                     });
                     const {
                         leadGroup,
@@ -353,7 +353,7 @@ function LeadEditModal(props: Props) {
         {
             refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
-                if (!response?.project?.leadUpdate) {
+                if (!response.project?.leadUpdate) {
                     return;
                 }
                 const {
@@ -393,7 +393,7 @@ function LeadEditModal(props: Props) {
         {
             refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
-                if (!response?.project?.leadCreate) {
+                if (!response.project?.leadCreate) {
                     return;
                 }
                 const {
@@ -479,7 +479,7 @@ function LeadEditModal(props: Props) {
             <Card className={styles.previewContainer}>
                 <LeadPreview
                     className={styles.preview}
-                    url={value?.url ?? undefined}
+                    url={value.url ?? undefined}
                     attachment={leadData?.attachment ?? undefined}
                 />
             </Card>

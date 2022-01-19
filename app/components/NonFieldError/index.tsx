@@ -29,7 +29,7 @@ function NonFieldError(props: Props) {
         );
     }
 
-    const internalError = error?.[internal];
+    const internalError = error[internal];
 
     if (!internalError) {
         return null;

@@ -128,9 +128,6 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
 
     // Handle toggling the state of checkbox including its children
     const handleCheckboxChange = useCallback((newValue: boolean, key: string) => {
-        if (!onChange) {
-            return;
-        }
         const tempValue = [...value];
 
         const index = tempValue.findIndex((v) => v.key === key);
@@ -140,10 +137,6 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
     }, [onChange, value, name]);
 
     const handleChildrenChange = useCallback((nodes: T[], key: string) => {
-        if (!onChange) {
-            return;
-        }
-
         const tempValue = [...value];
         const index = tempValue.findIndex((v) => v.key === key);
         const selected = nodes.some((n) => n.selected);

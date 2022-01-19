@@ -179,7 +179,7 @@ function UserList(props: Props) {
         PROJECT_MEMBERSHIP_BULK_REMOVE,
         {
             onCompleted: (response) => {
-                if (!response?.project?.projectUserMembershipBulk) {
+                if (!response.project?.projectUserMembershipBulk) {
                     return;
                 }
                 const {
@@ -188,13 +188,13 @@ function UserList(props: Props) {
                 } = response.project.projectUserMembershipBulk;
 
                 const [err] = errors ?? [];
-                const [deletedUser] = deletedResult ?? [];
                 if (err) {
                     alert.show(
                         err,
                         { variant: 'error' },
                     );
                 }
+                const [deletedUser] = deletedResult ?? [];
                 if (deletedUser) {
                     alert.show(
                         `Successfully deleted ${deletedUser.member.displayName}`,
@@ -297,7 +297,7 @@ function UserList(props: Props) {
             createStringColumn<ProjectUser, string>(
                 'role',
                 'Assigned Role',
-                (item) => item?.role.title,
+                (item) => item.role.title,
             ),
             badgeColumn,
             actionColumn,

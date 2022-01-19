@@ -23,19 +23,19 @@ interface Props {
 }
 
 function getCommentTokenString(data: ReviewEntryCommentAdd['data']) {
-    if (data?.comment_type === EntryAction.COMMENT) {
+    if (data.comment_type === EntryAction.COMMENT) {
         return '{createdByName} assigned you to a comment in an {entryLink} in the project {projectTitle}.';
     }
-    if (data?.comment_type === EntryAction.VERIFY) {
+    if (data.comment_type === EntryAction.VERIFY) {
         return '{createdByName} verified an {entryLink} in the project {projectTitle}.';
     }
-    if (data?.comment_type === EntryAction.UNVERIFY) {
+    if (data.comment_type === EntryAction.UNVERIFY) {
         return '{createdByName} unverified an {entryLink} in the project {projectTitle}.';
     }
-    if (data?.comment_type === EntryAction.CONTROL) {
+    if (data.comment_type === EntryAction.CONTROL) {
         return '{createdByName} controlled an {entryLink} in the project {projectTitle}.';
     }
-    if (data?.comment_type === EntryAction.UNCONTROL) {
+    if (data.comment_type === EntryAction.UNCONTROL) {
         return '{createdByName} uncontrolled an {entryLink} in the project {projectTitle}.';
     }
     return '';
@@ -65,15 +65,15 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.requested_by?.display_name}
+                userName={data.requested_by.display_name}
                 descriptionLabel="Reason"
-                description={data?.reason}
+                description={data.reason}
                 content={
                     generateString(
                         '{requestorName} removed their join request to the project {projectTitle}.',
                         {
-                            requestorName: (<b>{data?.requested_by?.display_name}</b>),
-                            projectTitle: (<b>{data?.project?.title}</b>),
+                            requestorName: (<b>{data.requested_by.display_name}</b>),
+                            projectTitle: (<b>{data.project.title}</b>),
                         },
                     )
                 }
@@ -83,21 +83,21 @@ function NotificationItem(props: Props) {
     if (notification.notificationType === 'PROJECT_JOIN_RESPONSE') {
         const { data } = notification;
 
-        const content = data?.status === 'accepted'
+        const content = data.status === 'accepted'
             ? (generateString(
                 '{respondorName} accepted join request of {requestorName} in the project {projectTitle}.',
                 {
-                    requestorName: (<b>{data?.requested_by?.display_name}</b>),
-                    respondorName: (<b>{data?.responded_by?.display_name}</b>),
-                    projectTitle: (<b>{data?.project?.title}</b>),
+                    requestorName: (<b>{data.requested_by.display_name}</b>),
+                    respondorName: (<b>{data.responded_by.display_name}</b>),
+                    projectTitle: (<b>{data.project.title}</b>),
                 },
             )) : (
                 generateString(
                     '{respondorName} rejected join request of {requestorName} in the project {projectTitle}.',
                     {
-                        requestorName: (<b>{data?.requested_by?.display_name}</b>),
-                        respondorName: (<b>{data?.responded_by?.display_name}</b>),
-                        projectTitle: (<b>{data?.project?.title}</b>),
+                        requestorName: (<b>{data.requested_by.display_name}</b>),
+                        respondorName: (<b>{data.responded_by.display_name}</b>),
+                        projectTitle: (<b>{data.project.title}</b>),
                     },
                 )
             );
@@ -106,7 +106,7 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.requested_by?.display_name}
+                userName={data.requested_by.display_name}
                 content={content}
             />
         );
@@ -117,13 +117,13 @@ function NotificationItem(props: Props) {
             project,
         } = notification;
 
-        const editEntryLink = (project?.id && data?.lead) ? ({
+        const editEntryLink = (project?.id && data.lead) ? ({
             pathname: (generatePath(routes.entryEdit.path, {
-                projectId: project?.id,
-                leadId: data?.lead,
+                projectId: project.id,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         }) : undefined;
 
@@ -131,14 +131,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_detail?.name}
+                userName={data.created_by_detail.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} assigned you to a comment in the {entryLink} in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_detail?.name}</b>),
+                            createdByName: (<b>{data.created_by_detail.name}</b>),
                             entryLink: editEntryLink ? (
                                 <Link
                                     className={styles.link}
@@ -163,13 +163,13 @@ function NotificationItem(props: Props) {
             project,
         } = notification;
 
-        const editEntryLink = (project?.id && data?.lead) ? ({
+        const editEntryLink = (project?.id && data.lead) ? ({
             pathname: (generatePath(routes.entryEdit.path, {
-                projectId: project?.id,
-                leadId: data?.lead,
+                projectId: project.id,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         }) : undefined;
 
@@ -177,14 +177,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_detail?.name}
+                userName={data.created_by_detail.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} modified the comment you were assigned to in the {entryLink} in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_detail?.name}</b>),
+                            createdByName: (<b>{data.created_by_detail.name}</b>),
                             entryLink: editEntryLink ? (
                                 <Link
                                     className={styles.link}
@@ -212,10 +212,10 @@ function NotificationItem(props: Props) {
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
-                leadId: data?.lead,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         };
 
@@ -223,14 +223,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_detail?.name}
+                userName={data.created_by_detail.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} assigned you to a comment in the {entryLink} in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_detail?.name}</b>),
+                            createdByName: (<b>{data.created_by_detail.name}</b>),
                             entryLink: (
                                 <Link
                                     className={styles.link}
@@ -256,10 +256,10 @@ function NotificationItem(props: Props) {
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
-                leadId: data?.lead,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         };
 
@@ -267,14 +267,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_detail?.name}
+                userName={data.created_by_detail.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} replied to a comment in the {entryLink} you were following in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_detail?.name}</b>),
+                            createdByName: (<b>{data.created_by_detail.name}</b>),
                             entryLink: (
                                 <Link
                                     className={styles.link}
@@ -300,10 +300,10 @@ function NotificationItem(props: Props) {
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
-                leadId: data?.lead,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         };
 
@@ -311,14 +311,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_detail?.name}
+                userName={data.created_by_detail.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} modified the reply to a comment in the {entryLink} you were following in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_detail?.name}</b>),
+                            createdByName: (<b>{data.created_by_detail.name}</b>),
                             entryLink: (
                                 <Link
                                     className={styles.link}
@@ -344,10 +344,10 @@ function NotificationItem(props: Props) {
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
                 projectId: project?.id,
-                leadId: data?.lead,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         };
 
@@ -355,14 +355,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_detail?.name}
+                userName={data.created_by_detail.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} resolved the comment in the {entryLink} you were following in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_detail?.name}</b>),
+                            createdByName: (<b>{data.created_by_detail.name}</b>),
                             entryLink: (
                                 <Link
                                     className={styles.link}
@@ -384,17 +384,17 @@ function NotificationItem(props: Props) {
 
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
-                projectId: data?.project_details?.id,
-                leadId: data?.lead,
+                projectId: data.project_details.id,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         };
         const content = generateString(
             getCommentTokenString(data),
             {
-                createdByName: (<b>{data?.created_by_details?.name}</b>),
+                createdByName: (<b>{data.created_by_details.name}</b>),
                 entryLink: (
                     <Link
                         className={styles.link}
@@ -404,16 +404,16 @@ function NotificationItem(props: Props) {
                         entry
                     </Link>
                 ),
-                projectTitle: (<b>{data?.project_details?.title}</b>),
+                projectTitle: (<b>{data.project_details.title}</b>),
             },
         );
         return (
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_details?.name}
+                userName={data.created_by_details.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={content}
             />
         );
@@ -424,11 +424,11 @@ function NotificationItem(props: Props) {
 
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
-                projectId: data?.project_details?.id,
-                leadId: data?.lead,
+                projectId: data.project_details.id,
+                leadId: data.lead,
             })),
             state: {
-                entryId: data?.entry,
+                entryId: data.entry,
             },
         };
 
@@ -436,14 +436,14 @@ function NotificationItem(props: Props) {
             <NotificationContainer
                 className={_cs(className, styles.notificationItem)}
                 notification={notification}
-                userName={data?.created_by_details?.name}
+                userName={data.created_by_details.name}
                 descriptionLabel="Comment"
-                description={data?.text}
+                description={data.text}
                 content={
                     generateString(
                         '{createdByName} modified a comment you were following in the {entryLink} in the project {projectTitle}.',
                         {
-                            createdByName: (<b>{data?.created_by_details?.name}</b>),
+                            createdByName: (<b>{data.created_by_details.name}</b>),
                             entryLink: (
                                 <Link
                                     className={styles.link}
@@ -453,7 +453,7 @@ function NotificationItem(props: Props) {
                                     entry
                                 </Link>
                             ),
-                            projectTitle: (<b>{data?.project_details?.title}</b>),
+                            projectTitle: (<b>{data.project_details.title}</b>),
                         },
                     )
                 }

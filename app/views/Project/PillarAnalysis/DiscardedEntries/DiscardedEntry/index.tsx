@@ -51,9 +51,7 @@ function DiscardedEntry(props: Props) {
         method: 'DELETE',
         failureMessage: 'Failed to undiscarded entry.',
         onSuccess: () => {
-            if (onEntryUndiscard) {
-                onEntryUndiscard();
-            }
+            onEntryUndiscard();
             alert.show(
                 'Successfully undiscarded the selected entry entry.',
                 { variant: 'success' },

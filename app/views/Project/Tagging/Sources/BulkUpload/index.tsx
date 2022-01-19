@@ -120,7 +120,7 @@ function BulkUpload(props: Props) {
                 } = leadBulk;
 
                 if (errors) {
-                    const leadsErrors = errors?.map((item, index) => {
+                    const leadsErrors = errors.map((item, index) => {
                         if (isNotDefined(item)) {
                             return undefined;
                         }
@@ -134,7 +134,7 @@ function BulkUpload(props: Props) {
                             clientId,
                             error: transformToFormError(removeNull(item) as ObjectError[]),
                         };
-                    }).filter(isDefined) ?? [];
+                    }).filter(isDefined);
                     const leadsErrorMapping = listToMap(
                         leadsErrors,
                         (item) => item.clientId,
@@ -175,7 +175,8 @@ function BulkUpload(props: Props) {
                         ), 'leads');
                     }
 
-                    const erroredLeadsCount = (result?.length ?? 0) - uploadedLeads.length;
+                    const erroredLeadsCount = result.length - uploadedLeads.length;
+
                     if (erroredLeadsCount > 0) {
                         alert.show(
                             `Failed to add ${erroredLeadsCount} sources!`,
@@ -249,11 +250,11 @@ function BulkUpload(props: Props) {
         if (!selectedLead) {
             return undefined;
         }
-        const selectedLeadData = formValue?.leads?.find((lead) => lead.clientId === selectedLead);
+        const selectedLeadData = formValue.leads?.find((lead) => lead.clientId === selectedLead);
         if (!selectedLeadData) {
             return undefined;
         }
-        const selectedFile = uploadedFiles?.find(
+        const selectedFile = uploadedFiles.find(
             (file) => String(file.id) === selectedLeadData.attachment,
         );
         if (!selectedFile) {
@@ -276,7 +277,7 @@ function BulkUpload(props: Props) {
                 formValidate,
                 setFormError,
                 (value) => {
-                    leadClientIdsRef.current = value?.leads?.map((lead) => lead.clientId);
+                    leadClientIdsRef.current = value.leads?.map((lead) => lead.clientId);
                     const leads = (value.leads ?? []) as LeadInputType[];
 
                     if (leads.length > 0) {
@@ -307,7 +308,7 @@ function BulkUpload(props: Props) {
                     disabled={
                         formPristine
                         || bulkCreateLeadsPending
-                        || (formValue?.leads?.length ?? 0) < 1
+                        || (formValue.leads?.length ?? 0) < 1
                     }
                     onClick={handleSubmit}
                 >

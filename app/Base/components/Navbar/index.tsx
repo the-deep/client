@@ -124,7 +124,7 @@ function Navbar(props: Props) {
     });
 
     const handleCloseNotificationClick = useCallback(() => {
-        notificationRef?.current?.setShowPopup(false);
+        notificationRef.current?.setShowPopup(false);
     }, []);
 
     useEffect(
