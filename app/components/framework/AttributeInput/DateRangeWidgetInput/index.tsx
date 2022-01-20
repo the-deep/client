@@ -3,10 +3,11 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
+import DateRangeInputWrapper from '#components/DateRangeInputWrapper';
+
 import WidgetWrapper from '../WidgetWrapper';
 import { DateRangeWidgetAttribute } from '#types/newEntry';
 
-import DateRangeInputWrapper from './DateRangeInputWrapper';
 import styles from './styles.css';
 
 type DateRangeValue = NonNullable<DateRangeWidgetAttribute['data']>;

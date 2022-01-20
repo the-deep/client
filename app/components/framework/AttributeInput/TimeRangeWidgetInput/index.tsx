@@ -3,7 +3,7 @@ import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
-import TimeRangeInputWrapper from './TimeRangeInputWrapper';
+import TimeRangeInputWrapper from '#components/TimeRangeInputWrapper';
 import WidgetWrapper from '../WidgetWrapper';
 import { TimeRangeWidgetAttribute } from '#types/newEntry';
 
