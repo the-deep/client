@@ -1,7 +1,4 @@
 import React, { useCallback } from 'react';
-import {
-    DateRangeInput,
-} from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
@@ -9,6 +6,7 @@ import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { DateRangeWidgetAttribute } from '#types/newEntry';
 
+import DateRangeInputWrapper from './DateRangeInputWrapper';
 import styles from './styles.css';
 
 type DateRangeValue = NonNullable<DateRangeWidgetAttribute['data']>;
@@ -73,7 +71,7 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             <NonFieldError
                 error={error}
             />
-            <DateRangeInput
+            <DateRangeInputWrapper
                 className={styles.input}
                 name={name}
                 onChange={onChange}
