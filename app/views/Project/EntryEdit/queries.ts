@@ -175,6 +175,7 @@ export const BULK_UPDATE_ENTRIES = gql`
                 }
                 deletedResult {
                     id
+                    clientId
                 }
             }
         }

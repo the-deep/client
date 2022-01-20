@@ -143,8 +143,8 @@ function EntryEdit(props: Props) {
         sectionId?: string;
     } | undefined;
 
-    const entryIdFromState = locationState?.entryId;
-    const sectionIdFromState = locationState?.sectionId;
+    const entryIdFromLocation = locationState?.entryId;
+    const sectionIdFromLocation = locationState?.sectionId;
 
     // LEAD
     const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
@@ -173,7 +173,7 @@ function EntryEdit(props: Props) {
         setLeadGroupOptions,
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
-    const [isFinalizeClicked, setIsFinalizeClicked] = useState(false);
+    const shouldFinalizeRef = useRef<boolean | undefined>(undefined);
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>(undefined);
 
@@ -223,13 +223,14 @@ function EntryEdit(props: Props) {
                 }
                 const analysisFrameworkFromResponse = projectFromResponse.analysisFramework;
                 if (analysisFrameworkFromResponse) {
+                    // Set first section or section from location state as active section
                     const firstSection = analysisFrameworkFromResponse.primaryTagging?.[0];
-                    const sectionFromState = analysisFrameworkFromResponse
-                        .primaryTagging?.find((section) => section.id === sectionIdFromState);
+                    const sectionFromLocation = analysisFrameworkFromResponse
+                        .primaryTagging?.find((section) => section.id === sectionIdFromLocation);
 
                     setSelectedSection(
-                        sectionFromState
-                            ? sectionFromState.clientId
+                        sectionFromLocation
+                            ? sectionFromLocation.clientId
                             : firstSection?.clientId,
                     );
                 }
@@ -300,6 +301,7 @@ function EntryEdit(props: Props) {
         {
             onCompleted: (response) => {
                 if (!response?.project?.leadUpdate) {
+                    shouldFinalizeRef.current = undefined;
                     return;
                 }
                 const {
@@ -309,49 +311,65 @@ function EntryEdit(props: Props) {
 
                 if (!ok) {
                     alert.show(
-                        isFinalizeClicked ? 'Failed to mark source as tagged!' : 'Failed to update source.',
+                        shouldFinalizeRef.current
+                            ? 'Failed to mark source as tagged!'
+                            : 'Failed to update source.',
                         { variant: 'error' },
                     );
                 } else {
+                    const leadData = removeNull(result);
+                    setLeadValue({
+                        ...leadData,
+                        attachment: leadData?.attachment?.id,
+                        leadGroup: leadData?.leadGroup?.id,
+                        assignee: leadData?.assignee?.id,
+                        source: leadData?.source?.id,
+                        authors: leadData?.authors?.map((author) => author.id),
+                    });
+
                     alert.show(
-                        isFinalizeClicked ? 'Successfully marked source as tagged!' : 'Successfully updated source.',
+                        shouldFinalizeRef.current
+                            ? 'Successfully marked source as tagged!'
+                            : 'Successfully updated source.',
                         { variant: 'success' },
                     );
                 }
-                setIsFinalizeClicked(false);
-                const leadData = removeNull(result);
-                setLeadValue({
-                    ...leadData,
-                    attachment: leadData?.attachment?.id,
-                    leadGroup: leadData?.leadGroup?.id,
-                    assignee: leadData?.assignee?.id,
-                    source: leadData?.source?.id,
-                    authors: leadData?.authors?.map((author) => author.id),
-                });
+                shouldFinalizeRef.current = undefined;
             },
             onError: () => {
                 alert.show(
-                    'Failed to update source!',
+                    shouldFinalizeRef.current
+                        ? 'Failed to mark source as tagged!'
+                        : 'Failed to update source!',
                     { variant: 'error' },
                 );
+
+                shouldFinalizeRef.current = undefined;
             },
         },
     );
 
-    const handleLeadSave = useCallback((finalized: boolean) => {
-        if (!projectId || (!finalized && leadPristine)) {
+    const handleLeadSave = useCallback(() => {
+        // NOTE: let's save lead if we are finalizing it
+        if (!projectId || (leadPristine && !shouldFinalizeRef.current)) {
+            shouldFinalizeRef.current = undefined;
             return;
         }
         const submit = createSubmitHandler(
             leadFormValidate,
-            setLeadError,
+            (err) => {
+                setLeadError(err);
+                shouldFinalizeRef.current = undefined;
+            },
             (val) => {
                 const data = val as LeadInputType;
                 updateLead({
                     variables: {
                         data: {
                             ...data,
-                            status: finalized ? 'TAGGED' : undefined,
+                            status: shouldFinalizeRef.current
+                                ? 'TAGGED'
+                                : undefined,
                         },
                         leadId,
                         projectId,
@@ -378,6 +396,7 @@ function EntryEdit(props: Props) {
             onCompleted: (response) => {
                 const entryBulk = response.project?.entryBulk;
                 if (!entryBulk) {
+                    shouldFinalizeRef.current = undefined;
                     return;
                 }
                 const errors = entryBulk?.errors;
@@ -401,6 +420,7 @@ function EntryEdit(props: Props) {
                         error: transformToFormError(removeNull(item) as ObjectError[]),
                     };
                 }).filter(isDefined) ?? [];
+
                 const entriesErrorMapping = listToMap(
                     entriesError,
                     (item) => item.clientId,
@@ -512,16 +532,10 @@ function EntryEdit(props: Props) {
                     );
                 }
 
-                if (projectId && isFinalizeClicked) {
-                    if (saveErrorsCount < 1 && deleteErrorsCount < 1) {
-                        handleLeadSave(true);
-                    } else {
-                        handleLeadSave(false);
-                        alert.show(
-                            'Source cannot be finalized due to some errors in entries.',
-                            { variant: 'error' },
-                        );
-                    }
+                if (saveErrorsCount <= 0 && deleteErrorsCount <= 0) {
+                    handleLeadSave();
+                } else {
+                    shouldFinalizeRef.current = undefined;
                 }
 
                 staleIdentifiersRef.current = undefined;
@@ -538,28 +552,25 @@ function EntryEdit(props: Props) {
                 // eslint-disable-next-line no-console
                 console.error(gqlError);
 
-                handleLeadSave(isFinalizeClicked);
-                if (isFinalizeClicked) {
-                    setIsFinalizeClicked(false);
-                    alert.show(
-                        'Failed to change lead status!',
-                        { variant: 'error' },
-                    );
-                }
+                shouldFinalizeRef.current = undefined;
             },
         },
     );
 
-    const handleSubmit = useCallback(
-        (shouldSetFinalize: boolean) => {
+    const handleEntriesSave = useCallback(
+        () => {
             if (!projectId) {
                 // eslint-disable-next-line no-console
                 console.error('No project id');
+                shouldFinalizeRef.current = undefined;
                 return;
             }
             const submit = createSubmitHandler(
                 formValidate,
-                setFormError,
+                (err) => {
+                    setFormError(err);
+                    shouldFinalizeRef.current = undefined;
+                },
                 (value) => {
                     // FIXME: do not send entries with errors
                     const entriesWithError = value.entries ?? [];
@@ -585,50 +596,47 @@ function EntryEdit(props: Props) {
                         ),
                     }));
 
-                    if (deletedEntries.length > 0 || staleEntries.length > 0) {
-                        const entryDeleteIds = deletedEntries
-                            .map((entry) => entry.id)
-                            // NOTE: we do not need this filter as entry.id is always defined
-                            .filter(isDefined);
-
-                        // FIXME: this is repeated
-                        const transformedEntries = staleEntries
-                            .map((entry) => {
-                                const hiddenWidgetIds = getHiddenWidgetIds(
-                                    allWidgets,
-                                    entry.attributes ?? [],
-                                );
-
-                                return {
-                                    ...entry,
-                                    deleted: undefined,
-                                    stale: undefined,
-                                    attributes: entry.attributes
-                                        ?.filter((attribute) => isDefined(attribute.data))
-                                        .filter((attribute) => !hiddenWidgetIds[attribute.widget])
-                                        .map((attribute) => ({
-                                            ...attribute,
-                                            widgetVersion: attribute.widgetVersion,
-                                            widgetType: undefined,
-                                        })),
-                                };
-                            });
-
-                        setIsFinalizeClicked(shouldSetFinalize);
-                        bulkUpdateEntries({
-                            variables: {
-                                projectId,
-                                deleteIds: entryDeleteIds,
-                                entries: transformedEntries,
-                            },
-                        });
-                    } else {
-                        handleLeadSave(shouldSetFinalize);
-                        alert.show(
-                            'Successfully updated entries!',
-                            { variant: 'success' },
-                        );
+                    // NOTE: let's try to save lead if entries is all good
+                    if (deletedEntries.length <= 0 && staleEntries.length <= 0) {
+                        handleLeadSave();
+                        return;
                     }
+
+                    const entryDeleteIds = deletedEntries
+                        .map((entry) => entry.id)
+                        // NOTE: we do not need this filter as entry.id is always defined
+                        .filter(isDefined);
+
+                    // FIXME: this is repeated
+                    const transformedEntries = staleEntries
+                        .map((entry) => {
+                            const hiddenWidgetIds = getHiddenWidgetIds(
+                                allWidgets,
+                                entry.attributes ?? [],
+                            );
+
+                            return {
+                                ...entry,
+                                deleted: undefined,
+                                stale: undefined,
+                                attributes: entry.attributes
+                                    ?.filter((attribute) => isDefined(attribute.data))
+                                    .filter((attribute) => !hiddenWidgetIds[attribute.widget])
+                                    .map((attribute) => ({
+                                        ...attribute,
+                                        widgetVersion: attribute.widgetVersion,
+                                        widgetType: undefined,
+                                    })),
+                            };
+                        });
+
+                    bulkUpdateEntries({
+                        variables: {
+                            projectId,
+                            deleteIds: entryDeleteIds,
+                            entries: transformedEntries,
+                        },
+                    });
                 },
             );
             submit();
@@ -639,7 +647,6 @@ function EntryEdit(props: Props) {
             formValidate,
             bulkUpdateEntries,
             projectId,
-            alert,
             setFormValue,
             allWidgets,
         ],
@@ -647,24 +654,18 @@ function EntryEdit(props: Props) {
 
     const handleSaveClick = useCallback(
         () => {
-            if (!entriesFormStale) {
-                handleLeadSave(false);
-            } else {
-                handleSubmit(false);
-            }
+            shouldFinalizeRef.current = false;
+            handleEntriesSave();
         },
-        [handleSubmit, handleLeadSave, entriesFormStale],
+        [handleEntriesSave],
     );
 
     const handleFinalizeClick = useCallback(
         () => {
-            if (!entriesFormStale) {
-                handleLeadSave(true);
-            } else {
-                handleSubmit(true);
-            }
+            shouldFinalizeRef.current = true;
+            handleEntriesSave();
         },
-        [handleSubmit, entriesFormStale, handleLeadSave],
+        [handleEntriesSave],
     );
 
     const handleEntryClick = useCallback((entryId: string) => {
@@ -929,9 +930,9 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
-                    if (entries.some((entry) => entry.clientId === entryIdFromState)) {
+                    if (entries.some((entry) => entry.clientId === entryIdFromLocation)) {
                         createRestorePoint();
-                        setSelectedEntry(entryIdFromState);
+                        setSelectedEntry(entryIdFromLocation);
                     }
 
                     const leadData = removeNull(leadFromResponse);
@@ -1252,7 +1253,7 @@ function EntryEdit(props: Props) {
                                         entriesError={entriesErrorStateMap}
                                         // NOTE: If entry Id comes from state, we need to
                                         // show entries tab as it always has the entry
-                                        defaultTab={(entryIdFromState || showAllEntriesTab) ? 'entries' : undefined}
+                                        defaultTab={(entryIdFromLocation || showAllEntriesTab) ? 'entries' : undefined}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}
@@ -1340,7 +1341,7 @@ function EntryEdit(props: Props) {
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
-                                        defaultTab={entryIdFromState ? 'entries' : undefined}
+                                        defaultTab={entryIdFromLocation ? 'entries' : undefined}
                                     />
                                     <Container
                                         className={styles.rightContainer}

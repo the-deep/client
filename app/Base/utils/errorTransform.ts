@@ -7,7 +7,9 @@ interface Error {
 }
 
 export interface ObjectError {
-    // clientId: string;
+    // clientId is sent by the server for bulk updates
+    clientId: string | undefined;
+
     field: string;
     messages?: string;
     objectErrors?: ObjectError[];
