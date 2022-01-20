@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import {
     IoClose,
     IoCheckmark,
@@ -99,7 +99,6 @@ interface EntryItemProps extends EntryInput {
     errored?: boolean;
     projectId: string | undefined;
     entryServerId: string | undefined;
-    scrollIntoView?: boolean;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -126,22 +125,7 @@ function EntryItem(props: EntryItemProps) {
         deleted,
         errored,
         stale,
-        scrollIntoView,
     } = props;
-
-    const elementRef = useRef<HTMLDivElement>(null);
-
-    useEffect(
-        () => {
-            if (scrollIntoView && elementRef.current) {
-                elementRef.current.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                });
-            }
-        },
-        [scrollIntoView],
-    );
 
     const editExcerptDropdownRef: QuickActionDropdownMenuProps['componentRef'] = React.useRef(null);
 
@@ -166,7 +150,6 @@ function EntryItem(props: EntryItemProps) {
 
     return (
         <Container
-            elementRef={elementRef}
             className={_cs(
                 styles.taggedExcerpt,
                 className,

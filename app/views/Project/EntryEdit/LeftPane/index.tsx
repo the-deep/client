@@ -568,9 +568,9 @@ function LeftPane(props: Props) {
                     retainMount="lazy"
                 >
                     <VirtualizedListView
-                        spacing="none"
+                        spacing="comfortable"
                         direction="vertical"
-                        itemHeight={350}
+                        itemHeight={200}
                         data={entries ?? undefined}
                         renderer={EntryItem}
                         rendererParams={entryItemRendererParams}

@@ -60,12 +60,13 @@ function SimplifiedTextView(props: Props) {
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const scrollTopRef = React.useRef<number | undefined>();
     const [charactersLoaded, setCharactersLoaded] = React.useState(CHARACTER_PER_PAGE);
 
     const text = React.useMemo(() => {
         if (textFromProps) {
             const textLength = Math.min(textFromProps.length, charactersLoaded);
-            return textFromProps.substr(0, textLength);
+            return textFromProps.substring(0, textLength);
         }
 
         return '';
@@ -73,16 +74,8 @@ function SimplifiedTextView(props: Props) {
 
     // TODO: Remove overlapping splits if necessary
     const splits = React.useMemo(() => {
-        // Note: we need to preserve scroll due to
-        // unexpected jumps on entry addition / removal
-        const scrollTop = containerRef.current?.scrollTop;
-        if (isDefined(scrollTop)) {
-            window.setTimeout(() => {
-                if (containerRef.current) {
-                    containerRef.current.scrollTop = scrollTop;
-                }
-            }, 0);
-        }
+        // NOTE: Store scrollTopRef before new split is calculated
+        scrollTopRef.current = containerRef.current?.scrollTop;
 
         return entries?.map((entry) => {
             if (!text || !entry.droppedExcerpt) {
@@ -117,6 +110,19 @@ function SimplifiedTextView(props: Props) {
         text,
         entries,
     ]);
+
+    React.useLayoutEffect(
+        () => {
+            // NOTE: Set scrollTopRef on container before layout is done
+            // Without this logic, the scroll randomly jumps when splits is
+            // modified
+            if (isDefined(scrollTopRef.current) && containerRef.current) {
+                containerRef.current.scrollTop = scrollTopRef.current;
+            }
+            scrollTopRef.current = undefined;
+        },
+        [splits],
+    );
 
     let children: React.ReactNode = null;
     if (!text || splits.length === 0) {

@@ -12,6 +12,7 @@ import {
     randomString,
     isDefined,
     mapToMap,
+    compareDate,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -771,12 +772,12 @@ function EntryEdit(props: Props) {
             createRestorePoint();
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
+                    ...(prevValue ?? []),
                     {
                         ...newValue,
                         stale: true,
                         attributes: defaultAttributes,
                     },
-                    ...(prevValue ?? []),
                 ],
                 'entries',
             );
@@ -890,9 +891,15 @@ function EntryEdit(props: Props) {
 
                 const leadFromResponse = projectFromResponse.lead;
                 if (leadFromResponse) {
-                    const entries = leadFromResponse.entries?.map(
-                        (entry) => transformEntry(entry as Entry),
-                    );
+                    // FIXME: server sends entries in reverse order
+                    // FIXME: use a better way to sort entries
+                    const entries = [...(leadFromResponse.entries) ?? []]
+                        .sort((foo, bar) => compareDate(
+                            new Date(foo.createdAt),
+                            new Date(bar.createdAt),
+                        ))
+                        .map((entry) => transformEntry(entry as Entry));
+
                     setCommentsCountMap(
                         listToMap(
                             leadFromResponse.entries ?? [],
