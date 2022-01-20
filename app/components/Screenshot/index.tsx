@@ -4,7 +4,7 @@ import { brush as d3Brush } from 'd3-brush';
 import { select } from 'd3-selection';
 import { _cs } from '@togglecorp/fujs';
 
-import { oldExtensionChromeUrl } from '#base/configs/env';
+import { extensionChromeUrl } from '#base/configs/env';
 
 import { getScreenshot } from '#utils/browserExtension';
 
@@ -151,7 +151,7 @@ function Screenshot(props: Props) {
                     <a
                         className={styles.link}
                         // NOTE: the `deep` username is hardcoded here
-                        href={oldExtensionChromeUrl}
+                        href={extensionChromeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
