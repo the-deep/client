@@ -167,7 +167,10 @@ function SubNavbar(props: SubNavbarProps) {
                     <div
                         className={_cs(styles.descriptionContainer, descriptionContainerClassName)}
                     >
-                        <div className={_cs(styles.description, descriptionClassName)}>
+                        <div
+                            title={description}
+                            className={_cs(styles.description, descriptionClassName)}
+                        >
                             {description}
                         </div>
                     </div>

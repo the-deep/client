@@ -1,12 +1,17 @@
 import React from 'react';
 import { IoAdd } from 'react-icons/io5';
 import { _cs, isDefined } from '@togglecorp/fujs';
-import { QuickActionButton } from '@the-deep/deep-ui';
+import {
+    QuickActionButton,
+    Button,
+} from '@the-deep/deep-ui';
 
 import { PartialEntryType as EntryInput } from '../../schema';
 import useTextSelection from './useTextSelection';
 import EntryItem from '../EntryItem';
 import styles from './styles.css';
+
+const CHARACTER_PER_PAGE = 10000;
 
 interface Split {
     startIndex: number;
@@ -37,7 +42,7 @@ interface Props {
 function SimplifiedTextView(props: Props) {
     const {
         className,
-        text,
+        text: textFromProps,
         entries,
         onAddButtonClick,
         onExcerptChange,
@@ -54,9 +59,32 @@ function SimplifiedTextView(props: Props) {
         disableAddButton,
     } = props;
 
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [charactersLoaded, setCharactersLoaded] = React.useState(CHARACTER_PER_PAGE);
+
+    const text = React.useMemo(() => {
+        if (textFromProps) {
+            const textLength = Math.min(textFromProps.length, charactersLoaded);
+            return textFromProps.substr(0, textLength);
+        }
+
+        return '';
+    }, [textFromProps, charactersLoaded]);
+
     // TODO: Remove overlapping splits if necessary
-    const splits = React.useMemo(() => (
-        entries?.map((entry) => {
+    const splits = React.useMemo(() => {
+        // Note: we need to preserve scroll due to
+        // unexpected jumps on entry addition / removal
+        const scrollTop = containerRef.current?.scrollTop;
+        if (isDefined(scrollTop)) {
+            window.setTimeout(() => {
+                if (containerRef.current) {
+                    containerRef.current.scrollTop = scrollTop;
+                }
+            }, 0);
+        }
+
+        return entries?.map((entry) => {
             if (!text || !entry.droppedExcerpt) {
                 return null;
             }
@@ -84,8 +112,8 @@ function SimplifiedTextView(props: Props) {
             .filter(isDefined)
             .sort((a: Split, b: Split) => (
                 a.startIndex - b.startIndex
-            )) ?? []
-    ), [
+            )) ?? [];
+    }, [
         text,
         entries,
     ]);
@@ -144,8 +172,6 @@ function SimplifiedTextView(props: Props) {
         );
     }
 
-    const containerRef = React.useRef<HTMLDivElement>(null);
-
     const {
         clientRect,
         isCollapsed,
@@ -180,6 +206,12 @@ function SimplifiedTextView(props: Props) {
         }
     }, [onAddButtonClick]);
 
+    const handleLoadMoreClick = React.useCallback(() => {
+        setCharactersLoaded((prevValue) => (
+            prevValue + CHARACTER_PER_PAGE
+        ));
+    }, []);
+
     return (
         <div
             ref={containerRef}
@@ -190,6 +222,17 @@ function SimplifiedTextView(props: Props) {
             )}
         >
             {children}
+            {(textFromProps?.length ?? 0) > charactersLoaded && (
+                <div className={styles.actions}>
+                    <Button
+                        variant="secondary"
+                        name="load-more"
+                        onClick={handleLoadMoreClick}
+                    >
+                        Show more
+                    </Button>
+                </div>
+            )}
             {!isCollapsed && textContent && !disableAddButton && (
                 <div
                     className={styles.actionsPopup}
