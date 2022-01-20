@@ -485,7 +485,7 @@ function LeftPane(props: Props) {
                         name="entries"
                         disabled={isEntrySelectionActive}
                     >
-                        All Entries
+                        {`All Entries (${entries?.length ?? 0})`}
                     </Tab>
                 </TabList>
                 {!hideSimplifiedPreview && (
