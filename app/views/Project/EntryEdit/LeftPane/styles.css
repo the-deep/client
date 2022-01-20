@@ -35,6 +35,8 @@
     }
 
     .entry-list-tab {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         background-color: var(--dui-color-background-information);
         padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
@@ -43,9 +45,14 @@
         .entry-list {
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
             padding: var(--dui-spacing-medium);
-            overflow-y: auto;
-            gap: var(--dui-spacing-medium);
+            overflow: auto;
+            /* gap: var(--dui-spacing-medium); */
+
+            .entry-item {
+                height: 350px;
+            }
         }
     }
 }
