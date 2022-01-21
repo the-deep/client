@@ -99,7 +99,6 @@ export interface OptionBase {
 }
 
 export type DeepContextInterface = ContextInterface<
-
     object,
     ErrorFromServer | undefined,
     Error,

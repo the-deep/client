@@ -269,6 +269,7 @@ function ProjectDetailsForm(props: Props) {
                     organizations: getOrganizationValues(projectDetails),
                 } : initialValue
             ));
+            // FIXME: we may not need to set error here
             setError({});
         },
         [projectDetails, setError, setValue],
@@ -511,7 +512,7 @@ function ProjectDetailsForm(props: Props) {
                             onChange={setFieldValue}
                             disabled={isDefined(projectId) || !accessPrivateProject}
                         />
-                        { !accessPrivateProject && !isDefined(projectId) && (
+                        {!accessPrivateProject && !isDefined(projectId) && (
                             <RequestPrivateProjectButton />
                         )}
                     </Container>

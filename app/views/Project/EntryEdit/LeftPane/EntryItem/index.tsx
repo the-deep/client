@@ -217,11 +217,12 @@ function EntryItem(props: EntryItemProps) {
                         <IoCheckmark />
                     </QuickActionButton>
                     <QuickActionDropdownMenu
+                        title="Show original excerpt"
                         label={<BsFileDiff />}
                         disabled={
                             droppedExcerpt === excerpt
-                            || (droppedExcerpt?.length ?? 0) > 0
-                            || (excerpt?.length ?? 0) > 0
+                            || (droppedExcerpt?.length ?? 0) <= 0
+                            || (excerpt?.length ?? 0) <= 0
                         }
                         popupClassName={styles.diffExcerptPopup}
                         popupContentClassName={styles.content}
@@ -253,6 +254,7 @@ function EntryItem(props: EntryItemProps) {
                         popupContentClassName={styles.content}
                         persistent
                         componentRef={editExcerptDropdownRef}
+                        title="Edit excerpt"
                     >
                         <ExcerptModal
                             title="Edit Excerpt"

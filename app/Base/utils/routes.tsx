@@ -2,14 +2,13 @@ import React from 'react';
 
 import Page, { Props as PageProps } from '#base/components/Page';
 
-function joinUrlPart(foo: string, bar: string) {
+export function joinUrlPart(foo: string, bar: string) {
     if (foo.endsWith('/')) {
         return foo.substring(0, foo.length - 1) + bar;
     }
     return foo + bar;
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export function wrap<T extends string, K extends { className?: string }>(
     props: Omit<PageProps<K>, 'overrideProps' | 'path'> & { path: T, parent?: { path: string } },
 ) {

@@ -7,6 +7,7 @@
         left: var(--dui-spacing-small);
         transition: 200ms opacity ease-in-out;
         opacity: 0;
+        z-index: 1;
     }
 
     &:hover {

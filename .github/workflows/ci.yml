@@ -48,12 +48,23 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
-      - name: 🤞 Run Build + Lint + Test 🧪
+      - name: 🤞 Run Lint 🧪
         env:
             DOCKER_IMAGE: ${{ steps.prep.outputs.tagged_image }}
         run: |
-          python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)" && \
           docker run --rm --workdir="/code/" $DOCKER_IMAGE sh -c 'yarn lint'
+
+      - name: 🤞 Run Test 🧪
+        env:
+            DOCKER_IMAGE: ${{ steps.prep.outputs.tagged_image }}
+        run: |
+          docker run --rm --workdir="/code/" $DOCKER_IMAGE sh -c 'yarn test'
+
+      - name: 🤞 Run Build 🧪
+        env:
+            DOCKER_IMAGE: ${{ steps.prep.outputs.tagged_image }}
+        run: |
+          docker run --rm --workdir="/code/" $DOCKER_IMAGE sh -c 'yarn build'
 
         # Temp fix
         # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#github-cache
