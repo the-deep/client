@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { TimeInput } from '@the-deep/deep-ui';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
-import { isNotDefined } from '@togglecorp/fujs';
 
 import { TimeRangeWidgetAttribute, TimeWidgetAttribute } from '#types/newEntry';
 
@@ -28,36 +27,15 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
         readOnly,
     } = props;
 
-    const [tempTimeRange, setTempTimeRange] = useState<Partial<TimeRangeValue>>({
-        startTime: undefined,
-        endTime: undefined,
-    });
-
     const error = getErrorObject(riskyError);
 
     const handleStartTimeChange = useCallback((val: TimeValue['value'] | undefined) => {
-        if (isNotDefined(val)) {
-            setTempTimeRange({});
-            onChange(undefined, name);
-        } else {
-            setTempTimeRange({ startTime: val });
-            if (tempTimeRange.endTime) {
-                onChange({ startTime: val, endTime: tempTimeRange.endTime }, name);
-            }
-        }
-    }, [tempTimeRange, name, onChange]);
+        onChange({ startTime: val, endTime: value?.endTime }, name);
+    }, [value, name, onChange]);
 
     const handleEndTimeChange = useCallback((val: TimeValue['value'] | undefined) => {
-        if (isNotDefined(val)) {
-            setTempTimeRange({});
-            onChange(undefined, name);
-        } else {
-            setTempTimeRange({ endTime: val });
-            if (tempTimeRange.startTime) {
-                onChange({ startTime: tempTimeRange.startTime, endTime: val }, name);
-            }
-        }
-    }, [tempTimeRange, name, onChange]);
+        onChange({ startTime: value?.startTime, endTime: val }, name);
+    }, [value, name, onChange]);
 
     return (
         <div className={className}>

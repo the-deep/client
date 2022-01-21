@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { DateInput } from '@the-deep/deep-ui';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
-import { isNotDefined } from '@togglecorp/fujs';
 
 import { DateRangeWidgetAttribute, DateWidgetAttribute } from '#types/newEntry';
 
@@ -28,36 +27,15 @@ function DateRangeInputWrapper<N extends string>(props: Props<N>) {
         readOnly,
     } = props;
 
-    const [tempDateRange, setTempDateRange] = useState<Partial<DateRangeValue>>({
-        startDate: undefined,
-        endDate: undefined,
-    });
-
     const error = getErrorObject(riskyError);
 
     const handleStartDateChange = useCallback((val: DateValue['value'] | undefined) => {
-        if (isNotDefined(val)) {
-            setTempDateRange({});
-            onChange(undefined, name);
-        } else {
-            setTempDateRange({ startDate: val });
-            if (tempDateRange.endDate) {
-                onChange({ startDate: val, endDate: tempDateRange.endDate }, name);
-            }
-        }
-    }, [tempDateRange, name, onChange]);
+        onChange({ startDate: val, endDate: value?.endDate }, name);
+    }, [value, name, onChange]);
 
     const handleEndDateChange = useCallback((val: DateValue['value'] | undefined) => {
-        if (isNotDefined(val)) {
-            setTempDateRange({});
-            onChange(undefined, name);
-        } else {
-            setTempDateRange({ endDate: val });
-            if (tempDateRange.startDate) {
-                onChange({ startDate: tempDateRange.startDate, endDate: val }, name);
-            }
-        }
-    }, [tempDateRange, name, onChange]);
+        onChange({ startDate: value?.startDate, endDate: val }, name);
+    }, [value, name, onChange]);
 
     return (
         <div className={className}>
