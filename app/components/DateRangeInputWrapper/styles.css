@@ -1,0 +1,16 @@
+.date-input {
+    display: flex;
+    align-items: baseline;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-medium);
+
+    .start-input {
+        flex-shrink: 0;
+    }
+
+    .end-input {
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+}

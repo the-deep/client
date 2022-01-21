@@ -2,8 +2,6 @@
     display: flex;
 
     .input {
-        display: flex;
         flex-grow: 1;
-        gap: var(--dui-spacing-extra-small);
     }
 }

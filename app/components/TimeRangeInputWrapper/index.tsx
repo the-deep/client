@@ -1,8 +1,13 @@
 import React, { useCallback } from 'react';
 import { TimeInput } from '@the-deep/deep-ui';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
+import { _cs } from '@togglecorp/fujs';
+
+import NonFieldError from '#components/NonFieldError';
 
 import { TimeRangeWidgetAttribute, TimeWidgetAttribute } from '#types/newEntry';
+
+import styles from './styles.css';
 
 type TimeValue = NonNullable<TimeWidgetAttribute['data']>;
 type TimeRangeValue = NonNullable<TimeRangeWidgetAttribute['data']>['value'];
@@ -38,8 +43,10 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
     }, [value, name, onChange]);
 
     return (
-        <div className={className}>
+        <div className={_cs(className, styles.timeInput)}>
+            <NonFieldError error={error} />
             <TimeInput
+                className={styles.startInput}
                 name="startTime"
                 onChange={handleStartTimeChange}
                 value={value?.startTime}
@@ -47,7 +54,11 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
                 disabled={disabled}
                 error={error?.startTime}
             />
+            <span>
+                to
+            </span>
             <TimeInput
+                className={styles.endInput}
                 name="endTime"
                 onChange={handleEndTimeChange}
                 value={value?.endTime}
