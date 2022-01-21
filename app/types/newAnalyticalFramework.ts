@@ -342,12 +342,12 @@ export type TextValue = string;
 export type DateValue = string;
 export type TimeValue = string;
 export type DateRangeValue = {
-    startDate: string;
-    endDate: string;
+    startDate: string | undefined;
+    endDate: string | undefined;
 };
 export type TimeRangeValue = {
-    startTime: string;
-    endTime: string;
+    startTime: string | undefined;
+    endTime: string | undefined;
 };
 export type SingleSelectValue = string;
 export type MultiSelectValue = string[];

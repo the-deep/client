@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
-import { TimeRangeInput, TimeRangeOutput } from '@the-deep/deep-ui';
+import { TimeRangeOutput } from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
 
+import TimeRangeInputWrapper from '#components/TimeRangeInputWrapper';
 import NonFieldError from '#components/NonFieldError';
 import WidgetWrapper from '../WidgetWrapper';
 import { TimeRangeWidgetAttribute } from '#types/newEntry';
@@ -83,7 +84,7 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
                     <NonFieldError
                         error={error}
                     />
-                    <TimeRangeInput
+                    <TimeRangeInputWrapper
                         className={styles.input}
                         name={name}
                         onChange={onChange}
