@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     Kraken,
     QuickActionButton,
+    Message,
 } from '@the-deep/deep-ui';
 import { GrDrag } from 'react-icons/gr';
 import {
@@ -24,7 +25,7 @@ import AttributeInput, { PartialWidget } from '#components/framework/AttributeIn
 import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}
+function noop() { }
 
 interface WidgetProps {
     isSecondary: boolean;
@@ -326,33 +327,47 @@ function Canvas<T>(props: Props<T>) {
             </>
         );
     }
+
     return (
-        <>
-            <NonFieldError
-                error={error}
-            />
-            <SortableList
-                className={styles.canvas}
-                name="widgets"
-                onChange={handleWidgetOrderChangeComplete}
-                // eslint-disable-next-line react/destructuring-assignment
-                data={props.widgets}
-                keySelector={widgetKeySelector}
-                renderer={AttributeInputWrapper}
-                direction="rect"
-                rendererParams={widgetRendererParams}
-                itemContainerParams={itemContainerParams}
-                showDragOverlay
-                emptyIcon={(
-                    <Kraken
-                        variant="sleep"
-                    />
-                )}
-                emptyMessage="No widgets found."
-                messageShown
-                messageIconShown
-            />
-        </>
+        props.widgets && props.widgets.length > 0 ? (
+            <>
+                <NonFieldError
+                    error={error}
+                />
+                <SortableList
+                    className={styles.canvas}
+                    name="widgets"
+                    onChange={handleWidgetOrderChangeComplete}
+                    // eslint-disable-next-line react/destructuring-assignment
+                    data={props.widgets}
+                    keySelector={widgetKeySelector}
+                    renderer={AttributeInputWrapper}
+                    direction="rect"
+                    rendererParams={widgetRendererParams}
+                    itemContainerParams={itemContainerParams}
+                    showDragOverlay
+                    emptyIcon={(
+                        <Kraken
+                            variant="sleep"
+                        />
+                    )}
+                    emptyMessage="No widgets list found."
+                    messageShown
+                    messageIconShown
+                />
+            </>
+        ) : (
+            <div className={styles.noWidgetsFound}>
+                <Message
+                    icon={(
+                        <Kraken
+                            variant="sleep"
+                        />
+                    )}
+                    message="No widgets found."
+                />
+            </div>
+        )
     );
 }
 export default Canvas;

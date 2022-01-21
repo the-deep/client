@@ -9,6 +9,8 @@ import {
     ContainerCard,
     List,
     useConfirmation,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import {
@@ -176,8 +178,12 @@ function RegionsMap(props: Props) {
                     />
                     {!regionsPending && (regions.length ?? 0) < 1 && (
                         <div className={_cs(styles.message, className)}>
-                            <IoMapOutline className={styles.icon} />
-                            {_ts('geoAreas', 'noGeoAreas')}
+                            <Message
+                                icon={
+                                    <Kraken variant="sleep" />
+                                }
+                                message={_ts('geoAreas', 'noGeoAreas')}
+                            />
                         </div>
                     )}
                     {/* FIXME: show pending message */}

@@ -8,6 +8,8 @@ import {
     TabPanel,
     QuickActionButton,
     ButtonProps,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 import {
     Error,
@@ -419,101 +421,116 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                     )}
                     contentClassName={styles.content}
                 >
-                    <NonFieldError error={error} />
-                    <TabList className={styles.tabs}>
-                        {sectionsState.editMode ? (
-                            sectionsState.appliedSections.map((section) => (
-                                <Tab
-                                    key={section.clientId}
-                                    name={section.clientId}
-                                    borderWrapperClassName={styles.borderWrapper}
-                                    className={_cs(
-                                        styles.tab,
-                                        analyzeErrors(error?.[section.clientId]) && styles.errored,
-                                    )}
-                                    title={section.tooltip}
-                                    // FIXME: use strings
-                                >
-                                    {section.title || 'Unnamed'}
-                                    <QuickActionButton
-                                        title="Edit section"
-                                        className={styles.sectionEditButton}
-                                        name={section.clientId}
-                                        onClick={handleSectionEditClick}
-                                        disabled
-                                    >
-                                        <FiEdit2 />
-                                    </QuickActionButton>
-                                </Tab>
-                            ))
-                        ) : (
-                            sectionsState.appliedSections.map((section) => (
-                                <Tab
-                                    key={section.clientId}
-                                    name={section.clientId}
-                                    borderWrapperClassName={styles.borderWrapper}
-                                    className={_cs(
-                                        styles.tab,
-                                        analyzeErrors(error?.[section.clientId]) && styles.errored,
-                                    )}
-                                    title={section.tooltip}
-                                >
-                                    {section.title}
-                                    <QuickActionButton
-                                        className={styles.sectionEditButton}
-                                        name={section.clientId}
-                                        onClick={handleSectionEditClick}
-                                        disabled={disabled}
+                    {sectionsState && sectionsState.appliedSections.length > 0 ? (
+                        <>
+                            <NonFieldError error={error} />
+                            <TabList className={styles.tabs}>
+                                {sectionsState.editMode ? (
+                                    sectionsState.appliedSections.map((section) => (
+                                        <Tab
+                                            key={section.clientId}
+                                            name={section.clientId}
+                                            borderWrapperClassName={styles.borderWrapper}
+                                            className={_cs(
+                                                styles.tab,
+                                                analyzeErrors(error?.[section.clientId])
+                                                && styles.errored,
+                                            )}
+                                            title={section.tooltip}
                                         // FIXME: use strings
-                                        title="Edit"
+                                        >
+                                            {section.title || 'Unnamed'}
+                                            <QuickActionButton
+                                                title="Edit section"
+                                                className={styles.sectionEditButton}
+                                                name={section.clientId}
+                                                onClick={handleSectionEditClick}
+                                                disabled
+                                            >
+                                                <FiEdit2 />
+                                            </QuickActionButton>
+                                        </Tab>
+                                    ))
+                                ) : (
+                                    sectionsState.appliedSections.map((section) => (
+                                        <Tab
+                                            key={section.clientId}
+                                            name={section.clientId}
+                                            borderWrapperClassName={styles.borderWrapper}
+                                            className={_cs(
+                                                styles.tab,
+                                                analyzeErrors(error?.[section.clientId])
+                                                && styles.errored,
+                                            )}
+                                            title={section.tooltip}
+                                        >
+                                            {section.title}
+                                            <QuickActionButton
+                                                className={styles.sectionEditButton}
+                                                name={section.clientId}
+                                                onClick={handleSectionEditClick}
+                                                disabled={disabled}
+                                                // FIXME: use strings
+                                                title="Edit"
+                                            >
+                                                <FiEdit2 />
+                                            </QuickActionButton>
+                                        </Tab>
+                                    ))
+                                )}
+                            </TabList>
+                            {sectionsState.editMode ? (
+                                sectionsState.appliedSections.map((section) => (
+                                    <TabPanel
+                                        key={section.clientId}
+                                        name={section.clientId}
+                                        activeClassName={styles.panel}
                                     >
-                                        <FiEdit2 />
-                                    </QuickActionButton>
-                                </Tab>
-                            ))
-                        )}
-                    </TabList>
-                    {sectionsState.editMode ? (
-                        sectionsState.appliedSections.map((section) => (
-                            <TabPanel
-                                key={section.clientId}
-                                name={section.clientId}
-                                activeClassName={styles.panel}
-                            >
-                                <Canvas
-                                    name={section.clientId}
-                                    widgets={section.widgets}
-                                    editMode
-                                    disabled={disabled}
-                                    error={
-                                        getErrorObject(error?.[section.clientId])?.widgets
-                                    }
-                                />
-                            </TabPanel>
-                        ))
+                                        <Canvas
+                                            name={section.clientId}
+                                            widgets={section.widgets}
+                                            editMode
+                                            disabled={disabled}
+                                            error={
+                                                getErrorObject(error?.[section.clientId])?.widgets
+                                            }
+                                        />
+                                    </TabPanel>
+                                ))
+                            ) : (
+                                sectionsState.appliedSections.map((section) => (
+                                    <TabPanel
+                                        key={section.clientId}
+                                        name={section.clientId}
+                                        activeClassName={styles.panel}
+                                    >
+                                        <Canvas
+                                            name={section.clientId}
+                                            widgets={section.widgets}
+                                            onWidgetDelete={handleWidgetDeleteClick}
+                                            onWidgetEdit={handleWidgetEditClick}
+                                            onWidgetConditionEdit={handleWidgetConditionEditClick}
+                                            onWidgetOrderChange={handleWidgetOrderChange}
+                                            onWidgetClone={handleWidgetClone}
+                                            editMode={false}
+                                            disabled={disabled}
+                                            error={
+                                                getErrorObject(error?.[section.clientId])?.widgets
+                                            }
+                                        />
+                                    </TabPanel>
+                                ))
+                            )}
+                        </>
                     ) : (
-                        sectionsState.appliedSections.map((section) => (
-                            <TabPanel
-                                key={section.clientId}
-                                name={section.clientId}
-                                activeClassName={styles.panel}
-                            >
-                                <Canvas
-                                    name={section.clientId}
-                                    widgets={section.widgets}
-                                    onWidgetDelete={handleWidgetDeleteClick}
-                                    onWidgetEdit={handleWidgetEditClick}
-                                    onWidgetConditionEdit={handleWidgetConditionEditClick}
-                                    onWidgetOrderChange={handleWidgetOrderChange}
-                                    onWidgetClone={handleWidgetClone}
-                                    editMode={false}
-                                    disabled={disabled}
-                                    error={
-                                        getErrorObject(error?.[section.clientId])?.widgets
-                                    }
-                                />
-                            </TabPanel>
-                        ))
+                        <div className={styles.noWidgetsSelected}>
+                            <Message
+                                icon={
+                                    <Kraken variant="sleep" />
+                                }
+                                message="No widgets found."
+                            />
+                        </div>
                     )}
                 </Container>
             </Tabs>

@@ -6,6 +6,8 @@ import {
     Modal,
     PendingMessage,
     ImagePreview,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
@@ -84,7 +86,15 @@ function FrameworkImageButton(props: Props) {
                             src={image ?? frameworkDetails?.previewImage}
                         />
                     ) : (
-                        _ts('analyticalFramework', 'noImageUploaded')
+                        <Message
+                            icon={(
+                                <Kraken
+                                    size="large"
+                                    variant="sleep"
+                                />
+                            )}
+                            message={_ts('analyticalFramework', 'noImageUploaded')}
+                        />
                     )}
                 </Modal>
             )}

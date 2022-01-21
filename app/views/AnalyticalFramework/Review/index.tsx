@@ -5,6 +5,8 @@ import {
     Tab,
     TabList,
     TabPanel,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 import { _cs } from '@togglecorp/fujs';
 
@@ -16,7 +18,7 @@ import { WidgetsType, SectionsType } from '../schema';
 import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}
+function noop() { }
 
 const emptyObject = {};
 
@@ -47,42 +49,57 @@ function Review(props: Props) {
                 heading={_ts('analyticalFramework.review', 'primaryTagging')}
                 contentClassName={styles.primaryTaggingContent}
             >
-                <Tabs
-                    value={selectedSection}
-                    onChange={setSelectedSection}
-                    variant="step"
-                >
-                    <TabList className={styles.tabs}>
+                {primaryTagging && primaryTagging.length > 0 ? (
+                    <Tabs
+                        value={selectedSection}
+                        onChange={setSelectedSection}
+                        variant="step"
+                    >
+                        <TabList className={styles.tabs}>
+                            {primaryTagging.map((section) => (
+                                <Tab
+                                    key={section.clientId}
+                                    name={section.clientId}
+                                    borderWrapperClassName={styles.borderWrapper}
+                                    className={styles.tab}
+                                    title={section.tooltip}
+                                >
+                                    {section.title}
+                                </Tab>
+                            ))}
+                        </TabList>
                         {primaryTagging.map((section) => (
-                            <Tab
+                            <TabPanel
                                 key={section.clientId}
                                 name={section.clientId}
-                                borderWrapperClassName={styles.borderWrapper}
-                                className={styles.tab}
-                                title={section.tooltip}
                             >
-                                {section.title}
-                            </Tab>
+                                <Section
+                                    allWidgets={undefined}
+                                    widgets={section.widgets}
+                                    onAttributeChange={noop}
+                                    attributesMap={emptyObject}
+                                    error={undefined}
+                                    geoAreaOptions={undefined}
+                                    onGeoAreaOptionsChange={noop}
+                                    disabled
+                                />
+                            </TabPanel>
                         ))}
-                    </TabList>
-                    {primaryTagging.map((section) => (
-                        <TabPanel
-                            key={section.clientId}
-                            name={section.clientId}
-                        >
-                            <Section
-                                allWidgets={undefined}
-                                widgets={section.widgets}
-                                onAttributeChange={noop}
-                                attributesMap={emptyObject}
-                                error={undefined}
-                                geoAreaOptions={undefined}
-                                onGeoAreaOptionsChange={noop}
-                                disabled
-                            />
-                        </TabPanel>
-                    ))}
-                </Tabs>
+                    </Tabs>
+                ) : (
+                    <div className={styles.noWidgetsFound}>
+                        <Message
+                            icon={(
+                                <Kraken
+                                    variant="sleep"
+                                    size="large"
+                                />
+                            )}
+                            message="There are no widgets in this section."
+                        />
+                    </div>
+                )}
+
             </ContainerCard>
             <ContainerCard
                 className={styles.card}

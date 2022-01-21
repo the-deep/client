@@ -8,6 +8,6 @@ RUN apk update\
 WORKDIR /code
 
 COPY ./package.json ./yarn.lock /code/
-RUN yarn install --frozen-lockfile
+RUN yarn install && yarn cache clean --frozen-lockfile
 
 COPY . /code/

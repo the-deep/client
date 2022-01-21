@@ -111,6 +111,15 @@
                     flex-grow: 1;
                     overflow: auto;
                 }
+
+                .no-entries-found {
+                    display: flex;
+                    align-items: center;
+                    flex-grow: 1;
+                    justify-content: center;
+                    padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+                    color: var(--dui-color-text-message);
+                }
             }
         }
     }
