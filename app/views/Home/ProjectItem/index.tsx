@@ -39,6 +39,7 @@ import routes from '#base/configs/routes';
 import {
     DateCountType,
     UserEntityCountType,
+    UserEntityDateType,
     ProjectPermission,
 } from '#generated/types';
 
@@ -80,6 +81,7 @@ export interface RecentProjectItemProps {
     topTaggers: UserEntityCountType[] | null | undefined;
     topSourcers: UserEntityCountType[] | null | undefined;
     allowedPermissions: ProjectPermission[] | null | undefined;
+    recentActiveUsers: UserEntityDateType[] | null | undefined;
 }
 
 function ProjectItem(props: RecentProjectItemProps) {
@@ -102,9 +104,10 @@ function ProjectItem(props: RecentProjectItemProps) {
         topSourcers,
         entriesActivity,
         allowedPermissions,
+        recentActiveUsers,
     } = props;
 
-    const topTaggersRendererParams = useCallback((_: unknown, data: UserEntityCountType) => ({
+    const topTaggersRendererParams = useCallback((_: unknown, data: UserEntityDateType) => ({
         className: styles.recentlyActiveItem,
         label: data.name,
         labelContainerClassName: styles.recentlyActiveUserName,
@@ -113,7 +116,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             <DateOutput
                 className={styles.recentActivityDate}
                 // FIXME: Get this information from server
-                value={null}
+                value={data.date}
                 format="hh:mm aaa, MMM dd, yyyy"
             />
         ),
@@ -121,7 +124,7 @@ function ProjectItem(props: RecentProjectItemProps) {
 
     const userStatsRendererParams = useCallback((_: unknown, data: UserEntityCountType) => ({
         className: styles.recentlyActiveItem,
-        label: data.name,
+        label: data.name ?? 'Anon',
         labelContainerClassName: styles.recentlyActiveUserName,
         hideLabelColon: true,
         value: (
@@ -235,8 +238,6 @@ function ProjectItem(props: RecentProjectItemProps) {
                         />
                     </div>
                     <div className={styles.column}>
-                        {/*
-                        // TODO: Add recently active users
                         <TextOutput
                             label={_ts('home.recentProjects', 'recentlyActiveUsersLabel')}
                             block
@@ -244,14 +245,13 @@ function ProjectItem(props: RecentProjectItemProps) {
                             valueContainerClassName={styles.recentlyActiveList}
                             value={(
                                 <List
-                                    data={topTaggers ?? undefined}
+                                    data={recentActiveUsers ?? undefined}
                                     keySelector={topUserKeySelector}
                                     rendererParams={topTaggersRendererParams}
                                     renderer={TextOutput}
                                 />
                             )}
                         />
-                        */}
                         {canEditProject && (
                             <>
                                 <TextOutput

@@ -62,6 +62,11 @@ query RecentProjects{
             count
             name
         }
+        recentActiveUsers {
+            id
+            name
+            date
+        }
         stats {
             entriesActivity {
                 count
@@ -108,6 +113,11 @@ query FetchProject($projectId: ID!) {
         topSourcers {
             count
             name
+        }
+        recentActiveUsers {
+            id
+            name
+            date
         }
         stats {
             entriesActivity {
@@ -195,6 +205,7 @@ function Home(props: ViewProps) {
             totalSourcesTagged: data?.stats?.numberOfLeadsTagged,
             entriesActivity: data?.stats?.entriesActivity,
             topTaggers: data?.topTaggers,
+            recentActiveUsers: data?.recentActiveUsers,
             topSourcers: data?.topSourcers,
             allowedPermissions: data?.allowedPermissions,
         }),
