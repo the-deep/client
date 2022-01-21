@@ -235,6 +235,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                         />
                     </div>
                     <div className={styles.column}>
+                        {/*
+                        // TODO: Add recently active users
                         <TextOutput
                             label={_ts('home.recentProjects', 'recentlyActiveUsersLabel')}
                             block
@@ -249,6 +251,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                 />
                             )}
                         />
+                        */}
                         {canEditProject && (
                             <>
                                 <TextOutput

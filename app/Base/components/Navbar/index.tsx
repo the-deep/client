@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useRef } from 'react';
+import React, { useCallback, useContext, useRef, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Link } from 'react-router-dom';
 import { useQuery, gql, useMutation } from '@apollo/client';
@@ -59,10 +59,14 @@ export const USER_NOTIFICATIONS_COUNT = gql`
 
 interface Props {
     className?: string;
+    disabled?: boolean;
 }
 
 function Navbar(props: Props) {
-    const { className } = props;
+    const {
+        className,
+        disabled,
+    } = props;
     const alert = useAlert();
 
     const {
@@ -72,6 +76,9 @@ function Navbar(props: Props) {
     } = useContext(UserContext);
 
     const notificationRef = useRef<
+        { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
+    >(null);
+    const settingsRef = useRef<
         { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
     >(null);
 
@@ -116,10 +123,21 @@ function Navbar(props: Props) {
         message: 'Are you sure you want to logout?',
     });
 
-    const notificationsCount = notifications?.notifications?.totalCount;
     const handleCloseNotificationClick = useCallback(() => {
         notificationRef?.current?.setShowPopup(false);
     }, []);
+
+    useEffect(
+        () => {
+            if (disabled) {
+                settingsRef?.current?.setShowPopup(false);
+                notificationRef?.current?.setShowPopup(false);
+            }
+        },
+        [disabled],
+    );
+
+    const notificationsCount = notifications?.notifications?.totalCount;
 
     return (
         <nav className={_cs(className, styles.navbar)}>
@@ -181,6 +199,7 @@ function Navbar(props: Props) {
                             actions={notificationsCount !== 0 ? notificationsCount : undefined}
                             popupClassName={styles.popup}
                             actionsContainerClassName={styles.notificationCount}
+                            disabled={disabled}
                             persistent
                         >
                             <Notifications
@@ -192,6 +211,7 @@ function Navbar(props: Props) {
             </div>
             {authenticated && user && (
                 <DropdownMenu
+                    componentRef={settingsRef}
                     actions={(
                         <Avatar
                             className={styles.avatar}
@@ -202,6 +222,7 @@ function Navbar(props: Props) {
                     label={user.displayName ?? 'Anon'}
                     className={styles.userDisplay}
                     variant="transparent"
+                    disabled={disabled}
                 >
                     <DropdownMenuItem
                         href={route.myProfile.path}

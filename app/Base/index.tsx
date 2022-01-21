@@ -216,6 +216,7 @@ function Base() {
                                                     styles.navbar,
                                                     !navbarVisibility && styles.hidden,
                                                 )}
+                                                disabled={!navbarVisibility}
                                             />
                                             <Routes
                                                 className={styles.view}
