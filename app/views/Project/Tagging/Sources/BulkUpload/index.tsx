@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useCallback } from 'react';
+import React, { useContext, useMemo, useState, useCallback, useRef } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -77,7 +77,7 @@ function BulkUpload(props: Props) {
     // NOTE: If a lead is removed or saved, uploaded files are not being removed at the moment
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
     const [selectedLead, setSelectedLead] = useState<string | undefined>();
-    const [leadClientIds, setLeadClientIds] = useState<string[] | undefined>();
+    const leadClientIdsRef = useRef<string[] | undefined>();
 
     const { user } = useContext(UserContext);
 
@@ -111,6 +111,7 @@ function BulkUpload(props: Props) {
             onCompleted: (response) => {
                 const leadBulk = response.project?.leadBulk;
                 if (!leadBulk) {
+                    leadClientIdsRef.current = undefined;
                     return;
                 }
                 const {
@@ -123,6 +124,7 @@ function BulkUpload(props: Props) {
                         if (isNotDefined(item)) {
                             return undefined;
                         }
+                        const leadClientIds = leadClientIdsRef.current;
                         const clientId = leadClientIds?.[index];
                         if (isNotDefined(clientId)) {
                             return undefined;
@@ -154,6 +156,7 @@ function BulkUpload(props: Props) {
                         if (isNotDefined(item)) {
                             return undefined;
                         }
+                        const leadClientIds = leadClientIdsRef.current;
                         const clientId = leadClientIds?.[index];
                         if (isNotDefined(clientId)) {
                             return undefined;
@@ -173,7 +176,6 @@ function BulkUpload(props: Props) {
                     }
 
                     const erroredLeadsCount = (result?.length ?? 0) - uploadedLeads.length;
-
                     if (erroredLeadsCount > 0) {
                         alert.show(
                             `Failed to add ${erroredLeadsCount} sources!`,
@@ -183,8 +185,10 @@ function BulkUpload(props: Props) {
                         onClose();
                     }
                 }
+                leadClientIdsRef.current = undefined;
             },
             onError: (gqlError) => {
+                leadClientIdsRef.current = undefined;
                 alert.show(
                     'Failed to add sources!',
                     { variant: 'error' },
@@ -272,7 +276,7 @@ function BulkUpload(props: Props) {
                 formValidate,
                 setFormError,
                 (value) => {
-                    setLeadClientIds(value?.leads?.map((lead) => lead.clientId));
+                    leadClientIdsRef.current = value?.leads?.map((lead) => lead.clientId);
                     const leads = (value.leads ?? []) as LeadInputType[];
 
                     if (leads.length > 0) {
