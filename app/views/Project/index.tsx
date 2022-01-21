@@ -62,6 +62,7 @@ function Project(props: Props) {
         SET_LAST_ACTIVE_PROJECT,
     );
 
+    // Let's make sure last active project
     const { loading, error } = useQuery<CurrentProjectQuery, CurrentProjectQueryVariables>(
         CURRENT_PROJECT,
         {
