@@ -191,7 +191,7 @@ function EntriesExportSelection(props: Props) {
     const alert = useAlert();
 
     const { project } = React.useContext(ProjectContext);
-    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
+    const filterOnlyUnprotected = !!project?.allowedPermissions.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [previewId, setPreviewId] = useState<string | undefined>(undefined);
@@ -238,7 +238,7 @@ function EntriesExportSelection(props: Props) {
             onCompleted: (response) => {
                 // TODO handle for conditional widgets
                 const widgets = getWidgets(
-                    response.project?.analysisFramework as AnalysisFramework,
+                    response.project?.analysisFramework as (AnalysisFramework | undefined),
                 );
                 const textWidgetList = widgets
                     ?.filter((v) => v.widgetId === 'TEXT')
@@ -265,9 +265,9 @@ function EntriesExportSelection(props: Props) {
                 'ProjectExports',
             ],
             onCompleted: (response) => {
-                if (response?.project?.exportCreate?.ok) {
+                if (response.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {
-                        setPreviewId(response.project.exportCreate.result?.id);
+                        setPreviewId(response.project.exportCreate.result.id);
                     } else {
                         alert.show(
                             _ts('export', 'exportStartedNotifyMessage'),
@@ -288,7 +288,10 @@ function EntriesExportSelection(props: Props) {
         },
     );
 
-    const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
+    const analysisFramework = frameworkResponse?.project?.analysisFramework as (
+        AnalysisFramework | undefined
+    );
+
     useEffect(() => {
         const structure = createReportStructure(
             reportStructureVariant,

@@ -35,6 +35,7 @@ const config = {
         },
         sourceType: 'module',
         allowImportExportEverywhere: true,
+        project: ['tsconfig.json'],
     },
     rules: {
         strict: 1,
@@ -52,6 +53,8 @@ const config = {
         '@typescript-eslint/no-empty-interface': 0,
         '@typescript-eslint/explicit-function-return-type': 0,
         '@typescript-eslint/explicit-module-boundary-types': 0,
+
+        '@typescript-eslint/no-unnecessary-condition': 'warn',
 
         'no-console': 1,
         indent: ['error', 4, { SwitchCase: 1 }],

@@ -163,7 +163,7 @@ function FrameworkDetail(props: Props) {
         {
             variables,
             onCompleted: (response) => {
-                setSelectedSection(response?.analysisFramework?.primaryTagging?.[0]?.clientId);
+                setSelectedSection(response.analysisFramework?.primaryTagging?.[0]?.clientId);
             },
         },
     );
@@ -173,7 +173,7 @@ function FrameworkDetail(props: Props) {
         () => removeNull(frameworkDetailsResponse?.analysisFramework as Framework | undefined),
         [frameworkDetailsResponse],
     );
-    const sections = frameworkDetails?.primaryTagging;
+    const sections = frameworkDetails.primaryTagging;
 
     const {
         pending: projectPatchPending,
@@ -231,9 +231,9 @@ function FrameworkDetail(props: Props) {
         frameworkId,
     });
 
-    const canEditFramework = frameworkDetails?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
-    const canCloneFramework = frameworkDetails?.allowedPermissions?.includes('CAN_CLONE_FRAMEWORK');
-    const canUseFramework = frameworkDetails?.allowedPermissions?.includes('CAN_USE_IN_OTHER_PROJECTS');
+    const canEditFramework = frameworkDetails.allowedPermissions.includes('CAN_EDIT_FRAMEWORK');
+    const canCloneFramework = frameworkDetails.allowedPermissions.includes('CAN_CLONE_FRAMEWORK');
+    const canUseFramework = frameworkDetails.allowedPermissions.includes('CAN_USE_IN_OTHER_PROJECTS');
 
     return (
         <div className={_cs(styles.frameworkDetail, className)}>
@@ -244,7 +244,7 @@ function FrameworkDetail(props: Props) {
             >
                 <ContainerCard
                     className={styles.frameworkItem}
-                    heading={frameworkDetails?.title ?? '-'}
+                    heading={frameworkDetails.title ?? '-'}
                     headingSize="small"
                     headerClassName={styles.header}
                     headingContainerClassName={styles.headingContainer}
@@ -252,7 +252,7 @@ function FrameworkDetail(props: Props) {
                     headingDescription={(
                         <TextOutput
                             label={_ts('projectEdit', 'createdAtLabel')}
-                            value={frameworkDetails?.createdAt && (
+                            value={frameworkDetails.createdAt && (
                                 <DateOutput
                                     value={frameworkDetails.createdAt}
                                 />
@@ -286,7 +286,7 @@ function FrameworkDetail(props: Props) {
                                             <>
                                                 <p>
                                                     { _ts('projectEdit', 'confirmUseFramework', {
-                                                        title: <b>{frameworkDetails?.title}</b>,
+                                                        title: <b>{frameworkDetails.title}</b>,
                                                     }) }
                                                 </p>
                                                 <p>
@@ -340,11 +340,11 @@ function FrameworkDetail(props: Props) {
                     contentClassName={styles.content}
                 >
                     <div className={styles.metadataContainer}>
-                        {frameworkDetails?.description}
+                        {frameworkDetails.description}
                         <TextOutput
                             className={styles.block}
                             label={_ts('projectEdit', 'frameworkCreatorTitle')}
-                            value={frameworkDetails?.createdBy?.displayName}
+                            value={frameworkDetails.createdBy?.displayName}
                             hideLabelColon
                         />
                         <TextOutput
@@ -358,13 +358,13 @@ function FrameworkDetail(props: Props) {
                             )}
                             hideLabelColon
                         />
-                        {(frameworkDetails?.visibleProjects?.length ?? 0) > 0 && (
+                        {(frameworkDetails.visibleProjects?.length ?? 0) > 0 && (
                             <TextOutput
                                 className={styles.block}
                                 label={_ts('projectEdit', 'recentlyUsedInProjectsTitle')}
                                 value={(
                                     <List
-                                        data={frameworkDetails?.visibleProjects}
+                                        data={frameworkDetails.visibleProjects}
                                         keySelector={itemKeySelector}
                                         rendererParams={itemRendererParams}
                                         renderer={Link}
@@ -440,7 +440,7 @@ function FrameworkDetail(props: Props) {
                         >
                             <Section
                                 allWidgets={undefined}
-                                widgets={frameworkDetails?.secondaryTagging}
+                                widgets={frameworkDetails.secondaryTagging}
                                 onAttributeChange={noop}
                                 attributesMap={emptyObject}
                                 error={undefined}
@@ -455,8 +455,8 @@ function FrameworkDetail(props: Props) {
             {frameworkCloneModalShown && (
                 <CloneFrameworkModal
                     frameworkToClone={frameworkId}
-                    frameworkTitle={frameworkDetails?.title}
-                    frameworkDescription={frameworkDetails?.description}
+                    frameworkTitle={frameworkDetails.title}
+                    frameworkDescription={frameworkDetails.description}
                     onCloneSuccess={handleNewFrameworkAddSuccess}
                     onModalClose={hideFrameworkCloneModal}
                 />

@@ -74,7 +74,7 @@ function AddLeadGroupModal(props: Props) {
         onSuccess: (response) => {
             setValue({
                 ...value,
-                title: response?.title,
+                title: response.title,
             });
         },
     });
@@ -143,7 +143,7 @@ function AddLeadGroupModal(props: Props) {
             {(leadGroupFetchPending || leadGroupAddPending) && <PendingMessage />}
             <TextInput
                 name="title"
-                value={value?.title}
+                value={value.title}
                 error={error?.title}
                 onChange={setFieldValue}
                 label={_ts('addLeadGroup', 'titleLabel')}

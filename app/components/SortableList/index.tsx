@@ -32,6 +32,7 @@ import {
 } from '@dnd-kit/sortable';
 import { listToMap, isDefined } from '@togglecorp/fujs';
 
+import { find } from '#base/utils/common';
 import { genericMemo } from '#utils/common';
 
 type OptionKey = string | number;
@@ -190,7 +191,7 @@ function SortableList<
         const { active, over } = event;
         setActiveId(undefined);
 
-        if (active.id && over?.id && active.id !== over?.id && items && onChange) {
+        if (active.id && over?.id && active.id !== over.id && onChange) {
             const oldIndex = items.indexOf(active.id);
             const newIndex = items.indexOf(over.id);
 
@@ -209,16 +210,17 @@ function SortableList<
         if (!activeId || !data || !showDragOverlay) {
             return null;
         }
-        const activeIndex = data.findIndex(
+        const activeDatum = find(
+            data,
             (d) => String(keySelector(d)) === activeId,
         );
-        if (!activeIndex) {
+        if (!activeDatum.index) {
             return null;
         }
         const params = rendererParams(
-            keySelector(data[activeIndex]),
-            data[activeIndex],
-            activeIndex,
+            keySelector(activeDatum.value),
+            activeDatum.value,
+            activeDatum.index,
             data,
         );
         if (!params) {

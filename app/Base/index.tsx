@@ -33,6 +33,7 @@ import {
 } from '#base/utils/restRequest';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import { find } from '#base/utils/common';
 import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
 
@@ -119,7 +120,7 @@ function Base() {
             setAlerts((prevAlerts) => unique(
                 [...prevAlerts, alert],
                 (a) => a.name,
-            ) ?? prevAlerts);
+            ));
         },
         [setAlerts],
     );
@@ -144,18 +145,18 @@ function Base() {
     const updateAlertContent = React.useCallback(
         (name: string, children: React.ReactNode) => {
             setAlerts((prevAlerts) => {
-                const i = prevAlerts.findIndex((a) => a.name === name);
-                if (i === -1) {
+                const prevAlert = find(prevAlerts, (a) => a.name === name);
+                if (prevAlert.index === undefined) {
                     return prevAlerts;
                 }
 
                 const updatedAlert = {
-                    ...prevAlerts[i],
+                    ...prevAlert.value,
                     children,
                 };
 
                 const newAlerts = [...prevAlerts];
-                newAlerts.splice(i, 1, updatedAlert);
+                newAlerts.splice(prevAlert.index, 1, updatedAlert);
 
                 return newAlerts;
             });

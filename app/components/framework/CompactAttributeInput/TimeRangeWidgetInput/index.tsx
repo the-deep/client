@@ -76,8 +76,8 @@ function TimeRangeWidgetInput<N extends string>(props: Props<N>) {
         >
             {readOnly ? (
                 <TimeRangeOutput
-                    startTime={value?.value?.startTime}
-                    endTime={value?.value?.startTime}
+                    startTime={value?.value.startTime}
+                    endTime={value?.value.startTime}
                 />
             ) : (
                 <>

@@ -42,8 +42,8 @@ function EmmStatsModal(props: Props) {
         emmTriggers,
     } = props;
 
-    const showEntities = emmEntities && emmEntities?.length > 0;
-    const showTriggers = emmTriggers && emmTriggers?.length > 0;
+    const showEntities = emmEntities && emmEntities.length > 0;
+    const showTriggers = emmTriggers && emmTriggers.length > 0;
 
     return (
         <div className={_cs(className, styles.body)}>
@@ -56,7 +56,7 @@ function EmmStatsModal(props: Props) {
                     <ListView
                         className={styles.list}
                         renderer={Tag}
-                        data={emmTriggers ?? undefined}
+                        data={emmTriggers}
                         keySelector={emmTriggerKeySelector}
                         rendererParams={emmTriggerRendererParams}
                         pending={false}
@@ -74,7 +74,7 @@ function EmmStatsModal(props: Props) {
                     <ListView
                         className={styles.list}
                         renderer={Tag}
-                        data={emmEntities ?? undefined}
+                        data={emmEntities}
                         keySelector={emmEntitiesKeySelector}
                         rendererParams={emmEntitiesRendererParams}
                         pending={false}

@@ -61,7 +61,7 @@ function DropboxPicker(props: Props) {
     }, [onSuccess]);
 
     const handleClick = useCallback(() => {
-        window?.Dropbox?.choose({
+        window.Dropbox?.choose({
             success: handleSuccess,
             cancel: handleCancel,
             linkType,

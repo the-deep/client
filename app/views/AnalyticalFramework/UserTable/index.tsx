@@ -127,14 +127,14 @@ function UserTable(props: Props) {
     const [userToEdit, setUserToEdit] = useState<UserToEdit | undefined>(undefined);
 
     const handleUserEditClick = useCallback((userId: number) => {
-        const selectedUser = frameworkUsers?.results?.find((u) => u.id === userId);
+        const selectedUser = frameworkUsers?.results.find((u) => u.id === userId);
         if (!selectedUser) {
             return;
         }
         setUserToEdit({
             id: selectedUser.id,
             member: selectedUser.member,
-            memberName: selectedUser.memberDetails?.displayName,
+            memberName: selectedUser.memberDetails.displayName,
             role: selectedUser.role,
         });
         showUserAddModal();
@@ -172,27 +172,27 @@ function UserTable(props: Props) {
                 createStringColumn<User, number>(
                     'name',
                     'Name',
-                    (item) => item?.memberDetails?.displayName,
+                    (item) => item.memberDetails.displayName,
                 ),
                 createStringColumn<User, number>(
                     'organization',
                     'Organization',
-                    (item) => item?.memberDetails?.organizationTitle,
+                    (item) => item.memberDetails.organizationTitle,
                 ),
                 createStringColumn<User, number>(
                     'added_by',
                     'Added By',
-                    (item) => item?.addedByDetails?.displayName,
+                    (item) => item.addedByDetails?.displayName,
                 ),
                 createDateColumn<User, number>(
                     'joined_at',
                     'Joined By',
-                    (item) => item?.joinedAt,
+                    (item) => item.joinedAt,
                 ),
                 createStringColumn<User, number>(
                     'role',
                     'Assigned Role',
-                    (item) => item?.roleDetails?.title,
+                    (item) => item.roleDetails.title,
                 ),
                 actionColumn,
             ]);

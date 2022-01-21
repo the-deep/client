@@ -140,7 +140,7 @@ function NodeInput(props: NodeInputProps) {
     const arrayError = getErrorObject(error?.children);
 
     const errored = analyzeErrors(error);
-    const heading = value?.label ?? `Option ${index + 1}`;
+    const heading = value.label ?? `Option ${index + 1}`;
     const {
         setValue: onSiblingChange,
         removeValue: onSiblingRemove,
@@ -148,7 +148,7 @@ function NodeInput(props: NodeInputProps) {
 
     const handleAdd = useCallback(
         () => {
-            const oldNodes = value?.children ?? [];
+            const oldNodes = value.children ?? [];
             const key = randomString();
             newlyCreatedNodeIdRef.current = key;
             const newNode: PartialNodeType = {
@@ -156,7 +156,7 @@ function NodeInput(props: NodeInputProps) {
                 order: oldNodes.length + 1,
             };
             setExpandedNodeId(newNode.key);
-            onExpansionChange(true, value?.key);
+            onExpansionChange(true, value.key);
             onFieldChange(
                 [...reorder(oldNodes), newNode],
                 'children' as const,
@@ -164,9 +164,9 @@ function NodeInput(props: NodeInputProps) {
         },
         [
             onFieldChange,
-            value?.children,
+            value.children,
             onExpansionChange,
-            value?.key,
+            value.key,
         ],
     );
 
@@ -206,7 +206,7 @@ function NodeInput(props: NodeInputProps) {
 
     return (
         <ControlledExpandableContainer
-            name={value?.key}
+            name={value.key}
             className={className}
             heading={`${heading} ${errored ? '*' : ''}`}
             headingSize="extraSmall"
@@ -227,7 +227,7 @@ function NodeInput(props: NodeInputProps) {
                     <GrDrag />
                 </QuickActionButton>
             )}
-            headerActions={(value?.children?.length ?? 0) < OPTIONS_LIMIT && (
+            headerActions={(value.children?.length ?? 0) < OPTIONS_LIMIT && (
                 <>
                     <QuickActionButton
                         name={undefined}
@@ -255,7 +255,7 @@ function NodeInput(props: NodeInputProps) {
                 // FIXME: use translation
                 label="Label"
                 name="label"
-                value={value?.label}
+                value={value.label}
                 onChange={onFieldChange}
                 error={error?.label}
             />
@@ -265,7 +265,7 @@ function NodeInput(props: NodeInputProps) {
                 label="Tooltip"
                 name="tooltip"
                 rows={2}
-                value={value?.tooltip}
+                value={value.tooltip}
                 onChange={onFieldChange}
                 error={error?.tooltip}
             />
@@ -273,7 +273,7 @@ function NodeInput(props: NodeInputProps) {
                 name="children"
                 className={styles.sortableList}
                 onChange={handleOrderChange}
-                data={value?.children}
+                data={value.children}
                 keySelector={optionKeySelector}
                 renderer={NodeInput}
                 direction="vertical"

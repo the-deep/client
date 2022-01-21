@@ -250,9 +250,9 @@ function AnalyticalFramework(props: Props) {
                 // eslint-disable-next-line max-len
                 if (framework && (!storedData || getTimestamp(framework.modifiedAt) > getTimestamp(storedData.framework.modifiedAt))) {
                     setValue(transformFramework(framework));
-                    setFrameworkImage(framework?.previewImage);
+                    setFrameworkImage(framework.previewImage);
                     setOrganizationOptions(
-                        framework?.organization
+                        framework.organization
                             ? [framework.organization]
                             : [],
                     );
@@ -283,7 +283,7 @@ function AnalyticalFramework(props: Props) {
         CREATE_FRAMEWORK,
         {
             onCompleted: (response) => {
-                if (!response?.analysisFrameworkCreate) {
+                if (!response.analysisFrameworkCreate) {
                     return;
                 }
                 const {
@@ -336,7 +336,7 @@ function AnalyticalFramework(props: Props) {
         UPDATE_FRAMEWORK,
         {
             onCompleted: (response) => {
-                if (!response?.analysisFramework?.analysisFrameworkUpdate) {
+                if (!response.analysisFramework?.analysisFrameworkUpdate) {
                     return;
                 }
                 const {
@@ -651,7 +651,7 @@ function AnalyticalFramework(props: Props) {
     }
 
     const framework = (frameworkQueryData?.analysisFramework ?? undefined) as Framework | undefined;
-    const hasPermission = createMode || framework?.allowedPermissions?.includes('CAN_EDIT_FRAMEWORK');
+    const hasPermission = createMode || framework?.allowedPermissions.includes('CAN_EDIT_FRAMEWORK');
 
     return (
         <div className={_cs(styles.analyticalFramework, className)}>
@@ -772,7 +772,7 @@ function AnalyticalFramework(props: Props) {
                                             <DateInput
                                                 className={styles.createdOn}
                                                 name="createdAt"
-                                                value={framework?.createdAt?.split('T')[0]}
+                                                value={framework?.createdAt.split('T')[0]}
                                                 disabled
                                                 label={_ts('analyticalFramework', 'createdOn')}
                                             />
@@ -885,7 +885,7 @@ function AnalyticalFramework(props: Props) {
                                         allWidgets={allWidgets}
                                         name="properties"
                                         onChange={handlePropertiesChange}
-                                        value={value?.properties}
+                                        value={value.properties}
                                         error={error?.properties}
                                         disabled={pending}
                                     />

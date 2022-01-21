@@ -100,7 +100,7 @@ function DiscardedEntries(props: Props) {
             discardedEntryId: data.id,
             tagDisplay: data.tagDisplay,
             excerpt: data.entryDetails.excerpt ?? '',
-            image: data.entryDetails?.imageDetails?.file ? ({
+            image: data.entryDetails.imageDetails?.file ? ({
                 id: String(data.entryDetails.imageDetails.id),
                 title: data.entryDetails.imageDetails.title ?? '',
                 file: {

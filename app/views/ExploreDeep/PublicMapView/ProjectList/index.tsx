@@ -140,15 +140,15 @@ function ProjectList(props: Props) {
     }, []);
 
     const rendererParams = useCallback((_: string, datum: ProjectDetail): ProjectListProps => ({
-        projectId: datum?.id,
-        projectTitle: datum?.title,
-        description: datum?.description,
-        frameworkTitle: datum?.analysisFrameworkTitle ?? undefined,
-        frameworkPreviewImage: datum?.analysisFrameworkPreviewImage ?? undefined,
-        createdAt: datum?.createdAt ?? undefined,
-        numberOfEntries: datum?.numberOfEntries ?? 0,
-        numberOfLeads: datum?.numberOfLeads ?? 0,
-        numberOfUsers: datum?.numberOfUsers ?? 0,
+        projectId: datum.id,
+        projectTitle: datum.title,
+        description: datum.description,
+        frameworkTitle: datum.analysisFrameworkTitle ?? undefined,
+        frameworkPreviewImage: datum.analysisFrameworkPreviewImage ?? undefined,
+        createdAt: datum.createdAt,
+        numberOfEntries: datum.numberOfEntries,
+        numberOfLeads: datum.numberOfLeads,
+        numberOfUsers: datum.numberOfUsers,
         onExpansionChange: handleExpansionChange,
         expanded: expandedProjectId === datum.id,
     }), [

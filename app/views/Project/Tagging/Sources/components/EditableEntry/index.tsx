@@ -162,7 +162,7 @@ function EditableEntry(props: Props) {
         {
             refetchQueries: ['ProjectSources'],
             onCompleted: (gqlResponse) => {
-                const response = gqlResponse?.project?.entryUpdate;
+                const response = gqlResponse.project?.entryUpdate;
                 if (!response) {
                     return;
                 }

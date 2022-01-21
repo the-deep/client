@@ -16,7 +16,7 @@ function EntryCommentWrapper(props: EntryCommentsProps) {
     const handleEntryCommentAdd = useCallback(() => {
         setCommentsCountMap((oldCounts) => ({
             ...oldCounts,
-            [String(entryId)]: (oldCounts?.[String(entryId)] ?? 0) + 1,
+            [String(entryId)]: (oldCounts[String(entryId)] ?? 0) + 1,
         }));
     }, [entryId, setCommentsCountMap]);
 
@@ -24,7 +24,7 @@ function EntryCommentWrapper(props: EntryCommentsProps) {
         <EntryComments
             {...props}
             entryId={entryId}
-            activityCount={commentsCountMap?.[String(entryId)]}
+            activityCount={commentsCountMap[String(entryId)]}
             onEntryCommentAdd={handleEntryCommentAdd}
         />
     );

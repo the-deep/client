@@ -112,7 +112,7 @@ function ProjectJoinModal(props: Props) {
                     if (formError?.project) {
                         setError({
                             ...formError,
-                            [internal]: formError?.project as string,
+                            [internal]: formError.project as string,
                         });
                     } else {
                         setError(formError);

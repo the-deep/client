@@ -34,8 +34,8 @@ function Users(props: Props) {
         method: 'GET',
     });
 
-    const activeUserMembership = projectMembershipsResponse?.results?.[0];
-    const activeUserRoleLevel = activeUserMembership?.roleDetails?.level;
+    const activeUserMembership = projectMembershipsResponse?.results[0];
+    const activeUserRoleLevel = activeUserMembership?.roleDetails.level;
 
     return (
         <div className={styles.users}>

@@ -372,7 +372,7 @@ function SingleSelectConditionalWidgetForm(props: SingleSelectConditionalWidgetF
 
     const arrayError = getErrorObject(error?.conditions);
 
-    const totalConditions = value?.conditions?.length ?? 0;
+    const totalConditions = value.conditions?.length ?? 0;
 
     const conditionRendererParams = useCallback((
         key: string,
@@ -434,7 +434,7 @@ function SingleSelectConditionalWidgetForm(props: SingleSelectConditionalWidgetF
                     <SortableList
                         name="conditions"
                         onChange={handleOrderChange}
-                        data={value?.conditions}
+                        data={value.conditions}
                         keySelector={conditionKeySelector}
                         renderer={ConditionInput}
                         direction="vertical"
@@ -444,12 +444,12 @@ function SingleSelectConditionalWidgetForm(props: SingleSelectConditionalWidgetF
                         messageShown
                         messageIconShown
                     />
-                    {((value?.conditions?.length ?? 0) > 0) && (
+                    {((value.conditions?.length ?? 0) > 0) && (
                         <ConjunctionInput
                             name="add-condition"
                             value={undefined}
                             onChange={handleAdd}
-                            disabled={(value?.conditions?.length ?? 0) >= CONDITIONS_LIMIT}
+                            disabled={(value.conditions?.length ?? 0) >= CONDITIONS_LIMIT}
                         />
                     )}
                 </Container>

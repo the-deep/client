@@ -112,7 +112,7 @@ function AnalyticalNGramsModal(props: Props) {
 
     const entriesForNgrams = useMemo(() => (
         analyticalEntries?.map(
-            (ae) => (ae.entry ? entries?.[ae.entry] : undefined),
+            (ae) => (ae.entry ? entries[ae.entry] : undefined),
         ).filter(isDefined) ?? []
     ), [entries, analyticalEntries]);
 

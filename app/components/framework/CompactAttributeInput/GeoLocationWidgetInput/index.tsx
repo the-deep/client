@@ -70,7 +70,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
             (d) => d.id,
             (d) => breadcrumb([d.regionTitle, d.adminLevelTitle, d.title]),
         );
-        return value?.value?.map((v) => optionsMap?.[v]);
+        return value?.value.map((v) => optionsMap?.[v]);
     }, [geoAreaOptions, value]);
 
     return (

@@ -138,7 +138,7 @@ function EntryEdit(props: Props) {
     const alert = useAlert();
     const location = useLocation();
 
-    const locationState = location?.state as {
+    const locationState = location.state as {
         entryId?: string;
         sectionId?: string;
     } | undefined;
@@ -217,7 +217,7 @@ function EntryEdit(props: Props) {
             skip: isNotDefined(frameworkVariables),
             variables: frameworkVariables,
             onCompleted: (response) => {
-                const projectFromResponse = response?.project;
+                const projectFromResponse = response.project;
                 if (!projectFromResponse) {
                     return;
                 }
@@ -283,8 +283,8 @@ function EntryEdit(props: Props) {
     } = useForm(schema, defaultFormValues);
 
     const entriesFormStale = useMemo(
-        () => (formValue?.entries?.some((entry) => entry.stale) ?? false),
-        [formValue?.entries],
+        () => (formValue.entries?.some((entry) => entry.stale) ?? false),
+        [formValue.entries],
     );
 
     const formPristine = !entriesFormStale && leadPristine;
@@ -300,7 +300,7 @@ function EntryEdit(props: Props) {
         UPDATE_LEAD,
         {
             onCompleted: (response) => {
-                if (!response?.project?.leadUpdate) {
+                if (!response.project?.leadUpdate) {
                     shouldFinalizeRef.current = undefined;
                     return;
                 }
@@ -428,7 +428,7 @@ function EntryEdit(props: Props) {
                     shouldFinalizeRef.current = undefined;
                     return;
                 }
-                const errors = entryBulk?.errors;
+                const { errors } = entryBulk;
                 const deletedResult = response.project?.entryBulk?.deletedResult;
                 const saveResult = response.project?.entryBulk?.result;
 
@@ -497,7 +497,7 @@ function EntryEdit(props: Props) {
                 }));
 
                 setFormValue((oldValue) => {
-                    const entries = oldValue?.entries ?? [];
+                    const entries = oldValue.entries ?? [];
                     const filteredEntries = entries.filter((item) => (
                         !deletedEntries.includes(item.clientId)
                     ));
@@ -522,15 +522,14 @@ function EntryEdit(props: Props) {
                     };
                 });
 
-                // eslint-disable-next-line max-len
-                const deleteErrorsCount = entryBulk?.deletedResult?.filter(isNotDefined).length ?? 0;
+                const deleteErrorsCount = entryBulk.deletedResult?.filter(isNotDefined).length ?? 0;
                 if (deleteErrorsCount > 0) {
                     alert.show(
                         `Failed to delete ${deleteErrorsCount} entries!`,
                         { variant: 'error' },
                     );
                 }
-                const deleteSuccessCount = entryBulk?.deletedResult?.filter(isDefined).length ?? 0;
+                const deleteSuccessCount = entryBulk.deletedResult?.filter(isDefined).length ?? 0;
                 if (deleteSuccessCount > 0) {
                     alert.show(
                         `Successfully deleted ${deleteSuccessCount} entry(s)!`,
@@ -538,14 +537,14 @@ function EntryEdit(props: Props) {
                     );
                 }
 
-                const saveErrorsCount = entryBulk?.result?.filter(isNotDefined).length ?? 0;
+                const saveErrorsCount = entryBulk.result?.filter(isNotDefined).length ?? 0;
                 if (saveErrorsCount > 0) {
                     alert.show(
                         `Failed to save ${saveErrorsCount} entry(s)!`,
                         { variant: 'error' },
                     );
                 }
-                const saveSuccessCount = entryBulk?.result?.filter(isDefined).length ?? 0;
+                const saveSuccessCount = entryBulk.result?.filter(isDefined).length ?? 0;
                 if (saveSuccessCount > 0) {
                     alert.show(
                         `Successfully saved ${saveSuccessCount} entry(s)!`,
@@ -616,8 +615,8 @@ function EntryEdit(props: Props) {
 
                     // NOTE: remembering the identifiers so that data and error
                     // can be patched later on
-                    const deleteIds = deletedEntries?.map((entry) => entry.clientId);
-                    const staleIds = staleEntries?.map((entry) => entry.clientId);
+                    const deleteIds = deletedEntries.map((entry) => entry.clientId);
+                    const staleIds = staleEntries.map((entry) => entry.clientId);
                     staleIdentifiersRef.current = staleIds;
                     deleteIdentifiersRef.current = deleteIds;
 
@@ -920,7 +919,7 @@ function EntryEdit(props: Props) {
             skip: isNotDefined(entriesVariables),
             variables: entriesVariables,
             onCompleted: (response) => {
-                const projectFromResponse = response?.project;
+                const projectFromResponse = response.project;
                 if (!projectFromResponse) {
                     return;
                 }
@@ -944,7 +943,7 @@ function EntryEdit(props: Props) {
                         ),
                     );
                     const geoData = leadFromResponse.entries
-                        ?.map((entry) => entry?.attributes)
+                        ?.map((entry) => entry.attributes)
                         .flat()
                         .map((attributes) => attributes?.geoSelectedOptions)
                         .flat()
@@ -1103,7 +1102,7 @@ function EntryEdit(props: Props) {
             ),
             leadId,
             disabled: !!selectedEntry,
-            entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
+            entryImage: datum.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
             geoAreaOptions,
             onGeoAreaOptionsChange: setGeoAreaOptions,

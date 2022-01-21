@@ -37,7 +37,7 @@ function cloneScaleWidget(widget: ScaleWidget): ScaleWidget {
     // NOTE: remembering index to get defaultOption after transformation
     const defaultOptionIndex = widget.properties.options.findIndex((o) => (
         o.key === widget.properties?.defaultValue
-    )) ?? -1;
+    ));
 
     const clonedOptions = widget.properties.options.map(cloneOption);
 
@@ -46,7 +46,7 @@ function cloneScaleWidget(widget: ScaleWidget): ScaleWidget {
         properties: {
             ...widget.properties,
             options: clonedOptions,
-            defaultValue: defaultOptionIndex !== -1 && clonedOptions
+            defaultValue: defaultOptionIndex !== -1
                 ? clonedOptions[defaultOptionIndex]?.key
                 : undefined,
         },
@@ -58,7 +58,7 @@ function cloneMultiSelectionWidget(widget: MultiSelectWidget): MultiSelectWidget
         ...widget,
         properties: widget.properties ? {
             ...widget.properties,
-            options: widget.properties?.options.map(cloneOption),
+            options: widget.properties.options.map(cloneOption),
         } : undefined,
     });
 }
@@ -68,7 +68,7 @@ function cloneSingleSelectionWidget(widget: SingleSelectWidget): SingleSelectWid
         ...widget,
         properties: widget.properties ? {
             ...widget.properties,
-            options: widget.properties?.options.map(cloneOption),
+            options: widget.properties.options.map(cloneOption),
         } : undefined,
     });
 }
@@ -95,7 +95,7 @@ function cloneMatrix1dWidget(widget: Matrix1dWidget): Matrix1dWidget {
         ...widget,
         properties: widget.properties ? {
             ...widget.properties,
-            rows: widget.properties?.rows.map((row) => (
+            rows: widget.properties.rows.map((row) => (
                 cloneOption({
                     ...row,
                     cells: row.cells.map(cloneOption),
@@ -110,13 +110,13 @@ function cloneMatrix2dWidget(widget: Matrix2dWidget): Matrix2dWidget {
         ...widget,
         properties: widget.properties ? {
             ...widget.properties,
-            rows: widget.properties?.rows.map((row) => (
+            rows: widget.properties.rows.map((row) => (
                 cloneOption({
                     ...row,
                     subRows: row.subRows.map(cloneOption),
                 })
             )),
-            columns: widget.properties?.columns.map((column) => (
+            columns: widget.properties.columns.map((column) => (
                 cloneOption({
                     ...column,
                     subColumns: column.subColumns.map(cloneOption),

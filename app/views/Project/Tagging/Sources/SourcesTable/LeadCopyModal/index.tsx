@@ -61,7 +61,7 @@ function LeadCopyModal(props: Props) {
         LEAD_COPY,
         {
             onCompleted: (response) => {
-                if (!response?.project?.leadCopy) {
+                if (!response.project?.leadCopy) {
                     return;
                 }
                 const {
@@ -119,8 +119,8 @@ function LeadCopyModal(props: Props) {
                     onConfirm={handleCopyLeadsClick}
                     message={`
                         Are you sure you want to copy
-                        ${leadIds?.length.toString()} source(s) to
-                        ${selectedProjects?.length.toString()} project(s)?
+                        ${leadIds.length.toString()} source(s) to
+                        ${selectedProjects.length.toString()} project(s)?
                     `}
                 >
                     Export
@@ -130,7 +130,7 @@ function LeadCopyModal(props: Props) {
             {loading && <PendingMessage />}
             <TextOutput
                 label="No. of sources to be copied"
-                value={leadIds?.length ?? 0}
+                value={leadIds.length}
             />
             <ProjectMultiSelectInput
                 name="searchProjects"

@@ -46,7 +46,7 @@ function Comment(props: Props) {
     const [latest] = textHistory;
 
     const isEditable = useMemo(() => (
-        user?.id === createdByDetails?.id.toString() && latest
+        user?.id === createdByDetails.id.toString() && latest
     ), [user, createdByDetails, latest]);
 
     const handleSuccess = useCallback((value: EntryComment) => {
@@ -78,7 +78,7 @@ function Comment(props: Props) {
                 >
                     <div className={styles.userAction}>
                         <span className={styles.userName}>
-                            {createdByDetails?.name}
+                            {createdByDetails.name}
                         </span>
                         &nbsp;
                         {commentType !== 0 && (
@@ -94,7 +94,7 @@ function Comment(props: Props) {
                             onEditSuccess={handleSuccess}
                             onEditCancel={hideEditModal}
                         />
-                    ) : (latest?.text && (
+                    ) : (latest.text && (
                         <Card
                             className={styles.comment}
                         >

@@ -81,7 +81,7 @@ function ExportPreview(props: OwnProps) {
             {!pending && isDefined(exportResponse) ? (
                 <LeadPreview
                     className={styles.leadPreview}
-                    url={exportResponse?.file}
+                    url={exportResponse.file}
                 />
             ) : (!pending && (
                 <div className={styles.label}>

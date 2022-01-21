@@ -136,9 +136,9 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     )}
                     name={name}
                     onChange={handleDateRangeChange}
-                    value={value?.valueGte && value?.valueLte ? {
-                        startDate: encodeDate(new Date(value?.valueGte)),
-                        endDate: encodeDate(new Date(value?.valueLte)),
+                    value={value?.valueGte && value.valueLte ? {
+                        startDate: encodeDate(new Date(value.valueGte)),
+                        endDate: encodeDate(new Date(value.valueLte)),
                     } : undefined}
                     label={title}
                     disabled={disabled}
@@ -163,9 +163,9 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     )}
                     name={name}
                     onChange={handleDateRangeChange}
-                    value={value?.valueGte && value?.valueLte ? {
-                        startDate: encodeDate(new Date(value?.valueGte)),
-                        endDate: encodeDate(new Date(value?.valueLte)),
+                    value={value?.valueGte && value.valueLte ? {
+                        startDate: encodeDate(new Date(value.valueGte)),
+                        endDate: encodeDate(new Date(value.valueLte)),
                     } : undefined}
                     label={title}
                     disabled={disabled}
@@ -185,9 +185,9 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     )}
                     name={name}
                     onChange={handleTimeRangeChange}
-                    value={value?.valueGte && value?.valueLte ? {
-                        startTime: value?.valueGte,
-                        endTime: value?.valueLte,
+                    value={value?.valueGte && value.valueLte ? {
+                        startTime: value.valueGte,
+                        endTime: value.valueLte,
                     } : undefined}
                     label={title}
                     disabled={disabled}
@@ -207,9 +207,9 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     )}
                     name={name}
                     onChange={handleTimeRangeChange}
-                    value={value?.valueGte && value?.valueLte ? {
-                        startTime: value?.valueGte,
-                        endTime: value?.valueLte,
+                    value={value?.valueGte && value.valueLte ? {
+                        startTime: value.valueGte,
+                        endTime: value.valueLte,
                     } : undefined}
                     label={title}
                     disabled={disabled}

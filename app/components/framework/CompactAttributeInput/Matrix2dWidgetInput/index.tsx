@@ -305,9 +305,9 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             const newValue = {
                 ...value?.value,
                 [rowId]: {
-                    ...value?.value?.[rowId],
+                    ...value?.value[rowId],
                     [subRowId]: {
-                        ...value?.value?.[rowId]?.[subRowId],
+                        ...value?.value[rowId]?.[subRowId],
                         [columnId]: newSubColValue,
                     },
                 },
@@ -323,14 +323,14 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const columns = useMemo(() => (
-        sortByOrder(widget?.properties?.columns)
-    ), [widget?.properties?.columns]);
+        sortByOrder(widget.properties?.columns)
+    ), [widget.properties?.columns]);
 
     const rowRendererParams = useCallback(
         (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.value?.[key],
+            value: value?.value[key],
             row,
             columns,
             onSubColumnsChange: handleSubColumnsChange,
@@ -338,10 +338,10 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         [disabled, readOnly, handleSubColumnsChange, value, columns],
     );
 
-    const widgetRows = widget?.properties?.rows;
+    const widgetRows = widget.properties?.rows;
 
     const orderedRows = useMemo(() => {
-        const filteredRows = widgetRows?.filter((wr) => value?.value?.[wr.key]);
+        const filteredRows = widgetRows?.filter((wr) => value?.value[wr.key]);
         return sortByOrder(filteredRows);
     }, [widgetRows, value]);
 

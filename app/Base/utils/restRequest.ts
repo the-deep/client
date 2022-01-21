@@ -45,9 +45,9 @@ type FormDataCompatibleObj = Record<string, Literal | Literal[] | null | undefin
 
 function getFormData(jsonData: FormDataCompatibleObj) {
     const formData = new FormData();
-    Object.keys(jsonData || {}).forEach(
+    Object.keys(jsonData).forEach(
         (key) => {
-            const value = jsonData?.[key];
+            const value = jsonData[key];
             if (value && Array.isArray(value)) {
                 value.forEach((v) => {
                     formData.append(key, v instanceof Blob ? v : String(v));
@@ -178,9 +178,7 @@ export const processDeepOptions: DeepContextInterface['transformOptions'] = (
         const csrftoken = getCookie(`deep-${deepEnvironment}-csrftoken`);
 
         finalOptions.credentials = 'include';
-        if (finalOptions.headers) {
-            finalOptions.headers['X-CSRFToken'] = csrftoken;
-        }
+        finalOptions.headers['X-CSRFToken'] = csrftoken;
     }
 
     return finalOptions;
@@ -250,7 +248,7 @@ export const processDeepError = (
         const faramErrors = alterResponse(res.errors);
 
         const messageForNotification = (
-            faramErrors?.$internal
+            faramErrors.$internal
             ?? 'Some error occurred while performing this action.'
         );
 

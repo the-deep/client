@@ -12,27 +12,36 @@ interface ScreenshotResponse {
     image: string;
 }
 
-export const getScreenshot = () => {
+// eslint-disable-next-line import/prefer-default-export
+export function getScreenshot() {
     const data = {
         message: EXTENSION_GET_SCREENSHOT,
     };
 
-    const promise = new Promise((resolve: (r: ScreenshotResponse) => void, reject: () => void) => {
+    const promise = new Promise((
+        resolve: (r: ScreenshotResponse) => void,
+        reject: () => void,
+    ) => {
         if (!chrome) {
             reject();
         }
 
-        chrome.runtime.sendMessage(oldExtensionId, data, (response: ScreenshotResponse) => {
-            if (!response) {
-                reject();
-            }
+        chrome.runtime.sendMessage(
+            oldExtensionId,
+            data,
+            (response: ScreenshotResponse | undefined) => {
+                if (!response) {
+                    reject();
+                    return;
+                }
 
-            resolve(response);
-        });
+                resolve(response);
+            },
+        );
     });
 
     return promise;
-};
+}
 
 export const sendToken = (token: unknown) => {
     const data = {

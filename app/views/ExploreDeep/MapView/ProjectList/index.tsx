@@ -112,9 +112,9 @@ function ListRenderer(props: ProjectListProps) {
             <ActionCell
                 className={styles.joinButton}
                 projectId={projectId}
-                membershipPending={projectDetails?.membershipPending}
+                membershipPending={projectDetails.membershipPending}
                 isRejected={isRejected}
-                isMember={!!projectDetails?.currentUserRole}
+                isMember={!!projectDetails.currentUserRole}
                 onMemberStatusChange={refetchProjectDetails}
                 variant="primary"
             />
@@ -159,17 +159,17 @@ function ProjectList(props: Props) {
     }, []);
 
     const rendererParams = useCallback((_: string, datum: ProjectDetail): ProjectListProps => ({
-        projectId: datum?.id,
+        projectId: datum.id,
         projectDetails: datum,
-        projectTitle: datum?.title,
+        projectTitle: datum.title,
         isRejected: datum.isRejected,
-        description: datum?.description,
-        frameworkId: datum?.analysisFramework?.id,
-        frameworkTitle: datum?.analysisFramework?.title,
-        createdAt: datum?.createdAt ?? undefined,
-        numberOfEntries: datum?.stats?.numberOfEntries ?? 0,
-        numberOfLeads: datum?.stats?.numberOfLeads ?? 0,
-        numberOfUsers: datum?.stats?.numberOfUsers ?? 0,
+        description: datum.description,
+        frameworkId: datum.analysisFramework?.id,
+        frameworkTitle: datum.analysisFramework?.title,
+        createdAt: datum.createdAt,
+        numberOfEntries: datum.stats?.numberOfEntries ?? 0,
+        numberOfLeads: datum.stats?.numberOfLeads ?? 0,
+        numberOfUsers: datum.stats?.numberOfUsers ?? 0,
         onExpansionChange: handleExpansionChange,
         expanded: expandedProjectId === datum.id,
         refetchProjectDetails,

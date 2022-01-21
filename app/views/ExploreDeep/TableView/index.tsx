@@ -138,8 +138,8 @@ function ExploreDeepTableView(props: Props) {
             },
             cellRenderer: FrameworkImageButton,
             cellRendererParams: (_, project) => ({
-                frameworkId: project?.analysisFramework?.id,
-                label: project?.analysisFramework?.title,
+                frameworkId: project.analysisFramework?.id,
+                label: project.analysisFramework?.title,
             }),
         };
 
@@ -155,9 +155,9 @@ function ExploreDeepTableView(props: Props) {
             cellRenderer: ActionCell,
             cellRendererParams: (projectId, project) => ({
                 projectId,
-                isRejected: project?.isRejected,
-                membershipPending: project?.membershipPending,
-                isMember: !!project?.currentUserRole,
+                isRejected: project.isRejected,
+                membershipPending: project.membershipPending,
+                isMember: !!project.currentUserRole,
                 onMemberStatusChange: refetch,
             }),
             columnWidth: 156,
@@ -172,12 +172,12 @@ function ExploreDeepTableView(props: Props) {
             createStringColumn<Project, string>(
                 'location',
                 'Location',
-                (item) => item?.regions?.map((region) => region.title)?.join(', '),
+                (item) => item.regions?.map((region) => region.title)?.join(', '),
             ),
             createDateColumn<Project, string>(
                 'created_at',
                 'Created At',
-                (item) => item?.createdAt,
+                (item) => item.createdAt,
                 {
                     columnWidth: 116,
                 },
@@ -186,7 +186,7 @@ function ExploreDeepTableView(props: Props) {
             createNumberColumn<Project, string>(
                 'members_count',
                 'Users',
-                (item) => item?.stats?.numberOfUsers,
+                (item) => item.stats?.numberOfUsers,
                 {
                     columnWidth: 96,
                 },
@@ -194,7 +194,7 @@ function ExploreDeepTableView(props: Props) {
             createNumberColumn<Project, string>(
                 'sources_count',
                 'Sources',
-                (item) => item?.stats?.numberOfLeads,
+                (item) => item.stats?.numberOfLeads,
                 {
                     columnWidth: 96,
                 },
@@ -202,7 +202,7 @@ function ExploreDeepTableView(props: Props) {
             createStringColumn<Project, string>(
                 'organizations',
                 'Organizations',
-                (item) => item?.organizations?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
+                (item) => item.organizations?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
             ),
             actionsColumn,
         ]);

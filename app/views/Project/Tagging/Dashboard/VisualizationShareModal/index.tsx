@@ -74,16 +74,16 @@ function VisualizationShareModal(props: ShareModalProps) {
         UPDATE_PROJECT_VIZ_PUBLIC_SHARE,
         {
             onCompleted: (response) => {
-                const update = removeNull(response?.project?.projectVizConfigurationUpdate);
-                if (update?.ok) {
+                const update = removeNull(response.project?.projectVizConfigurationUpdate);
+                if (update.ok) {
                     alert.show(
                         'Successfully changed url status.',
                         {
                             variant: 'success',
                         },
                     );
-                    onPublicShareEnabledChange(!!update?.result?.publicShare);
-                    onPublicUrlChange(update?.result?.publicUrl);
+                    onPublicShareEnabledChange(!!update.result?.publicShare);
+                    onPublicUrlChange(update.result?.publicUrl);
                 } else {
                     alert.show(
                         'Failed to change url status.',

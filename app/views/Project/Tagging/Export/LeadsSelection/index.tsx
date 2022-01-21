@@ -276,7 +276,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, string>(
                 'title',
                 'Title',
-                (item) => item?.title,
+                (item) => item.title,
                 {
                     sortable: true,
                     columnClassName: styles.titleColumn,
@@ -294,7 +294,7 @@ function LeadsSelection(props: Props) {
             createStringColumn<Lead, string>(
                 'authors',
                 'Authors',
-                (item) => item?.authors?.map((v) => organizationTitleSelector(v)).filter(isDefined).join(','),
+                (item) => item.authors?.map((v) => organizationTitleSelector(v)).filter(isDefined).join(','),
                 {
                     sortable: false,
                     columnWidth: 144,
@@ -304,7 +304,7 @@ function LeadsSelection(props: Props) {
             createNumberColumn<Lead, string>(
                 'entriesCounts',
                 'No of entries',
-                (item) => item?.entriesCounts?.total,
+                (item) => item.entriesCounts?.total,
                 {
                     sortable: true,
                 },

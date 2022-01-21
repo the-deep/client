@@ -68,8 +68,8 @@ function LeadPreview(props: Props) {
             return;
         }
         const { current: viewerContainer } = containerRef;
-        if (!fullScreenMode && isDefined(viewerContainer?.requestFullscreen)) {
-            viewerContainer?.requestFullscreen();
+        if (!fullScreenMode && isDefined(viewerContainer.requestFullscreen)) {
+            viewerContainer.requestFullscreen();
         } else if (fullScreenMode && isDefined(document.exitFullscreen)) {
             document.exitFullscreen();
         }

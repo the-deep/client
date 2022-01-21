@@ -254,7 +254,7 @@ function LeftPane(props: Props) {
             });
         }
         // Just hide the excerpt dropdown if it is shown
-        if (editExcerptDropdownRef?.current) {
+        if (editExcerptDropdownRef.current) {
             editExcerptDropdownRef.current.setShowPopup(false);
         }
     }, [leadId, onEntryCreate]);
@@ -269,7 +269,7 @@ function LeftPane(props: Props) {
         onExcerptChange,
         onEntryDelete,
         onEntryRestore,
-        entryImage: entry?.image ? entryImagesMap?.[entry.image] : undefined,
+        entryImage: entry.image ? entryImagesMap?.[entry.image] : undefined,
         onApproveButtonClick,
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
@@ -315,8 +315,8 @@ function LeftPane(props: Props) {
             return;
         }
         const { current: viewerContainer } = containerRef;
-        if (!fullScreenMode && isDefined(viewerContainer?.requestFullscreen)) {
-            viewerContainer?.requestFullscreen();
+        if (!fullScreenMode && isDefined(viewerContainer.requestFullscreen)) {
+            viewerContainer.requestFullscreen();
         } else if (fullScreenMode && isDefined(document.exitFullscreen)) {
             document.exitFullscreen();
         }
@@ -339,7 +339,7 @@ function LeftPane(props: Props) {
             heading={(lead?.url || lead?.attachment?.file) && (
                 <TextInput
                     name="url"
-                    value={lead?.url || lead?.attachment?.file?.url || ''}
+                    value={lead.url || lead.attachment?.file?.url || ''}
                     variant="general"
                     readOnly
                 />
@@ -419,7 +419,7 @@ function LeftPane(props: Props) {
                 <EntryItem
                     {...activeEntryDetails}
                     entryId={activeEntry}
-                    entryServerId={activeEntryDetails?.id}
+                    entryServerId={activeEntryDetails.id}
                     projectId={projectId}
                     isActive
                     onExcerptChange={onExcerptChange}
@@ -494,7 +494,7 @@ function LeftPane(props: Props) {
                         activeClassName={styles.simplifiedTab}
                         retainMount="lazy"
                     >
-                        {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
+                        {(leadPreview?.textExtract.length ?? 0) > 0 ? (
                             <SimplifiedTextView
                                 className={styles.simplifiedTextView}
                                 activeEntryClientId={activeEntry}

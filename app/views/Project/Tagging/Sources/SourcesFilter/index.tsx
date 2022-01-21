@@ -207,9 +207,7 @@ function SourcesFilter(props: Props) {
     } = useForm(schema, initialValue);
 
     useEffect(() => {
-        if (valueFromProps) {
-            setValue(valueFromProps);
-        }
+        setValue(valueFromProps);
     }, [valueFromProps, setValue]);
 
     const {

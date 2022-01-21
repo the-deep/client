@@ -58,7 +58,7 @@ function ActionCell(props: Props) {
         LEAD_GROUP_DELETE,
         {
             onCompleted: (result) => {
-                if (result?.project?.leadGroupDelete?.ok) {
+                if (result.project?.leadGroupDelete?.ok) {
                     onDeleteSuccess();
                     alert.show(
                         'Successfully deleted source group.',

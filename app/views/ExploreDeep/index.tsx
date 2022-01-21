@@ -113,8 +113,8 @@ function ExploreDeep(props: Props) {
     const activeFrameworkRendererParams = useCallback(
         (_: string, datum: ActiveFramework): ActiveFrameworkItemProps => ({
             frameworkTitle: datum.analysisFrameworkTitle ?? undefined,
-            projectCount: datum.projectCount ?? undefined,
-            sourceCount: datum.sourceCount ?? undefined,
+            projectCount: datum.projectCount,
+            sourceCount: datum.sourceCount,
         }),
         [],
     );

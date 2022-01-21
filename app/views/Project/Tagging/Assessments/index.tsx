@@ -142,22 +142,22 @@ function Assessments(props: Props) {
             createStringColumn<Assessment, string>(
                 'title',
                 'Title',
-                (item) => item?.lead?.title ?? item?.leadGroup?.title,
+                (item) => item.lead?.title ?? item.leadGroup?.title,
             ),
             createStringColumn<Assessment, string>(
                 'type',
                 'Type',
-                (item) => (item?.lead?.id ? 'Source' : 'Source Group'),
+                (item) => (item.lead?.id ? 'Source' : 'Source Group'),
             ),
             createStringColumn<Assessment, string>(
                 'created_by',
                 'Created By',
-                (item) => item?.createdBy?.displayName,
+                (item) => item.createdBy?.displayName,
             ),
             createDateColumn<Assessment, string>(
                 'created_at',
                 'Created At',
-                (item) => item?.createdAt,
+                (item) => item.createdAt,
                 {
                     columnWidth: 116,
                 },

@@ -89,8 +89,8 @@ function DateRangeWidgetInput<N extends string>(props: Props<N>) {
             ) : (
                 <DateRangeOutput
                     className={styles.input}
-                    startDate={value?.value?.startDate}
-                    endDate={value?.value?.endDate}
+                    startDate={value?.value.startDate}
+                    endDate={value?.value.endDate}
                 />
             )}
         </WidgetWrapper>

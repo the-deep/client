@@ -87,17 +87,17 @@ function CompactSection(props: Props) {
             (widget) => {
                 if (widget.widgetId === 'MATRIX1D') {
                     return !doesObjectHaveNoData(
-                        attributesMap?.[widget.clientId]?.value?.data?.value,
+                        attributesMap[widget.clientId]?.value.data?.value,
                         [''],
                     );
                 }
 
                 if (widget.widgetId === 'MATRIX2D') {
-                    const val = attributesMap?.[widget.clientId]?.value?.data?.value;
+                    const val = attributesMap[widget.clientId]?.value.data?.value;
                     return Object.keys(val ?? {}).length > 0;
                 }
 
-                return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);
+                return isDefined(attributesMap[widget.clientId]?.value.data?.value);
             },
         );
     }, [emptyValueHidden, attributesMap, filteredWidgets]);

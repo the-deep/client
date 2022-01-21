@@ -298,8 +298,8 @@ function Canvas<T>(props: Props<T>) {
         className: _cs(
             styles.widgetContainer,
             analyzeErrors(error?.[key]) && styles.errored,
-            data?.width === 'HALF' && styles.halfWidget,
-            data?.conditional && styles.conditional,
+            data.width === 'HALF' && styles.halfWidget,
+            data.conditional && styles.conditional,
         ),
     }), [
         error,

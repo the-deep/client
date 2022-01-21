@@ -149,22 +149,22 @@ function LeadGroups(props: Props) {
             createStringColumn<LeadGroup, string>(
                 'title',
                 'Title',
-                (item) => item?.title,
+                (item) => item.title,
             ),
             createStringColumn<LeadGroup, string>(
                 'created_by',
                 'Created By',
-                (item) => item?.createdBy?.displayName,
+                (item) => item.createdBy?.displayName,
             ),
             createNumberColumn<LeadGroup, string>(
                 'leadCounts',
                 'No. of Sources',
-                (item) => item?.leadCounts,
+                (item) => item.leadCounts,
             ),
             createDateColumn<LeadGroup, string>(
                 'created_at',
                 'Created At',
-                (item) => item?.createdAt,
+                (item) => item.createdAt,
                 {
                     columnWidth: 116,
                 },

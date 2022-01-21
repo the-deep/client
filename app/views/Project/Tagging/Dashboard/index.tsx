@@ -75,8 +75,8 @@ function Dashboard(props: Props) {
             variables,
             onCompleted: (result) => {
                 const cleanResult = removeNull(result);
-                setPublicUrl(cleanResult?.project?.vizData?.publicUrl);
-                setPublicShareEnabled(cleanResult?.project?.vizData?.publicShare);
+                setPublicUrl(cleanResult.project?.vizData?.publicUrl);
+                setPublicShareEnabled(cleanResult.project?.vizData?.publicShare);
             },
         },
     );
@@ -150,7 +150,7 @@ function Dashboard(props: Props) {
                     onPublicShareEnabledChange={setPublicShareEnabled}
                     onPublicUrlChange={setPublicUrl}
                     onClose={hideShareModal}
-                    isAdmin={!!project?.allowedPermissions.includes('UPDATE_PROJECT')}
+                    isAdmin={!!project.allowedPermissions.includes('UPDATE_PROJECT')}
                 />
             )}
         </Container>

@@ -87,7 +87,7 @@ function Row(props: RowProps) {
             </div>
             {!readOnly ? (
                 <MultiSelectInput
-                    name={row?.key}
+                    name={row.key}
                     onChange={handleCellsChange}
                     options={sortedCells}
                     labelSelector={cellLabelSelector}
@@ -150,12 +150,12 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
 
-    const widgetRows = widget?.properties?.rows;
+    const widgetRows = widget.properties?.rows;
 
     const filteredRows = useMemo(() => {
         const rows = widgetRows?.filter(
             (row) => {
-                const rowValue = value?.value?.[row.key];
+                const rowValue = value?.value[row.key];
                 return !!rowValue && Object.values(rowValue).some((d) => d);
             },
         );
@@ -181,7 +181,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.value?.[key],
+            value: value?.value[key],
             row,
             onCellsChange: handleCellsChange,
         }),

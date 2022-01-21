@@ -108,12 +108,12 @@ function ExploreDeepTableView(props: Props) {
         createStringColumn<Project, string>(
             'location',
             'Location',
-            (item) => item?.regionsTitle,
+            (item) => item.regionsTitle,
         ),
         createDateColumn<Project, string>(
             'created_at',
             'Created At',
-            (item) => item?.createdAt,
+            (item) => item.createdAt,
             {
                 columnWidth: 116,
             },
@@ -121,12 +121,12 @@ function ExploreDeepTableView(props: Props) {
         createStringColumn<Project, string>(
             'framework',
             'Analytical Framework',
-            (item) => item?.analysisFrameworkTitle,
+            (item) => item.analysisFrameworkTitle,
         ),
         createNumberColumn<Project, string>(
             'members_count',
             'Users',
-            (item) => item?.numberOfUsers,
+            (item) => item.numberOfUsers,
             {
                 columnWidth: 96,
             },
@@ -134,7 +134,7 @@ function ExploreDeepTableView(props: Props) {
         createNumberColumn<Project, string>(
             'sources_count',
             'Sources',
-            (item) => item?.numberOfLeads,
+            (item) => item.numberOfLeads,
             {
                 columnWidth: 96,
             },
@@ -142,7 +142,7 @@ function ExploreDeepTableView(props: Props) {
         createStringColumn<Project, string>(
             'organizations',
             'Organizations',
-            (item) => item?.organizationsTitle,
+            (item) => item.organizationsTitle,
         ),
     ]), []);
 

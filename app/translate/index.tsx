@@ -46,7 +46,7 @@ function renderElement<T>(r: KeyValue<T>) {
 
 function format(
     str: string,
-    params: Record<string, string | string[] | number | React.ReactNode>,
+    params: Record<string, string | string[] | number | React.ReactNode | undefined>,
 ) {
     // TODO: Support escaping { and }
 
@@ -99,8 +99,8 @@ function format(
 }
 
 const getString = (
-    strings: Record<string, string>,
-    links: Record<string, Record<string, number>>,
+    strings: Record<string, string | undefined>,
+    links: Record<string, Record<string, number | undefined> | undefined>,
     namespace: keyof DevLang['links'],
     identifier: string,
 ) => {
@@ -118,13 +118,13 @@ function _ts(
 function _ts(
     namespace: keyof DevLang['links'],
     identifier: string,
-    params: Record<string, React.ReactNode>,
+    params: Record<string, React.ReactNode | undefined>,
 ): React.ReactNode;
 // eslint-disable-next-line no-underscore-dangle
 function _ts(
     namespace: keyof DevLang['links'],
     identifier: string,
-    params?: Record<string, React.ReactNode>,
+    params?: Record<string, React.ReactNode | undefined>,
 ) {
     const str = getString(
         devLang.strings,

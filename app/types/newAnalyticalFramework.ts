@@ -869,8 +869,8 @@ function validateDateRangeCondition(
     condition: DateRangeCondition,
     attribute: PartializeAttribute<DateRangeWidgetAttribute> | undefined,
 ) {
-    const startValue = convertDateStringToTimestamp(attribute?.data?.value?.startDate);
-    const endValue = convertDateStringToTimestamp(attribute?.data?.value?.endDate);
+    const startValue = convertDateStringToTimestamp(attribute?.data?.value.startDate);
+    const endValue = convertDateStringToTimestamp(attribute?.data?.value.endDate);
     switch (condition.operator) {
         case 'empty':
             return isNotDefined(startValue) && isNotDefined(endValue);
@@ -893,8 +893,8 @@ function validateTimeRangeCondition(
     condition: TimeRangeCondition,
     attribute: PartializeAttribute<TimeRangeWidgetAttribute> | undefined,
 ) {
-    const startValue = convertTimeStringToSeconds(attribute?.data?.value?.startTime);
-    const endValue = convertTimeStringToSeconds(attribute?.data?.value?.endTime);
+    const startValue = convertTimeStringToSeconds(attribute?.data?.value.startTime);
+    const endValue = convertTimeStringToSeconds(attribute?.data?.value.endTime);
     switch (condition.operator) {
         case 'empty':
             return isNotDefined(startValue) && isNotDefined(endValue);

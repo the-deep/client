@@ -151,14 +151,14 @@ function UserGroupList(props: Props) {
             createStringColumn<UserGroup, number>(
                 'role',
                 'Assigned Role',
-                (item) => item?.roleDetails.title,
+                (item) => item.roleDetails.title,
             ),
             actionColumn,
         ]);
     }, [triggerDeleteUsergroup, handleEditUsergroupClick, activeUserRoleLevel]);
 
     const usergroupToEdit = useMemo(() => (
-        usergroupResponse?.results?.find((d) => d.id === usergroupIdToEdit)
+        usergroupResponse?.results.find((d) => d.id === usergroupIdToEdit)
     ), [usergroupResponse?.results, usergroupIdToEdit]);
 
     const handleAddUsergroupClick = useCallback(() => {

@@ -71,7 +71,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
 
-    const widgetOptions = widget?.properties?.options;
+    const widgetOptions = widget.properties?.options;
     const sortedOptions = useMemo(() => (
         sortByOrder(widgetOptions)
     ), [widgetOptions]);

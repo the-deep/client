@@ -73,7 +73,7 @@ function AssessmentFilterForm(props: Props) {
                 <TextInput
                     name="search"
                     label="Search"
-                    value={value?.search}
+                    value={value.search}
                     onChange={setFieldValue}
                     placeholder="any"
                 />
@@ -83,8 +83,8 @@ function AssessmentFilterForm(props: Props) {
                     toName="endDate"
                     fromOnChange={setFieldValue}
                     toOnChange={setFieldValue}
-                    fromValue={value?.startDate}
-                    toValue={value?.endDate}
+                    fromValue={value.startDate}
+                    toValue={value.endDate}
                 />
             </div>
             <div className={styles.buttonContainer}>

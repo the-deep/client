@@ -104,7 +104,7 @@ function AddUserModal(props: Props) {
         trigger: triggerAddMember,
     } = useLazyRequest<Membership, FormType>({
         url: isDefined(userToEdit)
-            ? `server://group-memberships/${userToEdit?.id}/`
+            ? `server://group-memberships/${userToEdit.id}/`
             : 'server://group-memberships/',
         method: isDefined(userToEdit?.id)
             ? 'PATCH'

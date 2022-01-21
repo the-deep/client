@@ -180,15 +180,15 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const sortedRows = useMemo(() => (
-        sortByOrder(widget?.properties?.rows)
-    ), [widget?.properties?.rows]);
+        sortByOrder(widget.properties?.rows)
+    ), [widget.properties?.rows]);
 
     const handleCellChange = useCallback(
         (rowId: string, cellId: string, state: boolean | undefined) => {
             const newValue = removeEmptyObject(removeUndefinedKeys({
                 ...value?.value,
                 [rowId]: {
-                    ...value?.value?.[rowId],
+                    ...value?.value[rowId],
                     [cellId]: state,
                 },
             }));
@@ -205,7 +205,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         (key: string, row: RowType) => ({
             disabled,
             readOnly,
-            value: value?.value?.[key],
+            value: value?.value[key],
             row,
             onCellChange: handleCellChange,
         }),
