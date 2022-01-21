@@ -35,10 +35,9 @@ export function useTextSelection(target?: HTMLElement) {
         setText(undefined);
     }, []);
 
+    // FIXME: debounce handler call
     const handler = React.useCallback(() => {
-        let newRect: ClientRect;
         const selection = window.getSelection();
-
         if (selection == null || !selection.rangeCount) {
             reset();
             return;
@@ -46,27 +45,29 @@ export function useTextSelection(target?: HTMLElement) {
 
         const range = selection.getRangeAt(0);
 
-        if (target != null && !target.contains(range.commonAncestorContainer)) {
-            reset();
-            return;
-        }
-
         if (range == null) {
             reset();
             return;
         }
 
-        const contents = range.cloneContents();
+        if (target != null && !target.contains(range.commonAncestorContainer)) {
+            reset();
+            return;
+        }
 
+        const contents = range.cloneContents();
         if (contents.textContent != null) {
             setText(contents.textContent);
         }
 
         const rects = range.getClientRects();
 
+        let newRect: ClientRect | undefined;
         if (rects.length === 0 && range.commonAncestorContainer != null) {
-            const el = range.commonAncestorContainer as HTMLElement;
-            newRect = el.getBoundingClientRect().toJSON();
+            const el = range.commonAncestorContainer;
+            if (el instanceof Element) {
+                newRect = el.getBoundingClientRect().toJSON();
+            }
         } else {
             const lastRect = rects.item(rects.length - 1);
             if (lastRect) {

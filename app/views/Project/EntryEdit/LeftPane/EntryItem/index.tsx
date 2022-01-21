@@ -65,7 +65,7 @@ export function ExcerptModal(props: ExcerptModalProps) {
                 name="modified-excerpt"
                 value={excerpt}
                 onChange={setExcerpt}
-                rows={4}
+                rows={10}
             />
             <Footer
                 actions={(

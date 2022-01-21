@@ -18,7 +18,7 @@ import {
     Button,
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
-    ListView,
+    VirtualizedListView,
     Kraken,
     useAlert,
     QuickActionLink,
@@ -274,6 +274,7 @@ function LeftPane(props: Props) {
         onDiscardButtonClick,
         disableClick: isEntrySelectionActive,
         errored: entriesError?.[entryId],
+        className: styles.entryItem,
     }), [
         projectId,
         onApproveButtonClick,
@@ -484,7 +485,7 @@ function LeftPane(props: Props) {
                         name="entries"
                         disabled={isEntrySelectionActive}
                     >
-                        All Entries
+                        {`All Entries (${entries?.length ?? 0})`}
                     </Tab>
                 </TabList>
                 {!hideSimplifiedPreview && (
@@ -566,7 +567,10 @@ function LeftPane(props: Props) {
                     activeClassName={styles.entryListTab}
                     retainMount="lazy"
                 >
-                    <ListView
+                    <VirtualizedListView
+                        spacing="comfortable"
+                        direction="vertical"
+                        itemHeight={200}
                         data={entries ?? undefined}
                         renderer={EntryItem}
                         rendererParams={entryItemRendererParams}

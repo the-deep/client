@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react'
 import {
     _cs,
     isDefined,
-    isValidUrl,
     isNotDefined,
 } from '@togglecorp/fujs';
 import {
@@ -19,7 +18,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import ExternalUrlPreview from './ExternalUrlPreview';
-import Viewer from './Preview';
+import Viewer, { isValidUrl } from './Preview';
 import { MimeTypes } from './Preview/mimeTypes';
 
 import styles from './styles.css';

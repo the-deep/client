@@ -4,6 +4,7 @@ const ENTRY_FRAGMENT = gql`
     fragment EntryResponse on EntryType {
         clientId
         id
+        createdAt
         entryType
         droppedExcerpt
         excerpt

@@ -1,15 +1,16 @@
 .simplified-text-view {
     --padding: var(--dui-spacing-medium);
 
+    position: relative;
+    padding: var(--padding);
+
+    white-space: pre-wrap;
+    word-break: break-word;
+
+
     &.disabled {
         user-select: none;
     }
-
-    position: relative;
-    padding: var(--padding);
-    text-align: justify;
-    white-space: pre-wrap;
-    word-break: break-word;
 
     .entry {
         margin: var(--dui-spacing-medium) 0;
@@ -38,6 +39,12 @@
             font-size: var(--dui-font-size-large);
             user-select: none;
         }
+    }
+
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: var(--dui-spacing-medium);
     }
 }
 

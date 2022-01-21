@@ -24,7 +24,7 @@
         flex-direction: column;
         flex-grow: 1;
         background-color: var(--dui-color-background-information);
-        padding: var(--dui-spacing-extra-large);
+        padding: var(--dui-spacing-large);
         overflow: auto;
 
         .simplified-text-view {
@@ -34,49 +34,49 @@
         }
     }
 
-    .entry-list-tab {
+    .original-tab {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         background-color: var(--dui-color-background-information);
-        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
+        padding: 0;
+
+        .original-preview-container {
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .lead-url-container {
+                align-self: stretch;
+            }
+
+            .content {
+                display: flex;
+                position: relative;
+                flex-direction: column;
+                flex-grow: 1;
+                background-color: var(--dui-color-foreground);
+
+                .preview {
+                    flex-grow: 1;
+                }
+            }
+        }
+    }
+
+    .entry-list-tab {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-large);
         overflow: auto;
 
         .entry-list {
-            display: flex;
-            flex-direction: column;
-            padding: var(--dui-spacing-medium);
-            overflow-y: auto;
-            gap: var(--dui-spacing-medium);
-        }
-    }
-}
-
-/*
- NOTE: styling for original tab is moved outside to make it work
- for fullscreen mode
- */
-.original-tab {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-
-    .original-preview-container {
-        flex-grow: 1;
-        background-color: var(--dui-color-background-information);
-        overflow-y: auto;
-
-        .lead-url-container {
-            align-self: stretch;
-        }
-
-        .content {
-            display: flex;
-            position: relative;
-            flex-direction: column;
             flex-grow: 1;
-            background-color: var(--dui-color-foreground);
+            overflow: auto;
 
-            .preview {
-                flex-grow: 1;
+            .entry-item {
+                height: 200px;
             }
         }
     }

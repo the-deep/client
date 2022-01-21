@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import {
     useParams,
     useLocation,
@@ -12,6 +12,7 @@ import {
     randomString,
     isDefined,
     mapToMap,
+    compareDate,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -287,8 +288,8 @@ function EntryEdit(props: Props) {
 
     const formPristine = !entriesFormStale && leadPristine;
 
-    const [staleIdentifiers, setStaleIdentifiers] = useState<string[] | undefined>(undefined);
-    const [deleteIdentifiers, setDeleteIdentifiers] = useState<string[] | undefined>(undefined);
+    const staleIdentifiersRef = useRef<string[] | undefined>();
+    const deleteIdentifiersRef = useRef<string[] | undefined>();
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const [
@@ -382,6 +383,9 @@ function EntryEdit(props: Props) {
                 const errors = entryBulk?.errors;
                 const deletedResult = response.project?.entryBulk?.deletedResult;
                 const saveResult = response.project?.entryBulk?.result;
+
+                const staleIdentifiers = staleIdentifiersRef.current;
+                const deleteIdentifiers = deleteIdentifiersRef.current;
 
                 const entriesError = errors?.map((item, index) => {
                     if (isNotDefined(item)) {
@@ -520,12 +524,12 @@ function EntryEdit(props: Props) {
                     }
                 }
 
-                setStaleIdentifiers(undefined);
-                setDeleteIdentifiers(undefined);
+                staleIdentifiersRef.current = undefined;
+                deleteIdentifiersRef.current = undefined;
             },
             onError: (gqlError) => {
-                setStaleIdentifiers(undefined);
-                setDeleteIdentifiers(undefined);
+                staleIdentifiersRef.current = undefined;
+                deleteIdentifiersRef.current = undefined;
 
                 alert.show(
                     'Failed to save entries!',
@@ -571,8 +575,8 @@ function EntryEdit(props: Props) {
                     // can be patched later on
                     const deleteIds = deletedEntries?.map((entry) => entry.clientId);
                     const staleIds = staleEntries?.map((entry) => entry.clientId);
-                    setStaleIdentifiers(staleIds);
-                    setDeleteIdentifiers(deleteIds);
+                    staleIdentifiersRef.current = staleIds;
+                    deleteIdentifiersRef.current = deleteIds;
 
                     // NOTE: deleting all the entries that are not saved on server
                     setFormValue((oldValue) => ({
@@ -771,12 +775,12 @@ function EntryEdit(props: Props) {
             createRestorePoint();
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
+                    ...(prevValue ?? []),
                     {
                         ...newValue,
                         stale: true,
                         attributes: defaultAttributes,
                     },
-                    ...(prevValue ?? []),
                 ],
                 'entries',
             );
@@ -890,9 +894,15 @@ function EntryEdit(props: Props) {
 
                 const leadFromResponse = projectFromResponse.lead;
                 if (leadFromResponse) {
-                    const entries = leadFromResponse.entries?.map(
-                        (entry) => transformEntry(entry as Entry),
-                    );
+                    // FIXME: server sends entries in reverse order
+                    // FIXME: use a better way to sort entries
+                    const entries = [...(leadFromResponse.entries) ?? []]
+                        .sort((foo, bar) => compareDate(
+                            new Date(foo.createdAt),
+                            new Date(bar.createdAt),
+                        ))
+                        .map((entry) => transformEntry(entry as Entry));
+
                     setCommentsCountMap(
                         listToMap(
                             leadFromResponse.entries ?? [],
@@ -919,7 +929,7 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
-                    if (entries?.some((entry) => entry.clientId === entryIdFromState)) {
+                    if (entries.some((entry) => entry.clientId === entryIdFromState)) {
                         createRestorePoint();
                         setSelectedEntry(entryIdFromState);
                     }
