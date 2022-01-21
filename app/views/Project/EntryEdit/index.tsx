@@ -359,7 +359,9 @@ function EntryEdit(props: Props) {
             leadFormValidate,
             (err) => {
                 setLeadError(err);
-                shouldFinalizeRef.current = undefined;
+                if (err) {
+                    shouldFinalizeRef.current = undefined;
+                }
             },
             (val) => {
                 const data = val as LeadInputType;
@@ -393,6 +395,33 @@ function EntryEdit(props: Props) {
     ] = useMutation<BulkUpdateEntriesMutation, BulkUpdateEntriesMutationVariables>(
         BULK_UPDATE_ENTRIES,
         {
+            /*
+            update: (cache, response) => {
+                const bulkActions = response?.data?.project?.entryBulk;
+                if (bulkActions && leadId) {
+                    const errors = bulkActions.errors?.filter(isDefined) ?? [];
+                    const deletedResult = bulkActions.deletedResult?.filter(isDefined) ?? [];
+                    const result = bulkActions.result?.filter(isDefined) ?? [];
+                    if (errors.length <= 0 && result.length + deletedResult.length > 0) {
+                        console.warn('called');
+                        cache.writeFragment({
+                            data: {
+                                __typename: 'LeadDetailType',
+                                id: leadId,
+                                status: null,
+                            },
+                            fragment: gql`
+                                fragment NewLeadType on LeadDetailType {
+                                    __typename
+                                    id
+                                    status
+                                }
+                            `,
+                        });
+                    }
+                }
+            },
+            */
             onCompleted: (response) => {
                 const entryBulk = response.project?.entryBulk;
                 if (!entryBulk) {
@@ -565,11 +594,14 @@ function EntryEdit(props: Props) {
                 shouldFinalizeRef.current = undefined;
                 return;
             }
+
             const submit = createSubmitHandler(
                 formValidate,
                 (err) => {
                     setFormError(err);
-                    shouldFinalizeRef.current = undefined;
+                    if (err) {
+                        shouldFinalizeRef.current = undefined;
+                    }
                 },
                 (value) => {
                     // FIXME: do not send entries with errors
@@ -976,6 +1008,11 @@ function EntryEdit(props: Props) {
         },
     );
 
+    // FIXME: can't use leadStatus from query because the underlying types are
+    // different
+    // const leadStatus = data?.project?.lead?.status;
+    const leadStatus = leadValue?.status;
+
     const handleApplyToAll = useCallback(
         (entryId: string, widgetId: string, applyBelowOnly?: boolean) => {
             setFormFieldValue(
@@ -1111,7 +1148,7 @@ function EntryEdit(props: Props) {
 
         // NOTE: If entries form is not edited and lead's status is already tagged
         // we don't need to finalize the lead
-        if (!entriesFormStale && leadValue.status === 'TAGGED') {
+        if (!entriesFormStale && leadStatus === 'TAGGED') {
             return true;
         }
 
@@ -1120,7 +1157,7 @@ function EntryEdit(props: Props) {
         selectedEntry,
         entriesFormStale,
         loading,
-        leadValue.status,
+        leadStatus,
         formValue.entries,
     ]);
 

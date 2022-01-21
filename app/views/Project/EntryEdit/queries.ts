@@ -39,6 +39,8 @@ const ENTRY_FRAGMENT = gql`
     }
 `;
 
+// FIXME: use fragment for lead as well
+
 export const LEAD_ENTRIES = gql`
     ${ENTRY_FRAGMENT}
     query LeadEntries(
