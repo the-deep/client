@@ -68,7 +68,7 @@ function Project(props: Props) {
         {
             variables,
             onCompleted: (data) => {
-                if (data.project) {
+                if (data.project && data.project.allowedPermissions.length > 0) {
                     setProject(data.project);
 
                     setLastActiveProject({
@@ -104,12 +104,13 @@ function Project(props: Props) {
                 />
             );
         }
-        // NOTE: this conditional branch should never be executed
+        // NOTE: This branch will be called when user requests project without
+        // any permissions
         return (
             <PreloadMessage
                 className={className}
                 heading="Oh no!"
-                content="Some error occurred"
+                content="You do not have permission to access this page"
             />
         );
     }

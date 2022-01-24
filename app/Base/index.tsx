@@ -60,7 +60,10 @@ const apolloClient = new ApolloClient(apolloConfig);
 function Base() {
     const [user, setUser] = useState<User | undefined>();
 
-    const [navbarVisibility, setNavbarVisibility] = useState(false);
+    const [navbarState, setNavbarState] = useState<{
+        path: string;
+        visibility: boolean;
+    }[]>([]);
 
     const authenticated = !!user;
 
@@ -91,24 +94,20 @@ function Base() {
             authenticated,
             user,
             setUser: setUserWithSentry,
-            navbarVisibility,
-            setNavbarVisibility,
         }),
         [
             authenticated,
             user,
             setUserWithSentry,
-            navbarVisibility,
-            setNavbarVisibility,
         ],
     );
 
     const navbarContext: NavbarContextInterface = useMemo(
         () => ({
-            navbarVisibility,
-            setNavbarVisibility,
+            navbarState,
+            setNavbarState,
         }),
-        [navbarVisibility, setNavbarVisibility],
+        [navbarState, setNavbarState],
     );
 
     const [alerts, setAlerts] = React.useState<AlertOptions[]>([]);
@@ -189,6 +188,21 @@ function Base() {
         [addAlert],
     );
 
+    const currentNavbarState = navbarState.reduce(
+        (acc: typeof navbarState[number] | undefined, value) => {
+            if (!acc) {
+                return value;
+            }
+            if (acc.path.length > value.path.length) {
+                return acc;
+            }
+            return value;
+        },
+        undefined,
+    );
+
+    const navbarShown = currentNavbarState?.visibility;
+
     return (
         <div className={styles.base}>
             <ErrorBoundary
@@ -214,9 +228,9 @@ function Base() {
                                             <Navbar
                                                 className={_cs(
                                                     styles.navbar,
-                                                    !navbarVisibility && styles.hidden,
+                                                    !navbarShown && styles.hidden,
                                                 )}
-                                                disabled={!navbarVisibility}
+                                                disabled={!navbarShown}
                                             />
                                             <Routes
                                                 className={styles.view}

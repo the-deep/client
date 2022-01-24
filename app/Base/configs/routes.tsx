@@ -147,7 +147,7 @@ const projectCreateRoute = wrap({
 const projectRoute = wrap({
     path: '/projects/:projectId(\\d+)/',
     title: 'Project',
-    navbarVisibility: undefined,
+    navbarVisibility: true,
     component: lazy(() => import('#views/Project')),
     componentProps: { },
     visibility: 'is-authenticated',
@@ -159,7 +159,7 @@ const taggingRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/tagging/',
     title: 'Tagging',
-    navbarVisibility: undefined,
+    navbarVisibility: true,
     component: lazy(() => import('#views/Project/Tagging')),
     componentProps: {
     },

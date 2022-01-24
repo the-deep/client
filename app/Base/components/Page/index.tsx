@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import { isDefined } from '@togglecorp/fujs';
 
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { UserContext } from '#base/context/UserContext';
@@ -27,7 +26,7 @@ export interface Props<T extends { className?: string }> {
         project: Project | undefined,
         skipProjectPermissionCheck: boolean,
     ) => boolean | undefined,
-    navbarVisibility: boolean | undefined;
+    navbarVisibility: boolean;
 
     path: string;
     loginPage?: string;
@@ -54,7 +53,7 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         authenticated,
     } = useContext(UserContext);
     const {
-        setNavbarVisibility,
+        setNavbarState,
     } = useContext(NavbarContext);
     const {
         project,
@@ -68,16 +67,24 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         () => {
             // NOTE: should not set visibility for redirection or, navbar will
             // flash
+            if (redirect) {
+                return undefined;
+            }
             // NOTE: if navbarVisibility do not change navbar state
             // useful for parent routes
-            if (!redirect && isDefined(navbarVisibility)) {
-                setNavbarVisibility(navbarVisibility);
-            }
+            setNavbarState((oldValue) => (
+                [...oldValue, { path, visibility: navbarVisibility }]
+            ));
+            return () => {
+                setNavbarState((oldValue) => (
+                    oldValue.filter((item) => item.path === path)
+                ));
+            };
         },
-        // NOTE: setNavbarVisibility will not change
+        // NOTE: setNavbarState will not change
         // NOTE: navbarVisibility will not change
         // NOTE: adding path because Path component is reused when used in Switch > Routes
-        [setNavbarVisibility, navbarVisibility, path, redirect],
+        [setNavbarState, navbarVisibility, path, redirect],
     );
 
     if (redirectToSignIn) {
