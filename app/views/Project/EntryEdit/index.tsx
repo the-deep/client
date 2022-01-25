@@ -1590,7 +1590,7 @@ function EntryEdit(props: Props) {
                                     )}
                                     contentClassName={styles.reviewContent}
                                 >
-                                    {formValue && formValue.entries && formValue.entries?.length > 0
+                                    {(formValue?.entries?.length ?? 0) > 0
                                         ? (
                                             <VirtualizedListView
                                                 itemHeight={360}
