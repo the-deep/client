@@ -5,6 +5,7 @@ import { useQuery, gql, useMutation } from '@apollo/client';
 import PreloadMessage from '#base/components/PreloadMessage';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+import FullPageErrorMessage from '#views/FullPageErrorMessage';
 
 import {
     CurrentProjectQuery,
@@ -81,10 +82,11 @@ function Project(props: Props) {
 
     if (error) {
         return (
-            <PreloadMessage
+            <FullPageErrorMessage
                 className={className}
-                heading="Oh no!"
-                content="Some error occurred"
+                errorTitle="Oh no!"
+                errorMessage="Some error occured"
+                krakenVariant="hi"
             />
         );
     }
@@ -107,10 +109,11 @@ function Project(props: Props) {
         // NOTE: This branch will be called when user requests project without
         // any permissions
         return (
-            <PreloadMessage
+            <FullPageErrorMessage
                 className={className}
-                heading="Oh no!"
-                content="You do not have permission to access this page"
+                errorTitle="Oh no!"
+                errorMessage="You do not have permission to access this page"
+                krakenVariant="hi"
             />
         );
     }

@@ -46,6 +46,7 @@ import routes from '#base/configs/routes';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import PreloadMessage from '#base/components/PreloadMessage';
+import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
 import _ts from '#ts';
 import {
@@ -633,10 +634,11 @@ function AnalyticalFramework(props: Props) {
 
     if (frameworkQueryError) {
         return (
-            <PreloadMessage
+            <FullPageErrorMessage
                 className={className}
-                heading="Oh no!"
-                content="Some error occurred"
+                errorTitle="Oh no!"
+                errorMessage="Some error occured"
+                krakenVariant="hi"
             />
         );
     }
@@ -670,9 +672,10 @@ function AnalyticalFramework(props: Props) {
                         homeLinkShown
                     />
                     {!hasPermission ? (
-                        <PreloadMessage
-                            heading="Oh no!"
-                            content="The framework does not exist or you do not have permissions to edit the framework."
+                        <FullPageErrorMessage
+                            errorTitle="Oh no!"
+                            errorMessage="The framework does not exist or you do not have permissions to edit the framework."
+                            krakenVariant="hi"
                         />
                     ) : (
                         <>

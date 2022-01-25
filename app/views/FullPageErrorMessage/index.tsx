@@ -30,31 +30,34 @@ function FullPageErrorMessage(props: Props) {
 
     return (
         <div className={_cs(styles.errorPage, className)}>
-            <div className={styles.logoContainer}>
-                <Svg
-                    src={deepLogo}
-                    className={styles.logo}
-                />
-            </div>
-            <div className={styles.background}>
+            <div className={styles.backgroundContainer}>
                 <img
                     src={waterLevelImage}
                     className={styles.backgroundImage}
                     alt=""
                 />
-                <Kraken
-                    className={styles.kraken}
-                    variant={krakenVariant}
-                />
+            </div>
+            <div className={styles.container}>
+                <div className={styles.logoContainer}>
+                    <Svg
+                        src={deepLogo}
+                        className={styles.logo}
+                    />
+                </div>
                 <div className={styles.content}>
-                    <h2 className={styles.errorMessageTitle}>
-                        {errorTitle}
-                    </h2>
-                    <div className={styles.errorMessage}>
-                        {errorMessage}
+                    <Kraken
+                        className={styles.kraken}
+                        variant={krakenVariant}
+                    />
+                    <div className={styles.message}>
+                        <h2 className={styles.errorMessageTitle}>
+                            {errorTitle}
+                        </h2>
+                        <div className={styles.errorMessage}>
+                            {errorMessage}
+                        </div>
                     </div>
                     <ButtonLikeLink
-                        className={styles.button}
                         variant="primary"
                         to="/"
                     >
@@ -65,7 +68,6 @@ function FullPageErrorMessage(props: Props) {
             <div className={styles.footer}>
                 Copyright @DFS 2021
             </div>
-
         </div>
     );
 }

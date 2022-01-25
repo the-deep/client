@@ -12,6 +12,9 @@ import {
     ProjectContextInterface,
 } from '#base/context/ProjectContext';
 import { Project } from '#base/types/project';
+
+import FullPageErrorMessage from '#views/FullPageErrorMessage';
+
 import { MeQuery } from '#generated/types';
 
 const ME = gql`
@@ -99,10 +102,11 @@ function Init(props: Props) {
 
     if (errored) {
         return (
-            <PreloadMessage
+            <FullPageErrorMessage
                 className={className}
-                heading="Oh no!"
-                content="Some error occurred"
+                errorTitle="Oh no!"
+                errorMessage="Some error occured"
+                krakenVariant="hi"
             />
         );
     }

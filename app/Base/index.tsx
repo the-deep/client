@@ -11,7 +11,6 @@ import { setMapboxToken } from '@togglecorp/re-map';
 import '@the-deep/deep-ui/build/index.css';
 
 import Init from '#base/components/Init';
-import PreloadMessage from '#base/components/PreloadMessage';
 import browserHistory from '#base/configs/history';
 import sentryConfig from '#base/configs/sentry';
 import { UserContext, UserContextInterface } from '#base/context/UserContext';
@@ -35,6 +34,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
+
+import FullPageErrorMessage from '#views/FullPageErrorMessage';
 
 import styles from './styles.css';
 
@@ -208,9 +209,10 @@ function Base() {
             <ErrorBoundary
                 showDialog
                 fallback={(
-                    <PreloadMessage
-                        heading="Oh no!"
-                        content="Some error occurred!"
+                    <FullPageErrorMessage
+                        errorTitle="Oh no!"
+                        errorMessage="Some error occured"
+                        krakenVariant="hi"
                     />
                 )}
             >

@@ -59,43 +59,37 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         project,
     } = useContext(ProjectContext);
 
-    const redirectToSignIn = visibility === 'is-authenticated' && !authenticated;
-    const redirectToHome = visibility === 'is-not-authenticated' && authenticated;
-    const redirect = redirectToSignIn || redirectToHome;
-
     useEffect(
         () => {
-            // NOTE: should not set visibility for redirection or, navbar will
-            // flash
-            if (redirect) {
-                return undefined;
-            }
-            // NOTE: if navbarVisibility do not change navbar state
-            // useful for parent routes
-            setNavbarState((oldValue) => (
-                [...oldValue, { path, visibility: navbarVisibility }]
-            ));
+            // NOTE: Decide if we should skip for redirections
+            setNavbarState((oldValue) => {
+                const newValue = [...oldValue, { path, visibility: navbarVisibility }];
+                return newValue;
+            });
             return () => {
-                setNavbarState((oldValue) => (
-                    oldValue.filter((item) => item.path === path)
-                ));
+                setNavbarState((oldValue) => {
+                    const newValue = oldValue.filter((item) => item.path !== path);
+                    return newValue;
+                });
             };
         },
         // NOTE: setNavbarState will not change
         // NOTE: navbarVisibility will not change
-        // NOTE: adding path because Path component is reused when used in Switch > Routes
-        [setNavbarState, navbarVisibility, path, redirect],
+        [setNavbarState, navbarVisibility, path],
     );
 
+    const redirectToSignIn = visibility === 'is-authenticated' && !authenticated;
+    const redirectToHome = visibility === 'is-not-authenticated' && authenticated;
+
     if (redirectToSignIn) {
-        // console.warn('Redirecting to sign-in');
+        // console.info('Redirecting to sign-in');
         return (
             <Redirect to={loginPage} />
         );
     }
 
     if (redirectToHome) {
-        // console.warn('Redirecting to dashboard');
+        // console.info('Redirecting to dashboard');
         return (
             <Redirect to={defaultPage} />
         );
