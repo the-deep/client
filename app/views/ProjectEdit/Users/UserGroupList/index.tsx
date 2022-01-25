@@ -21,6 +21,7 @@ import {
     createStringColumn,
     useAlert,
 } from '@the-deep/deep-ui';
+import { useQuery, gql } from '@apollo/client';
 
 import { createDateColumn } from '#components/tableHelpers';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
@@ -32,6 +33,10 @@ import {
     MultiResponse,
     UserGroup,
 } from '#types';
+import {
+    UserGroupsQuery,
+    UserGroupsQueryVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import AddUserGroupModal from './AddUserGroupModal';
@@ -41,7 +46,32 @@ import styles from './styles.css';
 const maxItemsPerPage = 10;
 const usergroupKeySelector = (d: UserGroup) => d.id;
 
-interface Props{
+const USERS_GROUPS = gql`
+    query UserGroups($projectId: Float!) {
+        userGroups(id: $projectId) {
+            results {
+                title
+                id
+                clientId
+                createdAt
+                createdBy {
+                  firstName
+                  lastName
+                  id
+                  organization
+                  displayName
+                }
+                description
+                currentUserRole
+            }
+            totalCount
+            page
+            pageSize
+        }
+    }
+`;
+
+interface Props {
     className?: string;
     projectId: string;
     activeUserRoleLevel?: number;
@@ -76,16 +106,39 @@ function UserGroupList(props: Props) {
         limit: maxItemsPerPage,
     }), [activePage]);
 
+    // const {
+    //    pending: usergroupPending,
+    //    response: usergroupResponse,
+    //    retrigger: triggerUsergroupResponse,
+    // } = useRequest<MultiResponse<UserGroup>>({
+    //    url: `server://projects/${projectId}/project-usergroups/`,
+    //    method: 'GET',
+    //    query: queryForRequest,
+    //    preserveResponse: true,
+    // });
+
+    const userGroupVariables = useMemo(
+        (): UserGroupsQueryVariables | undefined => ({
+            projectId,
+        }),
+        [projectId],
+    );
+
     const {
-        pending: usergroupPending,
-        response: usergroupResponse,
-        retrigger: triggerUsergroupResponse,
-    } = useRequest<MultiResponse<UserGroup>>({
-        url: `server://projects/${projectId}/project-usergroups/`,
-        method: 'GET',
-        query: queryForRequest,
-        preserveResponse: true,
-    });
+        data: usergroupResponse,
+        loading: usergroupPending,
+        refetch: triggerUsergroupResponse,
+    } = useQuery<UserGroupsQuery, UserGroupsQueryVariables>(
+        USERS_GROUPS,
+        {
+            variables: userGroupVariables,
+            onCompleted: (data) => {
+                console.log('Received userGroup Data::###>>', data);
+            },
+        },
+    );
+
+    console.log('Check userGroup Response::!>>', usergroupResponse);
 
     const {
         trigger: triggerDeleteUsergroup,
@@ -158,8 +211,8 @@ function UserGroupList(props: Props) {
     }, [triggerDeleteUsergroup, handleEditUsergroupClick, activeUserRoleLevel]);
 
     const usergroupToEdit = useMemo(() => (
-        usergroupResponse?.results?.find((d) => d.id === usergroupIdToEdit)
-    ), [usergroupResponse?.results, usergroupIdToEdit]);
+        usergroupResponse?.userGroups?.results?.find((d) => d.id === usergroupIdToEdit)
+    ), [usergroupResponse?.userGroups?.results, usergroupIdToEdit]);
 
     const handleAddUsergroupClick = useCallback(() => {
         setUsergroupIdToEdit(undefined);
