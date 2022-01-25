@@ -119,6 +119,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
     const handleSectionsEditCancel = useCallback(
         () => {
             setTempSections(undefined);
+            setSectionToEdit(undefined);
         },
         [],
     );
@@ -129,8 +130,11 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         (value: Section[]) => {
             setTempSections(undefined);
             setSections(value, name);
+            if (sectionToEdit) {
+                setSelectedSection(sectionToEdit);
+            }
         },
-        [setSections, name],
+        [setSections, name, sectionToEdit],
     );
 
     const handleWidgetAdd = useCallback(

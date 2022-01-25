@@ -261,7 +261,7 @@ function SectionsEditor(props: Props) {
         setExpandedSectionId(sectionExpanded ? sectionId : undefined);
     }, []);
 
-    const handleAdd = useCallback(
+    const handleAddSection = useCallback(
         () => {
             const oldSections = value.sections ?? [];
             // NOTE: Don't let users add more that certain items
@@ -357,7 +357,7 @@ function SectionsEditor(props: Props) {
                     headerActions={(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
                         <QuickActionButton
                             name={undefined}
-                            onClick={handleAdd}
+                            onClick={handleAddSection}
                             // FIXME: use strings
                             title="Add section"
                         >
