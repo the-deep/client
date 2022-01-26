@@ -204,7 +204,6 @@ export const PROJECT_FRAMEWORK = gql`
     }
 `;
 
-const maxItemsPerPage = 5;
 const entryKeySelector = (e: Entry) => e.clientId ?? e.id;
 
 interface Props {
@@ -228,6 +227,7 @@ function EntryList(props: Props) {
         geoAreaOptions,
         setGeoAreaOptions,
     ] = useState<GeoArea[] | undefined | null>(undefined);
+    const [maxItemsPerPage, setMaxItemsPerPage] = useState(10);
 
     const ref = createRef<HTMLDivElement>();
 
@@ -259,7 +259,7 @@ function EntryList(props: Props) {
                 ...filters,
             } : undefined
         ),
-        [leadId, projectId, activePage, filters],
+        [leadId, projectId, activePage, filters, maxItemsPerPage],
     );
 
     const {
@@ -369,9 +369,8 @@ function EntryList(props: Props) {
                     activePage={activePage}
                     itemsCount={entriesResponse?.totalCount ?? 0}
                     maxItemsPerPage={maxItemsPerPage}
+                    onItemsPerPageChange={setMaxItemsPerPage}
                     onActivePageChange={handleSetActivePage}
-                    itemsPerPageControlHidden
-                    hideInfo
                 />
             )}
         >

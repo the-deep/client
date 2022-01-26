@@ -44,7 +44,12 @@ import EntryCard from './EntryCard';
 import { transformSourcesFilterToEntriesFilter } from '../utils';
 import styles from './styles.css';
 
-const maxItemsPerPage = 50;
+const itemsPerPageOptions = [
+    { label: '10 / page', key: 10 },
+    { label: '25 / page', key: 25 },
+    { label: '50 / page', key: 50 },
+    { label: '100 / page', key: 100 },
+];
 
 const entryKeySelector = (entry: Entry) => entry.id;
 
@@ -230,6 +235,7 @@ function EntriesGrid(props: Props) {
     }, [rawFilters]);
 
     const [activePage, setActivePage] = useState(1);
+    const [maxItemsPerPage, setMaxItemsPerPage] = useState(50);
 
     const [
         geoAreaOptions,
@@ -245,7 +251,7 @@ function EntriesGrid(props: Props) {
                 ...entriesFilter,
             } : undefined
         ),
-        [projectId, activePage, entriesFilter],
+        [projectId, activePage, entriesFilter, maxItemsPerPage],
     );
 
     const frameworkVariables = useMemo(
@@ -346,8 +352,8 @@ function EntriesGrid(props: Props) {
                     itemsCount={entriesResponse?.totalCount ?? 0}
                     maxItemsPerPage={maxItemsPerPage}
                     onActivePageChange={setActivePage}
-                    itemsPerPageControlHidden
-                    hideInfo
+                    onItemsPerPageChange={setMaxItemsPerPage}
+                    options={itemsPerPageOptions}
                 />
             )}
         >

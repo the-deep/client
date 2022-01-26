@@ -5,6 +5,22 @@
     background-color: var(--dui-color-foreground);
     --height-entry-card-content: 70vh;
 
+    .heading {
+        display: flex;
+        align-items: center;
+        gap: var(--dui-spacing-medium);
+
+        .preview-button {
+            opacity: 0;
+        }
+
+        &:hover {
+            .preview-button {
+                opacity: 1;
+            }
+        }
+    }
+
     .source-details {
         flex-grow: 1;
         background-color: transparent;

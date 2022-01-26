@@ -36,6 +36,8 @@
 
         .lead-preview {
             flex-basis: 50%;
+            flex-grow: 1;
+            min-height: 240px;
         }
     }
 }
