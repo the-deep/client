@@ -23,6 +23,7 @@ import { useQuery, gql } from '@apollo/client';
 
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import {
+    LeadOrderingEnum,
     ProjectSourceListQuery,
     ProjectSourceListQueryVariables,
     SourceFilterOptionsQueryVariables,
@@ -35,7 +36,7 @@ type Project = NonNullable<ProjectSourceListQuery['project']>;
 type Lead = NonNullable<NonNullable<NonNullable<Project['leads']>['results']>[number]>;
 
 const defaultSorting = {
-    name: 'createdAt',
+    name: 'CREATED_AT',
     direction: 'Descending',
 };
 
@@ -49,7 +50,7 @@ const PROJECT_LEADS = gql`
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
-        $ordering: String,
+        $ordering: [LeadOrderingEnum!],
         $assignees: [ID!],
         $authoringOrganizationTypes: [ID!],
         $confidentiality: LeadConfidentialityEnum,
@@ -169,8 +170,8 @@ function LeadsSelection(props: Props) {
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
     const ordering = validSorting.direction === 'Ascending'
-        ? validSorting.name
-        : `-${validSorting.name}`;
+        ? `ASC_${validSorting.name}`
+        : `DESC_${validSorting.name}`;
 
     const [activePage, setActivePage] = useState<number>(1);
 
@@ -185,7 +186,7 @@ function LeadsSelection(props: Props) {
                 projectId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
-                ordering,
+                ordering: [ordering as LeadOrderingEnum],
             } : undefined
         ),
         [projectId, activePage, ordering, filters],
@@ -242,7 +243,7 @@ function LeadsSelection(props: Props) {
         const createdAtColumn: TableColumn<
         Lead, string, DateOutputProps, TableHeaderCellProps
         > = {
-            id: 'createdAt',
+            id: 'CREATED_AT',
             title: 'Created at',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -257,7 +258,7 @@ function LeadsSelection(props: Props) {
         const publishedOnColumn: TableColumn<
         Lead, string, DateOutputProps, TableHeaderCellProps
         > = {
-            id: 'publishedOn',
+            id: 'PUBLISHED_ON',
             title: 'Published Date',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -274,7 +275,7 @@ function LeadsSelection(props: Props) {
             selectColumn,
             createdAtColumn,
             createStringColumn<Lead, string>(
-                'title',
+                'TITLE',
                 'Title',
                 (item) => item?.title,
                 {
@@ -283,7 +284,7 @@ function LeadsSelection(props: Props) {
                 },
             ),
             createStringColumn<Lead, string>(
-                'source',
+                'SOURCE',
                 'Publisher',
                 (item) => (item.source ? organizationTitleSelector(item.source) : undefined),
                 {
@@ -302,11 +303,11 @@ function LeadsSelection(props: Props) {
             ),
             publishedOnColumn,
             createNumberColumn<Lead, string>(
-                'entriesCounts',
+                'ENTRIES_COUNTS',
                 'No of entries',
                 (item) => item?.entriesCounts?.total,
                 {
-                    sortable: true,
+                    sortable: false,
                 },
             ),
         ]);
