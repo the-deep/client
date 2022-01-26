@@ -1,13 +1,18 @@
 import { createContext } from 'react';
 
+interface NavbarState {
+    path: string;
+    visibility: boolean;
+}
+
 export interface NavbarContextInterface {
-    navbarVisibility: boolean;
-    setNavbarVisibility: React.Dispatch<React.SetStateAction<boolean>>;
+    navbarState: NavbarState[];
+    setNavbarState: React.Dispatch<React.SetStateAction<NavbarState[]>>;
 }
 
 export const NavbarContext = createContext<NavbarContextInterface>({
-    navbarVisibility: false,
-    setNavbarVisibility: (value: unknown) => {
+    navbarState: [],
+    setNavbarState: (value: unknown) => {
         // eslint-disable-next-line no-console
         console.error('setNavbarVisibility called on NavbarContext without a provider', value);
     },

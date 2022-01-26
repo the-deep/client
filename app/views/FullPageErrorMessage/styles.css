@@ -15,99 +15,95 @@ warning. very weird!
     }
 }
 
+@keyframes wave {
+    0% {
+        transform: scaleX(1);
+    }
+    50% {
+        transform: scaleX(1.2);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
 .error-page{
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    z-index: 0;
-    background-color: var(--dui-color-foreground);
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto 0fr;
+    overflow: auto;
 
-    --height-logo-container: 15vh;
-    --height-footer: 55px;
+    .background-container {
+        overflow: hidden;
+        grid-area: 1 / 1 / 1 / 1;
 
-    .logo-container {
-        display: flex;
-        align-items: center;
-        padding: 0 calc(2 * var(--dui-spacing-super-large));
-        height: var(--height-logo-container);
-        overflow: auto;
-        color: var(--dui-color-brand);
-
-        .logo {
-            height: var(--dui-font-size-mega-large);
+        .background-image {
+            margin-top: 160px;
+            width: 100%;
+            height: 100%;
+            animation: wave 4s linear infinite;
+            object-fit: cover;
+            object-position: top center;
         }
     }
 
-    .background {
-        display: flex;
-        position: relative;
-        z-index: 1;
-        height: calc(100vh - (var(--height-logo-container) + var(--height-footer)));
+    .container {
+        margin: 0 auto;
+        padding: var(--dui-spacing-extra-large);
+        width: 100%;
+        max-width: 1200px;
+        grid-area: 1 / 1 / 1 / 1;
 
-        .background-image {
-            position: absolute;
-            z-index: -1;
-            animation: wave 4s linear infinite;
-        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
 
-        @keyframes wave {
-            0% {
-                transform: scaleX(1);
+            .logo {
+                height: var(--dui-font-size-mega-large);
+                color: var(--dui-color-brand);
             }
-            50% {
-                transform: scaleX(1.2) translateX(-100px);
-            }
-            100% {
-                transform: scaleX(1);
-            }
-        }
-
-        .kraken {
-            display: block;
-            position: absolute;
-            top: -100px;
-            right: 10vh;
-            animation: wiggle 4s 1s linear infinite;
-            --height: 24rem;
         }
 
         .content {
             display: flex;
-            align-self: center;
+            position: relative;
             flex-direction: column;
-            padding: 0 calc(2 * var(--dui-spacing-super-large));
-            color: var(--dui-color-brand);
-            font-weight: var(--dui-font-weight-bold);
-            gap: var(--dui-spacing-large);
+            gap: var(--dui-spacing-extra-large);
 
-            .error-message-title {
-                font-size: var(--dui-font-size-ultra-large);
+            .kraken {
+                align-self: flex-end;
+                animation: wiggle 4s 1s linear infinite;
+                --height: 24rem;
             }
 
-            .error-message {
-                line-height: 2;
-                font-size: var(--dui-font-size-extra-large);
-            }
+            .message {
+                display: flex;
+                align-self: flex-start;
+                flex-direction: column;
+                color: var(--dui-color-brand);
+                font-weight: var(--dui-font-weight-bold);
 
-            .button {
-                margin-top: var(--dui-spacing-super-large);
+                .error-message-title {
+                    margin: 0;
+                    font-size: var(--dui-font-size-ultra-large);
+                }
+
+                .error-message {
+                    line-height: 2;
+                    font-size: var(--dui-font-size-extra-large);
+                }
             }
         }
     }
 
     .footer {
         display: flex;
-        position: absolute;
-        bottom: 0;
         align-items: center;
         justify-content: center;
-        z-index: 1;
         background-color: var(--dui-color-foreground);
-        width: 100vw;
-        height: var(--height-footer);
+        padding: var(--dui-spacing-medium);
+        max-height: 100%;
     }
 }
 

@@ -35,6 +35,7 @@ function useRouteMatching(route: RouteData, attrs?: Attrs) {
         return undefined;
     }
 
+    // FIXME: add note on why skip project permission check is defined
     const skipProjectPermissionCheck = (
         !!project
         && !!attrs?.projectId

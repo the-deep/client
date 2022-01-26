@@ -11,7 +11,6 @@ import { setMapboxToken } from '@togglecorp/re-map';
 import '@the-deep/deep-ui/build/index.css';
 
 import Init from '#base/components/Init';
-import PreloadMessage from '#base/components/PreloadMessage';
 import browserHistory from '#base/configs/history';
 import sentryConfig from '#base/configs/sentry';
 import { UserContext, UserContextInterface } from '#base/context/UserContext';
@@ -35,6 +34,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
+
+import FullPageErrorMessage from '#views/FullPageErrorMessage';
 
 import styles from './styles.css';
 
@@ -60,7 +61,10 @@ const apolloClient = new ApolloClient(apolloConfig);
 function Base() {
     const [user, setUser] = useState<User | undefined>();
 
-    const [navbarVisibility, setNavbarVisibility] = useState(false);
+    const [navbarState, setNavbarState] = useState<{
+        path: string;
+        visibility: boolean;
+    }[]>([]);
 
     const authenticated = !!user;
 
@@ -91,24 +95,20 @@ function Base() {
             authenticated,
             user,
             setUser: setUserWithSentry,
-            navbarVisibility,
-            setNavbarVisibility,
         }),
         [
             authenticated,
             user,
             setUserWithSentry,
-            navbarVisibility,
-            setNavbarVisibility,
         ],
     );
 
     const navbarContext: NavbarContextInterface = useMemo(
         () => ({
-            navbarVisibility,
-            setNavbarVisibility,
+            navbarState,
+            setNavbarState,
         }),
-        [navbarVisibility, setNavbarVisibility],
+        [navbarState, setNavbarState],
     );
 
     const [alerts, setAlerts] = React.useState<AlertOptions[]>([]);
@@ -189,14 +189,30 @@ function Base() {
         [addAlert],
     );
 
+    const currentNavbarState = navbarState.reduce(
+        (acc: typeof navbarState[number] | undefined, value) => {
+            if (!acc) {
+                return value;
+            }
+            if (acc.path.length > value.path.length) {
+                return acc;
+            }
+            return value;
+        },
+        undefined,
+    );
+
+    const navbarShown = currentNavbarState?.visibility;
+
     return (
         <div className={styles.base}>
             <ErrorBoundary
                 showDialog
                 fallback={(
-                    <PreloadMessage
-                        heading="Oh no!"
-                        content="Some error occurred!"
+                    <FullPageErrorMessage
+                        errorTitle="Oh no!"
+                        errorMessage="Some error occured"
+                        krakenVariant="hi"
                     />
                 )}
             >
@@ -214,9 +230,9 @@ function Base() {
                                             <Navbar
                                                 className={_cs(
                                                     styles.navbar,
-                                                    !navbarVisibility && styles.hidden,
+                                                    !navbarShown && styles.hidden,
                                                 )}
-                                                disabled={!navbarVisibility}
+                                                disabled={!navbarShown}
                                             />
                                             <Routes
                                                 className={styles.view}

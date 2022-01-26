@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import { isDefined } from '@togglecorp/fujs';
 
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { UserContext } from '#base/context/UserContext';
@@ -27,7 +26,7 @@ export interface Props<T extends { className?: string }> {
         project: Project | undefined,
         skipProjectPermissionCheck: boolean,
     ) => boolean | undefined,
-    navbarVisibility: boolean | undefined;
+    navbarVisibility: boolean;
 
     path: string;
     loginPage?: string;
@@ -54,41 +53,43 @@ function Page<T extends { className?: string }>(props: Props<T>) {
         authenticated,
     } = useContext(UserContext);
     const {
-        setNavbarVisibility,
+        setNavbarState,
     } = useContext(NavbarContext);
     const {
         project,
     } = useContext(ProjectContext);
 
-    const redirectToSignIn = visibility === 'is-authenticated' && !authenticated;
-    const redirectToHome = visibility === 'is-not-authenticated' && authenticated;
-    const redirect = redirectToSignIn || redirectToHome;
-
     useEffect(
         () => {
-            // NOTE: should not set visibility for redirection or, navbar will
-            // flash
-            // NOTE: if navbarVisibility do not change navbar state
-            // useful for parent routes
-            if (!redirect && isDefined(navbarVisibility)) {
-                setNavbarVisibility(navbarVisibility);
-            }
+            // NOTE: Decide if we should skip for redirections
+            setNavbarState((oldValue) => {
+                const newValue = [...oldValue, { path, visibility: navbarVisibility }];
+                return newValue;
+            });
+            return () => {
+                setNavbarState((oldValue) => {
+                    const newValue = oldValue.filter((item) => item.path !== path);
+                    return newValue;
+                });
+            };
         },
-        // NOTE: setNavbarVisibility will not change
+        // NOTE: setNavbarState will not change
         // NOTE: navbarVisibility will not change
-        // NOTE: adding path because Path component is reused when used in Switch > Routes
-        [setNavbarVisibility, navbarVisibility, path, redirect],
+        [setNavbarState, navbarVisibility, path],
     );
 
+    const redirectToSignIn = visibility === 'is-authenticated' && !authenticated;
+    const redirectToHome = visibility === 'is-not-authenticated' && authenticated;
+
     if (redirectToSignIn) {
-        // console.warn('Redirecting to sign-in');
+        // console.info('Redirecting to sign-in');
         return (
             <Redirect to={loginPage} />
         );
     }
 
     if (redirectToHome) {
-        // console.warn('Redirecting to dashboard');
+        // console.info('Redirecting to dashboard');
         return (
             <Redirect to={defaultPage} />
         );
