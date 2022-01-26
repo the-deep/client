@@ -89,6 +89,10 @@ import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, Partia
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
 import styles from './styles.css';
 
+interface VirtualizedEntryListComponent {
+    scrollTo: (item: string) => void;
+}
+
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
 const DELETE_LEN = 100;
@@ -177,6 +181,8 @@ function EntryEdit(props: Props) {
     ] = useState<BasicLeadGroup[] | undefined | null>(undefined);
 
     const shouldFinalizeRef = useRef<boolean | undefined>(undefined);
+
+    const listComponentRef = useRef<VirtualizedEntryListComponent | null>(null);
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>(undefined);
 
@@ -1058,9 +1064,13 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
-                    if (entries.some((entry) => entry.clientId === entryIdFromLocation)) {
+                    const selectedEntryFromLocation = entries.find(
+                        (entry) => entry.id === String(entryIdFromLocation),
+                    );
+                    if (selectedEntryFromLocation) {
                         createRestorePoint();
-                        setSelectedEntry(entryIdFromLocation);
+                        setSelectedEntry(selectedEntryFromLocation.clientId);
+                        listComponentRef?.current?.scrollTo(selectedEntryFromLocation.clientId);
                     }
 
                     const leadData = removeNull(leadFromResponse);
@@ -1381,6 +1391,7 @@ function EntryEdit(props: Props) {
                                         onExcerptChange={handleExcerptChange}
                                         lead={lead}
                                         leadId={leadId}
+                                        listComponentRef={listComponentRef}
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}

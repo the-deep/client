@@ -12,7 +12,7 @@ import {
     requiredStringCondition,
     createSubmitHandler,
     internal,
-    requiredCondition,
+    requiredListCondition,
     getErrorString,
     getErrorObject,
 } from '@togglecorp/toggle-form';
@@ -33,7 +33,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         text: [requiredStringCondition],
-        mentionedUsers: [requiredCondition],
+        mentionedUsers: [requiredListCondition],
     }),
 };
 
@@ -56,7 +56,7 @@ function EditCommentForm(props: Props) {
 
     const [initialFormValue] = useState<FormType>({
         text: comment.textHistory[0]?.text ?? '',
-        mentionedUsers: comment.mentionedUsers.map((u) => String(u)),
+        mentionedUsers: comment.mentionedUsers.map(String),
     });
     const alert = useAlert();
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>(

@@ -125,6 +125,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         }) : undefined;
 
         return (
@@ -171,6 +172,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         }) : undefined;
 
         return (
@@ -217,6 +219,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         };
 
         return (
@@ -261,6 +264,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         };
 
         return (
@@ -305,6 +309,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         };
 
         return (
@@ -349,6 +354,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         };
 
         return (
@@ -390,6 +396,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         };
         const content = generateString(
             getCommentTokenString(data),
@@ -430,6 +437,7 @@ function NotificationItem(props: Props) {
             state: {
                 entryId: data?.entry,
             },
+            hash: '#/primary-tagging',
         };
 
         return (
