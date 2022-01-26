@@ -19,6 +19,7 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
+    projectId: string;
     comment: EntryComment;
 }
 
@@ -26,6 +27,7 @@ function Comment(props: Props) {
     const {
         className,
         comment: commentFromProps,
+        projectId,
     } = props;
 
     const { user } = useContext(UserContext);
@@ -43,6 +45,7 @@ function Comment(props: Props) {
         mentionedUsersDetails,
         createdAt,
     } = comment;
+
     const [latest] = textHistory;
 
     const isEditable = useMemo(() => (
@@ -91,6 +94,7 @@ function Comment(props: Props) {
                         <EditCommentForm
                             className={styles.editComment}
                             comment={comment}
+                            projectId={projectId}
                             onEditSuccess={handleSuccess}
                             onEditCancel={hideEditModal}
                         />

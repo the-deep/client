@@ -12,15 +12,19 @@ import {
     requiredStringCondition,
     createSubmitHandler,
     internal,
+    requiredCondition,
+    getErrorString,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
+import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { EntryComment } from '#types';
 import styles from './styles.css';
 
 interface Comment {
     text: string;
+    mentionedUsers: string[],
 }
 
 type FormType = Partial<Comment>;
@@ -29,6 +33,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         text: [requiredStringCondition],
+        mentionedUsers: [requiredCondition],
     }),
 };
 
@@ -37,6 +42,7 @@ interface Props {
     onEditSuccess: (response: EntryComment) => void;
     onEditCancel: () => void;
     comment: EntryComment;
+    projectId: string;
 }
 
 function EditCommentForm(props: Props) {
@@ -45,12 +51,20 @@ function EditCommentForm(props: Props) {
         comment,
         onEditSuccess,
         onEditCancel,
+        projectId,
     } = props;
 
     const [initialFormValue] = useState<FormType>({
         text: comment.textHistory[0]?.text ?? '',
+        mentionedUsers: comment.mentionedUsers.map((u) => String(u)),
     });
     const alert = useAlert();
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
+        () => comment.mentionedUsersDetails.map((u) => ({
+            id: String(u.id),
+            displayName: u.name,
+        })),
+    );
 
     const {
         pristine,
@@ -126,6 +140,16 @@ function EditCommentForm(props: Props) {
                     value={value.text}
                     onChange={setFieldValue}
                     error={error?.text}
+                />
+                <ProjectMemberMultiSelectInput
+                    name="mentionedUsers"
+                    label="Assignees"
+                    value={value.mentionedUsers}
+                    projectId={projectId}
+                    onChange={setFieldValue}
+                    options={members}
+                    onOptionsChange={setMembers}
+                    error={getErrorString(error?.mentionedUsers)}
                 />
             </ContainerCard>
         </form>

@@ -80,7 +80,8 @@ function EntryComments(props: Props) {
 
     const commentRendererParams = useCallback((_, comment: EntryComment) => ({
         comment,
-    }), []);
+        projectId,
+    }), [projectId]);
 
     return (
         <>
