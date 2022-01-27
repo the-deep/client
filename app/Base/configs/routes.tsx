@@ -22,8 +22,8 @@ const fourHundredFour = wrap({
     navbarVisibility: false,
 });
 const termsOfService = wrap({
-    path: '/terms-of-service/',
-    title: 'Terms of Service',
+    path: '/terms-and-privacy/',
+    title: 'Terms and Privacy',
     navbarVisibility: false,
     component: lazy(() => import('#views/TermsOfService')),
     componentProps: {

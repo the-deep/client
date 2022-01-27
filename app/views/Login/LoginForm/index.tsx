@@ -366,7 +366,7 @@ function LoginForm(props: Props) {
                     className={styles.link}
                     route={routes.termsOfService}
                 >
-                    Terms of Service
+                    Terms and Privacy
                 </SmartLink>
             </div>
         </form>

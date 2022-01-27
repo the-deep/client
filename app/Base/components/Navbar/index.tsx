@@ -241,7 +241,7 @@ function Navbar(props: Props) {
                     <DropdownMenuItem
                         href={route.termsOfService.path}
                     >
-                        Terms of Service
+                        Terms and Privacy
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         href={extensionChromeUrl}
@@ -252,7 +252,7 @@ function Navbar(props: Props) {
                             rel: 'noopener noreferrer',
                         }}
                     >
-                        Chrome extension
+                        Chrome Extension
                     </DropdownMenuItem>
                     <Border
                         inline
