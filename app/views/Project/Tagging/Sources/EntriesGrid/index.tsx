@@ -117,6 +117,15 @@ export const PROJECT_ENTRIES = gql`
                         createdBy {
                             displayName
                         }
+                        url
+                        attachment {
+                            id
+                            title
+                            mimeType
+                            file {
+                                url
+                            }
+                        }
                     }
                     attributes {
                         clientId

@@ -165,10 +165,10 @@ function EntryCard(props: Props) {
                         {leadDetails.title}
                         <LeadPreviewButton
                             className={styles.previewButton}
-                            leadId={leadDetails.id}
-                            projectId={projectId}
                             label={<IoEye />}
                             title={leadDetails.title}
+                            url={leadDetails.url}
+                            attachment={leadDetails.attachment}
                         />
                     </>
                 )}

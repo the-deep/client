@@ -146,6 +146,15 @@ export const PROJECT_SOURCES = gql`
                     publishedOn
                     priority
                     priorityDisplay
+                    url
+                    attachment {
+                        id
+                        title
+                        mimeType
+                        file {
+                            url
+                        }
+                    }
                     assessmentId
                     createdBy {
                         id
@@ -483,10 +492,10 @@ function SourcesTable(props: Props) {
             },
             cellRenderer: LeadPreviewButton,
             cellRendererParams: (_, data) => ({
-                leadId: data.id,
-                projectId,
                 title: data.title,
                 label: data.title,
+                url: data.url,
+                attachment: data.attachment,
             }),
             columnClassName: styles.titleColumn,
             columnWidth: 160,
