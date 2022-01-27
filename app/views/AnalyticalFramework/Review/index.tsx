@@ -49,7 +49,7 @@ function Review(props: Props) {
                 heading={_ts('analyticalFramework.review', 'primaryTagging')}
                 contentClassName={styles.primaryTaggingContent}
             >
-                {primaryTagging && primaryTagging.length > 0 ? (
+                {primaryTagging.length > 0 ? (
                     <Tabs
                         value={selectedSection}
                         onChange={setSelectedSection}

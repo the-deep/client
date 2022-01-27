@@ -421,7 +421,7 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
                     )}
                     contentClassName={styles.content}
                 >
-                    {sectionsState && sectionsState.appliedSections.length > 0 ? (
+                    {sectionsState.appliedSections.length > 0 ? (
                         <>
                             <NonFieldError error={error} />
                             <TabList className={styles.tabs}>

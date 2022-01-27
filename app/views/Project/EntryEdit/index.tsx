@@ -1590,7 +1590,7 @@ function EntryEdit(props: Props) {
                                     )}
                                     contentClassName={styles.reviewContent}
                                 >
-                                    {(formValue?.entries?.length ?? 0) > 0
+                                    {(formValue.entries?.length ?? 0) > 0
                                         ? (
                                             <VirtualizedListView
                                                 itemHeight={360}
@@ -1606,6 +1606,7 @@ function EntryEdit(props: Props) {
                                                 emptyIcon={(
                                                     <Kraken
                                                         variant="search"
+                                                        size="large"
                                                     />
                                                 )}
                                                 emptyMessage="No entries found"

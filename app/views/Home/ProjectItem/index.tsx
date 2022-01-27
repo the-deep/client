@@ -349,6 +349,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                     isAnimationActive={false}
                                 />
                                 <Area
+                                    name="Number of Entries"
                                     dataKey="activity"
                                     stroke="var(--dui-color-accent)"
                                     fillOpacity={1}
