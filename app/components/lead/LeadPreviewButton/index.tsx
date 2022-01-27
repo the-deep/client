@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Button,
@@ -7,45 +7,19 @@ import {
     Message,
     Kraken,
 } from '@the-deep/deep-ui';
-import { useQuery, gql } from '@apollo/client';
 
-import LeadPreview from '#components/lead/LeadPreview';
+import LeadPreview, { Attachment } from '#components/lead/LeadPreview';
 import { useModalState } from '#hooks/stateManagement';
-import {
-    ProjectLeadPreviewQuery,
-    ProjectLeadPreviewQueryVariables,
-} from '#generated/types';
 
 import styles from './styles.css';
-
-const PROJECT_LEAD_PREVIEW = gql`
-    query ProjectLeadPreview($projectId: ID!, $leadId: ID!) {
-        project(id: $projectId) {
-            id
-            lead (id: $leadId) {
-                id
-                title
-                url
-                attachment {
-                    id
-                    title
-                    mimeType
-                    file {
-                        url
-                    }
-                }
-            }
-        }
-    }
-`;
 
 export type Props = {
     label?: React.ReactNode;
     title?: string;
+    url?: string;
     className?: string;
+    attachment?: Attachment | null;
     variant?: ButtonProps<string>['variant'];
-    projectId?: string;
-    leadId?: string;
 }
 
 function LeadPreviewButton(props: Props) {
@@ -54,30 +28,9 @@ function LeadPreviewButton(props: Props) {
         label,
         variant,
         title,
-        projectId,
-        leadId,
+        url,
+        attachment,
     } = props;
-
-    const variables = useMemo(
-        () => ((leadId && projectId) ? ({
-            leadId,
-            projectId,
-        }) : undefined),
-        [leadId, projectId],
-    );
-
-    const {
-        loading: leadLoading,
-        data: lead,
-    } = useQuery<ProjectLeadPreviewQuery, ProjectLeadPreviewQueryVariables>(
-        PROJECT_LEAD_PREVIEW,
-        {
-            skip: !variables,
-            variables,
-        },
-    );
-
-    const leadData = lead?.project?.lead;
 
     const [
         isModalVisible,
@@ -87,7 +40,7 @@ function LeadPreviewButton(props: Props) {
 
     return (
         <>
-            {(!projectId && !leadId) ? (
+            {(!url && !attachment) ? (
                 label
             ) : (
                 <Button
@@ -113,16 +66,15 @@ function LeadPreviewButton(props: Props) {
                     bodyClassName={styles.content}
                     spacing="none"
                 >
-                    {(!leadLoading && (leadData?.url || leadData?.attachment)) ? (
+                    {(url || attachment) ? (
                         <LeadPreview
                             className={styles.preview}
-                            url={leadData?.url ?? undefined}
-                            attachment={leadData?.attachment ?? undefined}
+                            url={url ?? undefined}
+                            attachment={attachment ?? undefined}
                         />
                     ) : (
                         <Message
                             icon={<Kraken variant="sleep" />}
-                            pending={leadLoading}
                             message="No preview available"
                         />
                     )}
