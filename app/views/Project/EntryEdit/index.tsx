@@ -91,6 +91,9 @@ import styles from './styles.css';
 
 export type EntryImagesMap = { [key: string]: Entry['image'] | undefined };
 
+const DELETE_LEN = 100;
+const UPDATE_LEN = 100;
+
 const entryKeySelector = (e: PartialEntryType) => e.clientId;
 export type Lead = NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>;
 
@@ -291,6 +294,17 @@ function EntryEdit(props: Props) {
 
     const staleIdentifiersRef = useRef<string[] | undefined>();
     const deleteIdentifiersRef = useRef<string[] | undefined>();
+
+    const entriesToSaveRef = useRef<{
+        deleteIds: NonNullable<BulkUpdateEntriesMutationVariables['deleteIds']>,
+        entries: NonNullable<BulkUpdateEntriesMutationVariables['entries']>,
+    } | undefined>();
+    const entriesResponseRef = useRef<{
+        errors: NonNullable<NonNullable<NonNullable<BulkUpdateEntriesMutation['project']>['entryBulk']>['errors']>;
+        result: NonNullable<NonNullable<NonNullable<BulkUpdateEntriesMutation['project']>['entryBulk']>['result']>;
+        deletedResult: NonNullable<NonNullable<NonNullable<BulkUpdateEntriesMutation['project']>['entryBulk']>['deletedResult']>;
+    } | undefined>();
+
     const [entryImagesMap, setEntryImagesMap] = useState<EntryImagesMap | undefined>();
 
     const [
@@ -389,9 +403,12 @@ function EntryEdit(props: Props) {
         updateLead,
     ]);
 
+    // NOTE: handling bulkUpdateEntriesPending because we are making another
+    // request after one completes
+    // This avoids loading flickers
+    const [bulkUpdateEntriesPending, setBulkUpdateEntriesPending] = useState(false);
     const [
         bulkUpdateEntries,
-        { loading: bulkUpdateEntriesPending },
     ] = useMutation<BulkUpdateEntriesMutation, BulkUpdateEntriesMutationVariables>(
         BULK_UPDATE_ENTRIES,
         {
@@ -426,11 +443,70 @@ function EntryEdit(props: Props) {
                 const entryBulk = response.project?.entryBulk;
                 if (!entryBulk) {
                     shouldFinalizeRef.current = undefined;
+                    entriesToSaveRef.current = undefined;
+                    setBulkUpdateEntriesPending(false);
                     return;
                 }
-                const errors = entryBulk?.errors;
-                const deletedResult = response.project?.entryBulk?.deletedResult;
-                const saveResult = response.project?.entryBulk?.result;
+
+                if (!entriesToSaveRef.current) {
+                    // NOTE: this case should never occur
+                    // eslint-disable-next-line no-console
+                    console.error('entriesToSaveRef should always be defined');
+                    setBulkUpdateEntriesPending(false);
+                    return;
+                }
+
+                if (entriesResponseRef.current) {
+                    entriesResponseRef.current.errors.push(...(
+                        entryBulk.errors ?? []
+                    ));
+                    entriesResponseRef.current.result.push(...(
+                        entryBulk.result ?? []
+                    ));
+                    entriesResponseRef.current.deletedResult.push(...(
+                        entryBulk.deletedResult ?? []
+                    ));
+                } else {
+                    entriesResponseRef.current = {
+                        errors: entryBulk.errors ?? [],
+                        result: entryBulk.result ?? [],
+                        deletedResult: entryBulk.deletedResult ?? [],
+                    };
+                }
+
+                const nextDeleteIds = entriesToSaveRef.current.deleteIds.slice(
+                    entriesResponseRef.current.deletedResult.length,
+                    entriesResponseRef.current.deletedResult.length + DELETE_LEN,
+                );
+                const nextEntryIds = entriesToSaveRef.current.entries.slice(
+                    entriesResponseRef.current.result.length,
+                    entriesResponseRef.current.result.length + UPDATE_LEN,
+                );
+
+                if (nextDeleteIds.length > 0 || nextEntryIds.length > 0) {
+                    if (!projectId) {
+                        // NOTE: projectId should always be defined here
+                        // eslint-disable-next-line no-console
+                        console.error('No project id');
+                    } else {
+                        // setting this to true just in case
+                        setBulkUpdateEntriesPending(true);
+                        bulkUpdateEntries({
+                            variables: {
+                                projectId,
+                                deleteIds: nextDeleteIds,
+                                entries: nextEntryIds,
+                            },
+                        });
+                    }
+                    return;
+                }
+
+                const {
+                    errors,
+                    deletedResult,
+                    result: saveResult,
+                } = entriesResponseRef.current;
 
                 const staleIdentifiers = staleIdentifiersRef.current;
                 const deleteIdentifiers = deleteIdentifiersRef.current;
@@ -456,7 +532,7 @@ function EntryEdit(props: Props) {
                     (item) => item.error,
                 );
 
-                const deletedEntries = deletedResult?.map((item, index) => {
+                const deletedEntries = deletedResult.map((item, index) => {
                     if (isNotDefined(item)) {
                         return undefined;
                     }
@@ -522,15 +598,14 @@ function EntryEdit(props: Props) {
                     };
                 });
 
-                // eslint-disable-next-line max-len
-                const deleteErrorsCount = entryBulk?.deletedResult?.filter(isNotDefined).length ?? 0;
+                const deleteErrorsCount = deletedResult.filter(isNotDefined).length;
                 if (deleteErrorsCount > 0) {
                     alert.show(
                         `Failed to delete ${deleteErrorsCount} entries!`,
                         { variant: 'error' },
                     );
                 }
-                const deleteSuccessCount = entryBulk?.deletedResult?.filter(isDefined).length ?? 0;
+                const deleteSuccessCount = deletedResult.filter(isDefined).length;
                 if (deleteSuccessCount > 0) {
                     alert.show(
                         `Successfully deleted ${deleteSuccessCount} entry(s)!`,
@@ -538,14 +613,14 @@ function EntryEdit(props: Props) {
                     );
                 }
 
-                const saveErrorsCount = entryBulk?.result?.filter(isNotDefined).length ?? 0;
+                const saveErrorsCount = saveResult?.filter(isNotDefined).length;
                 if (saveErrorsCount > 0) {
                     alert.show(
                         `Failed to save ${saveErrorsCount} entry(s)!`,
                         { variant: 'error' },
                     );
                 }
-                const saveSuccessCount = entryBulk?.result?.filter(isDefined).length ?? 0;
+                const saveSuccessCount = saveResult?.filter(isDefined).length;
                 if (saveSuccessCount > 0) {
                     alert.show(
                         `Successfully saved ${saveSuccessCount} entry(s)!`,
@@ -569,11 +644,12 @@ function EntryEdit(props: Props) {
 
                 staleIdentifiersRef.current = undefined;
                 deleteIdentifiersRef.current = undefined;
+                entriesToSaveRef.current = undefined;
+                entriesResponseRef.current = undefined;
+                setBulkUpdateEntriesPending(false);
             },
             onError: (gqlError) => {
-                staleIdentifiersRef.current = undefined;
-                deleteIdentifiersRef.current = undefined;
-
+                // NOTE: not retrying/continuing if there is ApolloError
                 alert.show(
                     'Failed to save entries!',
                     { variant: 'error' },
@@ -582,6 +658,12 @@ function EntryEdit(props: Props) {
                 console.error(gqlError);
 
                 shouldFinalizeRef.current = undefined;
+
+                staleIdentifiersRef.current = undefined;
+                deleteIdentifiersRef.current = undefined;
+                entriesToSaveRef.current = undefined;
+                entriesResponseRef.current = undefined;
+                setBulkUpdateEntriesPending(false);
             },
         },
     );
@@ -662,11 +744,25 @@ function EntryEdit(props: Props) {
                             };
                         });
 
+                    entriesToSaveRef.current = {
+                        deleteIds: entryDeleteIds,
+                        entries: transformedEntries,
+                    };
+
+                    const entriesToSave = entriesToSaveRef.current;
+
+                    setBulkUpdateEntriesPending(true);
                     bulkUpdateEntries({
                         variables: {
                             projectId,
-                            deleteIds: entryDeleteIds,
-                            entries: transformedEntries,
+                            deleteIds: entriesToSave.deleteIds.slice(
+                                0,
+                                DELETE_LEN,
+                            ),
+                            entries: entriesToSave.entries.slice(
+                                0,
+                                UPDATE_LEN,
+                            ),
                         },
                     });
                 },
