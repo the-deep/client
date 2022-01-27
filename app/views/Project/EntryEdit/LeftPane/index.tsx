@@ -90,6 +90,9 @@ interface Props {
     entriesError: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original';
+    listComponentRef?: React.MutableRefObject<{
+        scrollTo: (item: string) => void;
+    } | null>;
 }
 
 function LeftPane(props: Props) {
@@ -99,6 +102,7 @@ function LeftPane(props: Props) {
         entries,
         activeEntry,
         lead,
+        listComponentRef,
         onEntryClick,
         onExcerptChange,
         onApproveButtonClick,
@@ -571,6 +575,7 @@ function LeftPane(props: Props) {
                         spacing="comfortable"
                         direction="vertical"
                         itemHeight={200}
+                        componentRef={listComponentRef}
                         data={entries ?? undefined}
                         renderer={EntryItem}
                         rendererParams={entryItemRendererParams}

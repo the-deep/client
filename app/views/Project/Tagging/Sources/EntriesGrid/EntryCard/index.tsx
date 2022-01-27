@@ -4,6 +4,7 @@ import { generatePath } from 'react-router-dom';
 import {
     IoPencil,
     IoTrashBinOutline,
+    IoEye,
     IoClose,
 } from 'react-icons/io5';
 import { gql, useMutation } from '@apollo/client';
@@ -21,6 +22,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import ExcerptInput from '#components/entry/ExcerptInput';
+import LeadPreviewButton from '#components/lead/LeadPreviewButton';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import ProjectContext from '#base/context/ProjectContext';
 import { PartialEntryType as EntryInputType } from '#views/Project/EntryEdit/schema';
@@ -157,7 +159,19 @@ function EntryCard(props: Props) {
         >
             <Container
                 className={styles.sourceDetails}
-                heading={leadDetails.title}
+                headingClassName={styles.heading}
+                heading={(
+                    <>
+                        {leadDetails.title}
+                        <LeadPreviewButton
+                            className={styles.previewButton}
+                            leadId={leadDetails.id}
+                            projectId={projectId}
+                            label={<IoEye />}
+                            title={leadDetails.title}
+                        />
+                    </>
+                )}
                 headingSize="small"
                 headerDescription={(
                     <DateOutput

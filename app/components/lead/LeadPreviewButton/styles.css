@@ -1,0 +1,25 @@
+.lead-preview-button {
+    border-radius: 0;
+    padding: 0;
+    text-align: left;
+    color: var(--dui-color-brand);
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.modal {
+    .header {
+        padding: var(--dui-spacing-medium);
+    }
+
+    .content {
+        display: flex;
+
+        .preview {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+    }
+}

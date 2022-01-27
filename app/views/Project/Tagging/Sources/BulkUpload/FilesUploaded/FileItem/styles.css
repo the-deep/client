@@ -2,6 +2,7 @@
     .item {
         flex-grow: 1;
         padding: var(--dui-spacing-medium);
+        text-align: left;
         font-size: var(--dui-font-size-small);
         font-weight: var(--dui-font-weight-regular);
     }

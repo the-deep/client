@@ -9,8 +9,6 @@ import {
     Checkbox,
     CheckboxProps,
     Container,
-    DateOutput,
-    DateOutputProps,
     Kraken,
     Link,
     Pager,
@@ -43,8 +41,10 @@ import {
     DeleteLeadMutationVariables,
 } from '#generated/types';
 import _ts from '#ts';
+import { createDateColumn } from '#components/tableHelpers';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import LeadPreviewButton, { Props as LeadPreviewProps } from '#components/lead/LeadPreviewButton';
 import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLine';
 import {
     calcPercent,
@@ -80,8 +80,6 @@ const statusVariantMap: Record<Lead['status'], 'default' | 'gradient1' | 'comple
     IN_PROGRESS: 'gradient1',
     TAGGED: 'complement1',
 };
-
-const maxItemsPerPage = 10;
 
 const defaultSorting = {
     name: 'createdAt',
@@ -254,6 +252,8 @@ function SourcesTable(props: Props) {
     ), [rawFilters]);
 
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
+    const [maxItemsPerPage, setMaxItemsPerPage] = useState(10);
+
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
     const alert = useAlert();
 
@@ -277,7 +277,7 @@ function SourcesTable(props: Props) {
                 ordering,
             });
         },
-        [projectId, activePage, ordering, filters],
+        [projectId, activePage, ordering, filters, maxItemsPerPage],
     );
 
     const {
@@ -472,35 +472,24 @@ function SourcesTable(props: Props) {
             }),
             columnWidth: 190,
         };
-        const createdAtColumn: TableColumn<
-            Lead, string, DateOutputProps, TableHeaderCellProps
+        const leadTitleColumn: TableColumn<
+            Lead, string, LeadPreviewProps, TableHeaderCellProps
         > = {
-            id: 'createdAt',
-            title: _ts('sourcesTable', 'createdAt'),
+            id: 'title',
+            title: _ts('sourcesTable', 'titleLabel'),
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
                 sortable: true,
             },
-            cellRenderer: DateOutput,
+            cellRenderer: LeadPreviewButton,
             cellRendererParams: (_, data) => ({
-                value: data.createdAt,
+                leadId: data.id,
+                projectId,
+                title: data.title,
+                label: data.title,
             }),
-            columnWidth: 128,
-        };
-        const publishedOnColumn: TableColumn<
-            Lead, string, DateOutputProps, TableHeaderCellProps
-        > = {
-            id: 'publishedOn',
-            title: _ts('sourcesTable', 'publishingDate'),
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: true,
-            },
-            cellRenderer: DateOutput,
-            cellRendererParams: (_, data) => ({
-                value: data.publishedOn,
-            }),
-            columnWidth: 144,
+            columnClassName: styles.titleColumn,
+            columnWidth: 160,
         };
         const publisherColumn: TableColumn<
             Lead, string, SourceLinkProps, TableHeaderCellProps
@@ -561,16 +550,16 @@ function SourcesTable(props: Props) {
         return ([
             selectColumn,
             statusColumn,
-            createdAtColumn,
-            createStringColumn<Lead, string>(
-                'title',
-                _ts('sourcesTable', 'titleLabel'),
-                (item) => item.title,
+            createDateColumn<Lead, string>(
+                'createdAt',
+                _ts('sourcesTable', 'createdAt'),
+                (item) => item.createdAt,
                 {
                     sortable: true,
-                    columnClassName: styles.titleColumn,
+                    columnWidth: 144,
                 },
             ),
+            leadTitleColumn,
             createStringColumn<Lead, string>(
                 'pageCount',
                 _ts('sourcesTable', 'pages'),
@@ -594,7 +583,15 @@ function SourcesTable(props: Props) {
                     columnWidth: 144,
                 },
             ),
-            publishedOnColumn,
+            createDateColumn<Lead, string>(
+                'publishedOn',
+                _ts('sourcesTable', 'publishingDate'),
+                (item) => item.publishedOn ?? '',
+                {
+                    sortable: true,
+                    columnWidth: 144,
+                },
+            ),
             createStringColumn<Lead, string>(
                 'createdBy',
                 _ts('sourcesTable', 'addedBy'),
@@ -626,6 +623,7 @@ function SourcesTable(props: Props) {
             actionsColumn,
         ]);
     }, [
+        projectId,
         handleSelectAll,
         handleSelection,
         sources,
@@ -655,8 +653,8 @@ function SourcesTable(props: Props) {
                         activePage={activePage}
                         itemsCount={sourcesResponse?.totalCount ?? 0}
                         maxItemsPerPage={maxItemsPerPage}
+                        onItemsPerPageChange={setMaxItemsPerPage}
                         onActivePageChange={setActivePage}
-                        itemsPerPageControlHidden
                     />
                 )}
             >
