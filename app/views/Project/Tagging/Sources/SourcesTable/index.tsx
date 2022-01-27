@@ -632,7 +632,6 @@ function SourcesTable(props: Props) {
             actionsColumn,
         ]);
     }, [
-        projectId,
         handleSelectAll,
         handleSelection,
         sources,
