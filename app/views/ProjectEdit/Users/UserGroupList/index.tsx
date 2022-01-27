@@ -47,22 +47,33 @@ const maxItemsPerPage = 10;
 const usergroupKeySelector = (d: UserGroup) => d.id;
 
 const USERS_GROUPS = gql`
-    query UserGroups($projectId: Float!) {
+    query UserGroups($projectId: Float) {
         userGroups(id: $projectId) {
             results {
                 title
                 id
                 clientId
-                createdAt
-                createdBy {
-                  firstName
-                  lastName
-                  id
-                  organization
-                  displayName
+                memberships {
+                    id
+                    role
+                    joinedAt
+                    roleDisplay
+                    member {
+                      displayName
+                      firstName
+                      lastName
+                      id
+                    }
                 }
+                createdBy {
+                    firstName
+                    lastName
+                    id
+                    organization
+                    displayName
+                }
+                customProjectFields
                 description
-                currentUserRole
             }
             totalCount
             page
@@ -131,9 +142,10 @@ function UserGroupList(props: Props) {
     } = useQuery<UserGroupsQuery, UserGroupsQueryVariables>(
         USERS_GROUPS,
         {
+            skip: !projectId,
             variables: userGroupVariables,
             onCompleted: (data) => {
-                console.log('Received userGroup Data::###>>', data);
+                console.log('UserGroup Response-Data::###>>', data);
             },
         },
     );
@@ -256,7 +268,7 @@ function UserGroupList(props: Props) {
             )}
         >
             <TableView
-                data={usergroupResponse?.results}
+                data={usergroupResponse?.userGroups?.results}
                 keySelector={usergroupKeySelector}
                 columns={columns}
                 emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
@@ -275,7 +287,7 @@ function UserGroupList(props: Props) {
             <Pager
                 activePage={activePage}
                 className={styles.pager}
-                itemsCount={usergroupResponse?.count ?? 0}
+                itemsCount={usergroupResponse?.userGroups?.totalCount ?? 0}
                 maxItemsPerPage={maxItemsPerPage}
                 onActivePageChange={setActivePage}
                 itemsPerPageControlHidden

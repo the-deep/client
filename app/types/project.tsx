@@ -148,20 +148,48 @@ export interface ProjectsSummary {
     recentEntriesActivity: ProjectRecentActivity;
 }
 
+// export interface UserGroup {
+//    id: number;
+//    title: string;
+//    joinedAt: string;
+//    project: number;
+//    usergroup: number;
+//    role: number;
+//    addedBy: number;
+//    addedByName: string;
+//    roleDetails: {
+//        id: number;
+//        title: string;
+//        level: number;
+//    };
+// }
+
 export interface UserGroup {
     id: number;
     title: string;
-    joinedAt: string;
-    project: number;
-    usergroup: number;
-    role: number;
-    addedBy: number;
-    addedByName: string;
-    roleDetails: {
+    clientId: string;
+    addedBy: {
+        firstName: string;
+        lastName: string;
         id: number;
-        title: string;
-        level: number;
-    };
+        displayName: string;
+    }
+    memberships: {
+        id: number;
+        joinedAt: string;
+        member: {
+            id: number;
+            displayName: string;
+            firstName: string;
+            lastName: string;
+        }
+    }
+    createdBy: {
+        firstName: string;
+        lastName: string;
+        id: number;
+        displayName: string;
+    }
 }
 
 interface Permission {
