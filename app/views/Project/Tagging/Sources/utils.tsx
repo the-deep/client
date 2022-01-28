@@ -25,8 +25,10 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         filterableData: (entriesFilterData?.filterableData?.length ?? 0) > 0
             ? entriesFilterData?.filterableData
             : undefined,
-        createdAtGte: convertDateToIsoDateTime(createdAtGte),
-        createdAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
+        createdAtGte: convertDateToIsoDateTime(entriesFilterData?.createdAtGte),
+        createdAtLte: convertDateToIsoDateTime(entriesFilterData?.createdAtLte, { endOfDay: true }),
+        leadCreatedAtGte: convertDateToIsoDateTime(createdAtGte),
+        leadCreatedAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
 
         authoringOrganizationTypes,
 
@@ -36,6 +38,6 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         leadPublishedOnGte: publishedOnGte,
         leadPublishedOnLte: publishedOnLte,
         leadStatuses: statuses,
-        search,
+        leadTitle: search,
     };
 }

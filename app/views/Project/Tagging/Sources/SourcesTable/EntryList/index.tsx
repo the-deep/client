@@ -59,19 +59,13 @@ export const LEAD_ENTRIES = gql`
         $leadId: ID!,
         $page: Int,
         $pageSize: Int,
-        $authoringOrganizationTypes: [ID!],
         $controlled: Boolean,
         $createdAtGte: DateTime,
         $createdAtLte: DateTime,
         $createdBy: [ID!],
         $entryTypes: [EntryTagTypeEnum!],
         $filterableData: [EntryFilterDataType!]
-        $leadAssignees: [ID!],
-        $leadConfidentialities: [LeadConfidentialityEnum!],
-        $leadPriorities: [LeadPriorityEnum!],
-        $leadPublishedOnGte: Date,
-        $leadPublishedOnLte: Date,
-        $leadStatuses: [LeadStatusEnum!],
+        $search: String,
         ) {
         project(id: $projectId) {
             id
@@ -79,19 +73,13 @@ export const LEAD_ENTRIES = gql`
                 leads: [$leadId],
                 page: $page,
                 pageSize: $pageSize,
-                authoringOrganizationTypes: $authoringOrganizationTypes,
                 controlled: $controlled,
                 createdAtGte: $createdAtGte,
                 createdAtLte: $createdAtLte,
                 createdBy: $createdBy,
                 entryTypes: $entryTypes,
                 filterableData: $filterableData,
-                leadAssignees: $leadAssignees,
-                leadConfidentialities: $leadConfidentialities,
-                leadPriorities: $leadPriorities,
-                leadPublishedOnGte: $leadPublishedOnGte,
-                leadPublishedOnLte: $leadPublishedOnLte,
-                leadStatuses: $leadStatuses,
+                search: $search,
             ) {
                 totalCount
                 results {

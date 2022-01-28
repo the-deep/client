@@ -4,9 +4,11 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 import {
+    TextInput,
     DateDualRangeInput,
     MultiSelectInput,
 } from '@the-deep/deep-ui';
+import { IoSearch } from 'react-icons/io5';
 import {
     useFormArray,
     useFormObject,
@@ -88,6 +90,15 @@ function EntryFilter<K extends string>(props: Props<K>) {
 
     return (
         <>
+            <TextInput
+                className={styles.input}
+                icons={<IoSearch />}
+                name="search"
+                onChange={setFieldValue}
+                value={value?.search}
+                disabled={disabled}
+                label="Excerpt Search"
+            />
             <ProjectMemberMultiSelectInput
                 className={_cs(
                     styles.input,
@@ -100,7 +111,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 options={members}
                 onOptionsChange={setMembers}
-                label="Entry created by"
+                label="Entry Created By"
                 disabled={disabled}
             />
             <DateDualRangeInput
@@ -118,7 +129,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 toOnChange={setFieldValue}
                 toValue={value?.createdAtLte}
                 disabled={disabled}
-                label="Entry created at"
+                label="Entry Created At"
             />
             <BooleanInput
                 className={_cs(
@@ -130,7 +141,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 name="controlled"
                 value={value?.controlled}
                 onChange={setFieldValue}
-                label="Entry controlled status"
+                label="Entry Controlled Status"
                 disabled={disabled}
             />
             <MultiSelectInput
@@ -146,7 +157,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 labelSelector={enumLabelSelector}
                 options={options?.entryTypeOptions?.enumValues}
                 disabled={disabled || optionsDisabled}
-                label="Entry type"
+                label="Entry Type"
             />
             {
                 options?.project?.analysisFramework?.filters?.map((filter) => {

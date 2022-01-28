@@ -51,6 +51,7 @@ const entriesFilterDataSchema: EntriesFilterDataSchema = {
         createdAtLte: [],
         createdBy: [],
         entryTypes: [],
+        search: [],
         filterableData: frameworkFiltersSchema,
     }),
 };

@@ -107,10 +107,16 @@ const UPDATE_ME = gql`
             errors
             ok
             result {
-                email
-                id
                 displayName
+                displayPicture
                 displayPictureUrl
+                email
+                emailOptOuts
+                firstName
+                id
+                language
+                lastName
+                organization
                 lastActiveProject {
                     allowedPermissions
                     currentUserRole
