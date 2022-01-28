@@ -265,6 +265,14 @@ function SourcesFilter(props: Props) {
     return (
         <div className={_cs(styles.sourcesFilter, className)}>
             <NonFieldError error={error} />
+            <div
+                className={_cs(
+                    styles.label,
+                    !allFiltersVisible && styles.hidden,
+                )}
+            >
+                Source Filters
+            </div>
             <div className={styles.content}>
                 <TextInput
                     className={styles.input}
@@ -274,8 +282,7 @@ function SourcesFilter(props: Props) {
                     value={value.search}
                     error={error?.search}
                     disabled={disabled}
-                    label={_ts('sourcesFilter', 'search')}
-                    placeholder="Source title or Entry excerpt"
+                    label="Source Title Search"
                 />
                 <MultiSelectInput
                     className={styles.input}
@@ -315,7 +322,7 @@ function SourcesFilter(props: Props) {
                     toOnChange={setFieldValue}
                     toValue={value.publishedOnLte}
                     disabled={disabled}
-                    label={_ts('sourcesFilter', 'originalDate')}
+                    label="Published On"
                 />
                 <DateDualRangeInput
                     className={styles.input}
@@ -326,7 +333,7 @@ function SourcesFilter(props: Props) {
                     toOnChange={setFieldValue}
                     toValue={value.createdAtLte}
                     disabled={disabled}
-                    label={_ts('sourcesFilter', 'addedOn')}
+                    label="Source Created At"
                 />
                 <ProjectMemberMultiSelectInput
                     className={_cs(
@@ -392,6 +399,14 @@ function SourcesFilter(props: Props) {
                         disabled={disabled || loading || !!sourceFilterOptionsError}
                     />
                 )}
+                <div
+                    className={_cs(
+                        styles.label,
+                        !allFiltersVisible && styles.hidden,
+                    )}
+                >
+                    Entry Filters
+                </div>
                 {!hasAssessment && (
                     <EntryFilter
                         name="entriesFilterData"

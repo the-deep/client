@@ -4,9 +4,11 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 import {
+    TextInput,
     DateDualRangeInput,
     MultiSelectInput,
 } from '@the-deep/deep-ui';
+import { IoSearch } from 'react-icons/io5';
 import {
     useFormArray,
     useFormObject,
@@ -88,6 +90,15 @@ function EntryFilter<K extends string>(props: Props<K>) {
 
     return (
         <>
+            <TextInput
+                className={styles.input}
+                icons={<IoSearch />}
+                name="search"
+                onChange={setFieldValue}
+                value={value?.search}
+                disabled={disabled}
+                label="Excerpt Search"
+            />
             <ProjectMemberMultiSelectInput
                 className={_cs(
                     styles.input,

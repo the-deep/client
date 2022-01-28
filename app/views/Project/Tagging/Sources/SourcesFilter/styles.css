@@ -1,6 +1,15 @@
 .sources-filter {
     display: flex;
     flex-direction: column;
+    gap: var(--dui-spacing-medium);
+
+    .label {
+        font-weight: var(--dui-font-weight-bold);
+
+        &.hidden {
+            display: none;
+        }
+    }
 
     .content {
         display: flex;
@@ -15,6 +24,10 @@
             &.hidden {
                 display: none;
             }
+        }
+
+        .label {
+            width: 100%;
         }
 
         .actions {
