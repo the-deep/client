@@ -69,13 +69,13 @@ function Project(props: Props) {
         {
             variables,
             onCompleted: (data) => {
-                if (data.project && data.project.allowedPermissions.length > 0) {
+                if (data.project && data.project.allowedPermissions?.length > 0) {
                     setProject(data.project);
 
                     setLastActiveProject({
                         variables: { id: data.project.id },
                     });
-                }
+                } return null;
             },
         },
     );

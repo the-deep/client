@@ -164,31 +164,39 @@ export interface ProjectsSummary {
 //    };
 // }
 
+export type BadgeType = 'QA';
+
+export interface UserGroupMemberships {
+    id: string;
+    joinedAt: string;
+    member: {
+        id: string;
+        displayName?: string | null | undefined;
+    };
+}
+
 export interface UserGroup {
-    id: number;
-    title: string;
-    clientId: string;
-    addedBy: {
-        firstName: string;
-        lastName: string;
-        id: number;
-        displayName: string;
+    id: string;
+    badges?: BadgeType[] | null;
+    joinedAt: string;
+    addedBy?: {
+        id: string;
+        displayName?: string | null | undefined;
+    } | null | undefined;
+    role: {
+        id: string;
+        level: number;
+        title: string;
     }
-    memberships: {
-        id: number;
-        joinedAt: string;
-        member: {
-            id: number;
-            displayName: string;
-            firstName: string;
-            lastName: string;
-        }
-    }
-    createdBy: {
-        firstName: string;
-        lastName: string;
-        id: number;
-        displayName: string;
+    usergroup: {
+        clientId?: string | null | undefined;
+        id: string;
+        title: string;
+        createdBy?: {
+            id: string;
+            displayName?: string | null;
+        } | null | undefined;
+        memberships?: UserGroupMemberships[] | null | undefined;
     }
 }
 

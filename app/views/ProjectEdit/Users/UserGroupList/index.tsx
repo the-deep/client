@@ -34,8 +34,8 @@ import {
     UserGroup,
 } from '#types';
 import {
-    UserGroupsQuery,
-    UserGroupsQueryVariables,
+    UserGroupMembersQuery,
+    UserGroupMembersQueryVariables,
 } from '#generated/types';
 import _ts from '#ts';
 
@@ -46,38 +46,43 @@ import styles from './styles.css';
 const maxItemsPerPage = 10;
 const usergroupKeySelector = (d: UserGroup) => d.id;
 
-const USERS_GROUPS = gql`
-    query UserGroups($projectId: Float) {
-        userGroups(id: $projectId) {
-            results {
-                title
-                id
-                clientId
-                memberships {
+const USER_GROUP_MEMBERS = gql`
+    query UserGroupMembers($id: ID!) {
+        project(id: $id) {
+            userGroupMembers {
+                results {
+                  id
+                  badges
+                  joinedAt
+                  addedBy {
+                    displayName
                     id
-                    role
-                    joinedAt
-                    roleDisplay
-                    member {
+                  }
+                  role {
+                    id
+                    level
+                    title
+                  }
+                  usergroup {
+                    clientId
+                    id
+                    title
+                    createdBy {
                       displayName
-                      firstName
-                      lastName
                       id
                     }
+                    memberships {
+                      id
+                      joinedAt
+                      member {
+                        id
+                        displayName
+                      }
+                    }
+                  }
                 }
-                createdBy {
-                    firstName
-                    lastName
-                    id
-                    organization
-                    displayName
-                }
-                customProjectFields
-                description
+                totalCount
             }
-            totalCount
-            page
-            pageSize
         }
     }
 `;
@@ -112,10 +117,10 @@ function UserGroupList(props: Props) {
         setModalHidden();
     }, [setModalHidden]);
 
-    const queryForRequest = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-    }), [activePage]);
+    // const queryForRequest = useMemo(() => ({
+    //    offset: (activePage - 1) * maxItemsPerPage,
+    //    limit: maxItemsPerPage,
+    // }), [activePage]);
 
     // const {
     //    pending: usergroupPending,
@@ -129,8 +134,8 @@ function UserGroupList(props: Props) {
     // });
 
     const userGroupVariables = useMemo(
-        (): UserGroupsQueryVariables | undefined => ({
-            projectId,
+        (): UserGroupMembersQueryVariables | undefined => ({
+            id: projectId,
         }),
         [projectId],
     );
@@ -139,18 +144,15 @@ function UserGroupList(props: Props) {
         data: usergroupResponse,
         loading: usergroupPending,
         refetch: triggerUsergroupResponse,
-    } = useQuery<UserGroupsQuery, UserGroupsQueryVariables>(
-        USERS_GROUPS,
+    } = useQuery<UserGroupMembersQuery, UserGroupMembersQueryVariables>(
+        USER_GROUP_MEMBERS,
         {
             skip: !projectId,
             variables: userGroupVariables,
-            onCompleted: (data) => {
-                console.log('UserGroup Response-Data::###>>', data);
-            },
         },
     );
 
-    console.log('Check userGroup Response::!>>', usergroupResponse);
+    console.log('Check UserGroup Response::!>>', usergroupResponse);
 
     const {
         trigger: triggerDeleteUsergroup,
@@ -189,7 +191,7 @@ function UserGroupList(props: Props) {
                 onDeleteClick: triggerDeleteUsergroup,
                 disabled: (
                     isNotDefined(activeUserRoleLevel)
-                    || data.roleDetails.level < activeUserRoleLevel
+                    || data.role.level < activeUserRoleLevel
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),
                 deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
@@ -201,12 +203,12 @@ function UserGroupList(props: Props) {
             createStringColumn<UserGroup, number>(
                 'title',
                 _ts('projectEdit', 'group'),
-                (item) => item.title,
+                (item) => item.usergroup.title,
             ),
             createStringColumn<UserGroup, number>(
                 'addedByName',
                 _ts('projectEdit', 'addedByName'),
-                (item) => item.addedByName,
+                (item) => item.addedBy?.displayName,
             ),
             createDateColumn<UserGroup, number>(
                 'joinedAt',
@@ -216,15 +218,16 @@ function UserGroupList(props: Props) {
             createStringColumn<UserGroup, number>(
                 'role',
                 'Assigned Role',
-                (item) => item?.roleDetails.title,
+                (item) => item.role.title,
             ),
             actionColumn,
         ]);
     }, [triggerDeleteUsergroup, handleEditUsergroupClick, activeUserRoleLevel]);
 
     const usergroupToEdit = useMemo(() => (
-        usergroupResponse?.userGroups?.results?.find((d) => d.id === usergroupIdToEdit)
-    ), [usergroupResponse?.userGroups?.results, usergroupIdToEdit]);
+        usergroupResponse?.project?.userGroupMembers?.results?.find(
+            (d) => d.id === usergroupIdToEdit)
+    ), [usergroupResponse?.project?.userGroupMembers?.results, usergroupIdToEdit]);
 
     const handleAddUsergroupClick = useCallback(() => {
         setUsergroupIdToEdit(undefined);
@@ -268,7 +271,7 @@ function UserGroupList(props: Props) {
             )}
         >
             <TableView
-                data={usergroupResponse?.userGroups?.results}
+                data={usergroupResponse?.project?.userGroupMembers?.results}
                 keySelector={usergroupKeySelector}
                 columns={columns}
                 emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
@@ -287,7 +290,7 @@ function UserGroupList(props: Props) {
             <Pager
                 activePage={activePage}
                 className={styles.pager}
-                itemsCount={usergroupResponse?.userGroups?.totalCount ?? 0}
+                itemsCount={usergroupResponse?.project?.userGroupMembers?.totalCount ?? 0}
                 maxItemsPerPage={maxItemsPerPage}
                 onActivePageChange={setActivePage}
                 itemsPerPageControlHidden

@@ -16,28 +16,30 @@ import {
 import styles from './styles.css';
 
 const MEMBERSHIP = gql`
-    query Membership($projectId: Float) {
-        userGroups(id: $projectId) {
-            results {
-                title
-                id
-                clientId
-                memberships {
+    query Membership($id: ID!) {
+        project(id: $id) {
+            userMembers {
+                results {
+                  clientId
+                  id
+                  badges
+                  member {
                     id
-                    role
-                    joinedAt
-                    roleDisplay
-                    member {
-                      displayName
-                      firstName
-                      lastName
-                      id
-                    }
+                    displayName
+                  }
+                  role {
+                    id
+                    level
+                    title
+                  }
+                  joinedAt
+                  addedBy {
+                    id
+                    displayName
+                  }
                 }
+                totalCount
             }
-            totalCount
-            page
-            pageSize
         }
     }
 `;
@@ -54,44 +56,41 @@ function Users(props: Props) {
     } = props;
 
     // FIXME: we should have a request to get project role of a certain user
-    const {
-        pending: pendingMemberships,
-        response: projectMembershipsResponse,
-    } = useRequest<MultiResponse<ProjectMemberships>>({
-        skip: isNotDefined(activeUserId),
-        url: `server://projects/${projectId}/project-memberships/`,
-        query: {
-            member: activeUserId,
-        },
-        method: 'GET',
-    });
-    console.log('Memberships REST data::>>', projectMembershipsResponse);
+    // const {
+    //    pending: pendingMemberships,
+    //    response: projectMembershipsResponse,
+    // } = useRequest<MultiResponse<ProjectMemberships>>({
+    //    skip: isNotDefined(activeUserId),
+    //    url: `server://projects/${projectId}/project-memberships/`,
+    //    query: {
+    //        member: activeUserId,
+    //    },
+    //    method: 'GET',
+    // });
 
     const membershipVariables = useMemo(
         (): MembershipQueryVariables | undefined => ({
-            projectId,
+            id: projectId,
         }),
         [projectId],
     );
 
     const {
-        data: membershipResponse,
-        loading: membershipPending,
-        // refetch: triggerUsergroupResponse,
+        data: projectMembershipsResponse,
+        loading: pendingMemberships,
+        // refetch: triggerMembershipsResponse,
     } = useQuery<MembershipQuery, MembershipQueryVariables>(
         MEMBERSHIP,
         {
             skip: !projectId,
             variables: membershipVariables,
-            onCompleted: (data) => {
-                console.log('Membersss onComplete Data::###>>', data);
-            },
         },
     );
-    console.log('Membersss GQL Data::###>>', membershipResponse);
+    console.log('Membersss GQL Data::###>>', projectMembershipsResponse);
 
-    const activeUserMembership = projectMembershipsResponse?.results?.[0];
-    const activeUserRoleLevel = activeUserMembership?.roleDetails?.level;
+    // eslint-disable-next-line max-len
+    const activeUserMembership = projectMembershipsResponse?.project?.userMembers?.results?.[0];
+    const activeUserRoleLevel = activeUserMembership?.role?.level;
 
     return (
         <div className={styles.users}>
