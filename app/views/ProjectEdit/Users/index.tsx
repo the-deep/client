@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 
 import { useRequest } from '#base/utils/restRequest';
@@ -78,11 +77,9 @@ function Users(props: Props) {
     const {
         data: projectMembershipsResponse,
         loading: pendingMemberships,
-        // refetch: triggerMembershipsResponse,
     } = useQuery<MembershipQuery, MembershipQueryVariables>(
         MEMBERSHIP,
         {
-            skip: !projectId,
             variables: membershipVariables,
         },
     );

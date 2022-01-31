@@ -24,13 +24,12 @@ import {
 import { useQuery, gql } from '@apollo/client';
 
 import { createDateColumn } from '#components/tableHelpers';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
+import { useLazyRequest } from '#base/utils/restRequest';
 import routes from '#base/configs/routes';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
 
 import {
-    MultiResponse,
     UserGroup,
 } from '#types';
 import {
@@ -47,9 +46,14 @@ const maxItemsPerPage = 10;
 const usergroupKeySelector = (d: UserGroup) => d.id;
 
 const USER_GROUP_MEMBERS = gql`
-    query UserGroupMembers($id: ID!) {
+    query UserGroupMembers(
+        $id: ID!,
+        $page: Int,
+        $pageSize: Int,
+    ) {
         project(id: $id) {
-            userGroupMembers {
+            id
+            userGroupMembers(page: $page, pageSize: $pageSize) {
                 results {
                   id
                   badges
@@ -103,7 +107,7 @@ function UserGroupList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [usergroupIdToEdit, setUsergroupIdToEdit] = useState<number | undefined>(undefined);
+    const [usergroupIdToEdit, setUsergroupIdToEdit] = useState<string | undefined>(undefined);
     const alert = useAlert();
 
     const [
@@ -136,8 +140,10 @@ function UserGroupList(props: Props) {
     const userGroupVariables = useMemo(
         (): UserGroupMembersQueryVariables | undefined => ({
             id: projectId,
+            page: activePage,
+            pageSize: maxItemsPerPage,
         }),
-        [projectId],
+        [projectId, activePage],
     );
 
     const {
@@ -147,7 +153,6 @@ function UserGroupList(props: Props) {
     } = useQuery<UserGroupMembersQuery, UserGroupMembersQueryVariables>(
         USER_GROUP_MEMBERS,
         {
-            skip: !projectId,
             variables: userGroupVariables,
         },
     );

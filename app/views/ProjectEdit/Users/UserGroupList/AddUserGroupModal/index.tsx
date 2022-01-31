@@ -31,25 +31,33 @@ import NonFieldError from '#components/NonFieldError';
 import styles from './styles.css';
 
 interface UserGroupMini {
-    id: number;
-    title: string;
+    id: string;
+    usergroup: {
+        id: string;
+        title: string;
+    }
 }
 
 interface UserGroupMembership {
-    id: number;
-    title: string;
-    usergroup: number;
+    id: string;
+    usergroup: {
+        id: string;
+        title: string;
+    }
 }
 
 const usergroupKeySelector = (d: UserGroupMini) => d.id;
-const usergroupLabelSelector = (d: UserGroupMini) => d.title;
+const usergroupLabelSelector = (d: UserGroupMini) => d.usergroup.title;
 
 const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
 type FormType = {
-    id?: number;
-    usergroup?: number;
+    id?: string;
+    usergroup: {
+        id: string;
+        title: string;
+    }
     role: number;
 };
 
@@ -174,8 +182,8 @@ function AddUserGroupModal(props: Props) {
         return [
             ...(usergroupResponse?.results ?? []),
             {
-                id: usergroupValue.usergroup,
-                title: usergroupValue.title,
+                id: usergroupValue.usergroup.id,
+                title: usergroupValue.usergroup.title,
             },
         ];
     }, [usergroupResponse, usergroupValue]);
@@ -221,7 +229,7 @@ function AddUserGroupModal(props: Props) {
                 keySelector={usergroupKeySelector}
                 labelSelector={usergroupLabelSelector}
                 onChange={setFieldValue}
-                value={value.usergroup}
+                value={value.usergroup?.id}
                 error={error?.usergroup}
                 label={_ts('projectEdit', 'usergroupLabel')}
                 placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
