@@ -330,7 +330,7 @@ function LeadsSelection(props: Props) {
                 projectId={projectId}
                 filterOnlyUnprotected={filterOnlyUnprotected}
                 value={filterValues}
-                hasAssessment={hasAssessment}
+                hideEntryFilters={hasAssessment}
             />
             <div className={styles.tableContainer}>
                 <SortContext.Provider value={sortState}>
