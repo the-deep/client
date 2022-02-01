@@ -33,6 +33,7 @@ import {
     convertDateToIsoDateTime,
 } from '#utils/common';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import NewOrganizationMultiSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import {
     SourceFilterOptionsQueryVariables,
@@ -195,6 +196,14 @@ function SourcesFilter(props: Props) {
     } = props;
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
 
     const {
         pristine,
@@ -380,6 +389,36 @@ function SourcesFilter(props: Props) {
                     error={getErrorString(error?.authoringOrganizationTypes)}
                     label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
                     disabled={disabled || loading || !!sourceFilterOptionsError}
+                />
+                <NewOrganizationMultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        (hasNoData(value.authorOrganizations)
+                      && !allFiltersVisible) && styles.hidden,
+                    )}
+                    name="authorOrganizations"
+                    value={value.authorOrganizations}
+                    onChange={setFieldValue}
+                    options={authorOrganizationOptions}
+                    onOptionsChange={setAuthorOrganizationOptions}
+                    disabled={disabled || loading}
+                    label="Authoring Organizations"
+                    error={getErrorString(error?.authorOrganizations)}
+                />
+                <NewOrganizationMultiSelectInput
+                    className={_cs(
+                        styles.input,
+                        (hasNoData(value.sourceOrganizations)
+                      && !allFiltersVisible) && styles.hidden,
+                    )}
+                    name="sourceOrganizations"
+                    value={value.sourceOrganizations}
+                    onChange={setFieldValue}
+                    options={sourceOrganizationOptions}
+                    onOptionsChange={setSourceOrganizationOptions}
+                    disabled={disabled || loading}
+                    label="Source Organizations"
+                    error={getErrorString(error?.sourceOrganizations)}
                 />
                 {!filterOnlyUnprotected && (
                     <SelectInput

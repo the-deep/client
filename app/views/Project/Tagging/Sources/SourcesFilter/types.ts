@@ -18,6 +18,7 @@ export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables
     | 'priorities'
     | 'statuses'
     | 'entryTypes'
+    | 'ordering'
 >>;
 
 export type SourceFilterOptions = DeepReplace<
