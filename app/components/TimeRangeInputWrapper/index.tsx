@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
-import { TimeInput } from '@the-deep/deep-ui';
+import { TimeInput, Button } from '@the-deep/deep-ui';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
+import {
+    IoRepeatSharp,
+} from 'react-icons/io5';
 
 import NonFieldError from '#components/NonFieldError';
 
@@ -33,6 +36,7 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
     } = props;
 
     const error = getErrorObject(riskyError);
+    const timeValue = !!value?.startTime && !!value?.endTime;
 
     const handleStartTimeChange = useCallback((val: TimeValue['value'] | undefined) => {
         onChange({ startTime: val, endTime: value?.endTime }, name);
@@ -40,6 +44,10 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
 
     const handleEndTimeChange = useCallback((val: TimeValue['value'] | undefined) => {
         onChange({ startTime: value?.startTime, endTime: val }, name);
+    }, [value, name, onChange]);
+
+    const handleSwapTimeRange = React.useCallback(() => {
+        onChange({ startTime: value?.endTime, endTime: value?.startTime }, name);
     }, [value, name, onChange]);
 
     return (
@@ -66,6 +74,18 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
                 disabled={disabled}
                 error={error?.endTime}
             />
+            {timeValue && (
+                <Button
+                    name={undefined}
+                    variant="action"
+                    onClick={handleSwapTimeRange}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    title="Swap Time"
+                >
+                    <IoRepeatSharp />
+                </Button>
+            )}
         </div>
     );
 }
