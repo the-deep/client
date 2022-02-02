@@ -121,22 +121,6 @@ function UserGroupList(props: Props) {
         setModalHidden();
     }, [setModalHidden]);
 
-    // const queryForRequest = useMemo(() => ({
-    //    offset: (activePage - 1) * maxItemsPerPage,
-    //    limit: maxItemsPerPage,
-    // }), [activePage]);
-
-    // const {
-    //    pending: usergroupPending,
-    //    response: usergroupResponse,
-    //    retrigger: triggerUsergroupResponse,
-    // } = useRequest<MultiResponse<UserGroup>>({
-    //    url: `server://projects/${projectId}/project-usergroups/`,
-    //    method: 'GET',
-    //    query: queryForRequest,
-    //    preserveResponse: true,
-    // });
-
     const userGroupVariables = useMemo(
         (): UserGroupMembersQueryVariables | undefined => ({
             id: projectId,
@@ -157,11 +141,9 @@ function UserGroupList(props: Props) {
         },
     );
 
-    console.log('Check UserGroup Response::!>>', usergroupResponse);
-
     const {
         trigger: triggerDeleteUsergroup,
-    } = useLazyRequest<unknown, number>({
+    } = useLazyRequest<unknown, string>({
         url: (ctx) => `server://projects/${projectId}/project-usergroups/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
@@ -181,7 +163,7 @@ function UserGroupList(props: Props) {
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
-            UserGroup, number, ActionCellProps<number>, TableHeaderCellProps
+            UserGroup, string, ActionCellProps<string>, TableHeaderCellProps
         > = {
             id: 'action',
             title: 'Actions',
@@ -205,22 +187,22 @@ function UserGroupList(props: Props) {
         };
 
         return ([
-            createStringColumn<UserGroup, number>(
+            createStringColumn<UserGroup, string>(
                 'title',
                 _ts('projectEdit', 'group'),
                 (item) => item.usergroup.title,
             ),
-            createStringColumn<UserGroup, number>(
+            createStringColumn<UserGroup, string>(
                 'addedByName',
                 _ts('projectEdit', 'addedByName'),
                 (item) => item.addedBy?.displayName,
             ),
-            createDateColumn<UserGroup, number>(
+            createDateColumn<UserGroup, string>(
                 'joinedAt',
                 _ts('projectEdit', 'addedOn'),
                 (item) => item.joinedAt,
             ),
-            createStringColumn<UserGroup, number>(
+            createStringColumn<UserGroup, string>(
                 'role',
                 'Assigned Role',
                 (item) => item.role.title,

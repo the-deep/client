@@ -182,8 +182,11 @@ function AddUserGroupModal(props: Props) {
         return [
             ...(usergroupResponse?.results ?? []),
             {
-                id: usergroupValue.usergroup.id,
-                title: usergroupValue.usergroup.title,
+                id: usergroupValue?.id,
+                usergroup: {
+                    id: usergroupValue.usergroup.id,
+                    title: usergroupValue.usergroup.title,
+                },
             },
         ];
     }, [usergroupResponse, usergroupValue]);
