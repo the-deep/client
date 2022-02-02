@@ -36,7 +36,7 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
     } = props;
 
     const error = getErrorObject(riskyError);
-    const timeValue = !!value?.startTime && !!value?.endTime;
+    const hasTimeValue = !!value?.startTime || !!value?.endTime;
 
     const handleStartTimeChange = useCallback((val: TimeValue['value'] | undefined) => {
         onChange({ startTime: val, endTime: value?.endTime }, name);
@@ -74,13 +74,12 @@ function TimeRangeInputWrapper<N extends string>(props: Props<N>) {
                 disabled={disabled}
                 error={error?.endTime}
             />
-            {timeValue && (
+            {hasTimeValue && !readOnly && (
                 <Button
                     name={undefined}
                     variant="action"
                     onClick={handleSwapTimeRange}
                     disabled={disabled}
-                    readOnly={readOnly}
                     title="Swap Time"
                 >
                     <IoRepeatSharp />

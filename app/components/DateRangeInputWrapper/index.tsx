@@ -36,7 +36,7 @@ function DateRangeInputWrapper<N extends string>(props: Props<N>) {
     } = props;
 
     const error = getErrorObject(riskyError);
-    const dateValue = !!value?.startDate && !!value?.endDate;
+    const hasDateValue = !!value?.startDate || !!value?.endDate;
 
     const handleStartDateChange = useCallback((val: DateValue['value'] | undefined) => {
         onChange({ startDate: val, endDate: value?.endDate }, name);
@@ -74,13 +74,12 @@ function DateRangeInputWrapper<N extends string>(props: Props<N>) {
                 disabled={disabled}
                 error={error?.endDate}
             />
-            {dateValue && (
+            {hasDateValue && !readOnly && (
                 <Button
                     name={undefined}
                     variant="action"
                     onClick={handleSwapDateRange}
                     disabled={disabled}
-                    readOnly={readOnly}
                     title="Swap Date"
                 >
                     <IoRepeatSharp />
