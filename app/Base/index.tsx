@@ -1,9 +1,15 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import localforage from 'localforage';
 import { Router } from 'react-router-dom';
+import { IoAlert } from 'react-icons/io5';
 import { init, ErrorBoundary, setUser as setUserOnSentry, withProfiler } from '@sentry/react';
 import { unique, _cs } from '@togglecorp/fujs';
-import { AlertContainer, AlertContext, AlertOptions } from '@the-deep/deep-ui';
+import {
+    AlertContainer,
+    AlertContext,
+    AlertOptions,
+    Button,
+} from '@the-deep/deep-ui';
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import ReactGA from 'react-ga';
 import { setMapboxToken } from '@togglecorp/re-map';
@@ -14,6 +20,10 @@ import Init from '#base/components/Init';
 import browserHistory from '#base/configs/history';
 import sentryConfig from '#base/configs/sentry';
 import { UserContext, UserContextInterface } from '#base/context/UserContext';
+import {
+    openZendeskFeedback,
+    setUserOnZendesk,
+} from '#base/utils/zendesk';
 import { NavbarContext, NavbarContextInterface } from '#base/context/NavbarContext';
 import AuthPopup from '#base/components/AuthPopup';
 import { sync } from '#base/hooks/useAuthSync';
@@ -68,7 +78,7 @@ function Base() {
 
     const authenticated = !!user;
 
-    const setUserWithSentry: typeof setUser = useCallback(
+    const setUserWithSentryAndZendesk: typeof setUser = useCallback(
         (u) => {
             if (typeof u === 'function') {
                 setUser((oldUser) => {
@@ -77,6 +87,7 @@ function Base() {
                     const sanitizedUser = newUser;
                     sync(!!sanitizedUser, sanitizedUser?.id);
                     setUserOnSentry(sanitizedUser ?? null);
+                    setUserOnZendesk(sanitizedUser ?? null);
 
                     return newUser;
                 });
@@ -84,6 +95,7 @@ function Base() {
                 const sanitizedUser = u;
                 sync(!!sanitizedUser, sanitizedUser?.id);
                 setUserOnSentry(sanitizedUser ?? null);
+                setUserOnZendesk(sanitizedUser ?? null);
                 setUser(u);
             }
         },
@@ -94,12 +106,12 @@ function Base() {
         () => ({
             authenticated,
             user,
-            setUser: setUserWithSentry,
+            setUser: setUserWithSentryAndZendesk,
         }),
         [
             authenticated,
             user,
-            setUserWithSentry,
+            setUserWithSentryAndZendesk,
         ],
     );
 
@@ -245,6 +257,18 @@ function Base() {
                     </ApolloProvider>
                 </RequestContext.Provider>
             </ErrorBoundary>
+            {!navbarShown && (
+                <Button
+                    name={undefined}
+                    title="Report an Issue"
+                    variant="secondary"
+                    className={styles.zendeskHelpButton}
+                    onClick={openZendeskFeedback}
+                    icons={<IoAlert />}
+                >
+                    Report an issue
+                </Button>
+            )}
         </div>
     );
 }
