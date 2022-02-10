@@ -178,7 +178,7 @@ interface Props {
     projectId: string;
     value: PartialFormType;
     filterOnlyUnprotected?: boolean;
-    hasAssessment?: boolean;
+    hideEntryFilters?: boolean;
     onFilterApply: (value: PartialFormType) => void;
     isEntriesOnlyFilter?: boolean;
 }
@@ -189,7 +189,7 @@ function SourcesFilter(props: Props) {
         onFilterApply,
         projectId,
         filterOnlyUnprotected,
-        hasAssessment,
+        hideEntryFilters,
         value: valueFromProps,
         disabled,
         isEntriesOnlyFilter,
@@ -438,25 +438,27 @@ function SourcesFilter(props: Props) {
                         disabled={disabled || loading || !!sourceFilterOptionsError}
                     />
                 )}
-                <div
-                    className={_cs(
-                        styles.label,
-                        !allFiltersVisible && styles.hidden,
-                    )}
-                >
-                    Entry Filters
-                </div>
-                {!hasAssessment && (
-                    <EntryFilter
-                        name="entriesFilterData"
-                        value={value.entriesFilterData}
-                        onChange={setFieldValue}
-                        projectId={projectId}
-                        options={sourceFilterOptions}
-                        optionsDisabled={loading || !!sourceFilterOptionsError}
-                        allFiltersVisible={allFiltersVisible}
-                        disabled={disabled}
-                    />
+                {!hideEntryFilters && (
+                    <>
+                        <div
+                            className={_cs(
+                                styles.label,
+                                !allFiltersVisible && styles.hidden,
+                            )}
+                        >
+                            Entry Filters
+                        </div>
+                        <EntryFilter
+                            name="entriesFilterData"
+                            value={value.entriesFilterData}
+                            onChange={setFieldValue}
+                            projectId={projectId}
+                            options={sourceFilterOptions}
+                            optionsDisabled={loading || !!sourceFilterOptionsError}
+                            allFiltersVisible={allFiltersVisible}
+                            disabled={disabled}
+                        />
+                    </>
                 )}
                 <div className={styles.actions}>
                     <Button
