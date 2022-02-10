@@ -18,6 +18,8 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         createdAtGte,
         createdAtLte,
         search,
+        authorOrganizations,
+        sourceOrganizations,
     } = filters;
 
     return {
@@ -30,8 +32,6 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         leadCreatedAtGte: convertDateToIsoDateTime(createdAtGte),
         leadCreatedAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
 
-        authoringOrganizationTypes,
-
         leadAssignees: assignees,
         leadConfidentialities: confidentiality && [confidentiality],
         leadPriorities: priorities,
@@ -39,5 +39,8 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         leadPublishedOnLte: publishedOnLte,
         leadStatuses: statuses,
         leadTitle: search,
+        leadAuthorOrganizations: authorOrganizations,
+        leadSourceOrganizations: sourceOrganizations,
+        leadAuthoringOrganizationTypes: authoringOrganizationTypes,
     };
 }

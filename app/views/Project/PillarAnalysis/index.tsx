@@ -119,6 +119,8 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $leadPriorities: [LeadPriorityEnum!],
             $leadPublishedOnGte: Date,
             $leadPublishedOnLte: Date,
+            $leadSourceOrganizations: [ID!],
+            $leadAuthorOrganizations: [ID!],
             $leadStatuses: [LeadStatusEnum!],
         ) {
         project(id: $projectId) {
@@ -128,7 +130,6 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                 entries(
                     page: $page,
                     pageSize: $pageSize,
-                    authoringOrganizationTypes: $authoringOrganizationTypes,
                     controlled: $controlled,
                     createdAtGte: $createdAtGte,
                     createdAtLte: $createdAtLte,
@@ -141,6 +142,9 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     leadPublishedOnGte: $leadPublishedOnGte,
                     leadPublishedOnLte: $leadPublishedOnLte,
                     leadStatuses: $leadStatuses,
+                    leadAuthoringOrganizationTypes: $authoringOrganizationTypes,
+                    leadSourceOrganizations: $leadSourceOrganizations,
+                    leadAuthorOrganizations: $leadAuthorOrganizations,
                 ) {
                     totalCount
                     results {
