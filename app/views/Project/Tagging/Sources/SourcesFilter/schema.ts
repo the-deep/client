@@ -70,6 +70,8 @@ const schema: FormSchema = {
         customFilters: [],
         authoringOrganizationTypes: [],
         confidentiality: [],
+        sourceOrganizations: [],
+        authorOrganizations: [],
         entriesFilterData: entriesFilterDataSchema,
     }),
 };

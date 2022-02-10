@@ -68,6 +68,8 @@ export const PROJECT_ENTRIES = gql`
         $entryTypes: [EntryTagTypeEnum!],
         $filterableData: [EntryFilterDataType!]
         $leadAssignees: [ID!],
+        $leadSourceOrganizations: [ID!],
+        $leadAuthorOrganizations: [ID!],
         $leadConfidentialities: [LeadConfidentialityEnum!],
         $leadPriorities: [LeadPriorityEnum!],
         $leadPublishedOnGte: Date,
@@ -81,7 +83,6 @@ export const PROJECT_ENTRIES = gql`
                 pageSize: $pageSize,
                 search: $search,
                 leadTitle: $leadTitle,
-                authoringOrganizationTypes: $authoringOrganizationTypes,
                 controlled: $controlled,
                 createdAtGte: $createdAtGte,
                 createdAtLte: $createdAtLte,
@@ -94,6 +95,9 @@ export const PROJECT_ENTRIES = gql`
                 leadPublishedOnGte: $leadPublishedOnGte,
                 leadPublishedOnLte: $leadPublishedOnLte,
                 leadStatuses: $leadStatuses,
+                leadAuthoringOrganizationTypes: $authoringOrganizationTypes,
+                leadSourceOrganizations: $leadSourceOrganizations,
+                leadAuthorOrganizations: $leadAuthorOrganizations,
             ) {
                 totalCount
                 results {

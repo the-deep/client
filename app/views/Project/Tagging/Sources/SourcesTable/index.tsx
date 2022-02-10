@@ -33,7 +33,6 @@ import {
 } from '@apollo/client';
 import { IoCheckmarkCircleOutline } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
-
 import {
     ProjectSourcesQuery,
     ProjectSourcesQueryVariables,
@@ -107,6 +106,8 @@ export const PROJECT_SOURCES = gql`
         $publishedOnLte: Date,
         $search: String,
         $statuses: [LeadStatusEnum!],
+        $sourceOrganizations: [ID!],
+        $authorOrganizations: [ID!],
         $entriesFilterData: LeadEntriesFilterData,
         $customFilters: LeadCustomFilterEnum,
     ) {
@@ -130,6 +131,8 @@ export const PROJECT_SOURCES = gql`
                 publishedOnLte: $publishedOnLte,
                 search: $search,
                 statuses: $statuses,
+                sourceOrganizations: $sourceOrganizations,
+                authorOrganizations: $authorOrganizations,
                 entriesFilterData: $entriesFilterData,
                 customFilters: $customFilters,
             ) {

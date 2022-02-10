@@ -65,6 +65,8 @@ const PROJECT_LEADS = gql`
         $publishedOnLte: Date,
         $search: String,
         $statuses: [LeadStatusEnum!],
+        $sourceOrganizations: [ID!],
+        $authorOrganizations: [ID!],
         $entriesFilterData: LeadEntriesFilterData,
         $customFilters: LeadCustomFilterEnum,
     ) {
@@ -88,6 +90,8 @@ const PROJECT_LEADS = gql`
                 publishedOnLte: $publishedOnLte,
                 search: $search,
                 statuses: $statuses,
+                sourceOrganizations: $sourceOrganizations,
+                authorOrganizations: $authorOrganizations,
                 entriesFilterData: $entriesFilterData,
                 customFilters: $customFilters,
             ) {
