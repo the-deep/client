@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
-import { DateInput } from '@the-deep/deep-ui';
+import { DateInput, Button } from '@the-deep/deep-ui';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
+import {
+    IoRepeatSharp,
+} from 'react-icons/io5';
 
 import NonFieldError from '#components/NonFieldError';
 
@@ -33,6 +36,7 @@ function DateRangeInputWrapper<N extends string>(props: Props<N>) {
     } = props;
 
     const error = getErrorObject(riskyError);
+    const hasDateValue = !!value?.startDate || !!value?.endDate;
 
     const handleStartDateChange = useCallback((val: DateValue['value'] | undefined) => {
         onChange({ startDate: val, endDate: value?.endDate }, name);
@@ -40,6 +44,10 @@ function DateRangeInputWrapper<N extends string>(props: Props<N>) {
 
     const handleEndDateChange = useCallback((val: DateValue['value'] | undefined) => {
         onChange({ startDate: value?.startDate, endDate: val }, name);
+    }, [value, name, onChange]);
+
+    const handleSwapDateRange = React.useCallback(() => {
+        onChange({ startDate: value?.endDate, endDate: value?.startDate }, name);
     }, [value, name, onChange]);
 
     return (
@@ -66,6 +74,17 @@ function DateRangeInputWrapper<N extends string>(props: Props<N>) {
                 disabled={disabled}
                 error={error?.endDate}
             />
+            {hasDateValue && !readOnly && (
+                <Button
+                    name={undefined}
+                    variant="action"
+                    onClick={handleSwapDateRange}
+                    disabled={disabled}
+                    title="Swap Date"
+                >
+                    <IoRepeatSharp />
+                </Button>
+            )}
         </div>
     );
 }
