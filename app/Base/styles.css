@@ -37,4 +37,10 @@
         z-index: 1;
         width: 24rem;
     }
+
+    .zendesk-help-button {
+        position: absolute;
+        bottom: var(--dui-spacing-medium);
+        left: var(--dui-spacing-medium);
+    }
 }

@@ -10,9 +10,11 @@ import {
     DropdownMenuItem,
     useConfirmation,
     useAlert,
+    QuickActionButton,
     Svg,
 } from '@the-deep/deep-ui';
 import {
+    IoAlert,
     IoHelp,
     IoCompassOutline,
     IoNotificationsOutline,
@@ -23,6 +25,7 @@ import {
 import Notifications from '#components/Notifications';
 import SmartNavLink from '#base/components/SmartNavLink';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import { openZendeskFeedback } from '#base/utils/zendesk';
 import Avatar from '#components/Avatar';
 import { UserContext } from '#base/context/UserContext';
 import route from '#base/configs/routes';
@@ -191,6 +194,13 @@ function Navbar(props: Props) {
                     >
                         <IoHelp />
                     </QuickActionLink>
+                    <QuickActionButton
+                        title="Report a bug"
+                        name={undefined}
+                        onClick={openZendeskFeedback}
+                    >
+                        <IoAlert />
+                    </QuickActionButton>
                     {authenticated && (
                         <QuickActionDropdownMenu
                             label={(<IoNotificationsOutline />)}

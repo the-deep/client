@@ -21,6 +21,7 @@ const ME = gql`
     query Me {
         me {
             id
+            email
             displayName
             displayPictureUrl
             accessibleFeatures {
