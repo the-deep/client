@@ -4,15 +4,13 @@ export const openZendeskFeedback = () => {
     }
 };
 
-const enableZe = () => window.zE;
-
 export const setUserOnZendesk = (user) => {
-    if (enableZe() && user.id) {
+    if (window.zE) {
         window.zE(() => {
             window.zE.identify({
-                id: user.id,
-                name: user.displayName,
-                email: user.email,
+                id: user ? user.id : undefined,
+                name: user ? user.displayName : undefined,
+                email: user ? user.email : undefined,
             });
         });
     }
