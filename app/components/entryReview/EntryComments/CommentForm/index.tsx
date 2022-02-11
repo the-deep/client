@@ -50,7 +50,7 @@ const defaultValue: FormType = {
 interface Props {
     className?: string;
     onSave: (response: EntryComment) => void;
-    entryId: number;
+    entryId: string;
     projectId: string;
 }
 
