@@ -1,13 +1,16 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
+    isNotDefined,
     _cs,
 } from '@togglecorp/fujs';
+import { useQuery, gql } from '@apollo/client';
 import {
     Pager,
     QuickActionButton,
     ListView,
     Kraken,
     Modal,
+    useSortState,
 } from '@the-deep/deep-ui';
 import {
     IoChatboxOutline,
@@ -18,6 +21,11 @@ import {
     EntryComment,
     EntryReviewSummary,
 } from '#types';
+import {
+    ReviewCommentsQuery,
+    ReviewCommentsQueryVariables,
+    EntryReviewCommentOrderingEnum,
+} from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 import { useRequest } from '#base/utils/restRequest';
 
@@ -25,10 +33,50 @@ import Comment from './Comment';
 import CommentForm from './CommentForm';
 import styles from './styles.css';
 
+const REVIEW_COMMENTS = gql`
+    query ReviewComments(
+        $projectId: ID!,
+        $ordering: [EntryReviewCommentOrderingEnum!],
+        $page: Int,
+        $pageSize: Int,
+        $entry: ID,
+        ) {
+        project(id: $projectId) {
+            reviewComments (
+                entry: $entry,
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+            ) {
+                page
+                pageSize
+                totalCount
+                results {
+                    commentType
+                    commentTypeDisplay
+                    createdAt
+                    createdBy {
+                        displayName
+                        id
+                        organization
+                    }
+                    entry
+                    id
+                    text
+                    mentionedUsers {
+                        displayName
+                        id
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export interface Props {
     className?: string;
     activityCount?: number;
-    entryId: number;
+    entryId: string;
     projectId: string;
     onEntryCommentAdd?: () => void;
 }
@@ -39,6 +87,10 @@ interface MultiResponseWithSummary<T> extends MultiResponse<T> {
 
 const commentKeySelector = (d: EntryComment) => d.id;
 const maxItemsPerPage = 50;
+const defaultSorting = {
+    name: 'CREATED_AT',
+    direction: 'Descending',
+};
 
 function EntryComments(props: Props) {
     const {
@@ -56,10 +108,17 @@ function EntryComments(props: Props) {
         hideCommentModal,
     ] = useModalState(false);
 
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = validSorting.direction === 'Ascending'
+        ? `ASC_${validSorting.name}`
+        : `DESC_${validSorting.name}`;
+
     const {
         pending: commentsPending,
         response: commentsResponse,
-        retrigger: getComments,
+        // retrigger: getComments,
     } = useRequest<MultiResponseWithSummary<EntryComment>>({
         skip: !isCommentModalShown,
         url: `server://v2/entries/${entryId}/review-comments/`,
@@ -70,6 +129,33 @@ function EntryComments(props: Props) {
             limit: maxItemsPerPage,
         },
     });
+    console.log('REST DATA comments:>>', commentsResponse);
+
+    const commentVariables = useMemo(
+        (): ReviewCommentsQueryVariables | undefined => (
+            (projectId) ? {
+                projectId,
+                entry: entryId,
+                page: activePage,
+                pageSize: maxItemsPerPage,
+                ordering: [ordering as EntryReviewCommentOrderingEnum],
+            } : undefined
+        ),
+        [projectId, entryId]);
+
+    const {
+        previousData,
+        data: reviewComments = previousData,
+        loading: reviewCommentsPending,
+        refetch: getComments,
+    } = useQuery<ReviewCommentsQuery, ReviewCommentsQueryVariables>(
+        REVIEW_COMMENTS,
+        {
+            skip: !isCommentModalShown,
+            variables: commentVariables,
+        },
+    );
+    console.log('GQL data for comments::>>', reviewComments);
 
     const handleEntryCommentSave = useCallback(() => {
         getComments();
