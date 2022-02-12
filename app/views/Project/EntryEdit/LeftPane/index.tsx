@@ -70,6 +70,8 @@ const LEAD_PREVIEW = gql`
 
 const entryKeySelector = (e: EntryInput) => e.clientId;
 
+export type TabOptions = 'simplified' | 'original' | 'entries' | undefined;
+
 interface Props {
     className?: string;
     onEntryCreate?: (newEntry: EntryInput) => void;
@@ -90,6 +92,9 @@ interface Props {
     entriesError: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original';
+    activeTabRef?: React.MutableRefObject<{
+        setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>>;
+    } | null>;
     listComponentRef?: React.MutableRefObject<{
         scrollTo: (item: string) => void;
     } | null>;
@@ -117,15 +122,24 @@ function LeftPane(props: Props) {
         entriesError,
         defaultTab = 'simplified',
         projectId,
+        activeTabRef,
     } = props;
 
     const alert = useAlert();
 
-    const [activeTab, setActiveTab] = useState<'simplified' | 'original' | 'entries' | undefined>(
+    const [activeTab, setActiveTab] = useState<TabOptions>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
             ? 'entries'
             : defaultTab,
     );
+
+    useEffect(() => {
+        if (activeTabRef) {
+            activeTabRef.current = {
+                setActiveTab,
+            };
+        }
+    }, [activeTabRef]);
 
     // FIXME: we shouldn't need these values here
     const [capturedImageUrl, setCapturedImageUrl] = useState<string | undefined>();

@@ -82,7 +82,7 @@ import {
 } from './queries';
 
 import SourceDetails from './SourceDetails';
-import LeftPane from './LeftPane';
+import LeftPane, { TabOptions } from './LeftPane';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
@@ -128,7 +128,16 @@ function EntryEdit(props: Props) {
         setCommentsCountMap,
     ] = useState<CountMap>({});
 
-    const [showAllEntriesTab, setShowAllEntriesTab] = useState(false);
+    const location = useLocation();
+    const locationState = location?.state as {
+        entryId?: string;
+        sectionId?: string;
+    } | undefined;
+
+    const entryIdFromLocation = locationState?.entryId;
+    const sectionIdFromLocation = locationState?.sectionId;
+
+    const [defaultActiveTab, setDefaultActiveTab] = useState<TabOptions>(entryIdFromLocation ? 'entries' : undefined);
 
     const commentCountContext: CommentCountContextInterface = useMemo(() => ({
         commentsCountMap,
@@ -143,15 +152,6 @@ function EntryEdit(props: Props) {
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
     const alert = useAlert();
-    const location = useLocation();
-
-    const locationState = location?.state as {
-        entryId?: string;
-        sectionId?: string;
-    } | undefined;
-
-    const entryIdFromLocation = locationState?.entryId;
-    const sectionIdFromLocation = locationState?.sectionId;
 
     // LEAD
     const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
@@ -183,6 +183,10 @@ function EntryEdit(props: Props) {
     const shouldFinalizeRef = useRef<boolean | undefined>(undefined);
 
     const listComponentRef = useRef<VirtualizedEntryListComponent | null>(null);
+
+    const leftPaneRef = useRef<
+        { setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>> }
+    >(null);
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>(undefined);
 
@@ -995,13 +999,14 @@ function EntryEdit(props: Props) {
     // ENTRY
     const handleAddButtonClick = useCallback((entryId: string, sectionId?: string) => {
         handleEntryClick(entryId);
-        setShowAllEntriesTab(true);
+        setDefaultActiveTab('entries');
         if (sectionId) {
             window.location.replace('#/primary-tagging');
             setSelectedSection(sectionId);
         } else {
             window.location.replace('#/secondary-tagging');
         }
+        leftPaneRef?.current?.setActiveTab('entries');
     }, [handleEntryClick]);
 
     const entriesVariables = useMemo(
@@ -1386,6 +1391,7 @@ function EntryEdit(props: Props) {
                                         onEntryCreate={handleEntryCreate}
                                         onApproveButtonClick={handleEntryChangeApprove}
                                         onDiscardButtonClick={handleEntryChangeDiscard}
+                                        activeTabRef={leftPaneRef}
                                         onEntryDelete={handleEntryDelete}
                                         onEntryRestore={handleEntryRestore}
                                         onExcerptChange={handleExcerptChange}
@@ -1395,9 +1401,7 @@ function EntryEdit(props: Props) {
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
-                                        // NOTE: If entry Id comes from state, we need to
-                                        // show entries tab as it always has the entry
-                                        defaultTab={(entryIdFromLocation || showAllEntriesTab) ? 'entries' : undefined}
+                                        defaultTab={defaultActiveTab}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}
@@ -1482,10 +1486,12 @@ function EntryEdit(props: Props) {
                                         leadId={leadId}
                                         hideSimplifiedPreview
                                         hideOriginalPreview
+                                        listComponentRef={listComponentRef}
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
-                                        defaultTab={entryIdFromLocation ? 'entries' : undefined}
+                                        activeTabRef={leftPaneRef}
+                                        defaultTab={defaultActiveTab}
                                     />
                                     <Container
                                         className={styles.rightContainer}

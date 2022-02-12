@@ -195,7 +195,7 @@ function Navbar(props: Props) {
                         <IoHelp />
                     </QuickActionLink>
                     <QuickActionButton
-                        title="Report a bug"
+                        title="Bug/Feedback?"
                         name={undefined}
                         onClick={openZendeskFeedback}
                     >

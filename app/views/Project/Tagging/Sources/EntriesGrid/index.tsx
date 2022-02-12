@@ -60,7 +60,6 @@ export const PROJECT_ENTRIES = gql`
         $pageSize: Int,
         $search: String,
         $leadTitle: String,
-        $authoringOrganizationTypes: [ID!],
         $controlled: Boolean,
         $createdAtGte: DateTime,
         $createdAtLte: DateTime,
@@ -75,6 +74,7 @@ export const PROJECT_ENTRIES = gql`
         $leadPublishedOnGte: Date,
         $leadPublishedOnLte: Date,
         $leadStatuses: [LeadStatusEnum!],
+        $leadAuthoringOrganizationTypes: [ID!],
         ) {
         project(id: $projectId) {
             id
@@ -95,7 +95,7 @@ export const PROJECT_ENTRIES = gql`
                 leadPublishedOnGte: $leadPublishedOnGte,
                 leadPublishedOnLte: $leadPublishedOnLte,
                 leadStatuses: $leadStatuses,
-                leadAuthoringOrganizationTypes: $authoringOrganizationTypes,
+                leadAuthoringOrganizationTypes: $leadAuthoringOrganizationTypes,
                 leadSourceOrganizations: $leadSourceOrganizations,
                 leadAuthorOrganizations: $leadAuthorOrganizations,
             ) {
