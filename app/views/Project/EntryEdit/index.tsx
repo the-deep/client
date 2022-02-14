@@ -137,8 +137,6 @@ function EntryEdit(props: Props) {
     const entryIdFromLocation = locationState?.entryId;
     const sectionIdFromLocation = locationState?.sectionId;
 
-    const [defaultActiveTab, setDefaultActiveTab] = useState<TabOptions>(entryIdFromLocation ? 'entries' : undefined);
-
     const commentCountContext: CommentCountContextInterface = useMemo(() => ({
         commentsCountMap,
         setCommentsCountMap,
@@ -182,9 +180,13 @@ function EntryEdit(props: Props) {
 
     const shouldFinalizeRef = useRef<boolean | undefined>(undefined);
 
-    const listComponentRef = useRef<VirtualizedEntryListComponent | null>(null);
+    const primaryPageListComponentRef = useRef<VirtualizedEntryListComponent | null>(null);
+    const secondaryPageListComponentRef = useRef<VirtualizedEntryListComponent | null>(null);
 
-    const leftPaneRef = useRef<
+    const primaryPageLeftPaneRef = useRef<
+        { setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>> }
+    >(null);
+    const secondaryPageLeftPaneRef = useRef<
         { setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>> }
     >(null);
 
@@ -212,7 +214,6 @@ function EntryEdit(props: Props) {
 
     // ENTRY FORM
 
-    // FIXME: set section initially
     const [selectedSection, setSelectedSection] = useState<string | undefined>();
 
     const frameworkVariables = useMemo(
@@ -999,14 +1000,28 @@ function EntryEdit(props: Props) {
     // ENTRY
     const handleAddButtonClick = useCallback((entryId: string, sectionId?: string) => {
         handleEntryClick(entryId);
-        setDefaultActiveTab('entries');
+
         if (sectionId) {
-            window.location.replace('#/primary-tagging');
+            primaryPageLeftPaneRef?.current?.setActiveTab('entries');
+            setTimeout(
+                () => {
+                    // NOTE: we use setTimeout with zero time so that 'entries'
+                    // tab is already mounted before we try to scroll to
+                    // selected entry
+                    primaryPageListComponentRef?.current?.scrollTo(entryId);
+                },
+                0,
+            );
+
             setSelectedSection(sectionId);
+
+            window.location.replace('#/primary-tagging');
         } else {
+            secondaryPageLeftPaneRef?.current?.setActiveTab('entries');
+            secondaryPageListComponentRef?.current?.scrollTo(entryId);
+
             window.location.replace('#/secondary-tagging');
         }
-        leftPaneRef?.current?.setActiveTab('entries');
     }, [handleEntryClick]);
 
     const entriesVariables = useMemo(
@@ -1069,13 +1084,37 @@ function EntryEdit(props: Props) {
                     );
                     setEntryImagesMap(imagesMap);
 
-                    const selectedEntryFromLocation = entries.find(
-                        (entry) => entry.id === String(entryIdFromLocation),
-                    );
-                    if (selectedEntryFromLocation) {
+                    if (entryIdFromLocation) {
                         createRestorePoint();
-                        setSelectedEntry(selectedEntryFromLocation.clientId);
-                        listComponentRef?.current?.scrollTo(selectedEntryFromLocation.clientId);
+                        setSelectedEntry(entryIdFromLocation);
+
+                        if (sectionIdFromLocation) {
+                            primaryPageLeftPaneRef?.current?.setActiveTab('entries');
+                            setTimeout(
+                                () => {
+                                    // NOTE: we use setTimeout with zero time so that 'entries'
+                                    // tab is already mounted before we try to scroll to
+                                    // selected entry
+                                    primaryPageListComponentRef?.current?.scrollTo(
+                                        entryIdFromLocation,
+                                    );
+                                },
+                                0,
+                            );
+                        } else {
+                            secondaryPageLeftPaneRef?.current?.setActiveTab('entries');
+                            setTimeout(
+                                () => {
+                                    // NOTE: we use setTimeout with zero time so that 'entries'
+                                    // tab is already mounted before we try to scroll to
+                                    // selected entry
+                                    secondaryPageListComponentRef?.current?.scrollTo(
+                                        entryIdFromLocation,
+                                    );
+                                },
+                                0,
+                            );
+                        }
                     }
 
                     const leadData = removeNull(leadFromResponse);
@@ -1378,7 +1417,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="primary-tagging"
-                            retainMount="lazy"
+                            retainMount="eager"
                         >
                             {frameworkDetails && (
                                 <div className={styles.primaryTagging}>
@@ -1391,17 +1430,16 @@ function EntryEdit(props: Props) {
                                         onEntryCreate={handleEntryCreate}
                                         onApproveButtonClick={handleEntryChangeApprove}
                                         onDiscardButtonClick={handleEntryChangeDiscard}
-                                        activeTabRef={leftPaneRef}
+                                        activeTabRef={primaryPageLeftPaneRef}
                                         onEntryDelete={handleEntryDelete}
                                         onEntryRestore={handleEntryRestore}
                                         onExcerptChange={handleExcerptChange}
                                         lead={lead}
                                         leadId={leadId}
-                                        listComponentRef={listComponentRef}
+                                        listComponentRef={primaryPageListComponentRef}
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
-                                        defaultTab={defaultActiveTab}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}
@@ -1466,7 +1504,7 @@ function EntryEdit(props: Props) {
                         <TabPanel
                             activeClassName={styles.tabPanel}
                             name="secondary-tagging"
-                            retainMount="lazy"
+                            retainMount="eager"
                         >
                             {frameworkDetails && (
                                 <div className={styles.secondaryTagging}>
@@ -1486,12 +1524,11 @@ function EntryEdit(props: Props) {
                                         leadId={leadId}
                                         hideSimplifiedPreview
                                         hideOriginalPreview
-                                        listComponentRef={listComponentRef}
+                                        listComponentRef={secondaryPageListComponentRef}
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
-                                        activeTabRef={leftPaneRef}
-                                        defaultTab={defaultActiveTab}
+                                        activeTabRef={secondaryPageLeftPaneRef}
                                     />
                                     <Container
                                         className={styles.rightContainer}
