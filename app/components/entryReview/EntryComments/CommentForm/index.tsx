@@ -4,6 +4,7 @@ import {
     TextArea,
     Button,
     Container,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -65,6 +66,7 @@ function CommentForm(props: Props) {
     const {
         user,
     } = useContext(UserContext);
+    const alert = useAlert();
 
     const {
         pristine,
@@ -88,6 +90,10 @@ function CommentForm(props: Props) {
         onSuccess: (response) => {
             setValue(defaultValue);
             onSave(response);
+            alert.show(
+                'Successfully added comment to the selected entry.',
+                { variant: 'success' },
+            );
         },
         onFailure: ({ value: errorValue }) => {
             const {

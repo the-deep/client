@@ -260,13 +260,13 @@ function Base() {
             {!navbarShown && (
                 <Button
                     name={undefined}
-                    title="Report an Issue"
+                    title="Bug/Feedback?"
                     variant="secondary"
                     className={styles.zendeskHelpButton}
                     onClick={openZendeskFeedback}
                     icons={<IoAlert />}
                 >
-                    Report an issue
+                    Bug/Feedback?
                 </Button>
             )}
         </div>

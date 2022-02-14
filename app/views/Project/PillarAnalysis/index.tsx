@@ -107,7 +107,6 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $pillarId: ID!
             $page: Int,
             $pageSize: Int,
-            $authoringOrganizationTypes: [ID!],
             $controlled: Boolean,
             $createdAtGte: DateTime,
             $createdAtLte: DateTime,
@@ -122,6 +121,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $leadSourceOrganizations: [ID!],
             $leadAuthorOrganizations: [ID!],
             $leadStatuses: [LeadStatusEnum!],
+            $leadAuthoringOrganizationTypes: [ID!],
         ) {
         project(id: $projectId) {
             id
@@ -142,7 +142,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
                     leadPublishedOnGte: $leadPublishedOnGte,
                     leadPublishedOnLte: $leadPublishedOnLte,
                     leadStatuses: $leadStatuses,
-                    leadAuthoringOrganizationTypes: $authoringOrganizationTypes,
+                    leadAuthoringOrganizationTypes: $leadAuthoringOrganizationTypes,
                     leadSourceOrganizations: $leadSourceOrganizations,
                     leadAuthorOrganizations: $leadAuthorOrganizations,
                 ) {
