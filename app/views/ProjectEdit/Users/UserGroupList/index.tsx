@@ -1,13 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-    _cs,
-    isNotDefined,
-} from '@togglecorp/fujs';
 import { generatePath } from 'react-router-dom';
 import {
     IoChevronForward,
     IoAdd,
 } from 'react-icons/io5';
+import {
+    _cs,
+    isNotDefined,
+} from '@togglecorp/fujs';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import {
     Container,
     Button,
@@ -18,28 +19,93 @@ import {
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
+    SortContext,
     createStringColumn,
     useAlert,
+    useSortState,
 } from '@the-deep/deep-ui';
 
 import { createDateColumn } from '#components/tableHelpers';
-import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import routes from '#base/configs/routes';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
-
 import {
-    MultiResponse,
-    UserGroup,
-} from '#types';
+    ProjectUsergroupsQuery,
+    ProjectUsergroupsQueryVariables,
+    ProjectUsergroupMembershipRemoveMutation,
+    ProjectUsergroupMembershipRemoveMutationVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import AddUserGroupModal from './AddUserGroupModal';
 
 import styles from './styles.css';
 
+const PROJECT_USERGROUP_MEMBERSHIP_REMOVE = gql`
+    mutation ProjectUsergroupMembershipRemove($projectId: ID!, $deleteIds: [ID!]) {
+        project(id: $projectId) {
+            id
+            projectUserGroupMembershipBulk(deleteIds: $deleteIds) {
+                errors
+                deletedResult {
+                    id
+                    usergroup {
+                        id
+                        title
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const PROJECT_USERGROUPS = gql`
+    query ProjectUsergroups(
+        $projectId: ID!,
+        $page: Int = 1,
+        $pageSize: Int,
+        $ordering: String,
+    ) {
+        project(id: $projectId) {
+            id
+            userGroupMembers(
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+            ) {
+                page
+                pageSize
+                totalCount
+                results {
+                    id
+                    joinedAt
+                    role {
+                        id
+                        title
+                        level
+                    }
+                    usergroup {
+                        id
+                        title
+                        modifiedAt
+                        modifiedBy {
+                            id
+                            displayName
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export type ProjectUsergroup = NonNullable<NonNullable<NonNullable<ProjectUsergroupsQuery['project']>['userGroupMembers']>['results']>[number];
+const usergroupsKeySelector = (d: ProjectUsergroup) => d.id;
 const maxItemsPerPage = 10;
-const usergroupKeySelector = (d: UserGroup) => d.id;
+const defaultSorting = {
+    name: 'usergroup',
+    direction: 'Descending',
+};
 
 interface Props{
     className?: string;
@@ -57,7 +123,10 @@ function UserGroupList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [usergroupIdToEdit, setUsergroupIdToEdit] = useState<number | undefined>(undefined);
+    const [
+        projectUsergroupToEdit,
+        setProjectUsergroupToEdit,
+    ] = useState<ProjectUsergroup | undefined>();
     const alert = useAlert();
 
     const [
@@ -67,49 +136,91 @@ function UserGroupList(props: Props) {
     ] = useModalState(false);
 
     const handleModalClose = useCallback(() => {
-        setUsergroupIdToEdit(undefined);
+        setProjectUsergroupToEdit(undefined);
         setModalHidden();
     }, [setModalHidden]);
 
-    const queryForRequest = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-    }), [activePage]);
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = useMemo(() => (
+        validSorting.direction === 'Ascending'
+            ? validSorting.name
+            : `-${validSorting.name}`
+    ), [validSorting]);
+
+    const variables = useMemo(() => ({
+        projectId,
+        page: activePage,
+        pageSize: maxItemsPerPage,
+        ordering,
+    }), [projectId, activePage, ordering]);
 
     const {
-        pending: usergroupPending,
-        response: usergroupResponse,
-        retrigger: triggerUsergroupResponse,
-    } = useRequest<MultiResponse<UserGroup>>({
-        url: `server://projects/${projectId}/project-usergroups/`,
-        method: 'GET',
-        query: queryForRequest,
-        preserveResponse: true,
-    });
-
-    const {
-        trigger: triggerDeleteUsergroup,
-    } = useLazyRequest<unknown, number>({
-        url: (ctx) => `server://projects/${projectId}/project-usergroups/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            triggerUsergroupResponse();
-            alert.show(
-                'Successfully deleted user group.',
-                { variant: 'success' },
-            );
+        previousData,
+        data: usergroups = previousData,
+        loading: usergroupPending,
+        refetch,
+    } = useQuery<ProjectUsergroupsQuery, ProjectUsergroupsQueryVariables>(
+        PROJECT_USERGROUPS,
+        {
+            variables,
         },
-        failureMessage: 'Failed to delete user group.',
-    });
+    );
 
-    const handleEditUsergroupClick = useCallback((usergroupId) => {
-        setUsergroupIdToEdit(usergroupId);
+    const [
+        deleteUsergroupMembership,
+        { loading: deleteUsergroupMembershipPending },
+    ] = useMutation<
+    ProjectUsergroupMembershipRemoveMutation,
+    ProjectUsergroupMembershipRemoveMutationVariables
+    >(
+        PROJECT_USERGROUP_MEMBERSHIP_REMOVE,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.projectUserGroupMembershipBulk) {
+                    return;
+                }
+                const {
+                    deletedResult,
+                } = response.project.projectUserGroupMembershipBulk;
+
+                const [deletedUsergroup] = deletedResult ?? [];
+
+                if (deletedResult) {
+                    alert.show(
+                        `Successfully deleted ${deletedUsergroup.usergroup.title}`,
+                        { variant: 'success' },
+                    );
+                    refetch();
+                } else {
+                    alert.show(
+                        'Error deleting usergroup.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+        },
+    );
+
+    const handleEditProjectUsergroupClick = useCallback((id: string) => {
+        const usergroup = usergroups?.project?.userGroupMembers?.results?.find((v) => v.id === id);
+        setProjectUsergroupToEdit(usergroup);
         setModalShow();
-    }, [setModalShow]);
+    }, [setModalShow, usergroups?.project?.userGroupMembers?.results]);
+
+    const handleRemoveUsergroupFromProject = useCallback((id: string) => {
+        deleteUsergroupMembership({
+            variables: {
+                projectId,
+                deleteIds: [id],
+            },
+        });
+    }, [deleteUsergroupMembership, projectId]);
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
-            UserGroup, number, ActionCellProps<number>, TableHeaderCellProps
+            ProjectUsergroup, string, ActionCellProps<string>, TableHeaderCellProps
         > = {
             id: 'action',
             title: 'Actions',
@@ -120,11 +231,12 @@ function UserGroupList(props: Props) {
             cellRenderer: ActionCell,
             cellRendererParams: (userId, data) => ({
                 itemKey: userId,
-                onEditClick: handleEditUsergroupClick,
-                onDeleteClick: triggerDeleteUsergroup,
+                onEditClick: handleEditProjectUsergroupClick,
+                onDeleteClick: handleRemoveUsergroupFromProject,
                 disabled: (
                     isNotDefined(activeUserRoleLevel)
-                    || data.roleDetails.level < activeUserRoleLevel
+                    || data.role.level < activeUserRoleLevel
+                    || deleteUsergroupMembershipPending
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),
                 deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
@@ -133,36 +245,49 @@ function UserGroupList(props: Props) {
         };
 
         return ([
-            createStringColumn<UserGroup, number>(
-                'title',
+            createStringColumn<ProjectUsergroup, string>(
+                'usergroup',
                 _ts('projectEdit', 'group'),
-                (item) => item.title,
+                (item) => item.usergroup.title,
+                {
+                    sortable: true,
+                },
             ),
-            createStringColumn<UserGroup, number>(
-                'addedByName',
+            createStringColumn<ProjectUsergroup, string>(
+                'addedBy',
                 _ts('projectEdit', 'addedByName'),
-                (item) => item.addedByName,
+                (item) => item.usergroup.modifiedBy?.displayName,
+                {
+                    sortable: true,
+                },
             ),
-            createDateColumn<UserGroup, number>(
+            createDateColumn<ProjectUsergroup, string>(
                 'joinedAt',
                 _ts('projectEdit', 'addedOn'),
-                (item) => item.joinedAt,
+                (item) => item.usergroup.modifiedAt,
+                {
+                    sortable: true,
+                },
             ),
-            createStringColumn<UserGroup, number>(
+            createStringColumn<ProjectUsergroup, string>(
                 'role',
                 'Assigned Role',
-                (item) => item?.roleDetails.title,
+                (item) => item.role.title,
+                {
+                    sortable: true,
+                },
             ),
             actionColumn,
         ]);
-    }, [triggerDeleteUsergroup, handleEditUsergroupClick, activeUserRoleLevel]);
-
-    const usergroupToEdit = useMemo(() => (
-        usergroupResponse?.results?.find((d) => d.id === usergroupIdToEdit)
-    ), [usergroupResponse?.results, usergroupIdToEdit]);
+    }, [
+        handleRemoveUsergroupFromProject,
+        handleEditProjectUsergroupClick,
+        activeUserRoleLevel,
+        deleteUsergroupMembershipPending,
+    ]);
 
     const handleAddUsergroupClick = useCallback(() => {
-        setUsergroupIdToEdit(undefined);
+        setProjectUsergroupToEdit(undefined);
         setModalShow();
     }, [setModalShow]);
 
@@ -202,27 +327,29 @@ function UserGroupList(props: Props) {
                 </Button>
             )}
         >
-            <TableView
-                data={usergroupResponse?.results}
-                keySelector={usergroupKeySelector}
-                columns={columns}
-                emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
-                rowClassName={styles.tableRow}
-                filtered={false}
-                errored={false}
-                pending={usergroupPending || pending}
-                emptyIcon={(
-                    <Kraken
-                        variant="standby"
-                    />
-                )}
-                messageShown
-                messageIconShown
-            />
+            <SortContext.Provider value={sortState}>
+                <TableView
+                    data={usergroups?.project?.userGroupMembers?.results}
+                    keySelector={usergroupsKeySelector}
+                    columns={columns}
+                    emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
+                    rowClassName={styles.tableRow}
+                    filtered={false}
+                    errored={false}
+                    pending={usergroupPending || pending}
+                    emptyIcon={(
+                        <Kraken
+                            variant="standby"
+                        />
+                    )}
+                    messageShown
+                    messageIconShown
+                />
+            </SortContext.Provider>
             <Pager
                 activePage={activePage}
                 className={styles.pager}
-                itemsCount={usergroupResponse?.count ?? 0}
+                itemsCount={usergroups?.project?.userGroupMembers?.totalCount ?? 0}
                 maxItemsPerPage={maxItemsPerPage}
                 onActivePageChange={setActivePage}
                 itemsPerPageControlHidden
@@ -231,8 +358,8 @@ function UserGroupList(props: Props) {
                 <AddUserGroupModal
                     onModalClose={handleModalClose}
                     projectId={projectId}
-                    onTableReload={triggerUsergroupResponse}
-                    usergroupValue={usergroupToEdit}
+                    onTableReload={refetch}
+                    projectUsergroupToEdit={projectUsergroupToEdit ?? undefined}
                     activeUserRoleLevel={activeUserRoleLevel}
                 />
             )}

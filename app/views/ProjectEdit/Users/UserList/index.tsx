@@ -6,6 +6,7 @@ import {
     Button,
     Pager,
     Kraken,
+    SortContext,
     TableView,
     TableColumn,
     TableHeaderCell,
@@ -13,6 +14,7 @@ import {
     Tag,
     createStringColumn,
     useAlert,
+    useSortState,
 } from '@the-deep/deep-ui';
 import {
     useQuery,
@@ -57,10 +59,11 @@ const PROJECT_USERS = gql`
         $projectId: ID!
         $page: Int,
         $pageSize: Int,
+        $ordering: String,
     ) {
         project(id: $projectId) {
             id
-            userMembers(page: $page, pageSize: $pageSize) {
+            userMembers(page: $page, pageSize: $pageSize, ordering: $ordering) {
                 results {
                     badges
                     id
@@ -125,6 +128,11 @@ interface Props{
     pending?: boolean;
 }
 
+const defaultSorting = {
+    name: 'member',
+    direction: 'Descending',
+};
+
 function UserList(props: Props) {
     const {
         projectId,
@@ -149,13 +157,22 @@ function UserList(props: Props) {
         setModalHidden();
     }, [setModalHidden]);
 
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = useMemo(() => (
+        validSorting.direction === 'Ascending'
+            ? validSorting.name
+            : `-${validSorting.name}`
+    ), [validSorting]);
+
     const variables = useMemo(() => ({
         projectId,
         page: activePage,
         pageSize: maxItemsPerPage,
-
+        ordering,
     }
-    ), [projectId, activePage]);
+    ), [projectId, activePage, ordering]);
 
     const {
         previousData,
@@ -189,18 +206,18 @@ function UserList(props: Props) {
 
                 const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
-                if (err) {
-                    alert.show(
-                        err,
-                        { variant: 'error' },
-                    );
-                }
+
                 if (deletedUser) {
                     alert.show(
-                        `Successfully deleted ${deletedUser.member.displayName}`,
+                        `Successfully removed ${deletedUser.member.displayName} from this project.`,
                         { variant: 'success' },
                     );
                     refetch();
+                } else {
+                    alert.show(
+                        err ?? 'There was an issue while removing the user from this project.',
+                        { variant: 'error' },
+                    );
                 }
             },
             onError: () => {
@@ -270,9 +287,12 @@ function UserList(props: Props) {
 
         return ([
             createStringColumn<ProjectUser, string>(
-                'memberName',
+                'member',
                 _ts('projectEdit', 'memberName'),
                 (item) => item.member.displayName,
+                {
+                    sortable: true,
+                },
             ),
             createStringColumn<ProjectUser, string>(
                 'memberEmail',
@@ -285,19 +305,28 @@ function UserList(props: Props) {
                 (item) => item.member.organization,
             ),
             createStringColumn<ProjectUser, string>(
-                'addedByName',
+                'addedBy',
                 _ts('projectEdit', 'addedByName'),
                 (item) => item.addedBy?.displayName,
+                {
+                    sortable: true,
+                },
             ),
             createDateColumn<ProjectUser, string>(
                 'joinedAt',
                 _ts('projectEdit', 'addedOn'),
                 (item) => item.joinedAt,
+                {
+                    sortable: true,
+                },
             ),
             createStringColumn<ProjectUser, string>(
                 'role',
                 'Assigned Role',
                 (item) => item?.role.title,
+                {
+                    sortable: true,
+                },
             ),
             badgeColumn,
             actionColumn,
@@ -331,23 +360,25 @@ function UserList(props: Props) {
                 </Button>
             )}
         >
-            <TableView
-                data={projectUsersResponse?.project?.userMembers?.results}
-                keySelector={userKeySelector}
-                emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
-                rowClassName={styles.tableRow}
-                columns={columns}
-                filtered={false}
-                errored={false}
-                pending={projectUsersPending || pending}
-                emptyIcon={(
-                    <Kraken
-                        variant="standby"
-                    />
-                )}
-                messageShown
-                messageIconShown
-            />
+            <SortContext.Provider value={sortState}>
+                <TableView
+                    data={projectUsersResponse?.project?.userMembers?.results}
+                    keySelector={userKeySelector}
+                    emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
+                    rowClassName={styles.tableRow}
+                    columns={columns}
+                    filtered={false}
+                    errored={false}
+                    pending={projectUsersPending || pending}
+                    emptyIcon={(
+                        <Kraken
+                            variant="standby"
+                        />
+                    )}
+                    messageShown
+                    messageIconShown
+                />
+            </SortContext.Provider>
             <Pager
                 activePage={activePage}
                 className={styles.pager}
