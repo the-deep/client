@@ -123,7 +123,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         }) : undefined;
@@ -170,7 +172,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         }) : undefined;
@@ -217,7 +221,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };
@@ -262,7 +268,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };
@@ -307,7 +315,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };
@@ -352,7 +362,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };
@@ -394,7 +406,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };
@@ -435,7 +449,9 @@ function NotificationItem(props: Props) {
                 leadId: data?.lead,
             })),
             state: {
-                entryId: data?.entry,
+                // NOTE: Replace this later to clientId
+                entryServerId: data?.entry,
+                activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };

@@ -68,8 +68,11 @@ function AssignmentItem(props: AssignmentItemProps) {
                     leadId: contentObjectDetails.lead,
                 })),
                 state: {
-                    entryId: contentObjectDetails.entry,
+                    // NOTE: Replace this later to clientId
+                    entryServerId: contentObjectDetails.entry,
+                    activePage: 'primary',
                 },
+                hash: '#/primary-tagging',
             };
             return (
                 <Link
