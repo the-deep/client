@@ -131,11 +131,15 @@ function EntryEdit(props: Props) {
     const location = useLocation();
     const locationState = location?.state as {
         entryId?: string;
+        entryServerId?: string;
         sectionId?: string;
+        activePage?: 'primary' | 'secondary' | 'review' | undefined;
     } | undefined;
 
     const entryIdFromLocation = locationState?.entryId;
+    const entryServerIdFromLocation = locationState?.entryServerId;
     const sectionIdFromLocation = locationState?.sectionId;
+    const activePageFromLocation = locationState?.activePage;
 
     const commentCountContext: CommentCountContextInterface = useMemo(() => ({
         commentsCountMap,
@@ -1018,7 +1022,15 @@ function EntryEdit(props: Props) {
             window.location.replace('#/primary-tagging');
         } else {
             secondaryPageLeftPaneRef?.current?.setActiveTab('entries');
-            secondaryPageListComponentRef?.current?.scrollTo(entryId);
+            setTimeout(
+                () => {
+                    // NOTE: we use setTimeout with zero time so that 'entries'
+                    // tab is already mounted before we try to scroll to
+                    // selected entry
+                    secondaryPageListComponentRef?.current?.scrollTo(entryId);
+                },
+                0,
+            );
 
             window.location.replace('#/secondary-tagging');
         }
@@ -1083,12 +1095,16 @@ function EntryEdit(props: Props) {
                         (d) => d,
                     );
                     setEntryImagesMap(imagesMap);
+                    const finalEntryIdFromLocation = entryIdFromLocation
+                        ?? entries?.find(
+                            (e) => e.id === String(entryServerIdFromLocation),
+                        )?.clientId;
 
-                    if (entryIdFromLocation) {
+                    if (finalEntryIdFromLocation) {
                         createRestorePoint();
-                        setSelectedEntry(entryIdFromLocation);
+                        setSelectedEntry(finalEntryIdFromLocation);
 
-                        if (sectionIdFromLocation) {
+                        if (activePageFromLocation === 'primary') {
                             primaryPageLeftPaneRef?.current?.setActiveTab('entries');
                             setTimeout(
                                 () => {
@@ -1096,12 +1112,12 @@ function EntryEdit(props: Props) {
                                     // tab is already mounted before we try to scroll to
                                     // selected entry
                                     primaryPageListComponentRef?.current?.scrollTo(
-                                        entryIdFromLocation,
+                                        finalEntryIdFromLocation,
                                     );
                                 },
                                 0,
                             );
-                        } else {
+                        } else if (activePageFromLocation === 'secondary') {
                             secondaryPageLeftPaneRef?.current?.setActiveTab('entries');
                             setTimeout(
                                 () => {
@@ -1109,7 +1125,7 @@ function EntryEdit(props: Props) {
                                     // tab is already mounted before we try to scroll to
                                     // selected entry
                                     secondaryPageListComponentRef?.current?.scrollTo(
-                                        entryIdFromLocation,
+                                        finalEntryIdFromLocation,
                                     );
                                 },
                                 0,

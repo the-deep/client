@@ -301,6 +301,7 @@ function EditableEntry(props: Props) {
         history.push(`${link}${sectionId ? '#/primary-tagging' : '#/secondary-tagging'}`, {
             entryId: entryIdToAdd,
             sectionId,
+            activePage: sectionId ? 'primary' : 'secondary',
         });
     }, [projectId, leadId, history]);
 
