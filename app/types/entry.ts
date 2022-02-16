@@ -147,9 +147,9 @@ export interface EntryComment {
     id: string;
     text?: string | null | undefined;
     mentionedUsers: {
-        organization?: string | undefined;
+        organization?: string | null | undefined;
         displayName?: string | null | undefined;
-        displayPictureUrl: string;
+        displayPictureUrl?: string | null | undefined;
         id: string;
     }[];
     commentTypeDisplay: string;
@@ -157,7 +157,7 @@ export interface EntryComment {
     createdBy: {
         displayName?: string | null | undefined;
         id: string;
-        organization?: string | undefined;
+        organization?: string | null | undefined;
     };
     createdAt: string;
     entry: string;

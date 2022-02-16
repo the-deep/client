@@ -106,7 +106,12 @@ function EntryComments(props: Props) {
                 pageSize: maxItemsPerPage,
             } : undefined
         ),
-        [projectId, entryId]);
+        [
+            projectId,
+            entryId,
+            activePage,
+        ],
+    );
 
     const {
         data: commentsResponse,
@@ -119,7 +124,6 @@ function EntryComments(props: Props) {
             variables: commentVariables,
         },
     );
-    console.log('GQL data for comments::>>', commentsResponse);
 
     const handleEntryCommentSave = useCallback(() => {
         getComments();
