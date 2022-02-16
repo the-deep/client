@@ -4,6 +4,7 @@ import {
     DatabaseEntityBase,
 } from './common';
 import { Lead } from './lead';
+import { EntryReviewCommentTypeEnum } from '#generated/types';
 
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
@@ -143,32 +144,23 @@ export interface EntryOptions {
 }
 
 export interface EntryComment {
-    id: number;
-    textHistory: {
-        createdAt: string;
-        text: string;
-    }[];
-    lead: number;
-    createdByDetails: {
-        id: number;
-        email: string;
-        name: string;
-        organization?: string;
-        displayPictureUrl?: string;
-    };
-    mentionedUsersDetails: {
-        id: number;
-        email: string;
-        name: string;
-        organization?: string;
-        displayPictureUrl?: string;
+    id: string;
+    text?: string | null | undefined;
+    mentionedUsers: {
+        organization?: string | undefined;
+        displayName?: string | null | undefined;
+        displayPictureUrl: string;
+        id: string;
     }[];
     commentTypeDisplay: string;
-    commentType: number;
-    createdBy: number;
+    commentType: EntryReviewCommentTypeEnum;
+    createdBy: {
+        displayName?: string | null | undefined;
+        id: string;
+        organization?: string | undefined;
+    };
     createdAt: string;
-    entry: number;
-    mentionedUsers: number[];
+    entry: string;
 }
 
 export interface EntryReviewSummary {
