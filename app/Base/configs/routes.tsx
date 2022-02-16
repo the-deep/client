@@ -427,6 +427,35 @@ const groupAssessmentEditRoute = wrap({
     },
 });
 
+const entryEditRedirect = wrap({
+    path: '/permalink/projects/:projectId/leads/:leadId/entries/:entryId/',
+    title: 'Edit Entry',
+    navbarVisibility: false,
+    component: lazy(() => import('../../redirects/EntryEdit')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (
+            !project
+            || project.allowedPermissions.length <= 0
+            || isNotDefined(project.analysisFramework?.id)
+        ) {
+            return false;
+        }
+        // NOTE: should also check if users can edit lead
+        // either in route or inside page
+        return (
+            project.allowedPermissions.includes('CREATE_ENTRY')
+            || project.allowedPermissions.includes('UPDATE_ENTRY')
+            || project.allowedPermissions.includes('DELETE_ENTRY')
+        );
+    },
+});
+
 const routes = {
     login,
     register,
@@ -456,5 +485,6 @@ const routes = {
     entryEdit: entryEditRoute,
     assessmentEdit: assessmentEditRoute,
     groupAssessmentEdit: groupAssessmentEditRoute,
+    entryEditRedirect,
 };
 export default routes;
