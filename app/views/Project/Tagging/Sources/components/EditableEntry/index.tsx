@@ -364,7 +364,7 @@ function EditableEntry(props: Props) {
         <EntryCommentWrapper
             // FIXME: Remove cast after entry comments
             // is switched to gql
-            entryId={+entryId}
+            entryId={entryId}
             projectId={projectId}
         />
     );

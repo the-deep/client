@@ -55,14 +55,14 @@ function EditCommentForm(props: Props) {
     } = props;
 
     const [initialFormValue] = useState<FormType>({
-        text: comment.textHistory[0]?.text ?? '',
+        text: comment.text ?? '',
         mentionedUsers: comment.mentionedUsers.map(String),
     });
     const alert = useAlert();
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
-        () => comment.mentionedUsersDetails.map((u) => ({
+        () => comment.mentionedUsers.map((u) => ({
             id: String(u.id),
-            displayName: u.name,
+            displayName: u.displayName,
         })),
     );
 

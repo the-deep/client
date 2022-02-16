@@ -6,10 +6,10 @@ export enum EntryAction {
     UNCONTROL = 4,
 }
 
-export const commentTypeToTextMap: { [id: number]: string } = {
-    0: 'commented',
-    1: 'verified',
-    2: 'unverified',
-    3: 'controlled',
-    4: 'uncontrolled',
+export const commentTypeToTextMap: { [id: string]: string } = {
+    COMMENT: 'commented',
+    VERIFY: 'verified',
+    UNVERIFY: 'unverified',
+    CONTROL: 'controlled',
+    UNCONTROL: 'uncontrolled',
 };

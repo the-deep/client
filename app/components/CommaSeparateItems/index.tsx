@@ -6,8 +6,8 @@ import { joinList } from '#utils/common';
 import styles from './styles.css';
 
 interface Item {
-    id: number;
-    name: string;
+    id: string;
+    displayName?: string | null | undefined;
 }
 
 interface Props {
@@ -20,7 +20,7 @@ function CommaSeparateItems(props: Props) {
     const { items, className } = props;
 
     const title = useMemo(() => (
-        items?.map((i) => i.name)?.join(', ') ?? undefined
+        items?.map((i) => i.displayName)?.join(', ') ?? undefined
     ), [items]);
 
     if (!items || items.length < 1) {
@@ -32,7 +32,7 @@ function CommaSeparateItems(props: Props) {
             key={item.id}
             className={styles.item}
         >
-            {item.name}
+            {item.displayName}
         </span>
     ));
 
@@ -41,7 +41,7 @@ function CommaSeparateItems(props: Props) {
             className={_cs(className, styles.items)}
             title={title}
         >
-            { joinList(list) }
+            {joinList(list)}
         </span>
     );
 }
