@@ -1295,11 +1295,117 @@ export function getHiddenWidgetIds(
     );
 }
 
-// TODO: List all tags from NLP framework
-type NlpTag = 'CONTEXT' | 'ENVIRONMENTAL';
+export interface AssistedTag {
+    id: string;
+    label: string; // Example: 'Context'
+    labelGroup: string; // Example: 'Context Group 1'
+}
+
+export const mockAssistedTags = [
+    {
+        id: '1',
+        label: 'Agriculture',
+        labelGroup: 'Sectors',
+    },
+    {
+        id: '2',
+        label: 'Cross',
+        labelGroup: 'Sectors',
+    },
+    {
+        id: '3',
+        label: 'Education',
+        labelGroup: 'Sectors',
+    },
+    {
+        id: '4',
+        label: 'Food Security',
+        labelGroup: 'Sectors',
+    },
+    {
+        id: '5',
+        label: 'Health',
+        labelGroup: 'Sectors',
+    },
+    {
+        id: '6',
+        label: 'Critical',
+        labelGroup: 'Severity',
+    },
+    {
+        id: '7',
+        label: 'Major',
+        labelGroup: 'Severity',
+    },
+    {
+        id: '8',
+        label: 'Minor Problem',
+        labelGroup: 'Severity',
+    },
+    {
+        id: '9',
+        label: 'No Problem',
+        labelGroup: 'Severity',
+    },
+    {
+        id: '10',
+        label: 'Of Concern',
+        labelGroup: 'Severity',
+    },
+    {
+        id: '11',
+        label: 'Environment',
+        labelGroup: 'Context',
+    },
+    {
+        id: '12',
+        label: 'Socio Cultural',
+        labelGroup: 'Context',
+    },
+    {
+        id: '13',
+        label: 'Economy',
+        labelGroup: 'Context',
+    },
+    {
+        id: '14',
+        label: 'Demography',
+        labelGroup: 'Context',
+    },
+    {
+        id: '15',
+        label: 'Legal and Policy',
+        labelGroup: 'Context',
+    },
+    {
+        id: '16',
+        label: 'Security and Stability',
+        labelGroup: 'Context',
+    },
+    {
+        id: '17',
+        label: 'Politics',
+        labelGroup: 'Context',
+    },
+    {
+        id: '18',
+        label: 'Type and Characteristics',
+        labelGroup: 'Shock and Event',
+    },
+    {
+        id: '19',
+        label: 'Underlying Aggravating Factors',
+        labelGroup: 'Shock and Event',
+    },
+    {
+        id: '20',
+        label: 'Hazard Threats',
+        labelGroup: 'Shock and Event',
+    },
+];
 
 interface MappingItemBase {
-    tag: NlpTag;
+    tagId: string; // NOTE: AssistedTag['id'];
     widgetId: string;
 }
 
