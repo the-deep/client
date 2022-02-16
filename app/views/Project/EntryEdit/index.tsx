@@ -1263,7 +1263,7 @@ function EntryEdit(props: Props) {
                 <EntryCommentWrapper
                     // FIXME: Remove cast after entry comments
                     // is switched to gql
-                    entryId={+datum.id}
+                    entryId={datum.id}
                     projectId={projectId}
                 />
             ),

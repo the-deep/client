@@ -160,7 +160,7 @@ function EntryItem(props: EntryItemProps) {
                 <EntryCommentWrapper
                     // FIXME: Remove cast after entry comments
                     // is switched to gql
-                    entryId={+entryServerId}
+                    entryId={entryServerId}
                     projectId={projectId}
                 />
             )}

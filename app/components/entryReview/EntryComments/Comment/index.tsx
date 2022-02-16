@@ -39,18 +39,16 @@ function Comment(props: Props) {
     ] = useModalState(false);
 
     const {
-        textHistory,
-        createdByDetails,
+        text,
+        createdBy,
         commentType,
-        mentionedUsersDetails,
+        mentionedUsers,
         createdAt,
     } = comment;
 
-    const [latest] = textHistory;
-
     const isEditable = useMemo(() => (
-        user?.id === createdByDetails?.id.toString() && latest
-    ), [user, createdByDetails, latest]);
+        user?.id === createdBy?.id && text
+    ), [user, createdBy, text]);
 
     const handleSuccess = useCallback((value: EntryComment) => {
         setComment(value);
@@ -62,12 +60,12 @@ function Comment(props: Props) {
             className={_cs(styles.commentContainer, className)}
             headingSize="extraSmall"
             headerActionsContainerClassName={styles.headerActions}
-            headerActions={mentionedUsersDetails.length > 0 && (
+            headerActions={mentionedUsers.length > 0 && (
                 <>
                     Assigned to
                     <CommaSeparateItems
                         className={styles.assignees}
-                        items={mentionedUsersDetails}
+                        items={mentionedUsers}
                     />
                 </>
             )}
@@ -81,10 +79,10 @@ function Comment(props: Props) {
                 >
                     <div className={styles.userAction}>
                         <span className={styles.userName}>
-                            {createdByDetails?.name}
+                            {createdBy?.displayName}
                         </span>
                         &nbsp;
-                        {commentType !== 0 && (
+                        {commentType && (
                             <span className={styles.details}>
                                 {`${commentTypeToTextMap[commentType]} the entry.`}
                             </span>
@@ -98,13 +96,13 @@ function Comment(props: Props) {
                             onEditSuccess={handleSuccess}
                             onEditCancel={hideEditModal}
                         />
-                    ) : (latest?.text && (
+                    ) : (
                         <Card
                             className={styles.comment}
                         >
-                            {latest.text}
+                            {text}
                         </Card>
-                    ))}
+                    )}
                 </div>
                 <div className={styles.info}>
                     <DateOutput
