@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import {
-    isNotDefined,
     _cs,
 } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
@@ -10,24 +9,19 @@ import {
     ListView,
     Kraken,
     Modal,
-    useSortState,
 } from '@the-deep/deep-ui';
 import {
     IoChatboxOutline,
 } from 'react-icons/io5';
 
 import {
-    MultiResponse,
     EntryComment,
-    EntryReviewSummary,
 } from '#types';
 import {
     ReviewCommentsQuery,
     ReviewCommentsQueryVariables,
-    EntryReviewCommentOrderingEnum,
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
-import { useRequest } from '#base/utils/restRequest';
 
 import Comment from './Comment';
 import CommentForm from './CommentForm';
@@ -42,6 +36,7 @@ const REVIEW_COMMENTS = gql`
         $entry: ID,
         ) {
         project(id: $projectId) {
+            id
             reviewComments (
                 entry: $entry,
                 page: $page,
@@ -66,6 +61,8 @@ const REVIEW_COMMENTS = gql`
                     mentionedUsers {
                         displayName
                         id
+                        organization
+                        displayPictureUrl
                     }
                 }
             }
@@ -81,16 +78,8 @@ export interface Props {
     onEntryCommentAdd?: () => void;
 }
 
-interface MultiResponseWithSummary<T> extends MultiResponse<T> {
-    summary: EntryReviewSummary;
-}
-
 const commentKeySelector = (d: EntryComment) => d.id;
 const maxItemsPerPage = 50;
-const defaultSorting = {
-    name: 'CREATED_AT',
-    direction: 'Descending',
-};
 
 function EntryComments(props: Props) {
     const {
@@ -108,29 +97,6 @@ function EntryComments(props: Props) {
         hideCommentModal,
     ] = useModalState(false);
 
-    const sortState = useSortState();
-    const { sorting } = sortState;
-    const validSorting = sorting || defaultSorting;
-    const ordering = validSorting.direction === 'Ascending'
-        ? `ASC_${validSorting.name}`
-        : `DESC_${validSorting.name}`;
-
-    const {
-        pending: commentsPending,
-        response: commentsResponse,
-        // retrigger: getComments,
-    } = useRequest<MultiResponseWithSummary<EntryComment>>({
-        skip: !isCommentModalShown,
-        url: `server://v2/entries/${entryId}/review-comments/`,
-        method: 'GET',
-        preserveResponse: true,
-        query: {
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-        },
-    });
-    console.log('REST DATA comments:>>', commentsResponse);
-
     const commentVariables = useMemo(
         (): ReviewCommentsQueryVariables | undefined => (
             (projectId) ? {
@@ -138,15 +104,13 @@ function EntryComments(props: Props) {
                 entry: entryId,
                 page: activePage,
                 pageSize: maxItemsPerPage,
-                ordering: [ordering as EntryReviewCommentOrderingEnum],
             } : undefined
         ),
         [projectId, entryId]);
 
     const {
-        previousData,
-        data: reviewComments = previousData,
-        loading: reviewCommentsPending,
+        data: commentsResponse,
+        loading: commentsPending,
         refetch: getComments,
     } = useQuery<ReviewCommentsQuery, ReviewCommentsQueryVariables>(
         REVIEW_COMMENTS,
@@ -155,7 +119,7 @@ function EntryComments(props: Props) {
             variables: commentVariables,
         },
     );
-    console.log('GQL data for comments::>>', reviewComments);
+    console.log('GQL data for comments::>>', commentsResponse);
 
     const handleEntryCommentSave = useCallback(() => {
         getComments();
@@ -194,7 +158,7 @@ function EntryComments(props: Props) {
                     footerActions={(
                         <Pager
                             activePage={activePage}
-                            itemsCount={commentsResponse?.count ?? 0}
+                            itemsCount={commentsResponse?.project?.reviewComments?.totalCount ?? 0}
                             maxItemsPerPage={maxItemsPerPage}
                             onActivePageChange={setActivePage}
                             itemsPerPageControlHidden
@@ -205,7 +169,7 @@ function EntryComments(props: Props) {
                     )}
                 >
                     <ListView
-                        data={commentsResponse?.results}
+                        data={commentsResponse?.project?.reviewComments?.results}
                         className={styles.commentList}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
