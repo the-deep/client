@@ -1412,46 +1412,53 @@ interface MappingItemBase {
 export interface Matrix1dMappingItem extends MappingItemBase {
     widgetType: 'MATRIX1D';
     mapping: {
-        rowId: string;
-        subRowId: string;
+        rowKey: string;
+        subRowKey: string;
     }
 }
 
 export interface Matrix2dMappingItem extends MappingItemBase {
     widgetType: 'MATRIX2D';
     mapping: {
-        rowId: string;
-        subRowId: string;
+        rowKey: string;
+        subRowKey: string;
     } | {
-        columnId: string;
-        subColumnId?: string;
+        columnKey: string;
+        subColumnKey?: string;
     };
 }
 
 export interface ScaleMappingItem extends MappingItemBase {
     widgetType: 'SCALE';
     mapping: {
-        optionId: string;
+        optionKey: string;
     };
 }
 
 export interface SelectMappingItem extends MappingItemBase {
     widgetType: 'SELECT';
     mapping: {
-        optionId: string;
+        optionKey: string;
     };
 }
 
 export interface MultiSelectMappingItem extends MappingItemBase {
     widgetType: 'MULTISELECT';
     mapping: {
-        optionId: string;
+        optionKey: string;
     };
 }
 
 export interface OrganigramMappingItem extends MappingItemBase {
     widgetType: 'ORGANIGRAM';
     mapping: {
-        optionId: string;
+        optionKey: string;
     };
 }
+
+export type MappingItem = Matrix1dMappingItem
+    | Matrix2dMappingItem
+    | ScaleMappingItem
+    | SelectMappingItem
+    | MultiSelectMappingItem
+    | OrganigramMappingItem;
