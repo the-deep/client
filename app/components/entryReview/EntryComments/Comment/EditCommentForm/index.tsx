@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     TextArea,
@@ -6,6 +6,7 @@ import {
     ContainerCard,
     useAlert,
 } from '@the-deep/deep-ui';
+import { gql, useMutation } from '@apollo/client';
 import {
     useForm,
     ObjectSchema,
@@ -18,9 +19,41 @@ import {
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
-import { useLazyRequest } from '#base/utils/restRequest';
 import { EntryComment } from '#types';
+import {
+    EntryReviewCommentUpdateMutation,
+    EntryReviewCommentUpdateMutationVariables,
+} from '#generated/types';
 import styles from './styles.css';
+
+const EDIT_COMMENT = gql`
+mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInputType!, $id: ID!) {
+    project(id: $projectId) {
+        entryReviewCommentUpdate(data: $data, id: $id) {
+          ok
+          errors
+          result {
+            commentType
+            commentTypeDisplay
+            createdAt
+            createdBy {
+              displayName
+              id
+              organization
+            }
+            id
+            entry
+            text
+            mentionedUsers {
+              displayName
+              organization
+              id
+            }
+          }
+        }
+    }
+}
+`;
 
 interface Comment {
     text: string;
@@ -56,12 +89,12 @@ function EditCommentForm(props: Props) {
 
     const [initialFormValue] = useState<FormType>({
         text: comment.text ?? '',
-        mentionedUsers: comment.mentionedUsers.map(String),
+        mentionedUsers: comment.mentionedUsers.map((userId) => userId.id),
     });
     const alert = useAlert();
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
         () => comment.mentionedUsers.map((u) => ({
-            id: String(u.id),
+            id: u.id,
             displayName: u.displayName,
         })),
     );
@@ -77,38 +110,61 @@ function EditCommentForm(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending,
-        trigger: editComment,
-    } = useLazyRequest<EntryComment, FormType>({
-        url: `server://v2/entries/${comment.entry}/review-comments/${comment.id}/`,
-        method: 'PATCH',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            onEditSuccess(response);
-            alert.show(
-                'Successfully edited comment.',
-                { variant: 'success' },
-            );
-        },
-        onFailure: ({ value: errorValue }) => {
-            const {
-                $internal,
-                ...otherErrors
-            } = errorValue.faramErrors;
+    const [
+        updateComment,
+        { loading: editCommentLoading },
+    ] = useMutation<EntryReviewCommentUpdateMutation, EntryReviewCommentUpdateMutationVariables>(
+        EDIT_COMMENT,
+        {
+            onCompleted: (response) => {
+                const successResponse = response?.project?.entryReviewCommentUpdate;
+                if (successResponse?.ok) {
+                    if (successResponse?.result) {
+                        const sucessData = successResponse?.result;
+                        onEditSuccess(sucessData);
+                        alert.show(
+                            'Successfully edited the comment!',
+                            { variant: 'success' },
+                        );
+                    }
+                } else {
+                    alert.show(
+                        'Failed to edit comment!',
+                        { variant: 'error' },
+                    );
+                }
+            },
 
-            setError({
-                ...otherErrors,
-                [internal]: $internal,
-            });
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+                alert.show(
+                    'Failed to edit comment!',
+                    { variant: 'error' },
+                );
+            },
         },
-        failureMessage: 'Failed to edit comment.',
-    });
+    );
+
+    const handleEditComment = useCallback((finalVal) => {
+        updateComment({
+            variables: {
+                projectId,
+                id: comment.id,
+                data: {
+                    entry: comment.entry,
+                    text: finalVal.text,
+                    mentionedUsers: finalVal.mentionedUsers,
+                },
+            },
+        });
+    }, [comment.id, comment.entry, projectId, updateComment]);
 
     return (
         <form
             className={_cs(styles.editCommentForm, className)}
-            onSubmit={createSubmitHandler(validate, setError, editComment)}
+            onSubmit={createSubmitHandler(validate, setError, handleEditComment)}
         >
             <ContainerCard
                 className={styles.container}
@@ -124,7 +180,7 @@ function EditCommentForm(props: Props) {
                         <Button
                             name={undefined}
                             type="submit"
-                            disabled={pristine || pending}
+                            disabled={pristine || editCommentLoading}
                         >
                             Save
                         </Button>
