@@ -1,0 +1,4 @@
+.widget-tag-list {
+    display: flex;
+    flex-direction: column;
+}
