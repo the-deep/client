@@ -1,0 +1,9 @@
+.cell-group {
+    background-color: transparent;
+
+    .cell-group-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-medium);
+    }
+}
