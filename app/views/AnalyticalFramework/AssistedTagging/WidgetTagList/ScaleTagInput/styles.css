@@ -1,0 +1,5 @@
+.scale-tag-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-small);
+}
