@@ -6,7 +6,9 @@ import {
     Widget,
     MappingItem,
 } from '#types/newAnalyticalFramework';
+
 import Matrix1dTagInput from './Matrix1dTagList';
+import ScaleTagInput from './ScaleTagInput';
 
 import styles from './styles.css';
 
@@ -35,6 +37,27 @@ function WidgetTagList(props: Props) {
                 headingSize="extraSmall"
             >
                 <Matrix1dTagInput
+                    widget={widget}
+                    mapping={mapping}
+                    onMappingChange={onMappingChange}
+                    selectedTag={selectedTag}
+                />
+            </Container>
+        );
+    }
+
+    if (
+        widget.widgetId === 'SCALE'
+        || widget.widgetId === 'SELECT'
+        || widget.widgetId === 'MULTISELECT'
+    ) {
+        return (
+            <Container
+                className={_cs(styles.widgetTagList, className)}
+                heading={widget.title}
+                headingSize="extraSmall"
+            >
+                <ScaleTagInput
                     widget={widget}
                     mapping={mapping}
                     onMappingChange={onMappingChange}
