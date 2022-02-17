@@ -11,7 +11,11 @@ import {
 
 import { FrameworkInput } from './types';
 
-type FormType = FrameworkInput & { isVisualizationEnabled?: boolean, modifiedAt?: string };
+type FormType = FrameworkInput & {
+    isVisualizationEnabled?: boolean;
+    isAssistedTaggingEnabled?: boolean;
+    modifiedAt?: string;
+};
 // NOTE: they will be handled internally
 // FIXME: should previewImage be added here?
 export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage'>;
@@ -79,6 +83,7 @@ export const defaultFormValues: PartialFormType = {
     title: '',
     isPrivate: false,
     isVisualizationEnabled: false,
+    isAssistedTaggingEnabled: true,
     modifiedAt: undefined,
 };
 
@@ -91,6 +96,7 @@ const schema: FormSchema = {
             isPrivate: [],
             organization: [],
             isVisualizationEnabled: [],
+            isAssistedTaggingEnabled: [],
             modifiedAt: [],
             properties: [forceNullType],
 

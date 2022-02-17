@@ -1,0 +1,37 @@
+.assisted-tagging {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: var(--dui-color-background);
+    overflow-y: auto;
+    gap: var(--dui-spacing-medium);
+
+    .header {
+        flex-shrink: 0;
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+        gap: var(--dui-spacing-large);
+    }
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        margin: var(--dui-spacing-large) var(--dui-spacing-super-large);
+        padding: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-medium);
+
+        .nlp-framework {
+            display: flex;
+            flex-basis: calc(50% - var(--dui-spacing-medium) / 2);
+            flex-shrink: 0;
+            background-color: var(--dui-color-foreground);
+        }
+
+        .current-framework {
+            display: flex;
+            flex-basis: calc(50% - var(--dui-spacing-medium) / 2);
+            flex-shrink: 0;
+            background-color: var(--dui-color-background-information);
+        }
+    }
+}
