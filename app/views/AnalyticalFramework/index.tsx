@@ -81,6 +81,7 @@ import PrimaryTagging from './PrimaryTagging';
 import Properties from './Properties';
 import SecondaryTagging from './SecondaryTagging';
 import Review from './Review';
+import AssistedTagging from './AssistedTagging';
 import styles from './styles.css';
 
 function getTimestamp(dateString: string | undefined) {
@@ -505,6 +506,13 @@ function AnalyticalFramework(props: Props) {
         [setFieldValue],
     );
 
+    const handleAssistedTaggingStatusChange = useCallback(
+        (val: boolean) => {
+            setFieldValue(val, 'isAssistedTaggingEnabled');
+        },
+        [setFieldValue],
+    );
+
     const handlePropertiesChange = useCallback(
         (val: SetValueArg<PropertiesType | undefined>, name: 'properties') => {
             // NOTE: inject custom logic here
@@ -522,6 +530,7 @@ function AnalyticalFramework(props: Props) {
                     const newData = {
                         ...val,
                         isVisualizationEnabled: undefined,
+                        isAssistedTaggingEnabled: undefined,
                         modifiedAt: undefined,
                         primaryTagging: primaryTaggingPristine
                             ? undefined
@@ -735,6 +744,13 @@ function AnalyticalFramework(props: Props) {
                                 >
                                     {_ts('analyticalFramework', 'review')}
                                 </Tab>
+                                <Tab
+                                    name="assisted-tagging"
+                                    transparentBorder
+                                    disabled={isNavigationDisabled}
+                                >
+                                    Assisted Tagging
+                                </Tab>
                                 {value.isVisualizationEnabled && (
                                     <Tab
                                         name="viz-settings"
@@ -876,6 +892,20 @@ function AnalyticalFramework(props: Props) {
                                     className={styles.view}
                                     primaryTagging={value.primaryTagging}
                                     secondaryTagging={value.secondaryTagging}
+                                />
+                            </TabPanel>
+                            <TabPanel
+                                activeClassName={styles.tabPanel}
+                                name="assisted-tagging"
+                                retainMount="lazy"
+                            >
+                                <AssistedTagging
+                                    className={styles.view}
+                                    allWidgets={allWidgets}
+                                    assistedTaggingEnabled={value.isAssistedTaggingEnabled}
+                                    onAssistedTaggingStatusChange={
+                                        handleAssistedTaggingStatusChange
+                                    }
                                 />
                             </TabPanel>
                             {value.isVisualizationEnabled && (
