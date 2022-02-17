@@ -43,15 +43,15 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultValue: FormType = {
-    commentType: EntryAction.COMMENT,
-};
-
 interface Props {
     className?: string;
     onSave: (response: EntryComment) => void;
     entryId: string;
     projectId: string;
+    commentAssignee: {
+        id: string;
+        displayName?: string | null | undefined;
+    } | null | undefined;
 }
 
 function CommentForm(props: Props) {
@@ -60,9 +60,17 @@ function CommentForm(props: Props) {
         onSave,
         entryId,
         projectId,
+        commentAssignee,
     } = props;
 
-    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const defaultValue: FormType = {
+        commentType: EntryAction.COMMENT,
+        mentionedUsers: commentAssignee ? [commentAssignee.id] : [],
+    };
+
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
+        () => (commentAssignee ? [commentAssignee] : []),
+    );
     const {
         user,
     } = useContext(UserContext);

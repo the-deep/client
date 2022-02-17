@@ -33,10 +33,17 @@ const REVIEW_COMMENTS = gql`
         $ordering: [EntryReviewCommentOrderingEnum!],
         $page: Int,
         $pageSize: Int,
-        $entry: ID,
+        $entry: ID!,
         ) {
         project(id: $projectId) {
             id
+            entry(id: $entry) {
+                id
+                createdBy {
+                    id
+                    displayName
+                }
+            }
             reviewComments (
                 entry: $entry,
                 page: $page,
@@ -137,6 +144,8 @@ function EntryComments(props: Props) {
         projectId,
     }), [projectId]);
 
+    const commentAssignee = commentsResponse?.project?.entry?.createdBy;
+
     return (
         <>
             <QuickActionButton
@@ -190,11 +199,14 @@ function EntryComments(props: Props) {
                         messageIconShown
                         messageShown
                     />
-                    <CommentForm
-                        entryId={entryId}
-                        projectId={projectId}
-                        onSave={handleEntryCommentSave}
-                    />
+                    {commentsResponse && (
+                        <CommentForm
+                            entryId={entryId}
+                            projectId={projectId}
+                            commentAssignee={commentAssignee}
+                            onSave={handleEntryCommentSave}
+                        />
+                    )}
                 </Modal>
             )}
         </>
