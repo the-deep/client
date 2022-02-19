@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
-    // compareNumber,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     ListView,
@@ -29,8 +29,6 @@ interface CellItem {
 
 const cellKeySelector = (cell: CellItem) => cell.subRowKey;
 const groupKeySelector = (n: CellItem) => n.rowKey;
-// const groupComparator = (a: CellItem, b: CellItem) => compareNumber(a.rowOrder, b.rowOrder);
-const groupRendererParams = (title: string) => ({ title });
 
 interface Props {
     className?: string;
@@ -50,7 +48,7 @@ function Matrix1dTagInput(props: Props) {
     } = props;
 
     const sortedCells = useMemo(() => (
-        sortByOrder(widget?.properties?.rows)?.reduce((acc: CellItem[], row) => {
+        sortByOrder(widget?.properties?.rows)?.map((row) => {
             const cells = row.cells.map((c) => ({
                 rowKey: row.key,
                 rowOrder: row.order,
@@ -59,11 +57,8 @@ function Matrix1dTagInput(props: Props) {
                 subRowOrder: c.order,
                 subRowLabel: c.label,
             }));
-            return [
-                ...acc,
-                ...cells,
-            ];
-        }, [])
+            return cells;
+        }).flat()
     ), [widget?.properties?.rows]);
 
     const handleCellClick = useCallback((cellKey: string) => {
@@ -71,7 +66,7 @@ function Matrix1dTagInput(props: Props) {
             return;
         }
 
-        const isCurrentlySelected = mapping?.some((m) => {
+        const selectedMappingIndex = mapping?.findIndex((m) => {
             if (
                 selectedTag === m.tagId
                 && m.widgetId === widget.clientId
@@ -80,21 +75,15 @@ function Matrix1dTagInput(props: Props) {
                 return m.mapping.subRowKey === cellKey;
             }
             return false;
-        }) ?? false;
+        });
 
-        if (isCurrentlySelected) {
-            onMappingChange((oldMapping) => (
-                oldMapping?.filter((om) => {
-                    if (
-                        selectedTag === om.tagId
-                        && om.widgetId === widget.clientId
-                        && om.widgetType === 'MATRIX1D'
-                    ) {
-                        return om.mapping.subRowKey !== cellKey;
-                    }
-                    return true;
-                })
-            ));
+        if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
+            onMappingChange((oldMapping = []) => {
+                const newMapping = [...oldMapping];
+                newMapping.splice(selectedMappingIndex, 1);
+
+                return newMapping;
+            });
         } else {
             const rowKey = sortedCells?.find((sc) => sc.subRowKey === cellKey)?.rowKey;
 
@@ -103,8 +92,8 @@ function Matrix1dTagInput(props: Props) {
                 return;
             }
 
-            onMappingChange((oldMapping) => ([
-                ...(oldMapping ?? []),
+            onMappingChange((oldMapping = []) => ([
+                ...(oldMapping),
                 {
                     tagId: selectedTag,
                     widgetId: widget.id,
@@ -146,6 +135,16 @@ function Matrix1dTagInput(props: Props) {
         mapping,
     ]);
 
+    const subRowGroupRendererParams = useCallback((groupKey: string) => {
+        const groupLabel = sortedCells
+            ?.find((c) => groupKey === c.rowKey)
+            ?.rowLabel;
+
+        return ({
+            title: groupLabel ?? groupKey,
+        });
+    }, [sortedCells]);
+
     return (
         <ListView
             className={_cs(className, styles.matrixTagInput)}
@@ -156,10 +155,9 @@ function Matrix1dTagInput(props: Props) {
             filtered={false}
             pending={false}
             errored={false}
-            groupRendererParams={groupRendererParams}
+            groupRendererParams={subRowGroupRendererParams}
             groupKeySelector={groupKeySelector}
             groupRenderer={CellGroup}
-            // groupComparator={groupComparator}
             grouped
         />
     );
