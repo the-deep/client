@@ -15,10 +15,16 @@
 
     .content {
         display: flex;
+        flex-direction: column;
         flex-grow: 1;
         margin: var(--dui-spacing-large) var(--dui-spacing-super-large);
         padding: var(--dui-spacing-medium);
         gap: var(--dui-spacing-medium);
+
+        .card {
+            display: flex;
+            gap: var(--dui-spacing-medium);
+        }
 
         .nlp-framework {
             display: flex;
@@ -33,5 +39,12 @@
             flex-shrink: 0;
             background-color: var(--dui-color-background-information);
         }
+    }
+
+    .number-widget-list,
+    .geo-widget-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-small);
     }
 }
