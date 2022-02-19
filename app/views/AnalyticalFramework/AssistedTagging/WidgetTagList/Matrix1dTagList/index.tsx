@@ -34,7 +34,7 @@ interface Props {
     className?: string;
     widget: Matrix1dWidget;
     mapping: MappingItem[] | undefined;
-    onMappingChange: React.Dispatch<React.SetStateAction<MappingItem[] | undefined>>;
+    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -69,7 +69,6 @@ function Matrix1dTagInput(props: Props) {
         const selectedMappingIndex = mapping?.findIndex((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX1D'
             ) {
                 return m.mapping.subRowKey === cellKey;
@@ -78,12 +77,10 @@ function Matrix1dTagInput(props: Props) {
         });
 
         if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
-            onMappingChange((oldMapping = []) => {
-                const newMapping = [...oldMapping];
-                newMapping.splice(selectedMappingIndex, 1);
+            const newMapping = [...(mapping ?? [])];
+            newMapping.splice(selectedMappingIndex, 1);
 
-                return newMapping;
-            });
+            onMappingChange(newMapping, widget.clientId);
         } else {
             const rowKey = sortedCells?.find((sc) => sc.subRowKey === cellKey)?.rowKey;
 
@@ -92,8 +89,8 @@ function Matrix1dTagInput(props: Props) {
                 return;
             }
 
-            onMappingChange((oldMapping = []) => ([
-                ...(oldMapping),
+            onMappingChange([
+                ...(mapping ?? []),
                 {
                     tagId: selectedTag,
                     widgetId: widget.id,
@@ -103,7 +100,7 @@ function Matrix1dTagInput(props: Props) {
                         rowKey,
                     },
                 },
-            ]));
+            ], widget.clientId);
         }
     }, [
         sortedCells,
@@ -119,17 +116,21 @@ function Matrix1dTagInput(props: Props) {
         value: mapping?.some((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX1D'
             ) {
                 return m.mapping.subRowKey === cell.subRowKey;
             }
             return false;
         }) ?? false,
+        mappedCount: mapping?.filter((m) => {
+            if (m.widgetType === 'MATRIX1D') {
+                return m.mapping.subRowKey === cell.subRowKey;
+            }
+            return false;
+        }).length ?? 0,
         onTagClick: handleCellClick,
         disabled: !selectedTag,
     }), [
-        widget,
         handleCellClick,
         selectedTag,
         mapping,
