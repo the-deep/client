@@ -11,7 +11,7 @@ import {
     ScaleWidget,
     SingleSelectWidget,
     MultiSelectWidget,
-    MappingItem,
+    CategoricalMappingItem,
     KeyLabelEntity,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
@@ -25,8 +25,8 @@ const cellKeySelector = (cell: KeyLabelEntity) => cell.key;
 interface Props {
     className?: string;
     widget: ScaleWidget | SingleSelectWidget | MultiSelectWidget;
-    mapping: MappingItem[] | undefined;
-    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
+    mapping: CategoricalMappingItem[] | undefined;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 
