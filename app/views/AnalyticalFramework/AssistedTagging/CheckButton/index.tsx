@@ -1,5 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { IoEllipse } from 'react-icons/io5';
 
 import {
     Button,
@@ -14,6 +15,7 @@ interface Props {
     disabled?: boolean;
     value: boolean;
     onTagClick: (key: string) => void;
+    mappedCount?: number;
 }
 
 function CheckButton(props: Props) {
@@ -23,6 +25,7 @@ function CheckButton(props: Props) {
         itemKey,
         disabled,
         value,
+        mappedCount = 0,
         onTagClick,
     } = props;
 
@@ -36,6 +39,7 @@ function CheckButton(props: Props) {
                 value ? styles.selected : styles.notSelected,
             )}
             onClick={onTagClick}
+            actions={mappedCount > 0 && <IoEllipse />}
         >
             {title}
         </Button>

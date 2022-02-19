@@ -17,7 +17,7 @@ interface Props {
     className?: string;
     widget: Widget;
     mapping: MappingItem[] | undefined;
-    onMappingChange: React.Dispatch<React.SetStateAction<MappingItem[] | undefined>>;
+    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 

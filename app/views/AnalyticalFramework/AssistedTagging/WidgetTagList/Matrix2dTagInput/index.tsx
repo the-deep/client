@@ -53,7 +53,7 @@ interface Props {
     className?: string;
     widget: Matrix2dWidget;
     mapping: MappingItem[] | undefined;
-    onMappingChange: React.Dispatch<React.SetStateAction<MappingItem[] | undefined>>;
+    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -108,7 +108,6 @@ function Matrix2dTagInput(props: Props) {
         const selectedMappingIndex = mapping?.findIndex((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX2D'
                 && m.mapping.type === 'COLUMN'
             ) {
@@ -118,15 +117,13 @@ function Matrix2dTagInput(props: Props) {
         });
 
         if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
-            onMappingChange((oldMapping = []) => {
-                const newMapping = [...oldMapping];
-                newMapping.splice(selectedMappingIndex, 1);
+            const newMapping = [...(mapping ?? [])];
+            newMapping.splice(selectedMappingIndex, 1);
 
-                return newMapping;
-            });
+            onMappingChange(newMapping, widget.clientId);
         } else {
-            onMappingChange((oldMapping = []) => ([
-                ...oldMapping,
+            onMappingChange([
+                ...(mapping ?? []),
                 {
                     tagId: selectedTag,
                     widgetId: widget.id,
@@ -136,7 +133,7 @@ function Matrix2dTagInput(props: Props) {
                         columnKey,
                     },
                 },
-            ]));
+            ], widget.clientId);
         }
     }, [
         onMappingChange,
@@ -145,24 +142,31 @@ function Matrix2dTagInput(props: Props) {
         selectedTag,
     ]);
 
-    const colRendererParams = useCallback((_: string, subRow: ColItem) => ({
-        title: subRow.label,
-        itemKey: subRow.columnKey,
+    const colRendererParams = useCallback((_: string, column: ColItem) => ({
+        title: column.label,
+        itemKey: column.columnKey,
         value: mapping?.some((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX2D'
                 && m.mapping.type === 'COLUMN'
             ) {
-                return m.mapping.columnKey === subRow.columnKey;
+                return m.mapping.columnKey === column.columnKey;
             }
             return false;
         }) ?? false,
+        mappedCount: mapping?.filter((m) => {
+            if (
+                m.widgetType === 'MATRIX2D'
+                && m.mapping.type === 'COLUMN'
+            ) {
+                return m.mapping.columnKey === column.columnKey;
+            }
+            return false;
+        }).length ?? 0,
         onTagClick: handleColumnClick,
         disabled: !selectedTag,
     }), [
-        widget,
         handleColumnClick,
         selectedTag,
         mapping,
@@ -176,7 +180,6 @@ function Matrix2dTagInput(props: Props) {
         const selectedMappingIndex = mapping?.findIndex((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX2D'
                 && m.mapping.type === 'SUB_ROW'
             ) {
@@ -186,12 +189,10 @@ function Matrix2dTagInput(props: Props) {
         });
 
         if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
-            onMappingChange((oldMapping = []) => {
-                const newMapping = [...oldMapping];
-                newMapping.splice(selectedMappingIndex, 1);
+            const newMapping = [...(mapping ?? [])];
+            newMapping.splice(selectedMappingIndex, 1);
 
-                return newMapping;
-            });
+            onMappingChange(newMapping, widget.clientId);
         } else {
             const rowKey = sortedSubRows?.find((sc) => sc.subRowKey === subRowKey)?.rowKey;
 
@@ -200,8 +201,8 @@ function Matrix2dTagInput(props: Props) {
                 return;
             }
 
-            onMappingChange((oldMapping = []) => ([
-                ...(oldMapping),
+            onMappingChange([
+                ...(mapping ?? []),
                 {
                     tagId: selectedTag,
                     widgetId: widget.id,
@@ -212,7 +213,7 @@ function Matrix2dTagInput(props: Props) {
                         rowKey,
                     },
                 },
-            ]));
+            ], widget.clientId);
         }
     }, [
         sortedSubRows,
@@ -228,7 +229,6 @@ function Matrix2dTagInput(props: Props) {
         value: mapping?.some((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX2D'
                 && m.mapping.type === 'SUB_ROW'
             ) {
@@ -236,10 +236,18 @@ function Matrix2dTagInput(props: Props) {
             }
             return false;
         }) ?? false,
+        mappedCount: mapping?.filter((m) => {
+            if (
+                m.widgetType === 'MATRIX2D'
+                && m.mapping.type === 'SUB_ROW'
+            ) {
+                return m.mapping.subRowKey === subRow.subRowKey;
+            }
+            return false;
+        }).length ?? 0,
         onTagClick: handleSubRowClick,
         disabled: !selectedTag,
     }), [
-        widget,
         handleSubRowClick,
         selectedTag,
         mapping,
@@ -253,7 +261,6 @@ function Matrix2dTagInput(props: Props) {
         const selectedMappingIndex = mapping?.findIndex((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX2D'
                 && m.mapping.type === 'SUB_COLUMN'
             ) {
@@ -263,12 +270,10 @@ function Matrix2dTagInput(props: Props) {
         });
 
         if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
-            onMappingChange((oldMapping = []) => {
-                const newMapping = [...oldMapping];
-                newMapping.splice(selectedMappingIndex, 1);
+            const newMapping = [...(mapping ?? [])];
+            newMapping.splice(selectedMappingIndex, 1);
 
-                return newMapping;
-            });
+            onMappingChange(newMapping, widget.clientId);
         } else {
             const columnKey = sortedSubColumns?.find(
                 (sc) => sc.subColumnKey === subColumnKey,
@@ -279,8 +284,8 @@ function Matrix2dTagInput(props: Props) {
                 return;
             }
 
-            onMappingChange((oldMapping = []) => ([
-                ...(oldMapping),
+            onMappingChange([
+                ...(mapping ?? []),
                 {
                     tagId: selectedTag,
                     widgetId: widget.id,
@@ -291,7 +296,7 @@ function Matrix2dTagInput(props: Props) {
                         columnKey,
                     },
                 },
-            ]));
+            ], widget.widgetId);
         }
     }, [
         sortedSubColumns,
@@ -307,7 +312,6 @@ function Matrix2dTagInput(props: Props) {
         value: mapping?.some((m) => {
             if (
                 selectedTag === m.tagId
-                && m.widgetId === widget.clientId
                 && m.widgetType === 'MATRIX2D'
                 && m.mapping.type === 'SUB_COLUMN'
             ) {
@@ -315,10 +319,18 @@ function Matrix2dTagInput(props: Props) {
             }
             return false;
         }) ?? false,
+        mappedCount: mapping?.filter((m) => {
+            if (
+                m.widgetType === 'MATRIX2D'
+                && m.mapping.type === 'SUB_COLUMN'
+            ) {
+                return m.mapping.subColumnKey === subColumn.subColumnKey;
+            }
+            return false;
+        }).length ?? 0,
         onTagClick: handleSubColumnClick,
         disabled: !selectedTag,
     }), [
-        widget,
         handleSubColumnClick,
         selectedTag,
         mapping,
