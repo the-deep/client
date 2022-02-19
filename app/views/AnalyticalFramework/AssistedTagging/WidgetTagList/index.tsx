@@ -8,6 +8,7 @@ import {
 } from '#types/newAnalyticalFramework';
 
 import Matrix1dTagInput from './Matrix1dTagList';
+import Matrix2dTagInput from './Matrix2dTagInput';
 import ScaleTagInput from './ScaleTagInput';
 
 import styles from './styles.css';
@@ -37,6 +38,23 @@ function WidgetTagList(props: Props) {
                 headingSize="extraSmall"
             >
                 <Matrix1dTagInput
+                    widget={widget}
+                    mapping={mapping}
+                    onMappingChange={onMappingChange}
+                    selectedTag={selectedTag}
+                />
+            </Container>
+        );
+    }
+
+    if (widget.widgetId === 'MATRIX2D') {
+        return (
+            <Container
+                className={_cs(styles.widgetTagList, className)}
+                heading={widget.title}
+                headingSize="extraSmall"
+            >
+                <Matrix2dTagInput
                     widget={widget}
                     mapping={mapping}
                     onMappingChange={onMappingChange}

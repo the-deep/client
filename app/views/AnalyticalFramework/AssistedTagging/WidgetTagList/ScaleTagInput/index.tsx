@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
-    // compareNumber,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     ListView,
@@ -48,7 +48,7 @@ function ScaleTagInput(props: Props) {
             return;
         }
 
-        const isCurrentlySelected = mapping?.some((m) => {
+        const selectedMappingIndex = mapping?.findIndex((m) => {
             if (
                 selectedTag === m.tagId
                 && m.widgetId === widget.clientId
@@ -57,28 +57,18 @@ function ScaleTagInput(props: Props) {
                 return m.mapping.optionKey === cellKey;
             }
             return false;
-        }) ?? false;
+        });
 
-        if (isCurrentlySelected) {
-            onMappingChange((oldMapping) => (
-                oldMapping?.filter((om) => {
-                    if (
-                        selectedTag === om.tagId
-                        && om.widgetId === widget.clientId
-                        && (
-                            om.widgetType === 'SCALE'
-                            || om.widgetType === 'SELECT'
-                            || om.widgetType === 'MULTISELECT'
-                        )
-                    ) {
-                        return om.mapping.optionKey !== cellKey;
-                    }
-                    return true;
-                })
-            ));
+        if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
+            onMappingChange((oldMapping = []) => {
+                const newMapping = [...oldMapping];
+                newMapping.splice(selectedMappingIndex, 1);
+
+                return newMapping;
+            });
         } else {
-            onMappingChange((oldMapping) => ([
-                ...(oldMapping ?? []),
+            onMappingChange((oldMapping = []) => ([
+                ...oldMapping,
                 {
                     tagId: selectedTag,
                     widgetId: widget.id,
