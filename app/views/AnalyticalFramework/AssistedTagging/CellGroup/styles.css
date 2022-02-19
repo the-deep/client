@@ -4,6 +4,6 @@
     .cell-group-content {
         display: flex;
         flex-wrap: wrap;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-small);
     }
 }
