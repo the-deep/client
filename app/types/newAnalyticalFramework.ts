@@ -1420,11 +1420,16 @@ export interface Matrix1dMappingItem extends MappingItemBase {
 export interface Matrix2dMappingItem extends MappingItemBase {
     widgetType: 'MATRIX2D';
     mapping: {
+        type: 'SUB_ROW';
         rowKey: string;
         subRowKey: string;
     } | {
+        type: 'COLUMN';
         columnKey: string;
-        subColumnKey?: string;
+    } | {
+        type: 'SUB_COLUMN';
+        columnKey: string;
+        subColumnKey: string;
     };
 }
 
