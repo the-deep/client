@@ -1,10 +1,14 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import {
     Button,
 } from '@the-deep/deep-ui';
 
+import styles from './styles.css';
+
 interface Props {
+    className?: string;
     title: string;
     itemKey: string;
     disabled?: boolean;
@@ -14,6 +18,7 @@ interface Props {
 
 function CheckButton(props: Props) {
     const {
+        className,
         title,
         itemKey,
         disabled,
@@ -25,7 +30,11 @@ function CheckButton(props: Props) {
         <Button
             name={itemKey}
             disabled={disabled}
-            variant={value ? 'primary' : 'secondary'}
+            className={_cs(
+                className,
+                styles.checkButton,
+                value ? styles.selected : styles.notSelected,
+            )}
             onClick={onTagClick}
         >
             {title}

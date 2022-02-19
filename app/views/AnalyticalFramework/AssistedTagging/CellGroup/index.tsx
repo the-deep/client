@@ -19,6 +19,7 @@ function CellGroup(props: Props) {
             className={styles.cellGroup}
             heading={title}
             headingSize="extraSmall"
+            spacing="compact"
             contentClassName={styles.cellGroupContent}
         >
             {children}
