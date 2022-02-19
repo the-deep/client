@@ -9,7 +9,7 @@ import {
 
 import {
     Matrix1dWidget,
-    MappingItem,
+    CategoricalMappingItem,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
@@ -33,8 +33,8 @@ const groupKeySelector = (n: CellItem) => n.rowKey;
 interface Props {
     className?: string;
     widget: Matrix1dWidget;
-    mapping: MappingItem[] | undefined;
-    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
+    mapping: CategoricalMappingItem[] | undefined;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 
