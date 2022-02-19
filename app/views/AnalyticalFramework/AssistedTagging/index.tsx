@@ -73,15 +73,36 @@ function AssistedTagging(props: Props) {
         title: tag.label,
         itemKey,
         value: selectedTag === itemKey,
+        mappedCount: mapping?.filter((m) => m.tagId === itemKey).length ?? 0,
         onTagClick: setSelectedTag,
-    }), [selectedTag]);
+    }), [
+        selectedTag,
+        mapping,
+    ]);
+
+    const handleWidgetMappingChange = useCallback((
+        newWidgetMapping: MappingItem[],
+        widgetId: string,
+    ) => {
+        setMapping((oldMapping = []) => {
+            const filteredMapping = oldMapping.filter((om) => om.widgetId !== widgetId);
+            return [
+                ...filteredMapping,
+                ...newWidgetMapping,
+            ];
+        });
+    }, []);
 
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-        mapping,
-        onMappingChange: setMapping,
+        mapping: mapping?.filter((m) => m.widgetId === widget.clientId),
+        onMappingChange: handleWidgetMappingChange,
         selectedTag,
-    }), [mapping, selectedTag]);
+    }), [
+        mapping,
+        selectedTag,
+        handleWidgetMappingChange,
+    ]);
 
     return (
         <div className={_cs(className, styles.assistedTagging)}>
