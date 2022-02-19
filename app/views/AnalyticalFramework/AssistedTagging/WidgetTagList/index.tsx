@@ -4,7 +4,7 @@ import { Container } from '@the-deep/deep-ui';
 
 import {
     Widget,
-    MappingItem,
+    CategoricalMappingItem,
 } from '#types/newAnalyticalFramework';
 
 import Matrix1dTagInput from './Matrix1dTagList';
@@ -16,8 +16,8 @@ import styles from './styles.css';
 interface Props {
     className?: string;
     widget: Widget;
-    mapping: MappingItem[] | undefined;
-    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
+    mapping: CategoricalMappingItem[] | undefined;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 
