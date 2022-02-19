@@ -9,7 +9,7 @@ import {
 
 import {
     Matrix2dWidget,
-    MappingItem,
+    CategoricalMappingItem,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
@@ -52,8 +52,8 @@ const subColumnGroupKeySelector = (n: SubColumnItem) => n.columnKey;
 interface Props {
     className?: string;
     widget: Matrix2dWidget;
-    mapping: MappingItem[] | undefined;
-    onMappingChange: (newMapping: MappingItem[], widgetId: string) => void;
+    mapping: CategoricalMappingItem[] | undefined;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
     selectedTag: string | undefined;
 }
 

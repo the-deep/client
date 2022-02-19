@@ -900,6 +900,7 @@ function AnalyticalFramework(props: Props) {
                                 retainMount="lazy"
                             >
                                 <AssistedTagging
+                                    frameworkId={framework?.id}
                                     className={styles.view}
                                     allWidgets={allWidgets}
                                     assistedTaggingEnabled={value.isAssistedTaggingEnabled}

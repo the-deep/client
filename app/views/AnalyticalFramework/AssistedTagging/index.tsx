@@ -9,7 +9,7 @@ import {
     Container,
     ContainerCard,
     Header,
-    Checkbox,
+    Switch,
 } from '@the-deep/deep-ui';
 
 import {
@@ -17,7 +17,9 @@ import {
     AssistedTag,
     Widget,
     MappingItem,
+    isCategoricalMapping,
 } from '#types/newAnalyticalFramework';
+import useLocalStorage from '#hooks/useLocalStorage';
 
 import { WidgetsType } from '../schema';
 import CheckButton from './CheckButton';
@@ -28,9 +30,9 @@ import styles from './styles.css';
 
 const nlpLabelGroupKeySelector = (n: AssistedTag) => n.labelGroup;
 const nlpLabelKeySelector = (n: AssistedTag) => n.id;
-const widgetKeySelector = (n: Widget) => n.id;
+const widgetKeySelector = (n: Widget) => n.clientId;
 
-const supportedWidgets = [
+const categoricalWidgets = [
     'MATRIX1D',
     'MATRIX2D',
     'SCALE',
@@ -44,10 +46,12 @@ interface Props {
     assistedTaggingEnabled: boolean | undefined;
     onAssistedTaggingStatusChange: (newVal: boolean) => void;
     pending?: boolean;
+    frameworkId?: string;
 }
 
 function AssistedTagging(props: Props) {
     const {
+        frameworkId,
         className,
         allWidgets,
         assistedTaggingEnabled,
@@ -56,13 +60,23 @@ function AssistedTagging(props: Props) {
     } = props;
 
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
-    const [mapping, setMapping] = useState<MappingItem[] | undefined>();
+    const [mapping, setMapping] = useLocalStorage<MappingItem[] | undefined>(`mapping-${frameworkId}`, undefined);
+
+    const categoricalMapping = mapping?.filter(isCategoricalMapping);
 
     const widgets = useMemo(() => (
         allWidgets
             ?.filter((w) => (
-                isDefined(w.id) && supportedWidgets.includes(w.widgetId)
+                isDefined(w.id) && categoricalWidgets.includes(w.widgetId)
             ))
+    ), [allWidgets]);
+
+    const geoWidgets = useMemo(() => (
+        allWidgets?.filter((w) => isDefined(w.id) && w.widgetId === 'GEO')
+    ), [allWidgets]);
+
+    const numberWidgets = useMemo(() => (
+        allWidgets?.filter((w) => isDefined(w.id) && w.widgetId === 'NUMBER')
     ), [allWidgets]);
 
     const nlpLabelGroupRendererParams = useCallback((title: string) => ({
@@ -73,11 +87,63 @@ function AssistedTagging(props: Props) {
         title: tag.label,
         itemKey,
         value: selectedTag === itemKey,
-        mappedCount: mapping?.filter((m) => m.tagId === itemKey).length ?? 0,
+        mappedCount: categoricalMapping?.filter((m) => m.tagId === itemKey).length ?? 0,
         onTagClick: setSelectedTag,
     }), [
         selectedTag,
+        categoricalMapping,
+    ]);
+
+    const handleGeoWidgetClick = useCallback((widgetId: string) => {
+        setMapping((oldMapping = []) => {
+            const selectedWidgetIndex = oldMapping.findIndex((om) => om.widgetId === widgetId);
+            if (selectedWidgetIndex !== -1) {
+                return oldMapping.filter((om) => om.widgetId !== widgetId);
+            }
+            return [
+                ...oldMapping,
+                {
+                    widgetType: 'GEO',
+                    widgetId,
+                },
+            ];
+        });
+    }, [setMapping]);
+
+    const geoWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
+        title: widget.title,
+        itemKey,
+        value: !!mapping?.find((m) => m.widgetId === widget.clientId && m.widgetType === 'GEO'),
+        onTagClick: handleGeoWidgetClick,
+    }), [
         mapping,
+        handleGeoWidgetClick,
+    ]);
+
+    const handleNumberWidgetClick = useCallback((widgetId: string) => {
+        setMapping((oldMapping = []) => {
+            const selectedWidgetIndex = oldMapping.findIndex((om) => om.widgetId === widgetId);
+            if (selectedWidgetIndex !== -1) {
+                return oldMapping.filter((om) => om.widgetId !== widgetId);
+            }
+            return [
+                ...oldMapping,
+                {
+                    widgetType: 'NUMBER',
+                    widgetId,
+                },
+            ];
+        });
+    }, [setMapping]);
+
+    const numberWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
+        title: widget.title,
+        itemKey,
+        value: !!mapping?.find((m) => m.widgetId === widget.clientId && m.widgetType === 'NUMBER'),
+        onTagClick: handleNumberWidgetClick,
+    }), [
+        mapping,
+        handleNumberWidgetClick,
     ]);
 
     const handleWidgetMappingChange = useCallback((
@@ -91,15 +157,15 @@ function AssistedTagging(props: Props) {
                 ...newWidgetMapping,
             ];
         });
-    }, []);
+    }, [setMapping]);
 
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-        mapping: mapping?.filter((m) => m.widgetId === widget.clientId),
+        mapping: categoricalMapping?.filter((m) => m.widgetId === widget.clientId),
         onMappingChange: handleWidgetMappingChange,
         selectedTag,
     }), [
-        mapping,
+        categoricalMapping,
         selectedTag,
         handleWidgetMappingChange,
     ]);
@@ -112,7 +178,7 @@ function AssistedTagging(props: Props) {
                 headingSize="small"
                 description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
                 actions={(
-                    <Checkbox
+                    <Switch
                         name="isAssistedTaggingEnabled"
                         value={assistedTaggingEnabled}
                         onChange={onAssistedTaggingStatusChange}
@@ -121,40 +187,82 @@ function AssistedTagging(props: Props) {
                     />
                 )}
             />
-            <Card className={styles.content}>
-                <Container
-                    className={styles.nlpFramework}
-                    heading="NLP Framework"
-                >
-                    <ListView
-                        data={mockAssistedTags}
-                        renderer={CheckButton}
-                        rendererParams={nlpRendererParams}
-                        keySelector={nlpLabelKeySelector}
-                        filtered={false}
-                        pending={false}
-                        errored={false}
-                        groupRendererParams={nlpLabelGroupRendererParams}
-                        groupKeySelector={nlpLabelGroupKeySelector}
-                        groupRenderer={CellGroup}
-                        grouped
-                    />
-                </Container>
-                <ContainerCard
-                    className={styles.currentFramework}
-                    heading="Selected Framework"
-                >
-                    <ListView
-                        data={widgets}
-                        renderer={WidgetTagList}
-                        rendererParams={widgetRendererParams}
-                        keySelector={widgetKeySelector}
-                        filtered={false}
-                        pending={false}
-                        errored={false}
-                    />
-                </ContainerCard>
-            </Card>
+            <div className={styles.content}>
+                <Card className={styles.card}>
+                    <Container
+                        className={styles.nlpFramework}
+                        headingSize="small"
+                        heading="NLP Framework"
+                    >
+                        <ListView
+                            data={mockAssistedTags}
+                            renderer={CheckButton}
+                            rendererParams={nlpRendererParams}
+                            keySelector={nlpLabelKeySelector}
+                            filtered={false}
+                            pending={false}
+                            errored={false}
+                            groupRendererParams={nlpLabelGroupRendererParams}
+                            groupKeySelector={nlpLabelGroupKeySelector}
+                            groupRenderer={CellGroup}
+                            grouped
+                        />
+                    </Container>
+                    <ContainerCard
+                        className={styles.currentFramework}
+                        heading="Selected Framework"
+                        headingSize="small"
+                    >
+                        <ListView
+                            data={widgets}
+                            renderer={WidgetTagList}
+                            rendererParams={widgetRendererParams}
+                            keySelector={widgetKeySelector}
+                            filtered={false}
+                            pending={false}
+                            errored={false}
+                        />
+                    </ContainerCard>
+                </Card>
+                <Card className={styles.card}>
+                    {(geoWidgets?.length ?? 0) > 0 && (
+                        <ContainerCard
+                            heading="Geo Widgets"
+                            spacing="compact"
+                            headingSize="small"
+                        >
+                            <ListView
+                                className={styles.geoWidgetList}
+                                data={geoWidgets}
+                                renderer={CheckButton}
+                                rendererParams={geoWidgetsRendererParas}
+                                keySelector={widgetKeySelector}
+                                filtered={false}
+                                pending={false}
+                                errored={false}
+                            />
+                        </ContainerCard>
+                    )}
+                    {(numberWidgets?.length ?? 0) > 0 && (
+                        <ContainerCard
+                            heading="Number Widgets"
+                            spacing="compact"
+                            headingSize="small"
+                        >
+                            <ListView
+                                className={styles.numberWidgetList}
+                                data={numberWidgets}
+                                renderer={CheckButton}
+                                rendererParams={numberWidgetsRendererParas}
+                                keySelector={widgetKeySelector}
+                                filtered={false}
+                                pending={false}
+                                errored={false}
+                            />
+                        </ContainerCard>
+                    )}
+                </Card>
+            </div>
         </div>
     );
 }

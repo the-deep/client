@@ -1461,9 +1461,29 @@ export interface OrganigramMappingItem extends MappingItemBase {
     };
 }
 
+export interface GeoMappingItem {
+    widgetType: 'GEO';
+    widgetId: string;
+}
+
+export interface NumberMappingItem {
+    widgetType: 'NUMBER';
+    widgetId: string;
+}
+
 export type MappingItem = Matrix1dMappingItem
     | Matrix2dMappingItem
     | ScaleMappingItem
     | SelectMappingItem
     | MultiSelectMappingItem
-    | OrganigramMappingItem;
+    | OrganigramMappingItem
+    | NumberMappingItem
+    | GeoMappingItem;
+
+export type CategoricalMappingItem = Exclude<MappingItem, NumberMappingItem | GeoMappingItem>;
+
+export function isCategoricalMapping(
+    value: MappingItem,
+): value is CategoricalMappingItem {
+    return !(value.widgetType === 'NUMBER' || value.widgetType === 'GEO');
+}
