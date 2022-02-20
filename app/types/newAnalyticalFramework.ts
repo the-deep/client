@@ -1426,6 +1426,7 @@ export interface Matrix2dMappingItem extends MappingItemBase {
     } | {
         type: 'COLUMN';
         columnKey: string;
+        subColumnKey?: undefined;
     } | {
         type: 'SUB_COLUMN';
         columnKey: string;

@@ -1,14 +1,18 @@
 import React from 'react';
 import { IoAdd } from 'react-icons/io5';
+import { BiBrain } from 'react-icons/bi';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     QuickActionButton,
+    QuickActionDropdownMenu,
     Button,
 } from '@the-deep/deep-ui';
 
 import { PartialEntryType as EntryInput } from '../../schema';
+import { Framework } from '../../types';
 import useTextSelection from './useTextSelection';
 import EntryItem from '../EntryItem';
+import AssistPopup from '../AssistPopup';
 import styles from './styles.css';
 
 const CHARACTER_PER_PAGE = 10000;
@@ -36,7 +40,9 @@ interface Props {
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
     disableAddButton?: boolean;
+    assistedTaggingEnabled: boolean;
     projectId: string | undefined;
+    frameworkDetails: Framework;
 }
 
 function SimplifiedTextView(props: Props) {
@@ -47,6 +53,7 @@ function SimplifiedTextView(props: Props) {
         onAddButtonClick,
         onExcerptChange,
         activeEntryClientId,
+        assistedTaggingEnabled,
         onExcerptClick,
         onApproveButtonClick,
         projectId,
@@ -57,6 +64,7 @@ function SimplifiedTextView(props: Props) {
         disableApproveButton,
         disableDiscardButton,
         disableAddButton,
+        frameworkDetails,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement>(null);
@@ -253,6 +261,19 @@ function SimplifiedTextView(props: Props) {
                     >
                         <IoAdd />
                     </QuickActionButton>
+                    { /* FIXME: Move this over to another logic */ }
+                    {assistedTaggingEnabled && (
+                        <QuickActionDropdownMenu
+                            title="Assist"
+                            variant="tertiary"
+                            className={styles.addButton}
+                            label={(<BiBrain />)}
+                        >
+                            <AssistPopup
+                                frameworkDetails={frameworkDetails}
+                            />
+                        </QuickActionDropdownMenu>
+                    )}
                 </div>
             )}
         </div>
