@@ -3,17 +3,27 @@ import {
     listToMap,
     isDefined,
     mapToMap,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     Matrix1dMappingItem,
     Matrix1dWidget,
     Matrix2dMappingItem,
     Matrix2dWidget,
+    ScaleMappingItem,
+    ScaleWidget,
+    SelectMappingItem,
+    SingleSelectWidget,
+    MultiSelectMappingItem,
+    MultiSelectWidget,
     MappingItem,
 } from '#types/newAnalyticalFramework';
 import {
     Matrix1dWidgetAttribute,
     Matrix2dWidgetAttribute,
+    ScaleWidgetAttribute,
+    SingleSelectWidgetAttribute,
+    MultiSelectWidgetAttribute,
 } from '#types/newEntry';
 import { DeepReplace } from '#utils/types';
 
@@ -45,7 +55,7 @@ export function createMatrix1dAttr(
 
     return {
         id: widget.id,
-        clientId: widget.clientId,
+        clientId: randomString(),
         widget: widget.id,
         widgetVersion: widget.version,
         widgetType: 'MATRIX1D',
@@ -130,10 +140,141 @@ export function createMatrix2dAttr(
 
     return {
         id: widget.id,
-        clientId: widget.clientId,
+        clientId: randomString(),
         widget: widget.id,
         widgetVersion: widget.version,
         widgetType: 'MATRIX2D',
         data: { value },
     };
+}
+
+export function filterScaleMappings(
+    mappingItem: MappingItem,
+): mappingItem is ScaleMappingItem {
+    return mappingItem.widgetType === 'SCALE';
+}
+
+export function createScaleAttr(
+    mapping: ScaleMappingItem[] | undefined,
+    widget: ScaleWidget,
+): {
+    attr: ScaleWidgetAttribute | undefined;
+    hints: string[];
+} {
+    const defaultAttr = {
+        id: widget.id,
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'SCALE' as const,
+        data: widget.properties?.defaultValue ? {
+            value: widget.properties?.defaultValue,
+        } : undefined,
+    };
+
+    if (!mapping || mapping.length < 1) {
+        return {
+            attr: widget.properties?.defaultValue ? defaultAttr : undefined,
+            hints: [],
+        };
+    }
+
+    if (mapping.length === 1) {
+        return {
+            attr: {
+                ...defaultAttr,
+                data: {
+                    value: mapping[0].mapping.optionKey,
+                },
+            },
+            hints: [],
+        };
+    }
+
+    return ({
+        attr: defaultAttr,
+        hints: mapping.map((m) => m.mapping.optionKey),
+    });
+}
+
+export function filterSelectMappings(
+    mappingItem: MappingItem,
+): mappingItem is SelectMappingItem {
+    return mappingItem.widgetType === 'SELECT';
+}
+
+export function createSelectAttr(
+    mapping: SelectMappingItem[] | undefined,
+    widget: SingleSelectWidget,
+): {
+    attr: SingleSelectWidgetAttribute | undefined;
+    hints: string[];
+} {
+    const defaultAttr = {
+        id: widget.id,
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'SELECT' as const,
+        data: widget.properties?.defaultValue ? {
+            value: widget.properties?.defaultValue,
+        } : undefined,
+    };
+
+    if (!mapping || mapping.length < 1) {
+        return {
+            attr: widget.properties?.defaultValue ? defaultAttr : undefined,
+            hints: [],
+        };
+    }
+
+    if (mapping.length === 1) {
+        return {
+            attr: {
+                ...defaultAttr,
+                data: {
+                    value: mapping[0].mapping.optionKey,
+                },
+            },
+            hints: [],
+        };
+    }
+
+    return ({
+        attr: defaultAttr,
+        hints: mapping.map((m) => m.mapping.optionKey),
+    });
+}
+
+export function filterMultiSelectMappings(
+    mappingItem: MappingItem,
+): mappingItem is MultiSelectMappingItem {
+    return mappingItem.widgetType === 'MULTISELECT';
+}
+
+export function createMultiSelectAttr(
+    mapping: MultiSelectMappingItem[] | undefined,
+    widget: MultiSelectWidget,
+): MultiSelectWidgetAttribute | undefined {
+    const defaultAttr = {
+        id: widget.id,
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'MULTISELECT' as const,
+        data: widget.properties?.defaultValue ? {
+            value: widget.properties?.defaultValue,
+        } : undefined,
+    };
+
+    if (!mapping || mapping.length < 1) {
+        return widget.properties?.defaultValue ? defaultAttr : undefined;
+    }
+
+    return ({
+        ...defaultAttr,
+        data: {
+            value: mapping.map((m) => m.mapping.optionKey),
+        },
+    });
 }
