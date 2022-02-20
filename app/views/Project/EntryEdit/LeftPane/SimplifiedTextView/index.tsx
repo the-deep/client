@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import { BiBrain } from 'react-icons/bi';
 import { _cs, isDefined } from '@togglecorp/fujs';
@@ -27,8 +27,10 @@ interface Split {
 interface Props {
     className?: string;
     text?: string;
+    leadId: string;
     entries: EntryInput[] | undefined | null;
     onAddButtonClick?: (selectedText: string) => void;
+    onAssistedEntryAdd?: (newEntry: EntryInput) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     activeEntryClientId?: string;
     onExcerptClick?: (entryClientId: string) => void;
@@ -51,11 +53,13 @@ function SimplifiedTextView(props: Props) {
         text: textFromProps,
         entries,
         onAddButtonClick,
+        onAssistedEntryAdd,
         onExcerptChange,
         activeEntryClientId,
         assistedTaggingEnabled,
         onExcerptClick,
         onApproveButtonClick,
+        leadId,
         projectId,
         onDiscardButtonClick,
         onEntryDelete,
@@ -69,9 +73,9 @@ function SimplifiedTextView(props: Props) {
 
     const containerRef = React.useRef<HTMLDivElement>(null);
     const scrollTopRef = React.useRef<number | undefined>();
-    const [charactersLoaded, setCharactersLoaded] = React.useState(CHARACTER_PER_PAGE);
+    const [charactersLoaded, setCharactersLoaded] = useState(CHARACTER_PER_PAGE);
 
-    const text = React.useMemo(() => {
+    const text = useMemo(() => {
         if (textFromProps) {
             const textLength = Math.min(textFromProps.length, charactersLoaded);
             return textFromProps.substring(0, textLength);
@@ -81,7 +85,7 @@ function SimplifiedTextView(props: Props) {
     }, [textFromProps, charactersLoaded]);
 
     // TODO: Remove overlapping splits if necessary
-    const splits = React.useMemo(() => {
+    const splits = useMemo(() => {
         // NOTE: Store scrollTopRef before new split is calculated
         scrollTopRef.current = containerRef.current?.scrollTop;
 
@@ -192,7 +196,7 @@ function SimplifiedTextView(props: Props) {
         textContent,
     } = useTextSelection(containerRef.current ?? undefined);
 
-    const position = React.useMemo(() => {
+    const position = useMemo(() => {
         const parent = containerRef.current;
         if (!clientRect || !parent) {
             return undefined;
@@ -212,7 +216,7 @@ function SimplifiedTextView(props: Props) {
         return pos;
     }, [clientRect]);
 
-    const handleAddButtonClick = React.useCallback((selectedText: string) => {
+    const handleAddButtonClick = useCallback((selectedText: string) => {
         window.getSelection()?.removeAllRanges();
 
         if (onAddButtonClick) {
@@ -220,7 +224,7 @@ function SimplifiedTextView(props: Props) {
         }
     }, [onAddButtonClick]);
 
-    const handleLoadMoreClick = React.useCallback(() => {
+    const handleLoadMoreClick = useCallback(() => {
         setCharactersLoaded((prevValue) => (
             prevValue + CHARACTER_PER_PAGE
         ));
@@ -262,15 +266,19 @@ function SimplifiedTextView(props: Props) {
                         <IoAdd />
                     </QuickActionButton>
                     { /* FIXME: Move this over to another logic */ }
-                    {assistedTaggingEnabled && (
+                    {assistedTaggingEnabled && onAssistedEntryAdd && (
                         <QuickActionDropdownMenu
                             title="Assist"
                             variant="tertiary"
                             className={styles.addButton}
                             label={(<BiBrain />)}
+                            persistent
                         >
                             <AssistPopup
                                 frameworkDetails={frameworkDetails}
+                                leadId={leadId}
+                                selectedText={textContent}
+                                onEntryCreate={onAssistedEntryAdd}
                             />
                         </QuickActionDropdownMenu>
                     )}

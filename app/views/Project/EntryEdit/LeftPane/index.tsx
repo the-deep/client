@@ -78,6 +78,7 @@ export type TabOptions = 'simplified' | 'original' | 'entries' | undefined;
 interface Props {
     className?: string;
     onEntryCreate?: (newEntry: EntryInput) => void;
+    onAssistedEntryAdd?: (newEntry: EntryInput) => void;
     entries: EntryInput[] | undefined | null;
     activeEntry?: string;
     onEntryClick?: (entryId: string) => void;
@@ -128,6 +129,7 @@ function LeftPane(props: Props) {
         projectId,
         activeTabRef,
         frameworkDetails,
+        onAssistedEntryAdd,
     } = props;
 
     const alert = useAlert();
@@ -540,6 +542,7 @@ function LeftPane(props: Props) {
                                     onExcerptClick={onEntryClick}
                                     entries={entries}
                                     onAddButtonClick={handleExcerptAddFromSimplified}
+                                    onAssistedEntryAdd={onAssistedEntryAdd}
                                     text={leadPreview?.textExtract}
                                     onExcerptChange={onExcerptChange}
                                     onApproveButtonClick={onApproveButtonClick}
@@ -550,6 +553,7 @@ function LeftPane(props: Props) {
                                     disableExcerptClick={isEntrySelectionActive}
                                     assistedTaggingEnabled={assistedTaggingEnabled}
                                     frameworkDetails={frameworkDetails}
+                                    leadId={leadId}
                                 />
                             </>
                         ) : (
