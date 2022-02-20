@@ -1461,6 +1461,7 @@ function EntryEdit(props: Props) {
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
+                                        frameworkDetails={frameworkDetails}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}
@@ -1550,6 +1551,7 @@ function EntryEdit(props: Props) {
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
                                         activeTabRef={secondaryPageLeftPaneRef}
+                                        frameworkDetails={frameworkDetails}
                                     />
                                     <Container
                                         className={styles.rightContainer}

@@ -26,6 +26,11 @@
         background-color: var(--dui-color-background-information);
         padding: var(--dui-spacing-large);
         overflow: auto;
+        gap: var(--dui-spacing-small);
+
+        .switch {
+            flex-shrink: 0;
+        }
 
         .simplified-text-view {
             flex-grow: 1;
