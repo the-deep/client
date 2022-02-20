@@ -943,6 +943,27 @@ function EntryEdit(props: Props) {
         ],
     );
 
+    const handleAssistedEntryAdd = useCallback(
+        (newValue: PartialEntryType) => {
+            createRestorePoint();
+            setFormFieldValue(
+                (prevValue: PartialFormType['entries']) => [
+                    ...(prevValue ?? []),
+                    {
+                        ...newValue,
+                        stale: true,
+                    },
+                ],
+                'entries',
+            );
+            setSelectedEntry(newValue.clientId);
+        },
+        [
+            setFormFieldValue,
+            createRestorePoint,
+        ],
+    );
+
     const handleEntryChangeApprove = useCallback(
         () => {
             clearRestorePoint();
@@ -1446,6 +1467,7 @@ function EntryEdit(props: Props) {
                                         className={styles.sourcePreview}
                                         projectId={projectId}
                                         entries={formValue.entries}
+                                        onAssistedEntryAdd={handleAssistedEntryAdd}
                                         activeEntry={selectedEntry}
                                         onEntryClick={handleEntryClick}
                                         onEntryCreate={handleEntryCreate}
@@ -1532,6 +1554,7 @@ function EntryEdit(props: Props) {
                                 <div className={styles.secondaryTagging}>
                                     <LeftPane
                                         className={styles.sourcePreview}
+                                        onAssistedEntryAdd={handleAssistedEntryAdd}
                                         projectId={projectId}
                                         entries={formValue.entries}
                                         activeEntry={selectedEntry}
