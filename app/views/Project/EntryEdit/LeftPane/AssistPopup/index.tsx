@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
     isDefined,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     Container,
@@ -12,16 +13,24 @@ import useLocalStorage from '#hooks/useLocalStorage';
 import {
     MappingItem,
     isCategoricalMapping,
+    getWidgetVersion,
 } from '#types/newAnalyticalFramework';
 
 import {
     Framework,
 } from '../../types';
+import { PartialEntryType } from '../../schema';
 import {
     filterMatrix1dMappings,
     createMatrix1dAttr,
     filterMatrix2dMappings,
     createMatrix2dAttr,
+    filterScaleMappings,
+    createScaleAttr,
+    filterSelectMappings,
+    createSelectAttr,
+    filterMultiSelectMappings,
+    createMultiSelectAttr,
 } from './utils';
 
 import styles from './styles.css';
@@ -51,12 +60,18 @@ const mockAssistedMappingResponse = {
 interface Props {
     className?: string;
     frameworkDetails: Framework;
+    leadId: string;
+    selectedText: string;
+    onEntryCreate: (newEntry: PartialEntryType) => void;
 }
 
 function AssistPopup(props: Props) {
     const {
         className,
+        selectedText,
+        leadId,
         frameworkDetails,
+        onEntryCreate,
     } = props;
 
     const [mapping] = useLocalStorage<MappingItem[] | undefined>(`mapping-${frameworkDetails.id}`, undefined);
@@ -102,11 +117,71 @@ function AssistPopup(props: Props) {
                     widget,
                 );
             }
+            if (widget.widgetId === 'SCALE') {
+                const supportedTags = matchedMapping
+                    ?.filter((m) => m.widgetId === widget.clientId)
+                    .filter(filterScaleMappings);
+
+                return createScaleAttr(
+                    supportedTags,
+                    widget,
+                ).attr;
+            }
+            if (widget.widgetId === 'SELECT') {
+                const supportedTags = matchedMapping
+                    ?.filter((m) => m.widgetId === widget.clientId)
+                    .filter(filterSelectMappings);
+
+                return createSelectAttr(
+                    supportedTags,
+                    widget,
+                ).attr;
+            }
+            if (widget.widgetId === 'MULTISELECT') {
+                const supportedTags = matchedMapping
+                    ?.filter((m) => m.widgetId === widget.clientId)
+                    .filter(filterMultiSelectMappings);
+
+                return createMultiSelectAttr(
+                    supportedTags,
+                    widget,
+                );
+            }
+            if (
+                (
+                    widget.widgetId === 'TEXT'
+                    || widget.widgetId === 'DATE'
+                    || widget.widgetId === 'TIME'
+                )
+                && widget.properties?.defaultValue
+            ) {
+                return ({
+                    clientId: randomString(),
+                    widget,
+                    widgetType: widget.widgetId,
+                    widgetVersion: getWidgetVersion(widget.widgetId),
+                    data: {
+                        value: widget.properties.defaultValue,
+                    },
+                });
+            }
             return undefined;
         }).filter(isDefined);
-        console.warn('I am here', attributes);
+
+        const entry = {
+            clientId: randomString(),
+            entryType: 'EXCERPT' as const,
+            lead: leadId,
+            excerpt: selectedText,
+            droppedExcerpt: selectedText,
+            attributes,
+        };
+        onEntryCreate(entry);
     }, [
+        onEntryCreate,
         mapping,
+        selectedText,
+        leadId,
         allWidgets,
     ]);
 
