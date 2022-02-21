@@ -1301,7 +1301,7 @@ export interface AssistedTag {
     labelGroup: string; // Example: 'Context Group 1'
 }
 
-export const mockAssistedTags = [
+export const mockAssistedTags: AssistedTag[] = [
     {
         id: '1',
         label: 'Agriculture',
@@ -1406,7 +1406,7 @@ export const mockAssistedTags = [
 
 interface MappingItemBase {
     tagId: string; // NOTE: AssistedTag['id'];
-    widgetId: string;
+    widgetClientId: string;
 }
 
 export interface Matrix1dMappingItem extends MappingItemBase {
@@ -1464,12 +1464,12 @@ export interface OrganigramMappingItem extends MappingItemBase {
 
 export interface GeoMappingItem {
     widgetType: 'GEO';
-    widgetId: string;
+    widgetClientId: string;
 }
 
 export interface NumberMappingItem {
     widgetType: 'NUMBER';
-    widgetId: string;
+    widgetClientId: string;
 }
 
 export type MappingItem = Matrix1dMappingItem
@@ -1488,3 +1488,21 @@ export function isCategoricalMapping(
 ): value is CategoricalMappingItem {
     return !(value.widgetType === 'NUMBER' || value.widgetType === 'GEO');
 }
+
+export const mappingSupportedWidgets = [
+    'MATRIX1D',
+    'MATRIX2D',
+    'SCALE',
+    'MULTISELECT',
+    'SELECT',
+    'NUMBER',
+    'GEO',
+];
+
+export const categoricalWidgets = [
+    'MATRIX1D',
+    'MATRIX2D',
+    'SCALE',
+    'MULTISELECT',
+    'SELECT',
+];

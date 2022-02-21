@@ -49,7 +49,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
     error: Error<PartialEntryType> | undefined;
-    onAddButtonClick: (entryId: string, sectionId?: string) => void;
+    onAddButtonClick?: (entryId: string, sectionId?: string) => void;
 
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;

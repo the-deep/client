@@ -1,6 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoEllipse } from 'react-icons/io5';
+import { IoCheckmark } from 'react-icons/io5';
 
 import {
     Button,
@@ -39,7 +39,7 @@ function CheckButton(props: Props) {
                 value ? styles.selected : styles.notSelected,
             )}
             onClick={onTagClick}
-            actions={mappedCount > 0 && <IoEllipse />}
+            actions={mappedCount > 0 && <IoCheckmark />}
         >
             {title}
         </Button>

@@ -38,7 +38,7 @@ export interface Props {
     entryClientId: string;
     sectionId?: string;
     onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
-    onAddButtonClick: (entryId: string, sectionId?: string) => void;
+    onAddButtonClick: ((entryId: string, sectionId?: string) => void) | undefined;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
@@ -156,7 +156,9 @@ function CompactSection(props: Props) {
     );
 
     const handleAddButtonClick = useCallback(() => {
-        onAddButtonClick(entryClientId, sectionId);
+        if (onAddButtonClick) {
+            onAddButtonClick(entryClientId, sectionId);
+        }
     }, [
         entryClientId,
         sectionId,
