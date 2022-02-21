@@ -106,6 +106,12 @@ function Routes(props: Props) {
                 </Route>
                 <Route
                     exact
+                    path={routes.entryEditRedirect.path}
+                >
+                    {routes.entryEditRedirect.load({ className })}
+                </Route>
+                <Route
+                    exact
                     path={routes.fourHundredFour.path}
                 >
                     {routes.fourHundredFour.load({})}
