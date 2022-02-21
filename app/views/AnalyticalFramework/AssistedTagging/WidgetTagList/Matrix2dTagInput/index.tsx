@@ -53,7 +53,7 @@ interface Props {
     className?: string;
     widget: Matrix2dWidget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -126,7 +126,7 @@ function Matrix2dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetId: widget.id,
+                    widgetClientId: widget.clientId,
                     widgetType: widget.widgetId,
                     mapping: {
                         type: 'COLUMN',
@@ -205,7 +205,7 @@ function Matrix2dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetId: widget.id,
+                    widgetClientId: widget.clientId,
                     widgetType: 'MATRIX2D',
                     mapping: {
                         type: 'SUB_ROW',
@@ -288,7 +288,7 @@ function Matrix2dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetId: widget.id,
+                    widgetClientId: widget.clientId,
                     widgetType: 'MATRIX2D',
                     mapping: {
                         type: 'SUB_COLUMN',
