@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     isDefined,
@@ -14,12 +14,15 @@ import {
     MappingItem,
     isCategoricalMapping,
     getWidgetVersion,
+    mappingSupportedWidgets,
 } from '#types/newAnalyticalFramework';
 
 import {
     Framework,
 } from '../../types';
-import { PartialEntryType } from '../../schema';
+import {
+    PartialEntryType,
+} from '../../schema';
 import {
     filterMatrix1dMappings,
     createMatrix1dAttr,
@@ -32,18 +35,9 @@ import {
     filterMultiSelectMappings,
     createMultiSelectAttr,
 } from './utils';
+import AssistEntryForm from './AssistEntryForm';
 
 import styles from './styles.css';
-
-const supportedWidgets = [
-    'MATRIX1D',
-    'MATRIX2D',
-    'SCALE',
-    'MULTISELECT',
-    'SELECT',
-    'NUMBER',
-    'GEO',
-];
 
 const mockAssistedMappingResponse = {
     tags: [
@@ -75,16 +69,23 @@ function AssistPopup(props: Props) {
     } = props;
 
     const [mapping] = useLocalStorage<MappingItem[] | undefined>(`mapping-${frameworkDetails.id}`, undefined);
-
-    const allWidgets = useMemo(() => {
+    const [partialEntry, setPartialEntry] = useState<PartialEntryType>();
+    const {
+        allWidgets,
+        filteredWidgets,
+    } = useMemo(() => {
         const widgetsFromPrimary = frameworkDetails.primaryTagging?.flatMap(
             (item) => (item.widgets ?? []),
         ) ?? [];
         const widgetsFromSecondary = frameworkDetails.secondaryTagging ?? [];
-        return [
+        const widgets = [
             ...widgetsFromPrimary,
             ...widgetsFromSecondary,
-        ].filter((w) => supportedWidgets.includes(w.widgetId));
+        ];
+        return {
+            allWidgets: widgets,
+            filteredWidgets: widgets.filter((w) => mappingSupportedWidgets.includes(w.widgetId)),
+        };
     }, [
         frameworkDetails,
     ]);
@@ -96,10 +97,10 @@ function AssistPopup(props: Props) {
             ?.filter(isCategoricalMapping)
             .filter((m) => mockAssistedMappingResponse.tags.includes(m.tagId));
 
-        const attributes = allWidgets.map((widget) => {
+        const attributes = filteredWidgets.map((widget) => {
             if (widget.widgetId === 'MATRIX1D') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetId === widget.clientId)
+                    ?.filter((m) => m.widgetClientId === widget.clientId)
                     .filter(filterMatrix1dMappings);
 
                 return createMatrix1dAttr(
@@ -109,7 +110,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'MATRIX2D') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetId === widget.clientId)
+                    ?.filter((m) => m.widgetClientId === widget.clientId)
                     .filter(filterMatrix2dMappings);
 
                 return createMatrix2dAttr(
@@ -119,7 +120,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'SCALE') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetId === widget.clientId)
+                    ?.filter((m) => m.widgetClientId === widget.clientId)
                     .filter(filterScaleMappings);
 
                 return createScaleAttr(
@@ -129,7 +130,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'SELECT') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetId === widget.clientId)
+                    ?.filter((m) => m.widgetClientId === widget.clientId)
                     .filter(filterSelectMappings);
 
                 return createSelectAttr(
@@ -139,7 +140,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'MULTISELECT') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetId === widget.clientId)
+                    ?.filter((m) => m.widgetClientId === widget.clientId)
                     .filter(filterMultiSelectMappings);
 
                 return createMultiSelectAttr(
@@ -157,7 +158,7 @@ function AssistPopup(props: Props) {
             ) {
                 return ({
                     clientId: randomString(),
-                    widget,
+                    widget: widget.id,
                     widgetType: widget.widgetId,
                     widgetVersion: getWidgetVersion(widget.widgetId),
                     data: {
@@ -176,13 +177,12 @@ function AssistPopup(props: Props) {
             droppedExcerpt: selectedText,
             attributes,
         };
-        onEntryCreate(entry);
+        setPartialEntry(entry);
     }, [
-        onEntryCreate,
         mapping,
         selectedText,
         leadId,
-        allWidgets,
+        filteredWidgets,
     ]);
 
     return (
@@ -199,7 +199,15 @@ function AssistPopup(props: Props) {
                 </Button>
             )}
         >
-            {frameworkDetails?.id}
+            {partialEntry && (
+                <AssistEntryForm
+                    leadId={leadId}
+                    entry={partialEntry}
+                    onEntryCreate={onEntryCreate}
+                    allWidgets={allWidgets}
+                    frameworkDetails={frameworkDetails}
+                />
+            )}
         </Container>
     );
 }
