@@ -34,7 +34,7 @@ interface Props {
     className?: string;
     widget: Matrix1dWidget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -93,7 +93,7 @@ function Matrix1dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetId: widget.id,
+                    widgetClientId: widget.id,
                     widgetType: 'MATRIX1D',
                     mapping: {
                         subRowKey: cellKey,

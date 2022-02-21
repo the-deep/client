@@ -26,7 +26,7 @@ interface Props {
     className?: string;
     widget: ScaleWidget | SingleSelectWidget | MultiSelectWidget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -68,7 +68,7 @@ function ScaleTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetId: widget.id,
+                    widgetClientId: widget.id,
                     widgetType: widget.widgetId,
                     mapping: {
                         optionKey: cellKey,

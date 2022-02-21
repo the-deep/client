@@ -17,7 +17,7 @@ interface Props {
     className?: string;
     widget: Widget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -91,7 +91,7 @@ function WidgetTagList(props: Props) {
             heading={widget.title}
             headingSize="extraSmall"
         >
-            {widget.title}
+            This widget is not supported at the moment.
         </Container>
     );
 }
