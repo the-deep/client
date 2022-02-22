@@ -17,7 +17,7 @@ interface Props {
     className?: string;
     widget: Widget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 

@@ -100,7 +100,7 @@ function AssistPopup(props: Props) {
         const attributes = filteredWidgets.map((widget) => {
             if (widget.widgetId === 'MATRIX1D') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetClientId === widget.clientId)
+                    ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterMatrix1dMappings);
 
                 return createMatrix1dAttr(
@@ -110,7 +110,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'MATRIX2D') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetClientId === widget.clientId)
+                    ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterMatrix2dMappings);
 
                 return createMatrix2dAttr(
@@ -120,7 +120,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'SCALE') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetClientId === widget.clientId)
+                    ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterScaleMappings);
 
                 return createScaleAttr(
@@ -130,7 +130,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'SELECT') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetClientId === widget.clientId)
+                    ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterSelectMappings);
 
                 return createSelectAttr(
@@ -140,7 +140,7 @@ function AssistPopup(props: Props) {
             }
             if (widget.widgetId === 'MULTISELECT') {
                 const supportedTags = matchedMapping
-                    ?.filter((m) => m.widgetClientId === widget.clientId)
+                    ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterMultiSelectMappings);
 
                 return createMultiSelectAttr(
