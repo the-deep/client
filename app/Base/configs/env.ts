@@ -48,4 +48,4 @@ export const hCaptchaKey = process.env.REACT_APP_HCATPCHA_SITEKEY || '10000000-f
 
 // Google drive
 export const driveDeveloperKey = process.env.REACT_APP_GOOGLE_DRIVE_DEVELOPER_KEY || 'AIzaSyDINvjHwIS_HHsb3qCgFm_2GFHKqEUwucE';
-export const driveClientId = process.env.REACT_APP_GOOGLE_DRIVE_CLIENT_ID || '642927279233-98drcidvhmudgv9dh70m7k66730n9rjr.apps.googleusercontent.com';
+export const driveClientId = process.env.REACT_APP_GOOGLE_DRIVE_CLIENT_KEY || '642927279233-98drcidvhmudgv9dh70m7k66730n9rjr.apps.googleusercontent.com';
