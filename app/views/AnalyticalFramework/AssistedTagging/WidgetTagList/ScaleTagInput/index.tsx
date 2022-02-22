@@ -26,7 +26,7 @@ interface Props {
     className?: string;
     widget: ScaleWidget | SingleSelectWidget | MultiSelectWidget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -53,7 +53,7 @@ function ScaleTagInput(props: Props) {
                 selectedTag === m.tagId
                 && (m.widgetType === 'SCALE' || m.widgetType === 'SELECT' || m.widgetType === 'MULTISELECT')
             ) {
-                return m.mapping.optionKey === cellKey;
+                return m.association.optionKey === cellKey;
             }
             return false;
         });
@@ -62,19 +62,19 @@ function ScaleTagInput(props: Props) {
             const newMapping = [...(mapping ?? [])];
             newMapping.splice(selectedMappingIndex, 1);
 
-            onMappingChange(newMapping, widget.clientId);
+            onMappingChange(newMapping, widget.id);
         } else {
             onMappingChange([
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetClientId: widget.id,
+                    widgetPk: widget.id,
                     widgetType: widget.widgetId,
-                    mapping: {
+                    association: {
                         optionKey: cellKey,
                     },
                 },
-            ], widget.clientId);
+            ], widget.id);
         }
     }, [
         onMappingChange,
@@ -95,7 +95,7 @@ function ScaleTagInput(props: Props) {
                     || m.widgetType === 'MULTISELECT'
                 )
             ) {
-                return m.mapping.optionKey === cell.key;
+                return m.association.optionKey === cell.key;
             }
             return false;
         }) ?? false,
@@ -105,7 +105,7 @@ function ScaleTagInput(props: Props) {
                 || m.widgetType === 'SELECT'
                 || m.widgetType === 'MULTISELECT'
             ) {
-                return m.mapping.optionKey === cell.key;
+                return m.association.optionKey === cell.key;
             }
             return false;
         }).length ?? 0,

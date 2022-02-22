@@ -34,7 +34,7 @@ interface Props {
     className?: string;
     widget: Matrix1dWidget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -71,7 +71,7 @@ function Matrix1dTagInput(props: Props) {
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX1D'
             ) {
-                return m.mapping.subRowKey === cellKey;
+                return m.association.subRowKey === cellKey;
             }
             return false;
         });
@@ -93,9 +93,9 @@ function Matrix1dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetClientId: widget.id,
+                    widgetPk: widget.id,
                     widgetType: 'MATRIX1D',
-                    mapping: {
+                    association: {
                         subRowKey: cellKey,
                         rowKey,
                     },
@@ -118,13 +118,13 @@ function Matrix1dTagInput(props: Props) {
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX1D'
             ) {
-                return m.mapping.subRowKey === cell.subRowKey;
+                return m.association.subRowKey === cell.subRowKey;
             }
             return false;
         }) ?? false,
         mappedCount: mapping?.filter((m) => {
             if (m.widgetType === 'MATRIX1D') {
-                return m.mapping.subRowKey === cell.subRowKey;
+                return m.association.subRowKey === cell.subRowKey;
             }
             return false;
         }).length ?? 0,
