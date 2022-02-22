@@ -43,8 +43,8 @@ export function createMatrix1dAttr(
     }
     const mappingGroupedByRows = listToGroupList(
         mapping,
-        (m) => m.mapping.rowKey,
-        (m) => m.mapping.subRowKey,
+        (m) => m.association.rowKey,
+        (m) => m.association.subRowKey,
     );
 
     const value = mapToMap(
@@ -81,13 +81,13 @@ type ColumnMap = {
 export function filterColumn(
     mappingItem: Matrix2dMappingItem,
 ): mappingItem is DeepReplace<Matrix2dMappingItem, SubRowMap, never> {
-    return mappingItem.mapping.type === 'COLUMN' || mappingItem.mapping.type === 'SUB_COLUMN';
+    return mappingItem.association.type === 'COLUMN' || mappingItem.association.type === 'SUB_COLUMN';
 }
 
 export function filterSubRows(
     mappingItem: Matrix2dMappingItem,
 ): mappingItem is DeepReplace<Matrix2dMappingItem, ColumnMap, never> {
-    return mappingItem.mapping.type === 'SUB_ROW';
+    return mappingItem.association.type === 'SUB_ROW';
 }
 
 export function filterMatrix2dMappings(
@@ -112,8 +112,8 @@ export function createMatrix2dAttr(
 
     const groupedCols = listToGroupList(
         columns,
-        (col) => col.mapping.columnKey,
-        (col) => col.mapping.subColumnKey,
+        (col) => col.association.columnKey,
+        (col) => col.association.subColumnKey,
     );
 
     const transformedCols = mapToMap(
@@ -124,8 +124,8 @@ export function createMatrix2dAttr(
 
     const groupedSubRows = listToGroupList(
         rows,
-        (col) => col.mapping.rowKey,
-        (col) => col.mapping.subRowKey,
+        (col) => col.association.rowKey,
+        (col) => col.association.subRowKey,
     );
 
     const value = mapToMap(
@@ -184,7 +184,7 @@ export function createScaleAttr(
             attr: {
                 ...defaultAttr,
                 data: {
-                    value: mapping[0].mapping.optionKey,
+                    value: mapping[0].association.optionKey,
                 },
             },
             hints: [],
@@ -193,7 +193,7 @@ export function createScaleAttr(
 
     return ({
         attr: defaultAttr,
-        hints: mapping.map((m) => m.mapping.optionKey),
+        hints: mapping.map((m) => m.association.optionKey),
     });
 }
 
@@ -233,7 +233,7 @@ export function createSelectAttr(
             attr: {
                 ...defaultAttr,
                 data: {
-                    value: mapping[0].mapping.optionKey,
+                    value: mapping[0].association.optionKey,
                 },
             },
             hints: [],
@@ -242,7 +242,7 @@ export function createSelectAttr(
 
     return ({
         attr: defaultAttr,
-        hints: mapping.map((m) => m.mapping.optionKey),
+        hints: mapping.map((m) => m.association.optionKey),
     });
 }
 
@@ -274,7 +274,7 @@ export function createMultiSelectAttr(
     return ({
         ...defaultAttr,
         data: {
-            value: mapping.map((m) => m.mapping.optionKey),
+            value: mapping.map((m) => m.association.optionKey),
         },
     });
 }
