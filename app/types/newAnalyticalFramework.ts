@@ -1406,12 +1406,12 @@ export const mockAssistedTags: AssistedTag[] = [
 
 interface MappingItemBase {
     tagId: string; // NOTE: AssistedTag['id'];
-    widgetClientId: string;
+    widgetPk: string;
 }
 
 export interface Matrix1dMappingItem extends MappingItemBase {
     widgetType: 'MATRIX1D';
-    mapping: {
+    association: {
         rowKey: string;
         subRowKey: string;
     }
@@ -1419,7 +1419,7 @@ export interface Matrix1dMappingItem extends MappingItemBase {
 
 export interface Matrix2dMappingItem extends MappingItemBase {
     widgetType: 'MATRIX2D';
-    mapping: {
+    association: {
         type: 'SUB_ROW';
         rowKey: string;
         subRowKey: string;
@@ -1436,40 +1436,40 @@ export interface Matrix2dMappingItem extends MappingItemBase {
 
 export interface ScaleMappingItem extends MappingItemBase {
     widgetType: 'SCALE';
-    mapping: {
+    association: {
         optionKey: string;
     };
 }
 
 export interface SelectMappingItem extends MappingItemBase {
     widgetType: 'SELECT';
-    mapping: {
+    association: {
         optionKey: string;
     };
 }
 
 export interface MultiSelectMappingItem extends MappingItemBase {
     widgetType: 'MULTISELECT';
-    mapping: {
+    association: {
         optionKey: string;
     };
 }
 
 export interface OrganigramMappingItem extends MappingItemBase {
     widgetType: 'ORGANIGRAM';
-    mapping: {
+    association: {
         optionKey: string;
     };
 }
 
 export interface GeoMappingItem {
     widgetType: 'GEO';
-    widgetClientId: string;
+    widgetPk: string;
 }
 
 export interface NumberMappingItem {
     widgetType: 'NUMBER';
-    widgetClientId: string;
+    widgetPk: string;
 }
 
 export type MappingItem = Matrix1dMappingItem

@@ -92,19 +92,19 @@ function AssistedTagging(props: Props) {
         categoricalMapping,
     ]);
 
-    const handleGeoWidgetClick = useCallback((widgetClientId: string) => {
+    const handleGeoWidgetClick = useCallback((widgetPk: string) => {
         setMapping((oldMapping = []) => {
             const selectedWidgetIndex = oldMapping.findIndex(
-                (om) => om.widgetClientId === widgetClientId,
+                (om) => om.widgetPk === widgetPk,
             );
             if (selectedWidgetIndex !== -1) {
-                return oldMapping.filter((om) => om.widgetClientId !== widgetClientId);
+                return oldMapping.filter((om) => om.widgetPk !== widgetPk);
             }
             return [
                 ...oldMapping,
                 {
                     widgetType: 'GEO',
-                    widgetClientId,
+                    widgetPk,
                 },
             ];
         });
@@ -113,26 +113,26 @@ function AssistedTagging(props: Props) {
     const geoWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
         title: widget.title,
         itemKey,
-        value: !!mapping?.some((m) => m.widgetClientId === widget.clientId && m.widgetType === 'GEO'),
+        value: !!mapping?.some((m) => m.widgetPk === widget.id && m.widgetType === 'GEO'),
         onTagClick: handleGeoWidgetClick,
     }), [
         mapping,
         handleGeoWidgetClick,
     ]);
 
-    const handleNumberWidgetClick = useCallback((widgetClientId: string) => {
+    const handleNumberWidgetClick = useCallback((widgetPk: string) => {
         setMapping((oldMapping = []) => {
             const selectedWidgetIndex = oldMapping.findIndex(
-                (om) => om.widgetClientId === widgetClientId,
+                (om) => om.widgetPk === widgetPk,
             );
             if (selectedWidgetIndex !== -1) {
-                return oldMapping.filter((om) => om.widgetClientId !== widgetClientId);
+                return oldMapping.filter((om) => om.widgetPk !== widgetPk);
             }
             return [
                 ...oldMapping,
                 {
                     widgetType: 'NUMBER',
-                    widgetClientId,
+                    widgetPk,
                 },
             ];
         });
@@ -141,7 +141,7 @@ function AssistedTagging(props: Props) {
     const numberWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
         title: widget.title,
         itemKey,
-        value: !!mapping?.find((m) => m.widgetClientId === widget.clientId && m.widgetType === 'NUMBER'),
+        value: !!mapping?.find((m) => m.widgetPk === widget.id && m.widgetType === 'NUMBER'),
         onTagClick: handleNumberWidgetClick,
     }), [
         mapping,
@@ -150,10 +150,10 @@ function AssistedTagging(props: Props) {
 
     const handleWidgetMappingChange = useCallback((
         newWidgetMapping: MappingItem[],
-        widgetClientId: string,
+        widgetPk: string,
     ) => {
         setMapping((oldMapping = []) => {
-            const filteredMapping = oldMapping.filter((om) => om.widgetClientId !== widgetClientId);
+            const filteredMapping = oldMapping.filter((om) => om.widgetPk !== widgetPk);
             return [
                 ...filteredMapping,
                 ...newWidgetMapping,
@@ -163,7 +163,7 @@ function AssistedTagging(props: Props) {
 
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-        mapping: categoricalMapping?.filter((m) => m.widgetClientId === widget.clientId),
+        mapping: categoricalMapping?.filter((m) => m.widgetPk === widget.id),
         onMappingChange: handleWidgetMappingChange,
         selectedTag,
     }), [

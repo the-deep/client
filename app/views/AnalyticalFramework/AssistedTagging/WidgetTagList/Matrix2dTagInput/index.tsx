@@ -53,7 +53,7 @@ interface Props {
     className?: string;
     widget: Matrix2dWidget;
     mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetClientId: string) => void;
+    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -109,9 +109,9 @@ function Matrix2dTagInput(props: Props) {
             if (
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'COLUMN'
+                && m.association.type === 'COLUMN'
             ) {
-                return m.mapping.columnKey === columnKey;
+                return m.association.columnKey === columnKey;
             }
             return false;
         });
@@ -120,20 +120,20 @@ function Matrix2dTagInput(props: Props) {
             const newMapping = [...(mapping ?? [])];
             newMapping.splice(selectedMappingIndex, 1);
 
-            onMappingChange(newMapping, widget.clientId);
+            onMappingChange(newMapping, widget.id);
         } else {
             onMappingChange([
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetClientId: widget.clientId,
+                    widgetPk: widget.id,
                     widgetType: widget.widgetId,
-                    mapping: {
+                    association: {
                         type: 'COLUMN',
                         columnKey,
                     },
                 },
-            ], widget.clientId);
+            ], widget.id);
         }
     }, [
         onMappingChange,
@@ -149,18 +149,18 @@ function Matrix2dTagInput(props: Props) {
             if (
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'COLUMN'
+                && m.association.type === 'COLUMN'
             ) {
-                return m.mapping.columnKey === column.columnKey;
+                return m.association.columnKey === column.columnKey;
             }
             return false;
         }) ?? false,
         mappedCount: mapping?.filter((m) => {
             if (
                 m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'COLUMN'
+                && m.association.type === 'COLUMN'
             ) {
-                return m.mapping.columnKey === column.columnKey;
+                return m.association.columnKey === column.columnKey;
             }
             return false;
         }).length ?? 0,
@@ -181,9 +181,9 @@ function Matrix2dTagInput(props: Props) {
             if (
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'SUB_ROW'
+                && m.association.type === 'SUB_ROW'
             ) {
-                return m.mapping.subRowKey === subRowKey;
+                return m.association.subRowKey === subRowKey;
             }
             return false;
         });
@@ -192,7 +192,7 @@ function Matrix2dTagInput(props: Props) {
             const newMapping = [...(mapping ?? [])];
             newMapping.splice(selectedMappingIndex, 1);
 
-            onMappingChange(newMapping, widget.clientId);
+            onMappingChange(newMapping, widget.id);
         } else {
             const rowKey = sortedSubRows?.find((sc) => sc.subRowKey === subRowKey)?.rowKey;
 
@@ -205,15 +205,15 @@ function Matrix2dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetClientId: widget.clientId,
+                    widgetPk: widget.id,
                     widgetType: 'MATRIX2D',
-                    mapping: {
+                    association: {
                         type: 'SUB_ROW',
                         subRowKey,
                         rowKey,
                     },
                 },
-            ], widget.clientId);
+            ], widget.id);
         }
     }, [
         sortedSubRows,
@@ -230,18 +230,18 @@ function Matrix2dTagInput(props: Props) {
             if (
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'SUB_ROW'
+                && m.association.type === 'SUB_ROW'
             ) {
-                return m.mapping.subRowKey === subRow.subRowKey;
+                return m.association.subRowKey === subRow.subRowKey;
             }
             return false;
         }) ?? false,
         mappedCount: mapping?.filter((m) => {
             if (
                 m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'SUB_ROW'
+                && m.association.type === 'SUB_ROW'
             ) {
-                return m.mapping.subRowKey === subRow.subRowKey;
+                return m.association.subRowKey === subRow.subRowKey;
             }
             return false;
         }).length ?? 0,
@@ -262,9 +262,9 @@ function Matrix2dTagInput(props: Props) {
             if (
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'SUB_COLUMN'
+                && m.association.type === 'SUB_COLUMN'
             ) {
-                return m.mapping.subColumnKey === subColumnKey;
+                return m.association.subColumnKey === subColumnKey;
             }
             return false;
         });
@@ -273,7 +273,7 @@ function Matrix2dTagInput(props: Props) {
             const newMapping = [...(mapping ?? [])];
             newMapping.splice(selectedMappingIndex, 1);
 
-            onMappingChange(newMapping, widget.clientId);
+            onMappingChange(newMapping, widget.id);
         } else {
             const columnKey = sortedSubColumns?.find(
                 (sc) => sc.subColumnKey === subColumnKey,
@@ -288,9 +288,9 @@ function Matrix2dTagInput(props: Props) {
                 ...(mapping ?? []),
                 {
                     tagId: selectedTag,
-                    widgetClientId: widget.clientId,
+                    widgetPk: widget.id,
                     widgetType: 'MATRIX2D',
-                    mapping: {
+                    association: {
                         type: 'SUB_COLUMN',
                         subColumnKey,
                         columnKey,
@@ -313,18 +313,18 @@ function Matrix2dTagInput(props: Props) {
             if (
                 selectedTag === m.tagId
                 && m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'SUB_COLUMN'
+                && m.association.type === 'SUB_COLUMN'
             ) {
-                return m.mapping.subColumnKey === subColumn.subColumnKey;
+                return m.association.subColumnKey === subColumn.subColumnKey;
             }
             return false;
         }) ?? false,
         mappedCount: mapping?.filter((m) => {
             if (
                 m.widgetType === 'MATRIX2D'
-                && m.mapping.type === 'SUB_COLUMN'
+                && m.association.type === 'SUB_COLUMN'
             ) {
-                return m.mapping.subColumnKey === subColumn.subColumnKey;
+                return m.association.subColumnKey === subColumn.subColumnKey;
             }
             return false;
         }).length ?? 0,
