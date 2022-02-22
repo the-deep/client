@@ -749,7 +749,7 @@ function AnalyticalFramework(props: Props) {
                                     transparentBorder
                                     disabled={isNavigationDisabled}
                                 >
-                                    Assisted Tagging
+                                    5. Assisted Tagging
                                 </Tab>
                                 {value.isVisualizationEnabled && (
                                     <Tab
@@ -758,7 +758,7 @@ function AnalyticalFramework(props: Props) {
                                         className={_cs(propertiesErrored && styles.erroredTab)}
                                         disabled={isNavigationDisabled}
                                     >
-                                        5. Visualization Settings
+                                        6. Visualization Settings
                                     </Tab>
                                 )}
                             </SubNavbarChildren>
