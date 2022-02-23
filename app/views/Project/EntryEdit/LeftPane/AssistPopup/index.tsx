@@ -56,7 +56,7 @@ interface Props {
     frameworkDetails: Framework;
     leadId: string;
     selectedText: string;
-    onEntryCreate: (newEntry: PartialEntryType) => void;
+    onEntryCreate: ((newEntry: PartialEntryType) => void) | undefined;
 }
 
 function AssistPopup(props: Props) {
@@ -199,7 +199,7 @@ function AssistPopup(props: Props) {
                 </Button>
             )}
         >
-            {partialEntry && (
+            {partialEntry && onEntryCreate && (
                 <AssistEntryForm
                     leadId={leadId}
                     entry={partialEntry}
