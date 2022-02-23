@@ -39,6 +39,7 @@ export interface Props {
     sectionId?: string;
     onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
     onAddButtonClick: ((entryId: string, sectionId?: string) => void) | undefined;
+    addButtonHidden?: boolean;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
 }
@@ -58,6 +59,7 @@ function CompactSection(props: Props) {
         disabled,
         error: riskyError,
         onAddButtonClick,
+        addButtonHidden,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onApplyToAll,
@@ -169,7 +171,7 @@ function CompactSection(props: Props) {
         <Container
             className={_cs(className, styles.compactSection)}
             heading={title}
-            headerActions={!readOnly && (
+            headerActions={(!readOnly && !addButtonHidden) && (
                 <QuickActionButton
                     name="addAttribute"
                     onClick={handleAddButtonClick}

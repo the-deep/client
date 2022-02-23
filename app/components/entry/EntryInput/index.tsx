@@ -50,6 +50,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
     error: Error<PartialEntryType> | undefined;
     onAddButtonClick?: (entryId: string, sectionId?: string) => void;
+    addButtonHidden?: boolean;
 
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
@@ -75,6 +76,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         className,
         value,
         onAddButtonClick,
+        addButtonHidden,
         primaryTagging,
         secondaryTagging,
         sectionContainerClassName,
@@ -136,6 +138,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         emptyValueHidden,
         error: error?.attributes,
         onAddButtonClick,
+        addButtonHidden,
         entryClientId: value.clientId,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -147,6 +150,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onGeoAreaOptionsChange,
         onAddButtonClick,
         emptyValueHidden,
+        addButtonHidden,
         onAttributeChange,
         attributesMap,
         readOnly,
@@ -210,6 +214,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 error={error?.attributes}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                addButtonHidden={addButtonHidden}
                 onApplyToAll={onApplyToAll}
                 entryClientId={value.clientId}
                 allWidgets={allWidgets}
