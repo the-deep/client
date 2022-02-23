@@ -103,6 +103,7 @@ export function useTextSelection(target?: HTMLElement) {
         clientRect,
         isCollapsed,
         textContent,
+        resetTextSelection: reset,
     };
 }
 
