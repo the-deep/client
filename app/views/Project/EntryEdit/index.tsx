@@ -41,7 +41,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
-import { getHiddenWidgetIds, getWidgetVersion } from '#types/newAnalyticalFramework';
+import { getHiddenWidgetIds } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
@@ -87,8 +87,10 @@ import SourceDetails from './SourceDetails';
 import LeftPane, { TabOptions } from './LeftPane';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
-import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
+import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from './schema';
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
+import { createDefaultAttributes } from './utils';
+
 import styles from './styles.css';
 
 interface VirtualizedEntryListComponent {
@@ -867,65 +869,7 @@ function EntryEdit(props: Props) {
 
     const handleEntryCreate = useCallback(
         (newValue: PartialEntryType) => {
-            const defaultAttributes = allWidgets.map((item) => {
-                let attr: PartialAttributeType | undefined;
-                const clientId = randomString();
-                const widget = item.id;
-
-                if (item.widgetId === 'TEXT' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'NUMBER' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'DATE' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'TIME' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'SCALE' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                }
-                return attr;
-            }).filter(isDefined);
-
+            const defaultAttributes = createDefaultAttributes(allWidgets);
             createRestorePoint();
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
