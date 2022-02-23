@@ -1,0 +1,15 @@
+.text-to-assist-item {
+    border: var(--dui-width-separator-thin) solid var(--color-nlp-tag);
+    background-color: var(--dui-color-foreground);
+    user-select: none;
+
+    .button {
+        border-color: var(--color-nlp-tag);
+        color: var(--color-nlp-tag);
+    }
+
+    .content {
+        font-weight: var(--dui-font-weight-bold);
+    }
+}
+
