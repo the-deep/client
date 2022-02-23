@@ -10,7 +10,7 @@ import {
 
 import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
-import CommaSeparateItems from '#components/CommaSeparateItems';
+import CommaSeparatedItems from '#components/CommaSeparatedItems';
 import { commentTypeToTextMap } from '#components/entryReview/commentConstants';
 import { EntryComment } from '#types';
 import EditCommentForm from './EditCommentForm';
@@ -63,9 +63,11 @@ function Comment(props: Props) {
             headerActions={mentionedUsers.length > 0 && (
                 <>
                     Assigned to
-                    <CommaSeparateItems
+                    <CommaSeparatedItems
                         className={styles.assignees}
                         items={mentionedUsers}
+                        keySelector={(mentionedUser) => mentionedUser.id}
+                        labelSelector={(mentionedUser) => mentionedUser.displayName ?? '?'}
                     />
                 </>
             )}
