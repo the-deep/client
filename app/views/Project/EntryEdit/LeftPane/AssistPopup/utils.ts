@@ -161,20 +161,9 @@ export function createScaleAttr(
     attr: ScaleWidgetAttribute | undefined;
     hints: string[];
 } {
-    const defaultAttr = {
-        id: widget.id,
-        clientId: randomString(),
-        widget: widget.id,
-        widgetVersion: widget.version,
-        widgetType: 'SCALE' as const,
-        data: widget.properties?.defaultValue ? {
-            value: widget.properties?.defaultValue,
-        } : undefined,
-    };
-
     if (!mapping || mapping.length < 1) {
         return {
-            attr: widget.properties?.defaultValue ? defaultAttr : undefined,
+            attr: undefined,
             hints: [],
         };
     }
@@ -182,7 +171,11 @@ export function createScaleAttr(
     if (mapping.length === 1) {
         return {
             attr: {
-                ...defaultAttr,
+                id: widget.id,
+                clientId: randomString(),
+                widget: widget.id,
+                widgetVersion: widget.version,
+                widgetType: 'SCALE' as const,
                 data: {
                     value: mapping[0].association.optionKey,
                 },
@@ -192,7 +185,7 @@ export function createScaleAttr(
     }
 
     return ({
-        attr: defaultAttr,
+        attr: undefined,
         hints: mapping.map((m) => m.association.optionKey),
     });
 }

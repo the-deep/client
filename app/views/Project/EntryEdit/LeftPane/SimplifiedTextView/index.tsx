@@ -24,7 +24,7 @@ const CHARACTER_PER_PAGE = 10000;
 type Split = {
     startIndex: number;
     endIndex: number;
-    excerpt: string | undefined;
+    excerpt: string;
     uniqueTextId: string;
 } & ({
     type: 'entry';
@@ -121,7 +121,7 @@ function SimplifiedTextView(props: Props) {
                 endIndex,
                 type: 'entry',
                 uniqueTextId: entry.clientId,
-                excerpt: entry.excerpt,
+                excerpt: entry.excerpt ?? entry.droppedExcerpt,
                 droppedExcerpt: entry.droppedExcerpt,
                 entryType: entry.entryType,
                 lead: entry.lead,
