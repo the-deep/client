@@ -5,6 +5,8 @@
     height: 100vh;
     font-size: var(--dui-font-size-medium);
 
+    --color-nlp-tag: #5f54ab;
+
     .navbar {
         flex-shrink: 0;
         height: 64px;
