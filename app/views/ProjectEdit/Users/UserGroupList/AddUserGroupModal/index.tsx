@@ -46,7 +46,7 @@ interface UserGroupMembership {
     }
 }
 
-const usergroupKeySelector = (d: UserGroupMini) => d.id;
+const usergroupKeySelector = (d: UserGroupMini) => d.usergroup.id;
 const usergroupLabelSelector = (d: UserGroupMini) => d.usergroup.title;
 
 const roleKeySelector = (d: ProjectRole) => d.id;

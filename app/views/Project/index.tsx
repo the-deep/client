@@ -75,7 +75,7 @@ function Project(props: Props) {
                     setLastActiveProject({
                         variables: { id: data.project.id },
                     });
-                } return null;
+                }
             },
         },
     );

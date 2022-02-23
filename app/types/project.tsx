@@ -148,22 +148,6 @@ export interface ProjectsSummary {
     recentEntriesActivity: ProjectRecentActivity;
 }
 
-// export interface UserGroup {
-//    id: number;
-//    title: string;
-//    joinedAt: string;
-//    project: number;
-//    usergroup: number;
-//    role: number;
-//    addedBy: number;
-//    addedByName: string;
-//    roleDetails: {
-//        id: number;
-//        title: string;
-//        level: number;
-//    };
-// }
-
 export type BadgeType = 'QA';
 
 export interface UserGroupMemberships {
