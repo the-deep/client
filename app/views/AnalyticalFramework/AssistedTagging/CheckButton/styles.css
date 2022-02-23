@@ -1,14 +1,13 @@
 .check-button {
-    --color-tag: #8c84bd;
-    --dui-color-accent: var(--color-tag);
-    border-color: var(--color-tag);
+    --dui-color-accent: var(--color-nlp-tag);
+    border-color: var(--color-nlp-tag);
 
     &.selected {
-        background-color: var(--color-tag);
+        background-color: var(--color-nlp-tag);
     }
 
     &.not-selected {
         background-color: var(--dui-color-white);
-        color: var(--color-tag);
+        color: var(--color-nlp-tag);
     }
 }
