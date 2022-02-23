@@ -184,8 +184,8 @@ function AddUserGroupModal(props: Props) {
             {
                 id: usergroupValue?.id,
                 usergroup: {
-                    id: usergroupValue.usergroup.id,
-                    title: usergroupValue.usergroup.title,
+                    id: usergroupValue?.usergroup.id,
+                    title: usergroupValue?.usergroup.title,
                 },
             },
         ];
