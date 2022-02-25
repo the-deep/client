@@ -47,13 +47,15 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         clientId: [],
+        region: [requiredCondition],
         title: [requiredStringCondition],
         level: [requiredCondition],
+        geoShapeFile: [],
         nameProp: [],
         codeProp: [],
-        region: [requiredCondition],
         parent: [],
-        geoShapeFile: [],
+        parentNameProp: [],
+        parentCodeProp: [],
     }),
 };
 
