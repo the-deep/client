@@ -12,19 +12,20 @@ import {
     ObjectSchema,
     requiredStringCondition,
     createSubmitHandler,
-    internal,
     requiredListCondition,
     getErrorString,
     getErrorObject,
 } from '@togglecorp/toggle-form';
 import NonFieldError from '#components/NonFieldError';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
-import { EntryComment } from '#types';
 import {
     EntryReviewCommentUpdateMutation,
     EntryReviewCommentUpdateMutationVariables,
+    ReviewCommentsQuery,
 } from '#generated/types';
 import styles from './styles.css';
+
+type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 const EDIT_COMMENT = gql`
 mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInputType!, $id: ID!) {
@@ -72,9 +73,9 @@ const schema: FormSchema = {
 
 interface Props {
     className?: string;
-    onEditSuccess: (response: EntryComment) => void;
+    onEditSuccess: (response: CommentType) => void;
     onEditCancel: () => void;
-    comment: EntryComment;
+    comment: CommentType;
     projectId: string;
 }
 
@@ -135,10 +136,7 @@ function EditCommentForm(props: Props) {
                 }
             },
 
-            onError: (errors) => {
-                setError({
-                    [internal]: errors.message,
-                });
+            onError: () => {
                 alert.show(
                     'Failed to edit comment!',
                     { variant: 'error' },

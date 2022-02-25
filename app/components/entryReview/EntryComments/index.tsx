@@ -15,9 +15,6 @@ import {
 } from 'react-icons/io5';
 
 import {
-    EntryComment,
-} from '#types';
-import {
     ReviewCommentsQuery,
     ReviewCommentsQueryVariables,
 } from '#generated/types';
@@ -26,6 +23,8 @@ import { useModalState } from '#hooks/stateManagement';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
 import styles from './styles.css';
+
+type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 const REVIEW_COMMENTS = gql`
     query ReviewComments(
@@ -85,7 +84,7 @@ export interface Props {
     onEntryCommentAdd?: () => void;
 }
 
-const commentKeySelector = (d: EntryComment) => d.id;
+const commentKeySelector = (d: CommentType) => d.id;
 const maxItemsPerPage = 50;
 
 function EntryComments(props: Props) {
@@ -139,12 +138,10 @@ function EntryComments(props: Props) {
         }
     }, [getComments, onEntryCommentAdd]);
 
-    const commentRendererParams = useCallback((_, comment: EntryComment) => ({
+    const commentRendererParams = useCallback((_, comment: CommentType) => ({
         comment,
         projectId,
     }), [projectId]);
-
-    const commentAssignee = commentsResponse?.project?.entry?.createdBy;
 
     return (
         <>
@@ -203,7 +200,7 @@ function EntryComments(props: Props) {
                         <CommentForm
                             entryId={entryId}
                             projectId={projectId}
-                            commentAssignee={commentAssignee}
+                            commentAssignee={commentsResponse?.project?.entry?.createdBy}
                             onSave={handleEntryCommentSave}
                         />
                     )}
