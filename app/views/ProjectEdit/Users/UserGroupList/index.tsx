@@ -213,7 +213,8 @@ function UserGroupList(props: Props) {
 
     const usergroupToEdit = useMemo(() => (
         usergroupResponse?.project?.userGroupMembers?.results?.find(
-            (d) => d.id === usergroupIdToEdit)
+            (d) => d.id === usergroupIdToEdit,
+        )
     ), [usergroupResponse?.project?.userGroupMembers?.results, usergroupIdToEdit]);
 
     const handleAddUsergroupClick = useCallback(() => {

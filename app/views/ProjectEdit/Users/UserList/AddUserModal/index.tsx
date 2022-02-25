@@ -49,7 +49,7 @@ import _ts from '#ts';
 import { ProjectUser } from '../index';
 import styles from './styles.css';
 
-const roleKeySelector = (d: ProjectRole) => d.id.toString();
+const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
 type FormType = NonNullable<EnumFix<ProjectMembershipBulkUpdateMutationVariables['items'], 'badges'>>[number];

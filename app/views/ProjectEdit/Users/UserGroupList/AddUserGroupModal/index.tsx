@@ -1,8 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     isDefined,
-    isNotDefined,
 } from '@togglecorp/fujs';
+import { useQuery, gql } from '@apollo/client';
 import {
     ObjectSchema,
     PartialForm,
@@ -21,21 +21,44 @@ import {
 
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import {
-    UserGroup,
     MultiResponse,
 } from '#types';
 import { ProjectRole } from '#types/project';
 import _ts from '#ts';
 import NonFieldError from '#components/NonFieldError';
 
+import {
+    UserGroupsQuery,
+    UserGroupsQueryVariables,
+} from '#generated/types';
+
 import styles from './styles.css';
+
+const USERGROUPS = gql`
+    query UserGroups($membersExcludeProject: ID) {
+        userGroups(membersExcludeProject: $membersExcludeProject) {
+            results {
+              id
+              title
+              createdAt
+              description
+              createdBy {
+                id
+                displayName
+              }
+            }
+            totalCount
+            pageSize
+            page
+        }
+    }
+`;
 
 interface UserGroupMini {
     id: string;
-    usergroup: {
-        id: string;
-        title: string;
-    }
+    title: string;
+    description: string;
+    createdAt: string;
 }
 
 interface UserGroupMembership {
@@ -44,23 +67,23 @@ interface UserGroupMembership {
         id: string;
         title: string;
     }
+    role: {
+        id: string;
+        title: string;
+    }
 }
 
-const usergroupKeySelector = (d: UserGroupMini) => d.usergroup.id;
-const usergroupLabelSelector = (d: UserGroupMini) => d.usergroup.title;
+const usergroupKeySelector = (d: UserGroupMini) => d.id;
+const usergroupLabelSelector = (d: UserGroupMini) => d.title;
 
 const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
 type FormType = {
     id?: string;
-    usergroup: {
-        id: string;
-        title: string;
-    }
-    role: number;
+    usergroup: string;
+    role: string;
 };
-
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -79,8 +102,8 @@ const schema: FormSchema = {
 };
 
 interface ValueToSend {
-    role: number;
-    usergroup?: number;
+    role: string;
+    usergroup: string;
 }
 
 const defaultFormValue: PartialForm<FormType> = {};
@@ -102,7 +125,12 @@ function AddUserGroupModal(props: Props) {
         activeUserRoleLevel,
     } = props;
 
-    const formValue: PartialForm<FormType> = usergroupValue ?? defaultFormValue;
+    const formValue: PartialForm<FormType> = usergroupValue ? {
+        id: usergroupValue.id,
+        usergroup: usergroupValue.usergroup.id,
+        role: usergroupValue.role.id,
+    } : defaultFormValue;
+
     const alert = useAlert();
 
     const {
@@ -116,10 +144,6 @@ function AddUserGroupModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const queryForUsergroups = useMemo(() => ({
-        members_exclude_project: projectId,
-    }), [projectId]);
-
     const {
         pending: pendingRoles,
         response: projectRolesResponse,
@@ -128,14 +152,22 @@ function AddUserGroupModal(props: Props) {
         method: 'GET',
     });
 
+    const membershipVariables = useMemo(
+        (): UserGroupsQueryVariables | undefined => ({
+            membersExcludeProject: projectId,
+        }),
+        [projectId],
+    );
+
     const {
-        pending: pendingUsergroupList,
-        response: usergroupResponse,
-    } = useRequest<MultiResponse<UserGroup>>({
-        url: 'server://user-groups/',
-        method: 'GET',
-        query: queryForUsergroups,
-    });
+        data: userGroupsResponse,
+        loading: pendingUserGroups,
+    } = useQuery<UserGroupsQuery, UserGroupsQueryVariables>(
+        USERGROUPS,
+        {
+            variables: membershipVariables,
+        },
+    );
 
     const {
         pending: pendingAddAction,
@@ -175,23 +207,7 @@ function AddUserGroupModal(props: Props) {
         [setError, validate, triggerAddUserGroup],
     );
 
-    const usergroupList = useMemo(() => {
-        if (isNotDefined(usergroupValue)) {
-            return usergroupResponse?.results ?? [];
-        }
-        return [
-            ...(usergroupResponse?.results ?? []),
-            {
-                id: usergroupValue?.id,
-                usergroup: {
-                    id: usergroupValue?.usergroup.id,
-                    title: usergroupValue?.usergroup.title,
-                },
-            },
-        ];
-    }, [usergroupResponse, usergroupValue]);
-
-    const pendingRequests = pendingRoles || pendingUsergroupList;
+    const pendingRequests = pendingRoles || pendingUserGroups;
 
     const roles = isDefined(activeUserRoleLevel)
         ? projectRolesResponse?.results.filter(
@@ -227,12 +243,12 @@ function AddUserGroupModal(props: Props) {
             <NonFieldError error={error} />
             <SelectInput
                 name="usergroup"
-                options={usergroupList}
+                options={userGroupsResponse?.userGroups?.results}
                 readOnly={isDefined(usergroupValue)}
                 keySelector={usergroupKeySelector}
                 labelSelector={usergroupLabelSelector}
                 onChange={setFieldValue}
-                value={value.usergroup?.id}
+                value={value.usergroup}
                 error={error?.usergroup}
                 label={_ts('projectEdit', 'usergroupLabel')}
                 placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}

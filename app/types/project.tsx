@@ -192,7 +192,7 @@ interface Permission {
 }
 
 export interface ProjectRole {
-    id: number;
+    id: string;
     leadPermissions: Permission;
     entryPermissions: Permission;
     setupPermissions: Permission;

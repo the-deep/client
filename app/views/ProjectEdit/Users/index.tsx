@@ -13,6 +13,7 @@ import styles from './styles.css';
 const MEMBERSHIP = gql`
     query Membership($id: ID!) {
         project(id: $id) {
+            id
             userMembers {
                 results {
                   clientId
