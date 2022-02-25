@@ -28,10 +28,6 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import routes from '#base/configs/routes';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
-
-import {
-    UserGroup,
-} from '#types';
 import {
     UserGroupMembersQuery,
     UserGroupMembersQueryVariables,
@@ -42,8 +38,10 @@ import AddUserGroupModal from './AddUserGroupModal';
 
 import styles from './styles.css';
 
+type UserGroupType = NonNullable<NonNullable<NonNullable<NonNullable<UserGroupMembersQuery>['project']>['userGroupMembers']>['results']>[number];
+
 const maxItemsPerPage = 10;
-const usergroupKeySelector = (d: UserGroup) => d.id;
+const usergroupKeySelector = (d: UserGroupType) => d.id;
 
 const USER_GROUP_MEMBERS = gql`
     query UserGroupMembers(
@@ -163,7 +161,7 @@ function UserGroupList(props: Props) {
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
-            UserGroup, string, ActionCellProps<string>, TableHeaderCellProps
+            UserGroupType, string, ActionCellProps<string>, TableHeaderCellProps
         > = {
             id: 'action',
             title: 'Actions',
@@ -187,22 +185,22 @@ function UserGroupList(props: Props) {
         };
 
         return ([
-            createStringColumn<UserGroup, string>(
+            createStringColumn<UserGroupType, string>(
                 'title',
                 _ts('projectEdit', 'group'),
                 (item) => item.usergroup.title,
             ),
-            createStringColumn<UserGroup, string>(
+            createStringColumn<UserGroupType, string>(
                 'addedByName',
                 _ts('projectEdit', 'addedByName'),
                 (item) => item.addedBy?.displayName,
             ),
-            createDateColumn<UserGroup, string>(
+            createDateColumn<UserGroupType, string>(
                 'joinedAt',
                 _ts('projectEdit', 'addedOn'),
                 (item) => item.joinedAt,
             ),
-            createStringColumn<UserGroup, string>(
+            createStringColumn<UserGroupType, string>(
                 'role',
                 'Assigned Role',
                 (item) => item.role.title,
