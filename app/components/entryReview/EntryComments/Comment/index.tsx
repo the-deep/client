@@ -12,16 +12,22 @@ import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
 import CommaSeparatedItems from '#components/CommaSeparatedItems';
 import { commentTypeToTextMap } from '#components/entryReview/commentConstants';
-import { EntryComment } from '#types';
+import {
+    ReviewCommentsQuery,
+} from '#generated/types';
 import EditCommentForm from './EditCommentForm';
 
 import styles from './styles.css';
 
+type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+
 interface Props {
     className?: string;
     projectId: string;
-    comment: EntryComment;
+    comment: CommentType;
 }
+
+type MentionedUserType = NonNullable<CommentType['mentionedUsers']>[number];
 
 function Comment(props: Props) {
     const {
@@ -31,7 +37,7 @@ function Comment(props: Props) {
     } = props;
 
     const { user } = useContext(UserContext);
-    const [comment, setComment] = useState<EntryComment>(commentFromProps);
+    const [comment, setComment] = useState<CommentType>(commentFromProps);
     const [
         isEditModalVisible,
         showEditModal,
@@ -50,10 +56,20 @@ function Comment(props: Props) {
         user?.id === createdBy?.id && text
     ), [user, createdBy, text]);
 
-    const handleSuccess = useCallback((value: EntryComment) => {
+    const handleSuccess = useCallback((value: CommentType) => {
         setComment(value);
         hideEditModal();
     }, [hideEditModal]);
+
+    const handleKeySelector = useCallback(
+        (value: MentionedUserType) => (value.id),
+        [],
+    );
+
+    const handleLabelSelector = useCallback(
+        (value: MentionedUserType) => (value.displayName ?? value.id),
+        [],
+    );
 
     return (
         <Container
@@ -66,8 +82,8 @@ function Comment(props: Props) {
                     <CommaSeparatedItems
                         className={styles.assignees}
                         items={mentionedUsers}
-                        keySelector={(mentionedUser) => mentionedUser.id}
-                        labelSelector={(mentionedUser) => mentionedUser.displayName ?? '?'}
+                        keySelector={handleKeySelector}
+                        labelSelector={handleLabelSelector}
                     />
                 </>
             )}
