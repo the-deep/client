@@ -11,7 +11,7 @@ import {
     ScaleWidget,
     SingleSelectWidget,
     MultiSelectWidget,
-    CategoricalMappingItem,
+    CategoricalMappingsItem,
     KeyLabelEntity,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
@@ -25,8 +25,8 @@ const cellKeySelector = (cell: KeyLabelEntity) => cell.key;
 interface Props {
     className?: string;
     widget: ScaleWidget | SingleSelectWidget | MultiSelectWidget;
-    mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
+    mappings: CategoricalMappingsItem[] | undefined;
+    onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -34,8 +34,8 @@ function ScaleTagInput(props: Props) {
     const {
         className,
         widget,
-        mapping,
-        onMappingChange,
+        mappings,
+        onMappingsChange,
         selectedTag,
     } = props;
 
@@ -48,24 +48,28 @@ function ScaleTagInput(props: Props) {
             return;
         }
 
-        const selectedMappingIndex = mapping?.findIndex((m) => {
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
             if (
-                selectedTag === m.tagId
-                && (m.widgetType === 'SCALE' || m.widgetType === 'SELECT' || m.widgetType === 'MULTISELECT')
+                selectedTag === mapping.tagId
+                && (
+                    mapping.widgetType === 'SCALE'
+                    || mapping.widgetType === 'SELECT'
+                    || mapping.widgetType === 'MULTISELECT'
+                )
             ) {
-                return m.association.optionKey === cellKey;
+                return mapping.association.optionKey === cellKey;
             }
             return false;
         });
 
-        if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
-            const newMapping = [...(mapping ?? [])];
-            newMapping.splice(selectedMappingIndex, 1);
+        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
+            const newMappings = [...(mappings ?? [])];
+            newMappings.splice(selectedMappingsIndex, 1);
 
-            onMappingChange(newMapping, widget.id);
+            onMappingsChange(newMappings, widget.id);
         } else {
-            onMappingChange([
-                ...(mapping ?? []),
+            onMappingsChange([
+                ...(mappings ?? []),
                 {
                     tagId: selectedTag,
                     widgetPk: widget.id,
@@ -77,44 +81,44 @@ function ScaleTagInput(props: Props) {
             ], widget.id);
         }
     }, [
-        onMappingChange,
-        mapping,
+        onMappingsChange,
+        mappings,
         selectedTag,
         widget,
     ]);
 
     const cellRendererParams = useCallback((_: string, cell: KeyLabelEntity) => ({
-        title: cell.label,
-        itemKey: cell.key,
-        value: mapping?.some((m) => {
+        children: cell.label,
+        name: cell.key,
+        value: mappings?.some((mapping) => {
             if (
-                selectedTag === m.tagId
+                selectedTag === mapping.tagId
                 && (
-                    m.widgetType === 'SCALE'
-                    || m.widgetType === 'SELECT'
-                    || m.widgetType === 'MULTISELECT'
+                    mapping.widgetType === 'SCALE'
+                    || mapping.widgetType === 'SELECT'
+                    || mapping.widgetType === 'MULTISELECT'
                 )
             ) {
-                return m.association.optionKey === cell.key;
+                return mapping.association.optionKey === cell.key;
             }
             return false;
         }) ?? false,
-        mappedCount: mapping?.filter((m) => {
+        mappedCount: mappings?.filter((mapping) => {
             if (
-                m.widgetType === 'SCALE'
-                || m.widgetType === 'SELECT'
-                || m.widgetType === 'MULTISELECT'
+                mapping.widgetType === 'SCALE'
+                || mapping.widgetType === 'SELECT'
+                || mapping.widgetType === 'MULTISELECT'
             ) {
-                return m.association.optionKey === cell.key;
+                return mapping.association.optionKey === cell.key;
             }
             return false;
         }).length ?? 0,
-        onTagClick: handleCellClick,
+        onClick: handleCellClick,
         disabled: !selectedTag,
     }), [
         handleCellClick,
         selectedTag,
-        mapping,
+        mappings,
     ]);
 
     return (
