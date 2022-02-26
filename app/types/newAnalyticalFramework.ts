@@ -720,7 +720,7 @@ export interface FrameworkProperties {
     };
 }
 
-const widgetVersionMapping: {
+const widgetVersionMappings: {
     [key in Widget['widgetId']]: number
 } = {
     TEXT: TEXT_WIDGET_VERSION,
@@ -756,7 +756,7 @@ const supportedWidgetTypes: Widget['widgetId'][] = [
 */
 
 export function getWidgetVersion(type: Widget['widgetId']) {
-    return widgetVersionMapping[type];
+    return widgetVersionMappings[type];
 }
 
 function convertDateStringToTimestamp(value: undefined): undefined;
@@ -1301,6 +1301,7 @@ export interface AssistedTag {
     labelGroup: string; // Example: 'Context Group 1'
 }
 
+// FIXME: Remove this after we fetch assisted tags from the server
 export const mockAssistedTags: AssistedTag[] = [
     {
         id: '1',
@@ -1404,12 +1405,14 @@ export const mockAssistedTags: AssistedTag[] = [
     },
 ];
 
-interface MappingItemBase {
+interface MappingsItemBase {
     tagId: string; // NOTE: AssistedTag['id'];
+    // NOTE: This is called widgetPK as it conflicts with widgetId which
+    // currently means type of widget
     widgetPk: string;
 }
 
-export interface Matrix1dMappingItem extends MappingItemBase {
+export interface Matrix1dMappingsItem extends MappingsItemBase {
     widgetType: 'MATRIX1D';
     association: {
         rowKey: string;
@@ -1417,7 +1420,7 @@ export interface Matrix1dMappingItem extends MappingItemBase {
     }
 }
 
-export interface Matrix2dMappingItem extends MappingItemBase {
+export interface Matrix2dMappingsItem extends MappingsItemBase {
     widgetType: 'MATRIX2D';
     association: {
         type: 'SUB_ROW';
@@ -1426,7 +1429,8 @@ export interface Matrix2dMappingItem extends MappingItemBase {
     } | {
         type: 'COLUMN';
         columnKey: string;
-        subColumnKey?: undefined;
+        // FIXME: Added for type issue, need to fix this
+        subColumnKey?: string;
     } | {
         type: 'SUB_COLUMN';
         columnKey: string;
@@ -1434,62 +1438,62 @@ export interface Matrix2dMappingItem extends MappingItemBase {
     };
 }
 
-export interface ScaleMappingItem extends MappingItemBase {
+export interface ScaleMappingsItem extends MappingsItemBase {
     widgetType: 'SCALE';
     association: {
         optionKey: string;
     };
 }
 
-export interface SelectMappingItem extends MappingItemBase {
+export interface SelectMappingsItem extends MappingsItemBase {
     widgetType: 'SELECT';
     association: {
         optionKey: string;
     };
 }
 
-export interface MultiSelectMappingItem extends MappingItemBase {
+export interface MultiSelectMappingsItem extends MappingsItemBase {
     widgetType: 'MULTISELECT';
     association: {
         optionKey: string;
     };
 }
 
-export interface OrganigramMappingItem extends MappingItemBase {
+export interface OrganigramMappingsItem extends MappingsItemBase {
     widgetType: 'ORGANIGRAM';
     association: {
         optionKey: string;
     };
 }
 
-export interface GeoMappingItem {
+export interface GeoMappingsItem {
     widgetType: 'GEO';
     widgetPk: string;
 }
 
-export interface NumberMappingItem {
+export interface NumberMappingsItem {
     widgetType: 'NUMBER';
     widgetPk: string;
 }
 
-export type MappingItem = Matrix1dMappingItem
-    | Matrix2dMappingItem
-    | ScaleMappingItem
-    | SelectMappingItem
-    | MultiSelectMappingItem
-    | OrganigramMappingItem
-    | NumberMappingItem
-    | GeoMappingItem;
+export type MappingsItem = Matrix1dMappingsItem
+    | Matrix2dMappingsItem
+    | ScaleMappingsItem
+    | SelectMappingsItem
+    | MultiSelectMappingsItem
+    | OrganigramMappingsItem
+    | NumberMappingsItem
+    | GeoMappingsItem;
 
-export type CategoricalMappingItem = Exclude<MappingItem, NumberMappingItem | GeoMappingItem>;
+export type CategoricalMappingsItem = Exclude<MappingsItem, NumberMappingsItem | GeoMappingsItem>;
 
-export function isCategoricalMapping(
-    value: MappingItem,
-): value is CategoricalMappingItem {
+export function isCategoricalMappings(
+    value: MappingsItem,
+): value is CategoricalMappingsItem {
     return !(value.widgetType === 'NUMBER' || value.widgetType === 'GEO');
 }
 
-export const mappingSupportedWidgets = [
+export const mappingsSupportedWidgets = [
     'MATRIX1D',
     'MATRIX2D',
     'SCALE',
