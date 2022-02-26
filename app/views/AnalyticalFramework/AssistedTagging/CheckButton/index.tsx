@@ -8,40 +8,40 @@ import {
 
 import styles from './styles.css';
 
-interface Props {
+interface Props<N> {
     className?: string;
-    title: string;
-    itemKey: string;
+    children: React.ReactNode;
+    name: N;
     disabled?: boolean;
     value: boolean;
-    onTagClick: (key: string) => void;
+    onClick: (key: N) => void;
     mappedCount?: number;
 }
 
-function CheckButton(props: Props) {
+function CheckButton<N>(props: Props<N>) {
     const {
         className,
-        title,
-        itemKey,
+        children,
+        name,
         disabled,
         value,
         mappedCount = 0,
-        onTagClick,
+        onClick,
     } = props;
 
     return (
         <Button
-            name={itemKey}
+            name={name}
             disabled={disabled}
             className={_cs(
                 className,
                 styles.checkButton,
                 value ? styles.selected : styles.notSelected,
             )}
-            onClick={onTagClick}
+            onClick={onClick}
             actions={mappedCount > 0 && <IoCheckmark />}
         >
-            {title}
+            {children}
         </Button>
     );
 }

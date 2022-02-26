@@ -18,7 +18,7 @@ type FormType = {
     entries: EntryInput[];
 }
 
-type getType<T, Q> = T extends Q ? T : never;
+export type getType<T, Q> = T extends Q ? T : never;
 
 export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data' | 'entryType' | 'lead' | 'widgetVersion'>;
 
