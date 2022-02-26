@@ -9,7 +9,7 @@ import {
 
 import {
     Matrix1dWidget,
-    CategoricalMappingItem,
+    CategoricalMappingsItem,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
@@ -33,8 +33,8 @@ const groupKeySelector = (n: CellItem) => n.rowKey;
 interface Props {
     className?: string;
     widget: Matrix1dWidget;
-    mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
+    mappings: CategoricalMappingsItem[] | undefined;
+    onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -42,20 +42,20 @@ function Matrix1dTagInput(props: Props) {
     const {
         className,
         widget,
-        mapping,
-        onMappingChange,
+        mappings,
+        onMappingsChange,
         selectedTag,
     } = props;
 
     const sortedCells = useMemo(() => (
         sortByOrder(widget?.properties?.rows)?.map((row) => {
-            const cells = row.cells.map((c) => ({
+            const cells = row.cells.map((cell) => ({
                 rowKey: row.key,
                 rowOrder: row.order,
                 rowLabel: row.label,
-                subRowKey: c.key,
-                subRowOrder: c.order,
-                subRowLabel: c.label,
+                subRowKey: cell.key,
+                subRowOrder: cell.order,
+                subRowLabel: cell.label,
             }));
             return cells;
         }).flat()
@@ -66,31 +66,32 @@ function Matrix1dTagInput(props: Props) {
             return;
         }
 
-        const selectedMappingIndex = mapping?.findIndex((m) => {
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
             if (
-                selectedTag === m.tagId
-                && m.widgetType === 'MATRIX1D'
+                selectedTag === mapping.tagId
+                && mapping.widgetType === 'MATRIX1D'
             ) {
-                return m.association.subRowKey === cellKey;
+                return mapping.association.subRowKey === cellKey;
             }
             return false;
         });
 
-        if (isDefined(selectedMappingIndex) && selectedMappingIndex !== -1) {
-            const newMapping = [...(mapping ?? [])];
-            newMapping.splice(selectedMappingIndex, 1);
+        if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
+            const newMappings = [...(mappings ?? [])];
+            newMappings.splice(selectedMappingsIndex, 1);
 
-            onMappingChange(newMapping, widget.clientId);
+            onMappingsChange(newMappings, widget.clientId);
         } else {
-            const rowKey = sortedCells?.find((sc) => sc.subRowKey === cellKey)?.rowKey;
+            const rowKey = sortedCells
+                ?.find((cell) => cell.subRowKey === cellKey)?.rowKey;
 
             if (!rowKey) {
                 console.error('Sub-row without row is found');
                 return;
             }
 
-            onMappingChange([
-                ...(mapping ?? []),
+            onMappingsChange([
+                ...(mappings ?? []),
                 {
                     tagId: selectedTag,
                     widgetPk: widget.id,
@@ -104,41 +105,41 @@ function Matrix1dTagInput(props: Props) {
         }
     }, [
         sortedCells,
-        onMappingChange,
-        mapping,
+        onMappingsChange,
+        mappings,
         selectedTag,
         widget,
     ]);
 
     const cellRendererParams = useCallback((_: string, cell: CellItem) => ({
-        title: cell.subRowLabel,
-        itemKey: cell.subRowKey,
-        value: mapping?.some((m) => {
+        children: cell.subRowLabel,
+        name: cell.subRowKey,
+        value: mappings?.some((mapping) => {
             if (
-                selectedTag === m.tagId
-                && m.widgetType === 'MATRIX1D'
+                selectedTag === mapping.tagId
+                && mapping.widgetType === 'MATRIX1D'
             ) {
-                return m.association.subRowKey === cell.subRowKey;
+                return mapping.association.subRowKey === cell.subRowKey;
             }
             return false;
         }) ?? false,
-        mappedCount: mapping?.filter((m) => {
-            if (m.widgetType === 'MATRIX1D') {
-                return m.association.subRowKey === cell.subRowKey;
+        mappedCount: mappings?.filter((mapping) => {
+            if (mapping.widgetType === 'MATRIX1D') {
+                return mapping.association.subRowKey === cell.subRowKey;
             }
             return false;
         }).length ?? 0,
-        onTagClick: handleCellClick,
+        onClick: handleCellClick,
         disabled: !selectedTag,
     }), [
         handleCellClick,
         selectedTag,
-        mapping,
+        mappings,
     ]);
 
     const subRowGroupRendererParams = useCallback((groupKey: string) => {
         const groupLabel = sortedCells
-            ?.find((c) => groupKey === c.rowKey)
+            ?.find((cell) => groupKey === cell.rowKey)
             ?.rowLabel;
 
         return ({

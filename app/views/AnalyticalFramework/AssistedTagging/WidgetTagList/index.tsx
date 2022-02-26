@@ -4,20 +4,20 @@ import { Container } from '@the-deep/deep-ui';
 
 import {
     Widget,
-    CategoricalMappingItem,
+    CategoricalMappingsItem,
 } from '#types/newAnalyticalFramework';
 
-import Matrix1dTagInput from './Matrix1dTagList';
+import Matrix1dTagInput from './Matrix1dTagInput';
 import Matrix2dTagInput from './Matrix2dTagInput';
-import ScaleTagInput from './ScaleTagInput';
+import OptionTypeTagInput from './OptionTypeTagInput';
 
 import styles from './styles.css';
 
 interface Props {
     className?: string;
     widget: Widget;
-    mapping: CategoricalMappingItem[] | undefined;
-    onMappingChange: (newMapping: CategoricalMappingItem[], widgetPk: string) => void;
+    mappings: CategoricalMappingsItem[] | undefined;
+    onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -25,8 +25,8 @@ function WidgetTagList(props: Props) {
     const {
         className,
         widget,
-        mapping,
-        onMappingChange,
+        mappings,
+        onMappingsChange,
         selectedTag,
     } = props;
 
@@ -39,8 +39,8 @@ function WidgetTagList(props: Props) {
             >
                 <Matrix1dTagInput
                     widget={widget}
-                    mapping={mapping}
-                    onMappingChange={onMappingChange}
+                    mappings={mappings}
+                    onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
                 />
             </Container>
@@ -56,8 +56,8 @@ function WidgetTagList(props: Props) {
             >
                 <Matrix2dTagInput
                     widget={widget}
-                    mapping={mapping}
-                    onMappingChange={onMappingChange}
+                    mappings={mappings}
+                    onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
                 />
             </Container>
@@ -75,10 +75,10 @@ function WidgetTagList(props: Props) {
                 heading={widget.title}
                 headingSize="extraSmall"
             >
-                <ScaleTagInput
+                <OptionTypeTagInput
                     widget={widget}
-                    mapping={mapping}
-                    onMappingChange={onMappingChange}
+                    mappings={mappings}
+                    onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
                 />
             </Container>

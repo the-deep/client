@@ -37,7 +37,7 @@ interface Props {
     onAssistCancel: () => void;
 }
 
-function TextToAssistItem(props: Props) {
+function AssistItem(props: Props) {
     const {
         className,
         textToAssist,
@@ -167,4 +167,4 @@ function TextToAssistItem(props: Props) {
     );
 }
 
-export default TextToAssistItem;
+export default AssistItem;

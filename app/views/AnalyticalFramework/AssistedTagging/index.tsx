@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
     _cs,
+    listToMap,
     isDefined,
 } from '@togglecorp/fujs';
 import {
@@ -16,8 +17,8 @@ import {
     mockAssistedTags,
     AssistedTag,
     Widget,
-    MappingItem,
-    isCategoricalMapping,
+    MappingsItem,
+    isCategoricalMappings,
     categoricalWidgets,
 } from '#types/newAnalyticalFramework';
 import useLocalStorage from '#hooks/useLocalStorage';
@@ -29,9 +30,9 @@ import CellGroup from './CellGroup';
 
 import styles from './styles.css';
 
-const nlpLabelGroupKeySelector = (n: AssistedTag) => n.labelGroup;
-const nlpLabelKeySelector = (n: AssistedTag) => n.id;
-const widgetKeySelector = (n: Widget) => n.clientId;
+const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.labelGroup;
+const nlpLabelKeySelector = (tag: AssistedTag) => tag.id;
+const widgetKeySelector = (widget: Widget) => widget.clientId;
 
 interface Props {
     className?: string;
@@ -53,23 +54,27 @@ function AssistedTagging(props: Props) {
     } = props;
 
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
-    const [mapping, setMapping] = useLocalStorage<MappingItem[] | undefined>(`mapping-${frameworkId}`, undefined);
+    // FIXME: Remove this later after it is saveable in server
+    const [mappings, setMappings] = useLocalStorage<MappingsItem[] | undefined>(`mappings-${frameworkId}`, undefined);
 
-    const categoricalMapping = mapping?.filter(isCategoricalMapping);
+    const categoricalMappings = useMemo(
+        () => mappings?.filter(isCategoricalMappings),
+        [mappings],
+    );
 
     const widgets = useMemo(() => (
         allWidgets
-            ?.filter((w) => (
-                isDefined(w.id) && categoricalWidgets.includes(w.widgetId)
+            ?.filter((widget) => (
+                isDefined(widget.id) && categoricalWidgets.includes(widget.widgetId)
             ))
     ), [allWidgets]);
 
     const geoWidgets = useMemo(() => (
-        allWidgets?.filter((w) => isDefined(w.id) && w.widgetId === 'GEO')
+        allWidgets?.filter((widget) => isDefined(widget.id) && widget.widgetId === 'GEO')
     ), [allWidgets]);
 
     const numberWidgets = useMemo(() => (
-        allWidgets?.filter((w) => isDefined(w.id) && w.widgetId === 'NUMBER')
+        allWidgets?.filter((widget) => isDefined(widget.id) && widget.widgetId === 'NUMBER')
     ), [allWidgets]);
 
     const nlpLabelGroupRendererParams = useCallback((title: string) => ({
@@ -81,95 +86,111 @@ function AssistedTagging(props: Props) {
     }, []);
 
     const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
-        title: tag.label,
-        itemKey,
+        children: tag.label,
+        name: itemKey,
         value: selectedTag === itemKey,
-        mappedCount: categoricalMapping?.filter((m) => m.tagId === itemKey).length ?? 0,
-        onTagClick: handleTagClick,
+        mappedCount: categoricalMappings?.filter((m) => m.tagId === itemKey).length ?? 0,
+        onClick: handleTagClick,
     }), [
         handleTagClick,
         selectedTag,
-        categoricalMapping,
+        categoricalMappings,
     ]);
 
     const handleGeoWidgetClick = useCallback((widgetPk: string) => {
-        setMapping((oldMapping = []) => {
-            const selectedWidgetIndex = oldMapping.findIndex(
-                (om) => om.widgetPk === widgetPk,
+        setMappings((oldMappings = []) => {
+            const selectedWidgetIndex = oldMappings.findIndex(
+                (mapping) => mapping.widgetPk === widgetPk,
             );
             if (selectedWidgetIndex !== -1) {
-                return oldMapping.filter((om) => om.widgetPk !== widgetPk);
+                return oldMappings.filter((mapping) => mapping.widgetPk !== widgetPk);
             }
             return [
-                ...oldMapping,
+                ...oldMappings,
                 {
                     widgetType: 'GEO',
                     widgetPk,
                 },
             ];
         });
-    }, [setMapping]);
+    }, [setMappings]);
+
+    const geoWidgetsMappingValue = useMemo(() => (
+        listToMap(
+            mappings?.filter((mapping) => mapping.widgetType === 'GEO'),
+            (mapping) => mapping.widgetPk,
+            () => true,
+        )
+    ), [mappings]);
 
     const geoWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
-        title: widget.title,
-        itemKey,
-        value: !!mapping?.some((m) => m.widgetPk === widget.id && m.widgetType === 'GEO'),
-        onTagClick: handleGeoWidgetClick,
+        children: widget.title,
+        name: itemKey,
+        value: !!geoWidgetsMappingValue?.[widget.id],
+        onClick: handleGeoWidgetClick,
     }), [
-        mapping,
+        geoWidgetsMappingValue,
         handleGeoWidgetClick,
     ]);
 
     const handleNumberWidgetClick = useCallback((widgetPk: string) => {
-        setMapping((oldMapping = []) => {
-            const selectedWidgetIndex = oldMapping.findIndex(
-                (om) => om.widgetPk === widgetPk,
+        setMappings((oldMappings = []) => {
+            const selectedWidgetIndex = oldMappings.findIndex(
+                (mapping) => mapping.widgetPk === widgetPk,
             );
             if (selectedWidgetIndex !== -1) {
-                return oldMapping.filter((om) => om.widgetPk !== widgetPk);
+                return oldMappings.filter((mapping) => mapping.widgetPk !== widgetPk);
             }
             return [
-                ...oldMapping,
+                ...oldMappings,
                 {
                     widgetType: 'NUMBER',
                     widgetPk,
                 },
             ];
         });
-    }, [setMapping]);
+    }, [setMappings]);
+
+    const numberWidgetsMappingValue = useMemo(() => (
+        listToMap(
+            mappings?.filter((mapping) => mapping.widgetType === 'NUMBER'),
+            (mapping) => mapping.widgetPk,
+            () => true,
+        )
+    ), [mappings]);
 
     const numberWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
-        title: widget.title,
-        itemKey,
-        value: !!mapping?.find((m) => m.widgetPk === widget.id && m.widgetType === 'NUMBER'),
-        onTagClick: handleNumberWidgetClick,
+        children: widget.title,
+        name: itemKey,
+        value: !!numberWidgetsMappingValue?.[widget.id],
+        onClick: handleNumberWidgetClick,
     }), [
-        mapping,
+        numberWidgetsMappingValue,
         handleNumberWidgetClick,
     ]);
 
-    const handleWidgetMappingChange = useCallback((
-        newWidgetMapping: MappingItem[],
+    const handleWidgetMappingsChange = useCallback((
+        newWidgetMappings: MappingsItem[],
         widgetPk: string,
     ) => {
-        setMapping((oldMapping = []) => {
-            const filteredMapping = oldMapping.filter((om) => om.widgetPk !== widgetPk);
+        setMappings((oldMappings = []) => {
+            const filteredMappings = oldMappings.filter((mapping) => mapping.widgetPk !== widgetPk);
             return [
-                ...filteredMapping,
-                ...newWidgetMapping,
+                ...filteredMappings,
+                ...newWidgetMappings,
             ];
         });
-    }, [setMapping]);
+    }, [setMappings]);
 
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-        mapping: categoricalMapping?.filter((m) => m.widgetPk === widget.id),
-        onMappingChange: handleWidgetMappingChange,
+        mappings: categoricalMappings?.filter((mapping) => mapping.widgetPk === widget.id),
+        onMappingsChange: handleWidgetMappingsChange,
         selectedTag,
     }), [
-        categoricalMapping,
+        categoricalMappings,
         selectedTag,
-        handleWidgetMappingChange,
+        handleWidgetMappingsChange,
     ]);
 
     return (
