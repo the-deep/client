@@ -3,7 +3,6 @@ import {
     _cs,
     listToMap,
     unique,
-    isDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -19,18 +18,16 @@ import useLocalStorage from '#hooks/useLocalStorage';
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import {
-    MappingItem,
-    isCategoricalMapping,
-    mappingSupportedWidgets,
+    MappingsItem,
+    isCategoricalMappings,
+    mappingsSupportedWidgets,
 } from '#types/newAnalyticalFramework';
-import {
-    WidgetAttribute,
-} from '#types/newEntry';
 
 import {
     Framework,
 } from '../../types';
 import {
+    PartialAttributeType,
     PartialEntryType,
 } from '../../schema';
 import {
@@ -48,7 +45,7 @@ import {
 
 import styles from './styles.css';
 
-const mockAssistedMappingResponse = {
+const mockAssistedMappingsResponse = {
     tags: [
         '9',
         '6',
@@ -90,7 +87,7 @@ function AssistPopup(props: Props) {
         onGeoAreaOptionsChange,
     } = props;
 
-    const [mapping] = useLocalStorage<MappingItem[] | undefined>(`mapping-${frameworkDetails.id}`, undefined);
+    const [mappings] = useLocalStorage<MappingsItem[] | undefined>(`mappings-${frameworkDetails.id}`, undefined);
 
     const {
         allWidgets,
@@ -106,119 +103,152 @@ function AssistPopup(props: Props) {
         ];
         return {
             allWidgets: widgets,
-            filteredWidgets: widgets.filter((w) => mappingSupportedWidgets.includes(w.widgetId)),
+            filteredWidgets: widgets.filter((w) => mappingsSupportedWidgets.includes(w.widgetId)),
         };
     }, [
         frameworkDetails,
     ]);
 
     // FIXME: Insert this inside onCompleted
-    const handleMappingFetch = useCallback(() => {
+    const handleMappingsFetch = useCallback(() => {
         // TODO: Handle Number and Geo widgets
-        const matchedMapping = mapping
-            ?.filter(isCategoricalMapping)
-            .filter((m) => mockAssistedMappingResponse.tags.includes(m.tagId));
+        const matchedMappings = mappings
+            ?.filter(isCategoricalMappings)
+            .filter((m) => mockAssistedMappingsResponse.tags.includes(m.tagId));
 
-        const recommendedAttributes: (WidgetAttribute | undefined)[] = [];
+        const recommendedAttributes: PartialAttributeType[] = [];
+        const widgetsHints = [];
         filteredWidgets.forEach((widget) => {
             if (widget.widgetId === 'MATRIX1D') {
-                const supportedTags = matchedMapping
+                const supportedTags = matchedMappings
                     ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterMatrix1dMappings);
 
-                recommendedAttributes.push(
-                    createMatrix1dAttr(
-                        supportedTags,
-                        widget,
-                    ),
-                );
+                const attr = createMatrix1dAttr(supportedTags, widget);
+                if (attr) {
+                    recommendedAttributes.push(attr);
+                }
             }
             if (widget.widgetId === 'MATRIX2D') {
-                const supportedTags = matchedMapping
+                const supportedTags = matchedMappings
                     ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterMatrix2dMappings);
 
-                recommendedAttributes.push(
-                    createMatrix2dAttr(
-                        supportedTags,
-                        widget,
-                    ),
-                );
+                const attr = createMatrix2dAttr(supportedTags, widget);
+                if (attr) {
+                    recommendedAttributes.push(attr);
+                }
             }
             if (widget.widgetId === 'SCALE') {
-                const supportedTags = matchedMapping
+                const supportedTags = matchedMappings
                     ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterScaleMappings);
 
                 const {
                     attr,
+                    hints,
                 } = createScaleAttr(supportedTags, widget);
-                recommendedAttributes.push(attr);
+
+                if (attr) {
+                    recommendedAttributes.push(attr);
+                }
+
+                if (hints) {
+                    widgetsHints.push({
+                        widgetPk: widget.id,
+                        hints,
+                    });
+                }
             }
             if (widget.widgetId === 'SELECT') {
-                const supportedTags = matchedMapping
+                const supportedTags = matchedMappings
                     ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterSelectMappings);
 
                 const {
                     attr,
+                    hints,
                 } = createSelectAttr(supportedTags, widget);
-                recommendedAttributes.push(attr);
+                if (attr) {
+                    recommendedAttributes.push(attr);
+                }
+                if (hints) {
+                    widgetsHints.push({
+                        widgetPk: widget.id,
+                        hints,
+                    });
+                }
             }
             if (widget.widgetId === 'MULTISELECT') {
-                const supportedTags = matchedMapping
+                const supportedTags = matchedMappings
                     ?.filter((m) => m.widgetPk === widget.id)
                     .filter(filterMultiSelectMappings);
 
-                recommendedAttributes.push(
-                    createMultiSelectAttr(
-                        supportedTags,
-                        widget,
-                    ),
+                const attr = createMultiSelectAttr(
+                    supportedTags,
+                    widget,
                 );
+                if (attr) {
+                    recommendedAttributes.push();
+                }
             }
             return undefined;
         });
 
-        const attributes = recommendedAttributes.filter(isDefined);
-        const attributesMap = listToMap(
-            attributes,
+        const recommentedAttributesMap = listToMap(
+            recommendedAttributes,
             (attr) => attr.widget,
             (attr) => attr,
         );
 
-        // FIXME: This should not be required
-        const newEntry = {
-            clientId: randomString(),
-            entryType: 'EXCERPT' as const,
-            lead: leadId,
-            excerpt: selectedText,
-            droppedExcerpt: selectedText,
-            attributes,
-        };
         onChange(
             (oldEntry) => {
+                if (!oldEntry) {
+                    const newEntry = {
+                        clientId: randomString(),
+                        entryType: 'EXCERPT' as const,
+                        lead: leadId,
+                        excerpt: selectedText,
+                        droppedExcerpt: selectedText,
+                        attributes: recommendedAttributes,
+                    };
+
+                    return newEntry;
+                }
                 const oldAttributes = oldEntry?.attributes ?? [];
+
                 // NOTE: Updating the existing attributes
                 // FIXME: Currently overrides all info, maybe we should only update data
                 const updatedAttributes = oldAttributes.map((attr) => (
-                    attributesMap[attr.widget] ? (
-                        attributesMap[attr.widget]
-                    ) : (
+                    recommentedAttributesMap[attr.widget] ? ({
+                        ...recommentedAttributesMap[attr.widget],
+                        clientId: attr.clientId,
+                        widget: attr.widget,
+                        id: attr.id,
+                        widgetVersion: attr.widgetVersion,
+                    }) : (
                         attr
                     )
                 ));
 
+                const oldAttributesMap = listToMap(
+                    oldAttributes,
+                    (attr) => (attr.widget),
+                    () => true,
+                );
+                const removedNewAttributes = recommendedAttributes.filter(
+                    (attr) => !oldAttributesMap[attr.widget],
+                );
+
                 // NOTE: Adding new attributes from suggestion and removing duplicates
                 const newAttributes = unique([
+                    ...removedNewAttributes,
                     ...updatedAttributes,
-                    ...attributes,
                 ], (attr) => attr.widget);
 
                 // FIXME: Spreading newEntry does not seem right
                 // need to discuss
                 return {
-                    ...newEntry,
                     ...oldEntry,
                     attributes: newAttributes,
                 };
@@ -228,7 +258,7 @@ function AssistPopup(props: Props) {
     }, [
         selectedText,
         leadId,
-        mapping,
+        mappings,
         onChange,
         filteredWidgets,
     ]);
@@ -243,7 +273,7 @@ function AssistPopup(props: Props) {
                 <>
                     <Button
                         name={undefined}
-                        onClick={handleMappingFetch}
+                        onClick={handleMappingsFetch}
                     >
                         Fetch Details
                     </Button>

@@ -15,7 +15,7 @@ import { PartialEntryType as EntryInput } from '../../schema';
 import { Framework } from '../../types';
 import useTextSelection from './useTextSelection';
 import EntryItem from '../EntryItem';
-import TextToAssistItem from '../TextToAssistItem';
+import AssistItem from '../AssistItem';
 
 import styles from './styles.css';
 
@@ -25,7 +25,7 @@ type Split = {
     startIndex: number;
     endIndex: number;
     excerpt: string;
-    uniqueTextId: string;
+    key: string;
 } & ({
     type: 'entry';
     entryType: EntryInput['entryType'];
@@ -120,7 +120,7 @@ function SimplifiedTextView(props: Props) {
                 startIndex,
                 endIndex,
                 type: 'entry',
-                uniqueTextId: entry.clientId,
+                key: entry.clientId,
                 excerpt: entry.excerpt ?? entry.droppedExcerpt,
                 droppedExcerpt: entry.droppedExcerpt,
                 entryType: entry.entryType,
@@ -143,7 +143,7 @@ function SimplifiedTextView(props: Props) {
                     endIndex: startIndex + textToAssist.length,
                     type: 'assisted',
                     excerpt: textToAssist,
-                    uniqueTextId: randomString(),
+                    key: randomString(),
                 };
             }
         }
@@ -151,7 +151,8 @@ function SimplifiedTextView(props: Props) {
         return [
             ...(entriesSplits ?? []),
             assistedSplit,
-        ].filter(isDefined)
+        ]
+            .filter(isDefined)
             .sort(
                 (a, b) => (a.startIndex - b.startIndex),
             ) ?? [];
@@ -174,6 +175,7 @@ function SimplifiedTextView(props: Props) {
         [splits],
     );
 
+    // FIXME: Look into if the ref is working correctly
     const {
         clientRect,
         isCollapsed,
@@ -211,7 +213,7 @@ function SimplifiedTextView(props: Props) {
                     </span>
                 )}
                 {splits.map((split, i) => (
-                    <React.Fragment key={split.uniqueTextId}>
+                    <React.Fragment key={split.key}>
                         {i > 0 && splits[i - 1].endIndex < split.startIndex && (
                             <span>
                                 {text.substring(splits[i - 1].endIndex, split.startIndex)}
@@ -242,7 +244,7 @@ function SimplifiedTextView(props: Props) {
                                 entryImage={undefined}
                             />
                         ) : (
-                            <TextToAssistItem
+                            <AssistItem
                                 textToAssist={split.excerpt}
                                 onAssistedEntryAdd={handleAssistedEntryAdd}
                                 leadId={leadId}
