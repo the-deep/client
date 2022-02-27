@@ -35,6 +35,7 @@ interface Props {
     frameworkDetails: Framework;
     leadId: string;
     onAssistCancel: () => void;
+    disabled?: boolean;
 }
 
 function AssistItem(props: Props) {
@@ -45,6 +46,7 @@ function AssistItem(props: Props) {
         frameworkDetails,
         leadId,
         onAssistCancel,
+        disabled,
     } = props;
 
     const allWidgets = useMemo(
@@ -131,6 +133,7 @@ function AssistItem(props: Props) {
                     title="Assist"
                     className={styles.button}
                     onClick={showAssistedTaggingModal}
+                    disabled={disabled}
                     variant="tertiary"
                 >
                     <FaBrain />
@@ -141,6 +144,7 @@ function AssistItem(props: Props) {
                     name={undefined}
                     title="Cancel"
                     onClick={onAssistCancel}
+                    disabled={disabled}
                     variant="action"
                 >
                     <IoClose />
