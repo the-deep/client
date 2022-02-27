@@ -250,6 +250,7 @@ function SimplifiedTextView(props: Props) {
                                 leadId={leadId}
                                 frameworkDetails={frameworkDetails}
                                 onAssistCancel={handleAssistCancelButtonClick}
+                                disabled={disableExcerptClick}
                             />
                         )}
                     </React.Fragment>
