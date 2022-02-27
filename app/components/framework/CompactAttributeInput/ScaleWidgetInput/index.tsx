@@ -42,6 +42,7 @@ export interface Props<N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialScaleWidget,
+    widgetHints?: string[];
 }
 
 function ScaleWidgetInput<N extends string>(props: Props<N>) {
@@ -57,6 +58,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        widgetHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -100,6 +102,8 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.value}
+                // TODO: Replace this with suggestions
+                hint={widgetHints?.join(' ')}
             />
         </WidgetWrapper>
     );

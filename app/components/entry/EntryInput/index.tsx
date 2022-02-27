@@ -28,7 +28,10 @@ import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import { Entry } from '#views/Project/EntryEdit/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import ExcerptInput from '#components/entry/ExcerptInput';
-import { Widget } from '#types/newAnalyticalFramework';
+import {
+    Widget,
+    WidgetHint,
+} from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
 
 import CompactSection from '../CompactSection';
@@ -51,6 +54,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     error: Error<PartialEntryType> | undefined;
     onAddButtonClick?: (entryId: string, sectionId?: string) => void;
     addButtonHidden?: boolean;
+    widgetsHints?: WidgetHint[];
 
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
@@ -89,6 +93,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         leadId,
         compact,
         entryImage,
+        widgetsHints,
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -140,12 +145,14 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onAddButtonClick,
         addButtonHidden,
         entryClientId: value.clientId,
+        widgetsHints,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onApplyToAll,
         allWidgets,
     }), [
         allWidgets,
+        widgetsHints,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onAddButtonClick,
@@ -218,6 +225,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 onApplyToAll={onApplyToAll}
                 entryClientId={value.clientId}
                 allWidgets={allWidgets}
+                widgetsHints={widgetsHints}
             />
         </div>
     );

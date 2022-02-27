@@ -41,6 +41,7 @@ export interface Props <N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialSingleSelectWidget,
+    widgetHints?: string[];
 }
 
 function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
@@ -56,6 +57,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        widgetHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -108,6 +110,8 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
+                        // TODO: Replace this with suggestions
+                        hint={widgetHints?.join(' ')}
                     />
                 </>
             )}

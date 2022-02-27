@@ -22,6 +22,7 @@ export interface Props <N extends string>{
     readOnly?: boolean;
     actions?: React.ReactNode;
     icons?: React.ReactNode;
+    widgetHints?: number[];
 }
 
 function NumberWidgetInput<N extends string>(props: Props<N>) {
@@ -36,6 +37,7 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        widgetHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -76,6 +78,8 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
+                        // TODO: Replace this with suggestions
+                        hint={widgetHints?.join(' ')}
                         error={error?.value}
                     />
                 </>
