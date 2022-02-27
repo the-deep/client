@@ -1,7 +1,8 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     listToMap,
+    isDefined,
     unique,
     randomString,
 } from '@togglecorp/fujs';
@@ -21,6 +22,7 @@ import {
     MappingsItem,
     isCategoricalMappings,
     mappingsSupportedWidgets,
+    WidgetHint,
 } from '#types/newAnalyticalFramework';
 
 import {
@@ -88,6 +90,7 @@ function AssistPopup(props: Props) {
     } = props;
 
     const [mappings] = useLocalStorage<MappingsItem[] | undefined>(`mappings-${frameworkDetails.id}`, undefined);
+    const [allHints, setAllHints] = useState<WidgetHint[] | undefined>(undefined);
 
     const {
         allWidgets,
@@ -117,7 +120,7 @@ function AssistPopup(props: Props) {
             .filter((m) => mockAssistedMappingsResponse.tags.includes(m.tagId));
 
         const recommendedAttributes: PartialAttributeType[] = [];
-        const widgetsHints = [];
+        const widgetsHints: WidgetHint[] = [];
         filteredWidgets.forEach((widget) => {
             if (widget.widgetId === 'MATRIX1D') {
                 const supportedTags = matchedMappings
@@ -156,6 +159,7 @@ function AssistPopup(props: Props) {
                 if (hints) {
                     widgetsHints.push({
                         widgetPk: widget.id,
+                        widgetType: 'SCALE',
                         hints,
                     });
                 }
@@ -175,6 +179,7 @@ function AssistPopup(props: Props) {
                 if (hints) {
                     widgetsHints.push({
                         widgetPk: widget.id,
+                        widgetType: 'SELECT',
                         hints,
                     });
                 }
@@ -210,6 +215,7 @@ function AssistPopup(props: Props) {
                 if (mockAssistedMappingsResponse.numbers.length > 1) {
                     widgetsHints.push({
                         widgetPk: widget.id,
+                        widgetType: 'NUMBER',
                         hints: mockAssistedMappingsResponse.numbers,
                     });
                 }
@@ -220,6 +226,7 @@ function AssistPopup(props: Props) {
             ) {
                 widgetsHints.push({
                     widgetPk: widget.id,
+                    widgetType: 'GEO',
                     hints: mockAssistedMappingsResponse.locations,
                 });
             }
@@ -231,6 +238,8 @@ function AssistPopup(props: Props) {
             (attr) => attr.widget,
             (attr) => attr,
         );
+
+        setAllHints(widgetsHints.filter(isDefined));
 
         onChange(
             (oldEntry) => {
@@ -330,6 +339,7 @@ function AssistPopup(props: Props) {
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 allWidgets={allWidgets}
+                widgetsHints={allHints}
                 emptyValueHidden
                 addButtonHidden
                 compact
