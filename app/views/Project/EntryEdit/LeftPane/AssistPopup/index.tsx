@@ -192,6 +192,37 @@ function AssistPopup(props: Props) {
                     recommendedAttributes.push();
                 }
             }
+            if (
+                widget.widgetId === 'NUMBER'
+                && mockAssistedMappingsResponse.numbers.length > 0
+            ) {
+                if (mockAssistedMappingsResponse.numbers.length === 1) {
+                    recommendedAttributes.push({
+                        clientId: randomString(),
+                        widget: widget.id,
+                        widgetVersion: widget.version,
+                        widgetType: 'NUMBER' as const,
+                        data: {
+                            value: mockAssistedMappingsResponse.numbers[0],
+                        },
+                    });
+                }
+                if (mockAssistedMappingsResponse.numbers.length > 1) {
+                    widgetsHints.push({
+                        widgetPk: widget.id,
+                        hints: mockAssistedMappingsResponse.numbers,
+                    });
+                }
+            }
+            if (
+                widget.widgetId === 'GEO'
+                && mockAssistedMappingsResponse.locations.length > 0
+            ) {
+                widgetsHints.push({
+                    widgetPk: widget.id,
+                    hints: mockAssistedMappingsResponse.locations,
+                });
+            }
             return undefined;
         });
 
