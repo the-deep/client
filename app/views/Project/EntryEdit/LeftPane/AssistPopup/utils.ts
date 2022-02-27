@@ -208,19 +208,9 @@ export function createSelectAttr(
     attr: SingleSelectWidgetAttribute | undefined;
     hints: string[];
 } {
-    const defaultAttr = {
-        clientId: randomString(),
-        widget: widget.id,
-        widgetVersion: widget.version,
-        widgetType: 'SELECT' as const,
-        data: widget.properties?.defaultValue ? {
-            value: widget.properties?.defaultValue,
-        } : undefined,
-    };
-
     if (!mappings || mappings.length < 1) {
         return {
-            attr: widget.properties?.defaultValue ? defaultAttr : undefined,
+            attr: undefined,
             hints: [],
         };
     }
@@ -228,7 +218,10 @@ export function createSelectAttr(
     if (mappings.length === 1) {
         return {
             attr: {
-                ...defaultAttr,
+                clientId: randomString(),
+                widget: widget.id,
+                widgetVersion: widget.version,
+                widgetType: 'SELECT' as const,
                 data: {
                     value: mappings[0].association.optionKey,
                 },
@@ -238,7 +231,7 @@ export function createSelectAttr(
     }
 
     return ({
-        attr: defaultAttr,
+        attr: undefined,
         hints: mappings.map((m) => m.association.optionKey),
     });
 }
@@ -253,22 +246,15 @@ export function createMultiSelectAttr(
     mappings: MultiSelectMappingsItem[] | undefined,
     widget: MultiSelectWidget,
 ): MultiSelectWidgetAttribute | undefined {
-    const defaultAttr = {
+    if (!mappings || mappings.length < 1) {
+        return undefined;
+    }
+
+    return ({
         clientId: randomString(),
         widget: widget.id,
         widgetVersion: widget.version,
         widgetType: 'MULTISELECT' as const,
-        data: widget.properties?.defaultValue ? {
-            value: widget.properties?.defaultValue,
-        } : undefined,
-    };
-
-    if (!mappings || mappings.length < 1) {
-        return widget.properties?.defaultValue ? defaultAttr : undefined;
-    }
-
-    return ({
-        ...defaultAttr,
         data: {
             value: mappings.map((m) => m.association.optionKey),
         },
