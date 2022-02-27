@@ -20,7 +20,11 @@ import {
     isNotDefined,
 } from '@togglecorp/fujs';
 
-import { Widget, getWidgetVersion } from '#types/newAnalyticalFramework';
+import {
+    Widget,
+    getWidgetVersion,
+    WidgetHint,
+} from '#types/newAnalyticalFramework';
 
 import { PartialEntryType } from '#views/Project/EntryEdit/schema';
 import NonFieldError from '#components/NonFieldError';
@@ -40,6 +44,13 @@ import SingleSelectWidgetInput from './SingleSelectWidgetInput';
 import OrganigramWidgetInput from './OrganigramWidgetInput';
 import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
+import {
+    filterNumberHints,
+    filterDateHints,
+    filterSelectHints,
+    filterGeoHints,
+    filterScaleHints,
+} from './utils';
 
 import styles from './styles.css';
 
@@ -89,6 +100,7 @@ export interface Props<N extends string | number | undefined> {
     onApplyAllClick?: (widgetId: string) => void;
 
     applyButtonsHidden?: boolean;
+    widgetsHints?: WidgetHint[];
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -110,6 +122,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         onApplyAllClick,
 
         applyButtonsHidden = true,
+        widgetsHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -188,6 +201,10 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'NUMBER' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+        const widgetHints = widgetsHints
+            ?.filter(filterNumberHints)
+            ?.find((hint) => hint.widgetPk === widget.id);
+
         component = (
             <NumberWidgetInput
                 className={className}
@@ -199,10 +216,15 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'DATE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+        const widgetHints = widgetsHints
+            ?.filter(filterDateHints)
+            ?.find((hint) => hint.widgetPk === widget.id);
+
         component = (
             <DateWidgetInput
                 className={className}
@@ -214,10 +236,12 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'TIME' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+
         component = (
             <TimeWidgetInput
                 className={className}
@@ -263,6 +287,10 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'SCALE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+        const widgetHints = widgetsHints
+            ?.filter(filterScaleHints)
+            ?.find((hint) => hint.widgetPk === widget.id);
+
         component = (
             <ScaleWidgetInput
                 className={className}
@@ -275,6 +303,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'MULTISELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -295,6 +324,10 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'SELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+        const widgetHints = widgetsHints
+            ?.filter(filterSelectHints)
+            ?.find((hint) => hint.widgetPk === widget.id);
+
         component = (
             <SingleSelectWidgetInput
                 className={className}
@@ -307,6 +340,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'MATRIX1D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -359,6 +393,10 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+        const widgetHints = widgetsHints
+            ?.filter(filterGeoHints)
+            ?.find((hint) => hint.widgetPk === widget.id);
+
         component = (
             <GeoLocationWidgetInput
                 className={className}
@@ -373,6 +411,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 actions={actions}
+                widgetHints={widgetHints?.hints}
             />
         );
     } else {
