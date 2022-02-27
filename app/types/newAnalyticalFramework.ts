@@ -1510,3 +1510,22 @@ export const categoricalWidgets = [
     'MULTISELECT',
     'SELECT',
 ];
+
+export type WidgetHint = {
+    widgetPk: string;
+} & ({
+    widgetType: 'SCALE';
+    hints: string[];
+} | {
+    widgetType: 'SELECT';
+    hints: string[];
+} | {
+    widgetType: 'NUMBER';
+    hints: number[];
+} | {
+    widgetType: 'DATE';
+    hints: string[];
+} | {
+    widgetType: 'GEO';
+    hints: string[];
+});
