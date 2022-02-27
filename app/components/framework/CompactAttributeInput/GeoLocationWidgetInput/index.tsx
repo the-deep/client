@@ -33,6 +33,8 @@ export interface Props <N extends string>{
     widget: PartialGeoLocationWidget;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+
+    widgetHints?: string[];
 }
 
 function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
@@ -49,7 +51,9 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        widgetHints,
     } = props;
+    console.warn('Geo hints', widgetHints);
 
     const error = getErrorObject(riskyError);
 
