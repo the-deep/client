@@ -52,9 +52,9 @@ const defaultFormValue: FormType = {
 
 export interface Props {
     onModalClose: () => void;
-    entryId: number;
+    entryId: string;
     projectId: string;
-    onVerificationChange: (entryId: number) => void;
+    onVerificationChange: (entryId: string) => void;
     className?: string;
 }
 

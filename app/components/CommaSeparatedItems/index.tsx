@@ -13,7 +13,7 @@ interface Props<T> {
     separator?: string;
 }
 
-// FIXME may need to add key on the commas
+// FIXME: may need to add key on the commas
 function CommaSeparatedItems<T>(props: Props<T>) {
     const {
         items,

@@ -158,8 +158,6 @@ function EntryItem(props: EntryItemProps) {
             headingSectionClassName={styles.headingSection}
             headerActions={entryServerId && projectId && (
                 <EntryCommentWrapper
-                    // FIXME: Remove cast after entry comments
-                    // is switched to gql
                     entryId={entryServerId}
                     projectId={projectId}
                 />

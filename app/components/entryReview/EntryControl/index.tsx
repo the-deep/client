@@ -14,11 +14,11 @@ import EntryUncontrolCommentModal from './EntryUncontrolCommentModal';
 
 interface Props {
     className?: string;
-    entryId: number;
+    entryId: string;
     projectId: string;
     value: boolean;
     disabled?: boolean;
-    onChange: (entryId: number) => void;
+    onChange: (entryId: string) => void;
 }
 
 interface EntryControlFormData {
@@ -84,7 +84,7 @@ function EntryControl(props: Props) {
             >
                 {value ? 'Controlled' : 'Control'}
             </Button>
-            { commentModalShown && (
+            {commentModalShown && (
                 <EntryUncontrolCommentModal
                     onModalClose={setCommentModalHidden}
                     entryId={entryId}

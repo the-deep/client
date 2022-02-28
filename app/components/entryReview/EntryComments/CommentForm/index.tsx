@@ -27,7 +27,7 @@ import {
 
 import styles from './styles.css';
 
-type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 interface Comment {
     text: string;
@@ -48,7 +48,7 @@ const schema: FormSchema = {
 
 interface Props {
     className?: string;
-    onSave: (response: CommentType) => void;
+    onSave: (response: CommentItem) => void;
     entryId: string;
     projectId: string;
     commentAssignee: {
@@ -94,7 +94,7 @@ function CommentForm(props: Props) {
     const {
         pending,
         trigger: editComment,
-    } = useLazyRequest<CommentType, FormType>({
+    } = useLazyRequest<CommentItem, FormType>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: (ctx) => ctx,
