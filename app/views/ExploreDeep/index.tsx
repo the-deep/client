@@ -272,6 +272,7 @@ function ExploreDeep(props: Props) {
                             className={styles.filters}
                             filters={filters}
                             onFiltersChange={setFilters}
+                            publicRegions={!authenticated}
                         />
                         <TabList className={styles.tabs}>
                             <Tab

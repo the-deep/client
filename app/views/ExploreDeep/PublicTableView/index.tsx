@@ -7,6 +7,8 @@ import {
     createStringColumn,
     createNumberColumn,
     Pager,
+    useSortState,
+    SortContext,
 } from '@the-deep/deep-ui';
 
 import {
@@ -30,6 +32,8 @@ const PROJECT_LIST = gql`
         $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
+        $ordering: String,
+        $regions: [ID!],
     ) {
         publicProjects(
             search: $search,
@@ -39,6 +43,8 @@ const PROJECT_LIST = gql`
             createdAtGte: $startDate,
             page: $page,
             pageSize: $pageSize,
+            ordering: $ordering,
+            regions: $regions,
         ) {
             results {
                 id
@@ -56,6 +62,11 @@ const PROJECT_LIST = gql`
     }
 `;
 export type Project = NonNullable<NonNullable<NonNullable<PublicProjectListQuery['publicProjects']>['results']>[number]>;
+
+const defaultSorting = {
+    name: 'title',
+    direction: 'Ascending',
+};
 
 const projectKeySelector = (p: Project) => p.id;
 
@@ -78,6 +89,15 @@ function ExploreDeepTableView(props: Props) {
         setPage(1);
     }, [filters]);
 
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = useMemo(() => (
+        validSorting.direction === 'Ascending'
+            ? validSorting.name
+            : `-${validSorting.name}`
+    ), [validSorting]);
+
     // FIXME: rename startDate to createdAtGte
     // FIXME: rename endDate to createdAtLte
     const variables = useMemo(() => ({
@@ -86,7 +106,13 @@ function ExploreDeepTableView(props: Props) {
         endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
         page,
         pageSize,
-    }), [page, pageSize, filters]);
+        ordering,
+    }), [
+        page,
+        pageSize,
+        filters,
+        ordering,
+    ]);
 
     const {
         previousData,
@@ -104,6 +130,9 @@ function ExploreDeepTableView(props: Props) {
             'title',
             'Title',
             (item) => item.title,
+            {
+                sortable: true,
+            },
         ),
         createStringColumn<Project, string>(
             'location',
@@ -116,19 +145,24 @@ function ExploreDeepTableView(props: Props) {
             (item) => item?.createdAt,
             {
                 columnWidth: 116,
+                sortable: true,
             },
         ),
         createStringColumn<Project, string>(
             'framework',
             'Analytical Framework',
             (item) => item?.analysisFrameworkTitle,
+            {
+                sortable: true,
+            },
         ),
         createNumberColumn<Project, string>(
-            'members_count',
+            'number_of_users',
             'Users',
             (item) => item?.numberOfUsers,
             {
                 columnWidth: 96,
+                sortable: true,
             },
         ),
         createNumberColumn<Project, string>(
@@ -137,29 +171,36 @@ function ExploreDeepTableView(props: Props) {
             (item) => item?.numberOfLeads,
             {
                 columnWidth: 96,
+                // sortable: true,
+                // TODO: to be uncommented after fixed in the server
             },
         ),
         createStringColumn<Project, string>(
             'organizations',
             'Organizations',
             (item) => item?.organizationsTitle,
+            {
+                sortable: true,
+            },
         ),
     ]), []);
 
     return (
         <>
-            <TableView
-                className={_cs(className, styles.table)}
-                columns={columns}
-                keySelector={projectKeySelector}
-                data={data?.publicProjects?.results}
-                filtered={isFiltered(filters)}
-                pending={loading}
-                errored={false}
-                messageShown
-                messageIconShown
-                emptyMessage="No projects to show."
-            />
+            <SortContext.Provider value={sortState}>
+                <TableView
+                    className={_cs(className, styles.table)}
+                    columns={columns}
+                    keySelector={projectKeySelector}
+                    data={data?.publicProjects?.results}
+                    filtered={isFiltered(filters)}
+                    pending={loading}
+                    errored={false}
+                    messageShown
+                    messageIconShown
+                    emptyMessage="No projects to show."
+                />
+            </SortContext.Provider>
             <Footer
                 actions={(
                     <Pager
