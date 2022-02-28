@@ -19,15 +19,18 @@ import EditCommentForm from './EditCommentForm';
 
 import styles from './styles.css';
 
-type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 interface Props {
     className?: string;
     projectId: string;
-    comment: CommentType;
+    comment: CommentItem;
 }
 
-type MentionedUserType = NonNullable<CommentType['mentionedUsers']>[number];
+type MentionedUserType = NonNullable<CommentItem['mentionedUsers']>[number];
+
+const handleKeySelector = (value: MentionedUserType) => (value.id);
+const handleLabelSelector = (value: MentionedUserType) => (value.displayName ?? value.id);
 
 function Comment(props: Props) {
     const {
@@ -37,7 +40,7 @@ function Comment(props: Props) {
     } = props;
 
     const { user } = useContext(UserContext);
-    const [comment, setComment] = useState<CommentType>(commentFromProps);
+    const [comment, setComment] = useState<CommentItem>(commentFromProps);
     const [
         isEditModalVisible,
         showEditModal,
@@ -56,20 +59,10 @@ function Comment(props: Props) {
         user?.id === createdBy?.id && text
     ), [user, createdBy, text]);
 
-    const handleSuccess = useCallback((value: CommentType) => {
+    const handleSuccess = useCallback((value: CommentItem) => {
         setComment(value);
         hideEditModal();
     }, [hideEditModal]);
-
-    const handleKeySelector = useCallback(
-        (value: MentionedUserType) => (value.id),
-        [],
-    );
-
-    const handleLabelSelector = useCallback(
-        (value: MentionedUserType) => (value.displayName ?? value.id),
-        [],
-    );
 
     return (
         <Container

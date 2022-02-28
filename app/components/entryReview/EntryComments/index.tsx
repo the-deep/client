@@ -24,7 +24,7 @@ import Comment from './Comment';
 import CommentForm from './CommentForm';
 import styles from './styles.css';
 
-type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 const REVIEW_COMMENTS = gql`
     query ReviewComments(
@@ -57,18 +57,15 @@ const REVIEW_COMMENTS = gql`
                     commentTypeDisplay
                     createdAt
                     createdBy {
-                        displayName
                         id
-                        organization
+                        displayName
                     }
                     entry
                     id
                     text
                     mentionedUsers {
-                        displayName
                         id
-                        organization
-                        displayPictureUrl
+                        displayName
                     }
                 }
             }
@@ -84,7 +81,7 @@ export interface Props {
     onEntryCommentAdd?: () => void;
 }
 
-const commentKeySelector = (d: CommentType) => d.id;
+const commentKeySelector = (d: CommentItem) => d.id;
 const maxItemsPerPage = 50;
 
 function EntryComments(props: Props) {
@@ -126,7 +123,7 @@ function EntryComments(props: Props) {
     } = useQuery<ReviewCommentsQuery, ReviewCommentsQueryVariables>(
         REVIEW_COMMENTS,
         {
-            skip: !isCommentModalShown,
+            skip: !isCommentModalShown || !commentVariables,
             variables: commentVariables,
         },
     );
@@ -138,7 +135,7 @@ function EntryComments(props: Props) {
         }
     }, [getComments, onEntryCommentAdd]);
 
-    const commentRendererParams = useCallback((_, comment: CommentType) => ({
+    const commentRendererParams = useCallback((_, comment: CommentItem) => ({
         comment,
         projectId,
     }), [projectId]);

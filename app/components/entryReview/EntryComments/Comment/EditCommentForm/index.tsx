@@ -25,7 +25,7 @@ import {
 } from '#generated/types';
 import styles from './styles.css';
 
-type CommentType = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 const EDIT_COMMENT = gql`
 mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInputType!, $id: ID!) {
@@ -34,21 +34,19 @@ mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInpu
           ok
           errors
           result {
+            id
             commentType
             commentTypeDisplay
             createdAt
             createdBy {
-              displayName
               id
-              organization
+              displayName
             }
-            id
             entry
             text
             mentionedUsers {
-              displayName
-              organization
               id
+              displayName
             }
           }
         }
@@ -73,9 +71,9 @@ const schema: FormSchema = {
 
 interface Props {
     className?: string;
-    onEditSuccess: (response: CommentType) => void;
+    onEditSuccess: (response: CommentItem) => void;
     onEditCancel: () => void;
-    comment: CommentType;
+    comment: CommentItem;
     projectId: string;
 }
 
@@ -121,8 +119,7 @@ function EditCommentForm(props: Props) {
                 const successResponse = response?.project?.entryReviewCommentUpdate;
                 if (successResponse?.ok) {
                     if (successResponse?.result) {
-                        const sucessData = successResponse?.result;
-                        onEditSuccess(sucessData);
+                        onEditSuccess(successResponse.result);
                         alert.show(
                             'Successfully edited the comment!',
                             { variant: 'success' },
@@ -145,7 +142,7 @@ function EditCommentForm(props: Props) {
         },
     );
 
-    const handleEditComment = useCallback((finalVal) => {
+    const handleEditComment = useCallback((finalVal: Partial<Comment>) => {
         updateComment({
             variables: {
                 projectId,
@@ -157,7 +154,12 @@ function EditCommentForm(props: Props) {
                 },
             },
         });
-    }, [comment.id, comment.entry, projectId, updateComment]);
+    }, [
+        comment.id,
+        comment.entry,
+        projectId,
+        updateComment,
+    ]);
 
     return (
         <form

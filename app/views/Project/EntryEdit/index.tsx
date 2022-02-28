@@ -1262,8 +1262,6 @@ function EntryEdit(props: Props) {
             primaryTagging: frameworkDetails?.primaryTagging,
             excerptHeaderActions: datum.id && projectId && (
                 <EntryCommentWrapper
-                    // FIXME: Remove cast after entry comments
-                    // is switched to gql
                     entryId={datum.id}
                     projectId={projectId}
                 />
