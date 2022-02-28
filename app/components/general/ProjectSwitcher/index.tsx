@@ -39,6 +39,7 @@ function ProjectSwitcher(props: Props) {
     return (
         <div className={_cs(styles.projectSwitcher, className)}>
             <ProjectSelectInput
+                className={styles.selectInput}
                 name="project"
                 value={project?.id}
                 onChange={handleChange}

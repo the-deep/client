@@ -256,6 +256,7 @@ function Home(props: ViewProps) {
                 headerActions={(
                     <>
                         <ProjectSelectInput
+                            className={styles.projectSelect}
                             name=""
                             options={projects}
                             onOptionsChange={setProjects}
