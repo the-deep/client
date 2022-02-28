@@ -24,7 +24,7 @@ import AttributeInput, { PartialWidget } from '#components/framework/AttributeIn
 import styles from './styles.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop() {}
+function noop() { }
 
 interface WidgetProps {
     isSecondary: boolean;
@@ -326,6 +326,7 @@ function Canvas<T>(props: Props<T>) {
             </>
         );
     }
+
     return (
         <>
             <NonFieldError

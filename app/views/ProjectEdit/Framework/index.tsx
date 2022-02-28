@@ -13,6 +13,8 @@ import {
     TextInput,
     SelectInput,
     TextOutput,
+    Message,
+    Kraken,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -296,7 +298,12 @@ function ProjectFramework(props: Props) {
                     />
                 ) : (
                     <div className={styles.noFrameworkSelected}>
-                        {_ts('projectEdit', 'noFrameworkSelectedMessage')}
+                        <Message
+                            icon={
+                                <Kraken variant="sleep" />
+                            }
+                            message={_ts('projectEdit', 'noFrameworkSelectedMessage')}
+                        />
                     </div>
                 )}
             </Container>

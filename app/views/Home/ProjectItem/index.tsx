@@ -137,7 +137,7 @@ function ProjectItem(props: RecentProjectItemProps) {
 
     const convertedProjectActivity = useMemo(() => (
         entriesActivity?.map((pa) => ({
-            count: pa.count,
+            activity: pa.count,
             date: pa.date ? (new Date(pa.date)).getTime() : undefined,
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [entriesActivity]);
@@ -349,7 +349,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                                     isAnimationActive={false}
                                 />
                                 <Area
-                                    dataKey="count"
+                                    name="Number of Entries"
+                                    dataKey="activity"
                                     stroke="var(--dui-color-accent)"
                                     fillOpacity={1}
                                     fill="url(#entriesActivity)"

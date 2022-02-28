@@ -26,6 +26,7 @@ import {
     Kraken,
     Container,
     useAlert,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -1589,26 +1590,43 @@ function EntryEdit(props: Props) {
                                     )}
                                     contentClassName={styles.reviewContent}
                                 >
-                                    <VirtualizedListView
-                                        itemHeight={360}
-                                        keySelector={entryKeySelector}
-                                        renderer={EntryInput}
-                                        data={formValue.entries}
-                                        direction="vertical"
-                                        spacing="comfortable"
-                                        rendererParams={entryDataRendererParams}
-                                        filtered={false}
-                                        errored={false}
-                                        pending={false}
-                                        emptyIcon={(
-                                            <Kraken
-                                                variant="search"
+                                    {(formValue.entries?.length ?? 0) > 0
+                                        ? (
+                                            <VirtualizedListView
+                                                itemHeight={360}
+                                                keySelector={entryKeySelector}
+                                                renderer={EntryInput}
+                                                data={formValue.entries}
+                                                direction="vertical"
+                                                spacing="comfortable"
+                                                rendererParams={entryDataRendererParams}
+                                                filtered={false}
+                                                errored={false}
+                                                pending={false}
+                                                emptyIcon={(
+                                                    <Kraken
+                                                        variant="search"
+                                                        size="large"
+                                                    />
+                                                )}
+                                                emptyMessage="No entries found"
+                                                messageIconShown
+                                                messageShown
                                             />
+                                        ) : (
+                                            <div className={styles.noEntriesFound}>
+                                                <Message
+                                                    icon={(
+                                                        <Kraken
+                                                            variant="search"
+                                                            size="large"
+                                                        />
+                                                    )}
+                                                    message="No entries found."
+                                                />
+                                            </div>
                                         )}
-                                        emptyMessage="No entries found"
-                                        messageIconShown
-                                        messageShown
-                                    />
+
                                 </Container>
                             )}
                         </TabPanel>
