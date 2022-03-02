@@ -23,6 +23,8 @@ interface Props<N extends string> {
     showList?: boolean;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    inputDescription?: React.ReactNode;
+    hint?:React.ReactNode;
 }
 
 function GeoLocationInput<N extends string>(props: Props<N>) {
@@ -36,6 +38,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         showList,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        inputDescription,
+        hint,
     } = props;
 
     const [
@@ -77,6 +81,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                         // placeholder="Select geo locations"
                         readOnly={readOnly}
                         actionsContainerClassName={styles.showGeoLocationModalButton}
+                        inputDescription={inputDescription}
+                        hint={hint}
                         actions={!readOnly && (
                             <Button
                                 title="Show Geo Location Modal"
