@@ -36,8 +36,7 @@ import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
 import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
 
-import {
-    schema,
+import schema, {
     PartialLeadType,
     PartialFormType,
     defaultFormValues,

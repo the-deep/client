@@ -25,6 +25,7 @@ import _ts from '#ts';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
 import Framework from './Framework';
+import Connector from './Connector';
 import Users from './Users';
 import GeoAreas from './GeoAreas';
 
@@ -119,6 +120,14 @@ function ProjectEdit() {
                             >
                                 {_ts('projectEdit', 'frameworkLabel')}
                             </Tab>
+                            <Tab
+                                name="connectors"
+                                className={styles.tab}
+                                disabled={isNotDefined(projectId)}
+                                transparentBorder
+                            >
+                                Connectors
+                            </Tab>
                         </TabList>
                     </SubNavbarChildren>
                     <div className={styles.tabPanelContainer}>
@@ -159,7 +168,17 @@ function ProjectEdit() {
                         >
                             {projectId && (
                                 <Framework
-                                    projectId={String(projectId)}
+                                    projectId={projectId}
+                                />
+                            )}
+                        </TabPanel>
+                        <TabPanel
+                            name="connectors"
+                            activeClassName={styles.tabPanel}
+                        >
+                            {projectId && (
+                                <Connector
+                                    projectId={projectId}
                                 />
                             )}
                         </TabPanel>

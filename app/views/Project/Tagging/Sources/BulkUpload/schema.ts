@@ -91,7 +91,7 @@ const leadsSchema: LeadsSchema = {
     member: (): LeadsSchemaMember => leadSchema,
 };
 
-export const schema: FormSchema = {
+const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         leads: leadsSchema,
     }),

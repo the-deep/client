@@ -21,6 +21,7 @@ generates:
         CustomDate: 'string'
         CustomDateTime: 'string'
         EnumDescription: 'string'
+        GenericScalar: 'object'
   ./generated/schema.json:
     plugins:
       - "introspection"
