@@ -38,6 +38,7 @@ const widgetSchema: WidgetSchema = {
         id: [defaultUndefinedType],
         key: [],
         order: [],
+        // FIXME: Define proper schema
         properties: [],
         version: [],
         title: [],
