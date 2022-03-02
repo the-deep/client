@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     SelectInput,
+    Suggestion,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
@@ -82,6 +83,13 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         widgetOptions?.find((o) => o.key === value?.value)?.label
     ), [widgetOptions, value]);
 
+    const selectedOptions = useMemo(() => (
+        sortedOptions?.filter((item) => widgetHints?.includes(item.key)) ?? []
+    ), [
+        sortedOptions,
+        widgetHints,
+    ]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -110,8 +118,17 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
-                        // TODO: Replace this with suggestions
-                        hint={widgetHints?.join(' ')}
+                        hint={(
+                            <Suggestion
+                                name={name}
+                                options={selectedOptions}
+                                value={value?.value}
+                                onChange={onChange}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                disabled={readOnly || disabled}
+                            />
+                        )}
                     />
                 </>
             )}

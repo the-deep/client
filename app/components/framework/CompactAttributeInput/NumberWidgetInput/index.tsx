@@ -1,5 +1,9 @@
 import React, { useCallback } from 'react';
-import { NumberInput, NumberOutput } from '@the-deep/deep-ui';
+import {
+    NumberInput,
+    NumberOutput,
+    Suggestion,
+} from '@the-deep/deep-ui';
 import { isNotDefined } from '@togglecorp/fujs';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
@@ -8,6 +12,11 @@ import WidgetWrapper from '../WidgetWrapper';
 import { NumberWidgetAttribute } from '#types/newEntry';
 
 type NumberValue = NonNullable<NumberWidgetAttribute['data']>;
+
+const numberKeySelector = (s: number) => s;
+const numberLabelSelector = (s: number) => String(s);
+
+const emptyArray: number[] = [];
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -78,8 +87,17 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
-                        // TODO: Replace this with suggestions
-                        hint={widgetHints?.join(' ')}
+                        inputDescription={(
+                            <Suggestion
+                                name={name}
+                                value={value?.value}
+                                options={widgetHints ?? emptyArray}
+                                keySelector={numberKeySelector}
+                                labelSelector={numberLabelSelector}
+                                onChange={onChange}
+                                disabled={readOnly || disabled}
+                            />
+                        )}
                         error={error?.value}
                     />
                 </>
