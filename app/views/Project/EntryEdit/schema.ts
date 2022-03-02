@@ -40,6 +40,7 @@ const getAttributeSchema = (widgets: Partial<Record<string, Widget>>): Attribute
             id: [defaultUndefinedType],
             clientId: [],
             widget: [],
+            // FIXME: Add proper schema
             data: [],
 
             widgetVersion: [],
