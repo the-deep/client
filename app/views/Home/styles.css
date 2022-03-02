@@ -6,6 +6,10 @@
     overflow-y: auto;
     scrollbar-gutter: stable;
 
+    .project-select {
+        width: 18rem;
+    }
+
     .main-content {
         display: flex;
         align-content: flex-start;

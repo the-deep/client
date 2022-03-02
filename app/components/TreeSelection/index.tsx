@@ -60,6 +60,7 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
 
     const selectedNodesLength = nodes?.filter((n) => n.selected)?.length ?? 0;
     const totalNodesLength = nodes?.length ?? 0;
+    const disableExpansionButton = !nodes || nodes.length === 0;
     const indeterminate = selectedNodesLength !== 0 && selectedNodesLength !== totalNodesLength;
 
     return (
@@ -93,7 +94,12 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
             contentClassName={styles.sortableContent}
             headerClassName={styles.header}
             expansionTriggerArea="arrow"
-            disabled={!nodes || nodes.length === 0}
+            expansionButtonClassName={(
+                disableExpansionButton
+                    ? styles.expansionButtonHidden
+                    : undefined
+            )}
+            disabled={disableExpansionButton}
         >
             {/* eslint-disable-next-line @typescript-eslint/no-use-before-define */}
             <TreeSelection

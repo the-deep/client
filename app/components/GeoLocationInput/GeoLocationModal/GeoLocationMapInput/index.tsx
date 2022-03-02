@@ -163,6 +163,7 @@ function GeoLocationMapInput(props: Props) {
                         disabled={projectRegionsPending}
                     />
                     <GeoMultiSelectInput
+                        className={styles.geoSelectionInput}
                         name="geoSelection"
                         value={value}
                         onChange={onChange}

@@ -16,6 +16,10 @@
             .region-select {
                 padding-right: var(--dui-spacing-small);
             }
+
+            .geo-selection-input {
+                flex-grow: 1;
+            }
         }
 
         .map {
