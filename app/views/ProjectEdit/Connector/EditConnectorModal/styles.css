@@ -1,0 +1,18 @@
+.edit-connector-modal {
+    display: flex;
+
+    .body {
+        display: flex;
+        gap: var(--dui-spacing-small);
+
+        .left-container {
+            flex-basis: calc(30% - var(--dui-spacing-small) / 2);
+            flex-shrink: 0;
+        }
+
+        .right-container {
+            flex-basis: calc(70% - var(--dui-spacing-small) / 2);
+            flex-shrink: 0;
+        }
+    }
+}
