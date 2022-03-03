@@ -294,42 +294,7 @@ function AssistPopup(props: Props) {
                     return newEntry;
                 }
                 const oldAttributes = oldEntry?.attributes ?? [];
-                /*
-                const recommendedAttributesMap = listToMap(
-                    recommendedAttributes,
-                    (attr) => attr.widget,
-                    (attr) => attr,
-                );
 
-                // NOTE: Updating the existing attributes
-                // FIXME: Currently overrides all info, maybe we should only update data
-                const updatedAttributes = oldAttributes.map((attr) => (
-                    recommendedAttributesMap[attr.widget] ? ({
-                        ...recommendedAttributesMap[attr.widget],
-                        clientId: attr.clientId,
-                        widget: attr.widget,
-                        id: attr.id,
-                        widgetVersion: attr.widgetVersion,
-                    }) : (
-                        attr
-                    )
-                ));
-
-                const oldAttributesMap = listToMap(
-                    oldAttributes,
-                    (attr) => (attr.widget),
-                    () => true,
-                );
-                const removedNewAttributes = recommendedAttributes.filter(
-                    (attr) => !oldAttributesMap[attr.widget],
-                );
-
-                // NOTE: Adding new attributes from suggestion and removing duplicates
-                const newAttributes = unique([
-                    ...removedNewAttributes,
-                    ...updatedAttributes,
-                ], (attr) => attr.widget);
-                */
                 const newAttributes = mergeLists(
                     oldAttributes,
                     recommendedAttributes,
@@ -343,8 +308,6 @@ function AssistPopup(props: Props) {
                     }),
                 );
 
-                // FIXME: Spreading newEntry does not seem right
-                // need to discuss
                 return {
                     ...oldEntry,
                     attributes: newAttributes,

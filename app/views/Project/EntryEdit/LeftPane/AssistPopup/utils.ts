@@ -108,7 +108,8 @@ export function createMatrix2dAttr(
     const groupedCols = listToGroupList(
         columns,
         (col) => col.association.columnKey,
-        (col) => col.association.subColumnKey,
+        // NOTE: We need empty array for Columns while we need non-empty array for sub columns
+        (col) => (col.association.type === 'SUB_COLUMN' ? col.association.subColumnKey : undefined),
     );
 
     const transformedCols = mapToMap(
