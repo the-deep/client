@@ -1,6 +1,9 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
+    unique,
+    listToGroupList,
+    listToMap,
     isDefined,
 } from '@togglecorp/fujs';
 import {
@@ -9,7 +12,7 @@ import {
 
 import {
     Matrix1dWidget,
-    CategoricalMappingsItem,
+    Matrix1dMappingsItem,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
@@ -33,8 +36,8 @@ const groupKeySelector = (n: CellItem) => n.rowKey;
 interface Props {
     className?: string;
     widget: Matrix1dWidget;
-    mappings: CategoricalMappingsItem[] | undefined;
-    onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
+    mappings: Matrix1dMappingsItem[] | undefined;
+    onMappingsChange: (newMappings: Matrix1dMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
 }
 
@@ -48,17 +51,18 @@ function Matrix1dTagInput(props: Props) {
     } = props;
 
     const sortedCells = useMemo(() => (
-        sortByOrder(widget?.properties?.rows)?.map((row) => {
-            const cells = row.cells.map((cell) => ({
-                rowKey: row.key,
-                rowOrder: row.order,
-                rowLabel: row.label,
-                subRowKey: cell.key,
-                subRowOrder: cell.order,
-                subRowLabel: cell.label,
-            }));
-            return cells;
-        }).flat()
+        sortByOrder(widget?.properties?.rows)
+            ?.map((row) => (
+                row.cells.map((cell) => ({
+                    rowKey: row.key,
+                    rowOrder: row.order,
+                    rowLabel: row.label,
+                    subRowKey: cell.key,
+                    subRowOrder: cell.order,
+                    subRowLabel: cell.label,
+                }))
+            ))
+            .flat()
     ), [widget?.properties?.rows]);
 
     const handleCellClick = useCallback((cellKey: string) => {
@@ -67,10 +71,7 @@ function Matrix1dTagInput(props: Props) {
         }
 
         const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && mapping.widgetType === 'MATRIX1D'
-            ) {
+            if (selectedTag === mapping.tagId) {
                 return mapping.association.subRowKey === cellKey;
             }
             return false;
@@ -111,41 +112,51 @@ function Matrix1dTagInput(props: Props) {
         widget,
     ]);
 
-    const cellRendererParams = useCallback((_: string, cell: CellItem) => ({
-        children: cell.subRowLabel,
-        name: cell.subRowKey,
-        value: mappings?.some((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && mapping.widgetType === 'MATRIX1D'
-            ) {
-                return mapping.association.subRowKey === cell.subRowKey;
-            }
-            return false;
-        }) ?? false,
-        mappedCount: mappings?.filter((mapping) => {
-            if (mapping.widgetType === 'MATRIX1D') {
-                return mapping.association.subRowKey === cell.subRowKey;
-            }
-            return false;
-        }).length ?? 0,
-        onClick: handleCellClick,
-        disabled: !selectedTag,
-    }), [
-        handleCellClick,
+    const subRowKeysInMappings = useMemo(() => (
+        listToMap(
+            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
+            (mappingItem) => mappingItem.association.subRowKey,
+            () => true,
+        )
+    ), [
+        mappings,
         selectedTag,
+    ]);
+
+    const mappingsGroupedByCell = useMemo(() => (
+        listToGroupList(
+            mappings,
+            (mappingItem) => mappingItem.association.subRowKey,
+        )
+    ), [
         mappings,
     ]);
 
-    const subRowGroupRendererParams = useCallback((groupKey: string) => {
-        const groupLabel = sortedCells
-            ?.find((cell) => groupKey === cell.rowKey)
-            ?.rowLabel;
+    const cellRendererParams = useCallback((_: string, cell: CellItem) => ({
+        children: cell.subRowLabel,
+        name: cell.subRowKey,
+        value: !!subRowKeysInMappings?.[cell.subRowKey],
+        badgeCount: mappingsGroupedByCell?.[cell.subRowKey]?.length ?? 0,
+        onClick: handleCellClick,
+        disabled: !selectedTag,
+    }), [
+        mappingsGroupedByCell,
+        subRowKeysInMappings,
+        handleCellClick,
+        selectedTag,
+    ]);
 
-        return ({
-            title: groupLabel ?? groupKey,
-        });
-    }, [sortedCells]);
+    const groupLabelMap = useMemo(() => (
+        listToMap(
+            unique(sortedCells ?? [], (cell) => cell.rowKey),
+            (cell) => cell.rowKey,
+            (cell) => cell.rowLabel,
+        )
+    ), [sortedCells]);
+
+    const subRowGroupRendererParams = useCallback((groupKey: string) => ({
+        title: groupLabelMap[groupKey] ?? groupKey,
+    }), [groupLabelMap]);
 
     return (
         <ListView

@@ -31,3 +31,5 @@ export type EnumFix<T, F> = T extends object[] ? (
 ) : ({
     [K in keyof T]: K extends F ? Check<T[K]> : EnumFix<T[K], F>;
 })
+
+export type getType<T, Q> = T extends Q ? T : never;
