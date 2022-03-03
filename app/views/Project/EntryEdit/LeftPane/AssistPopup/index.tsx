@@ -1,9 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
-    listToMap,
     isDefined,
-    unique,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -23,7 +21,16 @@ import {
     isCategoricalMappings,
     mappingsSupportedWidgets,
     WidgetHint,
+    filterMatrix1dMappings,
+    filterMatrix2dMappings,
+    filterScaleMappings,
+    filterSelectMappings,
+    filterMultiSelectMappings,
 } from '#types/newAnalyticalFramework';
+
+import {
+    mergeLists,
+} from '#utils/common';
 
 import {
     Framework,
@@ -33,24 +40,21 @@ import {
     PartialEntryType,
 } from '../../schema';
 import {
-    filterMatrix1dMappings,
     createMatrix1dAttr,
-    filterMatrix2dMappings,
     createMatrix2dAttr,
-    filterScaleMappings,
     createScaleAttr,
-    filterSelectMappings,
     createSelectAttr,
-    filterMultiSelectMappings,
     createMultiSelectAttr,
 } from './utils';
 
 import styles from './styles.css';
 
+// FIXME: Remove this after connecting backend
 const mockAssistedMappingsResponse = {
     tags: [
         '9',
         '6',
+        '7',
         '11',
         '12',
         '5',
@@ -114,129 +118,163 @@ function AssistPopup(props: Props) {
 
     // FIXME: Insert this inside onCompleted
     const handleMappingsFetch = useCallback(() => {
-        // TODO: Handle Number and Geo widgets
         const matchedMappings = mappings
             ?.filter(isCategoricalMappings)
             .filter((m) => mockAssistedMappingsResponse.tags.includes(m.tagId));
 
-        const recommendedAttributes: PartialAttributeType[] = [];
-        const widgetsHints: WidgetHint[] = [];
-        filteredWidgets.forEach((widget) => {
-            if (widget.widgetId === 'MATRIX1D') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widgetPk === widget.id)
-                    .filter(filterMatrix1dMappings);
+        const supportedGeoWidgets = mappings
+            ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
+            ?.map((mappingItem) => mappingItem.widgetPk);
 
-                const attr = createMatrix1dAttr(supportedTags, widget);
-                if (attr) {
-                    recommendedAttributes.push(attr);
-                }
-            }
-            if (widget.widgetId === 'MATRIX2D') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widgetPk === widget.id)
-                    .filter(filterMatrix2dMappings);
+        const supportedNumberWidgets = mappings
+            ?.filter((mappingItem) => mappingItem.widgetType === 'NUMBER')
+            ?.map((mappingItem) => mappingItem.widgetPk);
 
-                const attr = createMatrix2dAttr(supportedTags, widget);
-                if (attr) {
-                    recommendedAttributes.push(attr);
-                }
-            }
-            if (widget.widgetId === 'SCALE') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widgetPk === widget.id)
-                    .filter(filterScaleMappings);
-
+        const {
+            tempAttrs: recommendedAttributes,
+            tempHints: widgetsHints,
+        } = filteredWidgets.reduce(
+            (
+                acc: { tempAttrs: PartialAttributeType[]; tempHints: WidgetHint[]; },
+                widget,
+            ) => {
                 const {
-                    attr,
-                    hints,
-                } = createScaleAttr(supportedTags, widget);
+                    tempAttrs: oldTempAttrs,
+                    tempHints: oldTempHints,
+                } = acc;
 
-                if (attr) {
-                    recommendedAttributes.push(attr);
+                if (widget.widgetId === 'MATRIX1D') {
+                    const supportedTags = matchedMappings
+                        ?.filter((m) => m.widgetPk === widget.id)
+                        .filter(filterMatrix1dMappings);
+
+                    const attr = createMatrix1dAttr(supportedTags, widget);
+                    return {
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: oldTempHints,
+                    };
                 }
+                if (widget.widgetId === 'MATRIX2D') {
+                    const supportedTags = matchedMappings
+                        ?.filter((m) => m.widgetPk === widget.id)
+                        .filter(filterMatrix2dMappings);
 
-                if (hints) {
-                    widgetsHints.push({
-                        widgetPk: widget.id,
-                        widgetType: 'SCALE',
+                    const attr = createMatrix2dAttr(supportedTags, widget);
+
+                    return {
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: oldTempHints,
+                    };
+                }
+                if (widget.widgetId === 'SCALE') {
+                    const supportedTags = matchedMappings
+                        ?.filter((m) => m.widgetPk === widget.id)
+                        .filter(filterScaleMappings);
+
+                    const {
+                        attr,
                         hints,
-                    });
-                }
-            }
-            if (widget.widgetId === 'SELECT') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widgetPk === widget.id)
-                    .filter(filterSelectMappings);
+                    } = createScaleAttr(supportedTags, widget);
 
-                const {
-                    attr,
-                    hints,
-                } = createSelectAttr(supportedTags, widget);
-                if (attr) {
-                    recommendedAttributes.push(attr);
-                }
-                if (hints) {
-                    widgetsHints.push({
+                    const hintsWithInfo = hints ? {
                         widgetPk: widget.id,
-                        widgetType: 'SELECT',
+                        widgetType: 'SCALE' as const,
                         hints,
-                    });
-                }
-            }
-            if (widget.widgetId === 'MULTISELECT') {
-                const supportedTags = matchedMappings
-                    ?.filter((m) => m.widgetPk === widget.id)
-                    .filter(filterMultiSelectMappings);
+                    } : undefined;
 
-                const attr = createMultiSelectAttr(
-                    supportedTags,
-                    widget,
-                );
-                if (attr) {
-                    recommendedAttributes.push();
+                    return {
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: hintsWithInfo ? [...oldTempHints, hintsWithInfo] : oldTempHints,
+                    };
                 }
-            }
-            if (
-                widget.widgetId === 'NUMBER'
-                && mockAssistedMappingsResponse.numbers.length > 0
-            ) {
-                if (mockAssistedMappingsResponse.numbers.length === 1) {
-                    recommendedAttributes.push({
-                        clientId: randomString(),
-                        widget: widget.id,
-                        widgetVersion: widget.version,
-                        widgetType: 'NUMBER' as const,
-                        data: {
-                            value: mockAssistedMappingsResponse.numbers[0],
-                        },
-                    });
-                }
-                if (mockAssistedMappingsResponse.numbers.length > 1) {
-                    widgetsHints.push({
+                if (widget.widgetId === 'SELECT') {
+                    const supportedTags = matchedMappings
+                        ?.filter((m) => m.widgetPk === widget.id)
+                        .filter(filterSelectMappings);
+
+                    const {
+                        attr,
+                        hints,
+                    } = createSelectAttr(supportedTags, widget);
+
+                    const hintsWithInfo = hints ? {
                         widgetPk: widget.id,
-                        widgetType: 'NUMBER',
-                        hints: mockAssistedMappingsResponse.numbers,
-                    });
-                }
-            }
-            if (
-                widget.widgetId === 'GEO'
-                && mockAssistedMappingsResponse.locations.length > 0
-            ) {
-                widgetsHints.push({
-                    widgetPk: widget.id,
-                    widgetType: 'GEO',
-                    hints: mockAssistedMappingsResponse.locations,
-                });
-            }
-            return undefined;
-        });
+                        widgetType: 'SELECT' as const,
+                        hints,
+                    } : undefined;
 
-        const recommentedAttributesMap = listToMap(
-            recommendedAttributes,
-            (attr) => attr.widget,
-            (attr) => attr,
+                    return {
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: hintsWithInfo ? [...oldTempHints, hintsWithInfo] : oldTempHints,
+                    };
+                }
+                if (widget.widgetId === 'MULTISELECT') {
+                    const supportedTags = matchedMappings
+                        ?.filter((m) => m.widgetPk === widget.id)
+                        .filter(filterMultiSelectMappings);
+
+                    const attr = createMultiSelectAttr(
+                        supportedTags,
+                        widget,
+                    );
+                    return {
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: oldTempHints,
+                    };
+                }
+                if (
+                    widget.widgetId === 'NUMBER'
+                    && mockAssistedMappingsResponse.numbers.length > 0
+                    && supportedNumberWidgets?.includes(widget.id)
+                ) {
+                    if (mockAssistedMappingsResponse.numbers.length === 1) {
+                        const attr = {
+                            clientId: randomString(),
+                            widget: widget.id,
+                            widgetVersion: widget.version,
+                            widgetType: 'NUMBER' as const,
+                            data: {
+                                value: mockAssistedMappingsResponse.numbers[0],
+                            },
+                        };
+                        return {
+                            tempAttrs: [...oldTempAttrs, attr],
+                            tempHints: oldTempHints,
+                        };
+                    }
+                    if (mockAssistedMappingsResponse.numbers.length > 1) {
+                        const hintsWithInfo = {
+                            widgetPk: widget.id,
+                            widgetType: 'NUMBER' as const,
+                            hints: mockAssistedMappingsResponse.numbers,
+                        };
+                        return {
+                            tempAttrs: oldTempAttrs,
+                            tempHints: [...oldTempHints, hintsWithInfo],
+                        };
+                    }
+                }
+                if (
+                    widget.widgetId === 'GEO'
+                    && mockAssistedMappingsResponse.locations.length > 0
+                    && supportedGeoWidgets?.includes(widget.id)
+                ) {
+                    const hintsWithInfo = {
+                        widgetPk: widget.id,
+                        widgetType: 'GEO' as const,
+                        hints: mockAssistedMappingsResponse.locations,
+                    };
+                    return {
+                        tempAttrs: oldTempAttrs,
+                        tempHints: [...oldTempHints, hintsWithInfo],
+                    };
+                }
+                return acc;
+            },
+            {
+                tempAttrs: [],
+                tempHints: [],
+            },
         );
 
         setAllHints(widgetsHints.filter(isDefined));
@@ -256,12 +294,18 @@ function AssistPopup(props: Props) {
                     return newEntry;
                 }
                 const oldAttributes = oldEntry?.attributes ?? [];
+                /*
+                const recommendedAttributesMap = listToMap(
+                    recommendedAttributes,
+                    (attr) => attr.widget,
+                    (attr) => attr,
+                );
 
                 // NOTE: Updating the existing attributes
                 // FIXME: Currently overrides all info, maybe we should only update data
                 const updatedAttributes = oldAttributes.map((attr) => (
-                    recommentedAttributesMap[attr.widget] ? ({
-                        ...recommentedAttributesMap[attr.widget],
+                    recommendedAttributesMap[attr.widget] ? ({
+                        ...recommendedAttributesMap[attr.widget],
                         clientId: attr.clientId,
                         widget: attr.widget,
                         id: attr.id,
@@ -285,6 +329,19 @@ function AssistPopup(props: Props) {
                     ...removedNewAttributes,
                     ...updatedAttributes,
                 ], (attr) => attr.widget);
+                */
+                const newAttributes = mergeLists(
+                    oldAttributes,
+                    recommendedAttributes,
+                    (attr) => attr.widget,
+                    (oldAttr, newAttr) => ({
+                        ...newAttr,
+                        clientId: oldAttr.clientId,
+                        widget: oldAttr.widget,
+                        id: oldAttr.id,
+                        widgetVersion: oldAttr.widgetVersion,
+                    }),
+                );
 
                 // FIXME: Spreading newEntry does not seem right
                 // need to discuss

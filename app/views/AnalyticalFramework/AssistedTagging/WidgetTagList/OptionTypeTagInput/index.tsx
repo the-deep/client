@@ -1,6 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
+    listToMap,
+    listToGroupList,
     isDefined,
 } from '@togglecorp/fujs';
 import {
@@ -11,7 +13,9 @@ import {
     ScaleWidget,
     SingleSelectWidget,
     MultiSelectWidget,
-    CategoricalMappingsItem,
+    ScaleMappingsItem,
+    SelectMappingsItem,
+    MultiSelectMappingsItem,
     KeyLabelEntity,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
@@ -25,8 +29,11 @@ const cellKeySelector = (cell: KeyLabelEntity) => cell.key;
 interface Props {
     className?: string;
     widget: ScaleWidget | SingleSelectWidget | MultiSelectWidget;
-    mappings: CategoricalMappingsItem[] | undefined;
-    onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
+    mappings: (ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem)[] | undefined;
+    onMappingsChange: (
+        newMappings: (ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem)[],
+        widgetPk: string,
+    ) => void;
     selectedTag: string | undefined;
 }
 
@@ -49,14 +56,7 @@ function ScaleTagInput(props: Props) {
         }
 
         const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && (
-                    mapping.widgetType === 'SCALE'
-                    || mapping.widgetType === 'SELECT'
-                    || mapping.widgetType === 'MULTISELECT'
-                )
-            ) {
+            if (selectedTag === mapping.tagId) {
                 return mapping.association.optionKey === cellKey;
             }
             return false;
@@ -87,38 +87,38 @@ function ScaleTagInput(props: Props) {
         widget,
     ]);
 
+    const optionKeysInMappings = useMemo(() => (
+        listToMap(
+            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
+            (mappingItem) => mappingItem.association.optionKey,
+            () => true,
+        )
+    ), [
+        mappings,
+        selectedTag,
+    ]);
+
+    const mappingsGroupedByOptionKey = useMemo(() => (
+        listToGroupList(
+            mappings,
+            (mappingItem) => mappingItem.association.optionKey,
+        )
+    ), [
+        mappings,
+    ]);
+
     const cellRendererParams = useCallback((_: string, cell: KeyLabelEntity) => ({
         children: cell.label,
         name: cell.key,
-        value: mappings?.some((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && (
-                    mapping.widgetType === 'SCALE'
-                    || mapping.widgetType === 'SELECT'
-                    || mapping.widgetType === 'MULTISELECT'
-                )
-            ) {
-                return mapping.association.optionKey === cell.key;
-            }
-            return false;
-        }) ?? false,
-        mappedCount: mappings?.filter((mapping) => {
-            if (
-                mapping.widgetType === 'SCALE'
-                || mapping.widgetType === 'SELECT'
-                || mapping.widgetType === 'MULTISELECT'
-            ) {
-                return mapping.association.optionKey === cell.key;
-            }
-            return false;
-        }).length ?? 0,
+        value: !!optionKeysInMappings?.[cell.key],
+        badgeCount: mappingsGroupedByOptionKey?.[cell.key]?.length ?? 0,
         onClick: handleCellClick,
         disabled: !selectedTag,
     }), [
         handleCellClick,
         selectedTag,
-        mappings,
+        optionKeysInMappings,
+        mappingsGroupedByOptionKey,
     ]);
 
     return (
