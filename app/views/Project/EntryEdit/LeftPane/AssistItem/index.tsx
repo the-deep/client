@@ -30,7 +30,7 @@ import styles from './styles.css';
 
 interface Props {
     className?: string;
-    textToAssist: string;
+    text: string;
     onAssistedEntryAdd: ((newEntry: EntryInput) => void) | undefined;
     frameworkDetails: Framework;
     leadId: string;
@@ -41,7 +41,7 @@ interface Props {
 function AssistItem(props: Props) {
     const {
         className,
-        textToAssist,
+        text,
         onAssistedEntryAdd,
         frameworkDetails,
         leadId,
@@ -79,13 +79,13 @@ function AssistItem(props: Props) {
         clientId: randomString(),
         entryType: 'EXCERPT' as const,
         lead: leadId,
-        excerpt: textToAssist,
-        droppedExcerpt: textToAssist,
+        excerpt: text,
+        droppedExcerpt: text,
         attributes: createDefaultAttributes(allWidgets),
     }), [
         leadId,
         allWidgets,
-        textToAssist,
+        text,
     ]);
 
     const [
@@ -126,7 +126,7 @@ function AssistItem(props: Props) {
 
     return (
         <Container
-            className={_cs(className, styles.textToAssistItem)}
+            className={_cs(className, styles.assistItem)}
             footerActions={(
                 <QuickActionButton
                     name={undefined}
@@ -152,7 +152,7 @@ function AssistItem(props: Props) {
             )}
             contentClassName={styles.content}
         >
-            {textToAssist}
+            {text}
             {isAssistedTaggingModalShown && (
                 <AssistPopup
                     onCloseButtonClick={hideAssistedTaggingModal}
@@ -161,7 +161,7 @@ function AssistItem(props: Props) {
                     onChange={setValue}
                     error={error}
                     leadId={leadId}
-                    selectedText={textToAssist}
+                    selectedText={text}
                     onEntryCreateButtonClick={handleEntryCreateButtonClick}
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={setGeoAreaOptions}
