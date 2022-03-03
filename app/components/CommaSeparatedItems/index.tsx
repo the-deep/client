@@ -27,18 +27,18 @@ function CommaSeparatedItems<T>(props: Props<T>) {
         items?.map(labelSelector)?.join(separator) ?? undefined
     ), [items, labelSelector, separator]);
 
-    if (!items || items.length < 1) {
-        return null;
-    }
-
-    const list = items.map((item) => (
+    const list = useMemo(() => items?.map((item) => (
         <span
             key={keySelector(item)}
             className={styles.item}
         >
             {labelSelector(item)}
         </span>
-    ));
+    )), []);
+
+    if (!list) {
+        return null;
+    }
 
     return (
         <span
