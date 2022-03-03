@@ -55,12 +55,10 @@ function ScaleTagInput(props: Props) {
             return;
         }
 
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (selectedTag === mapping.tagId) {
-                return mapping.association.optionKey === cellKey;
-            }
-            return false;
-        });
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            selectedTag === mapping.tagId
+            && mapping.association.optionKey === cellKey
+        ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
             const newMappings = [...(mappings ?? [])];
