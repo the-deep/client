@@ -70,12 +70,9 @@ function Matrix1dTagInput(props: Props) {
             return;
         }
 
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (selectedTag === mapping.tagId) {
-                return mapping.association.subRowKey === cellKey;
-            }
-            return false;
-        });
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            selectedTag === mapping.tagId && mapping.association.subRowKey === cellKey
+        ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
             const newMappings = [...(mappings ?? [])];
