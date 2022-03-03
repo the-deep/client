@@ -33,14 +33,19 @@
                 flex-direction: column;
             }
         }
+
         .info {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
+
+        .comment-action {
+            display: flex;
+        }
     }
 
-    .header-actions{
+    .header-actions {
         color: var(--dui-color-accent);
 
         .assignees {

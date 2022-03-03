@@ -6,7 +6,7 @@ export enum EntryAction {
     UNCONTROL = 4,
 }
 
-type EntryActionType = 'COMMENT' | 'VERIFY' | 'UNVERIFY' | 'CONTROL' | 'UNCONTROL';
+export type EntryActionType = 'COMMENT' | 'VERIFY' | 'UNVERIFY' | 'CONTROL' | 'UNCONTROL';
 
 export const commentTypeToTextMap: { [id in EntryActionType as string]: string } = {
     COMMENT: 'commented',

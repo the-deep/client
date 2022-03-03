@@ -48,6 +48,10 @@ mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInpu
               id
               displayName
             }
+            textHistory {
+                id
+                text
+            }
           }
         }
     }
@@ -115,6 +119,7 @@ function EditCommentForm(props: Props) {
     ] = useMutation<EntryReviewCommentUpdateMutation, EntryReviewCommentUpdateMutationVariables>(
         EDIT_COMMENT,
         {
+            refetchQueries: ['ReviewComments'],
             onCompleted: (response) => {
                 const successResponse = response?.project?.entryReviewCommentUpdate;
                 if (successResponse?.ok) {

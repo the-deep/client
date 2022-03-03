@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { gql, useMutation } from '@apollo/client';
 import {
     requiredStringCondition,
     requiredListCondition,
@@ -17,19 +18,36 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 
-import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
-import { EntryReviewComment } from '#types/entry';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { EntryAction } from '#components/entryReview/commentConstants';
 
+import {
+    CreateReviewCommentMutation,
+    CreateReviewCommentMutationVariables,
+} from '#generated/types';
+
 import styles from './styles.css';
 
-interface EntryVerificationFormData {
-    commentType: number;
-    text?: string;
-    mentionedUsers?: string[];
+const CREATE_REVIEW_COMMENT = gql`
+mutation CreateReviewComment(
+    $projectId: ID!,
+    $data: EntryReviewCommentInputType!,
+) {
+    project(id: $projectId) {
+        id
+        entryReviewCommentCreate(data: $data) {
+            result {
+                id
+                entry
+                text
+            }
+            errors
+            ok
+        }
+    }
 }
+`;
 
 type FormType = {
     commentType: number,
@@ -72,24 +90,6 @@ function EntryUnverifyCommentModal(props: Props) {
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
 
     const {
-        pending: reviewRequestPending,
-        trigger: triggerReviewRequest,
-    } = useLazyRequest<EntryReviewComment, EntryVerificationFormData>({
-        url: `server://v2/entries/${entryId}/review-comments/`,
-        method: 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            onVerificationChange(response.entry);
-            onModalClose();
-            alert.show(
-                'Successfully posted review comment.',
-                { variant: 'success' },
-            );
-        },
-        failureMessage: 'Failed to post review comment.',
-    });
-
-    const {
         pristine,
         value,
         error: riskyError,
@@ -98,16 +98,71 @@ function EntryUnverifyCommentModal(props: Props) {
         setError,
     } = useForm(schema, defaultFormValue);
 
+    const [
+        createReviewComment,
+        { loading: reviewRequestPending },
+    ] = useMutation<CreateReviewCommentMutation, CreateReviewCommentMutationVariables>(
+        CREATE_REVIEW_COMMENT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.entryReviewCommentCreate?.ok) {
+                    const entryResponse = response.project.entryReviewCommentCreate.result?.entry;
+                    if (entryResponse) {
+                        onVerificationChange(entryResponse);
+                        alert.show(
+                            'Successfully posted review comment.',
+                            { variant: 'success' },
+                        );
+                    }
+                } else {
+                    alert.show(
+                        'Failed to post review comment.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+                onModalClose();
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to post review comment.',
+                    {
+                        variant: 'error',
+                    },
+                );
+                onModalClose();
+            },
+        },
+    );
+
     const error = getErrorObject(riskyError);
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
-            triggerReviewRequest,
+            () => {
+                createReviewComment({
+                    variables: {
+                        projectId,
+                        data: {
+                            entry: entryId,
+                            text: value.text,
+                        },
+                    },
+                });
+            },
         );
         submit();
-    }, [setError, validate, triggerReviewRequest]);
+    }, [
+        setError,
+        validate,
+        createReviewComment,
+        entryId,
+        projectId,
+        value.text,
+    ]);
 
     return (
         <Modal

@@ -399,7 +399,6 @@ function EditableEntry(props: Props) {
         >
             Delete Entry
         </ConfirmButton>
-
     );
 
     if (compact) {
