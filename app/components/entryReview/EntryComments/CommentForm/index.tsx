@@ -58,7 +58,7 @@ mutation CreateComment(
 }
 `;
 
-type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<CreateCommentMutation>['project']>['entryReviewCommentCreate']>['result']>;
+type CommentItem = CreateCommentMutationVariables['data'];
 
 type FormType = Partial<CommentItem>;
 type FormSchema = ObjectSchema<FormType>;
@@ -73,7 +73,7 @@ const schema: FormSchema = {
 
 interface Props {
     className?: string;
-    onSave: (response: CommentItem | null | undefined) => void;
+    onSave: (response: unknown | null | undefined) => void;
     entryId: string;
     projectId: string;
     commentAssignee: {
@@ -93,7 +93,7 @@ function CommentForm(props: Props) {
 
     const defaultValue: FormType = {
         commentType: 'VERIFY',
-        mentionedUsers: commentAssignee ? [commentAssignee] : [],
+        mentionedUsers: commentAssignee ? [commentAssignee.id] : [],
     };
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
@@ -165,36 +165,6 @@ function CommentForm(props: Props) {
             },
         },
     );
-    /*
-     const {
-         pending,
-         trigger: editComment,
-     } = useLazyRequest<CommentItem, FormType>({
-         url: `server://v2/entries/${entryId}/review-comments/`,
-         method: 'POST',
-         body: (ctx) => ctx,
-         onSuccess: (response) => {
-             setValue(defaultValue);
-             onSave(response);
-             alert.show(
-                 'Successfully added comment to the selected entry.',
-                 { variant: 'success' },
-             );
-         },
-         onFailure: ({ value: errorValue }) => {
-             const {
-                 $internal,
-                 ...otherErrors
-             } = errorValue.faramErrors;
-
-             setError({
-                 ...otherErrors,
-                 [internal]: $internal,
-             });
-         },
-         failureMessage: 'Entry comment edit',
-     });
-     */
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
