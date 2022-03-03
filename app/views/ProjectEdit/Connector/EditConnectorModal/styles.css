@@ -8,6 +8,12 @@
         .left-container {
             flex-basis: calc(30% - var(--dui-spacing-small) / 2);
             flex-shrink: 0;
+
+            .buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--dui-spacing-small);
+            }
         }
 
         .right-container {
