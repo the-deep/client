@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
     _cs,
-    isDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -176,9 +175,9 @@ function AssistPopup(props: Props) {
                         hints,
                     } = createScaleAttr(supportedTags, widget);
 
-                    const hintsWithInfo = hints ? {
+                    const hintsWithInfo: WidgetHint | undefined = hints ? {
                         widgetPk: widget.id,
-                        widgetType: 'SCALE' as const,
+                        widgetType: 'SCALE',
                         hints,
                     } : undefined;
 
@@ -197,9 +196,9 @@ function AssistPopup(props: Props) {
                         hints,
                     } = createSelectAttr(supportedTags, widget);
 
-                    const hintsWithInfo = hints ? {
+                    const hintsWithInfo: WidgetHint | undefined = hints ? {
                         widgetPk: widget.id,
-                        widgetType: 'SELECT' as const,
+                        widgetType: 'SELECT',
                         hints,
                     } : undefined;
 
@@ -228,11 +227,11 @@ function AssistPopup(props: Props) {
                     && supportedNumberWidgets?.includes(widget.id)
                 ) {
                     if (mockAssistedMappingsResponse.numbers.length === 1) {
-                        const attr = {
+                        const attr: PartialAttributeType = {
                             clientId: randomString(),
                             widget: widget.id,
                             widgetVersion: widget.version,
-                            widgetType: 'NUMBER' as const,
+                            widgetType: 'NUMBER',
                             data: {
                                 value: mockAssistedMappingsResponse.numbers[0],
                             },
@@ -242,26 +241,24 @@ function AssistPopup(props: Props) {
                             tempHints: oldTempHints,
                         };
                     }
-                    if (mockAssistedMappingsResponse.numbers.length > 1) {
-                        const hintsWithInfo = {
-                            widgetPk: widget.id,
-                            widgetType: 'NUMBER' as const,
-                            hints: mockAssistedMappingsResponse.numbers,
-                        };
-                        return {
-                            tempAttrs: oldTempAttrs,
-                            tempHints: [...oldTempHints, hintsWithInfo],
-                        };
-                    }
+                    const hintsWithInfo: WidgetHint = {
+                        widgetPk: widget.id,
+                        widgetType: 'NUMBER',
+                        hints: mockAssistedMappingsResponse.numbers,
+                    };
+                    return {
+                        tempAttrs: oldTempAttrs,
+                        tempHints: [...oldTempHints, hintsWithInfo],
+                    };
                 }
                 if (
                     widget.widgetId === 'GEO'
                     && mockAssistedMappingsResponse.locations.length > 0
                     && supportedGeoWidgets?.includes(widget.id)
                 ) {
-                    const hintsWithInfo = {
+                    const hintsWithInfo: WidgetHint = {
                         widgetPk: widget.id,
-                        widgetType: 'GEO' as const,
+                        widgetType: 'GEO',
                         hints: mockAssistedMappingsResponse.locations,
                     };
                     return {
@@ -277,23 +274,21 @@ function AssistPopup(props: Props) {
             },
         );
 
-        setAllHints(widgetsHints.filter(isDefined));
+        setAllHints(widgetsHints);
 
         onChange(
             (oldEntry) => {
                 if (!oldEntry) {
-                    const newEntry = {
+                    return {
                         clientId: randomString(),
-                        entryType: 'EXCERPT' as const,
+                        entryType: 'EXCERPT',
                         lead: leadId,
                         excerpt: selectedText,
                         droppedExcerpt: selectedText,
                         attributes: recommendedAttributes,
                     };
-
-                    return newEntry;
                 }
-                const oldAttributes = oldEntry?.attributes ?? [];
+                const oldAttributes = oldEntry.attributes ?? [];
 
                 const newAttributes = mergeLists(
                     oldAttributes,

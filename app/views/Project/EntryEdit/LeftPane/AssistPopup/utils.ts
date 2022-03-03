@@ -40,7 +40,7 @@ export function createMatrix1dAttr(
     mappings: Matrix1dMappingsItem[] | undefined,
     widget: Matrix1dWidget,
 ): Matrix1dWidgetAttribute | undefined {
-    if (!mappings || mappings.length < 1) {
+    if (!mappings || mappings.length <= 0) {
         return undefined;
     }
     const mappingsGroupedByRows = listToGroupList(
@@ -95,7 +95,7 @@ export function createMatrix2dAttr(
     mappings: Matrix2dMappingsItem[] | undefined,
     widget: Matrix2dWidget,
 ): Matrix2dWidgetAttribute | undefined {
-    if (!mappings || mappings.length < 1) {
+    if (!mappings || mappings.length <= 0) {
         return undefined;
     }
     const columns = mappings.filter(filterColumn);
@@ -150,7 +150,7 @@ export function createScaleAttr(
     attr: ScaleWidgetAttribute | undefined;
     hints: string[];
 } {
-    if (!mappings || mappings.length < 1) {
+    if (!mappings || mappings.length <= 0) {
         return {
             attr: undefined,
             hints: [],
@@ -185,7 +185,7 @@ export function createSelectAttr(
     attr: SingleSelectWidgetAttribute | undefined;
     hints: string[];
 } {
-    if (!mappings || mappings.length < 1) {
+    if (!mappings || mappings.length <= 0) {
         return {
             attr: undefined,
             hints: [],
@@ -217,7 +217,7 @@ export function createMultiSelectAttr(
     mappings: MultiSelectMappingsItem[] | undefined,
     widget: MultiSelectWidget,
 ): MultiSelectWidgetAttribute | undefined {
-    if (!mappings || mappings.length < 1) {
+    if (!mappings || mappings.length <= 0) {
         return undefined;
     }
 
