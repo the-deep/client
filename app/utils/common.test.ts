@@ -1,4 +1,9 @@
-import { sortByOrder, reorder, breadcrumb } from './common';
+import {
+    sortByOrder,
+    reorder,
+    breadcrumb,
+    mergeLists,
+} from './common';
 
 test('sort by order', () => {
     expect(sortByOrder([])).toStrictEqual([]);
@@ -78,4 +83,94 @@ test('breadcrumb', () => {
     expect(breadcrumb(['ram'])).toBe('ram');
     expect(breadcrumb(['ram', 'shyam'], ' / ')).toBe('ram / shyam');
     expect(breadcrumb(['ram', undefined, 'shyam'], ' / ')).toBe('ram / shyam');
+});
+
+test('Merge lists', () => {
+    const oldList = [
+        {
+            id: 1,
+            name: 'One',
+            key: 'one',
+        },
+        {
+            id: 2,
+            name: 'Two',
+            key: 'two',
+        },
+        {
+            id: 3,
+            name: 'Three',
+            key: 'three',
+        },
+    ];
+
+    const newList = [
+        {
+            id: 1,
+            name: 'Uno',
+            key: 'uno',
+        },
+        {
+            id: 3,
+            name: 'Tre',
+            key: 'tre',
+        },
+    ];
+
+    expect(
+        mergeLists(
+            oldList,
+            newList,
+            (i) => i.id,
+            (_, newItem) => newItem,
+        )
+    ).toStrictEqual(
+        [
+            {
+                id: 1,
+                name: 'Uno',
+                key: 'uno',
+            },
+            {
+                id: 2,
+                name: 'Two',
+                key: 'two',
+            },
+            {
+                id: 3,
+                name: 'Tre',
+                key: 'tre',
+            },
+        ]
+    );
+
+    expect(
+        mergeLists(
+            oldList,
+            newList,
+            (i) => i.id,
+            (oldItem, newItem) => ({
+                ...newItem,
+                key: oldItem.key,
+            }),
+        )
+    ).toStrictEqual(
+        [
+            {
+                id: 1,
+                name: 'Uno',
+                key: 'one',
+            },
+            {
+                id: 2,
+                name: 'Two',
+                key: 'two',
+            },
+            {
+                id: 3,
+                name: 'Tre',
+                key: 'three',
+            },
+        ]
+    );
 });
