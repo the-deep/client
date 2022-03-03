@@ -56,11 +56,9 @@ function AssistedTagging(props: Props) {
 
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
     // FIXME: Remove this later after it is saveable in server
-    const [mappings, setMappings] = useLocalStorage<MappingsItem[] | undefined>(`mappings-${frameworkId}`, undefined);
-
-    const categoricalMappings = useMemo(
-        () => mappings?.filter(isCategoricalMappings),
-        [mappings],
+    const [mappings, setMappings] = useLocalStorage<MappingsItem[] | undefined>(
+        `mappings-${frameworkId}`,
+        undefined,
     );
 
     const widgets = useMemo(() => (
@@ -78,13 +76,10 @@ function AssistedTagging(props: Props) {
         allWidgets?.filter((widget) => isDefined(widget.id) && widget.widgetId === 'NUMBER')
     ), [allWidgets]);
 
-    const nlpLabelGroupRendererParams = useCallback((title: string) => ({
-        title,
-    }), []);
-
-    const handleTagClick = useCallback((newTag: string) => {
-        setSelectedTag((oldTag) => (oldTag === newTag ? undefined : newTag));
-    }, []);
+    const categoricalMappings = useMemo(
+        () => mappings?.filter(isCategoricalMappings),
+        [mappings],
+    );
 
     const mappingsByTagId = useMemo(() => (
         listToGroupList(
@@ -93,17 +88,25 @@ function AssistedTagging(props: Props) {
         )
     ), [categoricalMappings]);
 
-    const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
-        children: tag.label,
-        name: itemKey,
-        value: selectedTag === itemKey,
-        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
-        onClick: handleTagClick,
-    }), [
-        handleTagClick,
-        selectedTag,
-        mappingsByTagId,
-    ]);
+    const geoWidgetsMappingValue = useMemo(() => (
+        listToMap(
+            mappings?.filter((mapping) => mapping.widgetType === 'GEO'),
+            (mapping) => mapping.widgetPk,
+            () => true,
+        )
+    ), [mappings]);
+
+    const numberWidgetsMappingValue = useMemo(() => (
+        listToMap(
+            mappings?.filter((mapping) => mapping.widgetType === 'NUMBER'),
+            (mapping) => mapping.widgetPk,
+            () => true,
+        )
+    ), [mappings]);
+
+    const handleTagClick = useCallback((newTag: string) => {
+        setSelectedTag((oldTag) => (oldTag === newTag ? undefined : newTag));
+    }, []);
 
     const handleGeoWidgetClick = useCallback((widgetPk: string) => {
         setMappings((oldMappings = []) => {
@@ -123,24 +126,6 @@ function AssistedTagging(props: Props) {
         });
     }, [setMappings]);
 
-    const geoWidgetsMappingValue = useMemo(() => (
-        listToMap(
-            mappings?.filter((mapping) => mapping.widgetType === 'GEO'),
-            (mapping) => mapping.widgetPk,
-            () => true,
-        )
-    ), [mappings]);
-
-    const geoWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
-        children: widget.title,
-        name: itemKey,
-        value: !!geoWidgetsMappingValue?.[widget.id],
-        onClick: handleGeoWidgetClick,
-    }), [
-        geoWidgetsMappingValue,
-        handleGeoWidgetClick,
-    ]);
-
     const handleNumberWidgetClick = useCallback((widgetPk: string) => {
         setMappings((oldMappings = []) => {
             const selectedWidgetIndex = oldMappings.findIndex(
@@ -159,24 +144,6 @@ function AssistedTagging(props: Props) {
         });
     }, [setMappings]);
 
-    const numberWidgetsMappingValue = useMemo(() => (
-        listToMap(
-            mappings?.filter((mapping) => mapping.widgetType === 'NUMBER'),
-            (mapping) => mapping.widgetPk,
-            () => true,
-        )
-    ), [mappings]);
-
-    const numberWidgetsRendererParas = useCallback((itemKey: string, widget: Widget) => ({
-        children: widget.title,
-        name: itemKey,
-        value: !!numberWidgetsMappingValue?.[widget.id],
-        onClick: handleNumberWidgetClick,
-    }), [
-        numberWidgetsMappingValue,
-        handleNumberWidgetClick,
-    ]);
-
     const handleWidgetMappingsChange = useCallback((
         newWidgetMappings: MappingsItem[],
         widgetPk: string,
@@ -189,6 +156,41 @@ function AssistedTagging(props: Props) {
             ];
         });
     }, [setMappings]);
+
+    const nlpLabelGroupRendererParams = useCallback((title: string) => ({
+        title,
+    }), []);
+
+    const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
+        children: tag.label,
+        name: itemKey,
+        value: selectedTag === itemKey,
+        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
+        onClick: handleTagClick,
+    }), [
+        handleTagClick,
+        selectedTag,
+        mappingsByTagId,
+    ]);
+
+    const geoWidgetsRendererParams = useCallback((itemKey: string, widget: Widget) => ({
+        children: widget.title,
+        name: itemKey,
+        value: !!geoWidgetsMappingValue?.[widget.id],
+        onClick: handleGeoWidgetClick,
+    }), [
+        geoWidgetsMappingValue,
+        handleGeoWidgetClick,
+    ]);
+    const numberWidgetsRendererParams = useCallback((itemKey: string, widget: Widget) => ({
+        children: widget.title,
+        name: itemKey,
+        value: !!numberWidgetsMappingValue?.[widget.id],
+        onClick: handleNumberWidgetClick,
+    }), [
+        numberWidgetsMappingValue,
+        handleNumberWidgetClick,
+    ]);
 
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
@@ -267,7 +269,7 @@ function AssistedTagging(props: Props) {
                                 className={styles.geoWidgetList}
                                 data={geoWidgets}
                                 renderer={CheckButton}
-                                rendererParams={geoWidgetsRendererParas}
+                                rendererParams={geoWidgetsRendererParams}
                                 keySelector={widgetKeySelector}
                                 filtered={false}
                                 pending={false}
@@ -285,7 +287,7 @@ function AssistedTagging(props: Props) {
                                 className={styles.numberWidgetList}
                                 data={numberWidgets}
                                 renderer={CheckButton}
-                                rendererParams={numberWidgetsRendererParas}
+                                rendererParams={numberWidgetsRendererParams}
                                 keySelector={widgetKeySelector}
                                 filtered={false}
                                 pending={false}

@@ -53,6 +53,8 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         onGeoAreaOptionsChange,
         widgetHints,
     } = props;
+
+    // eslint-disable-next-line no-console
     console.warn('Geo hints', widgetHints);
 
     const error = getErrorObject(riskyError);
