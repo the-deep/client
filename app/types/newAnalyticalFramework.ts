@@ -1491,7 +1491,21 @@ export function isCategoricalMappings(
     return !(value.widgetType === 'NUMBER' || value.widgetType === 'GEO');
 }
 
-export const mappingsSupportedWidgets = [
+type WidgetType = 'NUMBER'
+    | 'TEXT'
+    | 'DATE'
+    | 'TIME'
+    | 'TIME_RANGE'
+    | 'DATE_RANGE'
+    | 'GEO'
+    | 'SELECT'
+    | 'MULTISELECT'
+    | 'MATRIX1D'
+    | 'MATRIX2D'
+    | 'ORGANIGRAM'
+    | 'SCALE';
+
+export const mappingsSupportedWidgets: WidgetType[] = [
     'MATRIX1D',
     'MATRIX2D',
     'SCALE',
@@ -1499,15 +1513,15 @@ export const mappingsSupportedWidgets = [
     'SELECT',
     'NUMBER',
     'GEO',
-] as const;
+];
 
-export const categoricalWidgets = [
+export const categoricalWidgets: WidgetType[] = [
     'MATRIX1D',
     'MATRIX2D',
     'SCALE',
     'MULTISELECT',
     'SELECT',
-] as const;
+];
 
 export type WidgetHint = {
     widgetPk: string;
