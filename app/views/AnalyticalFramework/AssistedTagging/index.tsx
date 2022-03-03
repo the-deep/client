@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import {
     _cs,
     listToMap,
+    listToGroupList,
     isDefined,
 } from '@togglecorp/fujs';
 import {
@@ -85,16 +86,23 @@ function AssistedTagging(props: Props) {
         setSelectedTag((oldTag) => (oldTag === newTag ? undefined : newTag));
     }, []);
 
+    const mappingsByTagId = useMemo(() => (
+        listToGroupList(
+            categoricalMappings,
+            (mappingItem) => mappingItem.tagId,
+        )
+    ), [categoricalMappings]);
+
     const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
         children: tag.label,
         name: itemKey,
         value: selectedTag === itemKey,
-        mappedCount: categoricalMappings?.filter((m) => m.tagId === itemKey).length ?? 0,
+        badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
         onClick: handleTagClick,
     }), [
         handleTagClick,
         selectedTag,
-        categoricalMappings,
+        mappingsByTagId,
     ]);
 
     const handleGeoWidgetClick = useCallback((widgetPk: string) => {
@@ -199,6 +207,7 @@ function AssistedTagging(props: Props) {
                 className={styles.header}
                 heading="Assisted Tagging"
                 headingSize="small"
+                // FIXME: Get actual description from DFS
                 description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
                 actions={(
                     <Switch

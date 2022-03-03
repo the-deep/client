@@ -15,7 +15,7 @@ interface Props<N> {
     disabled?: boolean;
     value: boolean;
     onClick: (key: N) => void;
-    mappedCount?: number;
+    badgeCount?: number;
 }
 
 function CheckButton<N>(props: Props<N>) {
@@ -25,7 +25,7 @@ function CheckButton<N>(props: Props<N>) {
         name,
         disabled,
         value,
-        mappedCount = 0,
+        badgeCount = 0,
         onClick,
     } = props;
 
@@ -39,7 +39,7 @@ function CheckButton<N>(props: Props<N>) {
                 value ? styles.selected : styles.notSelected,
             )}
             onClick={onClick}
-            actions={mappedCount > 0 && <IoCheckmark />}
+            actions={badgeCount > 0 && <IoCheckmark />}
         >
             {children}
         </Button>

@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Container } from '@the-deep/deep-ui';
 
 import {
     Widget,
     CategoricalMappingsItem,
+    Matrix1dMappingsItem,
+    Matrix2dMappingsItem,
+    ScaleMappingsItem,
+    SelectMappingsItem,
+    MultiSelectMappingsItem,
 } from '#types/newAnalyticalFramework';
 
 import Matrix1dTagInput from './Matrix1dTagInput';
@@ -30,6 +35,14 @@ function WidgetTagList(props: Props) {
         selectedTag,
     } = props;
 
+    const filteredMappings = useMemo(
+        () => mappings?.filter((mappingItem) => mappingItem.widgetType === widget.widgetId),
+        [
+            mappings,
+            widget,
+        ],
+    );
+
     if (widget.widgetId === 'MATRIX1D') {
         return (
             <Container
@@ -39,7 +52,8 @@ function WidgetTagList(props: Props) {
             >
                 <Matrix1dTagInput
                     widget={widget}
-                    mappings={mappings}
+                    // NOTE: We know its safe
+                    mappings={filteredMappings as Matrix1dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
                 />
@@ -56,7 +70,8 @@ function WidgetTagList(props: Props) {
             >
                 <Matrix2dTagInput
                     widget={widget}
-                    mappings={mappings}
+                    // NOTE: We know its safe
+                    mappings={filteredMappings as Matrix2dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
                 />
@@ -77,7 +92,11 @@ function WidgetTagList(props: Props) {
             >
                 <OptionTypeTagInput
                     widget={widget}
-                    mappings={mappings}
+                    // NOTE: We know its safe
+                    mappings={filteredMappings as (
+                        ScaleMappingsItem | SelectMappingsItem
+                        | MultiSelectMappingsItem
+                    )[] | undefined}
                     onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
                 />
