@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     ScaleInput,
+    Suggestion,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
@@ -77,6 +78,12 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         },
         [onChangeFromProps],
     );
+    const selectedOptions = useMemo(() => (
+        sortedOptions?.filter((item) => widgetHints?.includes(item.key)) ?? []
+    ), [
+        sortedOptions,
+        widgetHints,
+    ]);
 
     return (
         <WidgetWrapper
@@ -102,8 +109,17 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.value}
-                // TODO: Replace this with suggestions
-                hint={widgetHints?.join(' ')}
+                hint={(
+                    <Suggestion
+                        name={name}
+                        value={value?.value ?? widget?.properties?.defaultValue}
+                        options={selectedOptions}
+                        labelSelector={optionLabelSelector}
+                        keySelector={optionKeySelector}
+                        onChange={onChange}
+                        disabled={readOnly || disabled}
+                    />
+                )}
             />
         </WidgetWrapper>
     );
