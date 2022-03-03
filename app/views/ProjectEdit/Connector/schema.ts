@@ -6,32 +6,11 @@ import {
     defaultUndefinedType,
     requiredStringCondition,
     requiredCondition,
-    PurgeNull,
 } from '@togglecorp/toggle-form';
 
-import {
-    UnifiedConnectorInputType,
-    ConnectorSourceGqInputType,
-} from '#generated/types';
-import {
-    EnumFix,
-    DeepReplace,
-    DeepMandatory,
-} from '#utils/types';
+import { ConnectorInputType } from './types';
 
-interface Params {}
-
-export type SourceInput = Omit<EnumFix<DeepMandatory<PurgeNull<ConnectorSourceGqInputType>, 'clientId'>, 'source'>, 'params'> & {
-    params: Params;
-};
-
-export type ConnectorInputType = DeepReplace<
-    PurgeNull<UnifiedConnectorInputType>,
-    ConnectorSourceGqInputType,
-    SourceInput
->;
-
-export type PartialFormType = PartialForm<ConnectorInputType, 'clientId'>;
+export type PartialFormType = PartialForm<ConnectorInputType, 'clientId' | 'source'>;
 export type PartialSourceType = NonNullable<PartialFormType['sources']>[number];
 
 type FormSchema = ObjectSchema<PartialFormType>;
