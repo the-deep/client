@@ -175,12 +175,12 @@ function SimplifiedTextView(props: Props) {
         [splits],
     );
 
-    // FIXME: Look into if the ref is working correctly
     const {
         clientRect,
         isCollapsed,
         textContent,
         resetTextSelection,
+        // FIXME: Look into if the ref is working correctly
     } = useTextSelection(containerRef.current ?? undefined);
 
     const handleAssistButtonClick = useCallback((newTextToAssist: string) => {
