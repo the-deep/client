@@ -1429,8 +1429,6 @@ export interface Matrix2dMappingsItem extends MappingsItemBase {
     } | {
         type: 'COLUMN';
         columnKey: string;
-        // FIXME: Added for type issue, need to fix this
-        subColumnKey?: string;
     } | {
         type: 'SUB_COLUMN';
         columnKey: string;

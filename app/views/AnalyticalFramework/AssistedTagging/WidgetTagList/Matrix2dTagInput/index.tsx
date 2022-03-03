@@ -111,15 +111,11 @@ function Matrix2dTagInput(props: Props) {
         if (!selectedTag) {
             return;
         }
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && mapping.association.type === 'COLUMN'
-            ) {
-                return mapping.association.columnKey === columnKey;
-            }
-            return false;
-        });
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            selectedTag === mapping.tagId
+            && mapping.association.type === 'COLUMN'
+            && mapping.association.columnKey === columnKey
+        ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
             const newMappings = [...(mappings ?? [])];
@@ -195,15 +191,11 @@ function Matrix2dTagInput(props: Props) {
             return;
         }
 
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && mapping.association.type === 'SUB_ROW'
-            ) {
-                return mapping.association.subRowKey === subRowKey;
-            }
-            return false;
-        });
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            selectedTag === mapping.tagId
+            && mapping.association.type === 'SUB_ROW'
+            && mapping.association.subRowKey === subRowKey
+        ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
             const newMappings = [...(mappings ?? [])];
@@ -289,15 +281,11 @@ function Matrix2dTagInput(props: Props) {
             return;
         }
 
-        const selectedMappingsIndex = mappings?.findIndex((mapping) => {
-            if (
-                selectedTag === mapping.tagId
-                && mapping.association.type === 'SUB_COLUMN'
-            ) {
-                return mapping.association.subColumnKey === subColumnKey;
-            }
-            return false;
-        });
+        const selectedMappingsIndex = mappings?.findIndex((mapping) => (
+            selectedTag === mapping.tagId
+            && mapping.association.type === 'SUB_COLUMN'
+            && mapping.association.subColumnKey === subColumnKey
+        ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
             const newMappings = [...(mappings ?? [])];

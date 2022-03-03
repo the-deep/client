@@ -115,6 +115,11 @@ test('Merge lists', () => {
             name: 'Tre',
             key: 'tre',
         },
+        {
+            id: 4,
+            name: 'Cuatro',
+            key: 'cuatro',
+        },
     ];
 
     expect(
@@ -140,6 +145,11 @@ test('Merge lists', () => {
                 id: 3,
                 name: 'Tre',
                 key: 'tre',
+            },
+            {
+                id: 4,
+                name: 'Cuatro',
+                key: 'cuatro',
             },
         ]
     );
@@ -170,6 +180,11 @@ test('Merge lists', () => {
                 id: 3,
                 name: 'Tre',
                 key: 'three',
+            },
+            {
+                id: 4,
+                name: 'Cuatro',
+                key: 'cuatro',
             },
         ]
     );
