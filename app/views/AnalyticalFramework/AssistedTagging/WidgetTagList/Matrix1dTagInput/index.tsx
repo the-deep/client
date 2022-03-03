@@ -65,6 +65,34 @@ function Matrix1dTagInput(props: Props) {
             .flat()
     ), [widget?.properties?.rows]);
 
+    const subRowKeysInMappings = useMemo(() => (
+        listToMap(
+            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
+            (mappingItem) => mappingItem.association.subRowKey,
+            () => true,
+        )
+    ), [
+        mappings,
+        selectedTag,
+    ]);
+
+    const mappingsGroupedByCell = useMemo(() => (
+        listToGroupList(
+            mappings,
+            (mappingItem) => mappingItem.association.subRowKey,
+        )
+    ), [
+        mappings,
+    ]);
+
+    const groupLabelMap = useMemo(() => (
+        listToMap(
+            unique(sortedCells ?? [], (cell) => cell.rowKey),
+            (cell) => cell.rowKey,
+            (cell) => cell.rowLabel,
+        )
+    ), [sortedCells]);
+
     const handleCellClick = useCallback((cellKey: string) => {
         if (!selectedTag) {
             return;
@@ -84,6 +112,7 @@ function Matrix1dTagInput(props: Props) {
                 ?.find((cell) => cell.subRowKey === cellKey)?.rowKey;
 
             if (!rowKey) {
+                // eslint-disable-next-line no-console
                 console.error('Sub-row without row is found');
                 return;
             }
@@ -109,26 +138,6 @@ function Matrix1dTagInput(props: Props) {
         widget,
     ]);
 
-    const subRowKeysInMappings = useMemo(() => (
-        listToMap(
-            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
-            (mappingItem) => mappingItem.association.subRowKey,
-            () => true,
-        )
-    ), [
-        mappings,
-        selectedTag,
-    ]);
-
-    const mappingsGroupedByCell = useMemo(() => (
-        listToGroupList(
-            mappings,
-            (mappingItem) => mappingItem.association.subRowKey,
-        )
-    ), [
-        mappings,
-    ]);
-
     const cellRendererParams = useCallback((_: string, cell: CellItem) => ({
         children: cell.subRowLabel,
         name: cell.subRowKey,
@@ -142,14 +151,6 @@ function Matrix1dTagInput(props: Props) {
         handleCellClick,
         selectedTag,
     ]);
-
-    const groupLabelMap = useMemo(() => (
-        listToMap(
-            unique(sortedCells ?? [], (cell) => cell.rowKey),
-            (cell) => cell.rowKey,
-            (cell) => cell.rowLabel,
-        )
-    ), [sortedCells]);
 
     const subRowGroupRendererParams = useCallback((groupKey: string) => ({
         title: groupLabelMap[groupKey] ?? groupKey,

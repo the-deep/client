@@ -50,6 +50,26 @@ function ScaleTagInput(props: Props) {
         sortByOrder(widget?.properties?.options) ?? []
     ), [widget?.properties?.options]);
 
+    const optionKeysInMappings = useMemo(() => (
+        listToMap(
+            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
+            (mappingItem) => mappingItem.association.optionKey,
+            () => true,
+        )
+    ), [
+        mappings,
+        selectedTag,
+    ]);
+
+    const mappingsGroupedByOptionKey = useMemo(() => (
+        listToGroupList(
+            mappings,
+            (mappingItem) => mappingItem.association.optionKey,
+        )
+    ), [
+        mappings,
+    ]);
+
     const handleCellClick = useCallback((cellKey: string) => {
         if (!selectedTag) {
             return;
@@ -83,26 +103,6 @@ function ScaleTagInput(props: Props) {
         mappings,
         selectedTag,
         widget,
-    ]);
-
-    const optionKeysInMappings = useMemo(() => (
-        listToMap(
-            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
-            (mappingItem) => mappingItem.association.optionKey,
-            () => true,
-        )
-    ), [
-        mappings,
-        selectedTag,
-    ]);
-
-    const mappingsGroupedByOptionKey = useMemo(() => (
-        listToGroupList(
-            mappings,
-            (mappingItem) => mappingItem.association.optionKey,
-        )
-    ), [
-        mappings,
     ]);
 
     const cellRendererParams = useCallback((_: string, cell: KeyLabelEntity) => ({
