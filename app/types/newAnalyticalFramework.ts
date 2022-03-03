@@ -1501,7 +1501,7 @@ export const mappingsSupportedWidgets = [
     'SELECT',
     'NUMBER',
     'GEO',
-];
+] as const;
 
 export const categoricalWidgets = [
     'MATRIX1D',
@@ -1509,7 +1509,7 @@ export const categoricalWidgets = [
     'SCALE',
     'MULTISELECT',
     'SELECT',
-];
+] as const;
 
 export type WidgetHint = {
     widgetPk: string;
@@ -1529,3 +1529,33 @@ export type WidgetHint = {
     widgetType: 'GEO';
     hints: string[];
 });
+
+export function filterMatrix1dMappings(
+    mappingsItem: MappingsItem,
+): mappingsItem is Matrix1dMappingsItem {
+    return mappingsItem.widgetType === 'MATRIX1D';
+}
+
+export function filterMatrix2dMappings(
+    mappingsItem: MappingsItem,
+): mappingsItem is Matrix2dMappingsItem {
+    return mappingsItem.widgetType === 'MATRIX2D';
+}
+
+export function filterScaleMappings(
+    mappingsItem: MappingsItem,
+): mappingsItem is ScaleMappingsItem {
+    return mappingsItem.widgetType === 'SCALE';
+}
+
+export function filterSelectMappings(
+    mappingsItem: MappingsItem,
+): mappingsItem is SelectMappingsItem {
+    return mappingsItem.widgetType === 'SELECT';
+}
+
+export function filterMultiSelectMappings(
+    mappingsItem: MappingsItem,
+): mappingsItem is MultiSelectMappingsItem {
+    return mappingsItem.widgetType === 'MULTISELECT';
+}

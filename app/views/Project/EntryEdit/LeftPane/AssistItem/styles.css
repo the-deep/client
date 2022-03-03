@@ -1,4 +1,4 @@
-.text-to-assist-item {
+.assist-item {
     border: var(--dui-width-separator-thin) solid var(--color-nlp-tag);
     background-color: var(--dui-color-foreground);
     user-select: none;

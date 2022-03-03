@@ -17,15 +17,16 @@ import {
     SingleSelectWidget,
     MultiSelectMappingsItem,
     MultiSelectWidget,
-    MappingsItem,
 } from '#types/newAnalyticalFramework';
 import {
 } from '#types/newEntry';
 
-import { DeepReplace } from '#utils/types';
-
 import {
     getType,
+    DeepReplace,
+} from '#utils/types';
+
+import {
     PartialAttributeType,
 } from '../../schema';
 
@@ -34,13 +35,6 @@ type Matrix2dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATR
 type ScaleWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SCALE' }>;
 type SingleSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SELECT' }>;
 type MultiSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MULTISELECT' }>;
-
-// TODO: Also return default value in case of no matches
-export function filterMatrix1dMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is Matrix1dMappingsItem {
-    return mappingsItem.widgetType === 'MATRIX1D';
-}
 
 export function createMatrix1dAttr(
     mappings: Matrix1dMappingsItem[] | undefined,
@@ -97,12 +91,6 @@ export function filterSubRows(
     return mappingsItem.association.type === 'SUB_ROW';
 }
 
-export function filterMatrix2dMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is Matrix2dMappingsItem {
-    return mappingsItem.widgetType === 'MATRIX2D';
-}
-
 export function createMatrix2dAttr(
     mappings: Matrix2dMappingsItem[] | undefined,
     widget: Matrix2dWidget,
@@ -113,7 +101,7 @@ export function createMatrix2dAttr(
     const columns = mappings.filter(filterColumn);
     const rows = mappings.filter(filterSubRows);
 
-    if (columns.length === 0 && rows.length === 0) {
+    if (columns.length === 0 || rows.length === 0) {
         return undefined;
     }
 
@@ -154,12 +142,6 @@ export function createMatrix2dAttr(
     };
 }
 
-export function filterScaleMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is ScaleMappingsItem {
-    return mappingsItem.widgetType === 'SCALE';
-}
-
 export function createScaleAttr(
     mappings: ScaleMappingsItem[] | undefined,
     widget: ScaleWidget,
@@ -195,12 +177,6 @@ export function createScaleAttr(
     });
 }
 
-export function filterSelectMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is SelectMappingsItem {
-    return mappingsItem.widgetType === 'SELECT';
-}
-
 export function createSelectAttr(
     mappings: SelectMappingsItem[] | undefined,
     widget: SingleSelectWidget,
@@ -234,12 +210,6 @@ export function createSelectAttr(
         attr: undefined,
         hints: mappings.map((m) => m.association.optionKey),
     });
-}
-
-export function filterMultiSelectMappings(
-    mappingsItem: MappingsItem,
-): mappingsItem is MultiSelectMappingsItem {
-    return mappingsItem.widgetType === 'MULTISELECT';
 }
 
 export function createMultiSelectAttr(
