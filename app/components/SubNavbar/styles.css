@@ -54,7 +54,7 @@
         align-self: center;
         flex-basis: 0;
         flex-grow: 1;
-        justify-content: end;
+        justify-content: flex-end;
         gap: var(--dui-spacing-small);
 
         >* {
