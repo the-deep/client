@@ -3,6 +3,7 @@ import {
     _cs,
     listToMap,
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     Modal,
@@ -19,6 +20,7 @@ import {
     getErrorObject,
     removeNull,
 } from '@togglecorp/toggle-form';
+import { getOperationName } from 'apollo-link';
 import { gql, useMutation } from '@apollo/client';
 
 import _ts from '#ts';
@@ -27,9 +29,12 @@ import {
     BulkCreateLeadsMutationVariables,
     LeadInputType,
 } from '#generated/types';
-import useBatchManager, { filterFailed, filterCompleted } from '#hooks/useBatchManager';
+import useBatchManager, { filterFailed, filterCompleted, RequestItem } from '#hooks/useBatchManager';
+import { apolloClient } from '#base/configs/apollo';
 import { UserContext } from '#base/context/UserContext';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+
+import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
 
 import {
     schema,
@@ -60,32 +65,17 @@ export const BULK_CREATE_LEADS = gql`
     }
 `;
 
-interface Props {
-    className?: string;
-    onClose: () => void;
-    projectId: string;
-}
+type Req = NonNullable<BulkCreateLeadsMutationVariables['leads']>[number];
+type Res = NonNullable<NonNullable<NonNullable<NonNullable<BulkCreateLeadsMutation['project']>['leadBulk']>['result']>[number]>;
+type Err = NonNullable<NonNullable<NonNullable<NonNullable<BulkCreateLeadsMutation['project']>['leadBulk']>['errors']>[number]>;
 
-function BulkUpload(props: Props) {
-    const {
-        className,
-        onClose,
-        projectId,
-    } = props;
-
-    // Store uploaded files on memory to show preview
-    // NOTE: If a lead is removed or saved, uploaded files are not being removed at the moment
-    const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
-
-    const [selectedLead, setSelectedLead] = useState<string | undefined>();
-
+function useBulkLeads(
+    projectId: string,
+    onComplete: (value: RequestItem<string, Req, Res, Err>[]) => void,
+) {
     // NOTE: handling bulkUpdateLeadsPending because we are making another
     // request after one completes. This avoids loading flickers
     const [bulkUpdateLeadsPending, setBulkUpdateLeadsPending] = useState(false);
-
-    type Req = NonNullable<BulkCreateLeadsMutationVariables['leads']>[number];
-    type Res = NonNullable<NonNullable<NonNullable<NonNullable<BulkCreateLeadsMutation['project']>['leadBulk']>['result']>[number]>;
-    type Err = NonNullable<NonNullable<NonNullable<NonNullable<BulkCreateLeadsMutation['project']>['leadBulk']>['errors']>[number]>;
 
     const {
         inspect,
@@ -94,8 +84,6 @@ function BulkUpload(props: Props) {
         pop,
         update,
     } = useBatchManager<string, Req, Res, Err>();
-
-    const { user } = useContext(UserContext);
 
     const alert = useAlert();
 
@@ -112,7 +100,7 @@ function BulkUpload(props: Props) {
         setValue: onLeadChange,
     } = useFormArray<'leads', PartialLeadType>('leads', setFormFieldValue);
 
-    const handleTermination = useCallback(
+    const handleBulkActionsCompletion = useCallback(
         () => {
             const requests = inspect();
 
@@ -165,13 +153,11 @@ function BulkUpload(props: Props) {
                 );
             }
 
-            // set first failed lead as selected
-            // we will remove all successful leads
-            setSelectedLead(failedLeads[0]?.clientId);
-
             reset();
+
+            onComplete(requests);
         },
-        [inspect, reset, alert, setFormError, setFormFieldValue],
+        [inspect, reset, alert, setFormError, setFormFieldValue, onComplete],
     );
 
     const [
@@ -179,12 +165,11 @@ function BulkUpload(props: Props) {
     ] = useMutation<BulkCreateLeadsMutation, BulkCreateLeadsMutationVariables>(
         BULK_CREATE_LEADS,
         {
-            // refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
                 const leadBulk = response.project?.leadBulk;
                 if (!leadBulk) {
                     setBulkUpdateLeadsPending(false);
-                    handleTermination();
+                    handleBulkActionsCompletion();
                     return;
                 }
 
@@ -219,7 +204,7 @@ function BulkUpload(props: Props) {
                 const remainingLeads = pop();
                 if (remainingLeads.length <= 0) {
                     setBulkUpdateLeadsPending(false);
-                    handleTermination();
+                    handleBulkActionsCompletion();
                     return;
                 }
 
@@ -232,7 +217,7 @@ function BulkUpload(props: Props) {
             },
             onError: () => {
                 setBulkUpdateLeadsPending(false);
-                handleTermination();
+                handleBulkActionsCompletion();
             },
         },
     );
@@ -250,38 +235,6 @@ function BulkUpload(props: Props) {
             );
         },
         [onLeadChange],
-    );
-
-    const handleFileUploadSuccess = useCallback(
-        (value: FileUploadResponse) => {
-            setUploadedFiles((oldUploadedFiles) => ([
-                value,
-                ...oldUploadedFiles,
-            ]));
-
-            const newLead: PartialLeadType = {
-                clientId: randomString(),
-                sourceType: sourceTypeMap[value.sourceType],
-                confidentiality: 'UNPROTECTED',
-                priority: 'LOW',
-                isAssessmentLead: false,
-                attachment: String(value.id),
-                title: value.title,
-                assignee: user?.id,
-            };
-
-            setFormFieldValue(
-                (oldVal: PartialFormType['leads']) => [
-                    ...(oldVal ?? []),
-                    newLead,
-                ],
-                'leads',
-            );
-            setSelectedLead((oldSelection) => (
-                oldSelection ?? newLead.clientId
-            ));
-        },
-        [setUploadedFiles, setFormFieldValue, user],
     );
 
     const handleLeadRemove = useCallback(
@@ -311,12 +264,13 @@ function BulkUpload(props: Props) {
                     );
 
                     const initialLeads = pop();
-                    console.warn(initialLeads);
 
                     if (initialLeads.length <= 0) {
+                        reset();
                         return;
                     }
 
+                    setBulkUpdateLeadsPending(true);
                     bulkCreateLeads({
                         variables: {
                             projectId,
@@ -327,7 +281,68 @@ function BulkUpload(props: Props) {
             );
             submit();
         },
-        [setFormError, formValidate, bulkCreateLeads, projectId, init, pop],
+        [setFormError, formValidate, bulkCreateLeads, projectId, init, pop, reset],
+    );
+
+    return {
+        formValue,
+        formPristine,
+        formError,
+        bulkUpdateLeadsPending,
+        handleLeadChange,
+        handleLeadRemove,
+        handleSubmit,
+        setFormFieldValue,
+    };
+}
+
+interface Props {
+    className?: string;
+    onClose: () => void;
+    projectId: string;
+}
+
+function BulkUpload(props: Props) {
+    const {
+        className,
+        onClose,
+        projectId,
+    } = props;
+
+    // Store uploaded files on memory to show preview
+    // NOTE: If a lead is removed or saved, uploaded files are not being removed at the moment
+    const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
+
+    const [selectedLead, setSelectedLead] = useState<string | undefined>();
+
+    const { user } = useContext(UserContext);
+
+    const handleComplete = useCallback(
+        (requests: RequestItem<string, Req, Res, Err>[]) => {
+            const firstFailedRequest = requests.find(
+                (request) => request.status === 'failed',
+            );
+            setSelectedLead(firstFailedRequest?.key);
+
+            apolloClient.refetchQueries({
+                include: [getOperationName(PROJECT_SOURCES)].filter(isDefined),
+            });
+        },
+        [],
+    );
+
+    const {
+        formValue,
+        formPristine,
+        formError,
+        bulkUpdateLeadsPending,
+        handleLeadChange,
+        handleLeadRemove,
+        handleSubmit,
+        setFormFieldValue,
+    } = useBulkLeads(
+        projectId,
+        handleComplete,
     );
 
     const leadsError = useMemo(
@@ -360,6 +375,38 @@ function BulkUpload(props: Props) {
             });
         },
         [uploadedFiles, selectedLead, formValue],
+    );
+
+    const handleFileUploadSuccess = useCallback(
+        (value: FileUploadResponse) => {
+            setUploadedFiles((oldUploadedFiles) => ([
+                value,
+                ...oldUploadedFiles,
+            ]));
+
+            const newLead: PartialLeadType = {
+                clientId: randomString(),
+                sourceType: sourceTypeMap[value.sourceType],
+                confidentiality: 'UNPROTECTED',
+                priority: 'LOW',
+                isAssessmentLead: false,
+                attachment: String(value.id),
+                title: value.title,
+                assignee: user?.id,
+            };
+
+            setFormFieldValue(
+                (oldVal: PartialFormType['leads']) => [
+                    ...(oldVal ?? []),
+                    newLead,
+                ],
+                'leads',
+            );
+            setSelectedLead((oldSelection) => (
+                oldSelection ?? newLead.clientId
+            ));
+        },
+        [setUploadedFiles, setFormFieldValue, user],
     );
 
     return (

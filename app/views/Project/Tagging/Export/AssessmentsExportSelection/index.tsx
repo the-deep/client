@@ -1,5 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     Footer,
     useAlert,
@@ -7,6 +10,7 @@ import {
     Button,
     ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
+import { getOperationName } from 'apollo-link';
 import { gql, useMutation } from '@apollo/client';
 import {
     CreateExportMutation,
@@ -17,6 +21,7 @@ import {
 import ProjectContext from '#base/context/ProjectContext';
 import _ts from '#ts';
 
+import { PROJECT_EXPORTS } from '#views/Project/Tagging/Export/ExportHistory/queries';
 import ExportPreview from '../ExportPreview';
 import LeadsSelection from '../LeadsSelection';
 
@@ -74,9 +79,7 @@ function AssessmentsExportSelection(props: Props) {
     ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
         CREATE_EXPORT,
         {
-            refetchQueries: [
-                'ProjectExports',
-            ],
+            refetchQueries: [getOperationName(PROJECT_EXPORTS)].filter(isDefined),
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {
