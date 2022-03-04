@@ -1,8 +1,6 @@
-import React, { useContext, useMemo, useState, useCallback, useRef } from 'react';
+import React, { useContext, useMemo, useState, useCallback } from 'react';
 import {
     _cs,
-    isNotDefined,
-    isDefined,
     listToMap,
     randomString,
 } from '@togglecorp/fujs';
@@ -29,6 +27,7 @@ import {
     BulkCreateLeadsMutationVariables,
     LeadInputType,
 } from '#generated/types';
+import useBatchManager, { filterFailed, filterCompleted } from '#hooks/useBatchManager';
 import { UserContext } from '#base/context/UserContext';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
@@ -74,10 +73,27 @@ function BulkUpload(props: Props) {
         projectId,
     } = props;
 
+    // Store uploaded files on memory to show preview
     // NOTE: If a lead is removed or saved, uploaded files are not being removed at the moment
     const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([]);
+
     const [selectedLead, setSelectedLead] = useState<string | undefined>();
-    const leadClientIdsRef = useRef<string[] | undefined>();
+
+    // NOTE: handling bulkUpdateLeadsPending because we are making another
+    // request after one completes. This avoids loading flickers
+    const [bulkUpdateLeadsPending, setBulkUpdateLeadsPending] = useState(false);
+
+    type Req = NonNullable<BulkCreateLeadsMutationVariables['leads']>[number];
+    type Res = NonNullable<NonNullable<NonNullable<NonNullable<BulkCreateLeadsMutation['project']>['leadBulk']>['result']>[number]>;
+    type Err = NonNullable<NonNullable<NonNullable<NonNullable<BulkCreateLeadsMutation['project']>['leadBulk']>['errors']>[number]>;
+
+    const {
+        inspect,
+        init,
+        reset,
+        pop,
+        update,
+    } = useBatchManager<string, Req, Res, Err>();
 
     const { user } = useContext(UserContext);
 
@@ -92,109 +108,127 @@ function BulkUpload(props: Props) {
         pristine: formPristine,
     } = useForm(schema, defaultFormValues);
 
-    const leadsError = useMemo(
-        () => getErrorObject(getErrorObject(formError)?.leads),
-        [formError],
-    );
-
     const {
         setValue: onLeadChange,
     } = useFormArray<'leads', PartialLeadType>('leads', setFormFieldValue);
 
+    const handleTermination = useCallback(
+        () => {
+            const requests = inspect();
+
+            const failedLeads = requests
+                .filter(filterFailed)
+                .map((item) => ({
+                    clientId: item.key,
+                    error: transformToFormError(removeNull(item.error) as ObjectError[]),
+                }));
+            const failedLeadsMapping = listToMap(
+                failedLeads,
+                (item) => item.clientId,
+                (item) => item.error,
+            );
+            setFormError((oldError) => {
+                const err = getErrorObject(oldError);
+                return {
+                    ...err,
+                    leads: {
+                        ...getErrorObject(err?.leads),
+                        ...failedLeadsMapping,
+                    },
+                };
+            });
+
+            const completedLeads = requests
+                .filter(filterCompleted)
+                .map((item) => item.key);
+            const completedLeadsMapping = listToMap(
+                completedLeads,
+                (key) => key,
+                () => true,
+            );
+            setFormFieldValue((oldValues) => (
+                oldValues?.filter((lead) => !completedLeadsMapping[lead.clientId])
+            ), 'leads');
+
+            const completedLeadsCount = completedLeads.length;
+            if (completedLeadsCount > 0) {
+                alert.show(
+                    `Successfully added ${completedLeadsCount} sources!`,
+                    { variant: 'success' },
+                );
+            }
+            const failedLeadsCount = requests.length - completedLeadsCount;
+            if (failedLeadsCount > 0) {
+                alert.show(
+                    `Failed to add ${failedLeadsCount} sources!`,
+                    { variant: 'error' },
+                );
+            }
+
+            reset();
+        },
+        [inspect, reset, alert, setFormError, setFormFieldValue],
+    );
+
     const [
         bulkCreateLeads,
-        { loading: bulkCreateLeadsPending },
     ] = useMutation<BulkCreateLeadsMutation, BulkCreateLeadsMutationVariables>(
         BULK_CREATE_LEADS,
         {
-            refetchQueries: ['ProjectSources'],
+            // refetchQueries: ['ProjectSources'],
             onCompleted: (response) => {
                 const leadBulk = response.project?.leadBulk;
                 if (!leadBulk) {
-                    leadClientIdsRef.current = undefined;
+                    setBulkUpdateLeadsPending(false);
+                    handleTermination();
                     return;
                 }
+
                 const {
                     errors,
                     result,
                 } = leadBulk;
 
-                if (errors) {
-                    const leadsErrors = errors?.map((item, index) => {
-                        if (isNotDefined(item)) {
-                            return undefined;
-                        }
-                        const leadClientIds = leadClientIdsRef.current;
-                        const clientId = leadClientIds?.[index];
-                        if (isNotDefined(clientId)) {
-                            return undefined;
-                        }
+                update((oldValue, index) => {
+                    const individualResult = result?.[index];
+                    const individualError = errors?.[index];
 
+                    if (individualResult) {
                         return {
-                            clientId,
-                            error: transformToFormError(removeNull(item) as ObjectError[]),
+                            key: oldValue.key,
+                            request: oldValue.request,
+                            status: 'completed',
+                            response: individualResult,
                         };
-                    }).filter(isDefined) ?? [];
-                    const leadsErrorMapping = listToMap(
-                        leadsErrors,
-                        (item) => item.clientId,
-                        (item) => item.error,
-                    );
-                    setFormError((oldError) => {
-                        const err = getErrorObject(oldError);
+                    }
+                    if (individualError) {
                         return {
-                            ...err,
-                            leads: {
-                                ...getErrorObject(err?.leads),
-                                ...leadsErrorMapping,
-                            },
+                            key: oldValue.key,
+                            request: oldValue.request,
+                            status: 'failed',
+                            error: individualError,
                         };
-                    });
-                }
-                if (result) {
-                    const uploadedLeads = result.map((item, index) => {
-                        if (isNotDefined(item)) {
-                            return undefined;
-                        }
-                        const leadClientIds = leadClientIdsRef.current;
-                        const clientId = leadClientIds?.[index];
-                        if (isNotDefined(clientId)) {
-                            return undefined;
-                        }
-
-                        return clientId;
-                    }).filter(isDefined);
-
-                    if (uploadedLeads.length > 0) {
-                        alert.show(
-                            `Successfully added ${uploadedLeads.length} sources!`,
-                            { variant: 'success' },
-                        );
-                        setFormFieldValue((oldValues) => (
-                            oldValues?.filter((lead) => !uploadedLeads.includes(lead.clientId))
-                        ), 'leads');
                     }
+                    return oldValue;
+                });
 
-                    const erroredLeadsCount = (result?.length ?? 0) - uploadedLeads.length;
-                    if (erroredLeadsCount > 0) {
-                        alert.show(
-                            `Failed to add ${erroredLeadsCount} sources!`,
-                            { variant: 'error' },
-                        );
-                    } else {
-                        onClose();
-                    }
+                const remainingLeads = pop();
+                if (remainingLeads.length <= 0) {
+                    setBulkUpdateLeadsPending(false);
+                    handleTermination();
+                    return;
                 }
-                leadClientIdsRef.current = undefined;
+
+                bulkCreateLeads({
+                    variables: {
+                        projectId,
+                        leads: remainingLeads,
+                    },
+                });
             },
-            onError: (gqlError) => {
-                leadClientIdsRef.current = undefined;
-                alert.show(
-                    'Failed to add sources!',
-                    { variant: 'error' },
-                );
-                // eslint-disable-next-line no-console
-                console.error(gqlError);
+            onError: () => {
+                setBulkUpdateLeadsPending(false);
+                handleTermination();
             },
         },
     );
@@ -214,58 +248,46 @@ function BulkUpload(props: Props) {
         [onLeadChange],
     );
 
-    const handleFileUploadSuccess = useCallback((value: FileUploadResponse) => {
-        setUploadedFiles((oldUploadedFiles) => ([
-            value,
-            ...oldUploadedFiles,
-        ]));
-        const newLead: PartialLeadType = {
-            clientId: randomString(),
-            sourceType: sourceTypeMap[value.sourceType],
-            confidentiality: 'UNPROTECTED',
-            priority: 'LOW',
-            isAssessmentLead: false,
-            attachment: String(value.id),
-            title: value.title,
-            assignee: user?.id,
-        };
-        setFormFieldValue(
-            (oldVal: PartialFormType['leads']) => [
-                ...(oldVal ?? []),
-                newLead,
-            ],
-            'leads',
-        );
-        if (!selectedLead) {
-            setSelectedLead(newLead.clientId);
-        }
-    }, [setUploadedFiles, setFormFieldValue, selectedLead, user]);
+    const handleFileUploadSuccess = useCallback(
+        (value: FileUploadResponse) => {
+            setUploadedFiles((oldUploadedFiles) => ([
+                value,
+                ...oldUploadedFiles,
+            ]));
 
-    const handleLeadRemove = useCallback((clientId: string) => {
-        setFormFieldValue((oldVal) => oldVal?.filter((lead) => lead.clientId !== clientId), 'leads');
-    }, [setFormFieldValue]);
+            const newLead: PartialLeadType = {
+                clientId: randomString(),
+                sourceType: sourceTypeMap[value.sourceType],
+                confidentiality: 'UNPROTECTED',
+                priority: 'LOW',
+                isAssessmentLead: false,
+                attachment: String(value.id),
+                title: value.title,
+                assignee: user?.id,
+            };
 
-    const selectedLeadAttachment = useMemo(() => {
-        if (!selectedLead) {
-            return undefined;
-        }
-        const selectedLeadData = formValue?.leads?.find((lead) => lead.clientId === selectedLead);
-        if (!selectedLeadData) {
-            return undefined;
-        }
-        const selectedFile = uploadedFiles?.find(
-            (file) => String(file.id) === selectedLeadData.attachment,
-        );
-        if (!selectedFile) {
-            return undefined;
-        }
-        return ({
-            id: String(selectedFile.id),
-            title: selectedFile.title,
-            mimeType: selectedFile.mimeType,
-            file: selectedFile.file ? { url: selectedFile.file } : undefined,
-        });
-    }, [uploadedFiles, selectedLead, formValue]);
+            setFormFieldValue(
+                (oldVal: PartialFormType['leads']) => [
+                    ...(oldVal ?? []),
+                    newLead,
+                ],
+                'leads',
+            );
+            setSelectedLead((oldSelection) => (
+                oldSelection ?? newLead.clientId
+            ));
+        },
+        [setUploadedFiles, setFormFieldValue, user],
+    );
+
+    const handleLeadRemove = useCallback(
+        (clientId: string) => {
+            setFormFieldValue((oldVal) => oldVal?.filter(
+                (lead) => lead.clientId !== clientId,
+            ), 'leads');
+        },
+        [setFormFieldValue],
+    );
 
     const handleSubmit = useCallback(
         () => {
@@ -276,22 +298,63 @@ function BulkUpload(props: Props) {
                 formValidate,
                 setFormError,
                 (value) => {
-                    leadClientIdsRef.current = value?.leads?.map((lead) => lead.clientId);
-                    const leads = (value.leads ?? []) as LeadInputType[];
+                    // FIXME: do not send leads with error
+                    const leadsWithoutError = value.leads ?? [];
 
-                    if (leads.length > 0) {
-                        bulkCreateLeads({
-                            variables: {
-                                projectId,
-                                leads,
-                            },
-                        });
+                    init(
+                        leadsWithoutError as LeadInputType[],
+                        (item) => item.clientId as string,
+                    );
+
+                    const initialLeads = pop();
+
+                    if (initialLeads.length <= 0) {
+                        return;
                     }
+
+                    bulkCreateLeads({
+                        variables: {
+                            projectId,
+                            leads: initialLeads,
+                        },
+                    });
                 },
             );
             submit();
         },
-        [setFormError, formValidate, bulkCreateLeads, projectId],
+        [setFormError, formValidate, bulkCreateLeads, projectId, init, pop],
+    );
+
+    const leadsError = useMemo(
+        () => getErrorObject(getErrorObject(formError)?.leads),
+        [formError],
+    );
+
+    const selectedLeadAttachment = useMemo(
+        () => {
+            if (!selectedLead) {
+                return undefined;
+            }
+            const selectedLeadData = formValue?.leads?.find(
+                (lead) => lead.clientId === selectedLead,
+            );
+            if (!selectedLeadData) {
+                return undefined;
+            }
+            const selectedFile = uploadedFiles?.find(
+                (file) => String(file.id) === selectedLeadData.attachment,
+            );
+            if (!selectedFile) {
+                return undefined;
+            }
+            return ({
+                id: String(selectedFile.id),
+                title: selectedFile.title,
+                mimeType: selectedFile.mimeType,
+                file: selectedFile.file ? { url: selectedFile.file } : undefined,
+            });
+        },
+        [uploadedFiles, selectedLead, formValue],
     );
 
     return (
@@ -306,7 +369,7 @@ function BulkUpload(props: Props) {
                     name={undefined}
                     disabled={
                         formPristine
-                        || bulkCreateLeadsPending
+                        || bulkUpdateLeadsPending
                         || (formValue?.leads?.length ?? 0) < 1
                     }
                     onClick={handleSubmit}
@@ -315,7 +378,7 @@ function BulkUpload(props: Props) {
                 </Button>
             )}
         >
-            {bulkCreateLeadsPending && <PendingMessage />}
+            {bulkUpdateLeadsPending && <PendingMessage />}
             <Upload
                 className={styles.upload}
                 onSuccess={handleFileUploadSuccess}
