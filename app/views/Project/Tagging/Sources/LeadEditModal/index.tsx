@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useCallback, useState } from 'react';
 import {
     _cs,
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     Card,
@@ -16,6 +17,7 @@ import {
     internal,
     SetValueArg,
 } from '@togglecorp/toggle-form';
+import { getOperationName } from 'apollo-link';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
 import LeadPreview from '#components/lead/LeadPreview';
@@ -34,6 +36,8 @@ import {
 } from '#generated/types';
 import { ProjectContext } from '#base/context/ProjectContext';
 import { UserContext } from '#base/context/UserContext';
+
+import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -351,7 +355,7 @@ function LeadEditModal(props: Props) {
     ] = useMutation<LeadUpdateMutation, LeadUpdateMutationVariables>(
         LEAD_UPDATE,
         {
-            refetchQueries: ['ProjectSources'],
+            refetchQueries: [getOperationName(PROJECT_SOURCES)].filter(isDefined),
             onCompleted: (response) => {
                 if (!response?.project?.leadUpdate) {
                     return;
@@ -391,7 +395,7 @@ function LeadEditModal(props: Props) {
     ] = useMutation<LeadCreateMutation, LeadCreateMutationVariables>(
         LEAD_CREATE,
         {
-            refetchQueries: ['ProjectSources'],
+            refetchQueries: [getOperationName(PROJECT_SOURCES)].filter(isDefined),
             onCompleted: (response) => {
                 if (!response?.project?.leadCreate) {
                     return;

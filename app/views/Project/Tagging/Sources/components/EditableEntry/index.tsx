@@ -9,6 +9,7 @@ import {
     generatePath,
 } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
+import { getOperationName } from 'apollo-link';
 import {
     isDefined,
     listToMap,
@@ -25,6 +26,7 @@ import {
 import { FiEdit2 } from 'react-icons/fi';
 import { IoTrash } from 'react-icons/io5';
 
+import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
 import {
     getEntrySchema,
     PartialEntryType as EntryInputType,
@@ -160,7 +162,7 @@ function EditableEntry(props: Props) {
     ] = useMutation<UpdateEntryMutation, UpdateEntryMutationVariables>(
         UPDATE_ENTRY,
         {
-            refetchQueries: ['ProjectSources'],
+            refetchQueries: [getOperationName(PROJECT_SOURCES)].filter(isDefined),
             onCompleted: (gqlResponse) => {
                 const response = gqlResponse?.project?.entryUpdate;
                 if (!response) {
@@ -204,7 +206,7 @@ function EditableEntry(props: Props) {
     ] = useMutation(
         DELETE_ENTRY,
         {
-            refetchQueries: ['ProjectSources'],
+            refetchQueries: [getOperationName(PROJECT_SOURCES)].filter(isDefined),
             onCompleted: (response) => {
                 const {
                     ok,

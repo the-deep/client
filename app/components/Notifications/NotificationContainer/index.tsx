@@ -18,7 +18,9 @@ import {
     Container,
     DateOutput,
 } from '@the-deep/deep-ui';
+import { getOperationName } from 'apollo-link';
 
+import { USER_NOTIFICATIONS_COUNT } from '#base/components/Navbar/queries';
 import Avatar from '#components/Avatar';
 import { useModalState } from '#hooks/stateManagement';
 
@@ -91,7 +93,7 @@ function NotificationContainer(props: Props) {
     ] = useMutation<NotificationStatusUpdateMutation, NotificationStatusUpdateMutationVariables>(
         NOTIFICATION_STATUS_UPDATE,
         {
-            refetchQueries: ['UserNotificationsCount'],
+            refetchQueries: [getOperationName(USER_NOTIFICATIONS_COUNT)].filter(isDefined),
             onCompleted: (response) => {
                 if (response?.notificationStatusUpdate?.ok) {
                     const newStatus = response.notificationStatusUpdate?.result?.statusDisplay;
