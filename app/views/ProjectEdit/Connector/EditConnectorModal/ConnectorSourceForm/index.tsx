@@ -14,6 +14,7 @@ import {
 import {
     PartialSourceType,
 } from '../../schema';
+import ReliefWebParamsInput from './ReliefWebParamsInput';
 
 import styles from './styles.css';
 
@@ -42,6 +43,7 @@ function ConnectorSourceForm(props: Props) {
             className={_cs(className, styles.connectorSourceForm)}
             heading={value.title ?? value.source}
             headingSize="extraSmall"
+            contentClassName={styles.content}
         >
             <TextInput
                 name="title"
@@ -49,7 +51,17 @@ function ConnectorSourceForm(props: Props) {
                 value={value.title}
                 onChange={setFieldValue}
                 error={error?.title}
+                // TODO: We might not need to change titles
+                readOnly
             />
+            {value?.source === 'RELIEF_WEB' && (
+                <ReliefWebParamsInput
+                    name="params"
+                    value={value?.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                />
+            )}
         </Container>
     );
 }
