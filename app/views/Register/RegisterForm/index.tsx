@@ -78,7 +78,7 @@ function RegisterModal(props: Props) {
 
     const elementRef = useRef<Captcha>(null);
     const [success, setSuccess] = useState(false);
-    const [disableRegister, setDisableRegister] = useState(false);
+    const [acceptTerms, setAcceptTerms] = useState(false);
 
     const {
         pristine,
@@ -129,8 +129,13 @@ function RegisterModal(props: Props) {
     );
 
     const handleTermsCheck = useCallback(() => {
-        setDisableRegister(!disableRegister);
-    }, [disableRegister]);
+        setAcceptTerms(!acceptTerms);
+    }, [acceptTerms]);
+
+    const handleAcceptTerms = useCallback(() => {
+        setAcceptTerms(true);
+        hideTermsModal();
+    }, []);
 
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
@@ -213,8 +218,7 @@ function RegisterModal(props: Props) {
                                 <Checkbox
                                     name="terms"
                                     label="I accept the"
-                                    value={disableRegister}
-                                    disabled={pristine}
+                                    value={acceptTerms}
                                     onChange={handleTermsCheck}
                                 />
                                 <Button
@@ -227,7 +231,7 @@ function RegisterModal(props: Props) {
                                 </Button>
                             </div>
                             <Button
-                                disabled={registerPending || pristine || !disableRegister}
+                                disabled={registerPending || pristine || !acceptTerms}
                                 type="submit"
                                 variant="primary"
                                 name="register"
@@ -247,15 +251,24 @@ function RegisterModal(props: Props) {
                 <Modal
                     onCloseButtonClick={hideTermsModal}
                     heading="Terms and Conditions"
-                    size="medium"
+                    size="large"
                     footerActions={(
-                        <Button
-                            name={undefined}
-                            onClick={hideTermsModal}
-                            variant="secondary"
-                        >
-                            Close
-                        </Button>
+                        <>
+                            <Button
+                                name={undefined}
+                                onClick={handleAcceptTerms}
+                                variant="secondary"
+                            >
+                                Accept
+                            </Button>
+                            <Button
+                                name={undefined}
+                                onClick={hideTermsModal}
+                                variant="secondary"
+                            >
+                                Close
+                            </Button>
+                        </>
                     )}
                 >
                     <ReactMarkdown className={styles.termsContent}>
