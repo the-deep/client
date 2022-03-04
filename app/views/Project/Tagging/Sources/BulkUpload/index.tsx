@@ -165,6 +165,10 @@ function BulkUpload(props: Props) {
                 );
             }
 
+            // set first failed lead as selected
+            // we will remove all successful leads
+            setSelectedLead(failedLeads[0]?.clientId);
+
             reset();
         },
         [inspect, reset, alert, setFormError, setFormFieldValue],
@@ -298,7 +302,7 @@ function BulkUpload(props: Props) {
                 formValidate,
                 setFormError,
                 (value) => {
-                    // FIXME: do not send leads with error
+                    // FIXME: send request even if there are errors on some requests
                     const leadsWithoutError = value.leads ?? [];
 
                     init(
@@ -307,6 +311,7 @@ function BulkUpload(props: Props) {
                     );
 
                     const initialLeads = pop();
+                    console.warn(initialLeads);
 
                     if (initialLeads.length <= 0) {
                         return;

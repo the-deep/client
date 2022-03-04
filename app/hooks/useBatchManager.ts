@@ -72,16 +72,16 @@ function useBatchManager<K, Req, Res, Err>() {
         (batchSize = 2) => {
             if (startIndex.current === 0 && endIndex.current === 0) {
                 startIndex.current = 0;
-                endIndex.current = Math.max(
+                endIndex.current = Math.min(
                     batchSize,
                     requestItems.current.length,
                 );
             } else {
-                startIndex.current = Math.max(
+                startIndex.current = Math.min(
                     startIndex.current + batchSize,
                     requestItems.current.length,
                 );
-                endIndex.current = Math.max(
+                endIndex.current = Math.min(
                     endIndex.current + batchSize,
                     requestItems.current.length,
                 );
