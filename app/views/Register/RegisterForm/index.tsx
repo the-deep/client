@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { useMutation, gql } from '@apollo/client';
+import ReactMarkdown from 'react-markdown';
 import {
     TextInput,
     Link,
@@ -8,6 +9,8 @@ import {
     PendingMessage,
     Container,
     Kraken,
+    Checkbox,
+    Modal,
 } from '@the-deep/deep-ui';
 import { generatePath } from 'react-router-dom';
 import {
@@ -27,6 +30,8 @@ import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
 import routes from '#base/configs/routes';
 import { hCaptchaKey } from '#base/configs/hCaptcha';
+import { termsNotice } from '#views/TermsOfService';
+import { useModalState } from '#hooks/stateManagement';
 
 import _ts from '#ts';
 
@@ -73,6 +78,7 @@ function RegisterModal(props: Props) {
 
     const elementRef = useRef<Captcha>(null);
     const [success, setSuccess] = useState(false);
+    const [disableRegister, setDisableRegister] = useState(false);
 
     const {
         pristine,
@@ -84,6 +90,12 @@ function RegisterModal(props: Props) {
     } = useForm(schema, initialValue);
 
     const error = getErrorObject(riskyError);
+
+    const [
+        showTermsModal, ,
+        hideTermsModal, ,
+        toggleTermsModal,
+    ] = useModalState(false);
 
     const [
         triggerRegister,
@@ -116,99 +128,142 @@ function RegisterModal(props: Props) {
         },
     );
 
+    const handleTermsCheck = useCallback(() => {
+        setDisableRegister(!disableRegister);
+    }, [disableRegister]);
+
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
         triggerRegister({ variables: { input: finalValue } });
     }, [triggerRegister]);
 
     return (
-        <form
-            className={_cs(styles.registerForm, className)}
-            onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
-        >
-            {registerPending && <PendingMessage />}
-            <Container
-                className={styles.registerFormContainer}
-                contentClassName={styles.inputContainer}
-                heading="Register"
-                headingSize="medium"
-                headingDescription={(
-                    <div className={styles.headingDescription}>
-                        <span>
-                            Already a user?
-                        </span>
-                        <Link
-                            to={generatePath(routes.login.path, {})}
-                        >
-                            Login
-                        </Link>
-                    </div>
-                )}
+        <>
+            <form
+                className={_cs(styles.registerForm, className)}
+                onSubmit={createSubmitHandler(validate, setError, handleSubmit)}
             >
-                {success ? (
-                    <div className={styles.registerSuccess}>
-                        {_ts('explore.register', 'checkYourEmailText', { email: value?.email })}
-                    </div>
-                ) : (
-                    <>
-                        <NonFieldError error={error} />
-                        <TextInput
-                            name="firstName"
-                            onChange={setFieldValue}
-                            value={value?.firstName}
-                            error={error?.firstName}
-                            placeholder={_ts('explore.register', 'firstNamePlaceholder')}
-                            disabled={registerPending}
-                        />
-                        <TextInput
-                            name="lastName"
-                            onChange={setFieldValue}
-                            value={value?.lastName}
-                            error={error?.lastName}
-                            placeholder={_ts('explore.register', 'lastNamePlaceholder')}
-                            disabled={registerPending}
-                        />
-                        <TextInput
-                            name="organization"
-                            onChange={setFieldValue}
-                            value={value?.organization}
-                            error={error?.organization}
-                            placeholder={_ts('explore.register', 'organizationPlaceholder')}
-                            disabled={registerPending}
-                        />
-                        <TextInput
-                            name="email"
-                            onChange={setFieldValue}
-                            value={value?.email}
-                            error={error?.email}
-                            placeholder={_ts('explore.register', 'emailPlaceholder')}
-                            disabled={registerPending}
-                        />
-                        <HCaptcha
-                            name="captcha"
-                            elementRef={elementRef}
-                            siteKey={hCaptchaKey}
-                            onChange={setFieldValue}
-                            error={error?.captcha}
-                            disabled={registerPending}
-                        />
+                {registerPending && <PendingMessage />}
+                <Container
+                    className={styles.registerFormContainer}
+                    contentClassName={styles.inputContainer}
+                    heading="Register"
+                    headingSize="medium"
+                    headingDescription={(
+                        <div className={styles.headingDescription}>
+                            <span>
+                                Already a user?
+                            </span>
+                            <Link
+                                to={generatePath(routes.login.path, {})}
+                            >
+                                Login
+                            </Link>
+                        </div>
+                    )}
+                >
+                    {success ? (
+                        <div className={styles.registerSuccess}>
+                            {_ts('explore.register', 'checkYourEmailText', { email: value?.email })}
+                        </div>
+                    ) : (
+                        <>
+                            <NonFieldError error={error} />
+                            <TextInput
+                                name="firstName"
+                                onChange={setFieldValue}
+                                value={value?.firstName}
+                                error={error?.firstName}
+                                placeholder={_ts('explore.register', 'firstNamePlaceholder')}
+                                disabled={registerPending}
+                            />
+                            <TextInput
+                                name="lastName"
+                                onChange={setFieldValue}
+                                value={value?.lastName}
+                                error={error?.lastName}
+                                placeholder={_ts('explore.register', 'lastNamePlaceholder')}
+                                disabled={registerPending}
+                            />
+                            <TextInput
+                                name="organization"
+                                onChange={setFieldValue}
+                                value={value?.organization}
+                                error={error?.organization}
+                                placeholder={_ts('explore.register', 'organizationPlaceholder')}
+                                disabled={registerPending}
+                            />
+                            <TextInput
+                                name="email"
+                                onChange={setFieldValue}
+                                value={value?.email}
+                                error={error?.email}
+                                placeholder={_ts('explore.register', 'emailPlaceholder')}
+                                disabled={registerPending}
+                            />
+                            <HCaptcha
+                                name="captcha"
+                                elementRef={elementRef}
+                                siteKey={hCaptchaKey}
+                                onChange={setFieldValue}
+                                error={error?.captcha}
+                                disabled={registerPending}
+                            />
+                            <div className={styles.checkBoxArea}>
+                                <Checkbox
+                                    name="terms"
+                                    label="I accept the"
+                                    value={disableRegister}
+                                    disabled={pristine}
+                                    onChange={handleTermsCheck}
+                                />
+                                <Button
+                                    name={undefined}
+                                    variant="action"
+                                    onClick={toggleTermsModal}
+                                    className={styles.termsButton}
+                                >
+                                    terms and conditions
+                                </Button>
+                            </div>
+                            <Button
+                                disabled={registerPending || pristine || !disableRegister}
+                                type="submit"
+                                variant="primary"
+                                name="register"
+                            >
+                                {_ts('explore.register', 'registerButtonLabel')}
+                            </Button>
+                        </>
+                    )}
+                </Container>
+                <Kraken
+                    className={styles.kraken}
+                    variant="ballon"
+                    size="extraLarge"
+                />
+            </form>
+            {showTermsModal && (
+                <Modal
+                    onCloseButtonClick={hideTermsModal}
+                    heading="Terms and Conditions"
+                    size="medium"
+                    footerActions={(
                         <Button
-                            disabled={registerPending || pristine}
-                            type="submit"
-                            variant="primary"
-                            name="register"
+                            name={undefined}
+                            onClick={hideTermsModal}
+                            variant="secondary"
                         >
-                            {_ts('explore.register', 'registerButtonLabel')}
+                            Close
                         </Button>
-                    </>
-                )}
-            </Container>
-            <Kraken
-                className={styles.kraken}
-                variant="ballon"
-                size="extraLarge"
-            />
-        </form>
+                    )}
+                >
+                    <ReactMarkdown className={styles.termsContent}>
+                        {termsNotice}
+                    </ReactMarkdown>
+                </Modal>
+            )}
+        </>
     );
 }
 

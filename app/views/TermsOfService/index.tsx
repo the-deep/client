@@ -7,7 +7,7 @@ import WelcomeContent from '#components/general/WelcomeContent';
 
 import styles from './styles.css';
 
-const md = `
+export const termsNotice = `
 # DEEP TERMS OF USE & PRIVACY NOTICE
 **Effective: January, 2022**
 # DEEP TERMS OF USE
@@ -86,7 +86,7 @@ function TermsOfService(props: Props) {
                     className={styles.welcomeContent}
                 />
                 <ReactMarkdown className={styles.rightContent}>
-                    {md}
+                    {termsNotice}
                 </ReactMarkdown>
             </Card>
         </div>

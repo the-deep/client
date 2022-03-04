@@ -34,4 +34,30 @@
         align-self: flex-end;
         margin: calc(-1 * var(--dui-spacing-extra-large));
     }
+
+    .check-box-area {
+        display: flex;
+        gap: var(--dui-spacing-extra-small);
+
+        .terms-button {
+            color: var(--dui-color-accent);
+            font-size: var(--dui-font-size-extra-small);
+        }
+
+        .terms-button:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.terms-content {
+    margin: auto;
+    border-top-right-radius: var(--dui-border-radius-card);
+    border-bottom-right-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-foreground);
+    padding: var(--dui-spacing-small);
+    min-width: 320px;
+    max-width: 800px;
+    height: 100%;
+    overflow-y: auto;
 }
