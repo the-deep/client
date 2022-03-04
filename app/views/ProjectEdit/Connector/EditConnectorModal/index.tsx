@@ -10,11 +10,13 @@ import {
     useFormArray,
     getErrorObject,
     createSubmitHandler,
+    removeNull,
     internal,
 } from '@togglecorp/toggle-form';
 import { useMutation, gql } from '@apollo/client';
 import {
     PendingMessage,
+    useAlert,
     Button,
     Container,
     ListView,
@@ -26,6 +28,7 @@ import {
     ProjectConnectorCreateMutation,
     ProjectConnectorCreateMutationVariables,
 } from '#generated/types';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
 import {
     schema,
@@ -96,6 +99,8 @@ function EditConnectorModal(props: Props) {
         setFieldValue,
     } = useForm(schema, defaultValue);
 
+    const alert = useAlert();
+
     const [
         createConnector,
         { loading: connectorCreatePending },
@@ -103,7 +108,24 @@ function EditConnectorModal(props: Props) {
         CREATE_CONNECTOR,
         {
             onCompleted: (response) => {
-                console.warn('here', response);
+                const res = response?.project?.unifiedConnector?.unifiedConnectorCreate;
+                if (!res) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = res;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                } else if (ok) {
+                    alert.show(
+                        'Successfully created a new connector.',
+                        { variant: 'success' },
+                    );
+                }
             },
             onError: (errors) => {
                 setError({

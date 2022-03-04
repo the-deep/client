@@ -1,3 +1,9 @@
 .connector-source-form {
     background-color: var(--dui-color-foreground);
+
+    .content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-medium);
+    }
 }
