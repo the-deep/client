@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
     ElementFragments,
+    Spinner,
 } from '@the-deep/deep-ui';
 import { AiOutlineRedo } from 'react-icons/ai';
 import { IoDocumentOutline, IoLogoDropbox } from 'react-icons/io5';
@@ -110,7 +111,7 @@ function UploadItem(props: Props) {
     return (
         <div className={_cs(className, styles.uploadItem)}>
             <ElementFragments
-                icons={iconMap[data.fileType]}
+                icons={pending ? <Spinner /> : iconMap[data.fileType]}
                 iconsContainerClassName={styles.icons}
                 actions={hasFailed && (
                     <QuickActionButton

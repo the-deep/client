@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useRef, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { Link } from 'react-router-dom';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import {
     Border,
     QuickActionLink,
@@ -38,27 +38,11 @@ import {
 } from '#generated/types';
 import deepLogo from '#resources/img/deep-logo-new.svg';
 
+import { LOGOUT, USER_NOTIFICATIONS_COUNT } from './queries';
+
 import styles from './styles.css';
 
 const NOTIFICATION_POLL_INTERVAL = 60000;
-
-const LOGOUT = gql`
-    mutation Logout {
-        logout {
-            ok
-        }
-    }
-`;
-
-export const USER_NOTIFICATIONS_COUNT = gql`
-    query UserNotificationsCount {
-        notifications(
-            status: UNSEEN,
-        ) {
-            totalCount
-        }
-    }
-`;
 
 interface Props {
     className?: string;
@@ -256,7 +240,7 @@ function Navbar(props: Props) {
                     <DropdownMenuItem
                         href={extensionChromeUrl}
                         linkProps={{
-                            // FIXME: we shouldn't need to add "to" here
+                            // FIXME: we should not need to add "to" here
                             to: extensionChromeUrl,
                             target: '_blank',
                             rel: 'noopener noreferrer',

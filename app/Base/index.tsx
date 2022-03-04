@@ -9,7 +9,7 @@ import {
     AlertOptions,
     Button,
 } from '@the-deep/deep-ui';
-import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 import ReactGA from 'react-ga';
 import { setMapboxToken } from '@togglecorp/re-map';
 
@@ -29,7 +29,6 @@ import { sync } from '#base/hooks/useAuthSync';
 import Navbar from '#base/components/Navbar';
 import Routes from '#base/components/Routes';
 import { User } from '#base/types/user';
-import apolloConfig from '#base/configs/apollo';
 import { trackingId, gaConfig } from '#base/configs/googleAnalytics';
 import {
     processDeepUrls,
@@ -41,6 +40,7 @@ import {
 } from '#base/utils/restRequest';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import { apolloClient } from '#base/configs/apollo';
 import localforageInstance from '#base/configs/localforage';
 import { mapboxToken } from '#base/configs/env';
 
@@ -64,8 +64,6 @@ browserHistory.listen((location) => {
     ReactGA.set({ page });
     ReactGA.pageview(page);
 });
-
-const apolloClient = new ApolloClient(apolloConfig);
 
 function Base() {
     const [user, setUser] = useState<User | undefined>();

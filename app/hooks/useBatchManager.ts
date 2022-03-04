@@ -19,7 +19,7 @@ interface FailedRequestItem<K, Req, Err> {
     error: Err,
 }
 
-type RequestItem<K, Req, Res, Err> = PendingRequestItem<K, Req>
+export type RequestItem<K, Req, Res, Err> = PendingRequestItem<K, Req>
     | CompletedRequestItem<K, Req, Res>
     | FailedRequestItem<K, Req, Err>;
 
@@ -39,6 +39,7 @@ export function filterPending<K, Req, Res, Err>(
     return item.status === 'pending';
 }
 
+// TODO: show progress
 function useBatchManager<K, Req, Res, Err>() {
     const requestItems = useRef<RequestItem<K, Req, Res, Err>[]>([]);
 
