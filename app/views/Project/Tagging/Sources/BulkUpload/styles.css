@@ -1,6 +1,7 @@
 .bulk-upload-modal {
     .modal-body {
         display: flex;
+        position: relative;
 
         .upload {
             display: flex;

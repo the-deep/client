@@ -1,4 +1,11 @@
-import { ApolloClientOptions, NormalizedCacheObject, InMemoryCache, ApolloLink as ApolloLinkFromClient, HttpLink } from '@apollo/client';
+import {
+    ApolloClient,
+    ApolloClientOptions,
+    NormalizedCacheObject,
+    InMemoryCache,
+    ApolloLink as ApolloLinkFromClient,
+    HttpLink,
+} from '@apollo/client';
 import { ApolloLink } from 'apollo-link';
 import { RetryLink } from 'apollo-link-retry';
 import { createUploadLink } from 'apollo-upload-client';
@@ -47,4 +54,5 @@ const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
     },
 };
 
-export default apolloOptions;
+// eslint-disable-next-line import/prefer-default-export
+export const apolloClient = new ApolloClient(apolloOptions);
