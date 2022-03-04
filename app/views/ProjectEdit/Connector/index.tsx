@@ -34,35 +34,31 @@ interface ConnectorMini {
 
 const connectorKeySelector = (d: ConnectorMini) => d.id;
 
-interface ItemProps {
+interface ConnectorItemProps {
     itemKey: string;
     title: string;
     createdAt: string;
     onClick: (key: string) => void;
-    isSelected: boolean;
+    selected: boolean;
 }
 
-function Item(props: ItemProps) {
+function ConnectorItem(props: ConnectorItemProps) {
     const {
         itemKey,
         title,
         createdAt,
         onClick,
-        isSelected,
+        selected,
     } = props;
-
-    const handleItemClick = useCallback(() => {
-        onClick(itemKey);
-    }, [onClick, itemKey]);
 
     return (
         <RawButton
-            name={`item-${itemKey}`}
+            name={itemKey}
             className={_cs(
                 styles.item,
-                isSelected && styles.selected,
+                selected && styles.selected,
             )}
-            onClick={handleItemClick}
+            onClick={onClick}
         >
             <div className={styles.title}>
                 {title}
@@ -131,11 +127,12 @@ function Connector(props: Props) {
         title: data.title,
         createdAt: data.createdAt,
         onClick: setSelectedConnector,
-        isSelected: key === selectedConnector,
+        selected: key === selectedConnector,
     }), [selectedConnector]);
 
     const {
         loading: connectorsGetPending,
+        error,
     } = useQuery<ProjectConnectorsQuery, ProjectConnectorsQueryVariables>(
         PROJECT_CONNECTORS,
         {
@@ -175,11 +172,11 @@ function Connector(props: Props) {
                 <ListView
                     className={styles.connectorList}
                     pending={connectorsGetPending}
-                    errored={false}
+                    errored={!!error}
                     filtered={false}
                     data={connectorList}
                     keySelector={connectorKeySelector}
-                    renderer={Item}
+                    renderer={ConnectorItem}
                     rendererParams={connectorsRendererParams}
                     messageShown
                     messageIconShown

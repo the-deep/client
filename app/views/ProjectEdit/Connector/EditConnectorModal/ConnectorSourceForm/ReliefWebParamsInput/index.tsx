@@ -12,6 +12,8 @@ import {
     getErrorString,
 } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
+
 import {
     reliefWebCountryList,
     ReliefWebParams,
@@ -21,11 +23,14 @@ import {
 const countryKeySelector = (d: Country) => d.key;
 const countryLabelSelector = (d: Country) => d.label;
 
+const reliefWebDefaultValues: ReliefWebParams = {};
+
 interface Props<T extends string> {
     name: T;
-    value: ReliefWebParams;
+    value: ReliefWebParams | undefined | null;
     error: Error<ReliefWebParams>;
     onChange: (val: SetValueArg<ReliefWebParams>, name: T) => void;
+    disabled?: boolean;
 }
 
 function ReliefWebParamsInput<T extends string>(props: Props<T>) {
@@ -34,14 +39,14 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
         value,
         error: riskyError,
         onChange,
+        disabled,
     } = props;
-
     const error = getErrorObject(riskyError);
-    // FIXME: Look into if default values is good
-    const setParamsFieldValue = useFormObject(name, onChange, value ?? {});
+    const setParamsFieldValue = useFormObject(name, onChange, value ?? reliefWebDefaultValues);
 
     return (
         <>
+            <NonFieldError error={error} />
             <MultiSelectInput
                 name="primaryCountry"
                 label="Primary Country"
@@ -51,6 +56,7 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
                 keySelector={countryKeySelector}
                 labelSelector={countryLabelSelector}
                 error={getErrorString(error?.primaryCountry)}
+                disabled={disabled}
             />
             <MultiSelectInput
                 name="country"
@@ -61,12 +67,14 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
                 keySelector={countryKeySelector}
                 labelSelector={countryLabelSelector}
                 error={getErrorString(error?.country)}
+                disabled={disabled}
             />
             <DateInput
                 name="fromDate"
                 label="From date"
                 value={value?.fromDate}
                 onChange={setParamsFieldValue}
+                disabled={disabled}
                 error={error?.fromDate}
             />
             <DateInput
@@ -75,6 +83,7 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
                 value={value?.toDate}
                 onChange={setParamsFieldValue}
                 error={error?.fromDate}
+                disabled={disabled}
             />
         </>
     );

@@ -37,7 +37,6 @@ function CheckButton<N>(props: Props<N>) {
             className={_cs(
                 className,
                 styles.checkButton,
-                value ? styles.selected : styles.notSelected,
             )}
             onClick={onClick}
             variant="tertiary"
