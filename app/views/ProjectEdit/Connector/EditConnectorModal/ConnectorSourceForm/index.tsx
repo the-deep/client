@@ -11,6 +11,8 @@ import {
     getErrorObject,
 } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/NonFieldError';
+
 import {
     PartialSourceType,
 } from '../../schema';
@@ -18,21 +20,23 @@ import ReliefWebParamsInput from './ReliefWebParamsInput';
 
 import styles from './styles.css';
 
-interface Props {
+interface Props<T extends number> {
     className?: string;
-    name: number | undefined;
+    name: T;
     value: PartialSourceType;
     error: Error<PartialSourceType>;
-    onChange: (val: SetValueArg<PartialSourceType>, name: number | undefined) => void;
+    onChange: (val: SetValueArg<PartialSourceType>, name: T) => void;
+    disabled?: boolean;
 }
 
-function ConnectorSourceForm(props: Props) {
+function ConnectorSourceForm<T extends number>(props: Props<T>) {
     const {
         className,
         name,
         value,
         onChange,
         error: riskyError,
+        disabled,
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, value);
@@ -45,6 +49,7 @@ function ConnectorSourceForm(props: Props) {
             headingSize="extraSmall"
             contentClassName={styles.content}
         >
+            <NonFieldError error={error} />
             <TextInput
                 name="title"
                 label="Title"
@@ -53,6 +58,7 @@ function ConnectorSourceForm(props: Props) {
                 error={error?.title}
                 // TODO: We might not need to change titles
                 readOnly
+                disabled={disabled}
             />
             {value?.source === 'RELIEF_WEB' && (
                 <ReliefWebParamsInput
@@ -60,6 +66,7 @@ function ConnectorSourceForm(props: Props) {
                     value={value?.params}
                     onChange={setFieldValue}
                     error={error?.params}
+                    disabled={disabled}
                 />
             )}
         </Container>
