@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     Button,
     useAlert,
@@ -7,6 +10,7 @@ import {
     TextInput,
 } from '@the-deep/deep-ui';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { getOperationName } from 'apollo-link';
 
 import _ts from '#ts';
 import {
@@ -22,6 +26,8 @@ import {
     ExportFormatEnum,
 } from '#generated/types';
 import ProjectContext from '#base/context/ProjectContext';
+import { PROJECT_EXPORTS } from '#views/Project/Tagging/Export/ExportHistory/queries';
+
 import {
     Node,
     TreeSelectableWidget,
@@ -261,9 +267,7 @@ function EntriesExportSelection(props: Props) {
     ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
         CREATE_EXPORT,
         {
-            refetchQueries: [
-                'ProjectExports',
-            ],
+            refetchQueries: [getOperationName(PROJECT_EXPORTS)].filter(isDefined),
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {

@@ -27,7 +27,7 @@ import {
     TextInput,
     DateRangeInput,
 } from '@the-deep/deep-ui';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 import {
     ProjectExportsQuery,
@@ -45,6 +45,7 @@ import LeadPreview from '#components/lead/LeadPreview';
 
 import _ts from '#ts';
 
+import { PROJECT_EXPORTS, DELETE_EXPORT } from './queries';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
@@ -93,63 +94,6 @@ interface DateRangeValue {
     endDate: string;
 }
 
-const PROJECT_EXPORTS = gql`
-    query ProjectExports(
-        $projectId: ID!,
-        $page: Int,
-        $pageSize: Int,
-        $ordering: String,
-        $exportedAtGte: DateTime,
-        $exportedAtLte: DateTime,
-        $search: String,
-        $type: [ExportDataTypeEnum!],
-    ) {
-        project(id: $projectId) {
-            id
-            exports (
-                page: $page,
-                pageSize: $pageSize,
-                ordering: $ordering,
-                exportedAtGte: $exportedAtGte,
-                exportedAtLte: $exportedAtLte,
-                search: $search,
-                type: $type,
-            ) {
-                totalCount
-                page
-                pageSize
-                results {
-                    id
-                    title
-                    exportType
-                    exportedAt
-                    status
-                    format
-                    file {
-                        name
-                        url
-                    }
-                }
-            }
-        }
-    }
-`;
-
-const DELETE_EXPORT = gql`
-    mutation DeleteExport(
-        $projectId: ID!,
-        $exportId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            exportDelete(id: $exportId) {
-                ok
-                errors
-            }
-        }
-    }
-`;
-
 const debounceTime = 500;
 
 interface Props {
@@ -169,6 +113,7 @@ function ExportHistory(props: Props) {
     const [activePage, setActivePage] = useState(1);
     const [exportedAt, setExportedAt] = useState<DateRangeValue>();
     const [searchText, setSearchText] = useState<string>();
+    // FIXME: we can safely remove useDebouncedValue if we are using TextInput from deep-ui
     const debouncedSearchText = useDebouncedValue(searchText, debounceTime);
 
     const handleSetSearchText = useCallback((search: string | undefined) => {
