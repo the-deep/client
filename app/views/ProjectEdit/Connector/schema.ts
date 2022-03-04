@@ -10,7 +10,7 @@ import {
 
 import { ConnectorInputType } from './types';
 
-export type PartialFormType = PartialForm<ConnectorInputType, 'clientId' | 'source'>;
+export type PartialFormType = PartialForm<ConnectorInputType, 'clientId' | 'source' | 'params'>;
 export type PartialSourceType = NonNullable<PartialFormType['sources']>[number];
 
 type FormSchema = ObjectSchema<PartialFormType>;
@@ -23,7 +23,7 @@ export type SourceFormSchema = ObjectSchema<PartialSourceType, PartialFormType>;
 export type SourceFormSchemaFields = ReturnType<SourceFormSchema['fields']>;
 
 export const sourceSchema:SourceFormSchema = {
-    fields: (): SourceFormSchemaFields => {
+    fields: (value): SourceFormSchemaFields => {
         const baseSchema: SourceFormSchemaFields = {
             clientId: [],
             id: [defaultUndefinedType],
@@ -32,7 +32,24 @@ export const sourceSchema:SourceFormSchema = {
             // FIXME: Define better schema
             params: [],
         };
-        return baseSchema;
+        const reliefWebParamsSchema = {
+            fromDate: [],
+            toDate: [],
+            primaryCountry: [requiredCondition],
+            country: [],
+        };
+
+        switch (value?.source) {
+            case 'RELIEF_WEB':
+                return {
+                    ...baseSchema,
+                    params: {
+                        fields: () => reliefWebParamsSchema,
+                    },
+                };
+            default:
+                return baseSchema;
+        }
     },
 };
 
