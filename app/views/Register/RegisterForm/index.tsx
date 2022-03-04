@@ -92,8 +92,8 @@ function RegisterModal(props: Props) {
     const error = getErrorObject(riskyError);
 
     const [
-        showTermsModal, ,
-        hideTermsModal, ,
+        isTermsModalShown, ,
+        isTermsModalHidden, ,
         toggleTermsModal,
     ] = useModalState(false);
 
@@ -128,13 +128,14 @@ function RegisterModal(props: Props) {
         },
     );
 
-    const handleTermsCheck = useCallback(() => {
-        setAcceptTerms(!acceptTerms);
-    }, [acceptTerms]);
-
     const handleAcceptTerms = useCallback(() => {
         setAcceptTerms(true);
-        hideTermsModal();
+        isTermsModalHidden();
+    }, []);
+
+    const handleCancelTerms = useCallback(() => {
+        setAcceptTerms(false);
+        isTermsModalHidden();
     }, []);
 
     const handleSubmit = useCallback((finalValue) => {
@@ -219,7 +220,7 @@ function RegisterModal(props: Props) {
                                     name="terms"
                                     label="I accept the"
                                     value={acceptTerms}
-                                    onChange={handleTermsCheck}
+                                    onChange={setAcceptTerms}
                                 />
                                 <Button
                                     name={undefined}
@@ -247,26 +248,26 @@ function RegisterModal(props: Props) {
                     size="extraLarge"
                 />
             </form>
-            {showTermsModal && (
+            {isTermsModalShown && (
                 <Modal
-                    onCloseButtonClick={hideTermsModal}
+                    onCloseButtonClick={isTermsModalHidden}
                     heading="Terms and Conditions"
                     size="large"
                     footerActions={(
                         <>
                             <Button
                                 name={undefined}
+                                onClick={handleCancelTerms}
+                                variant="secondary"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                name={undefined}
                                 onClick={handleAcceptTerms}
                                 variant="secondary"
                             >
                                 Accept
-                            </Button>
-                            <Button
-                                name={undefined}
-                                onClick={hideTermsModal}
-                                variant="secondary"
-                            >
-                                Close
                             </Button>
                         </>
                     )}
