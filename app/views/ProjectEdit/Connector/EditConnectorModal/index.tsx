@@ -29,6 +29,7 @@ import {
     ProjectConnectorCreateMutationVariables,
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+import NonFieldError from '#components/NonFieldError';
 
 import {
     schema,
@@ -46,7 +47,7 @@ import styles from './styles.css';
 type SupportedSource = 'RELIEF_WEB' | 'UNHCR';
 const supportedSources = ['RELIEF_WEB', 'UNHCR'];
 
-const sourcesLabel = {
+const sourcesLabel: { [key in SupportedSource]: string } = {
     RELIEF_WEB: 'Relief Web',
     UNHCR: 'UNHCR',
 };
@@ -145,7 +146,7 @@ function EditConnectorModal(props: Props) {
         setFieldValue(
             (oldSources: PartialSourceType[] | undefined = []) => {
                 const selectedSourceIndex = oldSources
-                    ?.findIndex((source) => source.source === key);
+                    .findIndex((source) => source.source === key);
 
                 if (selectedSourceIndex === -1) {
                     return [
@@ -164,10 +165,15 @@ function EditConnectorModal(props: Props) {
         );
     }, [setFieldValue]);
 
-    const usedSourceMap = listToMap(
-        value?.sources?.filter((source) => isDefined(source.source)),
-        (source) => (source.source),
-        () => true,
+    const usedSourceMap = useMemo(
+        () => (
+            listToMap(
+                value?.sources?.filter((source) => isDefined(source.source)),
+                (source) => (source.source),
+                () => true,
+            )
+        ),
+        [value],
     );
 
     const buttonRendererParams = useCallback((key: SupportedSource) => ({
@@ -175,7 +181,9 @@ function EditConnectorModal(props: Props) {
         value: !!usedSourceMap?.[key],
         onClick: handleSourceClick,
         children: sourcesLabel[key] ?? key,
+        disabled: connectorCreatePending,
     }), [
+        connectorCreatePending,
         usedSourceMap,
         handleSourceClick,
     ]);
@@ -191,7 +199,12 @@ function EditConnectorModal(props: Props) {
         error: sourcesError?.[key],
         value: data,
         onChange: onRowChange,
-    }), [onRowChange, sourcesError]);
+        disabled: connectorCreatePending,
+    }), [
+        onRowChange,
+        sourcesError,
+        connectorCreatePending,
+    ]);
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
@@ -219,12 +232,12 @@ function EditConnectorModal(props: Props) {
             className={_cs(styles.editConnectorModal, className)}
             onCloseButtonClick={onClose}
             size="cover"
-            heading={connectorId ?? 'Add New Connector'}
+            heading={connectorId ? 'Edit Connector' : 'Add New Connector'}
             footerActions={(
                 <Button
                     name={undefined}
                     onClick={handleSubmit}
-                    disabled={pristine}
+                    disabled={pristine || connectorCreatePending}
                 >
                     Save
                 </Button>
@@ -232,6 +245,7 @@ function EditConnectorModal(props: Props) {
             bodyClassName={styles.body}
         >
             {connectorCreatePending && <PendingMessage />}
+            <NonFieldError error={error} />
             <div className={styles.leftContainer}>
                 <TextInput
                     name="title"
