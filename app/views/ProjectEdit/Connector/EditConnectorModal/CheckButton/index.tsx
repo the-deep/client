@@ -1,17 +1,17 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    IoCheckmark,
+    IoImage,
+    IoCheckbox,
     IoSquareOutline,
 } from 'react-icons/io5';
-
 import {
-    Button,
+    RawButton,
 } from '@the-deep/deep-ui';
 
 import styles from './styles.css';
 
-interface Props<N> {
+interface Props<N extends string | number | undefined> {
     className?: string;
     children: React.ReactNode;
     name: N;
@@ -20,7 +20,7 @@ interface Props<N> {
     onClick: (key: N) => void;
 }
 
-function CheckButton<N>(props: Props<N>) {
+function CheckButton<N extends string | number | undefined>(props: Props<N>) {
     const {
         className,
         children,
@@ -31,7 +31,7 @@ function CheckButton<N>(props: Props<N>) {
     } = props;
 
     return (
-        <Button
+        <RawButton
             name={name}
             disabled={disabled}
             className={_cs(
@@ -39,11 +39,18 @@ function CheckButton<N>(props: Props<N>) {
                 styles.checkButton,
             )}
             onClick={onClick}
-            variant="tertiary"
-            actions={value ? <IoCheckmark /> : <IoSquareOutline />}
         >
-            {children}
-        </Button>
+            <div className={styles.top}>
+                <IoImage className={styles.left} />
+                {(value
+                    ? <IoCheckbox className={styles.right} />
+                    : <IoSquareOutline className={styles.right} />
+                )}
+            </div>
+            <div className={styles.label}>
+                {children}
+            </div>
+        </RawButton>
     );
 }
 
