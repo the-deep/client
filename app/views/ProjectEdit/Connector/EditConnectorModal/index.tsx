@@ -395,8 +395,9 @@ function EditConnectorModal(props: Props) {
                     error={error?.title}
                 />
                 <Container
+                    className={styles.sourcesContainer}
                     heading="Select Information Portals"
-                    headingDescription="Select from which portals you want to gather information"
+                    headingDescription="Select from which portals you want to gather information."
                     headingSize="extraSmall"
                 >
                     <ListView
@@ -421,6 +422,8 @@ function EditConnectorModal(props: Props) {
                 filtered={false}
                 pending={false}
                 errored={false}
+                messageShown
+                messageIconShown
             />
         </Modal>
     );
