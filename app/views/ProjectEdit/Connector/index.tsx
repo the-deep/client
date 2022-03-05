@@ -166,6 +166,11 @@ function Connector(props: Props) {
         hideAddConnectorModal,
     ] = useModalState(false);
 
+    const handleConnectorAddSuccess = useCallback((newConnectorId: string) => {
+        hideAddConnectorModal();
+        setSelectedConnector(newConnectorId);
+    }, [hideAddConnectorModal]);
+
     return (
         <div className={_cs(className, styles.connector)}>
             <Container
@@ -236,7 +241,8 @@ function Connector(props: Props) {
                 <EditConnectorModal
                     projectId={projectId}
                     connectorId={undefined}
-                    onClose={hideAddConnectorModal}
+                    onCloseClick={hideAddConnectorModal}
+                    onCreateSuccess={handleConnectorAddSuccess}
                 />
             )}
         </div>

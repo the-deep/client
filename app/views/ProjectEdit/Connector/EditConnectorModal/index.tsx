@@ -13,7 +13,7 @@ import {
     removeNull,
     internal,
 } from '@togglecorp/toggle-form';
-import { useMutation, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import {
     PendingMessage,
     useAlert,
@@ -27,6 +27,11 @@ import {
 import {
     ProjectConnectorCreateMutation,
     ProjectConnectorCreateMutationVariables,
+    ProjectConnectorUpdateMutation,
+    ProjectConnectorUpdateMutationVariables,
+
+    ProjectConnectorDetailsToEditQuery,
+    ProjectConnectorDetailsToEditQueryVariables,
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NonFieldError from '#components/NonFieldError';
@@ -74,11 +79,61 @@ const CREATE_CONNECTOR = gql`
     }
 `;
 
+const UPDATE_CONNECTOR = gql`
+    mutation ProjectConnectorUpdate(
+        $input: UnifiedConnectorInputType!,
+        $projectId: ID!,
+        $connectorId: ID!,
+    ) {
+        project(id: $projectId) {
+            unifiedConnector {
+                unifiedConnectorUpdate(id: $connectorId, data: $input) {
+                    errors
+                    result {
+                        id
+                    }
+                    ok
+                }
+            }
+        }
+    }
+`;
+
+const PROJECT_CONNECTOR_TO_EDIT = gql`
+    query ProjectConnectorDetailsToEdit(
+        $projectId: ID!,
+        $connectorId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            unifiedConnector {
+                unifiedConnector(id: $connectorId) {
+                    id
+                    clientId
+                    title
+                    isActive
+                    sources {
+                        id
+                        clientId
+                        params
+                        source
+                        createdAt
+                        title
+                        lastFetchedAt
+                    }
+                }
+            }
+        }
+    }
+`;
+
 interface Props {
     className?: string;
     connectorId: string | undefined;
     projectId: string;
-    onClose: () => void;
+    onCloseClick: () => void;
+    onCreateSuccess?: (connectorId: string) => void;
+    onUpdateSuccess?: () => void;
 }
 
 function EditConnectorModal(props: Props) {
@@ -86,7 +141,9 @@ function EditConnectorModal(props: Props) {
         className,
         connectorId,
         projectId,
-        onClose,
+        onCloseClick,
+        onCreateSuccess,
+        onUpdateSuccess,
     } = props;
 
     const defaultValue = useMemo(() => getDefaultValues(), []);
@@ -97,8 +154,36 @@ function EditConnectorModal(props: Props) {
         error: riskyError,
         setError,
         validate,
+        setValue,
         setFieldValue,
     } = useForm(schema, defaultValue);
+
+    const variables = useMemo(
+        () => (connectorId ? ({
+            projectId,
+            connectorId,
+        }) : undefined),
+        [
+            projectId,
+            connectorId,
+        ],
+    );
+
+    const {
+        loading: pendingConnectorDetails,
+    } = useQuery<ProjectConnectorDetailsToEditQuery, ProjectConnectorDetailsToEditQueryVariables>(
+        PROJECT_CONNECTOR_TO_EDIT,
+        {
+            skip: !connectorId,
+            variables,
+            onCompleted: (response) => {
+                const connector = response?.project?.unifiedConnector?.unifiedConnector;
+                if (connector) {
+                    setValue(removeNull(connector));
+                }
+            },
+        },
+    );
 
     const alert = useAlert();
 
@@ -116,6 +201,7 @@ function EditConnectorModal(props: Props) {
                 const {
                     ok,
                     errors,
+                    result,
                 } = res;
 
                 if (errors) {
@@ -126,6 +212,46 @@ function EditConnectorModal(props: Props) {
                         'Successfully created a new connector.',
                         { variant: 'success' },
                     );
+                    if (onCreateSuccess && result?.id) {
+                        onCreateSuccess(result.id);
+                    }
+                }
+            },
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+            },
+        },
+    );
+
+    const [
+        updateConnector,
+        { loading: connectorUpdatePending },
+    ] = useMutation<ProjectConnectorUpdateMutation, ProjectConnectorUpdateMutationVariables>(
+        UPDATE_CONNECTOR,
+        {
+            onCompleted: (response) => {
+                const res = response?.project?.unifiedConnector?.unifiedConnectorUpdate;
+                if (!res) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = res;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                } else if (ok) {
+                    alert.show(
+                        'Successfully update the connector.',
+                        { variant: 'success' },
+                    );
+                    if (onUpdateSuccess) {
+                        onUpdateSuccess();
+                    }
                 }
             },
             onError: (errors) => {
@@ -211,12 +337,22 @@ function EditConnectorModal(props: Props) {
             validate,
             setError,
             (finalValue) => {
-                createConnector({
-                    variables: {
-                        projectId,
-                        input: finalValue as ConnectorInputType,
-                    },
-                });
+                if (connectorId) {
+                    updateConnector({
+                        variables: {
+                            projectId,
+                            connectorId,
+                            input: finalValue as ConnectorInputType,
+                        },
+                    });
+                } else {
+                    createConnector({
+                        variables: {
+                            projectId,
+                            input: finalValue as ConnectorInputType,
+                        },
+                    });
+                }
             },
         );
         submit();
@@ -225,19 +361,23 @@ function EditConnectorModal(props: Props) {
         setError,
         validate,
         createConnector,
+        updateConnector,
+        connectorId,
     ]);
+
+    const loading = pendingConnectorDetails || connectorCreatePending || connectorUpdatePending;
 
     return (
         <Modal
             className={_cs(styles.editConnectorModal, className)}
-            onCloseButtonClick={onClose}
+            onCloseButtonClick={onCloseClick}
             size="cover"
             heading={connectorId ? 'Edit Connector' : 'Add New Connector'}
             footerActions={(
                 <Button
                     name={undefined}
                     onClick={handleSubmit}
-                    disabled={pristine || connectorCreatePending}
+                    disabled={pristine || loading}
                 >
                     Save
                 </Button>
