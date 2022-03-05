@@ -41,7 +41,7 @@ export const sourceSchema:SourceFormSchema = {
                         fields: () => ({
                             fromDate: [],
                             toDate: [],
-                            primaryCountry: [requiredCondition],
+                            primaryCountry: [],
                             country: [],
                         }),
                     },
@@ -59,7 +59,7 @@ const sourcesSchema: SourcesSchema = {
 
 export const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        clientId: [requiredStringCondition],
+        clientId: [],
         title: [requiredStringCondition],
 
         sources: sourcesSchema,
