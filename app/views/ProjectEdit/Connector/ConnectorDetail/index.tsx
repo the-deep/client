@@ -10,6 +10,7 @@ import {
     TextOutput,
     useAlert,
     ContainerCard,
+    ListView,
     PendingMessage,
     QuickActionButton,
     QuickActionConfirmButton,
@@ -39,6 +40,7 @@ import {
 } from '#generated/types';
 
 import EditConnectorModal from '../EditConnectorModal';
+import ConnectorSource from './ConnectorSource';
 
 import styles from './styles.css';
 
@@ -66,6 +68,9 @@ const PROJECT_CONNECTOR_DETAILS = gql`
         }
     }
 `;
+
+type Connector = NonNullable<NonNullable<ProjectConnectorDetailsQuery['project']>['unifiedConnector']>['unifiedConnector'];
+export type Source = NonNullable<NonNullable<Connector>['sources']>[number];
 
 const PROJECT_CONNECTOR_DELETE = gql`
     mutation ProjectConnectorDelete(
@@ -100,6 +105,8 @@ const PROJECT_CONNECTOR_TRIGGER = gql`
         }
     }
 `;
+
+const sourceKeySelector = (source: Source) => source.id;
 
 interface Props {
     className?: string;
@@ -252,6 +259,11 @@ function ConnectorDetail(props: Props) {
         hideEditConnectorModal();
     }, [hideEditConnectorModal, refetch]);
 
+    const sourceRendererParams = useCallback((_: string, source: Source) => ({
+        className: styles.sourceItem,
+        source,
+    }), []);
+
     return (
         <ContainerCard
             className={_cs(styles.connectorDetail, className)}
@@ -315,7 +327,16 @@ function ConnectorDetail(props: Props) {
             borderBelowHeader
         >
             {loading && <PendingMessage />}
-            Connector Detail
+            <ListView
+                className={styles.list}
+                data={connector?.sources}
+                keySelector={sourceKeySelector}
+                rendererParams={sourceRendererParams}
+                renderer={ConnectorSource}
+                filtered={false}
+                errored={false}
+                pending={false}
+            />
             {editConnectorModalShown && (
                 <EditConnectorModal
                     projectId={projectId}
