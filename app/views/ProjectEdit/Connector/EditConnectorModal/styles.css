@@ -3,21 +3,30 @@
 
     .body {
         display: flex;
-        gap: var(--dui-spacing-small);
+        gap: var(--dui-spacing-large);
+        --width-left-pane: 30rem;
 
         .left-container {
-            flex-basis: calc(30% - var(--dui-spacing-small) / 2);
+            display: flex;
+            flex-basis: var(--width-left-pane);
+            flex-direction: column;
             flex-shrink: 0;
+            gap: var(--dui-spacing-medium);
 
-            .buttons {
-                display: flex;
-                flex-wrap: wrap;
-                gap: var(--dui-spacing-small);
+            .sources-container {
+                background-color: var(--dui-color-foreground);
+
+                .buttons {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: var(--dui-spacing-small);
+                }
             }
         }
 
         .right-container {
-            flex-basis: calc(70% - var(--dui-spacing-small) / 2);
+            flex-basis: calc(100% - var(--width-left-pane) - var(--dui-spacing-large));
+            flex-grow: 1;
             flex-shrink: 0;
         }
     }

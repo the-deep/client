@@ -1,3 +1,32 @@
 .check-button {
-    --dui-color-accent: var(--color-nlp-tag);
+    display: flex;
+    align-items: unset;
+    flex-direction: column;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-surface-information);
+    border-radius: 8px;
+    background-color: var(--dui-color-background-information);
+    padding: var(--dui-spacing-medium);
+    width: 10rem;
+    text-align: left;
+
+    .top {
+        display: flex;
+        justify-content: space-between;
+
+        .left {
+            color: var(--dui-color-text);
+            font-size: var(--dui-font-size-super-large);
+        }
+
+        .right {
+            color: var(--dui-color-accent);
+            font-size: var(--dui-font-size-extra-large);
+        }
+    }
+
+    .label {
+        color: var(--dui-color-text);
+        font-size: var(--dui-font-size-large);
+        font-weight: var(--dui-font-weight-bold);
+    }
 }
