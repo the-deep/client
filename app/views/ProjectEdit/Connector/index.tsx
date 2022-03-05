@@ -144,6 +144,9 @@ function Connector(props: Props) {
             onCompleted: (response) => {
                 const unifiedConnectors = response?.project?.unifiedConnector?.unifiedConnectors;
                 setConnectorsCount(unifiedConnectors?.totalCount ?? 0);
+                if (!selectedConnector) {
+                    setSelectedConnector(unifiedConnectors?.results?.[0].id);
+                }
 
                 setConnectorList((oldConnectors) => ([
                     ...oldConnectors,
