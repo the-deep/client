@@ -20,6 +20,7 @@ import {
     ProjectConnectorsQuery,
     ProjectConnectorsQueryVariables,
 } from '#generated/types';
+import { mergeLists } from '#utils/common';
 
 import ConnectorDetail from './ConnectorDetail';
 import EditConnectorModal from './EditConnectorModal';
@@ -148,10 +149,14 @@ function Connector(props: Props) {
                     setSelectedConnector(unifiedConnectors?.results?.[0].id);
                 }
 
-                setConnectorList((oldConnectors) => ([
-                    ...oldConnectors,
-                    ...(unifiedConnectors?.results ?? []),
-                ]));
+                setConnectorList((oldConnectors) => ((
+                    mergeLists(
+                        oldConnectors,
+                        unifiedConnectors?.results ?? [],
+                        (item) => item.id,
+                        (_, item) => item,
+                    )
+                )));
             },
         },
     );
