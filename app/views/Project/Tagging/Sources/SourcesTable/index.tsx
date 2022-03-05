@@ -204,7 +204,7 @@ function SourcesTable(props: Props) {
             onCompleted: (response) => {
                 if (response?.project?.leadDelete?.ok) {
                     alert.show(
-                        'Successfully deleted lead.',
+                        'Successfully deleted source.',
                         {
                             variant: 'success',
                         },
@@ -212,7 +212,7 @@ function SourcesTable(props: Props) {
                     getProjectSources();
                 } else {
                     alert.show(
-                        'Failed to delete lead.',
+                        'Failed to delete source.',
                         {
                             variant: 'error',
                         },
@@ -221,7 +221,7 @@ function SourcesTable(props: Props) {
             },
             onError: () => {
                 alert.show(
-                    'Failed to delete lead.',
+                    'Failed to delete source.',
                     {
                         variant: 'error',
                     },

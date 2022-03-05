@@ -1,3 +1,8 @@
 .connector-detail {
     background-color: var(--dui-color-foreground);
+
+    .header-actions {
+        display: flex;
+        gap: var(--dui-spacing-small);
+    }
 }
