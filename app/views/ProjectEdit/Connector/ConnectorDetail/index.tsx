@@ -6,6 +6,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     DateOutput,
+    useModalState,
     TextOutput,
     useAlert,
     ContainerCard,
@@ -36,6 +37,8 @@ import {
     ProjectConnectorTriggerMutation,
     ProjectConnectorTriggerMutationVariables,
 } from '#generated/types';
+
+import EditConnectorModal from '../EditConnectorModal';
 
 import styles from './styles.css';
 
@@ -126,6 +129,7 @@ function ConnectorDetail(props: Props) {
     const {
         loading: pendingConnectorDetails,
         data: connectorDetailsResponse,
+        refetch,
     } = useQuery<ProjectConnectorDetailsQuery, ProjectConnectorDetailsQueryVariables>(
         PROJECT_CONNECTOR_DETAILS,
         {
@@ -204,11 +208,6 @@ function ConnectorDetail(props: Props) {
         connectorId,
     ]);
 
-    const handleEditButtonClick = useCallback(() => {
-        // eslint-disable-next-line no-console
-        console.warn('Todo edit change');
-    }, []);
-
     const handleDeleteButtonClick = useCallback(() => {
         deleteConnector({
             variables: {
@@ -241,6 +240,17 @@ function ConnectorDetail(props: Props) {
             .sort(compareDate);
         return lastFetchedDates[0];
     }, [connector]);
+
+    const [
+        editConnectorModalShown,
+        showEditConnectorModal,
+        hideEditConnectorModal,
+    ] = useModalState(false);
+
+    const handleConnectorUpdateSuccess = useCallback(() => {
+        refetch();
+        hideEditConnectorModal();
+    }, [hideEditConnectorModal, refetch]);
 
     return (
         <ContainerCard
@@ -288,7 +298,7 @@ function ConnectorDetail(props: Props) {
                     <QuickActionButton
                         name={undefined}
                         title="Edit Connector"
-                        onClick={handleEditButtonClick}
+                        onClick={showEditConnectorModal}
                     >
                         <FiEdit2 />
                     </QuickActionButton>
@@ -306,6 +316,14 @@ function ConnectorDetail(props: Props) {
         >
             {loading && <PendingMessage />}
             Connector Detail
+            {editConnectorModalShown && (
+                <EditConnectorModal
+                    projectId={projectId}
+                    connectorId={connectorId}
+                    onCloseClick={hideEditConnectorModal}
+                    onUpdateSuccess={handleConnectorUpdateSuccess}
+                />
+            )}
         </ContainerCard>
     );
 }
