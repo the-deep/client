@@ -5,4 +5,15 @@
         display: flex;
         gap: var(--dui-spacing-small);
     }
+
+    .list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-medium);
+
+        .source-item {
+            flex-shrink: 0;
+            width: calc(33.33% - var(--dui-spacing-medium) / 2);
+        }
+    }
 }
