@@ -38,7 +38,14 @@ const link: ApolloLinkFromClient = ApolloLink.from([
 
 const apolloOptions: ApolloClientOptions<NormalizedCacheObject> = {
     link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        typePolicies: {
+            UnifiedConnectorQueryType: {
+                keyFields: [],
+                // empty keyFields means this is a singleton object
+            },
+        },
+    }),
     assumeImmutableResults: true,
     defaultOptions: {
         query: {

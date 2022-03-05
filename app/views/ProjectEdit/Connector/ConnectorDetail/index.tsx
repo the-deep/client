@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     compareDate,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     DateOutput,
@@ -204,6 +205,7 @@ function ConnectorDetail(props: Props) {
     ]);
 
     const handleEditButtonClick = useCallback(() => {
+        // eslint-disable-next-line no-console
         console.warn('Todo edit change');
     }, []);
 
@@ -221,6 +223,7 @@ function ConnectorDetail(props: Props) {
     ]);
 
     const handleConnectorStatusChange = useCallback(() => {
+        // eslint-disable-next-line no-console
         console.warn('Todo handle status change');
     }, []);
 
@@ -232,10 +235,11 @@ function ConnectorDetail(props: Props) {
         if (!connector || !connector.sources) {
             return undefined;
         }
-        const lastFetchedDates = [...connector.sources].map((source) => source.lastFetchedAt);
-        lastFetchedDates.sort(compareDate);
-
-        return lastFetchedDates[0] ?? undefined;
+        const lastFetchedDates = connector.sources
+            .map((source) => source.lastFetchedAt)
+            .filter(isDefined)
+            .sort(compareDate);
+        return lastFetchedDates[0];
     }, [connector]);
 
     return (
