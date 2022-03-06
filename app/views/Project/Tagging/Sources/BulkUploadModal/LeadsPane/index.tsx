@@ -36,7 +36,7 @@ import {
 } from '#generated/types';
 
 import { PartialLeadType } from '../schema';
-import FileItem from './FileItem';
+import LeadItem from './LeadItem';
 
 import styles from './styles.css';
 
@@ -64,7 +64,7 @@ interface Props {
     leadsError: Error<PartialLeadType[]> | undefined;
 }
 
-function FilesUploaded(props: Props) {
+function LeadsPane(props: Props) {
     const {
         className,
         onLeadRemove,
@@ -132,10 +132,10 @@ function FilesUploaded(props: Props) {
         onLeadRemove,
     }), [onLeadRemove, onSelectedLeadChange, selectedLead, leadsError]);
 
-    const searchedFiles = useMemo(() => {
+    const searchedLeads = useMemo(() => {
         if (isTruthyString(searchText)) {
-            return leads?.filter((file) => (
-                caseInsensitiveSubmatch(file.title, searchText)
+            return leads?.filter((lead) => (
+                caseInsensitiveSubmatch(lead.title, searchText)
             ));
         }
         return leads;
@@ -148,9 +148,9 @@ function FilesUploaded(props: Props) {
     const selectedLeadValue = isDefined(selectedLeadIndex) ? leads?.[selectedLeadIndex] : undefined;
 
     return (
-        <div className={_cs(className, styles.filesUploadedDetails)}>
+        <div className={_cs(className, styles.leadsPane)}>
             <Container
-                className={styles.filesContainer}
+                className={styles.leadsList}
                 headerClassName={styles.header}
                 headingSize="small"
                 heading={_ts('bulkUpload', 'sourcesUploadedTitle')}
@@ -164,12 +164,12 @@ function FilesUploaded(props: Props) {
                         autoFocus
                     />
                 )}
-                contentClassName={styles.files}
+                contentClassName={styles.leads}
             >
                 <ListView
                     className={styles.list}
-                    data={searchedFiles}
-                    renderer={FileItem}
+                    data={searchedLeads}
+                    renderer={LeadItem}
                     keySelector={keySelector}
                     rendererParams={fileRendererParams}
                     errored={false}
@@ -179,7 +179,7 @@ function FilesUploaded(props: Props) {
                             variant="exercise"
                         />
                     )}
-                    emptyMessage="No files to show."
+                    emptyMessage="No sources to show."
                     filtered={isFiltered(searchText)}
                     filteredEmptyIcon={(
                         <Kraken
@@ -191,7 +191,7 @@ function FilesUploaded(props: Props) {
                     messageShown
                 />
             </Container>
-            <div className={styles.rightPane}>
+            <div className={styles.leadPreviewPane}>
                 {selectedLeadValue && isDefined(selectedLeadIndex) && (
                     <LeadInput
                         name={selectedLeadIndex}
@@ -226,4 +226,4 @@ function FilesUploaded(props: Props) {
     );
 }
 
-export default FilesUploaded;
+export default LeadsPane;
