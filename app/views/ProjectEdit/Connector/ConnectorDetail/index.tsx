@@ -112,6 +112,7 @@ interface Props {
     className?: string;
     connectorId: string;
     projectId: string;
+    onConnectorDeleteSuccess: () => void;
 }
 
 function ConnectorDetail(props: Props) {
@@ -119,6 +120,7 @@ function ConnectorDetail(props: Props) {
         className,
         connectorId,
         projectId,
+        onConnectorDeleteSuccess,
     } = props;
     const alert = useAlert();
 
@@ -160,6 +162,7 @@ function ConnectorDetail(props: Props) {
                             variant: 'success',
                         },
                     );
+                    onConnectorDeleteSuccess();
                 } else {
                     alert.show(
                         'Failed to delete connector.',
@@ -304,6 +307,7 @@ function ConnectorDetail(props: Props) {
                         name={undefined}
                         onClick={handleConnectorStatusChange}
                         title={connector?.isActive ? 'Disable Connector' : 'Enable Connector'}
+                        disabled
                     >
                         {connector?.isActive ? <IoEyeOff /> : <IoEye />}
                     </QuickActionButton>
