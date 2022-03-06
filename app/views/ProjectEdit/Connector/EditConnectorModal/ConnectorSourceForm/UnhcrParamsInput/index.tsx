@@ -16,24 +16,24 @@ import NonFieldError from '#components/NonFieldError';
 
 import {
     reliefWebCountryList,
-    ReliefWebParams,
+    UnhcrParams,
     Country,
 } from '../../../types';
 
 const countryKeySelector = (d: Country) => d.key;
 const countryLabelSelector = (d: Country) => d.label;
 
-const reliefWebDefaultValues: ReliefWebParams = {};
+const unhcrDefaultValues: UnhcrParams = {};
 
 interface Props<T extends string> {
     name: T;
-    value: ReliefWebParams | undefined | null;
-    error: Error<ReliefWebParams>;
-    onChange: (val: SetValueArg<ReliefWebParams>, name: T) => void;
+    value: UnhcrParams | undefined | null;
+    error: Error<UnhcrParams>;
+    onChange: (val: SetValueArg<UnhcrParams>, name: T) => void;
     disabled?: boolean;
 }
 
-function ReliefWebParamsInput<T extends string>(props: Props<T>) {
+function UnhcrParamsInput<T extends string>(props: Props<T>) {
     const {
         name,
         value,
@@ -42,22 +42,11 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
         disabled,
     } = props;
     const error = getErrorObject(riskyError);
-    const setParamsFieldValue = useFormObject(name, onChange, value ?? reliefWebDefaultValues);
+    const setParamsFieldValue = useFormObject(name, onChange, value ?? unhcrDefaultValues);
 
     return (
         <>
             <NonFieldError error={error} />
-            <MultiSelectInput
-                name="primaryCountry"
-                label="Primary Country"
-                value={value?.primaryCountry}
-                onChange={setParamsFieldValue}
-                options={reliefWebCountryList}
-                keySelector={countryKeySelector}
-                labelSelector={countryLabelSelector}
-                error={getErrorString(error?.primaryCountry)}
-                disabled={disabled}
-            />
             <MultiSelectInput
                 name="country"
                 label="Country"
@@ -70,23 +59,23 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
                 disabled={disabled}
             />
             <DateInput
-                name="from"
+                name="dateFrom"
                 label="From date"
-                value={value?.from}
+                value={value?.dateFrom}
                 onChange={setParamsFieldValue}
                 disabled={disabled}
-                error={error?.from}
+                error={error?.dateFrom}
             />
             <DateInput
-                name="to"
+                name="dateTo"
                 label="To date"
-                value={value?.to}
+                value={value?.dateTo}
                 onChange={setParamsFieldValue}
-                error={error?.to}
+                error={error?.dateTo}
                 disabled={disabled}
             />
         </>
     );
 }
 
-export default ReliefWebParamsInput;
+export default UnhcrParamsInput;

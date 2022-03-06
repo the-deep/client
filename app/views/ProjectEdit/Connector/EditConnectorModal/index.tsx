@@ -62,7 +62,7 @@ const valueSourceKeySelector = (item: { clientId: string }) => item.clientId;
 
 const CREATE_CONNECTOR = gql`
     mutation ProjectConnectorCreate(
-        $input: UnifiedConnectorInputType!,
+        $input: UnifiedConnectorWithSourceInputType!,
         $projectId: ID!,
     ) {
         project(id: $projectId) {
@@ -81,13 +81,13 @@ const CREATE_CONNECTOR = gql`
 
 const UPDATE_CONNECTOR = gql`
     mutation ProjectConnectorUpdate(
-        $input: UnifiedConnectorInputType!,
+        $input: UnifiedConnectorWithSourceInputType!,
         $projectId: ID!,
         $connectorId: ID!,
     ) {
         project(id: $projectId) {
             unifiedConnector {
-                unifiedConnectorUpdate(id: $connectorId, data: $input) {
+                unifiedConnectorWithSourceUpdate(id: $connectorId, data: $input) {
                     errors
                     result {
                         id
@@ -232,7 +232,7 @@ function EditConnectorModal(props: Props) {
         UPDATE_CONNECTOR,
         {
             onCompleted: (response) => {
-                const res = response?.project?.unifiedConnector?.unifiedConnectorUpdate;
+                const res = response?.project?.unifiedConnector?.unifiedConnectorWithSourceUpdate;
                 if (!res) {
                     return;
                 }

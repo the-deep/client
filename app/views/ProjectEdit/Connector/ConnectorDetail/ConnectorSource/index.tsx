@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import {
     _cs,
+    sum,
     compareDate,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     InformationCard,
@@ -39,22 +41,6 @@ const minTickFormatter = (value: number | string) => {
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
-// TODO: Remove this after we get stats from server
-const sourceActivity = [
-    {
-        date: '2020-02-03',
-        count: 35,
-    },
-    {
-        date: '2020-02-05',
-        count: 2,
-    },
-    {
-        date: '2020-02-09',
-        count: 20,
-    },
-];
-
 interface Props {
     className?: string;
     source: Source;
@@ -67,11 +53,39 @@ function ConnectorSource(props: Props) {
     } = props;
 
     const convertedSourceActivity = useMemo(() => (
-        sourceActivity?.map((activity) => ({
-            count: activity.count,
-            date: activity.date ? (new Date(activity.date)).getTime() : undefined,
+        source.stats?.map((stat) => ({
+            count: stat?.count,
+            date: stat?.date ? (new Date(stat.date)).getTime() : undefined,
         })).sort((a, b) => compareDate(a.date, b.date))
-    ), []);
+    ), [source.stats]);
+
+    const {
+        last7DaysCount,
+        last30DaysCount,
+    } = useMemo(() => {
+        const date = new Date().getTime();
+        const sevenDaysAgo = date - 24 * 60 * 60 * 1000 * 7;
+        const thirtyDaysAgo = date - 24 * 60 * 60 * 1000 * 30;
+
+        const temp7Count = sum(
+            (convertedSourceActivity ?? [])
+                .filter((stat) => (stat.date ?? 0) >= sevenDaysAgo)
+                .map((stat) => stat.count)
+                .filter(isDefined),
+        );
+
+        const temp30Count = sum(
+            (convertedSourceActivity ?? [])
+                .filter((stat) => (stat.date ?? 0) >= thirtyDaysAgo)
+                .map((stat) => stat.count)
+                .filter(isDefined),
+        );
+
+        return {
+            last7DaysCount: temp7Count,
+            last30DaysCount: temp30Count,
+        };
+    }, [convertedSourceActivity]);
 
     return (
         <ContainerCard
@@ -95,7 +109,7 @@ function ConnectorSource(props: Props) {
                     {((convertedSourceActivity?.length ?? 0) > 0) ? (
                         <AreaChart data={convertedSourceActivity}>
                             <defs>
-                                <linearGradient id="activity" x1="0" y1="0" x2="0" y2="1">
+                                <linearGradient id="stat" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.2} />
                                     <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
                                 </linearGradient>
@@ -122,7 +136,7 @@ function ConnectorSource(props: Props) {
                                 dataKey="count"
                                 stroke="var(--dui-color-accent)"
                                 fillOpacity={1}
-                                fill="url(#activity)"
+                                fill="url(#stat)"
                                 strokeWidth={2}
                                 connectNulls
                                 activeDot
@@ -148,18 +162,16 @@ function ConnectorSource(props: Props) {
                 <InformationCard
                     className={styles.info}
                     variant="accent"
-                    label="This week"
+                    label="Last 7 days"
                     valuePrecision={0}
-                    // FIXME: Fetch this from server
-                    value={20}
+                    value={last7DaysCount}
                 />
                 <InformationCard
                     className={styles.info}
                     variant="accent"
-                    label="This month"
+                    label="Last 30 days"
                     valuePrecision={0}
-                    // FIXME: Fetch this from server
-                    value={26}
+                    value={last30DaysCount}
                 />
             </Container>
         </ContainerCard>
