@@ -37,6 +37,9 @@ import {
 
     ProjectConnectorTriggerMutation,
     ProjectConnectorTriggerMutationVariables,
+
+    ProjectConnectorUpdateStatusMutation,
+    ProjectConnectorUpdateStatusMutationVariables,
 } from '#generated/types';
 
 import EditConnectorModal from '../EditConnectorModal';
@@ -57,6 +60,7 @@ const PROJECT_CONNECTOR_DETAILS = gql`
                     title
                     createdAt
                     isActive
+                    clientId
                     sources {
                         id
                         createdAt
@@ -87,6 +91,27 @@ const PROJECT_CONNECTOR_DELETE = gql`
                 unifiedConnectorDelete(id: $connectorId) {
                     ok
                     errors
+                }
+            }
+        }
+    }
+`;
+
+const UPDATE_CONNECTOR_STATUS = gql`
+    mutation ProjectConnectorUpdateStatus(
+        $input: UnifiedConnectorInputType!,
+        $projectId: ID!,
+        $connectorId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            unifiedConnector {
+                unifiedConnectorUpdate(id: $connectorId, data: $input) {
+                    errors
+                    result {
+                        id
+                    }
+                    ok
                 }
             }
         }
@@ -180,6 +205,58 @@ function ConnectorDetail(props: Props) {
     );
 
     const [
+        editConnectorModalShown,
+        showEditConnectorModal,
+        hideEditConnectorModal,
+    ] = useModalState(false);
+
+    const handleConnectorUpdateSuccess = useCallback(() => {
+        refetch();
+        hideEditConnectorModal();
+    }, [hideEditConnectorModal, refetch]);
+
+    const [
+        updateConnector,
+        { loading: pendingConnectorUpdate },
+    ] = useMutation<
+        ProjectConnectorUpdateStatusMutation,
+        ProjectConnectorUpdateStatusMutationVariables
+    >(
+        UPDATE_CONNECTOR_STATUS,
+        {
+            onCompleted: (response) => {
+                const res = response?.project?.unifiedConnector?.unifiedConnectorUpdate;
+                if (!res) {
+                    return;
+                }
+                const {
+                    ok,
+                    errors,
+                } = res;
+
+                if (errors) {
+                    alert.show(
+                        'There was an error while updating the connector\'s status.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    alert.show(
+                        'Successfully update the connector\'s status.',
+                        { variant: 'success' },
+                    );
+                    handleConnectorUpdateSuccess();
+                }
+            },
+            onError: (errors) => {
+                alert.show(
+                    errors.message,
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const [
         triggerConnector,
         {
             loading: pendingConnectorTrigger,
@@ -236,13 +313,28 @@ function ConnectorDetail(props: Props) {
     ]);
 
     const handleConnectorStatusChange = useCallback(() => {
-        // eslint-disable-next-line no-console
-        console.warn('Todo handle status change');
-    }, []);
+        updateConnector({
+            variables: {
+                projectId,
+                connectorId,
+                input: {
+                    title: connector?.title ?? 'Connector',
+                    clientId: connector?.clientId,
+                    isActive: !connector?.isActive,
+                },
+            },
+        });
+    }, [
+        updateConnector,
+        projectId,
+        connectorId,
+        connector,
+    ]);
 
     const loading = pendingConnectorTrigger
         || pendingConnectorDelete
-        || pendingConnectorDetails;
+        || pendingConnectorDetails
+        || pendingConnectorUpdate;
 
     const latestFetchedAt = useMemo(() => {
         if (!connector || !connector.sources) {
@@ -254,17 +346,6 @@ function ConnectorDetail(props: Props) {
             .sort(compareDate);
         return lastFetchedDates[0];
     }, [connector]);
-
-    const [
-        editConnectorModalShown,
-        showEditConnectorModal,
-        hideEditConnectorModal,
-    ] = useModalState(false);
-
-    const handleConnectorUpdateSuccess = useCallback(() => {
-        refetch();
-        hideEditConnectorModal();
-    }, [hideEditConnectorModal, refetch]);
 
     const sourceRendererParams = useCallback((_: string, source: Source) => ({
         className: styles.sourceItem,
@@ -303,7 +384,7 @@ function ConnectorDetail(props: Props) {
                         name={undefined}
                         onClick={handleRetriggerButtonClick}
                         title="Fetch latest data for this connector"
-                        disabled={!connector?.isActive}
+                        disabled={!connector?.isActive || loading}
                     >
                         <IoReload />
                     </QuickActionButton>
@@ -311,7 +392,7 @@ function ConnectorDetail(props: Props) {
                         name={undefined}
                         onClick={handleConnectorStatusChange}
                         title={connector?.isActive ? 'Disable Connector' : 'Enable Connector'}
-                        disabled
+                        disabled={loading}
                     >
                         {connector?.isActive ? <IoEyeOff /> : <IoEye />}
                     </QuickActionButton>
@@ -319,6 +400,7 @@ function ConnectorDetail(props: Props) {
                         name={undefined}
                         title="Edit Connector"
                         onClick={showEditConnectorModal}
+                        disabled={loading}
                     >
                         <FiEdit2 />
                     </QuickActionButton>
@@ -326,6 +408,7 @@ function ConnectorDetail(props: Props) {
                         name={undefined}
                         title="Delete Connector"
                         onConfirm={handleDeleteButtonClick}
+                        disabled={loading}
                         message="Are you sure you want to delete this connector?"
                     >
                         <IoTrash />
