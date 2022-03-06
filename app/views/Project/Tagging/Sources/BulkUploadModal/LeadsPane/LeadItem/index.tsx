@@ -22,7 +22,7 @@ interface Props {
     onLeadRemove: (clientId: string) => void;
 }
 
-function FileItem(props: Props) {
+function LeadItem(props: Props) {
     const {
         className,
         isSelected,
@@ -50,7 +50,7 @@ function FileItem(props: Props) {
                     )}
                     <QuickActionButton
                         name={data.clientId}
-                        title="Remove File"
+                        title="Remove"
                         onClick={onLeadRemove}
                     >
                         <IoTrashBinOutline />
@@ -70,4 +70,4 @@ function FileItem(props: Props) {
     );
 }
 
-export default FileItem;
+export default LeadItem;
