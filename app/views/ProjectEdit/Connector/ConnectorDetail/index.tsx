@@ -62,6 +62,10 @@ const PROJECT_CONNECTOR_DETAILS = gql`
                         createdAt
                         title
                         lastFetchedAt
+                        stats {
+                            date
+                            count
+                        }
                     }
                 }
             }
@@ -328,6 +332,7 @@ function ConnectorDetail(props: Props) {
                     </QuickActionConfirmButton>
                 </>
             )}
+            spacing="loose"
             borderBelowHeader
         >
             {loading && <PendingMessage />}

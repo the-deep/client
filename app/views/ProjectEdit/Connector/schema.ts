@@ -39,9 +39,20 @@ export const sourceSchema:SourceFormSchema = {
                     ...baseSchema,
                     params: {
                         fields: () => ({
-                            fromDate: [],
-                            toDate: [],
+                            from: [],
+                            to: [],
                             primaryCountry: [],
+                            country: [],
+                        }),
+                    },
+                };
+            case 'UNHCR':
+                return {
+                    ...baseSchema,
+                    params: {
+                        fields: () => ({
+                            dateFrom: [],
+                            dateTo: [],
                             country: [],
                         }),
                     },

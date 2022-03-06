@@ -9,7 +9,7 @@
     .list {
         display: flex;
         flex-wrap: wrap;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-large);
 
         .source-item {
             flex-shrink: 0;
