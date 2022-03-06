@@ -66,6 +66,7 @@ const PROJECT_CONNECTOR_DETAILS = gql`
                         createdAt
                         title
                         lastFetchedAt
+                        status
                         stats {
                             date
                             count
@@ -347,6 +348,10 @@ function ConnectorDetail(props: Props) {
         return lastFetchedDates[0];
     }, [connector]);
 
+    const isProcessing = useMemo(() => (
+        connector?.sources?.some((source) => source.status === 'PENDING' || source.status === 'PROCESSING')
+    ), [connector]);
+
     const sourceRendererParams = useCallback((_: string, source: Source) => ({
         className: styles.sourceItem,
         source,
@@ -384,7 +389,7 @@ function ConnectorDetail(props: Props) {
                         name={undefined}
                         onClick={handleRetriggerButtonClick}
                         title="Fetch latest data for this connector"
-                        disabled={!connector?.isActive || loading}
+                        disabled={!connector?.isActive || loading || isProcessing}
                     >
                         <IoReload />
                     </QuickActionButton>

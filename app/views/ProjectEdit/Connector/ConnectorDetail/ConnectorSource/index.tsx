@@ -148,6 +148,13 @@ function ConnectorSource(props: Props) {
                                 <Kraken variant="sleep" />
                             }
                             message="This connector does not have any sources fetched."
+                            pending={source.status === 'PROCESSING' || source.status === 'PENDING'}
+                            pendingMessage="DEEP is currently fetching sources from this portal."
+                            errored={source.status === 'FAILURE'}
+                            erroredEmptyMessage="DEEP was unable to fetch sources from this portal."
+                            erroredEmptyIcon={
+                                <Kraken variant="icecream" />
+                            }
                         />
                     )}
                 </ResponsiveContainer>
