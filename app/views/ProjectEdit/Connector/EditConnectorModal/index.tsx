@@ -384,7 +384,7 @@ function EditConnectorModal(props: Props) {
             )}
             bodyClassName={styles.body}
         >
-            {connectorCreatePending && <PendingMessage />}
+            {loading && <PendingMessage />}
             <NonFieldError error={error} />
             <div className={styles.leftContainer}>
                 <TextInput
