@@ -7,7 +7,6 @@ import {
     isDefined,
     isNotDefined,
     compareNumber,
-    listToMap,
     isTruthyString,
     formatDateToString,
     doesObjectHaveNoData,
@@ -232,36 +231,4 @@ export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefin
 
 export function isFiltered(value: unknown) {
     return !doesObjectHaveNoData(value, ['']);
-}
-
-export function mergeLists<T>(
-    oldList: T[],
-    newList: T[],
-    keySelector: (item: T) => string | number,
-    mergeModifier: (prevItem: T, newItem: T) => T,
-) {
-    const newListMap = listToMap(newList, keySelector, (item) => item);
-
-    const updatedList = oldList.map((oldItem) => (
-        newListMap[keySelector(oldItem)] ? (
-            mergeModifier(oldItem, newListMap[keySelector(oldItem)])
-        ) : (
-            oldItem
-        )
-    ));
-
-    const oldListKeyMap = listToMap(
-        oldList,
-        keySelector,
-        () => true,
-    );
-
-    const newListWithOldItemsRemoved = newList.filter((item) => !oldListKeyMap[keySelector(item)]);
-
-    const finalList = [
-        ...updatedList,
-        ...newListWithOldItemsRemoved,
-    ];
-
-    return finalList;
 }

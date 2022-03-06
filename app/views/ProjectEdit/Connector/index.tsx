@@ -20,7 +20,6 @@ import {
     ProjectConnectorsQuery,
     ProjectConnectorsQueryVariables,
 } from '#generated/types';
-import { mergeLists } from '#utils/common';
 
 import ConnectorDetail from './ConnectorDetail';
 import EditConnectorModal from './EditConnectorModal';
@@ -101,7 +100,7 @@ const PROJECT_CONNECTORS = gql`
     }
 `;
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 1;
 
 interface Props {
     className?: string;
@@ -119,10 +118,6 @@ function Connector(props: Props) {
         setSelectedConnector,
     ] = useState<string | undefined>();
 
-    const [connectorList, setConnectorList] = useState<ConnectorMini[]>([]);
-    const [connectorsCount, setConnectorsCount] = useState<number>(0);
-    const [offset, setOffset] = useState<number>(0);
-
     const connectorsRendererParams = useCallback((key: string, data: ConnectorMini) => ({
         itemKey: key,
         title: data.title,
@@ -134,36 +129,70 @@ function Connector(props: Props) {
     const {
         loading: connectorsGetPending,
         error,
+        data,
+        fetchMore,
+        refetch,
     } = useQuery<ProjectConnectorsQuery, ProjectConnectorsQueryVariables>(
         PROJECT_CONNECTORS,
         {
             variables: {
                 projectId,
                 pageSize: PAGE_SIZE,
-                page: offset / PAGE_SIZE + 1,
+                page: 1,
             },
             onCompleted: (response) => {
                 const unifiedConnectors = response?.project?.unifiedConnector?.unifiedConnectors;
-                setConnectorsCount(unifiedConnectors?.totalCount ?? 0);
                 if (!selectedConnector) {
                     setSelectedConnector(unifiedConnectors?.results?.[0].id);
                 }
-
-                setConnectorList((oldConnectors) => ((
-                    mergeLists(
-                        oldConnectors,
-                        unifiedConnectors?.results ?? [],
-                        (item) => item.id,
-                        (_, item) => item,
-                    )
-                )));
             },
         },
     );
 
+    const connectors = data?.project?.unifiedConnector?.unifiedConnectors;
+    const connectorsCount = connectors?.totalCount ?? 0;
+    const connectorList = connectors?.results;
+
     const handleShowMoreButtonClick = useCallback(() => {
-        setOffset(connectorList.length);
-    }, [connectorList.length]);
+        fetchMore({
+            variables: {
+                projectId,
+                pageSize: PAGE_SIZE,
+                page: (connectorList?.length ?? 0) / PAGE_SIZE + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.project) {
+                    return previousResult;
+                }
+                const oldConnectors = previousResult.project.unifiedConnector?.unifiedConnectors;
+                const newConnectors = fetchMoreResult?.project?.unifiedConnector?.unifiedConnectors;
+
+                if (!newConnectors) {
+                    return previousResult;
+                }
+                return ({
+                    ...previousResult,
+                    project: {
+                        ...previousResult.project,
+                        unifiedConnector: {
+                            ...previousResult.project.unifiedConnector,
+                            unifiedConnectors: {
+                                ...newConnectors,
+                                results: [
+                                    ...(oldConnectors?.results ?? []),
+                                    ...(newConnectors.results ?? []),
+                                ],
+                            },
+                        },
+                    },
+                });
+            },
+        });
+    }, [
+        projectId,
+        fetchMore,
+        connectorList,
+    ]);
 
     const [
         addConnectorModalShown,
@@ -172,9 +201,20 @@ function Connector(props: Props) {
     ] = useModalState(false);
 
     const handleConnectorAddSuccess = useCallback((newConnectorId: string) => {
+        refetch();
         hideAddConnectorModal();
         setSelectedConnector(newConnectorId);
-    }, [hideAddConnectorModal]);
+    }, [
+        hideAddConnectorModal,
+        refetch,
+    ]);
+
+    const handleConnectorDeleteSuccess = useCallback(() => {
+        setSelectedConnector(undefined);
+        refetch();
+    }, [
+        refetch,
+    ]);
 
     return (
         <div className={_cs(className, styles.connector)}>
@@ -187,14 +227,14 @@ function Connector(props: Props) {
                     pending={connectorsGetPending}
                     errored={!!error}
                     filtered={false}
-                    data={connectorList}
+                    data={connectorList ?? undefined}
                     keySelector={connectorKeySelector}
                     renderer={ConnectorItem}
                     rendererParams={connectorsRendererParams}
                     messageShown
                     messageIconShown
                 />
-                {(connectorsCount > 0 && (connectorList.length < connectorsCount)) && (
+                {(connectorsCount > 0 && ((connectorList?.length ?? 0) < connectorsCount)) && (
                     <Button
                         className={styles.showMoreButton}
                         variant="action"
@@ -227,9 +267,10 @@ function Connector(props: Props) {
             >
                 {selectedConnector ? (
                     <ConnectorDetail
+                        className={styles.selectedConnectorDetails}
                         projectId={projectId}
                         connectorId={selectedConnector}
-                        className={styles.selectedConnectorDetails}
+                        onConnectorDeleteSuccess={handleConnectorDeleteSuccess}
                     />
                 ) : (
                     <div className={styles.noConnectorSelected}>
