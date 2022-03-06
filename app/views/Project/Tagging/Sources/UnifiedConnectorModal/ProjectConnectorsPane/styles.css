@@ -1,0 +1,27 @@
+.connector {
+    .connector-list {
+        .item {
+            display: flex;
+            flex-direction: column;
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            background-color: var(--dui-color-background-information);
+            padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+            gap: var(--dui-spacing-small);
+            width: 100%;
+            text-align: left;
+
+            .title {
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            .created-on {
+                color: var(--dui-color-text-description);
+                font-size: var(--dui-font-size-small);
+            }
+
+            &.selected {
+                background-color: var(--dui-color-surface-information);
+            }
+        }
+    }
+}

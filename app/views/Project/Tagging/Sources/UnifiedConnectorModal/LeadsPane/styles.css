@@ -1,0 +1,8 @@
+.connectorSources {
+    display: flex;
+    flex-direction: column;
+
+    .selected {
+        background-color: var(--dui-color-surface-information);
+    }
+}

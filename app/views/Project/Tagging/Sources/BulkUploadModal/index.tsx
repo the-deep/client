@@ -43,8 +43,8 @@ import {
     defaultFormValues,
 } from './schema';
 
-import Upload from './Upload';
-import FilesUploaded from './FilesUploaded';
+import UploadPane from './UploadPane';
+import LeadsPane from './LeadsPane';
 import {
     FileUploadResponse,
     sourceTypeMap,
@@ -302,7 +302,7 @@ interface Props {
     projectId: string;
 }
 
-function BulkUpload(props: Props) {
+function BulkUploadModal(props: Props) {
     const {
         className,
         onClose,
@@ -431,11 +431,11 @@ function BulkUpload(props: Props) {
             )}
         >
             {bulkUpdateLeadsPending && <PendingMessage />}
-            <Upload
+            <UploadPane
                 className={styles.upload}
                 onSuccess={handleFileUploadSuccess}
             />
-            <FilesUploaded
+            <LeadsPane
                 leads={formValue.leads}
                 className={styles.details}
                 onLeadRemove={handleLeadRemove}
@@ -450,4 +450,4 @@ function BulkUpload(props: Props) {
     );
 }
 
-export default BulkUpload;
+export default BulkUploadModal;
