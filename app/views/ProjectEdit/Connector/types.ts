@@ -3,7 +3,7 @@ import {
 } from '@togglecorp/toggle-form';
 
 import {
-    UnifiedConnectorInputType,
+    UnifiedConnectorWithSourceInputType,
     ConnectorSourceGqInputType,
 } from '#generated/types';
 import {
@@ -201,8 +201,14 @@ interface Params {}
 export interface ReliefWebParams {
     primaryCountry?: string[];
     country?: string[];
-    fromDate?: string;
-    toDate?: string;
+    from?: string;
+    to?: string;
+}
+
+export interface UnhcrParams {
+    country?: string[];
+    dateFrom?: string;
+    dateTo?: string;
 }
 
 export type SourceInput = Omit<DeepMandatory<PurgeNull<ConnectorSourceGqInputType>, 'clientId'>, 'source' | 'params'> & ({
@@ -216,11 +222,11 @@ export type SourceInput = Omit<DeepMandatory<PurgeNull<ConnectorSourceGqInputTyp
     params: Params;
 } | {
     source: 'UNHCR';
-    params: Params;
+    params: UnhcrParams;
 });
 
 export type ConnectorInputType = DeepReplace<
-    PurgeNull<UnifiedConnectorInputType>,
+    PurgeNull<UnifiedConnectorWithSourceInputType>,
     ConnectorSourceGqInputType,
     SourceInput
 >;
