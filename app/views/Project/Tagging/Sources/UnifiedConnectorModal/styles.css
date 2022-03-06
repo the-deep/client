@@ -1,0 +1,14 @@
+.unified-connector-modal {
+    .modal-body {
+        display: flex;
+        position: relative;
+
+        .project-connector-pane {
+            flex-shrink: 0;
+        }
+
+        .leads-pane {
+            flex-grow: 1;
+        }
+    }
+}

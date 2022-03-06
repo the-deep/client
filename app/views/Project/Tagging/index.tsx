@@ -22,7 +22,8 @@ import routes from '#base/configs/routes';
 import _ts from '#ts';
 
 import LeadEditModal from './Sources/LeadEditModal';
-import BulkUpload from './Sources/BulkUpload';
+import BulkUploadModal from './Sources/BulkUploadModal';
+import UnifiedConnectorModal from './Sources/UnifiedConnectorModal';
 
 import styles from './styles.css';
 
@@ -49,6 +50,12 @@ function Tagging(props: Props) {
         isBulkModalShown,
         showBulkUploadModal,
         hideBulkUploadModal,
+    ] = useModalState(false);
+
+    const [
+        isUnifiedConnectorModalShown,
+        showUnifiedConnectorModal,
+        hideUnifiedConnectorModal,
     ] = useModalState(false);
 
     const navbarContextValue = useMemo(
@@ -85,6 +92,12 @@ function Tagging(props: Props) {
                         name={undefined}
                     >
                         Add sources
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={showUnifiedConnectorModal}
+                        name={undefined}
+                    >
+                        Add sources from connectors
                     </DropdownMenuItem>
                 </DropdownMenu>
             </SubNavbarActions>
@@ -234,8 +247,14 @@ function Tagging(props: Props) {
                 />
             )}
             {isBulkModalShown && project?.id && (
-                <BulkUpload
+                <BulkUploadModal
                     onClose={hideBulkUploadModal}
+                    projectId={project.id}
+                />
+            )}
+            {isUnifiedConnectorModalShown && project?.id && (
+                <UnifiedConnectorModal
+                    onClose={hideUnifiedConnectorModal}
                     projectId={project.id}
                 />
             )}
