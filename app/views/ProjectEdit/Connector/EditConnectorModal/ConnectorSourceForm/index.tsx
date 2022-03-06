@@ -17,6 +17,7 @@ import {
     PartialSourceType,
 } from '../../schema';
 import ReliefWebParamsInput from './ReliefWebParamsInput';
+import UnhcrParams from './UnhcrParamsInput';
 
 import styles from './styles.css';
 
@@ -62,6 +63,15 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
             />
             {value?.source === 'RELIEF_WEB' && (
                 <ReliefWebParamsInput
+                    name="params"
+                    value={value?.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                    disabled={disabled}
+                />
+            )}
+            {value?.source === 'UNHCR' && (
+                <UnhcrParams
                     name="params"
                     value={value?.params}
                     onChange={setFieldValue}
