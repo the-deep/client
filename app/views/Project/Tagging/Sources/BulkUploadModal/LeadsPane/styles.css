@@ -1,7 +1,7 @@
-.files-uploaded-details {
+.leads-pane {
     display: flex;
 
-    .files-container {
+    .leads-list {
         display: flex;
         flex-basis: 40%;
         border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
@@ -12,7 +12,7 @@
             padding: 0 var(--dui-spacing-medium);
         }
 
-        .files {
+        .leads {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -27,7 +27,7 @@
         }
     }
 
-    .right-pane {
+    .lead-preview-pane {
         display: flex;
         flex-basis: 60%;
         flex-direction: column;

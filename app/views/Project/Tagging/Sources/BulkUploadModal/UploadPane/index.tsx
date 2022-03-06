@@ -26,7 +26,7 @@ interface Props {
 const noOfParallelUploads = 3;
 const fileKeySelector = (d: FileLike): string => d.key;
 
-function Upload(props: Props) {
+function UploadPane(props: Props) {
     const {
         className,
         onSuccess,
@@ -166,4 +166,4 @@ function Upload(props: Props) {
     );
 }
 
-export default Upload;
+export default UploadPane;

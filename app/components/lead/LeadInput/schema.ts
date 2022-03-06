@@ -10,7 +10,7 @@ import {
 import {
     PartialLeadType,
     leadSchema,
-} from '#views/Project/Tagging/Sources/BulkUpload/schema';
+} from '#views/Project/Tagging/Sources/BulkUploadModal/schema';
 
 import { EnumFix } from '#utils/types';
 
