@@ -5,6 +5,7 @@ import {
     Container,
     ListView,
     TextOutput,
+    TextInput,
     RawButton,
     Message,
     Button,
@@ -12,6 +13,7 @@ import {
     Kraken,
 } from '@the-deep/deep-ui';
 import {
+    IoSearch,
     IoAdd,
     IoChevronForward,
 } from 'react-icons/io5';
@@ -78,6 +80,7 @@ const PROJECT_CONNECTORS = gql`
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
+        $search: String,
     ) {
         project(
             id: $projectId,
@@ -86,6 +89,7 @@ const PROJECT_CONNECTORS = gql`
             unifiedConnector {
                 unifiedConnectors(
                     page: $page,
+                    search: $search,
                     pageSize: $pageSize,
                 ) {
                     totalCount
@@ -100,7 +104,7 @@ const PROJECT_CONNECTORS = gql`
     }
 `;
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 10;
 
 interface Props {
     className?: string;
@@ -117,6 +121,8 @@ function Connector(props: Props) {
         selectedConnector,
         setSelectedConnector,
     ] = useState<string | undefined>();
+
+    const [searchText, setSearchText] = useState<string | undefined>();
 
     const connectorsRendererParams = useCallback((key: string, data: ConnectorMini) => ({
         itemKey: key,
@@ -139,11 +145,12 @@ function Connector(props: Props) {
                 projectId,
                 pageSize: PAGE_SIZE,
                 page: 1,
+                search: searchText,
             },
             onCompleted: (response) => {
                 const unifiedConnectors = response?.project?.unifiedConnector?.unifiedConnectors;
                 if (!selectedConnector) {
-                    setSelectedConnector(unifiedConnectors?.results?.[0].id);
+                    setSelectedConnector(unifiedConnectors?.results?.[0]?.id);
                 }
             },
         },
@@ -221,16 +228,28 @@ function Connector(props: Props) {
             <Container
                 className={styles.leftContainer}
                 contentClassName={styles.content}
+                headingSize="small"
+                heading="Connectors"
+                headerDescription={(
+                    <TextInput
+                        name={undefined}
+                        value={searchText}
+                        onChange={setSearchText}
+                        label="Search"
+                        icons={<IoSearch />}
+                    />
+                )}
             >
                 <ListView
                     className={styles.connectorList}
                     pending={connectorsGetPending}
                     errored={!!error}
-                    filtered={false}
-                    data={connectorList ?? undefined}
+                    filtered={(searchText?.length ?? 0) > 0}
+                    data={connectorList}
                     keySelector={connectorKeySelector}
                     renderer={ConnectorItem}
                     rendererParams={connectorsRendererParams}
+                    emptyMessage="There are no connectors added to this project."
                     messageShown
                     messageIconShown
                 />
@@ -245,7 +264,6 @@ function Connector(props: Props) {
                             <IoChevronForward />
                         )}
                     >
-                        {/* TODO: Might move to component library, no need to use ts */}
                         Show More
                     </Button>
                 )}
