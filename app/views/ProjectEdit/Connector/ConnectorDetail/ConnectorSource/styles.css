@@ -7,12 +7,17 @@
 
     .chart-container {
         display: flex;
+        position: relative;
         flex-direction: column;
         height: 180px;
 
         .responsive-container {
             flex-grow: 1;
             overflow: hidden;
+        }
+
+        .pending {
+            z-index: 0;
         }
     }
 
