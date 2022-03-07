@@ -79,7 +79,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         [onChangeFromProps],
     );
     const selectedOptions = useMemo(() => (
-        sortedOptions?.filter((item) => widgetHints?.includes(item.key)) ?? []
+        sortedOptions?.filter((item) => widgetHints?.includes(item.key))
     ), [
         sortedOptions,
         widgetHints,
@@ -109,7 +109,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.value}
-                hint={(
+                hint={(selectedOptions && selectedOptions.length > 0) && (
                     <Suggestion
                         name={name}
                         value={value?.value ?? widget?.properties?.defaultValue}
