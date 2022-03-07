@@ -78,7 +78,7 @@ function RegisterModal(props: Props) {
 
     const elementRef = useRef<Captcha>(null);
     const [success, setSuccess] = useState(false);
-    const [acceptTerms, setAcceptTerms] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
     const {
         pristine,
@@ -93,7 +93,7 @@ function RegisterModal(props: Props) {
 
     const [
         isTermsModalShown, ,
-        isTermsModalHidden, ,
+        setTermsModalHidden, ,
         toggleTermsModal,
     ] = useModalState(false);
 
@@ -129,13 +129,13 @@ function RegisterModal(props: Props) {
     );
 
     const handleAcceptTerms = useCallback(() => {
-        setAcceptTerms(true);
-        isTermsModalHidden();
+        setTermsAccepted(true);
+        setTermsModalHidden();
     }, []);
 
     const handleCancelTerms = useCallback(() => {
-        setAcceptTerms(false);
-        isTermsModalHidden();
+        setTermsAccepted(false);
+        setTermsModalHidden();
     }, []);
 
     const handleSubmit = useCallback((finalValue) => {
@@ -219,8 +219,8 @@ function RegisterModal(props: Props) {
                                 <Checkbox
                                     name="terms"
                                     label="I accept the"
-                                    value={acceptTerms}
-                                    onChange={setAcceptTerms}
+                                    value={termsAccepted}
+                                    onChange={setTermsAccepted}
                                 />
                                 <Button
                                     name={undefined}
@@ -232,7 +232,7 @@ function RegisterModal(props: Props) {
                                 </Button>
                             </div>
                             <Button
-                                disabled={registerPending || pristine || !acceptTerms}
+                                disabled={registerPending || pristine || !termsAccepted}
                                 type="submit"
                                 variant="primary"
                                 name="register"
@@ -250,7 +250,7 @@ function RegisterModal(props: Props) {
             </form>
             {isTermsModalShown && (
                 <Modal
-                    onCloseButtonClick={isTermsModalHidden}
+                    onCloseButtonClick={setTermsModalHidden}
                     heading="Terms and Conditions"
                     size="large"
                     footerActions={(
