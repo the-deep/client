@@ -92,7 +92,7 @@ function AssistItem(props: Props) {
         isAssistedTaggingModalShown,
         showAssistedTaggingModal,
         hideAssistedTaggingModal,
-    ] = useModalState(false);
+    ] = useModalState(true);
 
     const [
         geoAreaOptions,

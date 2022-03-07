@@ -104,8 +104,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
                         error={getErrorString(error?.value)}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={onGeoAreaOptionsChange}
-                        hint={widgetHints?.join(', ')}
-                        showList
+                        hint={widgetHints && widgetHints.length > 0 && widgetHints.join(', ')}
                     />
                 </>
             )}
