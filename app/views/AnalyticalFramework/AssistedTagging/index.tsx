@@ -72,10 +72,6 @@ function AssistedTagging(props: Props) {
         allWidgets?.filter((widget) => isDefined(widget.id) && widget.widgetId === 'GEO')
     ), [allWidgets]);
 
-    const numberWidgets = useMemo(() => (
-        allWidgets?.filter((widget) => isDefined(widget.id) && widget.widgetId === 'NUMBER')
-    ), [allWidgets]);
-
     const categoricalMappings = useMemo(
         () => mappings?.filter(isCategoricalMappings),
         [mappings],
@@ -91,14 +87,6 @@ function AssistedTagging(props: Props) {
     const geoWidgetsMappingValue = useMemo(() => (
         listToMap(
             mappings?.filter((mapping) => mapping.widgetType === 'GEO'),
-            (mapping) => mapping.widgetPk,
-            () => true,
-        )
-    ), [mappings]);
-
-    const numberWidgetsMappingValue = useMemo(() => (
-        listToMap(
-            mappings?.filter((mapping) => mapping.widgetType === 'NUMBER'),
             (mapping) => mapping.widgetPk,
             () => true,
         )
@@ -120,24 +108,6 @@ function AssistedTagging(props: Props) {
                 ...oldMappings,
                 {
                     widgetType: 'GEO',
-                    widgetPk,
-                },
-            ];
-        });
-    }, [setMappings]);
-
-    const handleNumberWidgetClick = useCallback((widgetPk: string) => {
-        setMappings((oldMappings = []) => {
-            const selectedWidgetIndex = oldMappings.findIndex(
-                (mapping) => mapping.widgetPk === widgetPk,
-            );
-            if (selectedWidgetIndex !== -1) {
-                return oldMappings.filter((mapping) => mapping.widgetPk !== widgetPk);
-            }
-            return [
-                ...oldMappings,
-                {
-                    widgetType: 'NUMBER',
                     widgetPk,
                 },
             ];
@@ -182,16 +152,6 @@ function AssistedTagging(props: Props) {
         geoWidgetsMappingValue,
         handleGeoWidgetClick,
     ]);
-    const numberWidgetsRendererParams = useCallback((itemKey: string, widget: Widget) => ({
-        children: widget.title,
-        name: itemKey,
-        value: !!numberWidgetsMappingValue?.[widget.id],
-        onClick: handleNumberWidgetClick,
-    }), [
-        numberWidgetsMappingValue,
-        handleNumberWidgetClick,
-    ]);
-
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
         mappings: categoricalMappings?.filter((mapping) => mapping.widgetPk === widget.id),
@@ -258,8 +218,8 @@ function AssistedTagging(props: Props) {
                         />
                     </ContainerCard>
                 </Card>
-                <Card className={styles.card}>
-                    {(geoWidgets?.length ?? 0) > 0 && (
+                {(geoWidgets?.length ?? 0) > 0 && (
+                    <Card className={styles.card}>
                         <ContainerCard
                             heading="Geo Widgets"
                             spacing="compact"
@@ -276,26 +236,8 @@ function AssistedTagging(props: Props) {
                                 errored={false}
                             />
                         </ContainerCard>
-                    )}
-                    {(numberWidgets?.length ?? 0) > 0 && (
-                        <ContainerCard
-                            heading="Number Widgets"
-                            spacing="compact"
-                            headingSize="small"
-                        >
-                            <ListView
-                                className={styles.numberWidgetList}
-                                data={numberWidgets}
-                                renderer={CheckButton}
-                                rendererParams={numberWidgetsRendererParams}
-                                keySelector={widgetKeySelector}
-                                filtered={false}
-                                pending={false}
-                                errored={false}
-                            />
-                        </ContainerCard>
-                    )}
-                </Card>
+                    </Card>
+                )}
             </div>
         </div>
     );

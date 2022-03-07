@@ -41,7 +41,6 @@
         }
     }
 
-    .number-widget-list,
     .geo-widget-list {
         display: flex;
         flex-wrap: wrap;

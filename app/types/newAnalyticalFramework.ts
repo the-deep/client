@@ -1511,7 +1511,6 @@ export const mappingsSupportedWidgets: WidgetType[] = [
     'SCALE',
     'MULTISELECT',
     'SELECT',
-    'NUMBER',
     'GEO',
 ];
 
