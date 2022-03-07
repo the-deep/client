@@ -1,8 +1,24 @@
-.connectorSources {
+.leads-pane {
     display: flex;
-    flex-direction: column;
 
-    .selected {
-        background-color: var(--dui-color-surface-information);
+    .leads-listing-pane {
+        display: flex;
+        flex-basis: 50%;
+        flex-direction: column;
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--dui-spacing-medium);
+        }
+    }
+    .lead-detail-pane {
+        display: flex;
+        flex-basis: 50%;
+        flex-direction: column;
+
+        .preview {
+            flex-basis: 40%;
+        }
     }
 }

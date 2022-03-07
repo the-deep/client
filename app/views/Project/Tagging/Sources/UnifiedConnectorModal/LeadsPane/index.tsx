@@ -1,148 +1,79 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import {
     ListView,
-    RawButton,
-    TextOutput,
+    MultiSelectInput,
 } from '@the-deep/deep-ui';
 import {
     _cs,
+    listToMap,
 } from '@togglecorp/fujs';
+import {
+    SetValueArg,
+    ArrayError,
+    // analyzeErrors,
+} from '@togglecorp/toggle-form';
 import {
     gql,
     useQuery,
 } from '@apollo/client';
 
 import {
-    ProjectConnectorDetailsQuery,
-    ProjectConnectorDetailsQueryVariables,
+    ProjectConnectorQuery,
+    ProjectConnectorQueryVariables,
+    ConnectorLeadExtractionStatusEnum,
 } from '#generated/types';
+import {
+    enumKeySelector,
+    enumLabelSelector,
+} from '#utils/common';
+
+import BooleanInput, { Option } from '#components/selections/BooleanInput';
+import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
+import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
+import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
+import LeadPreview from '#components/lead/LeadPreview';
+import LeadInput from '#components/lead/LeadInput';
+import { PartialFormType } from '#components/lead/LeadInput/schema';
+
+import ConnectorSourceItem, { ConnectorSourceLead } from './ConnectorSourceItem';
 
 import styles from './styles.css';
 
-const CONNECTOR_SOURCE_LEADS = gql`
-    query ConnectorSourceLeads(
-        $projectId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            unifiedConnector {
-                connectorSourceLeads {
-                    totalCount
-                    results {
-                        id
-                        url
-                        title
-                        sourceRaw
-                        publishedOn
-                        extractionStatus
-                        authorRaw
-                        authors {
-                            id
-                            mergedAs {
-                                id
-                                title
-                            }
-                            title
-                        }
-                        source {
-                            id
-                            title
-                            mergedAs {
-                                id
-                                title
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-`;
+const blockedOptions: Option[] = [
+    {
+        key: 'true',
+        value: 'Yes',
+    },
+    {
+        key: 'false',
+        value: 'No',
+    },
+];
 
-
-type ConnectorSourceMini = NonNullable<NonNullable<NonNullable<NonNullable<ProjectConnectorDetailsQuery['project']>['unifiedConnector']>['unifiedConnector']>['sources']>[number];
+type ConnectorSourceMini = NonNullable<NonNullable<NonNullable<NonNullable<NonNullable<ProjectConnectorQuery>['project']>['unifiedConnector']>['unifiedConnector']>['sources']>[number];
 
 const connectorSourceKeySelector = (d: ConnectorSourceMini) => d.id;
 
-interface ConnectorSourceItemProps {
-    itemKey: string;
-    title: string;
-    onClick: (key: string) => void;
-    selected: boolean;
-    projectId: string;
-}
-
-function ConnectorSourceItem(props: ConnectorSourceItemProps) {
-    const {
-        itemKey,
-        title,
-        onClick,
-        selected,
-        projectId,
-    } = props;
-
-    const [selectedConnectorLead, setSelectedConnectorLead] = useState<string | undefined>();
-
-    const variables = useMemo(
-        (): ConnectorSourceLeadsQueryVariables => ({
-            projectId,
-        }),
-        [projectId],
-    );
-
-    const {
-        loading,
-        data,
-        error,
-    } = useQuery<ConnectorSourceLeadsQuery, ConnectorSourceLeadsQueryVariables>(
-        CONNECTOR_SOURCE_LEADS,
-        {
-            skip: !selected,
-            variables,
-            onCompleted: (response) => {
-                const connectorLeads = response?.project?.unifiedConnector
-                    ?.connectorSourceLeads?.results;
-                if (connectorLeads && connectorLeads.length > 0) {
-                    setSelectedConnectorLead((oldSelection) => {
-                        const connectorLead = connectorLeads.find(
-                            (item) => item.id === oldSelection,
-                        );
-                        return connectorLead ? oldSelection : connectorLeads[0].id;
-                    });
-                } else {
-                    setSelectedConnectorLead(undefined);
-                }
-            },
-        },
-    );
-
-    return (
-        <>
-            <RawButton
-                name={itemKey}
-                className={_cs(
-                    selected && styles.selected,
-                )}
-                onClick={onClick}
-            >
-                {title}
-            </RawButton>
-            {selected && (
-                <div>
-                    Content goes here
-                </div>
-            )}
-        </>
-    );
-}
-
 const PROJECT_CONNECTOR_DETAILS = gql`
-    query ProjectConnectorDetails(
+    query ProjectConnector(
         $projectId: ID!,
         $connectorId: ID!,
     ) {
+        connectorLeadExtractionStatusOptions: __type(name: "ConnectorLeadExtractionStatusEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+        leadPriorityOptions: __type(name: "LeadPriorityEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
         project(id: $projectId) {
             id
+            hasAssessmentTemplate
             unifiedConnector {
                 unifiedConnector(id: $connectorId) {
                     id
@@ -164,6 +95,43 @@ interface Props {
     className?: string;
     connectorId: string;
     projectId: string;
+
+    selectedConnectorSource: string | undefined;
+    selectedConnectorSourceLead: ConnectorSourceLead | undefined;
+    onSelectedConnectorSourceChange: React.Dispatch<React.SetStateAction<string | undefined>>;
+    onSelectedConnectorSourceLeadChange: React.Dispatch<React.SetStateAction<
+        ConnectorSourceLead | undefined
+    >>;
+
+    sourceOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    authorOrganizationOptions: BasicOrganization[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAuthorOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
+    leadGroupOptions: BasicLeadGroup[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onLeadGroupOptionsChange: React.Dispatch<React.SetStateAction<BasicLeadGroup[] | undefined | null>>;
+    assigneeOptions: BasicProjectUser[] | undefined | null;
+    // eslint-disable-next-line max-len
+    onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
+
+    leads: PartialFormType[] | undefined;
+    leadsError: ArrayError<PartialFormType[]> | undefined;
+    onLeadChange: (val: SetValueArg<PartialFormType>, name: number | undefined) => void;
+
+    selections: {
+        [key: string]: {
+            connectorId: string,
+            connectorSourceId: string,
+            connectorSourceLeadId: string,
+            connectorLeadId: string,
+        } | undefined,
+    }
+    onSelectionChange: (
+        connectorSourceId: string,
+        connectorSourceLead: ConnectorSourceLead,
+    ) => void;
 }
 
 function LeadsPane(props: Props) {
@@ -171,12 +139,57 @@ function LeadsPane(props: Props) {
         className,
         connectorId,
         projectId,
+
+        sourceOrganizationOptions,
+        onSourceOrganizationOptionsChange,
+        authorOrganizationOptions,
+        onAuthorOrganizationOptionsChange,
+        leadGroupOptions,
+        onLeadGroupOptionsChange,
+        assigneeOptions,
+        onAssigneeOptionChange,
+
+        selectedConnectorSource,
+        selectedConnectorSourceLead,
+
+        onSelectedConnectorSourceChange,
+        onSelectedConnectorSourceLeadChange,
+
+        leads,
+        leadsError,
+        onLeadChange,
+
+        selections,
+        onSelectionChange,
     } = props;
 
-    const [selectedConnectorSource, setSelectedConnectorSource] = useState<string | undefined>();
+    const [extractionStatus, setExtractionStatus] = useState<string[] | undefined>();
+    const [blocked, setBlocked] = useState<boolean | undefined>(false);
+
+    // NOTE: needed to get lead information from connectorLead
+    const leadsMapping = listToMap(
+        leads,
+        // FIXME: filter out leads without connectorLead (which should not happen)
+        (lead) => lead.connectorLead ?? 'x',
+        (lead) => lead,
+    );
+
+    const currentLeadIndex = (
+        selectedConnectorSourceLead
+            ? leads?.findIndex((lead) => (
+                lead.connectorLead === selectedConnectorSourceLead.connectorLead.id
+            ))
+            : undefined
+    ) ?? -1;
+
+    const currentLead = leads?.[currentLeadIndex];
+
+    const currentLeadError = currentLead
+        ? leadsError?.[currentLead.clientId]
+        : undefined;
 
     const variables = useMemo(
-        (): ProjectConnectorDetailsQueryVariables => ({
+        (): ProjectConnectorQueryVariables => ({
             projectId,
             connectorId,
         }),
@@ -190,53 +203,137 @@ function LeadsPane(props: Props) {
         loading: pendingConnectorDetails,
         data: connectorDetailsData,
         error,
-    } = useQuery<ProjectConnectorDetailsQuery, ProjectConnectorDetailsQueryVariables>(
+    } = useQuery<ProjectConnectorQuery, ProjectConnectorQueryVariables>(
         PROJECT_CONNECTOR_DETAILS,
         {
             variables,
             onCompleted: (response) => {
                 const sources = response?.project?.unifiedConnector?.unifiedConnector?.sources;
                 if (sources && sources.length > 0) {
-                    setSelectedConnectorSource((oldSelection) => {
+                    onSelectedConnectorSourceChange((oldSelection) => {
                         const source = sources.find((item) => item.id === oldSelection);
                         return source ? oldSelection : sources[0].id;
                     });
                 } else {
-                    setSelectedConnectorSource(undefined);
+                    onSelectedConnectorSourceChange(undefined);
                 }
             },
         },
     );
 
     const connectorSourceRendererParams = useCallback((key: string, data: ConnectorSourceMini) => ({
-        itemKey: key,
+        connectorSourceId: key,
         title: data.title,
-        onClick: setSelectedConnectorSource,
+        onClick: onSelectedConnectorSourceChange,
         selected: key === selectedConnectorSource,
         projectId,
-    }), [selectedConnectorSource, projectId]);
+        connectorSourceLead: selectedConnectorSourceLead,
+        onConnectorSourceLeadChange: onSelectedConnectorSourceLeadChange,
+
+        leadsMapping,
+        leadsError,
+
+        selections,
+        onSelectionChange,
+
+        extractionStatus: extractionStatus as (ConnectorLeadExtractionStatusEnum[] | undefined),
+        blocked,
+    }), [
+        leadsMapping,
+        leadsError,
+
+        onSelectedConnectorSourceLeadChange,
+        onSelectedConnectorSourceChange,
+        projectId,
+        selectedConnectorSource,
+        selectedConnectorSourceLead,
+
+        selections,
+        onSelectionChange,
+
+        extractionStatus,
+        blocked,
+    ]);
 
     const connector = connectorDetailsData?.project?.unifiedConnector?.unifiedConnector;
 
     const loading = pendingConnectorDetails;
 
     return (
-        <div className={className}>
-            <div>
-                Filters here
+        <div className={_cs(className, styles.leadsPane)}>
+            <div className={styles.leadsListingPane}>
+                <h3>
+                    Sources found
+                </h3>
+                <div className={styles.filters}>
+                    <MultiSelectInput
+                        name={undefined}
+                        onChange={setExtractionStatus}
+                        options={
+                            connectorDetailsData
+                                ?.connectorLeadExtractionStatusOptions
+                                ?.enumValues
+                        }
+                        disabled={loading}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
+                        value={extractionStatus}
+                        label="Status"
+                    />
+                    <BooleanInput
+                        options={blockedOptions}
+                        name={undefined}
+                        value={blocked}
+                        onChange={setBlocked}
+                        label="Blocked"
+                    />
+                </div>
+                <ListView
+                    pending={loading}
+                    errored={!!error}
+                    filtered={false}
+                    data={connector?.sources}
+                    keySelector={connectorSourceKeySelector}
+                    rendererParams={connectorSourceRendererParams}
+                    renderer={ConnectorSourceItem}
+                    messageShown
+                    messageIconShown
+                />
             </div>
-            <ListView
-                className={styles.connectorSources}
-                pending={loading}
-                errored={!!error}
-                filtered={false}
-                data={connector?.sources}
-                keySelector={connectorSourceKeySelector}
-                rendererParams={connectorSourceRendererParams}
-                renderer={ConnectorSourceItem}
-                messageShown
-                messageIconShown
-            />
+            <div className={styles.leadDetailPane}>
+                {currentLead ? (
+                    <>
+                        <LeadInput
+                            name={currentLeadIndex}
+                            value={currentLead}
+                            onChange={onLeadChange}
+                            pending={loading}
+                            projectId={projectId}
+                            error={currentLeadError}
+                            attachment={undefined}
+                            priorityOptions={connectorDetailsData?.leadPriorityOptions?.enumValues}
+                            sourceOrganizationOptions={sourceOrganizationOptions}
+                            onSourceOrganizationOptionsChange={onSourceOrganizationOptionsChange}
+                            authorOrganizationOptions={authorOrganizationOptions}
+                            onAuthorOrganizationOptionsChange={onAuthorOrganizationOptionsChange}
+                            leadGroupOptions={leadGroupOptions}
+                            onLeadGroupOptionsChange={onLeadGroupOptionsChange}
+                            assigneeOptions={assigneeOptions}
+                            onAssigneeOptionChange={onAssigneeOptionChange}
+                            hasAssessment={connectorDetailsData?.project?.hasAssessmentTemplate}
+                        />
+                        <LeadPreview
+                            className={styles.preview}
+                            key={currentLead.clientId}
+                            url={currentLead.url ?? undefined}
+                        />
+                    </>
+                ) : (
+                    <div>
+                        Please select a source
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
