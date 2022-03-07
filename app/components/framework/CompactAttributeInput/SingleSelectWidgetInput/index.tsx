@@ -84,7 +84,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [widgetOptions, value]);
 
     const selectedOptions = useMemo(() => (
-        sortedOptions?.filter((item) => widgetHints?.includes(item.key)) ?? []
+        sortedOptions?.filter((item) => widgetHints?.includes(item.key))
     ), [
         sortedOptions,
         widgetHints,
@@ -118,7 +118,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
-                        hint={(
+                        hint={(selectedOptions && selectedOptions.length > 0) && (
                             <Suggestion
                                 name={name}
                                 options={selectedOptions}

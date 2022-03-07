@@ -16,8 +16,6 @@ type NumberValue = NonNullable<NumberWidgetAttribute['data']>;
 const numberKeySelector = (s: number) => s;
 const numberLabelSelector = (s: number) => String(s);
 
-const emptyArray: number[] = [];
-
 export interface Props <N extends string>{
     title: string | undefined;
     className?: string;
@@ -87,11 +85,11 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
-                        inputDescription={(
+                        inputDescription={(widgetHints && widgetHints.length > 0) && (
                             <Suggestion
                                 name={name}
                                 value={value?.value}
-                                options={widgetHints ?? emptyArray}
+                                options={widgetHints}
                                 keySelector={numberKeySelector}
                                 labelSelector={numberLabelSelector}
                                 onChange={onChange}
