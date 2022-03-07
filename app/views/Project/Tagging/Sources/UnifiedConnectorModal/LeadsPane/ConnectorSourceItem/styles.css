@@ -1,0 +1,9 @@
+.connector-lead-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .connector-lead-item {
+        flex-shrink: 0;
+    }
+}

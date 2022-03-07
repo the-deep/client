@@ -6,19 +6,20 @@ import {
     TextOutput,
     RawButton,
     Button,
+    ContainerCard,
 } from '@the-deep/deep-ui';
 import {
     IoRefreshOutline,
 } from 'react-icons/io5';
 
 import {
-    ProjectConnectorsQuery,
-    ProjectConnectorsQueryVariables,
+    ProjectConnectorsListQuery,
+    ProjectConnectorsListQueryVariables,
 } from '#generated/types';
 
 import styles from './styles.css';
 
-type ConnectorMini = NonNullable<NonNullable<NonNullable<NonNullable<ProjectConnectorsQuery['project']>['unifiedConnector']>['unifiedConnectors']>['results']>[number];
+type ConnectorMini = NonNullable<NonNullable<NonNullable<NonNullable<ProjectConnectorsListQuery['project']>['unifiedConnector']>['unifiedConnectors']>['results']>[number];
 
 const connectorKeySelector = (d: ConnectorMini) => d.id;
 
@@ -61,8 +62,8 @@ function ConnectorItem(props: ConnectorItemProps) {
     );
 }
 
-const PROJECT_CONNECTORS = gql`
-    query ProjectConnectors(
+const PROJECT_CONNECTORS_LIST = gql`
+    query ProjectConnectorsList(
         $projectId: ID!,
         $page: Int,
         $pageSize: Int,
@@ -75,6 +76,7 @@ const PROJECT_CONNECTORS = gql`
                 unifiedConnectors(
                     page: $page,
                     pageSize: $pageSize,
+                    isActive: true,
                 ) {
                     totalCount
                     results {
@@ -116,8 +118,8 @@ function Connector(props: Props) {
         loading: connectorsGetPending,
         error,
         refetch,
-    } = useQuery<ProjectConnectorsQuery, ProjectConnectorsQueryVariables>(
-        PROJECT_CONNECTORS,
+    } = useQuery<ProjectConnectorsListQuery, ProjectConnectorsListQueryVariables>(
+        PROJECT_CONNECTORS_LIST,
         {
             variables: {
                 projectId,
@@ -136,18 +138,20 @@ function Connector(props: Props) {
     );
 
     return (
-        <div className={_cs(className, styles.connector)}>
-            <h2>
-                Project Connectors
-            </h2>
-            <Button
-                name={undefined}
-                onClick={refetch}
-                disabled={connectorsGetPending}
-                variant="secondary"
-            >
-                <IoRefreshOutline />
-            </Button>
+        <ContainerCard
+            className={_cs(className, styles.connector)}
+            heading="Project Connectors"
+            headerActions={(
+                <Button
+                    name={undefined}
+                    onClick={refetch}
+                    disabled={connectorsGetPending}
+                    variant="secondary"
+                >
+                    <IoRefreshOutline />
+                </Button>
+            )}
+        >
             <ListView
                 className={styles.connectorList}
                 pending={connectorsGetPending}
@@ -160,7 +164,7 @@ function Connector(props: Props) {
                 messageShown
                 messageIconShown
             />
-        </div>
+        </ContainerCard>
     );
 }
 
