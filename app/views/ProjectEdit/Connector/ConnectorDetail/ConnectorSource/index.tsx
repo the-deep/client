@@ -105,8 +105,8 @@ function ConnectorSource(props: Props) {
             )}
         >
             <div className={styles.chartContainer}>
-                <ResponsiveContainer className={styles.responsiveContainer}>
-                    {((convertedSourceActivity?.length ?? 0) > 0) ? (
+                {((convertedSourceActivity?.length ?? 0) > 0) ? (
+                    <ResponsiveContainer className={styles.responsiveContainer}>
                         <AreaChart data={convertedSourceActivity}>
                             <defs>
                                 <linearGradient id="stat" x1="0" y1="0" x2="0" y2="1">
@@ -142,22 +142,23 @@ function ConnectorSource(props: Props) {
                                 activeDot
                             />
                         </AreaChart>
-                    ) : (
-                        <Message
-                            icon={
-                                <Kraken variant="sleep" />
-                            }
-                            message="This connector does not have any sources fetched."
-                            pending={source.status === 'PROCESSING' || source.status === 'PENDING'}
-                            pendingMessage="DEEP is currently fetching sources from this portal."
-                            errored={source.status === 'FAILURE'}
-                            erroredEmptyMessage="DEEP was unable to fetch sources from this portal."
-                            erroredEmptyIcon={
-                                <Kraken variant="icecream" />
-                            }
-                        />
-                    )}
-                </ResponsiveContainer>
+                    </ResponsiveContainer>
+                ) : (
+                    <Message
+                        pendingContainerClassName={styles.pending}
+                        icon={
+                            <Kraken variant="sleep" />
+                        }
+                        message="This connector does not have any sources fetched."
+                        pending={source.status === 'PROCESSING' || source.status === 'PENDING'}
+                        pendingMessage="DEEP is currently fetching sources from this portal."
+                        errored={source.status === 'FAILURE'}
+                        erroredEmptyMessage="DEEP was unable to fetch sources from this portal."
+                        erroredEmptyIcon={
+                            <Kraken variant="icecream" />
+                        }
+                    />
+                )}
             </div>
             <Container
                 className={styles.infoContainers}
