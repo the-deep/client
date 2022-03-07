@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     randomString,
 } from '@togglecorp/fujs';
 import {
     Modal,
+    Message,
     Button,
 } from '@the-deep/deep-ui';
 import {
@@ -99,6 +100,9 @@ function AssistPopup(props: Props) {
     const [mappings] = useLocalStorage<MappingsItem[] | undefined>(`mappings-${frameworkDetails.id}`, undefined);
     const [allHints, setAllHints] = useState<WidgetHint[] | undefined>(undefined);
 
+    // FIXME: Use pending from request
+    const [pending, setPending] = useState(true);
+
     const {
         allWidgets,
         filteredWidgets,
@@ -127,10 +131,6 @@ function AssistPopup(props: Props) {
 
         const supportedGeoWidgets = mappings
             ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
-            ?.map((mappingItem) => mappingItem.widgetPk);
-
-        const supportedNumberWidgets = mappings
-            ?.filter((mappingItem) => mappingItem.widgetType === 'NUMBER')
             ?.map((mappingItem) => mappingItem.widgetPk);
 
         const {
@@ -226,36 +226,6 @@ function AssistPopup(props: Props) {
                     };
                 }
                 if (
-                    widget.widgetId === 'NUMBER'
-                    && mockAssistedMappingsResponse.numbers.length > 0
-                    && supportedNumberWidgets?.includes(widget.id)
-                ) {
-                    if (mockAssistedMappingsResponse.numbers.length === 1) {
-                        const attr: PartialAttributeType = {
-                            clientId: randomString(),
-                            widget: widget.id,
-                            widgetVersion: widget.version,
-                            widgetType: 'NUMBER',
-                            data: {
-                                value: mockAssistedMappingsResponse.numbers[0],
-                            },
-                        };
-                        return {
-                            tempAttrs: [...oldTempAttrs, attr],
-                            tempHints: oldTempHints,
-                        };
-                    }
-                    const hintsWithInfo: WidgetHint = {
-                        widgetPk: widget.id,
-                        widgetType: 'NUMBER',
-                        hints: mockAssistedMappingsResponse.numbers,
-                    };
-                    return {
-                        tempAttrs: oldTempAttrs,
-                        tempHints: [...oldTempHints, hintsWithInfo],
-                    };
-                }
-                if (
                     widget.widgetId === 'GEO'
                     && mockAssistedMappingsResponse.locations.length > 0
                     && supportedGeoWidgets?.includes(widget.id)
@@ -314,6 +284,8 @@ function AssistPopup(props: Props) {
             },
             undefined,
         );
+        // FIXME: Remove this later
+        setPending(false);
     }, [
         selectedText,
         leadId,
@@ -322,6 +294,22 @@ function AssistPopup(props: Props) {
         filteredWidgets,
     ]);
 
+    useEffect(() => {
+        const timeout = setTimeout(
+            () => {
+                if (pending) {
+                    handleMappingsFetch();
+                }
+            },
+            2000,
+        );
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [handleMappingsFetch, pending]);
+
+    const isMessageShown = pending;
+
     return (
         <Modal
             className={_cs(className, styles.assistPopup)}
@@ -329,40 +317,40 @@ function AssistPopup(props: Props) {
             headingSize="extraSmall"
             onCloseButtonClick={onCloseButtonClick}
             footerActions={(
-                <>
-                    <Button
-                        name={undefined}
-                        onClick={handleMappingsFetch}
-                    >
-                        Fetch Details
-                    </Button>
-                    <Button
-                        name={undefined}
-                        onClick={onEntryCreateButtonClick}
-                    >
-                        Create Entry
-                    </Button>
-                </>
+                <Button
+                    name={undefined}
+                    onClick={onEntryCreateButtonClick}
+                    disabled={isMessageShown}
+                >
+                    Create Entry
+                </Button>
             )}
         >
-            <EntryInput
-                leadId={leadId}
-                name={undefined}
-                error={error}
-                value={value}
-                onChange={onChange}
-                primaryTagging={frameworkDetails.primaryTagging}
-                secondaryTagging={frameworkDetails.secondaryTagging}
-                entryImage={undefined}
-                onAddButtonClick={undefined}
-                geoAreaOptions={geoAreaOptions}
-                onGeoAreaOptionsChange={onGeoAreaOptionsChange}
-                allWidgets={allWidgets}
-                widgetsHints={allHints}
-                emptyValueHidden
-                addButtonHidden
-                compact
-            />
+            {isMessageShown ? (
+                <Message
+                    pending={pending}
+                    pendingMessage="DEEP is analyzing your text."
+                />
+            ) : (
+                <EntryInput
+                    leadId={leadId}
+                    name={undefined}
+                    error={error}
+                    value={value}
+                    onChange={onChange}
+                    primaryTagging={frameworkDetails.primaryTagging}
+                    secondaryTagging={frameworkDetails.secondaryTagging}
+                    entryImage={undefined}
+                    onAddButtonClick={undefined}
+                    geoAreaOptions={geoAreaOptions}
+                    onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                    allWidgets={allWidgets}
+                    widgetsHints={allHints}
+                    emptyValueHidden
+                    addButtonHidden
+                    compact
+                />
+            )}
         </Modal>
     );
 }
