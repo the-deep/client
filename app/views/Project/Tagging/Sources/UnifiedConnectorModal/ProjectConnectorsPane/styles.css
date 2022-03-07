@@ -3,12 +3,15 @@
         .item {
             display: flex;
             flex-direction: column;
-            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             background-color: var(--dui-color-background-information);
             padding: var(--dui-spacing-small) var(--dui-spacing-medium);
             gap: var(--dui-spacing-small);
             width: 100%;
             text-align: left;
+
+            &:not(:last-child) {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
 
             .title {
                 font-weight: var(--dui-font-weight-bold);

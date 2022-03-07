@@ -114,7 +114,7 @@ function UploadPane(props: Props) {
 
     return (
         <Container
-            className={_cs(styles.upload, className)}
+            className={_cs(styles.uploadPane, className)}
             heading={_ts('bulkUpload', 'uploadFilesTitle')}
             contentClassName={styles.content}
             headingSize="small"
