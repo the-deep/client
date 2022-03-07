@@ -1,5 +1,7 @@
 .edit-connector-modal {
     display: flex;
+    /* FIXME: Make modal width overridable in deep ui */
+    --dui-width-modal-large: 1080px;
 
     .body {
         display: flex;

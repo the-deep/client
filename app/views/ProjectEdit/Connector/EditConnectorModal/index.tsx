@@ -371,7 +371,7 @@ function EditConnectorModal(props: Props) {
         <Modal
             className={_cs(styles.editConnectorModal, className)}
             onCloseButtonClick={onCloseClick}
-            size="cover"
+            size="large"
             heading={connectorId ? 'Edit Connector' : 'Add New Connector'}
             footerActions={(
                 <Button
@@ -385,8 +385,8 @@ function EditConnectorModal(props: Props) {
             bodyClassName={styles.body}
         >
             {loading && <PendingMessage />}
-            <NonFieldError error={error} />
             <div className={styles.leftContainer}>
+                <NonFieldError error={error} />
                 <TextInput
                     name="title"
                     label="Title"

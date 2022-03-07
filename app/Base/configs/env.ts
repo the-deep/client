@@ -18,6 +18,7 @@ export const pdfCacheEndpoint = process.env.REACT_APP_PDF_CACHE_ENDPOINT as stri
 export const oldAryEndpoint = process.env.REACT_APP_ASSESSMENT_REGISTRY_END; // http://localhost:3100
 export const aryVizEndpoint = process.env.REACT_APP_ASSESSMENT_VIZ_URL || 'https://the-deep.github.io/deepviz-assessments/';
 export const entriesVizEndpoint = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz-entries/';
+export const proxyEndpoint = process.env.REACT_APP_PROXY_ENDPOINT || 'https://preview-proxy.the-deep.io';
 
 // Chrome extension
 export const oldExtensionId = process.env.REACT_APP_OLD_BROWSER_EXTENSION_ID || 'kafonkgglonkbldmcigbdojiadfcmcdc';
