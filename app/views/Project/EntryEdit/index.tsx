@@ -45,6 +45,7 @@ import { getHiddenWidgetIds, getWidgetVersion } from '#types/newAnalyticalFramew
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
+import UserContext from '#base/context/UserContext';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import {
@@ -123,6 +124,7 @@ interface Props {
 function EntryEdit(props: Props) {
     const { className } = props;
     const { project } = React.useContext(ProjectContext);
+    const { user } = React.useContext(UserContext);
     const { leadId } = useParams<{ leadId: string }>();
     const [
         commentsCountMap,
@@ -157,11 +159,14 @@ function EntryEdit(props: Props) {
     const alert = useAlert();
 
     // LEAD
-    const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
+    const leadInitialValue: PartialLeadFormType = useMemo(() => ({
         clientId: randomString(),
         sourceType: 'WEBSITE',
+        priority: 'LOW',
+        confidentiality: 'UNPROTECTED',
         isAssessmentLead: false,
-    }));
+        assignee: user?.id,
+    }), [user]);
 
     const [
         projectUserOptions,
@@ -1415,7 +1420,6 @@ function EntryEdit(props: Props) {
                                 <SourceDetails
                                     leadValue={leadValue}
                                     setValue={setLeadValue}
-                                    defaultValue={leadInitialValue}
                                     leadFormError={leadFormError}
                                     pending={loading}
                                     projectId={projectId}

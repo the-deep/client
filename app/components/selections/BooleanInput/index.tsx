@@ -34,7 +34,7 @@ const keySelector = (d: Option) => d.key;
 
 const labelSelector = (d: Option) => d.value;
 
-interface Props<T extends Option, K extends string> {
+interface Props<T extends Option, K extends string | undefined> {
     className?: string;
     name: K;
     options: T[];
@@ -50,7 +50,7 @@ interface Props<T extends Option, K extends string> {
     readOnly?: boolean;
 }
 
-function BooleanInput<T extends Option, K extends string>(props: Props<T, K>) {
+function BooleanInput<T extends Option, K extends string | undefined>(props: Props<T, K>) {
     const {
         className,
         name,

@@ -89,6 +89,7 @@ function LeadsPane(props: Props) {
 
     const { project } = useContext(ProjectContext);
 
+    // FIXME: move these outside
     const [
         projectUserOptions,
         setProjectUserOptions,
@@ -200,7 +201,6 @@ function LeadsPane(props: Props) {
                         onChange={onLeadChange}
                         projectId={projectId}
                         error={currentLeadError}
-                        defaultValue={selectedLeadValue}
                         attachment={selectedLeadAttachment}
                         priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
                         sourceOrganizationOptions={sourceOrganizationOptions}
