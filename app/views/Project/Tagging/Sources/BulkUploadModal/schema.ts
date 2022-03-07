@@ -57,6 +57,7 @@ export const leadSchema:LeadFormSchema = {
             emmEntities: [defaultEmptyArrayType],
             emmTriggers: [defaultEmptyArrayType],
 
+            connectorLead: [],
             // NOTE: We are not adding forceNullType here, as it is not the behavior in server
             /*
             url: [forceNullType],

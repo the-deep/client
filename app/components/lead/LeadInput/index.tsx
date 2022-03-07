@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useContext } from 'react';
 import { useLazyQuery, gql } from '@apollo/client';
 import {
     _cs,
     isDefined,
+    randomString,
 } from '@togglecorp/fujs';
 import produce from 'immer';
 import {
@@ -28,6 +29,7 @@ import {
 } from 'react-icons/io5';
 
 import { useLazyRequest } from '#base/utils/restRequest';
+import { UserContext } from '#base/context/UserContext';
 import NewOrganizationSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import ProjectUserSelectInput, { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import LeadGroupSelectInput, { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -107,7 +109,6 @@ interface Props<N extends string | number | undefined> {
     pending?: boolean;
     projectId: string;
     disabled?: boolean;
-    defaultValue: PartialFormType;
     priorityOptions: NonNullable<LeadOptionsQuery['leadPriorityOptions']>['enumValues'] | undefined;
     sourceOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
@@ -122,7 +123,7 @@ interface Props<N extends string | number | undefined> {
     // eslint-disable-next-line max-len
     onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
     pendingLeadOptions?: boolean;
-    attachment: LeadType['attachment'];
+    attachment: LeadType['attachment'] | undefined | null;
     hasAssessment?: boolean;
 }
 
@@ -133,7 +134,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         value,
         onChange,
         error: riskyError,
-        defaultValue,
         pending: pendingFromProps,
         projectId,
         disabled,
@@ -150,6 +150,17 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         onAssigneeOptionChange,
         hasAssessment,
     } = props;
+
+    const { user } = useContext(UserContext);
+
+    const defaultValue: PartialFormType = useMemo(() => ({
+        clientId: randomString(),
+        sourceType: 'WEBSITE',
+        priority: 'LOW',
+        confidentiality: 'UNPROTECTED',
+        isAssessmentLead: false,
+        assignee: user?.id,
+    }), [user]);
 
     const error = getErrorObject(riskyError);
     const setFieldValue = useFormObject(name, onChange, defaultValue);

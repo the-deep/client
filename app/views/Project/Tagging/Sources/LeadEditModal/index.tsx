@@ -501,7 +501,6 @@ function LeadEditModal(props: Props) {
                     onChange={handleLeadChange}
                     projectId={projectId}
                     error={riskyError}
-                    defaultValue={initialValue}
                     attachment={leadData?.attachment}
                     priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
                     sourceOrganizationOptions={sourceOrganizationOptions}
