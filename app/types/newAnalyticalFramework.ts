@@ -1297,111 +1297,111 @@ export function getHiddenWidgetIds(
 
 export interface AssistedTag {
     id: string;
-    label: string; // Example: 'Context'
-    labelGroup: string; // Example: 'Context Group 1'
+    name: string; // Example: 'Context'
+    groupName: string; // Example: 'Context Group 1'
 }
 
 // FIXME: Remove this after we fetch assisted tags from the server
 export const mockAssistedTags: AssistedTag[] = [
     {
         id: '1',
-        label: 'Agriculture',
-        labelGroup: 'Sectors',
+        name: 'Agriculture',
+        groupName: 'Sectors',
     },
     {
         id: '2',
-        label: 'Cross',
-        labelGroup: 'Sectors',
+        name: 'Cross',
+        groupName: 'Sectors',
     },
     {
         id: '3',
-        label: 'Education',
-        labelGroup: 'Sectors',
+        name: 'Education',
+        groupName: 'Sectors',
     },
     {
         id: '4',
-        label: 'Food Security',
-        labelGroup: 'Sectors',
+        name: 'Food Security',
+        groupName: 'Sectors',
     },
     {
         id: '5',
-        label: 'Health',
-        labelGroup: 'Sectors',
+        name: 'Health',
+        groupName: 'Sectors',
     },
     {
         id: '6',
-        label: 'Critical',
-        labelGroup: 'Severity',
+        name: 'Critical',
+        groupName: 'Severity',
     },
     {
         id: '7',
-        label: 'Major',
-        labelGroup: 'Severity',
+        name: 'Major',
+        groupName: 'Severity',
     },
     {
         id: '8',
-        label: 'Minor Problem',
-        labelGroup: 'Severity',
+        name: 'Minor Problem',
+        groupName: 'Severity',
     },
     {
         id: '9',
-        label: 'No Problem',
-        labelGroup: 'Severity',
+        name: 'No Problem',
+        groupName: 'Severity',
     },
     {
         id: '10',
-        label: 'Of Concern',
-        labelGroup: 'Severity',
+        name: 'Of Concern',
+        groupName: 'Severity',
     },
     {
         id: '11',
-        label: 'Environment',
-        labelGroup: 'Context',
+        name: 'Environment',
+        groupName: 'Context',
     },
     {
         id: '12',
-        label: 'Socio Cultural',
-        labelGroup: 'Context',
+        name: 'Socio Cultural',
+        groupName: 'Context',
     },
     {
         id: '13',
-        label: 'Economy',
-        labelGroup: 'Context',
+        name: 'Economy',
+        groupName: 'Context',
     },
     {
         id: '14',
-        label: 'Demography',
-        labelGroup: 'Context',
+        name: 'Demography',
+        groupName: 'Context',
     },
     {
         id: '15',
-        label: 'Legal and Policy',
-        labelGroup: 'Context',
+        name: 'Legal and Policy',
+        groupName: 'Context',
     },
     {
         id: '16',
-        label: 'Security and Stability',
-        labelGroup: 'Context',
+        name: 'Security and Stability',
+        groupName: 'Context',
     },
     {
         id: '17',
-        label: 'Politics',
-        labelGroup: 'Context',
+        name: 'Politics',
+        groupName: 'Context',
     },
     {
         id: '18',
-        label: 'Type and Characteristics',
-        labelGroup: 'Shock and Event',
+        name: 'Type and Characteristics',
+        groupName: 'Shock and Event',
     },
     {
         id: '19',
-        label: 'Underlying Aggravating Factors',
-        labelGroup: 'Shock and Event',
+        name: 'Underlying Aggravating Factors',
+        groupName: 'Shock and Event',
     },
     {
         id: '20',
-        label: 'Hazard Threats',
-        labelGroup: 'Shock and Event',
+        name: 'Hazard Threats',
+        groupName: 'Shock and Event',
     },
 ];
 
