@@ -235,7 +235,7 @@ function Connector(props: Props) {
                         name={undefined}
                         value={searchText}
                         onChange={setSearchText}
-                        label="Search"
+                        placeholder="Search"
                         icons={<IoSearch />}
                     />
                 )}
