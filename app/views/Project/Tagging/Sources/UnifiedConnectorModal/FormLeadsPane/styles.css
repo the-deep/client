@@ -39,10 +39,6 @@
             padding: 0;
             overflow-y: auto;
 
-            .lead-input {
-                padding: 0;
-            }
-
             .preview {
                 flex-basis: 40%;
             }

@@ -34,6 +34,8 @@ import ConnectorSourceLeadItem from '../LeadsPane/ConnectorSourceItem/ConnectorS
 
 import styles from './styles.css';
 
+const leadKeySelector = (lead: PartialLeadType) => lead.clientId;
+
 const LEAD_OPTIONS = gql`
     query UnifiedConnectorLeadOptions(
         $projectId: ID!,
@@ -226,7 +228,7 @@ function FormLeadsPane(props: Props) {
                 <VirtualizedListView
                     className={styles.list}
                     itemHeight={48}
-                    keySelector={(item) => item.clientId}
+                    keySelector={leadKeySelector}
                     data={submittableLeads}
                     renderer={ConnectorSourceLeadItem}
                     rendererClassName={styles.leadItem}
