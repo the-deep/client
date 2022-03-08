@@ -113,7 +113,7 @@ function Matrix2dTagInput(props: Props) {
 
     const columnKeysInMappings = useMemo(() => {
         const list = mappings?.filter((mappingItem): mappingItem is ColMappingItem => (
-            mappingItem.tagId === selectedTag
+            mappingItem.tag === selectedTag
             && mappingItem.association.type === 'COLUMN'
         ));
         return listToMap(
@@ -142,7 +142,7 @@ function Matrix2dTagInput(props: Props) {
 
     const subRowKeysInMappings = useMemo(() => {
         const list = mappings?.filter((mappingItem): mappingItem is SubRowMappingItem => (
-            mappingItem.tagId === selectedTag
+            mappingItem.tag === selectedTag
             && mappingItem.association.type === 'SUB_ROW'
         ));
         return listToMap(
@@ -171,7 +171,7 @@ function Matrix2dTagInput(props: Props) {
 
     const subColumnKeysInMappings = useMemo(() => {
         const list = mappings?.filter((mappingItem): mappingItem is SubColumnMappingItem => (
-            mappingItem.tagId === selectedTag
+            mappingItem.tag === selectedTag
             && mappingItem.association.type === 'SUB_COLUMN'
         ));
         return listToMap(
@@ -215,7 +215,7 @@ function Matrix2dTagInput(props: Props) {
             return;
         }
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tagId
+            selectedTag === mapping.tag
             && mapping.association.type === 'COLUMN'
             && mapping.association.columnKey === columnKey
         ));
@@ -229,14 +229,16 @@ function Matrix2dTagInput(props: Props) {
             onMappingsChange([
                 ...(mappings ?? []),
                 {
-                    tagId: selectedTag,
-                    widgetPk: widget.id,
+                    tag: selectedTag,
+                    widget: widget.id,
                     widgetType: widget.widgetId,
                     association: {
                         type: 'COLUMN',
                         columnKey,
                     },
-                },
+                // FIXME: need to cast here because we cannot set id
+                // and a proper fix would require more time
+                } as Matrix2dMappingsItem,
             ], widget.id);
         }
     }, [
@@ -252,7 +254,7 @@ function Matrix2dTagInput(props: Props) {
         }
 
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tagId
+            selectedTag === mapping.tag
             && mapping.association.type === 'SUB_ROW'
             && mapping.association.subRowKey === subRowKey
         ));
@@ -272,19 +274,22 @@ function Matrix2dTagInput(props: Props) {
                 return;
             }
 
-            onMappingsChange([
+            const newMappings = [
                 ...(mappings ?? []),
                 {
-                    tagId: selectedTag,
-                    widgetPk: widget.id,
+                    tag: selectedTag,
+                    widget: widget.id,
                     widgetType: 'MATRIX2D',
                     association: {
                         type: 'SUB_ROW',
                         subRowKey,
                         rowKey,
                     },
-                },
-            ], widget.id);
+                // FIXME: need to cast here because we cannot set id
+                // and a proper fix would require more time
+                } as Matrix2dMappingsItem,
+            ];
+            onMappingsChange(newMappings, widget.id);
         }
     }, [
         sortedSubRows,
@@ -300,7 +305,7 @@ function Matrix2dTagInput(props: Props) {
         }
 
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tagId
+            selectedTag === mapping.tag
             && mapping.association.type === 'SUB_COLUMN'
             && mapping.association.subColumnKey === subColumnKey
         ));
@@ -321,19 +326,23 @@ function Matrix2dTagInput(props: Props) {
                 return;
             }
 
-            onMappingsChange([
+            const newMappings = [
                 ...(mappings ?? []),
                 {
-                    tagId: selectedTag,
-                    widgetPk: widget.id,
+                    tag: selectedTag,
+                    widget: widget.id,
                     widgetType: 'MATRIX2D',
                     association: {
                         type: 'SUB_COLUMN',
                         subColumnKey,
                         columnKey,
                     },
-                },
-            ], widget.widgetId);
+                // FIXME: need to cast here because we cannot set id
+                // and a proper fix would require more time
+                } as Matrix2dMappingsItem,
+            ];
+
+            onMappingsChange(newMappings, widget.id);
         }
     }, [
         sortedSubColumns,

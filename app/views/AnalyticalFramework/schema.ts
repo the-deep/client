@@ -17,7 +17,7 @@ type FormType = FrameworkInput & {
 };
 // NOTE: they will be handled internally
 // FIXME: should previewImage be added here?
-export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage'>;
+export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondaryTagging' | 'previewImage' | 'predictionTagsMapping'>;
 
 export type WidgetsType = NonNullable<PartialFormType['secondaryTagging']>;
 export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
@@ -101,14 +101,19 @@ const schema: FormSchema = {
 
             primaryTagging: sectionsSchema,
             secondaryTagging: widgetsSchema,
+
+            // FIXME: add stricter typings
+            predictionTagsMapping: [],
         };
 
         if (value?.isVisualizationEnabled) {
             baseSchema = {
                 ...baseSchema,
                 properties: {
+                    // FIXME: define return types
                     fields: () => ({
                         stats_config: {
+                            // FIXME: define return types
                             fields: () => ({
                                 matrix1d: [requiredCondition],
                                 matrix2d: [requiredCondition],

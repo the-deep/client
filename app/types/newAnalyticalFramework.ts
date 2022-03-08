@@ -11,6 +11,7 @@ import {
 import {
     // NOTE: Taking WidgetType instead of WidgetInputType
     WidgetType as WidgetRaw,
+    AnalysisFrameworkPredictionMappingType as MappingsItemRaw,
     WidgetWidgetTypeEnum as WidgetTypes,
     AnalysisFrameworkFilterType as AnalysisFrameworkFilterTypeRaw,
 } from '#generated/types';
@@ -317,6 +318,7 @@ type Conditional = NumberConditional
     | ScaleConditional
     | GeoLocationConditional;
 
+// FIXME: id should not be nullable for Query and nullable for Mutation
 // NOTE: we are replacing these with more strict types
 export type BaseWidget = Omit<WidgetRaw, 'widgetId' | 'properties' | 'widgetIdDisplay' | 'widthDisplay' | 'conditional'> & {
     conditional?: Conditional;
@@ -1405,12 +1407,8 @@ export const mockAssistedTags: AssistedTag[] = [
     },
 ];
 
-interface MappingsItemBase {
-    tagId: string; // NOTE: AssistedTag['id'];
-    // NOTE: This is called widgetPK as it conflicts with widgetId which
-    // currently means type of widget
-    widgetPk: string;
-}
+// NOTE: id should not be nullable for Query and nullable for Mutation
+type MappingsItemBase = Omit<MappingsItemRaw, 'association' | 'widgetType'>;
 
 export interface Matrix1dMappingsItem extends MappingsItemBase {
     widgetType: 'MATRIX1D';
@@ -1457,21 +1455,15 @@ export interface MultiSelectMappingsItem extends MappingsItemBase {
     };
 }
 
-export interface OrganigramMappingsItem extends MappingsItemBase {
-    widgetType: 'ORGANIGRAM';
-    association: {
-        optionKey: string;
-    };
-}
-
+// FIXME: Probably need to extend this from base mappings item
 export interface GeoMappingsItem {
     widgetType: 'GEO';
-    widgetPk: string;
+    widget: string;
 }
 
 export interface NumberMappingsItem {
     widgetType: 'NUMBER';
-    widgetPk: string;
+    widget: string;
 }
 
 export type MappingsItem = Matrix1dMappingsItem
@@ -1479,7 +1471,6 @@ export type MappingsItem = Matrix1dMappingsItem
     | ScaleMappingsItem
     | SelectMappingsItem
     | MultiSelectMappingsItem
-    | OrganigramMappingsItem
     | NumberMappingsItem
     | GeoMappingsItem;
 
