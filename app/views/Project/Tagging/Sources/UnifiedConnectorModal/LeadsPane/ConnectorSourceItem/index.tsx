@@ -243,16 +243,30 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
 
     return (
         <ControlledExpandableContainer
+            className={styles.connectorSourceItem}
             name={connectorSourceId}
             heading={title}
             onExpansionChange={handleExpansionChange}
             expanded={selected}
+            contentClassName={styles.content}
+            // NOTE: Currently footer is shown even when the container is collapsed
+            footerActions={selected && (
+                <Pager
+                    activePage={activePage}
+                    itemsCount={
+                        data?.project?.unifiedConnector?.connectorSourceLeads?.totalCount ?? 0
+                    }
+                    onActivePageChange={setActivePage}
+                    maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                    itemsPerPageControlHidden
+                />
+            )}
             withoutBorder
         >
             <ListView
                 className={styles.connectorLeadList}
                 keySelector={connectorLeadKeySelector}
-                data={data?.project?.unifiedConnector?.connectorSourceLeads?.results ?? undefined}
+                data={data?.project?.unifiedConnector?.connectorSourceLeads?.results}
                 renderer={ConnectorSourceLeadItem}
                 rendererParams={connectorLeadRendererParams}
                 rendererClassName={styles.connectorLeadItem}
@@ -268,13 +282,6 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
                 emptyMessage="No sources found."
                 messageIconShown
                 messageShown
-            />
-            <Pager
-                activePage={activePage}
-                itemsCount={data?.project?.unifiedConnector?.connectorSourceLeads?.totalCount ?? 0}
-                onActivePageChange={setActivePage}
-                maxItemsPerPage={MAX_ITEMS_PER_PAGE}
-                itemsPerPageControlHidden
             />
         </ControlledExpandableContainer>
     );

@@ -5,8 +5,8 @@ import {
     ListView,
     TextOutput,
     RawButton,
-    Button,
-    ContainerCard,
+    QuickActionButton,
+    Container,
 } from '@the-deep/deep-ui';
 import {
     IoRefreshOutline,
@@ -141,18 +141,21 @@ function Connector(props: Props) {
     );
 
     return (
-        <ContainerCard
-            className={_cs(className, styles.connector)}
+        <Container
+            className={_cs(className, styles.projectsConnectorPane)}
             heading="Project Connectors"
+            headerClassName={styles.header}
+            headingSize="small"
             headerActions={(
-                <Button
+                <QuickActionButton
                     name={undefined}
                     onClick={refetch}
                     disabled={connectorsGetPending}
+                    title="Refresh connectors"
                     variant="secondary"
                 >
                     <IoRefreshOutline />
-                </Button>
+                </QuickActionButton>
             )}
         >
             <ListView
@@ -168,7 +171,7 @@ function Connector(props: Props) {
                 messageIconShown
             />
             {children}
-        </ContainerCard>
+        </Container>
     );
 }
 

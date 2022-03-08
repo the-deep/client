@@ -66,7 +66,6 @@ function ConnectorSourceLeadItem<N>(props: ConnectorSourceLeadItemProps<N>) {
             )}
         >
             <Checkbox
-                className={styles.checkbox}
                 name={undefined}
                 onChange={handleCheckboxClick}
                 value={checked}

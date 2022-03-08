@@ -1,4 +1,10 @@
-.connector {
+.projects-connector-pane {
+    background-color: var(--dui-color-foreground);
+
+    .header {
+        padding: 0 var(--dui-spacing-medium);
+    }
+
     .connector-list {
         .item {
             display: flex;

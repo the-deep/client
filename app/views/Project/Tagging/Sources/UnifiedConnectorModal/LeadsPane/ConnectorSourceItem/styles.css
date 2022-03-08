@@ -1,9 +1,15 @@
-.connector-lead-list {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+.connector-source-item {
+    .content {
+        margin: calc(var(--spacing) * -1);
+    }
 
-    .connector-lead-item {
-        flex-shrink: 0;
+    .connector-lead-list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .connector-lead-item {
+            flex-shrink: 0;
+        }
     }
 }

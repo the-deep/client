@@ -1,7 +1,10 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import {
     ListView,
+    Container,
     Kraken,
+    Message,
+    Button,
 } from '@the-deep/deep-ui';
 import {
     _cs,
@@ -211,12 +214,21 @@ function FormLeadsPane(props: Props) {
         [leads, selections],
     );
 
+    const handleAddLeadButtonClick = useCallback(() => {
+        console.warn('add');
+    }, []);
+
+    const handleIgnoreLeadButtonClick = useCallback(() => {
+        console.warn('ignore');
+    }, []);
+
     return (
         <div className={_cs(className, styles.leadsPane)}>
-            <div className={styles.leadsListingPane}>
-                <h3>
-                    Sources added
-                </h3>
+            <Container
+                className={styles.leadsListingPane}
+                heading="Sources added"
+                headingSize="small"
+            >
                 <ListView
                     keySelector={(item) => item.clientId}
                     data={submittableLeads}
@@ -235,10 +247,34 @@ function FormLeadsPane(props: Props) {
                     messageIconShown
                     messageShown
                 />
-            </div>
+            </Container>
             <div className={styles.leadDetailPane}>
                 {currentLead ? (
-                    <>
+                    <Container
+                        className={styles.leadContainer}
+                        heading={currentLead.title || 'Unnamed'}
+                        headingSize="extraSmall"
+                        headerActions={(
+                            <>
+                                <Button
+                                    name={undefined}
+                                    onClick={handleIgnoreLeadButtonClick}
+                                    variant="secondary"
+                                    disabled
+                                >
+                                    Ignore
+                                </Button>
+                                <Button
+                                    name={undefined}
+                                    onClick={handleAddLeadButtonClick}
+                                    variant="secondary"
+                                    disabled
+                                >
+                                    Add
+                                </Button>
+                            </>
+                        )}
+                    >
                         <LeadInput
                             name={currentLeadIndex}
                             value={currentLead}
@@ -264,11 +300,12 @@ function FormLeadsPane(props: Props) {
                             key={currentLead.clientId}
                             url={currentLead.url ?? undefined}
                         />
-                    </>
+                    </Container>
                 ) : (
-                    <div>
-                        Please select a source
-                    </div>
+                    <Message
+                        message="Please select a source"
+                        icon={<Kraken variant="coffee" />}
+                    />
                 )}
             </div>
         </div>
