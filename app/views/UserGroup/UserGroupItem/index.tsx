@@ -25,10 +25,11 @@ import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
 import { MultiResponse } from '#types';
 
-import { UserGroup as UserGroupType, Membership } from '../AddUsergroupModal';
+import { Membership } from '../AddUsergroupModal';
 import AddUserModal from './AddUserModal';
 import MembershipActionCell, { Props as MembershipActionCellProps } from './MembershipActionCell';
 import UserGroupActionCell from './UserGroupActionCell';
+import { UserGroupType } from '#generated/types';
 import styles from './styles.css';
 
 const MAX_ITEMS_PER_PAGE = 20;
@@ -40,7 +41,7 @@ interface User {
     role: 'admin' | 'normal';
 }
 
-interface Props {
+export interface Props {
     className?: string;
     activeUserGroupId?: string;
     userGroupId: string;
@@ -155,7 +156,7 @@ function UserGroupItem(props: Props) {
                 membershipId,
                 onEditClick: handleEditMemberClick,
                 onDeleteClick: memberDeleteTrigger,
-                disabled: (userGroup.role !== 'admin') || String(data.member) === activeUserId,
+                disabled: (userGroup?.currentUserRole !== 'ADMIN') || String(data.member) === activeUserId,
             }),
             columnWidth: 96,
         };
@@ -254,7 +255,7 @@ function UserGroupItem(props: Props) {
                     editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
                     deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
                     deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
-                    disabled={userGroup.role === 'normal'}
+                    disabled={userGroup.currentUserRole === 'NORMAL'}
                 />
             )}
         >
