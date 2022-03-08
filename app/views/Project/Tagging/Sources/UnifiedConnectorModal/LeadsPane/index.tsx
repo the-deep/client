@@ -51,6 +51,26 @@ import ConnectorSourceItem, { ConnectorSourceLead } from './ConnectorSourceItem'
 
 import styles from './styles.css';
 
+function useStateWithCallback<S, T>(
+    defaultValue: S | (() => S),
+    callback: (value: T) => void,
+    callbackValue: T,
+): [S, React.Dispatch<React.SetStateAction<S>>] {
+    const [state, setState] = useState(defaultValue);
+
+    const handler: typeof setState = (value) => {
+        setState(value);
+        callback(callbackValue);
+    };
+
+    const handleChange = useCallback(
+        handler,
+        [callback, callbackValue],
+    );
+
+    return [state, handleChange];
+}
+
 interface Selection {
     [key: string]: {
         connectorId: string,
@@ -216,15 +236,27 @@ function LeadsPane(props: Props) {
     const { user } = useContext(UserContext);
     const alert = useAlert();
 
+    const [activePage, setActivePage] = useState(1);
+
     // Filters
-    const [extractionStatus, setExtractionStatus] = useState<string[] | undefined>();
-    const [blocked, setBlocked] = useState<boolean | undefined>(false);
+    const [extractionStatus, setExtractionStatus] = useStateWithCallback<
+        string[] | undefined,
+        number
+    >(undefined, setActivePage, 1);
+    const [blocked, setBlocked] = useStateWithCallback<
+        boolean | undefined,
+        number
+    >(false, setActivePage, 1);
 
     // Temporary selections
     const [
         selectedConnectorSource,
         setSelectedConnectorSource,
-    ] = useState<string | undefined>();
+    ] = useStateWithCallback<
+        string | undefined,
+        number
+    >(undefined, setActivePage, 1);
+
     const [
         selectedConnectorSourceLead,
         setSelectedConnectorLead,
@@ -331,7 +363,7 @@ function LeadsPane(props: Props) {
             setSelectedConnectorSource(value);
             setSelectedConnectorLead(undefined);
         },
-        [],
+        [setSelectedConnectorSource],
     );
 
     const handleSelectionsForSelectedConnector = useCallback(
@@ -393,7 +425,6 @@ function LeadsPane(props: Props) {
         },
     );
 
-    // FIXME: handle errors
     const [
         updateConnectorLeadBlockStatus,
         { loading: updateConnectorLeadBlockStatusLoading },
@@ -451,6 +482,7 @@ function LeadsPane(props: Props) {
     const handleAddRemoveLeadButtonClick = useCallback(
         (connectorSourceLead: ConnectorSourceLead) => {
             if (!selectedConnectorSource) {
+                // eslint-disable-next-line no-console
                 console.error('ConnectorSource or ConnectorSourceLead is not selected');
                 return;
             }
@@ -516,6 +548,9 @@ function LeadsPane(props: Props) {
         selections,
         onSelectionChange: handleSelectionsForSelectedConnector,
 
+        activePage,
+        setActivePage,
+
         extractionStatus: extractionStatus as (ConnectorLeadExtractionStatusEnum[] | undefined),
         blocked,
         disabled,
@@ -535,6 +570,8 @@ function LeadsPane(props: Props) {
         extractionStatus,
         blocked,
         disabled,
+
+        activePage,
     ]);
 
     const connector = connectorDetailsData?.project?.unifiedConnector?.unifiedConnector;
