@@ -33,4 +33,10 @@
             }
         }
     }
+
+    .show-more-button {
+        align-self: flex-start;
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+        color: var(--dui-color-accent);
+    }
 }

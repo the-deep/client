@@ -7,9 +7,11 @@ import {
     RawButton,
     QuickActionButton,
     Container,
+    Button,
 } from '@the-deep/deep-ui';
 import {
     IoRefreshOutline,
+    IoChevronForward,
 } from 'react-icons/io5';
 
 import {
@@ -90,6 +92,8 @@ const PROJECT_CONNECTORS_LIST = gql`
     }
 `;
 
+const PAGE_SIZE = 10;
+
 interface Props {
     className?: string;
     projectId: string;
@@ -120,12 +124,15 @@ function Connector(props: Props) {
         data,
         loading: connectorsGetPending,
         error,
+        fetchMore,
         refetch,
     } = useQuery<ProjectConnectorsListQuery, ProjectConnectorsListQueryVariables>(
         PROJECT_CONNECTORS_LIST,
         {
             variables: {
                 projectId,
+                pageSize: PAGE_SIZE,
+                page: 1,
             },
             onCompleted: (response) => {
                 const unifiedConnectors = response?.project?.unifiedConnector
@@ -139,6 +146,51 @@ function Connector(props: Props) {
             },
         },
     );
+
+    const connectors = data?.project?.unifiedConnector?.unifiedConnectors;
+    const connectorsCount = connectors?.totalCount ?? 0;
+    const connectorList = connectors?.results;
+
+    const handleShowMoreButtonClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                projectId,
+                pageSize: PAGE_SIZE,
+                page: (connectorList?.length ?? 0) / PAGE_SIZE + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.project) {
+                    return previousResult;
+                }
+                const oldConnectors = previousResult.project.unifiedConnector?.unifiedConnectors;
+                const newConnectors = fetchMoreResult?.project?.unifiedConnector?.unifiedConnectors;
+
+                if (!newConnectors) {
+                    return previousResult;
+                }
+                return ({
+                    ...previousResult,
+                    project: {
+                        ...previousResult.project,
+                        unifiedConnector: {
+                            ...previousResult.project.unifiedConnector,
+                            unifiedConnectors: {
+                                ...newConnectors,
+                                results: [
+                                    ...(oldConnectors?.results ?? []),
+                                    ...(newConnectors.results ?? []),
+                                ],
+                            },
+                        },
+                    },
+                });
+            },
+        });
+    }, [
+        projectId,
+        fetchMore,
+        connectorList,
+    ]);
 
     return (
         <Container
@@ -170,6 +222,20 @@ function Connector(props: Props) {
                 messageShown
                 messageIconShown
             />
+            {(connectorsCount > 0 && ((connectorList?.length ?? 0) < connectorsCount)) && (
+                <Button
+                    className={styles.showMoreButton}
+                    variant="action"
+                    name={undefined}
+                    onClick={handleShowMoreButtonClick}
+                    disabled={connectorsGetPending}
+                    actions={(
+                        <IoChevronForward />
+                    )}
+                >
+                    Show More
+                </Button>
+            )}
             {children}
         </Container>
     );

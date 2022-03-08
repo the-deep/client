@@ -252,6 +252,7 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
             // NOTE: Currently footer is shown even when the container is collapsed
             footerActions={selected && (
                 <Pager
+                    className={styles.pager}
                     activePage={activePage}
                     itemsCount={
                         data?.project?.unifiedConnector?.connectorSourceLeads?.totalCount ?? 0
