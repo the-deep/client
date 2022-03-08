@@ -6,6 +6,11 @@ import {
     isDefined,
 } from '@togglecorp/fujs';
 import {
+    Error,
+    SetValueArg,
+    analyzeErrors,
+} from '@togglecorp/toggle-form';
+import {
     ListView,
     Card,
     Container,
@@ -15,14 +20,14 @@ import {
 } from '@the-deep/deep-ui';
 
 import {
-    mockAssistedTags,
-    AssistedTag,
     Widget,
     MappingsItem,
     isCategoricalMappings,
     categoricalWidgets,
 } from '#types/newAnalyticalFramework';
-import useLocalStorage from '#hooks/useLocalStorage';
+import {
+    AssistedPredictionTagsQuery,
+} from '#generated/types';
 
 import { WidgetsType } from '../schema';
 import CheckButton from './CheckButton';
@@ -31,35 +36,52 @@ import CellGroup from './CellGroup';
 
 import styles from './styles.css';
 
-const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.groupName;
+type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
+
+// FIXME: Change tagId grouping to groupName after we get it from server
+const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.tagId;
 const nlpLabelKeySelector = (tag: AssistedTag) => tag.id;
 const widgetKeySelector = (widget: Widget) => widget.clientId;
 
-interface Props {
+interface Props<K extends string> {
     className?: string;
     allWidgets: WidgetsType | undefined;
     assistedTaggingEnabled: boolean | undefined;
     onAssistedTaggingStatusChange: (newVal: boolean) => void;
     pending?: boolean;
-    frameworkId?: string;
+    assistedPredictionTags: AssistedTag[] | undefined | null;
+
+    name: K;
+    value: MappingsItem[] | undefined;
+    error: Error<MappingsItem[]> | undefined;
+    onChange: (value: SetValueArg<MappingsItem[] | undefined>, name: K) => void;
 }
 
-function AssistedTagging(props: Props) {
+function AssistedTagging<K extends string>(props: Props<K>) {
     const {
-        frameworkId,
         className,
         allWidgets,
         assistedTaggingEnabled,
         pending,
         onAssistedTaggingStatusChange,
+        assistedPredictionTags,
+        name,
+        value: mappings,
+        error,
+        onChange,
     } = props;
 
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
-    // FIXME: Remove this later after it is saveable in server
-    const [mappings, setMappings] = useLocalStorage<MappingsItem[] | undefined>(
-        `mappings-${frameworkId}`,
-        undefined,
-    );
+
+    const errored = analyzeErrors(error);
+
+    type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
+    const setMappings = useCallback<SetMappingsFn>((newMappings) => {
+        onChange(newMappings, name);
+    }, [
+        onChange,
+        name,
+    ]);
 
     const widgets = useMemo(() => (
         allWidgets
@@ -80,14 +102,14 @@ function AssistedTagging(props: Props) {
     const mappingsByTagId = useMemo(() => (
         listToGroupList(
             categoricalMappings,
-            (mappingItem) => mappingItem.tagId,
+            (mappingItem) => mappingItem.tag,
         )
     ), [categoricalMappings]);
 
     const geoWidgetsMappingValue = useMemo(() => (
         listToMap(
             mappings?.filter((mapping) => mapping.widgetType === 'GEO'),
-            (mapping) => mapping.widgetPk,
+            (mapping) => mapping.widget,
             () => true,
         )
     ), [mappings]);
@@ -99,16 +121,16 @@ function AssistedTagging(props: Props) {
     const handleGeoWidgetClick = useCallback((widgetPk: string) => {
         setMappings((oldMappings = []) => {
             const selectedWidgetIndex = oldMappings.findIndex(
-                (mapping) => mapping.widgetPk === widgetPk,
+                (mapping) => mapping.widget === widgetPk,
             );
             if (selectedWidgetIndex !== -1) {
-                return oldMappings.filter((mapping) => mapping.widgetPk !== widgetPk);
+                return oldMappings.filter((mapping) => mapping.widget !== widgetPk);
             }
             return [
                 ...oldMappings,
                 {
                     widgetType: 'GEO',
-                    widgetPk,
+                    widget: widgetPk,
                 },
             ];
         });
@@ -119,11 +141,14 @@ function AssistedTagging(props: Props) {
         widgetPk: string,
     ) => {
         setMappings((oldMappings = []) => {
-            const filteredMappings = oldMappings.filter((mapping) => mapping.widgetPk !== widgetPk);
-            return [
+            const filteredMappings = oldMappings.filter(
+                (mapping) => mapping.widget !== widgetPk,
+            );
+            const finalMappings = [
                 ...filteredMappings,
                 ...newWidgetMappings,
             ];
+            return finalMappings;
         });
     }, [setMappings]);
 
@@ -152,9 +177,10 @@ function AssistedTagging(props: Props) {
         geoWidgetsMappingValue,
         handleGeoWidgetClick,
     ]);
+
     const widgetRendererParams = useCallback((_: string, widget: Widget) => ({
         widget,
-        mappings: categoricalMappings?.filter((mapping) => mapping.widgetPk === widget.id),
+        mappings: categoricalMappings,
         onMappingsChange: handleWidgetMappingsChange,
         selectedTag,
     }), [
@@ -167,7 +193,7 @@ function AssistedTagging(props: Props) {
         <div className={_cs(className, styles.assistedTagging)}>
             <Header
                 className={styles.header}
-                heading="Assisted Tagging"
+                heading={errored ? 'Assisted Tagging (errored)' : 'Assisted Tagging'}
                 headingSize="small"
                 // FIXME: Get actual description from DFS
                 description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
@@ -189,7 +215,7 @@ function AssistedTagging(props: Props) {
                         heading="NLP Framework"
                     >
                         <ListView
-                            data={mockAssistedTags}
+                            data={assistedPredictionTags}
                             renderer={CheckButton}
                             rendererParams={nlpRendererParams}
                             keySelector={nlpLabelKeySelector}
