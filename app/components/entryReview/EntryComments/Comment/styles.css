@@ -23,6 +23,7 @@
         .comment-section {
             display: flex;
             align-items: center;
+            gap: var(--dui-spacing-medium);
 
             .user-action {
                 display: inline;

@@ -27,13 +27,13 @@ import styles from './styles.css';
 type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 const REVIEW_COMMENTS = gql`
-    query ReviewComments(
-        $projectId: ID!,
-        $ordering: [EntryReviewCommentOrderingEnum!],
-        $page: Int,
-        $pageSize: Int,
-        $entry: ID!,
-        ) {
+query ReviewComments(
+    $projectId: ID!,
+    $ordering: [EntryReviewCommentOrderingEnum!],
+    $page: Int,
+    $pageSize: Int,
+    $entry: ID!,
+    ) {
         project(id: $projectId) {
             id
             entry(id: $entry) {
@@ -197,7 +197,7 @@ function EntryComments(props: Props) {
                         <CommentForm
                             entryId={entryId}
                             projectId={projectId}
-                            commentAssignee={commentsResponse?.project?.entry?.createdBy}
+                            commentAssignee={commentsResponse.project?.entry?.createdBy}
                             onSave={handleEntryCommentSave}
                         />
                     )}

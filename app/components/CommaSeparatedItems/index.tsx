@@ -34,7 +34,11 @@ function CommaSeparatedItems<T>(props: Props<T>) {
         >
             {labelSelector(item)}
         </span>
-    )), []);
+    )), [
+        items,
+        keySelector,
+        labelSelector,
+    ]);
 
     if (!list) {
         return null;

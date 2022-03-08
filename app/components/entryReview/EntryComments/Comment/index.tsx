@@ -5,7 +5,6 @@ import {
     QuickActionButton,
     DateOutput,
     Container,
-    Card,
 } from '@the-deep/deep-ui';
 
 import { useModalState } from '#hooks/stateManagement';
@@ -108,11 +107,9 @@ function Comment(props: Props) {
                             onEditCancel={hideEditModal}
                         />
                     ) : (
-                        <Card
-                            className={styles.comment}
-                        >
+                        <div className={styles.comment}>
                             {text}
-                        </Card>
+                        </div>
                     )}
                 </div>
                 <div className={styles.info}>

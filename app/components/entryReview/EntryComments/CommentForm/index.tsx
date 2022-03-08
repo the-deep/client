@@ -21,13 +21,8 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import { EntryAction } from '#components/entryReview/commentConstants';
 import UserContext from '#base/context/UserContext';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
-import {
-    ReviewCommentsQuery,
-} from '#generated/types';
 
 import styles from './styles.css';
-
-type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
 
 interface Comment {
     text: string;
@@ -48,7 +43,7 @@ const schema: FormSchema = {
 
 interface Props {
     className?: string;
-    onSave: (response: CommentItem) => void;
+    onSave: () => void;
     entryId: string;
     projectId: string;
     commentAssignee: {
@@ -94,13 +89,14 @@ function CommentForm(props: Props) {
     const {
         pending,
         trigger: editComment,
-    } = useLazyRequest<CommentItem, FormType>({
+    } = useLazyRequest<unknown, FormType>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: (ctx) => ctx,
-        onSuccess: (response) => {
+        onSuccess: () => {
+            // NOTE: We're resetting the form after one is submitted
             setValue(defaultValue);
-            onSave(response);
+            onSave();
             alert.show(
                 'Successfully added comment to the selected entry.',
                 { variant: 'success' },
@@ -127,6 +123,7 @@ function CommentForm(props: Props) {
         >
             <Container
                 className={styles.container}
+                contentClassName={styles.content}
                 footerActions={(
                     <Button
                         name={undefined}

@@ -186,13 +186,14 @@ function EditCommentForm(props: Props) {
                         </Button>
                     </>
                 )}
+                contentClassName={styles.content}
             >
                 <NonFieldError
                     error={error}
                 />
                 <TextArea
                     name="text"
-                    rows={3}
+                    rows={5}
                     value={value.text}
                     onChange={setFieldValue}
                     error={error?.text}
