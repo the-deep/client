@@ -1,8 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { PendingMessage } from '@the-deep/deep-ui';
-import {
-    prepareUrlParams,
-} from '@togglecorp/toggle-request';
 
 import { useRequest } from '#base/utils/restRequest';
 import { proxyEndpoint } from '#base/configs/env';
@@ -22,7 +19,8 @@ const domainsToProxy = [
 function getProxiedUrl(url: string) {
     const urlObject = new URL(url);
     if (domainsToProxy.includes(urlObject.host)) {
-        return `${proxyEndpoint}?${prepareUrlParams({ url })}`;
+        // NOTE: proxy server does not support encoded url params
+        return `${proxyEndpoint}?url=${url}`;
     }
     return url;
 }
