@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState, useCallback } from 'react';
+import React, { useContext, Suspense, useMemo, useState, useCallback } from 'react';
 import {
     Switch,
     Route,
@@ -13,6 +13,7 @@ import {
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
+import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
 import SubNavbar, { SubNavbarIcons, SubNavbarActions } from '#components/SubNavbar';
@@ -33,7 +34,8 @@ interface Props {
 
 function Tagging(props: Props) {
     const { className } = props;
-    const { project } = React.useContext(ProjectContext);
+    const { user } = useContext(UserContext);
+    const { project } = useContext(ProjectContext);
 
     const defaultRoute = generatePath(routes.sources.path, { projectId: project?.id });
 
@@ -72,6 +74,9 @@ function Tagging(props: Props) {
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
 
+    const isConnectorsAccessible = !!user
+        ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
+
     const subNavbarComponents = (
         <>
             <SubNavbarIcons>
@@ -93,12 +98,14 @@ function Tagging(props: Props) {
                     >
                         Add sources
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={showUnifiedConnectorModal}
-                        name={undefined}
-                    >
-                        Add sources from connectors
-                    </DropdownMenuItem>
+                    {isConnectorsAccessible && (
+                        <DropdownMenuItem
+                            onClick={showUnifiedConnectorModal}
+                            name={undefined}
+                        >
+                            Add sources from connectors
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenu>
             </SubNavbarActions>
         </>
