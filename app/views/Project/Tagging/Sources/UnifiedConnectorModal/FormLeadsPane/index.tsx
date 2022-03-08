@@ -163,7 +163,7 @@ function FormLeadsPane(props: Props) {
         [],
     );
 
-    const handleSelectionsChange = useCallback(
+    const handleSelectionRemove = useCallback(
         (lead: PartialLeadType) => {
             const { connectorLead } = lead;
             if (connectorLead) {
@@ -171,6 +171,7 @@ function FormLeadsPane(props: Props) {
                     ...oldValue,
                     [connectorLead]: undefined,
                 }));
+                setSelectedLead(undefined);
             }
         },
         [setSelections],
@@ -186,7 +187,7 @@ function FormLeadsPane(props: Props) {
             selected: datum.clientId === selectedLead,
 
             checked: !!connectorLead && !!selections[connectorLead],
-            onCheckClicked: handleSelectionsChange,
+            onCheckClicked: handleSelectionRemove,
 
             title: datum.title,
             publishedOn: datum.publishedOn,
@@ -202,7 +203,7 @@ function FormLeadsPane(props: Props) {
         leadsError,
         selectedLead,
         handleSelectedLeadChange,
-        handleSelectionsChange,
+        handleSelectionRemove,
         disabled,
     ]);
 
@@ -213,14 +214,6 @@ function FormLeadsPane(props: Props) {
         },
         [leads, selections],
     );
-
-    const handleAddLeadButtonClick = useCallback(() => {
-        console.warn('add');
-    }, []);
-
-    const handleIgnoreLeadButtonClick = useCallback(() => {
-        console.warn('ignore');
-    }, []);
 
     return (
         <div className={_cs(className, styles.leadsPane)}>
@@ -255,24 +248,13 @@ function FormLeadsPane(props: Props) {
                         heading={currentLead.title || 'Unnamed'}
                         headingSize="extraSmall"
                         headerActions={(
-                            <>
-                                <Button
-                                    name={undefined}
-                                    onClick={handleIgnoreLeadButtonClick}
-                                    variant="secondary"
-                                    disabled
-                                >
-                                    Ignore
-                                </Button>
-                                <Button
-                                    name={undefined}
-                                    onClick={handleAddLeadButtonClick}
-                                    variant="secondary"
-                                    disabled
-                                >
-                                    Add
-                                </Button>
-                            </>
+                            <Button
+                                name={currentLead}
+                                onClick={handleSelectionRemove}
+                                variant="secondary"
+                            >
+                                Remove
+                            </Button>
                         )}
                     >
                         <LeadInput
