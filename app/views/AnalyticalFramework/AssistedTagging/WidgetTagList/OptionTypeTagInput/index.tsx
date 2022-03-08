@@ -52,7 +52,7 @@ function ScaleTagInput(props: Props) {
 
     const optionKeysInMappings = useMemo(() => (
         listToMap(
-            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
+            mappings?.filter((mappingItem) => mappingItem.tag === selectedTag),
             (mappingItem) => mappingItem.association.optionKey,
             () => true,
         )
@@ -76,7 +76,7 @@ function ScaleTagInput(props: Props) {
         }
 
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tagId
+            selectedTag === mapping.tag
             && mapping.association.optionKey === cellKey
         ));
 
@@ -89,13 +89,15 @@ function ScaleTagInput(props: Props) {
             onMappingsChange([
                 ...(mappings ?? []),
                 {
-                    tagId: selectedTag,
-                    widgetPk: widget.id,
+                    tag: selectedTag,
+                    widget: widget.id,
                     widgetType: widget.widgetId,
                     association: {
                         optionKey: cellKey,
                     },
-                },
+                // FIXME: need to cast here because we cannot set id
+                // and a proper fix would require more time
+                } as ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem,
             ], widget.id);
         }
     }, [
