@@ -162,7 +162,7 @@ function BulkUploadModal(props: Props) {
                     disabled={
                         formPristine
                         || bulkUpdateLeadsPending
-                        || (formValue?.leads?.length ?? 0) < 1
+                        || (formValue.leads?.length ?? 0) < 1
                     }
                     onClick={handleSubmit}
                 >
