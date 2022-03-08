@@ -1,10 +1,14 @@
 .leads-pane {
     display: flex;
+    padding: 0 var(--dui-spacing-medium);
 
     .leads-listing-pane {
         display: flex;
         flex-basis: 50%;
         flex-direction: column;
+        border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
+        background-color: var(--dui-color-foreground);
+        padding: 0;
 
         .filters {
             display: flex;
@@ -12,13 +16,26 @@
             gap: var(--dui-spacing-medium);
         }
     }
-    .lead-detail-pane {
-        display: flex;
-        flex-basis: 50%;
-        flex-direction: column;
 
-        .preview {
-            flex-basis: 40%;
+    .lead-detail-pane {
+        flex-basis: 50%;
+        padding: 0 var(--dui-spacing-medium);
+        overflow-y: auto;
+
+        .lead-container {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dui-color-foreground);
+            padding: 0;
+            overflow-y: auto;
+
+            .lead-input {
+                padding: 0;
+            }
+
+            .preview {
+                flex-basis: 40%;
+            }
         }
     }
 }
