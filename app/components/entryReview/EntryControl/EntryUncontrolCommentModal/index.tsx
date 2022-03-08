@@ -47,8 +47,8 @@ const defaultFormValue: FormType = {
 
 export interface Props {
     onModalClose: () => void;
-    entryId: number;
-    onControlStatusChange: (entryId: number) => void;
+    entryId: string;
+    onControlStatusChange: (entryId: string) => void;
     className?: string;
     projectId: string;
 }

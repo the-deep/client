@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
+import { useQuery, gql } from '@apollo/client';
 import {
     Pager,
     QuickActionButton,
@@ -14,30 +15,73 @@ import {
 } from 'react-icons/io5';
 
 import {
-    MultiResponse,
-    EntryComment,
-    EntryReviewSummary,
-} from '#types';
+    ReviewCommentsQuery,
+    ReviewCommentsQueryVariables,
+} from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
-import { useRequest } from '#base/utils/restRequest';
 
 import Comment from './Comment';
 import CommentForm from './CommentForm';
 import styles from './styles.css';
 
+type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+
+const REVIEW_COMMENTS = gql`
+query ReviewComments(
+    $projectId: ID!,
+    $ordering: [EntryReviewCommentOrderingEnum!],
+    $page: Int,
+    $pageSize: Int,
+    $entry: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            entry(id: $entry) {
+                id
+                createdBy {
+                    id
+                    displayName
+                }
+            }
+            reviewComments (
+                entry: $entry,
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+            ) {
+                page
+                pageSize
+                totalCount
+                results {
+                    commentType
+                    commentTypeDisplay
+                    createdAt
+                    createdBy {
+                        id
+                        displayName
+                    }
+                    entry
+                    id
+                    text
+                    mentionedUsers {
+                        id
+                        displayName
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export interface Props {
     className?: string;
     activityCount?: number;
-    entryId: number;
+    entryId: string;
     projectId: string;
     onEntryCommentAdd?: () => void;
 }
 
-interface MultiResponseWithSummary<T> extends MultiResponse<T> {
-    summary: EntryReviewSummary;
-}
-
-const commentKeySelector = (d: EntryComment) => d.id;
+const commentKeySelector = (d: CommentItem) => d.id;
 const maxItemsPerPage = 50;
 
 function EntryComments(props: Props) {
@@ -56,20 +100,33 @@ function EntryComments(props: Props) {
         hideCommentModal,
     ] = useModalState(false);
 
+    const commentVariables = useMemo(
+        (): ReviewCommentsQueryVariables | undefined => (
+            (projectId) ? {
+                projectId,
+                entry: entryId,
+                page: activePage,
+                pageSize: maxItemsPerPage,
+            } : undefined
+        ),
+        [
+            projectId,
+            entryId,
+            activePage,
+        ],
+    );
+
     const {
-        pending: commentsPending,
-        response: commentsResponse,
-        retrigger: getComments,
-    } = useRequest<MultiResponseWithSummary<EntryComment>>({
-        skip: !isCommentModalShown,
-        url: `server://v2/entries/${entryId}/review-comments/`,
-        method: 'GET',
-        preserveResponse: true,
-        query: {
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
+        data: commentsResponse,
+        loading: commentsPending,
+        refetch: getComments,
+    } = useQuery<ReviewCommentsQuery, ReviewCommentsQueryVariables>(
+        REVIEW_COMMENTS,
+        {
+            skip: !isCommentModalShown || !commentVariables,
+            variables: commentVariables,
         },
-    });
+    );
 
     const handleEntryCommentSave = useCallback(() => {
         getComments();
@@ -78,7 +135,7 @@ function EntryComments(props: Props) {
         }
     }, [getComments, onEntryCommentAdd]);
 
-    const commentRendererParams = useCallback((_, comment: EntryComment) => ({
+    const commentRendererParams = useCallback((_, comment: CommentItem) => ({
         comment,
         projectId,
     }), [projectId]);
@@ -108,7 +165,7 @@ function EntryComments(props: Props) {
                     footerActions={(
                         <Pager
                             activePage={activePage}
-                            itemsCount={commentsResponse?.count ?? 0}
+                            itemsCount={commentsResponse?.project?.reviewComments?.totalCount ?? 0}
                             maxItemsPerPage={maxItemsPerPage}
                             onActivePageChange={setActivePage}
                             itemsPerPageControlHidden
@@ -119,7 +176,7 @@ function EntryComments(props: Props) {
                     )}
                 >
                     <ListView
-                        data={commentsResponse?.results}
+                        data={commentsResponse?.project?.reviewComments?.results}
                         className={styles.commentList}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
@@ -136,11 +193,14 @@ function EntryComments(props: Props) {
                         messageIconShown
                         messageShown
                     />
-                    <CommentForm
-                        entryId={entryId}
-                        projectId={projectId}
-                        onSave={handleEntryCommentSave}
-                    />
+                    {commentsResponse && (
+                        <CommentForm
+                            entryId={entryId}
+                            projectId={projectId}
+                            commentAssignee={commentsResponse.project?.entry?.createdBy}
+                            onSave={handleEntryCommentSave}
+                        />
+                    )}
                 </Modal>
             )}
         </>

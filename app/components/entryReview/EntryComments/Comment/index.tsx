@@ -5,23 +5,31 @@ import {
     QuickActionButton,
     DateOutput,
     Container,
-    Card,
 } from '@the-deep/deep-ui';
 
 import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
-import CommaSeparateItems from '#components/CommaSeparateItems';
+import CommaSeparatedItems from '#components/CommaSeparatedItems';
 import { commentTypeToTextMap } from '#components/entryReview/commentConstants';
-import { EntryComment } from '#types';
+import {
+    ReviewCommentsQuery,
+} from '#generated/types';
 import EditCommentForm from './EditCommentForm';
 
 import styles from './styles.css';
 
+type CommentItem = NonNullable<NonNullable<NonNullable<NonNullable<ReviewCommentsQuery>['project']>['reviewComments']>['results']>[number];
+
 interface Props {
     className?: string;
     projectId: string;
-    comment: EntryComment;
+    comment: CommentItem;
 }
+
+type MentionedUserType = NonNullable<CommentItem['mentionedUsers']>[number];
+
+const handleKeySelector = (value: MentionedUserType) => (value.id);
+const handleLabelSelector = (value: MentionedUserType) => (value.displayName ?? value.id);
 
 function Comment(props: Props) {
     const {
@@ -31,7 +39,7 @@ function Comment(props: Props) {
     } = props;
 
     const { user } = useContext(UserContext);
-    const [comment, setComment] = useState<EntryComment>(commentFromProps);
+    const [comment, setComment] = useState<CommentItem>(commentFromProps);
     const [
         isEditModalVisible,
         showEditModal,
@@ -39,20 +47,18 @@ function Comment(props: Props) {
     ] = useModalState(false);
 
     const {
-        textHistory,
-        createdByDetails,
+        text,
+        createdBy,
         commentType,
-        mentionedUsersDetails,
+        mentionedUsers,
         createdAt,
     } = comment;
 
-    const [latest] = textHistory;
-
     const isEditable = useMemo(() => (
-        user?.id === createdByDetails?.id.toString() && latest
-    ), [user, createdByDetails, latest]);
+        user?.id === createdBy?.id && text
+    ), [user, createdBy, text]);
 
-    const handleSuccess = useCallback((value: EntryComment) => {
+    const handleSuccess = useCallback((value: CommentItem) => {
         setComment(value);
         hideEditModal();
     }, [hideEditModal]);
@@ -62,12 +68,14 @@ function Comment(props: Props) {
             className={_cs(styles.commentContainer, className)}
             headingSize="extraSmall"
             headerActionsContainerClassName={styles.headerActions}
-            headerActions={mentionedUsersDetails.length > 0 && (
+            headerActions={mentionedUsers.length > 0 && (
                 <>
                     Assigned to
-                    <CommaSeparateItems
+                    <CommaSeparatedItems
                         className={styles.assignees}
-                        items={mentionedUsersDetails}
+                        items={mentionedUsers}
+                        keySelector={handleKeySelector}
+                        labelSelector={handleLabelSelector}
                     />
                 </>
             )}
@@ -81,10 +89,10 @@ function Comment(props: Props) {
                 >
                     <div className={styles.userAction}>
                         <span className={styles.userName}>
-                            {createdByDetails?.name}
+                            {createdBy?.displayName}
                         </span>
                         &nbsp;
-                        {commentType !== 0 && (
+                        {commentType && (
                             <span className={styles.details}>
                                 {`${commentTypeToTextMap[commentType]} the entry.`}
                             </span>
@@ -98,13 +106,11 @@ function Comment(props: Props) {
                             onEditSuccess={handleSuccess}
                             onEditCancel={hideEditModal}
                         />
-                    ) : (latest?.text && (
-                        <Card
-                            className={styles.comment}
-                        >
-                            {latest.text}
-                        </Card>
-                    ))}
+                    ) : (
+                        <div className={styles.comment}>
+                            {text}
+                        </div>
+                    )}
                 </div>
                 <div className={styles.info}>
                     <DateOutput

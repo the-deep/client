@@ -142,35 +142,6 @@ export interface EntryOptions {
     projectEntryLabel: BasicElement[];
 }
 
-export interface EntryComment {
-    id: number;
-    textHistory: {
-        createdAt: string;
-        text: string;
-    }[];
-    lead: number;
-    createdByDetails: {
-        id: number;
-        email: string;
-        name: string;
-        organization?: string;
-        displayPictureUrl?: string;
-    };
-    mentionedUsersDetails: {
-        id: number;
-        email: string;
-        name: string;
-        organization?: string;
-        displayPictureUrl?: string;
-    }[];
-    commentTypeDisplay: string;
-    commentType: number;
-    createdBy: number;
-    createdAt: string;
-    entry: number;
-    mentionedUsers: number[];
-}
-
 export interface EntryReviewSummary {
     verifiedBy: {
         id: number;
@@ -211,6 +182,6 @@ export interface EntryReviewComment {
     createdAt: string;
     commentType: number;
     createdBy: number;
-    entry: number;
+    entry: string;
     mentionedUsers: number[];
 }

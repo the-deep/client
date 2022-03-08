@@ -21,9 +21,7 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import { EntryAction } from '#components/entryReview/commentConstants';
 import UserContext from '#base/context/UserContext';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
-import {
-    EntryComment,
-} from '#types';
+
 import styles from './styles.css';
 
 interface Comment {
@@ -43,15 +41,15 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultValue: FormType = {
-    commentType: EntryAction.COMMENT,
-};
-
 interface Props {
     className?: string;
-    onSave: (response: EntryComment) => void;
-    entryId: number;
+    onSave: () => void;
+    entryId: string;
     projectId: string;
+    commentAssignee: {
+        id: string;
+        displayName?: string | null | undefined;
+    } | null | undefined;
 }
 
 function CommentForm(props: Props) {
@@ -60,9 +58,17 @@ function CommentForm(props: Props) {
         onSave,
         entryId,
         projectId,
+        commentAssignee,
     } = props;
 
-    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const defaultValue: FormType = {
+        commentType: EntryAction.COMMENT,
+        mentionedUsers: commentAssignee ? [commentAssignee.id] : [],
+    };
+
+    const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
+        () => (commentAssignee ? [commentAssignee] : []),
+    );
     const {
         user,
     } = useContext(UserContext);
@@ -83,13 +89,14 @@ function CommentForm(props: Props) {
     const {
         pending,
         trigger: editComment,
-    } = useLazyRequest<EntryComment, FormType>({
+    } = useLazyRequest<unknown, FormType>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
         body: (ctx) => ctx,
-        onSuccess: (response) => {
+        onSuccess: () => {
+            // NOTE: We're resetting the form after one is submitted
             setValue(defaultValue);
-            onSave(response);
+            onSave();
             alert.show(
                 'Successfully added comment to the selected entry.',
                 { variant: 'success' },
@@ -116,6 +123,7 @@ function CommentForm(props: Props) {
         >
             <Container
                 className={styles.container}
+                contentClassName={styles.content}
                 footerActions={(
                     <Button
                         name={undefined}

@@ -20,11 +20,11 @@ interface EntryVerificationFormData {
 
 interface Props {
     className?: string;
-    entryId: number;
+    entryId: string;
     projectId: string;
     disabled?: boolean;
     verifiedBy: number[];
-    onVerificationChange: (entryId: number) => void;
+    onVerificationChange: (entryId: string) => void;
 }
 
 function EntryVerification(props: Props) {

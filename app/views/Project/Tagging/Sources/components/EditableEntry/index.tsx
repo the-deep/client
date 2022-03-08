@@ -341,9 +341,7 @@ function EditableEntry(props: Props) {
 
     const entryControl = (
         <EntryControl
-            // FIXME: Remove cast after entry comments
-            // is switched to gql
-            entryId={+entryId}
+            entryId={entryId}
             projectId={projectId}
             value={!!controlled}
             onChange={onEntryDataChange}
@@ -351,9 +349,7 @@ function EditableEntry(props: Props) {
     );
     const entryVerification = (
         <EntryVerification
-            // FIXME: Remove cast after entry comments
-            // is switched to gql
-            entryId={+entryId}
+            entryId={entryId}
             projectId={projectId}
             verifiedBy={verifiedByIds}
             onVerificationChange={onEntryDataChange}
@@ -362,9 +358,7 @@ function EditableEntry(props: Props) {
 
     const entryComments = (
         <EntryCommentWrapper
-            // FIXME: Remove cast after entry comments
-            // is switched to gql
-            entryId={+entryId}
+            entryId={entryId}
             projectId={projectId}
         />
     );
