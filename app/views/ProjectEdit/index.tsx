@@ -54,6 +54,9 @@ function ProjectEdit() {
     const { projectId } = useParams<{ projectId: string | undefined }>();
     const userId = user?.id;
 
+    const isConnectorsAccessible = !!user
+        ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
+
     const handleCreate = useCallback(
         (response: ProjectDetails) => {
             const { id } = response;
@@ -120,14 +123,16 @@ function ProjectEdit() {
                             >
                                 {_ts('projectEdit', 'frameworkLabel')}
                             </Tab>
-                            <Tab
-                                name="connectors"
-                                className={styles.tab}
-                                disabled={isNotDefined(projectId)}
-                                transparentBorder
-                            >
-                                Connectors
-                            </Tab>
+                            {isConnectorsAccessible && (
+                                <Tab
+                                    name="connectors"
+                                    className={styles.tab}
+                                    disabled={isNotDefined(projectId)}
+                                    transparentBorder
+                                >
+                                    Connectors
+                                </Tab>
+                            )}
                         </TabList>
                     </SubNavbarChildren>
                     <div className={styles.tabPanelContainer}>
@@ -172,16 +177,18 @@ function ProjectEdit() {
                                 />
                             )}
                         </TabPanel>
-                        <TabPanel
-                            name="connectors"
-                            activeClassName={styles.tabPanel}
-                        >
-                            {projectId && (
-                                <Connector
-                                    projectId={projectId}
-                                />
-                            )}
-                        </TabPanel>
+                        {isConnectorsAccessible && (
+                            <TabPanel
+                                name="connectors"
+                                activeClassName={styles.tabPanel}
+                            >
+                                {projectId && (
+                                    <Connector
+                                        projectId={projectId}
+                                    />
+                                )}
+                            </TabPanel>
+                        )}
                     </div>
                 </Tabs>
             </SubNavbarContext.Provider>
