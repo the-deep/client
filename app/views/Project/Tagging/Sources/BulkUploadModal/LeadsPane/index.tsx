@@ -200,6 +200,7 @@ function LeadsPane(props: Props) {
             <div className={styles.leadPreviewPane}>
                 {selectedLeadValue && isDefined(selectedLeadIndex) && (
                     <LeadInput
+                        key={selectedLeadIndex}
                         name={selectedLeadIndex}
                         pending={leadOptionsPending}
                         value={selectedLeadValue}

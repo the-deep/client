@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, useContext } from 'react';
 import {
     ListView,
     MultiSelectInput,
@@ -6,11 +6,14 @@ import {
 import {
     _cs,
     listToMap,
+    randomString,
+    unique,
 } from '@togglecorp/fujs';
 import {
     SetValueArg,
     ArrayError,
     // analyzeErrors,
+    EntriesAsList,
 } from '@togglecorp/toggle-form';
 import {
     gql,
@@ -27,17 +30,27 @@ import {
     enumLabelSelector,
 } from '#utils/common';
 
+import { UserContext } from '#base/context/UserContext';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import LeadInput from '#components/lead/LeadInput';
-import { PartialFormType } from '#components/lead/LeadInput/schema';
+import { PartialFormType, PartialLeadType } from '#views/Project/Tagging/Sources/BulkUploadModal/schema';
 
 import ConnectorSourceItem, { ConnectorSourceLead } from './ConnectorSourceItem';
 
 import styles from './styles.css';
+
+interface Selection {
+    [key: string]: {
+        connectorId: string,
+        connectorSourceId: string,
+        connectorSourceLeadId: string,
+        connectorLeadId: string,
+    } | undefined,
+}
 
 const blockedOptions: Option[] = [
     {
@@ -96,13 +109,6 @@ interface Props {
     connectorId: string;
     projectId: string;
 
-    selectedConnectorSource: string | undefined;
-    selectedConnectorSourceLead: ConnectorSourceLead | undefined;
-    onSelectedConnectorSourceChange: React.Dispatch<React.SetStateAction<string | undefined>>;
-    onSelectedConnectorSourceLeadChange: React.Dispatch<React.SetStateAction<
-        ConnectorSourceLead | undefined
-    >>;
-
     sourceOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
     onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
@@ -116,22 +122,15 @@ interface Props {
     // eslint-disable-next-line max-len
     onAssigneeOptionChange: React.Dispatch<React.SetStateAction<BasicProjectUser[] | undefined | null>>;
 
-    leads: PartialFormType[] | undefined;
-    leadsError: ArrayError<PartialFormType[]> | undefined;
-    onLeadChange: (val: SetValueArg<PartialFormType>, name: number | undefined) => void;
+    leads: PartialLeadType[] | undefined;
+    leadsError: ArrayError<PartialLeadType[]> | undefined;
+    onLeadChange: (val: SetValueArg<PartialLeadType>, name: number | undefined) => void;
 
-    selections: {
-        [key: string]: {
-            connectorId: string,
-            connectorSourceId: string,
-            connectorSourceLeadId: string,
-            connectorLeadId: string,
-        } | undefined,
-    }
-    onSelectionChange: (
-        connectorSourceId: string,
-        connectorSourceLead: ConnectorSourceLead,
-    ) => void;
+    selections: Selection;
+    setSelections: React.Dispatch<React.SetStateAction<Selection>>;
+
+    setFormFieldValue: (...entries: EntriesAsList<PartialFormType>) => void;
+    disabled: boolean;
 }
 
 function LeadsPane(props: Props) {
@@ -149,44 +148,161 @@ function LeadsPane(props: Props) {
         assigneeOptions,
         onAssigneeOptionChange,
 
-        selectedConnectorSource,
-        selectedConnectorSourceLead,
-
-        onSelectedConnectorSourceChange,
-        onSelectedConnectorSourceLeadChange,
-
         leads,
         leadsError,
         onLeadChange,
 
         selections,
-        onSelectionChange,
+        setSelections,
+        setFormFieldValue,
+        disabled,
     } = props;
 
+    const { user } = useContext(UserContext);
+
+    // Filters
     const [extractionStatus, setExtractionStatus] = useState<string[] | undefined>();
     const [blocked, setBlocked] = useState<boolean | undefined>(false);
 
-    // NOTE: needed to get lead information from connectorLead
-    const leadsMapping = listToMap(
-        leads,
-        // FIXME: filter out leads without connectorLead (which should not happen)
-        (lead) => lead.connectorLead ?? 'x',
-        (lead) => lead,
+    // Temporary selections
+    const [
+        selectedConnectorSource,
+        setSelectedConnectorSource,
+    ] = useState<string | undefined>();
+    const [
+        selectedConnectorSourceLead,
+        setSelectedConnectorLead,
+    ] = useState<ConnectorSourceLead | undefined>();
+
+    const handleAddLeadToForm = useCallback(
+        (connectorSourceLead: ConnectorSourceLead | undefined) => {
+            if (!connectorSourceLead?.connectorLead) {
+                return;
+            }
+
+            const suggestedLead = connectorSourceLead.connectorLead;
+
+            const newLead = {
+                clientId: randomString(),
+                sourceType: 'WEBSITE' as const,
+                priority: 'LOW' as const,
+                confidentiality: 'UNPROTECTED' as const,
+                isAssessmentLead: false,
+                assignee: user?.id,
+
+                url: suggestedLead.url,
+                // FIXME: website is missing
+                // website: suggestedLead.website,
+                title: suggestedLead.title,
+                publishedOn: suggestedLead.publishedOn,
+                authors: suggestedLead.authors.map((item) => item.id),
+                source: suggestedLead.source?.id,
+
+                // NOTE: we should absolutely not miss this parameter
+                connectorLead: suggestedLead.id,
+            };
+            const newAuthors = suggestedLead.authors;
+            const newSources = suggestedLead.source ? [suggestedLead.source] : [];
+
+            setFormFieldValue(
+                (oldLeads) => {
+                    if (!oldLeads || oldLeads.length <= 0) {
+                        return [newLead];
+                    }
+                    const index = oldLeads.findIndex((oldValue) => (
+                        !!oldValue.connectorLead
+                        && oldValue.connectorLead === newLead.connectorLead
+                    ));
+                    return index === -1 ? [...oldLeads, newLead] : oldLeads;
+                },
+                'leads',
+            );
+
+            onSourceOrganizationOptionsChange((oldValues) => unique(
+                [
+                    ...(oldValues ?? []),
+                    ...newSources,
+                ],
+                (item) => item.id,
+            ));
+
+            onAuthorOrganizationOptionsChange((oldValues) => unique(
+                [
+                    ...(oldValues ?? []),
+                    ...newAuthors,
+                ],
+                (item) => item.id,
+            ));
+
+            if (user) {
+                onAssigneeOptionChange((oldValues) => unique(
+                    [
+                        ...(oldValues ?? []),
+                        user,
+                    ],
+                    (item) => item.id,
+                ));
+            }
+        },
+        [
+            user,
+            setFormFieldValue,
+            onAssigneeOptionChange,
+            onAuthorOrganizationOptionsChange,
+            onSourceOrganizationOptionsChange,
+        ],
     );
 
-    const currentLeadIndex = (
-        selectedConnectorSourceLead
-            ? leads?.findIndex((lead) => (
-                lead.connectorLead === selectedConnectorSourceLead.connectorLead.id
-            ))
-            : undefined
-    ) ?? -1;
+    const handleSelectedConnectorSourceLeadChange = useCallback<typeof setSelectedConnectorLead>(
+        (connectorSourceLead) => {
+            setSelectedConnectorLead((oldValue) => {
+                if (typeof connectorSourceLead === 'function') {
+                    const newConnectorSourceLead = connectorSourceLead(oldValue);
+                    handleAddLeadToForm(newConnectorSourceLead);
+                    return newConnectorSourceLead;
+                }
 
-    const currentLead = leads?.[currentLeadIndex];
+                const newConnectorSourceLead = connectorSourceLead;
+                handleAddLeadToForm(newConnectorSourceLead);
+                return newConnectorSourceLead;
+            });
+        },
+        [handleAddLeadToForm],
+    );
 
-    const currentLeadError = currentLead
-        ? leadsError?.[currentLead.clientId]
-        : undefined;
+    const handleSelectedConnectorSourceChange = useCallback<typeof setSelectedConnectorSource>(
+        (value) => {
+            setSelectedConnectorSource(value);
+            setSelectedConnectorLead(undefined);
+        },
+        [],
+    );
+
+    const handleSelectionsForSelectedConnector = useCallback(
+        (connectorSourceId: string, connectorSourceLead: ConnectorSourceLead) => {
+            setSelections((oldValue) => {
+                const connectorLeadId = connectorSourceLead.connectorLead.id;
+                if (!oldValue[connectorLeadId]) {
+                    // NOTE: only add to form if ticked
+                    handleAddLeadToForm(connectorSourceLead);
+                }
+                const newValue = {
+                    ...oldValue,
+                    // NOTE: toggle between values
+                    [connectorLeadId]: oldValue[connectorLeadId]
+                        ? undefined
+                        : {
+                            connectorId,
+                            connectorSourceId,
+                            connectorSourceLeadId: connectorSourceLead.id,
+                            connectorLeadId,
+                        },
+                };
+                return newValue;
+            });
+        },
+        [connectorId, handleAddLeadToForm, setSelections],
+    );
 
     const variables = useMemo(
         (): ProjectConnectorQueryVariables => ({
@@ -210,49 +326,80 @@ function LeadsPane(props: Props) {
             onCompleted: (response) => {
                 const sources = response?.project?.unifiedConnector?.unifiedConnector?.sources;
                 if (sources && sources.length > 0) {
-                    onSelectedConnectorSourceChange((oldSelection) => {
+                    handleSelectedConnectorSourceChange((oldSelection) => {
                         const source = sources.find((item) => item.id === oldSelection);
                         return source ? oldSelection : sources[0].id;
                     });
                 } else {
-                    onSelectedConnectorSourceChange(undefined);
+                    handleSelectedConnectorSourceChange(undefined);
                 }
             },
         },
     );
 
+    // NOTE: needed to get lead information from connectorLead
+    const leadsByConnectorLeadMapping = useMemo(
+        () => listToMap(
+            leads,
+            // FIXME: filter out leads without connectorLead (which should not happen)
+            (lead) => lead.connectorLead ?? 'x',
+            (lead) => lead,
+        ),
+        [leads],
+    );
+
+    const currentLeadIndex = useMemo(
+        () => {
+            const index = selectedConnectorSourceLead
+                ? leads?.findIndex((lead) => (
+                    lead.connectorLead === selectedConnectorSourceLead.connectorLead.id
+                ))
+                : undefined;
+            return index ?? -1;
+        },
+        [leads, selectedConnectorSourceLead],
+    );
+
+    const currentLead = leads?.[currentLeadIndex];
+
+    const currentLeadError = currentLead
+        ? leadsError?.[currentLead.clientId]
+        : undefined;
+
     const connectorSourceRendererParams = useCallback((key: string, data: ConnectorSourceMini) => ({
         connectorSourceId: key,
         title: data.title,
-        onClick: onSelectedConnectorSourceChange,
+        onClick: handleSelectedConnectorSourceChange,
         selected: key === selectedConnectorSource,
         projectId,
         connectorSourceLead: selectedConnectorSourceLead,
-        onConnectorSourceLeadChange: onSelectedConnectorSourceLeadChange,
+        onConnectorSourceLeadChange: handleSelectedConnectorSourceLeadChange,
 
-        leadsMapping,
+        leadsByConnectorLeadMapping,
         leadsError,
 
         selections,
-        onSelectionChange,
+        onSelectionChange: handleSelectionsForSelectedConnector,
 
         extractionStatus: extractionStatus as (ConnectorLeadExtractionStatusEnum[] | undefined),
         blocked,
+        disabled,
     }), [
-        leadsMapping,
+        leadsByConnectorLeadMapping,
         leadsError,
 
-        onSelectedConnectorSourceLeadChange,
-        onSelectedConnectorSourceChange,
+        handleSelectedConnectorSourceLeadChange,
+        handleSelectedConnectorSourceChange,
         projectId,
         selectedConnectorSource,
         selectedConnectorSourceLead,
 
         selections,
-        onSelectionChange,
+        handleSelectionsForSelectedConnector,
 
         extractionStatus,
         blocked,
+        disabled,
     ]);
 
     const connector = connectorDetailsData?.project?.unifiedConnector?.unifiedConnector;
@@ -288,6 +435,7 @@ function LeadsPane(props: Props) {
                         label="Blocked"
                     />
                 </div>
+                {/* FIXME: add pagination; filter out certain variables */}
                 <ListView
                     pending={loading}
                     errored={!!error}
@@ -321,6 +469,7 @@ function LeadsPane(props: Props) {
                             assigneeOptions={assigneeOptions}
                             onAssigneeOptionChange={onAssigneeOptionChange}
                             hasAssessment={connectorDetailsData?.project?.hasAssessmentTemplate}
+                            disabled={disabled}
                         />
                         <LeadPreview
                             className={styles.preview}

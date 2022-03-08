@@ -25,6 +25,7 @@ interface ConnectorSourceLeadItemProps<N> {
     errored: boolean;
     checked: boolean;
     faded: boolean;
+    disabled: boolean,
 }
 function ConnectorSourceLeadItem<N>(props: ConnectorSourceLeadItemProps<N>) {
     const {
@@ -38,6 +39,7 @@ function ConnectorSourceLeadItem<N>(props: ConnectorSourceLeadItemProps<N>) {
         title,
         publishedOn,
         faded,
+        disabled,
     } = props;
 
     const handleClick = useCallback(
@@ -68,11 +70,13 @@ function ConnectorSourceLeadItem<N>(props: ConnectorSourceLeadItemProps<N>) {
                 name={undefined}
                 onChange={handleCheckboxClick}
                 value={checked}
+                disabled={disabled}
             />
             <RawButton
                 className={styles.title}
                 name={undefined}
                 onClick={handleClick}
+                disabled={disabled}
             >
                 {title || 'Unnamed'}
             </RawButton>
