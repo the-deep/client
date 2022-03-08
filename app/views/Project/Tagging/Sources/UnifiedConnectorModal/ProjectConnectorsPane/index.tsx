@@ -95,6 +95,7 @@ interface Props {
     projectId: string;
     selectedConnector: string | undefined;
     setSelectedConnector: React.Dispatch<React.SetStateAction<string | undefined>>;
+    children?: React.ReactNode;
 }
 
 function Connector(props: Props) {
@@ -103,6 +104,8 @@ function Connector(props: Props) {
         projectId,
         selectedConnector,
         setSelectedConnector,
+
+        children,
     } = props;
 
     const connectorsRendererParams = useCallback((key: string, data: ConnectorMini) => ({
@@ -164,6 +167,7 @@ function Connector(props: Props) {
                 messageShown
                 messageIconShown
             />
+            {children}
         </ContainerCard>
     );
 }

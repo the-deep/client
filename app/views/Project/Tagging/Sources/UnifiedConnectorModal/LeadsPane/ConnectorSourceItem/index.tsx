@@ -6,6 +6,7 @@ import {
     ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
+    analyzeErrors,
     ArrayError,
 } from '@togglecorp/toggle-form';
 import {
@@ -18,7 +19,8 @@ import {
     ConnectorSourceLeadsQueryVariables,
     ConnectorLeadExtractionStatusEnum,
 } from '#generated/types';
-import { PartialFormType } from '#components/lead/LeadInput/schema';
+
+import { PartialLeadType } from '#views/Project/Tagging/Sources/BulkUploadModal/schema';
 
 import ConnectorSourceLeadItem from './ConnectorSourceLeadItem';
 import styles from './styles.css';
@@ -111,11 +113,12 @@ interface ConnectorSourceItemProps {
         connectorSourceLead: ConnectorSourceLead,
     ) => void;
 
-    leadsMapping: Record<string, PartialFormType> | undefined;
-    leadsError: ArrayError<PartialFormType[]> | undefined;
+    leadsByConnectorLeadMapping: Record<string, PartialLeadType> | undefined;
+    leadsError: ArrayError<PartialLeadType[]> | undefined;
 
     extractionStatus: ConnectorLeadExtractionStatusEnum[] | undefined;
     blocked: boolean | undefined;
+    disabled: boolean;
 }
 
 function ConnectorSourceItem(props: ConnectorSourceItemProps) {
@@ -131,11 +134,12 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
         selections,
         onSelectionChange,
 
-        leadsMapping,
+        leadsByConnectorLeadMapping,
         leadsError,
 
         extractionStatus,
         blocked,
+        disabled,
     } = props;
 
     const [activePage, setActivePage] = useState(1);
@@ -190,40 +194,45 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
         [onSelectionChange, connectorSourceId],
     );
 
-    const connectorLeadRendererParams = useCallback((_: string, datum: ConnectorSourceLead) => {
-        const leadItem = leadsMapping?.[datum.connectorLead.id];
-        const leadError = leadItem
-            ? leadsError?.[leadItem.clientId]
-            : undefined;
+    const connectorLeadRendererParams = useCallback(
+        (_: string, datum: ConnectorSourceLead) => {
+            const leadItem = leadsByConnectorLeadMapping?.[datum.connectorLead.id];
+            const leadError = leadItem
+                ? leadsError?.[leadItem.clientId]
+                : undefined;
 
-        return {
-            onClick: onConnectorSourceLeadChange,
-            name: datum,
-            selected: datum.id === connectorSourceLead?.id,
+            return {
+                onClick: onConnectorSourceLeadChange,
+                name: datum,
+                selected: datum.id === connectorSourceLead?.id,
 
-            checked: !!selections[datum.connectorLead.id],
-            onCheckClicked: handleSelectionChange,
+                checked: !!selections[datum.connectorLead.id],
+                onCheckClicked: handleSelectionChange,
 
-            title: leadItem
-                ? leadItem.title
-                : datum.connectorLead.title,
-            publishedOn: leadItem
-                ? leadItem.publishedOn
-                : datum.connectorLead.publishedOn,
+                title: leadItem
+                    ? leadItem.title
+                    : datum.connectorLead.title,
+                publishedOn: leadItem
+                    ? leadItem.publishedOn
+                    : datum.connectorLead.publishedOn,
 
-            faded: datum.blocked,
+                faded: datum.blocked,
 
-            // NOTE: only showing errored for leads that are checked
-            errored: !!selections[datum.connectorLead.id] && !!leadError,
-        };
-    }, [
-        leadsMapping,
-        leadsError,
-        connectorSourceLead,
-        onConnectorSourceLeadChange,
-        selections,
-        handleSelectionChange,
-    ]);
+                // NOTE: only showing errored for leads that are checked
+                errored: !!selections[datum.connectorLead.id] && analyzeErrors(leadError),
+
+                disabled,
+            };
+        }, [
+            leadsByConnectorLeadMapping,
+            leadsError,
+            connectorSourceLead,
+            onConnectorSourceLeadChange,
+            selections,
+            handleSelectionChange,
+            disabled,
+        ],
+    );
 
     const handleExpansionChange = useCallback(
         (value: boolean) => {
