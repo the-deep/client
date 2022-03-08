@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     ListView,
     Pager,
@@ -100,6 +100,11 @@ interface ConnectorSourceItemProps {
         ConnectorSourceLead | undefined
     >>;
 
+    activePage: number;
+    setActivePage: React.Dispatch<React.SetStateAction<
+        number
+    >>;
+
     selections: {
         [key: string]: {
             connectorId: string,
@@ -140,9 +145,10 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
         extractionStatus,
         blocked,
         disabled,
-    } = props;
 
-    const [activePage, setActivePage] = useState(1);
+        activePage,
+        setActivePage,
+    } = props;
 
     const variables = useMemo(
         (): ConnectorSourceLeadsQueryVariables => ({
