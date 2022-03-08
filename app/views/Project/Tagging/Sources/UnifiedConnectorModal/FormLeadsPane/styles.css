@@ -1,0 +1,19 @@
+.leads-pane {
+    display: flex;
+
+    .leads-listing-pane {
+        display: flex;
+        flex-basis: 50%;
+        flex-direction: column;
+    }
+
+    .lead-detail-pane {
+        display: flex;
+        flex-basis: 50%;
+        flex-direction: column;
+
+        .preview {
+            flex-basis: 40%;
+        }
+    }
+}
