@@ -6,7 +6,10 @@ import {
 import {
     Modal,
     Button,
+    RawButton,
     PendingMessage,
+    Kraken,
+    Message,
 } from '@the-deep/deep-ui';
 import {
     getErrorObject,
@@ -156,6 +159,10 @@ function UnifiedConnectorModal(props: Props) {
         [leads, selections],
     );
 
+    const handleSourcesToBeAddedButtonClick = useCallback(() => {
+        setFormLeadsShown(true);
+    }, []);
+
     return (
         <Modal
             className={_cs(className, styles.unifiedConnectorModal)}
@@ -178,22 +185,31 @@ function UnifiedConnectorModal(props: Props) {
             )}
         >
             {bulkUpdateLeadsPending && <PendingMessage />}
-            <ProjectConnectorsPane
-                className={styles.projectConnectorPane}
-                projectId={projectId}
-                selectedConnector={formLeadsShown ? undefined : selectedConnector}
-                setSelectedConnector={handleSelectedConnectorChange}
-            >
+            <div className={styles.leftPane}>
                 {submittableLeadsCount > 0 && (
-                    <Button
-                        name
-                        onClick={setFormLeadsShown}
-                        variant="transparent"
+                    <RawButton
+                        name={undefined}
+                        className={_cs(
+                            styles.item,
+                            formLeadsShown && styles.selected,
+                        )}
+                        onClick={handleSourcesToBeAddedButtonClick}
                     >
-                        {`${submittableLeadsCount} source(s) will be added`}
-                    </Button>
+                        <div className={styles.title}>
+                            Added Sources
+                        </div>
+                        <div className={styles.createdOn}>
+                            {`${submittableLeadsCount} source(s) will be added`}
+                        </div>
+                    </RawButton>
                 )}
-            </ProjectConnectorsPane>
+                <ProjectConnectorsPane
+                    className={styles.projectConnectorPane}
+                    projectId={projectId}
+                    selectedConnector={formLeadsShown ? undefined : selectedConnector}
+                    setSelectedConnector={handleSelectedConnectorChange}
+                />
+            </div>
             {formLeadsShown && (
                 <FormLeadsPane
                     className={styles.leadsPane}
@@ -239,11 +255,11 @@ function UnifiedConnectorModal(props: Props) {
                 />
             )}
             {!formLeadsShown && !selectedConnector && (
-                <div
+                <Message
                     className={styles.leadsPane}
-                >
-                    Please select a connector
-                </div>
+                    icon={<Kraken variant="coffee" />}
+                    message="Please select a connector"
+                />
             )}
         </Modal>
     );
