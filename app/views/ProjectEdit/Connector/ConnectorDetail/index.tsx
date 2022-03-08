@@ -349,13 +349,16 @@ function ConnectorDetail(props: Props) {
     }, [connector]);
 
     const isProcessing = useMemo(() => (
-        connector?.sources?.some((source) => source.status === 'PENDING' || source.status === 'PROCESSING')
+        connector?.sources?.some((source) => source.status === 'PROCESSING')
     ), [connector]);
+
+    const isActive = connector?.isActive;
 
     const sourceRendererParams = useCallback((_: string, source: Source) => ({
         className: styles.sourceItem,
         source,
-    }), []);
+        isActive,
+    }), [isActive]);
 
     return (
         <ContainerCard
