@@ -221,6 +221,7 @@ function ProjectFramework(props: Props) {
             <div className={styles.leftContainer}>
                 <div className={styles.filters}>
                     <SelectInput
+                        inputSectionClassName={styles.relatedToMeSelect}
                         name="relatedToMe"
                         onChange={setFieldValue}
                         options={frameworkFilterOptions}

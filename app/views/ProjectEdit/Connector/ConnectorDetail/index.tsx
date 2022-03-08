@@ -111,6 +111,9 @@ const UPDATE_CONNECTOR_STATUS = gql`
                     errors
                     result {
                         id
+                        title
+                        clientId
+                        isActive
                     }
                     ok
                 }
@@ -168,7 +171,6 @@ function ConnectorDetail(props: Props) {
     const {
         loading: pendingConnectorDetails,
         data: connectorDetailsResponse,
-        refetch,
     } = useQuery<ProjectConnectorDetailsQuery, ProjectConnectorDetailsQueryVariables>(
         PROJECT_CONNECTOR_DETAILS,
         {
@@ -211,11 +213,6 @@ function ConnectorDetail(props: Props) {
         hideEditConnectorModal,
     ] = useModalState(false);
 
-    const handleConnectorUpdateSuccess = useCallback(() => {
-        refetch();
-        hideEditConnectorModal();
-    }, [hideEditConnectorModal, refetch]);
-
     const [
         updateConnector,
         { loading: pendingConnectorUpdate },
@@ -245,7 +242,7 @@ function ConnectorDetail(props: Props) {
                         'Successfully update the connector\'s status.',
                         { variant: 'success' },
                     );
-                    handleConnectorUpdateSuccess();
+                    hideEditConnectorModal();
                 }
             },
             onError: (errors) => {
@@ -442,7 +439,7 @@ function ConnectorDetail(props: Props) {
                     projectId={projectId}
                     connectorId={connectorId}
                     onCloseClick={hideEditConnectorModal}
-                    onUpdateSuccess={handleConnectorUpdateSuccess}
+                    onUpdateSuccess={hideEditConnectorModal}
                 />
             )}
         </ContainerCard>
