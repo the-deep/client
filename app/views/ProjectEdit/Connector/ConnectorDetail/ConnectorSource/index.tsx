@@ -44,12 +44,14 @@ const minTickFormatter = (value: number | string) => {
 interface Props {
     className?: string;
     source: Source;
+    isActive: boolean | undefined;
 }
 
 function ConnectorSource(props: Props) {
     const {
         className,
         source,
+        isActive,
     } = props;
 
     const convertedSourceActivity = useMemo(() => (
@@ -89,7 +91,11 @@ function ConnectorSource(props: Props) {
 
     return (
         <ContainerCard
-            className={_cs(className, styles.connectorSource)}
+            className={_cs(
+                className,
+                styles.connectorSource,
+                !isActive && styles.inactive,
+            )}
             headingSize="small"
             headingClassName={styles.heading}
             heading={source.title}
@@ -150,12 +156,12 @@ function ConnectorSource(props: Props) {
                             <Kraken variant="sleep" />
                         }
                         message="This connector does not have any sources fetched."
-                        pending={source.status === 'PROCESSING' || source.status === 'PENDING'}
+                        pending={isActive && source.status === 'PROCESSING'}
                         pendingMessage="DEEP is currently fetching sources from this portal."
                         errored={source.status === 'FAILURE'}
                         erroredEmptyMessage="DEEP was unable to fetch sources from this portal."
                         erroredEmptyIcon={
-                            <Kraken variant="icecream" />
+                            <Kraken variant="fat" />
                         }
                     />
                 )}

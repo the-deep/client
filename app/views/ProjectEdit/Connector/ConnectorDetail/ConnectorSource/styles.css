@@ -1,6 +1,10 @@
 .connector-source {
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
+    &.inactive {
+        filter: saturate(0%);
+    }
+
     .heading {
         color: var(--dui-color-accent);
     }
