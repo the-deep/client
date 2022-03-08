@@ -127,11 +127,11 @@ function AssistPopup(props: Props) {
     const handleMappingsFetch = useCallback(() => {
         const matchedMappings = mappings
             ?.filter(isCategoricalMappings)
-            .filter((m) => mockAssistedMappingsResponse.tags.includes(m.tagId));
+            .filter((m) => mockAssistedMappingsResponse.tags.includes(m.tag));
 
         const supportedGeoWidgets = mappings
             ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
-            ?.map((mappingItem) => mappingItem.widgetPk);
+            ?.map((mappingItem) => mappingItem.widget);
 
         const {
             tempAttrs: recommendedAttributes,
@@ -148,7 +148,7 @@ function AssistPopup(props: Props) {
 
                 if (widget.widgetId === 'MATRIX1D') {
                     const supportedTags = matchedMappings
-                        ?.filter((m) => m.widgetPk === widget.id)
+                        ?.filter((m) => m.widget === widget.id)
                         .filter(filterMatrix1dMappings);
 
                     const attr = createMatrix1dAttr(supportedTags, widget);
@@ -159,7 +159,7 @@ function AssistPopup(props: Props) {
                 }
                 if (widget.widgetId === 'MATRIX2D') {
                     const supportedTags = matchedMappings
-                        ?.filter((m) => m.widgetPk === widget.id)
+                        ?.filter((m) => m.widget === widget.id)
                         .filter(filterMatrix2dMappings);
 
                     const attr = createMatrix2dAttr(supportedTags, widget);
@@ -171,7 +171,7 @@ function AssistPopup(props: Props) {
                 }
                 if (widget.widgetId === 'SCALE') {
                     const supportedTags = matchedMappings
-                        ?.filter((m) => m.widgetPk === widget.id)
+                        ?.filter((m) => m.widget === widget.id)
                         .filter(filterScaleMappings);
 
                     const {
@@ -192,7 +192,7 @@ function AssistPopup(props: Props) {
                 }
                 if (widget.widgetId === 'SELECT') {
                     const supportedTags = matchedMappings
-                        ?.filter((m) => m.widgetPk === widget.id)
+                        ?.filter((m) => m.widget === widget.id)
                         .filter(filterSelectMappings);
 
                     const {
@@ -213,7 +213,7 @@ function AssistPopup(props: Props) {
                 }
                 if (widget.widgetId === 'MULTISELECT') {
                     const supportedTags = matchedMappings
-                        ?.filter((m) => m.widgetPk === widget.id)
+                        ?.filter((m) => m.widget === widget.id)
                         .filter(filterMultiSelectMappings);
 
                     const attr = createMultiSelectAttr(

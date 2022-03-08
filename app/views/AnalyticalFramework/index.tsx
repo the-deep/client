@@ -48,8 +48,12 @@ import NewOrganizationSelectInput, { BasicOrganization } from '#components/selec
 import PreloadMessage from '#base/components/PreloadMessage';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
+import {
+    MappingsItem,
+} from '#types/newAnalyticalFramework';
 import _ts from '#ts';
 import {
+    AssistedPredictionTagsQuery,
     CurrentFrameworkQuery,
     CurrentFrameworkQueryVariables,
     UpdateFrameworkMutation,
@@ -73,6 +77,7 @@ import {
     CURRENT_FRAMEWORK,
     UPDATE_FRAMEWORK,
     CREATE_FRAMEWORK,
+    ASSISTED_PREDICTION_TAGS_QUERY,
 } from './queries';
 import PrivacyInput from './components/PrivacyInput';
 import UserTable from './UserTable';
@@ -101,6 +106,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         secondaryTagging,
         properties,
         modifiedAt,
+        predictionTagsMapping,
     } = framework;
 
     const newValues = removeNull({
@@ -110,6 +116,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         organization: organization?.id,
         primaryTagging,
         secondaryTagging,
+        predictionTagsMapping,
         properties,
         isVisualizationEnabled: isDefined(properties),
         modifiedAt,
@@ -121,6 +128,7 @@ interface Stored {
     pristine: boolean,
     primaryTaggingPristine: boolean,
     secondaryTaggingPristine: boolean,
+    predictionTagsMappingPristine: boolean,
     framework: PartialFormType,
     frameworkImage: Framework['previewImage'],
     organizationOptions: BasicOrganization[] | null | undefined,
@@ -175,6 +183,10 @@ function AnalyticalFramework(props: Props) {
         secondaryTaggingPristine,
         setSecondaryTaggingPristine,
     ] = useState(true);
+    const [
+        predictionTagsMappingPristine,
+        setPredictionTagsMappingPristine,
+    ] = useState(true);
 
     const [
         frameworkImage,
@@ -214,6 +226,7 @@ function AnalyticalFramework(props: Props) {
                 setOrganizationOptions(storedAfArg.organizationOptions);
                 setPrimaryTaggingPristine(storedAfArg.primaryTaggingPristine);
                 setSecondaryTaggingPristine(storedAfArg.secondaryTaggingPristine);
+                setPredictionTagsMappingPristine(storedAfArg.predictionTagsMappingPristine);
 
                 setCacheUsed(true);
             }
@@ -261,6 +274,7 @@ function AnalyticalFramework(props: Props) {
                     setPristine(true);
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
+                    setPredictionTagsMappingPristine(true);
 
                     if (storedData) {
                         // NOTE: clearing out stored af after new data is fetched
@@ -308,6 +322,7 @@ function AnalyticalFramework(props: Props) {
                     setPristine(true);
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
+                    setPredictionTagsMappingPristine(true);
 
                     const path = generatePath(
                         routes.analyticalFrameworkEdit.path,
@@ -362,6 +377,7 @@ function AnalyticalFramework(props: Props) {
                     setValue(transformFramework(result as Framework));
                     setPrimaryTaggingPristine(true);
                     setSecondaryTaggingPristine(true);
+                    setPredictionTagsMappingPristine(true);
                 }
             },
             onError: (error) => {
@@ -472,6 +488,7 @@ function AnalyticalFramework(props: Props) {
                 pristine,
                 primaryTaggingPristine,
                 secondaryTaggingPristine,
+                predictionTagsMappingPristine,
                 framework: value,
                 frameworkImage,
                 organizationOptions,
@@ -485,6 +502,7 @@ function AnalyticalFramework(props: Props) {
             value,
             primaryTaggingPristine,
             secondaryTaggingPristine,
+            predictionTagsMappingPristine,
             frameworkImage,
             organizationOptions,
         ],
@@ -501,6 +519,14 @@ function AnalyticalFramework(props: Props) {
     const handleSecondaryTaggingChange = useCallback(
         (val: SetValueArg<WidgetsType | undefined>, name: 'secondaryTagging') => {
             setSecondaryTaggingPristine(false);
+            setFieldValue(val, name);
+        },
+        [setFieldValue],
+    );
+
+    const handlePredictionTagsMappings = useCallback(
+        (val: SetValueArg<MappingsItem[] | undefined>, name: 'predictionTagsMapping') => {
+            setPredictionTagsMappingPristine(false);
             setFieldValue(val, name);
         },
         [setFieldValue],
@@ -557,6 +583,13 @@ function AnalyticalFramework(props: Props) {
                                     parentWidgetType: undefined,
                                 } : null,
                             })),
+                        // FIXME: may need to remove some fields here
+                        predictionTagsMapping: predictionTagsMappingPristine
+                            ? undefined
+                            : val.predictionTagsMapping?.map((item) => ({
+                                ...item,
+                                widgetType: undefined,
+                            })),
                     };
 
                     const data = newData as AnalysisFrameworkInputType;
@@ -588,11 +621,19 @@ function AnalyticalFramework(props: Props) {
         [
             setError, validate, frameworkId,
             primaryTaggingPristine, secondaryTaggingPristine,
+            predictionTagsMappingPristine,
             updateAnalysisFramework, createAnalysisFramework,
         ],
     );
 
-    const pending = creatingAnalysisFramework || updatingAnalysisFramework;
+    const {
+        data: assistedTagsResponse,
+        loading: assistedTagsPending,
+    } = useQuery<AssistedPredictionTagsQuery>(
+        ASSISTED_PREDICTION_TAGS_QUERY,
+    );
+
+    const pending = creatingAnalysisFramework || updatingAnalysisFramework || assistedTagsPending;
 
     const error = getErrorObject(riskyError);
 
@@ -900,10 +941,17 @@ function AnalyticalFramework(props: Props) {
                                 retainMount="lazy"
                             >
                                 <AssistedTagging
-                                    frameworkId={framework?.id}
+                                    name="predictionTagsMapping"
+                                    error={error?.predictionTagsMapping}
                                     className={styles.view}
                                     allWidgets={allWidgets}
+                                    value={value.predictionTagsMapping}
+                                    onChange={handlePredictionTagsMappings}
                                     assistedTaggingEnabled={value.isAssistedTaggingEnabled}
+                                    assistedPredictionTags={(
+                                        assistedTagsResponse
+                                            ?.assistedTagging?.predictionTags
+                                    )}
                                     onAssistedTaggingStatusChange={
                                         handleAssistedTaggingStatusChange
                                     }

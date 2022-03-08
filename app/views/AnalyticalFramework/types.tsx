@@ -4,13 +4,16 @@ import {
 
 import {
     WidgetType as WidgetRaw,
+    AnalysisFrameworkPredictionMappingType as MappingsItemRaw,
     WidgetGqlInputType as WidgetInputRaw,
+    PredictionTagAnalysisFrameworkMapInputType as MappingsItemInputRaw,
     CurrentFrameworkQuery,
     AnalysisFrameworkInputType,
 } from '#generated/types';
 import {
     Widget as WidgetFromAF,
     FrameworkProperties,
+    MappingsItem,
 } from '#types/newAnalyticalFramework';
 import {
     DeepMandatory,
@@ -21,11 +24,15 @@ import {
 // Remove this DeepMandatory transformation after server sends key as mandatory
 export type FrameworkRaw = DeepMandatory<NonNullable<CurrentFrameworkQuery['analysisFramework']>, 'key'>;
 type FrameworkWithWidgets = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
-export type Framework = Omit<FrameworkWithWidgets, 'properties'> & { properties?: FrameworkProperties };
+type FrameworkWithTags = DeepReplace<FrameworkWithWidgets, MappingsItemRaw, MappingsItem>;
+export type Framework = Omit<FrameworkWithTags, 'properties'> & { properties?: FrameworkProperties };
 
 export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'>;
 type FrameworkInputWithWidgets = DeepReplace<FrameworkInputRaw, WidgetInputRaw, WidgetFromAF>;
-export type FrameworkInput = Omit<FrameworkInputWithWidgets, 'properties' | 'previewImage'> & {
+type FrameworkInputWithTags = DeepReplace<
+    FrameworkInputWithWidgets, MappingsItemInputRaw, MappingsItem
+>;
+export type FrameworkInput = Omit<FrameworkInputWithTags, 'properties' | 'previewImage'> & {
     properties?: FrameworkProperties,
     previewImage?: File | null,
 };
