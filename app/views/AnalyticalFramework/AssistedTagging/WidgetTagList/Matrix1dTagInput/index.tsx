@@ -67,7 +67,7 @@ function Matrix1dTagInput(props: Props) {
 
     const subRowKeysInMappings = useMemo(() => (
         listToMap(
-            mappings?.filter((mappingItem) => mappingItem.tagId === selectedTag),
+            mappings?.filter((mappingItem) => mappingItem.tag === selectedTag),
             (mappingItem) => mappingItem.association.subRowKey,
             () => true,
         )
@@ -99,14 +99,14 @@ function Matrix1dTagInput(props: Props) {
         }
 
         const selectedMappingsIndex = mappings?.findIndex((mapping) => (
-            selectedTag === mapping.tagId && mapping.association.subRowKey === cellKey
+            selectedTag === mapping.tag && mapping.association.subRowKey === cellKey
         ));
 
         if (isDefined(selectedMappingsIndex) && selectedMappingsIndex !== -1) {
             const newMappings = [...(mappings ?? [])];
             newMappings.splice(selectedMappingsIndex, 1);
 
-            onMappingsChange(newMappings, widget.clientId);
+            onMappingsChange(newMappings, widget.id);
         } else {
             const rowKey = sortedCells
                 ?.find((cell) => cell.subRowKey === cellKey)?.rowKey;
@@ -120,15 +120,17 @@ function Matrix1dTagInput(props: Props) {
             onMappingsChange([
                 ...(mappings ?? []),
                 {
-                    tagId: selectedTag,
-                    widgetPk: widget.id,
+                    tag: selectedTag,
+                    widget: widget.id,
                     widgetType: 'MATRIX1D',
                     association: {
                         subRowKey: cellKey,
                         rowKey,
                     },
-                },
-            ], widget.clientId);
+                // FIXME: need to cast here because we cannot set id
+                // and a proper fix would require more time
+                } as Matrix1dMappingsItem,
+            ], widget.id);
         }
     }, [
         sortedCells,
