@@ -6,6 +6,7 @@ import {
     Message,
     Kraken,
     Button,
+    useAlert,
 } from '@the-deep/deep-ui';
 import {
     _cs,
@@ -22,12 +23,15 @@ import {
 import {
     gql,
     useQuery,
+    useMutation,
 } from '@apollo/client';
 
 import {
     ProjectConnectorQuery,
     ProjectConnectorQueryVariables,
     ConnectorLeadExtractionStatusEnum,
+    UpdateConnectorLeadBlockStatusMutation,
+    UpdateConnectorLeadBlockStatusMutationVariables,
 } from '#generated/types';
 import {
     enumKeySelector,
@@ -108,6 +112,53 @@ const PROJECT_CONNECTOR_DETAILS = gql`
     }
 `;
 
+const UPDATE_CONNECTOR_LEAD_BLOCK_STATUS = gql`
+    mutation UpdateConnectorLeadBlockStatus(
+        $projectId: ID!,
+        $data: ConnectorSourceLeadInputType!,
+        $connectorSourceLeadId: ID!,
+    ) {
+        project(id: $projectId) {
+            unifiedConnector {
+                connectorSourceLeadUpdate(data: $data, id: $connectorSourceLeadId) {
+                    errors
+                    result {
+                        id
+                        source
+                        blocked
+                        alreadyAdded
+                        connectorLead {
+                            id
+                            url
+                            title
+                            sourceRaw
+                            publishedOn
+                            extractionStatus
+                            authorRaw
+                            authors {
+                                id
+                                mergedAs {
+                                    id
+                                    title
+                                }
+                                title
+                            }
+                            source {
+                                id
+                                title
+                                mergedAs {
+                                    id
+                                    title
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
 interface Props {
     className?: string;
     connectorId: string;
@@ -163,6 +214,7 @@ function LeadsPane(props: Props) {
     } = props;
 
     const { user } = useContext(UserContext);
+    const alert = useAlert();
 
     // Filters
     const [extractionStatus, setExtractionStatus] = useState<string[] | undefined>();
@@ -308,14 +360,6 @@ function LeadsPane(props: Props) {
         [connectorId, handleAddLeadToForm, setSelections],
     );
 
-    const handleAddLeadButtonClick = useCallback(() => {
-        console.warn('add');
-    }, []);
-
-    const handleIgnoreLeadButtonClick = useCallback(() => {
-        console.warn('ignore');
-    }, []);
-
     const variables = useMemo(
         (): ProjectConnectorQueryVariables => ({
             projectId,
@@ -349,6 +393,50 @@ function LeadsPane(props: Props) {
         },
     );
 
+    // FIXME: handle errors
+    const [
+        updateConnectorLeadBlockStatus,
+        { loading: updateConnectorLeadBlockStatusLoading },
+    ] = useMutation<
+        UpdateConnectorLeadBlockStatusMutation,
+        UpdateConnectorLeadBlockStatusMutationVariables
+    >(
+        UPDATE_CONNECTOR_LEAD_BLOCK_STATUS,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.unifiedConnector?.connectorSourceLeadUpdate) {
+                    return;
+                }
+                const {
+                    errors,
+                    result,
+                } = response.project.unifiedConnector.connectorSourceLeadUpdate;
+
+                if (errors) {
+                    alert.show(
+                        'There was an issue changing source ignore status!',
+                        { variant: 'error' },
+                    );
+                }
+                if (result) {
+                    setSelectedConnectorLead((item) => (
+                        !item || item.id === result.id ? result : item
+                    ));
+                    alert.show(
+                        'Successfully changed source ignore status',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'There was an issue changing source ignore status!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
     // NOTE: needed to get lead information from connectorLead
     const leadsByConnectorLeadMapping = useMemo(
         () => listToMap(
@@ -358,6 +446,41 @@ function LeadsPane(props: Props) {
             (lead) => lead,
         ),
         [leads],
+    );
+
+    const handleAddRemoveLeadButtonClick = useCallback(
+        (connectorSourceLead: ConnectorSourceLead) => {
+            if (!selectedConnectorSource) {
+                console.error('ConnectorSource or ConnectorSourceLead is not selected');
+                return;
+            }
+            handleSelectionsForSelectedConnector(
+                selectedConnectorSource,
+                connectorSourceLead,
+            );
+        },
+        [
+            handleSelectionsForSelectedConnector,
+            selectedConnectorSource,
+        ],
+    );
+
+    const handleIgnoreLeadButtonClick = useCallback(
+        (connectorSourceLead) => {
+            updateConnectorLeadBlockStatus({
+                variables: {
+                    projectId,
+                    connectorSourceLeadId: connectorSourceLead.id,
+                    data: {
+                        blocked: !connectorSourceLead.blocked,
+                    },
+                },
+            });
+        },
+        [
+            updateConnectorLeadBlockStatus,
+            projectId,
+        ],
     );
 
     const currentLeadIndex = useMemo(
@@ -426,6 +549,13 @@ function LeadsPane(props: Props) {
                 headingSize="small"
                 headerDescription={(
                     <div className={styles.filters}>
+                        <BooleanInput
+                            options={blockedOptions}
+                            name={undefined}
+                            value={blocked}
+                            onChange={setBlocked}
+                            label="Ignored"
+                        />
                         <MultiSelectInput
                             name={undefined}
                             onChange={setExtractionStatus}
@@ -439,13 +569,6 @@ function LeadsPane(props: Props) {
                             labelSelector={enumLabelSelector}
                             value={extractionStatus}
                             label="Status"
-                        />
-                        <BooleanInput
-                            options={blockedOptions}
-                            name={undefined}
-                            value={blocked}
-                            onChange={setBlocked}
-                            label="Blocked"
                         />
                     </div>
                 )}
@@ -464,7 +587,7 @@ function LeadsPane(props: Props) {
                 />
             </Container>
             <div className={styles.leadDetailPane}>
-                {currentLead ? (
+                {(selectedConnectorSourceLead && currentLead) ? (
                     <Container
                         className={styles.leadContainer}
                         heading={currentLead.title || 'Unnamed'}
@@ -472,20 +595,24 @@ function LeadsPane(props: Props) {
                         headerActions={(
                             <>
                                 <Button
-                                    name={undefined}
+                                    name={selectedConnectorSourceLead}
                                     onClick={handleIgnoreLeadButtonClick}
                                     variant="secondary"
-                                    disabled
+                                    disabled={updateConnectorLeadBlockStatusLoading || disabled}
                                 >
-                                    Ignore
+                                    {selectedConnectorSourceLead.blocked
+                                        ? 'Un-ignore'
+                                        : 'Ignore'}
                                 </Button>
                                 <Button
-                                    name={undefined}
-                                    onClick={handleAddLeadButtonClick}
+                                    name={selectedConnectorSourceLead}
+                                    onClick={handleAddRemoveLeadButtonClick}
                                     variant="secondary"
-                                    disabled
                                 >
-                                    Add
+                                    {(currentLead.connectorLead
+                                      && !!selections[currentLead.connectorLead])
+                                        ? 'Remove'
+                                        : 'Add'}
                                 </Button>
                             </>
                         )}
