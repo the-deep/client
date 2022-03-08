@@ -2,6 +2,10 @@ import React, { useMemo, useCallback, useState, useContext } from 'react';
 import {
     ListView,
     MultiSelectInput,
+    Container,
+    Message,
+    Kraken,
+    Button,
 } from '@the-deep/deep-ui';
 import {
     _cs,
@@ -304,6 +308,14 @@ function LeadsPane(props: Props) {
         [connectorId, handleAddLeadToForm, setSelections],
     );
 
+    const handleAddLeadButtonClick = useCallback(() => {
+        console.warn('add');
+    }, []);
+
+    const handleIgnoreLeadButtonClick = useCallback(() => {
+        console.warn('ignore');
+    }, []);
+
     const variables = useMemo(
         (): ProjectConnectorQueryVariables => ({
             projectId,
@@ -408,33 +420,36 @@ function LeadsPane(props: Props) {
 
     return (
         <div className={_cs(className, styles.leadsPane)}>
-            <div className={styles.leadsListingPane}>
-                <h3>
-                    Sources found
-                </h3>
-                <div className={styles.filters}>
-                    <MultiSelectInput
-                        name={undefined}
-                        onChange={setExtractionStatus}
-                        options={
-                            connectorDetailsData
-                                ?.connectorLeadExtractionStatusOptions
-                                ?.enumValues
-                        }
-                        disabled={loading}
-                        keySelector={enumKeySelector}
-                        labelSelector={enumLabelSelector}
-                        value={extractionStatus}
-                        label="Status"
-                    />
-                    <BooleanInput
-                        options={blockedOptions}
-                        name={undefined}
-                        value={blocked}
-                        onChange={setBlocked}
-                        label="Blocked"
-                    />
-                </div>
+            <Container
+                className={styles.leadsListingPane}
+                heading="Sources found"
+                headingSize="small"
+                headerDescription={(
+                    <div className={styles.filters}>
+                        <MultiSelectInput
+                            name={undefined}
+                            onChange={setExtractionStatus}
+                            options={
+                                connectorDetailsData
+                                    ?.connectorLeadExtractionStatusOptions
+                                    ?.enumValues
+                            }
+                            disabled={loading}
+                            keySelector={enumKeySelector}
+                            labelSelector={enumLabelSelector}
+                            value={extractionStatus}
+                            label="Status"
+                        />
+                        <BooleanInput
+                            options={blockedOptions}
+                            name={undefined}
+                            value={blocked}
+                            onChange={setBlocked}
+                            label="Blocked"
+                        />
+                    </div>
+                )}
+            >
                 {/* FIXME: add pagination; filter out certain variables */}
                 <ListView
                     pending={loading}
@@ -447,14 +462,39 @@ function LeadsPane(props: Props) {
                     messageShown
                     messageIconShown
                 />
-            </div>
+            </Container>
             <div className={styles.leadDetailPane}>
                 {currentLead ? (
-                    <>
+                    <Container
+                        className={styles.leadContainer}
+                        heading={currentLead.title || 'Unnamed'}
+                        headingSize="extraSmall"
+                        headerActions={(
+                            <>
+                                <Button
+                                    name={undefined}
+                                    onClick={handleIgnoreLeadButtonClick}
+                                    variant="secondary"
+                                    disabled
+                                >
+                                    Ignore
+                                </Button>
+                                <Button
+                                    name={undefined}
+                                    onClick={handleAddLeadButtonClick}
+                                    variant="secondary"
+                                    disabled
+                                >
+                                    Add
+                                </Button>
+                            </>
+                        )}
+                    >
                         <LeadInput
                             name={currentLeadIndex}
                             value={currentLead}
                             onChange={onLeadChange}
+                            className={styles.leadInput}
                             pending={loading}
                             projectId={projectId}
                             error={currentLeadError}
@@ -476,11 +516,12 @@ function LeadsPane(props: Props) {
                             key={currentLead.clientId}
                             url={currentLead.url ?? undefined}
                         />
-                    </>
+                    </Container>
                 ) : (
-                    <div>
-                        Please select a source
-                    </div>
+                    <Message
+                        message="Please select a source"
+                        icon={<Kraken variant="coffee" />}
+                    />
                 )}
             </div>
         </div>

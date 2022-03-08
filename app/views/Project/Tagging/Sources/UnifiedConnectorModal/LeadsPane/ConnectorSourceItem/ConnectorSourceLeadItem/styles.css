@@ -18,10 +18,13 @@
     .title {
         flex-grow: 1;
         padding: var(--dui-spacing-medium) 0;
+        overflow: hidden;
         text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-    .date, .checkbox, .tag {
+    .date, .tag {
         align-self: center;
         flex-shrink: 0;
     }

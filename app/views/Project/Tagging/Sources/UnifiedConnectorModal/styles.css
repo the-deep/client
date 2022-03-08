@@ -2,10 +2,42 @@
     .modal-body {
         display: flex;
         position: relative;
+        padding: 0 var(--dui-spacing-medium);
 
-        .project-connector-pane {
-            flex-basis: 20%;
+        .left-pane {
+            display: flex;
+            flex-basis: 20rem;
+            flex-direction: column;
             flex-shrink: 0;
+            border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
+            gap: var(--dui-spacing-medium);
+
+            .project-connector-pane {
+                padding: 0;
+            }
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dui-color-background-information);
+            padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+            gap: var(--dui-spacing-small);
+            width: 100%;
+            text-align: left;
+
+            .title {
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            .created-on {
+                color: var(--dui-color-text-description);
+                font-size: var(--dui-font-size-small);
+            }
+
+            &.selected {
+                background-color: var(--dui-color-surface-information);
+            }
         }
 
         .leads-pane {

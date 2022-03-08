@@ -1,19 +1,35 @@
 .leads-pane {
     display: flex;
+    padding: 0 var(--dui-spacing-medium);
 
     .leads-listing-pane {
         display: flex;
         flex-basis: 50%;
         flex-direction: column;
+        border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
+        background-color: var(--dui-color-foreground);
+        padding: 0;
     }
 
     .lead-detail-pane {
-        display: flex;
         flex-basis: 50%;
-        flex-direction: column;
+        padding: 0 var(--dui-spacing-medium);
+        overflow-y: auto;
 
-        .preview {
-            flex-basis: 40%;
+        .lead-container {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dui-color-foreground);
+            padding: 0;
+            overflow-y: auto;
+
+            .lead-input {
+                padding: 0;
+            }
+
+            .preview {
+                flex-basis: 40%;
+            }
         }
     }
 }
