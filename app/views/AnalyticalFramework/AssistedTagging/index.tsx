@@ -31,7 +31,7 @@ import CellGroup from './CellGroup';
 
 import styles from './styles.css';
 
-const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.labelGroup;
+const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.groupName;
 const nlpLabelKeySelector = (tag: AssistedTag) => tag.id;
 const widgetKeySelector = (widget: Widget) => widget.clientId;
 
@@ -132,7 +132,7 @@ function AssistedTagging(props: Props) {
     }), []);
 
     const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
-        children: tag.label,
+        children: tag.name,
         name: itemKey,
         value: selectedTag === itemKey,
         badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
