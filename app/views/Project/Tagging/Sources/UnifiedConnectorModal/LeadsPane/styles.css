@@ -30,11 +30,13 @@
             overflow-y: auto;
 
             .lead-input {
+                flex-shrink: 0;
                 padding: 0;
             }
 
             .preview {
-                flex-basis: 40%;
+                flex-grow: 1;
+                min-height: 240px;
             }
         }
     }

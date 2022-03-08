@@ -1,10 +1,10 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import {
-    ListView,
     Container,
     Kraken,
     Message,
     Button,
+    VirtualizedListView,
 } from '@the-deep/deep-ui';
 import {
     _cs,
@@ -221,11 +221,15 @@ function FormLeadsPane(props: Props) {
                 className={styles.leadsListingPane}
                 heading="Sources added"
                 headingSize="small"
+                contentClassName={styles.content}
             >
-                <ListView
+                <VirtualizedListView
+                    className={styles.list}
+                    itemHeight={48}
                     keySelector={(item) => item.clientId}
                     data={submittableLeads}
                     renderer={ConnectorSourceLeadItem}
+                    rendererClassName={styles.leadItem}
                     rendererParams={connectorLeadRendererParams}
                     filtered={false}
                     pending={false}
@@ -258,6 +262,7 @@ function FormLeadsPane(props: Props) {
                         )}
                     >
                         <LeadInput
+                            className={styles.leadInput}
                             name={currentLeadIndex}
                             value={currentLead}
                             onChange={onLeadChange}
