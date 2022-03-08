@@ -9,6 +9,22 @@
         border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
         background-color: var(--dui-color-foreground);
         padding: 0;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+
+            .list {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+
+                .lead-item {
+                    height: 48px;
+                }
+            }
+        }
     }
 
     .lead-detail-pane {
