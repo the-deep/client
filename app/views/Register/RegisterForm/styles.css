@@ -35,16 +35,12 @@
         margin: calc(-1 * var(--dui-spacing-extra-large));
     }
 
-    .check-box-area {
-        display: flex;
-        gap: var(--dui-spacing-extra-small);
+    .terms-button {
+        display: inline;
+        color: var(--dui-color-accent);
+        font-size: var(--dui-font-size-extra-small);
 
-        .terms-button {
-            color: var(--dui-color-accent);
-            font-size: var(--dui-font-size-extra-small);
-        }
-
-        .terms-button:hover {
+        &:hover {
             text-decoration: underline;
         }
     }
@@ -60,4 +56,5 @@
     max-width: 800px;
     height: 100%;
     overflow-y: auto;
+    font-size: 0.9rem;
 }

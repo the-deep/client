@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Card } from '@the-deep/deep-ui';
 import { _cs } from '@togglecorp/fujs';
+import {
+    Card,
+    Container,
+} from '@the-deep/deep-ui';
 
 import WelcomeContent from '#components/general/WelcomeContent';
 
 import styles from './styles.css';
 
 export const termsNotice = `
-# DEEP TERMS OF USE & PRIVACY NOTICE
-**Effective: January, 2022**
 # DEEP TERMS OF USE
 The [Data Entry &amp; Exploration Platform (DEEP)](https://thedeep.io/) is an open data platform managed by a multi-stakeholder Governance Board through the Danish Refugee Council (DRC) as administrative host and the Data Friendly Space (DFS) as main technical provider and host. These Terms of Use describe how DEEP is managed and how the platform should be used. These Terms will be updated as needed with noticed of significant updates posted on DEEP slack channel and DEEP Skype user group. All users of DEEP are bound to those terms and if in disagreement, you should discontinue use of DEEP.
 
@@ -85,9 +86,17 @@ function TermsOfService(props: Props) {
                 <WelcomeContent
                     className={styles.welcomeContent}
                 />
-                <ReactMarkdown className={styles.rightContent}>
-                    {termsNotice}
-                </ReactMarkdown>
+                <Container
+                    className={styles.rightContent}
+                    heading="DEEP Terms of Use and Privacy Notice"
+                    headerDescription="Effective: January, 2022"
+                    headingSize="extraLarge"
+                    contentClassName={styles.content}
+                >
+                    <ReactMarkdown>
+                        {termsNotice}
+                    </ReactMarkdown>
+                </Container>
             </Card>
         </div>
     );

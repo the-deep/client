@@ -32,6 +32,7 @@ import routes from '#base/configs/routes';
 import { hCaptchaKey } from '#base/configs/hCaptcha';
 import { termsNotice } from '#views/TermsOfService';
 import { useModalState } from '#hooks/stateManagement';
+import generateString from '#utils/string';
 
 import _ts from '#ts';
 
@@ -131,12 +132,12 @@ function RegisterModal(props: Props) {
     const handleAcceptTerms = useCallback(() => {
         setTermsAccepted(true);
         setTermsModalHidden();
-    }, []);
+    }, [setTermsModalHidden]);
 
     const handleCancelTerms = useCallback(() => {
         setTermsAccepted(false);
         setTermsModalHidden();
-    }, []);
+    }, [setTermsModalHidden]);
 
     const handleSubmit = useCallback((finalValue) => {
         elementRef.current?.resetCaptcha();
@@ -215,22 +216,26 @@ function RegisterModal(props: Props) {
                                 error={error?.captcha}
                                 disabled={registerPending}
                             />
-                            <div className={styles.checkBoxArea}>
-                                <Checkbox
-                                    name="terms"
-                                    label="I accept the"
-                                    value={termsAccepted}
-                                    onChange={setTermsAccepted}
-                                />
-                                <Button
-                                    name={undefined}
-                                    variant="action"
-                                    onClick={toggleTermsModal}
-                                    className={styles.termsButton}
-                                >
-                                    terms and conditions
-                                </Button>
-                            </div>
+                            <Checkbox
+                                name="terms"
+                                label={generateString(
+                                    'I accept the {termsButton}',
+                                    {
+                                        termsButton: (
+                                            <Button
+                                                name={undefined}
+                                                variant="action"
+                                                onClick={toggleTermsModal}
+                                                className={styles.termsButton}
+                                            >
+                                                terms of use of DEEP
+                                            </Button>
+                                        ),
+                                    },
+                                )}
+                                value={termsAccepted}
+                                onChange={setTermsAccepted}
+                            />
                             <Button
                                 disabled={registerPending || pristine || !termsAccepted}
                                 type="submit"
@@ -251,8 +256,8 @@ function RegisterModal(props: Props) {
             {isTermsModalShown && (
                 <Modal
                     onCloseButtonClick={setTermsModalHidden}
-                    heading="Terms and Conditions"
                     size="large"
+                    heading="DEEP Terms of Use and Privacy Notice"
                     footerActions={(
                         <>
                             <Button
@@ -260,12 +265,12 @@ function RegisterModal(props: Props) {
                                 onClick={handleCancelTerms}
                                 variant="secondary"
                             >
-                                Cancel
+                                Reject
                             </Button>
                             <Button
                                 name={undefined}
                                 onClick={handleAcceptTerms}
-                                variant="secondary"
+                                variant="primary"
                             >
                                 Accept
                             </Button>
