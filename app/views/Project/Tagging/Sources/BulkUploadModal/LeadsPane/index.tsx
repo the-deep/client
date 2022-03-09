@@ -194,33 +194,35 @@ function LeadsPane(props: Props) {
             </Container>
             <div className={styles.leadPreviewPane}>
                 {selectedLeadValue && isDefined(selectedLeadIndex) && (
-                    <LeadInput
-                        key={selectedLeadIndex}
-                        name={selectedLeadIndex}
-                        pending={leadOptionsPending}
-                        value={selectedLeadValue}
-                        onChange={onLeadChange}
-                        projectId={projectId}
-                        error={currentLeadError}
-                        attachment={selectedLeadAttachment}
-                        priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
-                        sourceOrganizationOptions={sourceOrganizationOptions}
-                        onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
-                        authorOrganizationOptions={authorOrganizationOptions}
-                        onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
-                        leadGroupOptions={leadGroupOptions}
-                        onLeadGroupOptionsChange={setLeadGroupOptions}
-                        assigneeOptions={projectUserOptions}
-                        onAssigneeOptionChange={setProjectUserOptions}
-                        hasAssessment={project?.hasAssessmentTemplate}
-                    />
-                )}
-                {selectedLeadAttachment && (
-                    <LeadPreview
-                        key={selectedLeadIndex}
-                        className={styles.leadPreview}
-                        attachment={selectedLeadAttachment}
-                    />
+                    <React.Fragment
+                        key={selectedLeadValue.clientId}
+                    >
+                        <LeadInput
+                            name={selectedLeadIndex}
+                            pending={leadOptionsPending}
+                            value={selectedLeadValue}
+                            onChange={onLeadChange}
+                            projectId={projectId}
+                            error={currentLeadError}
+                            attachment={selectedLeadAttachment}
+                            priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
+                            sourceOrganizationOptions={sourceOrganizationOptions}
+                            onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
+                            authorOrganizationOptions={authorOrganizationOptions}
+                            onAuthorOrganizationOptionsChange={setAuthorOrganizationOptions}
+                            leadGroupOptions={leadGroupOptions}
+                            onLeadGroupOptionsChange={setLeadGroupOptions}
+                            assigneeOptions={projectUserOptions}
+                            onAssigneeOptionChange={setProjectUserOptions}
+                            hasAssessment={project?.hasAssessmentTemplate}
+                        />
+                        {selectedLeadAttachment && (
+                            <LeadPreview
+                                className={styles.leadPreview}
+                                attachment={selectedLeadAttachment}
+                            />
+                        )}
+                    </React.Fragment>
                 )}
             </div>
         </div>
