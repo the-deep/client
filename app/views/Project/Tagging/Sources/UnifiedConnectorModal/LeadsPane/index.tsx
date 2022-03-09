@@ -628,7 +628,9 @@ function LeadsPane(props: Props) {
                     <Container
                         className={styles.leadContainer}
                         heading={currentLead.title || 'Unnamed'}
+                        ellipsizeHeading
                         headingSize="extraSmall"
+                        contentClassName={styles.content}
                         headerActions={(
                             <>
                                 <Button

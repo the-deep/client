@@ -42,7 +42,7 @@ interface Selections {
     } | undefined,
 }
 
-function isSubmittableLead(lead: PartialLeadType, selections: Selections) {
+function isSubmitableLead(lead: PartialLeadType, selections: Selections) {
     return !!lead.connectorLead && !!selections[lead.connectorLead];
 }
 
@@ -118,9 +118,9 @@ function UnifiedConnectorModal(props: Props) {
         [],
     );
 
-    const getSubmittableLeads = useCallback(
+    const getSubmitableLeads = useCallback(
         (leadItem: PartialLeadType) => {
-            const selected = isSubmittableLead(leadItem, selections);
+            const selected = isSubmitableLead(leadItem, selections);
             return selected;
         },
         [selections],
@@ -137,7 +137,7 @@ function UnifiedConnectorModal(props: Props) {
     } = useBulkLeads(
         projectId,
         handleBulkRequestComplete,
-        getSubmittableLeads,
+        getSubmitableLeads,
     );
 
     const handleSubmission = useCallback<typeof handleSubmit>(
@@ -154,8 +154,8 @@ function UnifiedConnectorModal(props: Props) {
 
     const leads = formValue?.leads;
 
-    const submittableLeadsCount = useMemo(
-        () => leads?.filter((lead) => isSubmittableLead(lead, selections))?.length ?? 0,
+    const submitableLeadsCount = useMemo(
+        () => leads?.filter((lead) => isSubmitableLead(lead, selections))?.length ?? 0,
         [leads, selections],
     );
 
@@ -176,7 +176,7 @@ function UnifiedConnectorModal(props: Props) {
                     disabled={
                         formPristine
                         || bulkUpdateLeadsPending
-                        || submittableLeadsCount <= 0
+                        || submitableLeadsCount <= 0
                     }
                     onClick={handleSubmission}
                 >
@@ -186,7 +186,7 @@ function UnifiedConnectorModal(props: Props) {
         >
             {bulkUpdateLeadsPending && <PendingMessage />}
             <div className={styles.leftPane}>
-                {submittableLeadsCount > 0 && (
+                {submitableLeadsCount > 0 && (
                     <RawButton
                         name={undefined}
                         className={_cs(
@@ -199,7 +199,7 @@ function UnifiedConnectorModal(props: Props) {
                             Added Sources
                         </div>
                         <div className={styles.createdOn}>
-                            {`${submittableLeadsCount} source(s) will be added`}
+                            {`${submitableLeadsCount} source(s) will be added`}
                         </div>
                     </RawButton>
                 )}
