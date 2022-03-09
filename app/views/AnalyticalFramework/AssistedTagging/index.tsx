@@ -4,6 +4,7 @@ import {
     listToMap,
     listToGroupList,
     isDefined,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     Error,
@@ -24,6 +25,7 @@ import {
     MappingsItem,
     isCategoricalMappings,
     categoricalWidgets,
+    GeoMappingsItem,
 } from '#types/newAnalyticalFramework';
 import {
     AssistedPredictionTagsQuery,
@@ -131,7 +133,10 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                 {
                     widgetType: 'GEO',
                     widget: widgetPk,
-                },
+                    clientId: randomString(),
+                    // FIXME: need to cast here because we cannot set id
+                    // and a proper fix would require more time
+                } as GeoMappingsItem,
             ];
         });
     }, [setMappings]);

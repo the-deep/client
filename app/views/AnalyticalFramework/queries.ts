@@ -54,6 +54,7 @@ const FRAMEWORK = gql`
             widget
             tag
             id
+            clientId
             association
         }
         previewImage {
