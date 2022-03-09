@@ -1,14 +1,44 @@
-import React from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
-
-import { useRequest } from '#base/utils/restRequest';
-import { ProjectMemberships } from '#types/project';
-import { MultiResponse } from '#types';
+import React, { useMemo } from 'react';
+import { useQuery, gql } from '@apollo/client';
 
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
 
+import {
+    MembershipQuery,
+    MembershipQueryVariables,
+} from '#generated/types';
+
 import styles from './styles.css';
+
+const PROJECT_MEMBERSHIP = gql`
+    query Membership($id: ID!) {
+        project(id: $id) {
+            id
+            userMembers {
+                results {
+                  id
+                  badges
+                  member {
+                    id
+                    displayName
+                  }
+                  role {
+                    id
+                    level
+                    title
+                  }
+                  joinedAt
+                  addedBy {
+                    id
+                    displayName
+                  }
+                }
+                totalCount
+            }
+        }
+    }
+`;
 
 interface Props {
     projectId: string;
@@ -21,21 +51,25 @@ function Users(props: Props) {
         activeUserId,
     } = props;
 
-    // FIXME: we should have a request to get project role of a certain user
-    const {
-        pending: pendingMemberships,
-        response: projectMembershipsResponse,
-    } = useRequest<MultiResponse<ProjectMemberships>>({
-        skip: isNotDefined(activeUserId),
-        url: `server://projects/${projectId}/project-memberships/`,
-        query: {
-            member: activeUserId,
-        },
-        method: 'GET',
-    });
+    const membershipVariables = useMemo(
+        (): MembershipQueryVariables | undefined => ({
+            id: projectId,
+        }),
+        [projectId],
+    );
 
-    const activeUserMembership = projectMembershipsResponse?.results?.[0];
-    const activeUserRoleLevel = activeUserMembership?.roleDetails?.level;
+    const {
+        data: projectMembershipsResponse,
+        loading: pendingMemberships,
+    } = useQuery<MembershipQuery, MembershipQueryVariables>(
+        PROJECT_MEMBERSHIP,
+        {
+            variables: membershipVariables,
+        },
+    );
+
+    const activeUserMembership = projectMembershipsResponse?.project?.userMembers?.results?.[0];
+    const activeUserRoleLevel = activeUserMembership?.role?.level;
 
     return (
         <div className={styles.users}>
