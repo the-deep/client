@@ -2,7 +2,6 @@
     .modal-body {
         display: flex;
         position: relative;
-        padding: 0 var(--dui-spacing-medium);
 
         .left-pane {
             display: flex;
@@ -15,33 +14,34 @@
             .project-connector-pane {
                 padding: 0;
             }
+
+            .item {
+                display: flex;
+                flex-direction: column;
+                background-color: var(--dui-color-background-information);
+                padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+                text-align: left;
+                gap: var(--dui-spacing-small);
+
+                .title {
+                    font-weight: var(--dui-font-weight-bold);
+                }
+
+                .created-on {
+                    color: var(--dui-color-text-description);
+                    font-size: var(--dui-font-size-small);
+                }
+
+                &.selected {
+                    background-color: var(--dui-color-surface-information);
+                }
+            }
         }
 
-        .item {
-            display: flex;
-            flex-direction: column;
-            background-color: var(--dui-color-background-information);
-            padding: var(--dui-spacing-small) var(--dui-spacing-medium);
-            gap: var(--dui-spacing-small);
-            width: 100%;
-            text-align: left;
-
-            .title {
-                font-weight: var(--dui-font-weight-bold);
-            }
-
-            .created-on {
-                color: var(--dui-color-text-description);
-                font-size: var(--dui-font-size-small);
-            }
-
-            &.selected {
-                background-color: var(--dui-color-surface-information);
-            }
-        }
 
         .leads-pane {
             flex-grow: 1;
+            overflow: auto;
         }
     }
 }

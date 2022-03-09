@@ -252,6 +252,8 @@ function FormLeadsPane(props: Props) {
                     <Container
                         className={styles.leadContainer}
                         heading={currentLead.title || 'Unnamed'}
+                        ellipsizeHeading
+                        contentClassName={styles.content}
                         headingSize="extraSmall"
                         headerActions={(
                             <Button
