@@ -155,7 +155,7 @@ function ConnectorSource(props: Props) {
                         icon={
                             <Kraken variant="sleep" />
                         }
-                        message="This connector does not have any sources fetched."
+                        message="This connector does not have any sources fetched in last 3 months."
                         pending={isActive && source.status === 'PROCESSING'}
                         pendingMessage="DEEP is currently fetching sources from this portal."
                         errored={source.status === 'FAILURE'}
@@ -186,6 +186,13 @@ function ConnectorSource(props: Props) {
                     label="Last 30 days"
                     valuePrecision={0}
                     value={last30DaysCount}
+                />
+                <InformationCard
+                    className={styles.info}
+                    variant="accent"
+                    label="Total"
+                    valuePrecision={0}
+                    value={source.leadsCount ?? 0}
                 />
             </Container>
         </ContainerCard>

@@ -120,6 +120,8 @@ export const ASSISTED_PREDICTION_TAGS_QUERY = gql`
                 id
                 name
                 tagId
+                parentTag
+                isCategory
             }
         }
     }

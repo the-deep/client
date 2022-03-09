@@ -640,6 +640,7 @@ function AnalyticalFramework(props: Props) {
         detailsErrored,
         primaryTaggingErrored,
         secondaryTaggingErrored,
+        predictionTagsMappingErrored,
         propertiesErrored,
     ] = useMemo(
         () => {
@@ -647,11 +648,13 @@ function AnalyticalFramework(props: Props) {
             delete errorWithoutTaggings.primaryTagging;
             delete errorWithoutTaggings.secondaryTagging;
             delete errorWithoutTaggings.properties;
+            delete errorWithoutTaggings.predictionTagsMapping;
 
             return [
                 analyzeErrors(errorWithoutTaggings),
                 analyzeErrors(error?.primaryTagging),
                 analyzeErrors(error?.secondaryTagging),
+                analyzeErrors(error?.predictionTagsMapping),
                 analyzeErrors(error?.properties),
             ];
         },
@@ -787,6 +790,9 @@ function AnalyticalFramework(props: Props) {
                                 <Tab
                                     name="assisted-tagging"
                                     transparentBorder
+                                    className={_cs(
+                                        predictionTagsMappingErrored && styles.erroredTab,
+                                    )}
                                     disabled={isNavigationDisabled}
                                 >
                                     5. Assisted Tagging
