@@ -5,6 +5,7 @@ import {
     listToGroupList,
     listToMap,
     isDefined,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     ListView,
@@ -127,6 +128,7 @@ function Matrix1dTagInput(props: Props) {
                         subRowKey: cellKey,
                         rowKey,
                     },
+                    clientId: randomString(),
                 // FIXME: need to cast here because we cannot set id
                 // and a proper fix would require more time
                 } as Matrix1dMappingsItem,
