@@ -206,7 +206,7 @@ export interface ReliefWebParams {
 }
 
 export interface UnhcrParams {
-    country?: string[];
+    country?: string;
     dateFrom?: string;
     dateTo?: string;
 }

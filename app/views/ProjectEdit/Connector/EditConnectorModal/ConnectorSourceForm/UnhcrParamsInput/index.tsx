@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     DateInput,
-    MultiSelectInput,
+    SelectInput,
 } from '@the-deep/deep-ui';
 
 import {
@@ -47,7 +47,7 @@ function UnhcrParamsInput<T extends string>(props: Props<T>) {
     return (
         <>
             <NonFieldError error={error} />
-            <MultiSelectInput
+            <SelectInput
                 name="country"
                 label="Country"
                 value={value?.country}
