@@ -4,6 +4,7 @@ import {
     listToMap,
     listToGroupList,
     isDefined,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     ListView,
@@ -95,6 +96,7 @@ function ScaleTagInput(props: Props) {
                     association: {
                         optionKey: cellKey,
                     },
+                    clientId: randomString(),
                 // FIXME: need to cast here because we cannot set id
                 // and a proper fix would require more time
                 } as ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem,

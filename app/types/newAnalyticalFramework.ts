@@ -1456,13 +1456,12 @@ export interface MultiSelectMappingsItem extends MappingsItemBase {
 }
 
 // FIXME: Probably need to extend this from base mappings item
-export interface GeoMappingsItem {
+export interface GeoMappingsItem extends Omit<MappingsItemBase, 'tag'> {
     widgetType: 'GEO';
-    widget: string;
 }
 
 // FIXME: Probably need to extend this from base mappings item
-export interface NumberMappingsItem {
+export interface NumberMappingsItem extends Omit<MappingsItemBase, 'tag'> {
     widgetType: 'NUMBER';
     widget: string;
 }
