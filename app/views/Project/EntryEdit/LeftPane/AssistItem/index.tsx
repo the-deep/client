@@ -503,6 +503,7 @@ function AssistItem(props: Props) {
         createDraftEntry,
         {
             error: createErrors,
+            loading: creatingDraftEntry,
         },
     ] = useMutation<CreateProjectDraftEntryMutation, CreateProjectDraftEntryMutationVariables>(
         CREATE_DRAFT_ENTRY,
@@ -594,7 +595,7 @@ function AssistItem(props: Props) {
                     onEntryCreateButtonClick={handleEntryCreateButtonClick}
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={setGeoAreaOptions}
-                    predictionsLoading={loadingPredictions}
+                    predictionsLoading={loadingPredictions || creatingDraftEntry}
                     predictionsErrored={!!fetchErrors || !!createErrors}
                 />
             )}
