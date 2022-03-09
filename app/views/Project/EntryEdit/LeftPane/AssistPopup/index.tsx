@@ -38,7 +38,7 @@ interface Props {
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     onCloseButtonClick: () => void;
-    loadingPredictions?: boolean;
+    predictionsLoading?: boolean;
     hints: WidgetHint[] | undefined;
     predictionsErrored: boolean;
 }
@@ -55,7 +55,7 @@ function AssistPopup(props: Props) {
         onEntryCreateButtonClick,
         geoAreaOptions,
         onGeoAreaOptionsChange,
-        loadingPredictions,
+        predictionsLoading,
         hints,
         predictionsErrored,
     } = props;
@@ -74,7 +74,7 @@ function AssistPopup(props: Props) {
         frameworkDetails,
     ]);
 
-    const isMessageShown = loadingPredictions || predictionsErrored;
+    const isMessageShown = predictionsLoading || predictionsErrored;
 
     return (
         <Modal
@@ -97,7 +97,7 @@ function AssistPopup(props: Props) {
                 <Message
                     className={styles.message}
                     pendingMessage="DEEP is analyzing your text."
-                    pending={loadingPredictions}
+                    pending={predictionsLoading}
                     errored={predictionsErrored}
                     erroredEmptyIcon={(
                         <Kraken

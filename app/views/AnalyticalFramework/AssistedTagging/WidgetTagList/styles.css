@@ -1,4 +1,9 @@
 .widget-tag-list {
     display: flex;
     flex-direction: column;
+    background-color: transparent;
+
+    .content {
+        overflow: visible;
+    }
 }
