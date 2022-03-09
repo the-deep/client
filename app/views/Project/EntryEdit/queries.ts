@@ -161,6 +161,13 @@ export const PROJECT_FRAMEWORK = gql`
                     width
                     version
                 }
+                predictionTagsMapping {
+                    id
+                    tag
+                    widget
+                    widgetType
+                    association
+                }
             }
         }
     }
