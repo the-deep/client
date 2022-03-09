@@ -40,6 +40,7 @@ interface Props {
     mappings: Matrix1dMappingsItem[] | undefined;
     onMappingsChange: (newMappings: Matrix1dMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
+    disabled?: boolean;
 }
 
 function Matrix1dTagInput(props: Props) {
@@ -49,6 +50,7 @@ function Matrix1dTagInput(props: Props) {
         mappings,
         onMappingsChange,
         selectedTag,
+        disabled,
     } = props;
 
     const sortedCells = useMemo(() => (
@@ -148,8 +150,9 @@ function Matrix1dTagInput(props: Props) {
         value: !!subRowKeysInMappings?.[cell.subRowKey],
         badgeCount: mappingsGroupedByCell?.[cell.subRowKey]?.length ?? 0,
         onClick: handleCellClick,
-        disabled: !selectedTag,
+        disabled: !selectedTag || disabled,
     }), [
+        disabled,
         mappingsGroupedByCell,
         subRowKeysInMappings,
         handleCellClick,
