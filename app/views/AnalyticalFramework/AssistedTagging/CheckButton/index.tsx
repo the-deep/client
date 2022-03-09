@@ -39,6 +39,8 @@ function CheckButton<N>(props: Props<N>) {
                 value ? styles.selected : styles.notSelected,
             )}
             onClick={onClick}
+            variant={value ? 'primary' : 'secondary'}
+            actionsContainerClassName={styles.actions}
             actions={badgeCount > 0 && <IoCheckmark />}
         >
             {children}

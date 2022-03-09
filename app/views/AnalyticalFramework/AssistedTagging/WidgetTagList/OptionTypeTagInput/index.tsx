@@ -36,6 +36,7 @@ interface Props {
         widgetPk: string,
     ) => void;
     selectedTag: string | undefined;
+    disabled?: boolean;
 }
 
 function ScaleTagInput(props: Props) {
@@ -45,6 +46,7 @@ function ScaleTagInput(props: Props) {
         mappings,
         onMappingsChange,
         selectedTag,
+        disabled,
     } = props;
 
     const sortedCells = useMemo(() => (
@@ -115,8 +117,9 @@ function ScaleTagInput(props: Props) {
         value: !!optionKeysInMappings?.[cell.key],
         badgeCount: mappingsGroupedByOptionKey?.[cell.key]?.length ?? 0,
         onClick: handleCellClick,
-        disabled: !selectedTag,
+        disabled: !selectedTag || disabled,
     }), [
+        disabled,
         handleCellClick,
         selectedTag,
         optionKeysInMappings,

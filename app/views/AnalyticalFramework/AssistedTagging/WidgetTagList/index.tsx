@@ -24,6 +24,7 @@ interface Props {
     mappings: CategoricalMappingsItem[] | undefined;
     onMappingsChange: (newMappings: CategoricalMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
+    disabled?: boolean;
 }
 
 function WidgetTagList(props: Props) {
@@ -33,6 +34,7 @@ function WidgetTagList(props: Props) {
         mappings,
         onMappingsChange,
         selectedTag,
+        disabled,
     } = props;
 
     const filteredMappings = useMemo(
@@ -59,6 +61,7 @@ function WidgetTagList(props: Props) {
                     mappings={filteredMappings as Matrix1dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
+                    disabled={disabled}
                 />
             </Container>
         );
@@ -77,6 +80,7 @@ function WidgetTagList(props: Props) {
                     mappings={filteredMappings as Matrix2dMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
                     selectedTag={selectedTag}
+                    disabled={disabled}
                 />
             </Container>
         );
@@ -92,6 +96,7 @@ function WidgetTagList(props: Props) {
                 className={_cs(styles.widgetTagList, className)}
                 heading={widget.title}
                 headingSize="extraSmall"
+                contentClassName={styles.content}
             >
                 <OptionTypeTagInput
                     widget={widget}
@@ -101,6 +106,7 @@ function WidgetTagList(props: Props) {
                         | MultiSelectMappingsItem
                     )[] | undefined}
                     onMappingsChange={onMappingsChange}
+                    disabled={disabled}
                     selectedTag={selectedTag}
                 />
             </Container>

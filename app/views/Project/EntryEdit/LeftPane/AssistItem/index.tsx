@@ -592,7 +592,7 @@ function AssistItem(props: Props) {
                     onEntryCreateButtonClick={handleEntryCreateButtonClick}
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={setGeoAreaOptions}
-                    loadingPredictions={loadingPredictions}
+                    predictionsLoading={loadingPredictions}
                     predictionsErrored={!!fetchErrors || !!createErrors}
                 />
             )}

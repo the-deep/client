@@ -583,7 +583,6 @@ function AnalyticalFramework(props: Props) {
                                     parentWidgetType: undefined,
                                 } : null,
                             })),
-                        // FIXME: may need to remove some fields here
                         predictionTagsMapping: predictionTagsMappingPristine
                             ? undefined
                             : val.predictionTagsMapping?.map((item) => ({
