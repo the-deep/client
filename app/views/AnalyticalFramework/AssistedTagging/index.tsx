@@ -57,6 +57,7 @@ interface Props<K extends string> {
     value: MappingsItem[] | undefined;
     error: Error<MappingsItem[]> | undefined;
     onChange: (value: SetValueArg<MappingsItem[] | undefined>, name: K) => void;
+    disabled?: boolean;
 }
 
 function AssistedTagging<K extends string>(props: Props<K>) {
@@ -71,6 +72,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         value: mappings,
         error,
         onChange,
+        disabled,
     } = props;
 
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
@@ -167,7 +169,9 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         value: selectedTag === itemKey,
         badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
         onClick: handleTagClick,
+        disabled,
     }), [
+        disabled,
         handleTagClick,
         selectedTag,
         mappingsByTagId,
@@ -178,7 +182,9 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         name: itemKey,
         value: !!geoWidgetsMappingValue?.[widget.id],
         onClick: handleGeoWidgetClick,
+        disabled,
     }), [
+        disabled,
         geoWidgetsMappingValue,
         handleGeoWidgetClick,
     ]);
@@ -188,7 +194,9 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         mappings: categoricalMappings,
         onMappingsChange: handleWidgetMappingsChange,
         selectedTag,
+        disabled,
     }), [
+        disabled,
         categoricalMappings,
         selectedTag,
         handleWidgetMappingsChange,
