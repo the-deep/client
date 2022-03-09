@@ -1,13 +1,15 @@
 import React, { useMemo, useCallback, useState, useContext } from 'react';
 import {
     ListView,
-    MultiSelectInput,
     Container,
     Message,
     Kraken,
     Button,
     useAlert,
+    DateDualRangeInput,
+    TextInput,
 } from '@the-deep/deep-ui';
+import { IoSearch } from 'react-icons/io5';
 import {
     _cs,
     listToMap,
@@ -29,14 +31,9 @@ import {
 import {
     ProjectConnectorQuery,
     ProjectConnectorQueryVariables,
-    ConnectorLeadExtractionStatusEnum,
     UpdateConnectorLeadBlockStatusMutation,
     UpdateConnectorLeadBlockStatusMutationVariables,
 } from '#generated/types';
-import {
-    enumKeySelector,
-    enumLabelSelector,
-} from '#utils/common';
 
 import { UserContext } from '#base/context/UserContext';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
@@ -100,12 +97,6 @@ const PROJECT_CONNECTOR_DETAILS = gql`
         $projectId: ID!,
         $connectorId: ID!,
     ) {
-        connectorLeadExtractionStatusOptions: __type(name: "ConnectorLeadExtractionStatusEnum") {
-            enumValues {
-                name
-                description
-            }
-        }
         leadPriorityOptions: __type(name: "LeadPriorityEnum") {
             enumValues {
                 name
@@ -153,7 +144,7 @@ const UPDATE_CONNECTOR_LEAD_BLOCK_STATUS = gql`
                             title
                             sourceRaw
                             publishedOn
-                            extractionStatus
+                            website
                             authorRaw
                             authors {
                                 id
@@ -239,14 +230,24 @@ function LeadsPane(props: Props) {
     const [activePage, setActivePage] = useState(1);
 
     // Filters
-    const [extractionStatus, setExtractionStatus] = useStateWithCallback<
-        string[] | undefined,
-        number
-    >(undefined, setActivePage, 1);
     const [blocked, setBlocked] = useStateWithCallback<
         boolean | undefined,
         number
     >(false, setActivePage, 1);
+
+    const [search, setSearch] = useStateWithCallback<
+        string | undefined,
+        number
+    >(undefined, setActivePage, 1);
+
+    const [dateFrom, setDateFrom] = useStateWithCallback<
+        string | undefined,
+        number
+    >(undefined, setActivePage, 1);
+    const [dateTo, setDateTo] = useStateWithCallback<
+        string | undefined,
+        number
+    >(undefined, setActivePage, 1);
 
     // Temporary selections
     const [
@@ -279,8 +280,7 @@ function LeadsPane(props: Props) {
                 assignee: user?.id,
 
                 url: suggestedLead.url,
-                // FIXME: website is missing
-                // website: suggestedLead.website,
+                website: suggestedLead.website,
                 title: suggestedLead.title,
                 publishedOn: suggestedLead.publishedOn,
                 authors: suggestedLead.authors.map((item) => item.id),
@@ -551,9 +551,11 @@ function LeadsPane(props: Props) {
         activePage,
         setActivePage,
 
-        extractionStatus: extractionStatus as (ConnectorLeadExtractionStatusEnum[] | undefined),
         blocked,
         disabled,
+        search,
+        dateFrom,
+        dateTo,
     }), [
         leadsByConnectorLeadMapping,
         leadsError,
@@ -567,9 +569,11 @@ function LeadsPane(props: Props) {
         selections,
         handleSelectionsForSelectedConnector,
 
-        extractionStatus,
         blocked,
         disabled,
+        search,
+        dateFrom,
+        dateTo,
 
         activePage,
     ]);
@@ -586,26 +590,28 @@ function LeadsPane(props: Props) {
                 headingSize="small"
                 headerDescription={(
                     <div className={styles.filters}>
+                        <TextInput
+                            label="Search"
+                            icons={<IoSearch />}
+                            name={undefined}
+                            onChange={setSearch}
+                            value={search}
+                        />
+                        <DateDualRangeInput
+                            label="Published At"
+                            fromName={undefined}
+                            toName={undefined}
+                            fromOnChange={setDateFrom}
+                            toOnChange={setDateTo}
+                            fromValue={dateFrom}
+                            toValue={dateTo}
+                        />
                         <BooleanInput
                             options={blockedOptions}
                             name={undefined}
                             value={blocked}
                             onChange={setBlocked}
                             label="Ignored"
-                        />
-                        <MultiSelectInput
-                            name={undefined}
-                            onChange={setExtractionStatus}
-                            options={
-                                connectorDetailsData
-                                    ?.connectorLeadExtractionStatusOptions
-                                    ?.enumValues
-                            }
-                            disabled={loading}
-                            keySelector={enumKeySelector}
-                            labelSelector={enumLabelSelector}
-                            value={extractionStatus}
-                            label="Status"
                         />
                     </div>
                 )}

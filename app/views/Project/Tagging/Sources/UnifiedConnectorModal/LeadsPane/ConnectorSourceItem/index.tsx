@@ -17,7 +17,6 @@ import {
 import {
     ConnectorSourceLeadsQuery,
     ConnectorSourceLeadsQueryVariables,
-    ConnectorLeadExtractionStatusEnum,
 } from '#generated/types';
 
 import { PartialLeadType } from '#views/Project/Tagging/Sources/BulkUploadModal/schema';
@@ -33,8 +32,10 @@ export const CONNECTOR_SOURCE_LEADS = gql`
         $page: Int,
         $pageSize: Int,
         $sources: [ID!],
-        $extractionStatus: [ConnectorLeadExtractionStatusEnum!],
         $blocked: Boolean,
+        $dateFrom: Date,
+        $dateTo: Date,
+        $search: String,
     ) {
         project(id: $projectId) {
             id
@@ -43,8 +44,10 @@ export const CONNECTOR_SOURCE_LEADS = gql`
                     sources: $sources,
                     page: $page,
                     pageSize: $pageSize,
-                    extractionStatus: $extractionStatus,
                     blocked: $blocked,
+                    publishedOnGte: $dateFrom,
+                    publishedOnLte: $dateTo,
+                    search: $search,
                     alreadyAdded: false,
                 ) {
                     totalCount
@@ -59,7 +62,7 @@ export const CONNECTOR_SOURCE_LEADS = gql`
                             title
                             sourceRaw
                             publishedOn
-                            extractionStatus
+                            website
                             authorRaw
                             authors {
                                 id
@@ -121,9 +124,11 @@ interface ConnectorSourceItemProps {
     leadsByConnectorLeadMapping: Record<string, PartialLeadType> | undefined;
     leadsError: ArrayError<PartialLeadType[]> | undefined;
 
-    extractionStatus: ConnectorLeadExtractionStatusEnum[] | undefined;
     blocked: boolean | undefined;
     disabled: boolean;
+    dateFrom: string | undefined;
+    dateTo: string | undefined;
+    search: string | undefined;
 }
 
 function ConnectorSourceItem(props: ConnectorSourceItemProps) {
@@ -142,12 +147,15 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
         leadsByConnectorLeadMapping,
         leadsError,
 
-        extractionStatus,
         blocked,
         disabled,
 
         activePage,
         setActivePage,
+
+        dateFrom,
+        dateTo,
+        search,
     } = props;
 
     const variables = useMemo(
@@ -156,10 +164,20 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
             sources: [connectorSourceId],
             page: activePage,
             pageSize: MAX_ITEMS_PER_PAGE,
-            extractionStatus,
             blocked,
+            dateFrom,
+            dateTo,
+            search,
         }),
-        [projectId, connectorSourceId, activePage, extractionStatus, blocked],
+        [
+            projectId,
+            connectorSourceId,
+            activePage,
+            blocked,
+            dateFrom,
+            dateTo,
+            search,
+        ],
     );
 
     const {
