@@ -126,8 +126,7 @@ const schema: FormSchema = {
             primaryTagging: sectionsSchema,
             secondaryTagging: widgetsSchema,
 
-            // FIXME: add stricter typings
-            predictionTagsMapping: predictionTagMappingSchema,
+            predictionTagsMapping: predictionTagMappingsSchema,
         };
 
         if (value?.isVisualizationEnabled) {

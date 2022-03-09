@@ -5,6 +5,7 @@ import {
     listToMap,
     unique,
     isDefined,
+    randomString,
 } from '@togglecorp/fujs';
 import {
     ListView,
@@ -236,6 +237,7 @@ function Matrix2dTagInput(props: Props) {
                         type: 'COLUMN',
                         columnKey,
                     },
+                    clientId: randomString(),
                 // FIXME: need to cast here because we cannot set id
                 // and a proper fix would require more time
                 } as Matrix2dMappingsItem,
@@ -285,6 +287,7 @@ function Matrix2dTagInput(props: Props) {
                         subRowKey,
                         rowKey,
                     },
+                    clientId: randomString(),
                 // FIXME: need to cast here because we cannot set id
                 // and a proper fix would require more time
                 } as Matrix2dMappingsItem,
@@ -337,6 +340,7 @@ function Matrix2dTagInput(props: Props) {
                         subColumnKey,
                         columnKey,
                     },
+                    clientId: randomString(),
                 // FIXME: need to cast here because we cannot set id
                 // and a proper fix would require more time
                 } as Matrix2dMappingsItem,
