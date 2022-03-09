@@ -246,6 +246,7 @@ function SimplifiedTextView(props: Props) {
                         ) : (
                             <AssistItem
                                 text={split.excerpt}
+                                projectId={projectId}
                                 onAssistedEntryAdd={handleAssistedEntryAdd}
                                 leadId={leadId}
                                 frameworkDetails={frameworkDetails}
