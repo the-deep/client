@@ -60,6 +60,7 @@ interface Props {
     mappings: Matrix2dMappingsItem[] | undefined;
     onMappingsChange: (newMappings: Matrix2dMappingsItem[], widgetPk: string) => void;
     selectedTag: string | undefined;
+    disabled?: boolean;
 }
 
 function Matrix2dTagInput(props: Props) {
@@ -69,6 +70,7 @@ function Matrix2dTagInput(props: Props) {
         mappings,
         onMappingsChange,
         selectedTag,
+        disabled,
     } = props;
 
     const sortedColumns = useMemo(() => (
@@ -362,8 +364,9 @@ function Matrix2dTagInput(props: Props) {
         value: !!columnKeysInMappings?.[column.columnKey],
         badgeCount: mappingsGroupedByColumn?.[column.columnKey]?.length ?? 0,
         onClick: handleColumnClick,
-        disabled: !selectedTag,
+        disabled: !selectedTag || disabled,
     }), [
+        disabled,
         handleColumnClick,
         selectedTag,
         columnKeysInMappings,
@@ -376,8 +379,9 @@ function Matrix2dTagInput(props: Props) {
         onClick: handleSubRowClick,
         value: !!subRowKeysInMappings?.[subRow.subRowKey],
         badgeCount: mappingsGroupedBySubRow?.[subRow.subRowKey]?.length ?? 0,
-        disabled: !selectedTag,
+        disabled: !selectedTag || disabled,
     }), [
+        disabled,
         handleSubRowClick,
         selectedTag,
         subRowKeysInMappings,
@@ -390,8 +394,9 @@ function Matrix2dTagInput(props: Props) {
         value: !!subColumnKeysInMappings?.[subColumn.subColumnKey],
         badgeCount: mappingsGroupedBySubColumn?.[subColumn.subColumnKey]?.length ?? 0,
         onClick: handleSubColumnClick,
-        disabled: !selectedTag,
+        disabled: !selectedTag || disabled,
     }), [
+        disabled,
         handleSubColumnClick,
         selectedTag,
         subColumnKeysInMappings,
