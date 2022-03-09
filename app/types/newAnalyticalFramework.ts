@@ -1461,6 +1461,7 @@ export interface GeoMappingsItem {
     widget: string;
 }
 
+// FIXME: Probably need to extend this from base mappings item
 export interface NumberMappingsItem {
     widgetType: 'NUMBER';
     widget: string;
