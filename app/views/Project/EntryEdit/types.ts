@@ -7,6 +7,7 @@ import {
     ProjectFrameworkQuery,
     WidgetType as WidgetRaw,
     BulkEntryInputType,
+    AnalysisFrameworkPredictionMappingType as MappingsItemRaw,
     AttributeType as WidgetAttributeRaw,
     AttributeGqInputType as WidgetInputAttributeRaw,
 } from '#generated/types';
@@ -15,7 +16,10 @@ import {
     DeepReplace,
 } from '#utils/types';
 import { WidgetAttribute as WidgetAttributeFromEntry } from '#types/newEntry';
-import { Widget as WidgetFromAF } from '#types/newAnalyticalFramework';
+import {
+    Widget as WidgetFromAF,
+    MappingsItem,
+} from '#types/newAnalyticalFramework';
 
 export type EntryRaw = NonNullable<NonNullable<NonNullable<NonNullable<LeadEntriesQuery['project']>['lead']>['entries']>[number]>;
 export type Entry = DeepReplace<EntryRaw, Omit<WidgetAttributeRaw, 'widgetTypeDisplay' | 'widthTypeDisplay'>, WidgetAttributeFromEntry>;
@@ -32,6 +36,7 @@ export type EntryInput = DeepReplace<EntryInputRaw, WidgetInputAttributeRaw, Wid
 // FIXME: 'key' is thought to be mandatory from server.
 // Remove this DeepMandatory transformation after server sends key as mandatory
 export type FrameworkRaw = DeepMandatory<NonNullable<NonNullable<ProjectFrameworkQuery['project']>['analysisFramework']>, 'key'>;
-export type Framework = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
+export type FrameworkWithWidgets = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
+export type Framework = DeepReplace<FrameworkWithWidgets, MappingsItemRaw, MappingsItem>;
 export type Section = NonNullable<Framework['primaryTagging']>[number];
 export type Widget = WidgetFromAF;
