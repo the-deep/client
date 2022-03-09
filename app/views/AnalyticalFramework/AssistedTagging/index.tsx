@@ -40,8 +40,7 @@ import styles from './styles.css';
 
 type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
 
-// FIXME: Change tagId grouping to groupName after we get it from server
-const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.tagId;
+const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.parentTag ?? 'Miscellaneous';
 const nlpLabelKeySelector = (tag: AssistedTag) => tag.id;
 const widgetKeySelector = (widget: Widget) => widget.clientId;
 
@@ -78,6 +77,20 @@ function AssistedTagging<K extends string>(props: Props<K>) {
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
 
     const errored = analyzeErrors(error);
+
+    const {
+        predictionTags,
+        tagsParents,
+    } = useMemo(() => ({
+        predictionTags: assistedPredictionTags?.filter((tag) => !tag.isCategory),
+        tagsParents: listToMap(
+            assistedPredictionTags?.filter((tag) => tag.isCategory),
+            (tag) => tag.id,
+            (tag) => tag.name,
+        ),
+    }), [
+        assistedPredictionTags,
+    ]);
 
     type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
     const setMappings = useCallback<SetMappingsFn>((newMappings) => {
@@ -159,9 +172,9 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         });
     }, [setMappings]);
 
-    const nlpLabelGroupRendererParams = useCallback((title: string) => ({
-        title,
-    }), []);
+    const nlpLabelGroupRendererParams = useCallback((groupKey: string) => ({
+        title: tagsParents?.[groupKey] ?? groupKey,
+    }), [tagsParents]);
 
     const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
         children: tag.name,
@@ -228,7 +241,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                         heading="NLP Framework"
                     >
                         <ListView
-                            data={assistedPredictionTags}
+                            data={predictionTags}
                             renderer={CheckButton}
                             rendererParams={nlpRendererParams}
                             keySelector={nlpLabelKeySelector}

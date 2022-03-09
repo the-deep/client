@@ -1307,6 +1307,7 @@ export interface AssistedTag {
 type MappingsItemBase = Omit<MappingsItemRaw, 'association' | 'widgetType'>;
 
 export interface Matrix1dMappingsItem extends MappingsItemBase {
+    tag: string;
     widgetType: 'MATRIX1D';
     association: {
         rowKey: string;
@@ -1315,6 +1316,7 @@ export interface Matrix1dMappingsItem extends MappingsItemBase {
 }
 
 export interface Matrix2dMappingsItem extends MappingsItemBase {
+    tag: string;
     widgetType: 'MATRIX2D';
     association: {
         type: 'SUB_ROW';
@@ -1331,6 +1333,7 @@ export interface Matrix2dMappingsItem extends MappingsItemBase {
 }
 
 export interface ScaleMappingsItem extends MappingsItemBase {
+    tag: string;
     widgetType: 'SCALE';
     association: {
         optionKey: string;
@@ -1338,6 +1341,7 @@ export interface ScaleMappingsItem extends MappingsItemBase {
 }
 
 export interface SelectMappingsItem extends MappingsItemBase {
+    tag: string;
     widgetType: 'SELECT';
     association: {
         optionKey: string;
@@ -1345,18 +1349,17 @@ export interface SelectMappingsItem extends MappingsItemBase {
 }
 
 export interface MultiSelectMappingsItem extends MappingsItemBase {
+    tag: string;
     widgetType: 'MULTISELECT';
     association: {
         optionKey: string;
     };
 }
 
-// FIXME: Probably need to extend this from base mappings item
 export interface GeoMappingsItem extends Omit<MappingsItemBase, 'tag'> {
     widgetType: 'GEO';
 }
 
-// FIXME: Probably need to extend this from base mappings item
 export interface NumberMappingsItem extends Omit<MappingsItemBase, 'tag'> {
     widgetType: 'NUMBER';
     widget: string;

@@ -67,6 +67,7 @@ const CREATE_DRAFT_ENTRY = gql`
         $excerpt: String!,
     ) {
         project(id: $projectId) {
+            id
             assistedTagging {
                 draftEntryCreate(data: { lead: $leadId, excerpt: $excerpt }) {
                     ok
@@ -101,6 +102,7 @@ const PROJECT_DRAFT_ENTRY = gql`
         $draftEntryId: ID!,
     ) {
         project(id: $projectId) {
+            id
             assistedTagging {
                 draftEntry(id: $draftEntryId) {
                     id
@@ -238,7 +240,7 @@ function AssistItem(props: Props) {
     ) => {
         const matchedMappings = mappings
             ?.filter(isCategoricalMappings)
-            .filter((m) => predictions.tags.includes(m.tag));
+            .filter((m) => m.tag && predictions.tags.includes(m.tag));
 
         const supportedGeoWidgets = mappings
             ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
