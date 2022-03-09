@@ -4,6 +4,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     Modal,
+    Kraken,
     Message,
     Button,
 } from '@the-deep/deep-ui';
@@ -39,6 +40,7 @@ interface Props {
     onCloseButtonClick: () => void;
     loadingPredictions?: boolean;
     hints: WidgetHint[] | undefined;
+    predictionsErrored: boolean;
 }
 
 function AssistPopup(props: Props) {
@@ -55,6 +57,7 @@ function AssistPopup(props: Props) {
         onGeoAreaOptionsChange,
         loadingPredictions,
         hints,
+        predictionsErrored,
     } = props;
 
     const allWidgets = useMemo(() => {
@@ -71,7 +74,7 @@ function AssistPopup(props: Props) {
         frameworkDetails,
     ]);
 
-    const isMessageShown = loadingPredictions;
+    const isMessageShown = loadingPredictions || predictionsErrored;
 
     return (
         <Modal
@@ -88,11 +91,21 @@ function AssistPopup(props: Props) {
                     Create Entry
                 </Button>
             )}
+            bodyClassName={styles.body}
         >
             {isMessageShown ? (
                 <Message
+                    className={styles.message}
                     pendingMessage="DEEP is analyzing your text."
-                    pending
+                    pending={loadingPredictions}
+                    errored={predictionsErrored}
+                    erroredEmptyIcon={(
+                        <Kraken
+                            variant="crutches"
+                            size="large"
+                        />
+                    )}
+                    erroredEmptyMessage="DEEP was unable to provide predictions."
                 />
             ) : (
                 <EntryInput

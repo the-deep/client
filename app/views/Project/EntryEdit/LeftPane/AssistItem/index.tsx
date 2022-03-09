@@ -125,24 +125,6 @@ const PROJECT_DRAFT_ENTRY = gql`
     }
 `;
 
-// FIXME: Remove this after connecting backend
-const mockAssistedMappingsResponse = {
-    tags: [
-        '9',
-        '6',
-        '7',
-        '11',
-        '12',
-        '5',
-        '2',
-        '10',
-        '18',
-        '20',
-        '19',
-    ],
-    locations: ['Kathmandu'],
-};
-
 interface Props {
     className?: string;
     text: string;
@@ -251,8 +233,6 @@ function AssistItem(props: Props) {
         onAssistedEntryAdd,
     ]);
 
-    const [loadingPredictions, setFetchingPredictions] = useState(true);
-
     const handleMappingsFetch = useCallback((
         predictions: { tags: string[]; locations: string[]; },
     ) => {
@@ -358,13 +338,13 @@ function AssistItem(props: Props) {
                 }
                 if (
                     widget.widgetId === 'GEO'
-                    && mockAssistedMappingsResponse.locations.length > 0
+                    && predictions.locations.length > 0
                     && supportedGeoWidgets?.includes(widget.id)
                 ) {
                     const hintsWithInfo: WidgetHint = {
                         widgetPk: widget.id,
                         widgetType: 'GEO',
-                        hints: mockAssistedMappingsResponse.locations,
+                        hints: predictions.locations,
                     };
                     return {
                         tempAttrs: oldTempAttrs,
@@ -437,8 +417,10 @@ function AssistItem(props: Props) {
 
     const {
         data,
+        loading: loadingPredictions,
         startPolling,
         stopPolling,
+        error: fetchErrors,
     } = useQuery<ProjectDraftEntryQuery, ProjectDraftEntryQueryVariables>(
         PROJECT_DRAFT_ENTRY,
         {
@@ -461,7 +443,6 @@ function AssistItem(props: Props) {
                 ) {
                     return;
                 }
-                setFetchingPredictions(false);
 
                 const validPredictions = result?.predictions?.filter(isDefined);
 
@@ -503,17 +484,24 @@ function AssistItem(props: Props) {
 
     useEffect(
         () => {
-            if (shouldPoll) {
-                startPolling(5000);
-            } else {
-                stopPolling();
+            if (!shouldPoll) {
+                return undefined;
             }
+            startPolling(2000);
+            return () => { stopPolling(); };
         },
-        [shouldPoll, startPolling, stopPolling],
+        [
+            shouldPoll,
+            startPolling,
+            stopPolling,
+        ],
     );
 
     const [
         createDraftEntry,
+        {
+            error: createErrors,
+        },
     ] = useMutation<CreateProjectDraftEntryMutation, CreateProjectDraftEntryMutationVariables>(
         CREATE_DRAFT_ENTRY,
         {
@@ -521,49 +509,20 @@ function AssistItem(props: Props) {
                 const draftEntryResponse = response?.project?.assistedTagging?.draftEntryCreate;
 
                 // FIXME: Handle errors more gracefully
-                if (!draftEntryResponse || !draftEntryResponse.ok || !draftEntryResponse.errors) {
+                if (
+                    !draftEntryResponse
+                    || !draftEntryResponse.ok
+                    || !!draftEntryResponse.errors
+                    || !draftEntryResponse.result
+                ) {
                     alert.show(
                         'Failed to predict!',
                         { variant: 'error' },
                     );
                     return;
                 }
-                const {
-                    result,
-                } = draftEntryResponse;
-                setDraftEntryId(result?.id);
 
-                if (
-                    result?.predictionStatus === 'PENDING'
-                    || result?.predictionStatus === 'STARTED'
-                ) {
-                    setFetchingPredictions(true);
-                    return;
-                }
-
-                const validPredictions = result?.predictions?.filter(isDefined);
-
-                const geoPredictions = validPredictions?.filter(
-                    (prediction) => (
-                        prediction.modelVersionDeeplModelId === GEOLOCATION_DEEPL_MODEL_ID
-                    ),
-                ).map(
-                    (prediction) => prediction.value,
-                ) ?? [];
-
-                const categoricalTags = validPredictions?.filter(
-                    (prediction) => (
-                        prediction.modelVersionDeeplModelId !== GEOLOCATION_DEEPL_MODEL_ID
-                        && prediction.isSelected
-                    ),
-                ).map(
-                    (prediction) => prediction.tag,
-                ).filter(isDefined) ?? [];
-
-                handleMappingsFetch({
-                    tags: categoricalTags,
-                    locations: geoPredictions,
-                });
+                setDraftEntryId(draftEntryResponse.result?.id);
             },
             onError: () => {
                 alert.show(
@@ -634,6 +593,7 @@ function AssistItem(props: Props) {
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={setGeoAreaOptions}
                     loadingPredictions={loadingPredictions}
+                    predictionsErrored={!!fetchErrors || !!createErrors}
                 />
             )}
         </Container>
