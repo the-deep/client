@@ -58,6 +58,7 @@ function ConnectorSourceLeadItem<N>(props: ConnectorSourceLeadItemProps<N>) {
 
     return (
         <div
+            title={title || 'Unnamed'}
             className={_cs(
                 className,
                 styles.connectorLeadItemContainer,
