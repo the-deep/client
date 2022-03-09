@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { FaBrain } from 'react-icons/fa';
 import {
     listToMap,
+    isDefined,
     _cs,
     randomString,
 } from '@togglecorp/fujs';
@@ -9,8 +10,10 @@ import {
     useForm,
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import {
     QuickActionButton,
+    useAlert,
     Container,
 } from '@the-deep/deep-ui';
 import { IoClose } from 'react-icons/io5';
@@ -30,6 +33,12 @@ import {
 import {
     mergeLists,
 } from '#utils/common';
+import {
+    ProjectDraftEntryQuery,
+    ProjectDraftEntryQueryVariables,
+    CreateProjectDraftEntryMutation,
+    CreateProjectDraftEntryMutationVariables,
+} from '#generated/types';
 
 import {
     PartialEntryType as EntryInput,
@@ -49,6 +58,73 @@ import {
 
 import styles from './styles.css';
 
+const GEOLOCATION_DEEPL_MODEL_ID = 'geolocation';
+
+const CREATE_DRAFT_ENTRY = gql`
+    mutation CreateProjectDraftEntry(
+        $projectId: ID!,
+        $leadId: ID!,
+        $excerpt: String!,
+    ) {
+        project(id: $projectId) {
+            assistedTagging {
+                draftEntryCreate(data: { lead: $leadId, excerpt: $excerpt }) {
+                    ok
+                    errors
+                    result {
+                        id
+                        predictionStatus
+                        predictions {
+                            category
+                            dataType
+                            dataTypeDisplay
+                            draftEntry
+                            id
+                            isSelected
+                            modelVersion
+                            modelVersionDeeplModelId
+                            prediction
+                            tag
+                            threshold
+                            value
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const PROJECT_DRAFT_ENTRY = gql`
+    query ProjectDraftEntry(
+        $projectId: ID!,
+        $draftEntryId: ID!,
+    ) {
+        project(id: $projectId) {
+            assistedTagging {
+                draftEntry(id: $draftEntryId) {
+                    id
+                    predictionStatus
+                    predictions {
+                        category
+                        dataType
+                        dataTypeDisplay
+                        draftEntry
+                        id
+                        isSelected
+                        modelVersion
+                        modelVersionDeeplModelId
+                        prediction
+                        tag
+                        threshold
+                        value
+                    }
+                }
+            }
+        }
+    }
+`;
+
 // FIXME: Remove this after connecting backend
 const mockAssistedMappingsResponse = {
     tags: [
@@ -64,7 +140,6 @@ const mockAssistedMappingsResponse = {
         '20',
         '19',
     ],
-    numbers: [122, 1123, 541],
     locations: ['Kathmandu'],
 };
 
@@ -76,6 +151,7 @@ interface Props {
     leadId: string;
     onAssistCancel: () => void;
     disabled?: boolean;
+    projectId?: string;
 }
 
 function AssistItem(props: Props) {
@@ -86,6 +162,7 @@ function AssistItem(props: Props) {
         frameworkDetails,
         leadId,
         onAssistCancel,
+        projectId,
         disabled,
     } = props;
 
@@ -110,6 +187,7 @@ function AssistItem(props: Props) {
     ]);
 
     const mappings = frameworkDetails?.predictionTagsMapping;
+    const alert = useAlert();
     const [allHints, setAllHints] = useState<WidgetHint[] | undefined>(undefined);
 
     const schema = useMemo(
@@ -173,14 +251,14 @@ function AssistItem(props: Props) {
         onAssistedEntryAdd,
     ]);
 
-    // FIXME: Use pending from request
-    const [pending, setPending] = useState(true);
+    const [loadingPredictions, setFetchingPredictions] = useState(true);
 
-    // FIXME: Insert this inside onCompleted
-    const handleMappingsFetch = useCallback(() => {
+    const handleMappingsFetch = useCallback((
+        predictions: { tags: string[]; locations: string[]; },
+    ) => {
         const matchedMappings = mappings
             ?.filter(isCategoricalMappings)
-            .filter((m) => mockAssistedMappingsResponse.tags.includes(m.tag));
+            .filter((m) => predictions.tags.includes(m.tag));
 
         const supportedGeoWidgets = mappings
             ?.filter((mappingItem) => mappingItem.widgetType === 'GEO')
@@ -337,8 +415,6 @@ function AssistItem(props: Props) {
             },
             undefined,
         );
-        // FIXME: Remove this later
-        setPending(false);
     }, [
         text,
         leadId,
@@ -347,19 +423,174 @@ function AssistItem(props: Props) {
         filteredWidgets,
     ]);
 
-    useEffect(() => {
-        const timeout = setTimeout(
-            () => {
-                if (pending) {
-                    handleMappingsFetch();
+    const [draftEntryId, setDraftEntryId] = useState<string | undefined>(undefined);
+
+    const queryVariables = useMemo(() => (
+        draftEntryId && projectId ? ({
+            projectId,
+            draftEntryId,
+        }) : undefined
+    ), [
+        projectId,
+        draftEntryId,
+    ]);
+
+    const {
+        data,
+        startPolling,
+        stopPolling,
+    } = useQuery<ProjectDraftEntryQuery, ProjectDraftEntryQueryVariables>(
+        PROJECT_DRAFT_ENTRY,
+        {
+            skip: !queryVariables,
+            variables: queryVariables,
+            onCompleted: (response) => {
+                const result = response?.project?.assistedTagging?.draftEntry;
+
+                // FIXME: Handle errors more gracefully
+                if (!result) {
+                    alert.show(
+                        'Failed to predict!',
+                        { variant: 'error' },
+                    );
+                    return;
                 }
+                if (
+                    result?.predictionStatus === 'PENDING'
+                    || result?.predictionStatus === 'STARTED'
+                ) {
+                    return;
+                }
+                setFetchingPredictions(false);
+
+                const validPredictions = result?.predictions?.filter(isDefined);
+
+                const geoPredictions = validPredictions?.filter(
+                    (prediction) => (
+                        prediction.modelVersionDeeplModelId === GEOLOCATION_DEEPL_MODEL_ID
+                    ),
+                ).map(
+                    (prediction) => prediction.value,
+                ) ?? [];
+
+                const categoricalTags = validPredictions?.filter(
+                    (prediction) => (
+                        prediction.modelVersionDeeplModelId !== GEOLOCATION_DEEPL_MODEL_ID
+                        && prediction.isSelected
+                    ),
+                ).map(
+                    (prediction) => prediction.tag,
+                ).filter(isDefined) ?? [];
+
+                handleMappingsFetch({
+                    tags: categoricalTags,
+                    locations: geoPredictions,
+                });
             },
-            2000,
-        );
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [handleMappingsFetch, pending]);
+            onError: () => {
+                alert.show(
+                    'Failed to predict!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    const shouldPoll = useMemo(() => {
+        const draftEntry = data?.project?.assistedTagging?.draftEntry;
+        return draftEntry?.predictionStatus === 'PENDING' || draftEntry?.predictionStatus === 'STARTED';
+    }, [data]);
+
+    useEffect(
+        () => {
+            if (shouldPoll) {
+                startPolling(5000);
+            } else {
+                stopPolling();
+            }
+        },
+        [shouldPoll, startPolling, stopPolling],
+    );
+
+    const [
+        createDraftEntry,
+    ] = useMutation<CreateProjectDraftEntryMutation, CreateProjectDraftEntryMutationVariables>(
+        CREATE_DRAFT_ENTRY,
+        {
+            onCompleted: (response) => {
+                const draftEntryResponse = response?.project?.assistedTagging?.draftEntryCreate;
+
+                // FIXME: Handle errors more gracefully
+                if (!draftEntryResponse || !draftEntryResponse.ok || !draftEntryResponse.errors) {
+                    alert.show(
+                        'Failed to predict!',
+                        { variant: 'error' },
+                    );
+                    return;
+                }
+                const {
+                    result,
+                } = draftEntryResponse;
+                setDraftEntryId(result?.id);
+
+                if (
+                    result?.predictionStatus === 'PENDING'
+                    || result?.predictionStatus === 'STARTED'
+                ) {
+                    setFetchingPredictions(true);
+                    return;
+                }
+
+                const validPredictions = result?.predictions?.filter(isDefined);
+
+                const geoPredictions = validPredictions?.filter(
+                    (prediction) => (
+                        prediction.modelVersionDeeplModelId === GEOLOCATION_DEEPL_MODEL_ID
+                    ),
+                ).map(
+                    (prediction) => prediction.value,
+                ) ?? [];
+
+                const categoricalTags = validPredictions?.filter(
+                    (prediction) => (
+                        prediction.modelVersionDeeplModelId !== GEOLOCATION_DEEPL_MODEL_ID
+                        && prediction.isSelected
+                    ),
+                ).map(
+                    (prediction) => prediction.tag,
+                ).filter(isDefined) ?? [];
+
+                handleMappingsFetch({
+                    tags: categoricalTags,
+                    locations: geoPredictions,
+                });
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to predict!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
+
+    useEffect(() => {
+        if (projectId && !draftEntryId) {
+            createDraftEntry({
+                variables: {
+                    projectId,
+                    leadId,
+                    excerpt: text,
+                },
+            });
+        }
+    }, [
+        draftEntryId,
+        projectId,
+        leadId,
+        text,
+        createDraftEntry,
+    ]);
 
     return (
         <Container
@@ -402,7 +633,7 @@ function AssistItem(props: Props) {
                     onEntryCreateButtonClick={handleEntryCreateButtonClick}
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={setGeoAreaOptions}
-                    loadingPredictions={pending}
+                    loadingPredictions={loadingPredictions}
                 />
             )}
         </Container>
