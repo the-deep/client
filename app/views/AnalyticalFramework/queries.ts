@@ -50,10 +50,10 @@ const FRAMEWORK = gql`
             }
         }
         predictionTagsMapping {
-            widgetType
-            widget
-            tag
             id
+            tag
+            widget
+            widgetType
             clientId
             association
         }

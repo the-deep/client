@@ -166,6 +166,7 @@ export const PROJECT_FRAMEWORK = gql`
                     tag
                     widget
                     widgetType
+                    clientId
                     association
                 }
             }
