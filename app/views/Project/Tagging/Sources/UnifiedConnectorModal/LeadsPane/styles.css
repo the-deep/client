@@ -6,6 +6,7 @@
         display: flex;
         flex-basis: 50%;
         flex-direction: column;
+        flex-shrink: 0;
         border-right: var(--dui-width-separator-thick) solid var(--dui-color-surface-information);
         background-color: var(--dui-color-foreground);
         padding: 0;
@@ -18,25 +19,31 @@
     }
 
     .lead-detail-pane {
-        flex-basis: 50%;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
         padding: 0 var(--dui-spacing-medium);
-        overflow-y: auto;
+        overflow: auto;
 
         .lead-container {
-            display: flex;
-            flex-direction: column;
+            flex-grow: 1;
             background-color: var(--dui-color-foreground);
             padding: 0;
-            overflow-y: auto;
+            overflow: auto;
 
-            .lead-input {
-                flex-shrink: 0;
-                padding: 0;
-            }
+            .content {
+                display: flex;
+                flex-direction: column;
 
-            .preview {
-                flex-grow: 1;
-                min-height: 240px;
+                .lead-input {
+                    flex-shrink: 0;
+                    padding: 0;
+                }
+
+                .preview {
+                    flex-grow: 1;
+                    min-height: 240px;
+                }
             }
         }
     }
