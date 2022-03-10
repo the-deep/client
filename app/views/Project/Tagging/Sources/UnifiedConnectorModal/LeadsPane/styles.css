@@ -16,6 +16,10 @@
             flex-wrap: wrap;
             gap: var(--dui-spacing-medium);
         }
+
+        .retrigger-button {
+            margin: var(--dui-spacing-small);
+        }
     }
 
     .lead-detail-pane {
