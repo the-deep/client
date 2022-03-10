@@ -487,6 +487,9 @@ function LeftPane(props: Props) {
         </Container>
     );
 
+    const assistedTaggingShown = assistedTaggingEnabled
+        && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
+
     return (
         <div className={_cs(styles.sourcePreview, className)}>
             <Tabs
@@ -526,15 +529,15 @@ function LeftPane(props: Props) {
                     >
                         {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                             <>
-                                {/* TODO: Hide this button based on whether or not the
-                                    associated framework has NLP mapping */}
-                                <Switch
-                                    className={styles.switch}
-                                    name="isAssistedTaggingEnabled"
-                                    value={assistedTaggingEnabled}
-                                    onChange={onAssistedTaggingStatusChange}
-                                    label="Assisted Tagging"
-                                />
+                                {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0 && (
+                                    <Switch
+                                        className={styles.switch}
+                                        name="isAssistedTaggingEnabled"
+                                        value={assistedTaggingEnabled}
+                                        onChange={onAssistedTaggingStatusChange}
+                                        label="Assisted Tagging"
+                                    />
+                                )}
                                 <SimplifiedTextView
                                     className={styles.simplifiedTextView}
                                     activeEntryClientId={activeEntry}
@@ -551,7 +554,7 @@ function LeftPane(props: Props) {
                                     onEntryRestore={onEntryRestore}
                                     disableAddButton={isEntrySelectionActive}
                                     disableExcerptClick={isEntrySelectionActive}
-                                    assistedTaggingEnabled={assistedTaggingEnabled}
+                                    assistedTaggingEnabled={assistedTaggingShown}
                                     frameworkDetails={frameworkDetails}
                                     leadId={leadId}
                                 />

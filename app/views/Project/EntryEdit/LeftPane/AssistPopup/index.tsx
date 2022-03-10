@@ -41,6 +41,7 @@ interface Props {
     predictionsLoading?: boolean;
     hints: WidgetHint[] | undefined;
     predictionsErrored: boolean;
+    messageText: string | undefined;
 }
 
 function AssistPopup(props: Props) {
@@ -58,6 +59,7 @@ function AssistPopup(props: Props) {
         predictionsLoading,
         hints,
         predictionsErrored,
+        messageText,
     } = props;
 
     const allWidgets = useMemo(() => {
@@ -74,7 +76,7 @@ function AssistPopup(props: Props) {
         frameworkDetails,
     ]);
 
-    const isMessageShown = predictionsLoading || predictionsErrored;
+    const isMessageShown = predictionsLoading || predictionsErrored || !!messageText;
 
     return (
         <Modal
@@ -99,6 +101,13 @@ function AssistPopup(props: Props) {
                     pendingMessage="DEEP is analyzing your text."
                     pending={predictionsLoading}
                     errored={predictionsErrored}
+                    message={messageText}
+                    icon={(
+                        <Kraken
+                            variant="icecream"
+                            size="large"
+                        />
+                    )}
                     erroredEmptyIcon={(
                         <Kraken
                             variant="crutches"
