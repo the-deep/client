@@ -15,7 +15,6 @@ import {
     TableCellProps,
     createStringColumn,
     useAlert,
-    useSortState,
 } from '@the-deep/deep-ui';
 import {
     gql,
@@ -42,39 +41,25 @@ import styles from './styles.css';
 
 const USER_GROUP_MEMBERSHIP = gql`
     query UserGroupMembership(
-        $membersIncludeProject: ID,
-        $membersExcludeProject: ID,
-        $search: String,
-        $page: Int,
-        $pageSize: Int,
-        $ordering: String,
+        $id: ID!,
     ) {
-        userGroups(
-            membersIncludeProject: $membersIncludeProject,
-            membersExcludeProject: $membersExcludeProject,
-            search: $search,
-            page: $page,
-            pageSize: $pageSize,
-            ordering: $ordering,
+        userGroup(
+            id: $id,
         ) {
-            totalCount
-            results {
+            id
+            title
+            membershipsCount
+            memberships {
                 id
-                title
-                currentUserRole
-                membershipsCount
-                memberships {
-                  id
-                  joinedAt
-                  role
-                  roleDisplay
-                  member {
-                    id
-                    displayName
-                    organization
-                    firstName
-                    lastName
-                  }
+                joinedAt
+                role
+                roleDisplay
+                member {
+                id
+                firstName
+                lastName
+                displayName
+                organization
                 }
             }
         }
@@ -114,7 +99,7 @@ const USER_GROUP_MEMBERSHIP_DELETE = gql`
     }
 `;
 
-export type UserGroupMembership = NonNullable<NonNullable<NonNullable<NonNullable<UserGroupMembershipQuery['userGroups']>['results']>[number]>['memberships']>[number];
+export type UserGroupMembership = NonNullable<NonNullable<UserGroupMembershipQuery['userGroup']>['memberships']>[number];
 export type UserGroupMember = NonNullable<UserGroupMembership['member']>;
 
 const maxItemsPerPage = 20;
@@ -140,11 +125,6 @@ export interface Props {
     autoFocus?: boolean;
 }
 
-const defaultSorting = {
-    name: 'member',
-    direction: 'Descending',
-};
-
 function UserGroupItem(props: Props) {
     const {
         className,
@@ -165,60 +145,16 @@ function UserGroupItem(props: Props) {
     const alert = useAlert();
 
     const [userToEdit, setUserToEdit] = useState<User | undefined>();
-    // const query = useMemo(() => ({
-    //    offset: (activePage - 1) * maxItemsPerPage,
-    //    limit: maxItemsPerPage,
-    // }), [activePage]);
-
-    // const {
-    //    pending: membershipsPending,
-    //    response: memberships,
-    //    retrigger: userGroupMembers,
-    // } = useRequest<MultiResponse<UserGroupMember>>({
-    //    url: `server://user-groups/${userGroupId}/memberships/`,
-    //    skip: activeUserGroupId !== userGroupId,
-    //    query,
-    //    method: 'GET',
-    //    preserveResponse: true,
-    // });
-
-    // const {
-    //    trigger: memberDeleteTrigger,
-    // } = useLazyRequest<unknown, string>({
-    //    url: (ctx) => `server://group-memberships/${ctx}/`,
-    //    method: 'DELETE',
-    //    onSuccess: () => {
-    //        refetchUserGroupMembers();
-    //        onUserDeleteSuccess();
-    //        alert.show(
-    //            'Successfully removed user from user group.',
-    //            { variant: 'success' },
-    //        );
-    //    },
-    //    onFailure: () => {
-    //        alert.show(
-    //            'Failed to  remove user from user group.',
-    //            { variant: 'error' },
-    //        );
-    //    },
-    // });
-
-    const sortState = useSortState();
-    const { sorting } = sortState;
-    const validSorting = sorting || defaultSorting;
-    const ordering = useMemo(() => (
-        validSorting.direction === 'Ascending'
-            ? validSorting.name
-            : `-${validSorting.name}`
-    ), [validSorting]);
 
     const userGroupMemberVariables = useMemo(() => ({
-        projectId: project?.id as string,
+        id: userGroupId as string,
         page: activePage,
         pageSize: maxItemsPerPage,
-        ordering,
     }
-    ), [project?.id, activePage, ordering]);
+    ), [
+        activePage,
+        userGroupId,
+    ]);
 
     const {
         previousData,
@@ -235,7 +171,6 @@ function UserGroupItem(props: Props) {
 
     const [
         userGroupMembershipDelete,
-        // { loading: userGroupMembershipDeletePending },
     ] = useMutation<
         UserGroupMembershipDeleteMutation,
         UserGroupMembershipDeleteMutationVariables
@@ -253,6 +188,7 @@ function UserGroupItem(props: Props) {
 
                 const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
+                console.log('Delete user GQL::>>', deletedResult);
 
                 if (deletedUser) {
                     alert.show(
@@ -290,7 +226,10 @@ function UserGroupItem(props: Props) {
                 deleteIds: [id],
             },
         });
-    }, []);
+    }, [
+        project?.id,
+        userGroupMembershipDelete,
+    ]);
 
     const handleAddMemberClick = useCallback(() => {
         onExpansionChange(true, userGroupId);
@@ -353,12 +292,12 @@ function UserGroupItem(props: Props) {
             }),
         };
         return ([
-            createStringColumn<UserGroupMembership, string | undefined>(
+            createStringColumn<UserGroupMembership, string>(
                 'name',
                 _ts('usergroup', 'nameLabel'),
-                (item) => item.member.displayName,
+                (item) => item.member?.displayName,
             ),
-            createDateColumn<UserGroupMembership, string | undefined>(
+            createDateColumn<UserGroupMembership, string>(
                 'joinedAt',
                 _ts('usergroup', 'addedOnLabel'),
                 (item) => item.joinedAt,
@@ -369,13 +308,13 @@ function UserGroupItem(props: Props) {
     }, [activeUserId, handleEditMemberClick, handleMemberDelete, userGroup]);
 
     const users = useMemo(() => (
-        (userGroupMembershipResponse?.userGroups?.results ?? []).map((d) => ({
+        (userGroupMembershipResponse?.userGroup?.memberships ?? []).map((d) => ({
             id: d.id,
-            displayName: d.memberships?,
-            firstName: d.memberships,
-            lastName: '',
+            displayName: d.member?.displayName,
+            firstName: d.member?.firstName,
+            lastName: d.member?.lastName,
         }))
-    ), [userGroupMembershipResponse?.userGroups?.results]);
+    ), [userGroupMembershipResponse?.userGroup?.memberships]);
 
     return (
         <ControlledExpandableContainer
@@ -438,7 +377,7 @@ function UserGroupItem(props: Props) {
                 footerActions={(
                     <Pager
                         activePage={activePage}
-                        itemsCount={userGroupMembershipResponse?.userGroups?.totalCount ?? 0}
+                        itemsCount={userGroupMembershipResponse?.userGroup?.membershipsCount ?? 0}
                         onActivePageChange={setActivePage}
                         maxItemsPerPage={maxItemsPerPage}
                         itemsPerPageControlHidden
@@ -451,7 +390,7 @@ function UserGroupItem(props: Props) {
                     columns={membersColumns}
                     keySelector={membershipKeySelector}
                     headerCellClassName={styles.headerCell}
-                    data={userGroupMembershipResponse?.userGroups?.results}
+                    data={userGroupMembershipResponse?.userGroup?.memberships}
                     errored={false}
                     filtered={false}
                     pending={userGroupMembershipPending}

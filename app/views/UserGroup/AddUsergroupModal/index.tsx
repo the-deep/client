@@ -241,6 +241,7 @@ function AddUserGroupModal(props: Props) {
         validate,
         updateUsergroup,
         createUsergroup,
+        initialValue?.id,
     ]);
 
     return (

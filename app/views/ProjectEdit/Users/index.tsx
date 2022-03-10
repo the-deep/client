@@ -1,5 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
+import {
+    Container,
+    Pager,
+} from '@the-deep/deep-ui';
 
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
@@ -12,10 +16,19 @@ import {
 import styles from './styles.css';
 
 const PROJECT_MEMBERSHIP = gql`
-    query Membership($id: ID!) {
+    query Membership(
+        $id: ID!,
+        $search: String,
+        $page: Int,
+        $pageSize: Int,
+        ) {
         project(id: $id) {
             id
-            userMembers {
+            userMembers (
+              search: $search,
+              page: $page,
+              pageSize: $pageSize,
+            ) {
                 results {
                   id
                   badges
@@ -40,6 +53,8 @@ const PROJECT_MEMBERSHIP = gql`
     }
 `;
 
+const maxItemsPerPage = 20;
+
 interface Props {
     projectId: string;
     activeUserId?: string;
@@ -51,11 +66,18 @@ function Users(props: Props) {
         activeUserId,
     } = props;
 
+    const [activePage, setActivePage] = useState<number>(1);
+
     const membershipVariables = useMemo(
         (): MembershipQueryVariables | undefined => ({
             id: projectId,
+            page: activePage,
+            pageSize: maxItemsPerPage,
         }),
-        [projectId],
+        [
+            projectId,
+            activePage,
+        ],
     );
 
     const {
@@ -72,7 +94,18 @@ function Users(props: Props) {
     const activeUserRoleLevel = activeUserMembership?.role?.level;
 
     return (
-        <div className={styles.users}>
+        <Container
+            className={styles.users}
+            footerActions={(
+                <Pager
+                    activePage={activePage}
+                    itemsCount={projectMembershipsResponse?.project?.userMembers?.totalCount ?? 0}
+                    onActivePageChange={setActivePage}
+                    maxItemsPerPage={maxItemsPerPage}
+                    itemsPerPageControlHidden
+                />
+            )}
+        >
             <UserList
                 className={styles.userList}
                 projectId={projectId}
@@ -86,7 +119,7 @@ function Users(props: Props) {
                 activeUserRoleLevel={activeUserRoleLevel}
                 pending={pendingMemberships}
             />
-        </div>
+        </Container>
     );
 }
 
