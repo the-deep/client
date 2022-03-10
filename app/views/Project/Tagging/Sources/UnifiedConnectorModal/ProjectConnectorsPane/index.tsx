@@ -5,12 +5,10 @@ import {
     ListView,
     TextOutput,
     RawButton,
-    QuickActionButton,
     Container,
     Button,
 } from '@the-deep/deep-ui';
 import {
-    IoRefreshOutline,
     IoChevronForward,
 } from 'react-icons/io5';
 
@@ -125,7 +123,6 @@ function Connector(props: Props) {
         loading: connectorsGetPending,
         error,
         fetchMore,
-        refetch,
     } = useQuery<ProjectConnectorsListQuery, ProjectConnectorsListQueryVariables>(
         PROJECT_CONNECTORS_LIST,
         {
@@ -198,17 +195,6 @@ function Connector(props: Props) {
             heading="Project Connectors"
             headerClassName={styles.header}
             headingSize="small"
-            headerActions={(
-                <QuickActionButton
-                    name={undefined}
-                    onClick={refetch}
-                    disabled={connectorsGetPending}
-                    title="Refresh connectors"
-                    variant="secondary"
-                >
-                    <IoRefreshOutline />
-                </QuickActionButton>
-            )}
         >
             <ListView
                 className={styles.connectorList}
