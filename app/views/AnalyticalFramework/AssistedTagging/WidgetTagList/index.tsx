@@ -40,7 +40,7 @@ function WidgetTagList(props: Props) {
     const filteredMappings = useMemo(
         () => mappings?.filter((mappingItem) => (
             mappingItem.widgetType === widget.widgetId
-            || mappingItem.widget === widget.id
+            && mappingItem.widget === widget.id
         )),
         [
             mappings,
