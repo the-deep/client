@@ -8,8 +8,12 @@ import {
     useAlert,
     DateDualRangeInput,
     TextInput,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
-import { IoSearch } from 'react-icons/io5';
+import {
+    IoSearch,
+    IoRefreshOutline,
+} from 'react-icons/io5';
 import {
     _cs,
     listToMap,
@@ -33,6 +37,8 @@ import {
     ProjectConnectorQueryVariables,
     UpdateConnectorLeadBlockStatusMutation,
     UpdateConnectorLeadBlockStatusMutationVariables,
+    ProjectConnectorTriggerMutation,
+    ProjectConnectorTriggerMutationVariables,
 } from '#generated/types';
 
 import { UserContext } from '#base/context/UserContext';
@@ -164,6 +170,23 @@ const UPDATE_CONNECTOR_LEAD_BLOCK_STATUS = gql`
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+`;
+
+const PROJECT_CONNECTOR_TRIGGER = gql`
+    mutation ProjectConnectorTrigger(
+        $projectId: ID!,
+        $connectorId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            unifiedConnector {
+                unifiedConnectorTrigger(id: $connectorId) {
+                    ok
+                    errors
                 }
             }
         }
@@ -468,6 +491,34 @@ function LeadsPane(props: Props) {
         },
     );
 
+    const [
+        triggerConnector,
+        {
+            loading: pendingConnectorTrigger,
+        },
+    ] = useMutation<ProjectConnectorTriggerMutation, ProjectConnectorTriggerMutationVariables>(
+        PROJECT_CONNECTOR_TRIGGER,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.unifiedConnector?.unifiedConnectorTrigger?.ok) {
+                    alert.show(
+                        'Successfully triggered connector.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to trigger connector.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+        },
+    );
+
     // NOTE: needed to get lead information from connectorLead
     const leadsByConnectorLeadMapping = useMemo(
         () => listToMap(
@@ -514,6 +565,19 @@ function LeadsPane(props: Props) {
             projectId,
         ],
     );
+
+    const handleRetriggerButtonClick = useCallback(() => {
+        triggerConnector({
+            variables: {
+                projectId,
+                connectorId,
+            },
+        });
+    }, [
+        triggerConnector,
+        projectId,
+        connectorId,
+    ]);
 
     const currentLeadIndex = useMemo(
         () => {
@@ -614,6 +678,18 @@ function LeadsPane(props: Props) {
                             label="Ignored"
                         />
                     </div>
+                )}
+                headerActions={(
+                    <QuickActionButton
+                        name={undefined}
+                        className={styles.retriggerButton}
+                        onClick={handleRetriggerButtonClick}
+                        disabled={pendingConnectorTrigger}
+                        title="Retrigger connector"
+                        variant="secondary"
+                    >
+                        <IoRefreshOutline />
+                    </QuickActionButton>
                 )}
             >
                 {/* FIXME: add pagination; filter out certain variables */}
