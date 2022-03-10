@@ -235,9 +235,16 @@ function AssistItem(props: Props) {
         onAssistedEntryAdd,
     ]);
 
+    const [messageText, setMessageText] = useState<string | undefined>();
+
     const handleMappingsFetch = useCallback((
         predictions: { tags: string[]; locations: string[]; },
     ) => {
+        if (!(predictions.tags.length > 0 || predictions.locations.length > 0)) {
+            setMessageText('DEEP couldn\'t provide any recommendtations for the selected text.');
+            return;
+        }
+
         const matchedMappings = mappings
             ?.filter(isCategoricalMappings)
             .filter((m) => m.tag && predictions.tags.includes(m.tag));
@@ -360,6 +367,11 @@ function AssistItem(props: Props) {
                 tempHints: [],
             },
         );
+
+        if (!(recommendedAttributes.length > 0 || widgetsHints.length > 0)) {
+            setMessageText('The provided recommendations for this text didn\'t fit any tags in this project.');
+            return;
+        }
 
         setAllHints(widgetsHints);
 
@@ -607,6 +619,7 @@ function AssistItem(props: Props) {
                         || draftEntryCreationPending
                     }
                     predictionsErrored={!!fetchErrors || !!createErrors}
+                    messageText={messageText}
                 />
             )}
         </Container>
