@@ -148,12 +148,12 @@ export function createScaleAttr(
     widget: ScaleWidget,
 ): {
     attr: ScaleWidgetAttribute | undefined;
-    hints: string[];
+    hints: string[] | undefined;
 } {
     if (!mappings || mappings.length <= 0) {
         return {
             attr: undefined,
-            hints: [],
+            hints: undefined,
         };
     }
 
@@ -168,7 +168,7 @@ export function createScaleAttr(
                     value: mappings[0].association.optionKey,
                 },
             },
-            hints: [],
+            hints: undefined,
         };
     }
 
@@ -183,12 +183,12 @@ export function createSelectAttr(
     widget: SingleSelectWidget,
 ): {
     attr: SingleSelectWidgetAttribute | undefined;
-    hints: string[];
+    hints: string[] | undefined;
 } {
     if (!mappings || mappings.length <= 0) {
         return {
             attr: undefined,
-            hints: [],
+            hints: undefined,
         };
     }
 
@@ -203,7 +203,7 @@ export function createSelectAttr(
                     value: mappings[0].association.optionKey,
                 },
             },
-            hints: [],
+            hints: undefined,
         };
     }
 
