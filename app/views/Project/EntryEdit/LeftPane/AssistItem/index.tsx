@@ -240,8 +240,8 @@ function AssistItem(props: Props) {
     const handleMappingsFetch = useCallback((
         predictions: { tags: string[]; locations: string[]; },
     ) => {
-        if (!(predictions.tags.length > 0 || predictions.locations.length > 0)) {
-            setMessageText('DEEP couldn\'t provide any recommendtations for the selected text.');
+        if (predictions.tags.length <= 0 && predictions.locations.length <= 0) {
+            setMessageText('DEEP could not provide any recommendations for the selected text.');
             return;
         }
 
@@ -368,8 +368,8 @@ function AssistItem(props: Props) {
             },
         );
 
-        if (!(recommendedAttributes.length > 0 || widgetsHints.length > 0)) {
-            setMessageText('The provided recommendations for this text didn\'t fit any tags in this project.');
+        if (recommendedAttributes.length <= 0 && widgetsHints.length <= 0) {
+            setMessageText('The provided recommendations for this text did not fit any tags in this project.');
             return;
         }
 
