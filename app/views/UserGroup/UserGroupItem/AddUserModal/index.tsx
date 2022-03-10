@@ -65,7 +65,7 @@ interface Props {
     userToEdit?: {
         id: string;
         member: string;
-        role: '' | 'NORMAL';
+        role: 'ADMIN' | 'NORMAL';
     };
     users?: User[];
 }

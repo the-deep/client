@@ -64,10 +64,10 @@ const USER_GROUP_MEMBERSHIP = gql`
                 currentUserRole
                 membershipsCount
                 memberships {
+                  id
                   joinedAt
                   role
                   roleDisplay
-                  id
                   member {
                     id
                     displayName
@@ -371,7 +371,7 @@ function UserGroupItem(props: Props) {
     const users = useMemo(() => (
         (userGroupMembershipResponse?.userGroups?.results ?? []).map((d) => ({
             id: d.id,
-            displayName: d.memberships?.,
+            displayName: d.memberships?,
             firstName: d.memberships,
             lastName: '',
         }))
