@@ -406,6 +406,7 @@ function AssistItem(props: Props) {
     ]);
 
     const [draftEntryId, setDraftEntryId] = useState<string | undefined>(undefined);
+    const [predictionsLoading, setPredictionsLoading] = useState(false);
 
     const queryVariables = useMemo(() => (
         draftEntryId && projectId ? ({
@@ -418,8 +419,8 @@ function AssistItem(props: Props) {
     ]);
 
     const {
+        loading: draftEntryFetchPending,
         data,
-        loading: loadingPredictions,
         startPolling,
         stopPolling,
         error: fetchErrors,
@@ -489,8 +490,13 @@ function AssistItem(props: Props) {
             if (!shouldPoll) {
                 return undefined;
             }
+            setPredictionsLoading(true);
             startPolling(2000);
-            return () => { stopPolling(); };
+
+            return () => {
+                setPredictionsLoading(false);
+                stopPolling();
+            };
         },
         [
             shouldPoll,
@@ -503,7 +509,7 @@ function AssistItem(props: Props) {
         createDraftEntry,
         {
             error: createErrors,
-            loading: creatingDraftEntry,
+            loading: draftEntryCreationPending,
         },
     ] = useMutation<CreateProjectDraftEntryMutation, CreateProjectDraftEntryMutationVariables>(
         CREATE_DRAFT_ENTRY,
@@ -595,7 +601,11 @@ function AssistItem(props: Props) {
                     onEntryCreateButtonClick={handleEntryCreateButtonClick}
                     geoAreaOptions={geoAreaOptions}
                     onGeoAreaOptionsChange={setGeoAreaOptions}
-                    predictionsLoading={loadingPredictions || creatingDraftEntry}
+                    predictionsLoading={
+                        predictionsLoading
+                        || draftEntryFetchPending
+                        || draftEntryCreationPending
+                    }
                     predictionsErrored={!!fetchErrors || !!createErrors}
                 />
             )}
