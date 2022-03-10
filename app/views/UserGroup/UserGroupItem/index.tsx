@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useContext, useMemo, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Pager,
@@ -15,30 +15,115 @@ import {
     TableCellProps,
     createStringColumn,
     useAlert,
+    useSortState,
 } from '@the-deep/deep-ui';
-import _ts from '#ts';
 import {
-    useLazyRequest,
-    useRequest,
-} from '#base/utils/restRequest';
+    gql,
+    useQuery,
+    useMutation,
+} from '@apollo/client';
+import _ts from '#ts';
+
+import { ProjectContext } from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
-import { MultiResponse } from '#types';
 
-import { Membership } from '../AddUsergroupModal';
 import AddUserModal from './AddUserModal';
 import MembershipActionCell, { Props as MembershipActionCellProps } from './MembershipActionCell';
 import UserGroupActionCell from './UserGroupActionCell';
-import { UserGroupType } from '#generated/types';
+import {
+    UserGroupType,
+    UserGroupMembershipQuery,
+    UserGroupMembershipQueryVariables,
+    UserGroupMembershipDeleteMutation,
+    UserGroupMembershipDeleteMutationVariables,
+} from '#generated/types';
 import styles from './styles.css';
 
-const MAX_ITEMS_PER_PAGE = 20;
-const membershipKeySelector = (d: Membership) => d.id;
+const USER_GROUP_MEMBERSHIP = gql`
+    query UserGroupMembership(
+        $membersIncludeProject: ID,
+        $membersExcludeProject: ID,
+        $search: String,
+        $page: Int,
+        $pageSize: Int,
+        $ordering: String,
+    ) {
+        userGroups(
+            membersIncludeProject: $membersIncludeProject,
+            membersExcludeProject: $membersExcludeProject,
+            search: $search,
+            page: $page,
+            pageSize: $pageSize,
+            ordering: $ordering,
+        ) {
+            totalCount
+            results {
+                id
+                title
+                currentUserRole
+                membershipsCount
+                memberships {
+                  joinedAt
+                  role
+                  roleDisplay
+                  id
+                  member {
+                    id
+                    displayName
+                    organization
+                    firstName
+                    lastName
+                  }
+                }
+            }
+        }
+    }
+`;
+
+const USER_GROUP_MEMBERSHIP_DELETE = gql`
+    mutation UserGroupMembershipDelete(
+        $projectId:ID!,
+        $deleteIds: [ID!],
+        $items: [BulkProjectUserGroupMembershipInputType!],
+        ) {
+        project(
+            id: $projectId,
+        ) {
+            id
+            projectUserGroupMembershipBulk(
+                deleteIds: $deleteIds,
+                items: $items,
+            ) {
+                errors
+                deletedResult {
+                    usergroup {
+                      id
+                      memberships {
+                        id
+                        role
+                        member {
+                          id
+                          displayName
+                        }
+                      }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export type UserGroupMembership = NonNullable<NonNullable<NonNullable<NonNullable<UserGroupMembershipQuery['userGroups']>['results']>[number]>['memberships']>[number];
+export type UserGroupMember = NonNullable<UserGroupMembership['member']>;
+
+const maxItemsPerPage = 20;
+const membershipKeySelector = (d: UserGroupMembership) => d.id;
 
 interface User {
     id: string;
     member: string;
-    role: 'admin' | 'normal';
+    role: 'ADMIN' | 'NORMAL';
 }
 
 export interface Props {
@@ -55,6 +140,11 @@ export interface Props {
     autoFocus?: boolean;
 }
 
+const defaultSorting = {
+    name: 'member',
+    direction: 'Descending',
+};
+
 function UserGroupItem(props: Props) {
     const {
         className,
@@ -70,53 +160,137 @@ function UserGroupItem(props: Props) {
         autoFocus,
     } = props;
 
+    const { project } = useContext(ProjectContext);
     const [activePage, setActivePage] = useState<number>(1);
     const alert = useAlert();
 
     const [userToEdit, setUserToEdit] = useState<User | undefined>();
-    const query = useMemo(() => ({
-        offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
-        limit: MAX_ITEMS_PER_PAGE,
-    }), [activePage]);
+    // const query = useMemo(() => ({
+    //    offset: (activePage - 1) * maxItemsPerPage,
+    //    limit: maxItemsPerPage,
+    // }), [activePage]);
+
+    // const {
+    //    pending: membershipsPending,
+    //    response: memberships,
+    //    retrigger: userGroupMembers,
+    // } = useRequest<MultiResponse<UserGroupMember>>({
+    //    url: `server://user-groups/${userGroupId}/memberships/`,
+    //    skip: activeUserGroupId !== userGroupId,
+    //    query,
+    //    method: 'GET',
+    //    preserveResponse: true,
+    // });
+
+    // const {
+    //    trigger: memberDeleteTrigger,
+    // } = useLazyRequest<unknown, string>({
+    //    url: (ctx) => `server://group-memberships/${ctx}/`,
+    //    method: 'DELETE',
+    //    onSuccess: () => {
+    //        refetchUserGroupMembers();
+    //        onUserDeleteSuccess();
+    //        alert.show(
+    //            'Successfully removed user from user group.',
+    //            { variant: 'success' },
+    //        );
+    //    },
+    //    onFailure: () => {
+    //        alert.show(
+    //            'Failed to  remove user from user group.',
+    //            { variant: 'error' },
+    //        );
+    //    },
+    // });
+
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = useMemo(() => (
+        validSorting.direction === 'Ascending'
+            ? validSorting.name
+            : `-${validSorting.name}`
+    ), [validSorting]);
+
+    const userGroupMemberVariables = useMemo(() => ({
+        projectId: project?.id as string,
+        page: activePage,
+        pageSize: maxItemsPerPage,
+        ordering,
+    }
+    ), [project?.id, activePage, ordering]);
 
     const {
-        pending: membershipsPending,
-        response: memberships,
-        retrigger: usersGetTrigger,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://user-groups/${userGroupId}/memberships/`,
-        skip: activeUserGroupId !== userGroupId,
-        query,
-        method: 'GET',
-        preserveResponse: true,
-    });
+        previousData,
+        data: userGroupMembershipResponse = previousData,
+        loading: userGroupMembershipPending,
+        refetch: refetchUserGroupMembers,
+    } = useQuery<UserGroupMembershipQuery, UserGroupMembershipQueryVariables>(
+        USER_GROUP_MEMBERSHIP,
+        {
+            variables: userGroupMemberVariables,
+            skip: activeUserGroupId !== userGroupId,
+        },
+    );
 
-    const {
-        trigger: memberDeleteTrigger,
-    } = useLazyRequest<unknown, string>({
-        url: (ctx) => `server://group-memberships/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            usersGetTrigger();
-            onUserDeleteSuccess();
-            alert.show(
-                'Successfully removed user from user group.',
-                { variant: 'success' },
-            );
+    const [
+        userGroupMembershipDelete,
+        // { loading: userGroupMembershipDeletePending },
+    ] = useMutation<
+        UserGroupMembershipDeleteMutation,
+        UserGroupMembershipDeleteMutationVariables
+    >(
+        USER_GROUP_MEMBERSHIP_DELETE,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.projectUserGroupMembershipBulk) {
+                    return;
+                }
+                const {
+                    errors,
+                    deletedResult,
+                } = response.project.projectUserGroupMembershipBulk;
+
+                const [err] = errors ?? [];
+                const [deletedUser] = deletedResult ?? [];
+
+                if (deletedUser) {
+                    alert.show(
+                        `Successfully removed ${deletedUser.usergroup.memberships} from this project.`,
+                        { variant: 'success' },
+                    );
+                    refetchUserGroupMembers();
+                    onUserDeleteSuccess();
+                } else {
+                    alert.show(
+                        err ?? 'There was an issue while removing the user from this project.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete membership(s).',
+                    { variant: 'error' },
+                );
+            },
         },
-        onFailure: () => {
-            alert.show(
-                'Failed to  remove user from user group.',
-                { variant: 'error' },
-            );
-        },
-    });
+    );
 
     const [
         showAddUserModal,
         setUserModalShow,
         setUserModalHidden,
     ] = useModalState(false);
+
+    const handleMemberDelete = useCallback((id: string) => {
+        userGroupMembershipDelete({
+            variables: {
+                projectId: project?.id as string,
+                deleteIds: [id],
+            },
+        });
+    }, []);
 
     const handleAddMemberClick = useCallback(() => {
         onExpansionChange(true, userGroupId);
@@ -128,7 +302,7 @@ function UserGroupItem(props: Props) {
         value: {
             id: string;
             member: string;
-            role: 'admin' | 'normal';
+            role: 'ADMIN' | 'NORMAL';
         },
     ) => {
         setUserToEdit(value);
@@ -137,7 +311,7 @@ function UserGroupItem(props: Props) {
 
     const membersColumns = useMemo(() => {
         const actionColumn: TableColumn<
-            Membership,
+            UserGroupMembership,
             string,
             MembershipActionCellProps,
             TableHeaderCellProps
@@ -150,18 +324,18 @@ function UserGroupItem(props: Props) {
             },
             cellRenderer: MembershipActionCell,
             cellRendererParams: (membershipId, data) => ({
-                member: data.member,
+                member: data.id,
                 memberRole: data.role,
-                groupKey: data.group,
+                groupKey: data.id,
                 membershipId,
                 onEditClick: handleEditMemberClick,
-                onDeleteClick: memberDeleteTrigger,
-                disabled: (userGroup?.currentUserRole !== 'ADMIN') || String(data.member) === activeUserId,
+                onDeleteClick: handleMemberDelete,
+                disabled: (userGroup?.currentUserRole !== 'ADMIN') || String(data) === activeUserId,
             }),
             columnWidth: 96,
         };
         const roleColumn: TableColumn<
-            Membership,
+            UserGroupMembership,
             string,
             TableCellProps<string>,
             TableHeaderCellProps
@@ -179,12 +353,12 @@ function UserGroupItem(props: Props) {
             }),
         };
         return ([
-            createStringColumn<Membership, string>(
+            createStringColumn<UserGroupMembership, string | undefined>(
                 'name',
                 _ts('usergroup', 'nameLabel'),
-                (item) => item.memberName,
+                (item) => item.member.displayName,
             ),
-            createDateColumn<Membership, string>(
+            createDateColumn<UserGroupMembership, string | undefined>(
                 'joinedAt',
                 _ts('usergroup', 'addedOnLabel'),
                 (item) => item.joinedAt,
@@ -192,16 +366,16 @@ function UserGroupItem(props: Props) {
             roleColumn,
             actionColumn,
         ]);
-    }, [activeUserId, handleEditMemberClick, memberDeleteTrigger, userGroup]);
+    }, [activeUserId, handleEditMemberClick, handleMemberDelete, userGroup]);
 
     const users = useMemo(() => (
-        (memberships?.results ?? []).map((d) => ({
-            id: d.member,
-            displayName: d.memberName,
-            firstName: d.memberName,
+        (userGroupMembershipResponse?.userGroups?.results ?? []).map((d) => ({
+            id: d.id,
+            displayName: d.memberships?.,
+            firstName: d.memberships,
             lastName: '',
         }))
-    ), [memberships?.results]);
+    ), [userGroupMembershipResponse?.userGroups?.results]);
 
     return (
         <ControlledExpandableContainer
@@ -238,7 +412,7 @@ function UserGroupItem(props: Props) {
                         valueContainerClassName={styles.membersValue}
                         value={(
                             <NumberOutput
-                                value={userGroup.membersCount ?? 0}
+                                value={userGroup?.membershipsCount ?? 0}
                             />
                         )}
                         hideLabelColon
@@ -264,9 +438,9 @@ function UserGroupItem(props: Props) {
                 footerActions={(
                     <Pager
                         activePage={activePage}
-                        itemsCount={memberships?.count ?? 0}
+                        itemsCount={userGroupMembershipResponse?.userGroups?.totalCount ?? 0}
                         onActivePageChange={setActivePage}
-                        maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                        maxItemsPerPage={maxItemsPerPage}
                         itemsPerPageControlHidden
                     />
                 )}
@@ -277,10 +451,10 @@ function UserGroupItem(props: Props) {
                     columns={membersColumns}
                     keySelector={membershipKeySelector}
                     headerCellClassName={styles.headerCell}
-                    data={memberships?.results}
+                    data={userGroupMembershipResponse?.userGroups?.results}
                     errored={false}
                     filtered={false}
-                    pending={membershipsPending}
+                    pending={userGroupMembershipPending}
                     messageShown
                     messageIconShown
                 />
@@ -288,7 +462,7 @@ function UserGroupItem(props: Props) {
                     <AddUserModal
                         onModalClose={setUserModalHidden}
                         userGroupId={userGroupId}
-                        onUserAddSuccess={usersGetTrigger}
+                        onUserAddSuccess={refetchUserGroupMembers}
                         userToEdit={userToEdit}
                         users={users}
                     />

@@ -40,17 +40,17 @@ const schema: FormSchema = {
 };
 
 interface Role {
-    id: 'normal' | 'admin';
+    id: 'NORMAL' | 'ADMIN';
     title: string;
 }
 
 const roles: Role[] = [
     {
-        id: 'normal',
+        id: 'NORMAL',
         title: 'Normal',
     },
     {
-        id: 'admin',
+        id: 'ADMIN',
         title: 'Admin',
     },
 
@@ -65,7 +65,7 @@ interface Props {
     userToEdit?: {
         id: string;
         member: string;
-        role: 'admin' | 'normal';
+        role: '' | 'NORMAL';
     };
     users?: User[];
 }

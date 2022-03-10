@@ -55,6 +55,7 @@ export const USERGROUPS = gql`
               }
               globalCrisisMonitoring
               modifiedAt
+              membershipsCount
               memberships {
                 id
                 role

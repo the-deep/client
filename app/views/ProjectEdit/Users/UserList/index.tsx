@@ -36,7 +36,7 @@ import { useModalState } from '#hooks/stateManagement';
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';
 
-const PROJECT_MEMBERSHIP_BULK_REMOVE = gql`
+export const PROJECT_MEMBERSHIP_BULK_REMOVE = gql`
     mutation ProjectMembershipBulkRemove($projectId:ID!, $deleteIds: [ID!]) {
         project(id: $projectId) {
             id
@@ -54,7 +54,7 @@ const PROJECT_MEMBERSHIP_BULK_REMOVE = gql`
     }
 `;
 
-const PROJECT_USERS = gql`
+export const PROJECT_USERS = gql`
     query ProjectUsers(
         $projectId: ID!
         $page: Int,
@@ -63,7 +63,11 @@ const PROJECT_USERS = gql`
     ) {
         project(id: $projectId) {
             id
-            userMembers(page: $page, pageSize: $pageSize, ordering: $ordering) {
+            userMembers(
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+            ) {
                 results {
                     badges
                     id
@@ -120,7 +124,7 @@ function BadgeList(props: BadgeListProps) {
     );
 }
 
-interface Props{
+interface Props {
     className?: string;
     projectId: string;
     activeUserId?: string;
@@ -166,7 +170,7 @@ function UserList(props: Props) {
             : `-${validSorting.name}`
     ), [validSorting]);
 
-    const variables = useMemo(() => ({
+    const projectUsersVariables = useMemo(() => ({
         projectId,
         page: activePage,
         pageSize: maxItemsPerPage,
@@ -182,7 +186,7 @@ function UserList(props: Props) {
     } = useQuery<ProjectUsersQuery, ProjectUsersQueryVariables>(
         PROJECT_USERS,
         {
-            variables,
+            variables: projectUsersVariables,
         },
     );
 
@@ -228,6 +232,7 @@ function UserList(props: Props) {
             },
         },
     );
+
     const handleRemoveUserFromProject = useCallback((id: string) => {
         bulkDeleteProjectMembership({
             variables: {
