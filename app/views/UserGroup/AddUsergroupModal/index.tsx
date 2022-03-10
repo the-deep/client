@@ -140,7 +140,7 @@ function AddUserGroupModal(props: Props) {
                 const {
                     ok,
                     errors,
-                } = response.userGroupCreate;
+                } = response && response.userGroupCreate;
 
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
@@ -187,7 +187,7 @@ function AddUserGroupModal(props: Props) {
                 const {
                     ok,
                     errors,
-                } = response.userGroupUpdate;
+                } = response && response.userGroupUpdate;
 
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
@@ -218,7 +218,7 @@ function AddUserGroupModal(props: Props) {
             validate,
             setError,
             (val) => {
-                const data = { ...val } as FormType;
+                const data = val as FormType;
                 if (initialValue?.id) {
                     updateUsergroup({
                         variables: {

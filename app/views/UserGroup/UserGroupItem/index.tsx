@@ -188,7 +188,6 @@ function UserGroupItem(props: Props) {
 
                 const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
-                console.log('Delete user GQL::>>', deletedResult);
 
                 if (deletedUser) {
                     alert.show(
@@ -320,7 +319,7 @@ function UserGroupItem(props: Props) {
         <ControlledExpandableContainer
             name={userGroupId}
             className={_cs(styles.userGroupItem, className)}
-            heading={userGroup.title}
+            heading={userGroup?.title}
             autoFocus={autoFocus}
             withoutBorder
             spacing="comfortable"
@@ -339,7 +338,7 @@ function UserGroupItem(props: Props) {
                         label="Created On"
                         value={(
                             <DateOutput
-                                value={userGroup.createdAt}
+                                value={userGroup?.createdAt}
                                 format="hh:mm aaa, MMM dd, yyyy"
                             />
                         )}
@@ -368,7 +367,7 @@ function UserGroupItem(props: Props) {
                     editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
                     deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
                     deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
-                    disabled={userGroup.currentUserRole === 'NORMAL'}
+                    disabled={userGroup?.currentUserRole === 'NORMAL'}
                 />
             )}
         >
