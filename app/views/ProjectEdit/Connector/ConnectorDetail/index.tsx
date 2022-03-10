@@ -382,6 +382,11 @@ function ConnectorDetail(props: Props) {
                             />
                         )}
                     />
+                    {connector && !connector.isActive && (
+                        <div>
+                            This connector is currently disabled.
+                        </div>
+                    )}
                 </>
             )}
             headerActions={(
