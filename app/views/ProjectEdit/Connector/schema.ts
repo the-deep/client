@@ -41,7 +41,7 @@ export const sourceSchema:SourceFormSchema = {
                         fields: () => ({
                             from: [],
                             to: [],
-                            primaryCountry: [],
+                            'primary-country': [],
                             country: [],
                         }),
                     },
@@ -51,8 +51,8 @@ export const sourceSchema:SourceFormSchema = {
                     ...baseSchema,
                     params: {
                         fields: () => ({
-                            dateFrom: [],
-                            dateTo: [],
+                            date_from: [],
+                            date_to: [],
                             country: [],
                         }),
                     },
