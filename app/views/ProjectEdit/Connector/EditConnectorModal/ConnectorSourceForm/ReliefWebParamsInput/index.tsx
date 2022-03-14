@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     DateInput,
-    MultiSelectInput,
+    SelectInput,
 } from '@the-deep/deep-ui';
 
 import {
@@ -47,18 +47,18 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
     return (
         <>
             <NonFieldError error={error} />
-            <MultiSelectInput
-                name="primaryCountry"
+            <SelectInput
+                name="primary-country"
                 label="Primary Country"
-                value={value?.primaryCountry}
+                value={value?.['primary-country']}
                 onChange={setParamsFieldValue}
                 options={reliefWebCountryList}
                 keySelector={countryKeySelector}
                 labelSelector={countryLabelSelector}
-                error={getErrorString(error?.primaryCountry)}
+                error={getErrorString(error?.['primary-country'])}
                 disabled={disabled}
             />
-            <MultiSelectInput
+            <SelectInput
                 name="country"
                 label="Country"
                 value={value?.country}
