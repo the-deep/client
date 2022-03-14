@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import {
     _cs,
     compareDate,
@@ -172,6 +172,9 @@ function ConnectorDetail(props: Props) {
     const {
         loading: pendingConnectorDetails,
         data: connectorDetailsResponse,
+        startPolling,
+        stopPolling,
+        refetch,
     } = useQuery<ProjectConnectorDetailsQuery, ProjectConnectorDetailsQueryVariables>(
         PROJECT_CONNECTOR_DETAILS,
         {
@@ -271,6 +274,7 @@ function ConnectorDetail(props: Props) {
                             variant: 'success',
                         },
                     );
+                    refetch();
                 } else {
                     alert.show(
                         'Failed to trigger connector.',
@@ -349,6 +353,17 @@ function ConnectorDetail(props: Props) {
     const isProcessing = useMemo(() => (
         connector?.sources?.some((source) => source.status === 'PROCESSING')
     ), [connector]);
+
+    useEffect(
+        () => {
+            if (isProcessing) {
+                startPolling(5000);
+            } else {
+                stopPolling();
+            }
+        },
+        [isProcessing, startPolling, stopPolling],
+    );
 
     const isActive = connector?.isActive;
 

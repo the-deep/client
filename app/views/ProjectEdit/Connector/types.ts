@@ -199,16 +199,16 @@ export const reliefWebCountryList: { key: string; label: string }[] = [
 interface Params {}
 
 export interface ReliefWebParams {
-    primaryCountry?: string[];
-    country?: string[];
+    'primary-country'?: string;
+    country?: string;
     from?: string;
     to?: string;
 }
 
 export interface UnhcrParams {
     country?: string;
-    dateFrom?: string;
-    dateTo?: string;
+    date_from?: string;
+    date_to?: string;
 }
 
 export type SourceInput = Omit<DeepMandatory<PurgeNull<ConnectorSourceGqInputType>, 'clientId'>, 'source' | 'params'> & ({

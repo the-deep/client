@@ -59,19 +59,19 @@ function UnhcrParamsInput<T extends string>(props: Props<T>) {
                 disabled={disabled}
             />
             <DateInput
-                name="dateFrom"
+                name="date_from"
                 label="From date"
-                value={value?.dateFrom}
+                value={value?.date_from}
                 onChange={setParamsFieldValue}
                 disabled={disabled}
-                error={error?.dateFrom}
+                error={error?.date_from}
             />
             <DateInput
-                name="dateTo"
+                name="date_to"
                 label="To date"
-                value={value?.dateTo}
+                value={value?.date_to}
                 onChange={setParamsFieldValue}
-                error={error?.dateTo}
+                error={error?.date_to}
                 disabled={disabled}
             />
         </>
