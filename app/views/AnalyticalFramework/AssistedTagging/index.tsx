@@ -40,7 +40,7 @@ import styles from './styles.css';
 
 type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
 
-const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.parentTag ?? 'Miscellaneous';
+const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.group ?? 'Miscellaneous';
 const nlpLabelKeySelector = (tag: AssistedTag) => tag.id;
 const widgetKeySelector = (widget: Widget) => widget.clientId;
 
@@ -78,19 +78,11 @@ function AssistedTagging<K extends string>(props: Props<K>) {
 
     const errored = analyzeErrors(error);
 
-    const {
-        predictionTags,
-        tagsParents,
-    } = useMemo(() => ({
-        predictionTags: assistedPredictionTags?.filter((tag) => !tag.isCategory),
-        tagsParents: listToMap(
-            assistedPredictionTags?.filter((tag) => tag.isCategory),
-            (tag) => tag.id,
-            (tag) => tag.name,
-        ),
-    }), [
-        assistedPredictionTags,
-    ]);
+    const predictionTags = useMemo(() => (
+        assistedPredictionTags?.filter((tag) => (
+            !tag.isCategory && !tag.hideInAnalysisFrameworkMapping
+        ))
+    ), [assistedPredictionTags]);
 
     type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
     const setMappings = useCallback<SetMappingsFn>((newMappings) => {
@@ -173,8 +165,8 @@ function AssistedTagging<K extends string>(props: Props<K>) {
     }, [setMappings]);
 
     const nlpLabelGroupRendererParams = useCallback((groupKey: string) => ({
-        title: tagsParents?.[groupKey] ?? groupKey,
-    }), [tagsParents]);
+        title: groupKey,
+    }), []);
 
     const nlpRendererParams = useCallback((itemKey: string, tag: AssistedTag) => ({
         children: tag.name,
