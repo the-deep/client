@@ -142,7 +142,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         }
     }, [onReportStructureVariantChange]);
 
-    if (!reportStructure) {
+    if (!reportStructure || reportStructure.length < 1) {
         return (
             <p>
                 { _ts('export', 'noMatrixAfText')}

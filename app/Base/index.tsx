@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import localforage from 'localforage';
 import { Router } from 'react-router-dom';
-import { IoAlert } from 'react-icons/io5';
 import { init, ErrorBoundary, setUser as setUserOnSentry, withProfiler } from '@sentry/react';
 import { unique, _cs } from '@togglecorp/fujs';
 import {
@@ -261,12 +260,11 @@ function Base() {
                 <Button
                     name={undefined}
                     title="Bug/Feedback?"
-                    variant="secondary"
+                    variant="action"
                     className={styles.zendeskHelpButton}
                     onClick={openZendeskFeedback}
-                    icons={<IoAlert />}
                 >
-                    Bug/Feedback?
+                    Bug / Feedback?
                 </Button>
             )}
         </div>

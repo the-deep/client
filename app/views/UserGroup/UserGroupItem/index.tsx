@@ -183,11 +183,6 @@ function UserGroupItem(props: Props) {
                 _ts('usergroup', 'nameLabel'),
                 (item) => item.memberName,
             ),
-            createStringColumn<Membership, string>(
-                'email',
-                _ts('usergroup', 'emailLabel'),
-                (item) => item.memberEmail,
-            ),
             createDateColumn<Membership, string>(
                 'joinedAt',
                 _ts('usergroup', 'addedOnLabel'),

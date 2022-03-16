@@ -295,11 +295,6 @@ function UserList(props: Props) {
                 },
             ),
             createStringColumn<ProjectUser, string>(
-                'memberEmail',
-                _ts('projectEdit', 'memberEmail'),
-                (item) => item.member.displayName, // member email
-            ),
-            createStringColumn<ProjectUser, string>(
                 'memberOrganization',
                 _ts('projectEdit', 'memberOrganization'),
                 (item) => item.member.organization,

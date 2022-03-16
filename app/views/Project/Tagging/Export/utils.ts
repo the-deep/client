@@ -203,16 +203,14 @@ export const createReportStructure = (
         return undefined;
     }).filter(isDefined);
 
-    if (nodes.length > 0) {
-        nodes.push({
-            title: _ts('export', 'uncategorizedTitle'),
-            key: 'uncategorized',
-            selected: true,
-            draggable: true,
-            // FIXME: added line below, check if this works
-            nodes: [],
-        });
-    }
+    nodes.push({
+        title: _ts('export', 'uncategorizedTitle'),
+        key: 'uncategorized',
+        selected: true,
+        draggable: true,
+        // FIXME: added line below, check if this works
+        nodes: [],
+    });
 
     return nodes;
 };
