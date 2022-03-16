@@ -39,8 +39,18 @@
     }
 
     .zendesk-help-button {
-        position: absolute;
-        bottom: var(--dui-spacing-medium);
-        left: var(--dui-spacing-medium);
+        position: fixed;
+        bottom: var(--dui-spacing-extra-large);
+        left: 0;
+        transform: rotate(90deg) translateX(-100%);
+        transform-origin: 0 100%;
+        border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        border-bottom: 0;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem;
+        background-color: var(--dui-color-surface-information);
+        padding: 0 var(--dui-spacing-small);
+        font-size: var(--dui-font-size-extra-small);
+        font-weight: var(--dui-font-weight-regular);
     }
 }
