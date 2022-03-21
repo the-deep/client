@@ -26,7 +26,7 @@ DEEP is an open platform that anyone can create an account in and use. Registeri
 Anyone with a user account can create a new project in DEEP. The project administrator is considered to be the responsible publisher of the information and data uploaded to that project. The project administrator is also responsible for approving user access and rights of other users joining the project and verifying the identity of the requesters. The project administrator must review and sign a data sharing agreement and is obligated to ensure that ethical and legal considerations are taken within the project including responsibility for any copyright infringements. The information and data that will be uploaded to the project should meet the requirements set out in the _Data scope and criteria_-section below.
 
 ### Deletion of user profiles
-A user may delete their user account at any time. When you delete your account, DEEP will delete any personal data collected in order to create the account.
+A user may delete their user account at any time by contacting the DEEP admin. When you delete your account, DEEP will delete any personal data collected in order to create the account.
 
 If a Project Administrator wishes to delete their DEEP account, the Project Administrator needs to appoint a new Project Administrator, or one will be given by default to the users with the longest tenure in the project. A log of Project Administrators will be maintained as a record of responsible publisher for the time period
 
