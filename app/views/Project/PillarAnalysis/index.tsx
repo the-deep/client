@@ -821,7 +821,6 @@ function PillarAnalysis() {
                                     maxItemsPerPage={maxItemsPerPage}
                                     onActivePageChange={setActivePage}
                                     itemsPerPageControlHidden
-                                    hideInfo
                                 />
                             </TabPanel>
                             <TabPanel
