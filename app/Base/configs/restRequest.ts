@@ -1,6 +1,7 @@
 import {
     apiEndpoint,
     serverlessEndpoint as serverlessEndpointFromEnv,
+    pdfCacheEndpoint as pdfCacheEndpointFromEnv,
     apiHttps,
 } from '#base/configs/env';
 
@@ -17,3 +18,4 @@ export const adminEndpoint = !apiEndpoint
     : `${reactAppApiHttps}://${apiEndpoint}/admin/`;
 
 export const serverlessEndpoint = serverlessEndpointFromEnv;
+export const pdfCacheEndpoint = pdfCacheEndpointFromEnv;

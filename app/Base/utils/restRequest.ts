@@ -10,6 +10,7 @@ import { AlertOptions } from '@the-deep/deep-ui';
 import { mapToMap, isDefined, randomString } from '@togglecorp/fujs';
 import {
     serverlessEndpoint,
+    pdfCacheEndpoint,
     wsEndpoint,
     // reactAppApiHttps,
 } from '#base/configs/restRequest';
@@ -107,6 +108,7 @@ export type DeepContextInterface = ContextInterface<
 
 const serverPrefix = 'server://';
 const serverlessPrefix = 'serverless://';
+const pdfCachePrefix = 'pdf-cache://';
 export const processDeepUrls: DeepContextInterface['transformUrl'] = (url) => {
     if (url.startsWith(serverPrefix)) {
         // NOTE: -1 to leave out the starting slash
@@ -117,6 +119,11 @@ export const processDeepUrls: DeepContextInterface['transformUrl'] = (url) => {
         // NOTE: -1 to leave out the starting slash
         const cleanedUrl = url.slice(serverlessPrefix.length - 1);
         return `${serverlessEndpoint}${cleanedUrl}`;
+    }
+    if (url.startsWith(pdfCachePrefix)) {
+        // NOTE: -1 to leave out the starting slash
+        const cleanedUrl = url.slice(pdfCachePrefix.length - 1);
+        return `${pdfCacheEndpoint}${cleanedUrl}`;
     }
     if (/^https?:\/\//i.test(url)) {
         return url;
