@@ -169,9 +169,9 @@ function EntryComments(props: Props) {
                             maxItemsPerPage={maxItemsPerPage}
                             onActivePageChange={setActivePage}
                             itemsPerPageControlHidden
-                            hidePageNumberLabel
-                            hideInfo
-                            hidePrevAndNext
+                            pageNextPrevControlHidden
+                            pagesControlLabelHidden
+                            infoVisibility="hidden"
                         />
                     )}
                 >

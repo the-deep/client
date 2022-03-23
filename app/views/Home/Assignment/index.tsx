@@ -119,9 +119,7 @@ function Assignments() {
                     maxItemsPerPage={maxItemsPerPage}
                     onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
-                    hidePageNumberLabel
-                    hideInfo
-                    hidePrevAndNext
+                    infoVisibility="hidden"
                 />
             )}
             contentClassName={styles.content}
