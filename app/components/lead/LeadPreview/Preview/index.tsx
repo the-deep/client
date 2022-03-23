@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     _cs,
     isValidUrl as isValidRemoteUrl,
@@ -7,8 +7,10 @@ import {
     ImagePreview,
     Message,
     Kraken,
+    Button,
 } from '@the-deep/deep-ui';
 
+import { useRequest, useLazyRequest } from '#base/utils/restRequest';
 import { isHttps } from '#utils/common';
 
 import {
@@ -50,6 +52,39 @@ function Preview(props: Props) {
         canShowIframe,
     } = props;
 
+    const [cached, setCached] = useState(false);
+
+    const {
+        pending,
+        response,
+    } = useRequest<{ status: string, url: string | undefined }>({
+        url: 'pdf-cache://cache/',
+        method: 'GET',
+        skip: !cached,
+        query: { url },
+        shouldPoll: (res) => (res?.status === 'pending' ? 3000 : -1),
+    });
+
+    const {
+        pending: pendingCache,
+        trigger,
+    } = useLazyRequest<unknown, string>({
+        url: 'pdf-cache://cache/',
+        method: 'POST',
+        body: (ctx) => ({ url: ctx }),
+        onSuccess: () => {
+            setCached(true);
+        },
+        failureMessage: 'Failed to capture page snapshot.',
+    });
+
+    const handleGetStatus = useCallback(
+        () => {
+            trigger(url);
+        },
+        [trigger, url],
+    );
+
     if (!isValidUrl(url)) {
         return (
             <div className={_cs(styles.viewer, className)}>
@@ -77,21 +112,64 @@ function Preview(props: Props) {
         />
     );
 
+    let iframeError: JSX.Element;
+    if (cached) {
+        if (pending || (response?.status === 'pending')) {
+            iframeError = (
+                <Message
+                    className={_cs(styles.viewer, className)}
+                    pending
+                    pendingMessage="DEEP trying to generate page snapshot!"
+                />
+            );
+        } else if (response && response.url && response.status === 'processed') {
+            iframeError = (
+                <iframe
+                    title={url}
+                    className={_cs(className, styles.viewer)}
+                    src={!response.url.startsWith('http://') && !response.url.startsWith('https://') ? `http://${response.url}` : response.url}
+                />
+            );
+        } else {
+            iframeError = (
+                <Message
+                    className={_cs(styles.viewer, className)}
+                    message="DEEP failed to generate page snapshot!"
+                    icon={(
+                        <Kraken
+                            size="large"
+                            variant="move"
+                        />
+                    )}
+                />
+            );
+        }
+    } else {
+        iframeError = (
+            <Message
+                className={_cs(styles.viewer, className)}
+                message="The website has blocked us from viewing it inside DEEP. While we work on a long-term solution, click below to download a copy of the page to DEEP (this can take a minute or two)."
+                icon={(
+                    <Kraken
+                        size="large"
+                        variant="move"
+                    />
+                )}
+                actions={(
+                    <Button
+                        name={undefined}
+                        onClick={handleGetStatus}
+                        disabled={pending || pendingCache}
+                    >
+                        Show Page Snapshot
+                    </Button>
+                )}
+            />
+        );
+    }
+
     // NOTE: Generally check for X-Frame-Options or CSP to identify if content
     // can be embedded
-    const iframeError = (
-        <Message
-            className={_cs(styles.viewer, className)}
-            message="This website has blocked us from viewing it inside DEEP."
-            icon={(
-                <Kraken
-                    size="large"
-                    variant="move"
-                />
-            )}
-        />
-    );
-
     if (url.endsWith('txt')) {
         if (cannotPreviewHttps) {
             return httpsError;
@@ -163,6 +241,7 @@ function Preview(props: Props) {
             />
         );
     }
+
     return (
         <Message
             className={_cs(styles.viewer, className)}
