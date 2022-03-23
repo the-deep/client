@@ -119,7 +119,7 @@ function Preview(props: Props) {
                 <Message
                     className={_cs(styles.viewer, className)}
                     pending
-                    pendingMessage="DEEP trying to generate page snapshot!"
+                    pendingMessage="Grabbing a copy of the source, hang tight!"
                 />
             );
         } else if (response && response.url && response.status === 'processed') {
@@ -148,7 +148,7 @@ function Preview(props: Props) {
         iframeError = (
             <Message
                 className={_cs(styles.viewer, className)}
-                message="The website has blocked us from viewing it inside DEEP. While we work on a long-term solution, click below to download a copy of the page to DEEP (this can take a minute or two)."
+                message="The website has blocked us from viewing it inside DEEP. While we work on a longterm solution, click below to create a snapshot of the page in DEEP (this can take a minute or two)."
                 icon={(
                     <Kraken
                         size="large"
