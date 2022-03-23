@@ -1,17 +1,6 @@
 .check-button {
-    --dui-color-accent: var(--color-nlp-tag);
     position: relative;
     overflow: visible;
-
-    &.selected {
-        border-color: var(--color-nlp-tag);
-        background-color: var(--color-nlp-tag);
-    }
-
-    &.not-selected {
-        background-color: var(--dui-color-surface-information);
-        color: var(--dui-color-text);
-    }
 
     .actions {
         display: flex;
@@ -28,7 +17,7 @@
         padding: 2px;
         min-width: 1.4em;
         min-height: 1.4em;
-        color: var(--color-nlp-tag);
+        color: var(--dui-color-nlp);
         font-size: var(--dui-font-size-extra-small);
     }
 }
