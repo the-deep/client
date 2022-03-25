@@ -2,9 +2,10 @@ import React, { useCallback } from 'react';
 import {
     NumberInput,
     NumberOutput,
-    Suggestion,
 } from '@the-deep/deep-ui';
-import { isNotDefined } from '@togglecorp/fujs';
+import {
+    isNotDefined,
+} from '@togglecorp/fujs';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';
@@ -12,9 +13,6 @@ import WidgetWrapper from '../WidgetWrapper';
 import { NumberWidgetAttribute } from '#types/newEntry';
 
 type NumberValue = NonNullable<NumberWidgetAttribute['data']>;
-
-const numberKeySelector = (s: number) => s;
-const numberLabelSelector = (s: number) => String(s);
 
 export interface Props <N extends string>{
     title: string | undefined;
@@ -29,7 +27,6 @@ export interface Props <N extends string>{
     readOnly?: boolean;
     actions?: React.ReactNode;
     icons?: React.ReactNode;
-    widgetHints?: number[];
 }
 
 function NumberWidgetInput<N extends string>(props: Props<N>) {
@@ -44,7 +41,6 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
-        widgetHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -85,17 +81,6 @@ function NumberWidgetInput<N extends string>(props: Props<N>) {
                         value={value?.value}
                         readOnly={readOnly}
                         disabled={disabled}
-                        inputDescription={(widgetHints && widgetHints.length > 0) && (
-                            <Suggestion
-                                name={name}
-                                value={value?.value}
-                                options={widgetHints}
-                                keySelector={numberKeySelector}
-                                labelSelector={numberLabelSelector}
-                                onChange={onChange}
-                                disabled={readOnly || disabled}
-                            />
-                        )}
                         error={error?.value}
                     />
                 </>

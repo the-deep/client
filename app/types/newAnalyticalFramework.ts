@@ -1360,25 +1360,19 @@ export interface GeoMappingsItem extends Omit<MappingsItemBase, 'tag'> {
     widgetType: 'GEO';
 }
 
-export interface NumberMappingsItem extends Omit<MappingsItemBase, 'tag'> {
-    widgetType: 'NUMBER';
-    widget: string;
-}
-
 export type MappingsItem = Matrix1dMappingsItem
     | Matrix2dMappingsItem
     | ScaleMappingsItem
     | SelectMappingsItem
     | MultiSelectMappingsItem
-    | NumberMappingsItem
     | GeoMappingsItem;
 
-export type CategoricalMappingsItem = Exclude<MappingsItem, NumberMappingsItem | GeoMappingsItem>;
+export type CategoricalMappingsItem = Exclude<MappingsItem, GeoMappingsItem>;
 
 export function isCategoricalMappings(
     value: MappingsItem,
 ): value is CategoricalMappingsItem {
-    return !(value.widgetType === 'NUMBER' || value.widgetType === 'GEO');
+    return value.widgetType !== 'GEO';
 }
 
 type WidgetType = 'NUMBER'
@@ -1419,12 +1413,6 @@ export type WidgetHint = {
     hints: string[];
 } | {
     widgetType: 'SELECT';
-    hints: string[];
-} | {
-    widgetType: 'NUMBER';
-    hints: number[];
-} | {
-    widgetType: 'DATE';
     hints: string[];
 } | {
     widgetType: 'GEO';

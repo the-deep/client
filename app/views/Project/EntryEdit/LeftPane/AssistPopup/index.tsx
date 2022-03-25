@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
-    _cs,
-} from '@togglecorp/fujs';
-import {
-    Modal,
     Kraken,
+    Container,
     Message,
     Button,
 } from '@the-deep/deep-ui';
@@ -15,14 +13,11 @@ import {
 
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import {
-    WidgetHint,
-} from '#types/newAnalyticalFramework';
-import {
-    Framework,
-} from '../../types';
+import { WidgetHint } from '#types/newAnalyticalFramework';
+import { Framework } from '../../types';
 import {
     PartialEntryType,
+    PartialAttributeType,
 } from '../../schema';
 
 import styles from './styles.css';
@@ -37,9 +32,9 @@ interface Props {
     onEntryCreateButtonClick: () => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
-    onCloseButtonClick: () => void;
     predictionsLoading?: boolean;
     hints: WidgetHint[] | undefined;
+    recommendations: PartialAttributeType[] | undefined;
     predictionsErrored: boolean;
     messageText: string | undefined;
 }
@@ -47,7 +42,6 @@ interface Props {
 function AssistPopup(props: Props) {
     const {
         className,
-        onCloseButtonClick,
         leadId,
         value,
         onChange,
@@ -60,6 +54,7 @@ function AssistPopup(props: Props) {
         hints,
         predictionsErrored,
         messageText,
+        recommendations,
     } = props;
 
     const allWidgets = useMemo(() => {
@@ -79,11 +74,10 @@ function AssistPopup(props: Props) {
     const isMessageShown = predictionsLoading || predictionsErrored || !!messageText;
 
     return (
-        <Modal
+        <Container
             className={_cs(className, styles.assistPopup)}
             heading="Assisted Tagging"
             headingSize="extraSmall"
-            onCloseButtonClick={onCloseButtonClick}
             footerActions={(
                 <Button
                     name={undefined}
@@ -93,7 +87,7 @@ function AssistPopup(props: Props) {
                     Create Entry
                 </Button>
             )}
-            bodyClassName={styles.body}
+            contentClassName={styles.body}
         >
             {isMessageShown ? (
                 <Message
@@ -131,12 +125,13 @@ function AssistPopup(props: Props) {
                     onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                     allWidgets={allWidgets}
                     widgetsHints={hints}
+                    recommendations={recommendations}
                     emptyValueHidden
                     addButtonHidden
-                    compact
+                    variant="nlp"
                 />
             )}
-        </Modal>
+        </Container>
     );
 }
 
