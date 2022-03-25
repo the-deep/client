@@ -101,28 +101,28 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
 
     const onMatrix1dValueChange = useCallback((newVal: number[] | undefined) => {
         if (!newVal) {
-            onStatsConfigChange(undefined, 'matrix1d');
+            onStatsConfigChange(undefined, 'widget_1d');
         } else {
             const transformedNewVal = newVal.map((d) => ({ pk: d }));
-            onStatsConfigChange(transformedNewVal, 'matrix1d');
+            onStatsConfigChange(transformedNewVal, 'widget_1d');
         }
     }, [onStatsConfigChange]);
 
     const onMatrix2dValueChange = useCallback((newVal: number[] | undefined) => {
         if (!newVal) {
-            onStatsConfigChange(undefined, 'matrix2d');
+            onStatsConfigChange(undefined, 'widget_2d');
         } else {
             const transformedNewVal = newVal.map((d) => ({ pk: d }));
-            onStatsConfigChange(transformedNewVal, 'matrix2d');
+            onStatsConfigChange(transformedNewVal, 'widget_2d');
         }
     }, [onStatsConfigChange]);
 
     const matrix1dValue = useMemo(() => (
-        value?.stats_config?.matrix1d?.map((d) => d.pk).filter(isDefined)
+        value?.stats_config?.widget_1d?.map((d) => d.pk).filter(isDefined)
     ), [value?.stats_config]);
 
     const matrix2dValue = useMemo(() => (
-        value?.stats_config?.matrix2d?.map((d) => d.pk).filter(isDefined)
+        value?.stats_config?.widget_2d?.map((d) => d.pk).filter(isDefined)
     ), [value?.stats_config]);
 
     return (
@@ -139,7 +139,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
                 options={matrix1dWidgets}
                 name="matrix1d"
                 value={matrix1dValue}
-                error={getErrorString(statsConfigError?.matrix1d)}
+                error={getErrorString(statsConfigError?.widget_1d)}
                 onChange={onMatrix1dValueChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}
@@ -150,7 +150,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
                 options={matrix2dWidgets}
                 name="matrix2d"
                 value={matrix2dValue}
-                error={getErrorString(statsConfigError?.matrix2d)}
+                error={getErrorString(statsConfigError?.widget_2d)}
                 onChange={onMatrix2dValueChange}
                 keySelector={widgetIdSelector}
                 labelSelector={widgetLabelSelector}

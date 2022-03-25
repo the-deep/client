@@ -691,10 +691,10 @@ export type FrameworkExportableType = TextExportableType
 export interface FrameworkProperties {
 
     stats_config: {
-        matrix1d?: {
+        widget_1d?: { // TODO need to change this to matrix1d later
             pk: number;
         }[];
-        matrix2d?: {
+        widget_2d?: { // // TODO need to change this to matrix2d later
             pk: number;
         }[];
 
