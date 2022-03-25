@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { IoAdd } from 'react-icons/io5';
-import { FaBrain } from 'react-icons/fa';
 import {
     _cs,
     isDefined,
@@ -306,6 +305,7 @@ function SimplifiedTextView(props: Props) {
                 styles.simplifiedTextView,
                 className,
                 disableAddButton && styles.disabled,
+                assistedTaggingEnabled && styles.assistedEnabled,
             )}
         >
             {children}
@@ -325,17 +325,7 @@ function SimplifiedTextView(props: Props) {
                     className={styles.actionsPopup}
                     style={position ? ({ ...position }) : undefined}
                 >
-                    <QuickActionButton
-                        title="Add entry"
-                        name={textContent}
-                        variant="primary"
-                        className={styles.addButton}
-                        onClick={handleAddButtonClick}
-                    >
-                        <IoAdd />
-                    </QuickActionButton>
-                    { /* FIXME: Move this over to another logic */ }
-                    {assistedTaggingEnabled && onAssistedEntryAdd && (
+                    {assistedTaggingEnabled ? (
                         <QuickActionButton
                             title="Assist"
                             name={textContent}
@@ -343,7 +333,17 @@ function SimplifiedTextView(props: Props) {
                             className={styles.addButton}
                             onClick={handleAssistButtonClick}
                         >
-                            <FaBrain />
+                            <IoAdd />
+                        </QuickActionButton>
+                    ) : (
+                        <QuickActionButton
+                            title="Add entry"
+                            name={textContent}
+                            variant="primary"
+                            className={styles.addButton}
+                            onClick={handleAddButtonClick}
+                        >
+                            <IoAdd />
                         </QuickActionButton>
                     )}
                 </div>

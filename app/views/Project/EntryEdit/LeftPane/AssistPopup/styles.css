@@ -1,7 +1,13 @@
 .assist-popup {
+    background-color: var(--dui-color-foreground);
+    height: 100%;
+    overflow-y: auto;
+
     .body {
         display: flex;
         flex-direction: column;
+        width: var(--dui-width-modal-small);
+        min-height: var(--dui-height-modal-small);
         overflow-y: auto;
 
         .message {

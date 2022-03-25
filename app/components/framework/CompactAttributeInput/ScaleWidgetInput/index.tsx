@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     ScaleInput,
-    Suggestion,
+    BadgeInput,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
@@ -110,7 +110,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 disabled={disabled}
                 error={error?.value}
                 hint={(selectedOptions && selectedOptions.length > 0) && (
-                    <Suggestion
+                    <BadgeInput
                         name={name}
                         value={value?.value ?? widget?.properties?.defaultValue}
                         options={selectedOptions}

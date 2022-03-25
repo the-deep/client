@@ -2,8 +2,10 @@ import React, { useMemo, useCallback } from 'react';
 import { _cs, isNotDefined, listToMap } from '@togglecorp/fujs';
 import {
     MultiSelectInput,
+    MultiBadgeInput,
     ListView,
     List,
+    Button,
 } from '@the-deep/deep-ui';
 import { IoChevronForward } from 'react-icons/io5';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
@@ -47,6 +49,8 @@ interface ColumnProps {
     subRowId: string;
     readOnly?: boolean;
     disabled?: boolean;
+    suggestionModeEnabled?: boolean;
+    recommendedValue: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
 }
 
 function Column(props: ColumnProps) {
@@ -59,6 +63,8 @@ function Column(props: ColumnProps) {
         subRowId,
         readOnly,
         disabled,
+        suggestionModeEnabled,
+        recommendedValue,
     } = props;
 
     const {
@@ -75,10 +81,41 @@ function Column(props: ColumnProps) {
         );
     }, [onSubColumnsChange, rowId, subRowId, columnId]);
 
+    const orderedSubColumns = useMemo(() => {
+        const filteredSubColumns = subColumns?.filter((sc) => {
+            if (!suggestionModeEnabled) {
+                return true;
+            }
+            const hasRecommendedValue = recommendedValue?.[columnId]?.includes(sc.key);
+            return hasRecommendedValue;
+        });
+        return sortByOrder(filteredSubColumns);
+    }, [
+        suggestionModeEnabled,
+        columnId,
+        subColumns,
+        recommendedValue,
+    ]);
+
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(subColumns, (d) => d.key, (d) => d.label);
         return value?.[columnId]?.map((v) => optionsMap?.[v])?.join(', ');
     }, [subColumns, value, columnId]);
+
+    const handleColumnNameClick = useCallback(() => {
+        onSubColumnsChange(
+            rowId,
+            subRowId,
+            columnId,
+            value?.[columnId] ? undefined : [],
+        );
+    }, [
+        rowId,
+        subRowId,
+        columnId,
+        onSubColumnsChange,
+        value,
+    ]);
 
     return (
         <div className={styles.column}>
@@ -89,23 +126,53 @@ function Column(props: ColumnProps) {
                     </div>
                     <IoChevronForward className={styles.separatorIcon} />
                     <div className={styles.columnLabel}>
-                        {column.label}
+                        {(!readOnly && suggestionModeEnabled) ? (
+                            <Button
+                                name={undefined}
+                                onClick={handleColumnNameClick}
+                                className={styles.smallButton}
+                                spacing="compact"
+                                variant={value?.[columnId] ? 'nlp-primary' : 'nlp-tertiary'}
+                            >
+                                {column.label}
+                            </Button>
+                        ) : (
+                            column.label
+                        )}
                     </div>
                 </div>
-                {!readOnly ? (
+                {readOnly && (
+                    <div className={styles.selectedValues}>
+                        {selectedValues}
+                    </div>
+                )}
+                {!readOnly && !suggestionModeEnabled && (
                     <MultiSelectInput
                         name={column.key}
                         value={value?.[column.key]}
                         disabled={disabled}
                         labelSelector={subColumnLabelSelector}
                         onChange={handleSubColumnValueChange}
-                        options={subColumns}
+                        options={orderedSubColumns}
                         keySelector={subColumnKeySelector}
                     />
-                ) : (
-                    <div className={styles.selectedValues}>
-                        {selectedValues}
-                    </div>
+                )}
+                {(!readOnly
+                    && suggestionModeEnabled
+                    && orderedSubColumns
+                    && orderedSubColumns.length > 0
+                ) && (
+                    <MultiBadgeInput
+                        name={column.key}
+                        onChange={handleSubColumnValueChange}
+                        options={orderedSubColumns}
+                        labelSelector={subColumnLabelSelector}
+                        keySelector={subColumnKeySelector}
+                        value={value?.[column.key]}
+                        disabled={disabled || readOnly}
+                        selectedButtonVariant="nlp-primary"
+                        buttonVariant="nlp-tertiary"
+                    />
                 )}
             </div>
         </div>
@@ -125,7 +192,9 @@ interface SubRowProps {
     ) => void;
     subRow: SubRow;
     value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
+    recommendedValue: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
     columns: ColumnType[] | undefined;
+    suggestionModeEnabled?: boolean;
 }
 
 function SubRow(props: SubRowProps) {
@@ -138,6 +207,8 @@ function SubRow(props: SubRowProps) {
         subRow,
         value,
         columns,
+        suggestionModeEnabled,
+        recommendedValue,
     } = props;
 
     const {
@@ -146,22 +217,34 @@ function SubRow(props: SubRowProps) {
     } = subRow;
 
     const orderedColumns = useMemo(() => {
-        const filteredSubRows = columns?.filter((col) => value?.[col.key]);
+        const filteredSubRows = columns?.filter((col) => {
+            const hasValue = value?.[col.key];
+            const hasRecommendedValue = recommendedValue?.[col.key];
+            return hasValue || hasRecommendedValue;
+        });
         return sortByOrder(filteredSubRows);
-    }, [columns, value]);
+    }, [
+        columns,
+        value,
+        recommendedValue,
+    ]);
 
     const columnRendererParams = useCallback((_: string, column: ColumnType) => ({
         subRowLabel: label,
         column,
         readOnly,
         value,
+        recommendedValue,
         disabled,
         rowId,
         subRowId,
         onSubColumnsChange,
+        suggestionModeEnabled,
     }), [
         readOnly,
+        suggestionModeEnabled,
         subRowId,
+        recommendedValue,
         label,
         value,
         disabled,
@@ -185,12 +268,14 @@ interface RowProps {
     row: RowType;
     columns: ColumnType[] | undefined;
     value: NonNullable<Matrix2dValue['value']>[string];
+    recommendedValue: NonNullable<Matrix2dValue['value']>[string];
     onSubColumnsChange: (
         rowId: string,
         subRowId: string,
         columnId: string,
         selected: string[] | undefined,
     ) => void;
+    suggestionModeEnabled?: boolean;
 }
 
 function Row(props: RowProps) {
@@ -201,6 +286,8 @@ function Row(props: RowProps) {
         readOnly,
         value,
         columns,
+        suggestionModeEnabled,
+        recommendedValue,
     } = props;
 
     const {
@@ -211,9 +298,17 @@ function Row(props: RowProps) {
     } = row;
 
     const orderedSubRows = useMemo(() => {
-        const filteredSubRows = subRows?.filter((sr) => value?.[sr.key]);
+        const filteredSubRows = subRows?.filter((sr) => {
+            const hasValue = value?.[sr.key];
+            const hasRecommendedValue = recommendedValue?.[sr.key];
+            return hasValue || hasRecommendedValue;
+        });
         return sortByOrder(filteredSubRows);
-    }, [subRows, value]);
+    }, [
+        subRows,
+        value,
+        recommendedValue,
+    ]);
 
     const subRowKeySelector = useCallback(
         (subRow: SubRow) => subRow.key,
@@ -225,11 +320,22 @@ function Row(props: RowProps) {
             disabled,
             readOnly,
             value: value?.[subRow.key],
+            recommendedValue: recommendedValue?.[subRow.key],
             subRow,
             rowId: key,
             columns,
+            suggestionModeEnabled,
         }),
-        [disabled, onSubColumnsChange, readOnly, value, key, columns],
+        [
+            recommendedValue,
+            disabled,
+            onSubColumnsChange,
+            readOnly,
+            value,
+            key,
+            columns,
+            suggestionModeEnabled,
+        ],
     );
 
     return (
@@ -264,7 +370,9 @@ export interface Props <N extends string>{
     actions?: React.ReactNode;
     icons?: React.ReactNode;
 
-    widget: PartialMatrix2dWidget,
+    widget: PartialMatrix2dWidget;
+    suggestionModeEnabled?: boolean;
+    recommendedValue: Matrix2dValue | null | undefined,
 }
 
 function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
@@ -280,6 +388,8 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        suggestionModeEnabled,
+        recommendedValue,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -331,19 +441,38 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             disabled,
             readOnly,
             value: value?.value?.[key],
+            recommendedValue: recommendedValue?.value?.[key],
             row,
             columns,
             onSubColumnsChange: handleSubColumnsChange,
+            suggestionModeEnabled,
         }),
-        [disabled, readOnly, handleSubColumnsChange, value, columns],
+        [
+            recommendedValue,
+            disabled,
+            readOnly,
+            handleSubColumnsChange,
+            value,
+            columns,
+            suggestionModeEnabled,
+        ],
     );
 
     const widgetRows = widget?.properties?.rows;
 
     const orderedRows = useMemo(() => {
-        const filteredRows = widgetRows?.filter((wr) => value?.value?.[wr.key]);
+        const filteredRows = widgetRows?.filter((wr) => {
+            const hasValue = value?.value?.[wr.key];
+            const hasRecommendedValue = recommendedValue?.value?.[wr.key];
+
+            return hasValue || hasRecommendedValue;
+        });
         return sortByOrder(filteredRows);
-    }, [widgetRows, value]);
+    }, [
+        widgetRows,
+        value,
+        recommendedValue,
+    ]);
 
     return (
         <WidgetWrapper

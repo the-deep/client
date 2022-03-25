@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import { FaBrain } from 'react-icons/fa';
 import {
     listToMap,
@@ -13,12 +13,12 @@ import {
 import { useQuery, useMutation, gql } from '@apollo/client';
 import {
     QuickActionButton,
+    QuickActionDropdownMenu,
     useAlert,
     Container,
 } from '@the-deep/deep-ui';
 import { IoClose } from 'react-icons/io5';
 
-import { useModalState } from '#hooks/stateManagement';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import {
     mappingsSupportedWidgets,
@@ -172,7 +172,20 @@ function AssistItem(props: Props) {
 
     const mappings = frameworkDetails?.predictionTagsMapping;
     const alert = useAlert();
+    const [
+        allRecommendataions,
+        setAllRecommendations,
+    ] = useState<PartialAttributeType[] | undefined>(undefined);
+
     const [allHints, setAllHints] = useState<WidgetHint[] | undefined>(undefined);
+
+    const assistPopupRef = useRef<
+        { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
+    >(null);
+
+    useEffect(() => {
+        assistPopupRef?.current?.setShowPopup(true);
+    }, [assistPopupRef]);
 
     const schema = useMemo(
         () => {
@@ -198,12 +211,6 @@ function AssistItem(props: Props) {
         allWidgets,
         text,
     ]);
-
-    const [
-        isAssistedTaggingModalShown,
-        showAssistedTaggingModal,
-        hideAssistedTaggingModal,
-    ] = useModalState(true);
 
     const [
         geoAreaOptions,
@@ -340,6 +347,7 @@ function AssistItem(props: Props) {
                         supportedTags,
                         widget,
                     );
+
                     return {
                         tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
                         tempHints: oldTempHints,
@@ -374,6 +382,7 @@ function AssistItem(props: Props) {
         }
 
         setAllHints(widgetsHints);
+        setAllRecommendations(recommendedAttributes);
 
         setValue(
             (oldEntry) => {
@@ -576,16 +585,36 @@ function AssistItem(props: Props) {
         <Container
             className={_cs(className, styles.assistItem)}
             footerActions={(
-                <QuickActionButton
-                    name={undefined}
+                <QuickActionDropdownMenu
                     title="Assist"
+                    label={(<FaBrain />)}
+                    componentRef={assistPopupRef}
                     className={styles.button}
-                    onClick={showAssistedTaggingModal}
                     disabled={disabled}
                     variant="tertiary"
+                    popupContentClassName={styles.popupContent}
+                    persistent
                 >
-                    <FaBrain />
-                </QuickActionButton>
+                    <AssistPopup
+                        frameworkDetails={frameworkDetails}
+                        value={value}
+                        onChange={setValue}
+                        error={error}
+                        leadId={leadId}
+                        hints={allHints}
+                        recommendations={allRecommendataions}
+                        onEntryCreateButtonClick={handleEntryCreateButtonClick}
+                        geoAreaOptions={geoAreaOptions}
+                        onGeoAreaOptionsChange={setGeoAreaOptions}
+                        predictionsLoading={
+                            predictionsLoading
+                        || draftEntryFetchPending
+                        || draftEntryCreationPending
+                        }
+                        predictionsErrored={!!fetchErrors || !!createErrors}
+                        messageText={messageText}
+                    />
+                </QuickActionDropdownMenu>
             )}
             headerActions={(
                 <QuickActionButton
@@ -601,27 +630,6 @@ function AssistItem(props: Props) {
             contentClassName={styles.content}
         >
             {text}
-            {isAssistedTaggingModalShown && (
-                <AssistPopup
-                    onCloseButtonClick={hideAssistedTaggingModal}
-                    frameworkDetails={frameworkDetails}
-                    value={value}
-                    onChange={setValue}
-                    error={error}
-                    leadId={leadId}
-                    hints={allHints}
-                    onEntryCreateButtonClick={handleEntryCreateButtonClick}
-                    geoAreaOptions={geoAreaOptions}
-                    onGeoAreaOptionsChange={setGeoAreaOptions}
-                    predictionsLoading={
-                        predictionsLoading
-                        || draftEntryFetchPending
-                        || draftEntryCreationPending
-                    }
-                    predictionsErrored={!!fetchErrors || !!createErrors}
-                    messageText={messageText}
-                />
-            )}
         </Container>
     );
 }

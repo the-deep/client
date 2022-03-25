@@ -38,7 +38,7 @@ function CheckButton<N>(props: Props<N>) {
                 styles.checkButton,
             )}
             onClick={onClick}
-            variant={value ? 'nlp' : 'surface'}
+            variant={value ? 'nlp-primary' : 'nlp-general'}
             actionsContainerClassName={styles.actions}
             actions={badgeCount > 0 && <IoCheckmark />}
         >
