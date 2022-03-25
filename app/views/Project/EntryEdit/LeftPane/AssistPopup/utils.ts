@@ -168,7 +168,7 @@ export function createScaleAttr(
                     value: mappings[0].association.optionKey,
                 },
             },
-            hints: undefined,
+            hints: mappings.map((m) => m.association.optionKey),
         };
     }
 
@@ -203,7 +203,7 @@ export function createSelectAttr(
                     value: mappings[0].association.optionKey,
                 },
             },
-            hints: undefined,
+            hints: mappings.map((m) => m.association.optionKey),
         };
     }
 

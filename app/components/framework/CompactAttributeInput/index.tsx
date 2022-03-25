@@ -45,11 +45,12 @@ import OrganigramWidgetInput from './OrganigramWidgetInput';
 import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 import {
-    filterNumberHints,
-    filterDateHints,
     filterSelectHints,
     filterGeoHints,
     filterScaleHints,
+    filterMultiSelectRecommendations,
+    filterMatrix1dRecommendations,
+    filterMatrix2dRecommendations,
 } from './utils';
 
 import styles from './styles.css';
@@ -101,6 +102,8 @@ export interface Props<N extends string | number | undefined> {
 
     applyButtonsHidden?: boolean;
     widgetsHints?: WidgetHint[];
+    recommendations?: PartialAttributeType[];
+    suggestionModeEnabled?: boolean;
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -123,6 +126,9 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
 
         applyButtonsHidden = true,
         widgetsHints,
+        recommendations,
+
+        suggestionModeEnabled,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -201,9 +207,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'NUMBER' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
-        const widgetHints = widgetsHints
-            ?.filter(filterNumberHints)
-            ?.find((hint) => hint.widgetPk === widget.id);
 
         component = (
             <NumberWidgetInput
@@ -216,14 +219,10 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
-                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'DATE' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
-        const widgetHints = widgetsHints
-            ?.filter(filterDateHints)
-            ?.find((hint) => hint.widgetPk === widget.id);
 
         component = (
             <DateWidgetInput
@@ -236,7 +235,6 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 disabled={disabled}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
-                widgetHints={widgetHints?.hints}
             />
         );
     } else if (widget.widgetId === 'TIME' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -308,6 +306,11 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'MULTISELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+
+        const widgetRecommendation = recommendations
+            ?.filter(filterMultiSelectRecommendations)
+            ?.find((recommendation) => recommendation.widget === widget.id);
+
         component = (
             <MultiSelectWidgetInput
                 className={className}
@@ -320,6 +323,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                recommendedValue={widgetRecommendation?.data}
+                suggestionModeEnabled={suggestionModeEnabled}
             />
         );
     } else if (widget.widgetId === 'SELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -341,10 +346,18 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
                 widgetHints={widgetHints?.hints}
+                suggestionModeEnabled={suggestionModeEnabled}
             />
         );
     } else if (widget.widgetId === 'MATRIX1D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+
+        // FIXME: Handle this in an efficient manner
+        const widgetRecommendedValue = recommendations
+            ?.filter(filterMatrix1dRecommendations)
+            ?.find((recommendation) => recommendation.widget === widget.id)
+            ?.data;
+
         component = (
             <Matrix1dWidgetInput
                 className={className}
@@ -357,10 +370,19 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                suggestionModeEnabled={suggestionModeEnabled}
+                recommendedValue={widgetRecommendedValue}
             />
         );
     } else if (widget.widgetId === 'MATRIX2D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+
+        // FIXME: Handle this in an efficient manner
+        const widgetRecommendedValue = recommendations
+            ?.filter(filterMatrix2dRecommendations)
+            ?.find((recommendation) => recommendation.widget === widget.id)
+            ?.data;
+
         component = (
             <Matrix2dWidgetInput
                 className={className}
@@ -373,6 +395,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                suggestionModeEnabled={suggestionModeEnabled}
+                recommendedValue={widgetRecommendedValue}
             />
         );
     } else if (widget.widgetId === 'ORGANIGRAM' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {

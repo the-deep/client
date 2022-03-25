@@ -20,7 +20,10 @@ import {
     getHiddenWidgetIds,
 } from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
-import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import {
+    PartialEntryType,
+    PartialAttributeType,
+} from '#views/Project/EntryEdit/schema';
 
 import styles from './styles.css';
 
@@ -48,6 +51,9 @@ export interface Props {
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     widgetsHints?: WidgetHint[];
+    recommendations?: PartialAttributeType[];
+    emptyMessageHidden?: boolean;
+    suggestionModeEnabled?: boolean;
 }
 
 function CompactSection(props: Props) {
@@ -70,6 +76,9 @@ function CompactSection(props: Props) {
         onGeoAreaOptionsChange,
         onApplyToAll,
         widgetsHints,
+        emptyMessageHidden,
+        suggestionModeEnabled,
+        recommendations,
     } = props;
 
     const filteredWidgets = useMemo(
@@ -96,6 +105,15 @@ function CompactSection(props: Props) {
         [widgetsHints],
     );
 
+    const recommendationsMap = useMemo(
+        () => listToMap(
+            recommendations,
+            (recommendation) => recommendation.widget,
+            (recommendation) => recommendation,
+        ),
+        [recommendations],
+    );
+
     const widgetsWithValue = useMemo(() => {
         if (!emptyValueHidden) {
             return filteredWidgets;
@@ -107,21 +125,35 @@ function CompactSection(props: Props) {
                     return true;
                 }
                 if (widget.widgetId === 'MATRIX1D') {
-                    return !doesObjectHaveNoData(
+                    const hasValue = !doesObjectHaveNoData(
                         attributesMap?.[widget.clientId]?.value?.data?.value,
                         [''],
                     );
+                    const hasRecommendedValue = !doesObjectHaveNoData(
+                        recommendationsMap?.[widget.clientId]?.data?.value,
+                        [''],
+                    );
+                    return hasValue || hasRecommendedValue;
                 }
 
                 if (widget.widgetId === 'MATRIX2D') {
                     const val = attributesMap?.[widget.clientId]?.value?.data?.value;
-                    return Object.keys(val ?? {}).length > 0;
+                    const recommendationVal = recommendationsMap
+                        ?.[widget.clientId]?.data?.value;
+                    return (
+                        Object.keys(val ?? {}).length > 0
+                        || Object.keys(recommendationVal ?? {}).length > 0
+                    );
                 }
 
-                return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);
+                return isDefined(
+                    attributesMap?.[widget.clientId]?.value?.data?.value
+                    || recommendationsMap?.[widget.clientId]?.data?.value,
+                );
             },
         );
     }, [
+        recommendationsMap,
         hintsMap,
         emptyValueHidden,
         attributesMap,
@@ -167,9 +199,13 @@ function CompactSection(props: Props) {
                 onApplyBelowClick: handleApplyBelowClick,
                 onApplyAllClick: handleApplyAllClick,
                 widgetsHints,
+                recommendations,
+                suggestionModeEnabled,
             };
         },
         [
+            recommendations,
+            suggestionModeEnabled,
             widgetsHints,
             onApplyToAll,
             onAttributeChange,
@@ -193,6 +229,10 @@ function CompactSection(props: Props) {
         sectionId,
         onAddButtonClick,
     ]);
+
+    if (emptyMessageHidden && widgetsWithValue?.length === 0) {
+        return null;
+    }
 
     return (
         <Container
@@ -221,8 +261,8 @@ function CompactSection(props: Props) {
                 filtered={false}
                 errored={false}
                 emptyMessage="No widgets were tagged under this section."
-                messageShown
-                messageIconShown
+                messageShown={!emptyMessageHidden}
+                messageIconShown={!emptyMessageHidden}
             />
         </Container>
     );
