@@ -79,6 +79,7 @@ export const PROJECT_USERS = gql`
                         organization
                         firstName
                         lastName
+                        emailDisplay
                     }
                     role {
                         id

@@ -11,6 +11,7 @@ import {
 } from '#generated/types';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
+import styles from './styles.css';
 
 const USERS = gql`
     query Users($search: String, $membersExcludeProject: ID, $membersExcludeUsergroup: ID) {
@@ -25,6 +26,7 @@ const USERS = gql`
                 organization
                 firstName
                 lastName
+                emailDisplay
             }
             totalCount
         }
@@ -48,7 +50,22 @@ function keySelector(d: User) {
 }
 
 function labelSelector(d: User) {
-    return d.displayName ?? `${d.firstName} ${d.lastName}`;
+    const displayName = d.displayName ?? `${d.firstName} ${d.lastName}`;
+    return displayName;
+}
+
+function optionLabelSelector(d: User) {
+    const displayName = d.displayName ?? `${d.firstName} ${d.lastName}`;
+    return (
+        <div className={styles.option}>
+            <div className={styles.displayName}>
+                {displayName}
+            </div>
+            <div className={styles.email}>
+                {d.emailDisplay}
+            </div>
+        </div>
+    );
 }
 
 function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>) {
@@ -83,11 +100,14 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
+            optionLabelSelector={optionLabelSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.users?.results}
             optionsPending={loading}
             totalOptionsCount={data?.users?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
+            optionsPopupClassName={styles.optionsPopup}
+            optionsPopupContentClassName={styles.optionsPopupContent}
         />
     );
 }
