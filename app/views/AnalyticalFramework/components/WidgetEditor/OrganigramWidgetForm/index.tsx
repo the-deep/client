@@ -97,7 +97,7 @@ const schema: FormSchema = {
     }),
 };
 const defaultNodeVal = (): PartialNodeType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 
@@ -283,7 +283,7 @@ function NodeInput(props: NodeInputProps) {
     );
 }
 const defaultRootVal = (): PartialRootType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 

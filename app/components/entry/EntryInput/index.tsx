@@ -98,7 +98,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
 
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
-            clientId: randomString(),
+            clientId: `auto-${randomString()}`,
             entryType: 'EXCERPT',
             lead: leadId,
             excerpt: '',

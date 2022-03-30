@@ -112,7 +112,7 @@ const schema: FormSchema = {
 };
 
 const defaultOptionVal = (): PartialOptionType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 

@@ -141,7 +141,7 @@ const schema: FormSchema = {
 };
 
 const defaultCellVal = (): PartialCellType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 
@@ -244,7 +244,7 @@ function CellInput(props: CellInputProps) {
 }
 
 const defaultRowVal = (): PartialRowType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 interface RowInputProps {

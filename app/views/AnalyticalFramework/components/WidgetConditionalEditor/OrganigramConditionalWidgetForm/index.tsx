@@ -146,7 +146,7 @@ const schema: FormSchema = {
 const conditionKeySelector = (o: PartialConditionType) => o.key;
 
 const defaultConditionVal = (): PartialConditionType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 
     conjunctionOperator: 'AND',
@@ -196,7 +196,7 @@ function ConditionInput(props: ConditionInputProps) {
                     // eslint-disable-next-line no-console
                     console.error('Trying to change operator when no value is defined');
                     return {
-                        key: randomString(),
+                        key: `auto-${randomString()}`,
                         order: -1,
                         conjunctionOperator: 'AND',
                         invert: false,
