@@ -116,7 +116,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
 
     const defaultOptionVal = useCallback(
         (): PartialAttributeType => ({
-            clientId: randomString(),
+            clientId: `auto-${randomString()}`,
             widgetType: widget.widgetId,
             // NOTE: widget.id should always be defined before an attribute can be saved
             widget: widget.id ?? 'not-random',

@@ -65,7 +65,7 @@ export interface AnalyticalStatementInputProps {
 }
 
 const defaultVal = (): AnalyticalStatementType => ({
-    clientId: randomString(),
+    clientId: `auto-${randomString()}`,
     analyticalEntries: [],
 });
 

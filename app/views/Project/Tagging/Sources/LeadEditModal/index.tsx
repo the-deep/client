@@ -240,7 +240,7 @@ function LeadEditModal(props: Props) {
     const { user } = useContext(UserContext);
 
     const initialValue: PartialFormType = useMemo(() => ({
-        clientId: randomString(),
+        clientId: `auto-${randomString()}`,
         sourceType: 'WEBSITE',
         priority: 'LOW',
         confidentiality: 'UNPROTECTED',

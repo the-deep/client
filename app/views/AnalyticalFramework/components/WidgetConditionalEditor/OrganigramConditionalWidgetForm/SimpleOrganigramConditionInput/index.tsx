@@ -38,7 +38,7 @@ interface OrganigramContainsConditionInputProps {
 }
 
 const defaultConditionVal = (): PartialConditionType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 
     conjunctionOperator: 'AND',

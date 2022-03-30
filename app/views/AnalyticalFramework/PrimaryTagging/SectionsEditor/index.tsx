@@ -93,7 +93,7 @@ const schema: FormSchema = {
 };
 
 const defaultVal = (): PartialSectionType => ({
-    clientId: randomString(),
+    clientId: `auto-${randomString()}`,
     order: -1,
 });
 

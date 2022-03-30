@@ -99,7 +99,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
 
     const defaultOptionVal = useCallback(
         (): PartialAttributeType => ({
-            clientId: randomString(),
+            clientId: `auto-${randomString()}`,
             widgetType: widget.widgetId,
             // NOTE: widget.id should always be defined before an attribute can be saved
             widget: widget.id ?? 'not-random',

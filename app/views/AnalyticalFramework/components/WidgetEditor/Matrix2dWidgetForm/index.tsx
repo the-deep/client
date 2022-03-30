@@ -213,7 +213,7 @@ const schema: FormSchema = {
 };
 
 const defaultSubRowVal = (): PartialSubRowType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 interface SubRowInputProps {
@@ -311,7 +311,7 @@ function SubRowInput(props: SubRowInputProps) {
 }
 
 const defaultRowVal = (): PartialRowType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 interface RowInputProps {
@@ -369,6 +369,7 @@ function RowInput(props: RowInputProps) {
                 key,
                 order: oldSubRows.length + 1,
             };
+            // FIXME: this may be problematic, why not use the function api to do this?
             onFieldChange(
                 [...reorder(oldSubRows), newSubRow],
                 'subRows' as const,
@@ -506,7 +507,7 @@ function RowInput(props: RowInputProps) {
 }
 
 const defaultSubColumnVal = (): PartialSubColumnType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 interface SubColumnInputProps {
@@ -604,7 +605,7 @@ function SubColumnInput(props: SubColumnInputProps) {
 }
 
 const defaultColumnVal = (): PartialColumnType => ({
-    key: randomString(),
+    key: `auto-${randomString()}`,
     order: -1,
 });
 interface ColumnInputProps {

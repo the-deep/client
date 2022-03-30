@@ -197,9 +197,11 @@ function EntryEdit(props: Props) {
 
     const [selectedEntry, setSelectedEntry] = useState<string | undefined>(undefined);
 
+    // NOTE: Using useCallback because this needs to be called everytime to get
+    // new clientId
     const defaultOptionVal = useCallback(
         (): PartialEntryType => ({
-            clientId: randomString(),
+            clientId: `auto-${randomString()}`,
             entryType: 'EXCERPT',
             lead: leadId,
             excerpt: '',
@@ -817,10 +819,12 @@ function EntryEdit(props: Props) {
         setSelectedEntry(entryId);
     }, [createRestorePoint]);
 
+    // FIXME: check if we need to do this? also memoize this?
     const currentEntryIndex = formValue.entries?.findIndex(
         (entry) => entry.clientId === selectedEntry,
     ) ?? -1;
 
+    // FIXME: check if we need to do this?
     const currentEntry = formValue.entries?.[currentEntryIndex];
 
     const entriesError = useMemo(
@@ -954,12 +958,14 @@ function EntryEdit(props: Props) {
         [restore],
     );
 
+    // FIXME: check if we need to do this?
     const onEntryFieldChange = useFormObject(
         currentEntryIndex === -1 ? undefined : currentEntryIndex,
         handleEntryChange,
         defaultOptionVal,
     );
 
+    // FIXME: check if we need to do this?
     const handleExcerptChange = useCallback(
         (_: string, excerpt: string | undefined) => {
             onEntryFieldChange(excerpt, 'excerpt');
@@ -967,8 +973,10 @@ function EntryEdit(props: Props) {
         [onEntryFieldChange],
     );
 
+    // FIXME: check if we need to do this?
     const handleEntryDelete = useCallback(
         () => {
+            // NOTE: add note why we are clearing restore point
             clearRestorePoint();
             onEntryFieldChange(true, 'deleted');
             setSelectedEntry(undefined);
@@ -976,8 +984,10 @@ function EntryEdit(props: Props) {
         [onEntryFieldChange, clearRestorePoint],
     );
 
+    // FIXME: check if we need to do this?
     const handleEntryRestore = useCallback(
         () => {
+            // NOTE: add note why we are clearing restore point
             clearRestorePoint();
             onEntryFieldChange(false, 'deleted');
             setSelectedEntry(undefined);
@@ -1532,6 +1542,7 @@ function EntryEdit(props: Props) {
                                         onEntryCreate={handleEntryCreate}
                                         onEntryDelete={handleEntryDelete}
                                         onEntryRestore={handleEntryRestore}
+                                        // FIXME: maybe move the entries change inside
                                         onExcerptChange={handleExcerptChange}
                                         onApproveButtonClick={handleEntryChangeApprove}
                                         onDiscardButtonClick={handleEntryChangeDiscard}
