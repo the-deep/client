@@ -4,6 +4,7 @@ import {
     forceNullType,
     requiredCondition,
     requiredStringCondition,
+    requiredListCondition,
     defaultUndefinedType,
     PartialForm,
 } from '@togglecorp/toggle-form';
@@ -100,11 +101,13 @@ const schema: FormSchema = {
             baseSchema = {
                 ...baseSchema,
                 properties: {
+                    // FIXME: add proper typings for fields return type
                     fields: () => ({
                         stats_config: {
+                            // FIXME: add proper typings for fields return type
                             fields: () => ({
-                                matrix1d: [requiredCondition],
-                                matrix2d: [requiredCondition],
+                                widget_1d: [requiredListCondition],
+                                widget_2d: [requiredListCondition],
                                 geo_widget: [requiredCondition],
                                 severity_widget: [requiredCondition],
                                 reliability_widget: [requiredCondition],
