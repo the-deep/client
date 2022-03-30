@@ -137,7 +137,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
             <MultiSelectInput
                 label="Matrix 1D"
                 options={matrix1dWidgets}
-                name="matrix1d"
+                name={undefined}
                 value={matrix1dValue}
                 error={getErrorString(statsConfigError?.widget_1d)}
                 onChange={onMatrix1dValueChange}
@@ -148,7 +148,7 @@ function Properties<K extends string>(props: PropertiesProps<K>) {
             <MultiSelectInput
                 label="Matrix 2D"
                 options={matrix2dWidgets}
-                name="matrix2d"
+                name={undefined}
                 value={matrix2dValue}
                 error={getErrorString(statsConfigError?.widget_2d)}
                 onChange={onMatrix2dValueChange}
