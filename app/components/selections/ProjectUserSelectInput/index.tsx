@@ -9,6 +9,7 @@ import {
     ProjectUserQuery,
     ProjectUserQueryVariables,
 } from '#generated/types';
+import styles from './styles.css';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
@@ -22,6 +23,7 @@ const PROJECT_USERS = gql`
                     member {
                         id
                         displayName
+                        emailDisplay
                     }
                 }
                 totalCount
@@ -33,6 +35,20 @@ const PROJECT_USERS = gql`
 export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
 const keySelector = (d: BasicProjectUser) => d.id;
 const labelSelector = (d: BasicProjectUser) => d.displayName ?? '';
+
+function optionLabelSelector(d: BasicProjectUser) {
+    const displayName = d.displayName ?? '';
+    return (
+        <div className={styles.option}>
+            <div className={styles.displayName}>
+                {displayName}
+            </div>
+            <div className={styles.email}>
+                {d.emailDisplay}
+            </div>
+        </div>
+    );
+}
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -80,11 +96,14 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
+            optionLabelSelector={optionLabelSelector}
             searchOptions={members}
             onSearchValueChange={setSearchText}
             optionsPending={loading}
             onShowDropdownChange={setOpened}
             totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
+            optionsPopupClassName={styles.optionsPopup}
+            optionsPopupContentClassName={styles.optionsPopupContent}
         />
     );
 }
