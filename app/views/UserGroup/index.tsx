@@ -40,58 +40,64 @@ export const USERGROUPS = gql`
             pageSize: $pageSize,
         ) {
             results {
-              id
-              title
-              createdAt
-              description
-              currentUserRole
-              createdBy {
                 id
-                displayName
-                language
-                firstName
-                lastName
-                isActive
-              }
-              globalCrisisMonitoring
-              modifiedAt
-              membershipsCount
-              memberships {
-                id
-                role
-                roleDisplay
-                joinedAt
-                member {
+                title
+                createdAt
+                description
+                currentUserRole
+                createdBy {
                     id
                     displayName
-                    lastName
+                    language
                     firstName
+                    lastName
                     isActive
                 }
-              }
+                globalCrisisMonitoring
+                modifiedAt
+                membershipsCount
+                memberships {
+                    id
+                    clientId
+                    role
+                    roleDisplay
+                    joinedAt
+                    member {
+                        id
+                        displayName
+                        lastName
+                        firstName
+                        isActive
+                    }
+                }
             }
             totalCount
             pageSize
             page
         }
     }
-`;
+    `;
 
 const USER_GROUP_DELETE = gql`
-mutation UserGroupDelete(
-    $id: ID!,
-) {
-    userGroupDelete(id: $id) {
-        errors
-        ok
-        result {
-          id
-          currentUserRole
-          title
+    mutation UserGroupDelete(
+        $id:ID!,
+    ) {
+        userGroup(
+            id: $id,
+        ) {
+            id
+            userGroupDelete {
+                errors
+                ok
+                result {
+                    id
+                    currentUserRole
+                    title
+                }
+            }
         }
     }
-}
-`;
+    `;
 
 export type UsersGroupType = NonNullable<NonNullable<NonNullable<UserGroupsQuery>['userGroups']>['results']>[number];
 

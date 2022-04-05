@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     Pager,
@@ -23,7 +23,6 @@ import {
 } from '@apollo/client';
 import _ts from '#ts';
 
-import { ProjectContext } from '#base/context/ProjectContext';
 import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
 
@@ -68,31 +67,37 @@ const USER_GROUP_MEMBERSHIP = gql`
 
 const USER_GROUP_MEMBERSHIP_DELETE = gql`
     mutation UserGroupMembershipDelete(
-        $projectId:ID!,
+        $id:ID!,
         $deleteIds: [ID!],
-        $items: [BulkProjectUserGroupMembershipInputType!],
+        $items: [BulkUserGroupMembershipInputType!],
         ) {
-        project(
-            id: $projectId,
+        userGroup(
+            id: $id,
         ) {
             id
-            projectUserGroupMembershipBulk(
+            userGroupMembershipBulk(
                 deleteIds: $deleteIds,
                 items: $items,
             ) {
                 errors
                 deletedResult {
-                    usergroup {
+                    id
+                    clientId
+                    role
+                    roleDisplay
+                    member {
                       id
-                      memberships {
-                        id
-                        role
-                        member {
-                          id
-                          displayName
-                        }
-                      }
+                      displayName
                     }
+                }
+                result {
+                    clientId
+                    id
+                    member {
+                      id
+                      displayName
+                    }
+                    role
                 }
             }
         }
@@ -140,7 +145,6 @@ function UserGroupItem(props: Props) {
         autoFocus,
     } = props;
 
-    const { project } = useContext(ProjectContext);
     const [activePage, setActivePage] = useState<number>(1);
     const alert = useAlert();
 
@@ -178,20 +182,20 @@ function UserGroupItem(props: Props) {
         USER_GROUP_MEMBERSHIP_DELETE,
         {
             onCompleted: (response) => {
-                if (!response?.project?.projectUserGroupMembershipBulk) {
+                if (!response?.userGroup?.userGroupMembershipBulk) {
                     return;
                 }
                 const {
                     errors,
                     deletedResult,
-                } = response.project.projectUserGroupMembershipBulk;
+                } = response.userGroup.userGroupMembershipBulk;
 
                 const [err] = errors ?? [];
                 const [deletedUser] = deletedResult ?? [];
 
                 if (deletedUser) {
                     alert.show(
-                        `Successfully removed ${deletedUser.usergroup.memberships} from this project.`,
+                        `Successfully removed ${deletedUser.member.displayName} from this project.`,
                         { variant: 'success' },
                     );
                     refetchUserGroupMembers();
@@ -221,12 +225,12 @@ function UserGroupItem(props: Props) {
     const handleMemberDelete = useCallback((id: string) => {
         userGroupMembershipDelete({
             variables: {
-                projectId: project?.id as string,
+                id: userGroupId,
                 deleteIds: [id],
             },
         });
     }, [
-        project?.id,
+        userGroupId,
         userGroupMembershipDelete,
     ]);
 
@@ -262,7 +266,7 @@ function UserGroupItem(props: Props) {
             },
             cellRenderer: MembershipActionCell,
             cellRendererParams: (membershipId, data) => ({
-                member: data.id,
+                member: data.member.id,
                 memberRole: data.role,
                 groupKey: data.id,
                 membershipId,
@@ -272,6 +276,7 @@ function UserGroupItem(props: Props) {
             }),
             columnWidth: 96,
         };
+
         const roleColumn: TableColumn<
             UserGroupMembership,
             string,
@@ -290,6 +295,7 @@ function UserGroupItem(props: Props) {
                 value: data.role,
             }),
         };
+
         return ([
             createStringColumn<UserGroupMembership, string>(
                 'name',
@@ -308,7 +314,7 @@ function UserGroupItem(props: Props) {
 
     const users = useMemo(() => (
         (userGroupMembershipResponse?.userGroup?.memberships ?? []).map((d) => ({
-            id: d.id,
+            id: d.member?.id,
             displayName: d.member?.displayName,
             firstName: d.member?.firstName,
             lastName: d.member?.lastName,

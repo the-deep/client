@@ -47,20 +47,25 @@ mutation UserGroupCreate(
 `;
 
 const USER_GROUP_UPDATE = gql`
-mutation UserGroupUpdate(
-    $data: UserGroupInputType!,
-    $id: ID!,
-) {
-    userGroupUpdate(data: $data, id: $id) {
-        errors
-        ok
-        result {
-          id
-          currentUserRole
-          title
+    mutation UserGroupUpdate(
+        $id:ID!,
+        $data: UserGroupInputType!,
+        ) {
+        userGroup(
+            id: $id,
+        ) {
+            id
+            userGroupUpdate(data: $data){
+                errors
+                ok
+                result {
+                  id
+                  currentUserRole
+                  title
+                }
+            }
         }
     }
-}
 `;
 
 type FormType = {
@@ -175,19 +180,21 @@ function AddUserGroupModal(props: Props) {
         USER_GROUP_UPDATE,
         {
             onCompleted: (response) => {
-                if (!response?.userGroupUpdate?.ok) {
+                if (!response?.userGroup?.userGroupUpdate?.ok) {
                     return;
                 }
 
-                const responseId = response?.userGroupUpdate?.result?.id;
+                const responseId = response?.userGroup?.userGroupUpdate?.result?.id;
                 if (responseId) {
                     onSuccess(responseId);
                 }
 
+                const responseData = response?.userGroup?.userGroupUpdate;
+
                 const {
                     ok,
                     errors,
-                } = response && response.userGroupUpdate;
+                } = responseData;
 
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);

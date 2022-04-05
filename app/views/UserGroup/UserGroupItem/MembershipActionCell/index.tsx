@@ -17,7 +17,7 @@ export interface Props {
     memberRole: 'ADMIN' | 'NORMAL';
     onAddClick?: (key: number) => void;
     onEditClick: (
-        user: { id: string; member: string; role: 'ADMIN' | 'NORMAL' },
+        user: { id: string; member: string; role: 'ADMIN' | 'NORMAL'; },
         group: string,
     ) => void;
     onDeleteClick: (key: string) => void;
