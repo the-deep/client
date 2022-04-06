@@ -89,6 +89,7 @@ function Dashboard(props: Props) {
 
     const status = data?.project?.vizData?.status;
     const dataUrl = data?.project?.vizData?.dataUrl;
+    const publiclyShared = data?.project?.vizData?.publicShare;
 
     const vizUrl = useMemo(() => (
         `${entriesVizEndpoint}?${prepareUrlParams({ dataUrl: data?.project?.vizData?.dataUrl })}`
@@ -98,7 +99,10 @@ function Dashboard(props: Props) {
         <Container
             className={_cs(styles.dashboard, className)}
             headerClassName={styles.header}
-            headerActions={(publicUrl || project?.allowedPermissions.includes('UPDATE_PROJECT')) && (
+            headerActions={(
+                (publicUrl && publiclyShared)
+                || project?.allowedPermissions.includes('UPDATE_PROJECT')
+            ) && (
                 <Button
                     name={undefined}
                     icons={(<IoShareSocialOutline />)}
@@ -142,7 +146,7 @@ function Dashboard(props: Props) {
                     )}
                 />
             )}
-            {isShareModalShown && activeProject && publicUrl && (
+            {isShareModalShown && activeProject && (
                 <VisualizationShareModal
                     url={publicUrl}
                     projectId={activeProject}

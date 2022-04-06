@@ -144,7 +144,7 @@ function VisualizationShareModal(props: ShareModalProps) {
                 label="Enable Public Link"
                 value={publicShareEnabled}
                 onChange={handleCheckboxClick}
-                disabled={isAdmin}
+                disabled={!isAdmin}
             />
             {publicShareEnabled && url && (
                 <>
