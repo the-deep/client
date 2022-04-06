@@ -105,7 +105,6 @@ function Routes(props: Props) {
                     {routes.resetPassword.load({ className })}
                 </Route>
                 <Route
-                    exact
                     path={routes.entryEditRedirect.path}
                 >
                     {routes.entryEditRedirect.load({ className })}
