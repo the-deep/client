@@ -55,7 +55,7 @@ const USER_GROUP_UPDATE = gql`
             id: $id,
         ) {
             id
-            userGroupUpdate(data: $data){
+            userGroupUpdate(data: $data) {
                 errors
                 ok
                 result {
@@ -134,18 +134,14 @@ function AddUserGroupModal(props: Props) {
         USER_GROUP_CREATE,
         {
             onCompleted: (response) => {
-                if (!response?.userGroupCreate?.ok) {
+                if (!response || !response.userGroupCreate) {
                     return;
                 }
 
-                const responseId = response?.userGroupCreate?.result?.id;
-                if (responseId) {
-                    onSuccess(responseId);
-                }
                 const {
                     ok,
                     errors,
-                } = response && response.userGroupCreate;
+                } = response.userGroupCreate;
 
                 if (errors) {
                     const formError = transformToFormError(removeNull(errors) as ObjectError[]);
@@ -155,12 +151,15 @@ function AddUserGroupModal(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
+                    const responseId = response.userGroupCreate.result?.id;
+                    if (responseId) {
+                        onSuccess(responseId);
+                    }
                     alert.show(
                         'Successfully created user group!',
                         { variant: 'success' },
                     );
                 }
-                onModalClose();
             },
             onError: () => {
                 alert.show(
@@ -180,16 +179,10 @@ function AddUserGroupModal(props: Props) {
         USER_GROUP_UPDATE,
         {
             onCompleted: (response) => {
-                if (!response?.userGroup?.userGroupUpdate?.ok) {
+                const responseData = response?.userGroup?.userGroupUpdate;
+                if (!responseData) {
                     return;
                 }
-
-                const responseId = response?.userGroup?.userGroupUpdate?.result?.id;
-                if (responseId) {
-                    onSuccess(responseId);
-                }
-
-                const responseData = response?.userGroup?.userGroupUpdate;
 
                 const {
                     ok,
@@ -204,12 +197,16 @@ function AddUserGroupModal(props: Props) {
                         { variant: 'error' },
                     );
                 } else if (ok) {
+                    const responseId = response.userGroup?.userGroupUpdate?.result?.id;
+
+                    if (responseId) {
+                        onSuccess(responseId);
+                    }
                     alert.show(
                         'Successfully updated user group!',
                         { variant: 'success' },
                     );
                 }
-                onModalClose();
             },
             onError: () => {
                 alert.show(

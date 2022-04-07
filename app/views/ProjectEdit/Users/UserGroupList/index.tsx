@@ -38,6 +38,7 @@ import {
 import _ts from '#ts';
 
 import AddUserGroupModal from './AddUserGroupModal';
+import { roleLevels } from '../index';
 
 import styles from './styles.css';
 
@@ -83,6 +84,7 @@ const PROJECT_USERGROUPS = gql`
                         id
                         title
                         level
+                        type
                     }
                     usergroup {
                         id
@@ -235,7 +237,8 @@ function UserGroupList(props: Props) {
                 onDeleteClick: handleRemoveUsergroupFromProject,
                 disabled: (
                     isNotDefined(activeUserRoleLevel)
-                    || data.role.level < activeUserRoleLevel
+                    // FIXME: User level from server after it is ready
+                    || activeUserRoleLevel < roleLevels[data.role.type]
                     || deleteUsergroupMembershipPending
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),

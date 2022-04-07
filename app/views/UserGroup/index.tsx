@@ -30,12 +30,11 @@ import styles from './styles.css';
 
 export const USERGROUPS = gql`
     query UserGroups(
-        $membersExcludeProject: ID,
         $page: Int,
         $pageSize: Int,
     ) {
         userGroups(
-            membersExcludeProject: $membersExcludeProject,
+            isCurrentUserMember: true,
             page: $page,
             pageSize: $pageSize,
         ) {
@@ -133,14 +132,10 @@ function UserGroup(props: Props) {
 
     const userGroupVariables = useMemo(
         (): UserGroupsQueryVariables | undefined => ({
-            membersExcludeProject: user?.id,
             page: activePage,
             pageSize: MAX_ITEMS_PER_PAGE,
         }),
-        [
-            user?.id,
-            activePage,
-        ],
+        [activePage],
     );
 
     const {
@@ -156,15 +151,20 @@ function UserGroup(props: Props) {
 
     const [
         usergroupDeleteTrigger,
+        {
+            loading: usergroupDeletePending,
+        },
     ] = useMutation<UserGroupDeleteMutation, UserGroupDeleteMutationVariables>(
         USER_GROUP_DELETE,
         {
-            onCompleted: () => {
-                usergroupGetRetrigger();
-                alert.show(
-                    'Successfully deleted user group.',
-                    { variant: 'success' },
-                );
+            onCompleted: (response) => {
+                if (response?.userGroup?.userGroupDelete?.ok) {
+                    usergroupGetRetrigger();
+                    alert.show(
+                        'Successfully deleted user group.',
+                        { variant: 'success' },
+                    );
+                }
             },
             onError: () => {
                 alert.show(
@@ -177,7 +177,7 @@ function UserGroup(props: Props) {
 
     const usergroupObjectToEdit = useMemo(() => (
         userGroupsResponse?.userGroups
-            ?.results?.find((a: UsersGroupType) => a.id === userGroupToEdit)
+            ?.results?.find((userGroup) => userGroup.id === userGroupToEdit)
     ), [
         userGroupsResponse?.userGroups?.results,
         userGroupToEdit,
@@ -225,8 +225,10 @@ function UserGroup(props: Props) {
         onExpansionChange: handleExpansionChange,
         autoFocus: autoFocusUserGroup === datum.id,
         expanded: expandedUserGroupId === datum.id,
+        disabled: usergroupDeletePending,
     }), [
         autoFocusUserGroup,
+        usergroupDeletePending,
         userId,
         usergroupGetRetrigger,
         handleUserGroupDelete,

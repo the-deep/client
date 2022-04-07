@@ -365,8 +365,8 @@ function EntriesGrid(props: Props) {
                 <Pager
                     activePage={activePage}
                     itemsCount={entriesResponse?.totalCount ?? 0}
-                    maxItemsPerPage={maxItemsPerPage}
                     onActivePageChange={setActivePage}
+                    maxItemsPerPage={maxItemsPerPage}
                     onItemsPerPageChange={setMaxItemsPerPage}
                     options={itemsPerPageOptions}
                 />

@@ -33,6 +33,7 @@ import {
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 
+import { roleLevels } from '../index';
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';
 
@@ -83,6 +84,7 @@ export const PROJECT_USERS = gql`
                         id
                         level
                         title
+                        type
                     }
                     addedBy {
                         displayName
@@ -266,7 +268,8 @@ function UserList(props: Props) {
                 disabled: (
                     data.member.id === activeUserId
                     || isNotDefined(activeUserRoleLevel)
-                    || data.role.level < activeUserRoleLevel
+                    // FIXME: User level from server after it is ready
+                    || activeUserRoleLevel < roleLevels[data.role.type]
                     || bulkDeleteProjectMembershipPending
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUserLabel'),

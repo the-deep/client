@@ -11,8 +11,6 @@ import {
     TableColumn,
     TableHeaderCellProps,
     TableHeaderCell,
-    TableCell,
-    TableCellProps,
     createStringColumn,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -36,6 +34,7 @@ import {
     UserGroupMembershipDeleteMutation,
     UserGroupMembershipDeleteMutationVariables,
 } from '#generated/types';
+
 import styles from './styles.css';
 
 const USER_GROUP_MEMBERSHIP = gql`
@@ -70,10 +69,8 @@ const USER_GROUP_MEMBERSHIP_DELETE = gql`
         $id:ID!,
         $deleteIds: [ID!],
         $items: [BulkUserGroupMembershipInputType!],
-        ) {
-        userGroup(
-            id: $id,
-        ) {
+    ) {
+        userGroup(id: $id) {
             id
             userGroupMembershipBulk(
                 deleteIds: $deleteIds,
@@ -86,16 +83,16 @@ const USER_GROUP_MEMBERSHIP_DELETE = gql`
                     role
                     roleDisplay
                     member {
-                      id
-                      displayName
+                        id
+                        displayName
                     }
                 }
                 result {
                     clientId
                     id
                     member {
-                      id
-                      displayName
+                        id
+                        displayName
                     }
                     role
                 }
@@ -128,6 +125,7 @@ export interface Props {
     onExpansionChange: (usergroupExpanded: boolean, usergroupId: string) => void;
     expanded?: boolean;
     autoFocus?: boolean;
+    disabled?: boolean;
 }
 
 function UserGroupItem(props: Props) {
@@ -143,6 +141,7 @@ function UserGroupItem(props: Props) {
         onExpansionChange,
         expanded,
         autoFocus,
+        disabled,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -272,28 +271,9 @@ function UserGroupItem(props: Props) {
                 membershipId,
                 onEditClick: handleEditMemberClick,
                 onDeleteClick: handleMemberDelete,
-                disabled: (userGroup?.currentUserRole !== 'ADMIN') || String(data) === activeUserId,
+                disabled: (userGroup?.currentUserRole !== 'ADMIN') || data.member.id === activeUserId,
             }),
             columnWidth: 96,
-        };
-
-        const roleColumn: TableColumn<
-            UserGroupMembership,
-            string,
-            TableCellProps<string>,
-            TableHeaderCellProps
-        > = {
-            id: 'role',
-            title: 'Role',
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: false,
-            },
-            cellRenderer: TableCell,
-            cellRendererClassName: styles.role,
-            cellRendererParams: (_, data) => ({
-                value: data.role,
-            }),
         };
 
         return ([
@@ -307,7 +287,11 @@ function UserGroupItem(props: Props) {
                 _ts('usergroup', 'addedOnLabel'),
                 (item) => item.joinedAt,
             ),
-            roleColumn,
+            createStringColumn<UserGroupMembership, string>(
+                'role',
+                'Role',
+                (item) => item.roleDisplay,
+            ),
             actionColumn,
         ]);
     }, [activeUserId, handleEditMemberClick, handleMemberDelete, userGroup]);
@@ -373,7 +357,7 @@ function UserGroupItem(props: Props) {
                     editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
                     deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
                     deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
-                    disabled={userGroup?.currentUserRole === 'NORMAL'}
+                    disabled={userGroup?.currentUserRole === 'NORMAL' || disabled}
                 />
             )}
         >
