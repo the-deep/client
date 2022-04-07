@@ -161,14 +161,12 @@ export function getProjectSourcesQueryVariables(
             ))
             : undefined,
     } : undefined;
-    const isEntriesFilterDataEmpty = doesObjectHaveNoData(entriesFilterData, ['', null]);
 
     return {
         ...filters,
         createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
         createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
         entriesFilterData,
-        customFilters: isEntriesFilterDataEmpty ? undefined : 'EXCLUDE_EMPTY_FILTERED_ENTRIES',
     };
 }
 

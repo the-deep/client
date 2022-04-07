@@ -42,7 +42,7 @@ function BulkActions(props: Props) {
     ] = useModalState(false);
 
     const entriesCount = useMemo(() => (
-        sum(selectedLeads.map((lead) => lead.entriesCounts?.total).filter(isDefined))
+        sum(selectedLeads.map((lead) => lead.entriesCount?.total).filter(isDefined))
     ), [selectedLeads]);
 
     const assessmentsCount = useMemo(() => (

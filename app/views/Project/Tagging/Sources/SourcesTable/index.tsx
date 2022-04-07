@@ -277,7 +277,7 @@ function SourcesTable(props: Props) {
         setExpandedRowKey,
     ] = useRowExpansion<Lead, string>(
         ({ datum }) => {
-            if ((datum?.entriesCounts?.total ?? 0) > 0) {
+            if ((datum?.entriesCount?.total ?? 0) > 0) {
                 return (
                     <EntryList
                         key={datum.id}
@@ -432,8 +432,8 @@ function SourcesTable(props: Props) {
             cellRenderer: ProgressLine,
             cellRendererParams: (_, data) => ({
                 progress: calcPercent(
-                    data.entriesCounts?.controlled,
-                    data.entriesCounts?.total,
+                    data.entriesCount?.controlled,
+                    data.entriesCount?.total,
                 ) ?? 0,
                 size: 'small',
                 hideInfoCircle: true,
@@ -454,7 +454,7 @@ function SourcesTable(props: Props) {
                 title: data.title,
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
-                entriesCount: data.entriesCounts?.total ?? 0,
+                entriesCount: data.entriesCount?.total ?? 0,
                 hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
             }),

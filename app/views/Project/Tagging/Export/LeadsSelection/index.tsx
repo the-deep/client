@@ -69,7 +69,6 @@ const PROJECT_LEADS = gql`
         $sourceOrganizations: [ID!],
         $authorOrganizations: [ID!],
         $entriesFilterData: LeadEntriesFilterData,
-        $customFilters: LeadCustomFilterEnum,
     ) {
         project(id: $projectId) {
             id
@@ -95,7 +94,6 @@ const PROJECT_LEADS = gql`
                 sourceOrganizations: $sourceOrganizations,
                 authorOrganizations: $authorOrganizations,
                 entriesFilterData: $entriesFilterData,
-                customFilters: $customFilters,
             ) {
                 totalCount
                 page
@@ -132,7 +130,7 @@ const PROJECT_LEADS = gql`
                         url
                         title
                     }
-                    entriesCounts {
+                    entriesCount {
                         total
                     }
                     leadPreview {
@@ -309,11 +307,11 @@ function LeadsSelection(props: Props) {
             ),
             publishedOnColumn,
             createNumberColumn<Lead, string>(
-                'ENTRIES_COUNTS',
+                'ENTRIES_COUNT',
                 'No of entries',
-                (item) => item?.entriesCounts?.total,
+                (item) => item?.entriesCount?.total,
                 {
-                    sortable: false,
+                    sortable: true,
                 },
             ),
         ]);
