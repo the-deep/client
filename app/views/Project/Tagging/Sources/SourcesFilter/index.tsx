@@ -161,6 +161,7 @@ export function getProjectSourcesQueryVariables(
             ))
             : undefined,
     } : undefined;
+    const isEntriesFilterDataEmpty = doesObjectHaveNoData(entriesFilterData, ['', null]);
 
     return {
         ...filters,

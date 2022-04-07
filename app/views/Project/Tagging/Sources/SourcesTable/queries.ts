@@ -104,7 +104,7 @@ export const PROJECT_SOURCES = gql`
                         url
                         title
                     }
-                    entriesCounts {
+                    entriesCount {
                         controlled
                         total
                     }

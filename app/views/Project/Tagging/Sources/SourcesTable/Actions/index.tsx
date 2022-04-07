@@ -32,6 +32,7 @@ export interface Props<T extends string> {
     disabled?: boolean;
     isAssessmentLead?: boolean;
     entriesCount: number;
+    filteredEntriesCount: number;
     hasAssessment: boolean;
 }
 
@@ -44,6 +45,7 @@ function Actions<T extends string>(props: Props<T>) {
         isAssessmentLead,
         onDeleteClick,
         entriesCount,
+        filteredEntriesCount,
         hasAssessment,
     } = props;
 
@@ -87,7 +89,7 @@ function Actions<T extends string>(props: Props<T>) {
     });
 
     const isExpanded = id === expandedRowKey;
-    const isDisabled = entriesCount < 1;
+    const isDisabled = filteredEntriesCount < 1;
 
     return (
         <div className={_cs(styles.actions, className)}>
@@ -168,7 +170,7 @@ function Actions<T extends string>(props: Props<T>) {
                         <IoChevronDownOutline />
                     )}
                 >
-                    {`${entriesCount} ${entriesCount === 1 ? 'Entry' : 'Entries'}`}
+                    {`${filteredEntriesCount} ${filteredEntriesCount === 1 ? 'Entry' : 'Entries'}`}
                 </Button>
                 {/* TODO: Update entriesCount when parent has graphql */}
             </div>

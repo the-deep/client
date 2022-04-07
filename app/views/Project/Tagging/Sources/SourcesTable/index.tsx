@@ -277,7 +277,7 @@ function SourcesTable(props: Props) {
         setExpandedRowKey,
     ] = useRowExpansion<Lead, string>(
         ({ datum }) => {
-            if ((datum?.entriesCount?.total ?? 0) > 0) {
+            if ((datum?.filteredEntriesCount ?? 0) > 0) {
                 return (
                     <EntryList
                         key={datum.id}
@@ -455,6 +455,7 @@ function SourcesTable(props: Props) {
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
                 entriesCount: data.entriesCount?.total ?? 0,
+                filteredEntriesCount: data.filteredEntriesCount ?? 0,
                 hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
             }),
