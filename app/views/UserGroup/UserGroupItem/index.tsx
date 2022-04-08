@@ -11,36 +11,109 @@ import {
     TableColumn,
     TableHeaderCellProps,
     TableHeaderCell,
-    TableCell,
-    TableCellProps,
     createStringColumn,
     useAlert,
 } from '@the-deep/deep-ui';
-import _ts from '#ts';
 import {
-    useLazyRequest,
-    useRequest,
-} from '#base/utils/restRequest';
+    gql,
+    useQuery,
+    useMutation,
+} from '@apollo/client';
+import _ts from '#ts';
+
 import { createDateColumn } from '#components/tableHelpers';
 import { useModalState } from '#hooks/stateManagement';
-import { MultiResponse } from '#types';
 
-import { UserGroup as UserGroupType, Membership } from '../AddUsergroupModal';
 import AddUserModal from './AddUserModal';
 import MembershipActionCell, { Props as MembershipActionCellProps } from './MembershipActionCell';
 import UserGroupActionCell from './UserGroupActionCell';
+import {
+    UserGroupType,
+    UserGroupMembershipQuery,
+    UserGroupMembershipQueryVariables,
+    UserGroupMembershipDeleteMutation,
+    UserGroupMembershipDeleteMutationVariables,
+} from '#generated/types';
+
 import styles from './styles.css';
 
-const MAX_ITEMS_PER_PAGE = 20;
-const membershipKeySelector = (d: Membership) => d.id;
+const USER_GROUP_MEMBERSHIP = gql`
+    query UserGroupMembership(
+        $id: ID!,
+    ) {
+        userGroup(
+            id: $id,
+        ) {
+            id
+            title
+            membershipsCount
+            memberships {
+                id
+                joinedAt
+                role
+                roleDisplay
+                member {
+                id
+                firstName
+                lastName
+                displayName
+                organization
+                }
+            }
+        }
+    }
+`;
+
+const USER_GROUP_MEMBERSHIP_DELETE = gql`
+    mutation UserGroupMembershipDelete(
+        $id:ID!,
+        $deleteIds: [ID!],
+        $items: [BulkUserGroupMembershipInputType!],
+    ) {
+        userGroup(id: $id) {
+            id
+            userGroupMembershipBulk(
+                deleteIds: $deleteIds,
+                items: $items,
+            ) {
+                errors
+                deletedResult {
+                    id
+                    clientId
+                    role
+                    roleDisplay
+                    member {
+                        id
+                        displayName
+                    }
+                }
+                result {
+                    clientId
+                    id
+                    member {
+                        id
+                        displayName
+                    }
+                    role
+                }
+            }
+        }
+    }
+`;
+
+export type UserGroupMembership = NonNullable<NonNullable<UserGroupMembershipQuery['userGroup']>['memberships']>[number];
+export type UserGroupMember = NonNullable<UserGroupMembership['member']>;
+
+const maxItemsPerPage = 20;
+const membershipKeySelector = (d: UserGroupMembership) => d.id;
 
 interface User {
     id: string;
     member: string;
-    role: 'admin' | 'normal';
+    role: 'ADMIN' | 'NORMAL';
 }
 
-interface Props {
+export interface Props {
     className?: string;
     activeUserGroupId?: string;
     userGroupId: string;
@@ -52,6 +125,7 @@ interface Props {
     onExpansionChange: (usergroupExpanded: boolean, usergroupId: string) => void;
     expanded?: boolean;
     autoFocus?: boolean;
+    disabled?: boolean;
 }
 
 function UserGroupItem(props: Props) {
@@ -67,55 +141,97 @@ function UserGroupItem(props: Props) {
         onExpansionChange,
         expanded,
         autoFocus,
+        disabled,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
     const alert = useAlert();
 
     const [userToEdit, setUserToEdit] = useState<User | undefined>();
-    const query = useMemo(() => ({
-        offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
-        limit: MAX_ITEMS_PER_PAGE,
-    }), [activePage]);
+
+    const userGroupMemberVariables = useMemo(() => ({
+        id: userGroupId as string,
+        page: activePage,
+        pageSize: maxItemsPerPage,
+    }
+    ), [
+        activePage,
+        userGroupId,
+    ]);
 
     const {
-        pending: membershipsPending,
-        response: memberships,
-        retrigger: usersGetTrigger,
-    } = useRequest<MultiResponse<Membership>>({
-        url: `server://user-groups/${userGroupId}/memberships/`,
-        skip: activeUserGroupId !== userGroupId,
-        query,
-        method: 'GET',
-        preserveResponse: true,
-    });
+        previousData,
+        data: userGroupMembershipResponse = previousData,
+        loading: userGroupMembershipPending,
+        refetch: refetchUserGroupMembers,
+    } = useQuery<UserGroupMembershipQuery, UserGroupMembershipQueryVariables>(
+        USER_GROUP_MEMBERSHIP,
+        {
+            variables: userGroupMemberVariables,
+            skip: activeUserGroupId !== userGroupId,
+        },
+    );
 
-    const {
-        trigger: memberDeleteTrigger,
-    } = useLazyRequest<unknown, string>({
-        url: (ctx) => `server://group-memberships/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            usersGetTrigger();
-            onUserDeleteSuccess();
-            alert.show(
-                'Successfully removed user from user group.',
-                { variant: 'success' },
-            );
+    const [
+        userGroupMembershipDelete,
+    ] = useMutation<
+        UserGroupMembershipDeleteMutation,
+        UserGroupMembershipDeleteMutationVariables
+    >(
+        USER_GROUP_MEMBERSHIP_DELETE,
+        {
+            onCompleted: (response) => {
+                if (!response?.userGroup?.userGroupMembershipBulk) {
+                    return;
+                }
+                const {
+                    errors,
+                    deletedResult,
+                } = response.userGroup.userGroupMembershipBulk;
+
+                const [err] = errors ?? [];
+                const [deletedUser] = deletedResult ?? [];
+
+                if (deletedUser) {
+                    alert.show(
+                        `Successfully removed ${deletedUser.member.displayName} from this project.`,
+                        { variant: 'success' },
+                    );
+                    refetchUserGroupMembers();
+                    onUserDeleteSuccess();
+                } else {
+                    alert.show(
+                        err ?? 'There was an issue while removing the user from this project.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete membership(s).',
+                    { variant: 'error' },
+                );
+            },
         },
-        onFailure: () => {
-            alert.show(
-                'Failed to  remove user from user group.',
-                { variant: 'error' },
-            );
-        },
-    });
+    );
 
     const [
         showAddUserModal,
         setUserModalShow,
         setUserModalHidden,
     ] = useModalState(false);
+
+    const handleMemberDelete = useCallback((id: string) => {
+        userGroupMembershipDelete({
+            variables: {
+                id: userGroupId,
+                deleteIds: [id],
+            },
+        });
+    }, [
+        userGroupId,
+        userGroupMembershipDelete,
+    ]);
 
     const handleAddMemberClick = useCallback(() => {
         onExpansionChange(true, userGroupId);
@@ -127,7 +243,7 @@ function UserGroupItem(props: Props) {
         value: {
             id: string;
             member: string;
-            role: 'admin' | 'normal';
+            role: 'ADMIN' | 'NORMAL';
         },
     ) => {
         setUserToEdit(value);
@@ -136,7 +252,7 @@ function UserGroupItem(props: Props) {
 
     const membersColumns = useMemo(() => {
         const actionColumn: TableColumn<
-            Membership,
+            UserGroupMembership,
             string,
             MembershipActionCellProps,
             TableHeaderCellProps
@@ -149,64 +265,51 @@ function UserGroupItem(props: Props) {
             },
             cellRenderer: MembershipActionCell,
             cellRendererParams: (membershipId, data) => ({
-                member: data.member,
+                member: data.member.id,
                 memberRole: data.role,
-                groupKey: data.group,
+                groupKey: data.id,
                 membershipId,
                 onEditClick: handleEditMemberClick,
-                onDeleteClick: memberDeleteTrigger,
-                disabled: (userGroup.role !== 'admin') || String(data.member) === activeUserId,
+                onDeleteClick: handleMemberDelete,
+                disabled: (userGroup?.currentUserRole !== 'ADMIN') || data.member.id === activeUserId,
             }),
             columnWidth: 96,
         };
-        const roleColumn: TableColumn<
-            Membership,
-            string,
-            TableCellProps<string>,
-            TableHeaderCellProps
-        > = {
-            id: 'role',
-            title: 'Role',
-            headerCellRenderer: TableHeaderCell,
-            headerCellRendererParams: {
-                sortable: false,
-            },
-            cellRenderer: TableCell,
-            cellRendererClassName: styles.role,
-            cellRendererParams: (_, data) => ({
-                value: data.role,
-            }),
-        };
+
         return ([
-            createStringColumn<Membership, string>(
+            createStringColumn<UserGroupMembership, string>(
                 'name',
                 _ts('usergroup', 'nameLabel'),
-                (item) => item.memberName,
+                (item) => item.member?.displayName,
             ),
-            createDateColumn<Membership, string>(
+            createDateColumn<UserGroupMembership, string>(
                 'joinedAt',
                 _ts('usergroup', 'addedOnLabel'),
                 (item) => item.joinedAt,
             ),
-            roleColumn,
+            createStringColumn<UserGroupMembership, string>(
+                'role',
+                'Role',
+                (item) => item.roleDisplay,
+            ),
             actionColumn,
         ]);
-    }, [activeUserId, handleEditMemberClick, memberDeleteTrigger, userGroup]);
+    }, [activeUserId, handleEditMemberClick, handleMemberDelete, userGroup]);
 
     const users = useMemo(() => (
-        (memberships?.results ?? []).map((d) => ({
-            id: d.member,
-            displayName: d.memberName,
-            firstName: d.memberName,
-            lastName: '',
+        (userGroupMembershipResponse?.userGroup?.memberships ?? []).map((d) => ({
+            id: d.member?.id,
+            displayName: d.member?.displayName,
+            firstName: d.member?.firstName,
+            lastName: d.member?.lastName,
         }))
-    ), [memberships?.results]);
+    ), [userGroupMembershipResponse?.userGroup?.memberships]);
 
     return (
         <ControlledExpandableContainer
             name={userGroupId}
             className={_cs(styles.userGroupItem, className)}
-            heading={userGroup.title}
+            heading={userGroup?.title}
             autoFocus={autoFocus}
             withoutBorder
             spacing="comfortable"
@@ -225,7 +328,7 @@ function UserGroupItem(props: Props) {
                         label="Created On"
                         value={(
                             <DateOutput
-                                value={userGroup.createdAt}
+                                value={userGroup?.createdAt}
                                 format="hh:mm aaa, MMM dd, yyyy"
                             />
                         )}
@@ -237,7 +340,7 @@ function UserGroupItem(props: Props) {
                         valueContainerClassName={styles.membersValue}
                         value={(
                             <NumberOutput
-                                value={userGroup.membersCount ?? 0}
+                                value={userGroup?.membershipsCount ?? 0}
                             />
                         )}
                         hideLabelColon
@@ -254,7 +357,7 @@ function UserGroupItem(props: Props) {
                     editButtonTitle={_ts('usergroup', 'editUserGroupLabel')}
                     deleteButtonTitle={_ts('usergroup', 'deleteUserGroupLabel')}
                     deleteConfirmationMessage={_ts('usergroup', 'deleteUsergroupConfirmMessage')}
-                    disabled={userGroup.role === 'normal'}
+                    disabled={userGroup?.currentUserRole === 'NORMAL' || disabled}
                 />
             )}
         >
@@ -263,9 +366,9 @@ function UserGroupItem(props: Props) {
                 footerActions={(
                     <Pager
                         activePage={activePage}
-                        itemsCount={memberships?.count ?? 0}
+                        itemsCount={userGroupMembershipResponse?.userGroup?.membershipsCount ?? 0}
                         onActivePageChange={setActivePage}
-                        maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                        maxItemsPerPage={maxItemsPerPage}
                         itemsPerPageControlHidden
                     />
                 )}
@@ -276,10 +379,10 @@ function UserGroupItem(props: Props) {
                     columns={membersColumns}
                     keySelector={membershipKeySelector}
                     headerCellClassName={styles.headerCell}
-                    data={memberships?.results}
+                    data={userGroupMembershipResponse?.userGroup?.memberships}
                     errored={false}
                     filtered={false}
-                    pending={membershipsPending}
+                    pending={userGroupMembershipPending}
                     messageShown
                     messageIconShown
                 />
@@ -287,7 +390,7 @@ function UserGroupItem(props: Props) {
                     <AddUserModal
                         onModalClose={setUserModalHidden}
                         userGroupId={userGroupId}
-                        onUserAddSuccess={usersGetTrigger}
+                        onUserAddSuccess={refetchUserGroupMembers}
                         userToEdit={userToEdit}
                         users={users}
                     />

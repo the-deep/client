@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { isDefined } from '@togglecorp/fujs';
+import { gql, useMutation } from '@apollo/client';
 import {
     Modal,
     Button,
@@ -14,16 +15,58 @@ import {
     useForm,
     getErrorObject,
     createSubmitHandler,
+    removeNull,
 } from '@togglecorp/toggle-form';
 
-import { useLazyRequest } from '#base/utils/restRequest';
 import NonFieldError from '#components/NonFieldError';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import _ts from '#ts';
 
-interface UserGroupAdd {
-    title: string;
-    description?: string;
+import {
+    UserGroupType,
+    UserGroupCreateMutation,
+    UserGroupCreateMutationVariables,
+    UserGroupUpdateMutation,
+    UserGroupUpdateMutationVariables,
+} from '#generated/types';
+
+const USER_GROUP_CREATE = gql`
+mutation UserGroupCreate(
+    $data: UserGroupInputType!,
+) {
+    userGroupCreate(data: $data) {
+        errors
+        ok
+        result {
+          id
+          currentUserRole
+          title
+        }
+    }
 }
+`;
+
+const USER_GROUP_UPDATE = gql`
+    mutation UserGroupUpdate(
+        $id:ID!,
+        $data: UserGroupInputType!,
+        ) {
+        userGroup(
+            id: $id,
+        ) {
+            id
+            userGroupUpdate(data: $data) {
+                errors
+                ok
+                result {
+                  id
+                  currentUserRole
+                  title
+                }
+            }
+        }
+    }
+`;
 
 type FormType = {
     id?: number;
@@ -40,18 +83,6 @@ export interface Membership {
     joinedAt: string;
 }
 
-export interface UserGroup {
-    id: string;
-    title: string;
-    description: string;
-    role: 'admin' | 'normal';
-    membersCount: number;
-    memberships: Membership[];
-    globalCrisisMonitoring: boolean;
-    createdAt: string;
-    modifiedAt: string;
-}
-
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -66,7 +97,7 @@ const defaultFormValue: PartialForm<FormType> = {};
 interface Props {
     onModalClose: () => void;
     onSuccess: (userGroupId: string) => void;
-    value?: UserGroup,
+    value?: UserGroupType,
 }
 function AddUserGroupModal(props: Props) {
     const {
@@ -94,55 +125,128 @@ function AddUserGroupModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: pendingAddUserGroup,
-        trigger: triggerAddUserGroup,
-    } = useLazyRequest<UserGroup, UserGroupAdd>({
-        url: isDefined(initialValue?.id)
-            ? `server://user-groups/${initialValue?.id}/`
-            : 'server://user-groups/',
-        method: isDefined(initialValue?.id)
-            ? 'PATCH'
-            : 'POST',
-        body: (ctx) => ctx,
-        onSuccess: (response) => {
-            onSuccess(response.id);
-            onModalClose();
-            if (isDefined(initialValue?.id)) {
-                alert.show(
-                    'Successfully edited user group.',
-                    { variant: 'success' },
-                );
-            } else {
-                alert.show(
-                    'Successfully created user group.',
-                    { variant: 'success' },
-                );
-            }
+    const [
+        createUsergroup,
+        {
+            loading: createUsergroupPending,
         },
-        onFailure: () => {
-            if (isDefined(initialValue?.id)) {
-                alert.show(
-                    'Failed to edit user group.',
-                    { variant: 'error' },
-                );
-            } else {
+    ] = useMutation<UserGroupCreateMutation, UserGroupCreateMutationVariables>(
+        USER_GROUP_CREATE,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.userGroupCreate) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    errors,
+                } = response.userGroupCreate;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to create user group.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    const responseId = response.userGroupCreate.result?.id;
+                    if (responseId) {
+                        onSuccess(responseId);
+                    }
+                    alert.show(
+                        'Successfully created user group!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
                 alert.show(
                     'Failed to create user group.',
                     { variant: 'error' },
                 );
-            }
+            },
         },
-    });
+    );
+
+    const [
+        updateUsergroup,
+        {
+            loading: updateUsergroupPending,
+        },
+    ] = useMutation<UserGroupUpdateMutation, UserGroupUpdateMutationVariables>(
+        USER_GROUP_UPDATE,
+        {
+            onCompleted: (response) => {
+                const responseData = response?.userGroup?.userGroupUpdate;
+                if (!responseData) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    errors,
+                } = responseData;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to update user group.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    const responseId = response.userGroup?.userGroupUpdate?.result?.id;
+
+                    if (responseId) {
+                        onSuccess(responseId);
+                    }
+                    alert.show(
+                        'Successfully updated user group!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to update user group.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
-            (val) => triggerAddUserGroup(val as UserGroupAdd),
+            (val) => {
+                const data = val as FormType;
+                if (initialValue?.id) {
+                    updateUsergroup({
+                        variables: {
+                            data,
+                            id: initialValue.id,
+                        },
+                    });
+                } else {
+                    createUsergroup({
+                        variables: {
+                            data,
+                        },
+                    });
+                }
+            },
         );
         submit();
-    }, [setError, validate, triggerAddUserGroup]);
+    }, [
+        setError,
+        validate,
+        updateUsergroup,
+        createUsergroup,
+        initialValue?.id,
+    ]);
 
     return (
         <Modal
@@ -155,14 +259,14 @@ function AddUserGroupModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingAddUserGroup}
+                    disabled={pristine || createUsergroupPending || updateUsergroupPending}
                     onClick={handleSubmit}
                 >
                     {_ts('usergroup.editModal', 'submitLabel')}
                 </Button>
             )}
         >
-            {pendingAddUserGroup && (<PendingMessage />)}
+            {(createUsergroupPending || updateUsergroupPending) && (<PendingMessage />)}
             <NonFieldError error={error} />
             <TextInput
                 name="title"

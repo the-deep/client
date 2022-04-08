@@ -38,6 +38,7 @@ import {
 import _ts from '#ts';
 
 import AddUserGroupModal from './AddUserGroupModal';
+import { roleLevels } from '../index';
 
 import styles from './styles.css';
 
@@ -83,6 +84,7 @@ const PROJECT_USERGROUPS = gql`
                         id
                         title
                         level
+                        type
                     }
                     usergroup {
                         id
@@ -107,7 +109,7 @@ const defaultSorting = {
     direction: 'Descending',
 };
 
-interface Props{
+interface Props {
     className?: string;
     projectId: string;
     activeUserRoleLevel?: number;
@@ -149,7 +151,7 @@ function UserGroupList(props: Props) {
             : `-${validSorting.name}`
     ), [validSorting]);
 
-    const variables = useMemo(() => ({
+    const projectUsergroupVariables = useMemo(() => ({
         projectId,
         page: activePage,
         pageSize: maxItemsPerPage,
@@ -160,11 +162,11 @@ function UserGroupList(props: Props) {
         previousData,
         data: usergroups = previousData,
         loading: usergroupPending,
-        refetch,
+        refetch: refetchUsergroups,
     } = useQuery<ProjectUsergroupsQuery, ProjectUsergroupsQueryVariables>(
         PROJECT_USERGROUPS,
         {
-            variables,
+            variables: projectUsergroupVariables,
         },
     );
 
@@ -172,8 +174,8 @@ function UserGroupList(props: Props) {
         deleteUsergroupMembership,
         { loading: deleteUsergroupMembershipPending },
     ] = useMutation<
-    ProjectUsergroupMembershipRemoveMutation,
-    ProjectUsergroupMembershipRemoveMutationVariables
+        ProjectUsergroupMembershipRemoveMutation,
+        ProjectUsergroupMembershipRemoveMutationVariables
     >(
         PROJECT_USERGROUP_MEMBERSHIP_REMOVE,
         {
@@ -192,7 +194,7 @@ function UserGroupList(props: Props) {
                         `Successfully deleted ${deletedUsergroup.usergroup.title}`,
                         { variant: 'success' },
                     );
-                    refetch();
+                    refetchUsergroups();
                 } else {
                     alert.show(
                         'Error deleting usergroup.',
@@ -235,7 +237,8 @@ function UserGroupList(props: Props) {
                 onDeleteClick: handleRemoveUsergroupFromProject,
                 disabled: (
                     isNotDefined(activeUserRoleLevel)
-                    || data.role.level < activeUserRoleLevel
+                    // FIXME: User level from server after it is ready
+                    || activeUserRoleLevel < roleLevels[data.role.type]
                     || deleteUsergroupMembershipPending
                 ),
                 editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),
@@ -358,7 +361,7 @@ function UserGroupList(props: Props) {
                 <AddUserGroupModal
                     onModalClose={handleModalClose}
                     projectId={projectId}
-                    onTableReload={refetch}
+                    onTableReload={refetchUsergroups}
                     projectUsergroupToEdit={projectUsergroupToEdit ?? undefined}
                     activeUserRoleLevel={activeUserRoleLevel}
                 />

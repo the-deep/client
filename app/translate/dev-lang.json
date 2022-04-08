@@ -158,6 +158,7 @@
         "190": "Delete member",
         "191": "Delete source",
         "192": "Member",
+        "193": "Add Member",
         "194": "Are you sure you want to delete the user group {title}?",
         "195": "Are you sure you want to revoke admin rights form {memberName}?",
         "196": "Are you sure your want to grant admin rights to {memberName}?",
@@ -1133,7 +1134,7 @@
         "-86018902": "Government",
         "-30025571": "International Partners",
         "-49224651": "National Partners",
-        "-78808098": "Source Organization",
+        "-78808098": "Project owner",
         "-41977678": "Project stakeholders",
         "-435034987": "Searching",
         "-79879798": "Image",
@@ -2720,6 +2721,7 @@
             "addMemberErrorText": 177,
             "placeholderSearch": 9,
             "addMemberButtonLabel": 192,
+            "addMemberHeaderLabel": 193,
             "confirmTextRevokeAdmin": 195,
             "confirmTextGrantAdmin": 196,
             "confirmTextRemoveMember": 197,
@@ -4138,7 +4140,8 @@
             "fetchUsergroupFailed": -55358986,
             "memberDeleteFailed": -30147930,
             "usergroupDeleteFailed": -60399046,
-            "addMemberLabel": 192
+            "addMemberLabel": 192,
+            "addMemberHeaderLabel": 193
         },
         "usergroup.editModal": {
             "addUsergroupFailed": -69672375,
@@ -4149,6 +4152,7 @@
         },
         "usergroup.memberEditModal": {
             "addMemberLabel": 192,
+            "addMemberHeaderLabel": 193,
             "addMemberPlaceholderLabel": 192,
             "memberAddFailed": 177,
             "roleLabel": 12509,

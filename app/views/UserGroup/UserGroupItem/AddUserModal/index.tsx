@@ -1,10 +1,12 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import { isDefined } from '@togglecorp/fujs';
+import { gql, useMutation } from '@apollo/client';
 import {
     Modal,
     Button,
     SelectInput,
     useAlert,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -13,19 +15,63 @@ import {
     useForm,
     getErrorObject,
     createSubmitHandler,
+    internal,
+    removeNull,
+    defaultUndefinedType,
 } from '@togglecorp/toggle-form';
 
 import _ts from '#ts';
-import { useLazyRequest } from '#base/utils/restRequest';
+import NonFieldError from '#components/NonFieldError';
 import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
-import { Membership } from '../../AddUsergroupModal';
 import styles from './styles.css';
+import {
+    UserGroupMembershipBulkEditMutation,
+    UserGroupMembershipBulkEditMutationVariables,
+} from '#generated/types';
+
+const USER_GROUP_MEMBERSHIP_EDIT = gql`
+    mutation UserGroupMembershipBulkEdit(
+        $id:ID!,
+        $items: [BulkUserGroupMembershipInputType!],
+        ) {
+        userGroup(
+            id: $id,
+        ) {
+            id
+            userGroupMembershipBulk(
+                items: $items,
+            ) {
+                errors
+                deletedResult {
+                    id
+                    clientId
+                    role
+                    roleDisplay
+                    member {
+                      id
+                      displayName
+                    }
+                }
+                result {
+                    clientId
+                    id
+                    member {
+                      id
+                      displayName
+                    }
+                    role
+                }
+            }
+        }
+    }
+`;
 
 type FormType = {
     member: string;
     role: string;
-    group?: string;
+    id?: string;
 };
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
@@ -35,22 +81,22 @@ const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         member: [requiredCondition],
         role: [requiredCondition],
-        group: [requiredCondition],
+        id: [defaultUndefinedType],
     }),
 };
 
 interface Role {
-    id: 'normal' | 'admin';
+    id: 'NORMAL' | 'ADMIN';
     title: string;
 }
 
 const roles: Role[] = [
     {
-        id: 'normal',
+        id: 'NORMAL',
         title: 'Normal',
     },
     {
-        id: 'admin',
+        id: 'ADMIN',
         title: 'Admin',
     },
 
@@ -65,7 +111,7 @@ interface Props {
     userToEdit?: {
         id: string;
         member: string;
-        role: 'admin' | 'normal';
+        role: 'ADMIN' | 'NORMAL';
     };
     users?: User[];
 }
@@ -83,10 +129,10 @@ function AddUserModal(props: Props) {
     const [userOptions, setUserOptions] = useState<User[] | null | undefined>(users);
 
     const formValue: PartialForm<FormType> = useMemo(() => ({
-        group: userGroupId,
+        id: userToEdit?.id,
         member: userToEdit?.member,
         role: userToEdit?.role,
-    }), [userToEdit, userGroupId]);
+    }), [userToEdit]);
 
     const {
         pristine,
@@ -99,61 +145,84 @@ function AddUserModal(props: Props) {
 
     const error = getErrorObject(riskyError);
 
-    const {
-        pending: pendingAddMember,
-        trigger: triggerAddMember,
-    } = useLazyRequest<Membership, FormType>({
-        url: isDefined(userToEdit)
-            ? `server://group-memberships/${userToEdit?.id}/`
-            : 'server://group-memberships/',
-        method: isDefined(userToEdit?.id)
-            ? 'PATCH'
-            : 'POST',
-        body: (ctx) => ctx,
-        onSuccess: () => {
-            onUserAddSuccess();
-            onModalClose();
-            if (isDefined(userToEdit?.id)) {
+    const [
+        bulkEditUsergroupMembership,
+        { loading: bulkEditUsergroupMembershipPending },
+    ] = useMutation<
+        UserGroupMembershipBulkEditMutation,
+        UserGroupMembershipBulkEditMutationVariables
+    >(
+        USER_GROUP_MEMBERSHIP_EDIT,
+        {
+            onCompleted: (response) => {
+                if (!response?.userGroup?.userGroupMembershipBulk) {
+                    return;
+                }
+                const {
+                    errors,
+                    result,
+                } = response.userGroup.userGroupMembershipBulk;
+
+                const [err] = errors ?? [];
+                const [user] = result ?? [];
+                if (err) {
+                    const formError = transformToFormError(removeNull(err) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        userToEdit?.id
+                            ? 'Failed to update membership.'
+                            : 'Failed to add membership.',
+                        { variant: 'error' },
+                    );
+                } else if (user) {
+                    alert.show(
+                        userToEdit?.id
+                            ? `Successfully updated ${user.member.displayName}.`
+                            : `Successfully added ${user.member.displayName}.`,
+                        { variant: 'success' },
+                    );
+                    onUserAddSuccess();
+                    onModalClose();
+                }
+            },
+            onError: (gqlError) => {
+                setError({
+                    [internal]: gqlError.message,
+                });
                 alert.show(
-                    'Successfully edited user membership.',
-                    { variant: 'success' },
-                );
-            } else {
-                alert.show(
-                    'Successfully added user to user group.',
-                    { variant: 'success' },
-                );
-            }
-        },
-        onFailure: () => {
-            if (isDefined(userToEdit?.id)) {
-                alert.show(
-                    'Failed to change user membership.',
+                    userToEdit?.id
+                        ? 'Failed to update membership.'
+                        : 'Failed to add membership.',
                     { variant: 'error' },
                 );
-            } else {
-                alert.show(
-                    'Failed to add user to user group.',
-                    { variant: 'error' },
-                );
-            }
+            },
         },
-    });
+    );
 
     const handleSubmit = useCallback(() => {
         const submit = createSubmitHandler(
             validate,
             setError,
-            (val) => triggerAddMember(val as FormType),
+            (val) => bulkEditUsergroupMembership({
+                variables: {
+                    id: userGroupId,
+                    items: [val as NonNullable<UserGroupMembershipBulkEditMutationVariables['items']>[number]],
+                },
+            }),
         );
         submit();
-    }, [setError, validate, triggerAddMember]);
+    }, [
+        setError,
+        validate,
+        bulkEditUsergroupMembership,
+        userGroupId,
+    ]);
 
     return (
         <Modal
             heading={(isDefined(userToEdit)
                 ? _ts('usergroup.memberEditModal', 'editMemberLabel')
-                : _ts('usergroup.memberEditModal', 'addMemberLabel')
+                : _ts('usergroup.memberEditModal', 'addMemberHeaderLabel')
             )}
             onCloseButtonClick={onModalClose}
             className={styles.modal}
@@ -165,13 +234,15 @@ function AddUserModal(props: Props) {
                     name="submit"
                     variant="primary"
                     type="submit"
-                    disabled={pristine || pendingAddMember}
+                    disabled={pristine || bulkEditUsergroupMembershipPending}
                     onClick={handleSubmit}
                 >
                     {_ts('usergroup.editModal', 'submitLabel')}
                 </Button>
             )}
         >
+            {bulkEditUsergroupMembershipPending && (<PendingMessage />)}
+            <NonFieldError error={error} />
             <NewUserSelectInput
                 name="member"
                 value={value.member}
@@ -179,7 +250,7 @@ function AddUserModal(props: Props) {
                 options={userOptions}
                 onOptionsChange={setUserOptions}
                 error={error?.member}
-                disabled={pendingAddMember || isDefined(userToEdit)}
+                disabled={bulkEditUsergroupMembershipPending || isDefined(userToEdit)}
                 label={_ts('usergroup.memberEditModal', 'addMemberLabel')}
                 placeholder={_ts('usergroup.memberEditModal', 'addMemberPlaceholderLabel')}
                 membersExcludeUsergroup={userGroupId}
@@ -194,7 +265,7 @@ function AddUserModal(props: Props) {
                 onChange={setFieldValue}
                 value={value.role}
                 error={error?.role}
-                disabled={pendingAddMember}
+                disabled={bulkEditUsergroupMembershipPending}
             />
         </Modal>
     );

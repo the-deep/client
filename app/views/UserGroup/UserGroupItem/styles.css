@@ -45,10 +45,6 @@
             .expanded-table {
                 width: 100%;
                 min-height: 30vh;
-
-                .role {
-                    text-transform: capitalize;
-                }
             }
         }
     }

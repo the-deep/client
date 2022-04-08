@@ -14,10 +14,10 @@ export interface Props {
     membershipId: string;
     groupKey: string;
     member: string;
-    memberRole: 'admin' | 'normal';
+    memberRole: 'ADMIN' | 'NORMAL';
     onAddClick?: (key: number) => void;
     onEditClick: (
-        user: { id: string; member: string; role: 'admin' | 'normal' },
+        user: { id: string; member: string; role: 'ADMIN' | 'NORMAL'; },
         group: string,
     ) => void;
     onDeleteClick: (key: string) => void;

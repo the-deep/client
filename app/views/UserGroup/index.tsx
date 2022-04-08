@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { useQuery, gql, useMutation } from '@apollo/client';
 import {
     Button,
     Container,
@@ -12,22 +13,95 @@ import {
     IoAdd,
 } from 'react-icons/io5';
 
-import {
-    useRequest,
-    useLazyRequest,
-} from '#base/utils/restRequest';
-import { MultiResponse } from '#types';
 import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
 import _ts from '#ts';
 
-import AddUserGroupModal, { UserGroup as UserGroupType } from './AddUsergroupModal';
-import UserGroupItem from './UserGroupItem';
+import AddUserGroupModal from './AddUsergroupModal';
+import UserGroupItem, { Props as UserGroupItemProps } from './UserGroupItem';
 
+import {
+    UserGroupsQuery,
+    UserGroupsQueryVariables,
+    UserGroupDeleteMutation,
+    UserGroupDeleteMutationVariables,
+} from '#generated/types';
 import styles from './styles.css';
 
+export const USERGROUPS = gql`
+    query UserGroups(
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        userGroups(
+            isCurrentUserMember: true,
+            page: $page,
+            pageSize: $pageSize,
+        ) {
+            results {
+                id
+                title
+                createdAt
+                description
+                currentUserRole
+                createdBy {
+                    id
+                    displayName
+                    language
+                    firstName
+                    lastName
+                    isActive
+                }
+                globalCrisisMonitoring
+                modifiedAt
+                membershipsCount
+                memberships {
+                    id
+                    clientId
+                    role
+                    roleDisplay
+                    joinedAt
+                    member {
+                        id
+                        displayName
+                        lastName
+                        firstName
+                        isActive
+                    }
+                }
+            }
+            totalCount
+            pageSize
+            page
+        }
+    }
+    `;
+
+const USER_GROUP_DELETE = gql`
+    mutation UserGroupDelete(
+        $id:ID!,
+    ) {
+        userGroup(
+            id: $id,
+        ) {
+            id
+            userGroupDelete {
+                errors
+                ok
+                result {
+                    id
+                    currentUserRole
+                    title
+                }
+            }
+        }
+    }
+    `;
+
+export type UsersGroupType = NonNullable<NonNullable<NonNullable<UserGroupsQuery>['userGroups']>['results']>[number];
+
 const MAX_ITEMS_PER_PAGE = 10;
-const usergroupKeySelector = (d: UserGroupType) => d.id;
+const usergroupKeySelector = (d: UsersGroupType) => d.id;
 
 interface Props {
     className?: string;
@@ -56,53 +130,58 @@ function UserGroup(props: Props) {
         setUserGroupModalHidden,
     ] = useModalState(false);
 
-    const usergroupQuery = useMemo(() => ({
-        user: user?.id,
-        offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
-        limit: MAX_ITEMS_PER_PAGE,
-        fields: [
-            'id',
-            'title',
-            'members_count',
-            'role',
-            'created_at',
-        ],
-    }), [user?.id, activePage]);
+    const userGroupVariables = useMemo(
+        (): UserGroupsQueryVariables | undefined => ({
+            page: activePage,
+            pageSize: MAX_ITEMS_PER_PAGE,
+        }),
+        [activePage],
+    );
 
     const {
-        pending: usergroupGetPending,
-        response: usergroupResponse,
-        retrigger: usergroupGetRetrigger,
-    } = useRequest<MultiResponse<UserGroupType>>({
-        url: 'server://user-groups/member-of/',
-        method: 'GET',
-        query: usergroupQuery,
-        preserveResponse: true,
-    });
+        data: userGroupsResponse,
+        loading: usergroupGetPending,
+        refetch: usergroupGetRetrigger,
+    } = useQuery<UserGroupsQuery, UserGroupsQueryVariables>(
+        USERGROUPS,
+        {
+            variables: userGroupVariables,
+        },
+    );
 
-    const {
-        trigger: usergroupDeleteTrigger,
-    } = useLazyRequest<unknown, string>({
-        url: (ctx) => `server://user-groups/${ctx}/`,
-        method: 'DELETE',
-        onSuccess: () => {
-            usergroupGetRetrigger();
-            alert.show(
-                'Successfully deleted user group.',
-                { variant: 'success' },
-            );
+    const [
+        usergroupDeleteTrigger,
+        {
+            loading: usergroupDeletePending,
         },
-        onFailure: () => {
-            alert.show(
-                'Failed to delete user group.',
-                { variant: 'error' },
-            );
+    ] = useMutation<UserGroupDeleteMutation, UserGroupDeleteMutationVariables>(
+        USER_GROUP_DELETE,
+        {
+            onCompleted: (response) => {
+                if (response?.userGroup?.userGroupDelete?.ok) {
+                    usergroupGetRetrigger();
+                    alert.show(
+                        'Successfully deleted user group.',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to delete user group.',
+                    { variant: 'error' },
+                );
+            },
         },
-    });
+    );
 
     const usergroupObjectToEdit = useMemo(() => (
-        usergroupResponse?.results?.find((a) => a.id === userGroupToEdit)
-    ), [usergroupResponse?.results, userGroupToEdit]);
+        userGroupsResponse?.userGroups
+            ?.results?.find((userGroup) => userGroup.id === userGroupToEdit)
+    ), [
+        userGroupsResponse?.userGroups?.results,
+        userGroupToEdit,
+    ]);
 
     const handleAddUserGroupClick = useCallback(() => {
         setUserGroupToEdit(undefined);
@@ -126,22 +205,33 @@ function UserGroup(props: Props) {
         setExpandedUserGroupId(usergroupExpanded ? usergroupId : undefined);
     }, []);
 
-    const userGroupRendererParams = useCallback((key: string, datum: UserGroupType) => ({
+    const handleUserGroupDelete = useCallback((id: string) => {
+        usergroupDeleteTrigger({
+            variables: {
+                id,
+            },
+        });
+    }, [usergroupDeleteTrigger]);
+
+    // eslint-disable-next-line max-len
+    const userGroupRendererParams = useCallback((key: string, datum: UsersGroupType): UserGroupItemProps => ({
         activeUserGroupId: expandedUserGroupId,
         userGroupId: key,
         activeUserId: userId,
         onUserDeleteSuccess: usergroupGetRetrigger,
-        onDeleteClick: usergroupDeleteTrigger,
+        onDeleteClick: handleUserGroupDelete,
         onEditClick: handleEditUserGroupClick,
         userGroup: datum,
         onExpansionChange: handleExpansionChange,
         autoFocus: autoFocusUserGroup === datum.id,
         expanded: expandedUserGroupId === datum.id,
+        disabled: usergroupDeletePending,
     }), [
         autoFocusUserGroup,
+        usergroupDeletePending,
         userId,
         usergroupGetRetrigger,
-        usergroupDeleteTrigger,
+        handleUserGroupDelete,
         handleEditUserGroupClick,
         handleExpansionChange,
         expandedUserGroupId,
@@ -163,7 +253,7 @@ function UserGroup(props: Props) {
             footerActions={(
                 <Pager
                     activePage={activePage}
-                    itemsCount={usergroupResponse?.count ?? 0}
+                    itemsCount={userGroupsResponse?.userGroups?.totalCount ?? 0}
                     onActivePageChange={setActivePage}
                     maxItemsPerPage={MAX_ITEMS_PER_PAGE}
                     itemsPerPageControlHidden
@@ -174,7 +264,7 @@ function UserGroup(props: Props) {
             <ListView
                 className={styles.userGroupList}
                 keySelector={usergroupKeySelector}
-                data={usergroupResponse?.results}
+                data={userGroupsResponse?.userGroups?.results ?? undefined}
                 renderer={UserGroupItem}
                 rendererParams={userGroupRendererParams}
                 rendererClassName={styles.userGroupItem}

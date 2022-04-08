@@ -1,14 +1,23 @@
-import React from 'react';
-import { isNotDefined } from '@togglecorp/fujs';
+import React, { useContext } from 'react';
 
-import { useRequest } from '#base/utils/restRequest';
-import { ProjectMemberships } from '#types/project';
-import { MultiResponse } from '#types';
+import { ProjectRoleTypeEnum } from '#generated/types';
+import ProjectContext from '#base/context/ProjectContext';
 
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
 
 import styles from './styles.css';
+
+// FIXME: This is a hack for now. Need to fetch this from server later when
+// work on server is completed
+export const roleLevels: { [key in ProjectRoleTypeEnum]: number } = {
+    PROJECT_OWNER: 100,
+    ADMIN: 90,
+    MEMBER: 80,
+    READER: 70,
+    READER_NON_CONFIDENTIAL: 60,
+    UNKNOWN: 0,
+};
 
 interface Props {
     projectId: string;
@@ -21,21 +30,10 @@ function Users(props: Props) {
         activeUserId,
     } = props;
 
-    // FIXME: we should have a request to get project role of a certain user
-    const {
-        pending: pendingMemberships,
-        response: projectMembershipsResponse,
-    } = useRequest<MultiResponse<ProjectMemberships>>({
-        skip: isNotDefined(activeUserId),
-        url: `server://projects/${projectId}/project-memberships/`,
-        query: {
-            member: activeUserId,
-        },
-        method: 'GET',
-    });
+    const { project } = useContext(ProjectContext);
 
-    const activeUserMembership = projectMembershipsResponse?.results?.[0];
-    const activeUserRoleLevel = activeUserMembership?.roleDetails?.level;
+    const activeUserRoleLevel = project?.currentUserRole
+        ? roleLevels[project.currentUserRole] : 0;
 
     return (
         <div className={styles.users}>
@@ -44,13 +42,11 @@ function Users(props: Props) {
                 projectId={projectId}
                 activeUserId={activeUserId}
                 activeUserRoleLevel={activeUserRoleLevel}
-                pending={pendingMemberships}
             />
             <UserGroupList
                 className={styles.userGroupList}
                 projectId={projectId}
                 activeUserRoleLevel={activeUserRoleLevel}
-                pending={pendingMemberships}
             />
         </div>
     );
