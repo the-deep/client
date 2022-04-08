@@ -4,15 +4,16 @@ import {
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
-import OptionLabelSelector from '../OptionLabelSelector';
 
 import {
     ProjectUserQuery,
     ProjectUserQueryVariables,
 } from '#generated/types';
-import styles from './styles.css';
-
 import useDebouncedValue from '#hooks/useDebouncedValue';
+
+import OptionLabelSelector from '../OptionLabelSelector';
+
+import styles from './styles.css';
 
 const PROJECT_USERS = gql`
     query ProjectUser($search: String, $projectId: ID!) {
@@ -90,7 +91,6 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
             onShowDropdownChange={setOpened}
             totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
             optionsPopupClassName={styles.optionsPopup}
-            optionsPopupContentClassName={styles.optionsPopupContent}
         />
     );
 }

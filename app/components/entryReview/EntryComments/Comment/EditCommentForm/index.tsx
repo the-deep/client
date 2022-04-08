@@ -31,26 +31,26 @@ const EDIT_COMMENT = gql`
 mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInputType!, $id: ID!) {
     project(id: $projectId) {
         entryReviewCommentUpdate(data: $data, id: $id) {
-          ok
-          errors
-          result {
-            id
-            commentType
-            commentTypeDisplay
-            createdAt
-            createdBy {
-              id
-              displayName
-              emailDisplay
+            ok
+            errors
+            result {
+                id
+                commentType
+                commentTypeDisplay
+                createdAt
+                createdBy {
+                    id
+                    displayName
+                    emailDisplay
+                }
+                entry
+                text
+                mentionedUsers {
+                    id
+                    displayName
+                    emailDisplay
+                }
             }
-            entry
-            text
-            mentionedUsers {
-              id
-              displayName
-              emailDisplay
-            }
-          }
         }
     }
 }

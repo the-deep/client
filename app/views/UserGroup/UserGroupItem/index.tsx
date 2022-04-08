@@ -53,11 +53,12 @@ const USER_GROUP_MEMBERSHIP = gql`
                 role
                 roleDisplay
                 member {
-                id
-                firstName
-                lastName
-                displayName
-                organization
+                    id
+                    firstName
+                    lastName
+                    displayName
+                    organization
+                    emailDisplay
                 }
             }
         }
@@ -121,7 +122,7 @@ export interface Props {
     onUserDeleteSuccess: () => void;
     onEditClick: (id: string) => void;
     onDeleteClick: (id: string) => void;
-    userGroup: UserGroupType;
+    userGroup: Pick<UserGroupType, 'createdAt' | 'currentUserRole' | 'title' | 'membershipsCount'>;
     onExpansionChange: (usergroupExpanded: boolean, usergroupId: string) => void;
     expanded?: boolean;
     autoFocus?: boolean;
@@ -300,6 +301,7 @@ function UserGroupItem(props: Props) {
         (userGroupMembershipResponse?.userGroup?.memberships ?? []).map((d) => ({
             id: d.member?.id,
             displayName: d.member?.displayName,
+            emailDisplay: d.member?.emailDisplay,
             firstName: d.member?.firstName,
             lastName: d.member?.lastName,
         }))

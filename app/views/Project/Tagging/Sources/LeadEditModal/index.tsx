@@ -34,7 +34,6 @@ import {
 } from '#generated/types';
 import { ProjectContext } from '#base/context/ProjectContext';
 import { UserContext } from '#base/context/UserContext';
-import { ProjectUserContext } from '#base/context/ProjectUserContext';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
@@ -240,7 +239,6 @@ function LeadEditModal(props: Props) {
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
     const { user } = useContext(UserContext);
-    const { projectUser } = useContext(ProjectUserContext);
 
     const initialValue: PartialFormType = useMemo(() => ({
         clientId: `auto-${randomString()}`,
@@ -254,7 +252,12 @@ function LeadEditModal(props: Props) {
     const [
         projectUserOptions,
         setProjectUserOptions,
-    ] = useState<BasicProjectUser[] | undefined | null>(projectUser ? [projectUser] : undefined);
+    ] = useState<BasicProjectUser[] | undefined | null>(
+        user ? [{
+            ...user,
+            emailDisplay: user.email ?? '',
+        }] : undefined,
+    );
 
     const [
         sourceOrganizationOptions,

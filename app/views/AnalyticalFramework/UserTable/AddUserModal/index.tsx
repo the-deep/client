@@ -18,8 +18,8 @@ import {
 
 import NonFieldError from '#components/NonFieldError';
 import { useRequest, useLazyRequest } from '#base/utils/restRequest';
-import { MultiResponse, BasicUser, Membership } from '#types';
-import UserSelectInput from '#components/selections/UserSelectInput';
+import { MultiResponse, Membership } from '#types';
+import NewUserSelectInput, { User } from '#components/selections/NewUserSelectInput';
 import _ts from '#ts';
 
 import styles from './styles.css';
@@ -35,7 +35,7 @@ const roleLabelSelector = (d: Role) => d.title;
 
 type FormType = {
     id?: number;
-    member?: number;
+    member?: string;
     role: number;
 };
 
@@ -82,13 +82,22 @@ function AddUserModal(props: Props) {
         isPrivateFramework,
     } = props;
 
-    const formValueFromProps: PartialForm<FormType> = userValue ?? defaultFormValue;
+    const initialFormValue: PartialForm<FormType> = useMemo(() => {
+        if (!userValue) {
+            return defaultFormValue;
+        }
+        return ({
+            ...userValue,
+            member: String(userValue.member),
+        });
+    }, [userValue]);
     const alert = useAlert();
 
     const [
         userOptions,
         setUserOptions,
-    ] = useState<BasicUser[] | undefined | null>();
+    ] = useState<User[] | undefined | null>();
+
     const {
         pristine,
         value,
@@ -96,7 +105,7 @@ function AddUserModal(props: Props) {
         setFieldValue,
         validate,
         setError,
-    } = useForm(schema, formValueFromProps);
+    } = useForm(schema, initialFormValue);
 
     const error = getErrorObject(riskyError);
 
@@ -104,10 +113,6 @@ function AddUserModal(props: Props) {
         () => (isPrivateFramework ? ({ is_default_role: false }) : undefined),
         [isPrivateFramework],
     );
-
-    const queryForUsers = useMemo(() => ({
-        members_exclude_framework: frameworkId,
-    }), [frameworkId]);
 
     const {
         pending: pendingRoles,
@@ -152,7 +157,11 @@ function AddUserModal(props: Props) {
                 validate,
                 setError,
                 (val) => {
-                    triggerAddFrameworkMember({ ...val, framework: frameworkId } as ValueToSend);
+                    const newVal = val.member ? { member: Number(val.member), ...val } : val;
+                    triggerAddFrameworkMember({
+                        ...newVal,
+                        framework: frameworkId,
+                    } as ValueToSend);
                 },
             );
             submit();
@@ -161,8 +170,16 @@ function AddUserModal(props: Props) {
     );
 
     const currentUser = useMemo(() => (userValue
-        ? [{ id: userValue.member, displayName: userValue.memberName }]
-        : []
+        ? [
+            {
+                id: String(userValue.member),
+                displayName: userValue.memberName,
+                // FIXME: Use graphql to fetch details for User
+                firstName: '',
+                lastName: '',
+                emailDisplay: '',
+            },
+        ] : []
     ), [userValue]);
 
     const pendingRequests = pendingRoles;
@@ -193,11 +210,10 @@ function AddUserModal(props: Props) {
         >
             {pendingAddAction && (<PendingMessage />)}
             <NonFieldError error={error} />
-            <UserSelectInput
-                queryParams={queryForUsers}
+            <NewUserSelectInput
                 name="member"
                 readOnly={isDefined(userValue)}
-                value={value.member}
+                value={value.member ? String(value.member) : undefined}
                 onChange={setFieldValue}
                 options={userOptions ?? currentUser}
                 onOptionsChange={setUserOptions}
@@ -205,6 +221,7 @@ function AddUserModal(props: Props) {
                 disabled={pendingRequests}
                 label={_ts('analyticalFramework.addUser', 'userLabel')}
                 placeholder={_ts('analyticalFramework.addUser', 'selectUserPlaceholder')}
+                membersExcludeFramework={String(frameworkId)}
             />
             <SelectInput
                 name="role"

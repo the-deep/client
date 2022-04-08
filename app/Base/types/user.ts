@@ -11,13 +11,3 @@ export interface User {
         key: FeatureKey;
     }[];
 }
-
-export interface ProjectUser {
-    id: string;
-    displayName?: string;
-    emailDisplay: string;
-    displayPictureUrl?: string;
-    accessibleFeatures?: {
-        key: FeatureKey;
-    }[];
-}

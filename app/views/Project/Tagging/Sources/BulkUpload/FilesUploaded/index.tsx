@@ -20,7 +20,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
-import { ProjectUserContext } from '#base/context/ProjectUserContext';
+import { UserContext } from '#base/context/UserContext';
 import _ts from '#ts';
 import LeadInput from '#components/lead/LeadInput';
 import { ProjectContext } from '#base/context/ProjectContext';
@@ -78,7 +78,7 @@ function FilesUploaded(props: Props) {
     } = props;
 
     const [searchText, setSearchText] = useState<string | undefined>();
-    const { projectUser } = useContext(ProjectUserContext);
+    const { user } = useContext(UserContext);
 
     const {
         loading: leadOptionsPending,
@@ -92,7 +92,12 @@ function FilesUploaded(props: Props) {
     const [
         projectUserOptions,
         setProjectUserOptions,
-    ] = useState<BasicProjectUser[] | undefined | null>(projectUser ? [projectUser] : undefined);
+    ] = useState<BasicProjectUser[] | undefined | null>(
+        user ? [{
+            ...user,
+            emailDisplay: user.email ?? '',
+        }] : undefined,
+    );
 
     const [
         sourceOrganizationOptions,

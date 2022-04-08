@@ -1,17 +1,4 @@
 .options-popup {
     min-width: 16rem;
-
-    .options-popup-content {
-        .option {
-            .display-name {
-                color: var(--dui-font-weight-bold);
-            }
-
-            .email {
-                word-break: break-all;
-                color: var(--dui-color-text-description);
-            }
-        }
-    }
 }
 

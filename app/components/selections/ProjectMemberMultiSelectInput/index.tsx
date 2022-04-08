@@ -12,6 +12,7 @@ import {
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import OptionLabelSelector from '../OptionLabelSelector';
+
 import styles from './styles.css';
 
 const PROJECT_USERS = gql`
@@ -90,7 +91,6 @@ function ProjectUserMultiSelectInput<K extends string>(props: ProjectUserSelectI
             onShowDropdownChange={setOpened}
             totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
             optionsPopupClassName={styles.optionsPopup}
-            optionsPopupContentClassName={styles.optionsPopupContent}
         />
     );
 }
