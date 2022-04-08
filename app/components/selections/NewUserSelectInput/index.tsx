@@ -4,6 +4,7 @@ import {
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
+import OptionLabelSelector from '../OptionLabelSelector';
 
 import {
     UsersQuery,
@@ -54,20 +55,6 @@ function labelSelector(d: User) {
     return displayName;
 }
 
-function optionLabelSelector(d: User) {
-    const displayName = d.displayName ?? `${d.firstName} ${d.lastName}`;
-    return (
-        <div className={styles.option}>
-            <div className={styles.displayName}>
-                {displayName}
-            </div>
-            <div className={styles.email}>
-                {d.emailDisplay}
-            </div>
-        </div>
-    );
-}
-
 function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>) {
     const {
         className,
@@ -100,7 +87,7 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            optionLabelSelector={optionLabelSelector}
+            optionLabelSelector={OptionLabelSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.users?.results}
             optionsPending={loading}

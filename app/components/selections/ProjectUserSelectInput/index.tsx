@@ -4,6 +4,7 @@ import {
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
+import OptionLabelSelector from '../OptionLabelSelector';
 
 import {
     ProjectUserQuery,
@@ -34,21 +35,7 @@ const PROJECT_USERS = gql`
 
 export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
 const keySelector = (d: BasicProjectUser) => d.id;
-const labelSelector = (d: BasicProjectUser) => d.displayName ?? '';
-
-function optionLabelSelector(d: BasicProjectUser) {
-    const displayName = d.displayName ?? '';
-    return (
-        <div className={styles.option}>
-            <div className={styles.displayName}>
-                {displayName}
-            </div>
-            <div className={styles.email}>
-                {d.emailDisplay}
-            </div>
-        </div>
-    );
-}
+const labelSelector = (d: BasicProjectUser) => d.displayName ?? ' ';
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -96,7 +83,7 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            optionLabelSelector={optionLabelSelector}
+            optionLabelSelector={OptionLabelSelector}
             searchOptions={members}
             onSearchValueChange={setSearchText}
             optionsPending={loading}

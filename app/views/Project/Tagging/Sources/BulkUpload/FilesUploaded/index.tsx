@@ -78,7 +78,6 @@ function FilesUploaded(props: Props) {
     } = props;
 
     const [searchText, setSearchText] = useState<string | undefined>();
-    // const { user } = useContext(UserContext);
     const { projectUser } = useContext(ProjectUserContext);
 
     const {

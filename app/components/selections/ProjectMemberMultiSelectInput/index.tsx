@@ -11,6 +11,7 @@ import {
 } from '#generated/types';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
+import OptionLabelSelector from '../OptionLabelSelector';
 import styles from './styles.css';
 
 const PROJECT_USERS = gql`
@@ -35,20 +36,6 @@ const PROJECT_USERS = gql`
 export type ProjectMember = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
 const keySelector = (d: ProjectMember) => d.id;
 const labelSelector = (d: ProjectMember) => d.displayName ?? '';
-
-function optionLabelSelector(d: ProjectMember) {
-    const displayName = d.displayName ?? '';
-    return (
-        <div className={styles.option}>
-            <div className={styles.displayName}>
-                {displayName}
-            </div>
-            <div className={styles.email}>
-                {d.emailDisplay}
-            </div>
-        </div>
-    );
-}
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchMultiSelectInputProps<
@@ -96,7 +83,7 @@ function ProjectUserMultiSelectInput<K extends string>(props: ProjectUserSelectI
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            optionLabelSelector={optionLabelSelector}
+            optionLabelSelector={OptionLabelSelector}
             searchOptions={members}
             onSearchValueChange={setSearchText}
             optionsPending={loading}
