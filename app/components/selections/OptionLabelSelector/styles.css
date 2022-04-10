@@ -1,0 +1,10 @@
+.option {
+    .display-name {
+        color: var(--dui-font-weight-bold);
+    }
+
+    .email {
+        word-break: break-all;
+        color: var(--dui-color-text-description);
+    }
+}

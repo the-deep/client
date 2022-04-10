@@ -92,7 +92,12 @@ function FilesUploaded(props: Props) {
     const [
         projectUserOptions,
         setProjectUserOptions,
-    ] = useState<BasicProjectUser[] | undefined | null>(user ? [user] : undefined);
+    ] = useState<BasicProjectUser[] | undefined | null>(
+        user ? [{
+            ...user,
+            emailDisplay: user.email ?? '',
+        }] : undefined,
+    );
 
     const [
         sourceOrganizationOptions,

@@ -41,6 +41,7 @@ query ReviewComments(
                 createdBy {
                     id
                     displayName
+                    emailDisplay
                 }
             }
             reviewComments (
@@ -59,6 +60,7 @@ query ReviewComments(
                     createdBy {
                         id
                         displayName
+                        emailDisplay
                     }
                     entry
                     id
@@ -66,6 +68,7 @@ query ReviewComments(
                     mentionedUsers {
                         id
                         displayName
+                        emailDisplay
                     }
                 }
             }

@@ -61,6 +61,7 @@ export const LEAD_ENTRIES = gql`
                 assignee {
                     id
                     displayName
+                    emailDisplay
                 }
                 publishedOn
                 text
@@ -200,6 +201,7 @@ export const UPDATE_LEAD = gql`
                     assignee {
                         id,
                         displayName,
+                        emailDisplay
                     }
                     publishedOn,
                     text,

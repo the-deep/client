@@ -21,9 +21,7 @@ import {
 import NonFieldError from '#components/NonFieldError';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import _ts from '#ts';
-
 import {
-    UserGroupType,
     UserGroupCreateMutation,
     UserGroupCreateMutationVariables,
     UserGroupUpdateMutation,
@@ -97,7 +95,7 @@ const defaultFormValue: PartialForm<FormType> = {};
 interface Props {
     onModalClose: () => void;
     onSuccess: (userGroupId: string) => void;
-    value?: UserGroupType,
+    value?: { id: string; title: string };
 }
 function AddUserGroupModal(props: Props) {
     const {

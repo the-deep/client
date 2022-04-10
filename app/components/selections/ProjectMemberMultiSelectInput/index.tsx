@@ -11,9 +11,12 @@ import {
 } from '#generated/types';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
+import OptionLabelSelector from '../OptionLabelSelector';
+
+import styles from './styles.css';
 
 const PROJECT_USERS = gql`
-    query ProjectUser($search: String, $projectId: ID!) {
+    query ProjectMultiUser($search: String, $projectId: ID!) {
         project(id: $projectId) {
             id
             userMembers(search: $search) {
@@ -22,6 +25,7 @@ const PROJECT_USERS = gql`
                     member {
                         id
                         displayName
+                        emailDisplay
                     }
                 }
                 totalCount
@@ -80,11 +84,13 @@ function ProjectUserMultiSelectInput<K extends string>(props: ProjectUserSelectI
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
+            optionLabelSelector={OptionLabelSelector}
             searchOptions={members}
             onSearchValueChange={setSearchText}
             optionsPending={loading}
             onShowDropdownChange={setOpened}
             totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
+            optionsPopupClassName={styles.optionsPopup}
         />
     );
 }

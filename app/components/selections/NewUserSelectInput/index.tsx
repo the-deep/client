@@ -4,6 +4,7 @@ import {
     SearchSelectInputProps,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
+import OptionLabelSelector from '../OptionLabelSelector';
 
 import {
     UsersQuery,
@@ -12,10 +13,18 @@ import {
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
+import styles from './styles.css';
+
 const USERS = gql`
-    query Users($search: String, $membersExcludeProject: ID, $membersExcludeUsergroup: ID) {
+    query Users(
+        $search: String,
+        $membersExcludeProject: ID,
+        $membersExcludeFramework: ID,
+        $membersExcludeUsergroup: ID,
+    ) {
         users(
             membersExcludeProject: $membersExcludeProject,
+            membersExcludeFramework: $membersExcludeFramework,
             membersExcludeUsergroup: $membersExcludeUsergroup,
             search: $search,
         ) {
@@ -25,6 +34,7 @@ const USERS = gql`
                 organization
                 firstName
                 lastName
+                emailDisplay
             }
             totalCount
         }
@@ -40,6 +50,7 @@ string,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 > & {
+    membersExcludeFramework?: string;
     membersExcludeProject?: string;
     membersExcludeUsergroup?: string;
 };
@@ -48,13 +59,15 @@ function keySelector(d: User) {
 }
 
 function labelSelector(d: User) {
-    return d.displayName ?? `${d.firstName} ${d.lastName}`;
+    const displayName = d.displayName ?? `${d.firstName} ${d.lastName}`;
+    return displayName;
 }
 
 function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>) {
     const {
         className,
         membersExcludeProject,
+        membersExcludeFramework,
         membersExcludeUsergroup,
         ...otherProps
     } = props;
@@ -64,10 +77,16 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
     const debouncedSearchText = useDebouncedValue(searchText);
 
     const variables = useMemo(() => ({
+        membersExcludeFramework,
         membersExcludeProject,
         membersExcludeUsergroup,
         search: debouncedSearchText,
-    }), [membersExcludeProject, debouncedSearchText, membersExcludeUsergroup]);
+    }), [
+        membersExcludeProject,
+        membersExcludeFramework,
+        debouncedSearchText,
+        membersExcludeUsergroup,
+    ]);
 
     const { data, loading } = useQuery<UsersQuery, UsersQueryVariables>(
         USERS,
@@ -83,11 +102,13 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
+            optionLabelSelector={OptionLabelSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.users?.results}
             optionsPending={loading}
             totalOptionsCount={data?.users?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
+            optionsPopupClassName={styles.optionsPopup}
         />
     );
 }

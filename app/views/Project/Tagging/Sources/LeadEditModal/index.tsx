@@ -71,6 +71,7 @@ const PROJECT_LEAD = gql`
                 assignee {
                     id
                     displayName
+                    emailDisplay
                 }
                 publishedOn
                 text
@@ -251,7 +252,12 @@ function LeadEditModal(props: Props) {
     const [
         projectUserOptions,
         setProjectUserOptions,
-    ] = useState<BasicProjectUser[] | undefined | null>(user ? [user] : undefined);
+    ] = useState<BasicProjectUser[] | undefined | null>(
+        user ? [{
+            ...user,
+            emailDisplay: user.email ?? '',
+        }] : undefined,
+    );
 
     const [
         sourceOrganizationOptions,

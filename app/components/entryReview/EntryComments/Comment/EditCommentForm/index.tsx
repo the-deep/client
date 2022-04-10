@@ -31,24 +31,26 @@ const EDIT_COMMENT = gql`
 mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInputType!, $id: ID!) {
     project(id: $projectId) {
         entryReviewCommentUpdate(data: $data, id: $id) {
-          ok
-          errors
-          result {
-            id
-            commentType
-            commentTypeDisplay
-            createdAt
-            createdBy {
-              id
-              displayName
+            ok
+            errors
+            result {
+                id
+                commentType
+                commentTypeDisplay
+                createdAt
+                createdBy {
+                    id
+                    displayName
+                    emailDisplay
+                }
+                entry
+                text
+                mentionedUsers {
+                    id
+                    displayName
+                    emailDisplay
+                }
             }
-            entry
-            text
-            mentionedUsers {
-              id
-              displayName
-            }
-          }
         }
     }
 }
@@ -95,6 +97,7 @@ function EditCommentForm(props: Props) {
         () => comment.mentionedUsers.map((u) => ({
             id: u.id,
             displayName: u.displayName,
+            emailDisplay: u.emailDisplay,
         })),
     );
 

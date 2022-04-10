@@ -44,31 +44,7 @@ export const USERGROUPS = gql`
                 createdAt
                 description
                 currentUserRole
-                createdBy {
-                    id
-                    displayName
-                    language
-                    firstName
-                    lastName
-                    isActive
-                }
-                globalCrisisMonitoring
-                modifiedAt
                 membershipsCount
-                memberships {
-                    id
-                    clientId
-                    role
-                    roleDisplay
-                    joinedAt
-                    member {
-                        id
-                        displayName
-                        lastName
-                        firstName
-                        isActive
-                    }
-                }
             }
             totalCount
             pageSize
