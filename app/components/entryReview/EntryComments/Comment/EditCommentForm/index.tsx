@@ -73,8 +73,7 @@ const schema: FormSchema = {
 
 interface Props {
     className?: string;
-    onEditSuccess: (response: CommentItem) => void;
-    onEditCancel: () => void;
+    onClose: () => void;
     comment: CommentItem;
     projectId: string;
 }
@@ -83,8 +82,7 @@ function EditCommentForm(props: Props) {
     const {
         className,
         comment,
-        onEditSuccess,
-        onEditCancel,
+        onClose,
         projectId,
     } = props;
 
@@ -122,7 +120,7 @@ function EditCommentForm(props: Props) {
                 const successResponse = response?.project?.entryReviewCommentUpdate;
                 if (successResponse?.ok) {
                     if (successResponse?.result) {
-                        onEditSuccess(successResponse.result);
+                        onClose();
                         alert.show(
                             'Successfully edited the comment!',
                             { variant: 'success' },
@@ -175,7 +173,7 @@ function EditCommentForm(props: Props) {
                     <>
                         <Button
                             name={undefined}
-                            onClick={onEditCancel}
+                            onClick={onClose}
                             variant="tertiary"
                         >
                             Cancel

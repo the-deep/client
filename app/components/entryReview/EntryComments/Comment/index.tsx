@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useContext } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
@@ -34,16 +34,15 @@ const handleLabelSelector = (value: MentionedUserType) => (value.displayName ?? 
 function Comment(props: Props) {
     const {
         className,
-        comment: commentFromProps,
+        comment,
         projectId,
     } = props;
 
     const { user } = useContext(UserContext);
-    const [comment, setComment] = useState<CommentItem>(commentFromProps);
     const [
-        isEditModalVisible,
-        showEditModal,
-        hideEditModal,
+        editViewShown,
+        showEditView,
+        hideEditView,
     ] = useModalState(false);
 
     const {
@@ -57,11 +56,6 @@ function Comment(props: Props) {
     const isEditable = useMemo(() => (
         user?.id === createdBy?.id && text
     ), [user, createdBy, text]);
-
-    const handleSuccess = useCallback((value: CommentItem) => {
-        setComment(value);
-        hideEditModal();
-    }, [hideEditModal]);
 
     return (
         <Container
@@ -84,7 +78,7 @@ function Comment(props: Props) {
             <>
                 <div className={_cs(
                     styles.commentSection,
-                    isEditModalVisible && styles.inline,
+                    editViewShown && styles.inline,
                 )}
                 >
                     <div className={styles.userAction}>
@@ -98,13 +92,12 @@ function Comment(props: Props) {
                             </span>
                         )}
                     </div>
-                    {isEditModalVisible ? (
+                    {editViewShown ? (
                         <EditCommentForm
                             className={styles.editComment}
                             comment={comment}
                             projectId={projectId}
-                            onEditSuccess={handleSuccess}
-                            onEditCancel={hideEditModal}
+                            onClose={hideEditView}
                         />
                     ) : (
                         <div className={styles.comment}>
@@ -118,10 +111,10 @@ function Comment(props: Props) {
                         value={createdAt}
                         format="hh:mm aaa, MMM dd, yyyy"
                     />
-                    {isEditable && !isEditModalVisible && (
+                    {isEditable && !editViewShown && (
                         <QuickActionButton
                             name="editButton"
-                            onClick={showEditModal}
+                            onClick={showEditView}
                             title="Edit comment"
                         >
                             <FiEdit2 />
