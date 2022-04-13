@@ -22,7 +22,6 @@
 
         .app-brand {
             align-self: center;
-            overflow: auto;
             color: var(--dui-color-brand);
 
             .logo {
