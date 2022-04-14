@@ -15,7 +15,7 @@ import {
 import NonFieldError from '#components/NonFieldError';
 
 import {
-    reliefWebCountryList,
+    unhcrCountryList,
     UnhcrParams,
     Country,
 } from '../../../types';
@@ -52,7 +52,7 @@ function UnhcrParamsInput<T extends string>(props: Props<T>) {
                 label="Country"
                 value={value?.country}
                 onChange={setParamsFieldValue}
-                options={reliefWebCountryList}
+                options={unhcrCountryList}
                 keySelector={countryKeySelector}
                 labelSelector={countryLabelSelector}
                 error={getErrorString(error?.country)}
