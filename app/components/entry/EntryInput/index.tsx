@@ -241,7 +241,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 widgetsHints={widgetsHints}
                 recommendations={recommendations}
                 emptyMessageHidden={variant === 'nlp'}
-                // suggestionModeEnabled={variant === 'nlp'}
                 suggestionModeEnabled={variant === 'nlp'}
             />
         </div>
