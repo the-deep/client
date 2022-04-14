@@ -329,7 +329,7 @@ function SimplifiedTextView(props: Props) {
                         <QuickActionButton
                             title="Assist"
                             name={textContent}
-                            variant="primary"
+                            variant="nlp-primary"
                             className={styles.addButton}
                             onClick={handleAssistButtonClick}
                         >

@@ -119,7 +119,12 @@ function Column(props: ColumnProps) {
 
     return (
         <div className={styles.column}>
-            <div className={styles.columnDetails}>
+            <div
+                className={_cs(
+                    styles.columnDetails,
+                    !readOnly && suggestionModeEnabled && styles.suggestionMode,
+                )}
+            >
                 <div className={styles.columnTitle}>
                     <div className={styles.subrowLabel}>
                         {subRowLabel}
@@ -141,9 +146,25 @@ function Column(props: ColumnProps) {
                         )}
                     </div>
                 </div>
-                {readOnly && (
-                    <div className={styles.selectedValues}>
-                        {selectedValues}
+                {(!readOnly
+                    && suggestionModeEnabled
+                    && orderedSubColumns
+                    && orderedSubColumns.length > 0
+                ) && (
+                    <div className={styles.subColumnSuggestions}>
+                        <IoChevronForward className={styles.separatorIcon} />
+                        <MultiBadgeInput
+                            containerClassName={styles.badges}
+                            name={column.key}
+                            onChange={handleSubColumnValueChange}
+                            options={orderedSubColumns}
+                            labelSelector={subColumnLabelSelector}
+                            keySelector={subColumnKeySelector}
+                            value={value?.[column.key]}
+                            disabled={disabled || readOnly}
+                            selectedButtonVariant="nlp-primary"
+                            buttonVariant="nlp-tertiary"
+                        />
                     </div>
                 )}
                 {!readOnly && !suggestionModeEnabled && (
@@ -157,22 +178,10 @@ function Column(props: ColumnProps) {
                         keySelector={subColumnKeySelector}
                     />
                 )}
-                {(!readOnly
-                    && suggestionModeEnabled
-                    && orderedSubColumns
-                    && orderedSubColumns.length > 0
-                ) && (
-                    <MultiBadgeInput
-                        name={column.key}
-                        onChange={handleSubColumnValueChange}
-                        options={orderedSubColumns}
-                        labelSelector={subColumnLabelSelector}
-                        keySelector={subColumnKeySelector}
-                        value={value?.[column.key]}
-                        disabled={disabled || readOnly}
-                        selectedButtonVariant="nlp-primary"
-                        buttonVariant="nlp-tertiary"
-                    />
+                {readOnly && (
+                    <div className={styles.selectedValues}>
+                        {selectedValues}
+                    </div>
                 )}
             </div>
         </div>

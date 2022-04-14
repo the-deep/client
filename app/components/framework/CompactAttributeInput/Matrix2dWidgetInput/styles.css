@@ -17,21 +17,21 @@
                 .column-details {
                     display: flex;
                     flex-direction: column;
-                    gap: var(--dui-spacing-extra-small) 0;
+                    gap: var(--dui-spacing-extra-small);
+
+                    .separator-icon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--dui-color-text-label);
+                    }
 
                     .column-title {
-                        display: flex;
+                        display: inline-flex;
                         align-items: center;
                         gap: var(--dui-spacing-small);
 
                         .subrow-label {
-                            color: var(--dui-color-text-label);
-                        }
-
-                        .separator-icon {
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
                             color: var(--dui-color-text-label);
                         }
 
@@ -45,9 +45,26 @@
                         }
                     }
 
+                    .sub-column-suggestions {
+                        display: flex;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: var(--dui-spacing-small);
+
+                        .separator-icon,
+                        .badges {
+                            display: inline-block;
+                        }
+                    }
 
                     .selected-values {
                         color: var(--dui-color-accent);
+                    }
+
+                    &.suggestion-mode {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        gap: var(--dui-spacing-extra-small);
                     }
                 }
             }
