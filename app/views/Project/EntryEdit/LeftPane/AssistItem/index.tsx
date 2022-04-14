@@ -183,6 +183,8 @@ function AssistItem(props: Props) {
         { setShowPopup: React.Dispatch<React.SetStateAction<boolean>> }
     >(null);
 
+    // NOTE: This is done to open assist popup immediately after clicking
+    // on the entry add button
     useEffect(() => {
         assistPopupRef?.current?.setShowPopup(true);
     }, [assistPopupRef]);
@@ -608,8 +610,8 @@ function AssistItem(props: Props) {
                         onGeoAreaOptionsChange={setGeoAreaOptions}
                         predictionsLoading={
                             predictionsLoading
-                        || draftEntryFetchPending
-                        || draftEntryCreationPending
+                            || draftEntryFetchPending
+                            || draftEntryCreationPending
                         }
                         predictionsErrored={!!fetchErrors || !!createErrors}
                         messageText={messageText}

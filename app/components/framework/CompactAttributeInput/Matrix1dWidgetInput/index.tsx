@@ -41,7 +41,7 @@ interface RowProps {
     readOnly?: boolean;
     row: RowType;
     value: NonNullable<Matrix1dValue['value']>[string];
-    recommendedValue: NonNullable<Matrix1dValue['value']>[string];
+    recommendedValue?: NonNullable<Matrix1dValue['value']>[string];
     onCellsChange: (cells: { [key: string]: boolean | undefined }, cellId: string) => void;
     suggestionModeEnabled?: boolean;
 }
@@ -65,12 +65,17 @@ function Row(props: RowProps) {
     } = row;
 
     const transformedValue = useMemo(() => (
-        // FIXME: Remove the cast below later on
-        mapToList(value, (d, k) => (d ? k as string : undefined))?.filter(isDefined)
+        mapToList(
+            value,
+            (cellSelected, cellKey) => (cellSelected ? cellKey : undefined),
+        )?.filter(isDefined)
     ), [value]);
 
     const recommendedValueList = useMemo(() => (
-        mapToList(recommendedValue, (d, k) => (d ? k : undefined))?.filter(isDefined)
+        mapToList(
+            recommendedValue,
+            (cellSelected, cellKey) => (cellSelected ? cellKey : undefined),
+        )?.filter(isDefined)
     ), [recommendedValue]);
 
     const handleCellsChange = useCallback((newCells: string[] | undefined = []) => {
@@ -124,7 +129,7 @@ function Row(props: RowProps) {
                 <MultiBadgeInput
                     name={row?.key}
                     onChange={handleCellsChange}
-                    options={sortedCells ?? []}
+                    options={sortedCells}
                     labelSelector={cellLabelSelector}
                     keySelector={cellKeySelector}
                     value={transformedValue}
@@ -153,7 +158,7 @@ export interface Props <N extends string>{
 
     widget: PartialMatrix1dWidget;
     suggestionModeEnabled?: boolean;
-    recommendedValue: Matrix1dValue | null | undefined;
+    recommendedValue?: Matrix1dValue | null | undefined;
 }
 
 function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
@@ -195,7 +200,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
                 const rowValue = value?.value?.[row.key];
                 const hasValueInRow = !!rowValue && Object.values(rowValue).some((d) => d);
 
-                // NOTE: Filter from value
+                // NOTE: Filter from recommended value
                 const recommendationRowValue = recommendedValue?.value?.[row.key];
                 const hasRecommendationInRow = !!recommendationRowValue
                     && Object.values(recommendationRowValue).some((d) => d);

@@ -4,7 +4,10 @@ import {
     MultiBadgeInput,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
-import { listToMap, isNotDefined } from '@togglecorp/fujs';
+import {
+    listToMap,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#components/NonFieldError';
 import { sortByOrder } from '#utils/common';
@@ -86,14 +89,21 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         return value?.value?.map((v) => optionsMap?.[v]);
     }, [widgetOptions, value]);
 
+    const recommendedValuesMap = useMemo(() => (
+        listToMap(
+            recommendedValue?.value,
+            (key) => key,
+            () => true,
+        )
+    ), [recommendedValue]);
+
     const optionsForSuggestions = useMemo(() => {
         if (!suggestionModeEnabled) {
             return [];
         }
-        // FIXME: Accept undefined list of options in MultiBadgeInput
-        return sortedOptions?.filter((item) => recommendedValue?.value?.includes(item.key)) ?? [];
+        return sortedOptions?.filter((item) => recommendedValuesMap?.[item.key]);
     }, [
-        recommendedValue,
+        recommendedValuesMap,
         sortedOptions,
         suggestionModeEnabled,
     ]);

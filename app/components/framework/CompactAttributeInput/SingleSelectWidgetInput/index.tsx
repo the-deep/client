@@ -126,7 +126,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                         <BadgeInput
                             name={name}
                             value={value?.value}
-                            options={selectedOptions ?? []}
+                            options={selectedOptions}
                             keySelector={optionKeySelector}
                             labelSelector={optionLabelSelector}
                             onChange={onChange}

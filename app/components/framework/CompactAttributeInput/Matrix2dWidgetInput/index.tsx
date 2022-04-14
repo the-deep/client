@@ -50,7 +50,7 @@ interface ColumnProps {
     readOnly?: boolean;
     disabled?: boolean;
     suggestionModeEnabled?: boolean;
-    recommendedValue: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
+    recommendedValue?: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
 }
 
 function Column(props: ColumnProps) {
@@ -82,11 +82,11 @@ function Column(props: ColumnProps) {
     }, [onSubColumnsChange, rowId, subRowId, columnId]);
 
     const orderedSubColumns = useMemo(() => {
-        const filteredSubColumns = subColumns?.filter((sc) => {
+        const filteredSubColumns = subColumns?.filter((subColumn) => {
             if (!suggestionModeEnabled) {
                 return true;
             }
-            const hasRecommendedValue = recommendedValue?.[columnId]?.includes(sc.key);
+            const hasRecommendedValue = recommendedValue?.[columnId]?.includes(subColumn.key);
             return hasRecommendedValue;
         });
         return sortByOrder(filteredSubColumns);
@@ -192,7 +192,7 @@ interface SubRowProps {
     ) => void;
     subRow: SubRow;
     value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
-    recommendedValue: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
+    recommendedValue?: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
     columns: ColumnType[] | undefined;
     suggestionModeEnabled?: boolean;
 }
@@ -268,7 +268,7 @@ interface RowProps {
     row: RowType;
     columns: ColumnType[] | undefined;
     value: NonNullable<Matrix2dValue['value']>[string];
-    recommendedValue: NonNullable<Matrix2dValue['value']>[string];
+    recommendedValue?: NonNullable<Matrix2dValue['value']>[string];
     onSubColumnsChange: (
         rowId: string,
         subRowId: string,
@@ -298,9 +298,9 @@ function Row(props: RowProps) {
     } = row;
 
     const orderedSubRows = useMemo(() => {
-        const filteredSubRows = subRows?.filter((sr) => {
-            const hasValue = value?.[sr.key];
-            const hasRecommendedValue = recommendedValue?.[sr.key];
+        const filteredSubRows = subRows?.filter((subRow) => {
+            const hasValue = value?.[subRow.key];
+            const hasRecommendedValue = recommendedValue?.[subRow.key];
             return hasValue || hasRecommendedValue;
         });
         return sortByOrder(filteredSubRows);
@@ -372,7 +372,7 @@ export interface Props <N extends string>{
 
     widget: PartialMatrix2dWidget;
     suggestionModeEnabled?: boolean;
-    recommendedValue: Matrix2dValue | null | undefined,
+    recommendedValue?: Matrix2dValue | null | undefined,
 }
 
 function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
@@ -461,9 +461,9 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
     const widgetRows = widget?.properties?.rows;
 
     const orderedRows = useMemo(() => {
-        const filteredRows = widgetRows?.filter((wr) => {
-            const hasValue = value?.value?.[wr.key];
-            const hasRecommendedValue = recommendedValue?.value?.[wr.key];
+        const filteredRows = widgetRows?.filter((row) => {
+            const hasValue = value?.value?.[row.key];
+            const hasRecommendedValue = recommendedValue?.value?.[row.key];
 
             return hasValue || hasRecommendedValue;
         });
