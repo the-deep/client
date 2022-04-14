@@ -488,6 +488,7 @@ function LeftPane(props: Props) {
     );
 
     const assistedTaggingShown = assistedTaggingEnabled
+        && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
 
     return (
@@ -529,15 +530,17 @@ function LeftPane(props: Props) {
                     >
                         {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                             <>
-                                {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0 && (
-                                    <Switch
-                                        className={styles.switch}
-                                        name="isAssistedTaggingEnabled"
-                                        value={assistedTaggingEnabled}
-                                        onChange={onAssistedTaggingStatusChange}
-                                        label="Assisted Tagging"
-                                    />
-                                )}
+                                {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0
+                                    && frameworkDetails?.assistedTaggingEnabled
+                                    && (
+                                        <Switch
+                                            className={styles.switch}
+                                            name="isAssistedTaggingEnabled"
+                                            value={assistedTaggingEnabled}
+                                            onChange={onAssistedTaggingStatusChange}
+                                            label="Assisted Tagging"
+                                        />
+                                    )}
                                 <SimplifiedTextView
                                     className={styles.simplifiedTextView}
                                     activeEntryClientId={activeEntry}

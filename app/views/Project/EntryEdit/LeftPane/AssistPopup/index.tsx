@@ -83,6 +83,7 @@ function AssistPopup(props: Props) {
                     name={undefined}
                     onClick={onEntryCreateButtonClick}
                     disabled={isMessageShown}
+                    variant="nlp-primary"
                 >
                     Create Entry
                 </Button>
