@@ -121,6 +121,7 @@ export const PROJECT_FRAMEWORK = gql`
             id
             analysisFramework {
                 id
+                assistedTaggingEnabled
                 primaryTagging {
                     widgets {
                         id

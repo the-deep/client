@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
-import { FaBrain } from 'react-icons/fa';
 import {
     listToMap,
     isDefined,
@@ -15,11 +14,13 @@ import {
     QuickActionButton,
     QuickActionDropdownMenu,
     useAlert,
+    Svg,
     Container,
 } from '@the-deep/deep-ui';
 import { IoClose } from 'react-icons/io5';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import brainIcon from '#resources/img/brain.svg';
 import {
     mappingsSupportedWidgets,
     isCategoricalMappings,
@@ -173,7 +174,7 @@ function AssistItem(props: Props) {
     const mappings = frameworkDetails?.predictionTagsMapping;
     const alert = useAlert();
     const [
-        allRecommendataions,
+        allRecommendations,
         setAllRecommendations,
     ] = useState<PartialAttributeType[] | undefined>(undefined);
 
@@ -207,10 +208,9 @@ function AssistItem(props: Props) {
         lead: leadId,
         excerpt: text,
         droppedExcerpt: text,
-        attributes: createDefaultAttributes(allWidgets),
+        attributes: [],
     }), [
         leadId,
-        allWidgets,
         text,
     ]);
 
@@ -228,17 +228,42 @@ function AssistItem(props: Props) {
     } = useForm(schema, emptyEntry);
 
     const handleEntryCreateButtonClick = useCallback(() => {
+        if (!allRecommendations) {
+            return;
+        }
+
         const submit = createSubmitHandler(
             validate,
             setError,
             (entryData) => {
                 if (onAssistedEntryAdd) {
-                    onAssistedEntryAdd(entryData);
+                    const defaultAttributes = createDefaultAttributes(allWidgets) ?? [];
+
+                    const newAttributes = mergeLists(
+                        defaultAttributes,
+                        entryData?.attributes ?? [],
+                        (attr) => attr.widget,
+                        (defaultAttr, newAttr) => ({
+                            ...newAttr,
+                            clientId: defaultAttr.clientId,
+                            widget: defaultAttr.widget,
+                            id: defaultAttr.id,
+                            widgetVersion: defaultAttr.widgetVersion,
+                        }),
+                    );
+
+                    onAssistedEntryAdd({
+                        ...entryData,
+                        attributes: newAttributes,
+                    });
                 }
             },
         );
+
         submit();
     }, [
+        allWidgets,
+        allRecommendations,
         validate,
         setError,
         onAssistedEntryAdd,
@@ -398,24 +423,10 @@ function AssistItem(props: Props) {
                         attributes: recommendedAttributes,
                     };
                 }
-                const oldAttributes = oldEntry.attributes ?? [];
-
-                const newAttributes = mergeLists(
-                    oldAttributes,
-                    recommendedAttributes,
-                    (attr) => attr.widget,
-                    (oldAttr, newAttr) => ({
-                        ...newAttr,
-                        clientId: oldAttr.clientId,
-                        widget: oldAttr.widget,
-                        id: oldAttr.id,
-                        widgetVersion: oldAttr.widgetVersion,
-                    }),
-                );
 
                 return {
                     ...oldEntry,
-                    attributes: newAttributes,
+                    attributes: recommendedAttributes,
                 };
             },
             undefined,
@@ -589,11 +600,16 @@ function AssistItem(props: Props) {
             footerActions={(
                 <QuickActionDropdownMenu
                     title="Assist"
-                    label={(<FaBrain />)}
+                    label={(
+                        <Svg
+                            className={styles.brainIcon}
+                            src={brainIcon}
+                        />
+                    )}
                     componentRef={assistPopupRef}
                     className={styles.button}
                     disabled={disabled}
-                    variant="tertiary"
+                    variant="nlp-primary"
                     popupContentClassName={styles.popupContent}
                     persistent
                 >
@@ -604,7 +620,7 @@ function AssistItem(props: Props) {
                         error={error}
                         leadId={leadId}
                         hints={allHints}
-                        recommendations={allRecommendataions}
+                        recommendations={allRecommendations}
                         onEntryCreateButtonClick={handleEntryCreateButtonClick}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={setGeoAreaOptions}

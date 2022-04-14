@@ -4,8 +4,10 @@
     user-select: none;
 
     .button {
-        border-color: var(--color-nlp-tag);
-        color: var(--color-nlp-tag);
+        .brain-icon {
+            width: auto;
+            height: var(--dui-font-size-extra-large);
+        }
     }
 
     .content {
@@ -18,4 +20,5 @@
     flex-direction: column;
     flex-grow: 1;
     overflow-y: auto;
+    font-size: var(--dui-font-size-medium);
 }
