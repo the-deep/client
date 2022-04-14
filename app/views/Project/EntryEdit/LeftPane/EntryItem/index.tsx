@@ -135,12 +135,12 @@ function EntryItem(props: EntryItemProps) {
 
     const handleExcerptChange = React.useCallback(
         (modifiedExcerpt: string | undefined) => {
-            if (editExcerptDropdownRef?.current) {
-                editExcerptDropdownRef.current.setShowPopup(false);
-            }
-
             if (onExcerptChange) {
                 onExcerptChange(entryId, modifiedExcerpt);
+            }
+
+            if (editExcerptDropdownRef?.current) {
+                editExcerptDropdownRef.current.setShowPopup(false);
             }
         },
         [entryId, onExcerptChange],
