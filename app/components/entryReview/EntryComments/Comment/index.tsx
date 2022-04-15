@@ -1,4 +1,4 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useCallback, useMemo, useContext } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
@@ -24,6 +24,7 @@ interface Props {
     className?: string;
     projectId: string;
     comment: CommentItem;
+    onEditSuccess: () => void;
 }
 
 type MentionedUserType = NonNullable<CommentItem['mentionedUsers']>[number];
@@ -36,6 +37,7 @@ function Comment(props: Props) {
         className,
         comment,
         projectId,
+        onEditSuccess,
     } = props;
 
     const { user } = useContext(UserContext);
@@ -56,6 +58,14 @@ function Comment(props: Props) {
     const isEditable = useMemo(() => (
         user?.id === createdBy?.id && text
     ), [user, createdBy, text]);
+
+    const handleCommentEditSuccess = useCallback(() => {
+        hideEditView();
+        onEditSuccess();
+    }, [
+        onEditSuccess,
+        hideEditView,
+    ]);
 
     return (
         <Container
@@ -98,6 +108,7 @@ function Comment(props: Props) {
                             comment={comment}
                             projectId={projectId}
                             onClose={hideEditView}
+                            onSuccess={handleCommentEditSuccess}
                         />
                     ) : (
                         <div className={styles.comment}>

@@ -74,6 +74,7 @@ const schema: FormSchema = {
 interface Props {
     className?: string;
     onClose: () => void;
+    onSuccess: () => void;
     comment: CommentItem;
     projectId: string;
 }
@@ -83,6 +84,7 @@ function EditCommentForm(props: Props) {
         className,
         comment,
         onClose,
+        onSuccess,
         projectId,
     } = props;
 
@@ -119,13 +121,13 @@ function EditCommentForm(props: Props) {
             onCompleted: (response) => {
                 const successResponse = response?.project?.entryReviewCommentUpdate;
                 if (successResponse?.ok) {
-                    if (successResponse?.result) {
-                        onClose();
-                        alert.show(
-                            'Successfully edited the comment!',
-                            { variant: 'success' },
-                        );
-                    }
+                    // NOTE: This is not automatically handled because
+                    // the response type is different than list item type
+                    onSuccess();
+                    alert.show(
+                        'Successfully edited the comment!',
+                        { variant: 'success' },
+                    );
                 } else {
                     alert.show(
                         'Failed to edit comment!',
