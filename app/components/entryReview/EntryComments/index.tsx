@@ -140,8 +140,12 @@ function EntryComments(props: Props) {
 
     const commentRendererParams = useCallback((_, comment: CommentItem) => ({
         comment,
+        onEditSuccess: getComments,
         projectId,
-    }), [projectId]);
+    }), [
+        projectId,
+        getComments,
+    ]);
 
     return (
         <>
