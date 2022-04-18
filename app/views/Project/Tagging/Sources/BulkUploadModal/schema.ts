@@ -61,7 +61,6 @@ export const leadSchema:LeadFormSchema = {
             // NOTE: We are not adding forceNullType here, as it is not the behavior in server
             /*
             url: [forceNullType],
-            website: [forceNullType],
             text: [forceNullType],
             attachment: [forceNullType],
             */
@@ -70,7 +69,6 @@ export const leadSchema:LeadFormSchema = {
             baseSchema = {
                 ...baseSchema,
                 url: [requiredCondition, urlCondition],
-                website: [requiredCondition],
             };
         } else if (value?.sourceType === 'TEXT') {
             baseSchema = {

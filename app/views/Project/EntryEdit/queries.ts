@@ -67,7 +67,6 @@ export const LEAD_ENTRIES = gql`
                 publishedOn
                 text
                 url
-                website
                 attachment {
                     id
                     title
@@ -216,7 +215,6 @@ export const UPDATE_LEAD = gql`
                     publishedOn,
                     text,
                     url,
-                    website,
                     attachment {
                         id
                         title

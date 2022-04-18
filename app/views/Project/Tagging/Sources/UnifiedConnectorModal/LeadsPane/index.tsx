@@ -157,7 +157,6 @@ const UPDATE_CONNECTOR_LEAD_BLOCK_STATUS = gql`
                             title
                             sourceRaw
                             publishedOn
-                            website
                             authorRaw
                             authors {
                                 id
@@ -310,7 +309,6 @@ function LeadsPane(props: Props) {
                 assignee: user?.id,
 
                 url: suggestedLead.url,
-                website: suggestedLead.website,
                 title: suggestedLead.title,
                 publishedOn: suggestedLead.publishedOn,
                 authors: suggestedLead.authors.map((item) => item.id),

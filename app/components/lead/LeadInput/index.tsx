@@ -72,7 +72,6 @@ const TOKEN = gql`
 interface RawWebInfo {
     title?: string;
     date?: string;
-    website?: string;
     country?: string;
     sourceRaw?: string;
     authorRaw?: string;
@@ -82,7 +81,6 @@ interface WebInfoBody {
     url?: string;
     title?: string;
     date?: string;
-    website?: string;
     country?: string;
     source?: string;
     author?: string;
@@ -92,7 +90,6 @@ interface WebInfoBody {
 
 interface WebInfo {
     date?: string;
-    website?: string;
     title?: string;
     url?: string;
     source?: OrganizationDetails;
@@ -190,10 +187,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     // eslint-disable-next-line no-param-reassign
                     safeValues.publishedOn = webInfo.date;
                 }
-                if (webInfo.website) {
-                    // eslint-disable-next-line no-param-reassign
-                    safeValues.website = webInfo.website;
-                }
                 if (webInfo.title) {
                     // eslint-disable-next-line no-param-reassign
                     safeValues.title = webInfo.title;
@@ -250,7 +243,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         onSuccess: (response, ctx) => {
             handleInfoAutoFill({
                 date: ctx.date,
-                website: ctx.website,
                 title: ctx.title,
                 url: ctx.url,
                 ...response,
@@ -281,7 +273,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     url: ctx.url,
                     title: response.title,
                     date: response.date,
-                    website: response.website,
                     country: response.country,
                     sourceRaw: response.sourceRaw,
                     authorRaw: response.authorRaw,
@@ -378,38 +369,27 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
             {pending && <PendingMessage />}
             <NonFieldError error={error} />
             {value.sourceType === 'WEBSITE' && (
-                <>
-                    <TextInput
-                        className={styles.input}
-                        label="URL"
-                        name="url"
-                        value={value.url}
-                        onChange={setFieldValue}
-                        error={error?.url}
-                        readOnly={!!value.id}
-                        disabled={disabled}
-                        actions={(
-                            <QuickActionButton
-                                name="leadExtract"
-                                variant="action"
-                                onClick={handleLeadDataExtract}
-                                title="Auto-fill source information"
-                                disabled={disabled}
-                            >
-                                <IoEye />
-                            </QuickActionButton>
-                        )}
-                    />
-                    <TextInput
-                        className={styles.input}
-                        label="Website"
-                        name="website"
-                        value={value.website}
-                        onChange={setFieldValue}
-                        error={error?.website}
-                        disabled={disabled}
-                    />
-                </>
+                <TextInput
+                    className={styles.input}
+                    label="URL"
+                    name="url"
+                    value={value.url}
+                    onChange={setFieldValue}
+                    error={error?.url}
+                    readOnly={!!value.id}
+                    disabled={disabled}
+                    actions={(
+                        <QuickActionButton
+                            name="leadExtract"
+                            variant="action"
+                            onClick={handleLeadDataExtract}
+                            title="Auto-fill source information"
+                            disabled={disabled}
+                        >
+                            <IoEye />
+                        </QuickActionButton>
+                    )}
+                />
             )}
             {value.sourceType === 'TEXT' && (
                 <TextArea
