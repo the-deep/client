@@ -1,23 +1,12 @@
 import React, { useContext } from 'react';
 
-import { ProjectRoleTypeEnum } from '#generated/types';
 import ProjectContext from '#base/context/ProjectContext';
+import { roleLevels } from '#types/project';
 
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
 
 import styles from './styles.css';
-
-// FIXME: This is a hack for now. Need to fetch this from server later when
-// work on server is completed
-export const roleLevels: { [key in ProjectRoleTypeEnum]: number } = {
-    PROJECT_OWNER: 100,
-    ADMIN: 90,
-    MEMBER: 80,
-    READER: 70,
-    READER_NON_CONFIDENTIAL: 60,
-    UNKNOWN: 0,
-};
 
 interface Props {
     projectId: string;
@@ -42,11 +31,12 @@ function Users(props: Props) {
                 projectId={projectId}
                 activeUserId={activeUserId}
                 activeUserRoleLevel={activeUserRoleLevel}
+                activeUserRole={project?.currentUserRole ?? undefined}
             />
             <UserGroupList
                 className={styles.userGroupList}
                 projectId={projectId}
-                activeUserRoleLevel={activeUserRoleLevel}
+                activeUserRole={project?.currentUserRole ?? undefined}
             />
         </div>
     );

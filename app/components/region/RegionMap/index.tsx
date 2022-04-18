@@ -281,11 +281,16 @@ function RegionMap(props: Props) {
     const handleMouseEnter = useCallback((feature: MapboxGeoJSONFeature, lngLat: LngLat) => {
         if (feature.properties && isTruthyString(feature.properties.title)) {
             setHoverLngLat(lngLat);
-            setHoverFeatureProperties([{ key: 'title', value: feature.properties.title }]);
+            setHoverFeatureProperties([{
+                key: selectedAdminLevelTitle ?? 'Title',
+                value: feature.properties.title,
+            }]);
         } else {
             setHoverFeatureProperties([]);
         }
-    }, []);
+    }, [
+        selectedAdminLevelTitle,
+    ]);
 
     const handleMouseLeave = useCallback(() => {
         setHoverLngLat(undefined);

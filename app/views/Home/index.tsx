@@ -57,10 +57,12 @@ query RecentProjects{
         topTaggers {
             count
             name
+            id
         }
         topSourcers {
             count
             name
+            id
         }
         recentActiveUsers {
             id

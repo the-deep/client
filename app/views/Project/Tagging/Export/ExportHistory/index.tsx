@@ -370,6 +370,7 @@ function ExportHistory(props: Props) {
                 {
                     sortable: true,
                     columnWidth: '120px',
+                    format: 'dd MMM, yyyy hh:mm aaa',
                 },
             ),
             createStringColumn<ExportItem, string>(

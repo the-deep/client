@@ -26,14 +26,15 @@ import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/E
 import _ts from '#ts';
 
 import {
+    ProjectRoleTypeEnum,
     ProjectMembershipBulkRemoveMutation,
     ProjectMembershipBulkRemoveMutationVariables,
     ProjectUsersQuery,
     ProjectUsersQueryVariables,
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
+import { roleLevels } from '#types/project';
 
-import { roleLevels } from '../index';
 import AddUserModal from './AddUserModal';
 import styles from './styles.css';
 
@@ -131,8 +132,9 @@ interface Props {
     className?: string;
     projectId: string;
     activeUserId?: string;
-    activeUserRoleLevel?: number;
     pending?: boolean;
+    activeUserRoleLevel?: number;
+    activeUserRole?: ProjectRoleTypeEnum;
 }
 
 const defaultSorting = {
@@ -147,6 +149,7 @@ function UserList(props: Props) {
         activeUserId,
         activeUserRoleLevel,
         pending = false,
+        activeUserRole,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -266,7 +269,13 @@ function UserList(props: Props) {
                 itemKey: userId,
                 onEditClick: handleEditProjectUserClick,
                 onDeleteClick: handleRemoveUserFromProject,
-                disabled: (
+                editDisabled: (
+                    isNotDefined(activeUserRoleLevel)
+                    // FIXME: User level from server after it is ready
+                    || activeUserRoleLevel < roleLevels[data.role.type]
+                    || bulkDeleteProjectMembershipPending
+                ),
+                deleteDisabled: (
                     data.member.id === activeUserId
                     || isNotDefined(activeUserRoleLevel)
                     // FIXME: User level from server after it is ready
@@ -402,7 +411,8 @@ function UserList(props: Props) {
                     projectId={projectId}
                     onProjectUserChange={refetch}
                     projectUserToEdit={projectUserToEdit}
-                    activeUserRoleLevel={activeUserRoleLevel}
+                    activeUserId={activeUserId}
+                    activeUserRole={activeUserRole}
                 />
             )}
         </Container>

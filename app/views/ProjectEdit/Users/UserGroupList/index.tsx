@@ -30,15 +30,16 @@ import routes from '#base/configs/routes';
 import ActionCell, { Props as ActionCellProps } from '#components/tableHelpers/EditDeleteActionCell';
 import { useModalState } from '#hooks/stateManagement';
 import {
+    ProjectRoleTypeEnum,
     ProjectUsergroupsQuery,
     ProjectUsergroupsQueryVariables,
     ProjectUsergroupMembershipRemoveMutation,
     ProjectUsergroupMembershipRemoveMutationVariables,
 } from '#generated/types';
+import { roleLevels } from '#types/project';
 import _ts from '#ts';
 
 import AddUserGroupModal from './AddUserGroupModal';
-import { roleLevels } from '../index';
 
 import styles from './styles.css';
 
@@ -112,8 +113,9 @@ const defaultSorting = {
 interface Props {
     className?: string;
     projectId: string;
-    activeUserRoleLevel?: number;
     pending?: boolean;
+    activeUserRoleLevel?: number;
+    activeUserRole?: ProjectRoleTypeEnum;
 }
 
 function UserGroupList(props: Props) {
@@ -122,6 +124,7 @@ function UserGroupList(props: Props) {
         projectId,
         activeUserRoleLevel,
         pending = false,
+        activeUserRole,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -363,7 +366,7 @@ function UserGroupList(props: Props) {
                     projectId={projectId}
                     onTableReload={refetchUsergroups}
                     projectUsergroupToEdit={projectUsergroupToEdit ?? undefined}
-                    activeUserRoleLevel={activeUserRoleLevel}
+                    activeUserRole={activeUserRole}
                 />
             )}
         </Container>
