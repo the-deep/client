@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
+    isNotDefined,
     isDefined,
 } from '@togglecorp/fujs';
 import { useMutation, gql } from '@apollo/client';
@@ -28,6 +29,7 @@ import { ProjectRole } from '#types/project';
 import _ts from '#ts';
 import NonFieldError from '#components/NonFieldError';
 import {
+    ProjectRoleTypeEnum,
     ProjectUsergroupMembershipBulkMutation,
     ProjectUsergroupMembershipBulkMutationVariables,
 } from '#generated/types';
@@ -92,7 +94,7 @@ interface Props {
     projectId: string;
     onTableReload: () => void;
     projectUsergroupToEdit: ProjectUsergroup | undefined;
-    activeUserRoleLevel?: number;
+    activeUserRole?: ProjectRoleTypeEnum;
 }
 
 function AddUserGroupModal(props: Props) {
@@ -101,7 +103,7 @@ function AddUserGroupModal(props: Props) {
         projectId,
         onTableReload,
         projectUsergroupToEdit,
-        activeUserRoleLevel,
+        activeUserRole,
     } = props;
 
     const formValueFromProps: PartialForm<FormType> = projectUsergroupToEdit ? {
@@ -214,11 +216,26 @@ function AddUserGroupModal(props: Props) {
             : undefined
     ));
 
-    const roles = isDefined(activeUserRoleLevel)
-        ? projectRolesResponse?.results.filter(
-            (role) => role.level >= activeUserRoleLevel,
-        )
-        : undefined;
+    const roles = useMemo(() => {
+        if (isNotDefined(activeUserRole)) {
+            return undefined;
+        }
+        const currentUserRoleLevel = projectRolesResponse?.results?.find(
+            (role) => (
+                // FIXME: Update this after complete on server side
+                role.type.toUpperCase() === activeUserRole
+            ),
+        )?.level;
+        if (!currentUserRoleLevel) {
+            return undefined;
+        }
+        return projectRolesResponse?.results.filter(
+            (role) => role.level >= currentUserRoleLevel,
+        );
+    }, [
+        activeUserRole,
+        projectRolesResponse,
+    ]);
 
     return (
         <Modal

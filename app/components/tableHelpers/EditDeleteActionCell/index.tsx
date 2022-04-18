@@ -14,6 +14,8 @@ export interface Props<T> {
     itemKey: T;
     onEditClick: (key: T) => void;
     onDeleteClick: (key: T) => void;
+    deleteDisabled?: boolean;
+    editDisabled?: boolean;
     disabled?: boolean;
     editButtonTitle?: string;
     deleteButtonTitle?: string;
@@ -27,6 +29,8 @@ function ActionCell<T>(props: Props<T>) {
         onEditClick,
         onDeleteClick,
         disabled,
+        editDisabled,
+        deleteDisabled,
         editButtonTitle = 'Edit',
         deleteButtonTitle = 'Delete',
         deleteConfirmationMessage,
@@ -46,7 +50,7 @@ function ActionCell<T>(props: Props<T>) {
                 className={styles.button}
                 name={undefined}
                 onClick={handleEditButtonClick}
-                disabled={disabled}
+                disabled={disabled || editDisabled}
                 title={editButtonTitle}
             >
                 <FiEdit2 />
@@ -58,7 +62,7 @@ function ActionCell<T>(props: Props<T>) {
                 onConfirm={handleDeleteUserGroupClick}
                 message={deleteConfirmationMessage}
                 showConfirmationInitially={false}
-                disabled={disabled}
+                disabled={disabled || deleteDisabled}
             >
                 <IoTrashBinOutline />
             </QuickActionConfirmButton>

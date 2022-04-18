@@ -1,5 +1,8 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { isDefined } from '@togglecorp/fujs';
+import {
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 import {
     createSubmitHandler,
     defaultUndefinedType,
@@ -38,6 +41,7 @@ import {
 } from '#types';
 
 import {
+    ProjectRoleTypeEnum,
     ProjectMembershipBulkUpdateMutation,
     ProjectMembershipBulkUpdateMutationVariables,
     UserBadgeOptionsQuery,
@@ -46,6 +50,7 @@ import {
 import { ProjectRole } from '#types/project';
 import { EnumFix } from '#utils/types';
 import _ts from '#ts';
+
 import { ProjectUser } from '../index';
 import styles from './styles.css';
 
@@ -105,7 +110,8 @@ interface Props {
     projectId: string;
     onProjectUserChange: () => void;
     projectUserToEdit?: ProjectUser;
-    activeUserRoleLevel?: number;
+    activeUserRole?: ProjectRoleTypeEnum;
+    activeUserId?: string;
 }
 
 function AddUserModal(props: Props) {
@@ -114,7 +120,8 @@ function AddUserModal(props: Props) {
         projectId,
         onProjectUserChange,
         projectUserToEdit,
-        activeUserRoleLevel,
+        activeUserRole,
+        activeUserId,
     } = props;
 
     const formValueFromProps: PartialForm<FormType> = projectUserToEdit ? {
@@ -235,11 +242,26 @@ function AddUserModal(props: Props) {
         projectUserToEdit?.member ? [projectUserToEdit?.member] : []
     ), [projectUserToEdit?.member]);
 
-    const roles = isDefined(activeUserRoleLevel)
-        ? projectRolesResponse?.results.filter(
-            (role) => role.level >= activeUserRoleLevel,
-        )
-        : undefined;
+    const roles = useMemo(() => {
+        if (isNotDefined(activeUserRole)) {
+            return undefined;
+        }
+        const currentUserRoleLevel = projectRolesResponse?.results?.find(
+            (role) => (
+                // FIXME: Update this after complete on server side
+                role.type.toUpperCase() === activeUserRole
+            ),
+        )?.level;
+        if (!currentUserRoleLevel) {
+            return undefined;
+        }
+        return projectRolesResponse?.results.filter(
+            (role) => role.level >= currentUserRoleLevel,
+        );
+    }, [
+        activeUserRole,
+        projectRolesResponse,
+    ]);
 
     return (
         <Modal
@@ -289,6 +311,10 @@ function AddUserModal(props: Props) {
                 label={_ts('projectEdit', 'roleLabel')}
                 placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
                 disabled={pendingRoles}
+                readOnly={(
+                    isDefined(projectUserToEdit?.id)
+                    && projectUserToEdit?.member?.id === activeUserId
+                )}
             />
             <MultiSelectInput
                 name="badges"

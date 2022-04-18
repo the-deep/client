@@ -1,3 +1,5 @@
+import { ProjectRoleTypeEnum } from '#generated/types';
+
 import { BasicElement } from '.';
 import { OrganizationDetails } from './organization';
 
@@ -183,6 +185,7 @@ export interface ProjectRole {
     level: number;
     isCreatorRole: boolean;
     isDefaultRole: boolean;
+    type: string;
 }
 
 export interface ProjectMemberships {
@@ -265,3 +268,14 @@ export interface GeoAreaBounds {
     maxX: number;
     maxY: number;
 }
+
+// FIXME: This is a hack for now. Need to fetch this from server later when
+// work on server is completed
+export const roleLevels: { [key in ProjectRoleTypeEnum]: number } = {
+    PROJECT_OWNER: 100,
+    ADMIN: 90,
+    MEMBER: 80,
+    READER: 70,
+    READER_NON_CONFIDENTIAL: 60,
+    UNKNOWN: 0,
+};
