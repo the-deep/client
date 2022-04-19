@@ -44,12 +44,12 @@ export default class GalleryDocs extends React.PureComponent {
             return null;
         }
 
-        const useGoogle = mimeType !== 'application/pdf' || !canShowIframe || notHttps;
+        const useGoogle = mimeType === 'application/pdf' || !canShowIframe || notHttps;
         const src = useGoogle
             ? createUrlForGoogleViewer(docUrl)
             : docUrl;
         const sandbox = useGoogle
-            ? 'allow-scripts allow-same-origin allow-popups'
+            ? 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox'
             : undefined;
 
         const className = _cs(
