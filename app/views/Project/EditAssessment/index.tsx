@@ -44,7 +44,8 @@ function EditAssessment(props: Props) {
                         className={styles.iframe}
                         src={src}
                         title="editAry"
-                        sandbox="allow-same-origin allow-scripts allow-forms allow-top-navigation"
+                        allowFullScreen
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-top-navigation allow-popups allow-popups-to-escape-sandbox"
                     />
                 )}
             </div>
