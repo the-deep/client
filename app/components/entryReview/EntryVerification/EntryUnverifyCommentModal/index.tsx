@@ -115,7 +115,6 @@ function EntryUnverifyCommentModal(props: Props) {
             className={_cs(styles.modal, className)}
             heading="Reason for unverify"
             size="small"
-            freeHeight
             bodyClassName={styles.modalBody}
             footerIcons={(
                 <ProjectMemberMultiSelectInput
@@ -140,6 +139,8 @@ function EntryUnverifyCommentModal(props: Props) {
                     Save
                 </Button>
             )}
+            freeHeight
+            movable
         >
             <NonFieldError error={error} />
             <TextArea

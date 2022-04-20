@@ -48,7 +48,7 @@
 }
 
 .edit-excerpt-popup {
-    width: 20rem;
+    width: 30rem;
     max-width: unset!important;
 
     .content {
@@ -61,7 +61,7 @@
 
 
 .diff-excerpt-popup {
-    width: 20rem;
+    width: 30rem;
     max-width: unset!important;
 
     .content {
@@ -82,4 +82,8 @@
     to {
         transform: scale(1);
     }
+}
+
+.excerpt-modal-container {
+    background-color: var(--dui-color-foreground);
 }

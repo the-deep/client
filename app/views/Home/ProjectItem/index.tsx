@@ -60,7 +60,7 @@ const minTickFormatter = (value: number | string) => {
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
-const topUserKeySelector = (d: UserEntityCountType) => d?.id ?? '';
+const topUserKeySelector = (d: UserEntityCountType) => d?.name ?? '';
 
 export interface RecentProjectItemProps {
     className?: string;

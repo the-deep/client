@@ -166,7 +166,6 @@ function EntryComments(props: Props) {
                 <Modal
                     className={styles.entryCommentModal}
                     heading="Entry Comments"
-                    freeHeight
                     onCloseButtonClick={hideCommentModal}
                     bodyClassName={styles.modalBody}
                     footerActions={(
@@ -181,6 +180,8 @@ function EntryComments(props: Props) {
                             infoVisibility="hidden"
                         />
                     )}
+                    freeHeight
+                    movable
                 >
                     <ListView
                         data={commentsResponse?.project?.reviewComments?.results}

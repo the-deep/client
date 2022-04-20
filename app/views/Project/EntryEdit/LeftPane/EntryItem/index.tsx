@@ -11,7 +11,6 @@ import { requiredStringCondition } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 import {
     Tag,
-    Footer,
     Container,
     QuickActionButton,
     QuickActionButtonProps,
@@ -56,10 +55,20 @@ export function ExcerptModal(props: ExcerptModalProps) {
     );
 
     return (
-        <>
-            <Heading size="small">
-                {title}
-            </Heading>
+        <Container
+            className={styles.excerptModalContainer}
+            heading={title}
+            spacing="compact"
+            footerActions={(
+                <Button
+                    name={excerpt}
+                    onClick={handleSubmit}
+                    disabled={requiredStringCondition(excerpt) !== undefined}
+                >
+                    Done
+                </Button>
+            )}
+        >
             <ExcerptTextArea
                 className={styles.excerptTextArea}
                 name="modified-excerpt"
@@ -67,18 +76,7 @@ export function ExcerptModal(props: ExcerptModalProps) {
                 onChange={setExcerpt}
                 rows={10}
             />
-            <Footer
-                actions={(
-                    <Button
-                        name={excerpt}
-                        onClick={handleSubmit}
-                        disabled={requiredStringCondition(excerpt) !== undefined}
-                    >
-                        Done
-                    </Button>
-                )}
-            />
-        </>
+        </Container>
     );
 }
 

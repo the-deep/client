@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     Container,
@@ -20,10 +23,6 @@ import RegionMap from '#components/region/RegionMap';
 import GeoAreaListItem from './GeoAreaListItem';
 
 import styles from './styles.css';
-
-function geoAreaGroupKeySelector(geoArea: GeoArea) {
-    return geoArea.adminLevelTitle;
-}
 
 function geoAreaKeySelector(geoArea: GeoArea) {
     return geoArea.id;
@@ -131,12 +130,6 @@ function GeoLocationMapInput(props: Props) {
         spacing: 'compact',
     }), []);
 
-    const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => ({
-        id: `${geoArea.id}`,
-        value: breadcrumb([geoArea.adminLevelTitle, geoArea.title]),
-        onDismiss: handleRemoveItem,
-    }), [handleRemoveItem]);
-
     const geoAreasList = useMemo(() => (
         geoAreaOptions?.filter((item) => value?.includes(item.id))
     ), [geoAreaOptions, value]);
@@ -144,6 +137,37 @@ function GeoLocationMapInput(props: Props) {
     const filteredProjectRegions = useMemo(() => (
         projectRegions?.project?.regions?.filter((region) => region.isPublished)
     ), [projectRegions?.project?.regions]);
+
+    const geoAreasRendererParams = useCallback((_: string, geoArea: GeoArea) => {
+        const label = breadcrumb(
+            [
+                (filteredProjectRegions?.length ?? 0) > 1 ? geoArea.regionTitle : undefined,
+                geoArea.adminLevelTitle,
+                geoArea.title,
+            ].filter(isDefined),
+        );
+
+        return {
+            id: String(geoArea.id),
+            value: label,
+            onDismiss: handleRemoveItem,
+        };
+    }, [
+        handleRemoveItem,
+        filteredProjectRegions,
+    ]);
+
+    const geoAreaGroupKeySelector = useCallback((geoArea: GeoArea) => {
+        const label = breadcrumb(
+            [
+                (filteredProjectRegions?.length ?? 0) > 1 ? geoArea.regionTitle : undefined,
+                geoArea.adminLevelTitle,
+            ].filter(isDefined),
+        );
+        return label;
+    }, [
+        filteredProjectRegions,
+    ]);
 
     return (
         <div className={_cs(className, styles.geoLocationMapInput)}>

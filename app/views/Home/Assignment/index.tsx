@@ -120,6 +120,8 @@ function Assignments() {
                     onActivePageChange={setActivePage}
                     itemsPerPageControlHidden
                     infoVisibility="hidden"
+                    pagesControlLabelHidden
+                    pageNextPrevControlHidden
                 />
             )}
             contentClassName={styles.content}
