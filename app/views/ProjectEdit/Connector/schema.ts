@@ -8,7 +8,11 @@ import {
     requiredCondition,
 } from '@togglecorp/toggle-form';
 
-import { ConnectorInputType } from './types';
+import {
+    ConnectorInputType,
+    ReliefWebParams,
+    UnhcrParams,
+} from './types';
 
 export type PartialFormType = PartialForm<ConnectorInputType, 'clientId' | 'source'>;
 export type PartialSourceType = NonNullable<PartialFormType['sources']>[number];
@@ -29,34 +33,65 @@ export const sourceSchema:SourceFormSchema = {
             id: [defaultUndefinedType],
             title: [requiredStringCondition],
             source: [requiredCondition],
-            // FIXME: Define better schema
-            params: [],
         };
 
         switch (value?.source) {
-            case 'RELIEF_WEB':
-                return {
-                    ...baseSchema,
-                    params: {
-                        fields: () => ({
-                            from: [],
-                            to: [],
-                            'primary-country': [],
-                            country: [],
-                        }),
+            // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO:
+            // - review code changes
+            // - also call mom
+            // - or look at note
+            case 'RELIEF_WEB': {
+                const params: ObjectSchema<PartialForm<ReliefWebParams>> = {
+                    fields: () => ({
+                        from: [],
+                        to: [],
+                        'primary-country': [],
+                        country: [],
+                    }),
+                    validation: (paramsValue) => {
+                        if (
+                            paramsValue
+                            && paramsValue.to
+                            && paramsValue.from
+                            && paramsValue.to
+                            && new Date(paramsValue.from) > new Date(paramsValue.to)
+                        ) {
+                            return '"From" date should be smaller than "To" date';
+                        }
+                        return undefined;
                     },
                 };
-            case 'UNHCR':
+
                 return {
                     ...baseSchema,
-                    params: {
-                        fields: () => ({
-                            date_from: [],
-                            date_to: [],
-                            country: [],
-                        }),
+                    params,
+                };
+            }
+            case 'UNHCR': {
+                const params: ObjectSchema<PartialForm<UnhcrParams>> = {
+                    fields: () => ({
+                        date_from: [],
+                        date_to: [],
+                        country: [],
+                    }),
+                    validation: (paramsValue) => {
+                        if (
+                            paramsValue
+                            && paramsValue.date_to
+                            && paramsValue.date_from
+                            && paramsValue.date_to
+                            && new Date(paramsValue.date_from) > new Date(paramsValue.date_to)
+                        ) {
+                            return '"From" date should be smaller than "To" date';
+                        }
+                        return undefined;
                     },
                 };
+                return {
+                    ...baseSchema,
+                    params,
+                };
+            }
             default:
                 return baseSchema;
         }

@@ -99,6 +99,7 @@ interface EntryItemProps extends EntryInput {
     errored?: boolean;
     projectId: string | undefined;
     entryServerId: string | undefined;
+    draftEntry?: string;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -113,6 +114,7 @@ function EntryItem(props: EntryItemProps) {
         projectId,
         onApproveButtonClick,
         onDiscardButtonClick,
+        draftEntry,
         onExcerptChange,
         disableApproveButton,
         disableDiscardButton,
@@ -154,6 +156,7 @@ function EntryItem(props: EntryItemProps) {
                 styles.taggedExcerpt,
                 className,
                 isActive && styles.active,
+                draftEntry && styles.createdFromAssisted,
             )}
             headingSectionClassName={styles.headingSection}
             headerActions={entryServerId && projectId && (

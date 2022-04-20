@@ -17,9 +17,9 @@
     }
 
     &.assisted-enabled {
-        &::selection {
+        >*::selection {
             background: var(--dui-color-nlp);
-            color: var(--dui-color-text-on-primary);
+            color: var(--dui-color-text-on-accent);
         }
     }
 

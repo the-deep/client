@@ -227,48 +227,6 @@ function AssistItem(props: Props) {
         error,
     } = useForm(schema, emptyEntry);
 
-    const handleEntryCreateButtonClick = useCallback(() => {
-        if (!allRecommendations) {
-            return;
-        }
-
-        const submit = createSubmitHandler(
-            validate,
-            setError,
-            (entryData) => {
-                if (onAssistedEntryAdd) {
-                    const defaultAttributes = createDefaultAttributes(allWidgets) ?? [];
-
-                    const newAttributes = mergeLists(
-                        defaultAttributes,
-                        entryData?.attributes ?? [],
-                        (attr) => attr.widget,
-                        (defaultAttr, newAttr) => ({
-                            ...newAttr,
-                            clientId: defaultAttr.clientId,
-                            widget: defaultAttr.widget,
-                            id: defaultAttr.id,
-                            widgetVersion: defaultAttr.widgetVersion,
-                        }),
-                    );
-
-                    onAssistedEntryAdd({
-                        ...entryData,
-                        attributes: newAttributes,
-                    });
-                }
-            },
-        );
-
-        submit();
-    }, [
-        allWidgets,
-        allRecommendations,
-        validate,
-        setError,
-        onAssistedEntryAdd,
-    ]);
-
     const [messageText, setMessageText] = useState<string | undefined>();
 
     const handleMappingsFetch = useCallback((
@@ -538,6 +496,50 @@ function AssistItem(props: Props) {
             stopPolling,
         ],
     );
+
+    const handleEntryCreateButtonClick = useCallback(() => {
+        if (!allRecommendations) {
+            return;
+        }
+
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (entryData) => {
+                if (onAssistedEntryAdd) {
+                    const defaultAttributes = createDefaultAttributes(allWidgets) ?? [];
+
+                    const newAttributes = mergeLists(
+                        defaultAttributes,
+                        entryData?.attributes ?? [],
+                        (attr) => attr.widget,
+                        (defaultAttr, newAttr) => ({
+                            ...newAttr,
+                            clientId: defaultAttr.clientId,
+                            widget: defaultAttr.widget,
+                            id: defaultAttr.id,
+                            widgetVersion: defaultAttr.widgetVersion,
+                        }),
+                    );
+
+                    onAssistedEntryAdd({
+                        ...entryData,
+                        attributes: newAttributes,
+                        draftEntry: data?.project?.assistedTagging?.draftEntry?.id,
+                    });
+                }
+            },
+        );
+
+        submit();
+    }, [
+        data,
+        allWidgets,
+        allRecommendations,
+        validate,
+        setError,
+        onAssistedEntryAdd,
+    ]);
 
     const [
         createDraftEntry,

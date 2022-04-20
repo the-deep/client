@@ -33,6 +33,7 @@ type Split = {
     entryServerId: string | undefined;
     clientId: string;
     deleted: boolean;
+    draftEntry?: string;
 } | {
     type: 'assisted';
 });
@@ -127,6 +128,7 @@ function SimplifiedTextView(props: Props) {
                 entryServerId: entry.id,
                 clientId: entry.clientId,
                 deleted: entry.deleted,
+                draftEntry: entry.draftEntry,
             });
         });
 
@@ -232,6 +234,7 @@ function SimplifiedTextView(props: Props) {
                                 excerpt={split.excerpt}
                                 deleted={split.deleted}
                                 entryType={split.entryType}
+                                draftEntry={split.draftEntry}
                                 droppedExcerpt={split.droppedExcerpt}
                                 onExcerptChange={onExcerptChange}
                                 onEntryDelete={onEntryDelete}
