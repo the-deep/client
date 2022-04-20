@@ -312,8 +312,8 @@ function AddUserModal(props: Props) {
                 placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
                 disabled={pendingRoles}
                 readOnly={(
-                    isDefined(projectUserToEdit?.id)
-                    && projectUserToEdit?.member?.id === activeUserId
+                    isDefined(projectUserToEdit?.member?.id)
+                    && projectUserToEdit?.member.id === activeUserId
                 )}
             />
             <MultiSelectInput

@@ -148,7 +148,7 @@ function GeoLocationMapInput(props: Props) {
         );
 
         return {
-            id: `${geoArea.id}`,
+            id: String(geoArea.id),
             value: label,
             onDismiss: handleRemoveItem,
         };
