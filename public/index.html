@@ -53,12 +53,12 @@
 
     <!-- Start of anti-click-jacking -->
     <script type="text/javascript"> //NOTE disable anti-click-jacking for localhost and deep domain
-    if (self.location.hostname === "localhost" || self.location.hostname === process.env.REACT_APP_CLIENT_DOMAIN) {
-      var antiClickjack = document.getElementById("anti-click-jacking");
-      antiClickjack.parentNode.removeChild(antiClickjack);
-    } else {
-      top.location = self.location;
-    }
+      if (self.location.hostname === "localhost" || self.location.hostname === new URL(REACT_APP_ASSESSMENT_REGISTRY_END).hostname) {
+        var antiClickjack = document.getElementById("anti-click-jacking");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+      } else {
+        top.location = self.location;
+      }
     </script>
     <!-- End of anti-click-jacking -->
 
