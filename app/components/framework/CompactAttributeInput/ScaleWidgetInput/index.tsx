@@ -118,6 +118,10 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                         keySelector={optionKeySelector}
                         onChange={onChange}
                         disabled={readOnly || disabled}
+                        selectedButtonVariant="nlp-primary"
+                        buttonVariant="nlp-tertiary"
+                        selectedValueHidden
+                        smallButtons
                     />
                 )}
             />

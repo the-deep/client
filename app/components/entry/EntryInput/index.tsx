@@ -215,7 +215,11 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             <List
                 data={primaryTagging ?? undefined}
                 rendererParams={sectionRendererParams}
-                rendererClassName={_cs(styles.section, sectionContainerClassName)}
+                rendererClassName={_cs(
+                    styles.section,
+                    sectionContainerClassName,
+                    compactMode && styles.compact,
+                )}
                 renderer={CompactSection}
                 keySelector={sectionKeySelector}
             />

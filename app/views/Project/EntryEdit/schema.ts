@@ -100,6 +100,7 @@ export const getEntrySchema = (widgets: Partial<Record<string, Widget>>): EntryS
 
         id: [defaultUndefinedType],
         lead: [],
+        draftEntry: [],
         // order
         // informationDate
         entryType: [],

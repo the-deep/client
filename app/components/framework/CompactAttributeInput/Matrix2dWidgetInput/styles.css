@@ -52,8 +52,13 @@
                         gap: var(--dui-spacing-small);
 
                         .separator-icon,
-                        .badges {
+                        .badges-container {
                             display: inline-block;
+
+                            .badges-list {
+                                display: inline-flex;
+                                flex-wrap: wrap;
+                            }
                         }
                     }
 

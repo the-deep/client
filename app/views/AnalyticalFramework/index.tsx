@@ -107,6 +107,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         properties,
         modifiedAt,
         predictionTagsMapping,
+        assistedTaggingEnabled,
     } = framework;
 
     const newValues = removeNull({
@@ -117,6 +118,7 @@ function transformFramework(framework: Framework): FrameworkInput {
         primaryTagging,
         secondaryTagging,
         predictionTagsMapping,
+        assistedTaggingEnabled,
         properties,
         isVisualizationEnabled: isDefined(properties),
         modifiedAt,
@@ -534,7 +536,7 @@ function AnalyticalFramework(props: Props) {
 
     const handleAssistedTaggingStatusChange = useCallback(
         (val: boolean) => {
-            setFieldValue(val, 'isAssistedTaggingEnabled');
+            setFieldValue(val, 'assistedTaggingEnabled');
         },
         [setFieldValue],
     );
@@ -952,7 +954,7 @@ function AnalyticalFramework(props: Props) {
                                     allWidgets={allWidgets}
                                     value={value.predictionTagsMapping}
                                     onChange={handlePredictionTagsMappings}
-                                    assistedTaggingEnabled={value.isAssistedTaggingEnabled}
+                                    assistedTaggingEnabled={value.assistedTaggingEnabled}
                                     assistedPredictionTags={(
                                         assistedTagsResponse
                                             ?.assistedTagging?.predictionTags

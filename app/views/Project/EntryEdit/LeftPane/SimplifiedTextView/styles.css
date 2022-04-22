@@ -17,9 +17,9 @@
     }
 
     &.assisted-enabled {
-        &::selection {
+        >*::selection {
             background: var(--dui-color-nlp);
-            color: var(--dui-color-text-on-primary);
+            color: var(--dui-color-text-on-accent);
         }
     }
 
@@ -46,6 +46,11 @@
         .add-button {
             font-size: var(--dui-font-size-large);
             user-select: none;
+
+            .brain-icon {
+                width: auto;
+                height: var(--dui-font-size-extra-large);
+            }
         }
     }
 

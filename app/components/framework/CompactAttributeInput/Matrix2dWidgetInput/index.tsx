@@ -154,7 +154,8 @@ function Column(props: ColumnProps) {
                     <div className={styles.subColumnSuggestions}>
                         <IoChevronForward className={styles.separatorIcon} />
                         <MultiBadgeInput
-                            containerClassName={styles.badges}
+                            containerClassName={styles.badgesContainer}
+                            listClassName={styles.badgesList}
                             name={column.key}
                             onChange={handleSubColumnValueChange}
                             options={orderedSubColumns}
@@ -164,6 +165,7 @@ function Column(props: ColumnProps) {
                             disabled={disabled || readOnly}
                             selectedButtonVariant="nlp-primary"
                             buttonVariant="nlp-tertiary"
+                            smallButtons
                         />
                     </div>
                 )}

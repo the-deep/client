@@ -67,6 +67,7 @@ const FRAMEWORK = gql`
         description
         allowedPermissions
         isPrivate
+        assistedTaggingEnabled
         createdBy {
             id
             displayName

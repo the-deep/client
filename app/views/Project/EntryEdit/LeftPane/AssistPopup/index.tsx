@@ -4,12 +4,16 @@ import {
     Kraken,
     Container,
     Message,
-    Button,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
     SetValueArg,
     Error,
 } from '@togglecorp/toggle-form';
+import {
+    IoClose,
+    IoCheckmark,
+} from 'react-icons/io5';
 
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -30,6 +34,7 @@ interface Props {
     onChange: (val: SetValueArg<PartialEntryType>, name: undefined) => void;
     error: Error<PartialEntryType> | undefined;
     onEntryCreateButtonClick: () => void;
+    onEntryDiscardButtonClick: () => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     predictionsLoading?: boolean;
@@ -48,6 +53,7 @@ function AssistPopup(props: Props) {
         error,
         frameworkDetails,
         onEntryCreateButtonClick,
+        onEntryDiscardButtonClick,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         predictionsLoading,
@@ -76,17 +82,29 @@ function AssistPopup(props: Props) {
     return (
         <Container
             className={_cs(className, styles.assistPopup)}
-            heading="Assisted Tagging"
+            // heading="Assisted Tagging"
             headingSize="extraSmall"
-            footerActions={(
-                <Button
-                    name={undefined}
-                    onClick={onEntryCreateButtonClick}
-                    disabled={isMessageShown}
-                    variant="nlp-primary"
-                >
-                    Create Entry
-                </Button>
+            spacing="compact"
+            footerQuickActions={(
+                <>
+                    <QuickActionButton
+                        name={undefined}
+                        onClick={onEntryDiscardButtonClick}
+                        disabled={isMessageShown}
+                        title="Discard Entry"
+                    >
+                        <IoClose />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        name={undefined}
+                        onClick={onEntryCreateButtonClick}
+                        disabled={isMessageShown}
+                        variant="primary"
+                        title="Create Entry"
+                    >
+                        <IoCheckmark />
+                    </QuickActionButton>
+                </>
             )}
             contentClassName={styles.body}
         >
@@ -113,6 +131,7 @@ function AssistPopup(props: Props) {
                 />
             ) : (
                 <EntryInput
+                    className={styles.entryInput}
                     leadId={leadId}
                     name={undefined}
                     error={error}

@@ -719,7 +719,10 @@ function LeadsPane(props: Props) {
                                     name={selectedConnectorSourceLead}
                                     onClick={handleIgnoreLeadButtonClick}
                                     variant="secondary"
-                                    disabled={updateConnectorLeadBlockStatusLoading || disabled}
+                                    disabled={
+                                        updateConnectorLeadBlockStatusLoading
+                                        || disabled
+                                    }
                                 >
                                     {selectedConnectorSourceLead.blocked
                                         ? 'Un-ignore'

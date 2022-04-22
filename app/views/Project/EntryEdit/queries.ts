@@ -5,6 +5,7 @@ const ENTRY_FRAGMENT = gql`
         clientId
         id
         createdAt
+        draftEntry
         entryType
         droppedExcerpt
         excerpt

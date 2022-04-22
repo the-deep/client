@@ -136,6 +136,7 @@ function Row(props: RowProps) {
                     disabled={disabled || readOnly}
                     selectedButtonVariant="nlp-primary"
                     buttonVariant="nlp-tertiary"
+                    smallButtons
                 />
             )}
         </div>
