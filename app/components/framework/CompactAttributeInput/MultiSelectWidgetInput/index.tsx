@@ -152,6 +152,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
                             disabled={readOnly || disabled}
                             selectedButtonVariant="nlp-primary"
                             buttonVariant="nlp-tertiary"
+                            smallButtons
                         />
                     )}
                 </>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useContext, useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -40,6 +40,7 @@ import {
 import useLocalStorage from '#hooks/useLocalStorage';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
+import ProjectContext from '#base/context/ProjectContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
@@ -133,6 +134,7 @@ function LeftPane(props: Props) {
     } = props;
 
     const alert = useAlert();
+    const { project } = useContext(ProjectContext);
 
     const [activeTab, setActiveTab] = useState<TabOptions>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
@@ -488,6 +490,7 @@ function LeftPane(props: Props) {
     );
 
     const assistedTaggingShown = assistedTaggingEnabled
+        && !project?.isPrivate
         && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
 
@@ -531,6 +534,7 @@ function LeftPane(props: Props) {
                         {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
                             <>
                                 {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0
+                                    && !project?.isPrivate
                                     && frameworkDetails?.assistedTaggingEnabled
                                     && (
                                         <Switch

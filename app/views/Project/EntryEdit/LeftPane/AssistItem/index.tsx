@@ -188,7 +188,17 @@ function AssistItem(props: Props) {
     // on the entry add button
     useEffect(() => {
         assistPopupRef?.current?.setShowPopup(true);
-    }, [assistPopupRef]);
+    }, [
+        assistPopupRef,
+    ]);
+
+    const handleDiscardButtonClick = useCallback(() => {
+        assistPopupRef?.current?.setShowPopup(false);
+        onAssistCancel();
+    }, [
+        assistPopupRef,
+        onAssistCancel,
+    ]);
 
     const schema = useMemo(
         () => {
@@ -226,48 +236,6 @@ function AssistItem(props: Props) {
         setError,
         error,
     } = useForm(schema, emptyEntry);
-
-    const handleEntryCreateButtonClick = useCallback(() => {
-        if (!allRecommendations) {
-            return;
-        }
-
-        const submit = createSubmitHandler(
-            validate,
-            setError,
-            (entryData) => {
-                if (onAssistedEntryAdd) {
-                    const defaultAttributes = createDefaultAttributes(allWidgets) ?? [];
-
-                    const newAttributes = mergeLists(
-                        defaultAttributes,
-                        entryData?.attributes ?? [],
-                        (attr) => attr.widget,
-                        (defaultAttr, newAttr) => ({
-                            ...newAttr,
-                            clientId: defaultAttr.clientId,
-                            widget: defaultAttr.widget,
-                            id: defaultAttr.id,
-                            widgetVersion: defaultAttr.widgetVersion,
-                        }),
-                    );
-
-                    onAssistedEntryAdd({
-                        ...entryData,
-                        attributes: newAttributes,
-                    });
-                }
-            },
-        );
-
-        submit();
-    }, [
-        allWidgets,
-        allRecommendations,
-        validate,
-        setError,
-        onAssistedEntryAdd,
-    ]);
 
     const [messageText, setMessageText] = useState<string | undefined>();
 
@@ -539,6 +507,50 @@ function AssistItem(props: Props) {
         ],
     );
 
+    const handleEntryCreateButtonClick = useCallback(() => {
+        if (!allRecommendations) {
+            return;
+        }
+
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (entryData) => {
+                if (onAssistedEntryAdd) {
+                    const defaultAttributes = createDefaultAttributes(allWidgets) ?? [];
+
+                    const newAttributes = mergeLists(
+                        defaultAttributes,
+                        entryData?.attributes ?? [],
+                        (attr) => attr.widget,
+                        (defaultAttr, newAttr) => ({
+                            ...newAttr,
+                            clientId: defaultAttr.clientId,
+                            widget: defaultAttr.widget,
+                            id: defaultAttr.id,
+                            widgetVersion: defaultAttr.widgetVersion,
+                        }),
+                    );
+
+                    onAssistedEntryAdd({
+                        ...entryData,
+                        attributes: newAttributes,
+                        draftEntry: data?.project?.assistedTagging?.draftEntry?.id,
+                    });
+                }
+            },
+        );
+
+        submit();
+    }, [
+        data,
+        allWidgets,
+        allRecommendations,
+        validate,
+        setError,
+        onAssistedEntryAdd,
+    ]);
+
     const [
         createDraftEntry,
         {
@@ -621,6 +633,7 @@ function AssistItem(props: Props) {
                         leadId={leadId}
                         hints={allHints}
                         recommendations={allRecommendations}
+                        onEntryDiscardButtonClick={handleDiscardButtonClick}
                         onEntryCreateButtonClick={handleEntryCreateButtonClick}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={setGeoAreaOptions}

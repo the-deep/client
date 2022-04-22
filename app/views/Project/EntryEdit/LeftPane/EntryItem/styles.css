@@ -21,10 +21,20 @@
         height: 100%;
     }
 
+    &.created-from-assisted {
+        border-color: var(--dui-color-nlp);
+    }
+
     &.active {
         .vertical-border {
             background-color: var(--dui-color-accent);
             animation: grow var(--dui-duration-transition-medium) ease-in forwards;
+        }
+
+        &.created-from-assisted {
+            .vertical-border {
+                background-color: var(--dui-color-nlp);
+            }
         }
     }
 

@@ -13,7 +13,6 @@ import { FrameworkInput } from './types';
 
 type FormType = FrameworkInput & {
     isVisualizationEnabled?: boolean;
-    isAssistedTaggingEnabled?: boolean;
     modifiedAt?: string;
 };
 // NOTE: they will be handled internally
@@ -107,7 +106,7 @@ export const defaultFormValues: PartialFormType = {
     title: '',
     isPrivate: false,
     isVisualizationEnabled: false,
-    isAssistedTaggingEnabled: true,
+    assistedTaggingEnabled: true,
     modifiedAt: undefined,
 };
 
@@ -120,7 +119,7 @@ const schema: FormSchema = {
             isPrivate: [],
             organization: [],
             isVisualizationEnabled: [],
-            isAssistedTaggingEnabled: [],
+            assistedTaggingEnabled: [],
             modifiedAt: [],
             properties: [forceNullType],
 

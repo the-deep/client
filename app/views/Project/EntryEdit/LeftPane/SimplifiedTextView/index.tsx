@@ -7,8 +7,11 @@ import {
 } from '@togglecorp/fujs';
 import {
     QuickActionButton,
+    Svg,
     Button,
 } from '@the-deep/deep-ui';
+
+import brainIcon from '#resources/img/brain.svg';
 
 import { PartialEntryType as EntryInput } from '../../schema';
 import { Framework } from '../../types';
@@ -33,6 +36,7 @@ type Split = {
     entryServerId: string | undefined;
     clientId: string;
     deleted: boolean;
+    draftEntry?: string;
 } | {
     type: 'assisted';
 });
@@ -127,6 +131,7 @@ function SimplifiedTextView(props: Props) {
                 entryServerId: entry.id,
                 clientId: entry.clientId,
                 deleted: entry.deleted,
+                draftEntry: entry.draftEntry,
             });
         });
 
@@ -142,7 +147,7 @@ function SimplifiedTextView(props: Props) {
                     endIndex: startIndex + textToAssist.length,
                     type: 'assisted',
                     excerpt: textToAssist,
-                    key: randomString(),
+                    key: 'assist-key',
                 };
             }
         }
@@ -232,6 +237,7 @@ function SimplifiedTextView(props: Props) {
                                 excerpt={split.excerpt}
                                 deleted={split.deleted}
                                 entryType={split.entryType}
+                                draftEntry={split.draftEntry}
                                 droppedExcerpt={split.droppedExcerpt}
                                 onExcerptChange={onExcerptChange}
                                 onEntryDelete={onEntryDelete}
@@ -326,15 +332,29 @@ function SimplifiedTextView(props: Props) {
                     style={position ? ({ ...position }) : undefined}
                 >
                     {assistedTaggingEnabled ? (
-                        <QuickActionButton
-                            title="Assist"
-                            name={textContent}
-                            variant="nlp-primary"
-                            className={styles.addButton}
-                            onClick={handleAssistButtonClick}
-                        >
-                            <IoAdd />
-                        </QuickActionButton>
+                        <>
+                            <QuickActionButton
+                                title="Add entry"
+                                name={textContent}
+                                variant="primary"
+                                className={styles.addButton}
+                                onClick={handleAddButtonClick}
+                            >
+                                <IoAdd />
+                            </QuickActionButton>
+                            <QuickActionButton
+                                title="Assist"
+                                name={textContent}
+                                variant="nlp-primary"
+                                className={styles.addButton}
+                                onClick={handleAssistButtonClick}
+                            >
+                                <Svg
+                                    className={styles.brainIcon}
+                                    src={brainIcon}
+                                />
+                            </QuickActionButton>
+                        </>
                     ) : (
                         <QuickActionButton
                             title="Add entry"

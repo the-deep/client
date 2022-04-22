@@ -1,6 +1,7 @@
 .check-button {
     position: relative;
     overflow: visible;
+    text-transform: initial;
 
     .actions {
         display: flex;

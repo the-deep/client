@@ -174,9 +174,10 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         value: selectedTag === itemKey,
         badgeCount: mappingsByTagId?.[itemKey]?.length ?? 0,
         onClick: handleTagClick,
-        disabled,
+        disabled: disabled || !assistedTaggingEnabled,
     }), [
         disabled,
+        assistedTaggingEnabled,
         handleTagClick,
         selectedTag,
         mappingsByTagId,
@@ -187,8 +188,9 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         name: itemKey,
         value: !!geoWidgetsMappingValue?.[widget.id],
         onClick: handleGeoWidgetClick,
-        disabled,
+        disabled: disabled || !assistedTaggingEnabled,
     }), [
+        assistedTaggingEnabled,
         disabled,
         geoWidgetsMappingValue,
         handleGeoWidgetClick,
@@ -199,9 +201,10 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         mappings: categoricalMappings,
         onMappingsChange: handleWidgetMappingsChange,
         selectedTag,
-        disabled,
+        disabled: disabled || !assistedTaggingEnabled,
     }), [
         disabled,
+        assistedTaggingEnabled,
         categoricalMappings,
         selectedTag,
         handleWidgetMappingsChange,
@@ -225,14 +228,21 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                     />
                 )}
             />
-            <div className={styles.content}>
+            <div
+                className={_cs(
+                    styles.content,
+                    !assistedTaggingEnabled && styles.fadeOut,
+                )}
+            >
                 <Card className={styles.card}>
                     <Container
                         className={styles.nlpFramework}
                         headingSize="small"
                         heading="NLP Framework"
+                        spacing="compact"
                     >
                         <ListView
+                            className={styles.nlpFrameworkList}
                             data={predictionTags}
                             renderer={CheckButton}
                             rendererParams={nlpRendererParams}
@@ -250,8 +260,10 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                         className={styles.currentFramework}
                         heading="Selected Framework"
                         headingSize="small"
+                        spacing="compact"
                     >
                         <ListView
+                            className={styles.selectedFrameworkList}
                             data={widgets}
                             renderer={WidgetTagList}
                             rendererParams={widgetRendererParams}
@@ -263,7 +275,12 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                     </ContainerCard>
                 </Card>
                 {(geoWidgets?.length ?? 0) > 0 && (
-                    <Card className={styles.card}>
+                    <Card
+                        className={_cs(
+                            styles.card,
+                            styles.geoWidgets,
+                        )}
+                    >
                         <ContainerCard
                             heading="Geo Widgets"
                             spacing="compact"
