@@ -113,7 +113,7 @@ function ConnectorSource(props: Props) {
             )}
         >
             <div className={styles.chartContainer}>
-                {((convertedSourceActivity?.length ?? 0) > 0) ? (
+                {(((convertedSourceActivity?.length ?? 0) > 0) && isSuccessfullyFetched) ? (
                     <ResponsiveContainer className={styles.responsiveContainer}>
                         <AreaChart data={convertedSourceActivity}>
                             <defs>

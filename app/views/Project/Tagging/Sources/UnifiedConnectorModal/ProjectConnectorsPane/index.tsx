@@ -1,5 +1,9 @@
-import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useMemo, useCallback } from 'react';
+import {
+    _cs,
+    isDefined,
+    compareDate,
+} from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     ListView,
@@ -11,6 +15,7 @@ import {
 import {
     IoChevronForward,
 } from 'react-icons/io5';
+import { getMaximum } from '#utils/common';
 
 import {
     ProjectConnectorsListQuery,
@@ -26,7 +31,7 @@ const connectorKeySelector = (d: ConnectorMini) => d.id;
 interface ConnectorItemProps {
     itemKey: string;
     title: string;
-    createdAt: string;
+    sources?: ConnectorMini['sources'];
     onClick: (key: string) => void;
     selected: boolean;
 }
@@ -35,10 +40,21 @@ function ConnectorItem(props: ConnectorItemProps) {
     const {
         itemKey,
         title,
-        createdAt,
         onClick,
         selected,
+        sources,
     } = props;
+
+    const latestFetchedAt = useMemo(() => {
+        if (!sources) {
+            return undefined;
+        }
+        return getMaximum(
+            // NOTE: Filtering this out as compareDate doesn't support undefined dates
+            sources.filter((source) => isDefined(source.lastFetchedAt)),
+            (a, b) => compareDate(a.lastFetchedAt, b.lastFetchedAt),
+        )?.lastFetchedAt;
+    }, [sources]);
 
     return (
         <RawButton
@@ -54,8 +70,8 @@ function ConnectorItem(props: ConnectorItemProps) {
             </div>
             <TextOutput
                 className={styles.createdOn}
-                label="Created On"
-                value={createdAt}
+                label="Last Fetched On"
+                value={latestFetchedAt}
                 valueType="date"
             />
         </RawButton>
@@ -83,6 +99,9 @@ const PROJECT_CONNECTORS_LIST = gql`
                         id
                         title
                         createdAt
+                        sources {
+                            lastFetchedAt
+                        }
                     }
                 }
             }
@@ -110,14 +129,6 @@ function Connector(props: Props) {
         children,
     } = props;
 
-    const connectorsRendererParams = useCallback((key: string, data: ConnectorMini) => ({
-        itemKey: key,
-        title: data.title,
-        createdAt: data.createdAt,
-        onClick: setSelectedConnector,
-        selected: key === selectedConnector,
-    }), [selectedConnector, setSelectedConnector]);
-
     const {
         data,
         loading: connectorsGetPending,
@@ -143,6 +154,14 @@ function Connector(props: Props) {
             },
         },
     );
+
+    const connectorsRendererParams = useCallback((key: string, datum: ConnectorMini) => ({
+        itemKey: key,
+        title: datum.title,
+        sources: datum.sources,
+        onClick: setSelectedConnector,
+        selected: key === selectedConnector,
+    }), [selectedConnector, setSelectedConnector]);
 
     const connectors = data?.project?.unifiedConnector?.unifiedConnectors;
     const connectorsCount = connectors?.totalCount ?? 0;

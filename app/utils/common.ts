@@ -234,6 +234,24 @@ export function isFiltered(value: unknown) {
     return !doesObjectHaveNoData(value, ['']);
 }
 
+export function getMaximum<T>(
+    list: T[] | undefined,
+    comparator: (item1: T, item2: T) => number,
+) {
+    if (!list || list.length < 1) {
+        return undefined;
+    }
+    return list.reduce((acc: T, item: T) => {
+        if (!item) {
+            return acc;
+        }
+        if (comparator(item, acc) > 0) {
+            return item;
+        }
+        return acc;
+    }, list[0]);
+}
+
 export function mergeLists<T>(
     oldList: T[],
     newList: T[],
