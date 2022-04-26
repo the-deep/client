@@ -53,7 +53,7 @@ export interface Props {
     widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
     emptyMessageHidden?: boolean;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
 }
 
 function CompactSection(props: Props) {
@@ -77,7 +77,7 @@ function CompactSection(props: Props) {
         onApplyToAll,
         widgetsHints,
         emptyMessageHidden,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendations,
     } = props;
 
@@ -200,12 +200,12 @@ function CompactSection(props: Props) {
                 onApplyAllClick: handleApplyAllClick,
                 widgetsHints,
                 recommendations,
-                suggestionModeEnabled,
+                suggestionMode,
             };
         },
         [
             recommendations,
-            suggestionModeEnabled,
+            suggestionMode,
             widgetsHints,
             onApplyToAll,
             onAttributeChange,

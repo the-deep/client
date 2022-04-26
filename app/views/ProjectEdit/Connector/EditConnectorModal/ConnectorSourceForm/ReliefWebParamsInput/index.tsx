@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-    DateInput,
     SelectInput,
+    DateDualRangeInput,
 } from '@the-deep/deep-ui';
 
 import {
@@ -69,21 +69,16 @@ function ReliefWebParamsInput<T extends string>(props: Props<T>) {
                 error={getErrorString(error?.country)}
                 disabled={disabled}
             />
-            <DateInput
-                name="from"
-                label="From date"
-                value={value?.from}
-                onChange={setParamsFieldValue}
-                disabled={disabled}
-                error={error?.from}
-            />
-            <DateInput
-                name="to"
-                label="To date"
-                value={value?.to}
-                onChange={setParamsFieldValue}
-                error={error?.to}
-                disabled={disabled}
+            <DateDualRangeInput
+                label="Published At"
+                fromName="from"
+                toName="to"
+                fromOnChange={setParamsFieldValue}
+                toOnChange={setParamsFieldValue}
+                fromError={error?.from}
+                fromValue={value?.from}
+                toError={error?.to}
+                toValue={value?.to}
             />
         </>
     );

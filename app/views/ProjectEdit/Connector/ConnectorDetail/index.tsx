@@ -217,6 +217,14 @@ function ConnectorDetail(props: Props) {
         hideEditConnectorModal,
     ] = useModalState(false);
 
+    const handleConnectorUpdateSuccess = useCallback(() => {
+        hideEditConnectorModal();
+        refetch();
+    }, [
+        hideEditConnectorModal,
+        refetch,
+    ]);
+
     const [
         updateConnector,
         { loading: pendingConnectorUpdate },
@@ -460,7 +468,7 @@ function ConnectorDetail(props: Props) {
                     projectId={projectId}
                     connectorId={connectorId}
                     onCloseClick={hideEditConnectorModal}
-                    onUpdateSuccess={hideEditConnectorModal}
+                    onUpdateSuccess={handleConnectorUpdateSuccess}
                 />
             )}
         </ContainerCard>

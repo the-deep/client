@@ -45,7 +45,7 @@ export interface Props <N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialMultiSelectWidget;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
     recommendedValue?: MultiSelectValue | null | undefined;
 }
 
@@ -62,7 +62,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -98,14 +98,14 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
     ), [recommendedValue]);
 
     const optionsForSuggestions = useMemo(() => {
-        if (!suggestionModeEnabled) {
+        if (!suggestionMode) {
             return [];
         }
         return sortedOptions?.filter((item) => recommendedValuesMap?.[item.key]);
     }, [
         recommendedValuesMap,
         sortedOptions,
-        suggestionModeEnabled,
+        suggestionMode,
     ]);
 
     return (
@@ -129,7 +129,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
                     <NonFieldError
                         error={error}
                     />
-                    {!suggestionModeEnabled ? (
+                    {!suggestionMode ? (
                         <MultiSelectInput
                             name={name}
                             options={sortedOptions}

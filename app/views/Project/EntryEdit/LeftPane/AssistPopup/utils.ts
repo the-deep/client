@@ -17,6 +17,7 @@ import {
     SingleSelectWidget,
     MultiSelectMappingsItem,
     MultiSelectWidget,
+    GeoLocationWidget,
 } from '#types/newAnalyticalFramework';
 import {
 } from '#types/newEntry';
@@ -25,6 +26,8 @@ import {
     getType,
     DeepReplace,
 } from '#utils/types';
+
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import {
     PartialAttributeType,
@@ -35,6 +38,7 @@ type Matrix2dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATR
 type ScaleWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SCALE' }>;
 type SingleSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SELECT' }>;
 type MultiSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MULTISELECT' }>;
+type GeoLocationWidgetAttribute = getType<PartialAttributeType, { widgetType: 'GEO' }>;
 
 export function createMatrix1dAttr(
     mappings: Matrix1dMappingsItem[] | undefined,
@@ -228,6 +232,25 @@ export function createMultiSelectAttr(
         widgetType: 'MULTISELECT' as const,
         data: {
             value: mappings.map((m) => m.association.optionKey),
+        },
+    });
+}
+
+export function createGeoAttr(
+    locations: GeoArea[] | undefined,
+    widget: GeoLocationWidget,
+): GeoLocationWidgetAttribute | undefined {
+    if (!locations || locations.length <= 0) {
+        return undefined;
+    }
+
+    return ({
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'GEO' as const,
+        data: {
+            value: locations.map((location) => location.id),
         },
     });
 }
