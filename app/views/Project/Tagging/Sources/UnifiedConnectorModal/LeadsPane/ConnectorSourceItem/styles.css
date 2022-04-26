@@ -1,0 +1,21 @@
+.connector-source-item {
+    .content {
+        margin: calc(var(--spacing) * -1);
+    }
+
+    .pager {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .connector-lead-list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .connector-lead-item {
+            flex-shrink: 0;
+        }
+    }
+}

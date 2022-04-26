@@ -1,0 +1,19 @@
+.connector-detail {
+    background-color: var(--dui-color-foreground);
+
+    .header-actions {
+        display: flex;
+        gap: var(--dui-spacing-small);
+    }
+
+    .list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-large);
+
+        .source-item {
+            flex-shrink: 0;
+            width: 28rem;
+        }
+    }
+}

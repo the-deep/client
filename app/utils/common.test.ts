@@ -1,4 +1,14 @@
-import { sortByOrder, reorder, breadcrumb } from './common';
+import {
+    compareDate,
+} from '@togglecorp/fujs';
+
+import {
+    sortByOrder,
+    reorder,
+    getMaximum,
+    breadcrumb,
+    mergeLists,
+} from './common';
 
 test('sort by order', () => {
     expect(sortByOrder([])).toStrictEqual([]);
@@ -79,3 +89,125 @@ test('breadcrumb', () => {
     expect(breadcrumb(['ram', 'shyam'], ' / ')).toBe('ram / shyam');
     expect(breadcrumb(['ram', undefined, 'shyam'], ' / ')).toBe('ram / shyam');
 });
+
+test('Merge lists', () => {
+    const oldList = [
+        {
+            id: 1,
+            name: 'One',
+            key: 'one',
+        },
+        {
+            id: 2,
+            name: 'Two',
+            key: 'two',
+        },
+        {
+            id: 3,
+            name: 'Three',
+            key: 'three',
+        },
+    ];
+
+    const newList = [
+        {
+            id: 1,
+            name: 'Uno',
+            key: 'uno',
+        },
+        {
+            id: 3,
+            name: 'Tre',
+            key: 'tre',
+        },
+        {
+            id: 4,
+            name: 'Cuatro',
+            key: 'cuatro',
+        },
+    ];
+
+    expect(
+        mergeLists(
+            oldList,
+            newList,
+            (i) => i.id,
+            (_, newItem) => newItem,
+        )
+    ).toStrictEqual(
+        [
+            {
+                id: 1,
+                name: 'Uno',
+                key: 'uno',
+            },
+            {
+                id: 2,
+                name: 'Two',
+                key: 'two',
+            },
+            {
+                id: 3,
+                name: 'Tre',
+                key: 'tre',
+            },
+            {
+                id: 4,
+                name: 'Cuatro',
+                key: 'cuatro',
+            },
+        ]
+    );
+
+    expect(
+        mergeLists(
+            oldList,
+            newList,
+            (i) => i.id,
+            (oldItem, newItem) => ({
+                ...newItem,
+                key: oldItem.key,
+            }),
+        )
+    ).toStrictEqual(
+        [
+            {
+                id: 1,
+                name: 'Uno',
+                key: 'one',
+            },
+            {
+                id: 2,
+                name: 'Two',
+                key: 'two',
+            },
+            {
+                id: 3,
+                name: 'Tre',
+                key: 'three',
+            },
+            {
+                id: 4,
+                name: 'Cuatro',
+                key: 'cuatro',
+            },
+        ]
+    );
+});
+
+
+test('getMaximum', () => {
+    const dates = [
+        {
+            date: '2021-01-02',
+        },
+        {
+            date: '2021-01-05',
+        },
+        {
+            date: '2020-01-05',
+        },
+    ];
+    expect(getMaximum(dates, (d1, d2) => compareDate(d1.date, d2.date)).date).toBe('2021-01-05');
+});
+

@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState, useCallback } from 'react';
+import React, { useContext, Suspense, useMemo, useState, useCallback } from 'react';
 import {
     Switch,
     Route,
@@ -13,6 +13,7 @@ import {
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
+import { UserContext } from '#base/context/UserContext';
 import PreloadMessage from '#base/components/PreloadMessage';
 import SubNavbarContext from '#components/SubNavbar/context';
 import SubNavbar, { SubNavbarIcons, SubNavbarActions } from '#components/SubNavbar';
@@ -22,7 +23,8 @@ import routes from '#base/configs/routes';
 import _ts from '#ts';
 
 import LeadEditModal from './Sources/LeadEditModal';
-import BulkUpload from './Sources/BulkUpload';
+import BulkUploadModal from './Sources/BulkUploadModal';
+import UnifiedConnectorModal from './Sources/UnifiedConnectorModal';
 
 import styles from './styles.css';
 
@@ -32,7 +34,8 @@ interface Props {
 
 function Tagging(props: Props) {
     const { className } = props;
-    const { project } = React.useContext(ProjectContext);
+    const { user } = useContext(UserContext);
+    const { project } = useContext(ProjectContext);
 
     const defaultRoute = generatePath(routes.sources.path, { projectId: project?.id });
 
@@ -51,6 +54,12 @@ function Tagging(props: Props) {
         hideBulkUploadModal,
     ] = useModalState(false);
 
+    const [
+        isUnifiedConnectorModalShown,
+        showUnifiedConnectorModal,
+        hideUnifiedConnectorModal,
+    ] = useModalState(false);
+
     const navbarContextValue = useMemo(
         () => ({
             iconsNode,
@@ -64,6 +73,9 @@ function Tagging(props: Props) {
     const handleSingleLeadSaveSuccess = useCallback(() => {
         hideSingleSourceAddModal();
     }, [hideSingleSourceAddModal]);
+
+    const isConnectorsAccessible = !!user
+        ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
 
     const subNavbarComponents = (
         <>
@@ -86,6 +98,14 @@ function Tagging(props: Props) {
                     >
                         Add sources
                     </DropdownMenuItem>
+                    {isConnectorsAccessible && (
+                        <DropdownMenuItem
+                            onClick={showUnifiedConnectorModal}
+                            name={undefined}
+                        >
+                            Add sources from connectors
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenu>
             </SubNavbarActions>
         </>
@@ -234,8 +254,14 @@ function Tagging(props: Props) {
                 />
             )}
             {isBulkModalShown && project?.id && (
-                <BulkUpload
+                <BulkUploadModal
                     onClose={hideBulkUploadModal}
+                    projectId={project.id}
+                />
+            )}
+            {isUnifiedConnectorModalShown && project?.id && (
+                <UnifiedConnectorModal
+                    onClose={hideUnifiedConnectorModal}
                     projectId={project.id}
                 />
             )}

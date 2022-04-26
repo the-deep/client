@@ -9,6 +9,9 @@ import {
 import {
     isDefined,
 } from '@togglecorp/fujs';
+import {
+    getType,
+} from '#utils/types';
 
 import { Widget } from '#types/newAnalyticalFramework';
 
@@ -17,8 +20,6 @@ import { EntryInput } from './types';
 type FormType = {
     entries: EntryInput[];
 }
-
-type getType<T, Q> = T extends Q ? T : never;
 
 export type PartialFormType = PartialForm<FormType, 'clientId' | 'widgetType' | 'widget' | 'data' | 'entryType' | 'lead' | 'widgetVersion'>;
 
@@ -40,6 +41,7 @@ const getAttributeSchema = (widgets: Partial<Record<string, Widget>>): Attribute
             id: [defaultUndefinedType],
             clientId: [],
             widget: [],
+            // FIXME: Add proper schema
             data: [],
 
             widgetVersion: [],
@@ -98,6 +100,7 @@ export const getEntrySchema = (widgets: Partial<Record<string, Widget>>): EntryS
 
         id: [defaultUndefinedType],
         lead: [],
+        draftEntry: [],
         // order
         // informationDate
         entryType: [],

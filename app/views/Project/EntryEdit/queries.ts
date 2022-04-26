@@ -5,6 +5,7 @@ const ENTRY_FRAGMENT = gql`
         clientId
         id
         createdAt
+        draftEntry
         entryType
         droppedExcerpt
         excerpt
@@ -122,6 +123,7 @@ export const PROJECT_FRAMEWORK = gql`
             id
             analysisFramework {
                 id
+                assistedTaggingEnabled
                 primaryTagging {
                     widgets {
                         id
@@ -160,6 +162,14 @@ export const PROJECT_FRAMEWORK = gql`
                     widgetId
                     width
                     version
+                }
+                predictionTagsMapping {
+                    id
+                    tag
+                    widget
+                    widgetType
+                    clientId
+                    association
                 }
             }
         }

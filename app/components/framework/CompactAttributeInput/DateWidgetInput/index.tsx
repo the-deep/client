@@ -22,6 +22,7 @@ export interface Props <N extends string>{
     readOnly?: boolean;
     actions?: React.ReactNode;
     icons?: React.ReactNode;
+    widgetHints?: string[];
 }
 
 function DateWidgetInput<N extends string>(props: Props<N>) {
@@ -36,6 +37,7 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        widgetHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -77,6 +79,8 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
                         readOnly={readOnly}
                         disabled={disabled}
                         error={error?.value}
+                        // TODO: Replace this with suggestions
+                        hint={widgetHints?.join(' ')}
                     />
                 </>
             )}

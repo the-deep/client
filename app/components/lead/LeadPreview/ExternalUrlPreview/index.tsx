@@ -2,11 +2,28 @@ import React, { useState, useMemo } from 'react';
 import { PendingMessage } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
+import { proxyEndpoint } from '#base/configs/env';
+
 import {
     MimeTypes,
 } from '../Preview/mimeTypes';
 
 import Viewer from '../Preview';
+
+// NOTE: We are proxying these websites as they are auto-downloading files instead
+// of previewing them
+const domainsToProxy = [
+    'data2.unhcr.org',
+];
+
+function getProxiedUrl(url: string) {
+    const urlObject = new URL(url);
+    if (domainsToProxy.includes(urlObject.host)) {
+        // NOTE: proxy server does not support encoded url params
+        return `${proxyEndpoint}?url=${url}`;
+    }
+    return url;
+}
 
 // NOTE: Need to confirm if this is necessary
 // This is only necessary if even the keys might be differently cased
@@ -84,6 +101,10 @@ function ExternalUrlPreview(props: Props) {
         },
     });
 
+    const proxiedUrl = useMemo(() => (
+        getProxiedUrl(urlDetailsResponse?.httpsUrl ?? url)
+    ), [urlDetailsResponse?.httpsUrl, url]);
+
     if (pending) {
         return (
             <div className={className}>
@@ -97,7 +118,7 @@ function ExternalUrlPreview(props: Props) {
     return (
         <Viewer
             className={className}
-            url={urlDetailsResponse?.httpsUrl ?? url}
+            url={proxiedUrl}
             mimeType={mimeType ?? 'text/html'}
             canShowIframe={canShowIframe}
         />

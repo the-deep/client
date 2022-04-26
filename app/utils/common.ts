@@ -7,6 +7,7 @@ import {
     isDefined,
     isNotDefined,
     compareNumber,
+    listToMap,
     isTruthyString,
     formatDateToString,
     doesObjectHaveNoData,
@@ -231,4 +232,54 @@ export function flatten<A>(a: A[] | A, childSelector: (item: A) => A[] | undefin
 
 export function isFiltered(value: unknown) {
     return !doesObjectHaveNoData(value, ['']);
+}
+
+export function getMaximum<T>(
+    list: T[] | undefined,
+    comparator: (item1: T, item2: T) => number,
+) {
+    if (!list || list.length < 1) {
+        return undefined;
+    }
+    return list.reduce((acc: T, item: T) => {
+        if (!item) {
+            return acc;
+        }
+        if (comparator(item, acc) > 0) {
+            return item;
+        }
+        return acc;
+    }, list[0]);
+}
+
+export function mergeLists<T>(
+    oldList: T[],
+    newList: T[],
+    keySelector: (item: T) => string | number,
+    mergeModifier: (prevItem: T, newItem: T) => T,
+) {
+    const newListMap = listToMap(newList, keySelector, (item) => item);
+
+    const updatedList = oldList.map((oldItem) => (
+        newListMap[keySelector(oldItem)] ? (
+            mergeModifier(oldItem, newListMap[keySelector(oldItem)])
+        ) : (
+            oldItem
+        )
+    ));
+
+    const oldListKeyMap = listToMap(
+        oldList,
+        keySelector,
+        () => true,
+    );
+
+    const newListWithOldItemsRemoved = newList.filter((item) => !oldListKeyMap[keySelector(item)]);
+
+    const finalList = [
+        ...updatedList,
+        ...newListWithOldItemsRemoved,
+    ];
+
+    return finalList;
 }

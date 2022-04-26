@@ -1,0 +1,24 @@
+.assist-item {
+    border: var(--dui-width-separator-thin) solid var(--color-nlp-tag);
+    background-color: var(--dui-color-foreground);
+    user-select: none;
+
+    .button {
+        .brain-icon {
+            width: auto;
+            height: var(--dui-font-size-extra-large);
+        }
+    }
+
+    .content {
+        font-weight: var(--dui-font-weight-bold);
+    }
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+    font-size: var(--dui-font-size-medium);
+}

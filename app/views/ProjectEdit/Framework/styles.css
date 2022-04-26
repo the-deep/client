@@ -24,6 +24,11 @@
             padding-right: var(--dui-spacing-medium);
             overflow-y: auto;
             gap: var(--dui-spacing-medium);
+
+            .related-to-me-select {
+                font-size: var(--dui-font-size-heading-small);
+                font-weight: var(--dui-font-weight-bold);
+            }
         }
 
         .bottom-content {

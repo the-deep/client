@@ -1,6 +1,11 @@
 import React, { useCallback } from 'react';
-import { NumberInput, NumberOutput } from '@the-deep/deep-ui';
-import { isNotDefined } from '@togglecorp/fujs';
+import {
+    NumberInput,
+    NumberOutput,
+} from '@the-deep/deep-ui';
+import {
+    isNotDefined,
+} from '@togglecorp/fujs';
 import { Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import NonFieldError from '#components/NonFieldError';

@@ -1,0 +1,22 @@
+.assist-popup {
+    background-color: var(--dui-color-foreground);
+    height: 100%;
+    min-height: 240px;
+    overflow-y: auto;
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        width: var(--dui-width-modal-medium);
+        overflow-y: auto;
+
+        .message {
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .entry-input {
+            --height-entry-item: auto;
+        }
+    }
+}

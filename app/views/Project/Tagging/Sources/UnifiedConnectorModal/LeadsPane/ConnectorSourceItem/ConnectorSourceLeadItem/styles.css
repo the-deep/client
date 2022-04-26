@@ -1,0 +1,31 @@
+.connector-lead-item-container {
+    display: flex;
+    padding: 0 var(--dui-spacing-medium);
+    gap: var(--dui-spacing-medium);
+
+    &.selected {
+        background-color: var(--dui-color-surface-information);
+    }
+
+    &.faded {
+        opacity: 0.5;
+    }
+
+    &:not(:last-child) {
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    }
+
+    .title {
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium) 0;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .date, .tag {
+        align-self: center;
+        flex-shrink: 0;
+    }
+}

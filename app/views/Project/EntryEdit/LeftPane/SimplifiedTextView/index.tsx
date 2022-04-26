@@ -1,30 +1,52 @@
-import React from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { IoAdd } from 'react-icons/io5';
-import { _cs, isDefined } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     QuickActionButton,
+    Svg,
     Button,
 } from '@the-deep/deep-ui';
 
+import brainIcon from '#resources/img/brain.svg';
+
 import { PartialEntryType as EntryInput } from '../../schema';
+import { Framework } from '../../types';
 import useTextSelection from './useTextSelection';
 import EntryItem from '../EntryItem';
+import AssistItem from '../AssistItem';
+
 import styles from './styles.css';
 
 const CHARACTER_PER_PAGE = 10000;
 
-interface Split {
+type Split = {
     startIndex: number;
     endIndex: number;
-    excerpt: string | undefined;
+    excerpt: string;
+    key: string;
+} & ({
+    type: 'entry';
+    entryType: EntryInput['entryType'];
     droppedExcerpt: string | undefined;
-}
+    lead: string;
+    entryServerId: string | undefined;
+    clientId: string;
+    deleted: boolean;
+    draftEntry?: string;
+} | {
+    type: 'assisted';
+});
 
 interface Props {
     className?: string;
     text?: string;
+    leadId: string;
     entries: EntryInput[] | undefined | null;
     onAddButtonClick?: (selectedText: string) => void;
+    onAssistedEntryAdd?: (newEntry: EntryInput) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     activeEntryClientId?: string;
     onExcerptClick?: (entryClientId: string) => void;
@@ -36,7 +58,9 @@ interface Props {
     disableApproveButton?: boolean;
     disableDiscardButton?: boolean;
     disableAddButton?: boolean;
+    assistedTaggingEnabled: boolean;
     projectId: string | undefined;
+    frameworkDetails: Framework;
 }
 
 function SimplifiedTextView(props: Props) {
@@ -45,10 +69,13 @@ function SimplifiedTextView(props: Props) {
         text: textFromProps,
         entries,
         onAddButtonClick,
+        onAssistedEntryAdd,
         onExcerptChange,
         activeEntryClientId,
+        assistedTaggingEnabled,
         onExcerptClick,
         onApproveButtonClick,
+        leadId,
         projectId,
         onDiscardButtonClick,
         onEntryDelete,
@@ -57,13 +84,15 @@ function SimplifiedTextView(props: Props) {
         disableApproveButton,
         disableDiscardButton,
         disableAddButton,
+        frameworkDetails,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement>(null);
     const scrollTopRef = React.useRef<number | undefined>();
-    const [charactersLoaded, setCharactersLoaded] = React.useState(CHARACTER_PER_PAGE);
+    const [charactersLoaded, setCharactersLoaded] = useState(CHARACTER_PER_PAGE);
+    const [textToAssist, setTextToAssist] = useState<string | undefined>();
 
-    const text = React.useMemo(() => {
+    const text = useMemo(() => {
         if (textFromProps) {
             const textLength = Math.min(textFromProps.length, charactersLoaded);
             return textFromProps.substring(0, textLength);
@@ -73,11 +102,11 @@ function SimplifiedTextView(props: Props) {
     }, [textFromProps, charactersLoaded]);
 
     // TODO: Remove overlapping splits if necessary
-    const splits = React.useMemo(() => {
+    const splits = useMemo(() => {
         // NOTE: Store scrollTopRef before new split is calculated
         scrollTopRef.current = containerRef.current?.scrollTop;
 
-        return entries?.map((entry) => {
+        const entriesSplits = entries?.map((entry) => {
             if (!text || !entry.droppedExcerpt) {
                 return null;
             }
@@ -92,21 +121,46 @@ function SimplifiedTextView(props: Props) {
             return ({
                 startIndex,
                 endIndex,
-                entryId: entry.clientId,
-                excerpt: entry.excerpt,
+                type: 'entry',
+                key: entry.clientId,
+                excerpt: entry.excerpt ?? entry.droppedExcerpt,
                 droppedExcerpt: entry.droppedExcerpt,
                 entryType: entry.entryType,
                 lead: entry.lead,
                 entryServerId: entry.id,
                 clientId: entry.clientId,
                 deleted: entry.deleted,
+                draftEntry: entry.draftEntry,
             });
-        })
+        });
+
+        let assistedSplit: Split | undefined;
+
+        if (textToAssist && text) {
+            const startIndex = text.indexOf(textToAssist);
+            if (startIndex === -1) {
+                assistedSplit = undefined;
+            } else {
+                assistedSplit = {
+                    startIndex,
+                    endIndex: startIndex + textToAssist.length,
+                    type: 'assisted',
+                    excerpt: textToAssist,
+                    key: 'assist-key',
+                };
+            }
+        }
+
+        return [
+            ...(entriesSplits ?? []),
+            assistedSplit,
+        ]
             .filter(isDefined)
-            .sort((a: Split, b: Split) => (
-                a.startIndex - b.startIndex
-            )) ?? [];
+            .sort(
+                (a, b) => (a.startIndex - b.startIndex),
+            ) ?? [];
     }, [
+        textToAssist,
         text,
         entries,
     ]);
@@ -124,6 +178,30 @@ function SimplifiedTextView(props: Props) {
         [splits],
     );
 
+    const {
+        clientRect,
+        isCollapsed,
+        textContent,
+        resetTextSelection,
+        // FIXME: Look into if the ref is working correctly
+    } = useTextSelection(containerRef.current ?? undefined);
+
+    const handleAssistButtonClick = useCallback((newTextToAssist: string) => {
+        resetTextSelection();
+        setTextToAssist(newTextToAssist);
+    }, [resetTextSelection]);
+
+    const handleAssistedEntryAdd = useCallback((newEntry: EntryInput) => {
+        if (onAssistedEntryAdd) {
+            onAssistedEntryAdd(newEntry);
+        }
+        setTextToAssist(undefined);
+    }, [onAssistedEntryAdd]);
+
+    const handleAssistCancelButtonClick = useCallback(() => {
+        setTextToAssist(undefined);
+    }, []);
+
     let children: React.ReactNode = null;
     if (!text || splits.length === 0) {
         children = text;
@@ -138,35 +216,48 @@ function SimplifiedTextView(props: Props) {
                     </span>
                 )}
                 {splits.map((split, i) => (
-                    <React.Fragment key={split.entryId}>
+                    <React.Fragment key={split.key}>
                         {i > 0 && splits[i - 1].endIndex < split.startIndex && (
                             <span>
                                 {text.substring(splits[i - 1].endIndex, split.startIndex)}
                             </span>
                         )}
-                        <EntryItem
-                            className={styles.entry}
-                            clientId={split.clientId}
-                            entryServerId={split.entryServerId}
-                            projectId={projectId}
-                            lead={split.lead}
-                            entryId={split.entryId}
-                            onClick={onExcerptClick}
-                            disableClick={disableExcerptClick}
-                            isActive={activeEntryClientId === split.entryId}
-                            excerpt={split.excerpt}
-                            deleted={split.deleted}
-                            entryType={split.entryType}
-                            droppedExcerpt={split.droppedExcerpt}
-                            onExcerptChange={onExcerptChange}
-                            onEntryDelete={onEntryDelete}
-                            onEntryRestore={onEntryRestore}
-                            onApproveButtonClick={onApproveButtonClick}
-                            onDiscardButtonClick={onDiscardButtonClick}
-                            disableApproveButton={disableApproveButton}
-                            disableDiscardButton={disableDiscardButton}
-                            entryImage={undefined}
-                        />
+                        {split.type === 'entry' ? (
+                            <EntryItem
+                                className={styles.entry}
+                                clientId={split.clientId}
+                                entryServerId={split.entryServerId}
+                                projectId={projectId}
+                                lead={split.lead}
+                                entryId={split.clientId}
+                                onClick={onExcerptClick}
+                                disableClick={disableExcerptClick}
+                                isActive={activeEntryClientId === split.clientId}
+                                excerpt={split.excerpt}
+                                deleted={split.deleted}
+                                entryType={split.entryType}
+                                draftEntry={split.draftEntry}
+                                droppedExcerpt={split.droppedExcerpt}
+                                onExcerptChange={onExcerptChange}
+                                onEntryDelete={onEntryDelete}
+                                onEntryRestore={onEntryRestore}
+                                onApproveButtonClick={onApproveButtonClick}
+                                onDiscardButtonClick={onDiscardButtonClick}
+                                disableApproveButton={disableApproveButton}
+                                disableDiscardButton={disableDiscardButton}
+                                entryImage={undefined}
+                            />
+                        ) : (
+                            <AssistItem
+                                text={split.excerpt}
+                                projectId={projectId}
+                                onAssistedEntryAdd={handleAssistedEntryAdd}
+                                leadId={leadId}
+                                frameworkDetails={frameworkDetails}
+                                onAssistCancel={handleAssistCancelButtonClick}
+                                disabled={disableExcerptClick}
+                            />
+                        )}
                     </React.Fragment>
                 ))}
                 {lastSplit.endIndex < text.length && (
@@ -178,13 +269,7 @@ function SimplifiedTextView(props: Props) {
         );
     }
 
-    const {
-        clientRect,
-        isCollapsed,
-        textContent,
-    } = useTextSelection(containerRef.current ?? undefined);
-
-    const position = React.useMemo(() => {
+    const position = useMemo(() => {
         const parent = containerRef.current;
         if (!clientRect || !parent) {
             return undefined;
@@ -204,7 +289,7 @@ function SimplifiedTextView(props: Props) {
         return pos;
     }, [clientRect]);
 
-    const handleAddButtonClick = React.useCallback((selectedText: string) => {
+    const handleAddButtonClick = useCallback((selectedText: string) => {
         window.getSelection()?.removeAllRanges();
 
         if (onAddButtonClick) {
@@ -212,7 +297,7 @@ function SimplifiedTextView(props: Props) {
         }
     }, [onAddButtonClick]);
 
-    const handleLoadMoreClick = React.useCallback(() => {
+    const handleLoadMoreClick = useCallback(() => {
         setCharactersLoaded((prevValue) => (
             prevValue + CHARACTER_PER_PAGE
         ));
@@ -225,6 +310,7 @@ function SimplifiedTextView(props: Props) {
                 styles.simplifiedTextView,
                 className,
                 disableAddButton && styles.disabled,
+                assistedTaggingEnabled && styles.assistedEnabled,
             )}
         >
             {children}
@@ -244,15 +330,41 @@ function SimplifiedTextView(props: Props) {
                     className={styles.actionsPopup}
                     style={position ? ({ ...position }) : undefined}
                 >
-                    <QuickActionButton
-                        title="Add entry"
-                        name={textContent}
-                        variant="primary"
-                        className={styles.addButton}
-                        onClick={handleAddButtonClick}
-                    >
-                        <IoAdd />
-                    </QuickActionButton>
+                    {assistedTaggingEnabled ? (
+                        <>
+                            <QuickActionButton
+                                title="Add entry"
+                                name={textContent}
+                                variant="primary"
+                                className={styles.addButton}
+                                onClick={handleAddButtonClick}
+                            >
+                                <IoAdd />
+                            </QuickActionButton>
+                            <QuickActionButton
+                                title="Assist"
+                                name={textContent}
+                                variant="nlp-primary"
+                                className={styles.addButton}
+                                onClick={handleAssistButtonClick}
+                            >
+                                <Svg
+                                    className={styles.brainIcon}
+                                    src={brainIcon}
+                                />
+                            </QuickActionButton>
+                        </>
+                    ) : (
+                        <QuickActionButton
+                            title="Add entry"
+                            name={textContent}
+                            variant="primary"
+                            className={styles.addButton}
+                            onClick={handleAddButtonClick}
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
+                    )}
                 </div>
             )}
         </div>

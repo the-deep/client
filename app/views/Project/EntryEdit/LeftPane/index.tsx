@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useContext, useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -24,6 +24,7 @@ import {
     QuickActionLink,
     PendingMessage,
     Message,
+    Switch,
 } from '@the-deep/deep-ui';
 import {
     IoAdd,
@@ -36,8 +37,11 @@ import {
     IoCheckmark,
 } from 'react-icons/io5';
 
+import useLocalStorage from '#hooks/useLocalStorage';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
+import ProjectContext from '#base/context/ProjectContext';
+import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
@@ -46,6 +50,7 @@ import {
 import { PartialEntryType as EntryInput } from '../schema';
 import CanvasDrawModal from './CanvasDrawModal';
 import { Lead, EntryImagesMap } from '../index';
+import { Framework } from '../types';
 import SimplifiedTextView from './SimplifiedTextView';
 import EntryItem, { ExcerptModal } from './EntryItem';
 import styles from './styles.css';
@@ -75,6 +80,7 @@ export type TabOptions = 'simplified' | 'original' | 'entries' | undefined;
 interface Props {
     className?: string;
     onEntryCreate?: (newEntry: EntryInput) => void;
+    onAssistedEntryAdd?: (newEntry: EntryInput) => void;
     entries: EntryInput[] | undefined | null;
     activeEntry?: string;
     onEntryClick?: (entryId: string) => void;
@@ -92,6 +98,7 @@ interface Props {
     entriesError: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original';
+    frameworkDetails: Framework;
     activeTabRef?: React.MutableRefObject<{
         setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>>;
     } | null>;
@@ -123,15 +130,27 @@ function LeftPane(props: Props) {
         defaultTab = 'simplified',
         projectId,
         activeTabRef,
+        frameworkDetails,
+        onAssistedEntryAdd,
     } = props;
 
     const alert = useAlert();
+    const { project } = useContext(ProjectContext);
+    const { user } = useContext(UserContext);
+
+    const isAssistedTaggingAccessible = !!user
+        ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
 
     const [activeTab, setActiveTab] = useState<TabOptions>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
             ? 'entries'
             : defaultTab,
     );
+
+    const [
+        assistedTaggingEnabled,
+        onAssistedTaggingStatusChange,
+    ] = useLocalStorage('assisted-tagging-enabled', false);
 
     useEffect(() => {
         if (activeTabRef) {
@@ -475,6 +494,12 @@ function LeftPane(props: Props) {
         </Container>
     );
 
+    const assistedTaggingShown = assistedTaggingEnabled
+        && !project?.isPrivate
+        && isAssistedTaggingAccessible
+        && frameworkDetails?.assistedTaggingEnabled
+        && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
+
     return (
         <div className={_cs(styles.sourcePreview, className)}>
             <Tabs
@@ -513,22 +538,41 @@ function LeftPane(props: Props) {
                         retainMount="lazy"
                     >
                         {(leadPreview?.textExtract?.length ?? 0) > 0 ? (
-                            <SimplifiedTextView
-                                className={styles.simplifiedTextView}
-                                activeEntryClientId={activeEntry}
-                                projectId={projectId}
-                                onExcerptClick={onEntryClick}
-                                entries={entries}
-                                onAddButtonClick={handleExcerptAddFromSimplified}
-                                text={leadPreview?.textExtract}
-                                onExcerptChange={onExcerptChange}
-                                onApproveButtonClick={onApproveButtonClick}
-                                onDiscardButtonClick={onDiscardButtonClick}
-                                onEntryDelete={onEntryDelete}
-                                onEntryRestore={onEntryRestore}
-                                disableAddButton={isEntrySelectionActive}
-                                disableExcerptClick={isEntrySelectionActive}
-                            />
+                            <>
+                                {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0
+                                    && !project?.isPrivate
+                                    && frameworkDetails?.assistedTaggingEnabled
+                                    && isAssistedTaggingAccessible
+                                    && (
+                                        <Switch
+                                            className={styles.switch}
+                                            name="isAssistedTaggingEnabled"
+                                            value={assistedTaggingEnabled}
+                                            onChange={onAssistedTaggingStatusChange}
+                                            label="Assisted Tagging"
+                                        />
+                                    )}
+                                <SimplifiedTextView
+                                    className={styles.simplifiedTextView}
+                                    activeEntryClientId={activeEntry}
+                                    projectId={projectId}
+                                    onExcerptClick={onEntryClick}
+                                    entries={entries}
+                                    onAddButtonClick={handleExcerptAddFromSimplified}
+                                    onAssistedEntryAdd={onAssistedEntryAdd}
+                                    text={leadPreview?.textExtract}
+                                    onExcerptChange={onExcerptChange}
+                                    onApproveButtonClick={onApproveButtonClick}
+                                    onDiscardButtonClick={onDiscardButtonClick}
+                                    onEntryDelete={onEntryDelete}
+                                    onEntryRestore={onEntryRestore}
+                                    disableAddButton={isEntrySelectionActive}
+                                    disableExcerptClick={isEntrySelectionActive}
+                                    assistedTaggingEnabled={assistedTaggingShown}
+                                    frameworkDetails={frameworkDetails}
+                                    leadId={leadId}
+                                />
+                            </>
                         ) : (
                             <Message
                                 // NOTE: Pending from server side to get state of extraction

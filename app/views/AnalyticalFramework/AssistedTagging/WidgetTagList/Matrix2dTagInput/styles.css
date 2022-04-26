@@ -1,0 +1,22 @@
+.matrix-tag-input {
+    display: flex;
+    flex-direction: column;
+
+    .cols {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--dui-spacing-small);
+    }
+
+    .sub-columns {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
+    }
+
+    .sub-rows {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dui-spacing-small);
+    }
+}

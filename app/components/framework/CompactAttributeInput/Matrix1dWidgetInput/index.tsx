@@ -9,6 +9,7 @@ import {
 import {
     ListView,
     MultiSelectInput,
+    MultiBadgeInput,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 
@@ -30,7 +31,7 @@ export type PartialMatrix1dWidget = PartialForm<
 >;
 
 type RowType = NonNullable<NonNullable<NonNullable<PartialMatrix1dWidget>['properties']>['rows']>[number];
-type CellType = NonNullable<NonNullable<RowType>['cells']>[number];
+export type CellType = NonNullable<NonNullable<RowType>['cells']>[number];
 
 const cellKeySelector = (c: CellType) => c.key;
 const cellLabelSelector = (c: CellType) => c.label ?? '';
@@ -40,7 +41,9 @@ interface RowProps {
     readOnly?: boolean;
     row: RowType;
     value: NonNullable<Matrix1dValue['value']>[string];
+    recommendedValue?: NonNullable<Matrix1dValue['value']>[string];
     onCellsChange: (cells: { [key: string]: boolean | undefined }, cellId: string) => void;
+    suggestionMode?: boolean;
 }
 
 function Row(props: RowProps) {
@@ -50,6 +53,8 @@ function Row(props: RowProps) {
         disabled,
         readOnly,
         value,
+        suggestionMode,
+        recommendedValue,
     } = props;
 
     const {
@@ -60,17 +65,35 @@ function Row(props: RowProps) {
     } = row;
 
     const transformedValue = useMemo(() => (
-        // FIXME: Remove the cast below later on
-        mapToList(value, (d, k) => (d ? k as string : undefined))?.filter(isDefined)
+        mapToList(
+            value,
+            (cellSelected, cellKey) => (cellSelected ? cellKey : undefined),
+        )?.filter(isDefined)
     ), [value]);
 
-    const handleCellsChange = useCallback((newCells: string[]) => {
+    const recommendedValueList = useMemo(() => (
+        mapToList(
+            recommendedValue,
+            (cellSelected, cellKey) => (cellSelected ? cellKey : undefined),
+        )?.filter(isDefined)
+    ), [recommendedValue]);
+
+    const handleCellsChange = useCallback((newCells: string[] | undefined = []) => {
         onCellsChange(listToMap(newCells, (d) => d, () => true), key);
     }, [onCellsChange, key]);
 
-    const sortedCells = useMemo(() => (
-        sortByOrder(cells)
-    ), [cells]);
+    const sortedCells = useMemo(() => {
+        if (!suggestionMode) {
+            return sortByOrder(cells);
+        }
+        return sortByOrder(
+            cells?.filter((cell) => recommendedValueList?.includes(cell.key)),
+        );
+    }, [
+        recommendedValueList,
+        cells,
+        suggestionMode,
+    ]);
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(sortedCells, (d) => d.key, (d) => d.label);
@@ -85,7 +108,12 @@ function Row(props: RowProps) {
             >
                 {label ?? 'Unnamed'}
             </div>
-            {!readOnly ? (
+            {readOnly && (
+                <div className={styles.selectedValues}>
+                    {selectedValues}
+                </div>
+            )}
+            {!readOnly && !suggestionMode && (
                 <MultiSelectInput
                     name={row?.key}
                     onChange={handleCellsChange}
@@ -96,10 +124,20 @@ function Row(props: RowProps) {
                     readOnly={readOnly}
                     disabled={disabled}
                 />
-            ) : (
-                <div className={styles.selectedValues}>
-                    {selectedValues}
-                </div>
+            )}
+            {!readOnly && suggestionMode && (
+                <MultiBadgeInput
+                    name={row?.key}
+                    onChange={handleCellsChange}
+                    options={sortedCells}
+                    labelSelector={cellLabelSelector}
+                    keySelector={cellKeySelector}
+                    value={transformedValue}
+                    disabled={disabled || readOnly}
+                    selectedButtonVariant="nlp-primary"
+                    buttonVariant="nlp-tertiary"
+                    smallButtons
+                />
             )}
         </div>
     );
@@ -120,6 +158,8 @@ export interface Props <N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialMatrix1dWidget;
+    suggestionMode?: boolean;
+    recommendedValue?: Matrix1dValue | null | undefined;
 }
 
 function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
@@ -135,6 +175,8 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        suggestionMode,
+        recommendedValue,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -155,12 +197,24 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
     const filteredRows = useMemo(() => {
         const rows = widgetRows?.filter(
             (row) => {
+                // NOTE: Filter from value
                 const rowValue = value?.value?.[row.key];
-                return !!rowValue && Object.values(rowValue).some((d) => d);
+                const hasValueInRow = !!rowValue && Object.values(rowValue).some((d) => d);
+
+                // NOTE: Filter from recommended value
+                const recommendationRowValue = recommendedValue?.value?.[row.key];
+                const hasRecommendationInRow = !!recommendationRowValue
+                    && Object.values(recommendationRowValue).some((d) => d);
+
+                return hasValueInRow || hasRecommendationInRow;
             },
         );
         return sortByOrder(rows);
-    }, [widgetRows, value]);
+    }, [
+        widgetRows,
+        value,
+        recommendedValue,
+    ]);
 
     const handleCellsChange = useCallback(
         (newCells: { [key: string]: boolean | undefined }, rowId: string) => {
@@ -182,10 +236,19 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
             disabled,
             readOnly,
             value: value?.value?.[key],
+            recommendedValue: recommendedValue?.value?.[key],
             row,
             onCellsChange: handleCellsChange,
+            suggestionMode,
         }),
-        [disabled, readOnly, handleCellsChange, value],
+        [
+            recommendedValue,
+            suggestionMode,
+            disabled,
+            readOnly,
+            handleCellsChange,
+            value,
+        ],
     );
 
     return (

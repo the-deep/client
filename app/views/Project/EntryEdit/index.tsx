@@ -41,10 +41,11 @@ import {
 } from '@togglecorp/toggle-form';
 import { useMutation, useQuery } from '@apollo/client';
 
-import { getHiddenWidgetIds, getWidgetVersion } from '#types/newAnalyticalFramework';
+import { getHiddenWidgetIds } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import ProjectContext from '#base/context/ProjectContext';
+import UserContext from '#base/context/UserContext';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import {
@@ -86,8 +87,10 @@ import SourceDetails from './SourceDetails';
 import LeftPane, { TabOptions } from './LeftPane';
 import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
-import getSchema, { defaultFormValues, PartialEntryType, PartialFormType, PartialAttributeType } from './schema';
+import getSchema, { defaultFormValues, PartialEntryType, PartialFormType } from './schema';
 import { Entry, EntryInput as EntryInputType, Framework } from './types';
+import { createDefaultAttributes } from './utils';
+
 import styles from './styles.css';
 
 interface VirtualizedEntryListComponent {
@@ -123,6 +126,7 @@ interface Props {
 function EntryEdit(props: Props) {
     const { className } = props;
     const { project } = React.useContext(ProjectContext);
+    const { user } = React.useContext(UserContext);
     const { leadId } = useParams<{ leadId: string }>();
     const [
         commentsCountMap,
@@ -157,11 +161,14 @@ function EntryEdit(props: Props) {
     const alert = useAlert();
 
     // LEAD
-    const [leadInitialValue] = useState<PartialLeadFormType>(() => ({
+    const leadInitialValue: PartialLeadFormType = useMemo(() => ({
         clientId: randomString(),
         sourceType: 'WEBSITE',
+        priority: 'LOW',
+        confidentiality: 'UNPROTECTED',
         isAssessmentLead: false,
-    }));
+        assignee: user?.id,
+    }), [user]);
 
     const [
         projectUserOptions,
@@ -862,65 +869,7 @@ function EntryEdit(props: Props) {
 
     const handleEntryCreate = useCallback(
         (newValue: PartialEntryType) => {
-            const defaultAttributes = allWidgets.map((item) => {
-                let attr: PartialAttributeType | undefined;
-                const clientId = randomString();
-                const widget = item.id;
-
-                if (item.widgetId === 'TEXT' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'NUMBER' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'DATE' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'TIME' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                } else if (item.widgetId === 'SCALE' && item.properties?.defaultValue) {
-                    attr = {
-                        clientId,
-                        widget,
-                        widgetType: item.widgetId,
-                        widgetVersion: getWidgetVersion(item.widgetId),
-                        data: {
-                            value: item.properties.defaultValue,
-                        },
-                    };
-                }
-                return attr;
-            }).filter(isDefined);
-
+            const defaultAttributes = createDefaultAttributes(allWidgets);
             createRestorePoint();
             setFormFieldValue(
                 (prevValue: PartialFormType['entries']) => [
@@ -939,6 +888,27 @@ function EntryEdit(props: Props) {
             setFormFieldValue,
             createRestorePoint,
             allWidgets,
+        ],
+    );
+
+    const handleAssistedEntryAdd = useCallback(
+        (newValue: PartialEntryType) => {
+            createRestorePoint();
+            setFormFieldValue(
+                (prevValue: PartialFormType['entries']) => [
+                    ...(prevValue ?? []),
+                    {
+                        ...newValue,
+                        stale: true,
+                    },
+                ],
+                'entries',
+            );
+            setSelectedEntry(newValue.clientId);
+        },
+        [
+            setFormFieldValue,
+            createRestorePoint,
         ],
     );
 
@@ -1423,7 +1393,6 @@ function EntryEdit(props: Props) {
                                 <SourceDetails
                                     leadValue={leadValue}
                                     setValue={setLeadValue}
-                                    defaultValue={leadInitialValue}
                                     leadFormError={leadFormError}
                                     pending={loading}
                                     projectId={projectId}
@@ -1450,6 +1419,7 @@ function EntryEdit(props: Props) {
                                         className={styles.sourcePreview}
                                         projectId={projectId}
                                         entries={formValue.entries}
+                                        onAssistedEntryAdd={handleAssistedEntryAdd}
                                         activeEntry={selectedEntry}
                                         onEntryClick={handleEntryClick}
                                         onEntryCreate={handleEntryCreate}
@@ -1465,6 +1435,7 @@ function EntryEdit(props: Props) {
                                         entryImagesMap={entryImagesMap}
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
+                                        frameworkDetails={frameworkDetails}
                                     />
                                     <Container
                                         className={_cs(className, styles.sections)}
@@ -1535,6 +1506,7 @@ function EntryEdit(props: Props) {
                                 <div className={styles.secondaryTagging}>
                                     <LeftPane
                                         className={styles.sourcePreview}
+                                        onAssistedEntryAdd={handleAssistedEntryAdd}
                                         projectId={projectId}
                                         entries={formValue.entries}
                                         activeEntry={selectedEntry}
@@ -1555,6 +1527,7 @@ function EntryEdit(props: Props) {
                                         isEntrySelectionActive={isEntrySelectionActive}
                                         entriesError={entriesErrorStateMap}
                                         activeTabRef={secondaryPageLeftPaneRef}
+                                        frameworkDetails={frameworkDetails}
                                     />
                                     <Container
                                         className={styles.rightContainer}

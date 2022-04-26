@@ -1,5 +1,8 @@
 import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import { gql, useMutation } from '@apollo/client';
 import {
     IoClose,
@@ -9,6 +12,7 @@ import {
     Button,
     useAlert,
 } from '@the-deep/deep-ui';
+import { getOperationName } from 'apollo-link';
 
 import generateString from '#utils/string';
 import {
@@ -21,6 +25,8 @@ import {
     ProjectJoinRequest,
 } from '../../types';
 import NotificationContainer from '../../NotificationContainer';
+
+import { USER_NOTIFICATIONS_COUNT } from '#base/components/Navbar/queries';
 
 import styles from './styles.css';
 
@@ -66,7 +72,7 @@ function ProjectJoinRequestItem(props: Props) {
     ] = useMutation<JoinRequestAcceptRejectMutation, JoinRequestAcceptRejectMutationVariables>(
         JOIN_REQUEST_ACCEPT_REJECT,
         {
-            refetchQueries: ['UserNotificationsCount'],
+            refetchQueries: [getOperationName(USER_NOTIFICATIONS_COUNT)].filter(isDefined),
             onCompleted: (response) => {
                 if (response?.project?.acceptRejectProject?.ok) {
                     const status = response.project.acceptRejectProject?.result?.status;

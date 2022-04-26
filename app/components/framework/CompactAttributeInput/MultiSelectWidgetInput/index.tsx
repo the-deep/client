@@ -1,9 +1,13 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     MultiSelectInput,
+    MultiBadgeInput,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/toggle-form';
-import { listToMap, isNotDefined } from '@togglecorp/fujs';
+import {
+    listToMap,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import NonFieldError from '#components/NonFieldError';
 import { sortByOrder } from '#utils/common';
@@ -40,7 +44,9 @@ export interface Props <N extends string>{
     actions?: React.ReactNode;
     icons?: React.ReactNode;
 
-    widget: PartialMultiSelectWidget,
+    widget: PartialMultiSelectWidget;
+    suggestionMode?: boolean;
+    recommendedValue?: MultiSelectValue | null | undefined;
 }
 
 function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
@@ -56,6 +62,8 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        suggestionMode,
+        recommendedValue,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -81,6 +89,25 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
         return value?.value?.map((v) => optionsMap?.[v]);
     }, [widgetOptions, value]);
 
+    const recommendedValuesMap = useMemo(() => (
+        listToMap(
+            recommendedValue?.value,
+            (key) => key,
+            () => true,
+        )
+    ), [recommendedValue]);
+
+    const optionsForSuggestions = useMemo(() => {
+        if (!suggestionMode) {
+            return [];
+        }
+        return sortedOptions?.filter((item) => recommendedValuesMap?.[item.key]);
+    }, [
+        recommendedValuesMap,
+        sortedOptions,
+        suggestionMode,
+    ]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -102,17 +129,32 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
                     <NonFieldError
                         error={error}
                     />
-                    <MultiSelectInput
-                        name={name}
-                        options={sortedOptions}
-                        keySelector={optionKeySelector}
-                        labelSelector={optionLabelSelector}
-                        onChange={onChange}
-                        value={value?.value}
-                        readOnly={readOnly}
-                        disabled={disabled}
-                        error={getErrorString(error?.value)}
-                    />
+                    {!suggestionMode ? (
+                        <MultiSelectInput
+                            name={name}
+                            options={sortedOptions}
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            onChange={onChange}
+                            value={value?.value}
+                            readOnly={readOnly}
+                            disabled={disabled}
+                            error={getErrorString(error?.value)}
+                        />
+                    ) : (
+                        <MultiBadgeInput
+                            name={name}
+                            value={value?.value}
+                            options={optionsForSuggestions}
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            onChange={onChange}
+                            disabled={readOnly || disabled}
+                            selectedButtonVariant="nlp-primary"
+                            buttonVariant="nlp-tertiary"
+                            smallButtons
+                        />
+                    )}
                 </>
             )}
         </WidgetWrapper>

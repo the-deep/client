@@ -15,8 +15,19 @@
 
             .column {
                 .column-details {
-                    .column-title {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-extra-small);
+
+                    .separator-icon {
                         display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--dui-color-text-label);
+                    }
+
+                    .column-title {
+                        display: inline-flex;
                         align-items: center;
                         gap: var(--dui-spacing-small);
 
@@ -24,22 +35,41 @@
                             color: var(--dui-color-text-label);
                         }
 
-                        .separator-icon {
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            color: var(--dui-color-text-label);
-                        }
-
                         .column-label {
                             color: var(--dui-color-text-label);
-                        }
 
+                            .small-button {
+                                text-transform: unset;
+                                font-size: var(--dui-font-size-small);
+                            }
+                        }
                     }
 
+                    .sub-column-suggestions {
+                        display: flex;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: var(--dui-spacing-small);
+
+                        .separator-icon,
+                        .badges-container {
+                            display: inline-block;
+
+                            .badges-list {
+                                display: inline-flex;
+                                flex-wrap: wrap;
+                            }
+                        }
+                    }
 
                     .selected-values {
                         color: var(--dui-color-accent);
+                    }
+
+                    &.suggestion-mode {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        gap: var(--dui-spacing-extra-small);
                     }
                 }
             }

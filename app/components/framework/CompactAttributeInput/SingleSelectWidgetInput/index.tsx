@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     SelectInput,
+    BadgeInput,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
@@ -40,7 +41,9 @@ export interface Props <N extends string>{
     actions?: React.ReactNode;
     icons?: React.ReactNode;
 
-    widget: PartialSingleSelectWidget,
+    widget: PartialSingleSelectWidget;
+    widgetHints?: string[];
+    suggestionMode?: boolean;
 }
 
 function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
@@ -56,6 +59,8 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        widgetHints,
+        suggestionMode,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -80,6 +85,13 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         widgetOptions?.find((o) => o.key === value?.value)?.label
     ), [widgetOptions, value]);
 
+    const selectedOptions = useMemo(() => (
+        sortedOptions?.filter((item) => widgetHints?.includes(item.key))
+    ), [
+        sortedOptions,
+        widgetHints,
+    ]);
+
     return (
         <WidgetWrapper
             className={className}
@@ -99,16 +111,31 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                     <NonFieldError
                         error={error}
                     />
-                    <SelectInput
-                        name={name}
-                        options={sortedOptions}
-                        keySelector={optionKeySelector}
-                        labelSelector={optionLabelSelector}
-                        onChange={onChange}
-                        value={value?.value}
-                        readOnly={readOnly}
-                        disabled={disabled}
-                    />
+                    {!suggestionMode ? (
+                        <SelectInput
+                            name={name}
+                            options={sortedOptions}
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            onChange={onChange}
+                            value={value?.value}
+                            readOnly={readOnly}
+                            disabled={disabled}
+                        />
+                    ) : (
+                        <BadgeInput
+                            name={name}
+                            value={value?.value}
+                            options={selectedOptions}
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            onChange={onChange}
+                            disabled={readOnly || disabled}
+                            selectedButtonVariant="nlp-primary"
+                            buttonVariant="nlp-tertiary"
+                            smallButtons
+                        />
+                    )}
                 </>
             )}
         </WidgetWrapper>

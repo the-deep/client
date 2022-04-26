@@ -16,6 +16,13 @@
         margin: var(--dui-spacing-medium) 0;
     }
 
+    &.assisted-enabled {
+        >*::selection {
+            background: var(--dui-color-nlp);
+            color: var(--dui-color-text-on-accent);
+        }
+    }
+
     .actions-popup {
         display: flex;
         position: absolute;
@@ -26,6 +33,7 @@
         margin: var(--dui-spacing-extra-small);
         /* background-color: var(--dui-color-foreground); */
         user-select: none;
+        gap: var(--dui-spacing-small);
 
         >* {
             flex-shrink: 0;
@@ -38,6 +46,11 @@
         .add-button {
             font-size: var(--dui-font-size-large);
             user-select: none;
+
+            .brain-icon {
+                width: auto;
+                height: var(--dui-font-size-extra-large);
+            }
         }
     }
 
@@ -47,4 +60,3 @@
         margin-top: var(--dui-spacing-medium);
     }
 }
-

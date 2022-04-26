@@ -36,6 +36,10 @@
     .section {
         background-color: var(--dui-color-foreground);
         width: var(--inner-width);
+
+        &.compact {
+            border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        }
     }
 
     .secondary-tagging {

@@ -1,0 +1,41 @@
+.connector-source {
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    &.inactive {
+        filter: saturate(0%);
+    }
+
+    .heading {
+        color: var(--dui-color-accent);
+    }
+
+    .chart-container {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        height: 180px;
+
+        .responsive-container {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .pending {
+            z-index: 0;
+        }
+    }
+
+    .info-containers {
+        background-color: transparent;
+
+        .info-containers-content {
+            display: flex;
+            align-items: center;
+            gap: var(--dui-spacing-medium);
+
+            .info {
+                background-color: var(--dui-color-background-information);
+            }
+        }
+    }
+}

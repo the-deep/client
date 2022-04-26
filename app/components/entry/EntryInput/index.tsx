@@ -23,12 +23,18 @@ import {
     AnalysisFrameworkDetailType,
 } from '#generated/types';
 // FIXME: move this component
-import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import {
+    PartialAttributeType,
+    PartialEntryType,
+} from '#views/Project/EntryEdit/schema';
 
 import { Entry } from '#views/Project/EntryEdit/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import ExcerptInput from '#components/entry/ExcerptInput';
-import { Widget } from '#types/newAnalyticalFramework';
+import {
+    Widget,
+    WidgetHint,
+} from '#types/newAnalyticalFramework';
 import { DeepReplace } from '#utils/types';
 
 import CompactSection from '../CompactSection';
@@ -49,7 +55,11 @@ interface EntryInputProps<T extends string | number | undefined> {
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
     error: Error<PartialEntryType> | undefined;
-    onAddButtonClick: (entryId: string, sectionId?: string) => void;
+    onAddButtonClick?: (entryId: string, sectionId?: string) => void;
+    addButtonHidden?: boolean;
+
+    widgetsHints?: WidgetHint[];
+    recommendations?: PartialAttributeType[];
 
     sectionContainerClassName?: string;
     secondaryTaggingContainerClassName?: string;
@@ -58,7 +68,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     emptyValueHidden?: boolean;
     primaryTagging: Section[] | undefined | null;
     secondaryTagging: Widget[] | undefined | null;
-    compact?: boolean;
+    variant?: 'normal' | 'compact' | 'nlp';
 
     entryImage: Entry['image'] | undefined | null;
     geoAreaOptions: GeoArea[] | undefined | null;
@@ -75,6 +85,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         className,
         value,
         onAddButtonClick,
+        addButtonHidden,
         primaryTagging,
         secondaryTagging,
         sectionContainerClassName,
@@ -85,12 +96,14 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         index,
         onChange,
         leadId,
-        compact,
+        variant = 'normal',
         entryImage,
+        widgetsHints,
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         excerptHeaderActions,
+        recommendations,
         onApplyToAll,
     } = props;
 
@@ -136,17 +149,26 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         emptyValueHidden,
         error: error?.attributes,
         onAddButtonClick,
+        addButtonHidden,
         entryClientId: value.clientId,
+        widgetsHints,
+        recommendations,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onApplyToAll,
+        emptyMessageHidden: variant === 'nlp',
+        suggestionMode: variant === 'nlp',
         allWidgets,
     }), [
+        variant,
         allWidgets,
+        widgetsHints,
+        recommendations,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onAddButtonClick,
         emptyValueHidden,
+        addButtonHidden,
         onAttributeChange,
         attributesMap,
         readOnly,
@@ -155,16 +177,18 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onApplyToAll,
     ]);
 
+    const compactMode = variant === 'compact' || variant === 'nlp';
+
     return (
         <div
             className={_cs(
                 className,
-                compact && styles.compact,
+                compactMode && styles.compact,
                 styles.entryInput,
             )}
         >
             <NonFieldError error={error} />
-            {!compact && (
+            {!compactMode && (
                 <Container
                     className={styles.excerpt}
                     heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
@@ -191,7 +215,11 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             <List
                 data={primaryTagging ?? undefined}
                 rendererParams={sectionRendererParams}
-                rendererClassName={_cs(styles.section, sectionContainerClassName)}
+                rendererClassName={_cs(
+                    styles.section,
+                    sectionContainerClassName,
+                    compactMode && styles.compact,
+                )}
                 renderer={CompactSection}
                 keySelector={sectionKeySelector}
             />
@@ -210,9 +238,14 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 error={error?.attributes}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                addButtonHidden={addButtonHidden}
                 onApplyToAll={onApplyToAll}
                 entryClientId={value.clientId}
                 allWidgets={allWidgets}
+                widgetsHints={widgetsHints}
+                recommendations={recommendations}
+                emptyMessageHidden={variant === 'nlp'}
+                suggestionMode={variant === 'nlp'}
             />
         </div>
     );

@@ -1,0 +1,42 @@
+.projects-connector-pane {
+    background-color: var(--dui-color-foreground);
+
+    .header {
+        padding: 0 var(--dui-spacing-medium);
+    }
+
+    .connector-list {
+        .item {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--dui-color-background-information);
+            padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+            gap: var(--dui-spacing-small);
+            width: 100%;
+            text-align: left;
+
+            &:not(:last-child) {
+                border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            }
+
+            .title {
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            .created-on {
+                color: var(--dui-color-text-description);
+                font-size: var(--dui-font-size-small);
+            }
+
+            &.selected {
+                background-color: var(--dui-color-surface-information);
+            }
+        }
+    }
+
+    .show-more-button {
+        align-self: flex-start;
+        padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+        color: var(--dui-color-accent);
+    }
+}

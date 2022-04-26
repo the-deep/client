@@ -49,6 +49,14 @@ const FRAMEWORK = gql`
                 title
             }
         }
+        predictionTagsMapping {
+            id
+            tag
+            widget
+            widgetType
+            clientId
+            association
+        }
         previewImage {
             name
             url
@@ -59,6 +67,7 @@ const FRAMEWORK = gql`
         description
         allowedPermissions
         isPrivate
+        assistedTaggingEnabled
         createdBy {
             id
             displayName
@@ -103,4 +112,19 @@ export const UPDATE_FRAMEWORK = gql`
             }
         }
     }
-    `;
+`;
+
+export const ASSISTED_PREDICTION_TAGS_QUERY = gql`
+    query AssistedPredictionTags {
+        assistedTagging {
+            predictionTags {
+                id
+                name
+                tagId
+                group
+                hideInAnalysisFrameworkMapping
+                isCategory
+            }
+        }
+    }
+`;

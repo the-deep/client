@@ -39,7 +39,6 @@ interface Props {
     leadValue: PartialFormType;
     leadFormError: Error<PartialFormType> | undefined;
     setValue: (value: SetBaseValueArg<PartialFormType>, reset?: boolean) => void;
-    defaultValue: PartialFormType;
     projectId: string;
     disabled?: boolean;
     sourceOrganizationOptions: BasicOrganization[] | undefined | null;
@@ -61,7 +60,6 @@ function SourceDetails(props: Props) {
     const {
         className,
         leadValue,
-        defaultValue,
         setValue,
         leadFormError,
         pending,
@@ -105,7 +103,6 @@ function SourceDetails(props: Props) {
                     name="lead"
                     pending={pending || leadOptionsLoading}
                     value={leadValue}
-                    defaultValue={defaultValue}
                     error={leadFormError}
                     onChange={handleLeadChange}
                     projectId={projectId}

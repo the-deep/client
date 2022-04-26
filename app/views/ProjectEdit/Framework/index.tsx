@@ -63,18 +63,14 @@ function Item(props: ItemProps) {
         isSelected,
     } = props;
 
-    const handleItemClick = useCallback(() => {
-        onClick(itemKey);
-    }, [onClick, itemKey]);
-
     return (
         <RawButton
-            name={`item-${itemKey}`}
+            name={itemKey}
             className={_cs(
                 styles.item,
                 isSelected && styles.selected,
             )}
-            onClick={handleItemClick}
+            onClick={onClick}
         >
             <div className={styles.title}>
                 {title}
@@ -225,6 +221,7 @@ function ProjectFramework(props: Props) {
             <div className={styles.leftContainer}>
                 <div className={styles.filters}>
                     <SelectInput
+                        inputSectionClassName={styles.relatedToMeSelect}
                         name="relatedToMe"
                         onChange={setFieldValue}
                         options={frameworkFilterOptions}

@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     ScaleInput,
+    BadgeInput,
 } from '@the-deep/deep-ui';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { isNotDefined } from '@togglecorp/fujs';
@@ -42,6 +43,7 @@ export interface Props<N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialScaleWidget,
+    widgetHints?: string[];
 }
 
 function ScaleWidgetInput<N extends string>(props: Props<N>) {
@@ -57,6 +59,7 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        widgetHints,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -75,6 +78,12 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
         },
         [onChangeFromProps],
     );
+    const selectedOptions = useMemo(() => (
+        sortedOptions?.filter((item) => widgetHints?.includes(item.key))
+    ), [
+        sortedOptions,
+        widgetHints,
+    ]);
 
     return (
         <WidgetWrapper
@@ -100,6 +109,21 @@ function ScaleWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 error={error?.value}
+                hint={(selectedOptions && selectedOptions.length > 0) && (
+                    <BadgeInput
+                        name={name}
+                        value={value?.value ?? widget?.properties?.defaultValue}
+                        options={selectedOptions}
+                        labelSelector={optionLabelSelector}
+                        keySelector={optionKeySelector}
+                        onChange={onChange}
+                        disabled={readOnly || disabled}
+                        selectedButtonVariant="nlp-primary"
+                        buttonVariant="nlp-tertiary"
+                        selectedValueHidden
+                        smallButtons
+                    />
+                )}
             />
         </WidgetWrapper>
     );

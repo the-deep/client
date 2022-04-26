@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import {
     _cs,
+    listToMap,
     isDefined,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
@@ -13,9 +14,16 @@ import { SetValueArg, Error, getErrorObject } from '@togglecorp/toggle-form';
 import { IoAdd } from 'react-icons/io5';
 
 import { GeoArea } from '#components/GeoMultiSelectInput';
-import { Widget, getHiddenWidgetIds } from '#types/newAnalyticalFramework';
+import {
+    Widget,
+    WidgetHint,
+    getHiddenWidgetIds,
+} from '#types/newAnalyticalFramework';
 import CompactAttributeInput, { Props as AttributeInputProps } from '#components/framework/CompactAttributeInput';
-import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import {
+    PartialEntryType,
+    PartialAttributeType,
+} from '#views/Project/EntryEdit/schema';
 
 import styles from './styles.css';
 
@@ -38,9 +46,14 @@ export interface Props {
     entryClientId: string;
     sectionId?: string;
     onApplyToAll?: (entryId: string, widgetId: string, applyBelowOnly?: boolean) => void;
-    onAddButtonClick: (entryId: string, sectionId?: string) => void;
+    onAddButtonClick: ((entryId: string, sectionId?: string) => void) | undefined;
+    addButtonHidden?: boolean;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+    widgetsHints?: WidgetHint[];
+    recommendations?: PartialAttributeType[];
+    emptyMessageHidden?: boolean;
+    suggestionMode?: boolean;
 }
 
 function CompactSection(props: Props) {
@@ -58,9 +71,14 @@ function CompactSection(props: Props) {
         disabled,
         error: riskyError,
         onAddButtonClick,
+        addButtonHidden,
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onApplyToAll,
+        widgetsHints,
+        emptyMessageHidden,
+        suggestionMode,
+        recommendations,
     } = props;
 
     const filteredWidgets = useMemo(
@@ -78,6 +96,24 @@ function CompactSection(props: Props) {
 
     const error = getErrorObject(riskyError);
 
+    const hintsMap = useMemo(
+        () => listToMap(
+            widgetsHints?.filter((widgetHint) => widgetHint.hints.length > 0),
+            (widgetHint) => widgetHint.widgetPk,
+            (widgetHint) => widgetHint,
+        ),
+        [widgetsHints],
+    );
+
+    const recommendationsMap = useMemo(
+        () => listToMap(
+            recommendations,
+            (recommendation) => recommendation.widget,
+            (recommendation) => recommendation,
+        ),
+        [recommendations],
+    );
+
     const widgetsWithValue = useMemo(() => {
         if (!emptyValueHidden) {
             return filteredWidgets;
@@ -85,22 +121,44 @@ function CompactSection(props: Props) {
         return filteredWidgets?.filter(
             // FIXME: should only check into data, not value
             (widget) => {
+                if ((hintsMap?.[widget.id]?.hints.length ?? 0) > 0) {
+                    return true;
+                }
                 if (widget.widgetId === 'MATRIX1D') {
-                    return !doesObjectHaveNoData(
+                    const hasValue = !doesObjectHaveNoData(
                         attributesMap?.[widget.clientId]?.value?.data?.value,
                         [''],
                     );
+                    const hasRecommendedValue = !doesObjectHaveNoData(
+                        recommendationsMap?.[widget.clientId]?.data?.value,
+                        [''],
+                    );
+                    return hasValue || hasRecommendedValue;
                 }
 
                 if (widget.widgetId === 'MATRIX2D') {
                     const val = attributesMap?.[widget.clientId]?.value?.data?.value;
-                    return Object.keys(val ?? {}).length > 0;
+                    const recommendationVal = recommendationsMap
+                        ?.[widget.clientId]?.data?.value;
+                    return (
+                        Object.keys(val ?? {}).length > 0
+                        || Object.keys(recommendationVal ?? {}).length > 0
+                    );
                 }
 
-                return isDefined(attributesMap?.[widget.clientId]?.value?.data?.value);
+                return isDefined(
+                    attributesMap?.[widget.clientId]?.value?.data?.value
+                    || recommendationsMap?.[widget.clientId]?.data?.value,
+                );
             },
         );
-    }, [emptyValueHidden, attributesMap, filteredWidgets]);
+    }, [
+        recommendationsMap,
+        hintsMap,
+        emptyValueHidden,
+        attributesMap,
+        filteredWidgets,
+    ]);
 
     const handleApplyBelowClick = useCallback(
         (widgetId: string) => {
@@ -126,6 +184,7 @@ function CompactSection(props: Props) {
             const err = attribute
                 ? error?.[attribute.value.clientId]
                 : undefined;
+
             return {
                 name: attribute?.index,
                 value: attribute?.value,
@@ -139,9 +198,15 @@ function CompactSection(props: Props) {
                 applyButtonsHidden: !onApplyToAll,
                 onApplyBelowClick: handleApplyBelowClick,
                 onApplyAllClick: handleApplyAllClick,
+                widgetsHints,
+                recommendations,
+                suggestionMode,
             };
         },
         [
+            recommendations,
+            suggestionMode,
+            widgetsHints,
             onApplyToAll,
             onAttributeChange,
             attributesMap,
@@ -156,18 +221,24 @@ function CompactSection(props: Props) {
     );
 
     const handleAddButtonClick = useCallback(() => {
-        onAddButtonClick(entryClientId, sectionId);
+        if (onAddButtonClick) {
+            onAddButtonClick(entryClientId, sectionId);
+        }
     }, [
         entryClientId,
         sectionId,
         onAddButtonClick,
     ]);
 
+    if (emptyMessageHidden && widgetsWithValue?.length === 0) {
+        return null;
+    }
+
     return (
         <Container
             className={_cs(className, styles.compactSection)}
             heading={title}
-            headerActions={!readOnly && (
+            headerActions={(!readOnly && !addButtonHidden) && (
                 <QuickActionButton
                     name="addAttribute"
                     onClick={handleAddButtonClick}
@@ -190,8 +261,8 @@ function CompactSection(props: Props) {
                 filtered={false}
                 errored={false}
                 emptyMessage="No widgets were tagged under this section."
-                messageShown
-                messageIconShown
+                messageShown={!emptyMessageHidden}
+                messageIconShown={!emptyMessageHidden}
             />
         </Container>
     );
