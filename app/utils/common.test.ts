@@ -1,6 +1,11 @@
 import {
+    compareDate,
+} from '@togglecorp/fujs';
+
+import {
     sortByOrder,
     reorder,
+    getMaximum,
     breadcrumb,
     mergeLists,
 } from './common';
@@ -189,3 +194,20 @@ test('Merge lists', () => {
         ]
     );
 });
+
+
+test('getMaximum', () => {
+    const dates = [
+        {
+            date: '2021-01-02',
+        },
+        {
+            date: '2021-01-05',
+        },
+        {
+            date: '2020-01-05',
+        },
+    ];
+    expect(getMaximum(dates, (d1, d2) => compareDate(d1.date, d2.date)).date).toBe('2021-01-05');
+});
+

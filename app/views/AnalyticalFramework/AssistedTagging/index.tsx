@@ -18,6 +18,7 @@ import {
     ContainerCard,
     Header,
     Switch,
+    Link,
 } from '@the-deep/deep-ui';
 
 import {
@@ -30,6 +31,7 @@ import {
 import {
     AssistedPredictionTagsQuery,
 } from '#generated/types';
+import generateString from '#utils/string';
 
 import { WidgetsType } from '../schema';
 import CheckButton from './CheckButton';
@@ -216,8 +218,31 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                 className={styles.header}
                 heading={errored ? 'Assisted Tagging (errored)' : 'Assisted Tagging'}
                 headingSize="small"
-                // FIXME: Get actual description from DFS
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                description={generateString(
+                    'Through the infinite wisdom of the kraken, DEEP can provide you recommendations for your project’s tagging. Currently this is limited to common humanitarian frameworks, although in the future we envision this being available to all frameworks on the platform. Once you enable this feature and align your framework, you will see the option to use assisted tagging in the tagging page. To learn more about the feature, you can watch an {overview} and a {technicalExplanation}. The more you use this feature, and the more you use DEEP, the smarter we all become.',
+                    {
+                        overview: (
+                            <Link
+                                className={styles.link}
+                                // NOTE: Need to add a hide chevron button
+                                actionsContainerClassName={styles.linkActions}
+                                to="https://www.youtube.com/watch?v=cZFjq6L5Zl8"
+                            >
+                                overview here
+                            </Link>
+                        ),
+                        technicalExplanation: (
+                            <Link
+                                className={styles.link}
+                                // NOTE: Need to add a hide chevron button
+                                actionsContainerClassName={styles.linkActions}
+                                to="https://www.youtube.com/watch?v=9-4NF0A5S08"
+                            >
+                                technical explanation here
+                            </Link>
+                        ),
+                    },
+                )}
                 actions={(
                     <Switch
                         name="isAssistedTaggingEnabled"

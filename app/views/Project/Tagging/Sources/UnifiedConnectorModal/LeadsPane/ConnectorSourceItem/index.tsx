@@ -3,6 +3,8 @@ import {
     ListView,
     Pager,
     Kraken,
+    TextOutput,
+    DateOutput,
     ControlledExpandableContainer,
 } from '@the-deep/deep-ui';
 import {
@@ -95,6 +97,7 @@ const connectorLeadKeySelector = (d: ConnectorSourceLead) => d.id;
 interface ConnectorSourceItemProps {
     connectorSourceId: string;
     title: string;
+    lastFetchedAt?: string;
     onClick: (key: string | undefined) => void;
     selected: boolean;
     projectId: string;
@@ -138,6 +141,7 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
         onClick,
         selected,
         projectId,
+        lastFetchedAt,
         connectorSourceLead,
         onConnectorSourceLeadChange,
 
@@ -270,6 +274,17 @@ function ConnectorSourceItem(props: ConnectorSourceItemProps) {
             className={styles.connectorSourceItem}
             name={connectorSourceId}
             heading={title}
+            inlineHeadingDescription
+            headingDescription={lastFetchedAt && (
+                <TextOutput
+                    label="Last updated on"
+                    value={(
+                        <DateOutput
+                            value={lastFetchedAt}
+                        />
+                    )}
+                />
+            )}
             onExpansionChange={handleExpansionChange}
             expanded={selected}
             contentClassName={styles.content}

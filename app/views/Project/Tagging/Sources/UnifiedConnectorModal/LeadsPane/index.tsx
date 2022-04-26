@@ -121,6 +121,7 @@ const PROJECT_CONNECTOR_DETAILS = gql`
                     sources {
                         id
                         createdAt
+                        lastFetchedAt
                         title
                     }
                 }
@@ -603,6 +604,7 @@ function LeadsPane(props: Props) {
     const connectorSourceRendererParams = useCallback((key: string, data: ConnectorSourceMini) => ({
         connectorSourceId: key,
         title: data.title,
+        lastFetchedAt: data.lastFetchedAt ?? undefined,
         onClick: handleSelectedConnectorSourceChange,
         selected: key === selectedConnectorSource,
         projectId,

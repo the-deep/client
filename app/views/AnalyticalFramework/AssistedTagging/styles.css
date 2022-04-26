@@ -13,6 +13,14 @@
         gap: var(--dui-spacing-large);
     }
 
+    .link {
+        display: inline-flex;
+
+        .link-actions {
+            display: none;
+        }
+    }
+
     .content {
         display: flex;
         flex-direction: column;
