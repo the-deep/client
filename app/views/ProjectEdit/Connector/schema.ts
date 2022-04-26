@@ -36,10 +36,6 @@ export const sourceSchema:SourceFormSchema = {
         };
 
         switch (value?.source) {
-            // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO:
-            // - review code changes
-            // - also call mom
-            // - or look at note
             case 'RELIEF_WEB': {
                 const params: ObjectSchema<PartialForm<ReliefWebParams>> = {
                     fields: () => ({
@@ -53,7 +49,6 @@ export const sourceSchema:SourceFormSchema = {
                             paramsValue
                             && paramsValue.to
                             && paramsValue.from
-                            && paramsValue.to
                             && new Date(paramsValue.from) > new Date(paramsValue.to)
                         ) {
                             return '"From" date should be smaller than "To" date';
@@ -79,7 +74,6 @@ export const sourceSchema:SourceFormSchema = {
                             paramsValue
                             && paramsValue.date_to
                             && paramsValue.date_from
-                            && paramsValue.date_to
                             && new Date(paramsValue.date_from) > new Date(paramsValue.date_to)
                         ) {
                             return '"From" date should be smaller than "To" date';

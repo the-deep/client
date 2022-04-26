@@ -349,7 +349,10 @@ function EditConnectorModal(props: Props) {
                     createConnector({
                         variables: {
                             projectId,
-                            input: finalValue as ConnectorInputType,
+                            input: {
+                                ...finalValue,
+                                isActive: true,
+                            } as ConnectorInputType,
                         },
                     });
                 }

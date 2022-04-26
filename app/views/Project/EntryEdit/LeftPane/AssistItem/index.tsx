@@ -55,6 +55,7 @@ import {
     createScaleAttr,
     createSelectAttr,
     createMultiSelectAttr,
+    createGeoAttr,
 } from '../AssistPopup/utils';
 
 import styles from './styles.css';
@@ -90,6 +91,12 @@ const CREATE_DRAFT_ENTRY = gql`
                             threshold
                             value
                         }
+                        relatedGeoareas {
+                            id
+                            regionTitle
+                            adminLevelTitle
+                            title
+                        }
                     }
                 }
             }
@@ -121,6 +128,12 @@ const PROJECT_DRAFT_ENTRY = gql`
                         tag
                         threshold
                         value
+                    }
+                    relatedGeoareas {
+                        id
+                        regionTitle
+                        adminLevelTitle
+                        title
                     }
                 }
             }
@@ -240,12 +253,14 @@ function AssistItem(props: Props) {
     const [messageText, setMessageText] = useState<string | undefined>();
 
     const handleMappingsFetch = useCallback((
-        predictions: { tags: string[]; locations: string[]; },
+        predictions: { tags: string[]; locations: GeoArea[]; },
     ) => {
         if (predictions.tags.length <= 0 && predictions.locations.length <= 0) {
             setMessageText('DEEP could not provide any recommendations for the selected text.');
             return;
         }
+
+        setGeoAreaOptions(predictions.locations);
 
         const matchedMappings = mappings
             ?.filter(isCategoricalMappings)
@@ -353,14 +368,14 @@ function AssistItem(props: Props) {
                     && predictions.locations.length > 0
                     && supportedGeoWidgets?.includes(widget.id)
                 ) {
-                    const hintsWithInfo: WidgetHint = {
-                        widgetPk: widget.id,
-                        widgetType: 'GEO',
-                        hints: predictions.locations,
-                    };
+                    const attr = createGeoAttr(
+                        predictions.locations,
+                        widget,
+                    );
+
                     return {
-                        tempAttrs: oldTempAttrs,
-                        tempHints: [...oldTempHints, hintsWithInfo],
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: oldTempHints,
                     };
                 }
                 return acc;
@@ -451,6 +466,7 @@ function AssistItem(props: Props) {
 
                 const validPredictions = result?.predictions?.filter(isDefined);
 
+                /*
                 const geoPredictions = validPredictions?.filter(
                     (prediction) => (
                         prediction.modelVersionDeeplModelId === GEOLOCATION_DEEPL_MODEL_ID
@@ -458,6 +474,7 @@ function AssistItem(props: Props) {
                 ).map(
                     (prediction) => prediction.value,
                 ) ?? [];
+                */
 
                 const categoricalTags = validPredictions?.filter(
                     (prediction) => (
@@ -470,7 +487,7 @@ function AssistItem(props: Props) {
 
                 handleMappingsFetch({
                     tags: categoricalTags,
-                    locations: geoPredictions,
+                    locations: result.relatedGeoareas?.filter(isDefined) ?? [],
                 });
             },
             onError: () => {
@@ -517,7 +534,7 @@ function AssistItem(props: Props) {
             setError,
             (entryData) => {
                 if (onAssistedEntryAdd) {
-                    const defaultAttributes = createDefaultAttributes(allWidgets) ?? [];
+                    const defaultAttributes = createDefaultAttributes(allWidgets);
 
                     const newAttributes = mergeLists(
                         defaultAttributes,

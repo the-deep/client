@@ -92,6 +92,7 @@ function AssistPopup(props: Props) {
                         onClick={onEntryDiscardButtonClick}
                         disabled={isMessageShown}
                         title="Discard Entry"
+                        variant="nlp-secondary"
                     >
                         <IoClose />
                     </QuickActionButton>
@@ -99,7 +100,7 @@ function AssistPopup(props: Props) {
                         name={undefined}
                         onClick={onEntryCreateButtonClick}
                         disabled={isMessageShown}
-                        variant="primary"
+                        variant="nlp-primary"
                         title="Create Entry"
                     >
                         <IoCheckmark />

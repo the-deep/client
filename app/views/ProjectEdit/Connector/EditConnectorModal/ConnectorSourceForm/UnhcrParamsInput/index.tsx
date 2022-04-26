@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-    DateInput,
     SelectInput,
+    DateDualRangeInput,
 } from '@the-deep/deep-ui';
 
 import {
@@ -58,21 +58,16 @@ function UnhcrParamsInput<T extends string>(props: Props<T>) {
                 error={getErrorString(error?.country)}
                 disabled={disabled}
             />
-            <DateInput
-                name="date_from"
-                label="From date"
-                value={value?.date_from}
-                onChange={setParamsFieldValue}
-                disabled={disabled}
-                error={error?.date_from}
-            />
-            <DateInput
-                name="date_to"
-                label="To date"
-                value={value?.date_to}
-                onChange={setParamsFieldValue}
-                error={error?.date_to}
-                disabled={disabled}
+            <DateDualRangeInput
+                label="Published At"
+                fromName="date_from"
+                toName="date_to"
+                fromOnChange={setParamsFieldValue}
+                toOnChange={setParamsFieldValue}
+                fromError={error?.date_from}
+                fromValue={value?.date_from}
+                toError={error?.date_to}
+                toValue={value?.date_to}
             />
         </>
     );

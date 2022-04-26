@@ -89,6 +89,8 @@ function ConnectorSource(props: Props) {
         };
     }, [convertedSourceActivity]);
 
+    const isSuccessfullyFetched = source.status === 'SUCCESS';
+
     return (
         <ContainerCard
             className={_cs(
@@ -155,9 +157,9 @@ function ConnectorSource(props: Props) {
                         icon={
                             <Kraken variant="sleep" />
                         }
-                        message="This connector does not have any sources fetched in last 3 months."
+                        message="This connector does not have any sources in the last 3 months. Try adjusting the filters."
                         pending={isActive && source.status === 'PROCESSING'}
-                        pendingMessage="DEEP is currently fetching sources from this portal."
+                        pendingMessage="DEEP is currently fetching sources from this portal. This may take some time depending on the portal."
                         errored={source.status === 'FAILURE'}
                         erroredEmptyMessage="DEEP was unable to fetch sources from this portal."
                         erroredEmptyIcon={
@@ -178,21 +180,24 @@ function ConnectorSource(props: Props) {
                     variant="accent"
                     label="Last 7 days"
                     valuePrecision={0}
-                    value={last7DaysCount}
+                    value={isSuccessfullyFetched ? last7DaysCount : undefined}
+                    emptyContent="-"
                 />
                 <InformationCard
                     className={styles.info}
                     variant="accent"
                     label="Last 30 days"
                     valuePrecision={0}
-                    value={last30DaysCount}
+                    value={isSuccessfullyFetched ? last30DaysCount : undefined}
+                    emptyContent="-"
                 />
                 <InformationCard
                     className={styles.info}
                     variant="accent"
                     label="Total"
                     valuePrecision={0}
-                    value={source.leadsCount ?? 0}
+                    value={isSuccessfullyFetched ? source.leadsCount : undefined}
+                    emptyContent="-"
                 />
             </Container>
         </ContainerCard>

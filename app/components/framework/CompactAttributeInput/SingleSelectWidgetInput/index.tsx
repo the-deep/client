@@ -43,7 +43,7 @@ export interface Props <N extends string>{
 
     widget: PartialSingleSelectWidget;
     widgetHints?: string[];
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
 }
 
 function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
@@ -60,7 +60,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
         icons,
         error: riskyError,
         widgetHints,
-        suggestionModeEnabled,
+        suggestionMode,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -111,7 +111,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                     <NonFieldError
                         error={error}
                     />
-                    {!suggestionModeEnabled ? (
+                    {!suggestionMode ? (
                         <SelectInput
                             name={name}
                             options={sortedOptions}

@@ -49,7 +49,7 @@ interface ColumnProps {
     subRowId: string;
     readOnly?: boolean;
     disabled?: boolean;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
     recommendedValue?: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
 }
 
@@ -63,7 +63,7 @@ function Column(props: ColumnProps) {
         subRowId,
         readOnly,
         disabled,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -83,7 +83,7 @@ function Column(props: ColumnProps) {
 
     const orderedSubColumns = useMemo(() => {
         const filteredSubColumns = subColumns?.filter((subColumn) => {
-            if (!suggestionModeEnabled) {
+            if (!suggestionMode) {
                 return true;
             }
             const hasRecommendedValue = recommendedValue?.[columnId]?.includes(subColumn.key);
@@ -91,7 +91,7 @@ function Column(props: ColumnProps) {
         });
         return sortByOrder(filteredSubColumns);
     }, [
-        suggestionModeEnabled,
+        suggestionMode,
         columnId,
         subColumns,
         recommendedValue,
@@ -122,7 +122,7 @@ function Column(props: ColumnProps) {
             <div
                 className={_cs(
                     styles.columnDetails,
-                    !readOnly && suggestionModeEnabled && styles.suggestionMode,
+                    !readOnly && suggestionMode && styles.suggestionMode,
                 )}
             >
                 <div className={styles.columnTitle}>
@@ -131,7 +131,7 @@ function Column(props: ColumnProps) {
                     </div>
                     <IoChevronForward className={styles.separatorIcon} />
                     <div className={styles.columnLabel}>
-                        {(!readOnly && suggestionModeEnabled) ? (
+                        {(!readOnly && suggestionMode) ? (
                             <Button
                                 name={undefined}
                                 onClick={handleColumnNameClick}
@@ -147,12 +147,11 @@ function Column(props: ColumnProps) {
                     </div>
                 </div>
                 {(!readOnly
-                    && suggestionModeEnabled
+                    && suggestionMode
                     && orderedSubColumns
                     && orderedSubColumns.length > 0
                 ) && (
                     <div className={styles.subColumnSuggestions}>
-                        <IoChevronForward className={styles.separatorIcon} />
                         <MultiBadgeInput
                             containerClassName={styles.badgesContainer}
                             listClassName={styles.badgesList}
@@ -169,7 +168,7 @@ function Column(props: ColumnProps) {
                         />
                     </div>
                 )}
-                {!readOnly && !suggestionModeEnabled && (
+                {!readOnly && !suggestionMode && (
                     <MultiSelectInput
                         name={column.key}
                         value={value?.[column.key]}
@@ -205,7 +204,7 @@ interface SubRowProps {
     value: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
     recommendedValue?: NonNullable<NonNullable<Matrix2dValue['value']>[string]>[string];
     columns: ColumnType[] | undefined;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
 }
 
 function SubRow(props: SubRowProps) {
@@ -218,7 +217,7 @@ function SubRow(props: SubRowProps) {
         subRow,
         value,
         columns,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -250,10 +249,10 @@ function SubRow(props: SubRowProps) {
         rowId,
         subRowId,
         onSubColumnsChange,
-        suggestionModeEnabled,
+        suggestionMode,
     }), [
         readOnly,
-        suggestionModeEnabled,
+        suggestionMode,
         subRowId,
         recommendedValue,
         label,
@@ -286,7 +285,7 @@ interface RowProps {
         columnId: string,
         selected: string[] | undefined,
     ) => void;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
 }
 
 function Row(props: RowProps) {
@@ -297,7 +296,7 @@ function Row(props: RowProps) {
         readOnly,
         value,
         columns,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -335,7 +334,7 @@ function Row(props: RowProps) {
             subRow,
             rowId: key,
             columns,
-            suggestionModeEnabled,
+            suggestionMode,
         }),
         [
             recommendedValue,
@@ -345,7 +344,7 @@ function Row(props: RowProps) {
             value,
             key,
             columns,
-            suggestionModeEnabled,
+            suggestionMode,
         ],
     );
 
@@ -382,7 +381,7 @@ export interface Props <N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialMatrix2dWidget;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
     recommendedValue?: Matrix2dValue | null | undefined,
 }
 
@@ -399,7 +398,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -456,7 +455,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             row,
             columns,
             onSubColumnsChange: handleSubColumnsChange,
-            suggestionModeEnabled,
+            suggestionMode,
         }),
         [
             recommendedValue,
@@ -465,7 +464,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             handleSubColumnsChange,
             value,
             columns,
-            suggestionModeEnabled,
+            suggestionMode,
         ],
     );
 

@@ -41,6 +41,7 @@ import useLocalStorage from '#hooks/useLocalStorage';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
 import ProjectContext from '#base/context/ProjectContext';
+import { UserContext } from '#base/context/UserContext';
 import {
     LeadPreviewForTextQuery,
     LeadPreviewForTextQueryVariables,
@@ -135,6 +136,10 @@ function LeftPane(props: Props) {
 
     const alert = useAlert();
     const { project } = useContext(ProjectContext);
+    const { user } = useContext(UserContext);
+
+    const isAssistedTaggingAccessible = !!user
+        ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
 
     const [activeTab, setActiveTab] = useState<TabOptions>(
         (hideSimplifiedPreview && defaultTab === 'simplified') || (hideOriginalPreview && defaultTab === 'original')
@@ -491,6 +496,7 @@ function LeftPane(props: Props) {
 
     const assistedTaggingShown = assistedTaggingEnabled
         && !project?.isPrivate
+        && isAssistedTaggingAccessible
         && frameworkDetails?.assistedTaggingEnabled
         && (frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0;
 
@@ -536,6 +542,7 @@ function LeftPane(props: Props) {
                                 {(frameworkDetails?.predictionTagsMapping?.length ?? 0) > 0
                                     && !project?.isPrivate
                                     && frameworkDetails?.assistedTaggingEnabled
+                                    && isAssistedTaggingAccessible
                                     && (
                                         <Switch
                                             className={styles.switch}

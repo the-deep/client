@@ -46,8 +46,8 @@ import GeoLocationWidgetInput from './GeoLocationWidgetInput';
 import BaseWidgetInput from './BaseWidgetInput';
 import {
     filterSelectHints,
-    filterGeoHints,
     filterScaleHints,
+    filterGeoRecommendations,
     filterMultiSelectRecommendations,
     filterMatrix1dRecommendations,
     filterMatrix2dRecommendations,
@@ -103,7 +103,7 @@ export interface Props<N extends string | number | undefined> {
     applyButtonsHidden?: boolean;
     widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -128,7 +128,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         widgetsHints,
         recommendations,
 
-        suggestionModeEnabled,
+        suggestionMode,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -324,7 +324,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
                 recommendedValue={widgetRecommendation?.data}
-                suggestionModeEnabled={suggestionModeEnabled}
+                suggestionMode={suggestionMode}
             />
         );
     } else if (widget.widgetId === 'SELECT' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -346,7 +346,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
                 widgetHints={widgetHints?.hints}
-                suggestionModeEnabled={suggestionModeEnabled}
+                suggestionMode={suggestionMode}
             />
         );
     } else if (widget.widgetId === 'MATRIX1D' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
@@ -370,7 +370,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
-                suggestionModeEnabled={suggestionModeEnabled}
+                suggestionMode={suggestionMode}
                 recommendedValue={widgetRecommendedValue}
             />
         );
@@ -395,7 +395,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
-                suggestionModeEnabled={suggestionModeEnabled}
+                suggestionMode={suggestionMode}
                 recommendedValue={widgetRecommendedValue}
             />
         );
@@ -417,9 +417,12 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
-        const widgetHints = widgetsHints
-            ?.filter(filterGeoHints)
-            ?.find((hint) => hint.widgetPk === widget.id);
+
+        // FIXME: Handle this in an efficient manner
+        const widgetRecommendedValue = recommendations
+            ?.filter(filterGeoRecommendations)
+            ?.find((recommendation) => recommendation.widget === widget.id)
+            ?.data;
 
         component = (
             <GeoLocationWidgetInput
@@ -435,7 +438,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 actions={actions}
-                widgetHints={widgetHints?.hints}
+                suggestionMode={suggestionMode}
+                recommendedValue={widgetRecommendedValue}
             />
         );
     } else {

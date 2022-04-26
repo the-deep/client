@@ -43,7 +43,7 @@ interface RowProps {
     value: NonNullable<Matrix1dValue['value']>[string];
     recommendedValue?: NonNullable<Matrix1dValue['value']>[string];
     onCellsChange: (cells: { [key: string]: boolean | undefined }, cellId: string) => void;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
 }
 
 function Row(props: RowProps) {
@@ -53,7 +53,7 @@ function Row(props: RowProps) {
         disabled,
         readOnly,
         value,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -83,7 +83,7 @@ function Row(props: RowProps) {
     }, [onCellsChange, key]);
 
     const sortedCells = useMemo(() => {
-        if (!suggestionModeEnabled) {
+        if (!suggestionMode) {
             return sortByOrder(cells);
         }
         return sortByOrder(
@@ -92,7 +92,7 @@ function Row(props: RowProps) {
     }, [
         recommendedValueList,
         cells,
-        suggestionModeEnabled,
+        suggestionMode,
     ]);
 
     const selectedValues = useMemo(() => {
@@ -113,7 +113,7 @@ function Row(props: RowProps) {
                     {selectedValues}
                 </div>
             )}
-            {!readOnly && !suggestionModeEnabled && (
+            {!readOnly && !suggestionMode && (
                 <MultiSelectInput
                     name={row?.key}
                     onChange={handleCellsChange}
@@ -125,7 +125,7 @@ function Row(props: RowProps) {
                     disabled={disabled}
                 />
             )}
-            {!readOnly && suggestionModeEnabled && (
+            {!readOnly && suggestionMode && (
                 <MultiBadgeInput
                     name={row?.key}
                     onChange={handleCellsChange}
@@ -158,7 +158,7 @@ export interface Props <N extends string>{
     icons?: React.ReactNode;
 
     widget: PartialMatrix1dWidget;
-    suggestionModeEnabled?: boolean;
+    suggestionMode?: boolean;
     recommendedValue?: Matrix1dValue | null | undefined;
 }
 
@@ -175,7 +175,7 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
-        suggestionModeEnabled,
+        suggestionMode,
         recommendedValue,
     } = props;
 
@@ -239,11 +239,11 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
             recommendedValue: recommendedValue?.value?.[key],
             row,
             onCellsChange: handleCellsChange,
-            suggestionModeEnabled,
+            suggestionMode,
         }),
         [
             recommendedValue,
-            suggestionModeEnabled,
+            suggestionMode,
             disabled,
             readOnly,
             handleCellsChange,

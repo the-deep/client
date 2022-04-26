@@ -349,7 +349,10 @@ function LeadsPane(props: Props) {
                 onAssigneeOptionChange((oldValues) => unique(
                     [
                         ...(oldValues ?? []),
-                        user,
+                        {
+                            ...user,
+                            emailDisplay: user.email ?? '',
+                        },
                     ],
                     (item) => item.id,
                 ));

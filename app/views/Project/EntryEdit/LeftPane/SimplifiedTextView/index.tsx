@@ -3,7 +3,6 @@ import { IoAdd } from 'react-icons/io5';
 import {
     _cs,
     isDefined,
-    randomString,
 } from '@togglecorp/fujs';
 import {
     QuickActionButton,

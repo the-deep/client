@@ -157,7 +157,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         onGeoAreaOptionsChange,
         onApplyToAll,
         emptyMessageHidden: variant === 'nlp',
-        suggestionModeEnabled: variant === 'nlp',
+        suggestionMode: variant === 'nlp',
         allWidgets,
     }), [
         variant,
@@ -245,7 +245,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
                 widgetsHints={widgetsHints}
                 recommendations={recommendations}
                 emptyMessageHidden={variant === 'nlp'}
-                suggestionModeEnabled={variant === 'nlp'}
+                suggestionMode={variant === 'nlp'}
             />
         </div>
     );

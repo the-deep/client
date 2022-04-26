@@ -13,6 +13,7 @@ import {
 type MultiSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MULTISELECT' }>;
 type Matrix1dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATRIX1D' }>;
 type Matrix2dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATRIX2D' }>;
+type GeoWidgetAttribute = getType<PartialAttributeType, { widgetType: 'GEO' }>;
 
 export function filterMultiSelectRecommendations(
     recommendation: PartialAttributeType,
@@ -30,6 +31,12 @@ export function filterMatrix2dRecommendations(
     recommendation: PartialAttributeType,
 ): recommendation is Matrix2dWidgetAttribute {
     return recommendation.widgetType === 'MATRIX2D';
+}
+
+export function filterGeoRecommendations(
+    recommendation: PartialAttributeType,
+): recommendation is GeoWidgetAttribute {
+    return recommendation.widgetType === 'GEO';
 }
 
 export function filterGeoHints(

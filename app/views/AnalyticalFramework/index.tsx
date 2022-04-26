@@ -172,6 +172,9 @@ function AnalyticalFramework(props: Props) {
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
 
+    const isAssistedTaggingAccessible = !!user
+        ?.accessibleFeatures?.some((feature) => feature.key === 'ASSISTED');
+
     const [
         isNavigationDisabled,
         setNavigationDisableState,
@@ -789,16 +792,18 @@ function AnalyticalFramework(props: Props) {
                                 >
                                     {_ts('analyticalFramework', 'review')}
                                 </Tab>
-                                <Tab
-                                    name="assisted-tagging"
-                                    transparentBorder
-                                    className={_cs(
-                                        predictionTagsMappingErrored && styles.erroredTab,
-                                    )}
-                                    disabled={isNavigationDisabled}
-                                >
-                                    5. Assisted Tagging
-                                </Tab>
+                                {isAssistedTaggingAccessible && (
+                                    <Tab
+                                        name="assisted-tagging"
+                                        transparentBorder
+                                        className={_cs(
+                                            predictionTagsMappingErrored && styles.erroredTab,
+                                        )}
+                                        disabled={isNavigationDisabled}
+                                    >
+                                        Assisted Tagging
+                                    </Tab>
+                                )}
                                 {value.isVisualizationEnabled && (
                                     <Tab
                                         name="viz-settings"
@@ -806,7 +811,7 @@ function AnalyticalFramework(props: Props) {
                                         className={_cs(propertiesErrored && styles.erroredTab)}
                                         disabled={isNavigationDisabled}
                                     >
-                                        6. Visualization Settings
+                                        Visualization Settings
                                     </Tab>
                                 )}
                             </SubNavbarChildren>
@@ -942,28 +947,30 @@ function AnalyticalFramework(props: Props) {
                                     secondaryTagging={value.secondaryTagging}
                                 />
                             </TabPanel>
-                            <TabPanel
-                                activeClassName={styles.tabPanel}
-                                name="assisted-tagging"
-                                retainMount="lazy"
-                            >
-                                <AssistedTagging
-                                    name="predictionTagsMapping"
-                                    error={error?.predictionTagsMapping}
-                                    className={styles.view}
-                                    allWidgets={allWidgets}
-                                    value={value.predictionTagsMapping}
-                                    onChange={handlePredictionTagsMappings}
-                                    assistedTaggingEnabled={value.assistedTaggingEnabled}
-                                    assistedPredictionTags={(
-                                        assistedTagsResponse
-                                            ?.assistedTagging?.predictionTags
-                                    )}
-                                    onAssistedTaggingStatusChange={
-                                        handleAssistedTaggingStatusChange
-                                    }
-                                />
-                            </TabPanel>
+                            {isAssistedTaggingAccessible && (
+                                <TabPanel
+                                    activeClassName={styles.tabPanel}
+                                    name="assisted-tagging"
+                                    retainMount="lazy"
+                                >
+                                    <AssistedTagging
+                                        name="predictionTagsMapping"
+                                        error={error?.predictionTagsMapping}
+                                        className={styles.view}
+                                        allWidgets={allWidgets}
+                                        value={value.predictionTagsMapping}
+                                        onChange={handlePredictionTagsMappings}
+                                        assistedTaggingEnabled={value.assistedTaggingEnabled}
+                                        assistedPredictionTags={(
+                                            assistedTagsResponse
+                                                ?.assistedTagging?.predictionTags
+                                        )}
+                                        onAssistedTaggingStatusChange={
+                                            handleAssistedTaggingStatusChange
+                                        }
+                                    />
+                                </TabPanel>
+                            )}
                             {value.isVisualizationEnabled && (
                                 <TabPanel
                                     activeClassName={styles.tabPanel}
