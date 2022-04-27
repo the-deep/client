@@ -27,6 +27,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { IoTrash } from 'react-icons/io5';
 
 import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
+import ExcerptInput from '#components/entry/ExcerptInput';
 import {
     getEntrySchema,
     PartialEntryType as EntryInputType,
@@ -362,6 +363,17 @@ function EditableEntry(props: Props) {
         <EntryCommentWrapper
             entryId={entryId}
             projectId={projectId}
+            modalLeftContent={(
+                <ExcerptInput
+                    value={value.excerpt}
+                    image={entryImage}
+                    imageRaw={undefined}
+                    // FIXME: pass this after image drag/drop is implemented
+                    leadImageUrl={undefined}
+                    entryType={value.entryType}
+                    readOnly
+                />
+            )}
         />
     );
 

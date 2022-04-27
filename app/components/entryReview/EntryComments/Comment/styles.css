@@ -22,16 +22,11 @@
 
         .comment-section {
             display: flex;
-            align-items: center;
-            gap: var(--dui-spacing-medium);
+            flex-direction: column;
+            gap: var(--dui-spacing-small);
 
             .user-action {
                 display: inline;
-            }
-
-            &.inline {
-                align-items: flex-start;
-                flex-direction: column;
             }
         }
         .info {

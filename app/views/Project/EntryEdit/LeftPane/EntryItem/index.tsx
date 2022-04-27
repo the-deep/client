@@ -23,9 +23,9 @@ import {
 
 import ExcerptInput from '#components/entry/ExcerptInput';
 import ExcerptTextArea from '#components/entry/ExcerptTextArea';
+import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 
 import { PartialEntryType as EntryInput } from '../../schema';
-import EntryCommentWrapper from '#components/entryReview/EntryCommentWrapper';
 import { Entry } from '../../types';
 
 import styles from './styles.css';
@@ -161,6 +161,17 @@ function EntryItem(props: EntryItemProps) {
                 <EntryCommentWrapper
                     entryId={entryServerId}
                     projectId={projectId}
+                    modalLeftContent={(
+                        <ExcerptInput
+                            value={excerpt}
+                            image={entryImage}
+                            imageRaw={imageRaw}
+                            // FIXME: pass this after image drag/drop is implemented
+                            leadImageUrl={undefined}
+                            entryType={entryType}
+                            readOnly
+                        />
+                    )}
                 />
             )}
             footerIcons={(

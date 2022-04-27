@@ -6,6 +6,7 @@ import {
     DateOutput,
     Container,
 } from '@the-deep/deep-ui';
+import ReactMarkdown from 'react-markdown';
 
 import { useModalState } from '#hooks/stateManagement';
 import UserContext from '#base/context/UserContext';
@@ -86,11 +87,7 @@ function Comment(props: Props) {
             contentClassName={styles.content}
         >
             <>
-                <div className={_cs(
-                    styles.commentSection,
-                    editViewShown && styles.inline,
-                )}
-                >
+                <div className={styles.commentSection}>
                     <div className={styles.userAction}>
                         <span className={styles.userName}>
                             {createdBy?.displayName}
@@ -111,9 +108,11 @@ function Comment(props: Props) {
                             onSuccess={handleCommentEditSuccess}
                         />
                     ) : (
-                        <div className={styles.comment}>
-                            {text}
-                        </div>
+                        <ReactMarkdown
+                            className={styles.comment}
+                        >
+                            {text ?? ''}
+                        </ReactMarkdown>
                     )}
                 </div>
                 <div className={styles.info}>
