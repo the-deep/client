@@ -17,6 +17,7 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         entriesFilterData,
         createdAtGte,
         createdAtLte,
+        createdBy,
         search,
         authorOrganizations,
         sourceOrganizations,
@@ -33,6 +34,7 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         leadCreatedAtLte: convertDateToIsoDateTime(createdAtLte, { endOfDay: true }),
 
         leadAssignees: assignees,
+        leadCreatedBy: createdBy,
         leadConfidentialities: confidentiality && [confidentiality],
         leadPriorities: priorities,
         leadPublishedOnGte: publishedOnGte,

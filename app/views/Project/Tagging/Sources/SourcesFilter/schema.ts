@@ -47,8 +47,8 @@ type EntriesFilterDataFields = ReturnType<EntriesFilterDataSchema['fields']>;
 const entriesFilterDataSchema: EntriesFilterDataSchema = {
     fields: (): EntriesFilterDataFields => ({
         controlled: [],
-        createdAtGte: [],
         createdAtLte: [],
+        createdAtGte: [],
         createdBy: [],
         entryTypes: [],
         search: [],
@@ -67,6 +67,7 @@ const schema: FormSchema = {
         search: [],
         exists: [],
         priorities: [],
+        createdBy: [],
         customFilters: [],
         authoringOrganizationTypes: [],
         confidentiality: [],
