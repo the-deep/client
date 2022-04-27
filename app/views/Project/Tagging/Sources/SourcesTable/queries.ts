@@ -98,6 +98,7 @@ export const PROJECT_SOURCES = gql`
                         mergedAs {
                             id
                             title
+                            url
                         }
                         id
                         url
