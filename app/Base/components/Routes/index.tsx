@@ -70,6 +70,12 @@ function Routes(props: Props) {
                 </Route>
                 <Route
                     exact
+                    path={routes.documentPreview.path}
+                >
+                    {routes.documentPreview.load({ className })}
+                </Route>
+                <Route
+                    exact
                     path={routes.extensionPrivacyPolicy.path}
                 >
                     {routes.extensionPrivacyPolicy.load({ className })}

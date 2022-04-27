@@ -1,0 +1,19 @@
+.document-preview {
+    display: flex;
+    flex-grow: 1;
+    background-color: unset;
+
+    .content {
+        display: flex;
+
+        .preview {
+            flex-grow: 1;
+        }
+        .side-pane {
+            flex-shrink: 0;
+            border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            background-color: unset;
+            width: 25vw;
+        }
+    }
+}

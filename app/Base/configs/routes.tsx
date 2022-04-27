@@ -427,6 +427,16 @@ const groupAssessmentEditRoute = wrap({
     },
 });
 
+const documentPreview = wrap({
+    path: '/document-preview/',
+    title: 'DocumentPreview',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/Tagging/Export/DocumentPreview')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
+
 const entryEditRedirect = wrap({
     path: '/permalink/projects/:projectId/leads/:leadId/entries/:entryId/',
     title: 'Edit Entry',
@@ -486,5 +496,6 @@ const routes = {
     assessmentEdit: assessmentEditRoute,
     groupAssessmentEdit: groupAssessmentEditRoute,
     entryEditRedirect,
+    documentPreview,
 };
 export default routes;
