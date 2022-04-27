@@ -48,6 +48,7 @@ import ProjectContext from '#base/context/ProjectContext';
 import UserContext from '#base/context/UserContext';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
+import ExcerptInput from '#components/entry/ExcerptInput';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
@@ -1244,6 +1245,17 @@ function EntryEdit(props: Props) {
                 <EntryCommentWrapper
                     entryId={datum.id}
                     projectId={projectId}
+                    modalLeftContent={(
+                        <ExcerptInput
+                            value={datum.excerpt}
+                            image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
+                            imageRaw={undefined}
+                            // FIXME: pass this after image drag/drop is implemented
+                            leadImageUrl={undefined}
+                            entryType={datum.entryType}
+                            readOnly
+                        />
+                    )}
                 />
             ),
             leadId,

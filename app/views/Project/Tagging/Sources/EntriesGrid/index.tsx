@@ -67,6 +67,7 @@ export const PROJECT_ENTRIES = gql`
         $entryTypes: [EntryTagTypeEnum!],
         $filterableData: [EntryFilterDataType!]
         $leadAssignees: [ID!],
+        $leadCreatedBy: [ID!],
         $leadSourceOrganizations: [ID!],
         $leadAuthorOrganizations: [ID!],
         $leadConfidentialities: [LeadConfidentialityEnum!],
@@ -92,6 +93,7 @@ export const PROJECT_ENTRIES = gql`
                 leadAssignees: $leadAssignees,
                 leadConfidentialities: $leadConfidentialities,
                 leadPriorities: $leadPriorities,
+                leadCreatedBy: $leadCreatedBy,
                 leadPublishedOnGte: $leadPublishedOnGte,
                 leadPublishedOnLte: $leadPublishedOnLte,
                 leadStatuses: $leadStatuses,

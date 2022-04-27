@@ -82,6 +82,7 @@ export interface Props {
     entryId: string;
     projectId: string;
     onEntryCommentAdd?: () => void;
+    modalLeftContent?: React.ReactNode;
 }
 
 const commentKeySelector = (d: CommentItem) => d.id;
@@ -94,6 +95,7 @@ function EntryComments(props: Props) {
         projectId,
         activityCount = 0,
         onEntryCommentAdd,
+        modalLeftContent,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -165,6 +167,7 @@ function EntryComments(props: Props) {
             {isCommentModalShown && (
                 <Modal
                     className={styles.entryCommentModal}
+                    size="large"
                     heading="Entry Comments"
                     onCloseButtonClick={hideCommentModal}
                     bodyClassName={styles.modalBody}
@@ -180,35 +183,41 @@ function EntryComments(props: Props) {
                             infoVisibility="hidden"
                         />
                     )}
-                    freeHeight
                     movable
                 >
-                    <ListView
-                        data={commentsResponse?.project?.reviewComments?.results}
-                        className={styles.commentList}
-                        keySelector={commentKeySelector}
-                        rendererParams={commentRendererParams}
-                        renderer={Comment}
-                        pending={commentsPending}
-                        filtered={false}
-                        errored={false}
-                        emptyIcon={(
-                            <Kraken
-                                variant="work"
+                    {modalLeftContent && (
+                        <div className={styles.leftContentContainer}>
+                            {modalLeftContent}
+                        </div>
+                    )}
+                    <div className={styles.rightContent}>
+                        <ListView
+                            data={commentsResponse?.project?.reviewComments?.results}
+                            className={styles.commentList}
+                            keySelector={commentKeySelector}
+                            rendererParams={commentRendererParams}
+                            renderer={Comment}
+                            pending={commentsPending}
+                            filtered={false}
+                            errored={false}
+                            emptyIcon={(
+                                <Kraken
+                                    variant="work"
+                                />
+                            )}
+                            emptyMessage="No comments found"
+                            messageIconShown
+                            messageShown
+                        />
+                        {commentsResponse && (
+                            <CommentForm
+                                entryId={entryId}
+                                projectId={projectId}
+                                commentAssignee={commentsResponse.project?.entry?.createdBy}
+                                onSave={handleEntryCommentSave}
                             />
                         )}
-                        emptyMessage="No comments found"
-                        messageIconShown
-                        messageShown
-                    />
-                    {commentsResponse && (
-                        <CommentForm
-                            entryId={entryId}
-                            projectId={projectId}
-                            commentAssignee={commentsResponse.project?.entry?.createdBy}
-                            onSave={handleEntryCommentSave}
-                        />
-                    )}
+                    </div>
                 </Modal>
             )}
         </>

@@ -23,13 +23,27 @@
 
     .modal-body {
         display: flex;
-        flex-direction: column;
         gap: var(--dui-spacing-medium);
 
-        .comment-list {
-            max-height: 400px;
+        .left-content-container {
+            border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+            padding: var(--dui-spacing-medium);
+            max-width: 320px;
             overflow-y: auto;
+        }
+
+        .right-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
             gap: var(--dui-spacing-medium);
+
+            .comment-list {
+                flex-grow: 1;
+                max-height: 400px;
+                overflow-y: auto;
+                gap: var(--dui-spacing-medium);
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
     justify-content: space-between;
     padding: 0 var(--dui-spacing-super-large);
     min-height: 60px;
+    overflow: auto;
     gap: var(--gap);
 
     --gap: var(--dui-spacing-large);
@@ -18,10 +19,13 @@
         align-self: center;
         flex-basis: 0;
         flex-grow: 1;
+        min-width: 16rem;
+        overflow: auto;
         gap: var(--dui-spacing-medium);
 
         .app-brand {
             align-self: center;
+            flex-shrink: 0;
             color: var(--dui-color-brand);
 
             .logo {
@@ -37,6 +41,7 @@
 
         .description-container {
             align-self: baseline;
+            flex-grow: unset;
             flex-shrink: unset;
             overflow: auto;
 

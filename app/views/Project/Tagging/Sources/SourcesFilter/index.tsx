@@ -347,6 +347,21 @@ function SourcesFilter(props: Props) {
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
+                        (hasNoData(value.createdBy) && !allFiltersVisible)
+                        && styles.hidden,
+                    )}
+                    name="createdBy"
+                    projectId={projectId}
+                    value={value.createdBy}
+                    onChange={setFieldValue}
+                    options={members}
+                    onOptionsChange={setMembers}
+                    label="Source Created By"
+                    disabled={disabled}
+                />
+                <ProjectMemberMultiSelectInput
+                    className={_cs(
+                        styles.input,
                         (hasNoData(value.assignees) && !allFiltersVisible)
                         && styles.hidden,
                     )}

@@ -70,6 +70,18 @@ function sourcesKeySelector(d: Lead) {
     return d.id;
 }
 
+export function organizationUrlSelector(
+    org: {
+        url?: string;
+        mergedAs?: { url?: string | null } | null;
+    },
+) {
+    if (org.mergedAs) {
+        return org.mergedAs.url ?? undefined;
+    }
+    return org.url;
+}
+
 const statusIconMap: { [key in Lead['status']]: ReactNode } = {
     NOT_TAGGED: null,
     IN_PROGRESS: <VscLoading />,
@@ -403,7 +415,7 @@ function SourcesTable(props: Props) {
             cellRenderer: SourceLink,
             cellRendererParams: (_, data) => ({
                 title: data.source ? organizationTitleSelector(data.source) : undefined,
-                link: data.source?.url,
+                link: data.source ? organizationUrlSelector(data.source) : undefined,
             }),
             columnWidth: 160,
         };
