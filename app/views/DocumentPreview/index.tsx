@@ -6,7 +6,6 @@ import {
     IoInformationCircleOutline,
     IoClose,
 } from 'react-icons/io5';
-
 import {
     Container,
     QuickActionButton,

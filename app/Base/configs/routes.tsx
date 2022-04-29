@@ -429,9 +429,9 @@ const groupAssessmentEditRoute = wrap({
 
 const documentPreview = wrap({
     path: '/document-preview/',
-    title: 'DocumentPreview',
+    title: 'Document Preview',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/Export/DocumentPreview')),
+    component: lazy(() => import('#views/DocumentPreview')),
     componentProps: {
     },
     visibility: 'is-anything',

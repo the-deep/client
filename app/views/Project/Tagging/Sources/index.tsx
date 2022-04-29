@@ -82,7 +82,9 @@ function Sources(props: Props) {
                             </TabList>
                         )}
                     />
-                    {activeProject && (
+                </div>
+                {activeProject && (
+                    <div className={styles.leadsContainer}>
                         <SourcesFilter
                             className={styles.filter}
                             value={sourcesFilters}
@@ -90,29 +92,27 @@ function Sources(props: Props) {
                             projectId={activeProject}
                             isEntriesOnlyFilter={activeView === 'grid'}
                         />
-                    )}
-                </div>
-                {activeProject && (
-                    <div className={styles.leads}>
-                        <TabPanel
-                            name="table"
-                        >
-                            <SourcesTable
-                                className={styles.table}
-                                filters={sourcesFilters}
-                                projectId={activeProject}
-                                activePage={activePage}
-                                setActivePage={setActivePage}
-                            />
-                        </TabPanel>
-                        <TabPanel
-                            name="grid"
-                        >
-                            <EntriesGrid
-                                projectId={String(activeProject)}
-                                filters={sourcesFilters}
-                            />
-                        </TabPanel>
+                        <div className={styles.leads}>
+                            <TabPanel
+                                name="table"
+                            >
+                                <SourcesTable
+                                    className={styles.table}
+                                    filters={sourcesFilters}
+                                    projectId={activeProject}
+                                    activePage={activePage}
+                                    setActivePage={setActivePage}
+                                />
+                            </TabPanel>
+                            <TabPanel
+                                name="grid"
+                            >
+                                <EntriesGrid
+                                    projectId={String(activeProject)}
+                                    filters={sourcesFilters}
+                                />
+                            </TabPanel>
+                        </div>
                     </div>
                 )}
             </Tabs>
