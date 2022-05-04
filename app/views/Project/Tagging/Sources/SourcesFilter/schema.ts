@@ -65,15 +65,15 @@ const schema: FormSchema = {
         publishedOnLte: [],
         assignees: [],
         search: [],
-        exists: [],
         priorities: [],
         createdBy: [],
-        customFilters: [],
         authoringOrganizationTypes: [],
         confidentiality: [],
         sourceOrganizations: [],
         authorOrganizations: [],
         entriesFilterData: entriesFilterDataSchema,
+        hasEntries: [],
+        hasAssessment: [],
     }),
 };
 export default schema;

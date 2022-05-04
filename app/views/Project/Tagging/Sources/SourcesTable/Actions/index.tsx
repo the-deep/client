@@ -5,7 +5,7 @@ import {
     IoChevronUpOutline,
     IoChevronDownOutline,
 } from 'react-icons/io5';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import { MdModeEdit } from 'react-icons/md';
 import {
     QuickActionButton,
@@ -32,7 +32,7 @@ export interface Props<T extends string> {
     disabled?: boolean;
     isAssessmentLead?: boolean;
     entriesCount: number;
-    filteredEntriesCount: number;
+    filteredEntriesCount: number | null | undefined;
     hasAssessment: boolean;
 }
 
@@ -89,7 +89,10 @@ function Actions<T extends string>(props: Props<T>) {
     });
 
     const isExpanded = id === expandedRowKey;
-    const isDisabled = filteredEntriesCount < 1;
+    const isDisabled = isDefined(filteredEntriesCount)
+        ? filteredEntriesCount < 1
+        : entriesCount < 1;
+    const noOfEntries = filteredEntriesCount ?? entriesCount;
 
     return (
         <div className={_cs(styles.actions, className)}>
@@ -170,9 +173,8 @@ function Actions<T extends string>(props: Props<T>) {
                         <IoChevronDownOutline />
                     )}
                 >
-                    {`${filteredEntriesCount} ${filteredEntriesCount === 1 ? 'Entry' : 'Entries'}`}
+                    {`${isDefined(filteredEntriesCount) ? `${noOfEntries}/${entriesCount}` : entriesCount} ${noOfEntries === 1 ? 'Entry' : 'Entries'}`}
                 </Button>
-                {/* TODO: Update entriesCount when parent has graphql */}
             </div>
             {modal}
             {leadCopyModalShown && project?.id && (

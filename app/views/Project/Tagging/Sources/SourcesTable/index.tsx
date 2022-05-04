@@ -4,6 +4,7 @@ import {
     listToMap,
     unique,
     isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     Checkbox,
@@ -277,7 +278,10 @@ function SourcesTable(props: Props) {
         setExpandedRowKey,
     ] = useRowExpansion<Lead, string>(
         ({ datum }) => {
-            if ((datum?.filteredEntriesCount ?? 0) > 0) {
+            const showEntries = isDefined(datum.filteredEntriesCount)
+                ? (datum.filteredEntriesCount > 0)
+                : (datum.entriesCount?.total ?? 0) > 0;
+            if (showEntries) {
                 return (
                     <EntryList
                         key={datum.id}
@@ -455,7 +459,7 @@ function SourcesTable(props: Props) {
                 onEditClick: handleEdit,
                 onDeleteClick: handleDelete,
                 entriesCount: data.entriesCount?.total ?? 0,
-                filteredEntriesCount: data.filteredEntriesCount ?? 0,
+                filteredEntriesCount: data.filteredEntriesCount,
                 hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
             }),

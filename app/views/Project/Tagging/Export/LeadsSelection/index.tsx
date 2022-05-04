@@ -12,7 +12,6 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
     createStringColumn,
-    createNumberColumn,
     DateOutputProps,
     SortContext,
     useSortState,
@@ -60,7 +59,6 @@ const PROJECT_LEADS = gql`
         $emmEntities: String,
         $emmKeywords: String,
         $emmRiskFactors: String,
-        $exists: LeadExistsEnum,
         $priorities: [LeadPriorityEnum!],
         $publishedOnGte: Date,
         $publishedOnLte: Date,
@@ -69,6 +67,8 @@ const PROJECT_LEADS = gql`
         $sourceOrganizations: [ID!],
         $authorOrganizations: [ID!],
         $entriesFilterData: LeadEntriesFilterData,
+        $hasEntries: Boolean,
+        $hasAssessment: Boolean,
     ) {
         project(id: $projectId) {
             id
@@ -85,7 +85,6 @@ const PROJECT_LEADS = gql`
                 emmEntities: $emmEntities,
                 emmKeywords: $emmKeywords,
                 emmRiskFactors: $emmRiskFactors,
-                exists: $exists,
                 priorities: $priorities,
                 publishedOnGte: $publishedOnGte,
                 publishedOnLte: $publishedOnLte,
@@ -94,6 +93,8 @@ const PROJECT_LEADS = gql`
                 sourceOrganizations: $sourceOrganizations,
                 authorOrganizations: $authorOrganizations,
                 entriesFilterData: $entriesFilterData,
+                hasEntries: $hasEntries,
+                hasAssessment: $hasAssessment,
             ) {
                 totalCount
                 page
@@ -133,6 +134,7 @@ const PROJECT_LEADS = gql`
                     entriesCount {
                         total
                     }
+                    filteredEntriesCount
                     leadPreview {
                         pageCount
                     }
@@ -306,10 +308,15 @@ function LeadsSelection(props: Props) {
                 },
             ),
             publishedOnColumn,
-            createNumberColumn<Lead, string>(
+            createStringColumn<Lead, string>(
                 'ENTRIES_COUNT',
                 'No of entries',
-                (item) => item?.entriesCount?.total,
+                (item) => {
+                    if (isDefined(item.filteredEntriesCount)) {
+                        return `${item.filteredEntriesCount}/${item.entriesCount?.total}`;
+                    }
+                    return item.entriesCount?.total?.toString();
+                },
                 {
                     sortable: true,
                 },
