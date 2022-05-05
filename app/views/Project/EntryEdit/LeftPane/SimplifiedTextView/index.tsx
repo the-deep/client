@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import {
     _cs,
@@ -91,6 +91,15 @@ function SimplifiedTextView(props: Props) {
     const scrollTopRef = React.useRef<number | undefined>();
     const [charactersLoaded, setCharactersLoaded] = useState(CHARACTER_PER_PAGE);
     const [textToAssist, setTextToAssist] = useState<string | undefined>();
+
+    useEffect(() => {
+        if (textToAssist && !assistedTaggingEnabled) {
+            setTextToAssist(undefined);
+        }
+    }, [
+        textToAssist,
+        assistedTaggingEnabled,
+    ]);
 
     const text = useMemo(() => {
         if (textFromProps) {
