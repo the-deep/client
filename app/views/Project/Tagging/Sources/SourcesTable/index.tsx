@@ -399,6 +399,7 @@ function SourcesTable(props: Props) {
                 label: data.title,
                 url: data.url,
                 attachment: data.attachment,
+                className: styles.title,
             }),
             columnClassName: styles.titleColumn,
             columnWidth: 160,

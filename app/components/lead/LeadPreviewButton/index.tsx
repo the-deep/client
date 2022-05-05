@@ -52,6 +52,7 @@ function LeadPreviewButton(props: Props) {
                     onClick={showModal}
                     title="Show lead preview"
                     variant={variant ?? 'transparent'}
+                    childrenContainerClassName={styles.label}
                 >
                     {label}
                 </Button>

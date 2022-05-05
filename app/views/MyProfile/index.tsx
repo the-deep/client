@@ -333,7 +333,7 @@ function MyProfile(props: Props) {
                         />
                         <CheckListInput
                             className={styles.emailPreferences}
-                            label="Email Notifications"
+                            label="Opt-out from notifications"
                             name="emailOptOuts"
                             value={value.emailOptOuts}
                             options={emailOptOutsOptions}

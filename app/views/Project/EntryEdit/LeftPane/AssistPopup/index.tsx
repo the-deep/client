@@ -12,8 +12,8 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     IoClose,
-    IoCheckmark,
 } from 'react-icons/io5';
+import { FiEdit2 } from 'react-icons/fi';
 
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -103,7 +103,7 @@ function AssistPopup(props: Props) {
                         variant="nlp-primary"
                         title="Create Entry"
                     >
-                        <IoCheckmark />
+                        <FiEdit2 />
                     </QuickActionButton>
                 </>
             )}

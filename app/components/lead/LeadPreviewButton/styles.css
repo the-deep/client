@@ -7,6 +7,10 @@
     &:hover {
         text-decoration: underline;
     }
+
+    .label {
+        word-break: break-word;
+    }
 }
 
 .modal {
