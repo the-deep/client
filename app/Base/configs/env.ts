@@ -21,8 +21,6 @@ export const entriesVizEndpoint = process.env.REACT_APP_ENTRY_VIZ_URL || 'https:
 export const proxyEndpoint = process.env.REACT_APP_PROXY_ENDPOINT || 'https://preview-proxy.thedeep.io';
 
 // Chrome extension
-export const oldExtensionId = process.env.REACT_APP_OLD_BROWSER_EXTENSION_ID || 'kafonkgglonkbldmcigbdojiadfcmcdc';
-export const oldExtensionChromeUrl = `https://chrome.google.com/webstore/detail/deep-2-add-lead/${oldExtensionId}`;
 export const extensionId = process.env.REACT_APP_BROWSER_EXTENSION_ID || 'hkmakfhfikfhllpkfpkkaoonapclfajf';
 export const extensionChromeUrl = `https://chrome.google.com/webstore/detail/deep/${extensionId}`;
 

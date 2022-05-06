@@ -1,18 +1,14 @@
-import { oldExtensionId } from '#base/configs/env';
+import { extensionId } from '#base/configs/env';
 
 // FIXME: Use new extension keys for the following after extension is deployed
-const EXTENSION_GET_SCREENSHOT = 'get-screenshot';
-const EXTENSION_SET_TOKEN = 'set-token';
-/*
-const EXTENSION_GET_SCREENSHOT = 'deep_extension_le_get-screenshot';
-const EXTENSION_SET_TOKEN = 'deep_extension_le_set-token';
-*/
+const EXTENSION_GET_SCREENSHOT = 'deep-get-screenshot';
 
 interface ScreenshotResponse {
     image: string;
 }
 
-export const getScreenshot = () => {
+// eslint-disable-next-line import/prefer-default-export
+export function getScreenshot() {
     const data = {
         message: EXTENSION_GET_SCREENSHOT,
     };
@@ -22,7 +18,7 @@ export const getScreenshot = () => {
             reject();
         }
 
-        chrome.runtime.sendMessage(oldExtensionId, data, (response: ScreenshotResponse) => {
+        chrome.runtime.sendMessage(extensionId, data, (response: ScreenshotResponse) => {
             if (!response) {
                 reject();
             }
@@ -32,26 +28,4 @@ export const getScreenshot = () => {
     });
 
     return promise;
-};
-
-export const sendToken = (token: unknown) => {
-    const data = {
-        message: EXTENSION_SET_TOKEN,
-        token,
-    };
-
-    const promise = new Promise((resolve: (r: unknown) => void, reject: () => void) => {
-        if (!chrome) {
-            reject();
-        }
-
-        chrome.runtime.sendMessage(oldExtensionId, data, (response) => {
-            if (!response) {
-                reject();
-            }
-            resolve(response);
-        });
-    });
-
-    return promise;
-};
+}
