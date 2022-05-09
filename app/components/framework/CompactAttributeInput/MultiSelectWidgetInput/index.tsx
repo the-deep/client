@@ -14,7 +14,10 @@ import { sortByOrder } from '#utils/common';
 
 import { MultiSelectWidget } from '#types/newAnalyticalFramework';
 import { MultiSelectWidgetAttribute } from '#types/newEntry';
+
 import WidgetWrapper from '../WidgetWrapper';
+
+import styles from './styles.css';
 
 type MultiSelectValue = NonNullable<MultiSelectWidgetAttribute['data']>;
 
@@ -151,6 +154,7 @@ function MultiSelectWidgetInput<N extends string>(props: Props<N>) {
                             onChange={onChange}
                             disabled={readOnly || disabled}
                             selectedButtonVariant="nlp-primary"
+                            listClassName={styles.suggestions}
                             buttonVariant="nlp-tertiary"
                             smallButtons
                         />

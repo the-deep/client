@@ -38,6 +38,7 @@ import {
 } from 'react-icons/io5';
 
 import useLocalStorage from '#hooks/useLocalStorage';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 import LeadPreview from '#components/lead/LeadPreview';
 import Screenshot from '#components/Screenshot';
 import ProjectContext from '#base/context/ProjectContext';
@@ -80,7 +81,7 @@ export type TabOptions = 'simplified' | 'original' | 'entries' | undefined;
 interface Props {
     className?: string;
     onEntryCreate?: (newEntry: EntryInput) => void;
-    onAssistedEntryAdd?: (newEntry: EntryInput) => void;
+    onAssistedEntryAdd?: (newEntry: EntryInput, geoAreaOptions?: GeoArea[]) => void;
     entries: EntryInput[] | undefined | null;
     activeEntry?: string;
     onEntryClick?: (entryId: string) => void;

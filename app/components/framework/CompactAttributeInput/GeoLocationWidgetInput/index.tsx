@@ -13,7 +13,9 @@ import {
 } from '#components/GeoMultiSelectInput';
 import { GeoLocationWidgetAttribute } from '#types/newEntry';
 import GeoLocationInput from '#components/GeoLocationInput';
+
 import WidgetWrapper from '../WidgetWrapper';
+import styles from './styles.css';
 
 export type PartialGeoLocationWidget = PartialForm<
 GeoLocationWidget,
@@ -144,6 +146,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
                             labelSelector={labelSelector}
                             onChange={onChange}
                             disabled={disabled}
+                            listClassName={styles.suggestions}
                             selectedButtonVariant="nlp-primary"
                             buttonVariant="nlp-tertiary"
                             smallButtons

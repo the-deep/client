@@ -339,6 +339,7 @@ function MyProfile(props: Props) {
                             options={emailOptOutsOptions}
                             keySelector={emailOptOutKeySelector}
                             labelSelector={emailOptOutLabelSelector}
+                            direction="vertical"
                             onChange={setFieldValue}
                             disabled={disabled}
                             error={error?.emailOptOuts}

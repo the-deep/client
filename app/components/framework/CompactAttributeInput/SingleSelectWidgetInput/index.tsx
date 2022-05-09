@@ -11,7 +11,10 @@ import { sortByOrder } from '#utils/common';
 
 import { SingleSelectWidget } from '#types/newAnalyticalFramework';
 import { SingleSelectWidgetAttribute } from '#types/newEntry';
+
 import WidgetWrapper from '../WidgetWrapper';
+
+import styles from './styles.css';
 
 type SingleSelectValue = NonNullable<SingleSelectWidgetAttribute['data']>;
 
@@ -129,6 +132,7 @@ function SingleSelectWidgetInput<N extends string>(props: Props<N>) {
                             options={selectedOptions}
                             keySelector={optionKeySelector}
                             labelSelector={optionLabelSelector}
+                            listClassName={styles.suggestions}
                             onChange={onChange}
                             disabled={readOnly || disabled}
                             selectedButtonVariant="nlp-primary"
