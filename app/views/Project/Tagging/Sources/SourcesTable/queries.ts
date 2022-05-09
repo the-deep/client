@@ -16,7 +16,6 @@ export const PROJECT_SOURCES = gql`
         $emmEntities: String,
         $emmKeywords: String,
         $emmRiskFactors: String,
-        $exists: LeadExistsEnum,
         $priorities: [LeadPriorityEnum!],
         $publishedOnGte: Date,
         $publishedOnLte: Date,
@@ -25,7 +24,8 @@ export const PROJECT_SOURCES = gql`
         $sourceOrganizations: [ID!],
         $authorOrganizations: [ID!],
         $entriesFilterData: LeadEntriesFilterData,
-        $customFilters: LeadCustomFilterEnum,
+        $hasEntries: Boolean,
+        $hasAssessment: Boolean,
     ) {
         project(id: $projectId) {
             id
@@ -42,7 +42,6 @@ export const PROJECT_SOURCES = gql`
                 emmEntities: $emmEntities,
                 emmKeywords: $emmKeywords,
                 emmRiskFactors: $emmRiskFactors,
-                exists: $exists,
                 priorities: $priorities,
                 publishedOnGte: $publishedOnGte,
                 publishedOnLte: $publishedOnLte,
@@ -51,7 +50,8 @@ export const PROJECT_SOURCES = gql`
                 sourceOrganizations: $sourceOrganizations,
                 authorOrganizations: $authorOrganizations,
                 entriesFilterData: $entriesFilterData,
-                customFilters: $customFilters,
+                hasEntries: $hasEntries,
+                hasAssessment: $hasAssessment,
             ) {
                 totalCount
                 page
@@ -104,10 +104,11 @@ export const PROJECT_SOURCES = gql`
                         url
                         title
                     }
-                    entriesCounts {
+                    entriesCount {
                         controlled
                         total
                     }
+                    filteredEntriesCount
                     leadPreview {
                         pageCount
                     }

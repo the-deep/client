@@ -14,7 +14,6 @@ import {
 export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
     'statuses'
     | 'confidentiality'
-    | 'exists'
     | 'priorities'
     | 'statuses'
     | 'entryTypes'

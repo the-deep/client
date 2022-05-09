@@ -34,6 +34,7 @@ import {
 } from '#utils/common';
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import NewOrganizationMultiSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
+import BooleanInput, { Option } from '#components/selections/BooleanInput';
 import NonFieldError from '#components/NonFieldError';
 import {
     SourceFilterOptionsQueryVariables,
@@ -47,22 +48,23 @@ import schema, { FormType, PartialFormType } from './schema';
 import EntryFilter from './EntryFilter';
 import styles from './styles.css';
 
-const initialValue: PartialFormType = {
-    customFilters: 'EXCLUDE_EMPTY_FILTERED_ENTRIES', // NOTE: customFilters is required when entriesFilterData filter is applied.
-};
+const initialValue: PartialFormType = {};
+
+const hasEntryOptions: Option[] = [
+    { key: 'true', value: 'Has entry' },
+    { key: 'false', value: 'Does not have entry' },
+];
+
+const hasAssessmentOptions: Option[] = [
+    { key: 'true', value: 'Has assessment' },
+    { key: 'false', value: 'Does not have assessment' },
+];
 
 const SOURCE_FILTER_OPTIONS = gql`
     query SourceFilterOptions(
         $projectId: ID!,
     ) {
         sourceStatusOptions: __type(name: "LeadStatusEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        sourceExistsOptions: __type(name: "LeadExistsEnum") {
             name
             enumValues {
                 name
@@ -167,8 +169,7 @@ export function getProjectSourcesQueryVariables(
         ...filters,
         createdAtGte: convertDateToIsoDateTime(filters.createdAtGte),
         createdAtLte: convertDateToIsoDateTime(filters.createdAtLte, { endOfDay: true }),
-        entriesFilterData,
-        customFilters: isEntriesFilterDataEmpty ? undefined : 'EXCLUDE_EMPTY_FILTERED_ENTRIES',
+        entriesFilterData: isEntriesFilterDataEmpty ? undefined : entriesFilterData,
     };
 }
 
@@ -261,8 +262,6 @@ function SourcesFilter(props: Props) {
 
     const statusOptions = sourceFilterOptions
         ?.sourceStatusOptions?.enumValues;
-    const existsOptions = sourceFilterOptions
-        ?.sourceExistsOptions?.enumValues;
     const priorityOptions = sourceFilterOptions
         ?.sourcePriorityOptions?.enumValues;
     const confidentialityOptions = sourceFilterOptions
@@ -305,23 +304,6 @@ function SourcesFilter(props: Props) {
                     label={_ts('sourcesFilter', 'status')}
                     disabled={disabled || loading || !!sourceFilterOptionsError}
                 />
-                {!isEntriesOnlyFilter && (
-                    <SelectInput
-                        className={_cs(
-                            styles.input,
-                            (hasNoData(value.exists) && !allFiltersVisible) && styles.hidden,
-                        )}
-                        name="exists"
-                        onChange={setFieldValue}
-                        options={existsOptions}
-                        keySelector={enumKeySelector}
-                        labelSelector={enumLabelSelector}
-                        value={value.exists}
-                        error={error?.exists}
-                        label="Exists"
-                        disabled={disabled || loading || !!sourceFilterOptionsError}
-                    />
-                )}
                 <DateDualRangeInput
                     className={styles.input}
                     fromName="publishedOnGte"
@@ -344,10 +326,45 @@ function SourcesFilter(props: Props) {
                     disabled={disabled}
                     label="Source Created At"
                 />
+                {!isEntriesOnlyFilter && (
+                    <>
+                        <BooleanInput
+                            className={_cs(
+                                styles.input,
+                                hasNoData(value.hasEntries)
+                                && !allFiltersVisible
+                                && styles.hidden,
+                            )}
+                            options={hasEntryOptions}
+                            name="hasEntries"
+                            value={value.hasEntries}
+                            onChange={setFieldValue}
+                            label="Has Entry"
+                            error={error?.hasEntries}
+                            disabled={disabled || loading}
+                        />
+                        <BooleanInput
+                            className={_cs(
+                                styles.input,
+                                hasNoData(value.hasAssessment)
+                                && !allFiltersVisible
+                                && styles.hidden,
+                            )}
+                            options={hasAssessmentOptions}
+                            name="hasAssessment"
+                            value={value.hasAssessment}
+                            onChange={setFieldValue}
+                            label="Has Assessment"
+                            error={error?.hasAssessment}
+                            disabled={disabled || loading}
+                        />
+                    </>
+                )}
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.createdBy) && !allFiltersVisible)
+                        hasNoData(value.createdBy)
+                        && !allFiltersVisible
                         && styles.hidden,
                     )}
                     name="createdBy"
@@ -362,7 +379,8 @@ function SourcesFilter(props: Props) {
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.assignees) && !allFiltersVisible)
+                        hasNoData(value.assignees)
+                        && !allFiltersVisible
                         && styles.hidden,
                     )}
                     name="assignees"
@@ -377,7 +395,9 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.priorities) && !allFiltersVisible) && styles.hidden,
+                        hasNoData(value.priorities)
+                        && !allFiltersVisible
+                        && styles.hidden,
                     )}
                     name="priorities"
                     onChange={setFieldValue}
@@ -392,8 +412,9 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.authoringOrganizationTypes)
-                        && !allFiltersVisible) && styles.hidden,
+                        hasNoData(value.authoringOrganizationTypes)
+                        && !allFiltersVisible
+                        && styles.hidden,
                     )}
                     name="authoringOrganizationTypes"
                     onChange={setFieldValue}
@@ -408,8 +429,9 @@ function SourcesFilter(props: Props) {
                 <NewOrganizationMultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.authorOrganizations)
-                      && !allFiltersVisible) && styles.hidden,
+                        hasNoData(value.authorOrganizations)
+                        && !allFiltersVisible
+                        && styles.hidden,
                     )}
                     name="authorOrganizations"
                     value={value.authorOrganizations}
@@ -423,8 +445,9 @@ function SourcesFilter(props: Props) {
                 <NewOrganizationMultiSelectInput
                     className={_cs(
                         styles.input,
-                        (hasNoData(value.sourceOrganizations)
-                      && !allFiltersVisible) && styles.hidden,
+                        hasNoData(value.sourceOrganizations)
+                        && !allFiltersVisible
+                        && styles.hidden,
                     )}
                     name="sourceOrganizations"
                     value={value.sourceOrganizations}
@@ -439,7 +462,8 @@ function SourcesFilter(props: Props) {
                     <SelectInput
                         className={_cs(
                             styles.input,
-                            (hasNoData(value.confidentiality) && !allFiltersVisible)
+                            hasNoData(value.confidentiality)
+                            && !allFiltersVisible
                             && styles.hidden,
                         )}
                         name="confidentiality"

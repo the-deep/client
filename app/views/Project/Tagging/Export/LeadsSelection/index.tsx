@@ -12,7 +12,6 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
     createStringColumn,
-    createNumberColumn,
     DateOutputProps,
     SortContext,
     useSortState,
@@ -60,7 +59,6 @@ const PROJECT_LEADS = gql`
         $emmEntities: String,
         $emmKeywords: String,
         $emmRiskFactors: String,
-        $exists: LeadExistsEnum,
         $priorities: [LeadPriorityEnum!],
         $publishedOnGte: Date,
         $publishedOnLte: Date,
@@ -69,7 +67,8 @@ const PROJECT_LEADS = gql`
         $sourceOrganizations: [ID!],
         $authorOrganizations: [ID!],
         $entriesFilterData: LeadEntriesFilterData,
-        $customFilters: LeadCustomFilterEnum,
+        $hasEntries: Boolean,
+        $hasAssessment: Boolean,
     ) {
         project(id: $projectId) {
             id
@@ -86,7 +85,6 @@ const PROJECT_LEADS = gql`
                 emmEntities: $emmEntities,
                 emmKeywords: $emmKeywords,
                 emmRiskFactors: $emmRiskFactors,
-                exists: $exists,
                 priorities: $priorities,
                 publishedOnGte: $publishedOnGte,
                 publishedOnLte: $publishedOnLte,
@@ -95,7 +93,8 @@ const PROJECT_LEADS = gql`
                 sourceOrganizations: $sourceOrganizations,
                 authorOrganizations: $authorOrganizations,
                 entriesFilterData: $entriesFilterData,
-                customFilters: $customFilters,
+                hasEntries: $hasEntries,
+                hasAssessment: $hasAssessment,
             ) {
                 totalCount
                 page
@@ -132,9 +131,10 @@ const PROJECT_LEADS = gql`
                         url
                         title
                     }
-                    entriesCounts {
+                    entriesCount {
                         total
                     }
+                    filteredEntriesCount
                     leadPreview {
                         pageCount
                     }
@@ -308,12 +308,17 @@ function LeadsSelection(props: Props) {
                 },
             ),
             publishedOnColumn,
-            createNumberColumn<Lead, string>(
-                'ENTRIES_COUNTS',
+            createStringColumn<Lead, string>(
+                'ENTRIES_COUNT',
                 'No of entries',
-                (item) => item?.entriesCounts?.total,
+                (item) => {
+                    if (isDefined(item.filteredEntriesCount)) {
+                        return `${item.filteredEntriesCount}/${item.entriesCount?.total}`;
+                    }
+                    return item.entriesCount?.total?.toString();
+                },
                 {
-                    sortable: false,
+                    sortable: true,
                 },
             ),
         ]);
