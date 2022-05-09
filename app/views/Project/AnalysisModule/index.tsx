@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useCallback } from 'react';
+import React, { useContext, Suspense, useMemo, useState, useCallback } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
@@ -11,6 +11,7 @@ import {
     IoStatsChart,
     IoAdd,
 } from 'react-icons/io5';
+import { generatePath, Redirect, Route, Switch } from 'react-router-dom';
 import {
     PieChart,
     Pie,
@@ -56,10 +57,12 @@ import {
 } from '#types';
 
 import _ts from '#ts';
-
+import routes from '#base/configs/routes';
+import SmartNavLink from '#base/components/SmartNavLink';
 import Analysis from './Analysis';
 import AnalysisEditModal from './AnalysisEditModal';
 import styles from './styles.css';
+import PreloadMessage from '#base/components/PreloadMessage';
 
 const analysisKeySelector = (d: AnalysisSummary) => d.id;
 const maxItemsPerPage = 5;
@@ -134,6 +137,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const {
         project,
     } = useContext(ProjectContext);
+    const defaultRoute = generatePath(routes.sources.path, { projectId: project?.id });
 
     const activeProject = project?.id ? +project.id : undefined;
 
@@ -279,12 +283,48 @@ function AnalysisModule(props: AnalysisModuleProps) {
     return (
         <SubNavbarContext.Provider value={navbarContextValue}>
             <div className={_cs(styles.analysisModule, className)}>
-                <SubNavbar
-                    className={styles.subNavbar}
-                />
                 <SubNavbarIcons>
                     <ProjectSwitcher />
                 </SubNavbarIcons>
+                <SubNavbar
+                    className={styles.subNavbar}
+                >
+                    <SmartNavLink
+                        exact
+                        route={routes.analysis}
+                        className={styles.link}
+                    />
+                    <SmartNavLink
+                        exact
+                        route={routes.exportAnalysis}
+                        className={styles.link}
+                    />
+                </SubNavbar>
+                <Switch>
+                    <Route
+                        exact
+                        path={routes.exportAnalysis.path}
+                    >
+                        {routes.exportAnalysis.load({ className })}
+                    </Route>
+                </Switch>
+                <Suspense
+                    fallback={(
+                        <PreloadMessage
+                            className={styles.childView}
+                            content="Loading page..."
+                        />
+                    )}
+                >
+                    <Switch>
+                        <Route
+                            exact
+                            path={routes.exportAnalysis.path}
+                        >
+                            {routes.exportAnalysis.load({ className: styles.childView })}
+                        </Route>
+                    </Switch>
+                </Suspense>
                 <SubNavbarActions>
                     {canTagEntry && (
                         <Button
@@ -344,7 +384,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             footerContent={_ts('analysis', 'sourcesByTypeLabel')}
                             contentClassName={styles.pieChartContent}
                         >
-                            { piechartData?.length > 0 ? (
+                            {piechartData?.length > 0 ? (
                                 <ResponsiveContainer>
                                     <PieChart>
                                         <Pie
