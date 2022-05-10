@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useContext, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { _cs } from '@togglecorp/fujs';
 import {
     IoDocument,
     IoDownloadOutline,
@@ -12,39 +14,73 @@ import {
     Tag,
     TextOutput,
     useBooleanState,
+    useAlert,
 } from '@the-deep/deep-ui';
+
+import LeadPreview from '#components/lead/LeadPreview';
+import ProjectContext from '#base/context/ProjectContext';
 
 import styles from './styles.css';
 
-function DocumentPreview() {
+interface Props {
+    url?: string;
+    // attachment?: unknown;
+    className?: string;
+}
+function DocumentPreview(props: Props) {
+    const {
+        url = 'https://www.onlinekhabar.com/2022/05/1123315',
+        // TODO: remove this after connecting to API
+        // attachment,
+        className,
+    } = props;
+    const { leadId } = useParams<{ leadId: string }>();
     const [infoPaneShown, showInfoPane, hideInfoPane] = useBooleanState(true);
+    const { project } = useContext(ProjectContext);
+
+    const alert = useAlert();
+    console.warn(leadId, project);
+
+    const handleCopyToClipboard = useCallback(() => {
+        navigator.clipboard.writeText(url ?? '');
+
+        alert.show(
+            'URL successfully copied to clipboard',
+            {
+                variant: 'info',
+            },
+        );
+    }, [url, alert]);
+
+    const handlePrintClick = useCallback(() => {
+        window.print();
+    }, []);
+
     return (
         <Container
-            className={styles.documentPreview}
-            heading={(
-                <div className={styles.title}>
-                    <Tag
-                        icons={<IoDocument />}
-                    >
-                        Title of the document.
-                    </Tag>
-                </div>
-            )}
+            className={_cs(className, styles.documentPreview)}
+            heading="Title of the document"
+            spacing="loose"
             headerActions={(
                 <>
                     <QuickActionButton
                         name={undefined}
+                        onClick={handlePrintClick}
+                        title="print document"
                     >
                         <IoDownloadOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={undefined}
+                        onClick={handleCopyToClipboard}
+                        title="copy URL to clipboard"
                     >
                         <IoCopyOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={undefined}
                         onClick={infoPaneShown ? hideInfoPane : showInfoPane}
+                        title={infoPaneShown ? 'Hide info' : 'Show more info'}
                     >
                         <IoInformationCircleOutline />
                     </QuickActionButton>
@@ -53,8 +89,12 @@ function DocumentPreview() {
             borderBelowHeader
             contentClassName={styles.content}
         >
-            <div className={styles.preview}>
-                Preview Pane
+            <div className={styles.previewContainer}>
+                <LeadPreview
+                    className={styles.preview}
+                    url={url}
+                    // attachment={attachment}
+                />
             </div>
             {infoPaneShown && (
                 <Container
