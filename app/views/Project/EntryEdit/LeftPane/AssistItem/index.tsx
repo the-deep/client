@@ -144,7 +144,9 @@ const PROJECT_DRAFT_ENTRY = gql`
 interface Props {
     className?: string;
     text: string;
-    onAssistedEntryAdd: ((newEntry: EntryInput) => void) | undefined;
+    onAssistedEntryAdd: (
+        (newEntry: EntryInput, locations?: GeoArea[]) => void
+    ) | undefined;
     frameworkDetails: Framework;
     leadId: string;
     onAssistCancel: () => void;
@@ -549,11 +551,14 @@ function AssistItem(props: Props) {
                         }),
                     );
 
-                    onAssistedEntryAdd({
-                        ...entryData,
-                        attributes: newAttributes,
-                        draftEntry: data?.project?.assistedTagging?.draftEntry?.id,
-                    });
+                    onAssistedEntryAdd(
+                        {
+                            ...entryData,
+                            attributes: newAttributes,
+                            draftEntry: data?.project?.assistedTagging?.draftEntry?.id,
+                        },
+                        geoAreaOptions ?? undefined,
+                    );
                 }
             },
         );
@@ -562,6 +567,7 @@ function AssistItem(props: Props) {
     }, [
         data,
         allWidgets,
+        geoAreaOptions,
         allRecommendations,
         validate,
         setError,

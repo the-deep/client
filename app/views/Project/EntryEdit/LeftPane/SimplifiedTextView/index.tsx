@@ -11,6 +11,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import brainIcon from '#resources/img/brain.svg';
+import { GeoArea } from '#components/GeoMultiSelectInput';
 
 import { PartialEntryType as EntryInput } from '../../schema';
 import { Framework } from '../../types';
@@ -46,7 +47,7 @@ interface Props {
     leadId: string;
     entries: EntryInput[] | undefined | null;
     onAddButtonClick?: (selectedText: string) => void;
-    onAssistedEntryAdd?: (newEntry: EntryInput) => void;
+    onAssistedEntryAdd?: (newEntry: EntryInput, geoAreaOptions?: GeoArea[]) => void;
     onExcerptChange?: (entryClientId: string, newExcerpt: string | undefined) => void;
     activeEntryClientId?: string;
     onExcerptClick?: (entryClientId: string) => void;
@@ -200,9 +201,12 @@ function SimplifiedTextView(props: Props) {
         setTextToAssist(newTextToAssist);
     }, [resetTextSelection]);
 
-    const handleAssistedEntryAdd = useCallback((newEntry: EntryInput) => {
+    const handleAssistedEntryAdd = useCallback((
+        newEntry: EntryInput,
+        geoAreaOptions?: GeoArea[],
+    ) => {
         if (onAssistedEntryAdd) {
-            onAssistedEntryAdd(newEntry);
+            onAssistedEntryAdd(newEntry, geoAreaOptions);
         }
         setTextToAssist(undefined);
     }, [onAssistedEntryAdd]);
