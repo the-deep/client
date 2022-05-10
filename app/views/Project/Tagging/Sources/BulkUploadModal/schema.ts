@@ -16,7 +16,7 @@ import {
     EnumFix,
 } from '#utils/types';
 
-export type Lead = EnumFix<LeadInputType, 'priority'>;
+export type Lead = EnumFix<LeadInputType, 'priority' | 'confidentiality'>;
 
 type BulkLead = DeepMandatory<Lead, 'clientId'>;
 type FormType = {

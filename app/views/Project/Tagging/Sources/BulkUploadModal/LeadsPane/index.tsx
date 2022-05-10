@@ -49,6 +49,12 @@ const LEAD_OPTIONS = gql`
                 description
             }
         }
+        leadConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
@@ -211,6 +217,9 @@ function LeadsPane(props: Props) {
                             error={currentLeadError}
                             attachment={selectedLeadAttachment}
                             priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
+                            confidentialityOptions={
+                                leadOptions?.leadConfidentialityOptions?.enumValues
+                            }
                             sourceOrganizationOptions={sourceOrganizationOptions}
                             onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                             authorOrganizationOptions={authorOrganizationOptions}

@@ -56,6 +56,12 @@ const LEAD_OPTIONS = gql`
                 description
             }
         }
+        leadConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
@@ -503,6 +509,7 @@ function LeadEditModal(props: Props) {
                     error={riskyError}
                     attachment={leadData?.attachment}
                     priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
+                    confidentialityOptions={leadOptions?.leadConfidentialityOptions?.enumValues}
                     sourceOrganizationOptions={sourceOrganizationOptions}
                     onSourceOrganizationOptionsChange={setSourceOrganizationOptions}
                     authorOrganizationOptions={authorOrganizationOptions}
