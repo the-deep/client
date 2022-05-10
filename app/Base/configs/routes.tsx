@@ -310,6 +310,17 @@ const sources = wrap({
     visibility: 'is-authenticated',
 });
 
+const analysisDashboard = wrap({
+    parent: { path: analysisRoute.path },
+    path: '/dashboard/',
+    title: 'Dashboard',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/AnalysisModule/AnalysisDashboard')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+});
+
 const assessments = wrap({
     parent: { path: taggingRoute.path },
     path: '/assessments/',
@@ -402,7 +413,7 @@ const exportRoute = wrap({
     },
     visibility: 'is-authenticated',
 });
-const exportAnalysisRoute = wrap({
+const analysisExportRoute = wrap({
     parent: { path: analysisRoute.path },
     path: '/export/',
     title: 'Export',
@@ -499,7 +510,7 @@ const routes = {
     userGroups,
     tagging: taggingRoute,
     analysis,
-    exportAnalysis: exportAnalysisRoute,
+    analysisExport: analysisExportRoute,
     pillarAnalysis,
     explore,
     project: projectRoute,
@@ -511,6 +522,7 @@ const routes = {
     extensionPrivacyPolicy,
     sources,
     assessments,
+    analysisDashboard,
     leadGroups,
     fourHundredFour,
     dashboard,
