@@ -450,7 +450,7 @@ const groupAssessmentEditRoute = wrap({
 });
 
 const documentPreview = wrap({
-    path: '/document-preview/',
+    path: '/document-preview/:leadHash/',
     title: 'Document Preview',
     navbarVisibility: true,
     component: lazy(() => import('#views/DocumentPreview')),
