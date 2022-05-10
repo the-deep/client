@@ -51,7 +51,6 @@ import {
 } from '#generated/types';
 
 import { PartialFormType } from './schema';
-import ConfidentialityInput from './ConfidentialityInput';
 import EmmStats from './EmmStats';
 
 import styles from './styles.css';
@@ -110,6 +109,7 @@ interface Props<N extends string | number | undefined> {
     projectId: string;
     disabled?: boolean;
     priorityOptions: NonNullable<LeadOptionsQuery['leadPriorityOptions']>['enumValues'] | undefined;
+    confidentialityOptions: NonNullable<LeadOptionsQuery['leadConfidentialityOptions']>['enumValues'] | undefined;
     sourceOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
     onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;
@@ -138,6 +138,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         projectId,
         disabled,
         priorityOptions,
+        confidentialityOptions,
         pendingLeadOptions,
         attachment,
         sourceOrganizationOptions,
@@ -564,12 +565,16 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     disabled={disabled}
                 />
                 <div className={styles.nestedRow}>
-                    <ConfidentialityInput
+                    <SegmentInput
                         name="confidentiality"
                         className={styles.nestedInput}
-                        value={value.confidentiality ?? undefined}
+                        value={value.confidentiality}
                         onChange={setFieldValue}
-                        label="Confidential"
+                        options={confidentialityOptions ?? undefined}
+                        keySelector={enumKeySelector}
+                        labelSelector={enumLabelSelector}
+                        label="Confidentiality"
+                        error={error?.confidentiality}
                         disabled={disabled}
                     />
                     {hasAssessment && (

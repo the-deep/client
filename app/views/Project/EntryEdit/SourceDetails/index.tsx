@@ -30,6 +30,12 @@ const LEAD_OPTIONS = gql`
                 description
             }
         }
+        leadConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
@@ -117,6 +123,9 @@ function SourceDetails(props: Props) {
                     onAssigneeOptionChange={onAssigneeOptionChange}
                     attachment={attachment}
                     priorityOptions={leadOptions?.leadPriorityOptions?.enumValues}
+                    confidentialityOptions={
+                        leadOptions?.leadConfidentialityOptions?.enumValues
+                    }
                     hasAssessment={project?.hasAssessmentTemplate}
                 />
             </Card>

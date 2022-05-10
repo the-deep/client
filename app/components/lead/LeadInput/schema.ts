@@ -18,7 +18,7 @@ export type EmmTrigger = LeadEmmTriggerInputType;
 
 export type EmmEntity = EmmEntityInputType;
 
-export type Lead = EnumFix<LeadInputType, 'priority'>;
+export type Lead = EnumFix<LeadInputType, 'priority' | 'confidentiality'>;
 
 export type PartialFormType = PartialLeadType;
 export type LeadFormSchema = ObjectSchema<PartialFormType>;

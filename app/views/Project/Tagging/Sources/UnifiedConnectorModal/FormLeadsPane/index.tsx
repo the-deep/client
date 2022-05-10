@@ -46,6 +46,12 @@ const LEAD_OPTIONS = gql`
                 description
             }
         }
+        leadConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
         project(id: $projectId) {
             id
             hasAssessmentTemplate
@@ -275,6 +281,9 @@ function FormLeadsPane(props: Props) {
                             error={currentLeadError}
                             attachment={undefined}
                             priorityOptions={leadOptionsData?.leadPriorityOptions?.enumValues}
+                            confidentialityOptions={
+                                leadOptionsData?.leadConfidentialityOptions?.enumValues
+                            }
                             sourceOrganizationOptions={sourceOrganizationOptions}
                             onSourceOrganizationOptionsChange={onSourceOrganizationOptionsChange}
                             authorOrganizationOptions={authorOrganizationOptions}
