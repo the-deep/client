@@ -1,74 +1,44 @@
-.export-history-container {
+.container {
     display: flex;
+    flex-direction: column;
     flex-grow: 1;
-    background-color: var(--dui-color-foreground);
+    margin: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
-    .header-icons {
+    .header {
+        border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    }
+
+    .action-buttons {
         display: flex;
-        gap: var(--dui-spacing-medium);
+        gap: var(--dui-spacing-small);
+    }
+
+    .tab-list {
+        flex-grow: 1;
     }
 
     .content {
         display: flex;
+        flex-direction: column;
         flex-grow: 1;
-        gap: var(--dui-spacing-small);
 
-        .table-view {
+        .tab-panel {
             display: flex;
-            position: relative;
-            align-items: center;
-            flex-basis: 70%;
-            flex-direction: column;
             flex-grow: 1;
             overflow-y: auto;
-
-            .icons {
-                display: flex;
-                font-size: var(--dui-font-size-super-large);
-
-                .icon {
-                    color: var(--dui-color-accent);
-                }
-            }
-
-            .status {
-                display: flex;
-            }
         }
+    }
+}
 
-        .export-preview {
-            display: flex;
-            flex-basis: 30%;
-            background-color: var(--dui-color-foreground);
+.modal {
+    .body {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
 
-            .header {
-                border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
-                background-color: var(--dui-color-background-information);
-                padding: var(--dui-spacing-small) var(--dui-spacing-medium);
-
-                .heading {
-                    color: var(--dui-color-accent);
-                }
-            }
-
-            .main-content {
-                display: flex;
-                flex-direction: column;
-                background-color: var(--dui-color-foreground);
-
-                .preview {
-                    display: flex;
-                    flex-grow: 1;
-                    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                }
-
-                .label {
-                    margin: auto;
-                    text-align: center;
-                    color: var(--dui-color-text-label);
-                    font-size: var(--dui-font-size-large);
-                }
-            }
+        .selection {
+            flex-grow: 1;
         }
     }
 }
