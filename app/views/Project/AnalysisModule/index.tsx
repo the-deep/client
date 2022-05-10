@@ -3,27 +3,16 @@ import React, {
     Suspense,
     useMemo,
     useState,
-    useCallback,
 } from 'react';
 import {
     _cs,
 } from '@togglecorp/fujs';
-import {
-    IoAdd,
-} from 'react-icons/io5';
 import { generatePath, Redirect, Route, Switch } from 'react-router-dom';
-import {
-    Button,
-} from '@the-deep/deep-ui';
 
 import SubNavbarContext from '#components/SubNavbar/context';
-import SubNavbar, { SubNavbarIcons, SubNavbarActions } from '#components/SubNavbar';
+import SubNavbar, { SubNavbarIcons } from '#components/SubNavbar';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
 import { ProjectContext } from '#base/context/ProjectContext';
-
-import {
-    useModalState,
-} from '#hooks/stateManagement';
 
 import _ts from '#ts';
 import routes from '#base/configs/routes';
@@ -45,11 +34,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
     } = useContext(ProjectContext);
     const defaultRoute = generatePath(routes.analysisDashboard.path, { projectId: project?.id });
 
-    const [
-        showAnalysisAddModal,
-        setModalVisible,
-    ] = useModalState(false);
-
     const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
     const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
 
@@ -62,15 +46,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         }),
         [iconsNode, actionsNode],
     );
-
-    const [analysisToEdit, setAnalysisToEdit] = useState();
-
-    const handleNewAnalysisCreateClick = useCallback(() => {
-        setAnalysisToEdit(undefined);
-        setModalVisible();
-    }, [setModalVisible]);
-
-    const canTagEntry = project?.allowedPermissions?.includes('UPDATE_ENTRY');
 
     return (
         <SubNavbarContext.Provider value={navbarContextValue}>
@@ -121,20 +96,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         </Route>
                     </Switch>
                 </Suspense>
-                <SubNavbarActions>
-                    {canTagEntry && (
-                        <Button
-                            name={undefined}
-                            variant="primary"
-                            onClick={handleNewAnalysisCreateClick}
-                            icons={(
-                                <IoAdd />
-                            )}
-                        >
-                            {_ts('analysis', 'setupNewAnalysisButtonLabel')}
-                        </Button>
-                    )}
-                </SubNavbarActions>
             </div>
         </SubNavbarContext.Provider>
     );

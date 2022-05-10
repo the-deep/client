@@ -177,28 +177,6 @@ const taggingRoute = wrap({
         );
     },
 });
-const analysisRoute = wrap({
-    parent: { path: projectRoute.path },
-    path: '/analysis/',
-    title: 'Analysis',
-    navbarVisibility: true,
-    component: lazy(() => import('#views/Project/AnalysisModule')),
-    componentProps: {
-    },
-    visibility: 'is-authenticated',
-    checkPermissions: (_, project, skipProjectPermissionCheck) => {
-        if (skipProjectPermissionCheck) {
-            return true;
-        }
-        if (!project || project.allowedPermissions.length <= 0) {
-            return false;
-        }
-        return (
-            project.allowedPermissions.includes('VIEW_ALL_LEAD')
-            || project.allowedPermissions.includes('VIEW_ONLY_UNPROTECTED_LEAD')
-        );
-    },
-});
 
 const projectEditRoute = wrap({
     parent: { path: projectRoute.path },
@@ -249,7 +227,7 @@ const entryEditRoute = wrap({
 });
 const analysis = wrap({
     parent: { path: projectRoute.path },
-    path: '/analysis/',
+    path: '/analysis-module/',
     title: 'Analysis',
     navbarVisibility: true,
     component: lazy(() => import('#views/Project/AnalysisModule')),
@@ -311,7 +289,7 @@ const sources = wrap({
 });
 
 const analysisDashboard = wrap({
-    parent: { path: analysisRoute.path },
+    parent: { path: analysis.path },
     path: '/dashboard/',
     title: 'Dashboard',
     navbarVisibility: true,
@@ -414,7 +392,7 @@ const exportRoute = wrap({
     visibility: 'is-authenticated',
 });
 const analysisExportRoute = wrap({
-    parent: { path: analysisRoute.path },
+    parent: { path: analysis.path },
     path: '/export/',
     title: 'Export',
     navbarVisibility: true,
