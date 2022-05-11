@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { IoAdd } from 'react-icons/io5';
 import {
-    Modal,
     Tabs,
-    Tab,
-    TabList,
-    TabPanel,
     ContainerCard,
-    Button,
 } from '@the-deep/deep-ui';
-import ExportHistory from './ExportHistory';
+import {
+    ExportDataTypeEnum,
+} from '#generated/types';
+import ExportHistory from '../../Tagging/Export/ExportHistory';
 
 import { useModalState } from '#hooks/stateManagement';
 import ProjectContext from '#base/context/ProjectContext';
 import styles from './styles.css';
 
 type ExportType = 'export-entry-history' | 'export-assessment-history';
+
+const entryType: ExportDataTypeEnum[] = ['ENTRIES'];
+const assessmentType: ExportDataTypeEnum[] = ['PLANNED_ASSESSMENTS', 'ASSESSMENTS'];
 
 function Export() {
     const { project } = React.useContext(ProjectContext);
@@ -41,11 +41,14 @@ function Export() {
         >
             <ContainerCard
                 className={styles.container}
+                heading="Export History"
+                headingSize="extraSmall"
+                headerClassName={styles.header}
                 contentClassName={styles.content}
             >
                 <ExportHistory
-                    projectId="6"
-                    type={[]}
+                    projectId={activeProject}
+                    type={entryType}
                 />
             </ContainerCard>
         </Tabs>

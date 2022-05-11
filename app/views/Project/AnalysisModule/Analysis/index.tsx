@@ -4,6 +4,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import {
     IoCopyOutline,
     IoTrashBinOutline,
+    IoDownloadOutline,
 } from 'react-icons/io5';
 import {
     Container,
@@ -45,6 +46,7 @@ import PillarAssignment from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
 
 import styles from './styles.css';
+import EntriesExportSelection from '#views/Project/Tagging/Export/EntriesExportSelection';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -101,6 +103,12 @@ interface ComponentProps {
 const pillarSummaryKeySelector = (item: PillarSummary) => (item.id);
 
 function Analysis(props: ComponentProps) {
+    const [
+        newExportModalShown,
+        showCreateNewExportModal,
+        hideCreateNewExportModal,
+    ] = useModalState(false);
+
     const {
         title,
         modifiedAt,
@@ -203,6 +211,16 @@ function Analysis(props: ComponentProps) {
                     >
                         <IoCopyOutline />
                     </QuickActionButton>
+                    <QuickActionButton
+                        name="clone"
+                        onClick={hideCreateNewExportModal}
+                        disabled={disabled}
+                        title={_ts('analysis', 'cloneAnalysisButtonTitle')}
+                        variant="secondary"
+                    >
+                        <IoDownloadOutline />
+                    </QuickActionButton>
+
                     <QuickActionConfirmButton
                         name="delete"
                         onConfirm={handleDeleteAnalysis}
