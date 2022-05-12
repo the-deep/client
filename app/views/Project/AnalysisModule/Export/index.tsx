@@ -1,57 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-    Tabs,
     ContainerCard,
 } from '@the-deep/deep-ui';
 import {
     ExportDataTypeEnum,
 } from '#generated/types';
-import ExportHistory from '../../Tagging/Export/ExportHistory';
 
-import { useModalState } from '#hooks/stateManagement';
+import ExportHistory from '#views/Project/Tagging/Export/ExportHistory';
 import ProjectContext from '#base/context/ProjectContext';
+
 import styles from './styles.css';
 
-type ExportType = 'export-entry-history' | 'export-assessment-history';
-
-const entryType: ExportDataTypeEnum[] = ['ENTRIES'];
-const assessmentType: ExportDataTypeEnum[] = ['PLANNED_ASSESSMENTS', 'ASSESSMENTS'];
+const analysisType: ExportDataTypeEnum[] = ['ANALYSES'];
 
 function Export() {
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? project.id : undefined;
-    const [activeTab, setActiveTab] = useState<ExportType | undefined>('export-entry-history');
-
-    const [
-        newExportModalShown,
-        showCreateNewExportModal,
-        hideCreateNewExportModal,
-    ] = useModalState(false);
-
-    const [
-        newAssessmentModalShown,
-        showNewAssessmentModal,
-        hideNewAssessmentModal,
-    ] = useModalState(false);
 
     return (
-        <Tabs
-            onChange={setActiveTab}
-            value={activeTab}
+        <ContainerCard
+            className={styles.container}
+            heading="Export History"
+            headingSize="extraSmall"
+            headerClassName={styles.header}
+            contentClassName={styles.content}
         >
-            <ContainerCard
-                className={styles.container}
-                heading="Export History"
-                headingSize="extraSmall"
-                headerClassName={styles.header}
-                contentClassName={styles.content}
-            >
+            {activeProject && (
                 <ExportHistory
                     projectId={activeProject}
-                    type={entryType}
+                    type={analysisType}
                 />
-            </ContainerCard>
-        </Tabs>
+            )}
+        </ContainerCard>
     );
 }
 

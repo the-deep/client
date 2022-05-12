@@ -7,6 +7,7 @@
 
     .header {
         border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+        padding-bottom: var(--dui-spacing-small);
     }
 
     .action-buttons {

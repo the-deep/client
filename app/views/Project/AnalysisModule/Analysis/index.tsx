@@ -7,6 +7,7 @@ import {
     IoDownloadOutline,
 } from 'react-icons/io5';
 import {
+    useAlert,
     Container,
     ContainerCard,
     Button,
@@ -19,6 +20,8 @@ import {
     DateRangeOutput,
     PendingMessage,
 } from '@the-deep/deep-ui';
+import { gql, useMutation } from '@apollo/client';
+
 import {
     BarChart,
     CartesianGrid,
@@ -39,6 +42,10 @@ import {
 import {
     PillarSummary,
 } from '#types';
+import {
+    CreateAnalysisExportMutation,
+    CreateAnalysisExportMutationVariables,
+} from '#generated/types';
 
 import _ts from '#ts';
 import PillarAnalysisList from './PillarList';
@@ -46,7 +53,22 @@ import PillarAssignment from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
 
 import styles from './styles.css';
-import EntriesExportSelection from '#views/Project/Tagging/Export/EntriesExportSelection';
+
+const CREATE_ANALYSIS_EXPORT = gql`
+    mutation CreateAnalysisExport(
+        $projectId: ID!,
+        $data: ExportCreateInputType!,
+    )
+    {
+        project(id: $projectId) {
+            id
+            exportCreate(data: $data) {
+                ok
+                errors
+            }
+        }
+    }
+`;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -83,6 +105,7 @@ interface ComponentProps {
     className?: string;
     title: string;
     startDate?: string;
+    onSuccess: () => void;
     endDate: string;
     onEdit: (analysisId: number) => void;
     onAnalysisPillarDelete: () => void;
@@ -103,12 +126,6 @@ interface ComponentProps {
 const pillarSummaryKeySelector = (item: PillarSummary) => (item.id);
 
 function Analysis(props: ComponentProps) {
-    const [
-        newExportModalShown,
-        showCreateNewExportModal,
-        hideCreateNewExportModal,
-    ] = useModalState(false);
-
     const {
         title,
         modifiedAt,
@@ -129,19 +146,22 @@ function Analysis(props: ComponentProps) {
         analyzedSources,
         totalEntries,
         totalSources,
+        onSuccess,
     } = props;
 
     const {
         project,
     } = useContext(ProjectContext);
 
-    const activeProject = project?.id ? +project.id : undefined;
+    const activeProject = project?.id;
 
     const [
         showCloneModal,
         setModalVisible,
         setModalHidden,
     ] = useModalState(false);
+
+    const alert = useAlert();
 
     const pillarAssignmentRendererParams = useCallback(
         (_: number, data: PillarSummary) => ({
@@ -152,6 +172,57 @@ function Analysis(props: ComponentProps) {
         }),
         [totalEntries],
     );
+
+    const [
+        createAnalysisExport,
+        {
+            loading: createExportPending,
+        },
+    ] = useMutation<CreateAnalysisExportMutation, CreateAnalysisExportMutationVariables>(
+        CREATE_ANALYSIS_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportCreate?.ok) {
+                    alert.show(
+                        'Successfully exported!',
+                        { variant: 'success' },
+                    );
+                } else {
+                    alert.show(
+                        _ts('export', 'exportStartedNotifyMessage'),
+                        { variant: 'success' },
+                    );
+                    onSuccess();
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Error during export.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const handleAnalysisExport = useCallback(() => {
+        if (!activeProject) {
+            return;
+        }
+        createAnalysisExport({
+            variables: {
+                projectId: activeProject,
+                data: {
+                    analysis: String(analysisId),
+                    exportType: 'EXCEL' as const,
+                    format: 'XLSX' as const,
+                    type: 'ANALYSES' as const,
+                    filters: {},
+                },
+            },
+        });
+    }, [activeProject, analysisId]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);
@@ -212,10 +283,10 @@ function Analysis(props: ComponentProps) {
                         <IoCopyOutline />
                     </QuickActionButton>
                     <QuickActionButton
-                        name="clone"
-                        onClick={hideCreateNewExportModal}
-                        disabled={disabled}
-                        title={_ts('analysis', 'cloneAnalysisButtonTitle')}
+                        name="analysis"
+                        onClick={handleAnalysisExport}
+                        disabled={createExportPending}
+                        title="Export"
                         variant="secondary"
                     >
                         <IoDownloadOutline />
