@@ -184,7 +184,7 @@ function Analysis(props: ComponentProps) {
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     alert.show(
-                        'Successfully exported!',
+                        'Export created Successfully!',
                         { variant: 'success' },
                     );
                 } else {
