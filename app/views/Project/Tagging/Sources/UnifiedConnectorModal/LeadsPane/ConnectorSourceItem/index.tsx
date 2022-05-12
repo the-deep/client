@@ -64,7 +64,6 @@ export const CONNECTOR_SOURCE_LEADS = gql`
                             title
                             sourceRaw
                             publishedOn
-                            website
                             authorRaw
                             authors {
                                 id

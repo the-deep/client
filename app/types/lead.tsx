@@ -42,7 +42,6 @@ export interface Lead extends DatabaseEntityBase {
 
     text?: string;
     url?: string;
-    website?: string;
 
     thumbnail?: string;
     thumbnailWidth?: string;

@@ -86,7 +86,6 @@ const PROJECT_LEAD = gql`
                 publishedOn
                 text
                 url
-                website
                 attachment {
                     id
                     title
@@ -148,7 +147,6 @@ const LEAD_FRAGMENT = gql`
         publishedOn
         text
         url
-        website
         attachment {
             id
             title
