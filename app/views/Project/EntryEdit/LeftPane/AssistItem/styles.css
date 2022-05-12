@@ -15,10 +15,14 @@
     }
 }
 
-.popup-content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-y: auto;
-    font-size: var(--dui-font-size-medium);
+.popup {
+    width: var(--dui-width-modal-medium)!important;
+
+    .popup-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+        font-size: var(--dui-font-size-medium);
+    }
 }

@@ -48,7 +48,7 @@ import {
 } from '../../schema';
 import { createDefaultAttributes } from '../../utils';
 import { Framework } from '../../types';
-import AssistPopup from '../AssistPopup';
+import AssistPopup from './AssistPopup';
 import {
     createMatrix1dAttr,
     createMatrix2dAttr,
@@ -56,7 +56,7 @@ import {
     createSelectAttr,
     createMultiSelectAttr,
     createGeoAttr,
-} from '../AssistPopup/utils';
+} from './utils';
 
 import styles from './styles.css';
 
@@ -526,6 +526,33 @@ function AssistItem(props: Props) {
         ],
     );
 
+    const handleNormalEntryCreateButtonClick = useCallback(() => {
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (entryData) => {
+                if (onAssistedEntryAdd) {
+                    const defaultAttributes = createDefaultAttributes(allWidgets);
+
+                    onAssistedEntryAdd(
+                        {
+                            ...entryData,
+                            attributes: defaultAttributes,
+                        },
+                        undefined,
+                    );
+                }
+            },
+        );
+
+        submit();
+    }, [
+        setError,
+        validate,
+        onAssistedEntryAdd,
+        allWidgets,
+    ]);
+
     const handleEntryCreateButtonClick = useCallback(() => {
         if (!allRecommendations) {
             return;
@@ -645,7 +672,10 @@ function AssistItem(props: Props) {
                     className={styles.button}
                     disabled={disabled}
                     variant="nlp-primary"
+                    popupPlacementDirection="horizontal"
+                    popupClassName={styles.popup}
                     popupContentClassName={styles.popupContent}
+                    popupMatchesParentWidth={false}
                     persistent
                 >
                     <AssistPopup
@@ -658,6 +688,7 @@ function AssistItem(props: Props) {
                         recommendations={allRecommendations}
                         onEntryDiscardButtonClick={handleDiscardButtonClick}
                         onEntryCreateButtonClick={handleEntryCreateButtonClick}
+                        onNormalEntryCreateButtonClick={handleNormalEntryCreateButtonClick}
                         geoAreaOptions={geoAreaOptions}
                         onGeoAreaOptionsChange={setGeoAreaOptions}
                         predictionsLoading={

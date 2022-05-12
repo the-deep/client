@@ -262,6 +262,7 @@ function SimplifiedTextView(props: Props) {
                             />
                         ) : (
                             <AssistItem
+                                key={split.excerpt}
                                 text={split.excerpt}
                                 projectId={projectId}
                                 onAssistedEntryAdd={handleAssistedEntryAdd}
@@ -308,6 +309,7 @@ function SimplifiedTextView(props: Props) {
         if (onAddButtonClick) {
             onAddButtonClick(selectedText);
         }
+        setTextToAssist(undefined);
     }, [onAddButtonClick]);
 
     const handleLoadMoreClick = useCallback(() => {
