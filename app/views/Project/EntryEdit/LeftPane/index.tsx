@@ -99,7 +99,7 @@ interface Props {
     entriesError: Partial<Record<string, boolean>> | undefined;
     projectId: string | undefined;
     defaultTab?: 'entries' | 'simplified' | 'original';
-    frameworkDetails: Framework;
+    frameworkDetails?: Framework;
     activeTabRef?: React.MutableRefObject<{
         setActiveTab: React.Dispatch<React.SetStateAction<TabOptions>>;
     } | null>;
@@ -297,9 +297,14 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const entryItemRendererParams = useCallback((entryId: string, entry: EntryInput) => ({
+    const entryItemRendererParams = useCallback((
+        entryId: string,
+        entry: EntryInput,
+        index: number,
+    ) => ({
         ...entry,
         entryId: entry.clientId,
+        index,
         entryServerId: entry.id,
         isActive: activeEntry === entry.clientId,
         projectId,
@@ -569,7 +574,7 @@ function LeftPane(props: Props) {
                                     onEntryRestore={onEntryRestore}
                                     disableAddButton={isEntrySelectionActive}
                                     disableExcerptClick={isEntrySelectionActive}
-                                    assistedTaggingEnabled={assistedTaggingShown}
+                                    assistedTaggingEnabled={!!assistedTaggingShown}
                                     frameworkDetails={frameworkDetails}
                                     leadId={leadId}
                                 />

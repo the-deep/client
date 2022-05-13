@@ -7,7 +7,6 @@
     .body {
         display: flex;
         flex-direction: column;
-        width: var(--dui-width-modal-medium);
         overflow-y: auto;
 
         .message {

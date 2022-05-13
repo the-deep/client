@@ -48,7 +48,7 @@ import {
 } from '../../schema';
 import { createDefaultAttributes } from '../../utils';
 import { Framework } from '../../types';
-import AssistPopup from '../AssistPopup';
+import AssistPopup from './AssistPopup';
 import {
     createMatrix1dAttr,
     createMatrix2dAttr,
@@ -56,7 +56,7 @@ import {
     createSelectAttr,
     createMultiSelectAttr,
     createGeoAttr,
-} from '../AssistPopup/utils';
+} from './utils';
 
 import styles from './styles.css';
 
@@ -147,7 +147,7 @@ interface Props {
     onAssistedEntryAdd: (
         (newEntry: EntryInput, locations?: GeoArea[]) => void
     ) | undefined;
-    frameworkDetails: Framework;
+    frameworkDetails?: Framework;
     leadId: string;
     onAssistCancel: () => void;
     disabled?: boolean;
@@ -170,10 +170,10 @@ function AssistItem(props: Props) {
         allWidgets,
         filteredWidgets,
     } = useMemo(() => {
-        const widgetsFromPrimary = frameworkDetails.primaryTagging?.flatMap(
+        const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
             (item) => (item.widgets ?? []),
         ) ?? [];
-        const widgetsFromSecondary = frameworkDetails.secondaryTagging ?? [];
+        const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
         const widgets = [
             ...widgetsFromPrimary,
             ...widgetsFromSecondary,
@@ -526,6 +526,33 @@ function AssistItem(props: Props) {
         ],
     );
 
+    const handleNormalEntryCreateButtonClick = useCallback(() => {
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            (entryData) => {
+                if (onAssistedEntryAdd) {
+                    const defaultAttributes = createDefaultAttributes(allWidgets);
+
+                    onAssistedEntryAdd(
+                        {
+                            ...entryData,
+                            attributes: defaultAttributes,
+                        },
+                        undefined,
+                    );
+                }
+            },
+        );
+
+        submit();
+    }, [
+        setError,
+        validate,
+        onAssistedEntryAdd,
+        allWidgets,
+    ]);
+
     const handleEntryCreateButtonClick = useCallback(() => {
         if (!allRecommendations) {
             return;
@@ -645,29 +672,35 @@ function AssistItem(props: Props) {
                     className={styles.button}
                     disabled={disabled}
                     variant="nlp-primary"
+                    popupPlacementDirection="horizontal"
+                    popupClassName={styles.popup}
                     popupContentClassName={styles.popupContent}
+                    popupMatchesParentWidth={false}
                     persistent
                 >
-                    <AssistPopup
-                        frameworkDetails={frameworkDetails}
-                        value={value}
-                        onChange={setValue}
-                        error={error}
-                        leadId={leadId}
-                        hints={allHints}
-                        recommendations={allRecommendations}
-                        onEntryDiscardButtonClick={handleDiscardButtonClick}
-                        onEntryCreateButtonClick={handleEntryCreateButtonClick}
-                        geoAreaOptions={geoAreaOptions}
-                        onGeoAreaOptionsChange={setGeoAreaOptions}
-                        predictionsLoading={
-                            predictionsLoading
-                            || draftEntryFetchPending
-                            || draftEntryCreationPending
-                        }
-                        predictionsErrored={!!fetchErrors || !!createErrors}
-                        messageText={messageText}
-                    />
+                    {frameworkDetails && (
+                        <AssistPopup
+                            frameworkDetails={frameworkDetails}
+                            value={value}
+                            onChange={setValue}
+                            error={error}
+                            leadId={leadId}
+                            hints={allHints}
+                            recommendations={allRecommendations}
+                            onEntryDiscardButtonClick={handleDiscardButtonClick}
+                            onEntryCreateButtonClick={handleEntryCreateButtonClick}
+                            onNormalEntryCreateButtonClick={handleNormalEntryCreateButtonClick}
+                            geoAreaOptions={geoAreaOptions}
+                            onGeoAreaOptionsChange={setGeoAreaOptions}
+                            predictionsLoading={
+                                predictionsLoading
+                                || draftEntryFetchPending
+                                || draftEntryCreationPending
+                            }
+                            predictionsErrored={!!fetchErrors || !!createErrors}
+                            messageText={messageText}
+                        />
+                    )}
                 </QuickActionDropdownMenu>
             )}
             headerActions={(

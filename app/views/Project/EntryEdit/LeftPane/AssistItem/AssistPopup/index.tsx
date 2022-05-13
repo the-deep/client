@@ -18,11 +18,11 @@ import { FiEdit2 } from 'react-icons/fi';
 import EntryInput from '#components/entry/EntryInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { WidgetHint } from '#types/newAnalyticalFramework';
-import { Framework } from '../../types';
+import { Framework } from '../../../types';
 import {
     PartialEntryType,
     PartialAttributeType,
-} from '../../schema';
+} from '../../../schema';
 
 import styles from './styles.css';
 
@@ -34,6 +34,9 @@ interface Props {
     onChange: (val: SetValueArg<PartialEntryType>, name: undefined) => void;
     error: Error<PartialEntryType> | undefined;
     onEntryCreateButtonClick: () => void;
+    // NOTE: Normal entry creation refers to entry created without use of
+    // recommendations
+    onNormalEntryCreateButtonClick: () => void;
     onEntryDiscardButtonClick: () => void;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
@@ -53,6 +56,7 @@ function AssistPopup(props: Props) {
         error,
         frameworkDetails,
         onEntryCreateButtonClick,
+        onNormalEntryCreateButtonClick,
         onEntryDiscardButtonClick,
         geoAreaOptions,
         onGeoAreaOptionsChange,
@@ -98,8 +102,9 @@ function AssistPopup(props: Props) {
                     </QuickActionButton>
                     <QuickActionButton
                         name={undefined}
-                        onClick={onEntryCreateButtonClick}
-                        disabled={isMessageShown}
+                        onClick={(predictionsErrored || !!messageText)
+                            ? onNormalEntryCreateButtonClick : onEntryCreateButtonClick}
+                        disabled={predictionsLoading}
                         variant="nlp-primary"
                         title="Create Entry"
                     >

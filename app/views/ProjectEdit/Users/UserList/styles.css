@@ -1,8 +1,17 @@
 .users {
+    .header-actions {
+        gap: var(--dui-spacing-medium);
+    }
+
     .content {
         display: flex;
         flex-direction: column;
         overflow-x: auto;
+
+        .table {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
 
         .table-row {
             background-color: var(--dui-color-foreground);

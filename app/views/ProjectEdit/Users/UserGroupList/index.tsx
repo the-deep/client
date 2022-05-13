@@ -3,6 +3,7 @@ import { generatePath } from 'react-router-dom';
 import {
     IoChevronForward,
     IoAdd,
+    IoSearch,
 } from 'react-icons/io5';
 import {
     _cs,
@@ -15,6 +16,7 @@ import {
     Link,
     Kraken,
     Pager,
+    TextInput,
     TableView,
     TableColumn,
     TableHeaderCell,
@@ -67,6 +69,7 @@ const PROJECT_USERGROUPS = gql`
         $page: Int = 1,
         $pageSize: Int,
         $ordering: String,
+        $search: String,
     ) {
         project(id: $projectId) {
             id
@@ -74,6 +77,7 @@ const PROJECT_USERGROUPS = gql`
                 page: $page,
                 pageSize: $pageSize,
                 ordering: $ordering,
+                search: $search,
             ) {
                 page
                 pageSize
@@ -128,6 +132,7 @@ function UserGroupList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [searchText, setSearchText] = useState<string | undefined>(undefined);
     const [
         projectUsergroupToEdit,
         setProjectUsergroupToEdit,
@@ -158,8 +163,9 @@ function UserGroupList(props: Props) {
         projectId,
         page: activePage,
         pageSize: maxItemsPerPage,
+        search: searchText,
         ordering,
-    }), [projectId, activePage, ordering]);
+    }), [projectId, activePage, ordering, searchText]);
 
     const {
         previousData,
@@ -307,6 +313,7 @@ function UserGroupList(props: Props) {
             className={_cs(className, styles.usergroups)}
             heading={_ts('projectEdit', 'userGroup')}
             inlineHeadingDescription
+            headerActionsContainerClassName={styles.headerActions}
             headingDescription={(
                 <Link
                     className={styles.userGroupsLink}
@@ -320,21 +327,32 @@ function UserGroupList(props: Props) {
             )}
             contentClassName={styles.content}
             headerActions={(
-                <Button
-                    variant="tertiary"
-                    name="add-usergroup"
-                    icons={(
-                        <IoAdd />
-                    )}
-                    onClick={handleAddUsergroupClick}
-                    disabled={pending}
-                >
-                    {_ts('projectEdit', 'addUserGroup')}
-                </Button>
+                <>
+                    <TextInput
+                        name={undefined}
+                        value={searchText}
+                        onChange={setSearchText}
+                        placeholder="Search"
+                        icons={(<IoSearch />)}
+                        variant="general"
+                    />
+                    <Button
+                        variant="tertiary"
+                        name="add-usergroup"
+                        icons={(
+                            <IoAdd />
+                        )}
+                        onClick={handleAddUsergroupClick}
+                        disabled={pending}
+                    >
+                        {_ts('projectEdit', 'addUserGroup')}
+                    </Button>
+                </>
             )}
         >
             <SortContext.Provider value={sortState}>
                 <TableView
+                    className={styles.table}
                     data={usergroups?.project?.userGroupMembers?.results}
                     keySelector={usergroupsKeySelector}
                     columns={columns}

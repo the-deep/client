@@ -1,4 +1,8 @@
 .usergroups {
+    .header-actions {
+        gap: var(--dui-spacing-medium);
+    }
+
     .user-groups-link {
         margin: 0 var(--dui-spacing-large);
     }
@@ -7,6 +11,11 @@
         display: flex;
         flex-direction: column;
         overflow-x: auto;
+
+        .table {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
 
         .table-row {
             background-color: var(--dui-color-foreground);
