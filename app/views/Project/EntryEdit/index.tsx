@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
     useParams,
     useLocation,
@@ -1326,6 +1326,22 @@ function EntryEdit(props: Props) {
         leadStatus,
         formValue.entries,
     ]);
+
+    const alertUser = useCallback((e: BeforeUnloadEvent) => {
+        if (formPristine) {
+            return undefined;
+        }
+        const dialogText = _ts('common', 'youHaveUnsavedChanges');
+        e.returnValue = dialogText;
+        return dialogText;
+    }, [formPristine]);
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser);
+        return () => {
+            window.removeEventListener('beforeunload', alertUser);
+        };
+    }, [alertUser]);
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
