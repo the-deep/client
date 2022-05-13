@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import {
     useParams,
     useLocation,
@@ -76,6 +76,7 @@ import {
     CommentCountContextInterface,
 } from '#components/entryReview/EntryCommentWrapper/CommentContext';
 import _ts from '#ts';
+import usePromptOnCloseAndRefresh from '#hooks/usePromptOnCloseAndRefresh';
 
 import {
     PROJECT_FRAMEWORK,
@@ -1327,21 +1328,7 @@ function EntryEdit(props: Props) {
         formValue.entries,
     ]);
 
-    const alertUser = useCallback((e: BeforeUnloadEvent) => {
-        if (formPristine) {
-            return undefined;
-        }
-        const dialogText = _ts('common', 'youHaveUnsavedChanges');
-        e.returnValue = dialogText;
-        return dialogText;
-    }, [formPristine]);
-
-    useEffect(() => {
-        window.addEventListener('beforeunload', alertUser);
-        return () => {
-            window.removeEventListener('beforeunload', alertUser);
-        };
-    }, [alertUser]);
+    usePromptOnCloseAndRefresh(formPristine);
 
     return (
         <div className={_cs(styles.entryEdit, className)}>
