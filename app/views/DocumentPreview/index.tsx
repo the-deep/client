@@ -1,8 +1,7 @@
 import React, { useContext, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
-    IoDocument,
     IoDownloadOutline,
     IoCopyOutline,
     IoInformationCircleOutline,
@@ -11,7 +10,6 @@ import {
 import {
     Container,
     QuickActionButton,
-    Tag,
     TextOutput,
     useBooleanState,
     useAlert,
@@ -19,6 +17,7 @@ import {
 
 import LeadPreview from '#components/lead/LeadPreview';
 import ProjectContext from '#base/context/ProjectContext';
+import UserContext from '#base/context/UserContext';
 
 import styles from './styles.css';
 
@@ -37,9 +36,16 @@ function DocumentPreview(props: Props) {
     const { leadId } = useParams<{ leadId: string }>();
     const [infoPaneShown, showInfoPane, hideInfoPane] = useBooleanState(true);
     const { project } = useContext(ProjectContext);
-
+    const { user } = useContext(UserContext);
+    const isAuthenticated = !doesObjectHaveNoData(user);
+    const isProjectMember = isAuthenticated && isDefined(project?.currentUserRole);
     const alert = useAlert();
-    console.warn(leadId, project);
+    // TODO: Remove after redirection
+    console.warn('isProjectMember', isProjectMember);
+    // TODO: Remove after redirection
+    console.warn('isAuthenticated', isAuthenticated);
+    // TODO: Remove after redirection
+    console.warn('lead ID', leadId);
 
     const handleCopyToClipboard = useCallback(() => {
         navigator.clipboard.writeText(url ?? '');
@@ -60,20 +66,22 @@ function DocumentPreview(props: Props) {
         <Container
             className={_cs(className, styles.documentPreview)}
             heading="Title of the document"
-            spacing="loose"
+            borderBelowHeader
+            contentClassName={styles.content}
+            headerClassName={styles.header}
             headerActions={(
                 <>
                     <QuickActionButton
                         name={undefined}
                         onClick={handlePrintClick}
-                        title="print document"
+                        title="Print Document"
                     >
                         <IoDownloadOutline />
                     </QuickActionButton>
                     <QuickActionButton
                         name={undefined}
                         onClick={handleCopyToClipboard}
-                        title="copy URL to clipboard"
+                        title="Copy Link"
                     >
                         <IoCopyOutline />
                     </QuickActionButton>
@@ -86,13 +94,17 @@ function DocumentPreview(props: Props) {
                     </QuickActionButton>
                 </>
             )}
-            borderBelowHeader
-            contentClassName={styles.content}
         >
-            <div className={styles.previewContainer}>
+            <div
+                className={_cs(
+                    styles.previewContainer,
+                    !infoPaneShown && styles.previewContainerWithPane,
+                )}
+            >
                 <LeadPreview
                     className={styles.preview}
                     url={url}
+                    hideBar
                     // attachment={attachment}
                 />
             </div>
@@ -100,6 +112,7 @@ function DocumentPreview(props: Props) {
                 <Container
                     className={styles.sidePane}
                     heading="Details"
+                    headerClassName={styles.sidePaneHeader}
                     headerActions={(
                         <QuickActionButton
                             name={undefined}
@@ -109,23 +122,31 @@ function DocumentPreview(props: Props) {
                         </QuickActionButton>
                     )}
                     borderBelowHeader
+                    contentClassName={styles.detailsContent}
                 >
-                    <h4>Metadata</h4>
                     <TextOutput
                         label="Project"
                         value="Test Project"
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Author"
                         value="Aditya Khatri"
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Source"
                         value="BBC"
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Date of Publication"
                         value="29 Mar, 2022"
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
                     />
                 </Container>
             )}

@@ -29,24 +29,15 @@
         }
     }
 
-    .leads-container {
-        display: flex;
+    .leads {
+        flex-grow: 1;
+        background-color: var(--dui-color-background);
+        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
 
-        .filter {
+        .table {
             display: flex;
-            flex-shrink: 0;
-        }
-
-        .leads {
             flex-grow: 1;
-            background-color: var(--dui-color-background);
-            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
-
-            .table {
-                display: flex;
-                flex-grow: 1;
-                flex-shrink: 0;
-            }
+            flex-shrink: 0;
         }
     }
 }
