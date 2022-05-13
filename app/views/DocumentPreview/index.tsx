@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { _cs, isDefined, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
@@ -21,11 +21,32 @@ import UserContext from '#base/context/UserContext';
 
 import styles from './styles.css';
 
+interface Response {
+    url: string;
+    lead: {
+        id: string;
+        title: string;
+        authoringOrganization: string;
+        publishedDate: string;
+    };
+}
+
+const fakeResponse: Response = {
+    url: 'https://www.onlinekhabar.com/2022/05/1123315',
+    lead: {
+        id: '1',
+        title: 'Congress candidate from Kapilvastu dies',
+        authoringOrganization: 'BBC',
+        publishedDate: '2022-02-15T05:08:27.130741+00:00',
+    },
+};
+
 interface Props {
     url?: string;
     // attachment?: unknown;
     className?: string;
 }
+
 function DocumentPreview(props: Props) {
     const {
         url = 'https://www.onlinekhabar.com/2022/05/1123315',
@@ -56,7 +77,7 @@ function DocumentPreview(props: Props) {
                 variant: 'info',
             },
         );
-    }, [url, alert]);
+    }, [fakeResponse?.url, alert]);
 
     const handlePrintClick = useCallback(() => {
         window.print();
@@ -126,13 +147,13 @@ function DocumentPreview(props: Props) {
                 >
                     <TextOutput
                         label="Project"
-                        value="Test Project"
+                        value={project?.title}
                         labelContainerClassName={styles.label}
                         valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Author"
-                        value="Aditya Khatri"
+                        value={user?.displayName}
                         labelContainerClassName={styles.label}
                         valueContainerClassName={styles.value}
                     />
