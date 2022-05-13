@@ -297,9 +297,14 @@ function LeftPane(props: Props) {
         }
     }, [leadId, onEntryCreate]);
 
-    const entryItemRendererParams = useCallback((entryId: string, entry: EntryInput) => ({
+    const entryItemRendererParams = useCallback((
+        entryId: string,
+        entry: EntryInput,
+        index: number,
+    ) => ({
         ...entry,
         entryId: entry.clientId,
+        index,
         entryServerId: entry.id,
         isActive: activeEntry === entry.clientId,
         projectId,

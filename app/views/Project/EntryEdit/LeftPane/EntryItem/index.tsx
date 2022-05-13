@@ -8,7 +8,7 @@ import {
 } from 'react-icons/io5';
 import { BsFileDiff } from 'react-icons/bs';
 import { requiredStringCondition } from '@togglecorp/toggle-form';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     Tag,
     Container,
@@ -98,6 +98,7 @@ interface EntryItemProps extends EntryInput {
     projectId: string | undefined;
     entryServerId: string | undefined;
     draftEntry?: string;
+    index?: number;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -109,6 +110,7 @@ function EntryItem(props: EntryItemProps) {
         excerpt,
         isActive,
         onClick,
+        index,
         projectId,
         onApproveButtonClick,
         onDiscardButtonClick,
@@ -156,6 +158,8 @@ function EntryItem(props: EntryItemProps) {
                 isActive && styles.active,
                 draftEntry && styles.createdFromAssisted,
             )}
+            heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
+            headingSize="extraSmall"
             headingSectionClassName={styles.headingSection}
             headerActions={entryServerId && projectId && (
                 <EntryCommentWrapper
