@@ -61,7 +61,7 @@ interface Props {
     disableAddButton?: boolean;
     assistedTaggingEnabled: boolean;
     projectId: string | undefined;
-    frameworkDetails: Framework;
+    frameworkDetails?: Framework;
 }
 
 function SimplifiedTextView(props: Props) {

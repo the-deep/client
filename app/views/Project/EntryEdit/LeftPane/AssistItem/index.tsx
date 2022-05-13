@@ -147,7 +147,7 @@ interface Props {
     onAssistedEntryAdd: (
         (newEntry: EntryInput, locations?: GeoArea[]) => void
     ) | undefined;
-    frameworkDetails: Framework;
+    frameworkDetails?: Framework;
     leadId: string;
     onAssistCancel: () => void;
     disabled?: boolean;
@@ -170,10 +170,10 @@ function AssistItem(props: Props) {
         allWidgets,
         filteredWidgets,
     } = useMemo(() => {
-        const widgetsFromPrimary = frameworkDetails.primaryTagging?.flatMap(
+        const widgetsFromPrimary = frameworkDetails?.primaryTagging?.flatMap(
             (item) => (item.widgets ?? []),
         ) ?? [];
-        const widgetsFromSecondary = frameworkDetails.secondaryTagging ?? [];
+        const widgetsFromSecondary = frameworkDetails?.secondaryTagging ?? [];
         const widgets = [
             ...widgetsFromPrimary,
             ...widgetsFromSecondary,
@@ -678,27 +678,29 @@ function AssistItem(props: Props) {
                     popupMatchesParentWidth={false}
                     persistent
                 >
-                    <AssistPopup
-                        frameworkDetails={frameworkDetails}
-                        value={value}
-                        onChange={setValue}
-                        error={error}
-                        leadId={leadId}
-                        hints={allHints}
-                        recommendations={allRecommendations}
-                        onEntryDiscardButtonClick={handleDiscardButtonClick}
-                        onEntryCreateButtonClick={handleEntryCreateButtonClick}
-                        onNormalEntryCreateButtonClick={handleNormalEntryCreateButtonClick}
-                        geoAreaOptions={geoAreaOptions}
-                        onGeoAreaOptionsChange={setGeoAreaOptions}
-                        predictionsLoading={
-                            predictionsLoading
-                            || draftEntryFetchPending
-                            || draftEntryCreationPending
-                        }
-                        predictionsErrored={!!fetchErrors || !!createErrors}
-                        messageText={messageText}
-                    />
+                    {frameworkDetails && (
+                        <AssistPopup
+                            frameworkDetails={frameworkDetails}
+                            value={value}
+                            onChange={setValue}
+                            error={error}
+                            leadId={leadId}
+                            hints={allHints}
+                            recommendations={allRecommendations}
+                            onEntryDiscardButtonClick={handleDiscardButtonClick}
+                            onEntryCreateButtonClick={handleEntryCreateButtonClick}
+                            onNormalEntryCreateButtonClick={handleNormalEntryCreateButtonClick}
+                            geoAreaOptions={geoAreaOptions}
+                            onGeoAreaOptionsChange={setGeoAreaOptions}
+                            predictionsLoading={
+                                predictionsLoading
+                                || draftEntryFetchPending
+                                || draftEntryCreationPending
+                            }
+                            predictionsErrored={!!fetchErrors || !!createErrors}
+                            messageText={messageText}
+                        />
+                    )}
                 </QuickActionDropdownMenu>
             )}
             headerActions={(
