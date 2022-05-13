@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs, isNotDefined } from '@togglecorp/fujs';
-import { IoAdd } from 'react-icons/io5';
+import { IoAdd, IoSearch } from 'react-icons/io5';
 import {
     Container,
     Button,
     Pager,
     Kraken,
     SortContext,
+    TextInput,
     TableView,
     TableColumn,
     TableHeaderCell,
@@ -62,6 +63,7 @@ export const PROJECT_USERS = gql`
         $page: Int,
         $pageSize: Int,
         $ordering: String,
+        $search: String,
     ) {
         project(id: $projectId) {
             id
@@ -69,6 +71,7 @@ export const PROJECT_USERS = gql`
                 page: $page,
                 pageSize: $pageSize,
                 ordering: $ordering,
+                search: $search,
             ) {
                 results {
                     badges
@@ -154,6 +157,7 @@ function UserList(props: Props) {
 
     const [activePage, setActivePage] = useState<number>(1);
     const [projectUserToEdit, setProjectUserToEdit] = useState<ProjectUser>();
+    const [searchText, setSearchText] = useState<string | undefined>(undefined);
     const alert = useAlert();
 
     const [
@@ -181,8 +185,9 @@ function UserList(props: Props) {
         page: activePage,
         pageSize: maxItemsPerPage,
         ordering,
+        search: searchText,
     }
-    ), [projectId, activePage, ordering]);
+    ), [projectId, activePage, ordering, searchText]);
 
     const {
         previousData,
@@ -364,22 +369,34 @@ function UserList(props: Props) {
             className={_cs(className, styles.users)}
             heading={_ts('projectEdit', 'projectUsers')}
             contentClassName={styles.content}
+            headerActionsContainerClassName={styles.headerActions}
             headerActions={(
-                <Button
-                    name="add-member"
-                    variant="tertiary"
-                    icons={(
-                        <IoAdd />
-                    )}
-                    onClick={handleAddUserClick}
-                    disabled={pending}
-                >
-                    {_ts('projectEdit', 'addUser')}
-                </Button>
+                <>
+                    <TextInput
+                        name={undefined}
+                        value={searchText}
+                        onChange={setSearchText}
+                        placeholder="Search"
+                        icons={(<IoSearch />)}
+                        variant="general"
+                    />
+                    <Button
+                        name="add-member"
+                        variant="tertiary"
+                        icons={(
+                            <IoAdd />
+                        )}
+                        onClick={handleAddUserClick}
+                        disabled={pending}
+                    >
+                        {_ts('projectEdit', 'addUser')}
+                    </Button>
+                </>
             )}
         >
             <SortContext.Provider value={sortState}>
                 <TableView
+                    className={styles.table}
                     data={projectUsersResponse?.project?.userMembers?.results}
                     keySelector={userKeySelector}
                     emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
