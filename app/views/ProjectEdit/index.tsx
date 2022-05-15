@@ -20,7 +20,6 @@ import { UserContext } from '#base/context/UserContext';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
 import BackLink from '#components/BackLink';
-import { ProjectDetails } from '#types';
 import _ts from '#ts';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
@@ -58,10 +57,9 @@ function ProjectEdit() {
         ?.accessibleFeatures?.some((feature) => feature.key === 'CONNECTORS');
 
     const handleCreate = useCallback(
-        (response: ProjectDetails) => {
-            const { id } = response;
+        (newProjectId: string) => {
             history.replace(generatePath(routes.projectEdit.path, {
-                projectId: id,
+                projectId: newProjectId,
             }));
         },
         [history],

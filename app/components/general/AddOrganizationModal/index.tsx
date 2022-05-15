@@ -68,6 +68,7 @@ function AddOrganizationModal(props: Props) {
         url: 'server://organization-types/',
         method: 'GET',
     });
+
     const {
         pending: organizationPostPending,
         trigger: createOrganization,
@@ -77,7 +78,10 @@ function AddOrganizationModal(props: Props) {
         body: (ctx) => ctx,
         onSuccess: (response) => {
             if (onOrganizationAdd) {
-                onOrganizationAdd(response);
+                onOrganizationAdd({
+                    ...response,
+                    id: String(response.id),
+                });
             }
             alert.show(
                 'Successfully created new organization.',
