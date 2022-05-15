@@ -48,7 +48,7 @@ function StakeholderDetail(props: StakeholderDetailProps) {
 }
 
 const stakeholderDetailsKeySelector = (d: BasicOrganization) => d.id;
-const stakeholderDetailsRendererParams = (_: number, d: BasicOrganization) => ({
+const stakeholderDetailsRendererParams = (_: string, d: BasicOrganization) => ({
     logo: d.logoUrl,
     title: organizationTitleSelector(d),
 });

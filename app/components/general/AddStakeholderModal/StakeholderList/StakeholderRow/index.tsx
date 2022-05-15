@@ -7,8 +7,8 @@ import {
 
 export interface Props {
     className?: string;
-    onRemove: (index: number) => void;
-    value: number;
+    onRemove: (index: string) => void;
+    value: string;
     displayValue?: string;
 }
 

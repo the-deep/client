@@ -22,7 +22,7 @@ function Stakeholder(props: Props) {
     } = props;
 
     const dragValue = useMemo(() => ({
-        id: value.id,
+        id: String(value.id),
         title: value.title,
         logoUrl: value.logoUrl,
     }), [value]);

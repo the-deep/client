@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useMemo, useContext, useState, useCallback } from 'react';
 import {
     Prompt,
     useHistory,
@@ -12,93 +12,106 @@ import {
 import {
     Button,
     Container,
-    ContainerCard,
     PendingMessage,
     TextInput,
     DateInput,
     TextArea,
     ListView,
-    SegmentInput,
+    ContainerCard,
     Modal,
     useAlert,
 } from '@the-deep/deep-ui';
 import {
     isDefined,
-    isNotDefined,
     listToGroupList,
     compareDate,
 } from '@togglecorp/fujs';
 import {
-    ArraySchema,
     ObjectSchema,
     requiredStringCondition,
-    defaultUndefinedType,
+    removeNull,
     useForm,
+    PartialForm,
+    ArraySchema,
     requiredCondition,
     getErrorObject,
     createSubmitHandler,
 } from '@togglecorp/toggle-form';
-import { useLazyQuery, gql } from '@apollo/client';
+import {
+    useLazyQuery,
+    useQuery,
+    gql,
+    useMutation,
+} from '@apollo/client';
 
 import { SubNavbarActions } from '#components/SubNavbar';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import NonFieldError from '#components/NonFieldError';
 import UserContext from '#base/context/UserContext';
 import ProjectContext from '#base/context/ProjectContext';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
-import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
+// import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
+import BooleanInput, { Option as BooleanOption } from '#components/selections/BooleanInput';
 import {
-    BasicOrganization,
-    KeyValueElement,
     ProjectDetails,
-    OrganizationTypes,
+    BasicOrganization,
 } from '#types';
-import {
-    UserLastActiveProjectQuery,
-    UserLastActiveProjectQueryVariables,
-} from '#generated/types';
 import routes from '#base/configs/routes';
 import { useModalState } from '#hooks/stateManagement';
 
 import _ts from '#ts';
 import {
     useLazyRequest,
-    useRequest,
 } from '#base/utils/restRequest';
+import {
+    ProjectOrganizationGqInputType,
+    UserLastActiveProjectQuery,
+    UserLastActiveProjectQueryVariables,
+    ProjectCreateInputType,
+    ProjectUpdateInputType,
+    UserCurrentProjectQuery,
+    UserCurrentProjectQueryVariables,
+    ProjectCreateMutation,
+    ProjectCreateMutationVariables,
+    ProjectUpdateMutation,
+    ProjectUpdateMutationVariables,
+    ProjectOrganizationTypeEnum,
+} from '#generated/types';
 
-import StakeholderList, { organizationTitleSelector } from './StakeholderList';
+import StakeholderList from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 
 import styles from './styles.css';
 
 interface StakeholderType {
-    id: OrganizationTypes;
+    id: ProjectOrganizationTypeEnum;
     label: string;
 }
 
 const stakeholderTypes: StakeholderType[] = [
     {
         label: _ts('project.detail.stakeholders', 'leadOrganization'),
-        id: 'lead_organization',
+        id: 'LEAD_ORGANIZATION',
     },
     {
         label: _ts('project.detail.stakeholders', 'internationalPartner'),
-        id: 'international_partner',
+        id: 'INTERNATIONAL_PARTNER',
     },
     {
         label: _ts('project.detail.stakeholders', 'nationalPartner'),
-        id: 'national_partner',
+        id: 'NATIONAL_PARTNER',
     },
     {
         label: _ts('project.detail.stakeholders', 'donor'),
-        id: 'donor',
+        id: 'DONOR',
     },
     {
         label: _ts('project.detail.stakeholders', 'government'),
-        id: 'government',
+        id: 'GOVERNMENT',
     },
 ];
 
-const projectVisibilityOptions: KeyValueElement[] = [
+const projectVisibilityOptions: BooleanOption[] = [
     {
         key: 'false',
         value: _ts('projectEdit', 'publicProject'),
@@ -109,24 +122,13 @@ const projectVisibilityOptions: KeyValueElement[] = [
     },
 ];
 
-const projectVisibilityKeySelector = (v: KeyValueElement): string => v.key;
-const projectVisibilityLabelSelector = (v: KeyValueElement): string => v.value;
-
-type FormType = {
-    id?: number;
-    title?: string;
-    startDate?: string;
-    endDate?: string;
-    description?: string;
-    hasAssessments?: boolean;
-    isPrivate?: string;
-    organizations?: BasicProjectOrganization[];
-}
-
-type FormSchema = ObjectSchema<FormType>;
+type PartialFormType = PartialForm<ProjectCreateInputType, 'organizations'>;
+type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-type StakeholderSchema = ObjectSchema<BasicProjectOrganization, FormType>;
+type PartialOrganizationType = ProjectOrganizationGqInputType;
+
+type StakeholderSchema = ObjectSchema<PartialOrganizationType, PartialFormType>;
 type StakeholderSchemaFields = ReturnType<StakeholderSchema['fields']>;
 const organizationSchema: StakeholderSchema = {
     fields: (): StakeholderSchemaFields => ({
@@ -135,8 +137,9 @@ const organizationSchema: StakeholderSchema = {
     }),
 };
 
-type StakeholderListSchema = ArraySchema<BasicProjectOrganization, FormType>;
+type StakeholderListSchema = ArraySchema<PartialOrganizationType, PartialFormType>;
 type StakeholderListMember = ReturnType<StakeholderListSchema['member']>;
+
 const organizationListSchema: StakeholderListSchema = {
     keySelector: (d) => d.organization,
     member: (): StakeholderListMember => organizationSchema,
@@ -144,12 +147,10 @@ const organizationListSchema: StakeholderListSchema = {
 
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        id: [defaultUndefinedType],
         title: [requiredStringCondition],
         startDate: [],
         endDate: [],
         description: [],
-        hasAssessments: [],
         organizations: organizationListSchema,
         isPrivate: [],
     }),
@@ -165,6 +166,7 @@ const schema: FormSchema = {
     },
 };
 
+/*
 const getOrganizationValues = (project: ProjectDetails) => (
     project.organizations.map((v) => ({
         organization: v.organization,
@@ -178,12 +180,13 @@ const getOrganizationOptions = (project: ProjectDetails) => (
         title: organizationTitleSelector(v.organizationDetails),
     }))
 );
+ */
 
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
-const initialValue: FormType = {
-    isPrivate: 'false',
-    hasAssessments: false,
+const initialValue: PartialFormType = {
+    title: '',
+    isPrivate: false,
 };
 
 const LAST_ACTIVE_PROJECT = gql`
@@ -212,9 +215,109 @@ const LAST_ACTIVE_PROJECT = gql`
     }
 `;
 
+const CURRENT_PROJECT = gql`
+    query UserCurrentProject($projectId: ID!) {
+        project(id: $projectId) {
+            id
+            title
+            startDate
+            endDate
+            createdBy {
+                displayName
+            }
+            createdAt
+            description
+            isPrivate
+            organizations {
+                id
+                organization {
+                    id
+                    title
+                    mergedAs {
+                        id
+                        title
+                    }
+                }
+                organizationType
+                organizationTypeDisplay
+            }
+        }
+    }
+`;
+
+const PROJECT_CREATE = gql`
+mutation ProjectCreate($data: ProjectCreateInputType!) {
+    projectCreate(data: $data) {
+        ok
+        result {
+            id
+            title
+            startDate
+            endDate
+            createdBy {
+                displayName
+            }
+            createdAt
+            description
+            isPrivate
+            organizations {
+                id
+                organization {
+                    id
+                    title
+                    mergedAs {
+                        id
+                        title
+                    }
+                }
+                organizationType
+                organizationTypeDisplay
+            }
+        }
+        errors
+    }
+}
+`;
+
+const PROJECT_UPDATE = gql`
+mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
+    project(id: $projectId) {
+        projectUpdate(data: $data) {
+            ok
+            result {
+                id
+                title
+                startDate
+                endDate
+                createdBy {
+                    displayName
+                }
+                createdAt
+                description
+                isPrivate
+                organizations {
+                    id
+                    organization {
+                        id
+                        title
+                        mergedAs {
+                            id
+                            title
+                        }
+                    }
+                    organizationType
+                    organizationTypeDisplay
+                }
+            }
+            errors
+        }
+    }
+}
+`;
+
 interface Props {
     projectId: string | undefined;
-    onCreate: (value: ProjectDetails) => void;
+    onCreate: (newProjectId: string) => void;
 }
 
 function ProjectDetailsForm(props: Props) {
@@ -254,70 +357,120 @@ function ProjectDetailsForm(props: Props) {
     const error = getErrorObject(riskyError);
 
     const [projectTitleToDelete, setProjectTitleToDelete] = useState<string | undefined>();
-    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
     const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
     const location = useLocation();
-
-    // FIXME: we may not need this use effect
-    useEffect(
-        () => {
-            setValue((): FormType => (
-                projectDetails ? {
-                    ...projectDetails,
-                    isPrivate: projectDetails.isPrivate.toString(),
-                    organizations: getOrganizationValues(projectDetails),
-                } : initialValue
-            ));
-            // FIXME: we may not need to set error here
-            setError({});
+    const {
+        data: projectDetailsResponse,
+        loading: projectDetailsLoading,
+    } = useQuery<UserCurrentProjectQuery, UserCurrentProjectQueryVariables>(
+        CURRENT_PROJECT,
+        {
+            skip: !projectId,
+            variables: projectId ? { projectId } : undefined,
+            onCompleted: (response) => {
+                if (response?.project) {
+                    const cleanProject = removeNull(response.project);
+                    setValue({
+                        ...cleanProject,
+                        organizations: cleanProject?.organizations?.map((org) => ({
+                            organization: org.organization.id,
+                            organizationType: org.organizationType,
+                        })),
+                    });
+                    setStakeholderOptions(
+                        cleanProject?.organizations?.map((org) => org.organization) ?? [],
+                    );
+                }
+            },
         },
-        [projectDetails, setError, setValue],
     );
 
-    const {
-        pending: pendingProjectDetailsGet,
-    } = useRequest<ProjectDetails>({
-        skip: isNotDefined(projectId),
-        url: `server://projects/${projectId}/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            setProjectDetails(response);
-            const options = getOrganizationOptions(response);
-            setStakeholderOptions(options);
-            setError({});
+    const [
+        createProject,
+        {
+            loading: createProjectPending,
         },
-    });
+    ] = useMutation<ProjectCreateMutation, ProjectCreateMutationVariables>(
+        PROJECT_CREATE,
+        {
+            onCompleted: (response) => {
+                if (!response || !response.projectCreate) {
+                    return;
+                }
 
-    const {
-        pending: projectPatchPending,
-        trigger: projectPatch,
-    } = useLazyRequest<ProjectDetails, { values: FormType; }>({
-        url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
-        method: projectId ? 'PATCH' : 'POST',
-        body: (ctx) => ctx.values,
-        onSuccess: (response) => {
-            // FIXME: better to use context instead of mutable props
-            if (!projectId) {
-                // Set this as pristine so the prompt will not be trigger
-                setPristine(true);
-                onCreate(response);
-            } else {
-                setProjectDetails(response);
-                const options = getOrganizationOptions(response);
-                setStakeholderOptions(options);
-            }
-            alert.show(
-                projectId
-                    ? 'Successfully updated changes.'
-                    : 'Successfully created project.',
-                { variant: 'success' },
-            );
+                const {
+                    ok,
+                    result,
+                    errors,
+                } = response.projectCreate;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to create project.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    if (result?.id) {
+                        onCreate(result.id);
+                    }
+                    alert.show(
+                        'Successfully created project!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to create project.',
+                    { variant: 'error' },
+                );
+            },
         },
-        failureMessage: projectId
-            ? 'Failed to update changes.'
-            : 'Failed to create project.',
-    });
+    );
+
+    const [
+        updateProject,
+        {
+            loading: updateProjectPending,
+        },
+    ] = useMutation<ProjectUpdateMutation, ProjectUpdateMutationVariables>(
+        PROJECT_UPDATE,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.projectUpdate) {
+                    return;
+                }
+
+                const {
+                    ok,
+                    errors,
+                } = response.project.projectUpdate;
+
+                if (errors) {
+                    const formError = transformToFormError(removeNull(errors) as ObjectError[]);
+                    setError(formError);
+                    alert.show(
+                        'Failed to update project.',
+                        { variant: 'error' },
+                    );
+                } else if (ok) {
+                    alert.show(
+                        'Successfully updated project!',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to update project.',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const [
         getUserLastActiveProject,
@@ -336,6 +489,7 @@ function ProjectDetailsForm(props: Props) {
             },
         },
     );
+
     const {
         pending: projectDeletePending,
         trigger: triggerProjectDelete,
@@ -363,29 +517,31 @@ function ProjectDetailsForm(props: Props) {
 
     const groupedStakeholders = useMemo(
         () => listToGroupList(
-
-            value?.organizations ?? [],
-            (o) => o.organizationType,
+            (value?.organizations ?? []).filter((org) => org.organizationType),
+            (o) => o.organizationType ?? '',
             (o) => o.organization,
         ),
         [value],
     );
 
     const organizationListRendererParams = useCallback(
-        (key: OrganizationTypes, v: StakeholderType) => {
+        (key: ProjectOrganizationTypeEnum, v: StakeholderType) => {
             const organizations = groupedStakeholders[key];
             return {
                 data: organizations
                     ?.map((o) => stakeholderOptions.find((option) => option.id === o))
                     .filter(isDefined),
                 title: v.label,
-                dataPending: pendingProjectDetailsGet,
+                dataPending: projectDetailsLoading,
             };
         },
-        [groupedStakeholders, stakeholderOptions, pendingProjectDetailsGet],
+        [groupedStakeholders, stakeholderOptions, projectDetailsLoading],
     );
 
-    const pending = pendingProjectDetailsGet || projectPatchPending;
+    const pending = projectDetailsLoading
+        || createProjectPending
+        || updateProjectPending;
+
     const disabled = pending;
 
     const handleSubmit = useCallback(
@@ -393,12 +549,29 @@ function ProjectDetailsForm(props: Props) {
             const submit = createSubmitHandler(
                 validate,
                 setError,
-                (val) => projectPatch({ values: val }),
+                (val) => {
+                    if (projectId) {
+                        updateProject({
+                            variables: {
+                                projectId,
+                                data: val as ProjectUpdateInputType,
+                            },
+                        });
+                    } else {
+                        createProject({
+                            variables: {
+                                data: val as ProjectCreateInputType,
+                            },
+                        });
+                    }
+                },
             );
             submit();
         },
-        [setError, validate, projectPatch],
+        [setError, validate, createProject, projectId, updateProject],
     );
+
+    const projectDetails = projectDetailsResponse?.project;
 
     return (
         <div className={styles.projectDetails}>
@@ -502,44 +675,26 @@ function ProjectDetailsForm(props: Props) {
                             />
                         )}
                     >
-                        <SegmentInput
+                        <BooleanInput
                             className={styles.segmentInput}
                             name="isPrivate"
                             value={value?.isPrivate}
-                            options={projectVisibilityOptions}
-                            keySelector={projectVisibilityKeySelector}
-                            labelSelector={projectVisibilityLabelSelector}
                             onChange={setFieldValue}
+                            options={projectVisibilityOptions}
+                            type="segment"
                             disabled={isDefined(projectId) || !accessPrivateProject}
                         />
                         {!accessPrivateProject && !isDefined(projectId) && (
                             <RequestPrivateProjectButton />
                         )}
                     </Container>
-                    {/*
-                    <Container
-                        className={styles.features}
-                        contentClassName={styles.items}
-                        headingSize="extraSmall"
-                        heading={_ts('projectEdit', 'projectAdditionalFeatures')}
-                    >
-                        <Checkbox
-                            name="hasAssessments"
-                            disabled={disabled}
-                            onChange={setFieldValue}
-                            value={value?.hasAssessments}
-                            // error={error?.hasAssessments}
-                            label={_ts('projectEdit', 'projectAssessmentRegistry')}
-                        />
-                    </Container>
-                    */}
                     <div className={styles.createdByDetails}>
-                        {projectDetails?.createdByName && (
+                        {projectDetails?.createdBy?.displayName && (
                             <TextInput
                                 name="createdByName"
                                 className={styles.input}
                                 label={_ts('projectEdit', 'projectCreatedBy')}
-                                value={projectDetails.createdByName}
+                                value={projectDetails.createdBy.displayName}
                                 disabled
                             />
                         )}
