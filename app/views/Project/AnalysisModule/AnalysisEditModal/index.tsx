@@ -131,6 +131,7 @@ const analysisPillarSchema: AnalysisPillarSchema = {
 
 type AnalysisPillarListSchema = ArraySchema<PartialForm<AnalysisPillarType>, PartialFormType>;
 type AnalysisPillarListMember = ReturnType<AnalysisPillarListSchema['member']>;
+
 const analysisPillarListSchema: AnalysisPillarListSchema = {
     keySelector: (d) => d.key,
     member: (): AnalysisPillarListMember => analysisPillarSchema,
