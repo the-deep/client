@@ -39,7 +39,6 @@ function StakeholderList(props: Props) {
         if (!val) {
             return;
         }
-        console.warn('here', val);
         const typedVal = val as { id: string; title: string; logoUrl?: string };
         if (options.findIndex((option) => option.id === typedVal.id) < 0) {
             onOptionsChange([...options, typedVal]);
