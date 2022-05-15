@@ -20,6 +20,7 @@ import {
     ContainerCard,
     Modal,
     useAlert,
+    Switch,
 } from '@the-deep/deep-ui';
 import {
     isDefined,
@@ -36,6 +37,7 @@ import {
     requiredCondition,
     getErrorObject,
     createSubmitHandler,
+    PurgeNull,
 } from '@togglecorp/toggle-form';
 import {
     useLazyQuery,
@@ -50,7 +52,6 @@ import NonFieldError from '#components/NonFieldError';
 import UserContext from '#base/context/UserContext';
 import ProjectContext from '#base/context/ProjectContext';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
-// import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
 import BooleanInput, { Option as BooleanOption } from '#components/selections/BooleanInput';
 import {
     ProjectDetails,
@@ -122,7 +123,7 @@ const projectVisibilityOptions: BooleanOption[] = [
     },
 ];
 
-type PartialFormType = PartialForm<ProjectCreateInputType, 'organizations'>;
+type PartialFormType = PartialForm<PurgeNull<ProjectCreateInputType>, 'organizations'>;
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -152,6 +153,7 @@ const schema: FormSchema = {
         endDate: [],
         description: [],
         organizations: organizationListSchema,
+        hasPubliclyViewableLeads: [requiredCondition],
         isPrivate: [],
     }),
     validation: (value) => {
@@ -187,6 +189,7 @@ const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 const initialValue: PartialFormType = {
     title: '',
     isPrivate: false,
+    hasPubliclyViewableLeads: false,
 };
 
 const LAST_ACTIVE_PROJECT = gql`
@@ -228,6 +231,7 @@ const CURRENT_PROJECT = gql`
             createdAt
             description
             isPrivate
+            hasPubliclyViewableLeads
             organizations {
                 id
                 organization {
@@ -254,6 +258,7 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
             title
             startDate
             endDate
+            hasPubliclyViewableLeads
             createdBy {
                 displayName
             }
@@ -295,6 +300,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 createdAt
                 description
                 isPrivate
+                hasPubliclyViewableLeads
                 organizations {
                     id
                     organization {
@@ -688,6 +694,12 @@ function ProjectDetailsForm(props: Props) {
                             <RequestPrivateProjectButton />
                         )}
                     </Container>
+                    <Switch
+                        name="hasPubliclyViewableLeads"
+                        value={value?.hasPubliclyViewableLeads}
+                        onChange={setFieldValue}
+                        label="Make all sources publicly viewable"
+                    />
                     <div className={styles.createdByDetails}>
                         {projectDetails?.createdBy?.displayName && (
                             <TextInput
