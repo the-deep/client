@@ -1,5 +1,8 @@
 import React, { useCallback } from 'react';
-import { SelectInput } from '@the-deep/deep-ui';
+import {
+    SelectInput,
+    SegmentInput,
+} from '@the-deep/deep-ui';
 
 type BooleanString = 'true' | 'false';
 
@@ -48,6 +51,7 @@ interface Props<T extends Option, K extends string | undefined> {
     error?: string;
     disabled?: boolean;
     readOnly?: boolean;
+    type?: 'select' | 'segment';
 }
 
 function BooleanInput<T extends Option, K extends string | undefined>(props: Props<T, K>) {
@@ -57,6 +61,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
         value,
         onChange,
         options,
+        type = 'select',
         ...otherProps
     } = props;
 
@@ -69,8 +74,23 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
         [onChange, name],
     );
 
+    if (type === 'select') {
+        return (
+            <SelectInput
+                className={className}
+                keySelector={keySelector}
+                labelSelector={labelSelector}
+                options={options}
+                value={currentValue}
+                onChange={handleChange}
+                name={name}
+                {...otherProps}
+            />
+        );
+    }
+
     return (
-        <SelectInput
+        <SegmentInput
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
