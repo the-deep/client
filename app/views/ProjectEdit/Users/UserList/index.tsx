@@ -402,7 +402,7 @@ function UserList(props: Props) {
                     emptyMessage={_ts('projectEdit', 'emptyUserTableMessage')}
                     rowClassName={styles.tableRow}
                     columns={columns}
-                    filtered={false}
+                    filtered={(searchText?.length ?? 0) > 0}
                     errored={false}
                     pending={projectUsersPending || pending}
                     emptyIcon={(

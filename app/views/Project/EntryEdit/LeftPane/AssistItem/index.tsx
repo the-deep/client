@@ -437,6 +437,8 @@ function AssistItem(props: Props) {
         draftEntryId,
     ]);
 
+    const [isErrored, setIsErrored] = useState(false);
+
     const {
         loading: draftEntryFetchPending,
         data,
@@ -453,6 +455,7 @@ function AssistItem(props: Props) {
 
                 // FIXME: Handle errors more gracefully
                 if (!result) {
+                    setIsErrored(true);
                     alert.show(
                         'Failed to predict!',
                         { variant: 'error' },
@@ -620,6 +623,7 @@ function AssistItem(props: Props) {
                     || !!draftEntryResponse.errors
                     || !draftEntryResponse.result
                 ) {
+                    setIsErrored(true);
                     alert.show(
                         'Failed to predict!',
                         { variant: 'error' },
@@ -630,6 +634,7 @@ function AssistItem(props: Props) {
                 setDraftEntryId(draftEntryResponse.result?.id);
             },
             onError: () => {
+                setIsErrored(true);
                 alert.show(
                     'Failed to predict!',
                     { variant: 'error' },
@@ -697,7 +702,7 @@ function AssistItem(props: Props) {
                                 || draftEntryFetchPending
                                 || draftEntryCreationPending
                             }
-                            predictionsErrored={!!fetchErrors || !!createErrors}
+                            predictionsErrored={!!fetchErrors || !!createErrors || isErrored}
                             messageText={messageText}
                         />
                     )}
