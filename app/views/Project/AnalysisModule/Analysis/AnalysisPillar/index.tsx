@@ -36,7 +36,7 @@ export interface Props {
     createdAt: string;
     onDelete: (value: number) => void;
     pillarId: PillarSummary['id'];
-    projectId: number;
+    projectId: string;
     pendingPillarDelete: boolean;
     className?: string;
     totalEntries: number;

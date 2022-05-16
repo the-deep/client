@@ -63,7 +63,7 @@ interface CloneProperties {
 
 interface Props {
     onClose: () => void;
-    projectId: number;
+    projectId: string;
     analysisId: number;
     onClone: () => void;
 }

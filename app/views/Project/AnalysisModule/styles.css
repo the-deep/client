@@ -1,22 +1,19 @@
 .analysis-module {
     display: flex;
     flex-direction: column;
-    background-color: var(--dui-color-background);
-    overflow-y: auto;
+    overflow: auto;
 
     .sub-navbar {
-        flex-shrink: 0;
-        background-color: var(--dui-color-foreground);
+        .link {
+            padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+            text-transform: capitalize;
+            font-size: var(--dui-font-size-medium);
+        }
     }
 
-    .child {
+    .child-view {
         flex-grow: 1;
         overflow: auto;
         scrollbar-gutter: stable;
     }
-
-}
-
-.legend {
-    margin: auto;
 }

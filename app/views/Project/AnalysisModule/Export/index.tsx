@@ -2,12 +2,10 @@ import React from 'react';
 import {
     ContainerCard,
 } from '@the-deep/deep-ui';
-import {
-    ExportDataTypeEnum,
-} from '#generated/types';
 
-import ExportHistory from '#views/Project/Tagging/Export/ExportHistory';
+import { ExportDataTypeEnum } from '#generated/types';
 import ProjectContext from '#base/context/ProjectContext';
+import ExportHistory from '#views/Project/Tagging/Export/ExportHistory';
 
 import styles from './styles.css';
 
@@ -21,9 +19,10 @@ function Export() {
         <ContainerCard
             className={styles.container}
             heading="Export History"
-            headingSize="extraSmall"
-            headerClassName={styles.header}
+            headingSize="small"
             contentClassName={styles.content}
+            borderBelowHeaderWidth="thin"
+            borderBelowHeader
         >
             {activeProject && (
                 <ExportHistory

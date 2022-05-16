@@ -105,7 +105,6 @@ interface ComponentProps {
     className?: string;
     title: string;
     startDate?: string;
-    onSuccess: () => void;
     endDate: string;
     onEdit: (analysisId: number) => void;
     onAnalysisPillarDelete: () => void;
@@ -146,7 +145,6 @@ function Analysis(props: ComponentProps) {
         analyzedSources,
         totalEntries,
         totalSources,
-        onSuccess,
     } = props;
 
     const {
@@ -184,20 +182,19 @@ function Analysis(props: ComponentProps) {
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     alert.show(
-                        'Export created Successfully!',
+                        'Successfully started analysis export! You can find your export under exports tab.',
                         { variant: 'success' },
                     );
                 } else {
                     alert.show(
-                        _ts('export', 'exportStartedNotifyMessage'),
-                        { variant: 'success' },
+                        'There was an issue with exporting this analysis.',
+                        { variant: 'error' },
                     );
-                    onSuccess();
                 }
             },
             onError: () => {
                 alert.show(
-                    'Error during export.',
+                    'There was an issue with exporting this analysis.',
                     {
                         variant: 'error',
                     },
@@ -222,7 +219,7 @@ function Analysis(props: ComponentProps) {
                 },
             },
         });
-    }, [activeProject, analysisId]);
+    }, [activeProject, analysisId, createAnalysisExport]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);

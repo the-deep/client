@@ -14,11 +14,10 @@ import SubNavbar, { SubNavbarIcons } from '#components/SubNavbar';
 import ProjectSwitcher from '#components/general/ProjectSwitcher';
 import { ProjectContext } from '#base/context/ProjectContext';
 
-import _ts from '#ts';
 import routes from '#base/configs/routes';
 import SmartNavLink from '#base/components/SmartNavLink';
-import styles from './styles.css';
 import PreloadMessage from '#base/components/PreloadMessage';
+import styles from './styles.css';
 
 interface AnalysisModuleProps {
     className?: string;

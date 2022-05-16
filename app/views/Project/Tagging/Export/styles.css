@@ -2,15 +2,17 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+    margin: var(--dui-spacing-medium) var(--dui-spacing-super-large);
     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
     .header {
+        margin: 0 calc(-1 * var(--dui-spacing-medium));
         border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     }
 
     .action-buttons {
         display: flex;
+        padding: 0 var(--dui-spacing-medium);
         gap: var(--dui-spacing-small);
     }
 

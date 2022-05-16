@@ -26,7 +26,7 @@ interface Props {
     className?: string;
     createdAt: string;
     modifiedAt: string;
-    activeProject: number;
+    activeProject: string;
     onAnalysisPillarDelete: () => void;
     analysisId: number;
     totalEntries: number;

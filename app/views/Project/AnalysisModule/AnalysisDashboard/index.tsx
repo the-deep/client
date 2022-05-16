@@ -57,7 +57,6 @@ import { ProjectContext } from '#base/context/ProjectContext';
 import RechartsLegend from '#components/RechartsLegend';
 import Timeline from '#components/Timeline';
 import styles from './styles.css';
-import SubNavbarContext from '#components/SubNavbar/context';
 
 const analysisKeySelector = (d: AnalysisSummary) => d.id;
 const maxItemsPerPage = 5;
@@ -138,18 +137,6 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
     ] = useModalState(false);
 
     const alert = useAlert();
-    const [iconsNode, setIconsNode] = useState<Element | null | undefined>();
-    const [actionsNode, setActionsNode] = useState<Element | null | undefined>();
-
-    const navbarContextValue = useMemo(
-        () => ({
-            iconsNode,
-            actionsNode,
-            setIconsNode,
-            setActionsNode,
-        }),
-        [iconsNode, actionsNode],
-    );
 
     const [activePage, setActivePage] = useState(1);
     const [analysisToEdit, setAnalysisToEdit] = useState();
@@ -285,169 +272,167 @@ function AnalysisDashboard(props: AnalysisDashboardProps) {
                     </Button>
                 )}
             </SubNavbarActions>
-            <div className={styles.child}>
-                <Container
-                    className={styles.summary}
-                    contentClassName={styles.summaryContent}
-                    heading={_ts('analysis', 'analysesOverview')}
-                >
-                    <div className={styles.infoCardContainer}>
-                        <InformationCard
-                            coloredBackground
-                            icon={<IoDocumentTextOutline />}
-                            label={_ts('analysis', 'totalSourcesLabel')}
-                            value={overviewResponse?.sourcesTotal}
-                            variant="accent"
-                        />
-                        <InformationCard
-                            coloredBackground
-                            icon={<IoBookmarkOutline />}
-                            label={_ts('analysis', 'totalEntriesLabel')}
-                            value={overviewResponse?.entriesTotal}
-                            variant="complement1"
-                        />
-                        <PercentageInformationCard
-                            value={calcPercent(
-                                overviewResponse?.analyzedSourceCount,
-                                overviewResponse?.sourcesTotal,
-                            )}
-                            label={_ts('analysis', 'sourcesAnalyzedLabel')}
-                            variant="complement1"
-                            icon={<IoDocumentOutline />}
-                        />
-                        <PercentageInformationCard
-                            value={calcPercent(
-                                overviewResponse?.analyzedEntriesCount,
-                                overviewResponse?.entriesTotal,
-                            )}
-                            variant="complement2"
-                            label={_ts('analysis', 'entriesAnalyzedLabel')}
-                            icon={<IoCheckmarkCircle />}
-                        />
-                    </div>
-                    <ContainerCard
-                        className={styles.pieChartContainer}
-                        footerContent={_ts('analysis', 'sourcesByTypeLabel')}
-                        contentClassName={styles.pieChartContent}
-                    >
-                        {piechartData?.length > 0 ? (
-                            <ResponsiveContainer>
-                                <PieChart>
-                                    <Pie
-                                        data={piechartData}
-                                        dataKey={valueSelector}
-                                        nameKey={labelSelector}
-                                    >
-                                        {piechartData.map((
-                                            entry: AuthoringOrganizations,
-                                            index: number,
-                                        ) => (
-                                            <Cell
-                                                key={entry.organizationTypeId}
-                                                fill={colorScheme[
-                                                    index % colorScheme.length
-                                                ]}
-                                            />
-                                        ))}
-                                    </Pie>
-                                    <Legend
-                                        verticalAlign="bottom"
-                                        content={<RechartsLegend className={styles.legend} />}
-                                    />
-                                    <Tooltip
-                                        labelFormatter={tickFormatter}
-                                        isAnimationActive={false}
-                                    />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className={styles.emptyChart}>
-                                <IoPieChart
-                                    className={styles.icon}
-                                />
-                                <div className={styles.text}>
-                                    {/* FIXME: use strings with appropriate wording */}
-                                    Chart not available
-                                </div>
-                            </div>
-                        )}
-                    </ContainerCard>
-                    <Card className={styles.analysesTimelineContainer}>
-                        {timelineData?.length > 0 ? (
-                            <Timeline
-                                data={timelineData}
-                                labelSelector={timelineLabelSelector}
-                                valueSelector={timelineValueSelector}
-                                keySelector={timelineKeySelector}
-                                tickLabelSelector={timelineTickSelector}
-                            />
-                        ) : (
-                            <div className={styles.emptyChart}>
-                                <IoStatsChart
-                                    className={styles.icon}
-                                />
-                                <div className={styles.text}>
-                                    {/* FIXME: use strings with appropriate wording */}
-                                    Chart not available
-                                </div>
-                            </div>
-                        )}
-                    </Card>
-                </Container>
-                <Container
-                    className={styles.allAnalyses}
-                    contentClassName={styles.analysesContainer}
-                    heading={_ts('analysis', 'allAnalyses')}
-                    headingDescription={analysesResponse?.count}
-                    headerDescriptionClassName={styles.headingDescription}
-                    inlineHeadingDescription
-                    headerActions={(
-                        <DateRangeInput
-                            name="dateFilter"
-                            value={dateRangeFilter}
-                            onChange={setDateRangeFilter}
-                            variant="general"
-                        />
-                    )}
-                    footerActions={(
-                        <Pager
-                            activePage={activePage}
-                            itemsCount={analysesResponse?.count ?? 0}
-                            maxItemsPerPage={maxItemsPerPage}
-                            onActivePageChange={setActivePage}
-                            itemsPerPageControlHidden
-                        />
-                    )}
-                >
-                    <ListView
-                        className={styles.analysisList}
-                        data={analysesResponse?.results}
-                        renderer={Analysis}
-                        rendererParams={analysisRendererParams}
-                        keySelector={analysisKeySelector}
-                        pending={pendingAnalyses}
-                        filtered={!!dateRangeFilter}
-                        errored={false}
-                        emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
-                        emptyIcon={(
-                            <Kraken
-                                size="large"
-                                variant="experiment"
-                            />
-                        )}
-                        messageIconShown
-                        messageShown
+            <Container
+                className={styles.summary}
+                contentClassName={styles.summaryContent}
+                heading={_ts('analysis', 'analysesOverview')}
+            >
+                <div className={styles.infoCardContainer}>
+                    <InformationCard
+                        coloredBackground
+                        icon={<IoDocumentTextOutline />}
+                        label={_ts('analysis', 'totalSourcesLabel')}
+                        value={overviewResponse?.sourcesTotal}
+                        variant="accent"
                     />
-                </Container>
-                {showAnalysisAddModal && activeProject && (
-                    <AnalysisEditModal
-                        onSuccess={handleAnalysisEditSuccess}
-                        onModalClose={setModalHidden}
-                        projectId={activeProject}
-                        analysisToEdit={analysisToEdit}
+                    <InformationCard
+                        coloredBackground
+                        icon={<IoBookmarkOutline />}
+                        label={_ts('analysis', 'totalEntriesLabel')}
+                        value={overviewResponse?.entriesTotal}
+                        variant="complement1"
+                    />
+                    <PercentageInformationCard
+                        value={calcPercent(
+                            overviewResponse?.analyzedSourceCount,
+                            overviewResponse?.sourcesTotal,
+                        )}
+                        label={_ts('analysis', 'sourcesAnalyzedLabel')}
+                        variant="complement1"
+                        icon={<IoDocumentOutline />}
+                    />
+                    <PercentageInformationCard
+                        value={calcPercent(
+                            overviewResponse?.analyzedEntriesCount,
+                            overviewResponse?.entriesTotal,
+                        )}
+                        variant="complement2"
+                        label={_ts('analysis', 'entriesAnalyzedLabel')}
+                        icon={<IoCheckmarkCircle />}
+                    />
+                </div>
+                <ContainerCard
+                    className={styles.pieChartContainer}
+                    footerContent={_ts('analysis', 'sourcesByTypeLabel')}
+                    contentClassName={styles.pieChartContent}
+                >
+                    {piechartData?.length > 0 ? (
+                        <ResponsiveContainer>
+                            <PieChart>
+                                <Pie
+                                    data={piechartData}
+                                    dataKey={valueSelector}
+                                    nameKey={labelSelector}
+                                >
+                                    {piechartData.map((
+                                        entry: AuthoringOrganizations,
+                                        index: number,
+                                    ) => (
+                                        <Cell
+                                            key={entry.organizationTypeId}
+                                            fill={colorScheme[
+                                                index % colorScheme.length
+                                            ]}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Legend
+                                    verticalAlign="bottom"
+                                    content={<RechartsLegend className={styles.legend} />}
+                                />
+                                <Tooltip
+                                    labelFormatter={tickFormatter}
+                                    isAnimationActive={false}
+                                />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    ) : (
+                        <div className={styles.emptyChart}>
+                            <IoPieChart
+                                className={styles.icon}
+                            />
+                            <div className={styles.text}>
+                                {/* FIXME: use strings with appropriate wording */}
+                                Chart not available
+                            </div>
+                        </div>
+                    )}
+                </ContainerCard>
+                <Card className={styles.analysesTimelineContainer}>
+                    {timelineData?.length > 0 ? (
+                        <Timeline
+                            data={timelineData}
+                            labelSelector={timelineLabelSelector}
+                            valueSelector={timelineValueSelector}
+                            keySelector={timelineKeySelector}
+                            tickLabelSelector={timelineTickSelector}
+                        />
+                    ) : (
+                        <div className={styles.emptyChart}>
+                            <IoStatsChart
+                                className={styles.icon}
+                            />
+                            <div className={styles.text}>
+                                {/* FIXME: use strings with appropriate wording */}
+                                Chart not available
+                            </div>
+                        </div>
+                    )}
+                </Card>
+            </Container>
+            <Container
+                className={styles.allAnalyses}
+                contentClassName={styles.analysesContainer}
+                heading={_ts('analysis', 'allAnalyses')}
+                headingDescription={analysesResponse?.count}
+                headerDescriptionClassName={styles.headingDescription}
+                inlineHeadingDescription
+                headerActions={(
+                    <DateRangeInput
+                        name="dateFilter"
+                        value={dateRangeFilter}
+                        onChange={setDateRangeFilter}
+                        variant="general"
                     />
                 )}
-            </div>
+                footerActions={(
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={analysesResponse?.count ?? 0}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
+                    />
+                )}
+            >
+                <ListView
+                    className={styles.analysisList}
+                    data={analysesResponse?.results}
+                    renderer={Analysis}
+                    rendererParams={analysisRendererParams}
+                    keySelector={analysisKeySelector}
+                    pending={pendingAnalyses}
+                    filtered={!!dateRangeFilter}
+                    errored={false}
+                    emptyMessage={_ts('analysis', 'noAnalysisCreatedLabel')}
+                    emptyIcon={(
+                        <Kraken
+                            size="large"
+                            variant="experiment"
+                        />
+                    )}
+                    messageIconShown
+                    messageShown
+                />
+            </Container>
+            {showAnalysisAddModal && activeProject && (
+                <AnalysisEditModal
+                    onSuccess={handleAnalysisEditSuccess}
+                    onModalClose={setModalHidden}
+                    projectId={activeProject}
+                    analysisToEdit={analysisToEdit}
+                />
+            )}
         </div>
     );
 }
