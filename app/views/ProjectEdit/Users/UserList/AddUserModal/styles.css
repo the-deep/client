@@ -1,6 +1,12 @@
 .modal {
     .modal-body {
         display: flex;
+        flex-direction: column;
         gap: var(--dui-spacing-medium);
+
+        .inputs {
+            display: flex;
+            gap: var(--dui-spacing-medium);
+        }
     }
 }

@@ -288,46 +288,48 @@ function AddUserModal(props: Props) {
         >
             {bulkEditProjectMembershipPending && (<PendingMessage />)}
             <NonFieldError error={error} />
-            <NewUserSelectInput
-                name="member"
-                readOnly={isDefined(projectUserToEdit)}
-                value={value.member}
-                onChange={setFieldValue}
-                options={userOptions ?? currentUser}
-                onOptionsChange={setUserOptions}
-                error={error?.member}
-                label={_ts('projectEdit', 'userLabel')}
-                placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
-                membersExcludeProject={projectId}
-            />
-            <SelectInput
-                name="role"
-                options={roles}
-                keySelector={roleKeySelector}
-                labelSelector={roleLabelSelector}
-                onChange={setFieldValue}
-                value={value.role}
-                error={error?.role}
-                label={_ts('projectEdit', 'roleLabel')}
-                placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
-                disabled={pendingRoles}
-                readOnly={(
-                    isDefined(projectUserToEdit?.member?.id)
-                    && projectUserToEdit?.member.id === activeUserId
-                )}
-            />
-            <MultiSelectInput
-                name="badges"
-                onChange={setFieldValue}
-                options={badgeOptionsResponse?.userBadgeOptions?.enumValues}
-                keySelector={enumKeySelector}
-                labelSelector={enumLabelSelector}
-                value={value.badges}
-                error={getErrorString(error?.badges)}
-                label="Badges"
-                placeholder="Badges"
-                disabled={badgeOptionsPending}
-            />
+            <div className={styles.inputs}>
+                <NewUserSelectInput
+                    name="member"
+                    readOnly={isDefined(projectUserToEdit)}
+                    value={value.member}
+                    onChange={setFieldValue}
+                    options={userOptions ?? currentUser}
+                    onOptionsChange={setUserOptions}
+                    error={error?.member}
+                    label={_ts('projectEdit', 'userLabel')}
+                    placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
+                    membersExcludeProject={projectId}
+                />
+                <SelectInput
+                    name="role"
+                    options={roles}
+                    keySelector={roleKeySelector}
+                    labelSelector={roleLabelSelector}
+                    onChange={setFieldValue}
+                    value={value.role}
+                    error={error?.role}
+                    label={_ts('projectEdit', 'roleLabel')}
+                    placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
+                    disabled={pendingRoles}
+                    readOnly={(
+                        isDefined(projectUserToEdit?.member?.id)
+                        && projectUserToEdit?.member.id === activeUserId
+                    )}
+                />
+                <MultiSelectInput
+                    name="badges"
+                    onChange={setFieldValue}
+                    options={badgeOptionsResponse?.userBadgeOptions?.enumValues}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    value={value.badges}
+                    error={getErrorString(error?.badges)}
+                    label="Badges"
+                    placeholder="Badges"
+                    disabled={badgeOptionsPending}
+                />
+            </div>
         </Modal>
     );
 }

@@ -263,29 +263,31 @@ function AddUserGroupModal(props: Props) {
         >
             {bulkEditProjectUsergroupPending && (<PendingMessage />)}
             <NonFieldError error={error} />
-            <NewUsergroupSelectInput
-                name="usergroup"
-                options={usergroupOptions}
-                onOptionsChange={setUsergroupOptions}
-                onChange={setFieldValue}
-                value={value.usergroup}
-                error={error?.usergroup}
-                label={_ts('projectEdit', 'usergroupLabel')}
-                placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
-                readOnly={isDefined(projectUsergroupToEdit)}
-                membersExcludeProject={projectId}
-            />
-            <SelectInput
-                name="role"
-                options={roles}
-                keySelector={roleKeySelector}
-                labelSelector={roleLabelSelector}
-                onChange={setFieldValue}
-                value={value.role}
-                error={error?.role}
-                label={_ts('projectEdit', 'roleLabel')}
-                placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
-            />
+            <div className={styles.inputs}>
+                <NewUsergroupSelectInput
+                    name="usergroup"
+                    options={usergroupOptions}
+                    onOptionsChange={setUsergroupOptions}
+                    onChange={setFieldValue}
+                    value={value.usergroup}
+                    error={error?.usergroup}
+                    label={_ts('projectEdit', 'usergroupLabel')}
+                    placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
+                    readOnly={isDefined(projectUsergroupToEdit)}
+                    membersExcludeProject={projectId}
+                />
+                <SelectInput
+                    name="role"
+                    options={roles}
+                    keySelector={roleKeySelector}
+                    labelSelector={roleLabelSelector}
+                    onChange={setFieldValue}
+                    value={value.role}
+                    error={error?.role}
+                    label={_ts('projectEdit', 'roleLabel')}
+                    placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
+                />
+            </div>
         </Modal>
     );
 }

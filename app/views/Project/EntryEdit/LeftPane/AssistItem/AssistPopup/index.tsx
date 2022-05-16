@@ -94,7 +94,6 @@ function AssistPopup(props: Props) {
                     <QuickActionButton
                         name={undefined}
                         onClick={onEntryDiscardButtonClick}
-                        disabled={isMessageShown}
                         title="Discard Entry"
                         variant="nlp-secondary"
                     >
