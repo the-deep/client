@@ -58,6 +58,8 @@ There are currently two levels of restriction impacting data sharing on DEEP:
 
 • **Public:** Data can be shared with any user in DEEP and exported to anyone without restrictions. The data is unlikely to cause any harm to affected population or other individuals and is publicly available. The data can be shared across the platform for research purposes (for example development of NLP), available in joint repository and platform cross searches.
 
+• **Restricted:** Data is accessible only to users collaborating on the project where the data is uploaded on DEEP. Data might be sensitive or under copyright. The metadata of a dataset is available and the [project owner] can decide whether or not to grant access to the full dataset when requested by a user. The data is not accessible in platform cross searches, joint repository or for other purposes. Other users will only be able to consult the metadata.
+
 • **Confidential:** Data is considered confidential that could cause harm to affected population or other individuals our under copyright. Data is accessible only to members of the project or a specific segment of users but should be assigned access only with caution and due procedure. The Project Administrator can decide whether or not to grant access to the data. The data is not accessible in platform cross searches, joint repository or for other purposes. Other users will only be able to consult the metadata.
 
 After exporting data from DEEP, users must follow any restrictions applied when using and further sharing the data.
@@ -157,9 +159,11 @@ The Project Administrator is the responsible publisher for his/her project and n
 
 There are currently two levels of restriction impacting data sharing on DEEP:
 
-• **Public:** Data can be shared with any user in DEEP and exported to anyone without restrictions. The data is unlikely to cause any harm to affected population or other individuals and is publicly available. The data can be shared across the platform for research purposes (for example development of NLP), available in joint repository and platform cross searches.
+•   **Public**: Data can be shared with any user in DEEP and exported to anyone without restrictions. The data is unlikely to cause any harm to affected populations or other individuals and is publicly available. The data can be shared across the platform for research purposes, e.g., development of Machine Learning or Natural Language Processing solutions, available in joint repository and platform cross searches.
 
-• **Confidential:** Data is considered confidential that could cause harm to affected population or other individuals our under copyright. Data is accessible only to members of the project or a specific segment of users but should be assigned access only with caution and due procedure. The Project Administrator can decide whether or not to grant access to the data. The data is not accessible in platform cross searches, joint repository or for other purposes. Other users will only be able to consult the metadata.
+•   **Restricted**: Data is accessible only to members of the project where the data is uploaded on DEEP. Data might be sensitive or under copyright. The Project Administrator can decide whether or not to grant access to the data. The data is not accessible in platform cross searches, joint repository, or for other purposes. Other users will only be able to consult the metadata.
+
+•   **Confidential**: Data is considered confidential and could cause harm to affected populations or other individuals. Data is accessible only to members of the project or a specific segment of users but should be assigned access only with caution and due procedure. The data is not accessible in platform cross searches, joint repository or for other purposes.
 
 After exporting data from DEEP, users must follow any restrictions applied when using and further sharing the data.
 

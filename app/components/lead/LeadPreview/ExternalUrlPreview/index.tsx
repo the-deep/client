@@ -16,8 +16,20 @@ const domainsToProxy = [
     'data2.unhcr.org',
 ];
 
+const pathsToProxy = [
+    'https://reliefweb.int/attachments/',
+];
+
 function getProxiedUrl(url: string) {
-    const urlObject = new URL(url);
+    let urlObject: URL;
+    try {
+        urlObject = new URL(url);
+    } catch {
+        return url;
+    }
+    if (pathsToProxy.some((path) => (url.startsWith(path)))) {
+        return `${proxyEndpoint}?url=${url}`;
+    }
     if (domainsToProxy.includes(urlObject.host)) {
         // NOTE: proxy server does not support encoded url params
         return `${proxyEndpoint}?url=${url}`;
