@@ -401,6 +401,24 @@ const analysisExportRoute = wrap({
     },
     visibility: 'is-authenticated',
 });
+const exportCreateRoute = wrap({
+    parent: { path: projectRoute.path },
+    path: '/exports/new/',
+    title: 'New Export',
+    navbarVisibility: false,
+    component: lazy(() => import('#views/Project/Tagging/Export/NewExport')),
+    componentProps: {},
+    visibility: 'is-authenticated',
+    checkPermissions: (_, project, skipProjectPermissionCheck) => {
+        if (skipProjectPermissionCheck) {
+            return true;
+        }
+        if (!project || project.allowedPermissions.length <= 0) {
+            return false;
+        }
+        return project.allowedPermissions.includes('CREATE_EXPORT');
+    },
+});
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/assessments/leads/:leadId(\\d+)/',
@@ -526,6 +544,7 @@ const routes = {
     dashboard,
     aryDashboard,
     export: exportRoute,
+    exportCreate: exportCreateRoute,
     entryEdit: entryEditRoute,
     assessmentEdit: assessmentEditRoute,
     groupAssessmentEdit: groupAssessmentEditRoute,
