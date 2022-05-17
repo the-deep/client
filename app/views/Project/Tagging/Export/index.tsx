@@ -15,6 +15,8 @@ import {
 } from '#generated/types';
 import { useModalState } from '#hooks/stateManagement';
 import ProjectContext from '#base/context/ProjectContext';
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import routes from '#base/configs/routes';
 
 import ExportHistory from './ExportHistory';
 import AssessmentsExportSelection from './AssessmentsExportSelection';
@@ -76,6 +78,15 @@ function Export() {
                 headerActionsContainerClassName={styles.actionButtons}
                 headerActions={(
                     <>
+                        <SmartButtonLikeLink
+                            variant="tertiary"
+                            route={routes.exportCreate}
+                            attrs={{
+                                activeProject,
+                            }}
+                        >
+                            New Export
+                        </SmartButtonLikeLink>
                         <Button
                             name="export-entry"
                             onClick={showCreateNewExportModal}
