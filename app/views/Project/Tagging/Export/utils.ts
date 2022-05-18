@@ -4,6 +4,7 @@ import _ts from '#ts';
 import {
     Matrix2dProperties,
     Level,
+    Widget,
 } from '#types/newAnalyticalFramework';
 import {
     ReportStructure,
@@ -214,3 +215,19 @@ export const createReportStructure = (
 
     return nodes;
 };
+
+export function filterContexualWidgets(widgets: Widget[] | undefined) {
+    const contextualWidgets = widgets?.filter((v) => (
+        v.widgetId === 'SELECT'
+        || v.widgetId === 'MULTISELECT'
+        || v.widgetId === 'SCALE'
+        || v.widgetId === 'GEO'
+        || v.widgetId === 'TIME'
+        || v.widgetId === 'DATE'
+        || v.widgetId === 'ORGANIGRAM'
+        || v.widgetId === 'DATE_RANGE'
+        || v.widgetId === 'TIME_RANGE'
+    ));
+
+    return contextualWidgets;
+}

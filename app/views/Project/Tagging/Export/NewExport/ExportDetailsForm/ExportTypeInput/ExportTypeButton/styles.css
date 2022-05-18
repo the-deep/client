@@ -1,0 +1,13 @@
+.export-type-select {
+    opacity: 0.2;
+    outline: 0;
+    border: 0;
+    border-radius: 0.1em;
+    cursor: pointer;
+    padding: var(--dui-spacing-medium);
+    font-size: var(--dui-font-size-super-large);
+
+    &.active {
+        opacity: 1;
+    }
+}
