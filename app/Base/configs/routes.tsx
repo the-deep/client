@@ -403,7 +403,7 @@ const analysisExportRoute = wrap({
 });
 const exportCreateRoute = wrap({
     parent: { path: projectRoute.path },
-    path: '/exports/new/',
+    path: '/export/new/',
     title: 'New Export',
     navbarVisibility: false,
     component: lazy(() => import('#views/Project/Tagging/Export/NewExport')),
