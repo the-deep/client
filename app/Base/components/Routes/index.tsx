@@ -69,6 +69,11 @@ function Routes(props: Props) {
                     {routes.analyticalFrameworkCreate.load({ className })}
                 </Route>
                 <Route
+                    path={routes.documentPreview.path}
+                >
+                    {routes.documentPreview.load({ className })}
+                </Route>
+                <Route
                     exact
                     path={routes.extensionPrivacyPolicy.path}
                 >
