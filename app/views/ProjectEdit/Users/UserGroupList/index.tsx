@@ -359,6 +359,7 @@ function UserGroupList(props: Props) {
                     emptyMessage={_ts('projectEdit', 'emptyUsergroupTableMessage')}
                     rowClassName={styles.tableRow}
                     filtered={(searchText?.length ?? 0) > 0}
+                    filteredEmptyMessage="No user groups found"
                     errored={false}
                     pending={usergroupPending || pending}
                     emptyIcon={(

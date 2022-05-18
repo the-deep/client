@@ -405,6 +405,7 @@ function UserList(props: Props) {
                     filtered={(searchText?.length ?? 0) > 0}
                     errored={false}
                     pending={projectUsersPending || pending}
+                    filteredEmptyMessage="No users found"
                     emptyIcon={(
                         <Kraken
                             variant="standby"
