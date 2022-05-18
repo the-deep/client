@@ -1,15 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import {
-    Tabs,
-    Tab,
-    TabList,
-    TabPanel,
-} from '@the-deep/deep-ui';
-import SubNavbar, {
-    SubNavbarChildren,
-} from '#components/SubNavbar';
+import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import SubNavbarContext from '#components/SubNavbar/context';
+
+import ExportDetailsForm from './ExportDetailsForm';
 
 import styles from './styles.css';
 
@@ -30,21 +24,23 @@ function NewExport() {
     );
     return (
         <div className={styles.newExport}>
-            <SubNavbar
-                className={styles.header}
-                heading="New Export"
-                homeLinkShown
-                defaultActions={(
-                    <BackLink
-                        defaultLink="/"
-                    >
-                        Close
-                    </BackLink>
-                )}
-            />
-            <div className={styles.content}>
-                New Export Page
-            </div>
+            <SubNavbarContext.Provider value={navbarContextValue}>
+                <SubNavbar
+                    className={styles.header}
+                    heading="New Export"
+                    homeLinkShown
+                    defaultActions={(
+                        <BackLink
+                            defaultLink="/"
+                        >
+                            Close
+                        </BackLink>
+                    )}
+                />
+                <div className={styles.content}>
+                    <ExportDetailsForm />
+                </div>
+            </SubNavbarContext.Provider>
         </div>
     );
 }
