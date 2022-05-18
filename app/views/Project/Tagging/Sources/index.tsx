@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoGridOutline,
     IoList,
+    IoFunnel,
 } from 'react-icons/io5';
 import {
     Header,
@@ -11,15 +12,15 @@ import {
     Tab,
     TabList,
     TabPanel,
+    Button,
+    useBooleanState,
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
 
+import AppliedFilters from './AppliedFilters';
 import SourcesStats from './SourcesStats';
-import SourcesFilter from './SourcesFilter';
-import {
-    PartialFormType as PartialFilterFormType,
-} from './SourcesFilter/schema';
+import SourcesFilter, { useFilterState } from './SourcesFilter';
 import SourcesTable from './SourcesTable';
 import EntriesGrid from './EntriesGrid';
 
@@ -36,12 +37,20 @@ function Sources(props: Props) {
 
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
-    const [sourcesFilters, setSourcesFilters] = useState<PartialFilterFormType>({});
     const [activePage, setActivePage] = useState<number>(1);
+    const [
+        showFilters,
+        ,,,
+        toggleShowFilter,
+    ] = useBooleanState(false);
     const activeView = useHash();
 
-    const handleSetSourcesFilters = useCallback((filters: PartialFilterFormType) => {
-        setSourcesFilters(filters);
+    const {
+        value: sourcesFilters,
+        setFieldValue: setSourcesFilterValue,
+    } = useFilterState();
+
+    React.useEffect(() => {
         setActivePage(1);
     }, []);
 
@@ -59,6 +68,7 @@ function Sources(props: Props) {
                         />
                     )}
                     <Header
+                        headingSectionClassName={styles.header}
                         heading={_ts('sourcesFilter', 'title')}
                         headingSize="medium"
                         actions={(
@@ -82,39 +92,55 @@ function Sources(props: Props) {
                             </TabList>
                         )}
                     />
+                    <Button
+                        name={undefined}
+                        onClick={toggleShowFilter}
+                        icons={<IoFunnel />}
+                    >
+                        Filter
+                    </Button>
                     {activeProject && (
-                        <SourcesFilter
-                            className={styles.filter}
-                            value={sourcesFilters}
-                            onFilterApply={handleSetSourcesFilters}
+                        <AppliedFilters
                             projectId={activeProject}
-                            isEntriesOnlyFilter={activeView === 'grid'}
+                            value={sourcesFilters}
+                            onChange={setSourcesFilterValue}
                         />
                     )}
                 </div>
-                {activeProject && (
-                    <div className={styles.leads}>
-                        <TabPanel
-                            name="table"
-                        >
-                            <SourcesTable
-                                className={styles.table}
-                                filters={sourcesFilters}
-                                projectId={activeProject}
-                                activePage={activePage}
-                                setActivePage={setActivePage}
-                            />
-                        </TabPanel>
-                        <TabPanel
-                            name="grid"
-                        >
-                            <EntriesGrid
-                                projectId={String(activeProject)}
-                                filters={sourcesFilters}
-                            />
-                        </TabPanel>
-                    </div>
-                )}
+                <div className={styles.sourceListContainer}>
+                    {showFilters && activeProject && (
+                        <SourcesFilter
+                            className={styles.filter}
+                            value={sourcesFilters}
+                            projectId={activeProject}
+                            onChange={setSourcesFilterValue}
+                            isEntriesOnlyFilter={activeView === 'grid'}
+                        />
+                    )}
+                    {activeProject && (
+                        <div className={styles.leads}>
+                            <TabPanel
+                                name="table"
+                            >
+                                <SourcesTable
+                                    className={styles.tableContainer}
+                                    filters={sourcesFilters}
+                                    projectId={activeProject}
+                                    activePage={activePage}
+                                    setActivePage={setActivePage}
+                                />
+                            </TabPanel>
+                            <TabPanel
+                                name="grid"
+                            >
+                                <EntriesGrid
+                                    projectId={String(activeProject)}
+                                    filters={sourcesFilters}
+                                />
+                            </TabPanel>
+                        </div>
+                    )}
+                </div>
             </Tabs>
         </div>
     );

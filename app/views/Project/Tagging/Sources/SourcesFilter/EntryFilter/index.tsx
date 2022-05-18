@@ -51,7 +51,8 @@ interface Props<K extends string> {
     projectId: string;
     optionsDisabled: boolean;
     allFiltersVisible: boolean;
-    options?: SourceFilterOptions;
+    entryTypeOptions?: NonNullable<SourceFilterOptions['entryTypeOptions']>['enumValues'];
+    frameworkFilters?: NonNullable<NonNullable<SourceFilterOptions['project']>['analysisFramework']>['filters'];
     disabled?: boolean;
 }
 
@@ -60,11 +61,12 @@ function EntryFilter<K extends string>(props: Props<K>) {
         name,
         value,
         onChange,
-        options,
         projectId,
         disabled,
         allFiltersVisible,
         optionsDisabled,
+        entryTypeOptions,
+        frameworkFilters,
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
@@ -91,6 +93,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
     return (
         <>
             <TextInput
+                variant="general"
                 className={styles.input}
                 icons={<IoSearch />}
                 name="search"
@@ -100,6 +103,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Excerpt Search"
             />
             <ProjectMemberMultiSelectInput
+                variant="general"
                 className={_cs(
                     styles.input,
                     (hasNoData(value?.createdBy) && !allFiltersVisible)
@@ -115,6 +119,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled}
             />
             <DateDualRangeInput
+                variant="general"
                 className={_cs(
                     styles.input,
                     hasNoData(value?.createdAtGte)
@@ -132,6 +137,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Entry Created At"
             />
             <BooleanInput
+                variant="general"
                 className={_cs(
                     styles.input,
                     (hasNoData(value?.controlled) && !allFiltersVisible)
@@ -145,6 +151,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled}
             />
             <MultiSelectInput
+                variant="general"
                 className={_cs(
                     styles.input,
                     (hasNoData(value?.entryTypes) && !allFiltersVisible)
@@ -155,15 +162,16 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
-                options={options?.entryTypeOptions?.enumValues}
+                options={entryTypeOptions}
                 disabled={disabled || optionsDisabled}
                 label="Entry Type"
             />
             {
-                options?.project?.analysisFramework?.filters?.map((filter) => {
+                frameworkFilters?.map((filter) => {
                     const filterValue = filterValuesMap[filter.key];
                     return (
                         <FrameworkFilterItem
+                            variant="general"
                             key={filter.id}
                             name={filterValue?.index}
                             title={filter.title}

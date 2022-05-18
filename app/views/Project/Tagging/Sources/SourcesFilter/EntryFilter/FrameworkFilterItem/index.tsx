@@ -47,6 +47,7 @@ interface Props<K extends number> {
     className?: string;
     optionsDisabled?: boolean;
     disabled?: boolean;
+    variant?: 'form' | 'general';
 }
 
 function FrameworkFilterItem<K extends number>(props: Props<K>) {
@@ -61,6 +62,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         allFiltersVisible,
         optionsDisabled,
         disabled,
+        variant,
     } = props;
 
     const [
@@ -126,6 +128,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'DATE': {
             return (
                 <DateRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -153,6 +156,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
             // will again dd another filter data
             return (
                 <DateRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -175,6 +179,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'TIME': {
             return (
                 <TimeRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -197,6 +202,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'TIME_RANGE': {
             return (
                 <TimeRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -220,6 +226,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
             return (
                 <>
                     <NumberButStringInput
+                        variant={variant}
                         className={_cs(
                             className,
                             styles.input,
@@ -233,6 +240,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         disabled={disabled}
                     />
                     <NumberButStringInput
+                        variant={variant}
                         className={_cs(
                             className,
                             styles.input,
@@ -251,6 +259,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'SCALE': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -271,6 +280,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'GEO': {
             return (
                 <GeoMultiSelectInput
+                    variant={variant}
                     name="valueList"
                     className={_cs(
                         className,
@@ -304,6 +314,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'SELECT': {
             return (
                 <SelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -324,6 +335,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'MULTISELECT': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -344,6 +356,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'ORGANIGRAM': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -364,6 +377,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'MATRIX1D': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -384,6 +398,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'MATRIX2D': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
@@ -404,6 +419,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'TEXT':
             return (
                 <TextInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
