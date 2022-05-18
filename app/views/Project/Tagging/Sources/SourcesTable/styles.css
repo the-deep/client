@@ -2,8 +2,8 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    flex-shrink: 0;
     z-index: 0;
+    background-color: var(--dui-color-foreground);
     padding: 0;
 
     .content {
@@ -13,7 +13,7 @@
 
         .table {
             width: 100%;
-            min-height: 50vh;
+            min-height: calc(100vh - 27rem);
 
             .title-column {
                 min-width: 196px;
