@@ -427,11 +427,21 @@ const groupAssessmentEditRoute = wrap({
     },
 });
 
-const documentPreview = wrap({
+const documentViewer = wrap({
     path: '/document-preview/:leadHash/',
     title: 'Document Preview',
     navbarVisibility: true,
-    component: lazy(() => import('#views/DocumentPreview')),
+    component: lazy(() => import('#views/DocumentViewer')),
+    componentProps: {
+    },
+    visibility: 'is-anything',
+});
+
+const documentViewerRedirect = wrap({
+    path: '/permalink/leads-uuid/:leadHash/',
+    title: 'Document Viewer',
+    navbarVisibility: false,
+    component: lazy(() => import('../../redirects/DocumentViewer')),
     componentProps: {
     },
     visibility: 'is-anything',
@@ -496,6 +506,7 @@ const routes = {
     assessmentEdit: assessmentEditRoute,
     groupAssessmentEdit: groupAssessmentEditRoute,
     entryEditRedirect,
-    documentPreview,
+    documentViewerRedirect,
+    documentViewer,
 };
 export default routes;
