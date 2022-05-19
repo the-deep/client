@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, generatePath } from 'react-router-dom';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     IoDownloadOutline,
@@ -30,7 +30,7 @@ import UserContext from '#base/context/UserContext';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { useModalState } from '#hooks/stateManagement';
 
-// import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
+import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
 
 import {
     PublicLeadQuery,
@@ -73,7 +73,7 @@ interface Props {
     className?: string;
 }
 
-function DocumentPreview(props: Props) {
+function DocumentViewer(props: Props) {
     const {
         className,
     } = props;
@@ -81,6 +81,9 @@ function DocumentPreview(props: Props) {
     const [infoPaneShown, showInfoPane, hideInfoPane] = useBooleanState(true);
     const { authenticated } = useContext(UserContext);
     const [isLeadAccessible, setIsLeadAccessible] = useState(false);
+    const [joinButtonVisible, setJoinButtonVisibility] = useState(true);
+
+    const alert = useAlert();
 
     const {
         data: publicLeadData,
@@ -93,14 +96,19 @@ function DocumentPreview(props: Props) {
             },
             onCompleted: (response) => {
                 if (!response) {
+                    alert.show(
+                        'There was an issue while viewing this document.',
+                        { variant: 'error' },
+                    );
                     return;
                 }
-                const { publicLead } = response;
-                if (isDefined(publicLead)) {
-                    setIsLeadAccessible(true);
-                } else {
-                    setIsLeadAccessible(false);
-                }
+                setIsLeadAccessible(isDefined(response.publicLead?.lead));
+            },
+            onError: () => {
+                alert.show(
+                    'There was an issue while viewing this document.',
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -108,7 +116,6 @@ function DocumentPreview(props: Props) {
     const publicLeadDetails = removeNull(publicLeadData?.publicLead?.lead);
     const publicLeadProjectDetails = removeNull(publicLeadData?.publicLead?.project);
 
-    const alert = useAlert();
     const [
         showProjectJoinModal,
         setModalVisible,
@@ -116,21 +123,26 @@ function DocumentPreview(props: Props) {
     ] = useModalState(false);
 
     const handleCopyToClipboard = useCallback(() => {
-        navigator.clipboard.writeText(publicLeadDetails?.url ?? publicLeadDetails?.attachment?.file?.url ?? '');
+        const documentViewerLink = generatePath(routes.documentViewerRedirect.path, { leadHash });
+        navigator.clipboard.writeText(`${window.location.origin}${documentViewerLink}`);
 
         alert.show(
-            'URL successfully copied to clipboard',
+            'Successfully copied URL to clipboard.',
             {
                 variant: 'info',
             },
         );
     }, [
-        publicLeadDetails,
+        leadHash,
         alert,
     ]);
 
     const handlePrintClick = useCallback(() => {
         window.print();
+    }, []);
+
+    const handleJoinRequestSuccess = useCallback(() => {
+        setJoinButtonVisibility(false);
     }, []);
 
     if (loading) {
@@ -145,6 +157,7 @@ function DocumentPreview(props: Props) {
                 errorTitle="Not logged in"
                 errorMessage="You are not logged in. Try logging in."
                 krakenVariant="hi"
+                hideGotoHomepageButton
                 buttons={(
                     <SmartButtonLikeLink
                         variant="primary"
@@ -158,33 +171,49 @@ function DocumentPreview(props: Props) {
     }
 
     if (authenticated && !isLeadAccessible) {
+        let errorMessage = 'You don\'t have access to this document.';
+
+        if (!publicLeadProjectDetails?.membershipPending && !publicLeadProjectDetails?.isRejected) {
+            errorMessage = 'You don\'t have access to this document. Try joining the project.';
+        } else if (
+            publicLeadProjectDetails?.membershipPending
+        ) {
+            errorMessage = 'You don\'t have access to this document. The project admin is currently reviewing your request to join the project.';
+        }
+
         return (
-            <FullPageErrorMessage
-                errorTitle="Forbidden"
-                errorMessage={(
-                    publicLeadProjectDetails?.id
-                    || !publicLeadProjectDetails?.isRejected
-                )
-                    ? 'You cannot see this lead. Try joining project.'
-                    : 'Go to homepage'}
-                buttons={(
-                    !publicLeadProjectDetails?.id
-                    || publicLeadProjectDetails?.isRejected
-                ) && (
-                    <Button
-                        name={undefined}
-                        onClick={setModalVisible}
-                    >
-                        Request to join project
-                    </Button>
+            <>
+                <FullPageErrorMessage
+                    errorTitle="Oops!"
+                    errorMessage={errorMessage}
+                    buttons={(
+                        publicLeadProjectDetails?.id
+                        && !publicLeadProjectDetails?.membershipPending
+                        && !publicLeadProjectDetails?.isRejected
+                        && joinButtonVisible
+                    ) && (
+                        <Button
+                            name={undefined}
+                            onClick={setModalVisible}
+                        >
+                            Request to join project
+                        </Button>
+                    )}
+                />
+                {showProjectJoinModal && (
+                    <ProjectJoinModal
+                        projectId={publicLeadProjectDetails?.id}
+                        onModalClose={setModalHidden}
+                        onJoinRequestSuccess={handleJoinRequestSuccess}
+                    />
                 )}
-            />
+            </>
         );
     }
 
     return (
         <Container
-            className={_cs(className, styles.documentPreview)}
+            className={_cs(className, styles.documentViewer)}
             heading={publicLeadDetails?.sourceTitle}
             borderBelowHeader
             contentClassName={styles.content}
@@ -248,43 +277,23 @@ function DocumentPreview(props: Props) {
                         <TextOutput
                             label="Project"
                             value={publicLeadProjectDetails?.title}
-                            labelContainerClassName={styles.label}
-                            valueContainerClassName={styles.value}
                         />
                     )}
                     <TextOutput
                         label="Created By"
                         value={publicLeadDetails?.createdByDisplayName}
-                        labelContainerClassName={styles.label}
-                        valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Source"
                         value={publicLeadDetails?.sourceTitle}
-                        labelContainerClassName={styles.label}
-                        valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Date of Publication"
                         value={(<DateOutput value={publicLeadDetails?.publishedOn} />)}
-                        labelContainerClassName={styles.label}
-                        valueContainerClassName={styles.value}
                     />
-                    {/* showProjectJoinModal && (
-                        <ProjectJoinModal
-                            projectId={projectId}
-                            onModalClose={setModalHidden}
-                            onJoinRequestSuccess={() => {
-                                alert.show(
-                                    'Successfully sent project join request',
-                                    { variant: 'success' },
-                                );
-                            }}
-                        />
-                        ) */}
                 </Container>
             )}
         </Container>
     );
 }
-export default DocumentPreview;
+export default DocumentViewer;

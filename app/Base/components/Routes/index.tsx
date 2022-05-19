@@ -69,9 +69,9 @@ function Routes(props: Props) {
                     {routes.analyticalFrameworkCreate.load({ className })}
                 </Route>
                 <Route
-                    path={routes.documentPreview.path}
+                    path={routes.documentViewer.path}
                 >
-                    {routes.documentPreview.load({ className })}
+                    {routes.documentViewer.load({ className })}
                 </Route>
                 <Route
                     exact
@@ -113,6 +113,11 @@ function Routes(props: Props) {
                     path={routes.entryEditRedirect.path}
                 >
                     {routes.entryEditRedirect.load({ className })}
+                </Route>
+                <Route
+                    path={routes.documentViewerRedirect.path}
+                >
+                    {routes.documentViewerRedirect.load({ className })}
                 </Route>
                 <Route
                     exact
