@@ -18,13 +18,13 @@ import {
 } from '@the-deep/deep-ui';
 
 import ExternalUrlPreview from './ExternalUrlPreview';
-import Viewer, { isValidUrl } from './Preview';
+import Preview, { isValidUrl } from './Preview';
 import { MimeTypes } from './Preview/mimeTypes';
 
 import styles from './styles.css';
 
 export interface Attachment {
-    id: string;
+    id?: string;
     title: string | undefined;
     file?: {
         url?: string | undefined | null;
@@ -147,7 +147,7 @@ function LeadPreview(props: Props) {
                 />
             )}
             {attachment?.file?.url && attachment.mimeType && (
-                <Viewer
+                <Preview
                     className={_cs(styles.content, className)}
                     url={attachment.file.url}
                     mimeType={attachment.mimeType}
