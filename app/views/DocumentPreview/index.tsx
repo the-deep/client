@@ -1,57 +1,73 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 import {
     IoDownloadOutline,
     IoCopyOutline,
     IoInformationCircleOutline,
     IoClose,
 } from 'react-icons/io5';
+import { removeNull } from '@togglecorp/toggle-form';
 import {
     Container,
     QuickActionButton,
     TextOutput,
+    PendingMessage,
     DateOutput,
     useBooleanState,
     useAlert,
     Button,
 } from '@the-deep/deep-ui';
+import {
+    useQuery,
+    gql,
+} from '@apollo/client';
 
 import LeadPreview from '#components/lead/LeadPreview';
 import routes from '#base/configs/routes';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
-import ProjectContext from '#base/context/ProjectContext';
 import UserContext from '#base/context/UserContext';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { useModalState } from '#hooks/stateManagement';
 
-import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
+// import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
+
+import {
+    PublicLeadQuery,
+    PublicLeadQueryVariables,
+} from '#generated/types';
 
 import styles from './styles.css';
 
-interface Response {
-    url: string;
-    projectId: string;
-    lead: {
-        id: string;
-        title: string;
-        authoringOrganization: string;
-        publishedDate: string;
-    };
-    canViewLead: boolean;
-}
-
-const mockResponse: Response = {
-    url: 'https://www.onlinekhabar.com/2022/05/1123315',
-    lead: {
-        id: '1',
-        title: 'Congress candidate from Kapilvastu dies',
-        authoringOrganization: 'BBC',
-        publishedDate: '2022-02-15T05:08:27.130741+00:00',
-    },
-    canViewLead: false,
-    projectId: '1',
-};
+const PUBLIC_LEAD = gql`
+    query PublicLead($uuid: UUID!) {
+        publicLead(uuid: $uuid) {
+            lead {
+                attachment {
+                    title
+                    file {
+                        name
+                        url
+                    }
+                }
+                createdByDisplayName
+                publishedOn
+                sourceTitle
+                sourceType
+                sourceTypeDisplay
+                text
+                url
+                uuid
+            }
+            project {
+                id
+                isRejected
+                membershipPending
+                title
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -61,20 +77,38 @@ function DocumentPreview(props: Props) {
     const {
         className,
     } = props;
-    const { leadId } = useParams<{ leadId: string }>();
+    const { leadHash } = useParams<{ leadHash: string }>();
     const [infoPaneShown, showInfoPane, hideInfoPane] = useBooleanState(true);
-    const { project } = useContext(ProjectContext);
     const { authenticated } = useContext(UserContext);
+    const [isLeadAccessible, setIsLeadAccessible] = useState(false);
 
     const {
-        url,
-        lead,
-        canViewLead,
-        projectId,
-    } = mockResponse;
+        data: publicLeadData,
+        loading,
+    } = useQuery<PublicLeadQuery, PublicLeadQueryVariables>(
+        PUBLIC_LEAD,
+        {
+            variables: {
+                uuid: leadHash,
+            },
+            onCompleted: (response) => {
+                if (!response) {
+                    return;
+                }
+                const { publicLead } = response;
+                if (isDefined(publicLead)) {
+                    setIsLeadAccessible(true);
+                } else {
+                    setIsLeadAccessible(false);
+                }
+            },
+        },
+    );
+
+    const publicLeadDetails = removeNull(publicLeadData?.publicLead?.lead);
+    const publicLeadProjectDetails = removeNull(publicLeadData?.publicLead?.project);
+
     const alert = useAlert();
-    // TODO: Remove after redirection
-    console.warn('lead ID', leadId);
     const [
         showProjectJoinModal,
         setModalVisible,
@@ -82,7 +116,7 @@ function DocumentPreview(props: Props) {
     ] = useModalState(false);
 
     const handleCopyToClipboard = useCallback(() => {
-        navigator.clipboard.writeText(url ?? '');
+        navigator.clipboard.writeText(publicLeadDetails?.url ?? publicLeadDetails?.attachment?.file?.url ?? '');
 
         alert.show(
             'URL successfully copied to clipboard',
@@ -90,13 +124,22 @@ function DocumentPreview(props: Props) {
                 variant: 'info',
             },
         );
-    }, [url, alert]);
+    }, [
+        publicLeadDetails,
+        alert,
+    ]);
 
     const handlePrintClick = useCallback(() => {
         window.print();
     }, []);
 
-    if (!authenticated && !canViewLead) {
+    if (loading) {
+        return (
+            <PendingMessage />
+        );
+    }
+
+    if (!authenticated && !isLeadAccessible) {
         return (
             <FullPageErrorMessage
                 errorTitle="Not logged in"
@@ -114,12 +157,20 @@ function DocumentPreview(props: Props) {
         );
     }
 
-    if (authenticated && !canViewLead) {
+    if (authenticated && !isLeadAccessible) {
         return (
             <FullPageErrorMessage
                 errorTitle="Forbidden"
-                errorMessage="You cannot see this lead. Try joining project."
+                errorMessage={(
+                    publicLeadProjectDetails?.id
+                    || !publicLeadProjectDetails?.isRejected
+                )
+                    ? 'You cannot see this lead. Try joining project.'
+                    : 'Go to homepage'}
                 buttons={(
+                    !publicLeadProjectDetails?.id
+                    || publicLeadProjectDetails?.isRejected
+                ) && (
                     <Button
                         name={undefined}
                         onClick={setModalVisible}
@@ -134,7 +185,7 @@ function DocumentPreview(props: Props) {
     return (
         <Container
             className={_cs(className, styles.documentPreview)}
-            heading={lead?.title}
+            heading={publicLeadDetails?.sourceTitle}
             borderBelowHeader
             contentClassName={styles.content}
             headerClassName={styles.header}
@@ -172,7 +223,8 @@ function DocumentPreview(props: Props) {
             >
                 <LeadPreview
                     className={styles.preview}
-                    url={mockResponse?.url}
+                    url={publicLeadDetails?.url ?? undefined}
+                    attachment={publicLeadDetails?.attachment ?? undefined}
                     hideBar
                 />
             </div>
@@ -192,31 +244,33 @@ function DocumentPreview(props: Props) {
                     borderBelowHeader
                     contentClassName={styles.detailsContent}
                 >
+                    {publicLeadProjectDetails?.id && (
+                        <TextOutput
+                            label="Project"
+                            value={publicLeadProjectDetails?.title}
+                            labelContainerClassName={styles.label}
+                            valueContainerClassName={styles.value}
+                        />
+                    )}
                     <TextOutput
-                        label="Project"
-                        value={project?.title}
-                        labelContainerClassName={styles.label}
-                        valueContainerClassName={styles.value}
-                    />
-                    <TextOutput
-                        label="Author"
-                        value={lead?.authoringOrganization}
+                        label="Created By"
+                        value={publicLeadDetails?.createdByDisplayName}
                         labelContainerClassName={styles.label}
                         valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Source"
-                        value="BBC"
+                        value={publicLeadDetails?.sourceTitle}
                         labelContainerClassName={styles.label}
                         valueContainerClassName={styles.value}
                     />
                     <TextOutput
                         label="Date of Publication"
-                        value={(<DateOutput value={lead?.publishedDate} />)}
+                        value={(<DateOutput value={publicLeadDetails?.publishedOn} />)}
                         labelContainerClassName={styles.label}
                         valueContainerClassName={styles.value}
                     />
-                    {showProjectJoinModal && (
+                    {/* showProjectJoinModal && (
                         <ProjectJoinModal
                             projectId={projectId}
                             onModalClose={setModalHidden}
@@ -227,7 +281,7 @@ function DocumentPreview(props: Props) {
                                 );
                             }}
                         />
-                    )}
+                        ) */}
                 </Container>
             )}
         </Container>
