@@ -6,12 +6,6 @@
 
     .header {
         flex-shrink: 0;
-
-        .tab-list {
-            .tab {
-                font-size: var(--dui-font-size-large);
-            }
-        }
     }
 
     .content {
@@ -19,5 +13,9 @@
         flex-direction: column;
         flex-grow: 1;
         overflow-y: auto;
+
+        .leads-table-container {
+            display: flex;
+        }
     }
 }
