@@ -1,180 +1,87 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     ContainerCard,
     Card,
     Checkbox,
     Heading,
 } from '@the-deep/deep-ui';
-import { gql, useQuery } from '@apollo/client';
-
 import {
     ExportFormatEnum,
-    ProjectFrameworkDetailsQuery,
-    ProjectFrameworkDetailsQueryVariables,
 } from '#generated/types';
 import TreeSelection from '#components/TreeSelection';
 import _ts from '#ts';
 
 import {
     TreeSelectableWidget,
-    AnalysisFramework,
     Node,
-} from '../../../../types';
+} from '../../types';
 import {
-    filterContexualWidgets,
-    createReportStructure,
-    getWidgets,
     SECTOR_FIRST,
     DIMENSION_FIRST,
-} from '../../../../utils';
-
-const PROJECT_FRAMEWORK_DETAILS = gql`
-    query ProjectFrameworkDetails($projectId: ID!) {
-        project(id: $projectId) {
-            id
-            analysisFramework {
-                id
-                exportables {
-                    data
-                    id
-                    inline
-                    order
-                    widgetKey
-                    widgetType
-                    widgetTypeDisplay
-                }
-                primaryTagging {
-                    widgets {
-                        id
-                        clientId
-                        key
-                        order
-                        properties
-                        conditional {
-                            parentWidget
-                            parentWidgetType
-                            conditions
-                        }
-                        title
-                        widgetId
-                        width
-                        version
-                    }
-                    clientId
-                    id
-                    order
-                    title
-                    tooltip
-                }
-                secondaryTagging {
-                    clientId
-                    id
-                    key
-                    order
-                    title
-                    properties
-                    conditional {
-                        parentWidget
-                        parentWidgetType
-                        conditions
-                    }
-                    widgetId
-                    width
-                    version
-                }
-            }
-        }
-    }
-`;
+} from '../../utils';
 
 interface Props {
     exportFileFormat: ExportFormatEnum;
+    reportStructureVariant: string;
+    excelDecoupled: boolean;
+    reportShowGroups: boolean;
+    reportShowLeadEntryId: boolean;
+    reportShowAssessmentData: boolean;
+    reportShowEntryWidgetData: boolean;
+    includeSubSector: boolean;
+    showMatrix2dOptions: boolean;
+    textWidgets: TreeSelectableWidget[];
+    contextualWidgets: TreeSelectableWidget[];
+    reportStructure?: Node[];
+    onReportShowGroupsChange: (show: boolean) => void;
+    onReportShowLeadEntryIdChange: (show: boolean) => void;
+    onReportShowAssessmentDataChange: (show: boolean) => void;
+    onReportShowEntryWidgetDataChange: (show: boolean) => void;
+    onReportStructureChange: (reports: Node[]) => void;
+    onReportStructureVariantChange: (variant: string) => void;
+    onExcelDecoupledChange: (value: boolean) => void;
+    onIncludeSubSectorChange: (value: boolean) => void;
+    onContextualWidgetsChange: (value: TreeSelectableWidget[]) => void;
+    onTextWidgetsChange: (value: TreeSelectableWidget[]) => void;
 }
 function AdvancedOptionsSelection(props: Props) {
     const {
         exportFileFormat,
+        excelDecoupled,
+        reportStructure,
+        reportStructureVariant,
+        reportShowGroups,
+        reportShowLeadEntryId,
+        reportShowAssessmentData,
+        reportShowEntryWidgetData,
+        includeSubSector,
+        showMatrix2dOptions,
+        contextualWidgets,
+        textWidgets,
+        onReportStructureChange,
+        onReportStructureVariantChange,
+        onReportShowGroupsChange,
+        onReportShowLeadEntryIdChange,
+        onReportShowAssessmentDataChange,
+        onReportShowEntryWidgetDataChange,
+        onIncludeSubSectorChange,
+        onContextualWidgetsChange,
+        onTextWidgetsChange,
+        onExcelDecoupledChange,
     } = props;
 
-    const [reportShowGroups, setReportShowGroups] = useState<boolean>(true);
-    const [reportShowLeadEntryId, setReportShowLeadEntryId] = useState<boolean>(true);
-    const [reportShowAssessmentData, setReportShowAssessmentData] = useState<boolean>(true);
-    const [reportShowEntryWidgetData, setReportShowEntryWidgetData] = useState<boolean>(true);
-    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget[]>([]);
-    const [contextualWidgets, setContextualWidgets] = useState<TreeSelectableWidget[]>([]);
-    const [reportStructure, setReportStructure] = useState<Node[] | undefined>();
-    const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
-    const [reportStructureVariant, setReportStructureVariant] = useState<string>(SECTOR_FIRST);
-    const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
-
-    const projectId = '1';
-    const variables = useMemo(
-        (): ProjectFrameworkDetailsQueryVariables => ({
-            projectId,
-        }),
-        [projectId],
-    );
-
-    const {
-        loading: frameworkGetPending, // TODO: disable export button when frameworkGetPending
-        data: frameworkResponse,
-    } = useQuery<ProjectFrameworkDetailsQuery, ProjectFrameworkDetailsQueryVariables>(
-        PROJECT_FRAMEWORK_DETAILS,
-        {
-            variables,
-            onCompleted: (response) => {
-                // TODO handle for conditional widgets
-                const widgets = getWidgets(
-                    response.project?.analysisFramework as AnalysisFramework,
-                );
-                const textWidgetList = widgets
-                    ?.filter((v) => v.widgetId === 'TEXT')
-                    .map((v) => ({ ...v, selected: true }));
-
-                const contextualWidgetList = filterContexualWidgets(widgets)
-                    ?.map((v) => ({ ...v, selected: true }));
-
-                setTextWidgets(textWidgetList ?? []);
-                setContextualWidgets(contextualWidgetList ?? []);
-            },
-        },
-    );
-
-    const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
-    const showMatrix2dOptions = useMemo(
-        () => {
-            if (frameworkGetPending || !analysisFramework) {
-                return false;
-            }
-            const widgets = getWidgets(analysisFramework);
-            return widgets?.some((widget) => widget.widgetId === 'MATRIX2D') ?? false; // TODO check for conditional widgets
-        },
-        [analysisFramework, frameworkGetPending],
-    );
-
+    console.warn('reportStructure', reportStructure);
     const handleSwapOrderValueChange = useCallback((newValue) => {
         if (newValue) {
-            setReportStructureVariant(DIMENSION_FIRST);
+            onReportStructureVariantChange(DIMENSION_FIRST);
         } else {
-            setReportStructureVariant(SECTOR_FIRST);
+            onReportStructureVariantChange(SECTOR_FIRST);
         }
-    }, []);
+    }, [onReportStructureVariantChange]);
 
     const swapOrderValue = useMemo(() => (
         reportStructureVariant === DIMENSION_FIRST
     ), [reportStructureVariant]);
-
-    useEffect(() => {
-        const structure = createReportStructure(
-            reportStructureVariant,
-            includeSubSector,
-            analysisFramework,
-        );
-        setReportStructure(structure);
-    }, [
-        analysisFramework,
-        reportStructureVariant,
-        includeSubSector,
-    ]);
 
     // TODO: previously true when entryFilterOptions had projectLabels;
     const showEntryGroupsSelection = false;
@@ -195,26 +102,26 @@ function AdvancedOptionsSelection(props: Props) {
                                         name="reportShowGroups"
                                         label={_ts('export', 'showEntryGroupsLabel')}
                                         value={reportShowGroups}
-                                        onChange={setReportShowGroups}
+                                        onChange={onReportShowGroupsChange}
                                     />
                                 )}
                                 <Checkbox
                                     name="reportShowLeadEntryId"
                                     label={_ts('export', 'showEntryIdLabel')}
                                     value={reportShowLeadEntryId}
-                                    onChange={setReportShowLeadEntryId}
+                                    onChange={onReportShowLeadEntryIdChange}
                                 />
                                 <Checkbox
                                     name="reportShowAssessmentData"
                                     label={_ts('export', 'showAryDetailLabel')}
                                     value={reportShowAssessmentData}
-                                    onChange={setReportShowAssessmentData}
+                                    onChange={onReportShowAssessmentDataChange}
                                 />
                                 <Checkbox
                                     name="showAdditionalMetaData"
                                     label={_ts('export', 'showAdditionalMetadataLabel')}
                                     value={reportShowEntryWidgetData}
-                                    onChange={setReportShowEntryWidgetData}
+                                    onChange={onReportShowEntryWidgetDataChange}
                                 />
                             </ContainerCard>
                             <ContainerCard>
@@ -226,7 +133,7 @@ function AdvancedOptionsSelection(props: Props) {
                                         <TreeSelection
                                             name="contextualWidgets"
                                             value={contextualWidgets}
-                                            onChange={setContextualWidgets}
+                                            onChange={onContextualWidgetsChange}
                                             direction="vertical"
                                         />
                                     </div>
@@ -239,7 +146,7 @@ function AdvancedOptionsSelection(props: Props) {
                                         <TreeSelection
                                             name="freeTextWidgets"
                                             value={textWidgets}
-                                            onChange={setTextWidgets}
+                                            onChange={onTextWidgetsChange}
                                             direction="vertical"
                                         />
                                     </div>
@@ -252,7 +159,7 @@ function AdvancedOptionsSelection(props: Props) {
                                 <TreeSelection
                                     name="treeSelection"
                                     value={reportStructure}
-                                    onChange={setReportStructure}
+                                    onChange={onReportStructureChange}
                                 />
                                 {showMatrix2dOptions && (
                                     <div>
@@ -260,7 +167,7 @@ function AdvancedOptionsSelection(props: Props) {
                                             name="checkbox"
                                             label={_ts('export', 'includeSubSector')}
                                             value={includeSubSector}
-                                            onChange={setIncludeSubSector}
+                                            onChange={onIncludeSubSectorChange}
                                         />
                                         <Checkbox
                                             name="swap-checkbox"
@@ -279,7 +186,7 @@ function AdvancedOptionsSelection(props: Props) {
                                 name="excelDecoupled"
                                 label={_ts('export', 'decoupledEntriesLabel')}
                                 value={excelDecoupled}
-                                onChange={setExcelDecoupled}
+                                onChange={onExcelDecoupledChange}
                             />
                             <div key="info">
                                 <p>{_ts('export', 'decoupledEntriesTitle2')}</p>

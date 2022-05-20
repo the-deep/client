@@ -2,6 +2,7 @@ import {
     WidgetType,
     ProjectFrameworkDetailsQuery,
     AnalysisFrameworkExportableType,
+    ExportFormatEnum,
 } from '#generated/types';
 import {
     Widget as WidgetFromAF,
@@ -37,3 +38,9 @@ export type AnalysisFramework = DeepReplace<
     Omit<WidgetType, 'widgetIdDisplay' | 'widthDisplay'>,
     WidgetFromAF
 >;
+
+export interface ExportTypeItem {
+    key: ExportFormatEnum;
+    icon: React.ReactNode;
+    title: string;
+}
