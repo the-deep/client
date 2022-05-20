@@ -8,7 +8,7 @@ import {
     MimeTypes,
 } from '../Preview/mimeTypes';
 
-import Viewer from '../Preview';
+import Preview from '../Preview';
 
 // NOTE: We are proxying these websites as they are auto-downloading files instead
 // of previewing them
@@ -128,7 +128,7 @@ function ExternalUrlPreview(props: Props) {
     }
 
     return (
-        <Viewer
+        <Preview
             className={className}
             url={proxiedUrl}
             mimeType={mimeType ?? 'text/html'}

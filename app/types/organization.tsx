@@ -1,7 +1,7 @@
 import { BasicElement } from './common';
 
 export interface BasicOrganization {
-    id: number;
+    id: string;
     title: string;
     logoUrl?: string;
     mergedAs?: {

@@ -94,6 +94,11 @@ warning. very weird!
                     font-size: var(--dui-font-size-extra-large);
                 }
             }
+
+            .buttons {
+                display: flex;
+                gap: var(--dui-spacing-medium);
+            }
         }
     }
 

@@ -17,6 +17,8 @@ interface Props {
     errorTitle?: string;
     krakenVariant?: KrakenProps['variant'];
     errorMessage?: React.ReactNode;
+    buttons?: React.ReactNode;
+    hideGotoHomepageButton?: boolean;
     className?: string;
 }
 
@@ -25,6 +27,8 @@ function FullPageErrorMessage(props: Props) {
         errorTitle,
         errorMessage,
         krakenVariant,
+        hideGotoHomepageButton = false,
+        buttons,
         className,
     } = props;
 
@@ -57,12 +61,17 @@ function FullPageErrorMessage(props: Props) {
                             {errorMessage}
                         </div>
                     </div>
-                    <ButtonLikeLink
-                        variant="primary"
-                        to="/"
-                    >
-                        Go to Home
-                    </ButtonLikeLink>
+                    <div className={styles.buttons}>
+                        {!hideGotoHomepageButton && (
+                            <ButtonLikeLink
+                                variant="primary"
+                                to="/"
+                            >
+                                Go to homepage
+                            </ButtonLikeLink>
+                        )}
+                        {buttons}
+                    </div>
                 </div>
             </div>
             <div className={styles.footer}>

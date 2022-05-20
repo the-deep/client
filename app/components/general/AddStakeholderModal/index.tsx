@@ -9,6 +9,7 @@ import {
     ObjectSchema,
     defaultEmptyArrayType,
     SetValueArg,
+    PurgeNull,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -17,37 +18,39 @@ import {
 import _ts from '#ts';
 import {
     BasicOrganization,
-    ProjectOrganization,
-    OrganizationTypes,
 } from '#types';
+import {
+    ProjectOrganizationGqInputType,
+    ProjectOrganizationTypeEnum,
+} from '#generated/types';
 
 import SearchStakeholder from './SearchStakeholder';
 import StakeholderList from './StakeholderList';
 
 import styles from './styles.css';
 
-type FormType = Partial<Record<OrganizationTypes, number[]>>;
+type FormType = Partial<Record<ProjectOrganizationTypeEnum, string[]>>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const stakeholdersSchema: FormSchema = {
     fields: (): FormSchemaFields => ({
-        lead_organization: [defaultEmptyArrayType],
-        international_partner: [defaultEmptyArrayType],
-        national_partner: [defaultEmptyArrayType],
-        donor: [defaultEmptyArrayType],
-        government: [defaultEmptyArrayType],
+        LEAD_ORGANIZATION: [defaultEmptyArrayType],
+        INTERNATIONAL_PARTNER: [defaultEmptyArrayType],
+        NATIONAL_PARTNER: [defaultEmptyArrayType],
+        DONOR: [defaultEmptyArrayType],
+        GOVERNMENT: [defaultEmptyArrayType],
     }),
 };
 
-export type BasicProjectOrganization = Pick<ProjectOrganization, 'organization' | 'organizationType'>;
+export type BasicProjectOrganization = PurgeNull<ProjectOrganizationGqInputType>;
 
 export interface Props<T> {
     name: T;
     onChange: (value: SetValueArg<BasicProjectOrganization[] | undefined>, name: T) => void;
     options: BasicOrganization[];
     onOptionsChange: (value: BasicOrganization[]) => void;
-    value?: BasicProjectOrganization[];
+    value?: BasicProjectOrganization[] | null;
     onModalClose: () => void;
 }
 
@@ -83,17 +86,15 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
     } = useForm(stakeholdersSchema, initialFormValue);
 
     const handleChange = useCallback(
-        (stakeholders: number[], organizationType) => {
-            setFieldValue(() => (
-                stakeholders
-            ), organizationType);
+        (stakeholders: string[], organizationType: ProjectOrganizationTypeEnum) => {
+            setFieldValue(stakeholders, organizationType);
         }, [setFieldValue],
     );
     const handleSubmitButtonClick = () => {
         const organizations = mapToList(value, (v, key) => {
             const out = v?.map((o) => ({
                 organization: o,
-                organizationType: key as OrganizationTypes,
+                organizationType: key as ProjectOrganizationTypeEnum,
             }));
             return out;
         }).filter(isDefined).flat();
@@ -129,40 +130,40 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
                     onChange={handleChange}
                     options={options}
                     onOptionsChange={onOptionsChange}
-                    name="lead_organization"
-                    value={value.lead_organization}
+                    name="LEAD_ORGANIZATION"
+                    value={value.LEAD_ORGANIZATION}
                     label={_ts('project.detail.stakeholders', 'leadOrganization')}
                 />
                 <StakeholderList
                     onChange={handleChange}
                     options={options}
                     onOptionsChange={onOptionsChange}
-                    name="international_partner"
-                    value={value.international_partner}
+                    name="INTERNATIONAL_PARTNER"
+                    value={value.INTERNATIONAL_PARTNER}
                     label={_ts('project.detail.stakeholders', 'internationalPartner')}
                 />
                 <StakeholderList
                     onChange={handleChange}
                     options={options}
                     onOptionsChange={onOptionsChange}
-                    name="national_partner"
-                    value={value.national_partner}
+                    name="NATIONAL_PARTNER"
+                    value={value.NATIONAL_PARTNER}
                     label={_ts('project.detail.stakeholders', 'nationalPartner')}
                 />
                 <StakeholderList
                     onChange={handleChange}
                     options={options}
                     onOptionsChange={onOptionsChange}
-                    name="donor"
-                    value={value.donor}
+                    name="DONOR"
+                    value={value.DONOR}
                     label={_ts('project.detail.stakeholders', 'donor')}
                 />
                 <StakeholderList
                     onChange={handleChange}
                     options={options}
                     onOptionsChange={onOptionsChange}
-                    name="government"
-                    value={value.government}
+                    name="GOVERNMENT"
+                    value={value.GOVERNMENT}
                     label={_ts('project.detail.stakeholders', 'government')}
                 />
             </div>

@@ -334,7 +334,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
         getUserToken();
     }, [getUserToken]);
 
-    const handleOrganizationAdd = useCallback((val: { id: number; title: string }) => {
+    const handleOrganizationAdd = useCallback((val: { id: string; title: string }) => {
         const transformedVal = {
             id: String(val.id),
             title: val.title,
