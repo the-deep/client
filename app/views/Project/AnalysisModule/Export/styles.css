@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+}

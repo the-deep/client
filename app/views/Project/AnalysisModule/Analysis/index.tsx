@@ -4,8 +4,10 @@ import { FiEdit2 } from 'react-icons/fi';
 import {
     IoCopyOutline,
     IoTrashBinOutline,
+    IoDownloadOutline,
 } from 'react-icons/io5';
 import {
+    useAlert,
     Container,
     ContainerCard,
     Button,
@@ -18,6 +20,8 @@ import {
     DateRangeOutput,
     PendingMessage,
 } from '@the-deep/deep-ui';
+import { gql, useMutation } from '@apollo/client';
+
 import {
     BarChart,
     CartesianGrid,
@@ -38,6 +42,10 @@ import {
 import {
     PillarSummary,
 } from '#types';
+import {
+    CreateAnalysisExportMutation,
+    CreateAnalysisExportMutationVariables,
+} from '#generated/types';
 
 import _ts from '#ts';
 import PillarAnalysisList from './PillarList';
@@ -45,6 +53,22 @@ import PillarAssignment from './PillarAssignment';
 import AnalysisCloneModal from './AnalysisCloneModal';
 
 import styles from './styles.css';
+
+const CREATE_ANALYSIS_EXPORT = gql`
+    mutation CreateAnalysisExport(
+        $projectId: ID!,
+        $data: ExportCreateInputType!,
+    )
+    {
+        project(id: $projectId) {
+            id
+            exportCreate(data: $data) {
+                ok
+                errors
+            }
+        }
+    }
+`;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderCustomizedLabel = (props: any) => {
@@ -127,13 +151,15 @@ function Analysis(props: ComponentProps) {
         project,
     } = useContext(ProjectContext);
 
-    const activeProject = project?.id ? +project.id : undefined;
+    const activeProject = project?.id;
 
     const [
         showCloneModal,
         setModalVisible,
         setModalHidden,
     ] = useModalState(false);
+
+    const alert = useAlert();
 
     const pillarAssignmentRendererParams = useCallback(
         (_: number, data: PillarSummary) => ({
@@ -144,6 +170,56 @@ function Analysis(props: ComponentProps) {
         }),
         [totalEntries],
     );
+
+    const [
+        createAnalysisExport,
+        {
+            loading: createExportPending,
+        },
+    ] = useMutation<CreateAnalysisExportMutation, CreateAnalysisExportMutationVariables>(
+        CREATE_ANALYSIS_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportCreate?.ok) {
+                    alert.show(
+                        'Successfully started analysis export! You can find your export under exports tab.',
+                        { variant: 'success' },
+                    );
+                } else {
+                    alert.show(
+                        'There was an issue with exporting this analysis.',
+                        { variant: 'error' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'There was an issue with exporting this analysis.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const handleAnalysisExport = useCallback(() => {
+        if (!activeProject) {
+            return;
+        }
+        createAnalysisExport({
+            variables: {
+                projectId: activeProject,
+                data: {
+                    analysis: String(analysisId),
+                    exportType: 'EXCEL' as const,
+                    format: 'XLSX' as const,
+                    type: 'ANALYSES' as const,
+                    filters: {},
+                },
+            },
+        });
+    }, [activeProject, analysisId, createAnalysisExport]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);
@@ -203,6 +279,16 @@ function Analysis(props: ComponentProps) {
                     >
                         <IoCopyOutline />
                     </QuickActionButton>
+                    <QuickActionButton
+                        name="analysis"
+                        onClick={handleAnalysisExport}
+                        disabled={createExportPending}
+                        title="Export"
+                        variant="secondary"
+                    >
+                        <IoDownloadOutline />
+                    </QuickActionButton>
+
                     <QuickActionConfirmButton
                         name="delete"
                         onConfirm={handleDeleteAnalysis}

@@ -143,7 +143,6 @@ function Project(props: Props) {
                     {routes.tagging.load({ className })}
                 </Route>
                 <Route
-                    exact
                     path={routes.analysis.path}
                 >
                     {routes.analysis.load({ className })}

@@ -117,7 +117,7 @@ const analyticalFrameworkCreateRoute = wrap({
     title: 'Analytical Framework',
     navbarVisibility: false,
     component: lazy(() => import('#views/AnalyticalFramework')),
-    componentProps: { },
+    componentProps: {},
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
@@ -127,7 +127,7 @@ const analyticalFrameworkEditRoute = wrap({
     title: 'Analytical Framework',
     navbarVisibility: false,
     component: lazy(() => import('#views/AnalyticalFramework')),
-    componentProps: { },
+    componentProps: {},
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
@@ -138,7 +138,7 @@ const projectCreateRoute = wrap({
     title: 'New Project',
     navbarVisibility: false,
     component: lazy(() => import('#views/ProjectEdit')),
-    componentProps: { },
+    componentProps: {},
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
@@ -149,7 +149,7 @@ const projectRoute = wrap({
     title: 'Project',
     navbarVisibility: true,
     component: lazy(() => import('#views/Project')),
-    componentProps: { },
+    componentProps: {},
     visibility: 'is-authenticated',
     // NOTE: we cannot use permission check related to project on this route
     // as this route manages all the data load
@@ -177,13 +177,14 @@ const taggingRoute = wrap({
         );
     },
 });
+
 const projectEditRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/edit/',
     title: 'Edit Project',
     navbarVisibility: false,
     component: lazy(() => import('#views/ProjectEdit')),
-    componentProps: { },
+    componentProps: {},
     visibility: 'is-authenticated',
     checkPermissions: (_, project, skipProjectPermissionCheck) => {
         if (skipProjectPermissionCheck) {
@@ -226,7 +227,7 @@ const entryEditRoute = wrap({
 });
 const analysis = wrap({
     parent: { path: projectRoute.path },
-    path: '/analysis/',
+    path: '/analysis-module/',
     title: 'Analysis',
     navbarVisibility: true,
     component: lazy(() => import('#views/Project/AnalysisModule')),
@@ -286,6 +287,18 @@ const sources = wrap({
     },
     visibility: 'is-authenticated',
 });
+
+const analysisDashboard = wrap({
+    parent: { path: analysis.path },
+    path: '/dashboard/',
+    title: 'Dashboard',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/AnalysisModule/AnalysisDashboard')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+});
+
 const assessments = wrap({
     parent: { path: taggingRoute.path },
     path: '/assessments/',
@@ -378,7 +391,16 @@ const exportRoute = wrap({
     },
     visibility: 'is-authenticated',
 });
-
+const analysisExportRoute = wrap({
+    parent: { path: analysis.path },
+    path: '/export/',
+    title: 'Export',
+    navbarVisibility: true,
+    component: lazy(() => import('#views/Project/AnalysisModule/Export')),
+    componentProps: {
+    },
+    visibility: 'is-authenticated',
+});
 const assessmentEditRoute = wrap({
     parent: { path: projectRoute.path },
     path: '/assessments/leads/:leadId(\\d+)/',
@@ -466,6 +488,7 @@ const routes = {
     userGroups,
     tagging: taggingRoute,
     analysis,
+    analysisExport: analysisExportRoute,
     pillarAnalysis,
     explore,
     project: projectRoute,
@@ -477,6 +500,7 @@ const routes = {
     extensionPrivacyPolicy,
     sources,
     assessments,
+    analysisDashboard,
     leadGroups,
     fourHundredFour,
     dashboard,

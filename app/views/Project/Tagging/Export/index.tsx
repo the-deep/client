@@ -73,7 +73,7 @@ function Export() {
                         )}
                     </TabList>
                 )}
-                headingContainerClassName={styles.actionButtons}
+                headerActionsContainerClassName={styles.actionButtons}
                 headerActions={(
                     <>
                         <Button
