@@ -82,7 +82,7 @@ function Export() {
                             variant="tertiary"
                             route={routes.exportCreate}
                             attrs={{
-                                activeProject,
+                                projectId: activeProject,
                             }}
                         >
                             New Export
