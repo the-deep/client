@@ -429,33 +429,6 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     )
                 }
             />
-            {hasAssessment && (
-                <LeadGroupSelectInput
-                    // FIXME: Filter this out based on if the project has assessment or not
-                    name="leadGroup"
-                    className={styles.input}
-                    value={value.leadGroup}
-                    onChange={setFieldValue}
-                    options={leadGroupOptions}
-                    onOptionsChange={onLeadGroupOptionsChange}
-                    disabled={disabled}
-                    label="Source Group"
-                    error={error?.leadGroup}
-                    projectId={projectId}
-                    actions={(
-                        <QuickActionButton
-                            name={undefined}
-                            variant="transparent"
-                            onClick={handleAddLeadGroupClick}
-                            disabled={disabled}
-                            title="Add source group"
-                        >
-                            <IoAdd />
-
-                        </QuickActionButton>
-                    )}
-                />
-            )}
             <div className={styles.row}>
                 <DateInput
                     className={styles.input}
@@ -531,6 +504,43 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     )}
                 />
             </div>
+            {hasAssessment && (
+                <>
+                    <LeadGroupSelectInput
+                        // FIXME: Filter this out based on if the project has assessment or not
+                        name="leadGroup"
+                        className={styles.input}
+                        value={value.leadGroup}
+                        onChange={setFieldValue}
+                        options={leadGroupOptions}
+                        onOptionsChange={onLeadGroupOptionsChange}
+                        disabled={disabled}
+                        label="Source Group"
+                        error={error?.leadGroup}
+                        projectId={projectId}
+                        actions={(
+                            <QuickActionButton
+                                name={undefined}
+                                variant="transparent"
+                                onClick={handleAddLeadGroupClick}
+                                disabled={disabled}
+                                title="Add source group"
+                            >
+                                <IoAdd />
+
+                            </QuickActionButton>
+                        )}
+                    />
+                    <Checkbox
+                        name="isAssessmentLead"
+                        value={value.isAssessmentLead}
+                        onChange={setFieldValue}
+                        className={styles.input}
+                        label="Is Assessment"
+                        disabled={disabled}
+                    />
+                </>
+            )}
             <div className={styles.row}>
                 <SegmentInput
                     name="priority"
@@ -544,30 +554,18 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     error={error?.priority}
                     disabled={disabled}
                 />
-                <div className={styles.nestedRow}>
-                    <SegmentInput
-                        name="confidentiality"
-                        className={styles.nestedInput}
-                        value={value.confidentiality}
-                        onChange={setFieldValue}
-                        options={confidentialityOptions ?? undefined}
-                        keySelector={enumKeySelector}
-                        labelSelector={enumLabelSelector}
-                        label="Confidentiality"
-                        error={error?.confidentiality}
-                        disabled={disabled}
-                    />
-                    {hasAssessment && (
-                        <Checkbox
-                            className={styles.nestedInput}
-                            name="isAssessmentLead"
-                            value={value.isAssessmentLead}
-                            onChange={setFieldValue}
-                            label="Is Assessment"
-                            disabled={disabled}
-                        />
-                    )}
-                </div>
+                <SegmentInput
+                    name="confidentiality"
+                    className={styles.input}
+                    value={value.confidentiality}
+                    onChange={setFieldValue}
+                    options={confidentialityOptions ?? undefined}
+                    keySelector={enumKeySelector}
+                    labelSelector={enumLabelSelector}
+                    label="Confidentiality"
+                    error={error?.confidentiality}
+                    disabled={disabled}
+                />
             </div>
             <EmmStats
                 emmTriggers={value.emmTriggers}

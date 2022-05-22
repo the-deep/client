@@ -17,6 +17,7 @@ import {
     PartialSourceType,
 } from '../../schema';
 import ReliefWebParamsInput from './ReliefWebParamsInput';
+import RssFeedParamsInput from './RssFeedParamsInput';
 import UnhcrParams from './UnhcrParamsInput';
 
 import styles from './styles.css';
@@ -28,6 +29,8 @@ interface Props<T extends number> {
     error: Error<PartialSourceType>;
     onChange: (val: SetValueArg<PartialSourceType>, name: T) => void;
     disabled?: boolean;
+    rssErrored: boolean;
+    onRssErrorChange: (rssErrored: boolean) => void;
 }
 
 function ConnectorSourceForm<T extends number>(props: Props<T>) {
@@ -38,6 +41,8 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
         onChange,
         error: riskyError,
         disabled,
+        rssErrored,
+        onRssErrorChange,
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, value);
@@ -61,22 +66,33 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
                 readOnly
                 disabled={disabled}
             />
-            {value?.source === 'RELIEF_WEB' && (
+            {value.source === 'RELIEF_WEB' && (
                 <ReliefWebParamsInput
                     name="params"
-                    value={value?.params}
+                    value={value.params}
                     onChange={setFieldValue}
                     error={error?.params}
                     disabled={disabled}
                 />
             )}
-            {value?.source === 'UNHCR' && (
+            {value.source === 'UNHCR' && (
                 <UnhcrParams
                     name="params"
-                    value={value?.params}
+                    value={value.params}
                     onChange={setFieldValue}
                     error={error?.params}
                     disabled={disabled}
+                />
+            )}
+            {(value.source === 'RSS_FEED' || value.source === 'ATOM_FEED') && (
+                <RssFeedParamsInput
+                    name="params"
+                    value={value.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                    disabled={disabled}
+                    rssErrored={rssErrored}
+                    onRssErrorChange={onRssErrorChange}
                 />
             )}
         </Container>

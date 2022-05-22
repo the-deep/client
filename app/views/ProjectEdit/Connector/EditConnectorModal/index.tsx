@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
     _cs,
     isDefined,
@@ -49,12 +49,14 @@ import ConnectorSourceForm from './ConnectorSourceForm';
 
 import styles from './styles.css';
 
-type SupportedSource = 'RELIEF_WEB' | 'UNHCR';
-const supportedSources = ['RELIEF_WEB', 'UNHCR'];
+type SupportedSource = 'RELIEF_WEB' | 'UNHCR' | 'RSS_FEED' | 'ATOM_FEED';
+const supportedSources = ['RELIEF_WEB', 'UNHCR', 'RSS_FEED', 'ATOM_FEED'];
 
 const sourcesLabel: { [key in SupportedSource]: string } = {
     RELIEF_WEB: 'Relief Web',
     UNHCR: 'UNHCR',
+    RSS_FEED: 'RSS Feed',
+    ATOM_FEED: 'ATOM Feed',
 };
 
 const sourceKeySelector = (item: SupportedSource) => item;
@@ -316,6 +318,7 @@ function EditConnectorModal(props: Props) {
 
     const sourcesError = getErrorObject(error?.sources);
 
+    const [rssErrored, setRssErrored] = useState(false);
     const connectorSourceRendererParams = useCallback((
         key: string,
         data: PartialSourceType,
@@ -326,7 +329,10 @@ function EditConnectorModal(props: Props) {
         value: data,
         onChange: onRowChange,
         disabled: connectorCreatePending,
+        rssErrored,
+        onRssErrorChange: setRssErrored,
     }), [
+        rssErrored,
         onRowChange,
         sourcesError,
         connectorCreatePending,
@@ -380,7 +386,7 @@ function EditConnectorModal(props: Props) {
                 <Button
                     name={undefined}
                     onClick={handleSubmit}
-                    disabled={pristine || loading}
+                    disabled={pristine || loading || rssErrored}
                 >
                     Save
                 </Button>
