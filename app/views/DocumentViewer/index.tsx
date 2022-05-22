@@ -34,10 +34,19 @@ import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
 
 import {
     PublicLeadQuery,
+    LeadSourceTypeEnum,
     PublicLeadQueryVariables,
 } from '#generated/types';
 
 import styles from './styles.css';
+
+function isWebsiteType(sourceType: LeadSourceTypeEnum) {
+    return sourceType === 'WEBSITE' || sourceType === 'RSS' || sourceType === 'EMM' || sourceType === 'WEB_API';
+}
+
+function isAttachmentType(sourceType: LeadSourceTypeEnum) {
+    return sourceType === 'DISK' || sourceType === 'DROPBOX' || sourceType === 'GOOGLE_DRIVE';
+}
 
 const PUBLIC_LEAD = gql`
     query PublicLead($uuid: UUID!) {
@@ -45,6 +54,7 @@ const PUBLIC_LEAD = gql`
             lead {
                 attachment {
                     title
+                    mimeType
                     file {
                         name
                         url
@@ -54,7 +64,6 @@ const PUBLIC_LEAD = gql`
                 publishedOn
                 sourceTitle
                 sourceType
-                sourceTypeDisplay
                 text
                 url
                 uuid
@@ -252,8 +261,14 @@ function DocumentViewer(props: Props) {
             >
                 <LeadPreview
                     className={styles.preview}
-                    url={publicLeadDetails?.url ?? undefined}
-                    attachment={publicLeadDetails?.attachment ?? undefined}
+                    url={
+                        isWebsiteType(publicLeadDetails?.sourceType)
+                            ? publicLeadDetails?.url : undefined
+                    }
+                    attachment={
+                        isAttachmentType(publicLeadDetails?.sourceType)
+                            ? publicLeadDetails?.attachment : undefined
+                    }
                     hideBar
                 />
             </div>
