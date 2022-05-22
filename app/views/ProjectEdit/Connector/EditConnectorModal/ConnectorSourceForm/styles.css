@@ -5,5 +5,9 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--dui-spacing-medium);
+
+        >* {
+            flex-basis: calc(50% - var(--dui-spacing-small));
+        }
     }
 }

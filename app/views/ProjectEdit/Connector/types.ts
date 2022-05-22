@@ -399,8 +399,6 @@ export const unhcrCountryList: { key: string; label: string }[] = [
     { label: 'Zimbabwe', key: '762' },
 ];
 
-interface Params {}
-
 export interface ReliefWebParams {
     'primary-country'?: string;
     country?: string;
@@ -414,15 +412,24 @@ export interface UnhcrParams {
     date_to?: string;
 }
 
+export interface RssFeedParams {
+    'feed-url': string;
+    'title-field': string;
+    'date-field': string;
+    'source-field': string;
+    'author-field': string;
+    'url-field': string;
+}
+
 export type SourceInput = Omit<DeepMandatory<PurgeNull<ConnectorSourceGqInputType>, 'clientId'>, 'source' | 'params'> & ({
     source: 'RELIEF_WEB';
     params: ReliefWebParams;
 } | {
     source: 'RSS_FEED';
-    params: Params;
+    params: RssFeedParams;
 } | {
     source: 'ATOM_FEED';
-    params: Params;
+    params: RssFeedParams;
 } | {
     source: 'UNHCR';
     params: UnhcrParams;

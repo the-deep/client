@@ -5,6 +5,7 @@ import {
     PartialForm,
     defaultUndefinedType,
     requiredStringCondition,
+    urlCondition,
     requiredCondition,
 } from '@togglecorp/toggle-form';
 
@@ -12,6 +13,7 @@ import {
     ConnectorInputType,
     ReliefWebParams,
     UnhcrParams,
+    RssFeedParams,
 } from './types';
 
 export type PartialFormType = PartialForm<ConnectorInputType, 'clientId' | 'source'>;
@@ -80,6 +82,23 @@ export const sourceSchema:SourceFormSchema = {
                         }
                         return undefined;
                     },
+                };
+                return {
+                    ...baseSchema,
+                    params,
+                };
+            }
+            case 'ATOM_FEED':
+            case 'RSS_FEED': {
+                const params: ObjectSchema<PartialForm<RssFeedParams>> = {
+                    fields: () => ({
+                        'feed-url': [requiredStringCondition, urlCondition],
+                        'title-field': [requiredStringCondition],
+                        'date-field': [requiredStringCondition],
+                        'source-field': [requiredStringCondition],
+                        'author-field': [requiredStringCondition],
+                        'url-field': [requiredStringCondition],
+                    }),
                 };
                 return {
                     ...baseSchema,

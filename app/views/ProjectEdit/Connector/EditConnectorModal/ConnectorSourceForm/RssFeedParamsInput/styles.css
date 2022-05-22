@@ -1,0 +1,4 @@
+.url {
+    /* FIXME: Fix increment of width when mounting actions in input */
+    flex-basis: 96%!important;
+}
