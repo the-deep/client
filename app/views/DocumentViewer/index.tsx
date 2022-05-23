@@ -163,8 +163,8 @@ function DocumentViewer(props: Props) {
     if (!authenticated && !isLeadAccessible) {
         return (
             <FullPageErrorMessage
-                errorTitle="Not logged in"
-                errorMessage="You are not logged in. Try logging in."
+                errorTitle="Oops!"
+                errorMessage="This document is cannot be previewed publicly or does not exist. Try logging in."
                 krakenVariant="hi"
                 hideGotoHomepageButton
                 buttons={(
