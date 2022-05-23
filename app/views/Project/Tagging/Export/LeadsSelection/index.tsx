@@ -18,6 +18,7 @@ import {
     Checkbox,
     CheckboxProps,
 } from '@the-deep/deep-ui';
+import { EntriesAsList } from '@togglecorp/toggle-form';
 import { useQuery, gql } from '@apollo/client';
 
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
@@ -25,10 +26,10 @@ import {
     LeadOrderingEnum,
     ProjectSourceListQuery,
     ProjectSourceListQueryVariables,
-    SourceFilterOptionsQueryVariables,
 } from '#generated/types';
 import { isFiltered } from '#utils/common';
 import SourcesFilter, { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
+import { PartialFormType, FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
 import styles from './styles.css';
 
 type Project = NonNullable<ProjectSourceListQuery['project']>;
@@ -149,13 +150,13 @@ interface Props {
     className?: string;
     projectId: string;
     filterOnlyUnprotected: boolean;
-    hasAssessment?: boolean;
+    // hasAssessment?: boolean;
     onSelectLeadChange: (values: string[]) => void;
     selectedLeads: string[];
     selectAll: boolean;
     onSelectAllChange: (v: boolean) => void;
-    filterValues: Omit<SourceFilterOptionsQueryVariables, 'projectId'>;
-    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
+    filterValues: PartialFormType;
+    onFilterApply: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
 function LeadsSelection(props: Props) {
@@ -169,7 +170,7 @@ function LeadsSelection(props: Props) {
         filterValues,
         onFilterApply,
         filterOnlyUnprotected,
-        hasAssessment,
+        // hasAssessment,
     } = props;
 
     const sortState = useSortState();
@@ -182,7 +183,7 @@ function LeadsSelection(props: Props) {
     const [activePage, setActivePage] = useState<number>(1);
 
     const filters = useMemo(() => (
-        getProjectSourcesQueryVariables(filterValues)
+        getProjectSourcesQueryVariables(filterValues as Omit<FilterFormType, 'projectId'>)
     ), [filterValues]);
 
     const variables = useMemo(
@@ -208,6 +209,14 @@ function LeadsSelection(props: Props) {
             skip: isNotDefined(variables),
             variables,
         },
+    );
+
+    const handleSourcesFiltersValueChange = useCallback(
+        (...value: EntriesAsList<PartialFormType>) => {
+            setActivePage(1);
+            onFilterApply(...value);
+        },
+        [onFilterApply, setActivePage],
     );
 
     const handleSelectAll = useCallback((value: boolean) => {
@@ -333,11 +342,11 @@ function LeadsSelection(props: Props) {
         <div className={_cs(className, styles.leadsSelection)}>
             <SourcesFilter
                 className={styles.sourceEntryFilter}
-                onFilterApply={onFilterApply}
+                onChange={handleSourcesFiltersValueChange}
                 projectId={projectId}
                 filterOnlyUnprotected={filterOnlyUnprotected}
                 value={filterValues}
-                hideEntryFilters={hasAssessment}
+            // hideEntryFilters={hasAssessment}
             />
             <div className={styles.tableContainer}>
                 <SortContext.Provider value={sortState}>
@@ -355,15 +364,15 @@ function LeadsSelection(props: Props) {
                         filteredEmptyMessage="No matching sources found."
                     />
                 </SortContext.Provider>
+                <Pager
+                    className={styles.footer}
+                    activePage={activePage}
+                    itemsCount={projectSourcesResponse?.project?.leads?.totalCount ?? 0}
+                    maxItemsPerPage={maxItemsPerPage}
+                    onActivePageChange={setActivePage}
+                    itemsPerPageControlHidden
+                />
             </div>
-            <Pager
-                className={styles.footer}
-                activePage={activePage}
-                itemsCount={projectSourcesResponse?.project?.leads?.totalCount ?? 0}
-                maxItemsPerPage={maxItemsPerPage}
-                onActivePageChange={setActivePage}
-                itemsPerPageControlHidden
-            />
         </div>
     );
 }
