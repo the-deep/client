@@ -17,13 +17,17 @@ import {
     List,
     Modal,
     useModalState,
+    useAlert,
 } from '@the-deep/deep-ui';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import {
     ProjectFrameworkDetailsQuery,
     ProjectFrameworkDetailsQueryVariables,
     SourceFilterOptionsQueryVariables,
+    CreateExportMutation,
+    CreateExportMutationVariables,
     ExportFormatEnum,
+    ExportExportTypeEnum,
 } from '#generated/types';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
@@ -33,6 +37,7 @@ import _ts from '#ts';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
 import ExportTypeButton from './ExportTypeButton';
 import LeadsSelection from '../LeadsSelection';
+import ExportPreviewModal from './ExportPreviewModal';
 import {
     ExportTypeItem,
     TreeSelectableWidget,
@@ -42,12 +47,23 @@ import {
 import {
     filterContexualWidgets,
     createReportStructure,
+    createReportLevels,
     getWidgets,
     SECTOR_FIRST,
+    createReportStructureForExport,
+    createWidgetIds,
 } from '../utils';
 
-import { PROJECT_FRAMEWORK_DETAILS } from './queries';
+import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT } from './queries';
 import styles from './styles.css';
+import { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
+
+const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
+    DOCX: 'REPORT',
+    PDF: 'REPORT',
+    JSON: 'JSON',
+    XLSX: 'EXCEL',
+};
 
 const exportTypes: ExportTypeItem[] = [
     {
@@ -88,6 +104,7 @@ function NewExport(props: Props) {
     const {
         projectId,
     } = useParams<{ projectId: string }>();
+
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [exportFileFormat, setExportFileFormat] = useState<ExportFormatEnum>('DOCX');
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
@@ -101,7 +118,7 @@ function NewExport(props: Props) {
     const [reportShowEntryWidgetData, setReportShowEntryWidgetData] = useState<boolean>(true);
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget[]>([]);
     const [contextualWidgets, setContextualWidgets] = useState<TreeSelectableWidget[]>([]);
-    const [reportStructure, setReportStructure] = useState<Node[] | undefined>();
+    const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [reportStructureVariant, setReportStructureVariant] = useState<string>(SECTOR_FIRST);
     const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
@@ -112,14 +129,48 @@ function NewExport(props: Props) {
         hideAdvancedOptionsModal,
     ] = useModalState(false);
 
+    const [
+        previewModalShown,
+        showPreviewModal,
+        hidePreviewModal,
+    ] = useModalState(false);
+
     const { project } = React.useContext(ProjectContext);
+
     const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
-    const variables = useMemo(
-        (): ProjectFrameworkDetailsQueryVariables => ({
-            projectId,
-        }),
-        [projectId],
+    const alert = useAlert();
+
+    const [
+        createExport,
+        {
+            data: createExportData,
+            loading: createExportPending,
+        },
+    ] = useMutation<CreateExportMutation, CreateExportMutationVariables>(
+        CREATE_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportCreate?.ok) {
+                    if (response.project.exportCreate.result?.isPreview) {
+                        showPreviewModal();
+                    } else {
+                        alert.show(
+                            _ts('export', 'exportStartedNotifyMessage'),
+                            { variant: 'success' },
+                        );
+                    }
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Error during export.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
     );
 
     const {
@@ -128,7 +179,9 @@ function NewExport(props: Props) {
     } = useQuery<ProjectFrameworkDetailsQuery, ProjectFrameworkDetailsQueryVariables>(
         PROJECT_FRAMEWORK_DETAILS,
         {
-            variables,
+            variables: {
+                projectId,
+            },
             onCompleted: (response) => {
                 // TODO handle for conditional widgets
                 const widgets = getWidgets(
@@ -146,6 +199,45 @@ function NewExport(props: Props) {
             },
         },
     );
+
+    const getCreateExportData = useCallback((isPreview: boolean) => ({
+        excelDecoupled,
+        filters: {
+            ...getProjectSourcesQueryVariables(filterValues),
+            ids: selectedLeads,
+            excludeProvidedLeadsId: selectAll,
+        },
+        format: exportFileFormat,
+        isPreview,
+        exportType: mapExportType[exportFileFormat],
+        reportLevels: createReportLevels(reportStructure).map((node) => ({
+            id: node.id,
+            levels: node.sublevels,
+        })),
+        reportStructure: createReportStructureForExport(reportStructure),
+        reportTextWidgetIds: createWidgetIds(textWidgets),
+        reportExportingWidgets: createWidgetIds(contextualWidgets),
+        reportShowAssessmentData,
+        reportShowEntryWidgetData,
+        reportShowGroups,
+        reportShowLeadEntryId,
+        type: 'ENTRIES' as const,
+        title: queryTitle,
+    }), [
+        exportFileFormat,
+        contextualWidgets,
+        excelDecoupled,
+        filterValues,
+        queryTitle,
+        reportShowAssessmentData,
+        reportShowEntryWidgetData,
+        reportShowGroups,
+        reportShowLeadEntryId,
+        reportStructure,
+        selectAll,
+        selectedLeads,
+        textWidgets,
+    ]);
 
     const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
 
@@ -172,8 +264,6 @@ function NewExport(props: Props) {
         },
         [analysisFramework, frameworkGetPending],
     );
-    console.warn('loading', frameworkGetPending, frameworkResponse);
-
     const exportTypeRendererParams = useCallback((key: ExportFormatEnum, data: ExportTypeItem) => {
         const {
             title,
@@ -189,8 +279,27 @@ function NewExport(props: Props) {
         });
     }, [exportFileFormat, setExportFileFormat]);
 
-    const handleExport = () => { }; //eslint-disable-line
-    const handlePreviewClick = () => { }; //eslint-disable-line
+    const handleCreateExport = useCallback(() => {
+        createExport({
+            variables: {
+                projectId,
+                data: getCreateExportData(false),
+            },
+        });
+    }, [createExport, projectId, getCreateExportData]);
+
+    const handlePreviewClick = useCallback(() => {
+        createExport({
+            variables: {
+                projectId,
+                data: getCreateExportData(true),
+            },
+        });
+    }, [createExport, projectId, getCreateExportData]);
+
+    const handlePreviewClose = useCallback(() => {
+        hidePreviewModal();
+    }, [hidePreviewModal]);
 
     return (
         <div className={_cs(styles.newExport, className)}>
@@ -213,8 +322,8 @@ function NewExport(props: Props) {
                             Show Preview
                         </Button>
                         <Button
-                            disabled={frameworkGetPending}
-                            onClick={handleExport}
+                            disabled={frameworkGetPending || createExportPending}
+                            onClick={handleCreateExport}
                             variant="primary"
                             name="startExport"
                         >
@@ -279,6 +388,13 @@ function NewExport(props: Props) {
                                 onTextWidgetsChange={setTextWidgets}
                             />
                         </Modal>
+                    )}
+                    {previewModalShown && createExportData?.project?.exportCreate?.result?.id && (
+                        <ExportPreviewModal
+                            projectId={projectId}
+                            exportId={createExportData.project.exportCreate.result.id}
+                            onCloseButtonClick={handlePreviewClose}
+                        />
                     )}
                 </div>
                 <LeadsSelection
