@@ -78,3 +78,21 @@ export const CREATE_EXPORT = gql`
         }
     }
 `;
+
+export const EXPORT_PREVIEW = gql`
+query ExportPreview($projectId: ID!, $exportId: ID!) {
+    project(id: $projectId) {
+        id
+        export (id: $exportId) {
+            id
+            status
+            file {
+                name
+                url
+            }
+            mimeType
+            title
+        }
+    }
+}
+`;
