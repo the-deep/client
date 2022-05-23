@@ -23,7 +23,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import {
     ProjectFrameworkDetailsQuery,
     ProjectFrameworkDetailsQueryVariables,
-    SourceFilterOptionsQueryVariables,
     CreateExportMutation,
     CreateExportMutationVariables,
     ExportFormatEnum,
@@ -34,6 +33,8 @@ import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import _ts from '#ts';
 
+import { useFilterState, getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
+import { FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
 import ExportTypeButton from './ExportTypeButton';
 import LeadsSelection from '../LeadsSelection';
@@ -56,7 +57,6 @@ import {
 
 import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT } from './queries';
 import styles from './styles.css';
-import { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
 
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
     DOCX: 'REPORT',
@@ -109,7 +109,6 @@ function NewExport(props: Props) {
     const [exportFileFormat, setExportFileFormat] = useState<ExportFormatEnum>('DOCX');
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
-    const [filterValues, setFilterValues] = useState<Omit<SourceFilterOptionsQueryVariables, 'projectId'>>({});
 
     // advanced-options
     const [reportShowGroups, setReportShowGroups] = useState<boolean>(true);
@@ -122,6 +121,11 @@ function NewExport(props: Props) {
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [reportStructureVariant, setReportStructureVariant] = useState<string>(SECTOR_FIRST);
     const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
+
+    const {
+        value: sourcesFilters,
+        setFieldValue: setSourcesFilterValue,
+    } = useFilterState();
 
     const [
         advancedOptionsModalShown,
@@ -203,7 +207,7 @@ function NewExport(props: Props) {
     const getCreateExportData = useCallback((isPreview: boolean) => ({
         excelDecoupled,
         filters: {
-            ...getProjectSourcesQueryVariables(filterValues),
+            ...getProjectSourcesQueryVariables(sourcesFilters as Omit<FilterFormType, 'projectId'>),
             ids: selectedLeads,
             excludeProvidedLeadsId: selectAll,
         },
@@ -227,7 +231,7 @@ function NewExport(props: Props) {
         exportFileFormat,
         contextualWidgets,
         excelDecoupled,
-        filterValues,
+        sourcesFilters,
         queryTitle,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
@@ -405,8 +409,8 @@ function NewExport(props: Props) {
                     onSelectLeadChange={setSelectedLeads}
                     selectAll={selectAll}
                     onSelectAllChange={setSelectAll}
-                    filterValues={filterValues}
-                    onFilterApply={setFilterValues}
+                    filterValues={sourcesFilters}
+                    onFilterApply={setSourcesFilterValue}
                 />
             </div>
         </div>

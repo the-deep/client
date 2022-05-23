@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     IoGridOutline,
@@ -15,12 +15,14 @@ import {
     Button,
     useBooleanState,
 } from '@the-deep/deep-ui';
+import { EntriesAsList } from '@togglecorp/toggle-form';
 import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
 
 import AppliedFilters from './AppliedFilters';
 import SourcesStats from './SourcesStats';
 import SourcesFilter, { useFilterState } from './SourcesFilter';
+import { PartialFormType } from './SourcesFilter/schema';
 import SourcesTable from './SourcesTable';
 import EntriesGrid from './EntriesGrid';
 
@@ -50,9 +52,13 @@ function Sources(props: Props) {
         setFieldValue: setSourcesFilterValue,
     } = useFilterState();
 
-    React.useEffect(() => {
-        setActivePage(1);
-    }, []);
+    const handleSourcesFiltersValueChange = useCallback(
+        (...value: EntriesAsList<PartialFormType>) => {
+            setActivePage(1);
+            setSourcesFilterValue(...value);
+        },
+        [setSourcesFilterValue, setActivePage],
+    );
 
     return (
         <div className={_cs(styles.sources, className)}>
@@ -103,7 +109,7 @@ function Sources(props: Props) {
                         <AppliedFilters
                             projectId={activeProject}
                             value={sourcesFilters}
-                            onChange={setSourcesFilterValue}
+                            onChange={handleSourcesFiltersValueChange}
                         />
                     )}
                 </div>
@@ -113,7 +119,7 @@ function Sources(props: Props) {
                             className={styles.filter}
                             value={sourcesFilters}
                             projectId={activeProject}
-                            onChange={setSourcesFilterValue}
+                            onChange={handleSourcesFiltersValueChange}
                             isEntriesOnlyFilter={activeView === 'grid'}
                         />
                     )}
