@@ -44,3 +44,8 @@ export interface ExportTypeItem {
     icon: React.ReactNode;
     title: string;
 }
+
+export interface ExportReportStructure {
+    id: string;
+    levels?: ExportReportStructure[];
+}

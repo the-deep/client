@@ -9,6 +9,9 @@ import {
 import {
     ReportStructure,
     AnalysisFramework,
+    ExportReportStructure,
+    Node,
+    TreeSelectableWidget,
 } from './types';
 
 export const SECTOR_FIRST = 'sectorFirst' as const;
@@ -231,3 +234,28 @@ export function filterContexualWidgets(widgets: Widget[] | undefined) {
 
     return contextualWidgets;
 }
+
+export const createReportStructureForExport = (nodes: Node[]): ExportReportStructure[] => (
+    nodes.filter((node) => node.selected)
+        .map((node) => ({
+            id: node.key,
+            ...(node.nodes && { levels: createReportStructureForExport(node.nodes) }),
+        }))
+);
+
+export const createReportLevels = (nodes: Node[]): Level[] => (
+    nodes
+        .filter((node) => node.selected)
+        .map((node) => ({
+            id: node.key,
+            title: node.title,
+            ...(node.nodes && { sublevels: createReportLevels(node.nodes) }),
+        }))
+);
+
+export const createWidgetIds = (widgets: TreeSelectableWidget[]) => (
+    // FIXME: we should not cast this value, fix this server
+    widgets
+        .filter((widget) => widget.selected)
+        .map((widget) => +(widget.id))
+);
