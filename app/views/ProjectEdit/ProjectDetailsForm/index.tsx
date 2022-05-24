@@ -153,7 +153,9 @@ const schema: FormSchema = {
         endDate: [],
         description: [],
         organizations: organizationListSchema,
-        hasPubliclyViewableLeads: [requiredCondition],
+        hasPubliclyViewableUnprotectedLeads: [requiredCondition],
+        hasPubliclyViewableRestrictedLeads: [requiredCondition],
+        hasPubliclyViewableConfidentialLeads: [requiredCondition],
         isPrivate: [],
     }),
     validation: (value) => {
@@ -189,7 +191,9 @@ const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 const initialValue: PartialFormType = {
     title: '',
     isPrivate: false,
-    hasPubliclyViewableLeads: false,
+    hasPubliclyViewableUnprotectedLeads: false,
+    hasPubliclyViewableConfidentialLeads: false,
+    hasPubliclyViewableRestrictedLeads: false,
 };
 
 const LAST_ACTIVE_PROJECT = gql`
@@ -231,7 +235,9 @@ const CURRENT_PROJECT = gql`
             createdAt
             description
             isPrivate
-            hasPubliclyViewableLeads
+            hasPubliclyViewableUnprotectedLeads
+            hasPubliclyViewableConfidentialLeads
+            hasPubliclyViewableRestrictedLeads
             organizations {
                 id
                 organization {
@@ -258,7 +264,9 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
             title
             startDate
             endDate
-            hasPubliclyViewableLeads
+            hasPubliclyViewableUnprotectedLeads
+            hasPubliclyViewableConfidentialLeads
+            hasPubliclyViewableRestrictedLeads
             createdBy {
                 displayName
             }
@@ -300,7 +308,9 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 createdAt
                 description
                 isPrivate
-                hasPubliclyViewableLeads
+                hasPubliclyViewableUnprotectedLeads
+                hasPubliclyViewableConfidentialLeads
+                hasPubliclyViewableRestrictedLeads
                 organizations {
                     id
                     organization {
@@ -694,12 +704,57 @@ function ProjectDetailsForm(props: Props) {
                             <RequestPrivateProjectButton />
                         )}
                     </Container>
-                    <Switch
-                        name="hasPubliclyViewableLeads"
-                        value={value?.hasPubliclyViewableLeads}
-                        onChange={setFieldValue}
-                        label="Make all sources publicly viewable"
-                    />
+                    <Container
+                        className={styles.documentSharing}
+                        headingSize="extraSmall"
+                        contentClassName={styles.items}
+                        heading="Document Sharing"
+                        inlineHeadingDescription
+                        headerDescriptionClassName={styles.infoIconContainer}
+                        headingDescription={(
+                            <IoInformationCircleOutline
+                                className={styles.infoIcon}
+                                title="You can allow documents uploaded to your project to be publicly viewed for users that have a document's link. People won't be able to know what these links are unless you share them."
+                            />
+                        )}
+                    >
+                        <Switch
+                            name="hasPubliclyViewableUnprotectedLeads"
+                            value={value?.hasPubliclyViewableUnprotectedLeads}
+                            onChange={setFieldValue}
+                            label={(
+                                <>
+                                    Allow links for
+                                    <i className={styles.italic}>Public</i>
+                                    documents to be viewed publicly
+                                </>
+                            )}
+                        />
+                        <Switch
+                            name="hasPubliclyViewableRestrictedLeads"
+                            value={value?.hasPubliclyViewableRestrictedLeads}
+                            onChange={setFieldValue}
+                            label={(
+                                <>
+                                    Allow links for
+                                    <i className={styles.italic}>Restricted</i>
+                                    documents to be viewed publicly
+                                </>
+                            )}
+                        />
+                        <Switch
+                            name="hasPubliclyViewableConfidentialLeads"
+                            value={value?.hasPubliclyViewableConfidentialLeads}
+                            onChange={setFieldValue}
+                            label={(
+                                <>
+                                    Allow links for
+                                    <i className={styles.italic}>Confidential</i>
+                                    documents to be viewed publicly
+                                </>
+                            )}
+                        />
+                    </Container>
                     <div className={styles.createdByDetails}>
                         {projectDetails?.createdBy?.displayName && (
                             <TextInput

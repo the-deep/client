@@ -89,9 +89,11 @@ function Page<T extends { className?: string }>(props: Props<T>) {
     }
 
     if (redirectToHome) {
+        const redirectUrl = new URL(window.location.href).searchParams.get('redirect') || defaultPage;
+
         // console.info('Redirecting to dashboard');
         return (
-            <Redirect to={defaultPage} />
+            <Redirect to={redirectUrl} />
         );
     }
 

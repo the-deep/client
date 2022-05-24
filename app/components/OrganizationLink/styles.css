@@ -1,0 +1,6 @@
+.link {
+    .link-actions {
+        /* FIXME: Add prop to remove arrow at the end of link */
+        display: none;
+    }
+}
