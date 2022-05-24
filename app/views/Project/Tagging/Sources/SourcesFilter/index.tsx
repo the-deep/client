@@ -136,7 +136,9 @@ function SourcesFilter(props: Props) {
         onChange: setFieldValue,
     } = props;
 
-    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const [createdByOptions, setCreatedByOptions] = useState<ProjectMember[] | undefined | null>();
+    const [assigneeOptions, setAssigneeOptions] = useState<ProjectMember[] | undefined | null>();
+
     const [
         authorOrganizationOptions,
         setAuthorOrganizationOptions,
@@ -267,8 +269,8 @@ function SourcesFilter(props: Props) {
                         projectId={projectId}
                         value={value.createdBy}
                         onChange={setFieldValue}
-                        options={members}
-                        onOptionsChange={setMembers}
+                        options={createdByOptions}
+                        onOptionsChange={setCreatedByOptions}
                         label="Source Created By"
                         disabled={disabled}
                     />
@@ -278,8 +280,8 @@ function SourcesFilter(props: Props) {
                         projectId={projectId}
                         value={value.assignees}
                         onChange={setFieldValue}
-                        options={members}
-                        onOptionsChange={setMembers}
+                        options={assigneeOptions}
+                        onOptionsChange={setAssigneeOptions}
                         label="Assignees"
                         disabled={disabled}
                     />

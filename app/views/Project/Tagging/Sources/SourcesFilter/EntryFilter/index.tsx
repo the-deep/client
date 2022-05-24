@@ -26,7 +26,6 @@ import FrameworkFilterItem from './FrameworkFilterItem';
 import { SourceFilterOptions } from '../types';
 
 import { PartialEntriesFilterDataType } from '../schema';
-
 import styles from './styles.css';
 
 const controlledStatusOptions: Option[] = [
@@ -43,6 +42,8 @@ const controlledStatusOptions: Option[] = [
 const defaultValue: PartialEntriesFilterDataType = {
     filterableData: [],
 };
+
+type FilterableData = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
 
 interface Props<K extends string> {
     name: K;
@@ -72,8 +73,6 @@ function EntryFilter<K extends string>(props: Props<K>) {
     const setFieldValue = useFormObject(name, onChange, defaultValue);
 
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
-
-    type FilterableData = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
 
     const {
         setValue: onFrameworkFilterChange,
