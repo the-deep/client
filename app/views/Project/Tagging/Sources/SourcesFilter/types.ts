@@ -15,7 +15,6 @@ export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables
     'statuses'
     | 'confidentiality'
     | 'priorities'
-    | 'statuses'
     | 'entryTypes'
     | 'ordering'
 >>;
