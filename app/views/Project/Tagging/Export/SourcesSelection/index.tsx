@@ -159,7 +159,7 @@ interface Props {
     onFilterApply: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
-function LeadsSelection(props: Props) {
+function SourcesSelection(props: Props) {
     const {
         projectId,
         className,
@@ -377,4 +377,4 @@ function LeadsSelection(props: Props) {
     );
 }
 
-export default LeadsSelection;
+export default SourcesSelection;

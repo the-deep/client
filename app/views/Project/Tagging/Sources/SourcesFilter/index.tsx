@@ -116,6 +116,7 @@ interface Props {
     value: PartialFormType;
     filterOnlyUnprotected?: boolean;
     isEntriesOnlyFilter?: boolean;
+    hideEntriesFilter?: boolean;
     contentClassName?: string;
     error?: Error<FormType>;
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
@@ -129,6 +130,7 @@ function SourcesFilter(props: Props) {
         value,
         disabled,
         isEntriesOnlyFilter = false,
+        hideEntriesFilter = false,
         contentClassName,
         error: formError,
         onChange: setFieldValue,
@@ -176,13 +178,15 @@ function SourcesFilter(props: Props) {
                     >
                         Source Filters
                     </Tab>
-                    <Tab
-                        name="entry"
-                        className={styles.tab}
-                        transparentBorder
-                    >
-                        Entry Filters
-                    </Tab>
+                    {!hideEntriesFilter && (
+                        <Tab
+                            name="entry"
+                            className={styles.tab}
+                            transparentBorder
+                        >
+                            Entry Filters
+                        </Tab>
+                    )}
                 </TabList>
                 <TabPanel
                     name="source"
@@ -340,22 +344,24 @@ function SourcesFilter(props: Props) {
                         />
                     )}
                 </TabPanel>
-                <TabPanel
-                    name="entry"
-                    className={_cs(styles.tabContent, contentClassName)}
-                >
-                    <EntryFilter
-                        name="entriesFilterData"
-                        value={value.entriesFilterData}
-                        onChange={setFieldValue}
-                        projectId={projectId}
-                        entryTypeOptions={entryTypeOptions}
-                        frameworkFilters={frameworkFilters}
-                        optionsDisabled={loading || !!sourceFilterOptionsError}
-                        allFiltersVisible
-                        disabled={disabled}
-                    />
-                </TabPanel>
+                {!hideEntriesFilter && (
+                    <TabPanel
+                        name="entry"
+                        className={_cs(styles.tabContent, contentClassName)}
+                    >
+                        <EntryFilter
+                            name="entriesFilterData"
+                            value={value.entriesFilterData}
+                            onChange={setFieldValue}
+                            projectId={projectId}
+                            entryTypeOptions={entryTypeOptions}
+                            frameworkFilters={frameworkFilters}
+                            optionsDisabled={loading || !!sourceFilterOptionsError}
+                            allFiltersVisible
+                            disabled={disabled}
+                        />
+                    </TabPanel>
+                )}
             </div>
         </Tabs>
     );
