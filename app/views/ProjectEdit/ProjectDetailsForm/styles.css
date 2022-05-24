@@ -108,6 +108,21 @@
                     padding: 0;
                 }
             }
+
+            .document-sharing {
+                background-color: var(--dui-color-foreground);
+                padding: 0;
+
+                .items {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-medium);
+                }
+            }
         }
     }
+}
+
+.italic {
+    padding: 0 var(--dui-spacing-extra-small);
 }

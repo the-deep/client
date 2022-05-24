@@ -37,9 +37,19 @@
             }
 
             .details-content {
-                display: flex;
-                flex-direction: column;
-                gap: var(--dui-spacing-medium);
+                display: table;
+                flex-grow: unset;
+                table-layout: fixed;
+
+                .text-output {
+                    display: table-row;
+
+                    .value,
+                    .label {
+                        display: table-cell;
+                        padding: var(--dui-spacing-small);
+                    }
+                }
             }
         }
     }

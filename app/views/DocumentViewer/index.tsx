@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useMemo, useState, useContext, useCallback } from 'react';
 import { useParams, generatePath } from 'react-router-dom';
 import { _cs, isDefined } from '@togglecorp/fujs';
 import {
@@ -10,6 +10,7 @@ import {
 import { removeNull } from '@togglecorp/toggle-form';
 import {
     Container,
+    QuickActionLink,
     QuickActionButton,
     TextOutput,
     PendingMessage,
@@ -25,12 +26,14 @@ import {
 
 import LeadPreview from '#components/lead/LeadPreview';
 import routes from '#base/configs/routes';
+import PageTitle from '#base/components/PageTitle';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import UserContext from '#base/context/UserContext';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { useModalState } from '#hooks/stateManagement';
 
 import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
+import OrganizationLink from '#components/OrganizationLink';
 
 import {
     PublicLeadQuery,
@@ -62,7 +65,10 @@ const PUBLIC_LEAD = gql`
                 }
                 createdByDisplayName
                 publishedOn
+                projectTitle
+                title
                 sourceTitle
+                sourceUrl
                 sourceType
                 text
                 url
@@ -136,7 +142,7 @@ function DocumentViewer(props: Props) {
         navigator.clipboard.writeText(`${window.location.origin}${documentViewerLink}`);
 
         alert.show(
-            'Successfully copied URL to clipboard.',
+            'Document link successfully copied to clipboard.',
             {
                 variant: 'info',
             },
@@ -146,13 +152,18 @@ function DocumentViewer(props: Props) {
         alert,
     ]);
 
-    const handlePrintClick = useCallback(() => {
-        window.print();
-    }, []);
-
     const handleJoinRequestSuccess = useCallback(() => {
         setJoinButtonVisibility(false);
     }, []);
+
+    const linkForDownload = useMemo(() => {
+        const attachmentUrl = isAttachmentType(publicLeadDetails?.sourceType)
+            ? publicLeadDetails?.attachment?.file?.url : undefined;
+        const url = isWebsiteType(publicLeadDetails?.sourceType)
+            ? publicLeadDetails?.url : undefined;
+
+        return url ?? attachmentUrl;
+    }, [publicLeadDetails]);
 
     if (loading) {
         return (
@@ -171,8 +182,9 @@ function DocumentViewer(props: Props) {
                     <SmartButtonLikeLink
                         variant="primary"
                         route={routes.login}
+                        search={`?redirect=${window.location.pathname}`}
                     >
-                        Go to Login page
+                        Login
                     </SmartButtonLikeLink>
                 )}
             />
@@ -223,19 +235,21 @@ function DocumentViewer(props: Props) {
     return (
         <Container
             className={_cs(className, styles.documentViewer)}
-            heading={publicLeadDetails?.sourceTitle}
+            heading={publicLeadDetails?.title}
             borderBelowHeader
             contentClassName={styles.content}
             headerClassName={styles.header}
             headerActions={(
                 <>
-                    <QuickActionButton
-                        name={undefined}
-                        onClick={handlePrintClick}
-                        title="Print Document"
-                    >
-                        <IoDownloadOutline />
-                    </QuickActionButton>
+                    {linkForDownload && (
+                        <QuickActionLink
+                            to={linkForDownload}
+                            title="Download Document"
+                            download
+                        >
+                            <IoDownloadOutline />
+                        </QuickActionLink>
+                    )}
                     <QuickActionButton
                         name={undefined}
                         onClick={handleCopyToClipboard}
@@ -253,6 +267,7 @@ function DocumentViewer(props: Props) {
                 </>
             )}
         >
+            <PageTitle value={`${publicLeadDetails?.title} - DEEP`} />
             <div
                 className={_cs(
                     styles.previewContainer,
@@ -288,23 +303,44 @@ function DocumentViewer(props: Props) {
                     borderBelowHeader
                     contentClassName={styles.detailsContent}
                 >
-                    {publicLeadProjectDetails?.id && (
+                    {publicLeadDetails?.projectTitle && (
                         <TextOutput
                             label="Project"
-                            value={publicLeadProjectDetails?.title}
+                            className={styles.textOutput}
+                            value={publicLeadDetails?.projectTitle}
+                            labelContainerClassName={styles.label}
+                            valueContainerClassName={styles.value}
+                            hideLabelColon
                         />
                     )}
                     <TextOutput
+                        className={styles.textOutput}
                         label="Created By"
                         value={publicLeadDetails?.createdByDisplayName}
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
+                        hideLabelColon
                     />
                     <TextOutput
+                        className={styles.textOutput}
                         label="Source"
-                        value={publicLeadDetails?.sourceTitle}
+                        value={(
+                            <OrganizationLink
+                                title={publicLeadDetails?.sourceTitle}
+                                link={publicLeadDetails?.sourceUrl}
+                            />
+                        )}
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
+                        hideLabelColon
                     />
                     <TextOutput
+                        className={styles.textOutput}
                         label="Date of Publication"
                         value={(<DateOutput value={publicLeadDetails?.publishedOn} />)}
+                        labelContainerClassName={styles.label}
+                        valueContainerClassName={styles.value}
+                        hideLabelColon
                     />
                 </Container>
             )}

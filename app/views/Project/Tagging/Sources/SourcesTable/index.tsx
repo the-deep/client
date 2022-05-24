@@ -11,7 +11,6 @@ import {
     CheckboxProps,
     Container,
     Kraken,
-    Link,
     Pager,
     SortContext,
     TableView,
@@ -45,6 +44,7 @@ import _ts from '#ts';
 import { createDateColumn } from '#components/tableHelpers';
 import { useLazyRequest } from '#base/utils/restRequest';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import OrganizationLink, { Props as OrganizationLinkProps } from '#components/OrganizationLink';
 import LeadPreviewButton, { Props as LeadPreviewProps } from '#components/lead/LeadPreviewButton';
 import ProgressLine, { Props as ProgressLineProps } from '#components/ProgressLine';
 import {
@@ -99,32 +99,6 @@ const defaultSorting = {
     name: 'CREATED_AT',
     direction: 'Descending',
 };
-
-interface SourceLinkProps {
-    title?: string;
-    link?: string;
-}
-
-function SourceLink(props: SourceLinkProps) {
-    const {
-        link,
-        title,
-    } = props;
-
-    if (!link) {
-        return (
-            <div>{title}</div>
-        );
-    }
-
-    return (
-        <Link
-            to={link}
-        >
-            {title}
-        </Link>
-    );
-}
 
 const DELETE_LEAD = gql`
     mutation DeleteLead(
@@ -409,7 +383,7 @@ function SourcesTable(props: Props) {
             columnWidth: 160,
         };
         const publisherColumn: TableColumn<
-            Lead, string, SourceLinkProps, TableHeaderCellProps
+            Lead, string, OrganizationLinkProps, TableHeaderCellProps
         > = {
             id: 'SOURCE',
             title: _ts('sourcesTable', 'publisher'),
@@ -417,7 +391,7 @@ function SourcesTable(props: Props) {
             headerCellRendererParams: {
                 sortable: true,
             },
-            cellRenderer: SourceLink,
+            cellRenderer: OrganizationLink,
             cellRendererParams: (_, data) => ({
                 title: data.source ? organizationTitleSelector(data.source) : undefined,
                 link: data.source ? organizationUrlSelector(data.source) : undefined,
