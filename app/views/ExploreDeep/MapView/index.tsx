@@ -36,7 +36,9 @@ const sourceOptions: mapboxgl.GeoJSONSourceRaw & { clusterProperties: unknown } 
     type: 'geojson',
     cluster: true,
     clusterRadius: 100,
-    clusterProperties: {},
+    clusterProperties: {
+        project_ids: ['concat', ['concat', ['get', 'projectId'], ',']],
+    },
 };
 
 const white = '#ffffff';
@@ -59,6 +61,8 @@ const clusterPointTextLayout: mapboxgl.SymbolLayout = {
         ['-', ['get', 'point_count']],
         -1,
     ],
+    // FIXME: we will not be able to read project_ids here because of lack of
+    // operators on mapboxgl expressions
     'text-field': [
         'case',
         ['has', 'point_count'],
@@ -218,15 +222,21 @@ function ExploreDeepMapView(props: Props) {
         map: mapboxgl.Map,
     ) => {
         interface ClusterProperties {
-
             cluster_id: number;
-
             point_count: number;
+            project_ids: string;
         }
 
         if (feature.properties) {
-            // eslint-disable-next-line camelcase
-            const { cluster_id, point_count } = feature.properties as ClusterProperties;
+            const {
+                // eslint-disable-next-line camelcase
+                cluster_id,
+                // eslint-disable-next-line camelcase
+                point_count,
+                // eslint-disable-next-line camelcase
+                project_ids,
+            } = feature.properties as ClusterProperties;
+            console.warn('Project Ids:', project_ids);
             const clusterSource = map.getSource('region') as mapboxgl.GeoJSONSource;
             if (clusterSource) {
                 clusterSource.getClusterLeaves(
