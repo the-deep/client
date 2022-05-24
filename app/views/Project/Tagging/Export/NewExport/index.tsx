@@ -37,7 +37,7 @@ import { useFilterState, getProjectSourcesQueryVariables } from '../../Sources/S
 import { FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
 import ExportTypeButton from './ExportTypeButton';
-import LeadsSelection from '../LeadsSelection';
+import SourcesSelection from '../SourcesSelection';
 import ExportPreviewModal from './ExportPreviewModal';
 import {
     ExportTypeItem,
@@ -123,7 +123,7 @@ function NewExport(props: Props) {
     const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
 
     const {
-        value: sourcesFilters,
+        value: sourcesFilter,
         setFieldValue: setSourcesFilterValue,
     } = useFilterState();
 
@@ -207,7 +207,7 @@ function NewExport(props: Props) {
     const getCreateExportData = useCallback((isPreview: boolean) => ({
         excelDecoupled,
         filters: {
-            ...getProjectSourcesQueryVariables(sourcesFilters as Omit<FilterFormType, 'projectId'>),
+            ...getProjectSourcesQueryVariables(sourcesFilter as Omit<FilterFormType, 'projectId'>),
             ids: selectedLeads,
             excludeProvidedLeadsId: selectAll,
         },
@@ -231,7 +231,7 @@ function NewExport(props: Props) {
         exportFileFormat,
         contextualWidgets,
         excelDecoupled,
-        sourcesFilters,
+        sourcesFilter,
         queryTitle,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
@@ -301,10 +301,6 @@ function NewExport(props: Props) {
         });
     }, [createExport, projectId, getCreateExportData]);
 
-    const handlePreviewClose = useCallback(() => {
-        hidePreviewModal();
-    }, [hidePreviewModal]);
-
     return (
         <div className={_cs(styles.newExport, className)}>
             <SubNavbar
@@ -321,6 +317,7 @@ function NewExport(props: Props) {
                         <Button
                             name="showPreview"
                             variant="primary"
+                            disabled={frameworkGetPending}
                             onClick={handlePreviewClick}
                         >
                             Show Preview
@@ -397,11 +394,11 @@ function NewExport(props: Props) {
                         <ExportPreviewModal
                             projectId={projectId}
                             exportId={createExportData.project.exportCreate.result.id}
-                            onCloseButtonClick={handlePreviewClose}
+                            onCloseButtonClick={hidePreviewModal}
                         />
                     )}
                 </div>
-                <LeadsSelection
+                <SourcesSelection
                     className={styles.leadsTableContainer}
                     projectId={projectId}
                     filterOnlyUnprotected={filterOnlyUnprotected}
@@ -409,7 +406,7 @@ function NewExport(props: Props) {
                     onSelectLeadChange={setSelectedLeads}
                     selectAll={selectAll}
                     onSelectAllChange={setSelectAll}
-                    filterValues={sourcesFilters}
+                    filterValues={sourcesFilter}
                     onFilterApply={setSourcesFilterValue}
                 />
             </div>

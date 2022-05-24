@@ -70,7 +70,6 @@ function AdvancedOptionsSelection(props: Props) {
         onExcelDecoupledChange,
     } = props;
 
-    console.warn('reportStructure', reportStructure);
     const handleSwapOrderValueChange = useCallback((newValue) => {
         if (newValue) {
             onReportStructureVariantChange(DIMENSION_FIRST);
