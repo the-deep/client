@@ -13,9 +13,9 @@ import {
 } from 'react-icons/ai';
 import {
     Button,
+    Container,
     TextInput,
-    List,
-    Modal,
+    ListView,
     useModalState,
     useAlert,
 } from '@the-deep/deep-ui';
@@ -111,7 +111,6 @@ function NewExport(props: Props) {
     const [selectAll, setSelectAll] = useState<boolean>(true);
 
     // advanced-options
-    const [reportShowGroups, setReportShowGroups] = useState<boolean>(true);
     const [reportShowLeadEntryId, setReportShowLeadEntryId] = useState<boolean>(true);
     const [reportShowAssessmentData, setReportShowAssessmentData] = useState<boolean>(true);
     const [reportShowEntryWidgetData, setReportShowEntryWidgetData] = useState<boolean>(true);
@@ -223,7 +222,7 @@ function NewExport(props: Props) {
         reportExportingWidgets: createWidgetIds(contextualWidgets),
         reportShowAssessmentData,
         reportShowEntryWidgetData,
-        reportShowGroups,
+        reportShowGroups: false,
         reportShowLeadEntryId,
         type: 'ENTRIES' as const,
         title: queryTitle,
@@ -235,7 +234,6 @@ function NewExport(props: Props) {
         queryTitle,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
-        reportShowGroups,
         reportShowLeadEntryId,
         reportStructure,
         selectAll,
@@ -316,7 +314,7 @@ function NewExport(props: Props) {
                         </BackLink>
                         <Button
                             name="showPreview"
-                            variant="primary"
+                            variant="secondary"
                             disabled={frameworkGetPending}
                             onClick={handlePreviewClick}
                         >
@@ -331,64 +329,72 @@ function NewExport(props: Props) {
                             Start Export
                         </Button>
                     </>
-
                 )}
             />
             <div className={styles.content}>
-                <div>
+                <Container
+                    className={styles.topBar}
+                    contentClassName={styles.topBarContent}
+                >
                     <TextInput
+                        className={styles.titleInput}
                         name="queryTitle"
                         value={queryTitle}
                         onChange={setQueryTitle}
                         label="Export Title"
                         placeholder="Export Title"
                     />
-                    <List
-                        data={exportTypes}
-                        rendererParams={exportTypeRendererParams}
-                        renderer={ExportTypeButton}
-                        keySelector={exportTypeKeySelector}
-                    />
-                    {exportFileFormat !== 'JSON' && (
-                        <Button
-                            name="undefined"
-                            variant="action"
-                            onClick={showAdvancedOptionsModal}
-                        >
-                            Advanced
-                        </Button>
-                    )}
+                    <Container
+                        heading="File Format"
+                        className={styles.fileFormatsContainer}
+                        headingSize="extraSmall"
+                        contentClassName={styles.fileFormats}
+                    >
+                        <ListView
+                            className={styles.typeOptions}
+                            data={exportTypes}
+                            keySelector={exportTypeKeySelector}
+                            rendererParams={exportTypeRendererParams}
+                            renderer={ExportTypeButton}
+                            pending={false}
+                            errored={false}
+                            filtered={false}
+                        />
+                        {exportFileFormat !== 'JSON' && (
+                            <Button
+                                className={styles.advancedButton}
+                                name="undefined"
+                                variant="action"
+                                onClick={showAdvancedOptionsModal}
+                            >
+                                Advanced
+                            </Button>
+                        )}
+                    </Container>
                     {advancedOptionsModalShown && (
-                        <Modal
-                            size="cover"
-                            heading="Advanced Options"
+                        <AdvancedOptionsSelection
                             onCloseButtonClick={hideAdvancedOptionsModal}
-                        >
-                            <AdvancedOptionsSelection
-                                exportFileFormat={exportFileFormat}
-                                reportStructure={reportStructure}
-                                reportStructureVariant={reportStructureVariant}
-                                excelDecoupled={excelDecoupled}
-                                reportShowGroups={reportShowGroups}
-                                reportShowLeadEntryId={reportShowLeadEntryId}
-                                reportShowAssessmentData={reportShowAssessmentData}
-                                reportShowEntryWidgetData={reportShowEntryWidgetData}
-                                includeSubSector={includeSubSector}
-                                showMatrix2dOptions={showMatrix2dOptions}
-                                contextualWidgets={contextualWidgets}
-                                textWidgets={textWidgets}
-                                onReportStructureChange={setReportStructure}
-                                onReportShowGroupsChange={setReportShowGroups}
-                                onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
-                                onReportShowAssessmentDataChange={setReportShowAssessmentData}
-                                onReportShowEntryWidgetDataChange={setReportShowEntryWidgetData}
-                                onReportStructureVariantChange={setReportStructureVariant}
-                                onExcelDecoupledChange={setExcelDecoupled}
-                                onIncludeSubSectorChange={setIncludeSubSector}
-                                onContextualWidgetsChange={setContextualWidgets}
-                                onTextWidgetsChange={setTextWidgets}
-                            />
-                        </Modal>
+                            exportFileFormat={exportFileFormat}
+                            reportStructure={reportStructure}
+                            reportStructureVariant={reportStructureVariant}
+                            excelDecoupled={excelDecoupled}
+                            reportShowLeadEntryId={reportShowLeadEntryId}
+                            reportShowAssessmentData={reportShowAssessmentData}
+                            reportShowEntryWidgetData={reportShowEntryWidgetData}
+                            includeSubSector={includeSubSector}
+                            showMatrix2dOptions={showMatrix2dOptions}
+                            contextualWidgets={contextualWidgets}
+                            textWidgets={textWidgets}
+                            onReportStructureChange={setReportStructure}
+                            onReportShowLeadEntryIdChange={setReportShowLeadEntryId}
+                            onReportShowAssessmentDataChange={setReportShowAssessmentData}
+                            onReportShowEntryWidgetDataChange={setReportShowEntryWidgetData}
+                            onReportStructureVariantChange={setReportStructureVariant}
+                            onExcelDecoupledChange={setExcelDecoupled}
+                            onIncludeSubSectorChange={setIncludeSubSector}
+                            onContextualWidgetsChange={setContextualWidgets}
+                            onTextWidgetsChange={setTextWidgets}
+                        />
                     )}
                     {previewModalShown && createExportData?.project?.exportCreate?.result?.id && (
                         <ExportPreviewModal
@@ -397,7 +403,7 @@ function NewExport(props: Props) {
                             onCloseButtonClick={hidePreviewModal}
                         />
                     )}
-                </div>
+                </Container>
                 <SourcesSelection
                     className={styles.leadsTableContainer}
                     projectId={projectId}
