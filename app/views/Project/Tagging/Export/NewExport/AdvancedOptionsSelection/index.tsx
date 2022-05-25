@@ -1,9 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 import {
-    ContainerCard,
-    Card,
+    Container,
+    Modal,
     Checkbox,
-    Heading,
 } from '@the-deep/deep-ui';
 import {
     ExportFormatEnum,
@@ -20,11 +19,13 @@ import {
     DIMENSION_FIRST,
 } from '../../utils';
 
+import styles from './styles.css';
+
 interface Props {
+    onCloseButtonClick: () => void;
     exportFileFormat: ExportFormatEnum;
     reportStructureVariant: string;
     excelDecoupled: boolean;
-    reportShowGroups: boolean;
     reportShowLeadEntryId: boolean;
     reportShowAssessmentData: boolean;
     reportShowEntryWidgetData: boolean;
@@ -33,7 +34,6 @@ interface Props {
     textWidgets: TreeSelectableWidget[];
     contextualWidgets: TreeSelectableWidget[];
     reportStructure?: Node[];
-    onReportShowGroupsChange: (show: boolean) => void;
     onReportShowLeadEntryIdChange: (show: boolean) => void;
     onReportShowAssessmentDataChange: (show: boolean) => void;
     onReportShowEntryWidgetDataChange: (show: boolean) => void;
@@ -46,11 +46,11 @@ interface Props {
 }
 function AdvancedOptionsSelection(props: Props) {
     const {
+        onCloseButtonClick,
         exportFileFormat,
         excelDecoupled,
         reportStructure,
         reportStructureVariant,
-        reportShowGroups,
         reportShowLeadEntryId,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
@@ -60,7 +60,6 @@ function AdvancedOptionsSelection(props: Props) {
         textWidgets,
         onReportStructureChange,
         onReportStructureVariantChange,
-        onReportShowGroupsChange,
         onReportShowLeadEntryIdChange,
         onReportShowAssessmentDataChange,
         onReportShowEntryWidgetDataChange,
@@ -82,28 +81,27 @@ function AdvancedOptionsSelection(props: Props) {
         reportStructureVariant === DIMENSION_FIRST
     ), [reportStructureVariant]);
 
-    // TODO: previously true when entryFilterOptions had projectLabels;
-    const showEntryGroupsSelection = false;
-
     return (
-        <div>
-            <div>
-                Left
-                <div>
-                    {(exportFileFormat === 'DOCX' || exportFileFormat === 'PDF') && (
-                        <div>
-                            <ContainerCard
+        <Modal
+            size={exportFileFormat === 'XLSX' ? 'small' : 'large'}
+            heading="Advanced Options"
+            onCloseButtonClick={onCloseButtonClick}
+            bodyClassName={styles.body}
+            freeHeight
+        >
+            {(exportFileFormat === 'DOCX' || exportFileFormat === 'PDF') && (
+                <div className={styles.reportOptions}>
+                    <p className={styles.note}>
+                        The values shown are based on filters from the main export page
+                    </p>
+                    <div className={styles.optionsContainer}>
+                        <div className={styles.left}>
+                            <Container
+                                className={styles.container}
                                 headingSize="extraSmall"
                                 heading={_ts('export', 'contentSettingsText')}
+                                contentClassName={styles.containerContent}
                             >
-                                {showEntryGroupsSelection && (
-                                    <Checkbox
-                                        name="reportShowGroups"
-                                        label={_ts('export', 'showEntryGroupsLabel')}
-                                        value={reportShowGroups}
-                                        onChange={onReportShowGroupsChange}
-                                    />
-                                )}
                                 <Checkbox
                                     name="reportShowLeadEntryId"
                                     label={_ts('export', 'showEntryIdLabel')}
@@ -122,83 +120,83 @@ function AdvancedOptionsSelection(props: Props) {
                                     value={reportShowEntryWidgetData}
                                     onChange={onReportShowEntryWidgetDataChange}
                                 />
-                            </ContainerCard>
-                            <ContainerCard>
-                                {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
-                                    <div>
-                                        <Heading size="extraSmall">
-                                            Contextual Widgets
-                                        </Heading>
-                                        <TreeSelection
-                                            name="contextualWidgets"
-                                            value={contextualWidgets}
-                                            onChange={onContextualWidgetsChange}
-                                            direction="vertical"
-                                        />
-                                    </div>
-                                )}
-                                {textWidgets.length > 0 && (
-                                    <div>
-                                        <Heading size="extraSmall">
-                                            Free Text Widgets
-                                        </Heading>
-                                        <TreeSelection
-                                            name="freeTextWidgets"
-                                            value={textWidgets}
-                                            onChange={onTextWidgetsChange}
-                                            direction="vertical"
-                                        />
-                                    </div>
-                                )}
-                            </ContainerCard>
-                            <ContainerCard
-                                headingSize="extraSmall"
-                                heading="Structure"
-                            >
-                                <TreeSelection
-                                    name="treeSelection"
-                                    value={reportStructure}
-                                    onChange={onReportStructureChange}
-                                />
-                                {showMatrix2dOptions && (
-                                    <div>
-                                        <Checkbox
-                                            name="checkbox"
-                                            label={_ts('export', 'includeSubSector')}
-                                            value={includeSubSector}
-                                            onChange={onIncludeSubSectorChange}
-                                        />
-                                        <Checkbox
-                                            name="swap-checkbox"
-                                            label={_ts('export', 'swapColumnRowsLabel')}
-                                            value={swapOrderValue}
-                                            onChange={handleSwapOrderValueChange}
-                                        />
-                                    </div>
-                                )}
-                            </ContainerCard>
+                            </Container>
+                            {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
+                                <Container
+                                    className={styles.container}
+                                    heading="Contextual Widgets"
+                                    headingSize="extraSmall"
+                                >
+                                    <TreeSelection
+                                        name="contextualWidgets"
+                                        value={contextualWidgets}
+                                        onChange={onContextualWidgetsChange}
+                                        direction="vertical"
+                                    />
+                                </Container>
+                            )}
+                            {textWidgets.length > 0 && (
+                                <Container
+                                    className={styles.container}
+                                    spacing="loose"
+                                    heading="Free Text Widgets"
+                                    headingSize="extraSmall"
+                                >
+                                    <TreeSelection
+                                        name="freeTextWidgets"
+                                        value={textWidgets}
+                                        onChange={onTextWidgetsChange}
+                                        direction="vertical"
+                                    />
+                                </Container>
+                            )}
                         </div>
-                    )}
-                    {(exportFileFormat === 'XLSX') && (
-                        <Card>
-                            <Checkbox
-                                name="excelDecoupled"
-                                label={_ts('export', 'decoupledEntriesLabel')}
-                                value={excelDecoupled}
-                                onChange={onExcelDecoupledChange}
+                        <Container
+                            className={styles.container}
+                            headingSize="extraSmall"
+                            heading="Structure"
+                            headingDescriptionClassName={styles.headingDescription}
+                            headingDescription={showMatrix2dOptions && (
+                                <>
+                                    <Checkbox
+                                        name="checkbox"
+                                        label={_ts('export', 'includeSubSector')}
+                                        value={includeSubSector}
+                                        onChange={onIncludeSubSectorChange}
+                                    />
+                                    <Checkbox
+                                        name="swap-checkbox"
+                                        label={_ts('export', 'swapColumnRowsLabel')}
+                                        value={swapOrderValue}
+                                        onChange={handleSwapOrderValueChange}
+                                    />
+                                </>
+                            )}
+                        >
+                            <TreeSelection
+                                name="treeSelection"
+                                value={reportStructure}
+                                onChange={onReportStructureChange}
                             />
-                            <div key="info">
-                                <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
-                                <p>{_ts('export', 'decoupledEntriesTitle')}</p>
-                            </div>
-                        </Card>
-                    )}
+                        </Container>
+                    </div>
                 </div>
-                <div>
-                    Preview
-                </div>
-            </div>
-        </div>
+            )}
+            {(exportFileFormat === 'XLSX') && (
+                <>
+                    <Checkbox
+                        name="excelDecoupled"
+                        label={_ts('export', 'decoupledEntriesLabel')}
+                        value={excelDecoupled}
+                        onChange={onExcelDecoupledChange}
+                    />
+                    <div key="info">
+                        <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
+                        <p>{_ts('export', 'decoupledEntriesTitle')}</p>
+                    </div>
+                </>
+            )}
+        </Modal>
     );
 }
 

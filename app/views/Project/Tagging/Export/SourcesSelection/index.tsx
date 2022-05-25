@@ -28,8 +28,9 @@ import {
     ProjectSourceListQueryVariables,
 } from '#generated/types';
 import { isFiltered } from '#utils/common';
-import SourcesFilter, { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
-import { PartialFormType, FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
+import SourcesFilter, { getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
+import { PartialFormType, FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+
 import styles from './styles.css';
 
 type Project = NonNullable<ProjectSourceListQuery['project']>;
@@ -338,6 +339,18 @@ function SourcesSelection(props: Props) {
         selectAll,
     ]);
 
+    const totalCount = projectSourcesResponse?.project?.leads?.totalCount;
+
+    const selectedLeadsCount = useMemo(() => (
+        selectAll
+            ? ((totalCount ?? 0) - selectedLeads.length)
+            : selectedLeads.length
+    ), [
+        selectedLeads,
+        selectAll,
+        totalCount,
+    ]);
+
     return (
         <div className={_cs(className, styles.leadsSelection)}>
             <SourcesFilter
@@ -349,8 +362,12 @@ function SourcesSelection(props: Props) {
                 hideEntriesFilter={hasAssessment}
             />
             <div className={styles.tableContainer}>
+                <p className={styles.note}>
+                    {`${selectedLeadsCount} of ${totalCount ?? 0} sources ${(selectedLeadsCount > 1) ? 'are' : 'is'} selected`}
+                </p>
                 <SortContext.Provider value={sortState}>
                     <TableView
+                        className={styles.table}
                         data={projectSourcesResponse?.project?.leads?.results}
                         pending={projectSourcesPending}
                         errored={false}
@@ -364,14 +381,16 @@ function SourcesSelection(props: Props) {
                         filteredEmptyMessage="No matching sources found."
                     />
                 </SortContext.Provider>
-                <Pager
-                    className={styles.footer}
-                    activePage={activePage}
-                    itemsCount={projectSourcesResponse?.project?.leads?.totalCount ?? 0}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onActivePageChange={setActivePage}
-                    itemsPerPageControlHidden
-                />
+                <div className={styles.footer}>
+                    <Pager
+                        className={styles.footer}
+                        activePage={activePage}
+                        itemsCount={totalCount ?? 0}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
+                    />
+                </div>
             </div>
         </div>
     );
