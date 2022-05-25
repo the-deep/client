@@ -1,13 +1,14 @@
 .export-type-select {
-    opacity: 0.2;
     outline: 0;
-    border: 0;
-    border-radius: 0.1em;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+    border-radius: 0.2em;
     cursor: pointer;
     padding: var(--dui-spacing-medium);
     font-size: var(--dui-font-size-super-large);
 
-    &.active {
-        opacity: 1;
+    &:not(&.active) {
+        opacity: 0.6;
+        filter: grayscale(100%);
+        border-color: transparent;
     }
 }

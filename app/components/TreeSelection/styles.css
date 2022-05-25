@@ -1,4 +1,8 @@
 .tree-selection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dui-spacing-small);
+
     .sortable-node {
         border: 0;
         background-color: var(--dui-color-foreground);
