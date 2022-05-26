@@ -12,7 +12,6 @@ function EntryCommentWrapper(props: EntryCommentsProps) {
         commentsCountMap,
         setCommentsCountMap,
     } = useContext(CommentCountContext);
-
     const handleEntryCommentAdd = useCallback(() => {
         setCommentsCountMap((oldCounts) => ({
             ...oldCounts,
