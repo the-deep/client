@@ -13,11 +13,12 @@
     .table-container {
         display: flex;
         flex-direction: column;
-        max-height: 50vh;
+        min-height: 50vh;
         overflow: auto;
         gap: var(--dui-spacing-medium);
 
         .note {
+            flex-shrink: 0;
             margin: 0;
             background-color: var(--dui-color-foreground);
             padding: var(--dui-spacing-small);
@@ -28,6 +29,7 @@
         .table {
             flex-grow: 1;
             background-color: var(--dui-color-foreground);
+            overflow-y: auto;
 
             .title-column {
                 min-width: 120px;
