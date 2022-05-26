@@ -20,9 +20,9 @@ export interface Node {
     nodes?: this[];
 }
 
-export interface TreeSelectableWidget extends Node {
+export type TreeSelectableWidget = Node & WidgetFromAF & {
     id: string;
-}
+};
 
 export interface ReportStructure {
     key: string;

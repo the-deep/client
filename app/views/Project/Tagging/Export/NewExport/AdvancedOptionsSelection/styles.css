@@ -1,38 +1,50 @@
-.body {
-    .report-options {
-        display: flex;
-        flex-direction: column;
-        gap: var(--dui-spacing-medium);
+.modal {
+    width: auto!important;
 
-        .container {
-            background-color: var(--dui-color-background-information);
-
-            .heading-description {
-                display: flex;
-                flex-direction: column;
-                gap: var(--dui-spacing-small);
-            }
-
-            .container-content {
-                display: flex;
-                flex-direction: column;
-                gap: var(--dui-spacing-medium);
-            }
-        }
-
-        .note {
-            margin: 0;
-            font-size: var(--dui-font-size-medium);
-        }
-
-        .options-container {
+    .body {
+        .report-options {
             display: flex;
-            gap: var(--dui-spacing-large);
+            flex-direction: column;
+            flex-shrink: 0;
+            gap: var(--dui-spacing-medium);
 
-            .left {
+            .container {
+                flex-shrink: 0;
+                background-color: var(--dui-color-background-information);
+
+                .heading-description {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-small);
+                }
+
+                .container-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-medium);
+                }
+            }
+
+            .note {
+                margin: 0;
+                font-size: var(--dui-font-size-medium);
+            }
+
+            .options-container {
                 display: flex;
-                flex-direction: column;
+                align-items: flex-start;
                 gap: var(--dui-spacing-large);
+
+                .left {
+                    display: flex;
+                    flex-direction: column;
+                    flex-shrink: 0;
+                    gap: var(--dui-spacing-large);
+                }
+
+                .entry-preview {
+                    width: 30rem;
+                }
             }
         }
     }
