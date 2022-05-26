@@ -176,6 +176,11 @@ function Project(props: Props) {
                     {routes.exportCreate.load({ className })}
                 </Route>
                 <Route
+                    path={routes.assessmentExportCreate.path}
+                >
+                    {routes.assessmentExportCreate.load({ className })}
+                </Route>
+                <Route
                     exact
                     path={routes.fourHundredFour.path}
                 >

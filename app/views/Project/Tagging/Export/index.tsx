@@ -79,13 +79,24 @@ function Export() {
                 headerActions={(
                     <>
                         <SmartButtonLikeLink
-                            variant="tertiary"
+                            icons={(<IoAdd />)}
+                            variant="primary"
                             route={routes.exportCreate}
                             attrs={{
                                 projectId: activeProject,
                             }}
                         >
                             New Export
+                        </SmartButtonLikeLink>
+                        <SmartButtonLikeLink
+                            variant="secondary"
+                            icons={(<IoAdd />)}
+                            route={routes.assessmentExportCreate}
+                            attrs={{
+                                projectId: activeProject,
+                            }}
+                        >
+                            New Assessment Export
                         </SmartButtonLikeLink>
                         <Button
                             name="export-entry"
