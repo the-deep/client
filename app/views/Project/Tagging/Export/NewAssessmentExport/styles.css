@@ -1,4 +1,4 @@
-.new-export {
+.new-assessment-export {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -26,30 +26,8 @@
                 align-items: center;
 
                 .title-input {
-                    border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                     padding: var(--dui-spacing-medium);
                     width: 24rem;
-                }
-
-                .file-formats-container {
-                    background-color: transparent;
-                    padding: 0 var(--dui-spacing-large);
-
-                    .file-formats {
-                        display: flex;
-                        align-items: flex-end;
-                        gap: var(--dui-spacing-small);
-
-                        .advanced-button {
-                            padding: var(--dui-spacing-small);
-                            font-size: var(--dui-font-size-extra-small);
-                        }
-
-                        .type-options {
-                            display: flex;
-                            gap: var(--dui-spacing-small);
-                        }
-                    }
                 }
             }
         }
