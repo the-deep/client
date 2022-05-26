@@ -12,8 +12,13 @@ import {
     AiFillFileText,
 } from 'react-icons/ai';
 import {
+    IoBookmarks,
+    IoDocumentText,
+} from 'react-icons/io5';
+import {
     Button,
     Container,
+    CompactInformationCard,
     TextInput,
     ListView,
     useModalState,
@@ -190,7 +195,7 @@ function NewExport(props: Props) {
         hidePreviewModal,
     ] = useModalState(false);
 
-    const { project } = React.useContext(ProjectContext);
+    const { project } = useContext(ProjectContext);
 
     const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
@@ -457,11 +462,28 @@ function NewExport(props: Props) {
                     )}
                 </Container>
                 <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
-                    <AppliedFilters
-                        projectId={projectId}
-                        value={sourcesFilter}
-                        onChange={setSourcesFilterValue}
-                    />
+                    <div className={styles.midBar}>
+                        <div className={styles.statsContainer}>
+                            <CompactInformationCard
+                                icon={<IoDocumentText />}
+                                label="Entries"
+                                valuePrecision={0}
+                                value={200}
+                            />
+                            <CompactInformationCard
+                                icon={<IoBookmarks />}
+                                label="Sources"
+                                valuePrecision={0}
+                                value={200}
+                            />
+                        </div>
+                        <AppliedFilters
+                            className={styles.appliedFilters}
+                            projectId={projectId}
+                            value={sourcesFilter}
+                            onChange={setSourcesFilterValue}
+                        />
+                    </div>
                     <SourcesSelection
                         className={styles.leadsTableContainer}
                         projectId={projectId}

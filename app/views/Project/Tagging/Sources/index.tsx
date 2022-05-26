@@ -149,20 +149,23 @@ function Sources(props: Props) {
                                 </TabList>
                             )}
                         />
-                        <Button
-                            name={undefined}
-                            onClick={toggleShowFilter}
-                            icons={<IoFunnel />}
-                        >
-                            Filter
-                        </Button>
-                        {activeProject && (
-                            <AppliedFilters
-                                projectId={activeProject}
-                                value={sourcesFilters}
-                                onChange={handleSourcesFiltersValueChange}
-                            />
-                        )}
+                        <div className={styles.filtersContainer}>
+                            <Button
+                                name={undefined}
+                                onClick={toggleShowFilter}
+                                icons={<IoFunnel />}
+                            >
+                                Filter
+                            </Button>
+                            {activeProject && (
+                                <AppliedFilters
+                                    className={styles.appliedFilters}
+                                    projectId={activeProject}
+                                    value={sourcesFilters}
+                                    onChange={handleSourcesFiltersValueChange}
+                                />
+                            )}
+                        </div>
                     </div>
                     <div className={styles.sourceListContainer}>
                         {showFilters && activeProject && (
@@ -175,9 +178,10 @@ function Sources(props: Props) {
                             />
                         )}
                         {activeProject && (
-                            <div className={styles.leads}>
+                            <>
                                 <TabPanel
                                     name="table"
+                                    className={styles.leads}
                                 >
                                     <SourcesTable
                                         className={styles.tableContainer}
@@ -189,13 +193,14 @@ function Sources(props: Props) {
                                 </TabPanel>
                                 <TabPanel
                                     name="grid"
+                                    className={styles.leads}
                                 >
                                     <EntriesGrid
                                         projectId={String(activeProject)}
                                         filters={sourcesFilters}
                                     />
                                 </TabPanel>
-                            </div>
+                            </>
                         )}
                     </div>
                 </SourcesFilterContext.Provider>

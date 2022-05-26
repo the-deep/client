@@ -6,18 +6,28 @@ import {
     Container,
     TextInput,
     useModalState,
+    CompactInformationCard,
     useAlert,
 } from '@the-deep/deep-ui';
 import { gql, useMutation } from '@apollo/client';
+import {
+    IoBookmarks,
+    IoDocumentText,
+} from 'react-icons/io5';
 
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import ProjectContext from '#base/context/ProjectContext';
 import _ts from '#ts';
+import { GeoArea } from '#components/GeoMultiSelectInput';
+import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
+
 import { FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
-import AppliedFilters from '../../Sources/AppliedFilters';
-import SourcesFilterContext from '../../Sources/SourcesFilterContext';
+import AppliedFilters from '#views/Project/Tagging/Sources/AppliedFilters';
+import SourcesFilterContext from '#views/Project/Tagging/Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
+
 import {
     CreateExportMutation,
     CreateExportMutationVariables,
@@ -74,7 +84,7 @@ function NewAssessmentExport(props: Props) {
         setFieldValue: setSourcesFilterValue,
     } = useFilterState();
 
-    const { project } = React.useContext(ProjectContext);
+    const { project } = useContext(ProjectContext);
 
     const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
@@ -206,7 +216,7 @@ function NewAssessmentExport(props: Props) {
         <div className={_cs(styles.newAssessmentExport, className)}>
             <SubNavbar
                 className={styles.header}
-                heading="New Export"
+                heading="New Assessment Export"
                 homeLinkShown
                 defaultActions={(
                     <>
@@ -255,11 +265,28 @@ function NewAssessmentExport(props: Props) {
                     )}
                 </Container>
                 <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
-                    <AppliedFilters
-                        projectId={projectId}
-                        value={sourcesFilter}
-                        onChange={setSourcesFilterValue}
-                    />
+                    <div className={styles.midBar}>
+                        <div className={styles.statsContainer}>
+                            <CompactInformationCard
+                                icon={<IoDocumentText />}
+                                label="Entries"
+                                valuePrecision={0}
+                                value={200}
+                            />
+                            <CompactInformationCard
+                                icon={<IoBookmarks />}
+                                label="Sources"
+                                valuePrecision={0}
+                                value={200}
+                            />
+                        </div>
+                        <AppliedFilters
+                            className={styles.appliedFilters}
+                            projectId={projectId}
+                            value={sourcesFilter}
+                            onChange={setSourcesFilterValue}
+                        />
+                    </div>
                     <SourcesSelection
                         className={styles.leadsTableContainer}
                         projectId={projectId}

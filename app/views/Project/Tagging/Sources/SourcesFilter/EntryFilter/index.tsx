@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useContext } from 'react';
+import React, { useMemo, useContext } from 'react';
 import {
     _cs,
     listToMap,
@@ -19,7 +19,7 @@ import {
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
-import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import ProjectMemberMultiSelectInput from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
 import SourcesFilterContext from '../../SourcesFilterContext';
