@@ -565,6 +565,7 @@ function SourcesTable(props: Props) {
                             rowModifier={rowModifier}
                             variant="large"
                             pending={pending}
+                            overflowContainerClassName={styles.overflowContainer}
                             filtered={isFiltered(entriesFilter)}
                             errored={false}
                             filteredEmptyMessage="No matching sources found."

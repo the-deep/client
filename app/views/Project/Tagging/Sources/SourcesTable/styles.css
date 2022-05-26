@@ -2,6 +2,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
+    flex-grow: 1;
     z-index: 0;
     background-color: var(--dui-color-foreground);
     padding: 0;
@@ -10,6 +11,10 @@
         display: flex;
         align-items: flex-start;
         flex-grow: 1;
+
+        .overflow-container {
+            overflow: unset;
+        }
 
         .table {
             width: 100%;

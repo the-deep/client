@@ -1,11 +1,12 @@
 .applied-filters {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--dui-spacing-small);
+    gap: var(--dui-spacing-medium);
 }
 
 .dismissable-tag {
     display: flex;
+    align-items: stretch;
     flex-direction: column;
 
     .label {
@@ -17,6 +18,8 @@
     .tag {
         align-items: center;
         border-radius: 0.25rem;
+        background-color: var(--dui-color-background-information);
         padding: var(--dui-spacing-small);
+        width: unset;
     }
 }
