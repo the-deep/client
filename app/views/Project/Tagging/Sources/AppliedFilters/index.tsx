@@ -100,7 +100,7 @@ function DismissableTag<T>(props: DismissableTagProps<T>) {
     );
 }
 
-interface DismissableBooleanOutputProps<T> {
+interface DismissableBooleanOutputProps<T extends string | number | undefined> {
     label?: React.ReactNode;
     trueLabel: string;
     falseLabel: string;
@@ -108,7 +108,9 @@ interface DismissableBooleanOutputProps<T> {
     name: T;
     onDismiss: (value: undefined, name: T) => void;
 }
-function DismissableBooleanOutput<T>(props: DismissableBooleanOutputProps<T>) {
+function DismissableBooleanOutput<T extends string | number | undefined>(
+    props: DismissableBooleanOutputProps<T>,
+) {
     const {
         label,
         trueLabel,
@@ -145,7 +147,11 @@ function DismissableBooleanOutput<T>(props: DismissableBooleanOutputProps<T>) {
     return null;
 }
 
-interface DismissableListOutputProps<D, V extends string | number, N> {
+interface DismissableListOutputProps<
+    D,
+    V extends string | number,
+    N extends string | number | undefined
+> {
     label?: React.ReactNode;
     value: V[] | undefined;
     name: N;
@@ -154,7 +160,7 @@ interface DismissableListOutputProps<D, V extends string | number, N> {
     labelSelector: (value: D) => string;
     options: D[] | undefined | null;
 }
-function DismissableListOutput<D, V extends string | number, N>(
+function DismissableListOutput<D, V extends string | number, N extends string | number | undefined>(
     props: DismissableListOutputProps<D, V, N>,
 ) {
     const {
@@ -194,7 +200,10 @@ function DismissableListOutput<D, V extends string | number, N>(
     );
 }
 
-interface DismissableDateRangeOutputProps<K, N> {
+interface DismissableDateRangeOutputProps<
+K extends string | number | undefined,
+N extends string | number | undefined
+> {
     label?: React.ReactNode;
     fromName: K;
     toName: N;
@@ -204,7 +213,10 @@ interface DismissableDateRangeOutputProps<K, N> {
     onDismissToValue: (value: undefined, name: N) => void;
 }
 
-function DismissableDateRangeOutput<K, N>(
+function DismissableDateRangeOutput<
+K extends string | number | undefined,
+N extends string | number | undefined
+>(
     props: DismissableDateRangeOutputProps<K, N>,
 ) {
     const {
