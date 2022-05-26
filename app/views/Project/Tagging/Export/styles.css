@@ -32,15 +32,3 @@
         }
     }
 }
-
-.modal {
-    .body {
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-
-        .selection {
-            flex-grow: 1;
-        }
-    }
-}
