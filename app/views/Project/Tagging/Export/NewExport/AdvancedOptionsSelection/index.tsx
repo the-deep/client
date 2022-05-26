@@ -4,12 +4,12 @@ import {
     Modal,
     Checkbox,
 } from '@the-deep/deep-ui';
-import {
-    ExportFormatEnum,
-} from '#generated/types';
+
 import TreeSelection from '#components/TreeSelection';
+import { ExportFormatEnum } from '#generated/types';
 import _ts from '#ts';
 
+import EntryPreview from '../EntryPreview';
 import {
     TreeSelectableWidget,
     Node,
@@ -83,6 +83,7 @@ function AdvancedOptionsSelection(props: Props) {
 
     return (
         <Modal
+            className={styles.modal}
             size={exportFileFormat === 'XLSX' ? 'small' : 'large'}
             heading="Advanced Options"
             onCloseButtonClick={onCloseButtonClick}
@@ -99,7 +100,7 @@ function AdvancedOptionsSelection(props: Props) {
                             <Container
                                 className={styles.container}
                                 headingSize="extraSmall"
-                                heading={_ts('export', 'contentSettingsText')}
+                                heading="Metadata to show"
                                 contentClassName={styles.containerContent}
                             >
                                 <Checkbox
@@ -179,6 +180,13 @@ function AdvancedOptionsSelection(props: Props) {
                                 onChange={onReportStructureChange}
                             />
                         </Container>
+                        <EntryPreview
+                            className={styles.entryPreview}
+                            showLeadEntryId={reportShowLeadEntryId}
+                            showAssessmentData={reportShowAssessmentData}
+                            showEntryWidgetData={reportShowEntryWidgetData}
+                            contextualWidgets={contextualWidgets}
+                        />
                     </div>
                 </div>
             )}
