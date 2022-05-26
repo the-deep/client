@@ -79,12 +79,6 @@ import {
     setPillarAnalysisDataAction,
 } from '#redux';
 */
-import FilterForm, { getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
-import {
-    FormType as FilterFormType,
-    PartialFormType as PartialFilterFormType,
-} from '#views/Project/Tagging/Sources/SourcesFilter/schema';
-
 import { transformSourcesFilterToEntriesFilter } from '#views/Project/Tagging/Sources/utils';
 import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem, { Props as SourceEntryItemProps } from './SourceEntryItem';
@@ -97,6 +91,12 @@ import {
     defaultFormValues,
     PartialAnalyticalStatementType,
 } from './schema';
+import FilterForm, { getProjectSourcesQueryVariables } from './SourcesFilter';
+import {
+    FormType as FilterFormType,
+    PartialFormType as PartialFilterFormType,
+} from './SourcesFilter/schema';
+
 import EntryContext, { EntryMin } from './context';
 
 import styles from './styles.css';
