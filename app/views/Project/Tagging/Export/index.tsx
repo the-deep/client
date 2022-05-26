@@ -1,26 +1,21 @@
 import React, { useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import {
-    Modal,
     Tabs,
     Tab,
     TabList,
     TabPanel,
     ContainerCard,
-    Button,
 } from '@the-deep/deep-ui';
 
 import {
     ExportDataTypeEnum,
 } from '#generated/types';
-import { useModalState } from '#hooks/stateManagement';
 import ProjectContext from '#base/context/ProjectContext';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import routes from '#base/configs/routes';
 
 import ExportHistory from './ExportHistory';
-import AssessmentsExportSelection from './AssessmentsExportSelection';
-import EntriesExportSelection from './EntriesExportSelection';
 
 import styles from './styles.css';
 
@@ -33,18 +28,6 @@ function Export() {
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? project.id : undefined;
     const [activeTab, setActiveTab] = useState<ExportType | undefined>('export-entry-history');
-
-    const [
-        newExportModalShown,
-        showCreateNewExportModal,
-        hideCreateNewExportModal,
-    ] = useModalState(false);
-
-    const [
-        newAssessmentModalShown,
-        showNewAssessmentModal,
-        hideNewAssessmentModal,
-    ] = useModalState(false);
 
     return (
         <Tabs
@@ -88,33 +71,17 @@ function Export() {
                         >
                             New Export
                         </SmartButtonLikeLink>
-                        <SmartButtonLikeLink
-                            variant="secondary"
-                            icons={(<IoAdd />)}
-                            route={routes.assessmentExportCreate}
-                            attrs={{
-                                projectId: activeProject,
-                            }}
-                        >
-                            New Assessment Export
-                        </SmartButtonLikeLink>
-                        <Button
-                            name="export-entry"
-                            onClick={showCreateNewExportModal}
-                            icons={<IoAdd />}
-                            variant="primary"
-                        >
-                            New Export
-                        </Button>
                         {project?.hasAssessmentTemplate && (
-                            <Button // TODO: properly check permissions
-                                name="export-assessment"
-                                onClick={showNewAssessmentModal}
-                                icons={<IoAdd />}
+                            <SmartButtonLikeLink
                                 variant="secondary"
+                                icons={(<IoAdd />)}
+                                route={routes.assessmentExportCreate}
+                                attrs={{
+                                    projectId: activeProject,
+                                }}
                             >
                                 New Assessment Export
-                            </Button>
+                            </SmartButtonLikeLink>
                         )}
                     </>
                 )}
@@ -143,36 +110,6 @@ function Export() {
                             />
                         )}
                     </TabPanel>
-                )}
-                {newExportModalShown && activeProject && (
-                    <Modal
-                        className={styles.modal}
-                        heading="Setup new export file"
-                        size="cover"
-                        onCloseButtonClick={hideCreateNewExportModal}
-                        bodyClassName={styles.body}
-                    >
-                        <EntriesExportSelection
-                            className={styles.selection}
-                            projectId={activeProject}
-                            onSuccess={hideCreateNewExportModal}
-                        />
-                    </Modal>
-                )}
-                {newAssessmentModalShown && activeProject && (
-                    <Modal
-                        className={styles.modal}
-                        size="cover"
-                        heading="Setup new assessment export file"
-                        onCloseButtonClick={hideNewAssessmentModal}
-                        bodyClassName={styles.body}
-                    >
-                        <AssessmentsExportSelection
-                            className={styles.selection}
-                            projectId={activeProject}
-                            onSuccess={hideNewAssessmentModal}
-                        />
-                    </Modal>
                 )}
             </ContainerCard>
         </Tabs>
