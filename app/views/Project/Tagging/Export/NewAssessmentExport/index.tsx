@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
 import {
@@ -15,6 +15,8 @@ import BackLink from '#components/BackLink';
 import ProjectContext from '#base/context/ProjectContext';
 import _ts from '#ts';
 import { FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+import AppliedFilters from '../../Sources/AppliedFilters';
+import SourcesFilterContext from '../../Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
 import {
     CreateExportMutation,
@@ -77,6 +79,53 @@ function NewAssessmentExport(props: Props) {
     const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
 
     const alert = useAlert();
+
+    const [
+        createdByOptions,
+        setCreatedByOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        assigneeOptions,
+        setAssigneeOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
+
+    const sourcesFilterContextValue = useMemo(() => ({
+        createdByOptions,
+        setCreatedByOptions,
+        assigneeOptions,
+        setAssigneeOptions,
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+        geoAreaOptions,
+        setGeoAreaOptions,
+    }), [
+        createdByOptions,
+        assigneeOptions,
+        authorOrganizationOptions,
+        sourceOrganizationOptions,
+        entryCreatedByOptions,
+        geoAreaOptions,
+    ]);
 
     const [
         createExport,
@@ -205,18 +254,25 @@ function NewAssessmentExport(props: Props) {
                         />
                     )}
                 </Container>
-                <SourcesSelection
-                    className={styles.leadsTableContainer}
-                    projectId={projectId}
-                    filterOnlyUnprotected={filterOnlyUnprotected}
-                    selectedLeads={selectedLeads}
-                    onSelectLeadChange={setSelectedLeads}
-                    selectAll={selectAll}
-                    onSelectAllChange={setSelectAll}
-                    filterValues={sourcesFilter}
-                    onFilterApply={setSourcesFilterValue}
-                    hasAssessment
-                />
+                <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
+                    <AppliedFilters
+                        projectId={projectId}
+                        value={sourcesFilter}
+                        onChange={setSourcesFilterValue}
+                    />
+                    <SourcesSelection
+                        className={styles.leadsTableContainer}
+                        projectId={projectId}
+                        filterOnlyUnprotected={filterOnlyUnprotected}
+                        selectedLeads={selectedLeads}
+                        onSelectLeadChange={setSelectedLeads}
+                        selectAll={selectAll}
+                        onSelectAllChange={setSelectAll}
+                        filterValues={sourcesFilter}
+                        onFilterApply={setSourcesFilterValue}
+                        hasAssessment
+                    />
+                </SourcesFilterContext.Provider>
             </div>
         </div>
     );
