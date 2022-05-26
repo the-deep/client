@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import {
     _cs,
     isDefined,
@@ -31,12 +31,13 @@ import {
     enumLabelSelector,
     convertDateToIsoDateTime,
 } from '#utils/common';
-import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
-import NewOrganizationMultiSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
+import ProjectMemberMultiSelectInput from '#components/selections/ProjectMemberMultiSelectInput';
+import NewOrganizationMultiSelectInput from '#components/selections/NewOrganizationMultiSelectInput';
 import BooleanInput from '#components/selections/BooleanInput';
 import NonFieldError from '#components/NonFieldError';
 import { OrganizationType } from '#generated/types';
 
+import SourcesFilterContext from '../SourcesFilterContext';
 import schema, {
     FormType,
     PartialFormType,
@@ -136,20 +137,20 @@ function SourcesFilter(props: Props) {
         onChange: setFieldValue,
     } = props;
 
-    const [createdByOptions, setCreatedByOptions] = useState<ProjectMember[] | undefined | null>();
-    const [assigneeOptions, setAssigneeOptions] = useState<ProjectMember[] | undefined | null>();
-
-    const [
-        authorOrganizationOptions,
-        setAuthorOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
-    const [
-        sourceOrganizationOptions,
-        setSourceOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
-
     const error = getErrorObject(formError);
     const [activeTab, setActiveTab] = React.useState<'source' | 'entry' | undefined>('source');
+
+    const {
+        createdByOptions,
+        setCreatedByOptions,
+        assigneeOptions,
+        setAssigneeOptions,
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    } = useContext(SourcesFilterContext);
+
     const {
         statusOptions,
         priorityOptions,

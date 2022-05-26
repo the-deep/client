@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -20,13 +20,14 @@ import {
     hasNoData,
     convertDateToIsoDateTime,
 } from '#utils/common';
-import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
+import GeoMultiSelectInput from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
-import { PartialEntriesFilterDataType } from '../../schema';
 import {
     FrameworkFilterType,
     KeyLabel,
 } from '#types/newAnalyticalFramework';
+import SourcesFilterContext from '../../../SourcesFilterContext';
+import { PartialEntriesFilterDataType } from '../../schema';
 import SubRegionCheckmark from './SubRegionCheckmark';
 import styles from './styles.css';
 
@@ -65,10 +66,10 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         variant,
     } = props;
 
-    const [
+    const {
         geoAreaOptions,
         setGeoAreaOptions,
-    ] = useState<GeoArea[] | undefined | null>(undefined);
+    } = useContext(SourcesFilterContext);
 
     const defaultOptionVal = useCallback(
         (): PartialFrameworkFilterValue => ({

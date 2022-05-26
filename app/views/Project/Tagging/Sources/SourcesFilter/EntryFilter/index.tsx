@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useContext } from 'react';
 import {
     _cs,
     listToMap,
@@ -22,6 +22,7 @@ import {
 import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
+import SourcesFilterContext from '../../SourcesFilterContext';
 import FrameworkFilterItem from './FrameworkFilterItem';
 import { SourceFilterOptions } from '../types';
 
@@ -72,7 +73,10 @@ function EntryFilter<K extends string>(props: Props<K>) {
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
 
-    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
+    const {
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+    } = useContext(SourcesFilterContext);
 
     const {
         setValue: onFrameworkFilterChange,
@@ -112,8 +116,8 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 projectId={projectId}
                 value={value?.createdBy}
                 onChange={setFieldValue}
-                options={members}
-                onOptionsChange={setMembers}
+                options={entryCreatedByOptions}
+                onOptionsChange={setEntryCreatedByOptions}
                 label="Entry Created By"
                 disabled={disabled}
             />
