@@ -15,11 +15,11 @@
         flex-direction: column;
         min-height: 50vh;
         overflow: auto;
-        gap: var(--dui-spacing-medium);
 
         .note {
             flex-shrink: 0;
             margin: 0;
+            margin-bottom: var(--dui-spacing-medium);
             background-color: var(--dui-color-foreground);
             padding: var(--dui-spacing-small);
             text-align: center;

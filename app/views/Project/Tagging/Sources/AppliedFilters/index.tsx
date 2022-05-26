@@ -621,10 +621,12 @@ interface Props {
     value: PartialFormType;
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
     projectId: string;
+    className?: string;
 }
 
 function AppliedFilters(props: Props) {
     const {
+        className,
         value,
         onChange,
         projectId,
@@ -647,7 +649,7 @@ function AppliedFilters(props: Props) {
     } = useFilterOptions(projectId);
 
     return (
-        <div className={styles.appliedFilters}>
+        <div className={_cs(className, styles.appliedFilters)}>
             <DismissableListOutput
                 label="Status"
                 name="statuses"
