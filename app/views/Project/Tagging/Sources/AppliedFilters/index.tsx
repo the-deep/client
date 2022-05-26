@@ -1,7 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
+import {
+    _cs,
+    listToMap,
+    isNotDefined,
+    encodeDate,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     EntriesAsList,
     useFormObject,
+    useFormArray,
     SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
@@ -11,16 +19,26 @@ import {
 } from '@the-deep/deep-ui';
 import { IoClose } from 'react-icons/io5';
 import {
-    _cs,
-    listToMap,
-    isNotDefined,
-} from '@togglecorp/fujs';
-
-import {
     enumKeySelector,
     enumLabelSelector,
     hasNoData,
 } from '#utils/common';
+import {
+    FrameworkFilterType,
+    KeyLabel,
+} from '#types/newAnalyticalFramework';
+import {
+    keySelector as projectMemberKeySelector,
+    labelSelector as projectMemberLabelSelector,
+} from '#components/selections/ProjectMemberMultiSelectInput';
+import {
+    keySelector as organizationKeySelector,
+    organizationTitleSelector as organizationLabelSelector,
+} from '#components/selections/NewOrganizationMultiSelectInput';
+import {
+    keySelector as geoAreaKeySelector,
+    labelSelector as geoAreaLabelSelector,
+} from '#components/GeoMultiSelectInput';
 
 import { PartialFormType, PartialEntriesFilterDataType } from '../SourcesFilter/schema';
 import useFilterOptions,
@@ -28,7 +46,14 @@ import useFilterOptions,
     organizationTypeKeySelector,
     organizationTypeLabelSelector,
 } from '../SourcesFilter/useFilterOptions';
+import SourcesFilterContext from '../SourcesFilterContext';
+import {
+    SourceFilterOptions,
+} from '../SourcesFilter/types';
 import styles from './styles.css';
+
+const filterKeySelector = (d: KeyLabel) => d.key;
+const filterLabelSelector = (d: KeyLabel) => d.label;
 
 interface DismissableTagProps<T> extends TagProps {
     label?: React.ReactNode;
@@ -261,6 +286,242 @@ function DismissableSelectOutput<D, V extends string | number, N>(
     );
 }
 
+type PartialFrameworkFilterValue = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
+
+interface FrameworkFilterOutputProps {
+    label?: string;
+    value: PartialFrameworkFilterValue;
+    index: number;
+    onDismiss: (index: number) => void;
+    frameworkFilter?: FrameworkFilterType;
+}
+function FrameworkFilterOutput(
+    props: FrameworkFilterOutputProps,
+) {
+    const {
+        label,
+        value,
+        onDismiss,
+        index,
+        frameworkFilter,
+    } = props;
+
+    const {
+        geoAreaOptions,
+    } = useContext(SourcesFilterContext);
+
+    const handleDismiss = React.useCallback(() => {
+        onDismiss(index);
+    }, [onDismiss, index]);
+
+    switch (frameworkFilter?.widgetType) {
+        case 'DATE': {
+            if (value.valueGte && value.valueLte) {
+                const startDate = encodeDate(new Date(value.valueGte));
+                const endDate = encodeDate(new Date(value.valueLte));
+                const content = `${startDate} - ${endDate}`;
+                return (
+                    <DismissableTag
+                        label={label}
+                        name={index}
+                        onDismiss={handleDismiss}
+                    >
+                        {content}
+                    </DismissableTag>
+                );
+            }
+            return null;
+        }
+        case 'DATE_RANGE': {
+            if (value.valueGte && value.valueLte) {
+                const startDate = encodeDate(new Date(value.valueGte));
+                const endDate = encodeDate(new Date(value.valueLte));
+                const content = `${startDate} - ${endDate}`;
+                return (
+                    <DismissableTag
+                        label={label}
+                        name={index}
+                        onDismiss={handleDismiss}
+                    >
+                        {content}
+                    </DismissableTag>
+                );
+            }
+            return null;
+        }
+        case 'TIME': {
+            if (value.valueGte && value.valueLte) {
+                const content = `${value.valueGte} - ${value.valueLte}`;
+                return (
+                    <DismissableTag
+                        label={label}
+                        name={index}
+                        onDismiss={handleDismiss}
+                    >
+                        {content}
+                    </DismissableTag>
+                );
+            }
+            return null;
+        }
+        case 'TIME_RANGE': {
+            if (value.valueGte && value.valueLte) {
+                const content = `${value.valueGte} - ${value.valueLte}`;
+                return (
+                    <DismissableTag
+                        label={label}
+                        name={index}
+                        onDismiss={handleDismiss}
+                    >
+                        {content}
+                    </DismissableTag>
+                );
+            }
+            return null;
+        }
+
+        case 'NUMBER': {
+            return (
+                <>
+                    {isDefined(value.valueGte) && (
+                        <DismissableTag
+                            label={`${label} (Greater than)`}
+                            name={index}
+                            onDismiss={handleDismiss}
+                        >
+                            {value.valueGte}
+                        </DismissableTag>
+                    )}
+                    {isDefined(value.valueLte) && (
+                        <DismissableTag
+                            label={`${label} (Less than)`}
+                            name={index}
+                            onDismiss={handleDismiss}
+                        >
+                            {value.valueLte}
+                        </DismissableTag>
+                    )}
+                </>
+            );
+        }
+
+        case 'SCALE': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={frameworkFilter?.properties?.options}
+                    keySelector={filterKeySelector}
+                    labelSelector={filterLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'GEO': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={geoAreaOptions}
+                    keySelector={geoAreaKeySelector}
+                    labelSelector={geoAreaLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'SELECT': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={frameworkFilter?.properties?.options}
+                    keySelector={filterKeySelector}
+                    labelSelector={filterLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'MULTISELECT': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={frameworkFilter?.properties?.options}
+                    keySelector={filterKeySelector}
+                    labelSelector={filterLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'ORGANIGRAM': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={frameworkFilter?.properties?.options}
+                    keySelector={filterKeySelector}
+                    labelSelector={filterLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'MATRIX1D': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={frameworkFilter?.properties?.options}
+                    keySelector={filterKeySelector}
+                    labelSelector={filterLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'MATRIX2D': {
+            return (
+                <DismissableListOutput
+                    label={label}
+                    name={index}
+                    onDismiss={handleDismiss}
+                    options={frameworkFilter?.properties?.options}
+                    keySelector={filterKeySelector}
+                    labelSelector={filterLabelSelector}
+                    value={value.valueList}
+                />
+            );
+        }
+
+        case 'TEXT': {
+            return (
+                isDefined(value.value) ? (
+                    <DismissableTag
+                        label={label}
+                        name={index}
+                        onDismiss={handleDismiss}
+                    >
+                        {value.value}
+                    </DismissableTag>
+                ) : null
+            );
+        }
+
+        default:
+            return null;
+    }
+}
+
 const defaultValue: PartialEntriesFilterDataType = {
     filterableData: [],
 };
@@ -275,7 +536,10 @@ interface EntryFilterOutputProps<K> {
     value: PartialEntriesFilterDataType | undefined;
     onChange: (value: SetValueArg<PartialEntriesFilterDataType | undefined>, name: K) => void;
     entryTypeOptions?: EnumOption[] | null | undefined;
+    frameworkFilters?: NonNullable<NonNullable<SourceFilterOptions['project']>['analysisFramework']>['filters'];
 }
+
+type FilterableData = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
 
 function EntryFilterOutput<K extends string>(
     props: EntryFilterOutputProps<K>,
@@ -285,12 +549,30 @@ function EntryFilterOutput<K extends string>(
         value,
         onChange,
         entryTypeOptions,
+        frameworkFilters,
     } = props;
+
+    const {
+        entryCreatedByOptions,
+    } = useContext(SourcesFilterContext);
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
 
+    const {
+        removeValue: onDismiss,
+    } = useFormArray<'filterableData', FilterableData>('filterableData', setFieldValue);
+
     return (
         <>
+            <DismissableListOutput
+                label="Entry Created By"
+                name="createdBy"
+                onDismiss={setFieldValue}
+                value={value?.createdBy}
+                options={entryCreatedByOptions}
+                labelSelector={projectMemberLabelSelector}
+                keySelector={projectMemberKeySelector}
+            />
             <DismissableDateRangeOutput
                 fromName="createdAtGte"
                 onDismissFromValue={setFieldValue}
@@ -304,6 +586,8 @@ function EntryFilterOutput<K extends string>(
                 label="Entry Controlled Status"
                 name="controlled"
                 onDismiss={setFieldValue}
+                trueLabel="Controlled"
+                falseLabel="Not controlled"
                 value={value?.controlled}
             />
             <DismissableListOutput
@@ -315,6 +599,20 @@ function EntryFilterOutput<K extends string>(
                 labelSelector={enumLabelSelector}
                 keySelector={enumKeySelector}
             />
+            {value?.filterableData?.map((frameworkFilterValue, filterIndex) => {
+                const frameworkFilter = frameworkFilters
+                    ?.find((f) => (f.key === frameworkFilterValue.filterKey));
+                return (
+                    <FrameworkFilterOutput
+                        label={frameworkFilter?.title}
+                        key={frameworkFilterValue.filterKey}
+                        index={filterIndex}
+                        value={frameworkFilterValue}
+                        onDismiss={onDismiss}
+                        frameworkFilter={frameworkFilter}
+                    />
+                );
+            })}
         </>
     );
 }
@@ -333,14 +631,19 @@ function AppliedFilters(props: Props) {
     } = props;
 
     const {
+        createdByOptions,
+        assigneeOptions,
+        authorOrganizationOptions,
+        sourceOrganizationOptions,
+    } = useContext(SourcesFilterContext);
+
+    const {
         statusOptions,
         priorityOptions,
         organizationTypeOptions,
         confidentialityOptions,
         entryTypeOptions,
-        // hasEntryOptions,
-        // hasAssessmentOptions,
-        // frameworkFilters,
+        frameworkFilters,
     } = useFilterOptions(projectId);
 
     return (
@@ -389,6 +692,24 @@ function AppliedFilters(props: Props) {
                 value={value.hasAssessment}
             />
             <DismissableListOutput
+                label="Source Created By"
+                name="createdBy"
+                onDismiss={onChange}
+                value={value.createdBy}
+                options={createdByOptions}
+                labelSelector={projectMemberLabelSelector}
+                keySelector={projectMemberKeySelector}
+            />
+            <DismissableListOutput
+                label="Assignees"
+                name="assignees"
+                onDismiss={onChange}
+                value={value.assignees}
+                options={assigneeOptions}
+                labelSelector={projectMemberLabelSelector}
+                keySelector={projectMemberKeySelector}
+            />
+            <DismissableListOutput
                 label="Priority"
                 name="priorities"
                 onDismiss={onChange}
@@ -406,6 +727,24 @@ function AppliedFilters(props: Props) {
                 labelSelector={organizationTypeLabelSelector}
                 value={value.authoringOrganizationTypes}
             />
+            <DismissableListOutput
+                label="Authoring Organizations"
+                name="authorOrganizations"
+                onDismiss={onChange}
+                value={value.authorOrganizations}
+                options={authorOrganizationOptions}
+                labelSelector={organizationLabelSelector}
+                keySelector={organizationKeySelector}
+            />
+            <DismissableListOutput
+                label="Source Organizations"
+                name="sourceOrganizations"
+                onDismiss={onChange}
+                value={value.sourceOrganizations}
+                options={sourceOrganizationOptions}
+                labelSelector={organizationLabelSelector}
+                keySelector={organizationKeySelector}
+            />
             <DismissableSelectOutput
                 label="Confidentiality"
                 name="confidentiality"
@@ -420,6 +759,7 @@ function AppliedFilters(props: Props) {
                 value={value.entriesFilterData}
                 onChange={onChange}
                 entryTypeOptions={entryTypeOptions}
+                frameworkFilters={frameworkFilters}
             />
         </div>
     );
