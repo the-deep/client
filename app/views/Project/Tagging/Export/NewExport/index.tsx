@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useContext } from 'react';
 import {
     useParams,
 } from 'react-router-dom';
@@ -28,11 +28,16 @@ import {
     ExportFormatEnum,
     ExportExportTypeEnum,
 } from '#generated/types';
+import { GeoArea } from '#components/GeoMultiSelectInput';
+import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 import ProjectContext from '#base/context/ProjectContext';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import _ts from '#ts';
 
+import AppliedFilters from '../../Sources/AppliedFilters';
+import SourcesFilterContext from '../../Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
 import { FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
@@ -125,6 +130,53 @@ function NewExport(props: Props) {
         value: sourcesFilter,
         setFieldValue: setSourcesFilterValue,
     } = useFilterState();
+
+    const [
+        createdByOptions,
+        setCreatedByOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        assigneeOptions,
+        setAssigneeOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
+    const [
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+    ] = useState<ProjectMember[] | undefined | null>();
+    const [
+        geoAreaOptions,
+        setGeoAreaOptions,
+    ] = useState<GeoArea[] | undefined | null>(undefined);
+
+    const sourcesFilterContextValue = useMemo(() => ({
+        createdByOptions,
+        setCreatedByOptions,
+        assigneeOptions,
+        setAssigneeOptions,
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+        geoAreaOptions,
+        setGeoAreaOptions,
+    }), [
+        createdByOptions,
+        assigneeOptions,
+        authorOrganizationOptions,
+        sourceOrganizationOptions,
+        entryCreatedByOptions,
+        geoAreaOptions,
+    ]);
 
     const [
         advancedOptionsModalShown,
@@ -404,17 +456,24 @@ function NewExport(props: Props) {
                         />
                     )}
                 </Container>
-                <SourcesSelection
-                    className={styles.leadsTableContainer}
-                    projectId={projectId}
-                    filterOnlyUnprotected={filterOnlyUnprotected}
-                    selectedLeads={selectedLeads}
-                    onSelectLeadChange={setSelectedLeads}
-                    selectAll={selectAll}
-                    onSelectAllChange={setSelectAll}
-                    filterValues={sourcesFilter}
-                    onFilterApply={setSourcesFilterValue}
-                />
+                <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
+                    <AppliedFilters
+                        projectId={projectId}
+                        value={sourcesFilter}
+                        onChange={setSourcesFilterValue}
+                    />
+                    <SourcesSelection
+                        className={styles.leadsTableContainer}
+                        projectId={projectId}
+                        filterOnlyUnprotected={filterOnlyUnprotected}
+                        selectedLeads={selectedLeads}
+                        onSelectLeadChange={setSelectedLeads}
+                        selectAll={selectAll}
+                        onSelectAllChange={setSelectAll}
+                        filterValues={sourcesFilter}
+                        onFilterApply={setSourcesFilterValue}
+                    />
+                </SourcesFilterContext.Provider>
             </div>
         </div>
     );

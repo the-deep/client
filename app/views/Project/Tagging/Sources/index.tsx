@@ -101,6 +101,7 @@ function Sources(props: Props) {
         entryCreatedByOptions,
         geoAreaOptions,
     ]);
+
     const handleSourcesFiltersValueChange = useCallback(
         (...value: EntriesAsList<PartialFormType>) => {
             setActivePage(1);
