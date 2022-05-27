@@ -1,5 +1,9 @@
 import React, { useState, useCallback, useContext, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import {
+    useHistory,
+    useParams,
+    generatePath,
+} from 'react-router-dom';
 import { _cs } from '@togglecorp/fujs';
 import {
     Button,
@@ -9,12 +13,13 @@ import {
     CompactInformationCard,
     useAlert,
 } from '@the-deep/deep-ui';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import {
     IoBookmarks,
     IoDocumentText,
 } from 'react-icons/io5';
 
+import routes from '#base/configs/routes';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import ProjectContext from '#base/context/ProjectContext';
@@ -34,29 +39,10 @@ import {
 } from '#generated/types';
 
 import SourcesSelection from '../SourcesSelection';
-import ExportPreviewModal from '../NewExport/ExportPreviewModal';
+import ExportPreviewModal from '../ExportPreviewModal';
+import { CREATE_EXPORT } from '../queries';
 
 import styles from './styles.css';
-
-export const CREATE_EXPORT = gql`
-    mutation CreateExport(
-        $projectId: ID!,
-        $data: ExportCreateInputType!,
-    ) {
-        project(id: $projectId) {
-            id
-            exportCreate(data: $data) {
-                ok
-                errors
-                result {
-                    id
-                    title
-                    isPreview
-                }
-            }
-        }
-    }
-`;
 
 interface Props {
     className?: string;
@@ -68,6 +54,7 @@ function NewAssessmentExport(props: Props) {
     const {
         projectId,
     } = useParams<{ projectId: string }>();
+    const history = useHistory();
 
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
@@ -151,6 +138,7 @@ function NewAssessmentExport(props: Props) {
                     if (response.project.exportCreate.result?.isPreview) {
                         showPreviewModal();
                     } else {
+                        history.replace(generatePath(routes.export.path, { projectId }), 'export-assessment-history');
                         alert.show(
                             _ts('export', 'exportStartedNotifyMessage'),
                             { variant: 'success' },

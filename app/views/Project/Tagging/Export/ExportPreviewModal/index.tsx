@@ -68,6 +68,16 @@ function ExportPreviewModal(props: Props) {
                     )}
                 />
             )}
+            {exportPreviewData?.project?.export?.status === 'PENDING' && (
+                <PendingMessage
+                    message="Export preview generation is pending. Please wait ..."
+                />
+            )}
+            {exportPreviewData?.project?.export?.status === 'STARTED' && (
+                <PendingMessage
+                    message="Export preview generation has started. Please wait ..."
+                />
+            )}
             {exportPreviewData?.project?.export?.status === 'CANCELED' && (
                 <Message
                     message="Export preview was canceled"

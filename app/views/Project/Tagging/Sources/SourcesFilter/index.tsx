@@ -95,7 +95,7 @@ export function useFilterState() {
 
     const error = getErrorObject(formError);
 
-    const resetValue = React.useMemo(() => {
+    const resetValue = React.useCallback(() => {
         setValue(initialValue);
     }, [setValue]);
 
