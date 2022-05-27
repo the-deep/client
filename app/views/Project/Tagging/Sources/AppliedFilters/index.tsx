@@ -100,6 +100,38 @@ function DismissableTag<T>(props: DismissableTagProps<T>) {
     );
 }
 
+interface DismissableTextOutputProps<T extends string | number | undefined> {
+    label?: React.ReactNode;
+    value?: string;
+    name: T;
+    onDismiss: (value: undefined, name: T) => void;
+}
+
+function DismissableTextOutput<T extends string | number | undefined>(
+    props: DismissableTextOutputProps<T>,
+) {
+    const {
+        label,
+        value,
+        name,
+        onDismiss,
+    } = props;
+
+    if (hasNoData(value)) {
+        return null;
+    }
+
+    return (
+        <DismissableTag
+            label={label}
+            name={name}
+            onDismiss={onDismiss}
+        >
+            {value}
+        </DismissableTag>
+    );
+}
+
 interface DismissableBooleanOutputProps<T extends string | number | undefined> {
     label?: React.ReactNode;
     trueLabel: string;
@@ -517,15 +549,12 @@ function FrameworkFilterOutput(
 
         case 'TEXT': {
             return (
-                isDefined(value.value) ? (
-                    <DismissableTag
-                        label={label}
-                        name={index}
-                        onDismiss={handleDismiss}
-                    >
-                        {value.value}
-                    </DismissableTag>
-                ) : null
+                <DismissableTextOutput
+                    label={label}
+                    name={index}
+                    value={value.value}
+                    onDismiss={handleDismiss}
+                />
             );
         }
 
@@ -576,6 +605,12 @@ function EntryFilterOutput<K extends string>(
 
     return (
         <>
+            <DismissableTextOutput
+                label="Excerpt Search"
+                name="search"
+                value={value?.search}
+                onDismiss={setFieldValue}
+            />
             <DismissableListOutput
                 label="Entry Created By"
                 name="createdBy"
@@ -662,6 +697,12 @@ function AppliedFilters(props: Props) {
 
     return (
         <div className={_cs(className, styles.appliedFilters)}>
+            <DismissableTextOutput
+                label="Source Title Search"
+                name="search"
+                value={value.search}
+                onDismiss={onChange}
+            />
             <DismissableListOutput
                 label="Status"
                 name="statuses"
