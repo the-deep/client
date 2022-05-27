@@ -242,7 +242,6 @@ function NewAssessmentExport(props: Props) {
                         value={queryTitle}
                         onChange={setQueryTitle}
                         label="Export Title"
-                        placeholder="Export Title"
                     />
                     {previewModalShown && createExportData?.project?.exportCreate?.result?.id && (
                         <ExportPreviewModal

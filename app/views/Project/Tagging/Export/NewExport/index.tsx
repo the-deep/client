@@ -4,9 +4,7 @@ import {
     useParams,
     generatePath,
 } from 'react-router-dom';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import {
     AiFillFilePdf,
     AiFillFileExcel,
@@ -309,12 +307,14 @@ function NewExport(props: Props) {
             reportStructureVariant,
             includeSubSector,
             analysisFramework,
+            sourcesFilter?.entriesFilterData?.filterableData,
         );
         setReportStructure(structure);
     }, [
         analysisFramework,
         reportStructureVariant,
         includeSubSector,
+        sourcesFilter?.entriesFilterData?.filterableData,
     ]);
 
     const showMatrix2dOptions = useMemo(
@@ -403,7 +403,6 @@ function NewExport(props: Props) {
                         value={queryTitle}
                         onChange={setQueryTitle}
                         label="Export Title"
-                        placeholder="Export Title"
                     />
                     <Container
                         heading="File Format"

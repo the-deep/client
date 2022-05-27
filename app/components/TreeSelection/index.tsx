@@ -41,6 +41,7 @@ interface SortableNodeProps<T extends Node> {
     node: T;
     onCheckboxClick: (newVal: boolean, key: string) => void;
     onChildrenChange: (children: T[], key: string) => void;
+    checkboxHidden?: boolean;
 }
 
 function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
@@ -56,6 +57,7 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
         onChildrenChange,
         attributes,
         listeners,
+        checkboxHidden,
     } = props;
 
     const selectedNodesLength = nodes?.filter((n) => n.selected)?.length ?? 0;
@@ -79,13 +81,15 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
                     >
                         <GrDrag />
                     </QuickActionButton>
-                    <Checkbox
-                        name={key}
-                        value={selected}
-                        className={styles.checkbox}
-                        onChange={onCheckboxClick}
-                        indeterminate={indeterminate}
-                    />
+                    {!checkboxHidden && (
+                        <Checkbox
+                            name={key}
+                            value={selected}
+                            className={styles.checkbox}
+                            onChange={onCheckboxClick}
+                            indeterminate={indeterminate}
+                        />
+                    )}
                 </>
             )}
             heading={title}
@@ -103,9 +107,11 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
         >
             {/* eslint-disable-next-line @typescript-eslint/no-use-before-define */}
             <TreeSelection
+                className={styles.nestedTree}
                 name={key}
                 value={nodes}
                 onChange={onChildrenChange}
+                checkboxHidden={checkboxHidden}
             />
         </ExpandableContainer>
     );
@@ -119,6 +125,7 @@ interface Props<N extends string, T extends Node> {
     value?: T[] | undefined;
     onChange: (newVal: T[], name: N) => void;
     direction?: 'vertical' | 'horizontal';
+    checkboxHidden?: boolean;
 }
 
 const emptyArray: unknown[] = [];
@@ -130,6 +137,7 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
         onChange,
         className,
         direction = 'vertical',
+        checkboxHidden,
     } = props;
 
     // Handle toggling the state of checkbox including its children
@@ -168,7 +176,8 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
         onCheckboxClick: handleCheckboxChange,
         onChildrenChange: handleChildrenChange,
         node: data,
-    }), [handleCheckboxChange, handleChildrenChange]);
+        checkboxHidden,
+    }), [handleCheckboxChange, handleChildrenChange, checkboxHidden]);
 
     return (
         <SortableList
