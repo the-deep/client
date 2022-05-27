@@ -3,6 +3,7 @@ import {
     useParams,
 } from 'react-router-dom';
 import {
+    listToMap,
     _cs,
 } from '@togglecorp/fujs';
 import {
@@ -300,17 +301,34 @@ function NewExport(props: Props) {
 
     const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
 
+    const filterMap = useMemo(() => (
+        listToMap(
+            analysisFramework?.filters?.filter(
+                (filter) => filter.widgetType === 'MATRIX1D' || filter.widgetType === 'MATRIX2D',
+            ),
+            (filter) => filter.key,
+            (filter) => ({
+                widgetId: filter.id,
+                widgetType: filter.widgetType,
+            }),
+        )
+    ), [analysisFramework]);
+
     useEffect(() => {
         const structure = createReportStructure(
             reportStructureVariant,
             includeSubSector,
             analysisFramework,
+            sourcesFilter?.entriesFilterData?.filterableData,
+            filterMap,
         );
         setReportStructure(structure);
     }, [
+        filterMap,
         analysisFramework,
         reportStructureVariant,
         includeSubSector,
+        sourcesFilter?.entriesFilterData?.filterableData,
     ]);
 
     const showMatrix2dOptions = useMemo(

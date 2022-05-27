@@ -6,6 +6,7 @@ import {
     Level,
     Widget,
 } from '#types/newAnalyticalFramework';
+import { PartialEntriesFilterDataType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
 import {
     ReportStructure,
     AnalysisFramework,
@@ -131,31 +132,72 @@ function transformLevelsColumnFirst(
     return sectorFirstLevels;
 }
 
-function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
-    return levels.map((level) => ({
-        key: level.id,
-        title: level.title,
-        selected: true,
-        draggable: true,
-        nodes: level.sublevels && mapReportLevelsToNodes(level.sublevels),
-    }));
+function mapReportLevelsToNodes(levels: Level[], valueList: string[] = []): ReportStructure[] {
+    return levels.map((level) => {
+        if (valueList.length === 0) {
+            return ({
+                key: level.id,
+                title: level.title,
+                selected: true,
+                draggable: true,
+                nodes: level.sublevels && mapReportLevelsToNodes(level.sublevels, valueList),
+            });
+        }
+        const isActiveKey = valueList.some((val) => val === level.id);
+
+        if (level.sublevels) {
+            const nodes = mapReportLevelsToNodes(level.sublevels, valueList);
+            console.warn('here', nodes);
+
+            if (nodes.length > 0 || isActiveKey) {
+                return ({
+                    key: level.id,
+                    title: level.title,
+                    selected: true,
+                    draggable: true,
+                    nodes,
+                });
+            }
+            return undefined;
+        }
+
+        if (!level.sublevels && isActiveKey) {
+            return ({
+                key: level.id,
+                title: level.title,
+                selected: true,
+                draggable: true,
+                nodes: undefined,
+            });
+        }
+
+        return undefined;
+    }).filter(isDefined);
 }
 
 export const createReportStructure = (
     reportStructureVariant: string = SECTOR_FIRST,
     includeSubColumn: boolean,
     analysisFramework: AnalysisFramework | null | undefined,
+    filterData: PartialEntriesFilterDataType['filterableData'],
 ): ReportStructure[] => {
     if (!analysisFramework || !analysisFramework.exportables) {
         return [];
     }
 
-    const { exportables } = analysisFramework;
+    const {
+        exportables,
+    } = analysisFramework;
 
     const widgets = getWidgets(analysisFramework);
     if (!widgets) {
         return [];
     }
+
+    const filterWithWidgetId = filterData?.map((filter) => ({
+        widgetKey: filter?.filterKey?.split('-')?.[0],
+        valueList: filter?.valueList,
+    }));
 
     // FIXME: we are creating exportable for Matrix2d,
     // if we create exportable for Matrix1d we can just not read exportable on
@@ -189,6 +231,9 @@ export const createReportStructure = (
         }
         if (exportable.widgetType === 'MATRIX1D') {
             const widget = widgets.find((w) => w.key === exportable.widgetKey);
+            const appliedFilter = filterWithWidgetId?.find(
+                (f) => f.widgetKey === exportable.widgetKey,
+            );
             if (!widget || widget.widgetId !== exportable.widgetType) {
                 return undefined;
             }
@@ -201,7 +246,7 @@ export const createReportStructure = (
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
-                nodes: mapReportLevelsToNodes(newLevels),
+                nodes: mapReportLevelsToNodes(newLevels, appliedFilter?.valueList),
             };
         }
         return undefined;
