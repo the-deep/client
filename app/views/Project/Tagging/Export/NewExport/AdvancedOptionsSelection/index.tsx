@@ -178,6 +178,7 @@ function AdvancedOptionsSelection(props: Props) {
                                 name="treeSelection"
                                 value={reportStructure}
                                 onChange={onReportStructureChange}
+                                checkboxHidden
                             />
                         </Container>
                         <EntryPreview

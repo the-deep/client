@@ -252,7 +252,7 @@ function SourcesSelection(props: Props) {
     ]);
 
     return (
-        <div className={_cs(className, styles.leadsSelection)}>
+        <div className={_cs(className, styles.sourcesSelection)}>
             <SourcesFilter
                 className={styles.sourceEntryFilter}
                 onChange={handleSourcesFiltersValueChange}
