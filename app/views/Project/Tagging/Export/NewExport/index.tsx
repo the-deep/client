@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect, useContext } from 'react';
 import {
+    useHistory,
     useParams,
+    generatePath,
 } from 'react-router-dom';
 import {
     _cs,
@@ -25,6 +27,7 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import { useQuery, useMutation } from '@apollo/client';
+
 import {
     ProjectFrameworkDetailsQuery,
     ProjectFrameworkDetailsQueryVariables,
@@ -33,6 +36,7 @@ import {
     ExportFormatEnum,
     ExportExportTypeEnum,
 } from '#generated/types';
+import routes from '#base/configs/routes';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
@@ -48,7 +52,7 @@ import { FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
 import ExportTypeButton from './ExportTypeButton';
 import SourcesSelection from '../SourcesSelection';
-import ExportPreviewModal from './ExportPreviewModal';
+import ExportPreviewModal from '../ExportPreviewModal';
 import {
     ExportTypeItem,
     TreeSelectableWidget,
@@ -64,8 +68,7 @@ import {
     createReportStructureForExport,
     createWidgetIds,
 } from '../utils';
-
-import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT } from './queries';
+import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT } from '../queries';
 import styles from './styles.css';
 
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
@@ -114,7 +117,7 @@ function NewExport(props: Props) {
     const {
         projectId,
     } = useParams<{ projectId: string }>();
-
+    const history = useHistory();
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [exportFileFormat, setExportFileFormat] = useState<ExportFormatEnum>('DOCX');
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
@@ -215,6 +218,7 @@ function NewExport(props: Props) {
                     if (response.project.exportCreate.result?.isPreview) {
                         showPreviewModal();
                     } else {
+                        history.replace(generatePath(routes.export.path, { projectId }), 'export-entry-history');
                         alert.show(
                             _ts('export', 'exportStartedNotifyMessage'),
                             { variant: 'success' },

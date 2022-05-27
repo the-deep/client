@@ -19,7 +19,7 @@ import {
     CheckboxProps,
 } from '@the-deep/deep-ui';
 import { EntriesAsList } from '@togglecorp/toggle-form';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import {
@@ -30,7 +30,7 @@ import {
 import { isFiltered } from '#utils/common';
 import SourcesFilter, { getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
 import { PartialFormType, FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
-
+import { PROJECT_LEADS } from '../queries';
 import styles from './styles.css';
 
 type Project = NonNullable<ProjectSourceListQuery['project']>;
@@ -44,108 +44,8 @@ const defaultSorting = {
 function leadsKeySelector(d: Lead) {
     return d.id;
 }
-const maxItemsPerPage = 10;
 
-const PROJECT_LEADS = gql`
-    query ProjectSourceList(
-        $projectId: ID!,
-        $page: Int,
-        $pageSize: Int,
-        $ordering: [LeadOrderingEnum!],
-        $assignees: [ID!],
-        $createdBy: [ID!],
-        $authoringOrganizationTypes: [ID!],
-        $confidentiality: LeadConfidentialityEnum,
-        $createdAtGte: DateTime,
-        $createdAtLte: DateTime,
-        $emmEntities: String,
-        $emmKeywords: String,
-        $emmRiskFactors: String,
-        $priorities: [LeadPriorityEnum!],
-        $publishedOnGte: Date,
-        $publishedOnLte: Date,
-        $search: String,
-        $statuses: [LeadStatusEnum!],
-        $sourceOrganizations: [ID!],
-        $authorOrganizations: [ID!],
-        $entriesFilterData: LeadEntriesFilterData,
-        $hasEntries: Boolean,
-        $hasAssessment: Boolean,
-    ) {
-        project(id: $projectId) {
-            id
-            leads (
-                page: $page,
-                pageSize: $pageSize,
-                ordering: $ordering,
-                assignees: $assignees,
-                createdBy: $createdBy,
-                authoringOrganizationTypes: $authoringOrganizationTypes,
-                confidentiality: $confidentiality,
-                createdAtGte: $createdAtGte,
-                createdAtLte: $createdAtLte,
-                emmEntities: $emmEntities,
-                emmKeywords: $emmKeywords,
-                emmRiskFactors: $emmRiskFactors,
-                priorities: $priorities,
-                publishedOnGte: $publishedOnGte,
-                publishedOnLte: $publishedOnLte,
-                search: $search,
-                statuses: $statuses,
-                sourceOrganizations: $sourceOrganizations,
-                authorOrganizations: $authorOrganizations,
-                entriesFilterData: $entriesFilterData,
-                hasEntries: $hasEntries,
-                hasAssessment: $hasAssessment,
-            ) {
-                totalCount
-                page
-                pageSize
-                results {
-                    id
-                    clientId
-                    createdAt
-                    title
-                    publishedOn
-                    createdBy {
-                        id
-                        displayName
-                    }
-                    project
-                    authors {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
-                    }
-                    assignee {
-                        id
-                        displayName
-                    }
-                    source {
-                        mergedAs {
-                            id
-                            title
-                        }
-                        id
-                        url
-                        title
-                    }
-                    entriesCount {
-                        total
-                    }
-                    filteredEntriesCount
-                    leadPreview {
-                        pageCount
-                    }
-                    isAssessmentLead
-                }
-            }
-        }
-    }
-`;
+const maxItemsPerPage = 10;
 
 interface Props {
     className?: string;
