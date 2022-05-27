@@ -1,7 +1,6 @@
 .new-assessment-export {
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow-y: auto;
 
     .header {
@@ -35,7 +34,7 @@
         .mid-bar {
             display: flex;
             background-color: var(--dui-color-foreground);
-            padding: var(--dui-spacing-large);
+            padding: var(--dui-spacing-extra-large);
             gap: var(--dui-spacing-medium);
 
             .stats-container {

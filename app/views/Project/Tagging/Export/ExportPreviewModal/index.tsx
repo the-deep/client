@@ -2,7 +2,6 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import {
     Modal,
-    PendingMessage,
     Message,
     Kraken,
 } from '@the-deep/deep-ui';
@@ -13,6 +12,8 @@ import {
 import LeadPreview from '#components/lead/LeadPreview';
 
 import { EXPORT_PREVIEW } from '../queries';
+
+import styles from './styles.css';
 
 interface Props {
     projectId: string;
@@ -50,48 +51,32 @@ function ExportPreviewModal(props: Props) {
         },
     );
 
+    const status = exportPreviewData?.project?.export?.status;
+
     return (
         <Modal
-            size="cover"
+            size="large"
             heading={exportPreviewData?.project?.export?.title}
             onCloseButtonClick={onCloseButtonClick}
+            bodyClassName={styles.body}
         >
-            {exportPreviewPending && <PendingMessage />}
-            {exportPreviewData?.project?.export?.status === 'FAILURE' && (
-                <Message
-                    message="Failed to generate export preview"
-                    icon={(
-                        <Kraken
-                            size="large"
-                            variant="crutches"
-                        />
-                    )}
-                />
-            )}
-            {exportPreviewData?.project?.export?.status === 'PENDING' && (
-                <PendingMessage
-                    message="Export preview generation is pending. Please wait ..."
-                />
-            )}
-            {exportPreviewData?.project?.export?.status === 'STARTED' && (
-                <PendingMessage
-                    message="Export preview generation has started. Please wait ..."
-                />
-            )}
-            {exportPreviewData?.project?.export?.status === 'CANCELED' && (
-                <Message
-                    message="Export preview was canceled"
-                    icon={(
-                        <Kraken
-                            size="large"
-                            variant="crutches"
-                        />
-                    )}
-                />
-            )}
-            {exportPreviewData?.project?.export?.status === 'SUCCESS' && (
+            {status === 'SUCCESS' ? (
                 <LeadPreview
+                    className={styles.leadPreview}
                     attachment={exportPreviewData?.project?.export}
+                />
+            ) : (
+                <Message
+                    errored={status === 'FAILURE' || status === 'CANCELED'}
+                    erroredEmptyMessage={status === 'CANCELED' ? 'Export preview was canceled' : 'Failed to generate export preview.'}
+                    erroredEmptyIcon={(
+                        <Kraken
+                            size="large"
+                            variant="crutches"
+                        />
+                    )}
+                    pending={exportPreviewPending || status === 'PENDING' || status === 'STARTED'}
+                    pendingMessage={status === 'STARTED' ? 'Export preview generation has started. Please wait...' : 'Export preview generation is pending. Please wait ...'}
                 />
             )}
         </Modal>

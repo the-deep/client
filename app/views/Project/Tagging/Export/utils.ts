@@ -6,6 +6,7 @@ import {
     Level,
     Widget,
 } from '#types/newAnalyticalFramework';
+import { PartialEntriesFilterDataType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
 import {
     ReportStructure,
     AnalysisFramework,
@@ -131,31 +132,102 @@ function transformLevelsColumnFirst(
     return sectorFirstLevels;
 }
 
-function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
-    return levels.map((level) => ({
-        key: level.id,
-        title: level.title,
-        selected: true,
-        draggable: true,
-        nodes: level.sublevels && mapReportLevelsToNodes(level.sublevels),
-    }));
+// NOTE: This function is used to generate report levels for matrix2d
+// It currently filters out any item that is not part of the item in the 2 filter lists of matrix2d
+function mapReportLevelsToNodes(
+    levels: Level[],
+    rowsSet: Set<string>,
+    colsSet: Set<string>,
+): ReportStructure[] {
+    return levels.map((level) => {
+        // NOTE: If there are no filters selected, we show everything
+        if (rowsSet.size === 0 && colsSet.size === 0) {
+            return ({
+                key: level.id,
+                title: level.title,
+                selected: true,
+                draggable: true,
+                nodes: level.sublevels && mapReportLevelsToNodes(
+                    level.sublevels, rowsSet, colsSet,
+                ),
+            });
+        }
+
+        const splits = level.id.split('-');
+        // NOTE: Levels are by default a composite of keys
+        // We are checking for any item in the list of keys to include all children
+        // of selected root as well
+        // Sample level: {rowId}-{subRowId}-{colId}-{subColId}
+        // If row/col is selected in filter, we show all child of that row
+        const isActiveRowKey = splits.some(
+            (split) => rowsSet.has(split),
+        );
+
+        const isActiveColKey = splits.some(
+            (split) => colsSet.has(split),
+        );
+
+        // NOTE: If both row and col filters are applied, we need to apply AND logic
+        const isActiveKey = (rowsSet.size > 0 && colsSet.size > 0)
+            ? (isActiveRowKey && isActiveColKey)
+            : (isActiveRowKey || isActiveColKey);
+
+        if (level.sublevels) {
+            const nodes = mapReportLevelsToNodes(
+                level.sublevels,
+                rowsSet,
+                colsSet,
+            );
+
+            if (nodes.length > 0 || isActiveKey) {
+                return ({
+                    key: level.id,
+                    title: level.title,
+                    selected: true,
+                    draggable: true,
+                    nodes,
+                });
+            }
+        }
+
+        if (!level.sublevels && isActiveKey) {
+            return ({
+                key: level.id,
+                title: level.title,
+                selected: true,
+                draggable: true,
+                nodes: undefined,
+            });
+        }
+
+        return undefined;
+    }).filter(isDefined);
 }
 
 export const createReportStructure = (
     reportStructureVariant: string = SECTOR_FIRST,
     includeSubColumn: boolean,
     analysisFramework: AnalysisFramework | null | undefined,
+    filterData: PartialEntriesFilterDataType['filterableData'],
 ): ReportStructure[] => {
     if (!analysisFramework || !analysisFramework.exportables) {
         return [];
     }
 
-    const { exportables } = analysisFramework;
+    const {
+        exportables,
+    } = analysisFramework;
 
     const widgets = getWidgets(analysisFramework);
     if (!widgets) {
         return [];
     }
+
+    const filterWithWidgetId = filterData?.map((filter) => ({
+        // FIXME: We need to use the widgetKey from server
+        widgetKey: filter?.filterKey?.split('-')?.[0],
+        valueList: filter?.valueList,
+    }));
 
     // FIXME: we are creating exportable for Matrix2d,
     // if we create exportable for Matrix1d we can just not read exportable on
@@ -179,16 +251,32 @@ export const createReportStructure = (
                 return undefined;
             }
 
+            // NOTE: There can two filters for matrix2d
+            const appliedValuesList = filterWithWidgetId?.filter(
+                (f) => f.widgetKey === exportable.widgetKey,
+            ).map((v) => v.valueList).filter(isDefined);
+
+            const rowsSet = new Set(appliedValuesList?.[0]);
+            const colsSet = new Set(appliedValuesList?.[1]);
+
             return {
                 title: widget.title,
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
-                nodes: mapReportLevelsToNodes(newLevels),
+                nodes: mapReportLevelsToNodes(
+                    newLevels,
+                    rowsSet,
+                    colsSet,
+                ),
             };
         }
         if (exportable.widgetType === 'MATRIX1D') {
             const widget = widgets.find((w) => w.key === exportable.widgetKey);
+            // NOTE: There can only be one filter for matrix1d
+            const appliedFilter = filterWithWidgetId?.find(
+                (f) => f.widgetKey === exportable.widgetKey,
+            );
             if (!widget || widget.widgetId !== exportable.widgetType) {
                 return undefined;
             }
@@ -196,12 +284,14 @@ export const createReportStructure = (
             if (!newLevels) {
                 return undefined;
             }
+            const rowsSet = new Set(appliedFilter?.valueList);
+            const emptySet = new Set<string>();
             return {
                 title: widget.title,
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
-                nodes: mapReportLevelsToNodes(newLevels),
+                nodes: mapReportLevelsToNodes(newLevels, rowsSet, emptySet),
             };
         }
         return undefined;
