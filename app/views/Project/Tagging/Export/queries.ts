@@ -15,6 +15,11 @@ export const PROJECT_FRAMEWORK_DETAILS = gql`
                     widgetType
                     widgetTypeDisplay
                 }
+                filters {
+                    id
+                    key
+                    widgetType
+                }
                 primaryTagging {
                     widgets {
                         id
