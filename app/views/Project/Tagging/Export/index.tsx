@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import {
+    useLocation,
+} from 'react-router-dom';
 import { IoAdd } from 'react-icons/io5';
 import {
     Tabs,
@@ -27,7 +30,9 @@ const assessmentType: ExportDataTypeEnum[] = ['PLANNED_ASSESSMENTS', 'ASSESSMENT
 function Export() {
     const { project } = React.useContext(ProjectContext);
     const activeProject = project ? project.id : undefined;
-    const [activeTab, setActiveTab] = useState<ExportType | undefined>('export-entry-history');
+    const location = useLocation();
+
+    const [activeTab, setActiveTab] = useState<ExportType | undefined>(location.state as ExportType | undefined ?? 'export-entry-history');
 
     return (
         <Tabs
