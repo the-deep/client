@@ -30,6 +30,7 @@ import {
     filterScaleMappings,
     filterSelectMappings,
     filterMultiSelectMappings,
+    filterOrganigramMappings,
 } from '#types/newAnalyticalFramework';
 import {
     mergeLists,
@@ -50,6 +51,7 @@ import { createDefaultAttributes } from '../../utils';
 import { Framework } from '../../types';
 import AssistPopup from './AssistPopup';
 import {
+    createOrganigramAttr,
     createMatrix1dAttr,
     createMatrix2dAttr,
     createScaleAttr,
@@ -356,6 +358,21 @@ function AssistItem(props: Props) {
                         .filter(filterMultiSelectMappings);
 
                     const attr = createMultiSelectAttr(
+                        supportedTags,
+                        widget,
+                    );
+
+                    return {
+                        tempAttrs: attr ? [...oldTempAttrs, attr] : oldTempAttrs,
+                        tempHints: oldTempHints,
+                    };
+                }
+                if (widget.widgetId === 'ORGANIGRAM') {
+                    const supportedTags = matchedMappings
+                        ?.filter((m) => m.widget === widget.id)
+                        .filter(filterOrganigramMappings);
+
+                    const attr = createOrganigramAttr(
                         supportedTags,
                         widget,
                     );

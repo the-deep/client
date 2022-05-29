@@ -10,6 +10,7 @@ import {
     Matrix1dMappingsItem,
     Matrix1dWidget,
     Matrix2dMappingsItem,
+    OrganigramMappingsItem,
     Matrix2dWidget,
     ScaleMappingsItem,
     ScaleWidget,
@@ -17,6 +18,7 @@ import {
     SingleSelectWidget,
     MultiSelectMappingsItem,
     MultiSelectWidget,
+    OrganigramWidget,
     GeoLocationWidget,
 } from '#types/newAnalyticalFramework';
 import {
@@ -38,6 +40,7 @@ type Matrix2dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATR
 type ScaleWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SCALE' }>;
 type SingleSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SELECT' }>;
 type MultiSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MULTISELECT' }>;
+type OrganigramWidgetAttribute = getType<PartialAttributeType, { widgetType: 'ORGANIGRAM' }>;
 type GeoLocationWidgetAttribute = getType<PartialAttributeType, { widgetType: 'GEO' }>;
 
 export function createMatrix1dAttr(
@@ -230,6 +233,25 @@ export function createMultiSelectAttr(
         widget: widget.id,
         widgetVersion: widget.version,
         widgetType: 'MULTISELECT' as const,
+        data: {
+            value: mappings.map((m) => m.association.optionKey),
+        },
+    });
+}
+
+export function createOrganigramAttr(
+    mappings: OrganigramMappingsItem[] | undefined,
+    widget: OrganigramWidget,
+): OrganigramWidgetAttribute | undefined {
+    if (!mappings || mappings.length <= 0) {
+        return undefined;
+    }
+
+    return ({
+        clientId: randomString(),
+        widget: widget.id,
+        widgetVersion: widget.version,
+        widgetType: 'ORGANIGRAM' as const,
         data: {
             value: mappings.map((m) => m.association.optionKey),
         },

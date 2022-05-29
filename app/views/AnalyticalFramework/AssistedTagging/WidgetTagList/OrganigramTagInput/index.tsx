@@ -11,16 +11,13 @@ import {
 } from '@the-deep/deep-ui';
 
 import {
-    ScaleWidget,
-    SingleSelectWidget,
-    MultiSelectWidget,
-    ScaleMappingsItem,
-    SelectMappingsItem,
-    MultiSelectMappingsItem,
+    OrganigramWidget,
+    OrganigramMappingsItem,
     KeyLabelEntity,
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
+import { getOrganigramFlatOptions } from '#views/AnalyticalFramework/utils';
 import CheckButton from '../../CheckButton';
 
 import styles from './styles.css';
@@ -29,17 +26,17 @@ const cellKeySelector = (cell: KeyLabelEntity) => cell.key;
 
 interface Props {
     className?: string;
-    widget: ScaleWidget | SingleSelectWidget | MultiSelectWidget;
-    mappings: (ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem)[] | undefined;
+    widget: OrganigramWidget;
+    mappings: OrganigramMappingsItem[] | undefined;
     onMappingsChange: (
-        newMappings: (ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem)[],
+        newMappings: OrganigramMappingsItem[],
         widgetPk: string,
     ) => void;
     selectedTag: string | undefined;
     disabled?: boolean;
 }
 
-function OptionTypeTagInput(props: Props) {
+function OrganigramTagInput(props: Props) {
     const {
         className,
         widget,
@@ -50,7 +47,7 @@ function OptionTypeTagInput(props: Props) {
     } = props;
 
     const sortedCells = useMemo(() => (
-        sortByOrder(widget?.properties?.options) ?? []
+        sortByOrder(getOrganigramFlatOptions(widget?.properties?.options)) ?? []
     ), [widget?.properties?.options]);
 
     const optionKeysInMappings = useMemo(() => (
@@ -101,7 +98,7 @@ function OptionTypeTagInput(props: Props) {
                     clientId: randomString(),
                 // FIXME: need to cast here because we cannot set id
                 // and a proper fix would require more time
-                } as ScaleMappingsItem | SelectMappingsItem | MultiSelectMappingsItem,
+                } as OrganigramMappingsItem,
             ], widget.id);
         }
     }, [
@@ -128,7 +125,7 @@ function OptionTypeTagInput(props: Props) {
 
     return (
         <ListView
-            className={_cs(className, styles.optionTypeTagInput)}
+            className={_cs(className, styles.organigramTagInput)}
             data={sortedCells}
             keySelector={cellKeySelector}
             renderer={CheckButton}
@@ -140,4 +137,4 @@ function OptionTypeTagInput(props: Props) {
     );
 }
 
-export default OptionTypeTagInput;
+export default OrganigramTagInput;

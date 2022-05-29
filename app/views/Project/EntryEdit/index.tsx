@@ -1273,7 +1273,7 @@ function EntryEdit(props: Props) {
             if (!currentVerifiedList) {
                 return { ...oldMap, [entryId]: [user?.id].filter(isDefined) };
             }
-            const isAlreadyVerified = currentVerifiedList?.some(
+            const isAlreadyVerified = currentVerifiedList.some(
                 (verifiyingUser) => verifiyingUser === user?.id,
             );
             return {

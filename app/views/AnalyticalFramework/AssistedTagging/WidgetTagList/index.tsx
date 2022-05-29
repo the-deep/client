@@ -9,12 +9,14 @@ import {
     Matrix2dMappingsItem,
     ScaleMappingsItem,
     SelectMappingsItem,
+    OrganigramMappingsItem,
     MultiSelectMappingsItem,
 } from '#types/newAnalyticalFramework';
 
 import Matrix1dTagInput from './Matrix1dTagInput';
 import Matrix2dTagInput from './Matrix2dTagInput';
 import OptionTypeTagInput from './OptionTypeTagInput';
+import OrganigramTagInput from './OrganigramTagInput';
 
 import styles from './styles.css';
 
@@ -105,6 +107,26 @@ function WidgetTagList(props: Props) {
                         ScaleMappingsItem | SelectMappingsItem
                         | MultiSelectMappingsItem
                     )[] | undefined}
+                    onMappingsChange={onMappingsChange}
+                    disabled={disabled}
+                    selectedTag={selectedTag}
+                />
+            </Container>
+        );
+    }
+
+    if (widget.widgetId === 'ORGANIGRAM') {
+        return (
+            <Container
+                className={_cs(styles.widgetTagList, className)}
+                heading={widget.title}
+                headingSize="extraSmall"
+                contentClassName={styles.content}
+            >
+                <OrganigramTagInput
+                    widget={widget}
+                    // NOTE: We know its safe
+                    mappings={filteredMappings as OrganigramMappingsItem[] | undefined}
                     onMappingsChange={onMappingsChange}
                     disabled={disabled}
                     selectedTag={selectedTag}

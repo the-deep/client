@@ -49,6 +49,7 @@ import {
     filterScaleHints,
     filterGeoRecommendations,
     filterMultiSelectRecommendations,
+    filterOrganigramRecommendations,
     filterMatrix1dRecommendations,
     filterMatrix2dRecommendations,
 } from './utils';
@@ -401,6 +402,11 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         );
     } else if (widget.widgetId === 'ORGANIGRAM' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {
         const data = value?.data;
+
+        const widgetRecommendation = recommendations
+            ?.filter(filterOrganigramRecommendations)
+            ?.find((recommendation) => recommendation.widget === widget.id);
+
         component = (
             <OrganigramWidgetInput
                 className={className}
@@ -413,6 +419,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 widget={widget}
                 error={error?.data as Error<typeof data> | undefined}
                 actions={actions}
+                recommendedValue={widgetRecommendation?.data}
+                suggestionMode={suggestionMode}
             />
         );
     } else if (widget.widgetId === 'GEO' && (isNotDefined(value) || value.widgetType === widget.widgetId)) {

@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import {
     MultiSelectInput,
+    MultiBadgeInput,
 } from '@the-deep/deep-ui';
 import {
     isNotDefined,
@@ -11,8 +12,11 @@ import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/
 import NonFieldError from '#components/NonFieldError';
 import { OrganigramWidgetAttribute } from '#types/newEntry';
 import { OrganigramWidget, OrganigramDatum } from '#types/newAnalyticalFramework';
+import { getOrganigramFlatOptions } from '#views/AnalyticalFramework/utils';
 
 import WidgetWrapper from '../WidgetWrapper';
+
+import styles from './styles.css';
 
 export type PartialOrganigramWidget = PartialForm<
     OrganigramWidget,
@@ -27,19 +31,6 @@ NonNullable<PartialOrganigramWidget>['properties']
 
 const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label ?? 'Unnamed';
-
-function getFlatOptions(data?: OrganigramDatum, prefix?: string): Omit<OrganigramDatum, 'children'>[] {
-    if (!data) {
-        return [];
-    }
-    const { children, ...values } = data;
-    const label = `${prefix ? `${prefix}/` : ''}${values.label}`;
-    const childrenValues = children?.flatMap((v) => getFlatOptions(v, label)) ?? [];
-    return [
-        { ...values, label },
-        ...childrenValues,
-    ];
-}
 
 export interface Props <N extends string> {
     title: string | undefined;
@@ -56,6 +47,8 @@ export interface Props <N extends string> {
     icons?: React.ReactNode;
 
     widget: PartialOrganigramWidget;
+    suggestionMode?: boolean;
+    recommendedValue?: OrganigramValue | null | undefined;
 }
 
 function OrganigramWidgetInput<N extends string>(props: Props<N>) {
@@ -71,6 +64,8 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
         actions,
         icons,
         error: riskyError,
+        suggestionMode,
+        recommendedValue,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -87,13 +82,32 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
     );
 
     const options = useMemo(() => (
-        getFlatOptions(widget.properties?.options as OrganigramDatum)
+        getOrganigramFlatOptions(widget.properties?.options as OrganigramDatum)
     ), [widget.properties?.options]);
+
+    const recommendedValuesMap = useMemo(() => (
+        listToMap(
+            recommendedValue?.value,
+            (key) => key,
+            () => true,
+        )
+    ), [recommendedValue]);
 
     const selectedValues = useMemo(() => {
         const optionsMap = listToMap(options, (d) => d.key, (d) => d.label);
         return value?.value?.map((v) => optionsMap?.[v]);
     }, [options, value]);
+
+    const optionsForSuggestions = useMemo(() => {
+        if (!suggestionMode) {
+            return [];
+        }
+        return options?.filter((item) => recommendedValuesMap?.[item.key]);
+    }, [
+        recommendedValuesMap,
+        options,
+        suggestionMode,
+    ]);
 
     return (
         <WidgetWrapper
@@ -114,17 +128,33 @@ function OrganigramWidgetInput<N extends string>(props: Props<N>) {
             ) : (
                 <>
                     <NonFieldError error={error} />
-                    <MultiSelectInput
-                        name={name}
-                        value={value?.value}
-                        onChange={onChange}
-                        options={options}
-                        disabled={disabled}
-                        readOnly={readOnly}
-                        keySelector={optionKeySelector}
-                        labelSelector={optionLabelSelector}
-                        error={getErrorString(error?.value)}
-                    />
+                    {!suggestionMode ? (
+                        <MultiSelectInput
+                            name={name}
+                            value={value?.value}
+                            onChange={onChange}
+                            options={options}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            error={getErrorString(error?.value)}
+                        />
+                    ) : (
+                        <MultiBadgeInput
+                            name={name}
+                            value={value?.value}
+                            options={optionsForSuggestions}
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            onChange={onChange}
+                            disabled={disabled}
+                            selectedButtonVariant="nlp-primary"
+                            listClassName={styles.suggestions}
+                            buttonVariant="nlp-tertiary"
+                            smallButtons
+                        />
+                    )}
                 </>
             )}
         </WidgetWrapper>
