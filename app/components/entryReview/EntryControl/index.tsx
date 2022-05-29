@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
+import { _cs } from '@togglecorp/fujs';
 import {
     Button,
 } from '@the-deep/deep-ui';
@@ -10,7 +11,13 @@ import { useLazyRequest } from '#base/utils/restRequest';
 import { ProjectContext } from '#base/context/ProjectContext';
 
 import { EntryAction } from '#components/entryReview/commentConstants';
+
 import EntryUncontrolCommentModal from './EntryUncontrolCommentModal';
+import styles from './styles.css';
+
+interface EntryControlFormData {
+    commentType: number;
+}
 
 interface Props {
     className?: string;
@@ -19,10 +26,7 @@ interface Props {
     value: boolean;
     disabled?: boolean;
     onChange: (entryId: string) => void;
-}
-
-interface EntryControlFormData {
-    commentType: number;
+    compact?: boolean;
 }
 
 function EntryControl(props: Props) {
@@ -33,6 +37,7 @@ function EntryControl(props: Props) {
         value,
         onChange,
         disabled,
+        compact,
     } = props;
 
     const { project } = useContext(ProjectContext);
@@ -69,7 +74,11 @@ function EntryControl(props: Props) {
     return (
         <>
             <Button
-                className={className}
+                className={_cs(
+                    className,
+                    styles.entryControl,
+                    compact && styles.compact,
+                )}
                 name="entryVerification"
                 variant="secondary"
                 actions={(

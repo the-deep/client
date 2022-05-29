@@ -10,6 +10,10 @@ const ENTRY_FRAGMENT = gql`
         droppedExcerpt
         excerpt
         reviewCommentsCount
+        verifiedBy {
+            id
+        }
+        controlled
         attributes {
             clientId
             data

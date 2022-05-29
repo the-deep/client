@@ -293,7 +293,7 @@ function EditableEntry(props: Props) {
     }, [allWidgets, projectId, validate, setError, updateEntry, entry.id, entry.attributes]);
 
     const verifiedByIds = useMemo(() => (
-        verifiedBy?.map((v) => +v.id) ?? []
+        verifiedBy?.map((v) => v.id) ?? []
     ), [verifiedBy]);
 
     const handleAddButtonClick = useCallback((entryIdToAdd: string, sectionId?: string) => {

@@ -1,0 +1,6 @@
+.entry-control {
+    &.compact {
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+        font-size: var(--dui-font-size-small);
+    }
+}
