@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
     IoGridOutline,
     IoList,
@@ -15,7 +15,8 @@ import {
     Button,
     useBooleanState,
 } from '@the-deep/deep-ui';
-import { EntriesAsList } from '@togglecorp/toggle-form';
+import { EntriesAsList, createSubmitHandler } from '@togglecorp/toggle-form';
+
 import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -76,9 +77,18 @@ function Sources(props: Props) {
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
     const {
-        value: sourcesFilters,
+        value: sourcesFilterValue,
         setFieldValue: setSourcesFilterValue,
+        resetValue: clearSourcesFilterValue,
+        setError,
+        validate,
+        pristine,
     } = useFilterState();
+
+    const [
+        sourcesFilters,
+        setSourcesFilters,
+    ] = useState<PartialFormType>({});
 
     const sourcesFilterContextValue = useMemo(() => ({
         createdByOptions,
@@ -104,11 +114,32 @@ function Sources(props: Props) {
 
     const handleSourcesFiltersValueChange = useCallback(
         (...value: EntriesAsList<PartialFormType>) => {
-            setActivePage(1);
             setSourcesFilterValue(...value);
         },
-        [setSourcesFilterValue, setActivePage],
+        [setSourcesFilterValue],
     );
+
+    const handleSubmit = useCallback((values: PartialFormType) => {
+        setActivePage(1);
+        setSourcesFilters(values);
+    }, []);
+
+    const handleApply = useCallback(() => {
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            handleSubmit,
+        );
+        submit();
+    }, [setError, validate, handleSubmit]);
+
+    const handleClear = useCallback(() => {
+        clearSourcesFilterValue();
+        setSourcesFilters({});
+        setActivePage(1);
+    }, [clearSourcesFilterValue, setActivePage]);
+
+    const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
 
     return (
         <div className={_cs(styles.sources, className)}>
@@ -151,18 +182,40 @@ function Sources(props: Props) {
                             )}
                         />
                         <div className={styles.filtersContainer}>
-                            <Button
-                                name={undefined}
-                                onClick={toggleShowFilter}
-                                icons={<IoFunnel />}
-                            >
-                                Filter
-                            </Button>
+                            <div>
+                                <Button
+                                    name={undefined}
+                                    onClick={toggleShowFilter}
+                                    icons={<IoFunnel />}
+                                >
+                                    Filter
+                                </Button>
+                                {showFilters && (
+                                    <div className={styles.buttons}>
+                                        <Button
+                                            disabled={pristine}
+                                            name="sourcesFilterSubmit"
+                                            variant="action"
+                                            onClick={handleApply}
+                                        >
+                                            {_ts('sourcesFilter', 'apply')}
+                                        </Button>
+                                        <Button
+                                            disabled={isFilterEmpty}
+                                            name="clearFilter"
+                                            variant="action"
+                                            onClick={handleClear}
+                                        >
+                                            {_ts('sourcesFilter', 'clearAll')}
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
                             {activeProject && (
                                 <AppliedFilters
                                     className={styles.appliedFilters}
                                     projectId={activeProject}
-                                    value={sourcesFilters}
+                                    value={sourcesFilterValue}
                                     onChange={handleSourcesFiltersValueChange}
                                 />
                             )}
@@ -172,7 +225,7 @@ function Sources(props: Props) {
                         {showFilters && activeProject && (
                             <SourcesFilter
                                 className={styles.filter}
-                                value={sourcesFilters}
+                                value={sourcesFilterValue}
                                 projectId={activeProject}
                                 onChange={handleSourcesFiltersValueChange}
                                 isEntriesOnlyFilter={activeView === 'grid'}
