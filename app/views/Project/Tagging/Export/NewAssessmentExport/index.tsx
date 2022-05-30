@@ -96,6 +96,7 @@ function NewAssessmentExport(props: Props) {
         pristine,
         validate,
         setError,
+        setPristine,
     } = useFilterState();
 
     const [
@@ -117,7 +118,8 @@ function NewAssessmentExport(props: Props) {
 
     const handleSubmit = useCallback((values: PartialFormType) => {
         setSourcesFilters(values);
-    }, []);
+        setPristine(true);
+    }, [setPristine]);
 
     const handleApply = useCallback(() => {
         const submit = createSubmitHandler(
@@ -129,9 +131,10 @@ function NewAssessmentExport(props: Props) {
     }, [setError, validate, handleSubmit]);
 
     const handleClear = useCallback(() => {
+        setPristine(true);
         clearSourcesFilterValue();
         setSourcesFilters({});
-    }, [clearSourcesFilterValue]);
+    }, [clearSourcesFilterValue, setPristine]);
 
     const { project } = useContext(ProjectContext);
 
@@ -338,7 +341,7 @@ function NewAssessmentExport(props: Props) {
                             value={sourcesFilter}
                             onChange={setSourcesFilterValue}
                         />
-                        {!isFilterEmpty && (
+                        {!(isFilterEmpty && pristine) && (
                             <div className={styles.buttons}>
                                 <Button
                                     disabled={pristine}
