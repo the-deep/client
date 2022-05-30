@@ -175,7 +175,7 @@ function DocumentViewer(props: Props) {
         return (
             <FullPageErrorMessage
                 errorTitle="Oops!"
-                errorMessage="This document is cannot be previewed publicly or does not exist. Try logging in."
+                errorMessage="This document cannot be previewed publicly or does not exist. Try logging in."
                 krakenVariant="hi"
                 hideGotoHomepageButton
                 buttons={(
@@ -194,10 +194,14 @@ function DocumentViewer(props: Props) {
     if (authenticated && !isLeadAccessible) {
         let errorMessage = 'You don\'t have access to this document.';
 
-        if (!publicLeadProjectDetails?.membershipPending && !publicLeadProjectDetails?.isRejected) {
+        if (
+            !publicLeadProjectDetails?.membershipPending
+            && !publicLeadProjectDetails?.isRejected
+            && publicLeadProjectDetails?.id
+        ) {
             errorMessage = 'You don\'t have access to this document. Try joining the project.';
         } else if (
-            publicLeadProjectDetails?.membershipPending
+            publicLeadProjectDetails?.membershipPending && publicLeadProjectDetails?.id
         ) {
             errorMessage = 'You don\'t have access to this document. The project admin is currently reviewing your request to join the project.';
         }
