@@ -1,0 +1,40 @@
+.information-card {
+    display: flex;
+    align-items: flex-start;
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-white);
+    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-large) - var(--dui-spacing-small));
+
+    &.colored-background {
+        &.accent {
+            background-color: var(--dui-color-accent);
+        }
+
+        &.complement-1 {
+            background-color: var(--dui-color-complement1);
+        }
+
+        &.complement-2 {
+            background-color: var(--dui-color-complement2);
+        }
+
+        &.complement-3 {
+            background-color: var(--dui-color-complement3);
+        }
+    }
+
+    .label-container {
+        font-weight: var(--dui-font-weight-bold);
+    }
+
+    .numbers {
+        display: flex;
+        align-items: center;
+
+        .filtered-number {
+            &:after {
+                content: '/';
+            }
+        }
+    }
+}
