@@ -4,22 +4,21 @@ import {
     useParams,
     generatePath,
 } from 'react-router-dom';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
     Button,
     Container,
     TextInput,
     useModalState,
-    CompactInformationCard,
     useAlert,
 } from '@the-deep/deep-ui';
-import { useMutation } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
 import {
     IoBookmarks,
-    IoDocumentText,
 } from 'react-icons/io5';
 
 import routes from '#base/configs/routes';
+import StatsInformationCard from '#components/StatsInformationCard';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import ProjectContext from '#base/context/ProjectContext';
@@ -36,6 +35,9 @@ import { useFilterState, getProjectSourcesQueryVariables } from '#views/Project/
 import {
     CreateExportMutation,
     CreateExportMutationVariables,
+    ProjectSourceStatsForExportQuery,
+    ProjectSourceStatsForExportQueryVariables,
+    LeadsFilterDataInputType,
 } from '#generated/types';
 
 import SourcesSelection from '../SourcesSelection';
@@ -43,6 +45,23 @@ import ExportPreviewModal from '../ExportPreviewModal';
 import { CREATE_EXPORT } from '../queries';
 
 import styles from './styles.css';
+
+const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
+    query ProjectSourceStatsForExport(
+        $projectId: ID!,
+        $filters: LeadsFilterDataInputType,
+    ) {
+        project(id: $projectId) {
+            id
+            stats(filters: $filters) {
+                numberOfEntries
+                numberOfLeads
+                filteredNumberOfEntries
+                filteredNumberOfLeads
+            }
+        }
+    }
+`;
 
 interface Props {
     className?: string;
@@ -70,6 +89,18 @@ function NewAssessmentExport(props: Props) {
         value: sourcesFilter,
         setFieldValue: setSourcesFilterValue,
     } = useFilterState();
+
+    const {
+        data: sourcesStats,
+    } = useQuery<ProjectSourceStatsForExportQuery, ProjectSourceStatsForExportQueryVariables>(
+        PROJECT_SOURCE_STATS_FOR_EXPORT,
+        {
+            variables: {
+                projectId,
+                filters: sourcesFilter as LeadsFilterDataInputType,
+            },
+        },
+    );
 
     const { project } = useContext(ProjectContext);
 
@@ -200,6 +231,11 @@ function NewAssessmentExport(props: Props) {
         startExport(true);
     }, [startExport]);
 
+    const stats = sourcesStats?.project?.stats;
+    const isFilterEmpty = useMemo(() => (
+        doesObjectHaveNoData(sourcesFilter, [''])
+    ), [sourcesFilter]);
+
     return (
         <div className={_cs(styles.newAssessmentExport, className)}>
             <SubNavbar
@@ -254,17 +290,15 @@ function NewAssessmentExport(props: Props) {
                 <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
                     <div className={styles.midBar}>
                         <div className={styles.statsContainer}>
-                            <CompactInformationCard
-                                icon={<IoDocumentText />}
-                                label="Entries"
-                                valuePrecision={0}
-                                value={200}
-                            />
-                            <CompactInformationCard
-                                icon={<IoBookmarks />}
+                            <StatsInformationCard
+                                icon={(
+                                    <IoBookmarks />
+                                )}
                                 label="Sources"
-                                valuePrecision={0}
-                                value={200}
+                                filteredValue={stats?.filteredNumberOfLeads ?? undefined}
+                                totalValue={stats?.numberOfLeads ?? 0}
+                                isFiltered={!isFilterEmpty}
+                                variant="accent"
                             />
                         </div>
                         <AppliedFilters
