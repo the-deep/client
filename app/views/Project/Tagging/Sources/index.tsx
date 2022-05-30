@@ -122,6 +122,7 @@ function Sources(props: Props) {
                             <SourcesStats
                                 className={styles.stats}
                                 projectId={activeProject}
+                                filters={sourcesFilters}
                             />
                         )}
                         <Header
