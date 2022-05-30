@@ -190,26 +190,6 @@ function Sources(props: Props) {
                                 >
                                     Filter
                                 </Button>
-                                {showFilters && (
-                                    <div className={styles.buttons}>
-                                        <Button
-                                            disabled={pristine}
-                                            name="sourcesFilterSubmit"
-                                            variant="action"
-                                            onClick={handleApply}
-                                        >
-                                            {_ts('sourcesFilter', 'apply')}
-                                        </Button>
-                                        <Button
-                                            disabled={isFilterEmpty}
-                                            name="clearFilter"
-                                            variant="action"
-                                            onClick={handleClear}
-                                        >
-                                            {_ts('sourcesFilter', 'clearAll')}
-                                        </Button>
-                                    </div>
-                                )}
                             </div>
                             {activeProject && (
                                 <AppliedFilters
@@ -218,6 +198,26 @@ function Sources(props: Props) {
                                     value={sourcesFilterValue}
                                     onChange={handleSourcesFiltersValueChange}
                                 />
+                            )}
+                            {showFilters && !isFilterEmpty && (
+                                <div className={styles.buttons}>
+                                    <Button
+                                        disabled={pristine}
+                                        name="sourcesFilterSubmit"
+                                        variant="action"
+                                        onClick={handleApply}
+                                    >
+                                        {_ts('sourcesFilter', 'apply')}
+                                    </Button>
+                                    <Button
+                                        disabled={isFilterEmpty}
+                                        name="clearFilter"
+                                        variant="action"
+                                        onClick={handleClear}
+                                    >
+                                        {_ts('sourcesFilter', 'clearAll')}
+                                    </Button>
+                                </div>
                             )}
                         </div>
                     </div>
