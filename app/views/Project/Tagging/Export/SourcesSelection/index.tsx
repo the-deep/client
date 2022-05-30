@@ -57,7 +57,8 @@ interface Props {
     selectAll: boolean;
     onSelectAllChange: (v: boolean) => void;
     filterValues: PartialFormType;
-    onFilterApply: (...entries: EntriesAsList<PartialFormType>) => void;
+    sourcesFilterValue: PartialFormType;
+    onFilterChange: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
 function SourcesSelection(props: Props) {
@@ -69,9 +70,10 @@ function SourcesSelection(props: Props) {
         selectAll,
         onSelectAllChange,
         filterValues,
-        onFilterApply,
+        onFilterChange,
         filterOnlyUnprotected,
         hasAssessment = false,
+        sourcesFilterValue,
     } = props;
 
     const sortState = useSortState();
@@ -114,10 +116,9 @@ function SourcesSelection(props: Props) {
 
     const handleSourcesFiltersValueChange = useCallback(
         (...value: EntriesAsList<PartialFormType>) => {
-            setActivePage(1);
-            onFilterApply(...value);
+            onFilterChange(...value);
         },
-        [onFilterApply, setActivePage],
+        [onFilterChange],
     );
 
     const handleSelectAll = useCallback((value: boolean) => {
@@ -258,7 +259,7 @@ function SourcesSelection(props: Props) {
                 onChange={handleSourcesFiltersValueChange}
                 projectId={projectId}
                 filterOnlyUnprotected={filterOnlyUnprotected}
-                value={filterValues}
+                value={sourcesFilterValue}
                 hideEntriesFilter={hasAssessment}
             />
             <div className={styles.tableContainer}>

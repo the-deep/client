@@ -24,6 +24,7 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import { createSubmitHandler } from '@togglecorp/toggle-form';
 
 import {
     ProjectFrameworkDetailsQuery,
@@ -49,7 +50,7 @@ import _ts from '#ts';
 import AppliedFilters from '../../Sources/AppliedFilters';
 import SourcesFilterContext from '../../Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
-import { FormType as FilterFormType } from '../../Sources/SourcesFilter/schema';
+import { FormType as FilterFormType, PartialFormType } from '../../Sources/SourcesFilter/schema';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
 import ExportTypeButton from './ExportTypeButton';
 import SourcesSelection from '../SourcesSelection';
@@ -153,9 +154,18 @@ function NewExport(props: Props) {
     const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
 
     const {
-        value: sourcesFilter,
+        value: sourcesFilterValue,
         setFieldValue: setSourcesFilterValue,
+        resetValue: clearSourcesFilterValue,
+        pristine,
+        validate,
+        setError,
     } = useFilterState();
+
+    const [
+        sourcesFilter,
+        setSourcesFilters,
+    ] = useState<PartialFormType>({});
 
     const {
         data: sourcesStats,
@@ -168,6 +178,24 @@ function NewExport(props: Props) {
             },
         },
     );
+
+    const handleSubmit = useCallback((values: PartialFormType) => {
+        setSourcesFilters(values);
+    }, []);
+
+    const handleApply = useCallback(() => {
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            handleSubmit,
+        );
+        submit();
+    }, [setError, validate, handleSubmit]);
+
+    const handleClear = useCallback(() => {
+        clearSourcesFilterValue();
+        setSourcesFilters({});
+    }, [clearSourcesFilterValue]);
 
     const [
         createdByOptions,
@@ -525,10 +553,28 @@ function NewExport(props: Props) {
                                 variant="accent"
                             />
                         </div>
+                        <div className={styles.buttons}>
+                            <Button
+                                disabled={pristine}
+                                name="sourcesFilterSubmit"
+                                variant="action"
+                                onClick={handleApply}
+                            >
+                                {_ts('sourcesFilter', 'apply')}
+                            </Button>
+                            <Button
+                                disabled={isFilterEmpty}
+                                name="clearFilter"
+                                variant="action"
+                                onClick={handleClear}
+                            >
+                                {_ts('sourcesFilter', 'clearAll')}
+                            </Button>
+                        </div>
                         <AppliedFilters
                             className={styles.appliedFilters}
                             projectId={projectId}
-                            value={sourcesFilter}
+                            value={sourcesFilterValue}
                             onChange={setSourcesFilterValue}
                         />
                     </div>
@@ -541,7 +587,8 @@ function NewExport(props: Props) {
                         selectAll={selectAll}
                         onSelectAllChange={setSelectAll}
                         filterValues={sourcesFilter}
-                        onFilterApply={setSourcesFilterValue}
+                        sourcesFilterValue={sourcesFilterValue}
+                        onFilterChange={setSourcesFilterValue}
                     />
                 </SourcesFilterContext.Provider>
             </div>

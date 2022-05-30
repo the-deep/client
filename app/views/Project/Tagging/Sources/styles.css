@@ -18,6 +18,10 @@
             align-items: center;
             gap: var(--dui-spacing-medium);
 
+            .buttons {
+                display: flex;
+            }
+
             .applied-filters {
                 border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 padding: 0 var(--dui-spacing-medium);
