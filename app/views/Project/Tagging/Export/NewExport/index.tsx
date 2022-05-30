@@ -4,7 +4,7 @@ import {
     useParams,
     generatePath,
 } from 'react-router-dom';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
     AiFillFilePdf,
     AiFillFileExcel,
@@ -13,18 +13,17 @@ import {
 } from 'react-icons/ai';
 import {
     IoBookmarks,
-    IoDocumentText,
+    IoDocument,
 } from 'react-icons/io5';
 import {
     Button,
     Container,
-    CompactInformationCard,
     TextInput,
     ListView,
     useModalState,
     useAlert,
 } from '@the-deep/deep-ui';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
 import {
     ProjectFrameworkDetailsQuery,
@@ -33,7 +32,11 @@ import {
     CreateExportMutationVariables,
     ExportFormatEnum,
     ExportExportTypeEnum,
+    ProjectSourceStatsForExportQuery,
+    ProjectSourceStatsForExportQueryVariables,
+    LeadsFilterDataInputType,
 } from '#generated/types';
+import StatsInformationCard from '#components/StatsInformationCard';
 import routes from '#base/configs/routes';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
@@ -68,6 +71,23 @@ import {
 } from '../utils';
 import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT } from '../queries';
 import styles from './styles.css';
+
+const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
+    query ProjectSourceStatsForExport(
+        $projectId: ID!,
+        $filters: LeadsFilterDataInputType,
+    ) {
+        project(id: $projectId) {
+            id
+            stats(filters: $filters) {
+                numberOfEntries
+                numberOfLeads
+                filteredNumberOfEntries
+                filteredNumberOfLeads
+            }
+        }
+    }
+`;
 
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
     DOCX: 'REPORT',
@@ -136,6 +156,18 @@ function NewExport(props: Props) {
         value: sourcesFilter,
         setFieldValue: setSourcesFilterValue,
     } = useFilterState();
+
+    const {
+        data: sourcesStats,
+    } = useQuery<ProjectSourceStatsForExportQuery, ProjectSourceStatsForExportQueryVariables>(
+        PROJECT_SOURCE_STATS_FOR_EXPORT,
+        {
+            variables: {
+                projectId,
+                filters: sourcesFilter as LeadsFilterDataInputType,
+            },
+        },
+    );
 
     const [
         createdByOptions,
@@ -360,6 +392,11 @@ function NewExport(props: Props) {
         });
     }, [createExport, projectId, getCreateExportData]);
 
+    const stats = sourcesStats?.project?.stats;
+    const isFilterEmpty = useMemo(() => (
+        doesObjectHaveNoData(sourcesFilter, [''])
+    ), [sourcesFilter]);
+
     return (
         <div className={_cs(styles.newExport, className)}>
             <SubNavbar
@@ -467,17 +504,25 @@ function NewExport(props: Props) {
                 <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
                     <div className={styles.midBar}>
                         <div className={styles.statsContainer}>
-                            <CompactInformationCard
-                                icon={<IoDocumentText />}
-                                label="Entries"
-                                valuePrecision={0}
-                                value={200}
+                            <StatsInformationCard
+                                icon={(
+                                    <IoDocument />
+                                )}
+                                label={_ts('sourcesStats', 'totalEntries')}
+                                totalValue={stats?.numberOfEntries ?? 0}
+                                filteredValue={stats?.filteredNumberOfEntries ?? undefined}
+                                isFiltered={!isFilterEmpty}
+                                variant="accent"
                             />
-                            <CompactInformationCard
-                                icon={<IoBookmarks />}
+                            <StatsInformationCard
+                                icon={(
+                                    <IoBookmarks />
+                                )}
                                 label="Sources"
-                                valuePrecision={0}
-                                value={200}
+                                filteredValue={stats?.filteredNumberOfLeads ?? undefined}
+                                totalValue={stats?.numberOfLeads ?? 0}
+                                isFiltered={!isFilterEmpty}
+                                variant="accent"
                             />
                         </div>
                         <AppliedFilters
