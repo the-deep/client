@@ -553,30 +553,32 @@ function NewExport(props: Props) {
                                 variant="accent"
                             />
                         </div>
-                        <div className={styles.buttons}>
-                            <Button
-                                disabled={pristine}
-                                name="sourcesFilterSubmit"
-                                variant="action"
-                                onClick={handleApply}
-                            >
-                                {_ts('sourcesFilter', 'apply')}
-                            </Button>
-                            <Button
-                                disabled={isFilterEmpty}
-                                name="clearFilter"
-                                variant="action"
-                                onClick={handleClear}
-                            >
-                                {_ts('sourcesFilter', 'clearAll')}
-                            </Button>
-                        </div>
                         <AppliedFilters
                             className={styles.appliedFilters}
                             projectId={projectId}
                             value={sourcesFilterValue}
                             onChange={setSourcesFilterValue}
                         />
+                        {!isFilterEmpty && (
+                            <div className={styles.buttons}>
+                                <Button
+                                    disabled={pristine}
+                                    name="sourcesFilterSubmit"
+                                    variant="action"
+                                    onClick={handleApply}
+                                >
+                                    {_ts('sourcesFilter', 'apply')}
+                                </Button>
+                                <Button
+                                    disabled={isFilterEmpty}
+                                    name="clearFilter"
+                                    variant="action"
+                                    onClick={handleClear}
+                                >
+                                    {_ts('sourcesFilter', 'clearAll')}
+                                </Button>
+                            </div>
+                        )}
                     </div>
                     <SourcesSelection
                         className={styles.leadsTableContainer}

@@ -39,12 +39,21 @@
 
             .stats-container {
                 display: flex;
+                flex-shrink: 0;
                 gap: var(--dui-spacing-medium);
             }
 
             .applied-filters {
+                flex-grow: 1;
                 border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
                 padding: var(--dui-spacing-medium);
+            }
+
+            .buttons {
+                display: flex;
+                align-items: flex-end;
+                flex-shrink: 0;
+                gap: var(--dui-spacing-medium);
             }
         }
 
