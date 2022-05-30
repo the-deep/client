@@ -13,6 +13,7 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import { useQuery, gql, useMutation } from '@apollo/client';
+import { createSubmitHandler } from '@togglecorp/toggle-form';
 import {
     IoBookmarks,
 } from 'react-icons/io5';
@@ -27,7 +28,10 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 
-import { FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+import {
+    FormType as FilterFormType,
+    PartialFormType,
+} from '#views/Project/Tagging/Sources/SourcesFilter/schema';
 import AppliedFilters from '#views/Project/Tagging/Sources/AppliedFilters';
 import SourcesFilterContext from '#views/Project/Tagging/Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
@@ -86,9 +90,18 @@ function NewAssessmentExport(props: Props) {
     ] = useModalState(false);
 
     const {
-        value: sourcesFilter,
+        value: sourcesFilterValue,
         setFieldValue: setSourcesFilterValue,
+        resetValue: clearSourcesFilterValue,
+        pristine,
+        validate,
+        setError,
     } = useFilterState();
+
+    const [
+        sourcesFilter,
+        setSourcesFilters,
+    ] = useState<PartialFormType>({});
 
     const {
         data: sourcesStats,
@@ -101,6 +114,24 @@ function NewAssessmentExport(props: Props) {
             },
         },
     );
+
+    const handleSubmit = useCallback((values: PartialFormType) => {
+        setSourcesFilters(values);
+    }, []);
+
+    const handleApply = useCallback(() => {
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            handleSubmit,
+        );
+        submit();
+    }, [setError, validate, handleSubmit]);
+
+    const handleClear = useCallback(() => {
+        clearSourcesFilterValue();
+        setSourcesFilters({});
+    }, [clearSourcesFilterValue]);
 
     const { project } = useContext(ProjectContext);
 
@@ -307,6 +338,26 @@ function NewAssessmentExport(props: Props) {
                             value={sourcesFilter}
                             onChange={setSourcesFilterValue}
                         />
+                        {!isFilterEmpty && (
+                            <div className={styles.buttons}>
+                                <Button
+                                    disabled={pristine}
+                                    name="sourcesFilterSubmit"
+                                    variant="action"
+                                    onClick={handleApply}
+                                >
+                                    {_ts('sourcesFilter', 'apply')}
+                                </Button>
+                                <Button
+                                    disabled={isFilterEmpty}
+                                    name="clearFilter"
+                                    variant="action"
+                                    onClick={handleClear}
+                                >
+                                    {_ts('sourcesFilter', 'clearAll')}
+                                </Button>
+                            </div>
+                        )}
                     </div>
                     <SourcesSelection
                         className={styles.leadsTableContainer}
@@ -317,8 +368,8 @@ function NewAssessmentExport(props: Props) {
                         selectAll={selectAll}
                         onSelectAllChange={setSelectAll}
                         filterValues={sourcesFilter}
-                        onFilterApply={setSourcesFilterValue}
-                        hasAssessment
+                        sourcesFilterValue={sourcesFilterValue}
+                        onFilterChange={setSourcesFilterValue}
                     />
                 </SourcesFilterContext.Provider>
             </div>
