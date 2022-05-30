@@ -160,6 +160,7 @@ function NewExport(props: Props) {
         pristine,
         validate,
         setError,
+        setPristine,
     } = useFilterState();
 
     const [
@@ -181,7 +182,8 @@ function NewExport(props: Props) {
 
     const handleSubmit = useCallback((values: PartialFormType) => {
         setSourcesFilters(values);
-    }, []);
+        setPristine(true);
+    }, [setPristine]);
 
     const handleApply = useCallback(() => {
         const submit = createSubmitHandler(
@@ -195,7 +197,8 @@ function NewExport(props: Props) {
     const handleClear = useCallback(() => {
         clearSourcesFilterValue();
         setSourcesFilters({});
-    }, [clearSourcesFilterValue]);
+        setPristine(true);
+    }, [clearSourcesFilterValue, setPristine]);
 
     const [
         createdByOptions,
@@ -421,6 +424,7 @@ function NewExport(props: Props) {
     }, [createExport, projectId, getCreateExportData]);
 
     const stats = sourcesStats?.project?.stats;
+
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(sourcesFilter, [''])
     ), [sourcesFilter]);
@@ -559,7 +563,7 @@ function NewExport(props: Props) {
                             value={sourcesFilterValue}
                             onChange={setSourcesFilterValue}
                         />
-                        {!isFilterEmpty && (
+                        {!(isFilterEmpty && pristine) && (
                             <div className={styles.buttons}>
                                 <Button
                                     disabled={pristine}

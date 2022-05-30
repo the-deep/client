@@ -94,6 +94,7 @@ export function useFilterState() {
         pristine,
         setError,
         validate,
+        setPristine,
     } = useForm(schema, initialValue);
     const error = getErrorObject(formError);
 
@@ -110,7 +111,18 @@ export function useFilterState() {
         pristine,
         setError,
         validate,
-    }), [value, error, setFieldValue, setValue, resetValue, pristine, setError, validate]);
+        setPristine,
+    }), [
+        value,
+        error,
+        setFieldValue,
+        setValue,
+        resetValue,
+        pristine,
+        setError,
+        validate,
+        setPristine,
+    ]);
 
     return returnValue;
 }

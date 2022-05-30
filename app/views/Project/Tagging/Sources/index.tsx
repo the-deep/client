@@ -83,6 +83,7 @@ function Sources(props: Props) {
         setError,
         validate,
         pristine,
+        setPristine,
     } = useFilterState();
 
     const [
@@ -122,7 +123,8 @@ function Sources(props: Props) {
     const handleSubmit = useCallback((values: PartialFormType) => {
         setActivePage(1);
         setSourcesFilters(values);
-    }, []);
+        setPristine(true);
+    }, [setPristine]);
 
     const handleApply = useCallback(() => {
         const submit = createSubmitHandler(
@@ -137,7 +139,8 @@ function Sources(props: Props) {
         clearSourcesFilterValue();
         setSourcesFilters({});
         setActivePage(1);
-    }, [clearSourcesFilterValue, setActivePage]);
+        setPristine(true);
+    }, [clearSourcesFilterValue, setActivePage, setPristine]);
 
     const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
 
@@ -199,7 +202,7 @@ function Sources(props: Props) {
                                     onChange={handleSourcesFiltersValueChange}
                                 />
                             )}
-                            {showFilters && !isFilterEmpty && (
+                            {showFilters && !(isFilterEmpty && pristine) && (
                                 <div className={styles.buttons}>
                                     <Button
                                         disabled={pristine}
