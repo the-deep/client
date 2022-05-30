@@ -3,6 +3,7 @@ import {
     _cs,
     isNotDefined,
     encodeDate,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     SelectInput,
@@ -17,7 +18,6 @@ import {
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
-    hasNoData,
     convertDateToIsoDateTime,
 } from '#utils/common';
 import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
@@ -129,8 +129,8 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                        && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                        && doesObjectHaveNoData(value?.valueLte)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -156,8 +156,8 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                            && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                            && doesObjectHaveNoData(value?.valueLte)
                             && !allFiltersVisible
                             && styles.hidden,
                     )}
@@ -178,8 +178,8 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                        && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                        && doesObjectHaveNoData(value?.valueLte)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -200,8 +200,8 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                        && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                        && doesObjectHaveNoData(value?.valueLte)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -223,7 +223,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         className={_cs(
                             className,
                             styles.input,
-                            (hasNoData(value?.value) && !allFiltersVisible)
+                            (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                             && styles.hidden,
                         )}
                         name="valueGte"
@@ -236,7 +236,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         className={_cs(
                             className,
                             styles.input,
-                            (hasNoData(value?.value) && !allFiltersVisible)
+                            (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                             && styles.hidden,
                         )}
                         name="valueLte"
@@ -254,7 +254,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -275,7 +275,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     value={value?.valueList}
@@ -307,7 +307,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -327,7 +327,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -347,7 +347,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -367,7 +367,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -387,7 +387,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -407,7 +407,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="value"

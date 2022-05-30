@@ -188,9 +188,7 @@ function mapReportLevelsToNodes(
                     nodes,
                 });
             }
-        }
-
-        if (!level.sublevels && isActiveKey) {
+        } else if (isActiveKey) {
             return ({
                 key: level.id,
                 title: level.title,

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
     _cs,
     listToMap,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     TextInput,
@@ -15,7 +16,6 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
-    hasNoData,
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
@@ -102,7 +102,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
             <ProjectMemberMultiSelectInput
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.createdBy) && !allFiltersVisible)
+                    (doesObjectHaveNoData(value?.createdBy) && !allFiltersVisible)
                     && styles.hidden,
                 )}
                 name="createdBy"
@@ -117,8 +117,8 @@ function EntryFilter<K extends string>(props: Props<K>) {
             <DateDualRangeInput
                 className={_cs(
                     styles.input,
-                    hasNoData(value?.createdAtGte)
-                        && hasNoData(value?.createdAtLte)
+                    doesObjectHaveNoData(value?.createdAtGte)
+                        && doesObjectHaveNoData(value?.createdAtLte)
                         && !allFiltersVisible
                         && styles.hidden,
                 )}
@@ -134,7 +134,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
             <BooleanInput
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.controlled) && !allFiltersVisible)
+                    (doesObjectHaveNoData(value?.controlled) && !allFiltersVisible)
                     && styles.hidden,
                 )}
                 options={controlledStatusOptions}
@@ -147,7 +147,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
             <MultiSelectInput
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.entryTypes) && !allFiltersVisible)
+                    (doesObjectHaveNoData(value?.entryTypes) && !allFiltersVisible)
                     && styles.hidden,
                 )}
                 name="entryTypes"
