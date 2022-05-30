@@ -27,7 +27,6 @@ import {
 import { gql, useQuery } from '@apollo/client';
 import _ts from '#ts';
 import {
-    hasNoData,
     enumKeySelector,
     enumLabelSelector,
     convertDateToIsoDateTime,
@@ -331,7 +330,7 @@ function SourcesFilter(props: Props) {
                         <BooleanInput
                             className={_cs(
                                 styles.input,
-                                hasNoData(value.hasEntries)
+                                doesObjectHaveNoData(value.hasEntries)
                                 && !allFiltersVisible
                                 && styles.hidden,
                             )}
@@ -346,7 +345,7 @@ function SourcesFilter(props: Props) {
                         <BooleanInput
                             className={_cs(
                                 styles.input,
-                                hasNoData(value.hasAssessment)
+                                doesObjectHaveNoData(value.hasAssessment)
                                 && !allFiltersVisible
                                 && styles.hidden,
                             )}
@@ -363,7 +362,7 @@ function SourcesFilter(props: Props) {
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
-                        hasNoData(value.createdBy)
+                        doesObjectHaveNoData(value.createdBy)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -379,7 +378,7 @@ function SourcesFilter(props: Props) {
                 <ProjectMemberMultiSelectInput
                     className={_cs(
                         styles.input,
-                        hasNoData(value.assignees)
+                        doesObjectHaveNoData(value.assignees)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -395,7 +394,7 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        hasNoData(value.priorities)
+                        doesObjectHaveNoData(value.priorities)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -412,7 +411,7 @@ function SourcesFilter(props: Props) {
                 <MultiSelectInput
                     className={_cs(
                         styles.input,
-                        hasNoData(value.authoringOrganizationTypes)
+                        doesObjectHaveNoData(value.authoringOrganizationTypes)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -429,7 +428,7 @@ function SourcesFilter(props: Props) {
                 <NewOrganizationMultiSelectInput
                     className={_cs(
                         styles.input,
-                        hasNoData(value.authorOrganizations)
+                        doesObjectHaveNoData(value.authorOrganizations)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -445,7 +444,7 @@ function SourcesFilter(props: Props) {
                 <NewOrganizationMultiSelectInput
                     className={_cs(
                         styles.input,
-                        hasNoData(value.sourceOrganizations)
+                        doesObjectHaveNoData(value.sourceOrganizations)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -462,7 +461,7 @@ function SourcesFilter(props: Props) {
                     <SelectInput
                         className={_cs(
                             styles.input,
-                            hasNoData(value.confidentiality)
+                            doesObjectHaveNoData(value.confidentiality)
                             && !allFiltersVisible
                             && styles.hidden,
                         )}

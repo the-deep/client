@@ -5,6 +5,7 @@ import {
     isNotDefined,
     encodeDate,
     isDefined,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     EntriesAsList,
@@ -21,7 +22,6 @@ import { IoClose } from 'react-icons/io5';
 import {
     enumKeySelector,
     enumLabelSelector,
-    hasNoData,
 } from '#utils/common';
 import {
     FrameworkFilterType,
@@ -117,7 +117,7 @@ function DismissableTextOutput<T extends string | number | undefined>(
         onDismiss,
     } = props;
 
-    if (hasNoData(value)) {
+    if (doesObjectHaveNoData(value)) {
         return null;
     }
 
@@ -217,7 +217,7 @@ function DismissableListOutput<D, V extends string | number, N extends string | 
         return value?.map((val) => labelMap?.[val])?.join(', ');
     }, [value, labelMap]);
 
-    if (hasNoData(value)) {
+    if (doesObjectHaveNoData(value)) {
         return null;
     }
 
@@ -266,7 +266,7 @@ N extends string | number | undefined
         onDismissToValue(undefined, toName);
     }, [onDismissFromValue, onDismissToValue, fromName, toName]);
 
-    if (hasNoData(fromValue) || hasNoData(toValue)) {
+    if (doesObjectHaveNoData(fromValue) || doesObjectHaveNoData(toValue)) {
         return null;
     }
 
@@ -316,7 +316,7 @@ function DismissableSelectOutput<D, V extends string | number, N>(
         return labelMap?.[value];
     }, [value, labelMap]);
 
-    if (hasNoData(value)) {
+    if (doesObjectHaveNoData(value)) {
         return null;
     }
     return (

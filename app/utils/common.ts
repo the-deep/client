@@ -1,9 +1,6 @@
 import { memo, ReactElement } from 'react';
 
 import {
-    isNaN,
-    isObject,
-    isList,
     isDefined,
     isNotDefined,
     compareNumber,
@@ -128,54 +125,6 @@ export function joinList(
             ];
         },
     ).flat();
-}
-
-export function hasData(obj: unknown): boolean {
-    if (obj === undefined || obj === null || isNaN(obj)) {
-        return false;
-    }
-
-    if (isList(obj)) {
-        if (obj.length <= 0) {
-            return false;
-        }
-        return obj.every((e) => hasData(e));
-    }
-
-    if (isObject(obj)) {
-        if (Object.keys(obj).length <= 0) {
-            return false;
-        }
-        return Object.values(obj).every(
-            (value) => hasData(value),
-        );
-    }
-
-    return true;
-}
-
-export function hasNoData(obj: unknown): boolean {
-    if (obj === undefined || obj === null || isNaN(obj)) {
-        return true;
-    }
-
-    if (isList(obj)) {
-        if (obj.length <= 0) {
-            return true;
-        }
-        return obj.every((e) => hasNoData(e));
-    }
-
-    if (isObject(obj)) {
-        if (Object.keys(obj).length <= 0) {
-            return true;
-        }
-        return Object.values(obj).every(
-            (value) => hasNoData(value),
-        );
-    }
-
-    return false;
 }
 
 export const enumKeySelector = <T>(d: EnumEntity<T>) => (

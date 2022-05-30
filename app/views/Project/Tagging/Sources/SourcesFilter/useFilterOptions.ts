@@ -7,10 +7,12 @@ import {
     SourceFilterOptions,
 } from './types';
 
+// FIXME: Let's not create a helper if it's used only once. Need to inspect.
 export function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.id;
 }
 
+// FIXME: Let's not create a helper if it's used only once. Need to inspect.
 export function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.title;
 }
@@ -106,6 +108,7 @@ const SOURCE_FILTER_OPTIONS = gql`
     }
 `;
 
+// FIXME: Let's not create hooks for this simple purpose
 function useFilterOptions(projectId: string) {
     const {
         data,
