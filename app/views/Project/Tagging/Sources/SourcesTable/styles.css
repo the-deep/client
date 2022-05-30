@@ -2,8 +2,9 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    flex-shrink: 0;
+    flex-grow: 1;
     z-index: 0;
+    background-color: var(--dui-color-foreground);
     padding: 0;
 
     .content {
@@ -11,9 +12,13 @@
         align-items: flex-start;
         flex-grow: 1;
 
+        .overflow-container {
+            overflow: unset;
+        }
+
         .table {
             width: 100%;
-            min-height: 50vh;
+            min-height: calc(100vh - 27rem);
 
             .title-column {
                 min-width: 196px;

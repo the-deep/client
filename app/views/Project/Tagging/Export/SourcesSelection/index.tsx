@@ -18,17 +18,19 @@ import {
     Checkbox,
     CheckboxProps,
 } from '@the-deep/deep-ui';
-import { useQuery, gql } from '@apollo/client';
+import { EntriesAsList } from '@togglecorp/toggle-form';
+import { useQuery } from '@apollo/client';
 
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import {
     LeadOrderingEnum,
     ProjectSourceListQuery,
     ProjectSourceListQueryVariables,
-    SourceFilterOptionsQueryVariables,
 } from '#generated/types';
 import { isFiltered } from '#utils/common';
-import SourcesFilter, { getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
+import SourcesFilter, { getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
+import { PartialFormType, FormType as FilterFormType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+import { PROJECT_LEADS } from '../queries';
 import styles from './styles.css';
 
 type Project = NonNullable<ProjectSourceListQuery['project']>;
@@ -42,108 +44,8 @@ const defaultSorting = {
 function leadsKeySelector(d: Lead) {
     return d.id;
 }
-const maxItemsPerPage = 10;
 
-const PROJECT_LEADS = gql`
-    query ProjectSourceList(
-        $projectId: ID!,
-        $page: Int,
-        $pageSize: Int,
-        $ordering: [LeadOrderingEnum!],
-        $assignees: [ID!],
-        $createdBy: [ID!],
-        $authoringOrganizationTypes: [ID!],
-        $confidentiality: LeadConfidentialityEnum,
-        $createdAtGte: DateTime,
-        $createdAtLte: DateTime,
-        $emmEntities: String,
-        $emmKeywords: String,
-        $emmRiskFactors: String,
-        $priorities: [LeadPriorityEnum!],
-        $publishedOnGte: Date,
-        $publishedOnLte: Date,
-        $search: String,
-        $statuses: [LeadStatusEnum!],
-        $sourceOrganizations: [ID!],
-        $authorOrganizations: [ID!],
-        $entriesFilterData: LeadEntriesFilterData,
-        $hasEntries: Boolean,
-        $hasAssessment: Boolean,
-    ) {
-        project(id: $projectId) {
-            id
-            leads (
-                page: $page,
-                pageSize: $pageSize,
-                ordering: $ordering,
-                assignees: $assignees,
-                createdBy: $createdBy,
-                authoringOrganizationTypes: $authoringOrganizationTypes,
-                confidentiality: $confidentiality,
-                createdAtGte: $createdAtGte,
-                createdAtLte: $createdAtLte,
-                emmEntities: $emmEntities,
-                emmKeywords: $emmKeywords,
-                emmRiskFactors: $emmRiskFactors,
-                priorities: $priorities,
-                publishedOnGte: $publishedOnGte,
-                publishedOnLte: $publishedOnLte,
-                search: $search,
-                statuses: $statuses,
-                sourceOrganizations: $sourceOrganizations,
-                authorOrganizations: $authorOrganizations,
-                entriesFilterData: $entriesFilterData,
-                hasEntries: $hasEntries,
-                hasAssessment: $hasAssessment,
-            ) {
-                totalCount
-                page
-                pageSize
-                results {
-                    id
-                    clientId
-                    createdAt
-                    title
-                    publishedOn
-                    createdBy {
-                        id
-                        displayName
-                    }
-                    project
-                    authors {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
-                    }
-                    assignee {
-                        id
-                        displayName
-                    }
-                    source {
-                        mergedAs {
-                            id
-                            title
-                        }
-                        id
-                        url
-                        title
-                    }
-                    entriesCount {
-                        total
-                    }
-                    filteredEntriesCount
-                    leadPreview {
-                        pageCount
-                    }
-                    isAssessmentLead
-                }
-            }
-        }
-    }
-`;
+const maxItemsPerPage = 10;
 
 interface Props {
     className?: string;
@@ -154,11 +56,12 @@ interface Props {
     selectedLeads: string[];
     selectAll: boolean;
     onSelectAllChange: (v: boolean) => void;
-    filterValues: Omit<SourceFilterOptionsQueryVariables, 'projectId'>;
-    onFilterApply: (value: Omit<SourceFilterOptionsQueryVariables, 'projectId'>) => void;
+    filterValues: PartialFormType;
+    sourcesFilterValue: PartialFormType;
+    onFilterChange: (...entries: EntriesAsList<PartialFormType>) => void;
 }
 
-function LeadsSelection(props: Props) {
+function SourcesSelection(props: Props) {
     const {
         projectId,
         className,
@@ -167,9 +70,10 @@ function LeadsSelection(props: Props) {
         selectAll,
         onSelectAllChange,
         filterValues,
-        onFilterApply,
+        onFilterChange,
         filterOnlyUnprotected,
-        hasAssessment,
+        hasAssessment = false,
+        sourcesFilterValue,
     } = props;
 
     const sortState = useSortState();
@@ -182,7 +86,7 @@ function LeadsSelection(props: Props) {
     const [activePage, setActivePage] = useState<number>(1);
 
     const filters = useMemo(() => (
-        getProjectSourcesQueryVariables(filterValues)
+        getProjectSourcesQueryVariables(filterValues as Omit<FilterFormType, 'projectId'>)
     ), [filterValues]);
 
     const variables = useMemo(
@@ -208,6 +112,13 @@ function LeadsSelection(props: Props) {
             skip: isNotDefined(variables),
             variables,
         },
+    );
+
+    const handleSourcesFiltersValueChange = useCallback(
+        (...value: EntriesAsList<PartialFormType>) => {
+            onFilterChange(...value);
+        },
+        [onFilterChange],
     );
 
     const handleSelectAll = useCallback((value: boolean) => {
@@ -329,19 +240,35 @@ function LeadsSelection(props: Props) {
         selectAll,
     ]);
 
+    const totalCount = projectSourcesResponse?.project?.leads?.totalCount;
+
+    const selectedLeadsCount = useMemo(() => (
+        selectAll
+            ? ((totalCount ?? 0) - selectedLeads.length)
+            : selectedLeads.length
+    ), [
+        selectedLeads,
+        selectAll,
+        totalCount,
+    ]);
+
     return (
-        <div className={_cs(className, styles.leadsSelection)}>
+        <div className={_cs(className, styles.sourcesSelection)}>
             <SourcesFilter
                 className={styles.sourceEntryFilter}
-                onFilterApply={onFilterApply}
+                onChange={handleSourcesFiltersValueChange}
                 projectId={projectId}
                 filterOnlyUnprotected={filterOnlyUnprotected}
-                value={filterValues}
-                hideEntryFilters={hasAssessment}
+                value={sourcesFilterValue}
+                hideEntriesFilter={hasAssessment}
             />
             <div className={styles.tableContainer}>
+                <p className={styles.note}>
+                    {`${selectedLeadsCount} of ${totalCount ?? 0} sources ${(selectedLeadsCount > 1) ? 'are' : 'is'} selected`}
+                </p>
                 <SortContext.Provider value={sortState}>
                     <TableView
+                        className={styles.table}
                         data={projectSourcesResponse?.project?.leads?.results}
                         pending={projectSourcesPending}
                         errored={false}
@@ -355,17 +282,19 @@ function LeadsSelection(props: Props) {
                         filteredEmptyMessage="No matching sources found."
                     />
                 </SortContext.Provider>
+                <div className={styles.footer}>
+                    <Pager
+                        className={styles.footer}
+                        activePage={activePage}
+                        itemsCount={totalCount ?? 0}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
+                    />
+                </div>
             </div>
-            <Pager
-                className={styles.footer}
-                activePage={activePage}
-                itemsCount={projectSourcesResponse?.project?.leads?.totalCount ?? 0}
-                maxItemsPerPage={maxItemsPerPage}
-                onActivePageChange={setActivePage}
-                itemsPerPageControlHidden
-            />
         </div>
     );
 }
 
-export default LeadsSelection;
+export default SourcesSelection;

@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
     _cs,
+    doesObjectHaveNoData,
     isNotDefined,
     encodeDate,
 } from '@togglecorp/fujs';
@@ -17,16 +18,16 @@ import {
     useFormObject,
 } from '@togglecorp/toggle-form';
 import {
-    hasNoData,
     convertDateToIsoDateTime,
 } from '#utils/common';
-import GeoMultiSelectInput, { GeoArea } from '#components/GeoMultiSelectInput';
+import GeoMultiSelectInput from '#components/GeoMultiSelectInput';
 import NumberButStringInput from '#components/NumberButStringInput';
-import { PartialEntriesFilterDataType } from '../../schema';
 import {
     FrameworkFilterType,
     KeyLabel,
 } from '#types/newAnalyticalFramework';
+import SourcesFilterContext from '../../../SourcesFilterContext';
+import { PartialEntriesFilterDataType } from '../../schema';
 import SubRegionCheckmark from './SubRegionCheckmark';
 import styles from './styles.css';
 
@@ -47,6 +48,7 @@ interface Props<K extends number> {
     className?: string;
     optionsDisabled?: boolean;
     disabled?: boolean;
+    variant?: 'form' | 'general';
 }
 
 function FrameworkFilterItem<K extends number>(props: Props<K>) {
@@ -61,12 +63,13 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         allFiltersVisible,
         optionsDisabled,
         disabled,
+        variant,
     } = props;
 
-    const [
+    const {
         geoAreaOptions,
         setGeoAreaOptions,
-    ] = useState<GeoArea[] | undefined | null>(undefined);
+    } = useContext(SourcesFilterContext);
 
     const defaultOptionVal = useCallback(
         (): PartialFrameworkFilterValue => ({
@@ -126,11 +129,12 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'DATE': {
             return (
                 <DateRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                        && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                        && doesObjectHaveNoData(value?.valueLte)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -153,11 +157,12 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
             // will again dd another filter data
             return (
                 <DateRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                            && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                            && doesObjectHaveNoData(value?.valueLte)
                             && !allFiltersVisible
                             && styles.hidden,
                     )}
@@ -175,11 +180,12 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'TIME': {
             return (
                 <TimeRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                        && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                        && doesObjectHaveNoData(value?.valueLte)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -197,11 +203,12 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'TIME_RANGE': {
             return (
                 <TimeRangeInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        hasNoData(value?.valueGte)
-                        && hasNoData(value?.valueLte)
+                        doesObjectHaveNoData(value?.valueGte)
+                        && doesObjectHaveNoData(value?.valueLte)
                         && !allFiltersVisible
                         && styles.hidden,
                     )}
@@ -220,10 +227,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
             return (
                 <>
                     <NumberButStringInput
+                        variant={variant}
                         className={_cs(
                             className,
                             styles.input,
-                            (hasNoData(value?.value) && !allFiltersVisible)
+                            (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                             && styles.hidden,
                         )}
                         name="valueGte"
@@ -233,10 +241,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         disabled={disabled}
                     />
                     <NumberButStringInput
+                        variant={variant}
                         className={_cs(
                             className,
                             styles.input,
-                            (hasNoData(value?.value) && !allFiltersVisible)
+                            (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                             && styles.hidden,
                         )}
                         name="valueLte"
@@ -251,10 +260,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'SCALE': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -271,11 +281,12 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'GEO': {
             return (
                 <GeoMultiSelectInput
+                    variant={variant}
                     name="valueList"
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     value={value?.valueList}
@@ -304,10 +315,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'SELECT': {
             return (
                 <SelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -324,10 +336,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'MULTISELECT': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -344,10 +357,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'ORGANIGRAM': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -364,10 +378,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'MATRIX1D': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -384,10 +399,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'MATRIX2D': {
             return (
                 <MultiSelectInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.valueList) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.valueList) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="valueList"
@@ -404,10 +420,11 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         case 'TEXT':
             return (
                 <TextInput
+                    variant={variant}
                     className={_cs(
                         className,
                         styles.input,
-                        (hasNoData(value?.value) && !allFiltersVisible)
+                        (doesObjectHaveNoData(value?.value) && !allFiltersVisible)
                         && styles.hidden,
                     )}
                     name="value"

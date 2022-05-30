@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useContext } from 'react';
 import {
     _cs,
     listToMap,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     TextInput,
@@ -15,18 +16,17 @@ import {
     SetValueArg,
 } from '@togglecorp/toggle-form';
 import {
-    hasNoData,
     enumKeySelector,
     enumLabelSelector,
 } from '#utils/common';
-import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
+import ProjectMemberMultiSelectInput from '#components/selections/ProjectMemberMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 
+import SourcesFilterContext from '../../SourcesFilterContext';
 import FrameworkFilterItem from './FrameworkFilterItem';
 import { SourceFilterOptions } from '../types';
 
 import { PartialEntriesFilterDataType } from '../schema';
-
 import styles from './styles.css';
 
 const controlledStatusOptions: Option[] = [
@@ -44,6 +44,8 @@ const defaultValue: PartialEntriesFilterDataType = {
     filterableData: [],
 };
 
+type FilterableData = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
+
 interface Props<K extends string> {
     name: K;
     value: PartialEntriesFilterDataType | undefined;
@@ -51,7 +53,8 @@ interface Props<K extends string> {
     projectId: string;
     optionsDisabled: boolean;
     allFiltersVisible: boolean;
-    options?: SourceFilterOptions;
+    entryTypeOptions?: NonNullable<SourceFilterOptions['entryTypeOptions']>['enumValues'];
+    frameworkFilters?: NonNullable<NonNullable<SourceFilterOptions['project']>['analysisFramework']>['filters'];
     disabled?: boolean;
 }
 
@@ -60,18 +63,20 @@ function EntryFilter<K extends string>(props: Props<K>) {
         name,
         value,
         onChange,
-        options,
         projectId,
         disabled,
         allFiltersVisible,
         optionsDisabled,
+        entryTypeOptions,
+        frameworkFilters,
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, defaultValue);
 
-    const [members, setMembers] = useState<ProjectMember[] | undefined | null>();
-
-    type FilterableData = NonNullable<PartialEntriesFilterDataType['filterableData']>[number];
+    const {
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+    } = useContext(SourcesFilterContext);
 
     const {
         setValue: onFrameworkFilterChange,
@@ -91,6 +96,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
     return (
         <>
             <TextInput
+                variant="general"
                 className={styles.input}
                 icons={<IoSearch />}
                 name="search"
@@ -100,25 +106,27 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Excerpt Search"
             />
             <ProjectMemberMultiSelectInput
+                variant="general"
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.createdBy) && !allFiltersVisible)
+                    (doesObjectHaveNoData(value?.createdBy) && !allFiltersVisible)
                     && styles.hidden,
                 )}
                 name="createdBy"
                 projectId={projectId}
                 value={value?.createdBy}
                 onChange={setFieldValue}
-                options={members}
-                onOptionsChange={setMembers}
+                options={entryCreatedByOptions}
+                onOptionsChange={setEntryCreatedByOptions}
                 label="Entry Created By"
                 disabled={disabled}
             />
             <DateDualRangeInput
+                variant="general"
                 className={_cs(
                     styles.input,
-                    hasNoData(value?.createdAtGte)
-                        && hasNoData(value?.createdAtLte)
+                    doesObjectHaveNoData(value?.createdAtGte)
+                        && doesObjectHaveNoData(value?.createdAtLte)
                         && !allFiltersVisible
                         && styles.hidden,
                 )}
@@ -132,9 +140,10 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 label="Entry Created At"
             />
             <BooleanInput
+                variant="general"
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.controlled) && !allFiltersVisible)
+                    (doesObjectHaveNoData(value?.controlled) && !allFiltersVisible)
                     && styles.hidden,
                 )}
                 options={controlledStatusOptions}
@@ -145,9 +154,10 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled}
             />
             <MultiSelectInput
+                variant="general"
                 className={_cs(
                     styles.input,
-                    (hasNoData(value?.entryTypes) && !allFiltersVisible)
+                    (doesObjectHaveNoData(value?.entryTypes) && !allFiltersVisible)
                     && styles.hidden,
                 )}
                 name="entryTypes"
@@ -155,15 +165,16 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 keySelector={enumKeySelector}
                 labelSelector={enumLabelSelector}
-                options={options?.entryTypeOptions?.enumValues}
+                options={entryTypeOptions}
                 disabled={disabled || optionsDisabled}
                 label="Entry Type"
             />
             {
-                options?.project?.analysisFramework?.filters?.map((filter) => {
+                frameworkFilters?.map((filter) => {
                     const filterValue = filterValuesMap[filter.key];
                     return (
                         <FrameworkFilterItem
+                            variant="general"
                             key={filter.id}
                             name={filterValue?.index}
                             title={filter.title}

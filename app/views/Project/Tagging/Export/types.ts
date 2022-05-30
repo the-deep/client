@@ -2,6 +2,7 @@ import {
     WidgetType,
     ProjectFrameworkDetailsQuery,
     AnalysisFrameworkExportableType,
+    ExportFormatEnum,
 } from '#generated/types';
 import {
     Widget as WidgetFromAF,
@@ -19,9 +20,9 @@ export interface Node {
     nodes?: this[];
 }
 
-export interface TreeSelectableWidget extends Node {
+export type TreeSelectableWidget = Node & WidgetFromAF & {
     id: string;
-}
+};
 
 export interface ReportStructure {
     key: string;
@@ -37,3 +38,14 @@ export type AnalysisFramework = DeepReplace<
     Omit<WidgetType, 'widgetIdDisplay' | 'widthDisplay'>,
     WidgetFromAF
 >;
+
+export interface ExportTypeItem {
+    key: ExportFormatEnum;
+    icon: React.ReactNode;
+    title: string;
+}
+
+export interface ExportReportStructure {
+    id: string;
+    levels?: ExportReportStructure[];
+}

@@ -39,7 +39,9 @@ type OrganizationMultiSelectInputProps<K extends string> = SearchMultiSelectInpu
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 >;
 
-const keySelector = (d: BasicOrganization) => d.id;
+export function keySelector(d: BasicOrganization) {
+    return d.id;
+}
 export function organizationTitleSelector(org: BasicOrganization) {
     if (org.mergedAs) {
         return org.mergedAs.title;
