@@ -18,7 +18,10 @@ import {
 } from '../../schema';
 import ReliefWebParamsInput from './ReliefWebParamsInput';
 import RssFeedParamsInput from './RssFeedParamsInput';
+import AtomFeedParamsInput from './AtomFeedParamsInput';
 import UnhcrParams from './UnhcrParamsInput';
+import HumanitarianResponseParamsInput from './HumanitarianResponseParamsInput';
+import PdnaParamsInput from './PdnaParamsInput';
 
 import styles from './styles.css';
 
@@ -31,6 +34,8 @@ interface Props<T extends number> {
     disabled?: boolean;
     rssErrored: boolean;
     onRssErrorChange: (rssErrored: boolean) => void;
+    atomErrored: boolean;
+    onAtomErrorChange: (atomErrored: boolean) => void;
 }
 
 function ConnectorSourceForm<T extends number>(props: Props<T>) {
@@ -43,6 +48,8 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
         disabled,
         rssErrored,
         onRssErrorChange,
+        atomErrored,
+        onAtomErrorChange,
     } = props;
 
     const setFieldValue = useFormObject(name, onChange, value);
@@ -84,7 +91,25 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
                     disabled={disabled}
                 />
             )}
-            {(value.source === 'RSS_FEED' || value.source === 'ATOM_FEED') && (
+            {value.source === 'HUMANITARIAN_RESP' && (
+                <HumanitarianResponseParamsInput
+                    name="params"
+                    value={value.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                    disabled={disabled}
+                />
+            )}
+            {value.source === 'PDNA' && (
+                <PdnaParamsInput
+                    name="params"
+                    value={value.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                    disabled={disabled}
+                />
+            )}
+            {value.source === 'RSS_FEED' && (
                 <RssFeedParamsInput
                     name="params"
                     value={value.params}
@@ -93,6 +118,17 @@ function ConnectorSourceForm<T extends number>(props: Props<T>) {
                     disabled={disabled}
                     rssErrored={rssErrored}
                     onRssErrorChange={onRssErrorChange}
+                />
+            )}
+            {value.source === 'ATOM_FEED' && (
+                <AtomFeedParamsInput
+                    name="params"
+                    value={value.params}
+                    onChange={setFieldValue}
+                    error={error?.params}
+                    disabled={disabled}
+                    atomErrored={atomErrored}
+                    onAtomErrorChange={onAtomErrorChange}
                 />
             )}
         </Container>
