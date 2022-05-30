@@ -91,8 +91,10 @@ export function useFilterState() {
         error: formError,
         setFieldValue,
         setValue,
+        pristine,
+        setError,
+        validate,
     } = useForm(schema, initialValue);
-
     const error = getErrorObject(formError);
 
     const resetValue = React.useCallback(() => {
@@ -105,7 +107,10 @@ export function useFilterState() {
         setFieldValue,
         setValue,
         resetValue,
-    }), [value, error, setFieldValue, setValue, resetValue]);
+        pristine,
+        setError,
+        validate,
+    }), [value, error, setFieldValue, setValue, resetValue, pristine, setError, validate]);
 
     return returnValue;
 }
