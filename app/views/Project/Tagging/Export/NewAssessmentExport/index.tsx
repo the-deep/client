@@ -104,6 +104,12 @@ function NewAssessmentExport(props: Props) {
         setSourcesFilters,
     ] = useState<PartialFormType>({});
 
+    const finalFilters = useMemo(() => (
+        getProjectSourcesQueryVariables(
+            sourcesFilter as Omit<FilterFormType, 'projectId'>,
+        )
+    ), [sourcesFilter]);
+
     const {
         data: sourcesStats,
     } = useQuery<ProjectSourceStatsForExportQuery, ProjectSourceStatsForExportQueryVariables>(
@@ -111,7 +117,7 @@ function NewAssessmentExport(props: Props) {
         {
             variables: {
                 projectId,
-                filters: sourcesFilter as LeadsFilterDataInputType,
+                filters: finalFilters as LeadsFilterDataInputType,
             },
         },
     );
@@ -267,7 +273,7 @@ function NewAssessmentExport(props: Props) {
 
     const stats = sourcesStats?.project?.stats;
     const isFilterEmpty = useMemo(() => (
-        doesObjectHaveNoData(sourcesFilter, [''])
+        doesObjectHaveNoData(sourcesFilter, ['', null])
     ), [sourcesFilter]);
 
     return (

@@ -16,7 +16,9 @@ import _ts from '#ts';
 
 import {
     PartialFormType as PartialFilterFormType,
+    FormType as FilterFormType,
 } from '../SourcesFilter/schema';
+import { getProjectSourcesQueryVariables } from '../SourcesFilter';
 
 import styles from './styles.css';
 
@@ -60,6 +62,12 @@ function SourcesStats(props: Props) {
         filters,
     } = props;
 
+    const finalFilters = useMemo(() => (
+        getProjectSourcesQueryVariables(
+            filters as Omit<FilterFormType, 'projectId'>,
+        )
+    ), [filters]);
+
     const {
         data: sourcesStats,
     } = useQuery<ProjectSourceStatsQuery, ProjectSourceStatsQueryVariables>(
@@ -67,14 +75,15 @@ function SourcesStats(props: Props) {
         {
             variables: {
                 projectId,
-                filters: filters as LeadsFilterDataInputType,
+                filters: finalFilters as LeadsFilterDataInputType,
             },
         },
     );
 
     const stats = sourcesStats?.project?.stats;
+
     const isFilterEmpty = useMemo(() => (
-        doesObjectHaveNoData(filters, [''])
+        doesObjectHaveNoData(filters, ['', null])
     ), [filters]);
 
     return (
