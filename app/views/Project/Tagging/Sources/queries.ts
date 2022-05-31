@@ -23,7 +23,7 @@ export const PROJECT_SOURCES = gql`
         $statuses: [LeadStatusEnum!],
         $sourceOrganizations: [ID!],
         $authorOrganizations: [ID!],
-        $entriesFilterData: LeadEntriesFilterData,
+        $entriesFilterData: EntriesFilterDataInputType,
         $hasEntries: Boolean,
         $hasAssessment: Boolean,
     ) {
@@ -117,4 +117,180 @@ export const PROJECT_SOURCES = gql`
             }
         }
     }
+`;
+
+export const SAVE_LEAD_FILTER = gql`
+    mutation SaveLeadFilter($projectId: ID!, $filters: LeadsFilterDataInputType!) {
+      project(id: $projectId) {
+      leadFilterSave(data: {filters: $filters}) {
+          errors
+          ok
+          result {
+            id
+            modifiedAt
+            title
+            createdAt
+          }
+        }
+      }
+    }
+`;
+
+export const PROJECT_SAVED_LEAD_FILTER = gql`
+    query ProjectSavedLeadFilter($projectId: ID!) {
+    project(id: $projectId) {
+    userSavedLeadFilter {
+      id
+      title
+      modifiedAt
+      filtersData {
+        assigneeOptions {
+          id
+          displayName
+          emailDisplay
+        }
+        authorOrganizationOptions {
+          id
+          mergedAs {
+            id
+            title
+          }
+          title
+        }
+        authorOrganizationTypeOptions {
+          id
+          title
+        }
+        createdByOptions {
+          id
+          displayName
+          emailDisplay
+        }
+        entryFilterCreatedByOptions {
+          id
+          displayName
+          emailDisplay
+        }
+        entryFilterGeoAreaOptions {
+          id
+          regionTitle
+          adminLevelTitle
+          title
+        }
+        entryFilterLeadAssigneeOptions {
+          id
+          displayName
+        }
+        entryFilterLeadAuthorOrganizationOptions {
+          id
+          mergedAs {
+            id
+            title
+          }
+          title
+        }
+        entryFilterLeadAuthoringOrganizationtypeOptions {
+          title
+          id
+        }
+        entryFilterLeadCreatedByOptions {
+          displayName
+          id
+        }
+        entryFilterLeadSourceOrganizationOptions {
+          id
+          title
+          mergedAs {
+            id
+            title
+          }
+        }
+        entryFilterModifiedByOptions {
+          displayName
+          id
+        }
+        sourceOrganizationOptions {
+          id
+          title
+        }
+      }
+      filters {
+        assignees
+        authorOrganizations
+        authoringOrganizationTypes
+        confidentiality
+        createdAt
+        createdAtGte
+        createdAtLte
+        createdBy
+        emmEntities
+        emmKeywords
+        emmRiskFactors
+        excludeProvidedLeadsId
+        extractionStatus
+        hasAssessment
+        hasEntries
+        ids
+        modifiedAt
+        modifiedAtGte
+        modifiedAtLte
+        modifiedBy
+        ordering
+        priorities
+        publishedOn
+        publishedOnGte
+        publishedOnLte
+        search
+        sourceOrganizations
+        sourceTypes
+        statuses
+        text
+        url
+        entriesFilterData {
+          commentStatus
+          controlled
+          createdAt
+          createdAtGte
+          createdAtLte
+          createdBy
+          entriesId
+          entryTypes
+          excerpt
+          geoCustomShape
+          id
+          leadAssignees
+          leadAuthorOrganizations
+          leadAuthoringOrganizationTypes
+          leadConfidentialities
+          leadCreatedBy
+          leadGroupLabel
+          leadPriorities
+          leadPublishedOn
+          leadPublishedOnLte
+          leadPublishedOnGte
+          leadSourceOrganizations
+          leadStatuses
+          leadTitle
+          leads
+          modifiedAt
+          modifiedAtGte
+          modifiedAtLte
+          modifiedBy
+          projectEntryLabels
+          search
+          filterableData {
+            filterKey
+            includeSubRegions
+            useAndOperator
+            useExclude
+            value
+            valueGte
+            valueList
+            valueLte
+          }
+        }
+      }
+    }
+  }
+}
 `;

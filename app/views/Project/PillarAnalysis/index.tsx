@@ -112,7 +112,7 @@ export const PROJECT_ENTRIES_FOR_ANALYSIS = gql`
             $createdAtLte: DateTime,
             $createdBy: [ID!],
             $entryTypes: [EntryTagTypeEnum!],
-            $filterableData: [EntryFilterDataType!]
+            $filterableData: [EntryFilterDataInputType!]
             $leadAssignees: [ID!],
             $leadConfidentialities: [LeadConfidentialityEnum!],
             $leadPriorities: [LeadPriorityEnum!],

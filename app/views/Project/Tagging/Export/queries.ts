@@ -125,7 +125,7 @@ export const PROJECT_LEADS = gql`
         $statuses: [LeadStatusEnum!],
         $sourceOrganizations: [ID!],
         $authorOrganizations: [ID!],
-        $entriesFilterData: LeadEntriesFilterData,
+        $entriesFilterData: EntriesFilterDataInputType,
         $hasEntries: Boolean,
         $hasAssessment: Boolean,
     ) {

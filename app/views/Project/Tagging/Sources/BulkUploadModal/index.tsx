@@ -19,7 +19,7 @@ import { RequestItem } from '#hooks/useBatchManager';
 import { apolloClient } from '#base/configs/apollo';
 import { UserContext } from '#base/context/UserContext';
 
-import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
+import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/queries';
 
 import {
     PartialLeadType,
