@@ -23,7 +23,7 @@ import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput'
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 
 import { PartialLeadType } from '#views/Project/Tagging/Sources/BulkUploadModal/schema';
-import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/SourcesTable/queries';
+import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/queries';
 import { useBulkLeads, Req, Res, Err } from '#views/Project/Tagging/Sources/BulkUploadModal/hook';
 import { RequestItem } from '#hooks/useBatchManager';
 
