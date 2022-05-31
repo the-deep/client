@@ -1,4 +1,4 @@
-import { isDefined } from '@togglecorp/fujs';
+import { isDefined, listToMap } from '@togglecorp/fujs';
 import _ts from '#ts';
 
 import {
@@ -214,7 +214,14 @@ export const createReportStructure = (
 
     const {
         exportables,
+        filters,
     } = analysisFramework;
+
+    const filterKeyWidgetIdMap = listToMap(
+        filters,
+        (d) => d.key,
+        (d) => d.widgetKey,
+    );
 
     const widgets = getWidgets(analysisFramework);
     if (!widgets) {
@@ -222,8 +229,7 @@ export const createReportStructure = (
     }
 
     const filterWithWidgetId = filterData?.map((filter) => ({
-        // FIXME: We need to use the widgetKey from server
-        widgetKey: filter?.filterKey?.split('-')?.[0],
+        widgetKey: filterKeyWidgetIdMap?.[filter.filterKey],
         valueList: filter?.valueList,
     }));
 
