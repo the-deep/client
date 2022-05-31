@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
     IoGridOutline,
@@ -14,8 +14,22 @@ import {
     TabPanel,
     Button,
     useBooleanState,
+    SortContext,
+    useSortState,
 } from '@the-deep/deep-ui';
-import { EntriesAsList, createSubmitHandler } from '@togglecorp/toggle-form';
+import { EntriesAsList, removeNull, createSubmitHandler } from '@togglecorp/toggle-form';
+import {
+    useMutation,
+    useQuery,
+} from '@apollo/client';
+
+import {
+    LeadOrderingEnum,
+    SaveLeadFilterMutation,
+    SaveLeadFilterMutationVariables,
+    ProjectSavedLeadFilterQuery,
+    ProjectSavedLeadFilterQueryVariables,
+} from '#generated/types';
 
 import _ts from '#ts';
 import ProjectContext from '#base/context/ProjectContext';
@@ -25,12 +39,19 @@ import { BasicOrganization } from '#components/selections/NewOrganizationMultiSe
 import SourcesFilterContext from './SourcesFilterContext';
 import AppliedFilters from './AppliedFilters';
 import SourcesStats from './SourcesStats';
-import SourcesFilter, { useFilterState } from './SourcesFilter';
-import { PartialFormType } from './SourcesFilter/schema';
+import SourcesFilter, { useFilterState, getProjectSourcesQueryVariables } from './SourcesFilter';
+import { PartialFormType, FormType as FilterFormType } from './SourcesFilter/schema';
 import SourcesTable from './SourcesTable';
 import EntriesGrid from './EntriesGrid';
+import { SAVE_LEAD_FILTER, PROJECT_SAVED_LEAD_FILTER } from './queries';
+import { getSortState } from './utils';
 
 import styles from './styles.css';
+
+const defaultSorting = {
+    name: 'CREATED_AT',
+    direction: 'Descending',
+};
 
 interface Props {
     className?: string;
@@ -79,6 +100,7 @@ function Sources(props: Props) {
     const {
         value: sourcesFilterValue,
         setFieldValue: setSourcesFilterValue,
+        setValue: setSourcesFilter,
         resetValue: clearSourcesFilterValue,
         setError,
         validate,
@@ -90,6 +112,50 @@ function Sources(props: Props) {
         sourcesFilters,
         setSourcesFilters,
     ] = useState<PartialFormType>({});
+
+    const sortState = useSortState();
+    const { sorting, setSorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = validSorting.direction === 'Ascending'
+        ? `ASC_${validSorting.name}`
+        : `DESC_${validSorting.name}`;
+
+    const [
+        saveLeadFilter,
+    ] = useMutation<SaveLeadFilterMutation, SaveLeadFilterMutationVariables>(
+        SAVE_LEAD_FILTER,
+    );
+
+    useQuery<ProjectSavedLeadFilterQuery, ProjectSavedLeadFilterQueryVariables>(
+        PROJECT_SAVED_LEAD_FILTER,
+        {
+            skip: !activeProject,
+            variables: activeProject ? { projectId: activeProject } : undefined,
+            onCompleted: (response) => {
+                if (!response || !response.project) {
+                    return;
+                }
+                const {
+                    userSavedLeadFilter,
+                } = response.project;
+
+                if (userSavedLeadFilter?.filters) {
+                    const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
+                    setSorting(getSortState(orderingFilter));
+                    setSourcesFilter(removeNull(others));
+                }
+                if (userSavedLeadFilter?.filtersData) {
+                    const { filtersData } = userSavedLeadFilter;
+                    setCreatedByOptions(filtersData?.createdByOptions);
+                    setAssigneeOptions(filtersData?.assigneeOptions);
+                    setAuthorOrganizationOptions(filtersData?.authorOrganizationOptions);
+                    setSourceOrganizationOptions(filtersData?.sourceOrganizationOptions);
+                    setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
+                    setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
+                }
+            },
+        },
+    );
 
     const sourcesFilterContextValue = useMemo(() => ({
         createdByOptions,
@@ -143,6 +209,22 @@ function Sources(props: Props) {
     }, [clearSourcesFilterValue, setActivePage, setPristine]);
 
     const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
+
+    useEffect(() => {
+        if (activeProject) {
+            saveLeadFilter({
+                variables: {
+                    projectId: activeProject,
+                    filters: {
+                        ...getProjectSourcesQueryVariables(
+                            sourcesFilters as Omit<FilterFormType, 'projectId'>,
+                        ),
+                        ordering: [ordering as LeadOrderingEnum],
+                    },
+                },
+            });
+        }
+    }, [activeProject, sourcesFilters, ordering, saveLeadFilter]);
 
     return (
         <div className={_cs(styles.sources, className)}>
@@ -240,13 +322,15 @@ function Sources(props: Props) {
                                     name="table"
                                     className={styles.leads}
                                 >
-                                    <SourcesTable
-                                        className={styles.tableContainer}
-                                        filters={sourcesFilters}
-                                        projectId={activeProject}
-                                        activePage={activePage}
-                                        setActivePage={setActivePage}
-                                    />
+                                    <SortContext.Provider value={sortState}>
+                                        <SourcesTable
+                                            className={styles.tableContainer}
+                                            filters={sourcesFilters}
+                                            projectId={activeProject}
+                                            activePage={activePage}
+                                            setActivePage={setActivePage}
+                                        />
+                                    </SortContext.Provider>
                                 </TabPanel>
                                 <TabPanel
                                     name="grid"

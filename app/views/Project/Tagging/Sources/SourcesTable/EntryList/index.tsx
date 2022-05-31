@@ -64,7 +64,7 @@ export const LEAD_ENTRIES = gql`
         $createdAtLte: DateTime,
         $createdBy: [ID!],
         $entryTypes: [EntryTagTypeEnum!],
-        $filterableData: [EntryFilterDataType!]
+        $filterableData: [EntryFilterDataInputType!]
         $search: String,
         ) {
         project(id: $projectId) {
