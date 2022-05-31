@@ -66,7 +66,7 @@ export const PROJECT_ENTRIES = gql`
         $createdAtLte: DateTime,
         $createdBy: [ID!],
         $entryTypes: [EntryTagTypeEnum!],
-        $filterableData: [EntryFilterDataType!]
+        $filterableData: [EntryFilterDataInputType!]
         $leadAssignees: [ID!],
         $leadCreatedBy: [ID!],
         $leadSourceOrganizations: [ID!],

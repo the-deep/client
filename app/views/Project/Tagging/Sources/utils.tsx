@@ -1,8 +1,13 @@
+import { LeadOrderingEnum } from '#generated/types';
 import { convertDateToIsoDateTime } from '#utils/common';
-
 import { FormType } from './SourcesFilter/schema';
 
 type FaramValues = Omit<FormType, 'projectId'>;
+
+enum SortDirection {
+    'asc' = 'Ascending',
+    'dsc' = 'Descending',
+}
 
 // eslint-disable-next-line import/prefer-default-export
 export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
@@ -45,4 +50,17 @@ export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
         leadSourceOrganizations: sourceOrganizations,
         leadAuthoringOrganizationTypes: authoringOrganizationTypes,
     };
+}
+
+export function getSortState(
+    orderingFilter: LeadOrderingEnum[] | null | undefined,
+): { name: string; direction: SortDirection } | undefined {
+    const [direction, ...orderingName] = orderingFilter?.[0] ? orderingFilter[0].split('_') : [];
+    if (direction) {
+        return ({
+            name: orderingName.join('_'),
+            direction: direction === 'ASC' ? SortDirection.asc : SortDirection.dsc,
+        });
+    }
+    return undefined;
 }

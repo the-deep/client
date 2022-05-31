@@ -12,7 +12,6 @@ import {
     Container,
     Kraken,
     Pager,
-    SortContext,
     TableView,
     TableColumn,
     TableHeaderCell,
@@ -64,7 +63,7 @@ import LeadEditModal from '../LeadEditModal';
 import BulkActions from './BulkActions';
 import EntryList from './EntryList';
 
-import { PROJECT_SOURCES } from './queries';
+import { PROJECT_SOURCES } from '../queries';
 import styles from './styles.css';
 
 function sourcesKeySelector(d: Lead) {
@@ -558,37 +557,35 @@ function SourcesTable(props: Props) {
                 <RowExpansionContext.Provider
                     value={expandedContextValue}
                 >
-                    <SortContext.Provider value={sortState}>
-                        <TableView
-                            className={styles.table}
-                            data={sources}
-                            keySelector={sourcesKeySelector}
-                            rowClassName={styles.tableRow}
-                            columns={columns}
-                            rowModifier={rowModifier}
-                            variant="large"
-                            pending={pending}
-                            overflowContainerClassName={styles.overflowContainer}
-                            filtered={isFiltered(entriesFilter)}
-                            errored={false}
-                            filteredEmptyMessage="No matching sources found."
-                            filteredEmptyIcon={(
-                                <Kraken
-                                    size="large"
-                                    variant="search"
-                                />
-                            )}
-                            emptyMessage="No sources found."
-                            emptyIcon={(
-                                <Kraken
-                                    size="large"
-                                    variant="sleep"
-                                />
-                            )}
-                            messageShown
-                            messageIconShown
-                        />
-                    </SortContext.Provider>
+                    <TableView
+                        className={styles.table}
+                        data={sources}
+                        keySelector={sourcesKeySelector}
+                        rowClassName={styles.tableRow}
+                        columns={columns}
+                        rowModifier={rowModifier}
+                        variant="large"
+                        pending={pending}
+                        overflowContainerClassName={styles.overflowContainer}
+                        filtered={isFiltered(entriesFilter)}
+                        errored={false}
+                        filteredEmptyMessage="No matching sources found."
+                        filteredEmptyIcon={(
+                            <Kraken
+                                size="large"
+                                variant="search"
+                            />
+                        )}
+                        emptyMessage="No sources found."
+                        emptyIcon={(
+                            <Kraken
+                                size="large"
+                                variant="sleep"
+                            />
+                        )}
+                        messageShown
+                        messageIconShown
+                    />
                 </RowExpansionContext.Provider>
                 {showSingleSourceModal && (
                     <LeadEditModal
