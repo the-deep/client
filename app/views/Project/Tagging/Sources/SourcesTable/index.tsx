@@ -21,7 +21,6 @@ import {
     createStringColumn,
     useAlert,
     useBooleanState,
-    useSortState,
     useRowExpansion,
     RowExpansionContext,
 } from '@the-deep/deep-ui';
@@ -94,11 +93,6 @@ const statusVariantMap: Record<Lead['status'], 'default' | 'gradient1' | 'comple
     TAGGED: 'complement1',
 };
 
-const defaultSorting = {
-    name: 'CREATED_AT',
-    direction: 'Descending',
-};
-
 const DELETE_LEAD = gql`
     mutation DeleteLead(
         $projectId: ID!,
@@ -122,6 +116,7 @@ interface Props {
     filters: PartialFilterFormType;
     activePage: number;
     setActivePage: React.Dispatch<React.SetStateAction<number>>;
+    ordering: string;
 }
 
 function SourcesTable(props: Props) {
@@ -131,6 +126,7 @@ function SourcesTable(props: Props) {
         filters: rawFilters,
         activePage,
         setActivePage,
+        ordering,
     } = props;
 
     const filters = useMemo(() => (
@@ -144,13 +140,6 @@ function SourcesTable(props: Props) {
 
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
     const alert = useAlert();
-
-    const sortState = useSortState();
-    const { sorting } = sortState;
-    const validSorting = sorting || defaultSorting;
-    const ordering = validSorting.direction === 'Ascending'
-        ? `ASC_${validSorting.name}`
-        : `DESC_${validSorting.name}`;
 
     const variables = useMemo(
         (): ProjectSourcesQueryVariables | undefined => {

@@ -1,7 +1,10 @@
-import { LeadOrderingEnum } from '#generated/types';
+import { encodeDate } from '@togglecorp/fujs';
+import { removeNull } from '@togglecorp/toggle-form';
+import { LeadOrderingEnum, ProjectSavedLeadFilterQuery } from '#generated/types';
 import { convertDateToIsoDateTime } from '#utils/common';
 import { FormType } from './SourcesFilter/schema';
 
+type RawSourcesFilter = NonNullable<NonNullable<NonNullable<ProjectSavedLeadFilterQuery>['project']>['userSavedLeadFilter']>['filters'];
 type FaramValues = Omit<FormType, 'projectId'>;
 
 enum SortDirection {
@@ -63,4 +66,43 @@ export function getSortState(
         });
     }
     return undefined;
+}
+
+function getDateString(dateTimeString: string | null | undefined) {
+    if (dateTimeString && Date.parse(dateTimeString)) {
+        return encodeDate(new Date(dateTimeString));
+    }
+    return dateTimeString;
+}
+
+export function transformRawFiltersToFormValues(filters: RawSourcesFilter) {
+    if (filters) {
+        const {
+            createdAt,
+            createdAtGte,
+            createdAtLte,
+            entriesFilterData,
+            ...others
+        } = filters;
+        const formValues = {
+            ...others,
+            createdAt: getDateString(createdAt),
+            createdAtGte: getDateString(createdAtGte),
+            createdAtLte: getDateString(createdAtLte),
+            entriesFilterData: {
+                ...entriesFilterData,
+                createdAtGte: getDateString(entriesFilterData?.createdAtGte),
+                createdAtLte: getDateString(entriesFilterData?.createdAtLte),
+                filterableData: entriesFilterData?.filterableData
+                    ? entriesFilterData.filterableData.map((data) => ({
+                        ...data,
+                        valueGte: getDateString(data.valueGte),
+                        valueLte: getDateString(data.valueLte),
+                    }))
+                    : undefined,
+            },
+        };
+        return removeNull(formValues);
+    }
+    return {};
 }
