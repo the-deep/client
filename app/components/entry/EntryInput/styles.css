@@ -21,6 +21,10 @@
         background-color: var(--dui-color-foreground);
         width: var(--inner-width);
 
+        .header-actions {
+            flex-wrap: wrap;
+        }
+
         .excerpt-content {
             display: flex;
             flex-direction: column;

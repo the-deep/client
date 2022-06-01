@@ -1348,6 +1348,14 @@ export interface SelectMappingsItem extends MappingsItemBase {
     };
 }
 
+export interface OrganigramMappingsItem extends MappingsItemBase {
+    tag: string;
+    widgetType: 'ORGANIGRAM';
+    association: {
+        optionKey: string;
+    };
+}
+
 export interface MultiSelectMappingsItem extends MappingsItemBase {
     tag: string;
     widgetType: 'MULTISELECT';
@@ -1364,6 +1372,7 @@ export type MappingsItem = Matrix1dMappingsItem
     | Matrix2dMappingsItem
     | ScaleMappingsItem
     | SelectMappingsItem
+    | OrganigramMappingsItem
     | MultiSelectMappingsItem
     | GeoMappingsItem;
 
@@ -1396,6 +1405,7 @@ export const mappingsSupportedWidgets: WidgetType[] = [
     'MULTISELECT',
     'SELECT',
     'GEO',
+    'ORGANIGRAM',
 ];
 
 export const categoricalWidgets: WidgetType[] = [
@@ -1404,6 +1414,7 @@ export const categoricalWidgets: WidgetType[] = [
     'SCALE',
     'MULTISELECT',
     'SELECT',
+    'ORGANIGRAM',
 ];
 
 export type WidgetHint = {
@@ -1441,6 +1452,12 @@ export function filterSelectMappings(
     mappingsItem: MappingsItem,
 ): mappingsItem is SelectMappingsItem {
     return mappingsItem.widgetType === 'SELECT';
+}
+
+export function filterOrganigramMappings(
+    mappingsItem: MappingsItem,
+): mappingsItem is OrganigramMappingsItem {
+    return mappingsItem.widgetType === 'ORGANIGRAM';
 }
 
 export function filterMultiSelectMappings(

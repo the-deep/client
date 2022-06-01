@@ -7,4 +7,13 @@
         color: var(--dui-color-accent);
         gap: var(--dui-spacing-small);
     }
+
+    &.compact {
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+        font-size: var(--dui-font-size-small);
+
+        .verify-actions {
+            padding: 0 var(--dui-spacing-extra-small);
+        }
+    }
 }

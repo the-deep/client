@@ -49,6 +49,8 @@ import UserContext from '#base/context/UserContext';
 import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import ExcerptInput from '#components/entry/ExcerptInput';
+import EntryControl from '#components/entryReview/EntryControl';
+import EntryVerification from '#components/entryReview/EntryVerification';
 import {
     schema as leadSchema,
     PartialFormType as PartialLeadFormType,
@@ -134,6 +136,14 @@ function EntryEdit(props: Props) {
         commentsCountMap,
         setCommentsCountMap,
     ] = useState<CountMap>({});
+    const [
+        verifiedIdsMap,
+        setVerifiedIdsMap,
+    ] = useState<{ [key in string]: string[] | undefined } | undefined>();
+    const [
+        controlledMap,
+        setControlledMap,
+    ] = useState<{ [key in string]: boolean } | undefined>();
 
     const location = useLocation();
     const locationState = location?.state as {
@@ -1062,6 +1072,22 @@ function EntryEdit(props: Props) {
                         ))
                         .map((entry) => transformEntry(entry as Entry));
 
+                    setVerifiedIdsMap(
+                        listToMap(
+                            leadFromResponse.entries ?? [],
+                            (entry) => entry.id,
+                            (entry) => entry.verifiedBy?.map(
+                                (verifiyingUser) => verifiyingUser.id,
+                            ).filter(isDefined),
+                        ),
+                    );
+                    setControlledMap(
+                        listToMap(
+                            leadFromResponse.entries ?? [],
+                            (entry) => entry.id,
+                            (entry) => !!entry.controlled,
+                        ),
+                    );
                     setCommentsCountMap(
                         listToMap(
                             leadFromResponse.entries ?? [],
@@ -1241,6 +1267,31 @@ function EntryEdit(props: Props) {
         [setFormFieldValue],
     );
 
+    const onEntryVerificationStatusChange = useCallback((entryId: string) => {
+        setVerifiedIdsMap((oldMap = {}) => {
+            const currentVerifiedList = oldMap[entryId];
+            if (!currentVerifiedList) {
+                return { ...oldMap, [entryId]: [user?.id].filter(isDefined) };
+            }
+            const isAlreadyVerified = currentVerifiedList.some(
+                (verifiyingUser) => verifiyingUser === user?.id,
+            );
+            return {
+                ...oldMap,
+                [entryId]: isAlreadyVerified
+                    ? currentVerifiedList.filter((verifiyingUser) => verifiyingUser !== user?.id)
+                    : [...currentVerifiedList, user?.id].filter(isDefined),
+            };
+        });
+    }, [user?.id]);
+
+    const onEntryControlledStatusChange = useCallback((entryId: string) => {
+        setControlledMap((oldMap = {}) => ({
+            ...oldMap,
+            [entryId]: !oldMap?.[entryId],
+        }));
+    }, []);
+
     const entryDataRendererParams = useCallback(
         (entryId: string, datum: PartialEntryType, index: number) => ({
             value: datum,
@@ -1252,21 +1303,37 @@ function EntryEdit(props: Props) {
             onAddButtonClick: handleAddButtonClick,
             primaryTagging: frameworkDetails?.primaryTagging,
             excerptHeaderActions: datum.id && projectId && (
-                <EntryCommentWrapper
-                    entryId={datum.id}
-                    projectId={projectId}
-                    modalLeftContent={(
-                        <ExcerptInput
-                            value={datum.excerpt}
-                            image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
-                            imageRaw={undefined}
-                            // FIXME: pass this after image drag/drop is implemented
-                            leadImageUrl={undefined}
-                            entryType={datum.entryType}
-                            readOnly
-                        />
-                    )}
-                />
+                <>
+                    <EntryVerification
+                        entryId={datum.id}
+                        projectId={projectId}
+                        verifiedBy={verifiedIdsMap?.[datum.id]}
+                        onVerificationChange={onEntryVerificationStatusChange}
+                        compact
+                    />
+                    <EntryControl
+                        entryId={datum.id}
+                        projectId={projectId}
+                        value={!!controlledMap?.[datum.id]}
+                        onChange={onEntryControlledStatusChange}
+                        compact
+                    />
+                    <EntryCommentWrapper
+                        entryId={datum.id}
+                        projectId={projectId}
+                        modalLeftContent={(
+                            <ExcerptInput
+                                value={datum.excerpt}
+                                image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
+                                imageRaw={undefined}
+                                // FIXME: pass this after image drag/drop is implemented
+                                leadImageUrl={undefined}
+                                entryType={datum.entryType}
+                                readOnly
+                            />
+                        )}
+                    />
+                </>
             ),
             leadId,
             disabled: !!selectedEntry,
@@ -1278,6 +1345,10 @@ function EntryEdit(props: Props) {
             allWidgets,
         }),
         [
+            controlledMap,
+            onEntryControlledStatusChange,
+            verifiedIdsMap,
+            onEntryVerificationStatusChange,
             allWidgets,
             geoAreaOptions,
             projectId,

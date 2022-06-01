@@ -23,8 +23,9 @@ interface Props {
     entryId: string;
     projectId: string;
     disabled?: boolean;
-    verifiedBy: number[];
+    verifiedBy: string[] | undefined;
     onVerificationChange: (entryId: string) => void;
+    compact?: boolean;
 }
 
 function EntryVerification(props: Props) {
@@ -32,9 +33,10 @@ function EntryVerification(props: Props) {
         className,
         projectId,
         entryId,
-        verifiedBy,
+        verifiedBy = [],
         disabled,
         onVerificationChange,
+        compact,
     } = props;
 
     const {
@@ -42,7 +44,7 @@ function EntryVerification(props: Props) {
     } = useContext(UserContext);
 
     const isVerifiedByUser = useMemo(() => (
-        verifiedBy.some((v) => v.toString() === user?.id)
+        verifiedBy.some((v) => v === user?.id)
     ), [verifiedBy, user?.id]);
 
     const [
@@ -75,7 +77,11 @@ function EntryVerification(props: Props) {
     return (
         <>
             <Button
-                className={_cs(className, styles.toggleEntryVerification)}
+                className={_cs(
+                    className,
+                    styles.toggleEntryVerification,
+                    compact && styles.compact,
+                )}
                 name="entryVerification"
                 variant="secondary"
                 actionsContainerClassName={styles.verifyActions}

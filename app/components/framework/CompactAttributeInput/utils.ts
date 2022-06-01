@@ -11,6 +11,7 @@ import {
 // type ScaleWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SCALE' }>;
 // type SingleSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'SELECT' }>;
 type MultiSelectWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MULTISELECT' }>;
+type OrganigramWidgetAttribute = getType<PartialAttributeType, { widgetType: 'ORGANIGRAM' }>;
 type Matrix1dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATRIX1D' }>;
 type Matrix2dWidgetAttribute = getType<PartialAttributeType, { widgetType: 'MATRIX2D' }>;
 type GeoWidgetAttribute = getType<PartialAttributeType, { widgetType: 'GEO' }>;
@@ -19,6 +20,12 @@ export function filterMultiSelectRecommendations(
     recommendation: PartialAttributeType,
 ): recommendation is MultiSelectWidgetAttribute {
     return recommendation.widgetType === 'MULTISELECT';
+}
+
+export function filterOrganigramRecommendations(
+    recommendation: PartialAttributeType,
+): recommendation is OrganigramWidgetAttribute {
+    return recommendation.widgetType === 'ORGANIGRAM';
 }
 
 export function filterMatrix1dRecommendations(

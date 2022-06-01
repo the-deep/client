@@ -1,16 +1,11 @@
 import React, { useContext, useMemo, useCallback, useState } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
-import {
-    removeNull,
-} from '@togglecorp/toggle-form';
+import { removeNull } from '@togglecorp/toggle-form';
 import {
     IoMapOutline,
     IoBookmarks,
     IoDocuments,
-    IoPricetag,
     IoList,
     IoDocumentText,
     IoPersonSharp,
@@ -56,7 +51,6 @@ const PROJECT_EXPLORE_STATS = gql`
     query ProjectExploreStats {
         projectExploreStats {
             calculatedAt
-            dailyAverageLeadsTaggedPerProject
             generatedExportsMonthly
             leadsAddedWeekly
             totalUsers
@@ -166,17 +160,6 @@ function ExploreDeep(props: Props) {
                                 label="Sources added weekly"
                                 valuePrecision={0}
                                 value={data?.projectExploreStats?.leadsAddedWeekly ?? 0}
-                            />
-                            <CompactInformationCard
-                                className={styles.infoItem}
-                                icon={<IoPricetag />}
-                                label="Daily average sources tagged per project"
-                                valuePrecision={0}
-                                value={
-                                    data
-                                        ?.projectExploreStats
-                                        ?.dailyAverageLeadsTaggedPerProject ?? 0
-                                }
                             />
                             <CompactInformationCard
                                 className={styles.infoItem}
