@@ -14,6 +14,7 @@ import Preview from '../Preview';
 // of previewing them
 const domainsToProxy = [
     'data2.unhcr.org',
+    'data.unhcr.org',
 ];
 
 const pathsToProxy = [
