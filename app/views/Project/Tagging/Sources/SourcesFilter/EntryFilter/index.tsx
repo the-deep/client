@@ -138,9 +138,9 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 className={_cs(
                     styles.input,
                     doesObjectHaveNoData(value?.createdAtGte)
-                        && doesObjectHaveNoData(value?.createdAtLte)
-                        && !allFiltersVisible
-                        && styles.hidden,
+                    && doesObjectHaveNoData(value?.createdAtLte)
+                    && !allFiltersVisible
+                    && styles.hidden,
                 )}
                 fromName="createdAtGte"
                 fromOnChange={setFieldValue}
