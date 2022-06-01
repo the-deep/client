@@ -14,6 +14,9 @@ import {
     ReliefWebParams,
     UnhcrParams,
     RssFeedParams,
+    AtomFeedParams,
+    HumanitarianResponseParams,
+    PdnaParams,
 } from './types';
 
 export type PartialFormType = PartialForm<ConnectorInputType, 'clientId' | 'source'>;
@@ -88,7 +91,44 @@ export const sourceSchema:SourceFormSchema = {
                     params,
                 };
             }
-            case 'ATOM_FEED':
+            case 'ATOM_FEED': {
+                const params: ObjectSchema<PartialForm<AtomFeedParams>> = {
+                    fields: () => ({
+                        'feed-url': [requiredStringCondition, urlCondition],
+                        'title-field': [requiredStringCondition],
+                        'date-field': [requiredStringCondition],
+                        'source-field': [requiredStringCondition],
+                        'author-field': [requiredStringCondition],
+                        'url-field': [requiredStringCondition],
+                    }),
+                };
+                return {
+                    ...baseSchema,
+                    params,
+                };
+            }
+            case 'HUMANITARIAN_RESP': {
+                const params: ObjectSchema<PartialForm<HumanitarianResponseParams>> = {
+                    fields: () => ({
+                        country: [requiredStringCondition],
+                    }),
+                };
+                return {
+                    ...baseSchema,
+                    params,
+                };
+            }
+            case 'PDNA': {
+                const params: ObjectSchema<PartialForm<PdnaParams>> = {
+                    fields: () => ({
+                        country: [requiredStringCondition],
+                    }),
+                };
+                return {
+                    ...baseSchema,
+                    params,
+                };
+            }
             case 'RSS_FEED': {
                 const params: ObjectSchema<PartialForm<RssFeedParams>> = {
                     fields: () => ({

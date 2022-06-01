@@ -49,14 +49,16 @@ import ConnectorSourceForm from './ConnectorSourceForm';
 
 import styles from './styles.css';
 
-type SupportedSource = 'RELIEF_WEB' | 'UNHCR' | 'RSS_FEED' | 'ATOM_FEED';
-const supportedSources = ['RELIEF_WEB', 'UNHCR', 'RSS_FEED', 'ATOM_FEED'];
+type SupportedSource = 'RELIEF_WEB' | 'UNHCR' | 'RSS_FEED' | 'ATOM_FEED' | 'HUMANITARIAN_RESP' | 'PDNA';
+const supportedSources = ['RELIEF_WEB', 'UNHCR', 'RSS_FEED', 'ATOM_FEED', 'HUMANITARIAN_RESP', 'PDNA'];
 
 const sourcesLabel: { [key in SupportedSource]: string } = {
     RELIEF_WEB: 'Relief Web',
     UNHCR: 'UNHCR',
     RSS_FEED: 'RSS Feed',
     ATOM_FEED: 'ATOM Feed',
+    HUMANITARIAN_RESP: 'Humanitarian Response',
+    PDNA: 'PDNA',
 };
 
 const sourceKeySelector = (item: SupportedSource) => item;
@@ -319,6 +321,8 @@ function EditConnectorModal(props: Props) {
     const sourcesError = getErrorObject(error?.sources);
 
     const [rssErrored, setRssErrored] = useState(false);
+    const [atomErrored, setAtomErrored] = useState(false);
+
     const connectorSourceRendererParams = useCallback((
         key: string,
         data: PartialSourceType,
@@ -331,7 +335,10 @@ function EditConnectorModal(props: Props) {
         disabled: connectorCreatePending,
         rssErrored,
         onRssErrorChange: setRssErrored,
+        atomErrored,
+        onAtomErrorChange: setAtomErrored,
     }), [
+        atomErrored,
         rssErrored,
         onRowChange,
         sourcesError,
