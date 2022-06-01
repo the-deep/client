@@ -17,7 +17,7 @@ import {
     SortContext,
     useSortState,
 } from '@the-deep/deep-ui';
-import { EntriesAsList, removeNull, createSubmitHandler } from '@togglecorp/toggle-form';
+import { EntriesAsList, createSubmitHandler } from '@togglecorp/toggle-form';
 import {
     useMutation,
     useQuery,
@@ -44,7 +44,7 @@ import { PartialFormType, FormType as FilterFormType } from './SourcesFilter/sch
 import SourcesTable from './SourcesTable';
 import EntriesGrid from './EntriesGrid';
 import { SAVE_LEAD_FILTER, PROJECT_SAVED_LEAD_FILTER } from './queries';
-import { getSortState } from './utils';
+import { getSortState, transformRawFiltersToFormValues } from './utils';
 
 import styles from './styles.css';
 
@@ -142,7 +142,8 @@ function Sources(props: Props) {
                 if (userSavedLeadFilter?.filters) {
                     const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
                     setSorting(getSortState(orderingFilter));
-                    setSourcesFilter(removeNull(others));
+                    setSourcesFilter(transformRawFiltersToFormValues(others));
+                    setSourcesFilters(transformRawFiltersToFormValues(others));
                 }
                 if (userSavedLeadFilter?.filtersData) {
                     const { filtersData } = userSavedLeadFilter;
@@ -329,6 +330,7 @@ function Sources(props: Props) {
                                             projectId={activeProject}
                                             activePage={activePage}
                                             setActivePage={setActivePage}
+                                            ordering={ordering}
                                         />
                                     </SortContext.Provider>
                                 </TabPanel>
