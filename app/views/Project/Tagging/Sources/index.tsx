@@ -64,10 +64,10 @@ function Sources(props: Props) {
 
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
-    const [activePage, setActivePage] = useState<number>(1);
     const [
-        showFilters,
-        ,,,
+        filtersShown,
+        showFilter,
+        ,,
         toggleShowFilter,
     ] = useBooleanState(false);
     const activeView = useHash();
@@ -99,8 +99,8 @@ function Sources(props: Props) {
 
     const {
         value: sourcesFilterValue,
-        setFieldValue: setSourcesFilterValue,
-        setValue: setSourcesFilter,
+        setFieldValue: setSourcesFilterFieldValue,
+        setValue: setSourcesFilterValue,
         resetValue: clearSourcesFilterValue,
         setError,
         validate,
@@ -126,6 +126,22 @@ function Sources(props: Props) {
         SAVE_LEAD_FILTER,
     );
 
+    useEffect(() => {
+        if (activeProject) {
+            saveLeadFilter({
+                variables: {
+                    projectId: activeProject,
+                    filters: {
+                        ...getProjectSourcesQueryVariables(
+                            sourcesFilters as Omit<FilterFormType, 'projectId'>,
+                        ),
+                        ordering: [ordering as LeadOrderingEnum],
+                    },
+                },
+            });
+        }
+    }, [activeProject, ordering, sourcesFilters, saveLeadFilter]);
+
     useQuery<ProjectSavedLeadFilterQuery, ProjectSavedLeadFilterQueryVariables>(
         PROJECT_SAVED_LEAD_FILTER,
         {
@@ -142,7 +158,7 @@ function Sources(props: Props) {
                 if (userSavedLeadFilter?.filters) {
                     const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
                     setSorting(getSortState(orderingFilter));
-                    setSourcesFilter(transformRawFiltersToFormValues(others));
+                    setSourcesFilterValue(transformRawFiltersToFormValues(others));
                     setSourcesFilters(transformRawFiltersToFormValues(others));
                 }
                 if (userSavedLeadFilter?.filtersData) {
@@ -182,13 +198,15 @@ function Sources(props: Props) {
 
     const handleSourcesFiltersValueChange = useCallback(
         (...value: EntriesAsList<PartialFormType>) => {
-            setSourcesFilterValue(...value);
+            if (!filtersShown) {
+                showFilter();
+            }
+            setSourcesFilterFieldValue(...value);
         },
-        [setSourcesFilterValue],
+        [setSourcesFilterFieldValue, showFilter, filtersShown],
     );
 
     const handleSubmit = useCallback((values: PartialFormType) => {
-        setActivePage(1);
         setSourcesFilters(values);
         setPristine(true);
     }, [setPristine]);
@@ -205,27 +223,10 @@ function Sources(props: Props) {
     const handleClear = useCallback(() => {
         clearSourcesFilterValue();
         setSourcesFilters({});
-        setActivePage(1);
         setPristine(true);
-    }, [clearSourcesFilterValue, setActivePage, setPristine]);
+    }, [clearSourcesFilterValue, setPristine]);
 
     const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
-
-    useEffect(() => {
-        if (activeProject) {
-            saveLeadFilter({
-                variables: {
-                    projectId: activeProject,
-                    filters: {
-                        ...getProjectSourcesQueryVariables(
-                            sourcesFilters as Omit<FilterFormType, 'projectId'>,
-                        ),
-                        ordering: [ordering as LeadOrderingEnum],
-                    },
-                },
-            });
-        }
-    }, [activeProject, sourcesFilters, ordering, saveLeadFilter]);
 
     return (
         <div className={_cs(styles.sources, className)}>
@@ -285,7 +286,7 @@ function Sources(props: Props) {
                                     onChange={handleSourcesFiltersValueChange}
                                 />
                             )}
-                            {showFilters && !(isFilterEmpty && pristine) && (
+                            {filtersShown && !(isFilterEmpty && pristine) && (
                                 <div className={styles.buttons}>
                                     <Button
                                         disabled={pristine}
@@ -308,7 +309,7 @@ function Sources(props: Props) {
                         </div>
                     </div>
                     <div className={styles.sourceListContainer}>
-                        {showFilters && activeProject && (
+                        {filtersShown && activeProject && (
                             <SourcesFilter
                                 className={styles.filter}
                                 value={sourcesFilterValue}
@@ -328,8 +329,6 @@ function Sources(props: Props) {
                                             className={styles.tableContainer}
                                             filters={sourcesFilters}
                                             projectId={activeProject}
-                                            activePage={activePage}
-                                            setActivePage={setActivePage}
                                             ordering={ordering}
                                         />
                                     </SortContext.Provider>

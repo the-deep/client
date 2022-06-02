@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useState, useCallback } from 'react';
+import React, { ReactNode, useMemo, useState, useCallback, useEffect } from 'react';
 import {
     _cs,
     listToMap,
@@ -114,8 +114,6 @@ interface Props {
     className?: string;
     projectId: string;
     filters: PartialFilterFormType;
-    activePage: number;
-    setActivePage: React.Dispatch<React.SetStateAction<number>>;
     ordering: string;
 }
 
@@ -124,8 +122,6 @@ function SourcesTable(props: Props) {
         className,
         projectId,
         filters: rawFilters,
-        activePage,
-        setActivePage,
         ordering,
     } = props;
 
@@ -135,8 +131,13 @@ function SourcesTable(props: Props) {
         )
     ), [rawFilters]);
 
+    const [activePage, setActivePage] = useState(1);
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
     const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
+
+    useEffect(() => {
+        setActivePage(1);
+    }, [filters]);
 
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
     const alert = useAlert();
