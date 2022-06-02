@@ -219,8 +219,7 @@ function ExploreDeepTableView(props: Props) {
                 (item) => item?.stats?.numberOfUsers,
                 {
                     columnWidth: 96,
-                    // sortable: true,
-                    // TODO: To be uncommented after fixed from server
+                    sortable: true,
                 },
             ),
             createNumberColumn<Project, string>(
@@ -237,9 +236,6 @@ function ExploreDeepTableView(props: Props) {
                 'organizations',
                 'Organizations',
                 (item) => item?.organizations?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
-                {
-                    sortable: true,
-                },
             ),
             actionsColumn,
         ]);

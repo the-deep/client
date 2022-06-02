@@ -37,7 +37,7 @@ const labelSelector = (d: BasicRegion) => d.title;
 
 type Def = { containerClassName?: string;}
 type RegionMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
-    number,
+    string,
     K,
     BasicRegion,
     Def,
@@ -76,8 +76,6 @@ function RegionSelectInput<K extends string>(props: RegionMultiSelectInputProps<
         },
     );
 
-    console.warn('regions', data);
-
     return (
         <SearchMultiSelectInput
             {...otherProps}
@@ -87,7 +85,7 @@ function RegionSelectInput<K extends string>(props: RegionMultiSelectInputProps<
             onSearchValueChange={setSearchText}
             searchOptions={data?.regions?.results}
             optionsPending={regionsLoading}
-            totalOptionsCount={data?.regions?.results?.totalCount}
+            totalOptionsCount={data?.regions?.totalCount ?? 0}
             onShowDropdownChange={setOpened}
         />
     );

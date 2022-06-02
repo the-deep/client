@@ -179,9 +179,6 @@ function ExploreDeepTableView(props: Props) {
             'organizations',
             'Organizations',
             (item) => item?.organizationsTitle,
-            {
-                sortable: true,
-            },
         ),
     ]), []);
 
