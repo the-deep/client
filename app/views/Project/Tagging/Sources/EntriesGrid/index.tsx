@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import {
     _cs,
     isNotDefined,
@@ -255,6 +255,10 @@ function EntriesGrid(props: Props) {
 
     const [activePage, setActivePage] = useState(1);
     const [maxItemsPerPage, setMaxItemsPerPage] = useState(50);
+
+    useEffect(() => {
+        setActivePage(1);
+    }, [rawFilters]);
 
     const [
         geoAreaOptions,
