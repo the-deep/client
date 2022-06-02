@@ -93,13 +93,6 @@ export function transformRawFiltersToFormValues(filters: RawSourcesFilter) {
                 ...entriesFilterData,
                 createdAtGte: getDateString(entriesFilterData?.createdAtGte),
                 createdAtLte: getDateString(entriesFilterData?.createdAtLte),
-                filterableData: entriesFilterData?.filterableData
-                    ? entriesFilterData.filterableData.map((data) => ({
-                        ...data,
-                        valueGte: getDateString(data.valueGte),
-                        valueLte: getDateString(data.valueLte),
-                    }))
-                    : undefined,
             },
         };
         return removeNull(formValues);
