@@ -1,6 +1,158 @@
 import { gql } from '@apollo/client';
 
-// eslint-disable-next-line import/prefer-default-export
+export const SOURCE_FILTER_DATA_FRAGMENT = gql`
+    fragment SourceFilterDataResponse on LeadFilterDataType {
+        assigneeOptions {
+            displayName
+            emailDisplay
+        }
+        authorOrganizationOptions {
+            id
+            mergedAs {
+                id
+                title
+            }
+            title
+        }
+        authorOrganizationTypeOptions {
+            id
+            title
+        }
+        createdByOptions {
+            id
+            displayName
+            emailDisplay
+        }
+        entryFilterCreatedByOptions {
+            id
+            displayName
+            emailDisplay
+        }
+        entryFilterGeoAreaOptions {
+            id
+            regionTitle
+            adminLevelTitle
+            title
+        }
+        entryFilterLeadAssigneeOptions {
+            id
+            displayName
+            emailDisplay
+        }
+        entryFilterLeadAuthorOrganizationOptions {
+            id
+            mergedAs {
+                id
+                title
+            }
+            title
+        }
+        entryFilterLeadAuthoringOrganizationTypeOptions {
+            title
+            id
+        }
+        entryFilterLeadCreatedByOptions {
+            displayName
+            id
+        }
+        entryFilterLeadSourceOrganizationOptions {
+            id
+            title
+            mergedAs {
+                id
+                title
+            }
+        }
+        entryFilterModifiedByOptions {
+            displayName
+            id
+        }
+        sourceOrganizationOptions {
+            id
+            title
+        }
+    }
+`;
+
+export const SOURCE_FILTER_FRAGMENT = gql`
+    fragment SourceFilterResponse on LeadsFilterDataType {
+        assignees
+        authorOrganizations
+        authoringOrganizationTypes
+        confidentiality
+        createdAt
+        createdAtGte
+        createdAtLte
+        createdBy
+        emmEntities
+        emmKeywords
+        emmRiskFactors
+        excludeProvidedLeadsId
+        extractionStatus
+        hasAssessment
+        hasEntries
+        ids
+        modifiedAt
+        modifiedAtGte
+        modifiedAtLte
+        modifiedBy
+        ordering
+        priorities
+        publishedOn
+        publishedOnGte
+        publishedOnLte
+        search
+        sourceOrganizations
+        sourceTypes
+        statuses
+        text
+        url
+        entriesFilterData {
+            commentStatus
+            controlled
+            createdAt
+            createdAtGte
+            createdAtLte
+            createdBy
+            entriesId
+            entryTypes
+            excerpt
+            geoCustomShape
+            id
+            leadAssignees
+            leadAuthorOrganizations
+            leadAuthoringOrganizationTypes
+            leadConfidentialities
+            leadCreatedBy
+            leadGroupLabel
+            leadPriorities
+            leadPublishedOn
+            leadPublishedOnLte
+            leadPublishedOnGte
+            leadSourceOrganizations
+            leadStatuses
+            leadTitle
+            leads
+            modifiedAt
+            modifiedAtGte
+            modifiedAtLte
+            modifiedBy
+            projectEntryLabels
+            search
+            filterableData {
+                filterKey
+                includeSubRegions
+                useAndOperator
+                useExclude
+                value
+                valueGte
+                valueList
+                valueLte
+            }
+        }
+    }
+`;
+
 export const PROJECT_SOURCES = gql`
     query ProjectSources(
         $projectId: ID!,
@@ -137,6 +289,8 @@ export const SAVE_LEAD_FILTER = gql`
 `;
 
 export const PROJECT_SAVED_LEAD_FILTER = gql`
+    ${SOURCE_FILTER_FRAGMENT}
+    ${SOURCE_FILTER_DATA_FRAGMENT}
     query ProjectSavedLeadFilter($projectId: ID!) {
         project(id: $projectId) {
             userSavedLeadFilter {
@@ -144,151 +298,10 @@ export const PROJECT_SAVED_LEAD_FILTER = gql`
                 title
                 modifiedAt
                 filtersData {
-                    assigneeOptions {
-                        id
-                        displayName
-                        emailDisplay
-                    }
-                    authorOrganizationOptions {
-                        id
-                        mergedAs {
-                            id
-                            title
-                        }
-                        title
-                    }
-                    authorOrganizationTypeOptions {
-                        id
-                        title
-                    }
-                    createdByOptions {
-                        id
-                        displayName
-                        emailDisplay
-                    }
-                    entryFilterCreatedByOptions {
-                        id
-                        displayName
-                        emailDisplay
-                    }
-                    entryFilterGeoAreaOptions {
-                        id
-                        regionTitle
-                        adminLevelTitle
-                        title
-                    }
-                    entryFilterLeadAssigneeOptions {
-                        id
-                        displayName
-                    }
-                    entryFilterLeadAuthorOrganizationOptions {
-                        id
-                        mergedAs {
-                            id
-                            title
-                        }
-                        title
-                    }
-                    entryFilterLeadAuthoringOrganizationTypeOptions {
-                        title
-                        id
-                    }
-                    entryFilterLeadCreatedByOptions {
-                        displayName
-                        id
-                    }
-                    entryFilterLeadSourceOrganizationOptions {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
-                    }
-                    entryFilterModifiedByOptions {
-                        displayName
-                        id
-                    }
-                    sourceOrganizationOptions {
-                        id
-                        title
-                    }
+                    ...SourceFilterDataResponse
                 }
                 filters {
-                    assignees
-                    authorOrganizations
-                    authoringOrganizationTypes
-                    confidentiality
-                    createdAt
-                    createdAtGte
-                    createdAtLte
-                    createdBy
-                    emmEntities
-                    emmKeywords
-                    emmRiskFactors
-                    excludeProvidedLeadsId
-                    extractionStatus
-                    hasAssessment
-                    hasEntries
-                    ids
-                    modifiedAt
-                    modifiedAtGte
-                    modifiedAtLte
-                    modifiedBy
-                    ordering
-                    priorities
-                    publishedOn
-                    publishedOnGte
-                    publishedOnLte
-                    search
-                    sourceOrganizations
-                    sourceTypes
-                    statuses
-                    text
-                    url
-                    entriesFilterData {
-                        commentStatus
-                        controlled
-                        createdAt
-                        createdAtGte
-                        createdAtLte
-                        createdBy
-                        entriesId
-                        entryTypes
-                        excerpt
-                        geoCustomShape
-                        id
-                        leadAssignees
-                        leadAuthorOrganizations
-                        leadAuthoringOrganizationTypes
-                        leadConfidentialities
-                        leadCreatedBy
-                        leadGroupLabel
-                        leadPriorities
-                        leadPublishedOn
-                        leadPublishedOnLte
-                        leadPublishedOnGte
-                        leadSourceOrganizations
-                        leadStatuses
-                        leadTitle
-                        leads
-                        modifiedAt
-                        modifiedAtGte
-                        modifiedAtLte
-                        modifiedBy
-                        projectEntryLabels
-                        search
-                        filterableData {
-                            filterKey
-                            includeSubRegions
-                            useAndOperator
-                            useExclude
-                            value
-                            valueGte
-                            valueList
-                            valueLte
-                        }
-                    }
+                    ...SourceFilterResponse
                 }
             }
         }
