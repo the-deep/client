@@ -12,7 +12,6 @@ enum SortDirection {
     'dsc' = 'Descending',
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export function transformSourcesFilterToEntriesFilter(filters: FaramValues) {
     const {
         assignees,
