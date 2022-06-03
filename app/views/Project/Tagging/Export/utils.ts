@@ -7,6 +7,7 @@ import {
     Widget,
 } from '#types/newAnalyticalFramework';
 import { PartialEntriesFilterDataType } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+import { ExportItem } from './ExportHistory';
 import {
     ReportStructure,
     AnalysisFramework,
@@ -15,7 +16,7 @@ import {
     TreeSelectableWidget,
 } from './types';
 
-export const SECTOR_FIRST = 'sectorFirst' as const;
+export const SECTOR_FIRST = 'columnFirst' as const;
 export const DIMENSION_FIRST = 'rowFirst' as const;
 
 export function getWidgets(framework: AnalysisFramework | undefined | null) {
@@ -352,4 +353,36 @@ export const createWidgetIds = (widgets: TreeSelectableWidget[]) => (
     widgets
         .filter((widget) => widget.selected)
         .map((widget) => +(widget.id))
+);
+
+export const getReportStructureVariant = (
+    widgets: Widget[] | undefined,
+    reportStructure: ExportItem['extraOptions']['reportStructure'],
+) => {
+    const isDimensionFirst = widgets?.filter((widget) => widget.widgetId === 'MATRIX2D')
+        .some((widget) => {
+            const rowKeys = (
+                widget.properties as Matrix2dProperties
+            )?.rows.map((v) => v.key);
+            return reportStructure?.some((rootLevel) => (
+                rootLevel?.levels?.some((level) => rowKeys?.includes(level.id))
+            ));
+        });
+    return isDimensionFirst ? DIMENSION_FIRST : SECTOR_FIRST;
+};
+
+export const isSubSectorIncluded = (
+    reportStructure: ExportItem['extraOptions']['reportStructure'],
+) => (
+    reportStructure?.some((rootLevel) => (
+        rootLevel?.levels?.some((l) => (
+            l?.levels?.some((m) => (
+                m?.levels?.some((n) => (
+                    n?.levels?.some((o) => (
+                        isDefined(o?.id)
+                    ))
+                ))
+            ))
+        ))
+    )) ?? false
 );

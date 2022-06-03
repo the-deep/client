@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useContext, useMemo } from 'react';
+import React, { useState, useCallback, useContext, useMemo, useEffect } from 'react';
 import {
     useHistory,
     useParams,
     generatePath,
+    useLocation,
 } from 'react-router-dom';
 import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
@@ -12,7 +13,7 @@ import {
     useModalState,
     useAlert,
 } from '@the-deep/deep-ui';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { createSubmitHandler } from '@togglecorp/toggle-form';
 import {
     IoBookmarks,
@@ -34,9 +35,11 @@ import {
     FormType as FilterFormType,
     PartialFormType,
 } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
+import { transformRawFiltersToFormValues } from '#views/Project/Tagging/Sources/utils';
 import AppliedFilters from '#views/Project/Tagging/Sources/AppliedFilters';
 import SourcesFilterContext from '#views/Project/Tagging/Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
+import { ExportItem } from '#views/Project/Tagging/Export/ExportHistory';
 
 import {
     CreateExportMutation,
@@ -48,26 +51,11 @@ import {
 
 import SourcesSelection from '../SourcesSelection';
 import ExportPreviewModal from '../ExportPreviewModal';
-import { CREATE_EXPORT } from '../queries';
+import { CREATE_EXPORT, PROJECT_SOURCE_STATS_FOR_EXPORT } from '../queries';
 
 import styles from './styles.css';
 
-const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
-    query ProjectSourceStatsForExport(
-        $projectId: ID!,
-        $filters: LeadsFilterDataInputType,
-    ) {
-        project(id: $projectId) {
-            id
-            stats(filters: $filters) {
-                numberOfEntries
-                numberOfLeads
-                filteredNumberOfEntries
-                filteredNumberOfLeads
-            }
-        }
-    }
-`;
+type ExportStateData = Pick<ExportItem, 'filters' | 'filtersData'>
 
 interface Props {
     className?: string;
@@ -80,6 +68,7 @@ function NewAssessmentExport(props: Props) {
         projectId,
     } = useParams<{ projectId: string }>();
     const history = useHistory();
+    const { state }: { state: ExportStateData | undefined } = useLocation();
 
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
@@ -93,7 +82,8 @@ function NewAssessmentExport(props: Props) {
 
     const {
         value: sourcesFilterValue,
-        setFieldValue: setSourcesFilterValue,
+        setFieldValue: setSourcesFilterFieldValue,
+        setValue: setSourcesFilterValue,
         resetValue: clearSourcesFilterValue,
         pristine,
         validate,
@@ -101,16 +91,23 @@ function NewAssessmentExport(props: Props) {
         setPristine,
     } = useFilterState();
 
+    useEffect(() => {
+        if (state?.filters) {
+            setSourcesFilterValue(transformRawFiltersToFormValues(state?.filters));
+        }
+    }, [setSourcesFilterValue, state?.filters]);
     const [
-        sourcesFilter,
+        sourcesFilters,
         setSourcesFilters,
-    ] = useState<PartialFormType>({});
+    ] = useState<PartialFormType>(
+        state?.filters ? transformRawFiltersToFormValues(state?.filters) : {},
+    );
 
     const finalFilters = useMemo(() => (
         getProjectSourcesQueryVariables(
-            sourcesFilter as Omit<FilterFormType, 'projectId'>,
+            sourcesFilters as Omit<FilterFormType, 'projectId'>,
         )
-    ), [sourcesFilter]);
+    ), [sourcesFilters]);
 
     const {
         data: sourcesStats,
@@ -141,9 +138,9 @@ function NewAssessmentExport(props: Props) {
 
     const handleClear = useCallback(() => {
         setSelectedLeads([]);
-        setPristine(true);
         clearSourcesFilterValue();
         setSourcesFilters({});
+        setPristine(true);
     }, [clearSourcesFilterValue, setPristine]);
 
     const { project } = useContext(ProjectContext);
@@ -239,7 +236,7 @@ function NewAssessmentExport(props: Props) {
             isPreview: preview,
             type: 'ASSESSMENTS' as const,
             filters: {
-                ...getProjectSourcesQueryVariables(sourcesFilter as Omit<FilterFormType, 'projectId'>),
+                ...getProjectSourcesQueryVariables(sourcesFilters as Omit<FilterFormType, 'projectId'>),
                 ids: selectedLeads,
                 excludeProvidedLeadsId: selectAll,
             },
@@ -255,7 +252,7 @@ function NewAssessmentExport(props: Props) {
     }, [
         createExport,
         projectId,
-        sourcesFilter,
+        sourcesFilters,
         selectedLeads,
         selectAll,
         queryTitle,
@@ -277,8 +274,8 @@ function NewAssessmentExport(props: Props) {
 
     const stats = sourcesStats?.project?.stats;
     const isFilterEmpty = useMemo(() => (
-        doesObjectHaveNoData(sourcesFilter, ['', null])
-    ), [sourcesFilter]);
+        doesObjectHaveNoData(sourcesFilters, ['', null])
+    ), [sourcesFilters]);
 
     return (
         <div className={_cs(styles.newAssessmentExport, className)}>
@@ -348,8 +345,8 @@ function NewAssessmentExport(props: Props) {
                         <AppliedFilters
                             className={styles.appliedFilters}
                             projectId={projectId}
-                            value={sourcesFilter}
-                            onChange={setSourcesFilterValue}
+                            value={sourcesFilterValue}
+                            onChange={setSourcesFilterFieldValue}
                         />
                         {!(isFilterEmpty && pristine) && (
                             <div className={styles.buttons}>
@@ -386,10 +383,10 @@ function NewAssessmentExport(props: Props) {
                         onSelectLeadChange={setSelectedLeads}
                         selectAll={selectAll}
                         onSelectAllChange={setSelectAll}
-                        filterValues={sourcesFilter}
+                        filterValues={sourcesFilters}
                         sourcesFilterValue={sourcesFilterValue}
                         totalLeadsCount={stats?.numberOfLeads ?? 0}
-                        onFilterChange={setSourcesFilterValue}
+                        onFilterChange={setSourcesFilterFieldValue}
                     />
                 </SourcesFilterContext.Provider>
             </div>

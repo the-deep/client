@@ -36,7 +36,6 @@ import {
 } from '#generated/types';
 import { ProjectContext } from '#base/context/ProjectContext';
 import { UserContext } from '#base/context/UserContext';
-
 import { PROJECT_SOURCES } from '#views/Project/Tagging/Sources/queries';
 import { BasicOrganization } from '#components/selections/NewOrganizationSelectInput';
 import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput';

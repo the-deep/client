@@ -3,6 +3,7 @@ import {
     useHistory,
     useParams,
     generatePath,
+    useLocation,
 } from 'react-router-dom';
 import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
@@ -26,7 +27,7 @@ import {
     useModalState,
     useAlert,
 } from '@the-deep/deep-ui';
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { createSubmitHandler } from '@togglecorp/toggle-form';
 
 import {
@@ -50,8 +51,10 @@ import SubNavbar from '#components/SubNavbar';
 import BackLink from '#components/BackLink';
 import _ts from '#ts';
 
+import { ExportItem } from '../ExportHistory';
 import AppliedFilters from '../../Sources/AppliedFilters';
 import SourcesFilterContext from '../../Sources/SourcesFilterContext';
+import { transformRawFiltersToFormValues } from '../../Sources/utils';
 import { useFilterState, getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
 import { FormType as FilterFormType, PartialFormType } from '../../Sources/SourcesFilter/schema';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
@@ -72,26 +75,11 @@ import {
     SECTOR_FIRST,
     createReportStructureForExport,
     createWidgetIds,
+    getReportStructureVariant,
+    isSubSectorIncluded,
 } from '../utils';
-import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT } from '../queries';
+import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT, PROJECT_SOURCE_STATS_FOR_EXPORT } from '../queries';
 import styles from './styles.css';
-
-const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
-    query ProjectSourceStatsForExport(
-        $projectId: ID!,
-        $filters: LeadsFilterDataInputType,
-    ) {
-        project(id: $projectId) {
-            id
-            stats(filters: $filters) {
-                numberOfEntries
-                numberOfLeads
-                filteredNumberOfEntries
-                filteredNumberOfLeads
-            }
-        }
-    }
-`;
 
 const mapExportType: Record<ExportFormatEnum, ExportExportTypeEnum> = {
     DOCX: 'REPORT',
@@ -127,6 +115,8 @@ function exportTypeKeySelector(d: ExportTypeItem) {
     return d.key;
 }
 
+type ExportStateData = Pick<ExportItem, 'extraOptions' | 'filters' | 'filtersData' | 'format'>
+
 interface Props {
     className?: string;
 }
@@ -139,26 +129,50 @@ function NewExport(props: Props) {
     const {
         projectId,
     } = useParams<{ projectId: string }>();
+    const { state }: { state: ExportStateData | undefined } = useLocation();
     const history = useHistory();
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
-    const [exportFileFormat, setExportFileFormat] = useState<ExportFormatEnum>('DOCX');
-    const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-    const [selectAll, setSelectAll] = useState<boolean>(true);
-
-    // advanced-options
-    const [reportShowLeadEntryId, setReportShowLeadEntryId] = useState<boolean>(true);
-    const [reportShowAssessmentData, setReportShowAssessmentData] = useState<boolean>(true);
-    const [reportShowEntryWidgetData, setReportShowEntryWidgetData] = useState<boolean>(true);
-    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget[]>([]);
+    const [
+        exportFileFormat,
+        setExportFileFormat,
+    ] = useState<ExportFormatEnum>(state?.format ?? 'DOCX');
+    const [
+        selectedLeads,
+        setSelectedLeads,
+    ] = useState<string[]>(state?.filters?.ids ?? []);
+    const [
+        selectAll,
+        setSelectAll,
+    ] = useState<boolean>(state?.filters?.excludeProvidedLeadsId ?? true);
+    const [
+        reportShowLeadEntryId,
+        setReportShowLeadEntryId,
+    ] = useState<boolean>(state?.extraOptions?.reportShowLeadEntryId ?? true);
+    const [
+        reportShowAssessmentData,
+        setReportShowAssessmentData,
+    ] = useState<boolean>(state?.extraOptions?.reportShowAssessmentData ?? true);
+    const [
+        reportShowEntryWidgetData,
+        setReportShowEntryWidgetData,
+    ] = useState<boolean>(state?.extraOptions?.reportShowEntryWidgetData ?? true);
+    const [
+        textWidgets,
+        setTextWidgets,
+    ] = useState<TreeSelectableWidget[]>([]);
     const [contextualWidgets, setContextualWidgets] = useState<TreeSelectableWidget[]>([]);
     const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [reportStructureVariant, setReportStructureVariant] = useState<string>(SECTOR_FIRST);
-    const [excelDecoupled, setExcelDecoupled] = useState<boolean>(false);
+    const [
+        excelDecoupled,
+        setExcelDecoupled,
+    ] = useState<boolean>(state?.extraOptions?.excelDecoupled ?? false);
 
     const {
         value: sourcesFilterValue,
-        setFieldValue: setSourcesFilterValue,
+        setFieldValue: setSourcesFilterFieldValue,
+        setValue: setSourcesFilter,
         resetValue: clearSourcesFilterValue,
         pristine,
         validate,
@@ -166,16 +180,24 @@ function NewExport(props: Props) {
         setPristine,
     } = useFilterState();
 
+    useEffect(() => {
+        if (state?.filters) {
+            setSourcesFilter(transformRawFiltersToFormValues(state?.filters));
+        }
+    }, [setSourcesFilter, state?.filters]);
+
     const [
-        sourcesFilter,
+        sourcesFilters,
         setSourcesFilters,
-    ] = useState<PartialFormType>({});
+    ] = useState<PartialFormType>(
+        state?.filters ? transformRawFiltersToFormValues(state?.filters) : {},
+    );
 
     const finalFilters = useMemo(() => (
         getProjectSourcesQueryVariables(
-            sourcesFilter as Omit<FilterFormType, 'projectId'>,
+            sourcesFilters as Omit<FilterFormType, 'projectId'>,
         )
-    ), [sourcesFilter]);
+    ), [sourcesFilters]);
 
     const {
         data: sourcesStats,
@@ -325,45 +347,66 @@ function NewExport(props: Props) {
                 );
                 const textWidgetList = widgets
                     ?.filter((v) => v.widgetId === 'TEXT')
-                    .map((v) => ({ ...v, selected: true }));
+                    .map((v) => ({
+                        ...v,
+                        selected: state?.extraOptions?.reportTextWidgetIds
+                            ? (state?.extraOptions
+                                ?.reportTextWidgetIds?.includes(Number(v.id)) ?? false)
+                            : true,
+                    }));
 
                 const contextualWidgetList = filterContexualWidgets(widgets)
-                    ?.map((v) => ({ ...v, selected: true }));
+                    ?.map((v) => ({
+                        ...v,
+                        selected: state?.extraOptions?.reportExportingWidgets
+                            ? (state?.extraOptions
+                                ?.reportExportingWidgets?.includes(Number(v.id)) ?? false)
+                            : true,
+                    }));
 
                 setTextWidgets(textWidgetList ?? []);
                 setContextualWidgets(contextualWidgetList ?? []);
+                const reportStructureType = getReportStructureVariant(
+                    widgets,
+                    state?.extraOptions?.reportStructure,
+                );
+                setReportStructureVariant(reportStructureType);
+                setIncludeSubSector(isSubSectorIncluded(state?.extraOptions?.reportStructure));
             },
         },
     );
 
     const getCreateExportData = useCallback((isPreview: boolean) => ({
-        excelDecoupled,
+        extraOptions: {
+            excelDecoupled,
+            reportExportingWidgets: createWidgetIds(contextualWidgets),
+            reportLevels: createReportLevels(reportStructure).map((node) => ({
+                id: node.id,
+                levels: node.sublevels,
+            })),
+            reportShowAssessmentData,
+            reportShowEntryWidgetData,
+            reportShowGroups: false,
+            reportShowLeadEntryId,
+            reportStructure: createReportStructureForExport(reportStructure),
+            reportTextWidgetIds: createWidgetIds(textWidgets),
+        },
         filters: {
-            ...getProjectSourcesQueryVariables(sourcesFilter as Omit<FilterFormType, 'projectId'>),
+            ...getProjectSourcesQueryVariables(sourcesFilters as Omit<FilterFormType, 'projectId'>),
             ids: selectedLeads,
             excludeProvidedLeadsId: selectAll,
+
         },
         format: exportFileFormat,
         isPreview,
         exportType: mapExportType[exportFileFormat],
-        reportLevels: createReportLevels(reportStructure).map((node) => ({
-            id: node.id,
-            levels: node.sublevels,
-        })),
-        reportStructure: createReportStructureForExport(reportStructure),
-        reportTextWidgetIds: createWidgetIds(textWidgets),
-        reportExportingWidgets: createWidgetIds(contextualWidgets),
-        reportShowAssessmentData,
-        reportShowEntryWidgetData,
-        reportShowGroups: false,
-        reportShowLeadEntryId,
         type: 'ENTRIES' as const,
         title: queryTitle,
     }), [
         exportFileFormat,
         contextualWidgets,
         excelDecoupled,
-        sourcesFilter,
+        sourcesFilters,
         queryTitle,
         reportShowAssessmentData,
         reportShowEntryWidgetData,
@@ -381,14 +424,14 @@ function NewExport(props: Props) {
             reportStructureVariant,
             includeSubSector,
             analysisFramework,
-            sourcesFilter?.entriesFilterData?.filterableData,
+            sourcesFilters?.entriesFilterData?.filterableData,
         );
         setReportStructure(structure);
     }, [
         analysisFramework,
         reportStructureVariant,
         includeSubSector,
-        sourcesFilter?.entriesFilterData?.filterableData,
+        sourcesFilters?.entriesFilterData?.filterableData,
     ]);
 
     const showMatrix2dOptions = useMemo(
@@ -437,8 +480,8 @@ function NewExport(props: Props) {
     const stats = sourcesStats?.project?.stats;
 
     const isFilterEmpty = useMemo(() => (
-        doesObjectHaveNoData(sourcesFilter, ['', null])
-    ), [sourcesFilter]);
+        doesObjectHaveNoData(sourcesFilters, ['', null])
+    ), [sourcesFilters]);
 
     return (
         <div className={_cs(styles.newExport, className)}>
@@ -579,7 +622,7 @@ function NewExport(props: Props) {
                             className={styles.appliedFilters}
                             projectId={projectId}
                             value={sourcesFilterValue}
-                            onChange={setSourcesFilterValue}
+                            onChange={setSourcesFilterFieldValue}
                         />
                         {!(isFilterEmpty && pristine) && (
                             <div className={styles.buttons}>
@@ -616,10 +659,10 @@ function NewExport(props: Props) {
                         onSelectLeadChange={setSelectedLeads}
                         selectAll={selectAll}
                         onSelectAllChange={setSelectAll}
-                        filterValues={sourcesFilter}
+                        filterValues={sourcesFilters}
                         sourcesFilterValue={sourcesFilterValue}
                         totalLeadsCount={stats?.numberOfLeads ?? 0}
-                        onFilterChange={setSourcesFilterValue}
+                        onFilterChange={setSourcesFilterFieldValue}
                     />
                 </SourcesFilterContext.Provider>
             </div>
