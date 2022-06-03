@@ -12,7 +12,8 @@ import {
 import {
     ProjectExportsQuery,
 } from '#generated/types';
-
+import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import routes from '#base/configs/routes';
 import styles from './styles.css';
 
 type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
@@ -24,7 +25,6 @@ export interface Props {
     onViewExportClick: (data: ExportItem) => void;
     viewDisabled: boolean;
     disabled?: boolean;
-
     data: ExportItem;
 }
 
@@ -75,6 +75,38 @@ function TableActions(props: Props) {
             >
                 View
             </Button>
+            {data.type === 'ENTRIES' && (
+                <SmartButtonLikeLink
+                    variant="secondary"
+                    route={routes.exportCreate}
+                    attrs={{
+                        projectId: data.project as string | undefined,
+                    }}
+                    state={{
+                        format: data.format,
+                        filters: data.filters,
+                        filtersData: data.filtersData,
+                        extraOptions: data.extraOptions,
+                    }}
+                >
+                    Reuse
+                </SmartButtonLikeLink>
+            )}
+            {data.type === 'ASSESSMENTS' && (
+                <SmartButtonLikeLink
+                    variant="secondary"
+                    route={routes.assessmentExportCreate}
+                    attrs={{
+                        projectId: data.project as string | undefined,
+                    }}
+                    state={{
+                        filters: data.filters,
+                        filtersData: data.filtersData,
+                    }}
+                >
+                    Reuse
+                </SmartButtonLikeLink>
+            )}
         </div>
     );
 }

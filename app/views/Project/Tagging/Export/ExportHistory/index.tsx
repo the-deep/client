@@ -52,7 +52,6 @@ import {
     convertDateToIsoDateTime,
 } from '#utils/common';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
-import useDebouncedValue from '#hooks/useDebouncedValue';
 import { createDateColumn } from '#components/tableHelpers';
 import LeadPreview from '#components/lead/LeadPreview';
 
@@ -62,12 +61,12 @@ import {
     PROJECT_EXPORTS,
     DELETE_EXPORT,
     UPDATE_EXPORT,
-} from './queries';
+} from '../queries';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
 
-type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
+export type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
 
 const statusIconMap: Record<ExportItem['status'], ReactElement> = {
     PENDING: <VscLoading />,
@@ -127,8 +126,6 @@ interface DateRangeValue {
     endDate: string;
 }
 
-const debounceTime = 500;
-
 interface Props {
     projectId: string;
     className?: string;
@@ -146,8 +143,6 @@ function ExportHistory(props: Props) {
     const [activePage, setActivePage] = useState(1);
     const [exportedAt, setExportedAt] = useState<DateRangeValue>();
     const [searchText, setSearchText] = useState<string>();
-    // FIXME: we can safely remove useDebouncedValue if we are using TextInput from deep-ui
-    const debouncedSearchText = useDebouncedValue(searchText, debounceTime);
 
     const handleSetSearchText = useCallback((search: string | undefined) => {
         setSearchText(search);
@@ -181,7 +176,7 @@ function ExportHistory(props: Props) {
                     exportedAt?.endDate,
                     { endOfDay: true },
                 ),
-                search: debouncedSearchText,
+                search: searchText,
                 type,
             } : undefined
         ),
@@ -191,7 +186,7 @@ function ExportHistory(props: Props) {
             ordering,
             type,
             exportedAt,
-            debouncedSearchText,
+            searchText,
         ],
     );
 
@@ -391,6 +386,7 @@ function ExportHistory(props: Props) {
                     || data.status === 'FAILURE'
                     || data.id === selectedExport?.id,
                 data,
+                type,
                 onDeleteClick: handleDeleteExport,
                 onEditClick: handleExportEditClick,
                 onViewExportClick: setSelectedExport,
@@ -421,6 +417,7 @@ function ExportHistory(props: Props) {
             actionsColumn,
         ]);
     }, [
+        type,
         handleExportEditClick,
         handleDeleteExport,
         selectedExport,
@@ -500,7 +497,7 @@ function ExportHistory(props: Props) {
                     columns={columns}
                     pending={projectExportsPending}
                     errored={false}
-                    filtered={isDefined(debouncedSearchText) || isDefined(exportedAt)}
+                    filtered={isDefined(searchText) || isDefined(exportedAt)}
                     filteredEmptyMessage="No matching exports found."
                     filteredEmptyIcon={(
                         <Kraken
