@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import {
     IoAdd,
     IoEllipsisVerticalSharp,
@@ -15,18 +15,57 @@ import {
     Button,
     RowExpansionContext,
     useModalState,
+    useAlert,
 } from '@the-deep/deep-ui';
+import {
+    useMutation,
+    gql,
+} from '@apollo/client';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import { ProjectContext } from '#base/context/ProjectContext';
 import routes from '#base/configs/routes';
+import {
+    LeadStatusUpdateMutation,
+    LeadStatusUpdateMutationVariables,
+    LeadStatusEnum,
+} from '#generated/types';
+
 import LeadCopyModal from '../LeadCopyModal';
 
 import styles from './styles.css';
 
+const LEAD_STATUS_UPDATE = gql`
+    mutation LeadStatusUpdate(
+        $projectId: ID!,
+        $leadId: ID!,
+        $status: LeadStatusEnum,
+        $title: String!,
+    ) {
+        project(id: $projectId) {
+            leadUpdate(
+                data: {
+                    title: $title,
+                    status: $status,
+                },
+                id: $leadId
+            ) {
+                ok
+                errors
+                result {
+                    id
+                    status
+                    statusDisplay
+                }
+            }
+        }
+    }
+`;
+
 export interface Props<T extends string> {
     className?: string;
     id: T;
+    title: string;
     onEditClick: (key: T) => void;
     onDeleteClick: (key: T) => void;
     disabled?: boolean;
@@ -34,12 +73,15 @@ export interface Props<T extends string> {
     entriesCount: number;
     filteredEntriesCount: number | null | undefined;
     hasAssessment: boolean;
+    sourceStatus: LeadStatusEnum;
+    projectId: string;
 }
 
 function Actions<T extends string>(props: Props<T>) {
     const {
         className,
         id,
+        title,
         onEditClick,
         disabled,
         isAssessmentLead,
@@ -47,12 +89,14 @@ function Actions<T extends string>(props: Props<T>) {
         entriesCount,
         filteredEntriesCount,
         hasAssessment,
+        sourceStatus,
+        projectId,
     } = props;
 
+    const alert = useAlert();
     const { project } = useContext(ProjectContext);
 
     const canEditSource = project?.allowedPermissions.includes('UPDATE_LEAD');
-    const canDeleteSource = project?.allowedPermissions.includes('DELETE_LEAD');
 
     const [
         leadCopyModalShown,
@@ -69,6 +113,54 @@ function Actions<T extends string>(props: Props<T>) {
         setExpandedRowKey,
     } = useContext(RowExpansionContext);
 
+    const variables = useMemo(
+        (): LeadStatusUpdateMutationVariables => ({
+            projectId,
+            title,
+            leadId: id,
+            status: sourceStatus,
+        }),
+        [title, projectId, id, sourceStatus],
+    );
+
+    const [
+        leadStatusUpdate,
+        {
+            loading: statusUpdatePending,
+        },
+    ] = useMutation<LeadStatusUpdateMutation, LeadStatusUpdateMutationVariables>(
+        LEAD_STATUS_UPDATE,
+        {
+            variables,
+            onCompleted: (response) => {
+                if (response?.project?.leadUpdate?.ok) {
+                    const newStatus = response?.project?.leadUpdate?.result?.status;
+                    alert.show(
+                        `Successfully marked source as ${newStatus === 'TAGGED' ? 'tagged' : 'in progress'}.`,
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else {
+                    alert.show(
+                        'Failed to update source status.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to update source status.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
     const handleClick = useCallback(
         () => {
             const rowKey = id as string | number | undefined;
@@ -78,6 +170,17 @@ function Actions<T extends string>(props: Props<T>) {
         },
         [setExpandedRowKey, id],
     );
+
+    const handleSourceStatusChange = useCallback(() => {
+        leadStatusUpdate({
+            variables: {
+                projectId,
+                title,
+                leadId: id,
+                status: (sourceStatus === 'IN_PROGRESS' ? 'TAGGED' : 'IN_PROGRESS'),
+            },
+        });
+    }, [sourceStatus, projectId, title, id, leadStatusUpdate]);
 
     const [
         modal,
@@ -122,19 +225,20 @@ function Actions<T extends string>(props: Props<T>) {
                 >
                     Tag
                 </SmartButtonLikeLink>
-                {canDeleteSource && (
+                {canEditSource && (
                     <QuickActionDropdownMenu
                         title="More options"
                         label={(
                             <IoEllipsisVerticalSharp />
                         )}
                         variant="secondary"
+                        disabled={!!statusUpdatePending}
                     >
                         <DropdownMenuItem
                             onClick={showLeadCopyModal}
                             name={undefined}
                         >
-                            Move to other project
+                            Move to Other Projects
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={onDeleteLeadClick}
@@ -142,6 +246,18 @@ function Actions<T extends string>(props: Props<T>) {
                         >
                             Delete Source
                         </DropdownMenuItem>
+                        {(sourceStatus === 'TAGGED' || sourceStatus === 'IN_PROGRESS') && (
+                            <DropdownMenuItem
+                                onClick={handleSourceStatusChange}
+                                name={undefined}
+                            >
+                                {
+                                    sourceStatus === 'IN_PROGRESS'
+                                        ? 'Mark as Tagged'
+                                        : 'Mark as In Progress'
+                                }
+                            </DropdownMenuItem>
+                        )}
                     </QuickActionDropdownMenu>
                 )}
                 {isAssessmentLead && (
