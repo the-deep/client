@@ -346,7 +346,7 @@ function NewExport(props: Props) {
                         ...v,
                         selected: state?.extraOptions?.reportTextWidgetIds
                             ? (state?.extraOptions
-                                ?.reportTextWidgetIds?.includes(Number(v.id)) ?? false)
+                                ?.reportTextWidgetIds?.includes(v.id) ?? false)
                             : true,
                     }));
 
@@ -355,7 +355,7 @@ function NewExport(props: Props) {
                         ...v,
                         selected: state?.extraOptions?.reportExportingWidgets
                             ? (state?.extraOptions
-                                ?.reportExportingWidgets?.includes(Number(v.id)) ?? false)
+                                ?.reportExportingWidgets?.includes(v.id) ?? false)
                             : true,
                     }));
 
