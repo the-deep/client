@@ -35,6 +35,7 @@
                 .stats-by-time-container {
                     display: flex;
                     flex-basis: calc(50% - var(--dui-spacing-large) / 3);
+                    justify-content: center;
                     gap: var(--dui-spacing-large);
                     border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
 
