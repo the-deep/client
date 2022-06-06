@@ -352,7 +352,7 @@ export const createWidgetIds = (widgets: TreeSelectableWidget[]) => (
     // FIXME: we should not cast this value, fix this server
     widgets
         .filter((widget) => widget.selected)
-        .map((widget) => +(widget.id))
+        .map((widget) => (widget.id))
 );
 
 export const getReportStructureVariant = (
