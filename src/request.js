@@ -58,7 +58,7 @@ const coordinatorOptions = {
         const params = {
             method: method || methods.GET,
             body: newBody,
-            credentials: 'include',
+            credentials: extras.credentials || 'include',
             headers: newHeaders,
         };
 

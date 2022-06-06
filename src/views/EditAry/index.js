@@ -236,19 +236,25 @@ const requestOptions = {
             setProject({ project: response });
         },
     },
-    geoOptionsRequest: {
+    geoOptionsDataRequest: {
         extras: {
-            schemaName: 'geoOptions',
+            credentials: 'omit',
         },
-        url: '/geo-options/',
-        query: ({ props: { projectId } }) => ({ project: projectId }),
-        onMount: ({ props: { projectId } }) => !!projectId,
-        onPropsChanged: ['projectId'],
+        url: ({ params }) => params.url,
         onSuccess: ({ props, response }) => {
             props.setGeoOptions({
                 projectId: props.projectId,
                 locations: response,
             });
+        },
+    },
+    geoOptionsRequest: {
+        url: '/geo-options/',
+        query: ({ props: { projectId } }) => ({ project: projectId }),
+        onMount: ({ props: { projectId } }) => !!projectId,
+        onPropsChanged: ['projectId'],
+        onSuccess: ({ props, response }) => {
+            props.requests.geoOptionsDataRequest.do({ url: response.geoOptionsCachedFile });
         },
     },
     arySaveRequest: {
@@ -406,6 +412,7 @@ export default class EditAry extends React.PureComponent {
                 leadGroupRequest,
                 assessmentTemplateRequest,
                 geoOptionsRequest,
+                geoOptionsDataRequest,
                 arySaveRequest,
                 leadRequest,
                 projectGetRequest,
@@ -445,6 +452,7 @@ export default class EditAry extends React.PureComponent {
                 || assessmentTemplateRequest.pending
                 || geoOptionsRequest.pending
                 || projectGetRequest.pending
+                || geoOptionsDataRequest.pending
         ) {
             return (
                 <Page
