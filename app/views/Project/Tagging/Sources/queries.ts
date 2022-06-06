@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export const SOURCE_FILTER_DATA_FRAGMENT = gql`
     fragment SourceFilterDataResponse on LeadFilterDataType {
         assigneeOptions {
+            id
             displayName
             emailDisplay
         }
