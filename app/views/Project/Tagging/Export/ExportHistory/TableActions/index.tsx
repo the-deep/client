@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
+    IoCopyOutline,
     IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
@@ -67,17 +68,12 @@ function TableActions(props: Props) {
             >
                 <IoTrashBinOutline />
             </QuickActionConfirmButton>
-            <Button
-                name={data}
-                onClick={onViewExportClick}
-                variant="secondary"
-                disabled={disabled || viewDisabled}
-            >
-                View
-            </Button>
             {data.type === 'ENTRIES' && (
                 <SmartButtonLikeLink
+                    className={styles.button}
+                    childrenContainerClassName={styles.children}
                     variant="secondary"
+                    title="Create new export with these filters"
                     route={routes.exportCreate}
                     attrs={{
                         projectId: data.project as string | undefined,
@@ -89,12 +85,15 @@ function TableActions(props: Props) {
                         extraOptions: data.extraOptions,
                     }}
                 >
-                    Reuse
+                    <IoCopyOutline />
                 </SmartButtonLikeLink>
             )}
             {data.type === 'ASSESSMENTS' && (
                 <SmartButtonLikeLink
+                    className={styles.button}
+                    childrenContainerClassName={styles.children}
                     variant="secondary"
+                    title="Create new assessment export with these filters"
                     route={routes.assessmentExportCreate}
                     attrs={{
                         projectId: data.project as string | undefined,
@@ -104,9 +103,17 @@ function TableActions(props: Props) {
                         filtersData: data.filtersData,
                     }}
                 >
-                    Reuse
+                    <IoCopyOutline />
                 </SmartButtonLikeLink>
             )}
+            <Button
+                name={data}
+                onClick={onViewExportClick}
+                variant="secondary"
+                disabled={disabled || viewDisabled}
+            >
+                View
+            </Button>
         </div>
     );
 }
