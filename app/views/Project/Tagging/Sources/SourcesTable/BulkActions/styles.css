@@ -1,6 +1,6 @@
 .bulk-actions-bar {
     display: flex;
-    position: absolute;
+    position: fixed;
     bottom: var(--dui-spacing-extra-small);
     left: 50%;
     align-items: center;

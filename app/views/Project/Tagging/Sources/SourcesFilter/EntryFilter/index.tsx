@@ -1,6 +1,7 @@
 import React, { useMemo, useContext } from 'react';
 import {
     _cs,
+    capitalize,
     listToMap,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
@@ -103,7 +104,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 value={value?.search}
                 disabled={disabled}
-                label="Excerpt Search"
+                label="Entry Text"
             />
             <ProjectMemberMultiSelectInput
                 variant="general"
@@ -118,7 +119,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 options={entryCreatedByOptions}
                 onOptionsChange={setEntryCreatedByOptions}
-                label="Entry Created By"
+                label="Created By"
                 disabled={disabled}
             />
             <DateDualRangeInput
@@ -137,7 +138,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 toOnChange={setFieldValue}
                 toValue={value?.createdAtLte}
                 disabled={disabled}
-                label="Entry Created At"
+                label="Date Created"
             />
             <BooleanInput
                 variant="general"
@@ -150,7 +151,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 name="controlled"
                 value={value?.controlled}
                 onChange={setFieldValue}
-                label="Entry Controlled Status"
+                label="Controlled Status"
                 disabled={disabled}
             />
             <MultiSelectInput
@@ -177,7 +178,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                             variant="general"
                             key={filter.id}
                             name={filterValue?.index}
-                            title={filter.title}
+                            title={capitalize(filter.title.toLowerCase() ?? '')}
                             value={filterValue?.value}
                             filter={filter}
                             projectId={projectId}

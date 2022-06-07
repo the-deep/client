@@ -55,7 +55,7 @@ function ExportPreviewModal(props: Props) {
 
     return (
         <Modal
-            size="large"
+            size="cover"
             heading={exportPreviewData?.project?.export?.title}
             onCloseButtonClick={onCloseButtonClick}
             bodyClassName={styles.body}
@@ -76,7 +76,7 @@ function ExportPreviewModal(props: Props) {
                         />
                     )}
                     pending={exportPreviewPending || status === 'PENDING' || status === 'STARTED'}
-                    pendingMessage={status === 'STARTED' ? 'Export preview generation has started. Please wait...' : 'Export preview generation is pending. Please wait ...'}
+                    pendingMessage="We’ve started generating the preview of your document.. Please wait..."
                 />
             )}
         </Modal>

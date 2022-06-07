@@ -45,7 +45,7 @@ function leadsKeySelector(d: Lead) {
     return d.id;
 }
 
-const maxItemsPerPage = 10;
+const defaultMaxItemsPerPage = 10;
 
 interface Props {
     className?: string;
@@ -59,6 +59,7 @@ interface Props {
     filterValues: PartialFormType;
     sourcesFilterValue: PartialFormType;
     onFilterChange: (...entries: EntriesAsList<PartialFormType>) => void;
+    totalLeadsCount?: number;
 }
 
 function SourcesSelection(props: Props) {
@@ -74,7 +75,10 @@ function SourcesSelection(props: Props) {
         filterOnlyUnprotected,
         hasAssessment = false,
         sourcesFilterValue,
+        totalLeadsCount,
     } = props;
+
+    const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
 
     const sortState = useSortState();
     const { sorting } = sortState;
@@ -99,7 +103,7 @@ function SourcesSelection(props: Props) {
                 ordering: [ordering as LeadOrderingEnum],
             } : undefined
         ),
-        [projectId, activePage, ordering, filters],
+        [projectId, activePage, ordering, filters, maxItemsPerPage],
     );
 
     const {
@@ -221,7 +225,7 @@ function SourcesSelection(props: Props) {
             publishedOnColumn,
             createStringColumn<Lead, string>(
                 'ENTRIES_COUNT',
-                'No of entries',
+                'No of Entries',
                 (item) => {
                     if (isDefined(item.filteredEntriesCount)) {
                         return `${item.filteredEntriesCount}/${item.entriesCount?.total}`;
@@ -240,17 +244,17 @@ function SourcesSelection(props: Props) {
         selectAll,
     ]);
 
-    const totalCount = projectSourcesResponse?.project?.leads?.totalCount;
-
     const selectedLeadsCount = useMemo(() => (
         selectAll
-            ? ((totalCount ?? 0) - selectedLeads.length)
+            ? ((totalLeadsCount ?? 0) - selectedLeads.length)
             : selectedLeads.length
     ), [
         selectedLeads,
         selectAll,
-        totalCount,
+        totalLeadsCount,
     ]);
+
+    const totalCount = projectSourcesResponse?.project?.leads?.totalCount;
 
     return (
         <div className={_cs(className, styles.sourcesSelection)}>
@@ -264,7 +268,7 @@ function SourcesSelection(props: Props) {
             />
             <div className={styles.tableContainer}>
                 <p className={styles.note}>
-                    {`${selectedLeadsCount} of ${totalCount ?? 0} sources ${(selectedLeadsCount > 1) ? 'are' : 'is'} selected`}
+                    {`${selectedLeadsCount} of ${totalLeadsCount ?? 0} sources selected`}
                 </p>
                 <SortContext.Provider value={sortState}>
                     <TableView
@@ -289,7 +293,7 @@ function SourcesSelection(props: Props) {
                         itemsCount={totalCount ?? 0}
                         maxItemsPerPage={maxItemsPerPage}
                         onActivePageChange={setActivePage}
-                        itemsPerPageControlHidden
+                        onItemsPerPageChange={setMaxItemsPerPage}
                     />
                 </div>
             </div>

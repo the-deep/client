@@ -220,7 +220,7 @@ function SourcesFilter(props: Props) {
                         value={value.search}
                         error={error?.search}
                         disabled={disabled}
-                        label="Source Title Search"
+                        label="Title"
                     />
                     <CheckListInput
                         className={styles.checklist}
@@ -244,7 +244,7 @@ function SourcesFilter(props: Props) {
                         toOnChange={setFieldValue}
                         toValue={value.publishedOnLte}
                         disabled={disabled}
-                        label="Published On"
+                        label="Date Published"
                     />
                     <DateDualRangeInput
                         variant="general"
@@ -255,7 +255,7 @@ function SourcesFilter(props: Props) {
                         toOnChange={setFieldValue}
                         toValue={value.createdAtLte}
                         disabled={disabled}
-                        label="Source Created At"
+                        label="Date Created"
                     />
                     {!isEntriesOnlyFilter && (
                         <>
@@ -275,7 +275,7 @@ function SourcesFilter(props: Props) {
                                 name="hasAssessment"
                                 value={value.hasAssessment}
                                 onChange={setFieldValue}
-                                label="Has Assessment"
+                                label="Assessment Status"
                                 error={error?.hasAssessment}
                                 disabled={disabled || loading}
                             />
@@ -289,7 +289,7 @@ function SourcesFilter(props: Props) {
                         onChange={setFieldValue}
                         options={createdByOptions}
                         onOptionsChange={setCreatedByOptions}
-                        label="Source Created By"
+                        label="Created By"
                         disabled={disabled}
                     />
                     <ProjectMemberMultiSelectInput
@@ -300,7 +300,7 @@ function SourcesFilter(props: Props) {
                         onChange={setFieldValue}
                         options={assigneeOptions}
                         onOptionsChange={setAssigneeOptions}
-                        label="Assignees"
+                        label="Assignee"
                         disabled={disabled}
                     />
                     <MultiSelectInput
@@ -335,7 +335,7 @@ function SourcesFilter(props: Props) {
                         options={authorOrganizationOptions}
                         onOptionsChange={setAuthorOrganizationOptions}
                         disabled={disabled || loading}
-                        label="Authoring Organizations"
+                        label="Authoring Organization"
                         error={getErrorString(error?.authorOrganizations)}
                     />
                     <NewOrganizationMultiSelectInput
@@ -346,7 +346,7 @@ function SourcesFilter(props: Props) {
                         options={sourceOrganizationOptions}
                         onOptionsChange={setSourceOrganizationOptions}
                         disabled={disabled || loading}
-                        label="Source Organizations"
+                        label="Source Organization"
                         error={getErrorString(error?.sourceOrganizations)}
                     />
                     {!filterOnlyUnprotected && (

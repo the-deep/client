@@ -4,6 +4,8 @@ import {
     IoGridOutline,
     IoList,
     IoFunnel,
+    IoCheckmark,
+    IoClose,
 } from 'react-icons/io5';
 import {
     Header,
@@ -151,7 +153,7 @@ function Sources(props: Props) {
                 defaultHash="table"
             >
                 <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
-                    <div className={styles.topSection}>
+                    <div className={styles.statsContainer}>
                         {activeProject && (
                             <SourcesStats
                                 className={styles.stats}
@@ -159,9 +161,22 @@ function Sources(props: Props) {
                                 filters={sourcesFilters}
                             />
                         )}
+                    </div>
+                    <div className={styles.topSection}>
                         <Header
                             headingSectionClassName={styles.header}
                             heading={_ts('sourcesFilter', 'title')}
+                            description={(
+                                <Button
+                                    className={styles.filterButton}
+                                    name={undefined}
+                                    onClick={toggleShowFilter}
+                                    icons={<IoFunnel />}
+                                >
+                                    Filter
+                                </Button>
+                            )}
+                            inlineHeadingDescription
                             headingSize="medium"
                             actions={(
                                 <TabList className={styles.tabs}>
@@ -185,29 +200,15 @@ function Sources(props: Props) {
                             )}
                         />
                         <div className={styles.filtersContainer}>
-                            <div>
-                                <Button
-                                    name={undefined}
-                                    onClick={toggleShowFilter}
-                                    icons={<IoFunnel />}
-                                >
-                                    Filter
-                                </Button>
-                            </div>
-                            {activeProject && (
-                                <AppliedFilters
-                                    className={styles.appliedFilters}
-                                    projectId={activeProject}
-                                    value={sourcesFilterValue}
-                                    onChange={handleSourcesFiltersValueChange}
-                                />
-                            )}
-                            {showFilters && !(isFilterEmpty && pristine) && (
+                            {!(isFilterEmpty && pristine) && (
                                 <div className={styles.buttons}>
                                     <Button
                                         disabled={pristine}
                                         name="sourcesFilterSubmit"
-                                        variant="action"
+                                        icons={(
+                                            <IoCheckmark />
+                                        )}
+                                        variant="tertiary"
                                         onClick={handleApply}
                                     >
                                         {_ts('sourcesFilter', 'apply')}
@@ -215,12 +216,23 @@ function Sources(props: Props) {
                                     <Button
                                         disabled={isFilterEmpty}
                                         name="clearFilter"
-                                        variant="action"
+                                        icons={(
+                                            <IoClose />
+                                        )}
+                                        variant="tertiary"
                                         onClick={handleClear}
                                     >
                                         {_ts('sourcesFilter', 'clearAll')}
                                     </Button>
                                 </div>
+                            )}
+                            {activeProject && (
+                                <AppliedFilters
+                                    className={styles.appliedFilters}
+                                    projectId={activeProject}
+                                    value={sourcesFilterValue}
+                                    onChange={handleSourcesFiltersValueChange}
+                                />
                             )}
                         </div>
                     </div>

@@ -43,6 +43,9 @@ function ExportTypeButton(props: Props) {
             title={title}
         >
             {icon}
+            {buttonKey === 'JSON' && (
+                <span className={styles.title}>JSON</span>
+            )}
         </QuickActionButton>
     );
 }

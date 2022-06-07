@@ -97,7 +97,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 onChange={setFieldValue}
                 value={value?.search}
                 disabled={disabled}
-                label="Excerpt Search"
+                label="Entry Text"
             />
             <ProjectMemberMultiSelectInput
                 className={_cs(
@@ -141,7 +141,7 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 name="controlled"
                 value={value?.controlled}
                 onChange={setFieldValue}
-                label="Entry Controlled Status"
+                label="Controlled Status"
                 disabled={disabled}
             />
             <MultiSelectInput
