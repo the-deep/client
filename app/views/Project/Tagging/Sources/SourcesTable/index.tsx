@@ -480,7 +480,7 @@ function SourcesTable(props: Props) {
             ),
             createDateColumn<Lead, string>(
                 'PUBLISHED_ON',
-                'Published On',
+                'Date Published',
                 (item) => item.publishedOn ?? '',
                 {
                     sortable: true,

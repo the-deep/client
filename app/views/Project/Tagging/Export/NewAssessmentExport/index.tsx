@@ -16,6 +16,8 @@ import { useQuery, gql, useMutation } from '@apollo/client';
 import { createSubmitHandler } from '@togglecorp/toggle-form';
 import {
     IoBookmarks,
+    IoCheckmark,
+    IoClose,
 } from 'react-icons/io5';
 
 import routes from '#base/configs/routes';
@@ -352,7 +354,10 @@ function NewAssessmentExport(props: Props) {
                                 <Button
                                     disabled={pristine}
                                     name="sourcesFilterSubmit"
-                                    variant="action"
+                                    icons={(
+                                        <IoCheckmark />
+                                    )}
+                                    variant="tertiary"
                                     onClick={handleApply}
                                 >
                                     {_ts('sourcesFilter', 'apply')}
@@ -360,7 +365,10 @@ function NewAssessmentExport(props: Props) {
                                 <Button
                                     disabled={isFilterEmpty}
                                     name="clearFilter"
-                                    variant="action"
+                                    icons={(
+                                        <IoClose />
+                                    )}
+                                    variant="tertiary"
                                     onClick={handleClear}
                                 >
                                     {_ts('sourcesFilter', 'clearAll')}
@@ -378,6 +386,7 @@ function NewAssessmentExport(props: Props) {
                         onSelectAllChange={setSelectAll}
                         filterValues={sourcesFilter}
                         sourcesFilterValue={sourcesFilterValue}
+                        totalLeadsCount={stats?.numberOfLeads ?? 0}
                         onFilterChange={setSourcesFilterValue}
                     />
                 </SourcesFilterContext.Provider>

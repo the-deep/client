@@ -1,16 +1,30 @@
 .sources {
     display: flex;
+    position: relative;
     flex-direction: column;
+    z-index: 0;
+
+    .stats-container {
+        background-color: var(--dui-color-foreground);
+        padding: var(--dui-spacing-large) var(--dui-spacing-super-large) 0;
+    }
 
     .top-section {
         display: flex;
+        position: sticky;
+        top: 0;
         flex-direction: column;
+        z-index: 1;
         background-color: var(--dui-color-foreground);
         padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
         gap: var(--dui-spacing-medium);
 
         .header {
             align-items: center;
+
+            .filter-button {
+                margin: 0 var(--dui-spacing-small);
+            }
         }
 
         .filters-container {
@@ -20,7 +34,6 @@
 
             .buttons {
                 display: flex;
-                align-items: flex-end;
                 flex-shrink: 0;
                 gap: var(--dui-spacing-medium);
             }

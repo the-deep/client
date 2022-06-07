@@ -21,6 +21,13 @@ import {
 
 import styles from './styles.css';
 
+const exportTypeTitle: { [key in ExportFormatEnum]: string } = {
+    DOCX: 'Word',
+    XLSX: 'Excel',
+    PDF: 'PDF',
+    JSON: 'JSON',
+};
+
 interface Props {
     onCloseButtonClick: () => void;
     exportFileFormat: ExportFormatEnum;
@@ -83,35 +90,35 @@ function AdvancedOptionsSelection(props: Props) {
 
     return (
         <Modal
-            className={styles.modal}
+            className={exportFileFormat !== 'XLSX' ? styles.modal : undefined}
             size={exportFileFormat === 'XLSX' ? 'small' : 'large'}
-            heading="Advanced Options"
+            heading={`Advanced Options - ${exportTypeTitle[exportFileFormat]}`}
             onCloseButtonClick={onCloseButtonClick}
             bodyClassName={styles.body}
-            freeHeight
         >
             {(exportFileFormat === 'DOCX' || exportFileFormat === 'PDF') && (
                 <div className={styles.reportOptions}>
                     <p className={styles.note}>
-                        The values shown are based on filters from the main export page
+                        Tailor the content and structure of your export
+                        using the content of your framework as well additional metadata.
                     </p>
                     <div className={styles.optionsContainer}>
                         <div className={styles.left}>
                             <Container
                                 className={styles.container}
                                 headingSize="extraSmall"
-                                heading="Metadata to show"
+                                heading="Metadata"
                                 contentClassName={styles.containerContent}
                             >
                                 <Checkbox
                                     name="reportShowLeadEntryId"
-                                    label={_ts('export', 'showEntryIdLabel')}
+                                    label="Entry ID"
                                     value={reportShowLeadEntryId}
                                     onChange={onReportShowLeadEntryIdChange}
                                 />
                                 <Checkbox
                                     name="reportShowAssessmentData"
-                                    label={_ts('export', 'showAryDetailLabel')}
+                                    label="Assessment Registry Information"
                                     value={reportShowAssessmentData}
                                     onChange={onReportShowAssessmentDataChange}
                                 />
@@ -125,7 +132,7 @@ function AdvancedOptionsSelection(props: Props) {
                             {contextualWidgets.length > 0 && reportShowEntryWidgetData && (
                                 <Container
                                     className={styles.container}
-                                    heading="Contextual Widgets"
+                                    heading="Widgets"
                                     headingSize="extraSmall"
                                 >
                                     <TreeSelection
@@ -156,22 +163,28 @@ function AdvancedOptionsSelection(props: Props) {
                             className={styles.container}
                             headingSize="extraSmall"
                             heading="Structure"
-                            headingDescriptionClassName={styles.headingDescription}
-                            headingDescription={showMatrix2dOptions && (
+                            headerDescriptionClassName={styles.headingDescription}
+                            headerDescription={showMatrix2dOptions && (
                                 <>
                                     <Checkbox
                                         name="checkbox"
-                                        label={_ts('export', 'includeSubSector')}
+                                        label="Include 2D Matrix subsectors"
                                         value={includeSubSector}
                                         onChange={onIncludeSubSectorChange}
                                     />
                                     <Checkbox
                                         name="swap-checkbox"
-                                        label={_ts('export', 'swapColumnRowsLabel')}
+                                        label="Swap columns and rows in 2D Matrix order"
                                         value={swapOrderValue}
                                         onChange={handleSwapOrderValueChange}
                                     />
                                 </>
+                            )}
+                            headingDescription={(
+                                <p className={styles.info}>
+                                    Options shown are based on dimensions
+                                    available after filtering from the main export page
+                                </p>
                             )}
                         >
                             <TreeSelection
@@ -187,6 +200,7 @@ function AdvancedOptionsSelection(props: Props) {
                             showAssessmentData={reportShowAssessmentData}
                             showEntryWidgetData={reportShowEntryWidgetData}
                             contextualWidgets={contextualWidgets}
+                            textWidgets={textWidgets}
                         />
                     </div>
                 </div>

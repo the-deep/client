@@ -24,12 +24,12 @@ interface BooleanOption {
 
 const hasEntryOptions: BooleanOption[] = [
     { key: 'true', value: 'Has entry' },
-    { key: 'false', value: 'Does not have entry' },
+    { key: 'false', value: 'No entries' },
 ];
 
 const hasAssessmentOptions: BooleanOption[] = [
-    { key: 'true', value: 'Has assessment' },
-    { key: 'false', value: 'Does not have assessment' },
+    { key: 'true', value: 'Assessment completed' },
+    { key: 'false', value: 'Assessment not completed' },
 ];
 
 const SOURCE_FILTER_OPTIONS = gql`

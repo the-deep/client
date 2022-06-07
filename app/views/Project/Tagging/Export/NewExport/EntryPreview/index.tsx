@@ -1,18 +1,16 @@
-import React, { useMemo, useContext, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ContainerCard,
+    TextOutput,
     List,
-    DateOutput,
-    Heading,
+    ListView,
 } from '@the-deep/deep-ui';
 import { BiTargetLock } from 'react-icons/bi';
 import { IoEllipse } from 'react-icons/io5';
 import {
     Widget,
 } from '#types/newAnalyticalFramework';
-
-import { ProjectContext } from '#base/context/ProjectContext';
 
 import {
     TreeSelectableWidget,
@@ -33,14 +31,43 @@ const sampleExcerpts = [
     'It’s a dangerous business, Frodo, going out your door. You step onto the road, and if you don’t keep your feet, there’s no knowing where you might be swept off to.',
 ];
 
-const sampleDateRange = '08-04-2022 - 20-05-2022';
+const sampleTexts = [
+    'The seaweed is always greener In somebody else\'s lake You dream about going up there But that is a big mistake',
+    'Under the sea Under the sea Darling it\'s better Down where it\'s wetter Take it from me Up on the shore they work all day Out in the sun they slave away',
+    'Down here all the fish is happy As off through the waves they roll The fish on the land ain\'t happy They sad \'cause they in their bowl',
+];
+
+const sampleDateRange = '08/04/2022 - 20/05/2022';
 const sampleTimeRange = '12:00 - 14:50';
-const sampleDate = '08-04-2022';
+const sampleDate = '08/04/2022';
 const sampleTime = '13:52';
 const sampleGeo = 'Rivnenska; Bagmati;';
-const todaysDate = new Date();
 
 const widgetKeySelector = (widget: Widget) => widget.id;
+
+interface TextWidgetRendererProps {
+    title: string;
+}
+
+function TextWidgetRenderer(props: TextWidgetRendererProps) {
+    const {
+        title,
+    } = props;
+
+    const selectedText = useMemo(() => (
+        sampleTexts[Math.floor(Math.random() * sampleTexts.length)]
+    ), []);
+
+    return (
+        <TextOutput
+            className={styles.textWidget}
+            labelContainerClassName={styles.label}
+            valueContainerClassName={styles.value}
+            label={title}
+            value={selectedText}
+        />
+    );
+}
 
 interface WidgetSampleProps {
     widget: Widget;
@@ -119,6 +146,7 @@ function WidgetSample(props: WidgetSampleProps) {
 interface Props {
     className?: string;
     contextualWidgets: TreeSelectableWidget[];
+    textWidgets: TreeSelectableWidget[];
     showLeadEntryId: boolean;
     showAssessmentData: boolean;
     showEntryWidgetData: boolean;
@@ -131,9 +159,8 @@ function EntryPreview(props: Props) {
         showLeadEntryId,
         showAssessmentData,
         showEntryWidgetData,
+        textWidgets,
     } = props;
-
-    const { project } = useContext(ProjectContext);
 
     const selectedExcerpt = useMemo(() => (
         sampleExcerpts[Math.floor(Math.random() * sampleExcerpts.length)]
@@ -142,29 +169,26 @@ function EntryPreview(props: Props) {
         contextualWidgets?.filter((widget) => widget.selected)
     ), [contextualWidgets]);
 
+    const filteredTextWidgets = useMemo(() => (
+        textWidgets?.filter((widget) => widget.selected)
+    ), [textWidgets]);
+
     const widgetSampleRendererParams = useCallback((_, widget: Widget) => ({
         widget,
+    }), []);
+
+    const textWidgetRendererParams = useCallback((_, widget: Widget) => ({
+        title: widget.title,
     }), []);
 
     return (
         <ContainerCard
             className={_cs(className, styles.entryPreview)}
-            heading="Preview"
+            heading="Entry Structure Preview"
             headingSize="small"
             contentClassName={styles.content}
             borderBelowHeader
         >
-            <Heading
-                className={styles.heading}
-                size="extraSmall"
-            >
-                DEEP Export -
-                <DateOutput
-                    value={todaysDate.toDateString()}
-                    format="MMM dd, yyyy"
-                />
-                {`- ${project?.title}`}
-            </Heading>
             <div>
                 {showLeadEntryId && (
                     <span className={styles.leadEntryId}>
@@ -177,10 +201,10 @@ function EntryPreview(props: Props) {
                     <span className={styles.assessmentData}>
                         [
                         <BiTargetLock />
-                        , 612 Key Informant Interview, Data collection: 2022-04-08 - 2022-04-20]
+                        , 612 Key Informant Interview, Data collection: 08/04/2022 - 20/04/2022]
                     </span>
                 )}
-                {showEntryWidgetData && (
+                {showEntryWidgetData && filteredContextualWidgets?.length > 0 && (
                     <span className={styles.entryWidgetData}>
                         [
                         <List
@@ -192,13 +216,27 @@ function EntryPreview(props: Props) {
                         ]
                     </span>
                 )}
-                {selectedExcerpt}
+                <span className={styles.excerpt}>
+                    {selectedExcerpt}
+                </span>
+                {filteredTextWidgets.length > 0 && (
+                    <ListView
+                        className={styles.textWidgets}
+                        data={filteredTextWidgets}
+                        keySelector={widgetKeySelector}
+                        renderer={TextWidgetRenderer}
+                        rendererParams={textWidgetRendererParams}
+                        filtered={false}
+                        pending={false}
+                        errored={false}
+                    />
+                )}
                 <span className={styles.leadDetails}>
                     (
                     <span className={styles.link}>
-                        World Health Organization
+                        HarperCollins
                     </span>
-                    , Tales of the Sea, 17/04/2022)
+                    , Moby-Dick, 17/04/2022)
                 </span>
             </div>
         </ContainerCard>

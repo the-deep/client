@@ -1,6 +1,7 @@
 import React, { useMemo, useContext } from 'react';
 import {
     _cs,
+    capitalize,
     listToMap,
     isNotDefined,
     encodeDate,
@@ -606,7 +607,7 @@ function EntryFilterOutput<K extends string>(
     return (
         <>
             <DismissableTextOutput
-                label="Excerpt Search"
+                label="Entry Text"
                 name="search"
                 value={value?.search}
                 onDismiss={setFieldValue}
@@ -627,10 +628,10 @@ function EntryFilterOutput<K extends string>(
                 toName="createdAtLte"
                 onDismissToValue={setFieldValue}
                 toValue={value?.createdAtLte}
-                label="Entry Created At"
+                label="Entry Date Created"
             />
             <DismissableBooleanOutput
-                label="Entry Controlled Status"
+                label="Controlled Status"
                 name="controlled"
                 onDismiss={setFieldValue}
                 trueLabel="Controlled"
@@ -651,7 +652,7 @@ function EntryFilterOutput<K extends string>(
                     ?.find((f) => (f.key === frameworkFilterValue.filterKey));
                 return (
                     <FrameworkFilterOutput
-                        label={frameworkFilter?.title}
+                        label={capitalize(frameworkFilter?.title?.toLowerCase() ?? '')}
                         key={frameworkFilterValue.filterKey}
                         index={filterIndex}
                         value={frameworkFilterValue}
@@ -698,7 +699,7 @@ function AppliedFilters(props: Props) {
     return (
         <div className={_cs(className, styles.appliedFilters)}>
             <DismissableTextOutput
-                label="Source Title Search"
+                label="Title"
                 name="search"
                 value={value.search}
                 onDismiss={onChange}
@@ -719,7 +720,7 @@ function AppliedFilters(props: Props) {
                 toName="publishedOnLte"
                 onDismissToValue={onChange}
                 toValue={value.publishedOnLte}
-                label="Published On"
+                label="Date Published"
             />
             <DismissableDateRangeOutput
                 fromName="createdAtGte"
@@ -728,22 +729,22 @@ function AppliedFilters(props: Props) {
                 toName="createdAtLte"
                 onDismissToValue={onChange}
                 toValue={value.createdAtLte}
-                label="Source Created At"
+                label="Source Date Created"
             />
             <DismissableBooleanOutput
-                label="Entries"
+                label="Has Entry"
                 name="hasEntries"
                 onDismiss={onChange}
-                trueLabel="Entries exist"
-                falseLabel="Entries don't exist"
+                trueLabel="Has entry"
+                falseLabel="No entries"
                 value={value.hasEntries}
             />
             <DismissableBooleanOutput
-                label="Assessment"
+                label="Assessment Status"
                 name="hasAssessment"
                 onDismiss={onChange}
-                trueLabel="Has assessment"
-                falseLabel="Has no assessment"
+                trueLabel="Assessment completed"
+                falseLabel="Assessment not completed"
                 value={value.hasAssessment}
             />
             <DismissableListOutput
@@ -756,7 +757,7 @@ function AppliedFilters(props: Props) {
                 keySelector={projectMemberKeySelector}
             />
             <DismissableListOutput
-                label="Assignees"
+                label="Assignee"
                 name="assignees"
                 onDismiss={onChange}
                 value={value.assignees}
@@ -783,7 +784,7 @@ function AppliedFilters(props: Props) {
                 value={value.authoringOrganizationTypes}
             />
             <DismissableListOutput
-                label="Authoring Organizations"
+                label="Authoring Organization"
                 name="authorOrganizations"
                 onDismiss={onChange}
                 value={value.authorOrganizations}
@@ -792,7 +793,7 @@ function AppliedFilters(props: Props) {
                 keySelector={organizationKeySelector}
             />
             <DismissableListOutput
-                label="Source Organizations"
+                label="Source Organization"
                 name="sourceOrganizations"
                 onDismiss={onChange}
                 value={value.sourceOrganizations}

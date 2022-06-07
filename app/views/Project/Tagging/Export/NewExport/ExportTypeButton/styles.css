@@ -11,4 +11,11 @@
         filter: grayscale(100%);
         border-color: transparent;
     }
+
+    .title {
+        position: absolute;
+        top: 50%;
+        color: white;
+        font-size: 0.6rem;
+    }
 }

@@ -55,8 +55,8 @@ const hasEntryOptions: Option[] = [
 ];
 
 const hasAssessmentOptions: Option[] = [
-    { key: 'true', value: 'Has assessment' },
-    { key: 'false', value: 'Does not have assessment' },
+    { key: 'true', value: 'Assessment completed' },
+    { key: 'false', value: 'Assessment not completed' },
 ];
 
 const SOURCE_FILTER_OPTIONS = gql`
@@ -312,7 +312,7 @@ function SourcesFilter(props: Props) {
                     toOnChange={setFieldValue}
                     toValue={value.publishedOnLte}
                     disabled={disabled}
-                    label="Published On"
+                    label="Date Published"
                 />
                 <DateDualRangeInput
                     className={styles.input}
@@ -388,7 +388,7 @@ function SourcesFilter(props: Props) {
                     onChange={setFieldValue}
                     options={members}
                     onOptionsChange={setMembers}
-                    label="Assignees"
+                    label="Assignee"
                     disabled={disabled}
                 />
                 <MultiSelectInput
@@ -454,7 +454,7 @@ function SourcesFilter(props: Props) {
                     options={sourceOrganizationOptions}
                     onOptionsChange={setSourceOrganizationOptions}
                     disabled={disabled || loading}
-                    label="Source Organizations"
+                    label="Source Organization"
                     error={getErrorString(error?.sourceOrganizations)}
                 />
                 {!filterOnlyUnprotected && (

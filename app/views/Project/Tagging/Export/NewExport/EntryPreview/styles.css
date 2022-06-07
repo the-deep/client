@@ -6,11 +6,6 @@
         flex-direction: column;
         gap: var(--dui-spacing-large);
 
-        .heading {
-            display: inline-flex;
-            text-transform: uppercase;
-        }
-
         .lead-entry-id {
             padding-right: var(--dui-spacing-small);
             font-weight: var(--dui-font-weight-bold);
@@ -44,11 +39,33 @@
             }
         }
 
-        .lead-details {
-            padding-left: var(--dui-spacing-small);
+        .excerpt {
+            padding-right: var(--dui-spacing-small);
+        }
 
+        .lead-details {
             .link {
                 text-decoration: underline;
+            }
+        }
+
+        .text-widgets {
+            padding: var(--dui-spacing-medium) 0;
+
+            .text-widget {
+                display: inline;
+
+                .label {
+                    display: inline;
+                    color: var(--dui-color-text);
+                    font-weight: var(--dui-font-weight-bold);
+                }
+
+                .value {
+                    display: inline;
+                    padding-left: var(--dui-spacing-small);
+                    font-weight: var(--dui-font-weight-normal);
+                }
             }
         }
     }

@@ -9,11 +9,13 @@ import {
     AiFillFilePdf,
     AiFillFileExcel,
     AiFillFileWord,
-    AiFillFileText,
+    AiFillFile,
 } from 'react-icons/ai';
 import {
     IoBookmarks,
     IoDocument,
+    IoCheckmark,
+    IoClose,
 } from 'react-icons/io5';
 import {
     Button,
@@ -115,7 +117,7 @@ const exportTypes: ExportTypeItem[] = [
     },
     {
         key: 'JSON',
-        icon: <AiFillFileText title="JSON Export" />,
+        icon: <AiFillFile title="JSON Export" />,
         title: _ts('export', 'jsonLabel'),
     },
 ];
@@ -151,7 +153,7 @@ function NewExport(props: Props) {
     const [reportStructure, setReportStructure] = useState<Node[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [reportStructureVariant, setReportStructureVariant] = useState<string>(SECTOR_FIRST);
-    const [excelDecoupled, setExcelDecoupled] = useState<boolean>(true);
+    const [excelDecoupled, setExcelDecoupled] = useState<boolean>(false);
 
     const {
         value: sourcesFilterValue,
@@ -574,7 +576,10 @@ function NewExport(props: Props) {
                                 <Button
                                     disabled={pristine}
                                     name="sourcesFilterSubmit"
-                                    variant="action"
+                                    icons={(
+                                        <IoCheckmark />
+                                    )}
+                                    variant="tertiary"
                                     onClick={handleApply}
                                 >
                                     {_ts('sourcesFilter', 'apply')}
@@ -582,7 +587,10 @@ function NewExport(props: Props) {
                                 <Button
                                     disabled={isFilterEmpty}
                                     name="clearFilter"
-                                    variant="action"
+                                    icons={(
+                                        <IoClose />
+                                    )}
+                                    variant="tertiary"
                                     onClick={handleClear}
                                 >
                                     {_ts('sourcesFilter', 'clearAll')}
@@ -600,6 +608,7 @@ function NewExport(props: Props) {
                         onSelectAllChange={setSelectAll}
                         filterValues={sourcesFilter}
                         sourcesFilterValue={sourcesFilterValue}
+                        totalLeadsCount={stats?.numberOfLeads ?? 0}
                         onFilterChange={setSourcesFilterValue}
                     />
                 </SourcesFilterContext.Provider>

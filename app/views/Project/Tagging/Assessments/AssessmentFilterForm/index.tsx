@@ -103,7 +103,7 @@ function AssessmentFilterForm(props: Props) {
                     actions={<IoClose />}
                     variant="transparent"
                 >
-                    Clear All
+                    Clear
                 </Button>
             </div>
         </div>
