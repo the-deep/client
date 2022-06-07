@@ -144,35 +144,14 @@ function Sources(props: Props) {
         }
     }, [activeProject, ordering, sourcesFilters, saveLeadFilter]);
 
-    useQuery<ProjectSavedLeadFilterQuery, ProjectSavedLeadFilterQueryVariables>(
+    const {
+        data: projectSavedLeadFilterData,
+        loading: projectSavedLeadFilterPending,
+    } = useQuery<ProjectSavedLeadFilterQuery, ProjectSavedLeadFilterQueryVariables>(
         PROJECT_SAVED_LEAD_FILTER,
         {
             skip: !activeProject,
             variables: activeProject ? { projectId: activeProject } : undefined,
-            onCompleted: (response) => {
-                if (!response || !response.project) {
-                    return;
-                }
-                const {
-                    userSavedLeadFilter,
-                } = response.project;
-
-                if (userSavedLeadFilter?.filters) {
-                    const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
-                    setSorting(getSortState(orderingFilter));
-                    setSourcesFilterValue(transformRawFiltersToFormValues(others));
-                    setSourcesFilters(transformRawFiltersToFormValues(others));
-                }
-                if (userSavedLeadFilter?.filtersData) {
-                    const { filtersData } = userSavedLeadFilter;
-                    setCreatedByOptions(filtersData?.createdByOptions);
-                    setAssigneeOptions(filtersData?.assigneeOptions);
-                    setAuthorOrganizationOptions(filtersData?.authorOrganizationOptions);
-                    setSourceOrganizationOptions(filtersData?.sourceOrganizationOptions);
-                    setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
-                    setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
-                }
-            },
         },
     );
 
@@ -221,6 +200,39 @@ function Sources(props: Props) {
         );
         submit();
     }, [setError, validate, handleSubmit]);
+
+    const handleUsePreviousLeadFilter = useCallback(() => {
+        if (projectSavedLeadFilterData?.project) {
+            const { userSavedLeadFilter } = projectSavedLeadFilterData.project;
+
+            if (userSavedLeadFilter?.filters) {
+                const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
+                setSorting(getSortState(orderingFilter));
+                setSourcesFilterValue(transformRawFiltersToFormValues(others));
+                setSourcesFilters(transformRawFiltersToFormValues(others));
+                setPristine(true);
+            }
+            if (userSavedLeadFilter?.filtersData) {
+                const { filtersData } = userSavedLeadFilter;
+                setCreatedByOptions(filtersData?.createdByOptions);
+                setAssigneeOptions(filtersData?.assigneeOptions);
+                setAuthorOrganizationOptions(filtersData?.authorOrganizationOptions);
+                setSourceOrganizationOptions(filtersData?.sourceOrganizationOptions);
+                setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
+                setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
+            }
+            if (!filtersShown) {
+                showFilter();
+            }
+        }
+    }, [
+        projectSavedLeadFilterData,
+        setSorting,
+        setSourcesFilterValue,
+        setPristine,
+        filtersShown,
+        showFilter,
+    ]);
 
     const handleClear = useCallback(() => {
         clearSourcesFilterValue();
@@ -284,6 +296,16 @@ function Sources(props: Props) {
                             )}
                         />
                         <div className={styles.filtersContainer}>
+                            {!filtersShown && pristine && (
+                                <Button
+                                    disabled={projectSavedLeadFilterPending}
+                                    name="usePreviousFilters"
+                                    variant="action"
+                                    onClick={handleUsePreviousLeadFilter}
+                                >
+                                    Use Previous Filters
+                                </Button>
+                            )}
                             {!(isFilterEmpty && pristine) && (
                                 <div className={styles.buttons}>
                                     <Button
