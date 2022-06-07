@@ -187,6 +187,8 @@ interface RowProps {
     row: RowType;
     columns: ColumnType[] | undefined;
     value: NonNullable<Matrix2dValue['value']>[string];
+    selectedColumnKey: string | undefined;
+    onSelectedColumnKeyChange: (newVal: string | undefined) => void;
     onSubRowChange: (
         rowId: string,
         subRowId: string,
@@ -203,9 +205,9 @@ function Row(props: RowProps) {
         readOnly,
         value,
         columns,
+        onSelectedColumnKeyChange,
+        selectedColumnKey,
     } = props;
-
-    const [selectedColumnKey, setSelectedColumnKey] = useState<string | undefined>(undefined);
 
     const selectedColumn = columns?.find((item) => item.key === selectedColumnKey);
 
@@ -267,7 +269,7 @@ function Row(props: RowProps) {
                                         title={column.tooltip}
                                         onClick={() => {
                                             if ((column.subColumns?.length ?? 0) > 0 && !readOnly) {
-                                                setSelectedColumnKey(column.key);
+                                                onSelectedColumnKeyChange(column.key);
                                             }
                                         }}
                                     >
@@ -286,7 +288,7 @@ function Row(props: RowProps) {
                                         styles.firstColumn,
                                         styles.clickable,
                                     )}
-                                    onClick={() => setSelectedColumnKey(undefined)}
+                                    onClick={() => onSelectedColumnKeyChange(undefined)}
                                 >
                                     <div className={styles.back}>
                                         <IoArrowBackOutline />
@@ -395,16 +397,27 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         sortByOrder(widget?.properties?.columns)
     ), [widget?.properties?.columns]);
 
+    const [selectedColumnKey, setSelectedColumnKey] = useState<string | undefined>(undefined);
+
     const rowRendererParams = useCallback(
         (key: string, row: RowType) => ({
             disabled,
             readOnly,
             value: value?.value?.[key],
             row,
+            selectedColumnKey,
+            onSelectedColumnKeyChange: setSelectedColumnKey,
             columns,
             onSubRowChange: handleSubRowChange,
         }),
-        [disabled, readOnly, handleSubRowChange, value, columns],
+        [
+            disabled,
+            readOnly,
+            handleSubRowChange,
+            value,
+            columns,
+            selectedColumnKey,
+        ],
     );
 
     const orderedRows = useMemo(() => (
