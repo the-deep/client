@@ -158,6 +158,7 @@ function AnalyticalFramework(props: Props) {
     const location = useLocation();
 
     const { frameworkId: frameworkIdFromParams } = useParams<{ frameworkId: string }>();
+    const accessPrivateProject = !!user?.accessibleFeatures?.some((f) => f.key === 'PRIVATE_PROJECT');
     const frameworkId = !frameworkIdFromParams ? undefined : +frameworkIdFromParams;
     const createMode = !frameworkIdFromParams;
 
@@ -875,7 +876,11 @@ function AnalyticalFramework(props: Props) {
                                             value={value.isPrivate}
                                             onChange={setFieldValue}
                                             error={error?.isPrivate}
-                                            disabled={pending || !!frameworkId}
+                                            disabled={(
+                                                pending
+                                                || !!frameworkId
+                                                || !accessPrivateProject
+                                            )}
                                             label={_ts('analyticalFramework', 'frameworkVisibility')}
                                         />
                                         <Checkbox

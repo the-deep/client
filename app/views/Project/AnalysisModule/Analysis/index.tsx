@@ -182,7 +182,7 @@ function Analysis(props: ComponentProps) {
             onCompleted: (response) => {
                 if (response?.project?.exportCreate?.ok) {
                     alert.show(
-                        'Successfully started analysis export! You can find your export under exports tab.',
+                        'Successfully started analysis export! You can find your export under the exports tab.',
                         { variant: 'success' },
                     );
                 } else {
