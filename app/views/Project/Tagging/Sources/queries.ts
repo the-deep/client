@@ -294,6 +294,7 @@ export const PROJECT_SAVED_LEAD_FILTER = gql`
     ${SOURCE_FILTER_DATA_FRAGMENT}
     query ProjectSavedLeadFilter($projectId: ID!) {
         project(id: $projectId) {
+            id
             userSavedLeadFilter {
                 id
                 title
