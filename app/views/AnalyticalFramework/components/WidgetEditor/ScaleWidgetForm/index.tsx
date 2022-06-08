@@ -90,7 +90,7 @@ type DataSchema = ObjectSchema<PartialDataType, PartialFormType>;
 type DataSchemaFields = ReturnType<DataSchema['fields']>;
 const dataSchema: DataSchema = {
     fields: (): DataSchemaFields => ({
-        defaultValue: [requiredStringCondition],
+        defaultValue: [],
         options: optionsSchema,
     }),
 };
