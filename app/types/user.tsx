@@ -17,11 +17,6 @@ export interface User {
     accessibleFeatures: AccessibleFeature[];
 }
 
-export interface LanguagePreference {
-    code: string;
-    title: string;
-}
-
 export interface BasicUser {
     id: number;
     displayName: string;
