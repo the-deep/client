@@ -96,6 +96,7 @@ const SOURCE_FILTER_OPTIONS = gql`
                     properties
                     title
                     widgetType
+                    widgetKey
                 }
             }
        }

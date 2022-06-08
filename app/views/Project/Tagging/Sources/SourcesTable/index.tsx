@@ -436,6 +436,8 @@ function SourcesTable(props: Props) {
                 filteredEntriesCount: data.filteredEntriesCount,
                 hasAssessment: !!data.assessmentId,
                 isAssessmentLead: data.isAssessmentLead,
+                sourceStatus: data.status,
+                projectId,
             }),
             columnWidth: 196,
         };
@@ -522,6 +524,7 @@ function SourcesTable(props: Props) {
         selectedLeads,
         handleEdit,
         handleDelete,
+        projectId,
     ]);
 
     const handleSourceSaveSuccess = useCallback(() => {
