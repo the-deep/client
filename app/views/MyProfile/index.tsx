@@ -3,7 +3,6 @@ import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { FiEdit2 } from 'react-icons/fi';
 import {
     TextInput,
-    SelectInput,
     PendingMessage,
     Container,
     Button,
@@ -16,7 +15,6 @@ import {
     useForm,
     createSubmitHandler,
     defaultEmptyArrayType,
-    requiredCondition,
     getErrorObject,
     removeNull,
     internal,
@@ -35,11 +33,6 @@ import {
     UpdateMeMutationVariables,
     UserEmailConditionOptOutEnum,
 } from '#generated/types';
-import {
-    LanguagePreference,
-    MultiResponse,
-} from '#types';
-import { useRequest } from '#base/utils/restRequest';
 import UserContext from '#base/context/UserContext';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
@@ -60,7 +53,6 @@ const schema: FormSchema = {
         firstName: [requiredStringCondition],
         lastName: [requiredStringCondition],
         organization: [],
-        language: [requiredCondition],
         emailOptOuts: [defaultEmptyArrayType],
     }),
 };
@@ -76,8 +68,6 @@ const emailOptOutsOptions: EmailOptOutOption[] = [
 ];
 const emailOptOutKeySelector = (d: EmailOptOutOption) => d.key;
 const emailOptOutLabelSelector = (d: EmailOptOutOption) => d.label;
-const languageKeySelector = (d: LanguagePreference) => d.code;
-const languageLabelSelector = (d: LanguagePreference) => d.title;
 
 const initialValue: FormType = {};
 
@@ -94,7 +84,6 @@ const ME_DETAILS = gql`
             emailOptOuts
             firstName
             id
-            language
             organization
             lastName
         }
@@ -114,7 +103,6 @@ const UPDATE_ME = gql`
                 emailOptOuts
                 firstName
                 id
-                language
                 lastName
                 organization
                 lastActiveProject {
@@ -214,14 +202,6 @@ function MyProfile(props: Props) {
         },
     );
 
-    const {
-        pending: languagesPending,
-        response: languageResponse,
-    } = useRequest<MultiResponse<LanguagePreference>>({
-        url: 'server://languages/',
-        method: 'GET',
-    });
-
     const handleSubmit = useCallback((finalValue) => {
         updateUser({ variables: { data: finalValue } });
     }, [updateUser]);
@@ -230,7 +210,7 @@ function MyProfile(props: Props) {
         setFieldValue(option.file, 'displayPictureUrl' as const);
     }, [setFieldValue]);
 
-    const disabled = userGetPending || languagesPending || userUpdatePending;
+    const disabled = userGetPending || userUpdatePending;
 
     return (
         <form
@@ -242,7 +222,7 @@ function MyProfile(props: Props) {
                 heading={_ts('myProfile', 'myProfileTitle')}
                 contentClassName={styles.content}
             >
-                {(userGetPending || languagesPending) && <PendingMessage />}
+                {userGetPending && <PendingMessage />}
                 <div className={styles.displayPictureContainer}>
                     <Avatar
                         className={styles.displayPicture}
@@ -319,18 +299,6 @@ function MyProfile(props: Props) {
                         headingSize="small"
                         contentClassName={styles.inputContainer}
                     >
-                        <SelectInput
-                            name="language"
-                            disabled={disabled}
-                            onChange={setFieldValue}
-                            value={value.language}
-                            error={error?.language}
-                            label={_ts('myProfile', 'platformLanguage')}
-                            placeholder={_ts('myProfile', 'platformLanguage')}
-                            keySelector={languageKeySelector}
-                            labelSelector={languageLabelSelector}
-                            options={languageResponse?.results}
-                        />
                         <CheckListInput
                             className={styles.emailPreferences}
                             label="Opt-out from notifications"
