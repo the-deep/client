@@ -3,35 +3,55 @@ import {
     Container,
     ListView,
 } from '@the-deep/deep-ui';
-
-import { useRequest } from '#base/utils/restRequest';
-import { MultiResponse } from '#types';
 import {
-    RecentActivityItem,
-} from '#types/user';
+    useQuery,
+    gql,
+} from '@apollo/client';
+
+import {
+    RecentActivitiesListQuery,
+    RecentActivitiesListQueryVariables,
+} from '#generated/types';
 import _ts from '#ts';
 
 import ActivityItem from './ActivityItem';
 import styles from './styles.css';
 
-const keySelector = (d: RecentActivityItem) => `${d.type}-${d.id}`;
+const RECENT_ACTIVITIES_LIST = gql`
+    query RecentActivitiesList {
+        recentActivities {
+            id
+            type
+            typeDisplay
+            createdAt
+            leadId
+            createdBy {
+                id
+                displayName
+            }
+            project {
+                id
+                title
+            }
+        }
+    }
+`;
+
+export type RecentActivityItemType = NonNullable<RecentActivitiesListQuery['recentActivities']>[number];
+
+const keySelector = (d: RecentActivityItemType) => d.id;
 
 function RecentActivities() {
     const {
-        pending,
-        response: recentActivitiesResponse,
-    } = useRequest<MultiResponse<RecentActivityItem>>({
-        url: 'server://projects/recent-activities/',
-        method: 'GET',
-    });
+        previousData,
+        data: recentActivitiesResponse = previousData,
+        loading: pending,
+    } = useQuery<RecentActivitiesListQuery, RecentActivitiesListQueryVariables>(
+        RECENT_ACTIVITIES_LIST,
+    );
 
-    const activityRendererParams = useCallback((_: string, info: RecentActivityItem) => ({
-        activityId: keySelector(info),
-        projectDisplayName: info.projectDisplayName,
-        createdAt: info.createdAt,
-        createdByDisplayName: info.createdByDisplayName,
-        createdByDisplayPicture: info.createdByDisplayPicture,
-        type: info.type,
+    const activityRendererParams = useCallback((_: string, info: RecentActivityItemType) => ({
+        activity: info,
     }), []);
 
     return (
@@ -42,7 +62,7 @@ function RecentActivities() {
         >
             <ListView
                 className={styles.activities}
-                data={recentActivitiesResponse?.results}
+                data={recentActivitiesResponse?.recentActivities}
                 renderer={ActivityItem}
                 keySelector={keySelector}
                 rendererParams={activityRendererParams}

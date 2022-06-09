@@ -20,6 +20,13 @@
             display: inline-block;
             word-break: break-all;
 
+            .link {
+                display: inline-block;
+                word-break: break-all;
+                color: var(--dui-color-brand);
+                font-weight: var(--dui-font-weight-bold);
+            }
+
             >* {
                 display: inline;
                 padding: 0;
@@ -35,11 +42,6 @@
             display: block;
             color: var(--dui-color-text-label);
             font-size: var(--dui-font-size-small);
-        }
-
-        .bold-text{
-            color: var(--dui-color-brand);
-            font-weight: var(--dui-font-weight-bold);
         }
     }
 }

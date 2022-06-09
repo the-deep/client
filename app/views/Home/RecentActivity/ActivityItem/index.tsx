@@ -1,36 +1,101 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { generatePath } from 'react-router-dom';
 import {
     Element,
     DateOutput,
+    Link,
 } from '@the-deep/deep-ui';
 
 import Avatar from '#components/Avatar';
 import generateString from '#utils/string';
+import routes from '#base/configs/routes';
+
+import { RecentActivityItemType } from '..';
 
 import styles from './styles.css';
 
-const activityTypeMap = {
-    lead: 'a source',
-    entry: 'an entry',
-    'entry-comment': 'a comment to an entry',
-};
-
 interface RecentActivityProps {
-    projectDisplayName: string;
-    createdAt: string;
-    createdByDisplayName: string;
-    createdByDisplayPicture?: string;
-    type: 'lead' | 'entry' | 'entry-comment';
+    activity: RecentActivityItemType;
 }
 
 function ActivityItem(props: RecentActivityProps) {
     const {
-        createdAt,
-        createdByDisplayName,
-        createdByDisplayPicture,
-        projectDisplayName,
-        type,
+        activity,
     } = props;
+
+    const typeDisplayText = useMemo(() => {
+        const editEntryLink = {
+            pathname: (generatePath(routes.entryEdit.path, {
+                projectId: activity?.project?.id,
+                // TODO: Remove this
+                leadId: activity?.leadId ?? '1',
+            })),
+            state: {
+                // TODO: Remove this
+                entryServerId: ((activity?.type === 'ENTRY')
+                     || (activity?.type === 'ENTRY_COMMENT')) && activity?.leadId,
+                activePage: 'primary',
+            },
+            hash: '#/primary-tagging',
+        };
+        if (activity?.type === 'LEAD') {
+            return (generateString(
+                'a {link} on',
+                {
+                    link: (
+                        <Link
+                            className={styles.link}
+                            to={generatePath(routes.entryEdit.path, {
+                                projectId: activity?.project?.id,
+                                leadId: '1',
+                            })}
+                        >
+                            lead
+                        </Link>
+                    ),
+                },
+            ));
+        }
+        if (activity?.type === 'ENTRY') {
+            return (generateString(
+                'an {link} on',
+                {
+                    link: (
+                        <Link
+                            className={styles.link}
+                            to={editEntryLink}
+                        >
+                            entry
+                        </Link>
+                    ),
+                },
+            ));
+        }
+        if (activity?.type === 'ENTRY_COMMENT') {
+            return (generateString(
+                'an {link} on',
+                {
+                    link: (
+                        <Link
+                            className={styles.link}
+                            to={generatePath(routes.entryEdit.path, {
+                                projectId: activity?.project?.id,
+                                leadId: '1',
+                                entryId: '1',
+                            })}
+                        >
+                            entry comment
+                        </Link>
+                    ),
+                },
+            ));
+        }
+        return undefined;
+    }, [
+        activity?.type,
+        activity?.project?.id,
+        activity?.leadId,
+    ]);
 
     return (
         <Element
@@ -38,33 +103,35 @@ function ActivityItem(props: RecentActivityProps) {
             icons={(
                 <Avatar
                     className={styles.displayPicture}
-                    src={createdByDisplayPicture ?? undefined}
-                    name={createdByDisplayName}
+                    src={undefined}
+                    name={activity?.createdBy?.displayName ?? undefined}
                 />
             )}
             childrenContainerClassName={styles.mainContent}
         >
             <div className={styles.description}>
                 {generateString(
-                    '{createdByDisplayName} added {type} on {projectDisplayName}.',
+                    '{createdByDisplayName} added {type} on {project}.',
                     {
-                        createdByDisplayName: (
-                            <span className={styles.boldText}>
-                                {createdByDisplayName}
-                            </span>
-                        ),
-                        type: activityTypeMap[type],
-                        projectDisplayName: (
-                            <span className={styles.boldText}>
-                                {projectDisplayName}
-                            </span>
+                        createdByDisplayName: activity?.createdBy?.displayName,
+                        type: typeDisplayText,
+                        project: (
+                            <Link
+                                to={generatePath(
+                                    routes.tagging.path,
+                                    { projectId: activity?.project?.id },
+                                )}
+                                className={styles.link}
+                            >
+                                {activity?.project?.title}
+                            </Link>
                         ),
                     },
                 )}
             </div>
             <DateOutput
                 className={styles.createdDate}
-                value={createdAt}
+                value={activity?.createdAt}
                 format="hh:mm aaa, MMM dd, yyyy"
             />
         </Element>
