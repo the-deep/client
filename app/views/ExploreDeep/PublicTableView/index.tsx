@@ -11,15 +11,16 @@ import {
     SortContext,
 } from '@the-deep/deep-ui';
 
-import {
-    PublicProjectListQuery,
-    PublicProjectListQueryVariables,
-} from '#generated/types';
+import { createDateColumn } from '#components/tableHelpers';
 import {
     convertDateToIsoDateTime,
     isFiltered,
 } from '#utils/common';
-import { createDateColumn } from '#components/tableHelpers';
+import {
+    PublicProjectListQuery,
+    PublicProjectListQueryVariables,
+    PublicProjectOrderingEnum,
+} from '#generated/types';
 
 import styles from './styles.css';
 
@@ -32,7 +33,7 @@ const PROJECT_LIST = gql`
         $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
-        $ordering: String,
+        $ordering: [PublicProjectOrderingEnum!],
         $regions: [ID!],
     ) {
         publicProjects(
@@ -64,8 +65,8 @@ const PROJECT_LIST = gql`
 export type Project = NonNullable<NonNullable<NonNullable<PublicProjectListQuery['publicProjects']>['results']>[number]>;
 
 const defaultSorting = {
-    name: 'title',
-    direction: 'Ascending',
+    name: 'CREATED_AT',
+    direction: 'Descending',
 };
 
 const projectKeySelector = (p: Project) => p.id;
@@ -94,8 +95,8 @@ function ExploreDeepTableView(props: Props) {
     const validSorting = sorting || defaultSorting;
     const ordering = useMemo(() => (
         validSorting.direction === 'Ascending'
-            ? validSorting.name
-            : `-${validSorting.name}`
+            ? `ASC_${validSorting.name}`
+            : `DESC_${validSorting.name}`
     ), [validSorting]);
 
     // FIXME: rename startDate to createdAtGte
@@ -106,7 +107,7 @@ function ExploreDeepTableView(props: Props) {
         endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
         page,
         pageSize,
-        ordering,
+        ordering: [ordering as PublicProjectOrderingEnum],
     }), [
         page,
         pageSize,
@@ -127,7 +128,7 @@ function ExploreDeepTableView(props: Props) {
 
     const columns = useMemo(() => ([
         createStringColumn<Project, string>(
-            'title',
+            'TITLE',
             'Title',
             (item) => item.title,
             {
@@ -140,7 +141,7 @@ function ExploreDeepTableView(props: Props) {
             (item) => item?.regionsTitle,
         ),
         createDateColumn<Project, string>(
-            'created_at',
+            'CREATED_AT',
             'Created At',
             (item) => item?.createdAt,
             {
@@ -149,7 +150,7 @@ function ExploreDeepTableView(props: Props) {
             },
         ),
         createStringColumn<Project, string>(
-            'framework',
+            'ANALYSIS_FRAMEWORK',
             'Analytical Framework',
             (item) => item?.analysisFrameworkTitle,
             {
@@ -157,7 +158,7 @@ function ExploreDeepTableView(props: Props) {
             },
         ),
         createNumberColumn<Project, string>(
-            'number_of_users',
+            'USER_COUNT',
             'Users',
             (item) => item?.numberOfUsers,
             {
@@ -166,13 +167,12 @@ function ExploreDeepTableView(props: Props) {
             },
         ),
         createNumberColumn<Project, string>(
-            'sources_count',
+            'LEAD_COUNT',
             'Sources',
             (item) => item?.numberOfLeads,
             {
                 columnWidth: 96,
-                // sortable: true,
-                // TODO: to be uncommented after fixed in the server
+                sortable: true,
             },
         ),
         createStringColumn<Project, string>(

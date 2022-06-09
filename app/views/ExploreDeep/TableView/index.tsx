@@ -14,10 +14,6 @@ import {
     SortContext,
 } from '@the-deep/deep-ui';
 
-import {
-    ProjectListQuery,
-    ProjectListQueryVariables,
-} from '#generated/types';
 import FrameworkImageButton, { Props as FrameworkImageButtonProps } from '#components/framework/FrameworkImageButton';
 import {
     convertDateToIsoDateTime,
@@ -25,6 +21,11 @@ import {
 } from '#utils/common';
 import { createDateColumn } from '#components/tableHelpers';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
+import {
+    ProjectListQuery,
+    ProjectListQueryVariables,
+    ProjectOrderingEnum,
+} from '#generated/types';
 
 import ActionCell, { Props as ActionCellProps } from '../ActionCell';
 import styles from './styles.css';
@@ -38,7 +39,7 @@ const PROJECT_LIST = gql`
         $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
-        $ordering: String,
+        $ordering: [ProjectOrderingEnum!],
         $regions: [ID!],
     ) {
         projects(
@@ -90,8 +91,8 @@ const PROJECT_LIST = gql`
 export type Project = NonNullable<NonNullable<NonNullable<ProjectListQuery['projects']>['results']>[number]>;
 
 const defaultSorting = {
-    name: 'title',
-    direction: 'Ascending',
+    name: 'CREATED_AT',
+    direction: 'Descending',
 };
 
 const projectKeySelector = (p: Project) => p.id;
@@ -118,10 +119,11 @@ function ExploreDeepTableView(props: Props) {
     const sortState = useSortState();
     const { sorting } = sortState;
     const validSorting = sorting || defaultSorting;
+
     const ordering = useMemo(() => (
         validSorting.direction === 'Ascending'
-            ? validSorting.name
-            : `-${validSorting.name}`
+            ? `ASC_${validSorting.name}`
+            : `DESC_${validSorting.name}`
     ), [validSorting]);
 
     // FIXME: rename startDate to createdAtGte
@@ -132,7 +134,7 @@ function ExploreDeepTableView(props: Props) {
         endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
         page,
         pageSize,
-        ordering,
+        ordering: [ordering as ProjectOrderingEnum],
     }), [
         page,
         pageSize,
@@ -156,7 +158,7 @@ function ExploreDeepTableView(props: Props) {
         const frameworkColumn: TableColumn<
             Project, string, FrameworkImageButtonProps, TableHeaderCellProps
         > = {
-            id: 'framework',
+            id: 'ANALYSIS_FRAMEWORK',
             title: 'Framework',
             headerCellRenderer: TableHeaderCell,
             headerCellRendererParams: {
@@ -191,7 +193,7 @@ function ExploreDeepTableView(props: Props) {
 
         return ([
             createStringColumn<Project, string>(
-                'title',
+                'TITLE',
                 'Title',
                 (item) => item.title,
                 {
@@ -204,7 +206,7 @@ function ExploreDeepTableView(props: Props) {
                 (item) => item?.regions?.map((region) => region.title)?.join(', '),
             ),
             createDateColumn<Project, string>(
-                'created_at',
+                'CREATED_AT',
                 'Created At',
                 (item) => item?.createdAt,
                 {
@@ -214,7 +216,7 @@ function ExploreDeepTableView(props: Props) {
             ),
             frameworkColumn,
             createNumberColumn<Project, string>(
-                'members_count',
+                'USER_COUNT',
                 'Users',
                 (item) => item?.stats?.numberOfUsers,
                 {
@@ -223,13 +225,12 @@ function ExploreDeepTableView(props: Props) {
                 },
             ),
             createNumberColumn<Project, string>(
-                'sources_count',
+                'LEAD_COUNT',
                 'Sources',
                 (item) => item?.stats?.numberOfLeads,
                 {
                     columnWidth: 96,
-                    // sortable: true,
-                    // TODO: To be uncommented after fixed from server
+                    sortable: true,
                 },
             ),
             createStringColumn<Project, string>(
