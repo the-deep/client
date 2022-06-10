@@ -19,6 +19,7 @@ import {
     Container,
     Button,
     ConfirmButton,
+    NumberOutput,
     useBooleanState,
     Spinner,
     useAlert,
@@ -322,6 +323,13 @@ function EditableEntry(props: Props) {
         </Button>
     );
 
+    const entryIdDisplay = (
+        <NumberOutput
+            prefix="#"
+            value={Number(entryId)}
+        />
+    );
+
     const entryInput = (
         <EntryInput
             name={undefined}
@@ -440,6 +448,7 @@ function EditableEntry(props: Props) {
             className={className}
             headerIcons={(
                 <>
+                    {entryIdDisplay}
                     {canEditEntry && (
                         <>
                             {editTagsButton}

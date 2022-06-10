@@ -14,6 +14,7 @@ import {
 import {
     DateOutput,
     TextOutput,
+    NumberOutput,
     Button,
     QuickActionLink,
     QuickActionConfirmButton,
@@ -179,6 +180,12 @@ function EntryCard(props: Props) {
                 headerDescription={(
                     <DateOutput
                         value={leadDetails.publishedOn}
+                    />
+                )}
+                headerActions={(
+                    <NumberOutput
+                        prefix="#"
+                        value={Number(entry.id)}
                     />
                 )}
                 footerQuickActions={canEditEntry && (
