@@ -19,6 +19,8 @@ const domainsToProxy = [
 
 const pathsToProxy = [
     'https://reliefweb.int/attachments/',
+    'https://reliefweb.int/sites/reliefweb.int/files/',
+    'https://reliefweb.int/files/',
 ];
 
 function getProxiedUrl(url: string) {
