@@ -18,11 +18,11 @@ function BackLink(props: Props) {
     } = props;
 
     const handleBackLinkClick = useCallback((e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        window.history.back();
-        // NOTE: Don't know if this is required
-        return false;
+        if (window.history.length > 1) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.history.back();
+        }
     }, []);
 
     return (
