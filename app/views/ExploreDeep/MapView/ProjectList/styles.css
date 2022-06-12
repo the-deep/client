@@ -46,6 +46,7 @@
 
     .footer {
         display: flex;
+        align-items: flex-end;
         flex-direction: column;
         flex-wrap: wrap;
         gap: unset;

@@ -21,3 +21,13 @@
     }
 }
 
+.count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: #1a3ed0;
+    color: #fff;
+}
