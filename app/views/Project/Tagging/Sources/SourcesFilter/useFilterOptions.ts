@@ -32,7 +32,7 @@ const hasAssessmentOptions: BooleanOption[] = [
     { key: 'false', value: 'Assessment not completed' },
 ];
 
-const SOURCE_FILTER_OPTIONS = gql`
+export const SOURCE_FILTER_OPTIONS = gql`
     query SourceFilterOptions(
         $projectId: ID!,
     ) {
@@ -67,6 +67,7 @@ const SOURCE_FILTER_OPTIONS = gql`
                     key
                     properties
                     title
+                    widgetKey
                     widgetType
                 }
             }

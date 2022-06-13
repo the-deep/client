@@ -24,7 +24,7 @@ import {
     IoChevronUpOutline,
     IoChevronDownOutline,
 } from 'react-icons/io5';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import _ts from '#ts';
 import {
     enumKeySelector,
@@ -35,6 +35,7 @@ import ProjectMemberMultiSelectInput, { ProjectMember } from '#components/select
 import NewOrganizationMultiSelectInput, { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 import BooleanInput, { Option } from '#components/selections/BooleanInput';
 import NonFieldError from '#components/NonFieldError';
+import { SOURCE_FILTER_OPTIONS } from '#views/Project/Tagging/Sources/SourcesFilter/useFilterOptions';
 import {
     SourceFilterOptionsQueryVariables,
     OrganizationType,
@@ -58,82 +59,6 @@ const hasAssessmentOptions: Option[] = [
     { key: 'true', value: 'Assessment completed' },
     { key: 'false', value: 'Assessment not completed' },
 ];
-
-const SOURCE_FILTER_OPTIONS = gql`
-    query SourceFilterOptions(
-        $projectId: ID!,
-    ) {
-        sourceStatusOptions: __type(name: "LeadStatusEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        sourcePriorityOptions: __type(name: "LeadPriorityEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        sourceConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        project(id: $projectId) {
-            id
-            analysisFramework {
-                id
-                filters {
-                    id
-                    filterType
-                    key
-                    properties
-                    title
-                    widgetType
-                }
-            }
-       }
-        organizationTypes {
-            results {
-                id
-                title
-            }
-        }
-        emmEntititiesOptions: __type(name: "EmmEntityType") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        emmRiskFactorsOptions: __type(name: "EmmKeyRiskFactorType") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        emmKeywordsOptions: __type(name: "EmmKeyWordType") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-        entryTypeOptions: __type(name: "EntryTagTypeEnum") {
-            name
-            enumValues {
-                name
-                description
-            }
-        }
-    }
-`;
 
 function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.id;
