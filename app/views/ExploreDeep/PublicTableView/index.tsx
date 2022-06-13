@@ -7,17 +7,20 @@ import {
     createStringColumn,
     createNumberColumn,
     Pager,
+    useSortState,
+    SortContext,
 } from '@the-deep/deep-ui';
 
-import {
-    PublicProjectListQuery,
-    PublicProjectListQueryVariables,
-} from '#generated/types';
+import { createDateColumn } from '#components/tableHelpers';
 import {
     convertDateToIsoDateTime,
     isFiltered,
 } from '#utils/common';
-import { createDateColumn } from '#components/tableHelpers';
+import {
+    PublicProjectListQuery,
+    PublicProjectListQueryVariables,
+    PublicProjectOrderingEnum,
+} from '#generated/types';
 
 import styles from './styles.css';
 
@@ -30,6 +33,8 @@ const PROJECT_LIST = gql`
         $endDate: DateTime,
         $page: Int,
         $pageSize: Int,
+        $ordering: [PublicProjectOrderingEnum!],
+        $regions: [ID!],
     ) {
         publicProjects(
             search: $search,
@@ -39,6 +44,8 @@ const PROJECT_LIST = gql`
             createdAtGte: $startDate,
             page: $page,
             pageSize: $pageSize,
+            ordering: $ordering,
+            regions: $regions,
         ) {
             results {
                 id
@@ -56,6 +63,11 @@ const PROJECT_LIST = gql`
     }
 `;
 export type Project = NonNullable<NonNullable<NonNullable<PublicProjectListQuery['publicProjects']>['results']>[number]>;
+
+const defaultSorting = {
+    name: 'CREATED_AT',
+    direction: 'Descending',
+};
 
 const projectKeySelector = (p: Project) => p.id;
 
@@ -78,6 +90,15 @@ function ExploreDeepTableView(props: Props) {
         setPage(1);
     }, [filters]);
 
+    const sortState = useSortState();
+    const { sorting } = sortState;
+    const validSorting = sorting || defaultSorting;
+    const ordering = useMemo(() => (
+        validSorting.direction === 'Ascending'
+            ? `ASC_${validSorting.name}`
+            : `DESC_${validSorting.name}`
+    ), [validSorting]);
+
     // FIXME: rename startDate to createdAtGte
     // FIXME: rename endDate to createdAtLte
     const variables = useMemo(() => ({
@@ -86,7 +107,13 @@ function ExploreDeepTableView(props: Props) {
         endDate: convertDateToIsoDateTime(filters?.endDate, { endOfDay: true }),
         page,
         pageSize,
-    }), [page, pageSize, filters]);
+        ordering: [ordering as PublicProjectOrderingEnum],
+    }), [
+        page,
+        pageSize,
+        filters,
+        ordering,
+    ]);
 
     const {
         previousData,
@@ -101,9 +128,12 @@ function ExploreDeepTableView(props: Props) {
 
     const columns = useMemo(() => ([
         createStringColumn<Project, string>(
-            'title',
+            'TITLE',
             'Title',
             (item) => item.title,
+            {
+                sortable: true,
+            },
         ),
         createStringColumn<Project, string>(
             'location',
@@ -111,32 +141,38 @@ function ExploreDeepTableView(props: Props) {
             (item) => item?.regionsTitle,
         ),
         createDateColumn<Project, string>(
-            'created_at',
+            'CREATED_AT',
             'Created At',
             (item) => item?.createdAt,
             {
                 columnWidth: 116,
+                sortable: true,
             },
         ),
         createStringColumn<Project, string>(
-            'framework',
+            'ANALYSIS_FRAMEWORK',
             'Analytical Framework',
             (item) => item?.analysisFrameworkTitle,
+            {
+                sortable: true,
+            },
         ),
         createNumberColumn<Project, string>(
-            'members_count',
+            'USER_COUNT',
             'Users',
             (item) => item?.numberOfUsers,
             {
                 columnWidth: 96,
+                sortable: true,
             },
         ),
         createNumberColumn<Project, string>(
-            'sources_count',
+            'LEAD_COUNT',
             'Sources',
             (item) => item?.numberOfLeads,
             {
                 columnWidth: 96,
+                sortable: true,
             },
         ),
         createStringColumn<Project, string>(
@@ -148,18 +184,20 @@ function ExploreDeepTableView(props: Props) {
 
     return (
         <>
-            <TableView
-                className={_cs(className, styles.table)}
-                columns={columns}
-                keySelector={projectKeySelector}
-                data={data?.publicProjects?.results}
-                filtered={isFiltered(filters)}
-                pending={loading}
-                errored={false}
-                messageShown
-                messageIconShown
-                emptyMessage="No projects to show."
-            />
+            <SortContext.Provider value={sortState}>
+                <TableView
+                    className={_cs(className, styles.table)}
+                    columns={columns}
+                    keySelector={projectKeySelector}
+                    data={data?.publicProjects?.results}
+                    filtered={isFiltered(filters)}
+                    pending={loading}
+                    errored={false}
+                    messageShown
+                    messageIconShown
+                    emptyMessage="No projects to show."
+                />
+            </SortContext.Provider>
             <Footer
                 actions={(
                     <Pager

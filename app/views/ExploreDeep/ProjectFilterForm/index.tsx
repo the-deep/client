@@ -21,6 +21,11 @@ import PublicOrganizationMultiSelectInput, {
 import PublicFrameworkMultiSelectInput, {
     AnalysisFramework,
 } from '#components/selections/PublicFrameworkMultiSelectInput';
+
+import RegionMultiSelectInput, {
+    BasicRegion,
+} from '#components/selections/RegionMultiSelectInput';
+
 import {
     ProjectListQueryVariables,
 } from '#generated/types';
@@ -38,6 +43,7 @@ const schema: FormSchema = {
         endDate: [],
         organizations: [],
         analysisFrameworks: [],
+        regions: [],
     }),
 };
 
@@ -47,6 +53,7 @@ interface Props {
     className?: string;
     filters: ProjectListQueryVariables | undefined;
     onFiltersChange: (filters: ProjectListQueryVariables | undefined) => void;
+    publicRegions: boolean;
 }
 
 function ProjectFilterForm(props: Props) {
@@ -54,6 +61,7 @@ function ProjectFilterForm(props: Props) {
         className,
         filters,
         onFiltersChange,
+        publicRegions,
     } = props;
 
     const {
@@ -86,6 +94,11 @@ function ProjectFilterForm(props: Props) {
         analysisFrameworkOptions,
         setAnalysisFrameworkOptions,
     ] = useState<AnalysisFramework[] | undefined | null>();
+
+    const [
+        regionOptions,
+        setRegionOptions,
+    ] = useState<BasicRegion[] | undefined | null>();
 
     const handleSubmit = useCallback(() => {
         onFiltersChange(value);
@@ -129,6 +142,16 @@ function ProjectFilterForm(props: Props) {
                 onChange={setFieldValue}
                 options={analysisFrameworkOptions}
                 onOptionsChange={setAnalysisFrameworkOptions}
+            />
+            <RegionMultiSelectInput
+                name="regions"
+                label="Location"
+                placeholder="any"
+                value={value?.regions}
+                onChange={setFieldValue}
+                options={regionOptions}
+                onOptionsChange={setRegionOptions}
+                publicRegions={publicRegions}
             />
             <Button
                 name={undefined}
