@@ -432,7 +432,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
             <div className={styles.row}>
                 <DateInput
                     className={styles.input}
-                    label="Published On"
+                    label="Date Published"
                     name="publishedOn"
                     value={value.publishedOn}
                     onChange={setFieldValue}
@@ -486,7 +486,7 @@ function LeadInput<N extends string | number | undefined>(props: Props<N>) {
                     options={authorOrganizationOptions}
                     onOptionsChange={onAuthorOrganizationOptionsChange}
                     disabled={pendingLeadOptions || disabled}
-                    label="Authoring Organizations"
+                    label="Authoring Organization"
                     // eslint-disable-next-line max-len
                     // hint={isTruthyString(value.authorRaw) && `Previous organization: ${value.authorRaw}`}
                     error={getErrorString(error?.authors)}

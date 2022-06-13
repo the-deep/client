@@ -34,7 +34,6 @@ export interface Option {
 }
 
 const keySelector = (d: Option) => d.key;
-
 const labelSelector = (d: Option) => d.value;
 
 interface Props<T extends Option, K extends string | undefined> {
@@ -52,6 +51,7 @@ interface Props<T extends Option, K extends string | undefined> {
     disabled?: boolean;
     readOnly?: boolean;
     type?: 'select' | 'segment';
+    variant?: 'form' | 'general';
 }
 
 function BooleanInput<T extends Option, K extends string | undefined>(props: Props<T, K>) {
@@ -62,6 +62,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
         onChange,
         options,
         type = 'select',
+        variant,
         ...otherProps
     } = props;
 
@@ -83,6 +84,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
                 options={options}
                 value={currentValue}
                 onChange={handleChange}
+                variant={variant}
                 name={name}
                 {...otherProps}
             />

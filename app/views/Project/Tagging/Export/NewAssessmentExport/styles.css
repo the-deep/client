@@ -1,0 +1,64 @@
+.new-assessment-export {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: var(--dui-color-background);
+        padding: var(--dui-spacing-extra-large) var(--dui-spacing-super-large);
+        overflow-y: auto;
+        gap: var(--dui-spacing-large);
+
+        .top-bar {
+            flex-shrink: 0;
+            background-color: var(--dui-color-foreground);
+
+            .top-bar-content {
+                display: flex;
+                align-items: center;
+
+                .title-input {
+                    padding: var(--dui-spacing-medium);
+                    width: 24rem;
+                }
+            }
+        }
+
+        .mid-bar {
+            display: flex;
+            background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-extra-large);
+            gap: var(--dui-spacing-medium);
+
+            .stats-container {
+                display: flex;
+                flex-shrink: 0;
+                gap: var(--dui-spacing-medium);
+            }
+
+            .applied-filters {
+                flex-grow: 1;
+                border-left: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                padding: var(--dui-spacing-medium);
+            }
+
+            .buttons {
+                display: flex;
+                align-items: flex-end;
+                flex-shrink: 0;
+                gap: var(--dui-spacing-medium);
+            }
+        }
+
+        .leads-table-container {
+            display: flex;
+        }
+    }
+}

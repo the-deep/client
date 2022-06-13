@@ -1,41 +1,32 @@
 .sources-filter {
     display: flex;
     flex-direction: column;
-    gap: var(--dui-spacing-medium);
+    gap: var(--dui-spacing-extra-large);
+    overflow: auto;
 
-    .label {
-        font-weight: var(--dui-font-weight-bold);
+    .tab-list {
+        flex-shrink: 0;
 
-        &.hidden {
-            display: none;
+        .tab {
+            flex-grow: 1;
+            padding: var(--dui-spacing-medium) var(--dui-spacing-small);
         }
     }
 
-    .content {
+    .tab-content {
         display: flex;
-        align-items: flex-end;
+        flex-direction: column;
         flex-grow: 1;
-        flex-wrap: wrap;
-        gap: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-small);
+        width: 20rem;
+        overflow: auto;
+        gap: var(--dui-spacing-large);
+    }
 
-        .input {
-            width: 22rem;
-
-            &.hidden {
-                display: none;
-            }
-        }
-
-        .label {
-            width: 100%;
-        }
-
-        .actions {
+    .checklist {
+        .vertical-list {
             display: flex;
-            align-items: flex-end;
-            flex-grow: 1;
-            justify-content: flex-start;
-            gap: var(--dui-spacing-small);
+            flex-direction: column;
         }
     }
 }

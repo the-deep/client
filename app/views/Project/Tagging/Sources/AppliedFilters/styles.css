@@ -1,0 +1,25 @@
+.applied-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dui-spacing-medium);
+}
+
+.dismissable-tag {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+
+    .label {
+        padding: 0 var(--dui-spacing-small);
+        font-size: var(--dui-font-size-small);
+        font-weight: var(--dui-font-weight-bold);
+    }
+
+    .tag {
+        align-items: center;
+        border-radius: 0.25rem;
+        background-color: var(--dui-color-background-information);
+        padding: var(--dui-spacing-small);
+        width: unset;
+    }
+}

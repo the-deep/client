@@ -145,7 +145,7 @@ function ProjectFilterForm(props: Props) {
                 actions={<IoClose />}
                 variant="transparent"
             >
-                Clear All
+                Clear
             </Button>
         </div>
     );

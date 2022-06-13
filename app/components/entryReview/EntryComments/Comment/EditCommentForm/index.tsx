@@ -203,7 +203,7 @@ function EditCommentForm(props: Props) {
                 />
                 <ProjectMemberMultiSelectInput
                     name="mentionedUsers"
-                    label="Assignees"
+                    label="Assignee"
                     value={value.mentionedUsers}
                     projectId={projectId}
                     onChange={setFieldValue}

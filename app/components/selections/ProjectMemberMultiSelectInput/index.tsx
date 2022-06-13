@@ -35,8 +35,8 @@ const PROJECT_USERS = gql`
 `;
 
 export type ProjectMember = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
-const keySelector = (d: ProjectMember) => d.id;
-const labelSelector = (d: ProjectMember) => d.displayName ?? '';
+export const keySelector = (d: ProjectMember) => d.id;
+export const labelSelector = (d: ProjectMember) => d.displayName ?? '';
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchMultiSelectInputProps<

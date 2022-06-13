@@ -1,0 +1,21 @@
+.export-type-select {
+    outline: 0;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+    border-radius: 0.2em;
+    cursor: pointer;
+    padding: var(--dui-spacing-medium);
+    font-size: var(--dui-font-size-super-large);
+
+    &:not(&.active) {
+        opacity: 0.6;
+        filter: grayscale(100%);
+        border-color: transparent;
+    }
+
+    .title {
+        position: absolute;
+        top: 50%;
+        color: white;
+        font-size: 0.6rem;
+    }
+}

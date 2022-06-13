@@ -1,0 +1,58 @@
+.modal {
+    width: auto !important;
+    height: 800px !important;
+
+    .body {
+        .report-options {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            gap: var(--dui-spacing-medium);
+
+            .container {
+                flex-shrink: 0;
+                background-color: var(--dui-color-background-information);
+
+                .heading-description {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-small);
+                }
+
+                .container-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--dui-spacing-medium);
+                }
+
+                .info {
+                    margin: 0;
+                    max-width: 20rem;
+                    font-size: var(--dui-font-size-medium);
+                }
+            }
+
+            .note {
+                margin: 0;
+                font-size: var(--dui-font-size-medium);
+            }
+
+            .options-container {
+                display: flex;
+                align-items: flex-start;
+                gap: var(--dui-spacing-large);
+
+                .left {
+                    display: flex;
+                    flex-direction: column;
+                    flex-shrink: 0;
+                    gap: var(--dui-spacing-large);
+                }
+
+                .entry-preview {
+                    width: 40rem;
+                }
+            }
+        }
+    }
+}

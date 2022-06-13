@@ -1,10 +1,8 @@
 import { memo, ReactElement } from 'react';
 
 import {
-    isNaN,
-    isObject,
-    isList,
     isDefined,
+    capitalize,
     isNotDefined,
     compareNumber,
     listToMap,
@@ -130,36 +128,12 @@ export function joinList(
     ).flat();
 }
 
-export function hasNoData(obj: unknown): boolean {
-    if (obj === undefined || obj === null || isNaN(obj)) {
-        return true;
-    }
-
-    if (isList(obj)) {
-        if (obj.length <= 0) {
-            return true;
-        }
-        return obj.every((e) => hasNoData(e));
-    }
-
-    if (isObject(obj)) {
-        if (Object.keys(obj).length <= 0) {
-            return true;
-        }
-        return Object.values(obj).every(
-            (value) => hasNoData(value),
-        );
-    }
-
-    return false;
-}
-
 export const enumKeySelector = <T>(d: EnumEntity<T>) => (
     d.name
 );
 
 export const enumLabelSelector = <T extends string | number>(d: EnumEntity<T>) => (
-    d.description ?? `${d.name}`
+    capitalize(d.description ?? `${d.name}`)
 );
 
 interface Options {

@@ -3,7 +3,6 @@ import { _cs } from '@togglecorp/fujs';
 import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
-
 import {
     ExportFormatEnum,
 } from '#generated/types';
@@ -19,7 +18,7 @@ interface Props {
     icon?: React.ReactNode;
 }
 
-function ExportTypePaneButton(props: Props) {
+function ExportTypeButton(props: Props) {
     const {
         buttonKey,
         className,
@@ -44,8 +43,11 @@ function ExportTypePaneButton(props: Props) {
             title={title}
         >
             {icon}
+            {buttonKey === 'JSON' && (
+                <span className={styles.title}>JSON</span>
+            )}
         </QuickActionButton>
     );
 }
 
-export default ExportTypePaneButton;
+export default ExportTypeButton;

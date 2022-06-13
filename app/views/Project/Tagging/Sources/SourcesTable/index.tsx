@@ -115,6 +115,8 @@ const DELETE_LEAD = gql`
     }
 `;
 
+const defaultMaxItemsPerPage = 10;
+
 interface Props {
     className?: string;
     projectId: string;
@@ -139,7 +141,7 @@ function SourcesTable(props: Props) {
     ), [rawFilters]);
 
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
-    const [maxItemsPerPage, setMaxItemsPerPage] = useState(10);
+    const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
 
     const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
     const alert = useAlert();
@@ -480,7 +482,7 @@ function SourcesTable(props: Props) {
             ),
             createDateColumn<Lead, string>(
                 'PUBLISHED_ON',
-                'Published On',
+                'Date Published',
                 (item) => item.publishedOn ?? '',
                 {
                     sortable: true,
@@ -566,6 +568,7 @@ function SourcesTable(props: Props) {
                             rowModifier={rowModifier}
                             variant="large"
                             pending={pending}
+                            overflowContainerClassName={styles.overflowContainer}
                             filtered={isFiltered(entriesFilter)}
                             errored={false}
                             filteredEmptyMessage="No matching sources found."
