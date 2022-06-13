@@ -130,6 +130,7 @@ function NewAssessmentExport(props: Props) {
     }, [setPristine]);
 
     const handleApply = useCallback(() => {
+        setSelectedLeads([]);
         const submit = createSubmitHandler(
             validate,
             setError,
@@ -139,6 +140,7 @@ function NewAssessmentExport(props: Props) {
     }, [setError, validate, handleSubmit]);
 
     const handleClear = useCallback(() => {
+        setSelectedLeads([]);
         setPristine(true);
         clearSourcesFilterValue();
         setSourcesFilters({});
