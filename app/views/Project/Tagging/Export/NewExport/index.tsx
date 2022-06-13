@@ -194,6 +194,7 @@ function NewExport(props: Props) {
     }, [setPristine]);
 
     const handleApply = useCallback(() => {
+        setSelectedLeads([]);
         const submit = createSubmitHandler(
             validate,
             setError,
@@ -203,6 +204,7 @@ function NewExport(props: Props) {
     }, [setError, validate, handleSubmit]);
 
     const handleClear = useCallback(() => {
+        setSelectedLeads([]);
         clearSourcesFilterValue();
         setSourcesFilters({});
         setPristine(true);
