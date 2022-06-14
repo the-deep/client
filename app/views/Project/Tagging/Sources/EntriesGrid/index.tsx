@@ -227,6 +227,7 @@ interface Props {
     className?: string;
     projectId: string;
     filters: PartialFilterFormType;
+    onSourcesGetSuccess: () => void;
 }
 
 function EntriesGrid(props: Props) {
@@ -234,6 +235,7 @@ function EntriesGrid(props: Props) {
         className,
         projectId,
         filters: rawFilters,
+        onSourcesGetSuccess,
     } = props;
 
     const [
@@ -299,6 +301,7 @@ function EntriesGrid(props: Props) {
                 if (!projectFromResponse) {
                     return;
                 }
+                onSourcesGetSuccess();
                 setCommentsCountMap(
                     listToMap(
                         projectFromResponse.entries?.results ?? [],
