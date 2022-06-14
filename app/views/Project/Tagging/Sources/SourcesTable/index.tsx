@@ -115,6 +115,7 @@ interface Props {
     projectId: string;
     filters: PartialFilterFormType;
     ordering: string;
+    onSourcesGetSuccess: () => void;
 }
 
 function SourcesTable(props: Props) {
@@ -123,6 +124,7 @@ function SourcesTable(props: Props) {
         projectId,
         filters: rawFilters,
         ordering,
+        onSourcesGetSuccess,
     } = props;
 
     const filters = useMemo(() => (
@@ -168,6 +170,9 @@ function SourcesTable(props: Props) {
         {
             skip: isNotDefined(variables),
             variables,
+            onCompleted: () => {
+                onSourcesGetSuccess();
+            },
         },
     );
 
