@@ -638,6 +638,14 @@ function EntryFilterOutput<K extends string>(
                 falseLabel="Not controlled"
                 value={value?.controlled}
             />
+            <DismissableBooleanOutput
+                label="Has Comment"
+                name="hasComment"
+                onDismiss={setFieldValue}
+                trueLabel="Has Comment"
+                falseLabel="Does not have comment"
+                value={value?.hasComment}
+            />
             <DismissableListOutput
                 label="Entry Type"
                 name="entryTypes"
