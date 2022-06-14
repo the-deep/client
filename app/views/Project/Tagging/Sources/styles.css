@@ -22,8 +22,11 @@
         .header {
             align-items: center;
 
-            .filter-button {
-                margin: 0 var(--dui-spacing-small);
+            .filter-buttons {
+                display: flex;
+                align-items: center;
+                padding: 0 var(--dui-spacing-small);
+                gap: var(--dui-spacing-small);
             }
         }
 

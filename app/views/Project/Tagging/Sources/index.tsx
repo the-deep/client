@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
 import {
     IoGridOutline,
@@ -110,6 +110,8 @@ function Sources(props: Props) {
         setPristine,
     } = useFilterState();
 
+    const [filterTrulyPristine, setFilterTrulyPristine] = useState(true);
+
     const [
         sourcesFilters,
         setSourcesFilters,
@@ -127,22 +129,6 @@ function Sources(props: Props) {
     ] = useMutation<SaveLeadFilterMutation, SaveLeadFilterMutationVariables>(
         SAVE_LEAD_FILTER,
     );
-
-    useEffect(() => {
-        if (activeProject) {
-            saveLeadFilter({
-                variables: {
-                    projectId: activeProject,
-                    filters: {
-                        ...getProjectSourcesQueryVariables(
-                            sourcesFilters as Omit<FilterFormType, 'projectId'>,
-                        ),
-                        ordering: [ordering as LeadOrderingEnum],
-                    },
-                },
-            });
-        }
-    }, [activeProject, ordering, sourcesFilters, saveLeadFilter]);
 
     const {
         data: projectSavedLeadFilterData,
@@ -187,9 +173,33 @@ function Sources(props: Props) {
         [setSourcesFilterFieldValue, showFilter, filtersShown],
     );
 
+    const handleSourcesGetSuccess = useCallback(() => {
+        if (activeProject && !filterTrulyPristine) {
+            saveLeadFilter({
+                variables: {
+                    projectId: activeProject,
+                    filters: {
+                        ...getProjectSourcesQueryVariables(
+                            sourcesFilters as Omit<FilterFormType, 'projectId'>,
+                        ),
+                        ordering: [ordering as LeadOrderingEnum],
+                    },
+                },
+            });
+        }
+    }, [
+        sourcesFilters,
+        activeProject,
+        ordering,
+        saveLeadFilter,
+        filterTrulyPristine,
+    ]);
+
     const handleSubmit = useCallback((values: PartialFormType) => {
         setSourcesFilters(values);
+
         setPristine(true);
+        setFilterTrulyPristine(false);
     }, [setPristine]);
 
     const handleApply = useCallback(() => {
@@ -211,6 +221,7 @@ function Sources(props: Props) {
                 setSourcesFilterValue(transformRawFiltersToFormValues(others));
                 setSourcesFilters(transformRawFiltersToFormValues(others));
                 setPristine(true);
+                setFilterTrulyPristine(false);
             }
             if (userSavedLeadFilter?.filtersData) {
                 const { filtersData } = userSavedLeadFilter;
@@ -221,23 +232,19 @@ function Sources(props: Props) {
                 setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
                 setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
             }
-            if (!filtersShown) {
-                showFilter();
-            }
         }
     }, [
         projectSavedLeadFilterData,
         setSorting,
         setSourcesFilterValue,
         setPristine,
-        filtersShown,
-        showFilter,
     ]);
 
     const handleClear = useCallback(() => {
         clearSourcesFilterValue();
         setSourcesFilters({});
         setPristine(true);
+        setFilterTrulyPristine(false);
     }, [clearSourcesFilterValue, setPristine]);
 
     const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
@@ -262,15 +269,27 @@ function Sources(props: Props) {
                         <Header
                             headingSectionClassName={styles.header}
                             heading={_ts('sourcesFilter', 'title')}
+                            descriptionClassName={styles.filterButtons}
                             description={(
-                                <Button
-                                    className={styles.filterButton}
-                                    name={undefined}
-                                    onClick={toggleShowFilter}
-                                    icons={<IoFunnel />}
-                                >
-                                    Filter
-                                </Button>
+                                <>
+                                    <Button
+                                        name={undefined}
+                                        onClick={toggleShowFilter}
+                                        icons={<IoFunnel />}
+                                    >
+                                        Filter
+                                    </Button>
+                                    {filterTrulyPristine && (
+                                        <Button
+                                            disabled={projectSavedLeadFilterPending}
+                                            name="usePreviousFilters"
+                                            variant="secondary"
+                                            onClick={handleUsePreviousLeadFilter}
+                                        >
+                                            Use Previous Filters
+                                        </Button>
+                                    )}
+                                </>
                             )}
                             inlineHeadingDescription
                             headingSize="medium"
@@ -296,16 +315,6 @@ function Sources(props: Props) {
                             )}
                         />
                         <div className={styles.filtersContainer}>
-                            {!filtersShown && pristine && (
-                                <Button
-                                    disabled={projectSavedLeadFilterPending}
-                                    name="usePreviousFilters"
-                                    variant="action"
-                                    onClick={handleUsePreviousLeadFilter}
-                                >
-                                    Use Previous Filters
-                                </Button>
-                            )}
                             {!(isFilterEmpty && pristine) && (
                                 <div className={styles.buttons}>
                                     <Button
@@ -361,6 +370,7 @@ function Sources(props: Props) {
                                     <SortContext.Provider value={sortState}>
                                         <SourcesTable
                                             className={styles.tableContainer}
+                                            onSourcesGetSuccess={handleSourcesGetSuccess}
                                             filters={sourcesFilters}
                                             projectId={activeProject}
                                             ordering={ordering}
@@ -373,6 +383,7 @@ function Sources(props: Props) {
                                 >
                                     <EntriesGrid
                                         projectId={String(activeProject)}
+                                        onSourcesGetSuccess={handleSourcesGetSuccess}
                                         filters={sourcesFilters}
                                     />
                                 </TabPanel>
