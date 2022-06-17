@@ -51,6 +51,8 @@ import EntryVerification from '#components/entryReview/EntryVerification';
 import ProjectContext from '#base/context/ProjectContext';
 import { DeepReplace } from '#utils/types';
 
+import styles from './styles.css';
+
 export type Framework = DeepReplace<AnalysisFrameworkDetailType, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, Widget>;
 type Section = NonNullable<Framework['primaryTagging']>[number];
 
@@ -84,6 +86,7 @@ interface Props {
     projectId: string;
     leadId: string;
     entryId: string;
+    hideEntryId?: boolean;
     primaryTagging: Section[] | undefined | null;
     secondaryTagging: Widget[] | undefined | null;
     controlled: boolean | undefined | null;
@@ -105,6 +108,7 @@ function EditableEntry(props: Props) {
         leadId,
         entryId,
         entry,
+        hideEntryId,
         primaryTagging,
         secondaryTagging,
         compact,
@@ -323,13 +327,6 @@ function EditableEntry(props: Props) {
         </Button>
     );
 
-    const entryIdDisplay = (
-        <NumberOutput
-            prefix="#"
-            value={Number(entryId)}
-        />
-    );
-
     const entryInput = (
         <EntryInput
             name={undefined}
@@ -347,6 +344,7 @@ function EditableEntry(props: Props) {
             geoAreaOptions={geoAreaOptions}
             onGeoAreaOptionsChange={onGeoAreaOptionsChange}
             allWidgets={allWidgets}
+            hideEntryId={hideEntryId}
         />
     );
 
@@ -422,6 +420,14 @@ function EditableEntry(props: Props) {
             Delete Entry
         </ConfirmButton>
 
+    );
+
+    const entryIdDisplay = (
+        <NumberOutput
+            className={styles.entryId}
+            prefix="#"
+            value={Number(entryId)}
+        />
     );
 
     if (compact) {

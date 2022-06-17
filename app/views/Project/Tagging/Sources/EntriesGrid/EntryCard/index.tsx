@@ -182,8 +182,9 @@ function EntryCard(props: Props) {
                         value={leadDetails.publishedOn}
                     />
                 )}
-                headerActions={(
+                footerIcons={(
                     <NumberOutput
+                        className={styles.entryId}
                         prefix="#"
                         value={Number(entry.id)}
                     />

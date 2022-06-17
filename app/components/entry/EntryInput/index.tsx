@@ -15,6 +15,7 @@ import {
 import {
     List,
     Container,
+    NumberOutput,
 } from '@the-deep/deep-ui';
 
 import NonFieldError from '#components/NonFieldError';
@@ -57,6 +58,7 @@ interface EntryInputProps<T extends string | number | undefined> {
     error: Error<PartialEntryType> | undefined;
     onAddButtonClick?: (entryId: string, sectionId?: string) => void;
     addButtonHidden?: boolean;
+    hideEntryId?: boolean;
 
     widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
@@ -86,6 +88,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         value,
         onAddButtonClick,
         addButtonHidden,
+        hideEntryId,
         primaryTagging,
         secondaryTagging,
         sectionContainerClassName,
@@ -191,7 +194,24 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             {!compactMode && (
                 <Container
                     className={styles.excerpt}
-                    heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
+                    heading={(
+                        <div className={styles.heading}>
+                            {!hideEntryId && (isDefined(value.id)
+                                ? (
+                                    <NumberOutput
+                                        className={styles.entryId}
+                                        prefix="#"
+                                        value={Number(value.id)}
+                                    />
+                                ) : (
+                                    <span className={styles.unsavedEntry}>(unsaved entry)</span>
+                                )
+                            )}
+                            <span>
+                                {isDefined(index) ? `Entry ${index + 1}` : undefined}
+                            </span>
+                        </div>
+                    )}
                     headingSize="extraSmall"
                     headerActions={excerptHeaderActions}
                     headerActionsContainerClassName={styles.headerActions}

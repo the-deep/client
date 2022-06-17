@@ -16,6 +16,7 @@ import {
     QuickActionButtonProps,
     QuickActionDropdownMenu,
     QuickActionDropdownMenuProps,
+    NumberOutput,
     Heading,
     useInputState,
     Button,
@@ -158,7 +159,22 @@ function EntryItem(props: EntryItemProps) {
                 isActive && styles.active,
                 draftEntry && styles.createdFromAssisted,
             )}
-            heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
+            heading={(
+                <div className={styles.heading}>
+                    {isDefined(entryServerId) ? (
+                        <NumberOutput
+                            className={styles.entryId}
+                            prefix="#"
+                            value={Number(entryServerId)}
+                        />
+                    ) : (
+                        <span className={styles.unsavedEntry}>(unsaved entry)</span>
+                    )}
+                    <span>
+                        {isDefined(index) ? `Entry ${index + 1}` : undefined}
+                    </span>
+                </div>
+            )}
             headingSize="extraSmall"
             headingSectionClassName={styles.headingSection}
             headerActions={entryServerId && projectId && (
