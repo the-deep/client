@@ -1,24 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import ReactDOM from 'react-dom';
-import {
-    _cs,
-    unique,
-    isDefined,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { useQuery, gql } from '@apollo/client';
 import {
     PendingMessage,
 } from '@the-deep/deep-ui';
-import Map, {
-    MapContainer,
-    MapSource,
-    MapLayer,
-} from '@togglecorp/re-map';
-import {
-    MapboxGeoJSONFeature,
-    LngLat,
-    MapboxOptions,
-} from 'mapbox-gl';
 
 import {
     PublicProjectsByRegionQuery,
@@ -27,59 +12,11 @@ import {
     PublicProjectDetailsForMapViewQueryVariables,
     ProjectListQueryVariables,
 } from '#generated/types';
-import { mapboxStyle } from '#base/configs/env';
 import { convertDateToIsoDateTime } from '#utils/common';
 
+import ProjectCountMap from '../ProjectCountMap';
 import ProjectList from './ProjectList';
 import styles from './styles.css';
-
-export const sourceOptions: mapboxgl.GeoJSONSourceRaw & { clusterProperties: unknown } = {
-    type: 'geojson',
-    cluster: true,
-    clusterRadius: 100,
-    clusterProperties: {
-        project_ids: ['concat', ['concat', ['get', 'projectId'], ',']],
-    },
-};
-
-const white = '#ffffff';
-export const pointSymbolFilter = ['!', ['has', 'point_count']];
-
-export const clusterPointCirclePaint: mapboxgl.CirclePaint = {
-    'circle-radius': 12,
-    'circle-color': '#1a3ed0',
-};
-
-export const clusterPointTextPaint: mapboxgl.SymbolPaint = {
-    'text-color': white,
-    'text-halo-width': 0,
-};
-
-export const clusterPointTextLayout: mapboxgl.SymbolLayout = {
-    visibility: 'visible',
-    'symbol-sort-key': [
-        'case',
-        ['has', 'point_count'],
-        ['-', ['get', 'point_count']],
-        -1,
-    ],
-    'text-field': [
-        'case',
-        ['has', 'point_count'],
-        ['get', 'point_count_abbreviated'],
-        '1',
-    ],
-    'text-size': 15,
-};
-
-export const visibleLayout: mapboxgl.LineLayout = {
-    visibility: 'visible',
-};
-
-export const mapOptions: Partial<MapboxOptions> = {
-    zoom: 2,
-    center: [50, 10],
-};
 
 const PROJECT_LIST = gql`
     query PublicProjectsByRegion(
@@ -185,107 +122,13 @@ function ExploreDeepMapView(props: Props) {
         },
     );
 
-    const geoJson: GeoJSON.FeatureCollection<GeoJSON.Point> | undefined = useMemo(() => {
-        if (!data) {
-            return undefined;
-        }
-        const projects = data.publicProjectsByRegion?.results?.map((projectByRegion) => (
-            projectByRegion.projectsId?.map((project) => ({
-                id: project,
-                type: 'Feature' as const,
-                geometry: projectByRegion.centroid as GeoJSON.Point,
-                properties: {
-                    id: project,
-                    projectId: project,
-                },
-            }))
-        )).flat().filter(isDefined);
-
-        return ({
-            type: 'FeatureCollection',
-            features: projects ?? [],
-        });
-    }, [data]);
-
-    const handleClick = useCallback((
-        feature: MapboxGeoJSONFeature,
-        _: LngLat,
-        __: mapboxgl.Point,
-        map: mapboxgl.Map,
-    ) => {
-        interface ClusterProperties {
-
-            cluster_id: number;
-
-            point_count: number;
-        }
-
-        if (feature.properties) {
-            // eslint-disable-next-line camelcase
-            const { cluster_id, point_count } = feature.properties as ClusterProperties;
-            const clusterSource = map.getSource('region') as mapboxgl.GeoJSONSource;
-            if (clusterSource) {
-                clusterSource.getClusterLeaves(
-                    cluster_id,
-                    point_count,
-                    0,
-                    (___, aFeatures) => {
-                        if (aFeatures) {
-                            const projectIds = aFeatures
-                                .map((f) => f?.properties?.projectId)
-                                .filter(isDefined);
-                            setClickedFeatureProperties(projectIds);
-                        }
-                    },
-                );
-            }
-
-            if (feature.properties.projectId) {
-                setClickedFeatureProperties([feature.properties.projectId]);
-            } else {
-                setClickedFeatureProperties([]);
-            }
-        }
-        setClusterClicked(!clusterClicked);
-        return true;
-    }, [clusterClicked]);
-
     const handleListClose = useCallback(() => {
         setClusterClicked(false);
     }, []);
 
-    const createClusterMarker = useCallback((markerProps: object) => {
-        const {
-            project_ids: projectIds,
-        } = markerProps as { project_ids: string | undefined };
-
-        const uniqueProjects = unique(
-            projectIds?.split(',')?.filter((id) => id.length > 0) ?? [],
-            (id) => id,
-        );
-        const uniqueProjectsCount = uniqueProjects.length;
-
-        const width = Math.min(8 * Math.log10(uniqueProjectsCount) + 20, 100);
-
-        const mainDiv = document.createElement('div');
-        ReactDOM.render(
-            <button
-                className={styles.count}
-                type="button"
-                onClick={() => {
-                    setClickedFeatureProperties(uniqueProjects);
-                    setClusterClicked((oldVal) => !oldVal);
-                }}
-                style={{
-                    width: `${width}px`,
-                    height: `${width}px`,
-                }}
-            >
-                {uniqueProjectsCount}
-            </button>,
-            mainDiv,
-        );
-        return mainDiv;
+    const handleClusterClick = useCallback((projectIds: string[]) => {
+        setPage(1);
+        setClickedFeatureProperties(projectIds);
     }, []);
 
     return (
@@ -303,40 +146,12 @@ function ExploreDeepMapView(props: Props) {
                 />
             )}
             {loading && (<PendingMessage />)}
-            <Map
-                mapStyle={mapboxStyle}
-                mapOptions={mapOptions}
-                scaleControlShown={false}
-                navControlShown={false}
-            >
-                <MapContainer className={styles.map} />
-                <MapSource
-                    sourceKey="region"
-                    sourceOptions={sourceOptions}
-                    geoJson={geoJson}
-                    createMarkerElement={createClusterMarker}
-                >
-                    <MapLayer
-                        layerKey="cases-cluster-background"
-                        layerOptions={{
-                            type: 'circle',
-                            paint: clusterPointCirclePaint,
-                            filter: pointSymbolFilter,
-                            layout: visibleLayout,
-                        }}
-                        onClick={handleClick}
-                    />
-                    <MapLayer
-                        layerKey="cases-cluster-number"
-                        layerOptions={{
-                            type: 'symbol',
-                            paint: clusterPointTextPaint,
-                            filter: pointSymbolFilter,
-                            layout: clusterPointTextLayout,
-                        }}
-                    />
-                </MapSource>
-            </Map>
+            <ProjectCountMap
+                clusterClicked={clusterClicked}
+                onClusterClickedChange={setClusterClicked}
+                onClickedFeaturePropertiesChange={handleClusterClick}
+                projects={data?.publicProjectsByRegion?.results}
+            />
         </div>
     );
 }
