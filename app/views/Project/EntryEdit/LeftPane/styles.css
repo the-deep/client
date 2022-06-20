@@ -10,6 +10,11 @@
 .source-preview {
     display: flex;
     flex-direction: column;
+    margin-bottom: var(--dui-spacing-small);
+    min-width: 20vw;
+    max-width: 60vw;
+    overflow: auto;
+    resize: horizontal;
 
     .tab-list {
         flex-shrink: 0;
