@@ -99,7 +99,6 @@ interface EntryItemProps extends EntryInput {
     projectId: string | undefined;
     entryServerId: string | undefined;
     draftEntry?: string;
-    index?: number;
 }
 
 function EntryItem(props: EntryItemProps) {
@@ -111,7 +110,6 @@ function EntryItem(props: EntryItemProps) {
         excerpt,
         isActive,
         onClick,
-        index,
         projectId,
         onApproveButtonClick,
         onDiscardButtonClick,
@@ -159,22 +157,16 @@ function EntryItem(props: EntryItemProps) {
                 isActive && styles.active,
                 draftEntry && styles.createdFromAssisted,
             )}
-            heading={(
-                <div className={styles.heading}>
-                    {isDefined(entryServerId) ? (
-                        <NumberOutput
-                            className={styles.entryId}
-                            prefix="#"
-                            value={Number(entryServerId)}
-                        />
-                    ) : (
-                        <span className={styles.unsavedEntry}>(unsaved entry)</span>
-                    )}
-                    <span>
-                        {isDefined(index) ? `Entry ${index + 1}` : undefined}
-                    </span>
-                </div>
+            heading={isDefined(entryServerId) ? (
+                <NumberOutput
+                    className={styles.entryId}
+                    prefix="#"
+                    value={Number(entryServerId)}
+                />
+            ) : (
+                <span className={styles.unsavedEntry}>(unsaved entry)</span>
             )}
+            headingClassName={styles.heading}
             headingSize="extraSmall"
             headingSectionClassName={styles.headingSection}
             headerActions={entryServerId && projectId && (

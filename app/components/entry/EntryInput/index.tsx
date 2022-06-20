@@ -51,7 +51,6 @@ interface EntryInputProps<T extends string | number | undefined> {
 
     leadId: string;
 
-    index?: number;
     name: T;
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
@@ -96,7 +95,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         readOnly,
         emptyValueHidden = false,
         name,
-        index,
         onChange,
         leadId,
         variant = 'normal',
@@ -194,25 +192,18 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             {!compactMode && (
                 <Container
                     className={styles.excerpt}
-                    heading={(
-                        <div className={styles.heading}>
-                            {!hideEntryId && (isDefined(value.id)
-                                ? (
-                                    <NumberOutput
-                                        className={styles.entryId}
-                                        prefix="#"
-                                        value={Number(value.id)}
-                                    />
-                                ) : (
-                                    <span className={styles.unsavedEntry}>(unsaved entry)</span>
-                                )
-                            )}
-                            <span>
-                                {isDefined(index) ? `Entry ${index + 1}` : undefined}
-                            </span>
-                        </div>
-                    )}
+                    heading={(!hideEntryId && (isDefined(value.id)))
+                        ? (
+                            <NumberOutput
+                                className={styles.entryId}
+                                prefix="#"
+                                value={Number(value.id)}
+                            />
+                        ) : (
+                            <span className={styles.unsavedEntry}>(unsaved entry)</span>
+                        )}
                     headingSize="extraSmall"
+                    headingClassName={styles.heading}
                     headerActions={excerptHeaderActions}
                     headerActionsContainerClassName={styles.headerActions}
                     headingSectionClassName={styles.headingSection}
