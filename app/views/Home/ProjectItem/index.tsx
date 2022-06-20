@@ -32,6 +32,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
+import SmartQuickActionLink from '#base/components/SmartQuickActionLink';
 import ProgressLine from '#components/ProgressLine';
 import FrameworkImageButton from '#components/framework/FrameworkImageButton';
 import routes from '#base/configs/routes';
@@ -172,37 +173,30 @@ function ProjectItem(props: RecentProjectItemProps) {
                         )}
                     </Element>
                     {canEditProject && (
-                        <SmartButtonLikeLink
+                        <SmartQuickActionLink
                             variant="tertiary"
                             route={routes.projectEdit}
+                            title="Edit Project"
                             attrs={{
                                 projectId,
                             }}
-                            icons={(
-                                <FiEdit2 />
-                            )}
                         >
-                            {_ts('home.recentProjects', 'editProjectButtonLabel')}
-                        </SmartButtonLikeLink>
+                            <FiEdit2 />
+                        </SmartQuickActionLink>
                     )}
+                    <SmartButtonLikeLink
+                        route={routes.tagging}
+                        attrs={{
+                            projectId,
+                        }}
+                    >
+                        Open Project
+                    </SmartButtonLikeLink>
                 </>
             )}
             contentClassName={styles.content}
             borderBelowHeader
             borderBelowHeaderWidth="thin"
-            // TODO: there should be two different urls for editing and viewing entry
-            footerActions={(
-                <SmartButtonLikeLink
-                    route={routes.tagging}
-                    attrs={{
-                        projectId,
-                    }}
-                >
-                    {allowedPermissions?.includes('UPDATE_ENTRY')
-                        ? _ts('home', 'continueTaggingButton')
-                        : _ts('home', 'viewTaggingButton')}
-                </SmartButtonLikeLink>
-            )}
         >
             <div className={styles.info}>
                 {description && (

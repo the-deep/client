@@ -41,6 +41,17 @@ const controlledStatusOptions: Option[] = [
     },
 ];
 
+const hasCommentOptions: Option[] = [
+    {
+        key: 'true',
+        value: 'Has comment',
+    },
+    {
+        key: 'false',
+        value: 'Does not have comment',
+    },
+];
+
 const defaultValue: PartialEntriesFilterDataType = {
     filterableData: [],
 };
@@ -152,6 +163,20 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 value={value?.controlled}
                 onChange={setFieldValue}
                 label="Controlled Status"
+                disabled={disabled}
+            />
+            <BooleanInput
+                variant="general"
+                className={_cs(
+                    styles.input,
+                    (doesObjectHaveNoData(value?.hasComment) && !allFiltersVisible)
+                    && styles.hidden,
+                )}
+                options={hasCommentOptions}
+                name="hasComment"
+                value={value?.hasComment}
+                onChange={setFieldValue}
+                label="Has Comment"
                 disabled={disabled}
             />
             <MultiSelectInput
