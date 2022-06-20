@@ -54,7 +54,7 @@ Users may use DEEP to share data from other sources with appropriate metadata in
 
 ### Restriction levels
 
-There are currently two levels of restriction impacting data sharing on DEEP:
+There are currently three levels of restriction impacting data sharing on DEEP:
 
 • **Public:** Data can be shared with any user in DEEP and exported to anyone without restrictions. The data is unlikely to cause any harm to affected population or other individuals and is publicly available. The data can be shared across the platform for research purposes (for example development of NLP), available in joint repository and platform cross searches.
 
@@ -157,7 +157,7 @@ The Project Administrator is the responsible publisher for his/her project and n
 
 ## Restriction levels
 
-There are currently two levels of restriction impacting data sharing on DEEP:
+There are currently three levels of restriction impacting data sharing on DEEP:
 
 •   **Public**: Data can be shared with any user in DEEP and exported to anyone without restrictions. The data is unlikely to cause any harm to affected populations or other individuals and is publicly available. The data can be shared across the platform for research purposes, e.g., development of Machine Learning or Natural Language Processing solutions, available in joint repository and platform cross searches.
 

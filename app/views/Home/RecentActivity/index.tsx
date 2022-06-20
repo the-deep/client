@@ -25,6 +25,7 @@ const RECENT_ACTIVITIES_LIST = gql`
             typeDisplay
             createdAt
             leadId
+            entryId
             createdBy {
                 id
                 displayName

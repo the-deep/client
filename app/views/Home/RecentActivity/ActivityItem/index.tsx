@@ -24,21 +24,31 @@ function ActivityItem(props: RecentActivityProps) {
     } = props;
 
     const typeDisplayText = useMemo(() => {
+        if (!activity) {
+            return undefined;
+        }
+
+        const {
+            id,
+            leadId,
+            entryId,
+            project,
+            type,
+        } = activity;
+
         const editEntryLink = {
             pathname: (generatePath(routes.entryEdit.path, {
-                projectId: activity?.project?.id,
-                // TODO: Remove this
-                leadId: activity?.leadId ?? '1',
+                projectId: project?.id,
+                leadId,
             })),
             state: {
                 // TODO: Remove this
-                entryServerId: ((activity?.type === 'ENTRY')
-                     || (activity?.type === 'ENTRY_COMMENT')) && activity?.leadId,
+                entryServerId: ((type === 'ENTRY') || (type === 'ENTRY_COMMENT')) && entryId,
                 activePage: 'primary',
             },
             hash: '#/primary-tagging',
         };
-        if (activity?.type === 'LEAD') {
+        if (type === 'LEAD' && leadId) {
             return (generateString(
                 'a {link} on',
                 {
@@ -46,8 +56,8 @@ function ActivityItem(props: RecentActivityProps) {
                         <Link
                             className={styles.link}
                             to={generatePath(routes.entryEdit.path, {
-                                projectId: activity?.project?.id,
-                                leadId: '1',
+                                projectId: project?.id,
+                                leadId,
                             })}
                         >
                             lead
@@ -56,7 +66,7 @@ function ActivityItem(props: RecentActivityProps) {
                 },
             ));
         }
-        if (activity?.type === 'ENTRY') {
+        if (type === 'ENTRY' && id) {
             return (generateString(
                 'an {link} on',
                 {
@@ -71,18 +81,14 @@ function ActivityItem(props: RecentActivityProps) {
                 },
             ));
         }
-        if (activity?.type === 'ENTRY_COMMENT') {
+        if (type === 'ENTRY_COMMENT' && id) {
             return (generateString(
                 'an {link} on',
                 {
                     link: (
                         <Link
                             className={styles.link}
-                            to={generatePath(routes.entryEdit.path, {
-                                projectId: activity?.project?.id,
-                                leadId: '1',
-                                entryId: '1',
-                            })}
+                            to={editEntryLink}
                         >
                             entry comment
                         </Link>
@@ -91,11 +97,7 @@ function ActivityItem(props: RecentActivityProps) {
             ));
         }
         return undefined;
-    }, [
-        activity?.type,
-        activity?.project?.id,
-        activity?.leadId,
-    ]);
+    }, [activity]);
 
     return (
         <Element
