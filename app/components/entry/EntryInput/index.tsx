@@ -15,6 +15,7 @@ import {
 import {
     List,
     Container,
+    NumberOutput,
 } from '@the-deep/deep-ui';
 
 import NonFieldError from '#components/NonFieldError';
@@ -50,13 +51,13 @@ interface EntryInputProps<T extends string | number | undefined> {
 
     leadId: string;
 
-    index?: number;
     name: T;
     value: PartialEntryType;
     onChange: (val: SetValueArg<PartialEntryType>, name: T) => void;
     error: Error<PartialEntryType> | undefined;
     onAddButtonClick?: (entryId: string, sectionId?: string) => void;
     addButtonHidden?: boolean;
+    hideEntryId?: boolean;
 
     widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
@@ -86,6 +87,7 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         value,
         onAddButtonClick,
         addButtonHidden,
+        hideEntryId,
         primaryTagging,
         secondaryTagging,
         sectionContainerClassName,
@@ -93,7 +95,6 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
         readOnly,
         emptyValueHidden = false,
         name,
-        index,
         onChange,
         leadId,
         variant = 'normal',
@@ -191,8 +192,18 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             {!compactMode && (
                 <Container
                     className={styles.excerpt}
-                    heading={isDefined(index) ? `Entry ${index + 1}` : undefined}
+                    heading={(!hideEntryId && (isDefined(value.id)))
+                        ? (
+                            <NumberOutput
+                                className={styles.entryId}
+                                prefix="#"
+                                value={Number(value.id)}
+                            />
+                        ) : (
+                            <span className={styles.unsavedEntry}>(unsaved entry)</span>
+                        )}
                     headingSize="extraSmall"
+                    headingClassName={styles.heading}
                     headerActions={excerptHeaderActions}
                     headerActionsContainerClassName={styles.headerActions}
                     headingSectionClassName={styles.headingSection}

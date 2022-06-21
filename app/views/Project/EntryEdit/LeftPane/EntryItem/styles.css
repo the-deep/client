@@ -10,6 +10,23 @@
 
     .heading-section {
         overflow: visible;
+
+        .heading {
+            display: flex;
+            align-items: baseline;
+            gap: var(--dui-spacing-medium);
+
+            .entry-id {
+                color: var(--dui-color-accent);
+                font-weight: var(--dui-font-weight-bold);
+            }
+
+            .unsaved-entry {
+                color: var(--dui-color-text-description);
+                font-weight: var(--dui-font-weight-light);
+                font-style: italic;
+            }
+        }
     }
 
     .vertical-border {
