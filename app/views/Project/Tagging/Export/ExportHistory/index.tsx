@@ -326,7 +326,7 @@ function ExportHistory(props: Props) {
             statusColumn,
             actionsColumn,
         ]);
-    }, [handleDeleteExport, selectedExport]);
+    }, [handleDeleteExport, selectedExport, type]);
 
     const pending = deleteExportPending;
 

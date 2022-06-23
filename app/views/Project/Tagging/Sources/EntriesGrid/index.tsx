@@ -301,7 +301,6 @@ function EntriesGrid(props: Props) {
                 if (!projectFromResponse) {
                     return;
                 }
-                onSourcesGetSuccess();
                 setCommentsCountMap(
                     listToMap(
                         projectFromResponse.entries?.results ?? [],
@@ -318,6 +317,7 @@ function EntriesGrid(props: Props) {
                 const uniqueGeoData = unique(geoData, (d) => d.id);
 
                 setGeoAreaOptions(uniqueGeoData);
+                onSourcesGetSuccess();
             },
         },
     );

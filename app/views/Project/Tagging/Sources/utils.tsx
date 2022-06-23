@@ -58,13 +58,10 @@ export function getSortState(
     orderingFilter: LeadOrderingEnum[] | null | undefined,
 ): { name: string; direction: SortDirection } | undefined {
     const [direction, ...orderingName] = orderingFilter?.[0] ? orderingFilter[0].split('_') : [];
-    if (direction) {
-        return ({
-            name: orderingName.join('_'),
-            direction: direction === 'ASC' ? SortDirection.asc : SortDirection.dsc,
-        });
-    }
-    return undefined;
+    return direction ? ({
+        name: orderingName.join('_'),
+        direction: direction === 'ASC' ? SortDirection.asc : SortDirection.dsc,
+    }) : undefined;
 }
 
 function getDateString(dateTimeString: string | null | undefined) {
@@ -75,26 +72,26 @@ function getDateString(dateTimeString: string | null | undefined) {
 }
 
 export function transformRawFiltersToFormValues(filters: RawSourcesFilter) {
-    if (filters) {
-        const {
-            createdAt,
-            createdAtGte,
-            createdAtLte,
-            entriesFilterData,
-            ...others
-        } = filters;
-        const formValues = {
-            ...others,
-            createdAt: getDateString(createdAt),
-            createdAtGte: getDateString(createdAtGte),
-            createdAtLte: getDateString(createdAtLte),
-            entriesFilterData: {
-                ...entriesFilterData,
-                createdAtGte: getDateString(entriesFilterData?.createdAtGte),
-                createdAtLte: getDateString(entriesFilterData?.createdAtLte),
-            },
-        };
-        return removeNull(formValues);
+    if (!filters) {
+        return {};
     }
-    return {};
+    const {
+        createdAt,
+        createdAtGte,
+        createdAtLte,
+        entriesFilterData,
+        ...others
+    } = filters;
+    const formValues = {
+        ...others,
+        createdAt: getDateString(createdAt),
+        createdAtGte: getDateString(createdAtGte),
+        createdAtLte: getDateString(createdAtLte),
+        entriesFilterData: {
+            ...entriesFilterData,
+            createdAtGte: getDateString(entriesFilterData?.createdAtGte),
+            createdAtLte: getDateString(entriesFilterData?.createdAtLte),
+        },
+    };
+    return removeNull(formValues);
 }
