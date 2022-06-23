@@ -1,4 +1,5 @@
 .options-popup {
     min-width: 16rem;
+    max-height: 40vh !important;
 }
 
