@@ -109,7 +109,6 @@ export const SOURCE_FILTER_FRAGMENT = gql`
         text
         url
         entriesFilterData {
-            commentStatus
             controlled
             createdAt
             createdAtGte

@@ -350,8 +350,7 @@ function NewExport(props: Props) {
                     .map((v) => ({
                         ...v,
                         selected: state?.extraOptions?.reportTextWidgetIds
-                            ? (state?.extraOptions
-                                ?.reportTextWidgetIds?.includes(v.id) ?? false)
+                            ? (state?.extraOptions?.reportTextWidgetIds?.includes(v.id) ?? false)
                             : true,
                     }));
 
@@ -359,8 +358,7 @@ function NewExport(props: Props) {
                     ?.map((v) => ({
                         ...v,
                         selected: state?.extraOptions?.reportExportingWidgets
-                            ? (state?.extraOptions
-                                ?.reportExportingWidgets?.includes(v.id) ?? false)
+                            ? (state?.extraOptions?.reportExportingWidgets?.includes(v.id) ?? false)
                             : true,
                     }));
 

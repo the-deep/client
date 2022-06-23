@@ -60,7 +60,7 @@ function TableActions(props: Props) {
                     title="Create new export with these filters"
                     route={routes.exportCreate}
                     attrs={{
-                        projectId: data.project as string | undefined,
+                        projectId: data.project ?? undefined,
                     }}
                     state={{
                         format: data.format,
@@ -80,7 +80,7 @@ function TableActions(props: Props) {
                     title="Create new assessment export with these filters"
                     route={routes.assessmentExportCreate}
                     attrs={{
-                        projectId: data.project as string | undefined,
+                        projectId: data.project ?? undefined,
                     }}
                     state={{
                         filters: data.filters,
