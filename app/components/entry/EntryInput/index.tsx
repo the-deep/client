@@ -3,6 +3,7 @@ import {
     _cs,
     listToMap,
     isDefined,
+    isNotDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -192,16 +193,20 @@ function EntryInput<T extends string | number | undefined>(props: EntryInputProp
             {!compactMode && (
                 <Container
                     className={styles.excerpt}
-                    heading={(!hideEntryId && (isDefined(value.id)))
-                        ? (
-                            <NumberOutput
-                                className={styles.entryId}
-                                prefix="#"
-                                value={Number(value.id)}
-                            />
-                        ) : (
-                            <span className={styles.unsavedEntry}>(unsaved entry)</span>
-                        )}
+                    heading={(
+                        <>
+                            {!hideEntryId && isDefined(value.id) && (
+                                <NumberOutput
+                                    className={styles.entryId}
+                                    prefix="#"
+                                    value={Number(value.id)}
+                                />
+                            )}
+                            {!hideEntryId && isNotDefined(value.id) && (
+                                <span className={styles.unsavedEntry}>(unsaved entry)</span>
+                            )}
+                        </>
+                    )}
                     headingSize="extraSmall"
                     headingClassName={styles.heading}
                     headerActions={excerptHeaderActions}
