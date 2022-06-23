@@ -69,7 +69,7 @@ function Sources(props: Props) {
     const [
         filtersShown,
         showFilter,
-        ,,
+        , ,
         toggleShowFilter,
     ] = useBooleanState(false);
     const activeView = useHash();
@@ -212,26 +212,27 @@ function Sources(props: Props) {
     }, [setError, validate, handleSubmit]);
 
     const handleUsePreviousLeadFilter = useCallback(() => {
-        if (projectSavedLeadFilterData?.project) {
-            const { userSavedLeadFilter } = projectSavedLeadFilterData.project;
+        if (!projectSavedLeadFilterData?.project) {
+            return;
+        }
 
-            if (userSavedLeadFilter?.filters) {
-                const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
-                setSorting(getSortState(orderingFilter));
-                setSourcesFilterValue(transformRawFiltersToFormValues(others));
-                setSourcesFilters(transformRawFiltersToFormValues(others));
-                setPristine(true);
-                setFilterTrulyPristine(false);
-            }
-            if (userSavedLeadFilter?.filtersData) {
-                const { filtersData } = userSavedLeadFilter;
-                setCreatedByOptions(filtersData?.createdByOptions);
-                setAssigneeOptions(filtersData?.assigneeOptions);
-                setAuthorOrganizationOptions(filtersData?.authorOrganizationOptions);
-                setSourceOrganizationOptions(filtersData?.sourceOrganizationOptions);
-                setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
-                setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
-            }
+        const { userSavedLeadFilter } = projectSavedLeadFilterData?.project ?? {};
+        if (userSavedLeadFilter?.filters) {
+            const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
+            setSorting(getSortState(orderingFilter));
+            setSourcesFilterValue(transformRawFiltersToFormValues(others));
+            setSourcesFilters(transformRawFiltersToFormValues(others));
+            setPristine(true);
+            setFilterTrulyPristine(false);
+        }
+        if (userSavedLeadFilter?.filtersData) {
+            const { filtersData } = userSavedLeadFilter;
+            setCreatedByOptions(filtersData?.createdByOptions);
+            setAssigneeOptions(filtersData?.assigneeOptions);
+            setAuthorOrganizationOptions(filtersData?.authorOrganizationOptions);
+            setSourceOrganizationOptions(filtersData?.sourceOrganizationOptions);
+            setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
+            setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
         }
     }, [
         projectSavedLeadFilterData,
