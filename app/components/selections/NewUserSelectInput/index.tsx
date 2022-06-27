@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     SearchSelectInput,
     SearchSelectInputProps,
@@ -21,13 +21,18 @@ const USERS = gql`
         $membersExcludeProject: ID,
         $membersExcludeFramework: ID,
         $membersExcludeUsergroup: ID,
+        $page: Int,
+        $pageSize: Int,
     ) {
         users(
             membersExcludeProject: $membersExcludeProject,
             membersExcludeFramework: $membersExcludeFramework,
             membersExcludeUsergroup: $membersExcludeUsergroup,
             search: $search,
+            page: $page,
+            pageSize: $pageSize,
         ) {
+            page
             results {
                 displayName
                 id
@@ -81,6 +86,8 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
         membersExcludeProject,
         membersExcludeUsergroup,
         search: debouncedSearchText,
+        page: 1,
+        pageSize: 10,
     }), [
         membersExcludeProject,
         membersExcludeFramework,
@@ -88,13 +95,47 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
         membersExcludeUsergroup,
     ]);
 
-    const { data, loading } = useQuery<UsersQuery, UsersQueryVariables>(
+    const { data, loading, fetchMore } = useQuery<UsersQuery, UsersQueryVariables>(
         USERS,
         {
             variables,
             skip: !opened,
         },
     );
+
+    const handleShowMoreClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (data?.users?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.users) {
+                    return previousResult;
+                }
+                const oldUsers = previousResult.users;
+                const newUsers = fetchMoreResult?.users;
+
+                if (!newUsers) {
+                    return previousResult;
+                }
+                return ({
+                    ...previousResult,
+                    users: {
+                        ...newUsers,
+                        results: [
+                            ...(oldUsers.results ?? []),
+                            ...(newUsers.results ?? []),
+                        ],
+                    },
+                });
+            },
+        });
+    }, [
+        fetchMore,
+        variables,
+        data?.users?.page,
+    ]);
 
     return (
         <SearchSelectInput
@@ -109,6 +150,7 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
             totalOptionsCount={data?.users?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
             optionsPopupClassName={styles.optionsPopup}
+            handleShowMoreClick={handleShowMoreClick}
         />
     );
 }

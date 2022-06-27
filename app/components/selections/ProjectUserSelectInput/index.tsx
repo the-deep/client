@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     SearchSelectInput,
     SearchSelectInputProps,
@@ -16,10 +16,20 @@ import OptionLabelSelector from '../OptionLabelSelector';
 import styles from './styles.css';
 
 const PROJECT_USERS = gql`
-    query ProjectUser($search: String, $projectId: ID!) {
+    query ProjectUser(
+    $search: String,
+    $projectId: ID!,
+    $page: Int,
+    $pageSize: Int,
+) {
         project(id: $projectId) {
             id
-            userMembers(search: $search) {
+            userMembers(
+                search: $search,
+                page: $page,
+                pageSize: $pageSize,
+            ) {
+                page
                 results {
                     id
                     member {
@@ -61,9 +71,15 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
     const variables = useMemo(() => ({
         search: debouncedSearchText,
         projectId,
+        page: 1,
+        pageSize: 10,
     }), [debouncedSearchText, projectId]);
 
-    const { data, loading } = useQuery<ProjectUserQuery, ProjectUserQueryVariables>(
+    const {
+        data,
+        loading,
+        fetchMore,
+    } = useQuery<ProjectUserQuery, ProjectUserQueryVariables>(
         PROJECT_USERS,
         {
             variables,
@@ -78,6 +94,45 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
         [projectMembers],
     );
 
+    const handleShowMoreClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (data?.project?.userMembers?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.project) {
+                    return previousResult;
+                }
+
+                const oldUsers = previousResult.project.userMembers;
+                const newUsers = fetchMoreResult?.project?.userMembers;
+
+                if (!newUsers) {
+                    return previousResult;
+                }
+
+                return ({
+                    ...previousResult,
+                    project: {
+                        ...previousResult.project,
+                        userMembers: {
+                            ...newUsers,
+                            results: [
+                                ...(oldUsers?.results ?? []),
+                                ...(newUsers.results ?? []),
+                            ],
+                        },
+                    },
+                });
+            },
+        });
+    }, [
+        fetchMore,
+        variables,
+        data?.project?.userMembers?.page,
+    ]);
+
     return (
         <SearchSelectInput
             {...otherProps}
@@ -91,6 +146,7 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
             onShowDropdownChange={setOpened}
             totalOptionsCount={data?.project?.userMembers?.totalCount ?? undefined}
             optionsPopupClassName={styles.optionsPopup}
+            handleShowMoreClick={handleShowMoreClick}
         />
     );
 }
