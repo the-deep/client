@@ -18,14 +18,14 @@ import styles from './styles.css';
 const PROJECT_USERS = gql`
     query ProjectUser(
     $search: String,
-    $projectId: ID!
+    $projectId: ID!,
     $page: Int,
     $pageSize: Int,
 ) {
         project(id: $projectId) {
             id
             userMembers(
-                search: $search
+                search: $search,
                 page: $page,
                 pageSize: $pageSize,
             ) {
@@ -72,10 +72,14 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
         search: debouncedSearchText,
         projectId,
         page: 1,
-        pageSize: 5,
+        pageSize: 10,
     }), [debouncedSearchText, projectId]);
 
-    const { data, loading, fetchMore } = useQuery<ProjectUserQuery, ProjectUserQueryVariables>(
+    const {
+        data,
+        loading,
+        fetchMore,
+    } = useQuery<ProjectUserQuery, ProjectUserQueryVariables>(
         PROJECT_USERS,
         {
             variables,
@@ -98,10 +102,10 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
             },
             updateQuery: (previousResult, { fetchMoreResult }) => {
                 if (!previousResult.project) {
-                    return (previousResult);
+                    return previousResult;
                 }
 
-                const oldUsers = previousResult.project?.userMembers;
+                const oldUsers = previousResult.project.userMembers;
                 const newUsers = fetchMoreResult?.project?.userMembers;
 
                 if (!newUsers) {
@@ -116,7 +120,7 @@ function ProjectUserSelectInput<K extends string>(props: ProjectUserSelectInputP
                             ...newUsers,
                             results: [
                                 ...(oldUsers?.results ?? []),
-                                ...(newUsers?.results ?? []),
+                                ...(newUsers.results ?? []),
                             ],
                         },
                     },

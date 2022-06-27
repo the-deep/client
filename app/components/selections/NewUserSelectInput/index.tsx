@@ -87,7 +87,7 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
         membersExcludeUsergroup,
         search: debouncedSearchText,
         page: 1,
-        pageSize: 5,
+        pageSize: 10,
     }), [
         membersExcludeProject,
         membersExcludeFramework,
@@ -124,8 +124,8 @@ function NewUserSelectInput<K extends string>(props: NewUserSelectInputProps<K>)
                     users: {
                         ...newUsers,
                         results: [
-                            ...(oldUsers?.results ?? []),
-                            ...(newUsers?.results ?? []),
+                            ...(oldUsers.results ?? []),
+                            ...(newUsers.results ?? []),
                         ],
                     },
                 });
