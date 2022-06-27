@@ -157,6 +157,7 @@ const schema: FormSchema = {
         hasPubliclyViewableRestrictedLeads: [requiredCondition],
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
         isPrivate: [],
+        isTest: [],
     }),
     validation: (value) => {
         if (
@@ -235,6 +236,7 @@ const CURRENT_PROJECT = gql`
             createdAt
             description
             isPrivate
+            isTest
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
@@ -308,6 +310,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 createdAt
                 description
                 isPrivate
+                isTest
                 hasPubliclyViewableUnprotectedLeads
                 hasPubliclyViewableConfidentialLeads
                 hasPubliclyViewableRestrictedLeads
@@ -755,6 +758,12 @@ function ProjectDetailsForm(props: Props) {
                             )}
                         />
                     </Container>
+                    <Switch
+                        name="isTest"
+                        label="Is test project"
+                        value={value?.isTest}
+                        onChange={setFieldValue}
+                    />
                     <div className={styles.createdByDetails}>
                         {projectDetails?.createdBy?.displayName && (
                             <TextInput
