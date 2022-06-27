@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { PendingMessage } from '@the-deep/deep-ui';
 
 import { useRequest } from '#base/utils/restRequest';
-import { proxyEndpoint } from '#base/configs/env';
 
 import {
     MimeTypes,
@@ -10,18 +9,11 @@ import {
 
 import Preview from '../Preview';
 
-// NOTE: We are proxying these websites as they are auto-downloading files instead
-// of previewing them
-const domainsToProxy = [
-    'data2.unhcr.org',
-    'data.unhcr.org',
-];
-
-const pathsToProxy = [
-    'https://reliefweb.int/attachments/',
-    'https://reliefweb.int/sites/reliefweb.int/files/',
-    'https://reliefweb.int/files/',
-];
+const proxyMap: { [key in string]: string } = {
+    'reliefweb.int': 'reliefweb-int.preview-proxy.thedeep.io',
+    'data2.unhcr.org': 'data2-unhcr-org.preview-proxy.thedeep.io',
+    'data.unhcr.org': 'data-unhcr-org.preview-proxy.thedeep.io',
+};
 
 function getProxiedUrl(url: string) {
     let urlObject: URL;
@@ -30,12 +22,10 @@ function getProxiedUrl(url: string) {
     } catch {
         return url;
     }
-    if (pathsToProxy.some((path) => (url.startsWith(path)))) {
-        return `${proxyEndpoint}?url=${url}`;
-    }
-    if (domainsToProxy.includes(urlObject.host)) {
-        // NOTE: proxy server does not support encoded url params
-        return `${proxyEndpoint}?url=${url}`;
+    const proxyUrl = proxyMap[urlObject.host];
+    if (proxyUrl) {
+        urlObject.host = proxyMap[proxyUrl];
+        return urlObject.toString();
     }
     return url;
 }
@@ -75,6 +65,7 @@ function ExternalUrlPreview(props: Props) {
 
     const [canShowIframe, setCanShowIframe] = useState(false);
     const [mimeType, setMimeType] = useState<MimeTypes | undefined>();
+    const [updatedUrl, setUpdatedUrl] = useState<string | undefined>();
 
     const query = useMemo(() => ({
         url,
@@ -89,6 +80,19 @@ function ExternalUrlPreview(props: Props) {
         onSuccess: ({ headers }) => {
             const contentType = getHeaderValue(headers, 'Content-Type');
             setMimeType(contentType?.split(';')[0].trim() as MimeTypes);
+
+            let urlObject: URL | undefined;
+            try {
+                urlObject = new URL(url);
+            } catch {
+                console.error('undefined URL');
+            }
+
+            const redirectLocation = getHeaderValue(headers, 'Location');
+            if (redirectLocation && urlObject?.host) {
+                const newUrl = `https://${urlObject.host}/${encodeURIComponent(redirectLocation)}`;
+                setUpdatedUrl(newUrl);
+            }
 
             const xFrameOptions = getHeaderValue(headers, 'X-Frame-Options');
             const contentSecurityPolicy = getHeaderValue(headers, 'Content-Security-Policy');
@@ -112,13 +116,15 @@ function ExternalUrlPreview(props: Props) {
                 }
             }
 
-            setCanShowIframe(tempCanShowIframe);
+            setCanShowIframe(
+                (urlObject?.host && proxyMap[urlObject.host]) ? true : tempCanShowIframe,
+            );
         },
     });
 
     const proxiedUrl = useMemo(() => (
-        getProxiedUrl(urlDetailsResponse?.httpsUrl ?? url)
-    ), [urlDetailsResponse?.httpsUrl, url]);
+        getProxiedUrl(updatedUrl ?? urlDetailsResponse?.httpsUrl ?? url)
+    ), [urlDetailsResponse?.httpsUrl, url, updatedUrl]);
 
     if (pending) {
         return (
