@@ -30,6 +30,7 @@
     }
 
     .tab-list {
+        flex-shrink: 0;
         .tab {
             &.errored {
                 color: var(--dui-color-danger);
