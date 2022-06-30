@@ -81,6 +81,8 @@ import {
     createWidgetIds,
     getReportStructureVariant,
     isSubSectorIncluded,
+    sortReportStructure,
+    sortWidgets,
 } from '../utils';
 import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT, PROJECT_SOURCE_STATS_FOR_EXPORT } from '../queries';
 import styles from './styles.css';
@@ -369,31 +371,29 @@ function NewExport(props: Props) {
                 const widgets = getWidgets(
                     response.project?.analysisFramework as AnalysisFramework,
                 );
-                const textWidgetList = widgets
-                    ?.filter((v) => v.widgetId === 'TEXT')
-                    .map((v) => ({
-                        ...v,
-                        selected: state?.extraOptions?.reportTextWidgetIds
-                            ? (state?.extraOptions?.reportTextWidgetIds?.includes(v.id) ?? false)
-                            : true,
-                    }));
 
-                const contextualWidgetList = filterContexualWidgets(widgets)
-                    ?.map((v) => ({
-                        ...v,
-                        selected: state?.extraOptions?.reportExportingWidgets
-                            ? (state?.extraOptions?.reportExportingWidgets?.includes(v.id) ?? false)
-                            : true,
-                    }));
+                const textWidgetsValue = widgets
+                    ?.filter((v) => v.widgetId === 'TEXT');
+                const textWidgetList = sortWidgets(
+                    textWidgetsValue,
+                    state?.extraOptions?.reportTextWidgetIds,
+                );
+                const contextualWidgetsValue = filterContexualWidgets(widgets);
+                const contextualWidgetList = sortWidgets(
+                    contextualWidgetsValue,
+                    state?.extraOptions?.reportExportingWidgets,
+                );
 
-                setTextWidgets(textWidgetList ?? []);
-                setContextualWidgets(contextualWidgetList ?? []);
+                setTextWidgets(textWidgetList);
+                setContextualWidgets(contextualWidgetList);
+
                 const reportStructureType = getReportStructureVariant(
                     widgets,
                     state?.extraOptions?.reportStructure,
                 );
+                const subSectorIncluded = isSubSectorIncluded(state?.extraOptions?.reportStructure);
                 setReportStructureVariant(reportStructureType);
-                setIncludeSubSector(isSubSectorIncluded(state?.extraOptions?.reportStructure));
+                setIncludeSubSector(subSectorIncluded);
             },
         },
     );
@@ -448,12 +448,21 @@ function NewExport(props: Props) {
             analysisFramework,
             sourcesFilters?.entriesFilterData?.filterableData,
         );
-        setReportStructure(structure);
+        if (state?.extraOptions?.reportStructure) {
+            const sortedReportStructure = sortReportStructure(
+                structure,
+                state?.extraOptions?.reportStructure,
+            );
+            setReportStructure(sortedReportStructure);
+        } else {
+            setReportStructure(structure);
+        }
     }, [
         analysisFramework,
         reportStructureVariant,
         includeSubSector,
         sourcesFilters?.entriesFilterData?.filterableData,
+        state?.extraOptions?.reportStructure,
     ]);
 
     const showMatrix2dOptions = useMemo(
