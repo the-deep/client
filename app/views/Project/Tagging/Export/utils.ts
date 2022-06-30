@@ -386,3 +386,44 @@ export const isSubSectorIncluded = (
         ))
     )) ?? false
 );
+
+export function sortReportStructure(
+    data: Node[] | undefined,
+    sortedData: ExportItem['extraOptions']['reportStructure'],
+): Node[] {
+    const newData = sortedData?.map((sd) => {
+        const out = data?.find((d) => d.key === sd.id);
+        if (out) {
+            return { ...out, nodes: sortReportStructure(out.nodes, sd.levels) };
+        }
+        return data ?? [];
+    });
+
+    return newData as Node[];
+}
+
+export function sortWidgets(
+    data: Widget[] | undefined,
+    sortedDataKeys: string[] | null | undefined,
+) {
+    const selectedWidgets = sortedDataKeys
+        ?.reduce((acc, v) => {
+            const textWidget = data?.find((tw) => tw.id === v);
+            if (textWidget) {
+                return [...acc, { ...textWidget, selected: true }];
+            }
+            return acc;
+        }, [] as TreeSelectableWidget[]);
+    const remainingWidgets = data
+        ?.filter((v) => !sortedDataKeys?.includes(v.id))
+        .map((v) => ({
+            ...v,
+            selected: false,
+        }));
+    const widgetList = [
+        ...(selectedWidgets ?? []),
+        ...(remainingWidgets ?? []),
+    ];
+
+    return widgetList;
+}
