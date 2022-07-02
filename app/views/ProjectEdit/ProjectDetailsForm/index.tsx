@@ -157,6 +157,7 @@ const schema: FormSchema = {
         hasPubliclyViewableRestrictedLeads: [requiredCondition],
         hasPubliclyViewableConfidentialLeads: [requiredCondition],
         isPrivate: [],
+        isTest: [],
     }),
     validation: (value) => {
         if (
@@ -235,6 +236,7 @@ const CURRENT_PROJECT = gql`
             createdAt
             description
             isPrivate
+            isTest
             hasPubliclyViewableUnprotectedLeads
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
@@ -308,6 +310,7 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 createdAt
                 description
                 isPrivate
+                isTest
                 hasPubliclyViewableUnprotectedLeads
                 hasPubliclyViewableConfidentialLeads
                 hasPubliclyViewableRestrictedLeads
@@ -587,6 +590,13 @@ function ProjectDetailsForm(props: Props) {
         [setError, validate, createProject, projectId, updateProject],
     );
 
+    const handleTitleChange = useCallback((val: string | undefined) => {
+        if (val && (val.search(/\btest\b/i)) !== -1) {
+            setFieldValue(true, 'isTest');
+        }
+        setFieldValue(val, 'title');
+    }, [setFieldValue]);
+
     const projectDetails = projectDetailsResponse?.project;
 
     return (
@@ -609,12 +619,18 @@ function ProjectDetailsForm(props: Props) {
                         className={styles.input}
                         name="title"
                         disabled={disabled}
-                        onChange={setFieldValue}
+                        onChange={handleTitleChange}
                         value={value?.title}
                         error={error?.title}
                         label={_ts('projectEdit', 'projectTitle')}
                         placeholder={_ts('projectEdit', 'projectTitle')}
                         autoFocus
+                    />
+                    <Switch
+                        name="isTest"
+                        label="Is Test Project"
+                        value={value?.isTest}
+                        onChange={setFieldValue}
                     />
                     <div className={styles.dates}>
                         <DateInput
