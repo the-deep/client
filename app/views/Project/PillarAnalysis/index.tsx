@@ -327,22 +327,6 @@ function PillarAnalysis() {
     // NOTE: retain entries mapping to show entry information in entry cards
     const [entriesMapping, setEntriesMapping] = useState<Obj<EntryMin>>({});
 
-    const usedUpEntriesMap = useMemo(
-        () => {
-            const usedUpEntries = value.analyticalStatements?.map(
-                (statement) => statement.analyticalEntries?.map(
-                    (entry) => String(entry.entry),
-                ),
-            ).flat().filter(isDefined);
-            return listToMap(
-                usedUpEntries,
-                (item) => item,
-                () => true,
-            );
-        },
-        [value.analyticalStatements],
-    );
-
     // NOTE: write analysis data on redux
     /*
     useEffect(
@@ -621,13 +605,11 @@ function PillarAnalysis() {
             createdAt: data.createdAt,
             // tabularFieldData: data.tabularFieldData,
             entryType: data.entryType,
-            disabled: usedUpEntriesMap?.[key],
             pillarId,
             pillarModifiedDate: pillarAnalysisFromState?.modifiedAt,
             discardedTags,
             onEntryDiscard: getEntries,
         }), [
-            usedUpEntriesMap,
             pillarId,
             getEntries,
             discardedTags,
