@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 import {
     SearchMultiSelectInput,
@@ -7,14 +7,23 @@ import {
 import { useQuery, gql } from '@apollo/client';
 
 import {
-    OrganizationOptionsQuery,
-    OrganizationOptionsQueryVariables,
+    MultiOrganizationOptionsQuery,
+    MultiOrganizationOptionsQueryVariables,
 } from '#generated/types';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
-const ORGANIZATIONS = gql`
-    query OrganizationOptions($search: String) {
-        organizations(search: $search) {
+const MULTI_ORGANIZATIONS = gql`
+    query MultiOrganizationOptions(
+        $search: String,
+        $page: Int,
+        $pageSize: Int,
+    ) {
+        organizations(
+            search: $search,
+            page: $page,
+            pageSize: $pageSize,
+        ) {
+            page
             results {
                 id
                 title
@@ -28,7 +37,7 @@ const ORGANIZATIONS = gql`
     }
 `;
 
-export type BasicOrganization = NonNullable<NonNullable<NonNullable<OrganizationOptionsQuery['organizations']>['results']>[number]>;
+export type BasicOrganization = NonNullable<NonNullable<NonNullable<MultiOrganizationOptionsQuery['organizations']>['results']>[number]>;
 
 type Def = { containerClassName?: string };
 type OrganizationMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
@@ -63,15 +72,57 @@ function OrganizationSearchMultiSelectInput<K extends string>(
 
     const variables = useMemo(() => ({
         search: debouncedSearchText,
+        page: 1,
+        pageSize: 10,
     }), [debouncedSearchText]);
 
-    const { data, loading } = useQuery<OrganizationOptionsQuery, OrganizationOptionsQueryVariables>(
-        ORGANIZATIONS,
+    const {
+        data,
+        loading,
+        fetchMore,
+    } = useQuery<MultiOrganizationOptionsQuery, MultiOrganizationOptionsQueryVariables>(
+        MULTI_ORGANIZATIONS,
         {
             variables,
             skip: !opened,
         },
     );
+
+    const handleShowMoreClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (data?.organizations?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult) {
+                    return previousResult;
+                }
+
+                const oldOrgs = previousResult.organizations;
+                const newOrgs = fetchMoreResult?.organizations;
+
+                if (!newOrgs) {
+                    return previousResult;
+                }
+
+                return ({
+                    ...previousResult,
+                    organizations: {
+                        ...newOrgs,
+                        results: [
+                            ...(oldOrgs?.results ?? []),
+                            ...(newOrgs.results ?? []),
+                        ],
+                    },
+                });
+            },
+        });
+    }, [
+        fetchMore,
+        variables,
+        data?.organizations?.page,
+    ]);
 
     return (
         <SearchMultiSelectInput
@@ -84,6 +135,7 @@ function OrganizationSearchMultiSelectInput<K extends string>(
             optionsPending={loading}
             totalOptionsCount={data?.organizations?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
+            handleShowMoreClick={handleShowMoreClick}
         />
     );
 }

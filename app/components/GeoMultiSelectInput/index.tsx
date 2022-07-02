@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
@@ -13,10 +13,17 @@ const GEOAREAS = gql`
     query GeoAreaOptions(
         $projectId: ID!,
         $search: String,
+        $page: Int,
+        $pageSize: Int,
     ) {
         project(id: $projectId) {
             id
-            geoAreas(search: $search) {
+            geoAreas(
+                search: $search,
+                page: $page,
+                pageSize: $pageSize,
+            ) {
+                page
                 results {
                     adminLevelTitle
                     id
@@ -64,15 +71,60 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
     const variables = useMemo(() => ({
         projectId,
         search: debouncedSearchText,
+        page: 1,
+        pageSize: 10,
     }), [debouncedSearchText, projectId]);
 
-    const { data, loading } = useQuery<GeoAreaOptionsQuery, GeoAreaOptionsQueryVariables>(
+    const {
+        data,
+        loading,
+        fetchMore,
+    } = useQuery<GeoAreaOptionsQuery, GeoAreaOptionsQueryVariables>(
         GEOAREAS,
         {
             variables,
             skip: !opened,
         },
     );
+
+    const handleShowMoreClick = useCallback(() => {
+        fetchMore({
+            variables: {
+                ...variables,
+                page: (data?.project?.geoAreas?.page ?? 1) + 1,
+            },
+            updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!previousResult.project) {
+                    return previousResult;
+                }
+
+                const oldGeoAreas = previousResult.project.geoAreas;
+                const newGeoAreas = fetchMoreResult?.project?.geoAreas;
+
+                if (!newGeoAreas) {
+                    return previousResult;
+                }
+
+                return ({
+                    ...previousResult,
+                    project: {
+                        ...previousResult.project,
+                        geoAreas: {
+                            ...newGeoAreas,
+                            results: [
+                                ...(oldGeoAreas?.results ?? []),
+                                ...(newGeoAreas.results ?? []),
+                            ],
+                        },
+                    },
+                });
+            },
+        });
+    }, [
+        fetchMore,
+        variables,
+        data?.project?.geoAreas?.page,
+    ]);
 
     return (
         <SearchMultiSelectInput
@@ -85,6 +137,7 @@ function GeoMultiSelectInput<K extends string>(props: GeoSelectInputProps<K>) {
             optionsPending={loading}
             totalOptionsCount={data?.project?.geoAreas?.totalCount ?? undefined}
             onShowDropdownChange={setOpened}
+            handleShowMoreClick={handleShowMoreClick}
         />
     );
 }
