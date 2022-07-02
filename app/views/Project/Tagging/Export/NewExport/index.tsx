@@ -20,6 +20,7 @@ import {
 import {
     Button,
     Container,
+    Heading,
     TextInput,
     ListView,
     useModalState,
@@ -476,13 +477,20 @@ function NewExport(props: Props) {
                     className={styles.topBar}
                     contentClassName={styles.topBarContent}
                 >
-                    <TextInput
-                        className={styles.titleInput}
-                        name="queryTitle"
-                        value={queryTitle}
-                        onChange={setQueryTitle}
-                        label="Export Title"
-                    />
+                    <div>
+                        <Heading
+                            className={styles.title}
+                            size="extraSmall"
+                        >
+                            Export title
+                        </Heading>
+                        <TextInput
+                            className={styles.titleInput}
+                            name="queryTitle"
+                            value={queryTitle}
+                            onChange={setQueryTitle}
+                        />
+                    </div>
                     <Container
                         heading="File Format"
                         className={styles.fileFormatsContainer}

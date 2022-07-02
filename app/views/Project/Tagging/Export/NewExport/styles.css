@@ -24,9 +24,12 @@
                 display: flex;
                 align-items: center;
 
-                .title-input {
+                .title {
+                    padding-left: var(--dui-spacing-large);
+                }
+                .title-input{
                     border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-                    padding: var(--dui-spacing-large);
+                    padding: var(--dui-spacing-small) var(--dui-spacing-large) ;
                     width: 24rem;
                 }
 
