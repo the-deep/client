@@ -130,7 +130,9 @@ function PrimaryTaggingInput<K extends string>(props: PrimaryTaggingInput<K>) {
         (value: Section[]) => {
             setTempSections(undefined);
             setSections(value, name);
-            if (value?.length > 0 && value.find((tab) => tab.clientId === sectionToEdit)) {
+            if (value?.length < 0) {
+                setSelectedSection(undefined);
+            } else if (value.find((tab) => tab.clientId === sectionToEdit)) {
                 setSelectedSection(sectionToEdit);
             } else {
                 const firstTab = value?.length > 0 ? value[0].clientId : undefined;
