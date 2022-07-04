@@ -16,6 +16,7 @@ import {
 
     projectDetailsSelector,
     geoOptionsForProjectSelector,
+    editAryShouldShowProtectionInfo,
 } from '#redux';
 
 import OrganigramInput from '#components/input/OrganigramInput/';
@@ -25,6 +26,41 @@ import Header from '../Header';
 
 import styles from './styles.scss';
 
+const protectionInfoItems = [
+    {
+        id: 1,
+        title: 'Protection Monitoring',
+    },
+    {
+        id: 2,
+        title: 'Protection Needs Assessment',
+    },
+    {
+        id: 3,
+        title: 'Case Management',
+    },
+    {
+        id: 4,
+        title: 'Population Data',
+    },
+    {
+        id: 5,
+        title: 'Protection Response',
+    },
+    {
+        id: 6,
+        title: 'Communicating with(in) Affected Communities',
+    },
+    {
+        id: 7,
+        title: 'Security & Situational Awareness',
+    },
+    {
+        id: 8,
+        title: 'Sectoral Systems/Other',
+    },
+];
+
 const propTypes = {
     affectedGroups: PropTypes.arrayOf(PropTypes.object).isRequired,
     focuses: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -32,11 +68,13 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.arrayOf(PropTypes.object).isRequired,
     pending: PropTypes.bool,
+    showProtectionInfo: PropTypes.bool,
 };
 
 const defaultProps = {
     geoOptions: {},
     pending: false,
+    showProtectionInfo: false,
 };
 
 const mapStateToProps = state => ({
@@ -46,6 +84,7 @@ const mapStateToProps = state => ({
     projectDetails: projectDetailsSelector(state),
     sectors: assessmentSectorsSelector(state),
     sources: assessmentSourcesSelector(state),
+    showProtectionInfo: editAryShouldShowProtectionInfo(state),
 });
 
 const idSelector = d => String(d.id);
@@ -68,6 +107,7 @@ export default class Focuses extends React.PureComponent {
             projectDetails,
             geoOptions,
             pending,
+            showProtectionInfo,
         } = this.props;
 
         const focusesTitle = _ts('editAssessment.methodology', 'focusesTitle');
@@ -102,10 +142,26 @@ export default class Focuses extends React.PureComponent {
                             showLabel={false}
                             faramElementName="sectors"
                             options={sectors}
-                            className={styles.content}
+                            className={_cs(styles.content, styles.sectors)}
                             keySelector={idSelector}
                             labelSelector={titleSelector}
                         />
+                        {showProtectionInfo && (
+                            <>
+                                <Header
+                                    title="Protection Information Management"
+                                    className={styles.header}
+                                />
+                                <ChecklistInput
+                                    showLabel={false}
+                                    faramElementName="protectionInfo"
+                                    options={protectionInfoItems}
+                                    className={styles.content}
+                                    keySelector={idSelector}
+                                    labelSelector={titleSelector}
+                                />
+                            </>
+                        )}
                     </div>
                     <div className={_cs(styles.sectionItem)}>
                         <Header

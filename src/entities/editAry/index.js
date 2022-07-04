@@ -81,6 +81,8 @@ const METADATA_GROUPS__STAKEHOLDER = 2;
 const METADATA_FIELDS__FAMILY = 21;
 const METADATA_FIELDS__COORDINATION = 6;
 
+const SECTOR_FIELDS__PROTECTION = 9;
+
 const COORDINATION__JOINT = '1';
 // const COORDINATION__HARMONIZED = '2';
 
@@ -94,6 +96,10 @@ export const shouldShowHNO = (basicInformation) => {
     const familyValue = basicInformation[METADATA_FIELDS__FAMILY];
     return familyValue === FAMILY__HNO;
 };
+
+export const shouldShowProtectionInfo = sectors => (
+    sectors.some(sector => sector === String(SECTOR_FIELDS__PROTECTION))
+);
 
 export const shouldShowCNA = (basicInformation) => {
     const coordinationValue = basicInformation[METADATA_FIELDS__COORDINATION];
@@ -243,7 +249,11 @@ export const createMetadataSchema = (aryTemplateMetadata = [], plannedAssessment
     };
 };
 
-export const createMethodologySchema = (aryTemplateMethodology = [], plannedAssessment = false) => {
+export const createMethodologySchema = (
+    aryTemplateMethodology = [],
+    plannedAssessment = false,
+    showProtectionInfo = false,
+) => {
     if (plannedAssessment) {
         return {
             fields: {
@@ -255,65 +265,79 @@ export const createMethodologySchema = (aryTemplateMethodology = [], plannedAsse
         };
     }
 
+    const schemaFields = {
+        attributes: {
+            keySelector: d => d.key,
+            identifier: (value) => {
+                if (isSecondaryDataReviewSelected(value)) {
+                    return 'secondaryDataReview';
+                }
+                return 'default';
+            },
+            member: {
+                secondaryDataReview: {
+                    fields: {
+                        key: [],
+                        ...listToMap(
+                            aryTemplateMethodology
+                                .map(group => group.fields)
+                                .flat()
+                                // Only show data collection technique
+                                .filter(isDataCollectionTechniqueColumn),
+                            field => field.id,
+                            field => createFieldSchema(field),
+                        ),
+                    },
+                },
+                default: {
+                    fields: {
+                        key: [],
+                        ...listToMap(
+                            aryTemplateMethodology
+                                .map(group => group.fields)
+                                .flat(),
+                            field => field.id,
+                            field => createFieldSchema(field),
+                        ),
+                    },
+                },
+            },
+            /*
+            validation: (value) => {
+                const errors = [];
+                if (!value || value.length < 1) {
+                    // FIXME: Use strings
+                    errors.push('There should be at least one item.');
+                }
+                return errors;
+            },
+            */
+        },
+
+        focuses: [],
+        sectors: [],
+        locations: [],
+        affectedGroups: [],
+
+        objectives: [],
+        dataCollectionTechniques: [],
+        sampling: [],
+        limitations: [],
+        protectionInfo: [],
+    };
+
+    if (showProtectionInfo) {
+        return {
+            fields: {
+                ...schemaFields,
+                protectionInfo: [],
+            },
+        };
+    }
+
     return {
         fields: {
-            attributes: {
-                keySelector: d => d.key,
-                identifier: (value) => {
-                    if (isSecondaryDataReviewSelected(value)) {
-                        return 'secondaryDataReview';
-                    }
-                    return 'default';
-                },
-                member: {
-                    secondaryDataReview: {
-                        fields: {
-                            key: [],
-                            ...listToMap(
-                                aryTemplateMethodology
-                                    .map(group => group.fields)
-                                    .flat()
-                                    // Only show data collection technique
-                                    .filter(isDataCollectionTechniqueColumn),
-                                field => field.id,
-                                field => createFieldSchema(field),
-                            ),
-                        },
-                    },
-                    default: {
-                        fields: {
-                            key: [],
-                            ...listToMap(
-                                aryTemplateMethodology
-                                    .map(group => group.fields)
-                                    .flat(),
-                                field => field.id,
-                                field => createFieldSchema(field),
-                            ),
-                        },
-                    },
-                },
-                /*
-                validation: (value) => {
-                    const errors = [];
-                    if (!value || value.length < 1) {
-                        // FIXME: Use strings
-                        errors.push('There should be at least one item.');
-                    }
-                    return errors;
-                },
-                */
-            },
-
-            focuses: [],
-            sectors: [],
-            locations: [],
-            affectedGroups: [],
-
-            objectives: [],
-            dataCollectionTechniques: [],
-            sampling: [],
-            limitations: [],
+            ...schemaFields,
         },
     };
 };
@@ -504,10 +528,11 @@ export const createSchema = (
     selectedFocuses,
     showHNO,
     showCNA,
+    showProtectionInfo,
 ) => {
     const schema = { fields: {
         metadata: createMetadataSchema(aryTemplateMetadata),
-        methodology: createMethodologySchema(aryTemplateMethodology),
+        methodology: createMethodologySchema(aryTemplateMethodology, false, showProtectionInfo),
         summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
         score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
     } };

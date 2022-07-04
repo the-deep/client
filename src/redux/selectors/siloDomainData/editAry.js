@@ -6,6 +6,7 @@ import {
     createComputeSchema,
     shouldShowHNO,
     shouldShowCNA,
+    shouldShowProtectionInfo,
 } from '#entities/editAry';
 
 import {
@@ -114,6 +115,19 @@ export const editArySelectedFocusesSelector = createSelector(
     },
 );
 
+export const editAryShouldShowProtectionInfo = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            methodology: {
+                sectors = emptyList,
+            } = {},
+        } = faramValues;
+        return shouldShowProtectionInfo(sectors);
+    },
+);
+
+
 export const editAryShouldShowHNO = createSelector(
     editAryFaramValuesSelector,
     (faramValues) => {
@@ -153,6 +167,7 @@ export const assessmentSchemaSelector = createSelector(
     editArySelectedFocusesSelector,
     editAryShouldShowHNO,
     editAryShouldShowCNA,
+    editAryShouldShowProtectionInfo,
 
     createSchema,
 );

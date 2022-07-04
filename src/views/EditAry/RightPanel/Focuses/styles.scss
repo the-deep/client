@@ -18,9 +18,12 @@
         }
 
         .content {
-            flex-grow: 1;
             padding: 0 var(--spacing-small);
             overflow-y: auto;
+
+            &:not(.sectors) {
+                flex-grow: 1;
+            }
 
             :global .list-view {
                 display: flex;
