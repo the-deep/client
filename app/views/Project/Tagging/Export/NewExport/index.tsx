@@ -82,7 +82,7 @@ import {
     getReportStructureVariant,
     isSubSectorIncluded,
     sortReportStructure,
-    sortWidgets,
+    selectAndSortWidgets,
 } from '../utils';
 import { PROJECT_FRAMEWORK_DETAILS, CREATE_EXPORT, PROJECT_SOURCE_STATS_FOR_EXPORT } from '../queries';
 import styles from './styles.css';
@@ -374,12 +374,12 @@ function NewExport(props: Props) {
 
                 const textWidgetsValue = widgets
                     ?.filter((v) => v.widgetId === 'TEXT');
-                const textWidgetList = sortWidgets(
+                const textWidgetList = selectAndSortWidgets(
                     textWidgetsValue,
                     state?.extraOptions?.reportTextWidgetIds,
                 );
                 const contextualWidgetsValue = filterContexualWidgets(widgets);
-                const contextualWidgetList = sortWidgets(
+                const contextualWidgetList = selectAndSortWidgets(
                     contextualWidgetsValue,
                     state?.extraOptions?.reportExportingWidgets,
                 );
