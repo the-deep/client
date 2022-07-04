@@ -402,7 +402,7 @@ export function sortReportStructure(
     return newData as Node[];
 }
 
-export function sortWidgets(
+export function selectAndSortWidgets(
     data: Widget[] | undefined,
     sortedDataKeys: string[] | null | undefined,
 ) {
