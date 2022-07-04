@@ -41,6 +41,7 @@
     "include": [
         "./app/index.tsx",
         "./app/declarations",
-        "./generated/types.tsx"
+        "./generated/types.tsx",
+        "./**/*.test.ts"
     ]
 }

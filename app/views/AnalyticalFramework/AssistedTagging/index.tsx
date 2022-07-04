@@ -12,6 +12,7 @@ import {
     analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
+    ConfirmButton,
     ListView,
     Card,
     Container,
@@ -33,6 +34,12 @@ import {
 } from '#generated/types';
 import generateString from '#utils/string';
 
+import {
+    getMatrix2dPossibleMappings,
+    getMatrix1dPossibleMappings,
+    getOptionTypePossibleMappings,
+    getOrganigramPossibleMappings,
+} from './utils';
 import { WidgetsType } from '../schema';
 import CheckButton from './CheckButton';
 import WidgetTagList from './WidgetTagList';
@@ -85,6 +92,16 @@ function AssistedTagging<K extends string>(props: Props<K>) {
             !tag.isCategory && !tag.hideInAnalysisFrameworkMapping
         ))
     ), [assistedPredictionTags]);
+
+    const predictionTagsMapByName = useMemo(() => (
+        listToMap(
+            predictionTags,
+            (tag) => tag.name.toLowerCase(),
+            (tag) => tag.id,
+        )
+    ), [
+        predictionTags,
+    ]);
 
     type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
     const setMappings = useCallback<SetMappingsFn>((newMappings) => {
@@ -212,6 +229,46 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         handleWidgetMappingsChange,
     ]);
 
+    const handleAutoMatchClick = useCallback(() => {
+        const items = widgets?.map((widget) => {
+            if (widget.widgetId === 'MATRIX2D') {
+                return getMatrix2dPossibleMappings(widget);
+            }
+            if (widget.widgetId === 'MATRIX1D') {
+                return getMatrix1dPossibleMappings(widget);
+            }
+            if (
+                widget.widgetId === 'SCALE'
+                || widget.widgetId === 'SELECT'
+                || widget.widgetId === 'MULTISELECT'
+            ) {
+                return getOptionTypePossibleMappings(widget);
+            }
+            if (widget.widgetId === 'ORGANIGRAM') {
+                return getOrganigramPossibleMappings(widget);
+            }
+            return [];
+        }).flat();
+
+        const mapping = items?.map((item) => {
+            const tagId = predictionTagsMapByName?.[item?.label?.toLowerCase()];
+            if (tagId) {
+                return {
+                    ...item,
+                    tag: tagId,
+                    clientId: randomString(),
+                };
+            }
+            return undefined;
+        }).filter(isDefined);
+
+        setMappings(mapping);
+    }, [
+        setMappings,
+        predictionTagsMapByName,
+        widgets,
+    ]);
+
     return (
         <div className={_cs(className, styles.assistedTagging)}>
             <Header
@@ -243,14 +300,25 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                         ),
                     },
                 )}
+                actionsContainerClassName={styles.actions}
                 actions={(
-                    <Switch
-                        name="isAssistedTaggingEnabled"
-                        value={assistedTaggingEnabled}
-                        onChange={onAssistedTaggingStatusChange}
-                        disabled={pending}
-                        label="Active"
-                    />
+                    <>
+                        <Switch
+                            name="isAssistedTaggingEnabled"
+                            value={assistedTaggingEnabled}
+                            onChange={onAssistedTaggingStatusChange}
+                            disabled={pending}
+                            label="Active"
+                        />
+                        <ConfirmButton
+                            name={undefined}
+                            onConfirm={handleAutoMatchClick}
+                            message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
+                            variant="tertiary"
+                        >
+                            Auto Match
+                        </ConfirmButton>
+                    </>
                 )}
             />
             <div
