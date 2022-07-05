@@ -19,6 +19,8 @@ import {
     DIMENSION_FIRST,
 } from '../../utils';
 
+import { ExcelColumnNode } from '..';
+
 import styles from './styles.css';
 
 const exportTypeTitle: { [key in ExportFormatEnum]: string } = {
@@ -40,6 +42,7 @@ interface Props {
     showMatrix2dOptions: boolean;
     textWidgets: TreeSelectableWidget[];
     contextualWidgets: TreeSelectableWidget[];
+    widgetColumns: ExcelColumnNode[];
     reportStructure?: Node[];
     onReportShowLeadEntryIdChange: (show: boolean) => void;
     onReportShowAssessmentDataChange: (show: boolean) => void;
@@ -50,6 +53,7 @@ interface Props {
     onIncludeSubSectorChange: (value: boolean) => void;
     onContextualWidgetsChange: (value: TreeSelectableWidget[]) => void;
     onTextWidgetsChange: (value: TreeSelectableWidget[]) => void;
+    onWidgetColumnChange: (value: ExcelColumnNode[]) => void;
 }
 function AdvancedOptionsSelection(props: Props) {
     const {
@@ -65,6 +69,7 @@ function AdvancedOptionsSelection(props: Props) {
         showMatrix2dOptions,
         contextualWidgets,
         textWidgets,
+        widgetColumns,
         onReportStructureChange,
         onReportStructureVariantChange,
         onReportShowLeadEntryIdChange,
@@ -74,6 +79,7 @@ function AdvancedOptionsSelection(props: Props) {
         onContextualWidgetsChange,
         onTextWidgetsChange,
         onExcelDecoupledChange,
+        onWidgetColumnChange,
     } = props;
 
     const handleSwapOrderValueChange = useCallback((newValue) => {
@@ -91,7 +97,7 @@ function AdvancedOptionsSelection(props: Props) {
     return (
         <Modal
             className={exportFileFormat !== 'XLSX' ? styles.modal : undefined}
-            size={exportFileFormat === 'XLSX' ? 'small' : 'large'}
+            size="large"
             heading={`Advanced Options - ${exportTypeTitle[exportFileFormat]}`}
             onCloseButtonClick={onCloseButtonClick}
             bodyClassName={styles.body}
@@ -217,6 +223,21 @@ function AdvancedOptionsSelection(props: Props) {
                         <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
                         <p>{_ts('export', 'decoupledEntriesTitle')}</p>
                     </div>
+                    {widgetColumns.length > 0 && (
+                        <Container
+                            className={styles.container}
+                            spacing="loose"
+                            heading="Columns"
+                            headingSize="extraSmall"
+                        >
+                            <TreeSelection
+                                name="columns"
+                                value={widgetColumns}
+                                onChange={onWidgetColumnChange}
+                                direction="vertical"
+                            />
+                        </Container>
+                    )}
                 </>
             )}
         </Modal>

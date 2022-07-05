@@ -331,3 +331,14 @@ export const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
         }
     }
 `;
+
+export const EXCEL_STATIC_COLUMNS = gql`
+    query excelStaticColumns {
+        staticColumnOptions: __type(name: "ExportExcelSelectedStaticColumnEnum") {
+            enumValues {
+                name
+                description
+            }
+        }
+    }
+`;
