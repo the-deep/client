@@ -9,9 +9,11 @@ import {
     IoInformationCircleOutline,
     IoTrashBinOutline,
 } from 'react-icons/io5';
+import ReactMarkdown from 'react-markdown';
 import {
     Button,
     Container,
+    Checkbox,
     PendingMessage,
     TextInput,
     DateInput,
@@ -52,6 +54,7 @@ import NonFieldError from '#components/NonFieldError';
 import UserContext from '#base/context/UserContext';
 import ProjectContext from '#base/context/ProjectContext';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
+import { termsNotice } from '#views/TermsOfService';
 import BooleanInput, { Option as BooleanOption } from '#components/selections/BooleanInput';
 import {
     ProjectDetails,
@@ -59,6 +62,7 @@ import {
 } from '#types';
 import routes from '#base/configs/routes';
 import { useModalState } from '#hooks/stateManagement';
+import generateString from '#utils/string';
 
 import _ts from '#ts';
 import {
@@ -346,6 +350,7 @@ function ProjectDetailsForm(props: Props) {
     } = props;
 
     const history = useHistory();
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
     const {
         pristine,
@@ -557,13 +562,19 @@ function ProjectDetailsForm(props: Props) {
         [groupedStakeholders, stakeholderOptions, projectDetailsLoading],
     );
 
+    const [
+        isTermsModalShown,
+        showTermsModal,
+        hideTermsModal,
+    ] = useModalState(false);
+
     const pending = projectDetailsLoading
         || createProjectPending
         || updateProjectPending;
 
     const disabled = pending;
 
-    const handleSubmit = useCallback(
+    const handleProjectUpdate = useCallback(
         () => {
             const submit = createSubmitHandler(
                 validate,
@@ -587,7 +598,13 @@ function ProjectDetailsForm(props: Props) {
             );
             submit();
         },
-        [setError, validate, createProject, projectId, updateProject],
+        [
+            setError,
+            createProject,
+            validate,
+            projectId,
+            updateProject,
+        ],
     );
 
     const handleTitleChange = useCallback((val: string | undefined) => {
@@ -599,14 +616,31 @@ function ProjectDetailsForm(props: Props) {
 
     const projectDetails = projectDetailsResponse?.project;
 
+    const handleTermsAccept = useCallback(() => {
+        setTermsAccepted(true);
+        hideTermsModal();
+    }, [hideTermsModal]);
+
+    const handleTermsCancel = useCallback(() => {
+        setTermsAccepted(false);
+        hideTermsModal();
+    }, [hideTermsModal]);
+
+    const shouldTermsBeAccepted = !projectId && !termsAccepted;
+
     return (
         <div className={styles.projectDetails}>
             <SubNavbarActions>
                 <Button
-                    disabled={disabled || pristine}
-                    onClick={handleSubmit}
+                    disabled={disabled || pristine || shouldTermsBeAccepted}
+                    title={
+                        (shouldTermsBeAccepted && !disabled && !pristine)
+                            ? 'You have to accept terms of use to create the project.'
+                            : undefined
+                    }
+                    onClick={handleProjectUpdate}
                     variant="primary"
-                    name="save"
+                    name={undefined}
                 >
                     Save Project
                 </Button>
@@ -791,20 +825,43 @@ function ProjectDetailsForm(props: Props) {
                             />
                         )}
                     </div>
-                    <Button
-                        name="deleteProject"
-                        disabled={(
-                            !projectId
-                            || projectDeletePending
-                            || userLastActiveProjectPending
-                        )}
-                        onClick={showDeleteProjectConfirmation}
-                        icons={(
-                            <IoTrashBinOutline />
-                        )}
-                    >
-                        {_ts('projectEdit', 'deleteProjectButtonLabel')}
-                    </Button>
+                    {!projectId && (
+                        <Checkbox
+                            name={undefined}
+                            label={generateString(
+                                'I accept the {termsButton}',
+                                {
+                                    termsButton: (
+                                        <Button
+                                            name={undefined}
+                                            variant="action"
+                                            onClick={showTermsModal}
+                                            className={styles.termsButton}
+                                        >
+                                            terms of use.
+                                        </Button>
+                                    ),
+                                },
+                            )}
+                            value={termsAccepted}
+                            onChange={setTermsAccepted}
+                        />
+                    )}
+                    {projectId && (
+                        <Button
+                            name="deleteProject"
+                            disabled={(
+                                projectDeletePending
+                                || userLastActiveProjectPending
+                            )}
+                            onClick={showDeleteProjectConfirmation}
+                            icons={(
+                                <IoTrashBinOutline />
+                            )}
+                        >
+                            {_ts('projectEdit', 'deleteProjectButtonLabel')}
+                        </Button>
+                    )}
                     {isDeleteModalVisible && (
                         <Modal
                             onCloseButtonClick={handleProjectDeleteConfirmCancel}
@@ -867,6 +924,35 @@ function ProjectDetailsForm(props: Props) {
                     return true;
                 }}
             />
+            {isTermsModalShown && (
+                <Modal
+                    onCloseButtonClick={hideTermsModal}
+                    size="large"
+                    heading="DEEP Terms of Use and Privacy Notice"
+                    footerActions={(
+                        <>
+                            <Button
+                                name={undefined}
+                                onClick={handleTermsCancel}
+                                variant="secondary"
+                            >
+                                Reject
+                            </Button>
+                            <Button
+                                name={undefined}
+                                onClick={handleTermsAccept}
+                                variant="primary"
+                            >
+                                Accept
+                            </Button>
+                        </>
+                    )}
+                >
+                    <ReactMarkdown className={styles.termsContent}>
+                        {termsNotice}
+                    </ReactMarkdown>
+                </Modal>
+            )}
         </div>
     );
 }

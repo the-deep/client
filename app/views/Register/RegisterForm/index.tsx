@@ -228,7 +228,7 @@ function RegisterModal(props: Props) {
                                                 onClick={toggleTermsModal}
                                                 className={styles.termsButton}
                                             >
-                                                terms of use
+                                                terms of use.
                                             </Button>
                                         ),
                                     },
