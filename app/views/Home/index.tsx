@@ -49,7 +49,11 @@ query RecentProjects{
             title
         }
         createdBy {
-            displayName
+            id
+            profile {
+                id
+                displayName
+            }
         }
         leads {
             totalCount
@@ -103,7 +107,11 @@ query FetchProject($projectId: ID!) {
             title
         }
         createdBy {
-            displayName
+            id
+            profile {
+                id
+                displayName
+            }
         }
         leads {
             totalCount
@@ -198,7 +206,7 @@ function Home(props: ViewProps) {
             startDate: data?.startDate,
             endDate: data?.endDate,
             description: data?.description,
-            projectOwnerName: data?.createdBy?.displayName,
+            projectOwnerName: data?.createdBy?.profile?.displayName,
             analysisFrameworkTitle: data?.analysisFramework?.title,
             analysisFramework: data?.analysisFramework?.id,
             totalUsers: data?.stats?.numberOfUsers,

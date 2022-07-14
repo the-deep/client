@@ -106,7 +106,7 @@ function ActivityItem(props: RecentActivityProps) {
                 <Avatar
                     className={styles.displayPicture}
                     src={undefined}
-                    name={activity?.createdBy?.displayName ?? undefined}
+                    name={activity?.createdBy?.profile?.displayName ?? undefined}
                 />
             )}
             childrenContainerClassName={styles.mainContent}
@@ -115,7 +115,7 @@ function ActivityItem(props: RecentActivityProps) {
                 {generateString(
                     '{createdByDisplayName} added {type} on {project}.',
                     {
-                        createdByDisplayName: activity?.createdBy?.displayName,
+                        createdByDisplayName: activity?.createdBy?.profile?.displayName,
                         type: typeDisplayText,
                         project: (
                             <Link

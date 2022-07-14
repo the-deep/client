@@ -48,8 +48,11 @@ export const PROJECT_MEMBERSHIP_BULK_REMOVE = gql`
                 deletedResult {
                     id
                     member {
-                        displayName
                         id
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
             }
@@ -78,12 +81,15 @@ export const PROJECT_USERS = gql`
                     id
                     joinedAt
                     member {
-                        displayName
                         id
-                        organization
-                        firstName
-                        lastName
                         emailDisplay
+                        profile {
+                            id
+                            displayName
+                            organization
+                            firstName
+                            lastName
+                        }
                     }
                     role {
                         id
@@ -92,7 +98,10 @@ export const PROJECT_USERS = gql`
                         type
                     }
                     addedBy {
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                         id
                     }
                 }
@@ -224,7 +233,7 @@ function UserList(props: Props) {
 
                 if (deletedUser) {
                     alert.show(
-                        `Successfully removed ${deletedUser.member.displayName} from this project.`,
+                        `Successfully removed ${deletedUser.member.profile.displayName} from this project.`,
                         { variant: 'success' },
                     );
                     refetch();
@@ -312,7 +321,7 @@ function UserList(props: Props) {
             createStringColumn<ProjectUser, string>(
                 'member',
                 _ts('projectEdit', 'memberName'),
-                (item) => item.member.displayName,
+                (item) => item.member.profile.displayName,
                 {
                     sortable: true,
                 },
@@ -320,7 +329,7 @@ function UserList(props: Props) {
             createStringColumn<ProjectUser, string>(
                 'memberOrganization',
                 _ts('projectEdit', 'memberOrganization'),
-                (item) => item.member.organization,
+                (item) => item.member.profile.organization,
             ),
             createStringColumn<ProjectUser, string>(
                 'memberEmail',
@@ -330,7 +339,7 @@ function UserList(props: Props) {
             createStringColumn<ProjectUser, string>(
                 'addedBy',
                 _ts('projectEdit', 'addedByName'),
-                (item) => item.addedBy?.displayName,
+                (item) => item.addedBy?.profile.displayName,
                 {
                     sortable: true,
                 },

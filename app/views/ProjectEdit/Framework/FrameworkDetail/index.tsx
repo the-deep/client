@@ -71,7 +71,11 @@ const FRAMEWORK_DETAILS = gql`
             }
             allowedPermissions
             createdBy {
-                displayName
+                id
+                profile {
+                    id
+                    displayName
+                }
             }
             primaryTagging {
                 widgets {
@@ -344,7 +348,7 @@ function FrameworkDetail(props: Props) {
                         <TextOutput
                             className={styles.block}
                             label={_ts('projectEdit', 'frameworkCreatorTitle')}
-                            value={frameworkDetails?.createdBy?.displayName}
+                            value={frameworkDetails?.createdBy?.profile?.displayName}
                             hideLabelColon
                         />
                         <TextOutput

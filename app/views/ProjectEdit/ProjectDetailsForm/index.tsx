@@ -235,7 +235,11 @@ const CURRENT_PROJECT = gql`
             startDate
             endDate
             createdBy {
-                displayName
+                id
+                profile {
+                    id
+                    displayName
+                }
             }
             createdAt
             description
@@ -274,7 +278,11 @@ mutation ProjectCreate($data: ProjectCreateInputType!) {
             hasPubliclyViewableConfidentialLeads
             hasPubliclyViewableRestrictedLeads
             createdBy {
-                displayName
+                id
+                profile {
+                    id
+                    displayName
+                }
             }
             createdAt
             description
@@ -309,7 +317,11 @@ mutation ProjectUpdate($projectId: ID!, $data: ProjectUpdateInputType!) {
                 startDate
                 endDate
                 createdBy {
-                    displayName
+                    id
+                    profile {
+                        id
+                        displayName
+                    }
                 }
                 createdAt
                 description
@@ -806,12 +818,12 @@ function ProjectDetailsForm(props: Props) {
                         />
                     </Container>
                     <div className={styles.createdByDetails}>
-                        {projectDetails?.createdBy?.displayName && (
+                        {projectDetails?.createdBy?.profile?.displayName && (
                             <TextInput
                                 name="createdByName"
                                 className={styles.input}
                                 label={_ts('projectEdit', 'projectCreatedBy')}
-                                value={projectDetails.createdBy.displayName}
+                                value={projectDetails.createdBy.profile.displayName}
                                 disabled
                             />
                         )}

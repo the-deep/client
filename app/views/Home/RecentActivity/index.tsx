@@ -28,7 +28,10 @@ const RECENT_ACTIVITIES_LIST = gql`
             entryId
             createdBy {
                 id
-                displayName
+                profile {
+                    id
+                    displayName
+                }
             }
             project {
                 id

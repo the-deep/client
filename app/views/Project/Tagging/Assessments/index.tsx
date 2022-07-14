@@ -60,7 +60,11 @@ const ASSESSMENT_LIST = gql`
                     }
                     createdAt
                     createdBy {
-                        displayName
+                        id
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
                 totalCount
@@ -152,7 +156,7 @@ function Assessments(props: Props) {
             createStringColumn<Assessment, string>(
                 'created_by',
                 'Created By',
-                (item) => item?.createdBy?.displayName,
+                (item) => item?.createdBy?.profile?.displayName,
             ),
             createDateColumn<Assessment, string>(
                 'created_at',

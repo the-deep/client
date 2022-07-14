@@ -56,7 +56,11 @@ const ASSESSMENT_LIST = gql`
                     createdAt
                     leadCounts
                     createdBy {
-                        displayName
+                        id
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
                 totalCount
@@ -154,7 +158,7 @@ function LeadGroups(props: Props) {
             createStringColumn<LeadGroup, string>(
                 'created_by',
                 'Created By',
-                (item) => item?.createdBy?.displayName,
+                (item) => item?.createdBy?.profile?.displayName,
             ),
             createNumberColumn<LeadGroup, string>(
                 'leadCounts',

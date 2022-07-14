@@ -125,7 +125,10 @@ export const PROJECT_ENTRIES = gql`
                         }
                         createdAt
                         createdBy {
-                            displayName
+                            profile {
+                                id
+                                displayName
+                            }
                         }
                         url
                         attachment {

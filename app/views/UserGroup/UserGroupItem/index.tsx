@@ -54,11 +54,14 @@ const USER_GROUP_MEMBERSHIP = gql`
                 roleDisplay
                 member {
                     id
-                    firstName
-                    lastName
-                    displayName
-                    organization
                     emailDisplay
+                    profile {
+                        id
+                        firstName
+                        lastName
+                        displayName
+                        organization
+                    }
                 }
             }
         }
@@ -85,7 +88,10 @@ const USER_GROUP_MEMBERSHIP_DELETE = gql`
                     roleDisplay
                     member {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
                 result {
@@ -93,7 +99,10 @@ const USER_GROUP_MEMBERSHIP_DELETE = gql`
                     id
                     member {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                     role
                 }
@@ -195,7 +204,7 @@ function UserGroupItem(props: Props) {
 
                 if (deletedUser) {
                     alert.show(
-                        `Successfully removed ${deletedUser.member.displayName} from this project.`,
+                        `Successfully removed ${deletedUser.member.profile.displayName} from this project.`,
                         { variant: 'success' },
                     );
                     refetchUserGroupMembers();
@@ -281,7 +290,7 @@ function UserGroupItem(props: Props) {
             createStringColumn<UserGroupMembership, string>(
                 'name',
                 _ts('usergroup', 'nameLabel'),
-                (item) => item.member?.displayName,
+                (item) => item.member?.profile.displayName,
             ),
             createDateColumn<UserGroupMembership, string>(
                 'joinedAt',
@@ -300,10 +309,12 @@ function UserGroupItem(props: Props) {
     const users = useMemo(() => (
         (userGroupMembershipResponse?.userGroup?.memberships ?? []).map((d) => ({
             id: d.member?.id,
-            displayName: d.member?.displayName,
+            profile: {
+                displayName: d.member?.profile.displayName,
+                firstName: d.member?.profile.firstName,
+                lastName: d.member?.profile.lastName,
+            },
             emailDisplay: d.member?.emailDisplay,
-            firstName: d.member?.firstName,
-            lastName: d.member?.lastName,
         }))
     ), [userGroupMembershipResponse?.userGroup?.memberships]);
 

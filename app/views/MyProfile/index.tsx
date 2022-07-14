@@ -78,9 +78,9 @@ interface Props {
 const ME_DETAILS = gql`
     query MeDetails {
         me {
-            displayName
             displayPicture
             displayPictureUrl
+            displayName
             emailOptOuts
             firstName
             id

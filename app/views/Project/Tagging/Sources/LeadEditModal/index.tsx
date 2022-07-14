@@ -80,8 +80,11 @@ const PROJECT_LEAD = gql`
                 title
                 assignee {
                     id
-                    displayName
                     emailDisplay
+                    profile {
+                        id
+                        displayName
+                    }
                 }
                 publishedOn
                 text
@@ -142,7 +145,10 @@ const LEAD_FRAGMENT = gql`
         title
         assignee {
             id
-            displayName
+            profile {
+                id
+                displayName
+            }
         }
         publishedOn
         text
@@ -262,7 +268,10 @@ function LeadEditModal(props: Props) {
         setProjectUserOptions,
     ] = useState<BasicProjectUser[] | undefined | null>(
         user ? [{
-            ...user,
+            id: user.id,
+            profile: {
+                displayName: user.displayName,
+            },
             emailDisplay: user.email ?? '',
         }] : undefined,
     );

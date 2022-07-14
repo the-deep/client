@@ -79,7 +79,10 @@ export const PROJECT_SOURCES = gql`
                     assessmentId
                     createdBy {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                     project
                     authors {
@@ -92,7 +95,10 @@ export const PROJECT_SOURCES = gql`
                     }
                     assignee {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                     source {
                         mergedAs {

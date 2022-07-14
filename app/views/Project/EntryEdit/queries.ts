@@ -65,8 +65,11 @@ export const LEAD_ENTRIES = gql`
                 clientId
                 assignee {
                     id
-                    displayName
                     emailDisplay
+                    profile {
+                        id
+                        displayName
+                    }
                 }
                 publishedOn
                 text
@@ -204,21 +207,24 @@ export const UPDATE_LEAD = gql`
             id
             leadUpdate(data: $data, id: $leadId) {
                 result {
-                    title,
+                    title
                     leadGroup {
-                        id,
-                        title,
-                    },
-                    title,
-                    clientId,
+                        id
+                        title
+                    }
+                    title
+                    clientId
                     assignee {
-                        id,
-                        displayName,
+                        id
+                        profile {
+                            id
+                            displayName
+                        }
                         emailDisplay
                     }
-                    publishedOn,
-                    text,
-                    url,
+                    publishedOn
+                    text
+                    url
                     attachment {
                         id
                         title

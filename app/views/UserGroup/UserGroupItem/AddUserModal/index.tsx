@@ -50,16 +50,22 @@ const USER_GROUP_MEMBERSHIP_EDIT = gql`
                     role
                     roleDisplay
                     member {
-                      id
-                      displayName
+                        id
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
                 result {
                     clientId
                     id
                     member {
-                      id
-                      displayName
+                        id
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                     role
                 }
@@ -177,8 +183,8 @@ function AddUserModal(props: Props) {
                 } else if (user) {
                     alert.show(
                         userToEdit?.id
-                            ? `Successfully updated ${user.member.displayName}.`
-                            : `Successfully added ${user.member.displayName}.`,
+                            ? `Successfully updated ${user.member.profile.displayName}.`
+                            : `Successfully added ${user.member.profile.displayName}.`,
                         { variant: 'success' },
                     );
                     onUserAddSuccess();

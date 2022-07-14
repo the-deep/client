@@ -355,7 +355,10 @@ function LeadsPane(props: Props) {
                     [
                         ...(oldValues ?? []),
                         {
-                            ...user,
+                            id: user.id,
+                            profile: {
+                                displayName: user.displayName,
+                            },
                             emailDisplay: user.email ?? '',
                         },
                     ],

@@ -173,10 +173,12 @@ function AddUserModal(props: Props) {
         ? [
             {
                 id: String(userValue.member),
-                displayName: userValue.memberName,
-                // FIXME: Use graphql to fetch details for User
-                firstName: '',
-                lastName: '',
+                profile: {
+                    displayName: userValue.memberName,
+                    // FIXME: Use graphql to fetch details for User
+                    firstName: '',
+                    lastName: '',
+                },
                 emailDisplay: '',
             },
         ] : []

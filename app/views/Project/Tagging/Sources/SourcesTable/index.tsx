@@ -492,7 +492,7 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, string>(
                 'CREATED_BY',
                 _ts('sourcesTable', 'addedBy'),
-                (item) => item.createdBy?.displayName,
+                (item) => item.createdBy?.profile?.displayName,
                 {
                     sortable: true,
                     columnWidth: 144,
@@ -501,7 +501,7 @@ function SourcesTable(props: Props) {
             createStringColumn<Lead, string>(
                 'ASSIGNEE',
                 _ts('sourcesTable', 'assignee'),
-                (item) => item.assignee?.displayName,
+                (item) => item.assignee?.profile?.displayName,
                 {
                     sortable: true,
                     columnWidth: 144,

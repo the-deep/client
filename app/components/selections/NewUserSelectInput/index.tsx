@@ -34,12 +34,15 @@ const USERS = gql`
         ) {
             page
             results {
-                displayName
                 id
-                organization
-                firstName
-                lastName
                 emailDisplay
+                profile {
+                    id
+                    displayName
+                    organization
+                    firstName
+                    lastName
+                }
             }
             totalCount
         }
@@ -64,7 +67,7 @@ function keySelector(d: User) {
 }
 
 function labelSelector(d: User) {
-    const displayName = d.displayName ?? `${d.firstName} ${d.lastName}`;
+    const displayName = d.profile.displayName ?? `${d.profile.firstName} ${d.profile.lastName}`;
     return displayName;
 }
 

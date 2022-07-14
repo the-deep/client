@@ -34,8 +34,11 @@ const PROJECT_USERS = gql`
                     id
                     member {
                         id
-                        displayName
                         emailDisplay
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
                 totalCount
@@ -46,7 +49,7 @@ const PROJECT_USERS = gql`
 
 export type BasicProjectUser = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
 const keySelector = (d: BasicProjectUser) => d.id;
-const labelSelector = (d: BasicProjectUser) => d.displayName ?? ' ';
+const labelSelector = (d: BasicProjectUser) => d.profile.displayName ?? ' ';
 
 type Def = { containerClassName?: string };
 type ProjectUserSelectInputProps<K extends string> = SearchSelectInputProps<

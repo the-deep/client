@@ -40,14 +40,20 @@ mutation EntryReviewCommentUpdate($projectId: ID!, $data: EntryReviewCommentInpu
                 createdAt
                 createdBy {
                     id
-                    displayName
+                    profile {
+                        id
+                        displayName
+                    }
                     emailDisplay
                 }
                 entry
                 text
                 mentionedUsers {
                     id
-                    displayName
+                    profile {
+                        id
+                        displayName
+                    }
                     emailDisplay
                 }
             }
@@ -96,7 +102,7 @@ function EditCommentForm(props: Props) {
     const [members, setMembers] = useState<ProjectMember[] | undefined | null>(
         () => comment.mentionedUsers.map((u) => ({
             id: u.id,
-            displayName: u.displayName,
+            profile: u.profile,
             emailDisplay: u.emailDisplay,
         })),
     );

@@ -97,7 +97,10 @@ const PROJECT_USERGROUPS = gql`
                         modifiedAt
                         modifiedBy {
                             id
-                            displayName
+                            profile {
+                                id
+                                displayName
+                            }
                         }
                     }
                 }
@@ -268,7 +271,7 @@ function UserGroupList(props: Props) {
             createStringColumn<ProjectUsergroup, string>(
                 'addedBy',
                 _ts('projectEdit', 'addedByName'),
-                (item) => item.usergroup.modifiedBy?.displayName,
+                (item) => item.usergroup.modifiedBy?.profile?.displayName,
                 {
                     sortable: true,
                 },

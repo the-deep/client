@@ -166,7 +166,10 @@ export const PROJECT_LEADS = gql`
                     publishedOn
                     createdBy {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                     project
                     authors {
@@ -179,7 +182,10 @@ export const PROJECT_LEADS = gql`
                     }
                     assignee {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                     source {
                         mergedAs {

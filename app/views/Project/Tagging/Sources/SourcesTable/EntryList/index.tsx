@@ -105,7 +105,10 @@ export const LEAD_ENTRIES = gql`
                         }
                         createdAt
                         createdBy {
-                            displayName
+                            profile {
+                                id
+                                displayName
+                            }
                         }
                     }
                     attributes {

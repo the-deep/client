@@ -838,7 +838,7 @@ function AnalyticalFramework(props: Props) {
                                             <TextInput
                                                 className={styles.createdBy}
                                                 name="createdBy"
-                                                value={framework?.createdBy?.displayName}
+                                                value={framework?.createdBy?.profile?.displayName}
                                                 disabled
                                                 label={_ts('analyticalFramework', 'createdBy')}
                                             />

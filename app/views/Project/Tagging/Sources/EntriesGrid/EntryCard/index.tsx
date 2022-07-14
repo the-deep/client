@@ -243,7 +243,7 @@ function EntryCard(props: Props) {
                     />
                     <TextOutput
                         label="Added by"
-                        value={leadDetails.createdBy?.displayName}
+                        value={leadDetails.createdBy?.profile?.displayName}
                     />
                     {authorsDetailText && (
                         <TextOutput

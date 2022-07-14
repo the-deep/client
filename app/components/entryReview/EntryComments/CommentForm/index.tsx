@@ -48,7 +48,9 @@ interface Props {
     projectId: string;
     commentAssignee: {
         id: string;
-        displayName?: string | null | undefined;
+        profile: {
+            displayName?: string | null | undefined;
+        };
         emailDisplay: string;
     } | null | undefined;
 }

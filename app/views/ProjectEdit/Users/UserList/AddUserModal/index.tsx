@@ -95,7 +95,10 @@ const PROJECT_MEMBERSHIP_BULK = gql`
                     id
                     member  {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                     }
                 }
             }
@@ -194,8 +197,8 @@ function AddUserModal(props: Props) {
                 } else if (user) {
                     alert.show(
                         projectUserToEdit
-                            ? `Successfully updated ${user.member.displayName}.`
-                            : `Successfully added ${user.member.displayName}.`,
+                            ? `Successfully updated ${user.member.profile.displayName}.`
+                            : `Successfully added ${user.member.profile.displayName}.`,
                         { variant: 'success' },
                     );
                     onProjectUserChange();

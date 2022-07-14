@@ -40,8 +40,11 @@ query ReviewComments(
                 id
                 createdBy {
                     id
-                    displayName
                     emailDisplay
+                    profile {
+                        id
+                        displayName
+                    }
                 }
             }
             reviewComments (
@@ -59,7 +62,10 @@ query ReviewComments(
                     createdAt
                     createdBy {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                         emailDisplay
                     }
                     entry
@@ -67,7 +73,10 @@ query ReviewComments(
                     text
                     mentionedUsers {
                         id
-                        displayName
+                        profile {
+                            id
+                            displayName
+                        }
                         emailDisplay
                     }
                 }

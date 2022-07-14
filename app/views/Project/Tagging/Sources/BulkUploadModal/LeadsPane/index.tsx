@@ -101,7 +101,10 @@ function LeadsPane(props: Props) {
         setProjectUserOptions,
     ] = useState<BasicProjectUser[] | undefined | null>(
         user ? [{
-            ...user,
+            id: user.id,
+            profile: {
+                displayName: user.displayName,
+            },
             emailDisplay: user.email ?? '',
         }] : undefined,
     );

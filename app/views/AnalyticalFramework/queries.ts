@@ -70,7 +70,10 @@ const FRAMEWORK = gql`
         assistedTaggingEnabled
         createdBy {
             id
-            displayName
+            profile {
+                id
+                displayName
+            }
         }
         createdAt
         modifiedAt

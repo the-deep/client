@@ -31,7 +31,7 @@ interface Props {
 type MentionedUserType = NonNullable<CommentItem['mentionedUsers']>[number];
 
 const handleKeySelector = (value: MentionedUserType) => (value.id);
-const handleLabelSelector = (value: MentionedUserType) => (value.displayName ?? value.id);
+const handleLabelSelector = (value: MentionedUserType) => (value.profile.displayName ?? value.id);
 
 function Comment(props: Props) {
     const {
@@ -90,7 +90,7 @@ function Comment(props: Props) {
                 <div className={styles.commentSection}>
                     <div className={styles.userAction}>
                         <span className={styles.userName}>
-                            {createdBy?.displayName}
+                            {createdBy?.profile?.displayName}
                         </span>
                         &nbsp;
                         {commentType && (
