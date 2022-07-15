@@ -40,7 +40,7 @@ import {
     PartialFormType,
 } from '#views/Project/Tagging/Sources/SourcesFilter/schema';
 import { transformRawFiltersToFormValues } from '#views/Project/Tagging/Sources/utils';
-import AppliedFilters from '#views/Project/Tagging/Sources/AppliedFilters';
+import SourcesAppliedFilters from '#views/Project/Tagging/Sources/AppliedFilters';
 import SourcesFilterContext from '#views/Project/Tagging/Sources/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '#views/Project/Tagging/Sources/SourcesFilter';
 import { ExportItem } from '#views/Project/Tagging/Export/ExportHistory';
@@ -367,7 +367,7 @@ function NewAssessmentExport(props: Props) {
                                 variant="accent"
                             />
                         </div>
-                        <AppliedFilters
+                        <SourcesAppliedFilters
                             className={styles.appliedFilters}
                             projectId={projectId}
                             value={sourcesFilterValue}

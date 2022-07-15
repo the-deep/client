@@ -65,10 +65,27 @@ import EntryList from './EntryList';
 import { PROJECT_SOURCES } from '../queries';
 import styles from './styles.css';
 
+const DELETE_LEAD = gql`
+    mutation DeleteLead(
+        $projectId: ID!,
+        $leadId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            leadDelete(id: $leadId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
+
+// FIXME: use another util
 function sourcesKeySelector(d: Lead) {
     return d.id;
 }
 
+// FIXME: use another util
 export function organizationUrlSelector(
     org: {
         url?: string;
@@ -93,21 +110,6 @@ const statusVariantMap: Record<Lead['status'], 'default' | 'gradient1' | 'comple
     TAGGED: 'complement1',
 };
 
-const DELETE_LEAD = gql`
-    mutation DeleteLead(
-        $projectId: ID!,
-        $leadId: ID!,
-    ) {
-        project(id: $projectId) {
-            id
-            leadDelete(id: $leadId) {
-                ok
-                errors
-            }
-        }
-    }
-`;
-
 const defaultMaxItemsPerPage = 10;
 
 interface Props {
@@ -127,22 +129,34 @@ function SourcesTable(props: Props) {
         onSourcesGetSuccess,
     } = props;
 
+    const alert = useAlert();
+
     const filters = useMemo(() => (
         getProjectSourcesQueryVariables(
             rawFilters as Omit<FilterFormType, 'projectId'>,
         )
     ), [rawFilters]);
 
+    const entriesFilter = useMemo(
+        () => transformSourcesFilterToEntriesFilter(filters),
+        [filters],
+    );
+
     const [activePage, setActivePage] = useState(1);
     const [selectedLeads, setSelectedLeads] = useState<Lead[]>([]);
     const [maxItemsPerPage, setMaxItemsPerPage] = useState(defaultMaxItemsPerPage);
 
+    const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
+
+    const [
+        showSingleSourceModal,
+        setShowSingleSourceModalTrue,
+        setShowSingleSourceModalFalse,
+    ] = useBooleanState(false);
+
     useEffect(() => {
         setActivePage(1);
     }, [filters]);
-
-    const [leadToEdit, setLeadToEdit] = useState<string | undefined>();
-    const alert = useAlert();
 
     const variables = useMemo(
         (): ProjectSourcesQueryVariables | undefined => {
@@ -178,9 +192,7 @@ function SourcesTable(props: Props) {
 
     const [
         deleteLead,
-        {
-            loading: leadDeletePending,
-        },
+        { loading: leadDeletePending },
     ] = useMutation<DeleteLeadMutation, DeleteLeadMutationVariables>(
         DELETE_LEAD,
         {
@@ -216,6 +228,24 @@ function SourcesTable(props: Props) {
     const sourcesResponse = projectSourcesResponse?.project?.leads;
     const sources = sourcesResponse?.results;
 
+    const {
+        pending: bulkDeletePending,
+        trigger: bulkLeadDeleteTrigger,
+    } = useLazyRequest<unknown, string[]>({
+        url: `server://project/${projectId}/leads/bulk-delete/`,
+        method: 'POST',
+        body: (ctx) => ({ leads: ctx }),
+        onSuccess: () => {
+            alert.show(
+                'Successfully deleted sources!',
+                { variant: 'success' },
+            );
+            setSelectedLeads([]);
+            getProjectSources();
+        },
+        failureMessage: 'Failed to delete leads.',
+    });
+
     const clearSelection = useCallback(() => {
         setSelectedLeads([]);
     }, []);
@@ -239,8 +269,6 @@ function SourcesTable(props: Props) {
             ));
         }
     }, []);
-
-    const entriesFilter = useMemo(() => transformSourcesFilterToEntriesFilter(filters), [filters]);
 
     const [
         rowModifier,
@@ -272,12 +300,6 @@ function SourcesTable(props: Props) {
         },
     );
 
-    const [
-        showSingleSourceModal,
-        setShowSingleSourceModalTrue,
-        setShowSingleSourceModalFalse,
-    ] = useBooleanState(false);
-
     const handleDelete = useCallback(
         (leadId: string) => {
             deleteLead({
@@ -295,23 +317,16 @@ function SourcesTable(props: Props) {
         setShowSingleSourceModalTrue();
     }, [setShowSingleSourceModalTrue]);
 
-    const {
-        pending: bulkDeletePending,
-        trigger: bulkLeadDeleteTrigger,
-    } = useLazyRequest<unknown, string[]>({
-        url: `server://project/${projectId}/leads/bulk-delete/`,
-        method: 'POST',
-        body: (ctx) => ({ leads: ctx }),
-        onSuccess: () => {
-            alert.show(
-                'Successfully deleted sources!',
-                { variant: 'success' },
-            );
-            setSelectedLeads([]);
-            getProjectSources();
-        },
-        failureMessage: 'Failed to delete leads.',
-    });
+    const handleSourceSaveSuccess = useCallback(() => {
+        setShowSingleSourceModalFalse();
+    }, [setShowSingleSourceModalFalse]);
+
+    const pending = projectSourcesPending || bulkDeletePending || leadDeletePending;
+
+    const expandedContextValue = useMemo(
+        () => ({ expandedRowKey, setExpandedRowKey }),
+        [expandedRowKey, setExpandedRowKey],
+    );
 
     const columns = useMemo(() => {
         const selectedLeadsMap = listToMap(selectedLeads, (d) => d.id, () => true);
@@ -522,17 +537,6 @@ function SourcesTable(props: Props) {
         handleDelete,
         projectId,
     ]);
-
-    const handleSourceSaveSuccess = useCallback(() => {
-        setShowSingleSourceModalFalse();
-    }, [setShowSingleSourceModalFalse]);
-
-    const pending = projectSourcesPending || bulkDeletePending || leadDeletePending;
-
-    const expandedContextValue = useMemo(
-        () => ({ expandedRowKey, setExpandedRowKey }),
-        [expandedRowKey, setExpandedRowKey],
-    );
 
     return (
         <>

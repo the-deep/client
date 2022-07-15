@@ -260,6 +260,7 @@ function EntryCard(props: Props) {
                         name={entry.id}
                         onClick={onHideTagsButtonClick}
                         variant="action"
+                        title="Close"
                     >
                         <IoClose />
                     </Button>

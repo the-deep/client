@@ -43,19 +43,21 @@ import schema, {
     PartialFormType,
 } from './schema';
 import EntryFilter from './EntryFilter';
-import useFilterOptions from './useFilterOptions';
 import styles from './styles.css';
 
 const initialValue: PartialFormType = {};
 
+// FIXME: use utils
 function organizationTypeKeySelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.id;
 }
 
+// FIXME: use utils
 function organizationTypeLabelSelector(value: Pick<OrganizationType, 'id' | 'title'>) {
     return value.title;
 }
 
+// FIXME: move this somewhere else
 export function getProjectSourcesQueryVariables(
     filters: Omit<FormType, 'projectId'>,
 ): Omit<FormType, 'projectId'> {
@@ -67,6 +69,7 @@ export function getProjectSourcesQueryVariables(
             { endOfDay: true },
         ),
         filterableData: filters.entriesFilterData.filterableData
+            // FIXME: we do not need to do this, we will filter on form itself
             ? filters.entriesFilterData.filterableData.filter((filterable) => (
                 isDefined(filterable.value)
                 || isDefined(filterable.valueGte)
@@ -85,6 +88,7 @@ export function getProjectSourcesQueryVariables(
     };
 }
 
+// FIXME: move this somewhere else
 export function useFilterState() {
     const {
         value,
@@ -138,6 +142,9 @@ interface Props {
     contentClassName?: string;
     error?: Error<FormType>;
     onChange: (...entries: EntriesAsList<PartialFormType>) => void;
+
+    optionsLoading: boolean;
+    optionsErrored: boolean;
 }
 
 function SourcesFilter(props: Props) {
@@ -152,6 +159,8 @@ function SourcesFilter(props: Props) {
         contentClassName,
         error: formError,
         onChange: setFieldValue,
+        optionsLoading,
+        optionsErrored,
     } = props;
 
     const error = getErrorObject(formError);
@@ -166,9 +175,6 @@ function SourcesFilter(props: Props) {
         setAuthorOrganizationOptions,
         sourceOrganizationOptions,
         setSourceOrganizationOptions,
-    } = useContext(SourcesFilterContext);
-
-    const {
         statusOptions,
         priorityOptions,
         confidentialityOptions,
@@ -177,9 +183,7 @@ function SourcesFilter(props: Props) {
         hasAssessmentOptions,
         entryTypeOptions,
         frameworkFilters,
-        loading,
-        error: sourceFilterOptionsError,
-    } = useFilterOptions(projectId);
+    } = useContext(SourcesFilterContext);
 
     return (
         <Tabs
@@ -233,7 +237,7 @@ function SourcesFilter(props: Props) {
                         value={value.statuses}
                         error={getErrorString(error?.statuses)}
                         label={_ts('sourcesFilter', 'status')}
-                        disabled={disabled || loading || !!sourceFilterOptionsError}
+                        disabled={disabled || optionsLoading || optionsErrored}
                     />
                     <DateDualRangeInput
                         variant="general"
@@ -267,7 +271,7 @@ function SourcesFilter(props: Props) {
                                 onChange={setFieldValue}
                                 label="Has Entry"
                                 error={error?.hasEntries}
-                                disabled={disabled || loading}
+                                disabled={disabled || optionsLoading}
                             />
                             <BooleanInput
                                 variant="general"
@@ -277,7 +281,7 @@ function SourcesFilter(props: Props) {
                                 onChange={setFieldValue}
                                 label="Assessment Status"
                                 error={error?.hasAssessment}
-                                disabled={disabled || loading}
+                                disabled={disabled || optionsLoading}
                             />
                         </>
                     )}
@@ -313,7 +317,7 @@ function SourcesFilter(props: Props) {
                         value={value.priorities}
                         error={getErrorString(error?.priorities)}
                         label={_ts('sourcesFilter', 'priority')}
-                        disabled={disabled || loading || !!sourceFilterOptionsError}
+                        disabled={disabled || optionsLoading || optionsErrored}
                     />
                     <MultiSelectInput
                         variant="general"
@@ -325,7 +329,7 @@ function SourcesFilter(props: Props) {
                         value={value.authoringOrganizationTypes}
                         error={getErrorString(error?.authoringOrganizationTypes)}
                         label={_ts('sourcesFilter', 'authoringOrganizationTypes')}
-                        disabled={disabled || loading || !!sourceFilterOptionsError}
+                        disabled={disabled || optionsLoading || optionsErrored}
                     />
                     <NewOrganizationMultiSelectInput
                         variant="general"
@@ -334,7 +338,7 @@ function SourcesFilter(props: Props) {
                         onChange={setFieldValue}
                         options={authorOrganizationOptions}
                         onOptionsChange={setAuthorOrganizationOptions}
-                        disabled={disabled || loading}
+                        disabled={disabled || optionsLoading}
                         label="Authoring Organization"
                         error={getErrorString(error?.authorOrganizations)}
                     />
@@ -345,7 +349,7 @@ function SourcesFilter(props: Props) {
                         onChange={setFieldValue}
                         options={sourceOrganizationOptions}
                         onOptionsChange={setSourceOrganizationOptions}
-                        disabled={disabled || loading}
+                        disabled={disabled || optionsLoading}
                         label="Source Organization"
                         error={getErrorString(error?.sourceOrganizations)}
                     />
@@ -360,7 +364,7 @@ function SourcesFilter(props: Props) {
                             value={value.confidentiality}
                             error={getErrorString(error?.confidentiality)}
                             label={_ts('sourcesFilter', 'confidentiality')}
-                            disabled={disabled || loading || !!sourceFilterOptionsError}
+                            disabled={disabled || optionsLoading || optionsErrored}
                         />
                     )}
                 </TabPanel>
@@ -376,7 +380,7 @@ function SourcesFilter(props: Props) {
                             projectId={projectId}
                             entryTypeOptions={entryTypeOptions}
                             frameworkFilters={frameworkFilters}
-                            optionsDisabled={loading || !!sourceFilterOptionsError}
+                            optionsDisabled={optionsLoading || optionsErrored}
                             allFiltersVisible
                             disabled={disabled}
                         />

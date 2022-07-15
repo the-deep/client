@@ -3,6 +3,24 @@ import React from 'react';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { GeoArea } from '#components/GeoMultiSelectInput';
+import {
+    FrameworkFilterType,
+} from '#types/newAnalyticalFramework';
+
+interface EnumValue {
+    name: string;
+    description?: string | null;
+}
+
+interface KeyLabel {
+    id: string;
+    title: string;
+}
+
+interface BooleanOption {
+    key: 'true' | 'false';
+    value: string;
+}
 
 interface ContextProps {
     createdByOptions: ProjectMember[] | undefined | null;
@@ -29,6 +47,16 @@ interface ContextProps {
     setGeoAreaOptions: React.Dispatch<
         React.SetStateAction<GeoArea[] | undefined | null>
     >;
+
+    statusOptions: EnumValue[] | undefined | null,
+    priorityOptions: EnumValue[] | undefined | null,
+    confidentialityOptions: EnumValue[] | undefined | null,
+    organizationTypeOptions: KeyLabel[] | undefined | null,
+    entryTypeOptions: EnumValue[] | undefined | null,
+    frameworkFilters: FrameworkFilterType[] | undefined | null,
+
+    hasEntryOptions: BooleanOption[] | undefined | null;
+    hasAssessmentOptions: BooleanOption[] | undefined | null;
 }
 
 const SourcesFilterContext = React.createContext<ContextProps>({
@@ -62,6 +90,15 @@ const SourcesFilterContext = React.createContext<ContextProps>({
         // eslint-disable-next-line no-console
         console.error('setGeoAreaOptions called on SourcesFilterContext without a provider', value);
     },
+
+    statusOptions: [],
+    priorityOptions: [],
+    confidentialityOptions: [],
+    organizationTypeOptions: [],
+    entryTypeOptions: [],
+    frameworkFilters: [],
+    hasEntryOptions: [],
+    hasAssessmentOptions: [],
 });
 
 export default SourcesFilterContext;

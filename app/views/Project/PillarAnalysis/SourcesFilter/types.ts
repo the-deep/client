@@ -21,6 +21,6 @@ export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables
 
 export type SourceFilterOptions = DeepReplace<
     SourceFilterOptionsQuery,
-    Omit<AnalysisFrameworkFilterTypeRaw, 'widgetTypeDisplay' | 'filterTypeDisplay' | 'widgetKey'>,
+    Omit<AnalysisFrameworkFilterTypeRaw, 'widgetTypeDisplay' | 'filterTypeDisplay'>,
     FrameworkFilterType
 >;

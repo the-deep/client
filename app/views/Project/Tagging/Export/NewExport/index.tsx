@@ -56,7 +56,7 @@ import BackLink from '#components/BackLink';
 import _ts from '#ts';
 
 import { ExportItem } from '../ExportHistory';
-import AppliedFilters from '../../Sources/AppliedFilters';
+import SourcesAppliedFilters from '../../Sources/AppliedFilters';
 import SourcesFilterContext from '../../Sources/SourcesFilterContext';
 import { transformRawFiltersToFormValues } from '../../Sources/utils';
 import { useFilterState, getProjectSourcesQueryVariables } from '../../Sources/SourcesFilter';
@@ -650,7 +650,7 @@ function NewExport(props: Props) {
                                 variant="accent"
                             />
                         </div>
-                        <AppliedFilters
+                        <SourcesAppliedFilters
                             className={styles.appliedFilters}
                             projectId={projectId}
                             value={sourcesFilterValue}

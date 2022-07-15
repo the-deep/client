@@ -14,19 +14,17 @@ function SubRegionCheckmark(props: SubRegionCheckmarkProps) {
         value,
     } = props;
 
+    if (value) {
+        return (
+            <IoGitMergeSharp
+                className={className}
+            />
+        );
+    }
     return (
-        <>
-            {value && (
-                <IoGitMergeSharp
-                    className={className}
-                />
-            )}
-            {!value && (
-                <IoGitMergeSharp
-                    className={className}
-                />
-            )}
-        </>
+        <IoGitMergeSharp
+            className={className}
+        />
     );
 }
 

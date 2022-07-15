@@ -11,6 +11,7 @@ import {
     FrameworkFilterType,
 } from '#types/newAnalyticalFramework';
 
+// FIXME: why did we use ProjectSourcesQueryVariables
 export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables,
     'statuses'
     | 'confidentiality'
@@ -19,8 +20,9 @@ export type SourcesFilterFields = PurgeNull<EnumFix<ProjectSourcesQueryVariables
     | 'ordering'
 >>;
 
+// FIXME: why did we use SourceFilterOptionsQuery
 export type SourceFilterOptions = DeepReplace<
     SourceFilterOptionsQuery,
-    Omit<AnalysisFrameworkFilterTypeRaw, 'widgetTypeDisplay' | 'filterTypeDisplay' | 'widgetKey'>,
+    Omit<AnalysisFrameworkFilterTypeRaw, 'widgetTypeDisplay' | 'filterTypeDisplay'>,
     FrameworkFilterType
 >;
