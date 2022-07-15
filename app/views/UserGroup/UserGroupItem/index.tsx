@@ -57,7 +57,6 @@ const USER_GROUP_MEMBERSHIP = gql`
                     firstName
                     lastName
                     displayName
-                    organization
                     emailDisplay
                 }
             }

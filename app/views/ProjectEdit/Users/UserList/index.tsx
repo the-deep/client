@@ -80,10 +80,13 @@ export const PROJECT_USERS = gql`
                     member {
                         displayName
                         id
-                        organization
                         firstName
                         lastName
                         emailDisplay
+                        profile {
+                            id
+                            organization
+                        }
                     }
                     role {
                         id
@@ -320,7 +323,7 @@ function UserList(props: Props) {
             createStringColumn<ProjectUser, string>(
                 'memberOrganization',
                 _ts('projectEdit', 'memberOrganization'),
-                (item) => item.member.organization,
+                (item) => item.member.profile.organization,
             ),
             createStringColumn<ProjectUser, string>(
                 'memberEmail',

@@ -6,6 +6,7 @@ import {
     PendingMessage,
     Container,
     Button,
+    Modal,
     useAlert,
     CheckListInput,
 } from '@the-deep/deep-ui';
@@ -24,11 +25,13 @@ import { useQuery, useMutation, gql } from '@apollo/client';
 
 import Avatar from '#components/Avatar';
 import DeepImageInput, { Option } from '#components/general/DeepImageInput';
+import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
 import _ts from '#ts';
 import {
     MeDetailsQuery,
     MeDetailsQueryVariables,
+    DeleteUserMutation,
     UpdateMeMutation,
     UpdateMeMutationVariables,
     UserEmailConditionOptOutEnum,
@@ -90,6 +93,15 @@ const ME_DETAILS = gql`
     }
 `;
 
+const DELETE_USER = gql`
+    mutation DeleteUser {
+        deleteUser {
+            errors
+            ok
+        }
+    }
+`;
+
 const UPDATE_ME = gql`
     mutation UpdateMe($data: UserMeInputType!) {
         updateMe(data: $data) {
@@ -131,6 +143,12 @@ function MyProfile(props: Props) {
 
     const alert = useAlert();
 
+    const [
+        isDeleteAccountModalVisible,
+        showDeleteAccountModal,
+        hideDeleteAccountModal,
+    ] = useModalState(false);
+
     const {
         pristine,
         value,
@@ -155,6 +173,40 @@ function MyProfile(props: Props) {
                     setValue(safeMe);
                     setUser(safeMe);
                 }
+            },
+        },
+    );
+
+    const [
+        deleteUser,
+        {
+            loading: userDeletePending,
+            data: userDeleteData,
+        },
+    ] = useMutation<DeleteUserMutation>(
+        DELETE_USER,
+        {
+            onCompleted: (response) => {
+                if (!response.deleteUser) {
+                    return;
+                }
+
+                if (response.deleteUser.ok) {
+                    setUser(undefined);
+                    alert.show(
+                        'Successfully deleted user.',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: (errors) => {
+                setError({
+                    [internal]: errors.message,
+                });
+                alert.show(
+                    'There was an error updating your profile!',
+                    { variant: 'error' },
+                );
             },
         },
     );
@@ -298,6 +350,16 @@ function MyProfile(props: Props) {
                         heading={_ts('myProfile', 'preferences')}
                         headingSize="small"
                         contentClassName={styles.inputContainer}
+                        footerIcons={(
+                            <Button
+                                className={styles.deleteButton}
+                                variant="secondary"
+                                onClick={showDeleteAccountModal}
+                                name={undefined}
+                            >
+                                Delete Account
+                            </Button>
+                        )}
                     >
                         <CheckListInput
                             className={styles.emailPreferences}
@@ -313,6 +375,46 @@ function MyProfile(props: Props) {
                             error={error?.emailOptOuts}
                         />
                     </Container>
+                    {isDeleteAccountModalVisible && (
+                        <Modal
+                            onCloseButtonClick={hideDeleteAccountModal}
+                            freeHeight
+                            size="small"
+                            heading="Delete your account"
+                            footerActions={(
+                                <>
+                                    <Button
+                                        className={styles.deleteButton}
+                                        variant="secondary"
+                                        onClick={hideDeleteAccountModal}
+                                        name={undefined}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        className={styles.deleteButton}
+                                        variant="primary"
+                                        onClick={deleteUser}
+                                        name={undefined}
+                                    >
+                                        Delete Account
+                                    </Button>
+                                </>
+                            )}
+                        >
+                            Deleting yourself from DEEP will remove your account
+                            permanently and cannot be reversed.
+                            Are you sure you want to delete your account?
+                            <NonFieldError
+                                error={transformToFormError(
+                                    userDeleteData?.deleteUser?.errors as ObjectError[],
+                                )}
+                            />
+                            {userDeletePending && (
+                                <PendingMessage />
+                            )}
+                        </Modal>
+                    )}
                 </div>
                 <div className={styles.buttonContainer}>
                     <Button
