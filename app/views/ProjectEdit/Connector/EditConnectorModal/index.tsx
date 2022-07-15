@@ -181,8 +181,7 @@ function EditConnectorModal(props: Props) {
             skip: !connectorId,
             variables,
             onCompleted: (response) => {
-                const connector = response?.project
-                    ?.unifiedConnector?.unifiedConnector as ConnectorInputType;
+                const connector = response?.project?.unifiedConnector?.unifiedConnector;
                 if (connector) {
                     setValue(removeNull(connector));
                 }

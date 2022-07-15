@@ -26,7 +26,7 @@ import {
 } from '@apollo/client';
 
 import {
-    LeadOrderingEnum,
+    // LeadOrderingEnum,
     SaveLeadFilterMutation,
     SaveLeadFilterMutationVariables,
     ProjectSavedLeadFilterQuery,
@@ -34,25 +34,50 @@ import {
 } from '#generated/types';
 
 import _ts from '#ts';
+import {
+    FrameworkFilterType,
+} from '#types/newAnalyticalFramework';
 import ProjectContext from '#base/context/ProjectContext';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
 import SourcesFilterContext from './SourcesFilterContext';
-import AppliedFilters from './AppliedFilters';
+import SourcesAppliedFilters from './SourcesAppliedFilters';
 import SourcesStats from './SourcesStats';
 import SourcesFilter, { useFilterState, getProjectSourcesQueryVariables } from './SourcesFilter';
 import { PartialFormType, FormType as FilterFormType } from './SourcesFilter/schema';
 import SourcesTable from './SourcesTable';
 import EntriesGrid from './EntriesGrid';
 import { SAVE_LEAD_FILTER, PROJECT_SAVED_LEAD_FILTER } from './queries';
-import { getSortState, transformRawFiltersToFormValues } from './utils';
+import {
+    // getSortState,
+    transformRawFiltersToFormValues,
+    SortDirection,
+} from './utils';
 
 import styles from './styles.css';
 
-const defaultSorting = {
+interface BooleanOption {
+    key: 'true' | 'false';
+    value: string;
+}
+
+const hasEntryOptions: BooleanOption[] = [
+    { key: 'true', value: 'Has entry' },
+    { key: 'false', value: 'No entries' },
+];
+
+const hasAssessmentOptions: BooleanOption[] = [
+    { key: 'true', value: 'Assessment completed' },
+    { key: 'false', value: 'Assessment not completed' },
+];
+
+const defaultSorting: {
+    name: string,
+    direction: SortDirection,
+} = {
     name: 'CREATED_AT',
-    direction: 'Descending',
+    direction: SortDirection.dsc,
 };
 
 interface Props {
@@ -66,12 +91,14 @@ function Sources(props: Props) {
 
     const { project } = React.useContext(ProjectContext);
     const activeProject = project?.id;
+
     const [
         filtersShown,
         showFilter,
         , ,
         toggleShowFilter,
     ] = useBooleanState(false);
+
     const activeView = useHash();
 
     const [
@@ -99,6 +126,16 @@ function Sources(props: Props) {
         setGeoAreaOptions,
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
+    // NOTE: data actually used to send to server
+    const [
+        sourcesFilters,
+        setSourcesFilters,
+    ] = useState<PartialFormType>({});
+
+    // NOTE: users should only be able to set "apply previous filter"
+    // if they have not changed anything
+    const [filterTrulyPristine, setFilterTrulyPristine] = useState(true);
+
     const {
         value: sourcesFilterValue,
         setFieldValue: setSourcesFilterFieldValue,
@@ -110,17 +147,10 @@ function Sources(props: Props) {
         setPristine,
     } = useFilterState();
 
-    const [filterTrulyPristine, setFilterTrulyPristine] = useState(true);
+    const sortState = useSortState(defaultSorting);
 
-    const [
-        sourcesFilters,
-        setSourcesFilters,
-    ] = useState<PartialFormType>({});
-
-    const sortState = useSortState();
-    const { sorting, setSorting } = sortState;
-    const validSorting = sorting || defaultSorting;
-    const ordering = validSorting.direction === 'Ascending'
+    const validSorting = sortState.sorting || defaultSorting;
+    const ordering = validSorting.direction === SortDirection.asc
         ? `ASC_${validSorting.name}`
         : `DESC_${validSorting.name}`;
 
@@ -128,17 +158,72 @@ function Sources(props: Props) {
         saveLeadFilter,
     ] = useMutation<SaveLeadFilterMutation, SaveLeadFilterMutationVariables>(
         SAVE_LEAD_FILTER,
+        {
+            onCompleted: (response) => {
+                if (!response?.project?.leadFilterSave?.ok) {
+                    // eslint-disable-next-line no-console
+                    console.error('Failed to save lead filters');
+                }
+            },
+            onError: () => {
+                // eslint-disable-next-line no-console
+                console.error('Failed to save lead filters');
+            },
+        },
     );
 
     const {
         data: projectSavedLeadFilterData,
         loading: projectSavedLeadFilterPending,
+        error: projectSavedLeadFilterError,
     } = useQuery<ProjectSavedLeadFilterQuery, ProjectSavedLeadFilterQueryVariables>(
         PROJECT_SAVED_LEAD_FILTER,
         {
             skip: !activeProject,
             variables: activeProject ? { projectId: activeProject } : undefined,
         },
+    );
+
+    const statusOptions = projectSavedLeadFilterData
+        ?.sourceStatusOptions?.enumValues;
+    const priorityOptions = projectSavedLeadFilterData
+        ?.sourcePriorityOptions?.enumValues;
+    const confidentialityOptions = projectSavedLeadFilterData
+        ?.sourceConfidentialityOptions?.enumValues;
+    // FIXME: this may be problematic in the future
+    const organizationTypeOptions = projectSavedLeadFilterData
+        ?.organizationTypes?.results;
+    const entryTypeOptions = projectSavedLeadFilterData
+        ?.entryTypeOptions?.enumValues;
+    const frameworkFilters = (projectSavedLeadFilterData
+        ?.project?.analysisFramework?.filters) as (FrameworkFilterType[] | null | undefined);
+
+    const userSavedLeadFilter = projectSavedLeadFilterData
+        ?.project?.userSavedLeadFilter;
+
+    const {
+        savedFilter,
+        savedFilterOptions,
+    } = useMemo(
+        () => {
+            if (!userSavedLeadFilter || !userSavedLeadFilter.filters) {
+                return {
+                    savedFilter: undefined,
+                    savedFilterOptions: undefined,
+                };
+            }
+            const {
+                // NOTE: we are not using ordering
+                ordering: orderingFilter,
+                ...others
+            } = userSavedLeadFilter.filters;
+
+            return {
+                savedFilter: transformRawFiltersToFormValues(others, frameworkFilters),
+                savedFilterOptions: userSavedLeadFilter.filtersData,
+            };
+        },
+        [userSavedLeadFilter, frameworkFilters],
     );
 
     const sourcesFilterContextValue = useMemo(() => ({
@@ -154,6 +239,15 @@ function Sources(props: Props) {
         setEntryCreatedByOptions,
         geoAreaOptions,
         setGeoAreaOptions,
+
+        statusOptions,
+        priorityOptions,
+        confidentialityOptions,
+        organizationTypeOptions,
+        hasAssessmentOptions,
+        hasEntryOptions,
+        entryTypeOptions,
+        frameworkFilters,
     }), [
         createdByOptions,
         assigneeOptions,
@@ -161,10 +255,17 @@ function Sources(props: Props) {
         sourceOrganizationOptions,
         entryCreatedByOptions,
         geoAreaOptions,
+        statusOptions,
+        priorityOptions,
+        confidentialityOptions,
+        organizationTypeOptions,
+        entryTypeOptions,
+        frameworkFilters,
     ]);
 
     const handleSourcesFiltersValueChange = useCallback(
         (...value: EntriesAsList<PartialFormType>) => {
+            // FIXME: let's use a different handler here
             if (!filtersShown) {
                 showFilter();
             }
@@ -174,23 +275,23 @@ function Sources(props: Props) {
     );
 
     const handleSourcesGetSuccess = useCallback(() => {
-        if (activeProject && !filterTrulyPristine) {
-            saveLeadFilter({
-                variables: {
-                    projectId: activeProject,
-                    filters: {
-                        ...getProjectSourcesQueryVariables(
-                            sourcesFilters as Omit<FilterFormType, 'projectId'>,
-                        ),
-                        ordering: [ordering as LeadOrderingEnum],
-                    },
-                },
-            });
+        if (!activeProject || filterTrulyPristine) {
+            return;
         }
+
+        const filters = getProjectSourcesQueryVariables(
+            sourcesFilters as Omit<FilterFormType, 'projectId'>,
+        );
+
+        saveLeadFilter({
+            variables: {
+                projectId: activeProject,
+                filters,
+            },
+        });
     }, [
         sourcesFilters,
         activeProject,
-        ordering,
         saveLeadFilter,
         filterTrulyPristine,
     ]);
@@ -212,33 +313,25 @@ function Sources(props: Props) {
     }, [setError, validate, handleSubmit]);
 
     const handleUsePreviousLeadFilter = useCallback(() => {
-        if (!projectSavedLeadFilterData?.project) {
-            return;
-        }
-
-        const { userSavedLeadFilter } = projectSavedLeadFilterData?.project ?? {};
-        if (userSavedLeadFilter?.filters) {
-            const { ordering: orderingFilter, ...others } = userSavedLeadFilter.filters;
-            setSorting(getSortState(orderingFilter));
-            setSourcesFilterValue(transformRawFiltersToFormValues(others));
-            setSourcesFilters(transformRawFiltersToFormValues(others));
+        if (savedFilter) {
+            setSourcesFilterValue(savedFilter);
+            setSourcesFilters(savedFilter);
             setPristine(true);
             setFilterTrulyPristine(false);
         }
-        if (userSavedLeadFilter?.filtersData) {
-            const { filtersData } = userSavedLeadFilter;
-            setCreatedByOptions(filtersData?.createdByOptions);
-            setAssigneeOptions(filtersData?.assigneeOptions);
-            setAuthorOrganizationOptions(filtersData?.authorOrganizationOptions);
-            setSourceOrganizationOptions(filtersData?.sourceOrganizationOptions);
-            setEntryCreatedByOptions(filtersData?.entryFilterCreatedByOptions);
-            setGeoAreaOptions(filtersData?.entryFilterGeoAreaOptions);
+        if (savedFilterOptions) {
+            setCreatedByOptions(savedFilterOptions?.createdByOptions);
+            setAssigneeOptions(savedFilterOptions?.assigneeOptions);
+            setAuthorOrganizationOptions(savedFilterOptions?.authorOrganizationOptions);
+            setSourceOrganizationOptions(savedFilterOptions?.sourceOrganizationOptions);
+            setEntryCreatedByOptions(savedFilterOptions?.entryFilterCreatedByOptions);
+            setGeoAreaOptions(savedFilterOptions?.entryFilterGeoAreaOptions);
         }
     }, [
-        projectSavedLeadFilterData,
-        setSorting,
         setSourcesFilterValue,
         setPristine,
+        savedFilter,
+        savedFilterOptions,
     ]);
 
     const handleClear = useCallback(() => {
@@ -248,7 +341,13 @@ function Sources(props: Props) {
         setFilterTrulyPristine(false);
     }, [clearSourcesFilterValue, setPristine]);
 
+    const isCurrentFilterEmpty = doesObjectHaveNoData(sourcesFilters, ['', null]);
     const isFilterEmpty = doesObjectHaveNoData(sourcesFilterValue, ['', null]);
+    const isSavedFilterEmpty = doesObjectHaveNoData(savedFilter, ['', null]);
+
+    if (!activeProject) {
+        return null;
+    }
 
     return (
         <div className={_cs(styles.sources, className)}>
@@ -258,13 +357,11 @@ function Sources(props: Props) {
             >
                 <SourcesFilterContext.Provider value={sourcesFilterContextValue}>
                     <div className={styles.statsContainer}>
-                        {activeProject && (
-                            <SourcesStats
-                                className={styles.stats}
-                                projectId={activeProject}
-                                filters={sourcesFilters}
-                            />
-                        )}
+                        <SourcesStats
+                            className={styles.stats}
+                            projectId={activeProject}
+                            filters={sourcesFilters}
+                        />
                     </div>
                     <div className={styles.topSection}>
                         <Header
@@ -280,9 +377,8 @@ function Sources(props: Props) {
                                     >
                                         Filter
                                     </Button>
-                                    {filterTrulyPristine && (
+                                    {(filterTrulyPristine && !isSavedFilterEmpty) && (
                                         <Button
-                                            disabled={projectSavedLeadFilterPending}
                                             name="usePreviousFilters"
                                             variant="secondary"
                                             onClick={handleUsePreviousLeadFilter}
@@ -316,7 +412,7 @@ function Sources(props: Props) {
                             )}
                         />
                         <div className={styles.filtersContainer}>
-                            {!(isFilterEmpty && pristine) && (
+                            {!(isCurrentFilterEmpty && isFilterEmpty) && (
                                 <div className={styles.buttons}>
                                     <Button
                                         disabled={pristine}
@@ -342,54 +438,50 @@ function Sources(props: Props) {
                                     </Button>
                                 </div>
                             )}
-                            {activeProject && (
-                                <AppliedFilters
-                                    className={styles.appliedFilters}
-                                    projectId={activeProject}
-                                    value={sourcesFilterValue}
-                                    onChange={handleSourcesFiltersValueChange}
-                                />
-                            )}
+                            <SourcesAppliedFilters
+                                className={styles.appliedFilters}
+                                value={sourcesFilterValue}
+                                onChange={handleSourcesFiltersValueChange}
+                            />
                         </div>
                     </div>
                     <div className={styles.sourceListContainer}>
-                        {filtersShown && activeProject && (
+                        {filtersShown && (
                             <SourcesFilter
                                 className={styles.filter}
                                 value={sourcesFilterValue}
                                 projectId={activeProject}
                                 onChange={handleSourcesFiltersValueChange}
                                 isEntriesOnlyFilter={activeView === 'grid'}
+                                optionsLoading={projectSavedLeadFilterPending}
+                                optionsErrored={!!projectSavedLeadFilterError}
                             />
                         )}
-                        {activeProject && (
-                            <>
-                                <TabPanel
-                                    name="table"
-                                    className={styles.leads}
-                                >
-                                    <SortContext.Provider value={sortState}>
-                                        <SourcesTable
-                                            className={styles.tableContainer}
-                                            onSourcesGetSuccess={handleSourcesGetSuccess}
-                                            filters={sourcesFilters}
-                                            projectId={activeProject}
-                                            ordering={ordering}
-                                        />
-                                    </SortContext.Provider>
-                                </TabPanel>
-                                <TabPanel
-                                    name="grid"
-                                    className={styles.leads}
-                                >
-                                    <EntriesGrid
-                                        projectId={String(activeProject)}
-                                        onSourcesGetSuccess={handleSourcesGetSuccess}
-                                        filters={sourcesFilters}
-                                    />
-                                </TabPanel>
-                            </>
-                        )}
+                        <TabPanel
+                            name="table"
+                            className={styles.leads}
+                        >
+                            <SortContext.Provider value={sortState}>
+                                <SourcesTable
+                                    className={styles.tableContainer}
+                                    onSourcesGetSuccess={handleSourcesGetSuccess}
+                                    filters={sourcesFilters}
+                                    projectId={activeProject}
+                                    // NOTE: we need to pass ordering for api calls
+                                    ordering={ordering}
+                                />
+                            </SortContext.Provider>
+                        </TabPanel>
+                        <TabPanel
+                            name="grid"
+                            className={styles.leads}
+                        >
+                            <EntriesGrid
+                                projectId={String(activeProject)}
+                                onSourcesGetSuccess={handleSourcesGetSuccess}
+                                filters={sourcesFilters}
+                            />
+                        </TabPanel>
                     </div>
                 </SourcesFilterContext.Provider>
             </Tabs>

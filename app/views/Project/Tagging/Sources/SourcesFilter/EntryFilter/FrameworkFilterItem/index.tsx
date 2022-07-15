@@ -6,7 +6,6 @@ import {
     encodeDate,
 } from '@togglecorp/fujs';
 import {
-    SelectInput,
     MultiSelectInput,
     TextInput,
     DateRangeInput,
@@ -121,9 +120,15 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         [name, onChange, filter.key],
     );
 
+    /*
     const handleSingleSelect = useCallback((val: string | undefined) => {
-        onChange({ filterKey: filter.key, valueList: val ? [val] : [], value: val }, name);
+        onChange({
+            filterKey: filter.key,
+            valueList: val ? [val] : [],
+            value: val,
+        }, name);
     }, [onChange, filter.key, name]);
+    */
 
     switch (filter.widgetType) {
         case 'DATE': {
@@ -314,7 +319,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
         }
         case 'SELECT': {
             return (
-                <SelectInput
+                <MultiSelectInput
                     variant={variant}
                     className={_cs(
                         className,
@@ -323,9 +328,9 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                         && styles.hidden,
                     )}
                     name="valueList"
-                    value={value?.value}
+                    value={value?.valueList}
                     label={title}
-                    onChange={handleSingleSelect}
+                    onChange={onFieldChange}
                     options={filter.properties?.options}
                     keySelector={filterKeySelector}
                     labelSelector={filterLabelSelector}

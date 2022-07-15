@@ -1,9 +1,3 @@
-.applied-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--dui-spacing-medium);
-}
-
 .dismissable-tag {
     display: flex;
     align-items: stretch;

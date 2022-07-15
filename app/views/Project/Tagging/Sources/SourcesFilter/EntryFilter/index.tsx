@@ -1,9 +1,11 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo, useContext, useCallback } from 'react';
 import {
     _cs,
     capitalize,
     listToMap,
     doesObjectHaveNoData,
+    isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     TextInput,
@@ -12,9 +14,9 @@ import {
 } from '@the-deep/deep-ui';
 import { IoSearch } from 'react-icons/io5';
 import {
-    useFormArray,
     useFormObject,
     SetValueArg,
+    isCallable,
 } from '@togglecorp/toggle-form';
 import {
     enumKeySelector,
@@ -30,6 +32,7 @@ import { SourceFilterOptions } from '../types';
 import { PartialEntriesFilterDataType } from '../schema';
 import styles from './styles.css';
 
+// FIXME: move this to the top
 const controlledStatusOptions: Option[] = [
     {
         key: 'true',
@@ -41,6 +44,7 @@ const controlledStatusOptions: Option[] = [
     },
 ];
 
+// FIXME: move this to the top
 const hasCommentOptions: Option[] = [
     {
         key: 'true',
@@ -90,9 +94,32 @@ function EntryFilter<K extends string>(props: Props<K>) {
         setEntryCreatedByOptions,
     } = useContext(SourcesFilterContext);
 
-    const {
-        setValue: onFrameworkFilterChange,
-    } = useFormArray<'filterableData', FilterableData>('filterableData', setFieldValue);
+    const onFrameworkFilterChange = useCallback(
+        (val: SetValueArg<FilterableData>, index: number | undefined) => {
+            setFieldValue(
+                (oldValue: FilterableData[] | undefined): FilterableData[] => {
+                    const newVal = [...(oldValue ?? [])];
+
+                    if (isNotDefined(index)) {
+                        newVal.push(isCallable(val) ? val(undefined) : val);
+                    } else {
+                        newVal[index] = isCallable(val)
+                            ? val(newVal[index])
+                            : val;
+                    }
+                    // We are filtering out the values that have no information at all
+                    return newVal.filter((filterable) => (
+                        isDefined(filterable.value)
+                        || isDefined(filterable.valueGte)
+                        || isDefined(filterable.valueLte)
+                        || (isDefined(filterable.valueList) && filterable.valueList.length > 0)
+                    ));
+                },
+                'filterableData',
+            );
+        },
+        [setFieldValue],
+    );
 
     const filterValuesMap = useMemo(() => (
         listToMap(
@@ -195,26 +222,25 @@ function EntryFilter<K extends string>(props: Props<K>) {
                 disabled={disabled || optionsDisabled}
                 label="Entry Type"
             />
-            {
-                frameworkFilters?.map((filter) => {
-                    const filterValue = filterValuesMap[filter.key];
-                    return (
-                        <FrameworkFilterItem
-                            variant="general"
-                            key={filter.id}
-                            name={filterValue?.index}
-                            title={capitalize(filter.title.toLowerCase() ?? '')}
-                            value={filterValue?.value}
-                            filter={filter}
-                            projectId={projectId}
-                            onChange={onFrameworkFilterChange}
-                            optionsDisabled={optionsDisabled}
-                            allFiltersVisible={allFiltersVisible}
-                            disabled={disabled}
-                        />
-                    );
-                })
-            }
+            {frameworkFilters?.map((filter) => {
+                const filterValue = filterValuesMap[filter.key];
+                return (
+                    <FrameworkFilterItem
+                        key={filter.id}
+                        variant="general"
+                        name={filterValue?.index}
+                        // FIXME: any reason to do this?
+                        title={capitalize(filter.title.toLowerCase() ?? '')}
+                        value={filterValue?.value}
+                        filter={filter}
+                        projectId={projectId}
+                        onChange={onFrameworkFilterChange}
+                        optionsDisabled={optionsDisabled}
+                        allFiltersVisible={allFiltersVisible}
+                        disabled={disabled}
+                    />
+                );
+            })}
         </>
     );
 }

@@ -274,6 +274,7 @@ export const PROJECT_SOURCES = gql`
 export const SAVE_LEAD_FILTER = gql`
     mutation SaveLeadFilter($projectId: ID!, $filters: LeadsFilterDataInputType!) {
         project(id: $projectId) {
+            id
             leadFilterSave(data: {filters: $filters}) {
                 errors
                 ok
@@ -294,6 +295,18 @@ export const PROJECT_SAVED_LEAD_FILTER = gql`
     query ProjectSavedLeadFilter($projectId: ID!) {
         project(id: $projectId) {
             id
+            analysisFramework {
+                id
+                filters {
+                    id
+                    filterType
+                    key
+                    properties
+                    title
+                    widgetKey
+                    widgetType
+                }
+            }
             userSavedLeadFilter {
                 id
                 title
@@ -304,6 +317,61 @@ export const PROJECT_SAVED_LEAD_FILTER = gql`
                 filters {
                     ...SourceFilterResponse
                 }
+            }
+        }
+        sourceStatusOptions: __type(name: "LeadStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourcePriorityOptions: __type(name: "LeadPriorityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        organizationTypes {
+            results {
+                id
+                title
+            }
+        }
+        emmEntititiesOptions: __type(name: "EmmEntityType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        emmRiskFactorsOptions: __type(name: "EmmKeyRiskFactorType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        emmKeywordsOptions: __type(name: "EmmKeyWordType") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        entryTypeOptions: __type(name: "EntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
             }
         }
     }

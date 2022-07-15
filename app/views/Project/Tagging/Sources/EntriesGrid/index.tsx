@@ -309,10 +309,8 @@ function EntriesGrid(props: Props) {
                     ),
                 );
                 const geoData = projectFromResponse.entries?.results
-                    ?.map((entry) => entry?.attributes)
-                    .flat()
-                    .map((attributes) => attributes?.geoSelectedOptions)
-                    .flat()
+                    ?.flatMap((entry) => entry?.attributes)
+                    .flatMap((attributes) => attributes?.geoSelectedOptions)
                     .filter(isDefined) ?? [];
                 const uniqueGeoData = unique(geoData, (d) => d.id);
 
