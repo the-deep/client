@@ -1,10 +1,10 @@
-export interface PillarFilterItem {
+interface PillarFilterItem {
     id: string;
     key: string;
     uniqueId: string;
 }
 
-export interface AnalyticalStatement {
+interface AnalyticalStatement {
     id?: number;
     clientId: string;
     order?: number;
@@ -86,11 +86,4 @@ export interface AnalysisElement {
     endDate: string;
     createdAt: string;
     modifiedAt: string;
-}
-
-export interface AnalysisPillarFormItem {
-    key?: number;
-    title?: number;
-    assignee?: number;
-    filters?: PillarFilterItem[];
 }

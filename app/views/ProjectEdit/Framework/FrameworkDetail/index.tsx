@@ -49,6 +49,7 @@ import {
     FrameworkDetailsQueryVariables,
     WidgetType as WidgetRaw,
 } from '#generated/types';
+import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
 
 import CloneFrameworkModal from '../CloneFrameworkModal';
 import styles from './styles.css';
@@ -59,9 +60,9 @@ function noop() {}
 const emptyObject = {};
 
 const FRAMEWORK_DETAILS = gql`
+    ${FRAMEWORK_FRAGMENT}
     query FrameworkDetails($frameworkId: ID!) {
         analysisFramework(id: $frameworkId) {
-            id
             title
             description
             createdAt
@@ -73,45 +74,8 @@ const FRAMEWORK_DETAILS = gql`
             createdBy {
                 displayName
             }
-            primaryTagging {
-                widgets {
-                    id
-                    clientId
-                    key
-                    order
-                    properties
-                    conditional {
-                        parentWidget
-                        parentWidgetType
-                        conditions
-                    }
-                    title
-                    widgetId
-                    width
-                    version
-                }
-                clientId
-                id
-                order
-                title
-                tooltip
-            }
-            secondaryTagging {
-                clientId
-                id
-                key
-                order
-                title
-                properties
-                conditional {
-                    parentWidget
-                    parentWidgetType
-                    conditions
-                }
-                widgetId
-                width
-                version
-            }
+            # NOTE: Does not need predictionTagsMapping from FrameworkResponse
+            ...FrameworkResponse
         }
     }
 `;

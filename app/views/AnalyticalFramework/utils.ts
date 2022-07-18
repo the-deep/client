@@ -126,6 +126,7 @@ function cloneMatrix2dWidget(widget: Matrix2dWidget): Matrix2dWidget {
     });
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export function cloneWidget(
     widget: Widget,
 ): Widget | undefined {
@@ -160,21 +161,4 @@ export function cloneWidget(
             // FIXME: add "not implemented" console
             return undefined;
     }
-}
-
-export function getOrganigramFlatOptions(
-    data?: OrganigramDatum,
-    prefix?: string,
-): Omit<OrganigramDatum, 'children'>[] {
-    if (!data) {
-        return [];
-    }
-    const { children, ...values } = data;
-    const label = `${prefix ? `${prefix}/` : ''}${values.label}`;
-
-    const childrenValues = children?.flatMap((v) => getOrganigramFlatOptions(v, label)) ?? [];
-    return [
-        { ...values, label },
-        ...childrenValues,
-    ];
 }

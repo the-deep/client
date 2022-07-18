@@ -160,7 +160,7 @@ const taggingRoute = wrap({
     path: '/tagging/',
     title: 'Tagging',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging')),
+    component: lazy(() => import('#views/Tagging')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -201,7 +201,7 @@ const entryEditRoute = wrap({
     path: '/leads/:leadId(\\d+)/',
     title: 'Edit Entry',
     navbarVisibility: false,
-    component: lazy(() => import('#views/Project/EntryEdit')),
+    component: lazy(() => import('#views/EntryEdit')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -230,7 +230,7 @@ const analysis = wrap({
     path: '/analysis-module/',
     title: 'Analysis',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/AnalysisModule')),
+    component: lazy(() => import('#views/AnalysisModule')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -256,7 +256,7 @@ const pillarAnalysis = wrap({
     path: '/analysis/:analysisId(\\d+)/pillar/:pillarAnalysisId(\\d+)/',
     title: 'Pillar Analysis',
     navbarVisibility: false,
-    component: lazy(() => import('#views/Project/PillarAnalysis')),
+    component: lazy(() => import('#views/PillarAnalysis')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -282,7 +282,7 @@ const sources = wrap({
     path: '/sources/',
     title: 'Sources',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/Sources')),
+    component: lazy(() => import('#views/Sources')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -293,7 +293,7 @@ const analysisDashboard = wrap({
     path: '/dashboard/',
     title: 'Dashboard',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/AnalysisModule/AnalysisDashboard')),
+    component: lazy(() => import('#views/AnalysisDashboard')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -304,7 +304,7 @@ const assessments = wrap({
     path: '/assessments/',
     title: 'Assessments',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/Assessments')),
+    component: lazy(() => import('#views/Assessments')),
     componentProps: {
     },
     checkPermissions: (_, project, skipProjectPermissionCheck) => {
@@ -323,7 +323,7 @@ const leadGroups = wrap({
     path: '/source-groups/',
     title: 'Source Groups',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/LeadGroups')),
+    component: lazy(() => import('#views/LeadGroups')),
     componentProps: {
     },
     checkPermissions: (_, project, skipProjectPermissionCheck) => {
@@ -342,7 +342,7 @@ const dashboard = wrap({
     path: '/dashboard/',
     title: 'Dashboard',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/Dashboard')),
+    component: lazy(() => import('#views/Dashboard')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -362,7 +362,7 @@ const aryDashboard = wrap({
     path: '/assessment-dashboard/',
     title: 'Assessments Dashboard',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/AryDashboard')),
+    component: lazy(() => import('#views/AryDashboard')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -386,7 +386,7 @@ const exportRoute = wrap({
     path: '/export/',
     title: 'Export',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/Tagging/Export')),
+    component: lazy(() => import('#views/Export')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -396,7 +396,7 @@ const analysisExportRoute = wrap({
     path: '/export/',
     title: 'Export',
     navbarVisibility: true,
-    component: lazy(() => import('#views/Project/AnalysisModule/Export')),
+    component: lazy(() => import('#views/AssessmentExport')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -406,7 +406,7 @@ const exportCreateRoute = wrap({
     path: '/export/new-entry/',
     title: 'New Entry Export',
     navbarVisibility: false,
-    component: lazy(() => import('#views/Project/Tagging/Export/NewExport')),
+    component: lazy(() => import('#views/NewExport')),
     componentProps: {},
     visibility: 'is-authenticated',
     checkPermissions: (_, project, skipProjectPermissionCheck) => {
@@ -424,7 +424,7 @@ const newAssessmentExportCreateRoute = wrap({
     path: '/export/new-assessment/',
     title: 'New Export',
     navbarVisibility: false,
-    component: lazy(() => import('#views/Project/Tagging/Export/NewAssessmentExport')),
+    component: lazy(() => import('#views/NewAssessmentExport')),
     componentProps: {},
     visibility: 'is-authenticated',
     checkPermissions: (_, project, skipProjectPermissionCheck) => {
@@ -442,7 +442,7 @@ const assessmentEditRoute = wrap({
     path: '/assessments/leads/:leadId(\\d+)/',
     title: 'Edit Assessment',
     navbarVisibility: false,
-    component: lazy(() => import('#views/Project/EditAssessment')),
+    component: lazy(() => import('#views/EditAssessment')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -466,7 +466,7 @@ const groupAssessmentEditRoute = wrap({
     path: '/assessments/lead-groups/:leadGroupId(\\d+)/',
     title: 'Edit Source Group Assessment',
     navbarVisibility: false,
-    component: lazy(() => import('#views/Project/EditGroupAssessment')),
+    component: lazy(() => import('#views/EditGroupAssessment')),
     componentProps: {
     },
     visibility: 'is-authenticated',
@@ -499,7 +499,7 @@ const documentViewerRedirect = wrap({
     path: '/permalink/leads-uuid/:leadHash/',
     title: 'Document Viewer',
     navbarVisibility: false,
-    component: lazy(() => import('../../redirects/DocumentViewer')),
+    component: lazy(() => import('#redirects/DocumentViewer')),
     componentProps: {
     },
     visibility: 'is-anything',
@@ -509,7 +509,7 @@ const entryEditRedirect = wrap({
     path: '/permalink/projects/:projectId/leads/:leadId/entries/:entryId/',
     title: 'Edit Entry',
     navbarVisibility: false,
-    component: lazy(() => import('../../redirects/EntryEdit')),
+    component: lazy(() => import('#redirects/EntryEdit')),
     componentProps: {
     },
     visibility: 'is-authenticated',
