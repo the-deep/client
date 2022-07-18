@@ -45,6 +45,7 @@ import {
     Matrix2dRowsSelectedCondition,
     Matrix2dSubColumnsSelectedCondition,
     Matrix2dSubRowsSelectedCondition,
+    Matrix2dCellsSelectedCondition,
     Conjunction,
     Matrix2dWidget,
 } from '#types/newAnalyticalFramework';
@@ -64,6 +65,7 @@ const options: Option[] = [
     { key: 'matrix2d-sub-rows-selected', label: 'Is sub row selected', invertedLabel: 'Is sub row not selected' },
     { key: 'matrix2d-columns-selected', label: 'Is column selected', invertedLabel: 'Is column not selected' },
     { key: 'matrix2d-sub-columns-selected', label: 'Is sub column selected', invertedLabel: 'Is sub column not selected' },
+    { key: 'matrix2d-cells-selected', label: 'Is cell selected', invertedLabel: 'Is cell not selected' },
     { key: 'empty', label: 'Is empty', invertedLabel: 'Is not empty' },
 ];
 function optionKeySelector(value: Option) {
@@ -95,7 +97,7 @@ export type PartialConditionType = PartialForm<
 
 type PartialConditionTypeNew = PartialForm<
     // eslint-disable-next-line max-len
-    Matrix2dColumnsSelectedCondition | Matrix2dRowsSelectedCondition | Matrix2dSubColumnsSelectedCondition | Matrix2dSubRowsSelectedCondition,
+    Matrix2dColumnsSelectedCondition | Matrix2dRowsSelectedCondition | Matrix2dSubColumnsSelectedCondition | Matrix2dSubRowsSelectedCondition | Matrix2dCellsSelectedCondition,
     'operator' | 'conjunctionOperator' | 'key' | 'order'
 >;
 
@@ -118,6 +120,7 @@ const conditionSchema: ConditionSchema = {
             || val.operator === 'matrix2d-rows-selected'
             || val.operator === 'matrix2d-sub-columns-selected'
             || val.operator === 'matrix2d-sub-rows-selected'
+            || val.operator === 'matrix2d-cells-selected'
         ) {
             return {
                 ...basicValidation,
@@ -290,6 +293,7 @@ function ConditionInput(props: ConditionInputProps) {
                 || value.operator === 'matrix2d-rows-selected'
                 || value.operator === 'matrix2d-sub-columns-selected'
                 || value.operator === 'matrix2d-sub-rows-selected'
+                || value.operator === 'matrix2d-cells-selected'
             ) && (
                 <SimpleMatrix2dConditionInput
                     index={index}
