@@ -14,7 +14,7 @@ import {
 } from '@togglecorp/fujs';
 
 import { Widget, getWidgetVersion } from '#types/newAnalyticalFramework';
-import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import { PartialEntryType } from '#components/entry/schema';
 import NonFieldError from '#components/NonFieldError';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 

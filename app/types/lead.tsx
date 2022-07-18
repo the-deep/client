@@ -1,26 +1,23 @@
-import {
-    KeyValueElement,
-    DatabaseEntityBase,
-} from './common';
+import { DatabaseEntityBase } from './common';
 
-export type Confidentiality = 'confidential' | 'unprotected';
-export type LeadStatus = 'pending' | 'processed' | 'validated';
-export type LeadSourceType = 'Text' | 'Disk' | 'Website' |
+type Confidentiality = 'confidential' | 'unprotected';
+type LeadStatus = 'pending' | 'processed' | 'validated';
+type LeadSourceType = 'Text' | 'Disk' | 'Website' |
     'Dropbox' | 'Google Drive' | 'RSS Feed' | 'EMM' | 'Web API' | 'Unknown';
 
-export interface UserDetails {
+interface UserDetails {
     id: number;
     email: string;
     displayName: string;
     displayPicture?: number;
 }
 
-export interface OrganizationDetail {
+interface OrganizationDetail {
     id: number;
     title: string;
 }
 
-export interface Lead extends DatabaseEntityBase {
+interface Lead extends DatabaseEntityBase {
     title: string;
     assessmentId?: number;
     assignee?: number | number[];
@@ -60,33 +57,6 @@ export interface Lead extends DatabaseEntityBase {
         file: string;
         mimeType: string;
     };
-}
-
-export interface EmmEntity {
-    key: number;
-    label: string;
-    totalCount: number;
-}
-
-export interface LeadOptions {
-    status: KeyValueElement[];
-    project: KeyValueElement[];
-    assignee: KeyValueElement[];
-    leadGroup: KeyValueElement[];
-    priority: KeyValueElement[];
-    confidentiality: KeyValueElement[];
-    organizationTypes: KeyValueElement[];
-    hasEmmLeads: boolean;
-    emmEntities?: EmmEntity[];
-    emmRiskFactors?: EmmEntity[];
-    emmKeywords?: EmmEntity[];
-}
-
-export interface LeadSummary {
-    total: number;
-    totalEntries: number;
-    totalVerifiedEntries: number;
-    totalUnverifiedEntries: number;
 }
 
 export interface LeadGroup {

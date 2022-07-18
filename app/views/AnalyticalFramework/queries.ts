@@ -1,46 +1,11 @@
 import { gql } from '@apollo/client';
 
+import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
+
 const FRAMEWORK = gql`
+    ${FRAMEWORK_FRAGMENT}
     fragment Framework on AnalysisFrameworkDetailType {
-        primaryTagging {
-            widgets {
-                id
-                clientId
-                key
-                order
-                properties
-                conditional {
-                    parentWidget
-                    parentWidgetType
-                    conditions
-                }
-                title
-                widgetId
-                width
-                version
-            }
-            clientId
-            id
-            order
-            title
-            tooltip
-        }
-        secondaryTagging {
-            clientId
-            id
-            key
-            order
-            title
-            properties
-            conditional {
-                parentWidget
-                parentWidgetType
-                conditions
-            }
-            widgetId
-            width
-            version
-        }
+        ...FrameworkResponse
         organization {
             id
             title
@@ -49,25 +14,15 @@ const FRAMEWORK = gql`
                 title
             }
         }
-        predictionTagsMapping {
-            id
-            tag
-            widget
-            widgetType
-            clientId
-            association
-        }
         previewImage {
             name
             url
         }
         title
         properties
-        id
         description
         allowedPermissions
         isPrivate
-        assistedTaggingEnabled
         createdBy {
             id
             displayName

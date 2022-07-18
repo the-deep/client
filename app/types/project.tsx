@@ -3,13 +3,7 @@ import { ProjectRoleTypeEnum } from '#generated/types';
 import { BasicElement } from '.';
 import { OrganizationDetails } from './organization';
 
-export interface ProjectElement {
-    id: number;
-    title: string;
-    isPrivate: boolean;
-}
-
-export interface VisaulizationEnabledOptions {
+interface VisaulizationEnabledOptions {
     entry: boolean;
     assessment: boolean;
 }
@@ -66,22 +60,10 @@ export interface ProjectDetails {
     userGroups: BasicElement[];
     organizations: ProjectOrganization[];
 }
-export interface CountTimeSeries {
-    date: string;
-    count: number;
-}
 
-export interface UserActivityStat {
-    id: number;
-    userId: number;
-    name: string;
-    count: number;
-    date?: string;
-}
+type OrganizationTypes = 'lead_organization' | 'international_partner' | 'national_partner' | 'donor' | 'government';
 
-export type OrganizationTypes = 'lead_organization' | 'international_partner' | 'national_partner' | 'donor' | 'government';
-
-export interface ProjectOrganization {
+interface ProjectOrganization {
     id: number;
     organization: number;
     organizationDetails: OrganizationDetails;
@@ -89,43 +71,7 @@ export interface ProjectOrganization {
     organizationTypeDisplay: string;
 }
 
-export interface ProjectStat {
-    analysisFramework?: number;
-    analysisFrameworkTitle?: string;
-    assessmentTemplate?: number;
-    assessmentTemplateTitle?: string;
-    createdAt: string;
-    createdBy: string;
-    createdByName: string;
-    description?: string;
-    endDate?: string;
-    entriesActivity: CountTimeSeries[];
-    id: number;
-    isDefault?: boolean;
-    isPrivate: boolean;
-    isVisualizationEnabled: VisaulizationEnabledOptions;
-    leadsActivity: CountTimeSeries[];
-    memberStatus: 'admin' | 'member';
-    modifiedAt: string;
-    modifiedBy: number;
-    modifiedByName: string;
-    numberOfEntries: number;
-    numberOfLeads: number;
-    numberOfLeadsTagged: number;
-    numberOfLeadsTaggedAndVerified: number;
-    numberOfUsers: number;
-    role: number;
-    startDate?: string;
-    status: string;
-    statusDisplay: string;
-    title: string;
-    topSourcers: UserActivityStat[];
-    topTaggers: UserActivityStat[];
-    userGroups: BasicElement[];
-    versionId: number;
-}
-
-export interface ProjectSummaryItem {
+interface ProjectSummaryItem {
     count: number;
     id: number;
     title: string;
@@ -150,22 +96,6 @@ export interface ProjectsSummary {
     recentEntriesActivity: ProjectRecentActivity;
 }
 
-export interface UserGroup {
-    id: number;
-    title: string;
-    joinedAt: string;
-    project: number;
-    usergroup: number;
-    role: number;
-    addedBy: number;
-    addedByName: string;
-    roleDetails: {
-        id: number;
-        title: string;
-        level: number;
-    };
-}
-
 interface Permission {
     view?: boolean;
     create?: boolean;
@@ -188,32 +118,7 @@ export interface ProjectRole {
     type: string;
 }
 
-export interface ProjectMemberships {
-    id: number;
-    joinedAt: string;
-    member: number;
-    memberEmail: string;
-    memberName: string;
-    memberOrganization?: string;
-    memberStatus: string;
-    project: number;
-    role: number;
-    roleDetails: {
-        id: number;
-        title: string;
-        level: number;
-    };
-    userGroupOptions: {
-        id: number;
-        title: string;
-    }[];
-}
-
-export interface ProjectRolesMap {
-    [key: number]: ProjectRole;
-}
-
-export interface AdminLevel {
+interface AdminLevel {
     id: number;
     title: string;
     // clientId: string;
@@ -245,12 +150,13 @@ export interface Region extends BasicRegion {
     isPublished: boolean;
 }
 
-export interface GeoShapeFile {
+interface GeoShapeFile {
     id: number;
     title: string;
     file: string;
     mimeType: string;
 }
+
 export interface AdminLevelGeoArea extends AdminLevel {
     geoShapeFileDetails?: GeoShapeFile;
     geojsonFile?: string;

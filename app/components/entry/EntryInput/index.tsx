@@ -28,9 +28,9 @@ import {
 import {
     PartialAttributeType,
     PartialEntryType,
-} from '#views/Project/EntryEdit/schema';
+} from '#components/entry/schema';
 
-import { Entry } from '#views/Project/EntryEdit/types';
+import { Entry } from '#components/entry/types';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import ExcerptInput from '#components/entry/ExcerptInput';
 import {

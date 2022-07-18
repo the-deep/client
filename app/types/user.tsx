@@ -1,9 +1,13 @@
-import { ProjectElement } from './project';
-
-export interface AccessibleFeature {
+interface AccessibleFeature {
     key: string;
     title: string;
     featureType: 'general_access' | 'experimental' | 'early_access';
+}
+
+interface ProjectElement {
+    id: number;
+    title: string;
+    isPrivate: boolean;
 }
 
 export interface User {
@@ -17,26 +21,10 @@ export interface User {
     accessibleFeatures: AccessibleFeature[];
 }
 
-export interface BasicUser {
-    id: number;
-    displayName: string;
-}
-
 export interface UserMini {
     id: number;
     email: string;
     displayName: string;
-}
-
-export interface RecentActivityItem {
-    createdAt: string;
-    createdBy: number;
-    createdByDisplayName: string;
-    createdByDisplayPicture?: string;
-    id: number;
-    project: number;
-    projectDisplayName: string;
-    type: 'lead' | 'entry' | 'entry-comment';
 }
 
 export interface Assignment {

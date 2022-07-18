@@ -32,7 +32,7 @@ import UserContext from '#base/context/UserContext';
 import FullPageErrorMessage from '#views/FullPageErrorMessage';
 import { useModalState } from '#hooks/stateManagement';
 
-import ProjectJoinModal from '#views/ExploreDeep/ActionCell/ProjectJoinModal';
+import ProjectJoinModal from '#components/general/ProjectJoinModal';
 import OrganizationLink from '#components/OrganizationLink';
 
 import {

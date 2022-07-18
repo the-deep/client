@@ -43,11 +43,11 @@ import {
 } from '#utils/common';
 import {
     OrganizationDetails,
+    EnumEntity,
 } from '#types';
 import {
     LeadType,
     TokenQuery,
-    LeadOptionsQuery,
 } from '#generated/types';
 
 import { PartialFormType } from './schema';
@@ -105,8 +105,8 @@ interface Props<N extends string | number | undefined> {
     pending?: boolean;
     projectId: string;
     disabled?: boolean;
-    priorityOptions: NonNullable<LeadOptionsQuery['leadPriorityOptions']>['enumValues'] | undefined;
-    confidentialityOptions: NonNullable<LeadOptionsQuery['leadConfidentialityOptions']>['enumValues'] | undefined;
+    priorityOptions: EnumEntity<string>[] | undefined | null;
+    confidentialityOptions: EnumEntity<string>[] | undefined | null;
     sourceOrganizationOptions: BasicOrganization[] | undefined | null;
     // eslint-disable-next-line max-len
     onSourceOrganizationOptionsChange: React.Dispatch<React.SetStateAction<BasicOrganization[] | undefined | null>>;

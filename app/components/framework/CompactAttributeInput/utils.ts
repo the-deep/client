@@ -3,7 +3,7 @@ import {
 } from '#types/newAnalyticalFramework';
 import {
     PartialAttributeType,
-} from '#views/Project/EntryEdit/schema';
+} from '#components/entry/schema';
 import {
     getType,
 } from '#utils/types';
