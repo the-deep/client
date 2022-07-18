@@ -11,6 +11,7 @@ import {
 } from 'react-icons/ai';
 import {
     Pager,
+    Button,
     TableView,
     TableColumn,
     useAlert,
@@ -26,7 +27,16 @@ import {
     Icons,
     TextInput,
     DateRangeInput,
+    Modal,
 } from '@the-deep/deep-ui';
+import {
+    getErrorObject,
+    ObjectSchema,
+    useForm,
+    removeNull,
+    createSubmitHandler,
+    requiredStringCondition,
+} from '@togglecorp/toggle-form';
 import { useQuery, useMutation } from '@apollo/client';
 
 import {
@@ -34,18 +44,25 @@ import {
     ProjectExportsQueryVariables,
     ExportDataTypeEnum,
     DeleteExportMutation,
+    UpdateExportTitleMutation,
+    UpdateExportTitleMutationVariables,
     DeleteExportMutationVariables,
 } from '#generated/types';
 import {
     convertDateToIsoDateTime,
 } from '#utils/common';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import { createDateColumn } from '#components/tableHelpers';
 import LeadPreview from '#components/lead/LeadPreview';
 
 import _ts from '#ts';
 
-import { PROJECT_EXPORTS, DELETE_EXPORT } from './queries';
+import {
+    PROJECT_EXPORTS,
+    DELETE_EXPORT,
+    UPDATE_EXPORT,
+} from './queries';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
@@ -88,6 +105,22 @@ const defaultSorting = {
 function exportKeySelector(d: ExportItem) {
     return d.id;
 }
+
+interface TitleFormFields {
+    title: string;
+}
+
+type FormType = Partial<TitleFormFields>;
+type FormSchema = ObjectSchema<FormType>;
+type FormSchemaFields = ReturnType<FormSchema['fields']>;
+
+const schema: FormSchema = {
+    fields: (): FormSchemaFields => ({
+        title: [requiredStringCondition],
+    }),
+};
+
+const initialValue: FormType = {};
 
 interface DateRangeValue {
     startDate: string;
@@ -188,6 +221,26 @@ function ExportHistory(props: Props) {
         (v) => (v.status === 'PENDING' || v.status === 'STARTED'),
     );
 
+    const [exportToEdit, setExportToEdit] = useState<ExportItem | undefined>();
+
+    const {
+        pristine: exportToEditPristine,
+        value: exportToEditValue,
+        error: riskyError,
+        setFieldValue,
+        validate,
+        setError,
+    } = useForm(schema, initialValue);
+
+    const handleExportEditCancel = useCallback(() => {
+        setExportToEdit(undefined);
+    }, []);
+
+    const handleExportEditClick = useCallback((data: ExportItem) => {
+        setExportToEdit(data);
+        setFieldValue(data.title, 'title');
+    }, [setFieldValue]);
+
     useEffect(
         () => {
             if (shouldPoll) {
@@ -226,6 +279,41 @@ function ExportHistory(props: Props) {
             onError: () => {
                 alert.show(
                     'Failed to delete export.',
+                    {
+                        variant: 'error',
+                    },
+                );
+            },
+        },
+    );
+
+    const [
+        updateExportTitle,
+        {
+            loading: updateExportTitlePending,
+        },
+    ] = useMutation<UpdateExportTitleMutation, UpdateExportTitleMutationVariables>(
+        UPDATE_EXPORT,
+        {
+            onCompleted: (response) => {
+                if (response?.project?.exportUpdate?.ok) {
+                    alert.show(
+                        'Successfully renamed the desired export.',
+                        {
+                            variant: 'success',
+                        },
+                    );
+                } else if (response?.project?.exportUpdate?.errors) {
+                    const errors = response?.project?.exportUpdate?.errors;
+                    const formError = transformToFormError(
+                        removeNull(errors) as ObjectError[],
+                    );
+                    setError(formError);
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'Failed to update export title.',
                     {
                         variant: 'error',
                     },
@@ -303,6 +391,7 @@ function ExportHistory(props: Props) {
                     || data.id === selectedExport?.id,
                 data,
                 onDeleteClick: handleDeleteExport,
+                onEditClick: handleExportEditClick,
                 onViewExportClick: setSelectedExport,
             }),
         };
@@ -330,9 +419,42 @@ function ExportHistory(props: Props) {
             statusColumn,
             actionsColumn,
         ]);
-    }, [handleDeleteExport, selectedExport]);
+    }, [
+        handleExportEditClick,
+        handleDeleteExport,
+        selectedExport,
+    ]);
 
     const pending = deleteExportPending;
+    const error = getErrorObject(riskyError);
+
+    const handleSubmit = useCallback(
+        () => {
+            const submit = createSubmitHandler(
+                validate,
+                setError,
+                (val) => {
+                    if (exportToEdit?.id) {
+                        updateExportTitle({
+                            variables: {
+                                projectId,
+                                exportId: exportToEdit?.id,
+                                newTitle: val.title,
+                            },
+                        });
+                    }
+                },
+            );
+            submit();
+        },
+        [
+            setError,
+            validate,
+            updateExportTitle,
+            projectId,
+            exportToEdit,
+        ],
+    );
 
     return (
         <Container
@@ -415,6 +537,42 @@ function ExportHistory(props: Props) {
                     </div>
                 )}
             </Container>
+            {exportToEdit && (
+                <Modal
+                    heading="Edit Export Title"
+                    onCloseButtonClick={handleExportEditCancel}
+                    footerActions={(
+                        <>
+                            <Button
+                                name={undefined}
+                                variant="secondary"
+                                onClick={handleExportEditCancel}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                name={undefined}
+                                type="submit"
+                                onClick={handleSubmit}
+                                disabled={exportToEditPristine || updateExportTitlePending}
+                            >
+                                Update
+                            </Button>
+                        </>
+                    )}
+                    size="small"
+                    freeHeight
+                >
+                    {updateExportTitlePending && <PendingMessage />}
+                    <TextInput
+                        name="title"
+                        label="Title"
+                        value={exportToEditValue?.title}
+                        onChange={setFieldValue}
+                        error={error?.title}
+                    />
+                </Modal>
+            )}
         </Container>
     );
 }

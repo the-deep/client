@@ -56,3 +56,36 @@ export const DELETE_EXPORT = gql`
         }
     }
 `;
+
+export const UPDATE_EXPORT = gql`
+    mutation UpdateExportTitle(
+        $projectId: ID!,
+        $exportId: ID!,
+        $newTitle: String,
+    ) {
+        project(id: $projectId) {
+            id
+            exportUpdate(
+                id: $exportId,
+                data: {
+                    title: $newTitle,
+                },
+            ) {
+                ok
+                errors
+                result {
+                    id
+                    title
+                    exportType
+                    exportedAt
+                    status
+                    format
+                    file {
+                        name
+                        url
+                    }
+                }
+            }
+        }
+    }
+`;
