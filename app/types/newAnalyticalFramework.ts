@@ -196,6 +196,12 @@ export interface Matrix2dSubRowsSelectedCondition extends BaseCondition {
     operatorModifier: 'every' | 'some';
     value: string[];
 }
+export interface Matrix2dCellsSelectedCondition extends BaseCondition {
+    operator: 'matrix2d-cells-selected';
+    operatorModifier: 'every' | 'some';
+    // subrowKey-columnKey
+    value: string[];
+}
 
 export type NumberCondition = EmptyCondition
     | NumberGreaterThanCondition
@@ -249,7 +255,8 @@ export type Matrix2dCondition = EmptyCondition
     | Matrix2dColumnsSelectedCondition
     | Matrix2dRowsSelectedCondition
     | Matrix2dSubColumnsSelectedCondition
-    | Matrix2dSubRowsSelectedCondition;
+    | Matrix2dSubRowsSelectedCondition
+    | Matrix2dCellsSelectedCondition;
 
 export interface NumberConditional extends BaseConditional {
     parentWidgetType: 'NUMBER';
@@ -357,13 +364,18 @@ export type ScaleValue = string;
 export type OrganigramValue = string[];
 export type GeoLocationValue = string[];
 export type Matrix1dValue = {
+    // rowId
     [key: string]: {
+        // cellId
         [key: string]: boolean | undefined,
     } | undefined,
 }
 export type Matrix2dValue = {
+    // rowId
     [key: string]: {
+        // subRowId
         [key: string]: {
+            // columnId
             [key: string]: string[] | undefined,
         } | undefined,
     } | undefined,
@@ -977,33 +989,33 @@ function validateMatrix1dCondition(
     condition: Matrix1dCondition,
     attribute: PartializeAttribute<Matrix1dWidgetAttribute> | undefined,
 ) {
-    const value = attribute?.data?.value;
+    const rows = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(rows);
         case 'matrix1d-rows-selected': {
-            if (isNotDefined(value)) {
+            if (isNotDefined(rows)) {
                 return false;
             }
-            const rowsValue = Object.keys(value);
+            const rowKeys = Object.keys(rows);
             return (
                 condition.operatorModifier === 'every'
-                    ? isEverySelected(rowsValue, condition.value)
-                    : isSomeSelected(rowsValue, condition.value)
+                    ? isEverySelected(rowKeys, condition.value)
+                    : isSomeSelected(rowKeys, condition.value)
             );
         }
         case 'matrix1d-cells-selected': {
-            if (isNotDefined(value)) {
+            if (isNotDefined(rows)) {
                 return false;
             }
-            const rowsValue = mapToList(
-                value,
-                (item) => item,
-            ).flatMap((item) => (item ? Object.keys(item) : []));
+            const cellKeys = mapToList(
+                rows,
+                (row) => row,
+            ).flatMap((row) => (row ? Object.keys(row) : []));
             return (
                 condition.operatorModifier === 'every'
-                    ? isEverySelected(rowsValue, condition.value)
-                    : isSomeSelected(rowsValue, condition.value)
+                    ? isEverySelected(cellKeys, condition.value)
+                    : isSomeSelected(cellKeys, condition.value)
             );
         }
         default:
@@ -1014,66 +1026,91 @@ function validateMatrix2dCondition(
     condition: Matrix2dCondition,
     attribute: PartializeAttribute<Matrix2dWidgetAttribute> | undefined,
 ) {
-    const value = attribute?.data?.value;
+    const rows = attribute?.data?.value;
     switch (condition.operator) {
         case 'empty':
-            return isNotDefined(value);
+            return isNotDefined(rows);
         case 'matrix2d-rows-selected': {
-            if (isNotDefined(value)) {
+            if (isNotDefined(rows)) {
                 return false;
             }
-            const rowsValue = Object.keys(value);
+            const rowKeys = Object.keys(rows);
             return (
                 condition.operatorModifier === 'every'
-                    ? isEverySelected(rowsValue, condition.value)
-                    : isSomeSelected(rowsValue, condition.value)
+                    ? isEverySelected(rowKeys, condition.value)
+                    : isSomeSelected(rowKeys, condition.value)
             );
         }
         case 'matrix2d-sub-rows-selected': {
-            if (isNotDefined(value)) {
+            if (isNotDefined(rows)) {
                 return false;
             }
-            const rowsValue = mapToList(value)
+            const subRowKeys = mapToList(rows)
                 .filter(isDefined)
-                .flatMap((val) => Object.keys(val));
+                .flatMap((row) => Object.keys(row));
             return (
                 condition.operatorModifier === 'every'
-                    ? isEverySelected(rowsValue, condition.value)
-                    : isSomeSelected(rowsValue, condition.value)
+                    ? isEverySelected(subRowKeys, condition.value)
+                    : isSomeSelected(subRowKeys, condition.value)
             );
         }
         case 'matrix2d-columns-selected': {
-            if (isNotDefined(value)) {
+            if (isNotDefined(rows)) {
                 return false;
             }
-            const rowsValue = mapToList(value)
+            const columnKeys = mapToList(rows)
                 .filter(isDefined)
-                .flatMap((val) => mapToList(val))
+                .flatMap((row) => mapToList(row))
                 .filter(isDefined)
-                .flatMap((val) => Object.keys(val));
+                .flatMap((subRow) => Object.keys(subRow));
 
             return (
                 condition.operatorModifier === 'every'
-                    ? isEverySelected(rowsValue, condition.value)
-                    : isSomeSelected(rowsValue, condition.value)
+                    ? isEverySelected(columnKeys, condition.value)
+                    : isSomeSelected(columnKeys, condition.value)
             );
         }
         case 'matrix2d-sub-columns-selected': {
-            if (isNotDefined(value)) {
+            if (isNotDefined(rows)) {
                 return false;
             }
-            const rowsValue = mapToList(value)
+            const subColumnKeys = mapToList(rows)
                 .filter(isDefined)
-                .flatMap((val) => mapToList(val))
+                .flatMap((row) => mapToList(row))
                 .filter(isDefined)
-                .flatMap((val) => mapToList(val))
+                .flatMap((subRow) => mapToList(subRow))
                 .filter(isDefined)
                 .flat();
 
             return (
                 condition.operatorModifier === 'every'
-                    ? isEverySelected(rowsValue, condition.value)
-                    : isSomeSelected(rowsValue, condition.value)
+                    ? isEverySelected(subColumnKeys, condition.value)
+                    : isSomeSelected(subColumnKeys, condition.value)
+            );
+        }
+        case 'matrix2d-cells-selected': {
+            if (isNotDefined(rows)) {
+                return false;
+            }
+            const values = mapToList(rows)
+                .filter(isDefined)
+                .flatMap(
+                    (subRows) => mapToList(
+                        subRows,
+                        (subRow, subRowKey) => {
+                            if (!subRow) {
+                                return undefined;
+                            }
+                            return Object.keys(subRow).map((subColumnKey) => (
+                                `${subRowKey}-${subColumnKey}`
+                            ));
+                        },
+                    ).filter(isDefined).flat(),
+                ).filter(isDefined);
+            return (
+                condition.operatorModifier === 'every'
+                    ? isEverySelected(values, condition.value)
+                    : isSomeSelected(values, condition.value)
             );
         }
         default:

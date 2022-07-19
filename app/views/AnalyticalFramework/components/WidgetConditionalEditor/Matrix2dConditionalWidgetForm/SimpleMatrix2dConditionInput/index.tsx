@@ -12,6 +12,7 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     randomString,
+    isDefined,
 } from '@togglecorp/fujs';
 
 import EverySomeInput from '#components/EverySomeInput';
@@ -20,13 +21,14 @@ import {
     Matrix2dRowsSelectedCondition,
     Matrix2dSubColumnsSelectedCondition,
     Matrix2dSubRowsSelectedCondition,
+    Matrix2dCellsSelectedCondition,
     Matrix2dWidget,
     KeyLabelEntity,
 } from '#types/newAnalyticalFramework';
 
 type PartialConditionType = PartialForm<
     // eslint-disable-next-line max-len
-    Matrix2dColumnsSelectedCondition | Matrix2dRowsSelectedCondition | Matrix2dSubColumnsSelectedCondition | Matrix2dSubRowsSelectedCondition,
+    Matrix2dColumnsSelectedCondition | Matrix2dRowsSelectedCondition | Matrix2dSubColumnsSelectedCondition | Matrix2dSubRowsSelectedCondition | Matrix2dCellsSelectedCondition,
     'operator' | 'conjunctionOperator' | 'key' | 'order'
 >;
 
@@ -36,7 +38,7 @@ interface Matrix2dContainsConditionInputProps {
     onChange: (value: SetValueArg<PartialConditionType>, index: number) => void;
     index: number;
     parentWidget: Matrix2dWidget | undefined;
-    operator: (Matrix2dColumnsSelectedCondition | Matrix2dRowsSelectedCondition | Matrix2dSubColumnsSelectedCondition | Matrix2dSubRowsSelectedCondition)['operator'];
+    operator: (Matrix2dColumnsSelectedCondition | Matrix2dRowsSelectedCondition | Matrix2dSubColumnsSelectedCondition | Matrix2dSubRowsSelectedCondition | Matrix2dCellsSelectedCondition)['operator'];
 }
 
 const defaultConditionVal = (): PartialConditionType => ({
@@ -71,28 +73,44 @@ function SimpleMatrix2dConditionInput(props: Matrix2dContainsConditionInputProps
         () => {
             if (operator === 'matrix2d-rows-selected') {
                 const rows = parentWidget?.properties?.rows;
-                return rows?.map((item) => ({
-                    key: item.key,
-                    label: item.label,
-                    tooltip: item.tooltip,
-                    order: item.order,
+                return rows?.map((row) => ({
+                    key: row.key,
+                    label: row.label,
+                    tooltip: row.tooltip,
+                    order: row.order,
                 }));
             }
             if (operator === 'matrix2d-sub-rows-selected') {
                 const rows = parentWidget?.properties?.rows;
-                return rows?.flatMap((item) => item.subRows).map((item) => item);
+                return rows?.flatMap((row) => row.subRows);
             }
             if (operator === 'matrix2d-columns-selected') {
                 const columns = parentWidget?.properties?.columns;
-                return columns?.map((item) => ({
-                    key: item.key,
-                    label: item.label,
-                    tooltip: item.tooltip,
-                    order: item.order,
+                return columns?.map((column) => ({
+                    key: column.key,
+                    label: column.label,
+                    tooltip: column.tooltip,
+                    order: column.order,
                 }));
             }
+            if (operator === 'matrix2d-sub-columns-selected') {
+                const columns = parentWidget?.properties?.columns;
+                return columns?.flatMap((column) => column.subColumns);
+            }
+            const rows = parentWidget?.properties?.rows;
             const columns = parentWidget?.properties?.columns;
-            return columns?.flatMap((item) => item.subColumns).map((item) => item);
+
+            const values = rows
+                ?.flatMap((item) => item.subRows)
+                .flatMap((subRow) => (
+                    columns?.map((column) => ({
+                        key: `${subRow.key}-${column.key}`,
+                        label: `${subRow.label} / ${column.label}`,
+                        tooltip: `${subRow.tooltip} / ${column.tooltip}`,
+                        order: subRow.order + column.order,
+                    }))
+                )).filter(isDefined);
+            return values;
         },
         [parentWidget, operator],
     );
