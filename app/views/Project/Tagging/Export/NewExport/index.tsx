@@ -27,7 +27,10 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { createSubmitHandler } from '@togglecorp/toggle-form';
+import {
+    createSubmitHandler,
+    removeNull,
+} from '@togglecorp/toggle-form';
 
 import {
     ProjectFrameworkDetailsQuery,
@@ -40,6 +43,7 @@ import {
     ProjectSourceStatsForExportQueryVariables,
     LeadsFilterDataInputType,
 } from '#generated/types';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import StatsInformationCard from '#components/StatsInformationCard';
 import routes from '#base/configs/routes';
 import { GeoArea } from '#components/GeoMultiSelectInput';
@@ -141,9 +145,15 @@ function NewExport(props: Props) {
     } = useParams<{ projectId: string }>();
     const history = useHistory();
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
+    const [titleError, setTitleError] = useState<string | undefined>();
     const [exportFileFormat, setExportFileFormat] = useState<ExportFormatEnum>('DOCX');
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
+
+    const handleQueryTitleChange = useCallback((newTitle: string | undefined) => {
+        setQueryTitle(newTitle);
+        setTitleError(undefined);
+    }, []);
 
     // advanced-options
     const [reportShowLeadEntryId, setReportShowLeadEntryId] = useState<boolean>(true);
@@ -286,8 +296,9 @@ function NewExport(props: Props) {
         CREATE_EXPORT,
         {
             onCompleted: (response) => {
-                if (response?.project?.exportCreate?.ok) {
-                    if (response.project.exportCreate.result?.isPreview) {
+                const exportCreateResponse = response?.project?.exportCreate;
+                if (exportCreateResponse?.ok) {
+                    if (exportCreateResponse.result?.isPreview) {
                         showPreviewModal();
                     } else {
                         history.replace(generatePath(routes.export.path, { projectId }), 'export-entry-history');
@@ -296,6 +307,19 @@ function NewExport(props: Props) {
                             { variant: 'success' },
                         );
                     }
+                } else if (exportCreateResponse?.errors) {
+                    const formError = transformToFormError(
+                        removeNull(exportCreateResponse?.errors) as ObjectError[],
+                    );
+                    // FIXME: Use form in export to fix this later
+                    // NOTE: Title error is always string
+                    setTitleError(formError?.title as string);
+                    alert.show(
+                        'Error during export.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
             onError: () => {
@@ -488,7 +512,8 @@ function NewExport(props: Props) {
                             className={styles.titleInput}
                             name="queryTitle"
                             value={queryTitle}
-                            onChange={setQueryTitle}
+                            onChange={handleQueryTitleChange}
+                            error={titleError}
                         />
                     </div>
                     <Container

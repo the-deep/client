@@ -13,7 +13,10 @@ import {
     useAlert,
 } from '@the-deep/deep-ui';
 import { useQuery, gql, useMutation } from '@apollo/client';
-import { createSubmitHandler } from '@togglecorp/toggle-form';
+import {
+    createSubmitHandler,
+    removeNull,
+} from '@togglecorp/toggle-form';
 import {
     IoBookmarks,
     IoCheckmark,
@@ -29,6 +32,7 @@ import _ts from '#ts';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { ProjectMember } from '#components/selections/ProjectMemberMultiSelectInput';
 import { BasicOrganization } from '#components/selections/NewOrganizationMultiSelectInput';
+import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 
 import {
     FormType as FilterFormType,
@@ -82,8 +86,14 @@ function NewAssessmentExport(props: Props) {
     const history = useHistory();
 
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
+    const [titleError, setTitleError] = useState<string | undefined>();
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
+
+    const handleQueryTitleChange = useCallback((newTitle: string | undefined) => {
+        setQueryTitle(newTitle);
+        setTitleError(undefined);
+    }, []);
 
     const [
         previewModalShown,
@@ -209,6 +219,7 @@ function NewAssessmentExport(props: Props) {
         CREATE_EXPORT,
         {
             onCompleted: (response) => {
+                const exportCreateResponse = response?.project?.exportCreate;
                 if (response?.project?.exportCreate?.ok) {
                     if (response.project.exportCreate.result?.isPreview) {
                         showPreviewModal();
@@ -219,6 +230,19 @@ function NewAssessmentExport(props: Props) {
                             { variant: 'success' },
                         );
                     }
+                } else if (exportCreateResponse?.errors) {
+                    const formError = transformToFormError(
+                        removeNull(exportCreateResponse?.errors) as ObjectError[],
+                    );
+                    // FIXME: Use form in export to fix this later
+                    // NOTE: Title error is always string
+                    setTitleError(formError?.title as string);
+                    alert.show(
+                        'Error during export.',
+                        {
+                            variant: 'error',
+                        },
+                    );
                 }
             },
             onError: () => {
@@ -320,7 +344,8 @@ function NewAssessmentExport(props: Props) {
                         className={styles.titleInput}
                         name="queryTitle"
                         value={queryTitle}
-                        onChange={setQueryTitle}
+                        onChange={handleQueryTitleChange}
+                        error={titleError}
                         label="Export Title"
                     />
                     {previewModalShown && createExportData?.project?.exportCreate?.result?.id && (

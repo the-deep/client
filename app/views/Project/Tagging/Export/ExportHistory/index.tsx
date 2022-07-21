@@ -303,6 +303,7 @@ function ExportHistory(props: Props) {
                             variant: 'success',
                         },
                     );
+                    setExportToEdit(undefined);
                 } else if (response?.project?.exportUpdate?.errors) {
                     const errors = response?.project?.exportUpdate?.errors;
                     const formError = transformToFormError(
