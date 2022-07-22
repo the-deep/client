@@ -1,7 +1,7 @@
 import { internal } from '@togglecorp/toggle-form';
 import { listToMap, isDefined, isNotDefined } from '@togglecorp/fujs';
 
-interface Error {
+export interface Error {
     [internal]?: string | undefined;
     [key: string]: string | Error | undefined;
 }

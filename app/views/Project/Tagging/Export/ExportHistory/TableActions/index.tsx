@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { FiEdit2 } from 'react-icons/fi';
 import {
     IoTrashBinOutline,
 } from 'react-icons/io5';
 import {
     Button,
+    QuickActionButton,
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import {
@@ -18,6 +20,7 @@ type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExports
 export interface Props {
     className?: string;
     onDeleteClick: (data: ExportItem) => void;
+    onEditClick: (data: ExportItem) => void;
     onViewExportClick: (data: ExportItem) => void;
     viewDisabled: boolean;
     disabled?: boolean;
@@ -30,6 +33,7 @@ function TableActions(props: Props) {
         className,
         disabled,
         onDeleteClick,
+        onEditClick,
         onViewExportClick,
         viewDisabled,
         data,
@@ -39,8 +43,20 @@ function TableActions(props: Props) {
         onDeleteClick(data);
     }, [onDeleteClick, data]);
 
+    const handleEditClick = useCallback(() => {
+        onEditClick(data);
+    }, [onEditClick, data]);
+
     return (
         <div className={_cs(styles.actions, className)}>
+            <QuickActionButton
+                name={undefined}
+                title="Edit Export Title"
+                onClick={handleEditClick}
+                disabled={disabled}
+            >
+                <FiEdit2 />
+            </QuickActionButton>
             <QuickActionConfirmButton
                 name={undefined}
                 title="Remove export"
