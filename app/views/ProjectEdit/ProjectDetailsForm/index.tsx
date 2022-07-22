@@ -196,6 +196,7 @@ const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 const initialValue: PartialFormType = {
     title: '',
     isPrivate: false,
+    isTest: false,
     hasPubliclyViewableUnprotectedLeads: false,
     hasPubliclyViewableConfidentialLeads: false,
     hasPubliclyViewableRestrictedLeads: false,
