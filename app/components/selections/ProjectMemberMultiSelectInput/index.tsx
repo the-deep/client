@@ -44,7 +44,12 @@ const PROJECT_USERS = gql`
     }
 `;
 
-export type ProjectMember = NonNullable<NonNullable<NonNullable<NonNullable<ProjectUserQuery['project']>['userMembers']>['results']>[number]>['member'];
+export type ProjectMember = {
+    id: string;
+    emailDisplay: string;
+    displayName?: string | null | undefined;
+};
+
 export const keySelector = (d: ProjectMember) => d.id;
 export const labelSelector = (d: ProjectMember) => d.displayName ?? '';
 

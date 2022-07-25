@@ -36,7 +36,6 @@ const USERS = gql`
             results {
                 displayName
                 id
-                organization
                 firstName
                 lastName
                 emailDisplay
@@ -46,7 +45,13 @@ const USERS = gql`
     }
 `;
 
-export type User = NonNullable<NonNullable<NonNullable<UsersQuery['users']>['results']>[number]>;
+export type User = {
+    id: string;
+    emailDisplay: string;
+    displayName?: string | null | undefined;
+    firstName?: string | null | undefined;
+    lastName?: string | null | undefined;
+};
 type Def = { containerClassName?: string };
 type NewUserSelectInputProps<K extends string> = SearchSelectInputProps<
 string,

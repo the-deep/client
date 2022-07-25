@@ -57,7 +57,6 @@ import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { termsNotice } from '#views/TermsOfService';
 import BooleanInput, { Option as BooleanOption } from '#components/selections/BooleanInput';
 import {
-    ProjectDetails,
     BasicOrganization,
 } from '#types';
 import routes from '#base/configs/routes';
@@ -66,14 +65,13 @@ import generateString from '#utils/string';
 
 import _ts from '#ts';
 import {
-    useLazyRequest,
-} from '#base/utils/restRequest';
-import {
     ProjectOrganizationGqInputType,
     UserLastActiveProjectQuery,
     UserLastActiveProjectQueryVariables,
     ProjectCreateInputType,
     ProjectUpdateInputType,
+    DeleteProjectMutation,
+    DeleteProjectMutationVariables,
     UserCurrentProjectQuery,
     UserCurrentProjectQueryVariables,
     ProjectCreateMutation,
@@ -87,6 +85,17 @@ import StakeholderList from './StakeholderList';
 import RequestPrivateProjectButton from './RequestPrivateProjectButton';
 
 import styles from './styles.css';
+
+const DELETE_PROJECT = gql`
+    mutation deleteProject($projectId: ID!) {
+        project(id: $projectId) {
+            projectDelete {
+                errors
+                ok
+            }
+        }
+    }
+`;
 
 interface StakeholderType {
     id: ProjectOrganizationTypeEnum;
@@ -515,21 +524,35 @@ function ProjectDetailsForm(props: Props) {
         },
     );
 
-    const {
-        pending: projectDeletePending,
-        trigger: triggerProjectDelete,
-    } = useLazyRequest<ProjectDetails>({
-        url: projectId ? `server://projects/${projectId}/` : undefined,
-        method: 'DELETE',
-        onSuccess: () => {
-            alert.show(
-                'Successfully deleted project.',
-                { variant: 'success' },
-            );
-            getUserLastActiveProject();
+    const [
+        triggerProjectDelete,
+        {
+            loading: projectDeletePending,
         },
-        failureMessage: 'Failed to delete project.',
-    });
+    ] = useMutation<DeleteProjectMutation, DeleteProjectMutationVariables>(
+        DELETE_PROJECT,
+        {
+            onCompleted: (response) => {
+                if (!response.project?.projectDelete) {
+                    return;
+                }
+
+                if (response.project.projectDelete.ok) {
+                    getUserLastActiveProject();
+                    alert.show(
+                        'Successfully deleted project.',
+                        { variant: 'success' },
+                    );
+                }
+            },
+            onError: () => {
+                alert.show(
+                    'There was an error deleting this project!',
+                    { variant: 'error' },
+                );
+            },
+        },
+    );
 
     const handleProjectDeleteConfirmCancel = useCallback(() => {
         hideDeleteProjectConfirmation();
@@ -537,8 +560,13 @@ function ProjectDetailsForm(props: Props) {
     }, [hideDeleteProjectConfirmation]);
 
     const handleProjectDeleteConfirm = useCallback(() => {
-        triggerProjectDelete(null);
-    }, [triggerProjectDelete]);
+        if (projectId) {
+            triggerProjectDelete({ variables: { projectId } });
+        }
+    }, [
+        triggerProjectDelete,
+        projectId,
+    ]);
 
     const groupedStakeholders = useMemo(
         () => listToGroupList(

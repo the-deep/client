@@ -89,6 +89,10 @@
                         gap: var(--dui-spacing-medium);
                     }
                 }
+
+                .delete-button {
+                    color: var(--dui-color-danger);
+                }
             }
 
             .button-container {
