@@ -46,8 +46,9 @@ import SourcesFilterContext from '#components/leadFilters/SourcesFilterContext';
 import { useFilterState, getProjectSourcesQueryVariables } from '#components/leadFilters/SourcesFilter';
 import { transformRawFiltersToFormValues } from '#components/leadFilters/SourcesFilter/utils';
 import SourcesAppliedFilters from '#components/leadFilters/SourcesAppliedFilters';
-
-import { ExportItem } from '#views/Export/ExportHistory';
+import SourcesSelection from '#components/general/SourcesSelection';
+import { ExportItem } from '#components/general/ExportHistory';
+import ExportPreviewModal from '#components/general/ExportPreviewModal';
 
 import {
     CreateExportMutation,
@@ -62,11 +63,44 @@ import {
     FrameworkFilterType,
 } from '#types/newAnalyticalFramework';
 
-import SourcesSelection from '#views/Export/SourcesSelection';
-import ExportPreviewModal from '#views/Export/ExportPreviewModal';
-import { CREATE_EXPORT, PROJECT_SOURCE_STATS_FOR_EXPORT } from '#views/Export/queries';
-
 import styles from './styles.css';
+
+const CREATE_EXPORT = gql`
+    mutation CreateExport(
+        $projectId: ID!,
+        $data: ExportCreateInputType!,
+    ) {
+        project(id: $projectId) {
+            id
+            exportCreate(data: $data) {
+                ok
+                errors
+                result {
+                    id
+                    title
+                    isPreview
+                }
+            }
+        }
+    }
+`;
+
+const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
+    query ProjectSourceStatsForExport(
+        $projectId: ID!,
+        $filters: LeadsFilterDataInputType,
+    ) {
+        project(id: $projectId) {
+            id
+            stats(filters: $filters) {
+                numberOfEntries
+                numberOfLeads
+                filteredNumberOfEntries
+                filteredNumberOfLeads
+            }
+        }
+    }
+`;
 
 type ExportStateData = Pick<ExportItem, 'filters' | 'filtersData'>
 

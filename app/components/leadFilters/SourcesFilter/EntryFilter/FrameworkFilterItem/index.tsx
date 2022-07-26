@@ -241,7 +241,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                             && styles.hidden,
                         )}
                         name="valueGte"
-                        label={`${title} (Greater than)`}
+                        label={`${title} (Greater than or equal)`}
                         value={value?.valueGte}
                         onChange={onFieldChange}
                         disabled={disabled}
@@ -255,7 +255,7 @@ function FrameworkFilterItem<K extends number>(props: Props<K>) {
                             && styles.hidden,
                         )}
                         name="valueLte"
-                        label={`${title} (Less than)`}
+                        label={`${title} (Less than or equal)`}
                         value={value?.valueLte}
                         onChange={onFieldChange}
                         disabled={disabled}

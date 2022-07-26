@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 import {
     Modal,
     Message,
@@ -11,9 +11,25 @@ import {
 } from '#generated/types';
 import LeadPreview from '#components/lead/LeadPreview';
 
-import { EXPORT_PREVIEW } from '../queries';
-
 import styles from './styles.css';
+
+const EXPORT_PREVIEW = gql`
+    query ExportPreview($projectId: ID!, $exportId: ID!) {
+        project(id: $projectId) {
+            id
+            export (id: $exportId) {
+                id
+                status
+                file {
+                    name
+                    url
+                }
+                mimeType
+                title
+            }
+        }
+    }
+`;
 
 interface Props {
     projectId: string;
@@ -76,7 +92,7 @@ function ExportPreviewModal(props: Props) {
                         />
                     )}
                     pending={exportPreviewPending || status === 'PENDING' || status === 'STARTED'}
-                    pendingMessage="We’ve started generating the preview of your document.. Please wait..."
+                    pendingMessage="We've started generating the preview of your document.. Please wait..."
                 />
             )}
         </Modal>

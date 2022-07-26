@@ -5,7 +5,7 @@ import {
 
 import { ExportDataTypeEnum } from '#generated/types';
 import ProjectContext from '#base/context/ProjectContext';
-import ExportHistory from '#views/Export/ExportHistory';
+import ExportHistory from '#components/general/ExportHistory';
 
 import styles from './styles.css';
 

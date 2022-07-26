@@ -6,9 +6,11 @@ import {
     Level,
     Widget,
 } from '#types/newAnalyticalFramework';
+import {
+    ExportReportStructureWidgetType,
+} from '#generated/types';
 import { PartialEntriesFilterDataType } from '#components/leadFilters/SourcesFilter/schema';
 
-import { ExportItem } from './ExportHistory';
 import {
     ReportStructure,
     AnalysisFramework,
@@ -358,7 +360,7 @@ export const createWidgetIds = (widgets: TreeSelectableWidget[]) => (
 
 export const getReportStructureVariant = (
     widgets: Widget[] | undefined,
-    reportStructure: ExportItem['extraOptions']['reportStructure'],
+    reportStructure: ExportReportStructureWidgetType[] | undefined | null,
 ) => {
     const isDimensionFirst = widgets?.filter((widget) => widget.widgetId === 'MATRIX2D')
         .some((widget) => {
@@ -373,7 +375,7 @@ export const getReportStructureVariant = (
 };
 
 export const isSubSectorIncluded = (
-    reportStructure: ExportItem['extraOptions']['reportStructure'],
+    reportStructure: ExportReportStructureWidgetType[] | undefined | null,
 ) => (
     reportStructure?.some((rootLevel) => (
         rootLevel?.levels?.some((l) => (
@@ -390,9 +392,9 @@ export const isSubSectorIncluded = (
 
 export function sortReportStructure(
     data: Node[] | undefined,
-    sortedData: ExportItem['extraOptions']['reportStructure'],
+    reportStructure: ExportReportStructureWidgetType[] | undefined | null,
 ): Node[] {
-    const newData = sortedData?.map((sd) => {
+    const newData = reportStructure?.map((sd) => {
         const out = data?.find((d) => d.key === sd.id);
         if (out) {
             return { ...out, nodes: sortReportStructure(out.nodes, sd.levels) };

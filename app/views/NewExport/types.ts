@@ -1,5 +1,6 @@
 import {
     WidgetType,
+    // FIXME: this is a dependency
     ProjectFrameworkDetailsQuery,
     ExportFormatEnum,
 } from '#generated/types';

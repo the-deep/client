@@ -31,7 +31,7 @@ import {
     createSubmitHandler,
     removeNull,
 } from '@togglecorp/toggle-form';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
 import {
     ProjectFrameworkDetailsQuery,
@@ -61,19 +61,20 @@ import { useFilterState, getProjectSourcesQueryVariables } from '#components/lea
 import { FormType as FilterFormType, PartialFormType } from '#components/leadFilters/SourcesFilter/schema';
 import { transformRawFiltersToFormValues } from '#components/leadFilters/SourcesFilter/utils';
 import SourcesAppliedFilters from '#components/leadFilters/SourcesAppliedFilters';
+import SourcesSelection from '#components/general/SourcesSelection';
+import { ExportItem } from '#components/general/ExportHistory';
+import ExportPreviewModal from '#components/general/ExportPreviewModal';
+import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
 import _ts from '#ts';
 
-import { ExportItem } from '#views/Export/ExportHistory';
 import AdvancedOptionsSelection from './AdvancedOptionsSelection';
 import ExportTypeButton from './ExportTypeButton';
-import SourcesSelection from '#views/Export/SourcesSelection';
-import ExportPreviewModal from '#views/Export/ExportPreviewModal';
 import {
     ExportTypeItem,
     TreeSelectableWidget,
     AnalysisFramework,
     Node,
-} from '#views/Export/types';
+} from './types';
 import {
     filterContexualWidgets,
     createReportStructure,
@@ -86,14 +87,112 @@ import {
     isSubSectorIncluded,
     sortReportStructure,
     selectAndSortWidgets,
-} from '#views/Export/utils';
-import {
-    PROJECT_FRAMEWORK_DETAILS,
-    CREATE_EXPORT,
-    PROJECT_SOURCE_STATS_FOR_EXPORT,
-} from '#views/Export/queries';
+} from './utils';
 import styles from './styles.css';
 
+const PROJECT_FRAMEWORK_DETAILS = gql`
+    ${FRAMEWORK_FRAGMENT}
+    query ProjectFrameworkDetails($projectId: ID!) {
+        project(id: $projectId) {
+            id
+            analysisFramework {
+                exportables {
+                    data
+                    id
+                    inline
+                    order
+                    widgetKey
+                    widgetType
+                    widgetTypeDisplay
+                }
+                filters {
+                    id
+                    key
+                    properties
+                    title
+                    widgetKey
+                    widgetType
+                    widgetTypeDisplay
+                    filterType
+                    filterTypeDisplay
+                }
+                # NOTE: Does not need predictionTagsMapping from FrameworkResponse
+                ...FrameworkResponse
+            }
+        }
+        sourceStatusOptions: __type(name: "LeadStatusEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourcePriorityOptions: __type(name: "LeadPriorityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        sourceConfidentialityOptions: __type(name: "LeadConfidentialityEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+        organizationTypes {
+            results {
+                id
+                title
+            }
+        }
+        entryTypeOptions: __type(name: "EntryTagTypeEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
+    }
+`;
+
+const CREATE_EXPORT = gql`
+    mutation CreateExport(
+        $projectId: ID!,
+        $data: ExportCreateInputType!,
+    ) {
+        project(id: $projectId) {
+            id
+            exportCreate(data: $data) {
+                ok
+                errors
+                result {
+                    id
+                    title
+                    isPreview
+                }
+            }
+        }
+    }
+`;
+
+const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
+    query ProjectSourceStatsForExport(
+        $projectId: ID!,
+        $filters: LeadsFilterDataInputType,
+    ) {
+        project(id: $projectId) {
+            id
+            stats(filters: $filters) {
+                numberOfEntries
+                numberOfLeads
+                filteredNumberOfEntries
+                filteredNumberOfLeads
+            }
+        }
+    }
+`;
 // FIXME: use from utils
 interface BooleanOption {
     key: 'true' | 'false';
@@ -158,7 +257,9 @@ function NewExport(props: Props) {
     const {
         projectId,
     } = useParams<{ projectId: string }>();
+
     const { state: locationState } = useLocation<ExportStateData | undefined>();
+
     const history = useHistory();
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [titleError, setTitleError] = useState<string | undefined>();
@@ -167,6 +268,23 @@ function NewExport(props: Props) {
         setQueryTitle(newTitle);
         setTitleError(undefined);
     }, []);
+
+    const alert = useAlert();
+
+    const { project } = useContext(ProjectContext);
+
+    const [
+        advancedOptionsModalShown,
+        showAdvancedOptionsModal,
+        hideAdvancedOptionsModal,
+    ] = useModalState(false);
+
+    const [
+        previewModalShown,
+        showPreviewModal,
+        hidePreviewModal,
+    ] = useModalState(false);
+
     const [
         exportFileFormat,
         setExportFileFormat,
@@ -192,73 +310,35 @@ function NewExport(props: Props) {
         setReportShowEntryWidgetData,
     ] = useState<boolean>(locationState?.extraOptions?.reportShowEntryWidgetData ?? true);
     const [
-        textWidgets,
-        setTextWidgets,
-    ] = useState<TreeSelectableWidget[]>([]);
-    const [contextualWidgets, setContextualWidgets] = useState<TreeSelectableWidget[]>([]);
-    const [reportStructure, setReportStructure] = useState<Node[]>([]);
-    const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
-    const [reportStructureVariant, setReportStructureVariant] = useState<string>(SECTOR_FIRST);
-    const [
         excelDecoupled,
         setExcelDecoupled,
     ] = useState<boolean>(locationState?.extraOptions?.excelDecoupled ?? false);
 
-    const {
-        value: sourcesFilterValue,
-        setFieldValue: setSourcesFilterFieldValue,
-        setValue: setSourcesFilter,
-        resetValue: clearSourcesFilterValue,
-        pristine,
-        validate,
-        setError,
-        setPristine,
-    } = useFilterState();
+    const [
+        textWidgets,
+        setTextWidgets,
+    ] = useState<TreeSelectableWidget[]>([]);
+    const [
+        contextualWidgets,
+        setContextualWidgets,
+    ] = useState<TreeSelectableWidget[]>([]);
+    const [
+        reportStructure,
+        setReportStructure,
+    ] = useState<Node[]>([]);
+    const [
+        includeSubSector,
+        setIncludeSubSector,
+    ] = useState<boolean>(false);
+    const [
+        reportStructureVariant,
+        setReportStructureVariant,
+    ] = useState<string>(SECTOR_FIRST);
 
     const [
         sourcesFilters,
         setSourcesFilters,
     ] = useState<PartialFormType>({});
-
-    const finalFilters = useMemo(() => (
-        getProjectSourcesQueryVariables(
-            sourcesFilters as Omit<FilterFormType, 'projectId'>,
-        )
-    ), [sourcesFilters]);
-
-    const {
-        data: sourcesStats,
-    } = useQuery<ProjectSourceStatsForExportQuery, ProjectSourceStatsForExportQueryVariables>(
-        PROJECT_SOURCE_STATS_FOR_EXPORT,
-        {
-            variables: {
-                projectId,
-                filters: finalFilters as LeadsFilterDataInputType,
-            },
-        },
-    );
-
-    const handleSubmit = useCallback((values: PartialFormType) => {
-        setSourcesFilters(values);
-        setPristine(true);
-    }, [setPristine]);
-
-    const handleApply = useCallback(() => {
-        setSelectedLeads([]);
-        const submit = createSubmitHandler(
-            validate,
-            setError,
-            handleSubmit,
-        );
-        submit();
-    }, [setError, validate, handleSubmit]);
-
-    const handleClear = useCallback(() => {
-        setSelectedLeads([]);
-        clearSourcesFilterValue();
-        setSourcesFilters({});
-        setPristine(true);
-    }, [clearSourcesFilterValue, setPristine]);
 
     const [
         createdByOptions,
@@ -286,6 +366,35 @@ function NewExport(props: Props) {
     ] = useState<GeoArea[] | undefined | null>(undefined);
 
     const {
+        value: sourcesFilterValue,
+        setFieldValue: setSourcesFilterFieldValue,
+        setValue: setSourcesFilter,
+        resetValue: clearSourcesFilterValue,
+        pristine,
+        validate,
+        setError,
+        setPristine,
+    } = useFilterState();
+
+    const finalFilters = useMemo(() => (
+        getProjectSourcesQueryVariables(
+            sourcesFilters as Omit<FilterFormType, 'projectId'>,
+        )
+    ), [sourcesFilters]);
+
+    const {
+        data: sourcesStats,
+    } = useQuery<ProjectSourceStatsForExportQuery, ProjectSourceStatsForExportQueryVariables>(
+        PROJECT_SOURCE_STATS_FOR_EXPORT,
+        {
+            variables: {
+                projectId,
+                filters: finalFilters as LeadsFilterDataInputType,
+            },
+        },
+    );
+
+    const {
         loading: frameworkGetPending,
         data: frameworkResponse,
     } = useQuery<ProjectFrameworkDetailsQuery, ProjectFrameworkDetailsQueryVariables>(
@@ -302,7 +411,7 @@ function NewExport(props: Props) {
                 if (!analyticalFramework) {
                     return;
                 }
-                // TODO handle for conditional widgets
+                // TODO: handle for conditional widgets
                 const widgets = getWidgets(analyticalFramework);
 
                 const textWidgetsValue = widgets
@@ -311,104 +420,36 @@ function NewExport(props: Props) {
                     textWidgetsValue,
                     locationState?.extraOptions?.reportTextWidgetIds,
                 );
+                setTextWidgets(textWidgetList);
+
                 const contextualWidgetsValue = filterContexualWidgets(widgets);
                 const contextualWidgetList = selectAndSortWidgets(
                     contextualWidgetsValue,
                     locationState?.extraOptions?.reportExportingWidgets,
                 );
-
-                setTextWidgets(textWidgetList);
                 setContextualWidgets(contextualWidgetList);
 
                 const reportStructureType = getReportStructureVariant(
                     widgets,
                     locationState?.extraOptions?.reportStructure,
                 );
+                setReportStructureVariant(reportStructureType);
+
                 const subSectorIncluded = isSubSectorIncluded(
                     locationState?.extraOptions?.reportStructure,
                 );
-                setReportStructureVariant(reportStructureType);
                 setIncludeSubSector(subSectorIncluded);
 
                 const filters = transformRawFiltersToFormValues(
                     locationState?.filters,
                     analyticalFramework?.filters,
                 );
+                // FIXME: let's try to remove these
                 setSourcesFilter(filters);
                 setSourcesFilters(filters);
             },
         },
     );
-
-    const statusOptions = frameworkResponse
-        ?.sourceStatusOptions?.enumValues;
-    const priorityOptions = frameworkResponse
-        ?.sourcePriorityOptions?.enumValues;
-    const confidentialityOptions = frameworkResponse
-        ?.sourceConfidentialityOptions?.enumValues;
-    // FIXME: this may be problematic in the future
-    const organizationTypeOptions = frameworkResponse
-        ?.organizationTypes?.results;
-    const entryTypeOptions = frameworkResponse
-        ?.entryTypeOptions?.enumValues;
-    const frameworkFilters = (frameworkResponse
-        ?.project?.analysisFramework?.filters) as (FrameworkFilterType[] | null | undefined);
-
-    const sourcesFilterContextValue = useMemo(() => ({
-        createdByOptions,
-        setCreatedByOptions,
-        assigneeOptions,
-        setAssigneeOptions,
-        authorOrganizationOptions,
-        setAuthorOrganizationOptions,
-        sourceOrganizationOptions,
-        setSourceOrganizationOptions,
-        entryCreatedByOptions,
-        setEntryCreatedByOptions,
-        geoAreaOptions,
-        setGeoAreaOptions,
-
-        statusOptions,
-        priorityOptions,
-        confidentialityOptions,
-        organizationTypeOptions,
-        hasAssessmentOptions,
-        hasEntryOptions,
-        entryTypeOptions,
-        frameworkFilters,
-    }), [
-        createdByOptions,
-        assigneeOptions,
-        authorOrganizationOptions,
-        sourceOrganizationOptions,
-        entryCreatedByOptions,
-        geoAreaOptions,
-
-        statusOptions,
-        priorityOptions,
-        confidentialityOptions,
-        organizationTypeOptions,
-        entryTypeOptions,
-        frameworkFilters,
-    ]);
-
-    const [
-        advancedOptionsModalShown,
-        showAdvancedOptionsModal,
-        hideAdvancedOptionsModal,
-    ] = useModalState(false);
-
-    const [
-        previewModalShown,
-        showPreviewModal,
-        hidePreviewModal,
-    ] = useModalState(false);
-
-    const { project } = useContext(ProjectContext);
-
-    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
-
-    const alert = useAlert();
 
     const [
         createExport,
@@ -420,20 +461,12 @@ function NewExport(props: Props) {
         CREATE_EXPORT,
         {
             onCompleted: (response) => {
-                const exportCreateResponse = response?.project?.exportCreate;
-                if (exportCreateResponse?.ok) {
-                    if (exportCreateResponse.result?.isPreview) {
-                        showPreviewModal();
-                    } else {
-                        history.replace(generatePath(routes.export.path, { projectId }), 'export-entry-history');
-                        alert.show(
-                            _ts('export', 'exportStartedNotifyMessage'),
-                            { variant: 'success' },
-                        );
-                    }
-                } else if (exportCreateResponse?.errors) {
+                if (!response?.project?.exportCreate?.ok) {
+                    return;
+                }
+                if (response.project.exportCreate.errors) {
                     const formError = transformToFormError(
-                        removeNull(exportCreateResponse?.errors) as ObjectError[],
+                        removeNull(response.project.exportCreate?.errors) as ObjectError[],
                     );
                     // FIXME: Use form in export to fix this later
                     // NOTE: Title error is always string
@@ -445,17 +478,72 @@ function NewExport(props: Props) {
                         },
                     );
                 }
+                if (response.project.exportCreate.result?.isPreview) {
+                    showPreviewModal();
+                    return;
+                }
+                history.replace(generatePath(routes.export.path, { projectId }), 'export-entry-history');
+                alert.show(
+                    _ts('export', 'exportStartedNotifyMessage'),
+                    { variant: 'success' },
+                );
             },
             onError: () => {
                 alert.show(
                     'Error during export.',
-                    {
-                        variant: 'error',
-                    },
+                    { variant: 'error' },
                 );
             },
         },
     );
+
+    const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
+    // FIXME: when should this code run?
+    useEffect(() => {
+        const structure = createReportStructure(
+            reportStructureVariant,
+            includeSubSector,
+            analysisFramework,
+            sourcesFilters?.entriesFilterData?.filterableData,
+        );
+        if (locationState?.extraOptions?.reportStructure) {
+            const sortedReportStructure = sortReportStructure(
+                structure,
+                locationState?.extraOptions?.reportStructure,
+            );
+            setReportStructure(sortedReportStructure);
+        } else {
+            setReportStructure(structure);
+        }
+    }, [
+        analysisFramework,
+        reportStructureVariant,
+        includeSubSector,
+        sourcesFilters?.entriesFilterData?.filterableData,
+        locationState?.extraOptions?.reportStructure,
+    ]);
+
+    const handleSubmit = useCallback((values: PartialFormType) => {
+        setSourcesFilters(values);
+        setPristine(true);
+    }, [setPristine]);
+
+    const handleApply = useCallback(() => {
+        setSelectedLeads([]);
+        const submit = createSubmitHandler(
+            validate,
+            setError,
+            handleSubmit,
+        );
+        submit();
+    }, [setError, validate, handleSubmit]);
+
+    const handleClear = useCallback(() => {
+        setSelectedLeads([]);
+        clearSourcesFilterValue();
+        setSourcesFilters({});
+        setPristine(true);
+    }, [clearSourcesFilterValue, setPristine]);
 
     const getCreateExportData = useCallback((isPreview: boolean) => ({
         extraOptions: {
@@ -498,43 +586,6 @@ function NewExport(props: Props) {
         textWidgets,
     ]);
 
-    const analysisFramework = frameworkResponse?.project?.analysisFramework as AnalysisFramework;
-
-    // FIXME: when should this code run?
-    useEffect(() => {
-        const structure = createReportStructure(
-            reportStructureVariant,
-            includeSubSector,
-            analysisFramework,
-            sourcesFilters?.entriesFilterData?.filterableData,
-        );
-        if (locationState?.extraOptions?.reportStructure) {
-            const sortedReportStructure = sortReportStructure(
-                structure,
-                locationState?.extraOptions?.reportStructure,
-            );
-            setReportStructure(sortedReportStructure);
-        } else {
-            setReportStructure(structure);
-        }
-    }, [
-        analysisFramework,
-        reportStructureVariant,
-        includeSubSector,
-        sourcesFilters?.entriesFilterData?.filterableData,
-        locationState?.extraOptions?.reportStructure,
-    ]);
-
-    const showMatrix2dOptions = useMemo(
-        () => {
-            if (frameworkGetPending || !analysisFramework) {
-                return false;
-            }
-            const widgets = getWidgets(analysisFramework);
-            return widgets?.some((widget) => widget.widgetId === 'MATRIX2D') ?? false; // TODO check for conditional widgets
-        },
-        [analysisFramework, frameworkGetPending],
-    );
     const exportTypeRendererParams = useCallback((key: ExportFormatEnum, data: ExportTypeItem) => {
         const {
             title,
@@ -568,11 +619,76 @@ function NewExport(props: Props) {
         });
     }, [createExport, projectId, getCreateExportData]);
 
-    const stats = sourcesStats?.project?.stats;
-
     const isFilterEmpty = useMemo(() => (
         doesObjectHaveNoData(sourcesFilters, ['', null])
     ), [sourcesFilters]);
+
+    const stats = sourcesStats?.project?.stats;
+
+    const showMatrix2dOptions = useMemo(
+        () => {
+            if (frameworkGetPending || !analysisFramework) {
+                return false;
+            }
+            const widgets = getWidgets(analysisFramework);
+            return widgets?.some((widget) => widget.widgetId === 'MATRIX2D') ?? false; // TODO check for conditional widgets
+        },
+        [analysisFramework, frameworkGetPending],
+    );
+
+    const statusOptions = frameworkResponse
+        ?.sourceStatusOptions?.enumValues;
+    const priorityOptions = frameworkResponse
+        ?.sourcePriorityOptions?.enumValues;
+    const confidentialityOptions = frameworkResponse
+        ?.sourceConfidentialityOptions?.enumValues;
+    // FIXME: this may be problematic in the future
+    const organizationTypeOptions = frameworkResponse
+        ?.organizationTypes?.results;
+    const entryTypeOptions = frameworkResponse
+        ?.entryTypeOptions?.enumValues;
+    const frameworkFilters = (frameworkResponse
+        ?.project?.analysisFramework?.filters) as (FrameworkFilterType[] | null | undefined);
+
+    const filterOnlyUnprotected = !!project?.allowedPermissions?.includes('VIEW_ONLY_UNPROTECTED_LEAD');
+
+    const sourcesFilterContextValue = useMemo(() => ({
+        createdByOptions,
+        setCreatedByOptions,
+        assigneeOptions,
+        setAssigneeOptions,
+        authorOrganizationOptions,
+        setAuthorOrganizationOptions,
+        sourceOrganizationOptions,
+        setSourceOrganizationOptions,
+        entryCreatedByOptions,
+        setEntryCreatedByOptions,
+        geoAreaOptions,
+        setGeoAreaOptions,
+
+        statusOptions,
+        priorityOptions,
+        confidentialityOptions,
+        organizationTypeOptions,
+        hasAssessmentOptions,
+        hasEntryOptions,
+        entryTypeOptions,
+        frameworkFilters,
+    }), [
+        createdByOptions,
+        assigneeOptions,
+        authorOrganizationOptions,
+        sourceOrganizationOptions,
+        entryCreatedByOptions,
+        geoAreaOptions,
+
+        statusOptions,
+        priorityOptions,
+        confidentialityOptions,
+        organizationTypeOptions,
+        entryTypeOptions,
+        frameworkFilters,
+    ]);
 
     return (
         <div className={_cs(styles.newExport, className)}>

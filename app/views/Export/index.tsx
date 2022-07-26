@@ -18,7 +18,7 @@ import ProjectContext from '#base/context/ProjectContext';
 import SmartButtonLikeLink from '#base/components/SmartButtonLikeLink';
 import routes from '#base/configs/routes';
 
-import ExportHistory from './ExportHistory';
+import ExportHistory from '#components/general/ExportHistory';
 
 import styles from './styles.css';
 

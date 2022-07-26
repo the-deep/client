@@ -14,7 +14,7 @@ import {
 
 import {
     TreeSelectableWidget,
-} from '#views/Export/types';
+} from '../types';
 
 import styles from './styles.css';
 
