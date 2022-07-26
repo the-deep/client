@@ -13,11 +13,11 @@ import EntryPreview from '../EntryPreview';
 import {
     TreeSelectableWidget,
     Node,
-} from '#views/Export/types';
+} from '../types';
 import {
     SECTOR_FIRST,
     DIMENSION_FIRST,
-} from '#views/Export/utils';
+} from '../utils';
 
 import styles from './styles.css';
 

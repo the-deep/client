@@ -27,8 +27,12 @@ import {
     TextInput,
     DateRangeInput,
 } from '@the-deep/deep-ui';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
+import {
+    SOURCE_FILTER_DATA_FRAGMENT,
+    SOURCE_FILTER_FRAGMENT,
+} from '#gqlFragments';
 import {
     ProjectExportsQuery,
     ProjectExportsQueryVariables,
@@ -44,10 +48,119 @@ import LeadPreview from '#components/lead/LeadPreview';
 
 import _ts from '#ts';
 
-import { PROJECT_EXPORTS, DELETE_EXPORT } from '../queries';
 import TableActions, { Props as TableActionsProps } from './TableActions';
 import Status, { Props as StatusProps } from './Status';
 import styles from './styles.css';
+
+const PROJECT_EXPORTS = gql`
+    ${SOURCE_FILTER_FRAGMENT}
+    ${SOURCE_FILTER_DATA_FRAGMENT}
+    query ProjectExports(
+        $projectId: ID!,
+        $page: Int,
+        $pageSize: Int,
+        $ordering: String,
+        $exportedAtGte: DateTime,
+        $exportedAtLte: DateTime,
+        $search: String,
+        $type: [ExportDataTypeEnum!],
+    ) {
+        project(id: $projectId) {
+            id
+            exports (
+                page: $page,
+                pageSize: $pageSize,
+                ordering: $ordering,
+                exportedAtGte: $exportedAtGte,
+                exportedAtLte: $exportedAtLte,
+                search: $search,
+                type: $type,
+            ) {
+                totalCount
+                page
+                pageSize
+                results {
+                    id
+                    title
+                    exportType
+                    exportedAt
+                    status
+                    format
+                    file {
+                        name
+                        url
+                    }
+                    type
+                    project
+                    extraOptions {
+                        excelDecoupled
+                        reportExportingWidgets
+                        reportLevels {
+                            id
+                            levels {
+                                id
+                                title
+                                sublevels {
+                                    id
+                                    title
+                                    sublevels {
+                                        id
+                                        title
+                                        sublevels {
+                                            title
+                                            id
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        reportShowAssessmentData
+                        reportShowEntryWidgetData
+                        reportShowGroups
+                        reportShowLeadEntryId
+                        reportStructure {
+                            id
+                            levels {
+                                id
+                                levels {
+                                    id
+                                    levels {
+                                        id
+                                        levels {
+                                            id
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        reportTextWidgetIds
+                    }
+                    filtersData {
+                        ...SourceFilterDataResponse
+                    }
+                    filters {
+                        ...SourceFilterResponse
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const DELETE_EXPORT = gql`
+    mutation DeleteExport(
+        $projectId: ID!,
+        $exportId: ID!,
+    ) {
+        project(id: $projectId) {
+            id
+            exportDelete(id: $exportId) {
+                ok
+                errors
+            }
+        }
+    }
+`;
 
 export type ExportItem = NonNullable<NonNullable<NonNullable<NonNullable<ProjectExportsQuery['project']>['exports']>>['results']>[number];
 

@@ -121,7 +121,7 @@ export function FrameworkFilterOutput(
                 <>
                     {isDefined(value.valueGte) && (
                         <DismissableTag
-                            label={`${label} (Greater than)`}
+                            label={`${label} (Greater than or equal)`}
                             name={index}
                             onDismiss={handleDismiss}
                         >
@@ -130,7 +130,7 @@ export function FrameworkFilterOutput(
                     )}
                     {isDefined(value.valueLte) && (
                         <DismissableTag
-                            label={`${label} (Less than)`}
+                            label={`${label} (Less than or equal)`}
                             name={index}
                             onDismiss={handleDismiss}
                         >
