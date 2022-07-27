@@ -76,7 +76,7 @@ import {
     Node,
 } from './types';
 import {
-    filterContexualWidgets,
+    filterContextualWidgets,
     createReportStructure,
     createReportLevels,
     getWidgets,
@@ -243,7 +243,7 @@ function exportTypeKeySelector(d: ExportTypeItem) {
     return d.key;
 }
 
-type ExportStateData = Pick<ExportItem, 'extraOptions' | 'filters' | 'filtersData' | 'format'>
+type ExportStateData = Pick<ExportItem, 'extraOptions' | 'filters' | 'filtersData' | 'format'>;
 
 interface Props {
     className?: string;
@@ -343,27 +343,42 @@ function NewExport(props: Props) {
     const [
         createdByOptions,
         setCreatedByOptions,
-    ] = useState<ProjectMember[] | undefined | null>();
+    ] = useState<ProjectMember[] | undefined | null>(
+        locationState?.filtersData?.createdByOptions ?? [],
+    );
+
     const [
         assigneeOptions,
         setAssigneeOptions,
-    ] = useState<ProjectMember[] | undefined | null>();
+    ] = useState<ProjectMember[] | undefined | null>(
+        locationState?.filtersData?.assigneeOptions ?? [],
+    );
+
     const [
         authorOrganizationOptions,
         setAuthorOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
+    ] = useState<BasicOrganization[] | undefined | null>(
+        locationState?.filtersData?.authorOrganizationOptions ?? [],
+    );
+
     const [
         sourceOrganizationOptions,
         setSourceOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
+    ] = useState<BasicOrganization[] | undefined | null>(
+        locationState?.filtersData?.sourceOrganizationOptions ?? [],
+    );
     const [
         entryCreatedByOptions,
         setEntryCreatedByOptions,
-    ] = useState<ProjectMember[] | undefined | null>();
+    ] = useState<ProjectMember[] | undefined | null>(
+        locationState?.filtersData?.entryFilterCreatedByOptions ?? [],
+    );
     const [
         geoAreaOptions,
         setGeoAreaOptions,
-    ] = useState<GeoArea[] | undefined | null>(undefined);
+    ] = useState<GeoArea[] | undefined | null>(
+        locationState?.filtersData?.entryFilterGeoAreaOptions ?? [],
+    );
 
     const {
         value: sourcesFilterValue,
@@ -422,7 +437,7 @@ function NewExport(props: Props) {
                 );
                 setTextWidgets(textWidgetList);
 
-                const contextualWidgetsValue = filterContexualWidgets(widgets);
+                const contextualWidgetsValue = filterContextualWidgets(widgets);
                 const contextualWidgetList = selectAndSortWidgets(
                     contextualWidgetsValue,
                     locationState?.extraOptions?.reportExportingWidgets,

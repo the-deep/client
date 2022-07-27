@@ -135,6 +135,10 @@ export function transformRawFiltersToFormValues(
                         ...item,
                         valueList: item.valueList?.filter((value) => keyMapping[value]),
                     };
+
+                    if ((newItem.valueList?.length ?? 0) <= 0) {
+                        return undefined;
+                    }
                     return newItem;
                 }
                 return item;

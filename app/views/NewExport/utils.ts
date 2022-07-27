@@ -317,7 +317,7 @@ export const createReportStructure = (
     return nodes;
 };
 
-export function filterContexualWidgets(widgets: Widget[] | undefined) {
+export function filterContextualWidgets(widgets: Widget[] | undefined) {
     const contextualWidgets = widgets?.filter((v) => (
         v.widgetId === 'SELECT'
         || v.widgetId === 'MULTISELECT'
@@ -421,7 +421,7 @@ export function selectAndSortWidgets(
         ?.filter((v) => !sortedDataKeys?.includes(v.id))
         .map((v) => ({
             ...v,
-            selected: false,
+            selected: (selectedWidgets?.length ?? 0) < 1,
         }));
     const widgetList = [
         ...(selectedWidgets ?? []),

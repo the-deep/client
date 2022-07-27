@@ -1,6 +1,6 @@
 import { AnalysisFramework } from './types';
 import {
-  filterContexualWidgets,
+  filterContextualWidgets,
   createReportStructure,
   createReportLevels,
   getWidgets,
@@ -541,9 +541,9 @@ test('get all widgets of framework', () => {
 });
 
 test('get contextual widgets only', () => {
-  expect(filterContexualWidgets(undefined)).toStrictEqual(undefined);
-  expect(filterContexualWidgets([])).toStrictEqual([]);
-  expect(filterContexualWidgets([
+  expect(filterContextualWidgets(undefined)).toStrictEqual(undefined);
+  expect(filterContextualWidgets([])).toStrictEqual([]);
+  expect(filterContextualWidgets([
     {
       clientId: '3',
       id: '3',
@@ -618,7 +618,7 @@ test('get contextual widgets only', () => {
       version: 1
     }
   ]);
-  expect(filterContexualWidgets([
+  expect(filterContextualWidgets([
     {
       id: '1',
       clientId: '1',

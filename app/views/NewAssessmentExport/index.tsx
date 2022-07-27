@@ -189,7 +189,7 @@ function NewAssessmentExport(props: Props) {
         projectId,
     } = useParams<{ projectId: string }>();
     const history = useHistory();
-    const { state }: { state: ExportStateData | undefined } = useLocation();
+    const { state: locationState }: { state: ExportStateData | undefined } = useLocation();
 
     const [queryTitle, setQueryTitle] = useState<string | undefined>();
     const [titleError, setTitleError] = useState<string | undefined>();
@@ -243,7 +243,7 @@ function NewAssessmentExport(props: Props) {
                 }
 
                 const filters = transformRawFiltersToFormValues(
-                    state?.filters,
+                    locationState?.filters,
                     analyticalFramework?.filters as (FrameworkFilterType[] | null | undefined),
                 );
                 setSourcesFilterValue(filters);
@@ -314,27 +314,42 @@ function NewAssessmentExport(props: Props) {
     const [
         createdByOptions,
         setCreatedByOptions,
-    ] = useState<ProjectMember[] | undefined | null>();
+    ] = useState<ProjectMember[] | undefined | null>(
+        locationState?.filtersData?.createdByOptions ?? [],
+    );
+
     const [
         assigneeOptions,
         setAssigneeOptions,
-    ] = useState<ProjectMember[] | undefined | null>();
+    ] = useState<ProjectMember[] | undefined | null>(
+        locationState?.filtersData?.assigneeOptions ?? [],
+    );
+
     const [
         authorOrganizationOptions,
         setAuthorOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
+    ] = useState<BasicOrganization[] | undefined | null>(
+        locationState?.filtersData?.authorOrganizationOptions ?? [],
+    );
+
     const [
         sourceOrganizationOptions,
         setSourceOrganizationOptions,
-    ] = useState<BasicOrganization[] | undefined | null>();
+    ] = useState<BasicOrganization[] | undefined | null>(
+        locationState?.filtersData?.sourceOrganizationOptions ?? [],
+    );
     const [
         entryCreatedByOptions,
         setEntryCreatedByOptions,
-    ] = useState<ProjectMember[] | undefined | null>();
+    ] = useState<ProjectMember[] | undefined | null>(
+        locationState?.filtersData?.entryFilterCreatedByOptions ?? [],
+    );
     const [
         geoAreaOptions,
         setGeoAreaOptions,
-    ] = useState<GeoArea[] | undefined | null>(undefined);
+    ] = useState<GeoArea[] | undefined | null>(
+        locationState?.filtersData?.entryFilterGeoAreaOptions ?? [],
+    );
 
     const sourcesFilterContextValue = useMemo(() => ({
         createdByOptions,

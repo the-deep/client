@@ -521,7 +521,7 @@ function ExportHistory(props: Props) {
                 sortable: false,
             },
             cellRenderer: TableActions,
-            columnWidth: '120px',
+            columnWidth: '160px',
             cellRendererParams: (_, data) => ({
                 viewDisabled: data.status === 'PENDING'
                     || data.status === 'STARTED'
