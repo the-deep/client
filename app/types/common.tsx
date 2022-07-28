@@ -1,14 +1,7 @@
 // Basic
-
 export interface BasicElement {
     id: string;
     title: string;
-}
-
-// Used
-export interface KeyValueElement {
-    key: string;
-    value: string;
 }
 
 export interface MultiResponse<T> {
@@ -17,10 +10,6 @@ export interface MultiResponse<T> {
     previous?: string;
     results: T[];
 }
-
-export type NullableField<T, K extends keyof T> = {
-    [key in K]+?: T[key];
-} & Omit<T, K>
 
 export interface DatabaseEntityBase {
     id: number;
@@ -31,15 +20,6 @@ export interface DatabaseEntityBase {
     modifiedBy: number;
     modifiedByName: string;
     versionId: number;
-}
-
-export interface BooleanKeyValueElement {
-    key: boolean;
-    value: string;
-}
-
-export interface FaramErrors {
-    [key: string]: string | undefined | string [] | FaramErrors;
 }
 
 export interface EnumEntity<T> {

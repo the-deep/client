@@ -12,7 +12,7 @@ import { PartialForm, Error, getErrorObject, getErrorString } from '@togglecorp/
 import NonFieldError from '#components/NonFieldError';
 import { OrganigramWidgetAttribute } from '#types/newEntry';
 import { OrganigramWidget, OrganigramDatum } from '#types/newAnalyticalFramework';
-import { getOrganigramFlatOptions } from '#views/AnalyticalFramework/utils';
+import { getOrganigramFlatOptions } from './utils';
 
 import WidgetWrapper from '../WidgetWrapper';
 

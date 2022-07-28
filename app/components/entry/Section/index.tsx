@@ -13,7 +13,7 @@ import { GeoArea } from '#components/GeoMultiSelectInput';
 import NonFieldError from '#components/NonFieldError';
 import { Widget, getHiddenWidgetIds } from '#types/newAnalyticalFramework';
 import AttributeInput, { Props as AttributeInputProps } from '#components/framework/AttributeInput';
-import { PartialEntryType } from '#views/Project/EntryEdit/schema';
+import { PartialEntryType } from '#components/entry/schema';
 
 import styles from './styles.css';
 

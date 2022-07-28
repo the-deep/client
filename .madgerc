@@ -1,0 +1,6 @@
+{
+    "baseDir": ".",
+    "fileExtensions": ["js", "ts", "jsx", "tsx"],
+    "webackConfig": "./webpack.config.js",
+    "tsConfig": "./tsconfig.json"
+}

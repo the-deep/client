@@ -30,7 +30,7 @@ import HCaptcha from '#components/HCaptcha';
 import NonFieldError from '#components/NonFieldError';
 import routes from '#base/configs/routes';
 import { hCaptchaKey } from '#base/configs/hCaptcha';
-import { termsNotice } from '#views/TermsOfService';
+import { termsNotice } from '#utils/terms';
 import { useModalState } from '#hooks/stateManagement';
 import generateString from '#utils/string';
 

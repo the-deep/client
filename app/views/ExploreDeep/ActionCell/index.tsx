@@ -14,7 +14,7 @@ import {
     CancelJoinProjectMutationVariables,
 } from '#generated/types';
 
-import ProjectJoinModal from './ProjectJoinModal';
+import ProjectJoinModal from '#components/general/ProjectJoinModal';
 
 import styles from './styles.css';
 

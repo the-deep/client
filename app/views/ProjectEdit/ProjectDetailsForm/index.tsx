@@ -54,7 +54,7 @@ import NonFieldError from '#components/NonFieldError';
 import UserContext from '#base/context/UserContext';
 import ProjectContext from '#base/context/ProjectContext';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
-import { termsNotice } from '#views/TermsOfService';
+import { termsNotice } from '#utils/terms';
 import BooleanInput, { Option as BooleanOption } from '#components/selections/BooleanInput';
 import {
     BasicOrganization,

@@ -1,7 +1,0 @@
-.actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--dui-spacing-extra-small);
-    justify-content: flex-end;
-}

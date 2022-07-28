@@ -17,9 +17,9 @@ import {
 } from '#types/newAnalyticalFramework';
 import { sortByOrder } from '#utils/common';
 
-import { getOrganigramFlatOptions } from '#views/AnalyticalFramework/utils';
 import CheckButton from '../../CheckButton';
 
+import { getOrganigramFlatOptions } from './utils';
 import styles from './styles.css';
 
 const cellKeySelector = (cell: KeyLabelEntity) => cell.key;

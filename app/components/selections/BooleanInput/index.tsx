@@ -39,7 +39,7 @@ const labelSelector = (d: Option) => d.value;
 interface Props<T extends Option, K extends string | undefined> {
     className?: string;
     name: K;
-    options: T[];
+    options: T[] | null | undefined;
     value: boolean | null | undefined;
     onChange: (
         value: boolean | undefined,
@@ -96,7 +96,7 @@ function BooleanInput<T extends Option, K extends string | undefined>(props: Pro
             className={className}
             keySelector={keySelector}
             labelSelector={labelSelector}
-            options={options}
+            options={options ?? undefined}
             value={currentValue}
             onChange={handleChange}
             name={name}

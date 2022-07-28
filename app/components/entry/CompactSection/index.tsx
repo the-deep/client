@@ -23,7 +23,7 @@ import CompactAttributeInput, { Props as AttributeInputProps } from '#components
 import {
     PartialEntryType,
     PartialAttributeType,
-} from '#views/Project/EntryEdit/schema';
+} from '#components/entry/schema';
 
 import styles from './styles.css';
 
