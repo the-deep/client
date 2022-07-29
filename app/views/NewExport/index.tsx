@@ -154,6 +154,13 @@ const PROJECT_FRAMEWORK_DETAILS = gql`
                 description
             }
         }
+        staticColumnOptions: __type(name: "ExportExcelSelectedStaticColumnEnum") {
+            name
+            enumValues {
+                name
+                description
+            }
+        }
     }
 `;
 
@@ -197,6 +204,14 @@ const PROJECT_SOURCE_STATS_FOR_EXPORT = gql`
 interface BooleanOption {
     key: 'true' | 'false';
     value: string;
+}
+
+export interface ExcelColumnNode {
+    selected: boolean;
+    key: string;
+    title: string;
+    isWidget: boolean;
+    widgetKey?: string;
 }
 
 const hasEntryOptions: BooleanOption[] = [
@@ -318,6 +333,7 @@ function NewExport(props: Props) {
         textWidgets,
         setTextWidgets,
     ] = useState<TreeSelectableWidget[]>([]);
+    const [columns, setColumns] = useState<ExcelColumnNode[]>([]);
     const [
         contextualWidgets,
         setContextualWidgets,
@@ -459,6 +475,26 @@ function NewExport(props: Props) {
                     locationState?.filters,
                     analyticalFramework?.filters,
                 );
+
+                const mappedWidgetList = widgets?.map((w) => ({
+                    isWidget: true,
+                    selected: true,
+                    key: w.key,
+                    title: w.title ?? ' ',
+                }));
+
+                const mappedValues = response?.staticColumnOptions?.enumValues?.map((val) => ({
+                    isWidget: false,
+                    title: val.description ?? '',
+                    key: val.name,
+                    selected: true,
+                }));
+
+                setColumns(() => ([
+                    ...mappedValues,
+                    ...mappedWidgetList,
+                ]));
+
                 // FIXME: let's try to remove these
                 setSourcesFilter(filters);
                 setSourcesFilters(filters);
@@ -569,6 +605,15 @@ function NewExport(props: Props) {
     const getCreateExportData = useCallback((isPreview: boolean) => ({
         extraOptions: {
             excelDecoupled,
+            excelColumns: columns.filter((widget) => widget.selected).map((col) => (
+                col.isWidget ? {
+                    isWidget: col.isWidget,
+                    widgetKey: col.key,
+                } : {
+                    isWidget: col.isWidget,
+                    staticColumn: col.key,
+                }
+            )),
             reportExportingWidgets: createWidgetIds(contextualWidgets),
             reportLevels: createReportLevels(reportStructure).map((node) => ({
                 id: node.id,
@@ -593,6 +638,7 @@ function NewExport(props: Props) {
         type: 'ENTRIES' as const,
         title: queryTitle,
     }), [
+        columns,
         exportFileFormat,
         contextualWidgets,
         excelDecoupled,
@@ -813,6 +859,8 @@ function NewExport(props: Props) {
                             onIncludeSubSectorChange={setIncludeSubSector}
                             onContextualWidgetsChange={setContextualWidgets}
                             onTextWidgetsChange={setTextWidgets}
+                            widgetColumns={columns}
+                            onWidgetColumnChange={setColumns}
                         />
                     )}
                     {previewModalShown && createExportData?.project?.exportCreate?.result?.id && (
