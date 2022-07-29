@@ -37,20 +37,6 @@ export function getMatrix2dPossibleMappings(
         },
     })) ?? [];
 
-    const subRows = widget?.properties?.rows
-        ?.map((row) => (
-            row.subRows.map((cell) => ({
-                label: cell.label,
-                widget: widget.id,
-                widgetType: 'MATRIX2D' as const,
-                association: {
-                    type: 'SUB_ROW' as const,
-                    subRowKey: cell.key,
-                    rowKey: row.key,
-                },
-            }))
-        )).flat() ?? [];
-
     const subColumns = widget?.properties?.columns
         ?.map((column) => (
             column.subColumns.map((cell) => ({
@@ -65,10 +51,24 @@ export function getMatrix2dPossibleMappings(
             }))
         )).flat() ?? [];
 
+    const subRows = widget?.properties?.rows
+        ?.map((row) => (
+            row.subRows.map((cell) => ({
+                label: cell.label,
+                widget: widget.id,
+                widgetType: 'MATRIX2D' as const,
+                association: {
+                    type: 'SUB_ROW' as const,
+                    subRowKey: cell.key,
+                    rowKey: row.key,
+                },
+            }))
+        )).flat() ?? [];
+
     return [
         ...columns,
-        ...subRows,
         ...subColumns,
+        ...subRows,
     ] as Matrix2dPossibleMapping[];
 }
 

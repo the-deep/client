@@ -25,12 +25,12 @@ const matrix2dSample: Matrix2dWidget = {
                     {
                         order: 1,
                         key: 'sub-col-1',
-                        label: 'sub-col-1',
+                        label: 'Sub Col 1',
                     },
                     {
                         order: 2,
                         key: 'sub-col-2',
-                        label: 'sub-col-2',
+                        label: 'Sub Col 2',
                     },
                 ],
             },
@@ -50,12 +50,12 @@ const matrix2dSample: Matrix2dWidget = {
                 subRows: [
                     {
                         key: 'sub-row-1-1',
-                        label: 'Sub row 1 1',
+                        label: 'Sub Row 1 1',
                         order: 1,
                     },
                     {
                         key: 'sub-row-1-2',
-                        label: 'Sub row 1 2',
+                        label: 'Sub Row 1 2',
                         order: 2,
                     },
                 ],
@@ -68,17 +68,17 @@ const matrix2dSample: Matrix2dWidget = {
                 subRows: [
                     {
                         key: 'sub-row-2-1',
-                        label: 'Sub row 2 1',
+                        label: 'Sub Row 2 1',
                         order: 1,
                     },
                     {
                         key: 'sub-row-2-2',
-                        label: 'Sub row 2 2',
+                        label: 'Sub Row 2 2',
                         order: 2,
                     },
                     {
                         key: 'sub-row-2-3',
-                        label: 'Sub row 2 3',
+                        label: 'Sub Row 2 3',
                         order: 3,
                     },
                 ],
@@ -107,7 +107,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-col-1',
+        label: 'Sub Col 1',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -117,7 +117,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-col-2',
+        label: 'Sub Col 2',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -127,7 +127,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-row-1-1',
+        label: 'Sub Row 1 1',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -137,7 +137,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-row-1-2',
+        label: 'Sub Row 1 2',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -147,7 +147,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-row-2-1',
+        label: 'Sub Row 2 1',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -157,7 +157,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-row-2-2',
+        label: 'Sub Row 2 2',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -167,7 +167,7 @@ const matrix2dPossibleMapping = [
         },
     },
     {
-        label: 'sub-row-2-3',
+        label: 'Sub Row 2 3',
         widget: '12',
         widgetType: 'MATRIX2D',
         association: {
@@ -176,9 +176,11 @@ const matrix2dPossibleMapping = [
             subRowKey: 'sub-row-2-3',
         },
     },
-].sort();
+];
 
 test('get matrix possible mappings', () => {
     expect(getMatrix2dPossibleMappings(undefined)).toStrictEqual([]);
-    expect(getMatrix2dPossibleMappings(matrix2dSample)).toStrictEqual(matrix2dPossibleMapping.sort());
+    expect(
+        getMatrix2dPossibleMappings(matrix2dSample),
+    ).toStrictEqual(matrix2dPossibleMapping);
 });
