@@ -1,4 +1,8 @@
 .matrix {
+    .open-popup-button {
+        font-size: var(--dui-font-size-extra-small);
+    }
+
     .row-list {
         display: flex;
         flex-direction: column;
@@ -75,4 +79,8 @@
             }
         }
     }
+}
+
+.modal {
+    min-width: 720px;
 }

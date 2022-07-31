@@ -16,6 +16,7 @@ export interface Props {
 
     disabled?: boolean;
     readOnly?: boolean;
+    headingDescription?: React.ReactNode;
     actions?: React.ReactNode;
     icons?: React.ReactNode;
 
@@ -29,6 +30,7 @@ function WidgetWrapper(props: Props) {
         title,
         children,
         headerClassName,
+        headingDescription,
         childrenContainerClassName,
         readOnly,
         actions,
@@ -52,6 +54,8 @@ function WidgetWrapper(props: Props) {
                 actionsContainerClassName={styles.actions}
                 heading={title ?? 'Unnamed'}
                 actions={actions}
+                description={headingDescription}
+                inlineHeadingDescription
             />
             <div
                 className={_cs(

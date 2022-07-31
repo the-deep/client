@@ -6,14 +6,18 @@ import {
     ListView,
     List,
     Button,
+    Modal,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
-import { IoChevronForward } from 'react-icons/io5';
+import { IoChevronForward, IoOpenOutline } from 'react-icons/io5';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
+import { useModalState } from '#hooks/stateManagement';
 import { sortByOrder } from '#utils/common';
 
 import NonFieldError from '#components/NonFieldError';
 import { Matrix2dWidget } from '#types/newAnalyticalFramework';
 import { Matrix2dWidgetAttribute } from '#types/newEntry';
+import LargeMatrix2dWidgetInput from '#components/framework/AttributeInput/Matrix2dWidgetInput';
 
 import WidgetWrapper from '../WidgetWrapper';
 
@@ -402,6 +406,12 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
         recommendedValue,
     } = props;
 
+    const [
+        isPopupVisible,
+        showPopup,
+        hidePopup,
+    ] = useModalState(false);
+
     const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
@@ -493,6 +503,16 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             readOnly={readOnly}
             actions={actions}
             icons={icons}
+            headingDescription={(
+                <QuickActionButton
+                    name={undefined}
+                    className={styles.openPopupButton}
+                    onClick={showPopup}
+                    title="Edit in popup"
+                >
+                    <IoOpenOutline />
+                </QuickActionButton>
+            )}
         >
             <NonFieldError
                 error={error}
@@ -510,6 +530,29 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
                 filtered={false}
                 errored={false}
             />
+            {isPopupVisible && (
+                <Modal
+                    onCloseButtonClick={hidePopup}
+                    className={styles.modal}
+                    heading={`Edit ${widget.title}`}
+                    size="free"
+                    freeHeight
+                >
+                    <LargeMatrix2dWidgetInput
+                        className={className}
+                        title=""
+                        name={name}
+                        onChange={onChangeFromProps}
+                        value={value}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                        actions={actions}
+                        icons={icons}
+                        widget={widget}
+                        error={riskyError}
+                    />
+                </Modal>
+            )}
         </WidgetWrapper>
     );
 }

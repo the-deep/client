@@ -8,16 +8,20 @@ import {
 } from '@togglecorp/fujs';
 import {
     ListView,
+    Modal,
+    QuickActionButton,
     MultiSelectInput,
     MultiBadgeInput,
 } from '@the-deep/deep-ui';
+import { IoOpenOutline } from 'react-icons/io5';
 import { PartialForm, Error, getErrorObject } from '@togglecorp/toggle-form';
 
 import { sortByOrder } from '#utils/common';
-
+import { useModalState } from '#hooks/stateManagement';
 import NonFieldError from '#components/NonFieldError';
 import { Matrix1dWidget } from '#types/newAnalyticalFramework';
 import { Matrix1dWidgetAttribute } from '#types/newEntry';
+import LargeMatrix1dWidgetInput from '#components/framework/AttributeInput/Matrix1dWidgetInput';
 
 import WidgetWrapper from '../WidgetWrapper';
 
@@ -179,6 +183,12 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
         recommendedValue,
     } = props;
 
+    const [
+        isPopupVisible,
+        showPopup,
+        hidePopup,
+    ] = useModalState(false);
+
     const error = getErrorObject(riskyError);
 
     const onChange = useCallback(
@@ -260,6 +270,16 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
             actions={actions}
             icons={icons}
             title={title}
+            headingDescription={(
+                <QuickActionButton
+                    name={undefined}
+                    className={styles.openPopupButton}
+                    onClick={showPopup}
+                    title="Edit in popup"
+                >
+                    <IoOpenOutline />
+                </QuickActionButton>
+            )}
         >
             <NonFieldError
                 error={error}
@@ -271,12 +291,34 @@ function Matrix1dWidgetInput<N extends string>(props: Props<N>) {
                 rendererParams={rowRendererParams}
                 renderer={Row}
                 compactEmptyMessage
-                emptyMessage="-"
                 messageShown
                 errored={false}
                 filtered={false}
                 pending={false}
             />
+            {isPopupVisible && (
+                <Modal
+                    className={styles.modal}
+                    onCloseButtonClick={hidePopup}
+                    heading={`Edit ${widget.title}`}
+                    size="free"
+                    freeHeight
+                >
+                    <LargeMatrix1dWidgetInput
+                        className={className}
+                        title=""
+                        name={name}
+                        onChange={onChangeFromProps}
+                        value={value}
+                        readOnly={readOnly}
+                        disabled={disabled}
+                        actions={actions}
+                        icons={icons}
+                        widget={widget}
+                        error={riskyError}
+                    />
+                </Modal>
+            )}
         </WidgetWrapper>
     );
 }
