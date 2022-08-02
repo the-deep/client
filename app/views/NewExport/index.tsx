@@ -5,7 +5,11 @@ import {
     generatePath,
     useLocation,
 } from 'react-router-dom';
-import { _cs, doesObjectHaveNoData } from '@togglecorp/fujs';
+import {
+    _cs,
+    doesObjectHaveNoData,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     AiFillFilePdf,
     AiFillFileExcel,
@@ -43,8 +47,12 @@ import {
     ProjectSourceStatsForExportQuery,
     ProjectSourceStatsForExportQueryVariables,
     LeadsFilterDataInputType,
+    ExportExcelSelectedStaticColumnEnum,
 } from '#generated/types';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
+import {
+    mergeLists,
+} from '#utils/common';
 import {
     FrameworkFilterType,
 } from '#types/newAnalyticalFramework';
@@ -480,7 +488,7 @@ function NewExport(props: Props) {
                     isWidget: true,
                     selected: true,
                     key: w.key,
-                    title: w.title ?? ' ',
+                    title: w.title ?? '',
                 }));
 
                 const mappedValues = response?.staticColumnOptions?.enumValues?.map((val) => ({
@@ -490,10 +498,34 @@ function NewExport(props: Props) {
                     selected: true,
                 }));
 
-                setColumns(() => ([
-                    ...mappedValues,
-                    ...mappedWidgetList,
-                ]));
+                const combinedList = [
+                    ...mappedValues ?? [],
+                    ...mappedWidgetList ?? [],
+                ];
+
+                const initialColumns = locationState?.extraOptions?.excelColumns?.map(
+                    (item) => {
+                        const key = item.isWidget ? item.widgetKey : item.staticColumn;
+                        return key ? {
+                            isWidget: item.isWidget,
+                            selected: true,
+                            title: '',
+                            key,
+                        } : undefined;
+                    },
+                ).filter(isDefined);
+
+                const mergedColumnList = mergeLists(
+                    initialColumns ?? [],
+                    combinedList.map((item) => ({ ...item, selected: false })),
+                    (item) => item.key,
+                    (_, newItem) => ({
+                        ...newItem,
+                        selected: true,
+                    }),
+                );
+
+                setColumns((initialColumns?.length ?? 0) > 0 ? mergedColumnList : combinedList);
 
                 // FIXME: let's try to remove these
                 setSourcesFilter(filters);
@@ -611,7 +643,7 @@ function NewExport(props: Props) {
                     widgetKey: col.key,
                 } : {
                     isWidget: col.isWidget,
-                    staticColumn: col.key,
+                    staticColumn: col.key as ExportExcelSelectedStaticColumnEnum,
                 }
             )),
             reportExportingWidgets: createWidgetIds(contextualWidgets),
