@@ -47,6 +47,11 @@ import CellGroup from './CellGroup';
 
 import styles from './styles.css';
 
+// TODO: Implement fuzzy search later
+function isCaseInsensitiveMatch(foo: string | undefined, bar: string | undefined) {
+    return foo?.toLowerCase() === bar?.toLowerCase();
+}
+
 type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
 
 const nlpLabelGroupKeySelector = (tag: AssistedTag) => tag.group ?? 'Miscellaneous';
@@ -92,16 +97,6 @@ function AssistedTagging<K extends string>(props: Props<K>) {
             !tag.isCategory && !tag.hideInAnalysisFrameworkMapping
         ))
     ), [assistedPredictionTags]);
-
-    const predictionTagsMapByName = useMemo(() => (
-        listToMap(
-            predictionTags,
-            (tag) => tag.name.toLowerCase(),
-            (tag) => tag.id,
-        )
-    ), [
-        predictionTags,
-    ]);
 
     type SetMappingsFn = React.Dispatch<React.SetStateAction<MappingsItem[] | undefined>>;
     const setMappings = useCallback<SetMappingsFn>((newMappings) => {
@@ -250,22 +245,27 @@ function AssistedTagging<K extends string>(props: Props<K>) {
             return [];
         }).flat();
 
-        const mapping = items?.map((item) => {
-            const tagId = predictionTagsMapByName?.[item?.label?.toLowerCase()];
-            if (tagId) {
-                return {
-                    ...item,
-                    tag: tagId,
-                    clientId: randomString(),
-                };
-            }
-            return undefined;
-        }).filter(isDefined);
+        const mapping = items?.map((item) => (
+            predictionTags?.reduce((acc, tag) => {
+                if (!isCaseInsensitiveMatch(item?.label, tag.name)) {
+                    return acc;
+                }
+                return ([
+                    {
+                        ...item,
+                        tag: tag.id,
+                        clientId: randomString(),
+                    },
+                    ...acc,
+                ]);
+            }, [] as Omit<MappingsItem, 'id'>[])
+        )).flat();
 
-        setMappings(mapping);
+        // FIXME: MappingsItem requires id, but its not required at first
+        setMappings(mapping as MappingsItem[]);
     }, [
         setMappings,
-        predictionTagsMapByName,
+        predictionTags,
         widgets,
     ]);
 
@@ -314,6 +314,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                             name={undefined}
                             onConfirm={handleAutoMatchClick}
                             message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
+                            disabled={pending || disabled || !assistedTaggingEnabled}
                             variant="tertiary"
                         >
                             Auto Match

@@ -13,21 +13,21 @@ import {
     OrganigramMappingsItem,
 } from '#types/newAnalyticalFramework';
 
-import { getOrganigramFlatOptions } from '#views/AnalyticalFramework/utils';
+import { getOrganigramFlatOptions } from './WidgetTagList/OrganigramTagInput/utils';
 
-type Possible<T> = Omit<T, 'tag' | 'clientId'> & { label: string };
+type ConvertToPossibleMapping<T> = Omit<T, 'tag' | 'clientId' | 'id'> & { label: string };
 
-export type Matrix2dPossibleMapping = Possible<Matrix2dMappingsItem>;
-export type Matrix1dPossibleMapping = Possible<Matrix1dMappingsItem>;
-export type ScalePossibleMapping = Possible<ScaleMappingsItem>;
-export type SelectPossibleMapping = Possible<SelectMappingsItem>;
-export type MultiSelectPossibleMapping = Possible<MultiSelectMappingsItem>;
-export type OrganigramPossibleMapping = Possible<OrganigramMappingsItem>;
+export type Matrix2dPossibleMapping = ConvertToPossibleMapping<Matrix2dMappingsItem>;
+export type Matrix1dPossibleMapping = ConvertToPossibleMapping<Matrix1dMappingsItem>;
+export type ScalePossibleMapping = ConvertToPossibleMapping<ScaleMappingsItem>;
+export type SelectPossibleMapping = ConvertToPossibleMapping<SelectMappingsItem>;
+export type MultiSelectPossibleMapping = ConvertToPossibleMapping<MultiSelectMappingsItem>;
+export type OrganigramPossibleMapping = ConvertToPossibleMapping<OrganigramMappingsItem>;
 
 export function getMatrix2dPossibleMappings(
     widget: Matrix2dWidget | undefined,
 ): Matrix2dPossibleMapping[] {
-    const columns = widget?.properties?.columns?.map((column) => ({
+    const columns = widget?.properties?.columns?.map((column): Matrix2dPossibleMapping => ({
         label: column.label,
         widget: widget.id,
         widgetType: 'MATRIX2D' as const,
@@ -37,7 +37,7 @@ export function getMatrix2dPossibleMappings(
         },
     })) ?? [];
 
-    const subColumns = widget?.properties?.columns
+    const subColumns: Matrix2dPossibleMapping[] = widget?.properties?.columns
         ?.map((column) => (
             column.subColumns.map((cell) => ({
                 label: cell.label,
@@ -51,7 +51,7 @@ export function getMatrix2dPossibleMappings(
             }))
         )).flat() ?? [];
 
-    const subRows = widget?.properties?.rows
+    const subRows: Matrix2dPossibleMapping[] = widget?.properties?.rows
         ?.map((row) => (
             row.subRows.map((cell) => ({
                 label: cell.label,
@@ -69,10 +69,12 @@ export function getMatrix2dPossibleMappings(
         ...columns,
         ...subColumns,
         ...subRows,
-    ] as Matrix2dPossibleMapping[];
+    ];
 }
 
-export function getMatrix1dPossibleMappings(widget: Matrix1dWidget): Matrix1dPossibleMapping[] {
+export function getMatrix1dPossibleMappings(
+    widget: Matrix1dWidget | undefined,
+): Matrix1dPossibleMapping[] {
     const subRows = widget?.properties?.rows
         ?.map((row) => (
             row.cells.map((cell) => ({
@@ -86,11 +88,11 @@ export function getMatrix1dPossibleMappings(widget: Matrix1dWidget): Matrix1dPos
             }))
         )).flat() ?? [];
 
-    return subRows as Matrix1dPossibleMapping[];
+    return subRows;
 }
 
 export function getOptionTypePossibleMappings(
-    widget: ScaleWidget | MultiSelectWidget | SingleSelectWidget,
+    widget: ScaleWidget | MultiSelectWidget | SingleSelectWidget | undefined,
 ): (ScalePossibleMapping | SelectPossibleMapping | MultiSelectPossibleMapping)[] {
     const subRows = widget?.properties?.options
         ?.map((option) => ({
@@ -102,13 +104,16 @@ export function getOptionTypePossibleMappings(
             },
         })) ?? [];
 
-    return subRows as (ScalePossibleMapping | SelectPossibleMapping | MultiSelectPossibleMapping)[];
+    return subRows;
 }
 
 export function getOrganigramPossibleMappings(
-    widget: OrganigramWidget,
+    widget: OrganigramWidget | undefined,
 ): OrganigramPossibleMapping[] {
-    const flatOptions = getOrganigramFlatOptions(widget?.properties?.options) ?? [];
+    if (!widget) {
+        return [];
+    }
+    const flatOptions = getOrganigramFlatOptions(widget.properties?.options) ?? [];
     const options = flatOptions
         ?.map((option) => ({
             label: option.label,
@@ -119,5 +124,5 @@ export function getOrganigramPossibleMappings(
             },
         })) ?? [];
 
-    return options as OrganigramPossibleMapping[];
+    return options;
 }
