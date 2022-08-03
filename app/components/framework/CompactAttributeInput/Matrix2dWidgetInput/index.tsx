@@ -503,7 +503,7 @@ function Matrix2dWidgetInput<N extends string>(props: Props<N>) {
             readOnly={readOnly}
             actions={actions}
             icons={icons}
-            headingDescription={(
+            headingDescription={!readOnly && (
                 <QuickActionButton
                     name={undefined}
                     className={styles.openPopupButton}
