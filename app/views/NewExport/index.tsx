@@ -476,10 +476,7 @@ function NewExport(props: Props) {
         CREATE_EXPORT,
         {
             onCompleted: (response) => {
-                if (!response?.project?.exportCreate?.ok) {
-                    return;
-                }
-                if (response.project.exportCreate.errors) {
+                if (response?.project?.exportCreate?.errors) {
                     const formError = transformToFormError(
                         removeNull(response.project.exportCreate?.errors) as ObjectError[],
                     );
@@ -492,6 +489,15 @@ function NewExport(props: Props) {
                             variant: 'error',
                         },
                     );
+                }
+                if (!response?.project?.exportCreate?.ok) {
+                    alert.show(
+                        'Error during export.',
+                        {
+                            variant: 'error',
+                        },
+                    );
+                    return;
                 }
                 if (response.project.exportCreate.result?.isPreview) {
                     showPreviewModal();
