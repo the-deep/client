@@ -647,12 +647,20 @@ export interface PdnaParams {
     country?: string;
 }
 
+// FIXME: Change this to actual EMM params
+// Currently EMM is not used and shown
+export interface EmmParams {
+}
+
 export type SourceInput = Omit<DeepMandatory<PurgeNull<ConnectorSourceGqInputType>, 'clientId'>, 'source' | 'params'> & ({
     source: 'RELIEF_WEB';
     params: ReliefWebParams;
 } | {
     source: 'RSS_FEED';
     params: RssFeedParams;
+} | {
+    source: 'EMM';
+    params: EmmParams;
 } | {
     source: 'ATOM_FEED';
     params: AtomFeedParams;

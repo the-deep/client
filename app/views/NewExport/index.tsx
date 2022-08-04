@@ -491,7 +491,7 @@ function NewExport(props: Props) {
                     title: w.title ?? '',
                 }));
 
-                const mappedValues = response?.staticColumnOptions?.enumValues?.map((val) => ({
+                const mappedValues = response.staticColumnOptions?.enumValues?.map((val) => ({
                     isWidget: false,
                     title: val.description ?? '',
                     key: val.name,

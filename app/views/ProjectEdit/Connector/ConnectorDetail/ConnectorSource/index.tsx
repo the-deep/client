@@ -196,7 +196,7 @@ function ConnectorSource(props: Props) {
                     variant="accent"
                     label="Total"
                     valuePrecision={0}
-                    value={isSuccessfullyFetched ? source.leadsCount : undefined}
+                    value={isSuccessfullyFetched ? source.leadsCount.total : undefined}
                     emptyContent="-"
                 />
             </Container>
