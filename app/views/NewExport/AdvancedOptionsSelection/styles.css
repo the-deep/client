@@ -56,3 +56,17 @@
         }
     }
 }
+
+.excel-options-container {
+    display: flex;
+    gap: var(--dui-spacing-large);
+
+    .excel-info {
+        flex-basis: 35%;
+        flex-shrink: 0;
+    }
+
+    .excel-columns-container {
+        flex-grow: 1;
+    }
+}

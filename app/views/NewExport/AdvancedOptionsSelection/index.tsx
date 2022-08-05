@@ -19,6 +19,7 @@ import {
     DIMENSION_FIRST,
 } from '../utils';
 
+import { ExcelColumnNode } from '..';
 import styles from './styles.css';
 
 const exportTypeTitle: { [key in ExportFormatEnum]: string } = {
@@ -50,6 +51,8 @@ interface Props {
     onIncludeSubSectorChange: (value: boolean) => void;
     onContextualWidgetsChange: (value: TreeSelectableWidget[]) => void;
     onTextWidgetsChange: (value: TreeSelectableWidget[]) => void;
+    widgetColumns: ExcelColumnNode[];
+    onWidgetColumnChange: (value: ExcelColumnNode[]) => void;
 }
 function AdvancedOptionsSelection(props: Props) {
     const {
@@ -74,6 +77,8 @@ function AdvancedOptionsSelection(props: Props) {
         onContextualWidgetsChange,
         onTextWidgetsChange,
         onExcelDecoupledChange,
+        widgetColumns,
+        onWidgetColumnChange,
     } = props;
 
     const handleSwapOrderValueChange = useCallback((newValue) => {
@@ -91,10 +96,10 @@ function AdvancedOptionsSelection(props: Props) {
     return (
         <Modal
             className={exportFileFormat !== 'XLSX' ? styles.modal : undefined}
-            size={exportFileFormat === 'XLSX' ? 'small' : 'large'}
             heading={`Advanced Options - ${exportTypeTitle[exportFileFormat]}`}
             onCloseButtonClick={onCloseButtonClick}
             bodyClassName={styles.body}
+            size="large"
         >
             {(exportFileFormat === 'DOCX' || exportFileFormat === 'PDF') && (
                 <div className={styles.reportOptions}>
@@ -206,18 +211,34 @@ function AdvancedOptionsSelection(props: Props) {
                 </div>
             )}
             {(exportFileFormat === 'XLSX') && (
-                <>
-                    <Checkbox
-                        name="excelDecoupled"
-                        label={_ts('export', 'decoupledEntriesLabel')}
-                        value={excelDecoupled}
-                        onChange={onExcelDecoupledChange}
-                    />
-                    <div key="info">
-                        <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
-                        <p>{_ts('export', 'decoupledEntriesTitle')}</p>
+                <div className={styles.excelOptionsContainer}>
+                    <div className={styles.excelInfo}>
+                        <Checkbox
+                            name="excelDecoupled"
+                            label={_ts('export', 'decoupledEntriesLabel')}
+                            value={excelDecoupled}
+                            onChange={onExcelDecoupledChange}
+                        />
+                        <div key="info">
+                            <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
+                            <p>{_ts('export', 'decoupledEntriesTitle')}</p>
+                        </div>
                     </div>
-                </>
+                    {widgetColumns.length > 0 && (
+                        <Container
+                            className={styles.excelColumnsContainer}
+                            heading="Columns"
+                            headingSize="extraSmall"
+                        >
+                            <TreeSelection
+                                name="columns"
+                                value={widgetColumns}
+                                onChange={onWidgetColumnChange}
+                                direction="vertical"
+                            />
+                        </Container>
+                    )}
+                </div>
             )}
         </Modal>
     );

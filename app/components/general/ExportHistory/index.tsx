@@ -106,6 +106,11 @@ const PROJECT_EXPORTS = gql`
                     type
                     project
                     extraOptions {
+                        excelColumns {
+                            isWidget
+                            staticColumn
+                            widgetKey
+                        }
                         excelDecoupled
                         reportExportingWidgets
                         reportLevels {

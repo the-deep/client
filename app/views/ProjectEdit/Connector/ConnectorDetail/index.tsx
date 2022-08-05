@@ -66,7 +66,9 @@ const PROJECT_CONNECTOR_DETAILS = gql`
                         createdAt
                         title
                         lastFetchedAt
-                        leadsCount
+                        leadsCount {
+                            total
+                        }
                         status
                         stats {
                             date
