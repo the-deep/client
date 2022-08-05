@@ -12,6 +12,7 @@ import {
     analyzeErrors,
 } from '@togglecorp/toggle-form';
 import {
+    ConfirmButton,
     ListView,
     Card,
     Container,
@@ -33,12 +34,23 @@ import {
 } from '#generated/types';
 import generateString from '#utils/string';
 
+import {
+    getMatrix2dPossibleMappings,
+    getMatrix1dPossibleMappings,
+    getOptionTypePossibleMappings,
+    getOrganigramPossibleMappings,
+} from './utils';
 import { WidgetsType } from '../schema';
 import CheckButton from './CheckButton';
 import WidgetTagList from './WidgetTagList';
 import CellGroup from './CellGroup';
 
 import styles from './styles.css';
+
+// TODO: Implement fuzzy search later
+function isCaseInsensitiveMatch(foo: string | undefined, bar: string | undefined) {
+    return foo?.toLowerCase() === bar?.toLowerCase();
+}
 
 type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
 
@@ -212,6 +224,51 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         handleWidgetMappingsChange,
     ]);
 
+    const handleAutoMatchClick = useCallback(() => {
+        const items = widgets?.map((widget) => {
+            if (widget.widgetId === 'MATRIX2D') {
+                return getMatrix2dPossibleMappings(widget);
+            }
+            if (widget.widgetId === 'MATRIX1D') {
+                return getMatrix1dPossibleMappings(widget);
+            }
+            if (
+                widget.widgetId === 'SCALE'
+                || widget.widgetId === 'SELECT'
+                || widget.widgetId === 'MULTISELECT'
+            ) {
+                return getOptionTypePossibleMappings(widget);
+            }
+            if (widget.widgetId === 'ORGANIGRAM') {
+                return getOrganigramPossibleMappings(widget);
+            }
+            return [];
+        }).flat();
+
+        const mapping = items?.map((item) => (
+            predictionTags?.reduce((acc, tag) => {
+                if (!isCaseInsensitiveMatch(item?.label, tag.name)) {
+                    return acc;
+                }
+                return ([
+                    {
+                        ...item,
+                        tag: tag.id,
+                        clientId: randomString(),
+                    },
+                    ...acc,
+                ]);
+            }, [] as Omit<MappingsItem, 'id'>[])
+        )).flat();
+
+        // FIXME: MappingsItem requires id, but its not required at first
+        setMappings(mapping as MappingsItem[]);
+    }, [
+        setMappings,
+        predictionTags,
+        widgets,
+    ]);
+
     return (
         <div className={_cs(className, styles.assistedTagging)}>
             <Header
@@ -243,14 +300,26 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                         ),
                     },
                 )}
+                actionsContainerClassName={styles.actions}
                 actions={(
-                    <Switch
-                        name="isAssistedTaggingEnabled"
-                        value={assistedTaggingEnabled}
-                        onChange={onAssistedTaggingStatusChange}
-                        disabled={pending}
-                        label="Active"
-                    />
+                    <>
+                        <Switch
+                            name="isAssistedTaggingEnabled"
+                            value={assistedTaggingEnabled}
+                            onChange={onAssistedTaggingStatusChange}
+                            disabled={pending}
+                            label="Active"
+                        />
+                        <ConfirmButton
+                            name={undefined}
+                            onConfirm={handleAutoMatchClick}
+                            message="Auto-matching will remove all the current mappings and replace them with the recommended ones. Are you sure you want to auto-match?"
+                            disabled={pending || disabled || !assistedTaggingEnabled}
+                            variant="tertiary"
+                        >
+                            Auto Match
+                        </ConfirmButton>
+                    </>
                 )}
             />
             <div
