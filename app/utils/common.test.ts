@@ -208,6 +208,6 @@ test('getMaximum', () => {
             date: '2020-01-05',
         },
     ];
-    expect(getMaximum(dates, (d1, d2) => compareDate(d1.date, d2.date)).date).toBe('2021-01-05');
+    expect(getMaximum(dates, (d1, d2) => compareDate(d1.date, d2.date))?.date).toBe('2021-01-05');
 });
 
