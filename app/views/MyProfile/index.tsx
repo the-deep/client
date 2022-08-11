@@ -107,6 +107,9 @@ const UPDATE_ME = gql`
                 id
                 lastName
                 organization
+                accessibleFeatures {
+                    key
+                }
                 lastActiveProject {
                     allowedPermissions
                     currentUserRole
