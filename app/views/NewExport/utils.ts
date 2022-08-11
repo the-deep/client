@@ -140,47 +140,41 @@ function transformLevelsColumnFirst(
 // It currently filters out any item that is not part of the item in the 2 filter lists of matrix2d
 function mapReportLevelsToNodes(
     levels: Level[],
-    rowsSet: Set<string>,
-    colsSet: Set<string>,
+    rowsList: string[] = [],
+    colsList: string[] = [],
 ): ReportStructure[] {
     return levels.map((level) => {
         // NOTE: If there are no filters selected, we show everything
-        if (rowsSet.size === 0 && colsSet.size === 0) {
+        if (rowsList.length === 0 && colsList.length === 0) {
             return ({
                 key: level.id,
                 title: level.title,
                 selected: true,
                 draggable: true,
                 nodes: level.sublevels && mapReportLevelsToNodes(
-                    level.sublevels, rowsSet, colsSet,
+                    level.sublevels, rowsList, colsList,
                 ),
             });
         }
 
-        const splits = level.id.split('-');
         // NOTE: Levels are by default a composite of keys
         // We are checking for any item in the list of keys to include all children
         // of selected root as well
         // Sample level: {rowId}-{subRowId}-{colId}-{subColId}
         // If row/col is selected in filter, we show all child of that row
-        const isActiveRowKey = splits.some(
-            (split) => rowsSet.has(split),
-        );
-
-        const isActiveColKey = splits.some(
-            (split) => colsSet.has(split),
-        );
+        const isActiveRowKey = rowsList.some((rowKey) => level.id.includes(rowKey));
+        const isActiveColKey = colsList.some((colKey) => level.id.includes(colKey));
 
         // NOTE: If both row and col filters are applied, we need to apply AND logic
-        const isActiveKey = (rowsSet.size > 0 && colsSet.size > 0)
+        const isActiveKey = (rowsList.length > 0 && colsList.length > 0)
             ? (isActiveRowKey && isActiveColKey)
             : (isActiveRowKey || isActiveColKey);
 
         if (level.sublevels) {
             const nodes = mapReportLevelsToNodes(
                 level.sublevels,
-                rowsSet,
-                colsSet,
+                rowsList,
+                colsList,
             );
 
             if (nodes.length > 0 || isActiveKey) {
@@ -264,8 +258,8 @@ export const createReportStructure = (
                 (f) => f.widgetKey === exportable.widgetKey,
             ).map((v) => v.valueList).filter(isDefined);
 
-            const rowsSet = new Set(appliedValuesList?.[0]);
-            const colsSet = new Set(appliedValuesList?.[1]);
+            const rowsList = appliedValuesList?.[0];
+            const colsList = appliedValuesList?.[1];
 
             return {
                 title: widget.title,
@@ -274,8 +268,8 @@ export const createReportStructure = (
                 draggable: true,
                 nodes: mapReportLevelsToNodes(
                     newLevels,
-                    rowsSet,
-                    colsSet,
+                    rowsList,
+                    colsList,
                 ),
             };
         }
@@ -292,14 +286,13 @@ export const createReportStructure = (
             if (!newLevels) {
                 return undefined;
             }
-            const rowsSet = new Set(appliedFilter?.valueList);
-            const emptySet = new Set<string>();
+            const rowsList = appliedFilter?.valueList;
             return {
                 title: widget.title,
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
-                nodes: mapReportLevelsToNodes(newLevels, rowsSet, emptySet),
+                nodes: mapReportLevelsToNodes(newLevels, rowsList),
             };
         }
         return undefined;

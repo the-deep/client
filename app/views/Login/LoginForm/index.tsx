@@ -74,6 +74,9 @@ const LOGIN = gql`
                 id
                 displayName
                 displayPictureUrl
+                accessibleFeatures {
+                    key
+                }
                 lastActiveProject {
                     allowedPermissions
                     currentUserRole
@@ -100,6 +103,9 @@ const LOGIN_WITH_HID = gql`
                 id
                 displayName
                 displayPictureUrl
+                accessibleFeatures {
+                    key
+                }
                 lastActiveProject {
                     allowedPermissions
                     currentUserRole
