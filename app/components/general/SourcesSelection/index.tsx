@@ -99,25 +99,15 @@ const PROJECT_LEADS = gql`
                     }
                     project
                     authors {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
+                        ...OrganizationGeneralResponse
                     }
                     assignee {
                         id
                         displayName
                     }
                     source {
-                        mergedAs {
-                            id
-                            title
-                        }
-                        id
                         url
-                        title
+                        ...OrganizationGeneralResponse
                     }
                     entriesCount {
                         total
