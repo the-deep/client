@@ -12,7 +12,6 @@ import {
 } from '#generated/types';
 import {
     Widget as WidgetFromAF,
-    FrameworkProperties,
     MappingsItem,
 } from '#types/newAnalyticalFramework';
 import {
@@ -25,15 +24,14 @@ import {
 export type FrameworkRaw = DeepMandatory<NonNullable<CurrentFrameworkQuery['analysisFramework']>, 'key'>;
 type FrameworkWithWidgets = DeepReplace<FrameworkRaw, Omit<WidgetRaw, 'widgetIdDisplay' | 'widthDisplay'>, WidgetFromAF>;
 type FrameworkWithTags = DeepReplace<FrameworkWithWidgets, MappingsItemRaw, MappingsItem>;
-export type Framework = Omit<FrameworkWithTags, 'properties'> & { properties?: FrameworkProperties };
+export type Framework = FrameworkWithTags;
 
 export type FrameworkInputRaw = DeepMandatory<PurgeNull<AnalysisFrameworkInputType>, 'clientId' | 'key' | 'widgetId' | 'order' | 'conditional'>;
 type FrameworkInputWithWidgets = DeepReplace<FrameworkInputRaw, WidgetInputRaw, WidgetFromAF>;
 type FrameworkInputWithTags = DeepReplace<
     FrameworkInputWithWidgets, MappingsItemInputRaw, MappingsItem
 >;
-export type FrameworkInput = Omit<FrameworkInputWithTags, 'properties' | 'previewImage'> & {
-    properties?: FrameworkProperties,
+export type FrameworkInput = Omit<FrameworkInputWithTags, 'previewImage'> & {
     previewImage?: File | null,
 };
 export type Section = NonNullable<NonNullable<FrameworkInput['primaryTagging']>[number]>;

@@ -19,7 +19,31 @@ const FRAMEWORK = gql`
             url
         }
         title
-        properties
+        properties {
+            statsConfig {
+                geoWidget {
+                    pk
+                }
+                multiselectWidgets {
+                    pk
+                }
+                organigramWidgets {
+                    pk
+                }
+                reliabilityWidget {
+                    pk
+                }
+                severityWidget {
+                    pk
+                }
+                widget1d {
+                    pk
+                }
+                widget2d {
+                    pk
+                }
+            }
+        }
         description
         allowedPermissions
         isPrivate
