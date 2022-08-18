@@ -702,38 +702,6 @@ export type FrameworkExportableType = TextExportableType
     | Matrix1dExportableType
     | Matrix2dExportableType;
 
-export interface FrameworkProperties {
-
-    stats_config: {
-        widget_1d?: { // TODO need to change this to matrix1d later
-            pk: number;
-        }[];
-        widget_2d?: { // // TODO need to change this to matrix2d later
-            pk: number;
-        }[];
-
-        geo_widget?: {
-            pk: number;
-        };
-
-        severity_widget?: {
-            pk: number;
-        };
-
-        reliability_widget?: {
-            pk: number;
-        };
-
-        affected_groups_widget?: {
-            pk: number;
-        };
-
-        specific_needs_groups_widgets?: {
-            pk: number;
-        };
-    };
-}
-
 const widgetVersionMappings: {
     [key in Widget['widgetId']]: number
 } = {

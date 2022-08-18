@@ -22,6 +22,7 @@ export type PartialFormType = PartialForm<FormType, 'primaryTagging' | 'secondar
 export type WidgetsType = NonNullable<PartialFormType['secondaryTagging']>;
 export type SectionsType = NonNullable<PartialFormType['primaryTagging']>;
 export type PropertiesType = NonNullable<PartialFormType['properties']>;
+export type StatsConfigType = NonNullable<NonNullable<PartialFormType['properties']>['statsConfig']>;
 export type PredictionTagMappingsType = NonNullable<PartialFormType['predictionTagsMapping']>;
 
 export type PartialWidgetsType = WidgetsType;
@@ -102,6 +103,12 @@ const sectionsSchema: SectionsSchema = {
     member: (): SectionsSchemaMember => sectionSchema,
 };
 
+type FrameworkPropertiesSchema = ObjectSchema<PropertiesType, PartialFormType>;
+type FrameworkPropertiesSchemaFields = ReturnType<FrameworkPropertiesSchema['fields']>;
+
+type StatsConfigSchema = ObjectSchema<StatsConfigType, PartialFormType>;
+type StatsConfigSchemaFields = ReturnType<StatsConfigSchema['fields']>;
+
 export const defaultFormValues: PartialFormType = {
     title: '',
     isPrivate: false,
@@ -133,18 +140,16 @@ const schema: FormSchema = {
             baseSchema = {
                 ...baseSchema,
                 properties: {
-                    // FIXME: define return types
-                    fields: () => ({
-                        stats_config: {
-                            // FIXME: define return types
-                            fields: () => ({
-                                widget_1d: [requiredListCondition],
-                                widget_2d: [requiredListCondition],
-                                geo_widget: [requiredCondition],
-                                severity_widget: [requiredCondition],
-                                reliability_widget: [requiredCondition],
-                                affected_groups_widget: [requiredCondition],
-                                specific_needs_groups_widgets: [requiredCondition],
+                    fields: (): FrameworkPropertiesSchemaFields => ({
+                        statsConfig: {
+                            fields: (): StatsConfigSchemaFields => ({
+                                widget1d: [requiredListCondition],
+                                widget2d: [requiredListCondition],
+                                geoWidget: [requiredCondition],
+                                severityWidget: [requiredCondition],
+                                reliabilityWidget: [requiredCondition],
+                                multiselectWidgets: [requiredCondition],
+                                organigramWidgets: [requiredCondition],
                             }),
                         },
                     }),
