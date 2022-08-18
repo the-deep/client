@@ -1,18 +1,17 @@
 import { gql } from '@apollo/client';
 
-import { FRAMEWORK_FRAGMENT } from '#gqlFragments';
+import {
+    FRAMEWORK_FRAGMENT,
+    ORGANIZATION_FRAGMENT,
+} from '#gqlFragments';
 
 const FRAMEWORK = gql`
     ${FRAMEWORK_FRAGMENT}
+    ${ORGANIZATION_FRAGMENT}
     fragment Framework on AnalysisFrameworkDetailType {
         ...FrameworkResponse
         organization {
-            id
-            title
-            mergedAs {
-                id
-                title
-            }
+            ...OrganizationGeneralResponse
         }
         previewImage {
             name

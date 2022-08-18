@@ -341,6 +341,7 @@ function SourcesFilter(props: Props) {
                         disabled={disabled || optionsLoading}
                         label="Authoring Organization"
                         error={getErrorString(error?.authorOrganizations)}
+                        usedInProject={projectId}
                     />
                     <NewOrganizationMultiSelectInput
                         variant="general"
@@ -352,6 +353,7 @@ function SourcesFilter(props: Props) {
                         disabled={disabled || optionsLoading}
                         label="Source Organization"
                         error={getErrorString(error?.sourceOrganizations)}
+                        usedInProject={projectId}
                     />
                     {!filterOnlyUnprotected && (
                         <SelectInput

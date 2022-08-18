@@ -250,3 +250,15 @@ export const SOURCE_FILTER_FRAGMENT = gql`
         }
     }
 `;
+
+export const ORGANIZATION_FRAGMENT = gql`
+    fragment OrganizationGeneralResponse on OrganizationType {
+        id
+        title
+        verified
+        mergedAs {
+            id
+            title
+        }
+    }
+`;
