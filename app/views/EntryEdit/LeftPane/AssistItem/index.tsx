@@ -423,13 +423,35 @@ function AssistItem(props: Props) {
                         lead: leadId,
                         excerpt: text,
                         droppedExcerpt: text,
-                        attributes: recommendedAttributes,
+                        attributes: recommendedAttributes.map((attr) => {
+                            if (attr.widgetType !== 'GEO') {
+                                return attr;
+                            }
+                            // NOTE: Selecting only the 1st recommendation
+                            return ({
+                                ...attr,
+                                data: {
+                                    value: attr?.data?.value.slice(0, 1) ?? [],
+                                },
+                            });
+                        }),
                     };
                 }
 
                 return {
                     ...oldEntry,
-                    attributes: recommendedAttributes,
+                    attributes: recommendedAttributes.map((attr) => {
+                        if (attr.widgetType !== 'GEO') {
+                            return attr;
+                        }
+                        // NOTE: Selecting only the 1st recommendation
+                        return ({
+                            ...attr,
+                            data: {
+                                value: attr?.data?.value.slice(0, 1) ?? [],
+                            },
+                        });
+                    }),
                 };
             },
             undefined,

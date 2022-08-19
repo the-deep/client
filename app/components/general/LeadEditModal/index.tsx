@@ -122,6 +122,7 @@ const PROJECT_LEAD = gql`
 `;
 
 const LEAD_FRAGMENT = gql`
+    ${ORGANIZATION_FRAGMENT}
     fragment LeadResponse on LeadType {
         id
         title
@@ -152,20 +153,10 @@ const LEAD_FRAGMENT = gql`
         confidentiality
         status
         source {
-            id
-            title
-            mergedAs {
-                id
-                title
-            }
+            ...OrganizationGeneralResponse
         }
         authors {
-            id
-            title
-            mergedAs {
-                id
-                title
-            }
+            ...OrganizationGeneralResponse
         }
         emmEntities {
             id

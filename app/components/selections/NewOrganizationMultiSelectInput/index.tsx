@@ -38,7 +38,15 @@ const MULTI_ORGANIZATIONS = gql`
     }
 `;
 
-export type BasicOrganization = NonNullable<NonNullable<NonNullable<MultiOrganizationOptionsQuery['organizations']>['results']>[number]>;
+export type BasicOrganization = {
+    id: string;
+    title: string;
+    verified?: boolean;
+    mergedAs?: {
+        id: string;
+        title: string;
+    } | null | undefined;
+};
 
 type Def = { containerClassName?: string };
 type OrganizationMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<

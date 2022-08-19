@@ -28,7 +28,15 @@ const ORGANIZATIONS = gql`
     }
 `;
 
-export type BasicOrganization = NonNullable<NonNullable<NonNullable<OrganizationOptionsQuery['organizations']>['results']>[number]>;
+export type BasicOrganization = {
+    id: string;
+    title: string;
+    verified?: boolean;
+    mergedAs?: {
+        id: string;
+        title: string;
+    } | null | undefined;
+};
 
 type Def = { containerClassName?: string };
 type NewOrganizationSelectInputProps<K extends string> = SearchSelectInputProps<

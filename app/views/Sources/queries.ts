@@ -84,26 +84,20 @@ export const PROJECT_SOURCES = gql`
                     }
                     project
                     authors {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
+                        ...OrganizationGeneralResponse
                     }
                     assignee {
                         id
                         displayName
                     }
                     source {
+                        ...OrganizationGeneralResponse
                         mergedAs {
                             id
                             title
                             url
                         }
-                        id
                         url
-                        title
                     }
                     entriesCount {
                         controlled
