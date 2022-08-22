@@ -13,6 +13,7 @@ import {
     isDefined,
     mapToMap,
     compareDate,
+    isObject,
 } from '@togglecorp/fujs';
 import {
     PendingMessage,
@@ -1336,6 +1337,16 @@ function EntryEdit(props: Props) {
                 </>
             ),
             leadId,
+            rightComponent: (
+                <ExcerptInput
+                    value={datum.excerpt}
+                    image={datum?.image ? entryImagesMap?.[datum.image] : undefined}
+                    imageRaw={undefined}
+                    leadImageUrl={undefined}
+                    entryType={datum.entryType}
+                    readOnly
+                />
+            ),
             disabled: !!selectedEntry,
             entryImage: datum?.image ? entryImagesMap?.[datum.image] : undefined,
             error: entriesError?.[entryId],
@@ -1361,6 +1372,25 @@ function EntryEdit(props: Props) {
             selectedEntry,
             entriesError,
             handleApplyToAll,
+        ],
+    );
+
+    const rightComponentForEntry = useMemo(
+        () => (isObject(currentEntry) && (
+            <ExcerptInput
+                value={currentEntry.excerpt}
+                image={currentEntry.image
+                    ? entryImagesMap?.[currentEntry.image]
+                    : undefined}
+                imageRaw={undefined}
+                leadImageUrl={undefined}
+                entryType={currentEntry.entryType}
+                readOnly
+            />
+        )),
+        [
+            currentEntry,
+            entryImagesMap,
         ],
     );
 
@@ -1583,6 +1613,7 @@ function EntryEdit(props: Props) {
                                                     error={currentEntryError?.attributes}
                                                     geoAreaOptions={geoAreaOptions}
                                                     onGeoAreaOptionsChange={setGeoAreaOptions}
+                                                    rightComponent={rightComponentForEntry}
                                                 />
                                             </TabPanel>
                                         ))}
@@ -1642,6 +1673,7 @@ function EntryEdit(props: Props) {
                                         error={currentEntryError?.attributes}
                                         geoAreaOptions={geoAreaOptions}
                                         onGeoAreaOptionsChange={setGeoAreaOptions}
+                                        rightComponent={rightComponentForEntry}
                                     />
                                 </Container>
                             </div>

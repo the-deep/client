@@ -54,6 +54,8 @@ export interface Props {
     recommendations?: PartialAttributeType[];
     emptyMessageHidden?: boolean;
     suggestionMode?: boolean;
+
+    rightComponent?: React.ReactNode;
 }
 
 function CompactSection(props: Props) {
@@ -79,6 +81,8 @@ function CompactSection(props: Props) {
         emptyMessageHidden,
         suggestionMode,
         recommendations,
+
+        rightComponent,
     } = props;
 
     const filteredWidgets = useMemo(
@@ -201,6 +205,7 @@ function CompactSection(props: Props) {
                 widgetsHints,
                 recommendations,
                 suggestionMode,
+                rightComponent,
             };
         },
         [
@@ -217,6 +222,7 @@ function CompactSection(props: Props) {
             onGeoAreaOptionsChange,
             handleApplyBelowClick,
             handleApplyAllClick,
+            rightComponent,
         ],
     );
 

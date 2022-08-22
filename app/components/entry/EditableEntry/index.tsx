@@ -346,6 +346,16 @@ function EditableEntry(props: Props) {
             onGeoAreaOptionsChange={onGeoAreaOptionsChange}
             allWidgets={allWidgets}
             hideEntryId={hideEntryId}
+            rightComponent={(
+                <ExcerptInput
+                    value={value.excerpt}
+                    image={entryImage}
+                    imageRaw={undefined}
+                    leadImageUrl={undefined}
+                    entryType={value.entryType}
+                    readOnly
+                />
+            )}
         />
     );
 

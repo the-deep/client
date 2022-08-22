@@ -32,6 +32,8 @@ interface Props {
     disabled?: boolean;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+
+    rightComponent?: React.ReactNode;
 }
 
 function Section(props: Props) {
@@ -45,6 +47,8 @@ function Section(props: Props) {
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+
+        rightComponent,
     } = props;
 
     const filteredWidgets = useMemo(
@@ -89,6 +93,7 @@ function Section(props: Props) {
                 error: err,
                 geoAreaOptions,
                 onGeoAreaOptionsChange,
+                rightComponent,
             };
         },
         [
@@ -99,6 +104,7 @@ function Section(props: Props) {
             error,
             geoAreaOptions,
             onGeoAreaOptionsChange,
+            rightComponent,
         ],
     );
 

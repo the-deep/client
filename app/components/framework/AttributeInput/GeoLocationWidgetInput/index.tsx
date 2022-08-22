@@ -7,6 +7,7 @@ import { GeoLocationWidget } from '#types/newAnalyticalFramework';
 import { GeoArea } from '#components/GeoMultiSelectInput';
 import { GeoLocationWidgetAttribute } from '#types/newEntry';
 import GeoLocationInput from '#components/GeoLocationInput';
+
 import WidgetWrapper from '../WidgetWrapper';
 
 export type PartialGeoLocationWidget = PartialForm<
@@ -32,6 +33,9 @@ export interface Props <N extends string>{
     widget: PartialGeoLocationWidget;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+
+    rightComponent?: React.ReactNode;
+
 }
 
 function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
@@ -48,6 +52,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         error: riskyError,
         geoAreaOptions,
         onGeoAreaOptionsChange,
+        rightComponent,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -82,6 +87,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
                 error={getErrorString(error?.value)}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                rightComponent={rightComponent}
             />
         </WidgetWrapper>
     );

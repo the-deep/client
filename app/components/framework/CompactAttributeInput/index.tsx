@@ -105,6 +105,8 @@ export interface Props<N extends string | number | undefined> {
     widgetsHints?: WidgetHint[];
     recommendations?: PartialAttributeType[];
     suggestionMode?: boolean;
+
+    rightComponent: React.ReactNode;
 }
 
 function CompactAttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -130,6 +132,8 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
         recommendations,
 
         suggestionMode,
+
+        rightComponent,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -448,6 +452,7 @@ function CompactAttributeInput<N extends string | number | undefined>(props: Pro
                 actions={actions}
                 suggestionMode={suggestionMode}
                 recommendedValue={widgetRecommendedValue}
+                rightComponent={rightComponent}
             />
         );
     } else {

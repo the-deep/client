@@ -75,6 +75,8 @@ export interface Props<N extends string | number | undefined> {
     icons?: React.ReactNode;
     geoAreaOptions: GeoArea[] | undefined | null;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
+
+    rightComponent?: React.ReactNode;
 }
 
 function AttributeInput<N extends string | number | undefined>(props: Props<N>) {
@@ -93,6 +95,8 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
 
         geoAreaOptions,
         onGeoAreaOptionsChange,
+
+        rightComponent,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -330,6 +334,7 @@ function AttributeInput<N extends string | number | undefined>(props: Props<N>) 
                 error={error?.data as Error<typeof data> | undefined}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                rightComponent={rightComponent}
             />
         );
     } else {

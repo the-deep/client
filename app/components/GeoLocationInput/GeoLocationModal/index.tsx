@@ -17,6 +17,8 @@ interface Props {
     geoAreaOptions: GeoArea[] | null | undefined;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>;
     onModalClose: () => void;
+
+    rightComponent?: React.ReactNode;
 }
 function GeoLocationModal(props: Props) {
     const {
@@ -27,6 +29,8 @@ function GeoLocationModal(props: Props) {
         onGeoAreaOptionsChange,
         initialValue,
         onSubmit,
+
+        rightComponent,
     } = props;
 
     const [
@@ -71,6 +75,7 @@ function GeoLocationModal(props: Props) {
                 value={tempGeoAreas}
                 geoAreaOptions={geoAreaOptions}
                 onGeoAreaOptionsChange={onGeoAreaOptionsChange}
+                rightComponent={rightComponent}
             />
         </Modal>
     );

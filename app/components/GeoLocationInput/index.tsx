@@ -25,6 +25,8 @@ interface Props<N extends string> {
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | undefined | null>>;
     inputDescription?: React.ReactNode;
     hint?:React.ReactNode;
+
+    rightComponent?: React.ReactNode;
 }
 
 function GeoLocationInput<N extends string>(props: Props<N>) {
@@ -40,6 +42,8 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
         onGeoAreaOptionsChange,
         inputDescription,
         hint,
+
+        rightComponent,
     } = props;
 
     const [
@@ -104,6 +108,7 @@ function GeoLocationInput<N extends string>(props: Props<N>) {
                             geoAreaOptions={geoAreaOptions}
                             onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                             onSubmit={handleModalSubmit}
+                            rightComponent={rightComponent}
                         />
                     )}
                 </>

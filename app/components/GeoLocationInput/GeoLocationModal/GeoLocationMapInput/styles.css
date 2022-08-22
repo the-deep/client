@@ -6,8 +6,8 @@
     .map-selection {
         display: flex;
         align-self: stretch;
-        flex-basis: 75%;
         flex-direction: column;
+        flex-grow: 1;
 
         .inputs {
             display: flex;
@@ -28,11 +28,23 @@
         }
     }
 
-    .selected-geo-areas {
+    .right-pane {
         display: flex;
+        flex-basis: 25%;
         flex-direction: column;
-        flex-grow: 1;
-        background-color: var(--dui-color-white);
+        flex-shrink: 0;
+        gap: var(--dui-spacing-medium);
+
+        .excerpt {
+            background-color: transparent;
+            max-height: 20rem;
+            overflow-y: auto;
+        }
+
+        .selected-geo-areas {
+            flex-grow: 1;
+            background-color: var(--dui-color-white);
+        }
 
         .geo-area-group {
             display: flex;

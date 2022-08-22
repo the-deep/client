@@ -64,6 +64,8 @@ interface Props {
     onChange: (value: string[] | undefined) => void,
     geoAreaOptions: GeoArea[] | null | undefined;
     onGeoAreaOptionsChange: React.Dispatch<React.SetStateAction<GeoArea[] | null | undefined>>;
+
+    rightComponent?: React.ReactNode;
 }
 
 function GeoLocationMapInput(props: Props) {
@@ -74,6 +76,8 @@ function GeoLocationMapInput(props: Props) {
         geoAreaOptions,
         onGeoAreaOptionsChange,
         onChange,
+
+        rightComponent,
     } = props;
 
     const [selectedRegion, setSelectedRegion] = useState<string>();
@@ -210,35 +214,47 @@ function GeoLocationMapInput(props: Props) {
                     onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                 />
             </div>
-            <Container
-                className={styles.selectedGeoAreas}
-                heading="Selected Geo Areas"
-                spacing="none"
-                headingSize="small"
-            >
-                <ListView
-                    groupKeySelector={geoAreaGroupKeySelector}
-                    groupRenderer={ContainerCard}
-                    groupRendererClassName={styles.geoAreaGroup}
-                    grouped
-                    groupRendererParams={geoAreaGroupRendererParams}
-                    data={geoAreasList}
-                    renderer={GeoAreaListItem}
-                    keySelector={geoAreaKeySelector}
-                    rendererParams={geoAreasRendererParams}
-                    filtered={false}
-                    errored={false}
-                    pending={false}
-                    emptyIcon={(
-                        <Kraken
-                            variant="hi"
-                        />
-                    )}
-                    emptyMessage="No geo areas selected."
-                    messageIconShown
-                    messageShown
-                />
-            </Container>
+            <div className={styles.rightPane}>
+                {rightComponent && (
+                    <Container
+                        className={styles.excerpt}
+                        heading="Selected Entry"
+                        spacing="none"
+                        headingSize="small"
+                    >
+                        {rightComponent}
+                    </Container>
+                )}
+                <Container
+                    className={styles.selectedGeoAreas}
+                    heading="Selected Geo Areas"
+                    spacing="none"
+                    headingSize="small"
+                >
+                    <ListView
+                        groupKeySelector={geoAreaGroupKeySelector}
+                        groupRenderer={ContainerCard}
+                        groupRendererClassName={styles.geoAreaGroup}
+                        grouped
+                        groupRendererParams={geoAreaGroupRendererParams}
+                        data={geoAreasList}
+                        renderer={GeoAreaListItem}
+                        keySelector={geoAreaKeySelector}
+                        rendererParams={geoAreasRendererParams}
+                        filtered={false}
+                        errored={false}
+                        pending={false}
+                        emptyIcon={(
+                            <Kraken
+                                variant="hi"
+                            />
+                        )}
+                        emptyMessage="No geo areas selected."
+                        messageIconShown
+                        messageShown
+                    />
+                </Container>
+            </div>
         </div>
     );
 }
