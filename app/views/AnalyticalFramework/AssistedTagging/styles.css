@@ -18,6 +18,14 @@
             flex-direction: column;
             flex-shrink: 0;
             justify-content: flex-end;
+
+            .progress-line {
+                width: 16rem;
+
+                .title {
+                    font-weight: var(--dui-font-weight-bold);
+                }
+            }
         }
     }
 

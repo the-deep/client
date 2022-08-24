@@ -28,6 +28,11 @@
             background-color: var(--dui-color-complement3);
             color: var(--dui-color-text-on-accent);
         }
+
+        &.accent {
+            background-color: var(--dui-color-accent);
+            color: var(--dui-color-text-on-accent);
+        }
     }
 
 
@@ -56,6 +61,10 @@
 
                 &.complement3 {
                     background-color: var(--dui-color-complement3);
+                }
+
+                &.accent {
+                    background-color: var(--dui-color-accent);
                 }
             }
 

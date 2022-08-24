@@ -425,7 +425,7 @@ function SourcesTable(props: Props) {
                     data.entriesCount?.total,
                 ) ?? 0,
                 size: 'small',
-                hideInfoCircle: true,
+                hideInfoCircleBackground: true,
             }),
         };
         const actionsColumn: TableColumn<
