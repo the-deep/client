@@ -1,8 +1,13 @@
 import { gql } from '@apollo/client';
-import { FRAMEWORK_FRAGMENT, ENTRY_FRAGMENT } from '#gqlFragments';
+import {
+    ORGANIZATION_FRAGMENT,
+    FRAMEWORK_FRAGMENT,
+    ENTRY_FRAGMENT,
+} from '#gqlFragments';
 
 // FIXME: use fragment for lead as well
 export const LEAD_ENTRIES = gql`
+    ${ORGANIZATION_FRAGMENT}
     ${ENTRY_FRAGMENT}
     query LeadEntries(
         $projectId: ID!,
@@ -41,20 +46,10 @@ export const LEAD_ENTRIES = gql`
                 confidentiality
                 status
                 source {
-                    id
-                    title
-                    mergedAs {
-                        id
-                        title
-                    }
+                    ...OrganizationGeneralResponse
                 }
                 authors {
-                    id
-                    title
-                    mergedAs {
-                        id
-                        title
-                    }
+                    ...OrganizationGeneralResponse
                 }
                 emmEntities {
                     id
@@ -108,6 +103,7 @@ export const BULK_UPDATE_ENTRIES = gql`
 `;
 
 export const UPDATE_LEAD = gql`
+    ${ORGANIZATION_FRAGMENT}
     mutation UpdateLead($projectId:ID!, $leadId:ID!, $data: LeadInputType!) {
         project(id: $projectId) {
             id
@@ -142,20 +138,10 @@ export const UPDATE_LEAD = gql`
                     confidentiality
                     status
                     source {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
+                        ...OrganizationGeneralResponse
                     }
                     authors {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
+                        ...OrganizationGeneralResponse
                     }
                     emmEntities {
                         id

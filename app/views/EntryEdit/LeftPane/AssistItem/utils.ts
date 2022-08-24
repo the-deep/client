@@ -272,7 +272,8 @@ export function createGeoAttr(
         widgetVersion: widget.version,
         widgetType: 'GEO' as const,
         data: {
-            value: locations.map((location) => location.id),
+            // NOTE: We are reducing the amount of suggestions from geo areas
+            value: locations.map((location) => location.id).slice(0, 3),
         },
     });
 }

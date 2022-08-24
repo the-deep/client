@@ -26,11 +26,13 @@ import {
     ProjectListQueryVariables,
     ProjectOrderingEnum,
 } from '#generated/types';
+import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
 
 import ActionCell, { Props as ActionCellProps } from '../ActionCell';
 import styles from './styles.css';
 
 const PROJECT_LIST = gql`
+    ${ORGANIZATION_FRAGMENT}
     query ProjectList(
         $search: String,
         $organizations: [ID!],
@@ -75,12 +77,7 @@ const PROJECT_LIST = gql`
                 organizations {
                     id
                     organization {
-                        id
-                        title
-                        mergedAs {
-                            id
-                            title
-                        }
+                        ...OrganizationGeneralResponse
                     }
                 }
             }
@@ -236,7 +233,8 @@ function ExploreDeepTableView(props: Props) {
             createStringColumn<Project, string>(
                 'organizations',
                 'Organizations',
-                (item) => item?.organizations?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
+                (item) => item?.organizations
+                    ?.map((org) => organizationTitleSelector(org.organization))?.join(', '),
             ),
             actionsColumn,
         ]);

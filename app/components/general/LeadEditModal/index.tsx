@@ -42,6 +42,7 @@ import { BasicProjectUser } from '#components/selections/ProjectUserSelectInput'
 import { BasicLeadGroup } from '#components/selections/LeadGroupSelectInput';
 import { transformToFormError, ObjectError } from '#base/utils/errorTransform';
 import LeadInput from '#components/lead/LeadInput';
+import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
 
 import styles from './styles.css';
 
@@ -65,6 +66,7 @@ const LEAD_OPTIONS = gql`
 `;
 
 const PROJECT_LEAD = gql`
+    ${ORGANIZATION_FRAGMENT}
     query ProjectLead($projectId: ID!, $leadId: ID!) {
         project(id: $projectId) {
             id
@@ -99,20 +101,10 @@ const PROJECT_LEAD = gql`
                 confidentiality
                 status
                 source {
-                    id
-                    title
-                    mergedAs {
-                        id
-                        title
-                    }
+                    ...OrganizationGeneralResponse
                 }
                 authors {
-                    id
-                    title
-                    mergedAs {
-                        id
-                        title
-                    }
+                    ...OrganizationGeneralResponse
                 }
                 emmEntities {
                     id
@@ -130,6 +122,7 @@ const PROJECT_LEAD = gql`
 `;
 
 const LEAD_FRAGMENT = gql`
+    ${ORGANIZATION_FRAGMENT}
     fragment LeadResponse on LeadType {
         id
         title
@@ -160,20 +153,10 @@ const LEAD_FRAGMENT = gql`
         confidentiality
         status
         source {
-            id
-            title
-            mergedAs {
-                id
-                title
-            }
+            ...OrganizationGeneralResponse
         }
         authors {
-            id
-            title
-            mergedAs {
-                id
-                title
-            }
+            ...OrganizationGeneralResponse
         }
         emmEntities {
             id

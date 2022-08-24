@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
-
 import {
     SearchMultiSelectInput,
     SearchMultiSelectInputProps,
+    Tag,
 } from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
 
@@ -11,33 +11,42 @@ import {
     MultiOrganizationOptionsQueryVariables,
 } from '#generated/types';
 import useDebouncedValue from '#hooks/useDebouncedValue';
+import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
+
+import styles from './styles.css';
 
 const MULTI_ORGANIZATIONS = gql`
+    ${ORGANIZATION_FRAGMENT}
     query MultiOrganizationOptions(
         $search: String,
         $page: Int,
+        $usedInProject: ID,
         $pageSize: Int,
     ) {
         organizations(
             search: $search,
             page: $page,
             pageSize: $pageSize,
+            usedInProject: $usedInProject,
         ) {
             page
             results {
-                id
-                title
-                mergedAs {
-                    id
-                    title
-                }
+                ...OrganizationGeneralResponse
             }
             totalCount
         }
     }
 `;
 
-export type BasicOrganization = NonNullable<NonNullable<NonNullable<MultiOrganizationOptionsQuery['organizations']>['results']>[number]>;
+export type BasicOrganization = {
+    id: string;
+    title: string;
+    verified?: boolean;
+    mergedAs?: {
+        id: string;
+        title: string;
+    } | null | undefined;
+};
 
 type Def = { containerClassName?: string };
 type OrganizationMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
@@ -46,7 +55,9 @@ type OrganizationMultiSelectInputProps<K extends string> = SearchMultiSelectInpu
     BasicOrganization,
     Def,
     'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
->;
+> & {
+    usedInProject?: string;
+};
 
 export function keySelector(d: BasicOrganization) {
     return d.id;
@@ -58,11 +69,30 @@ export function organizationTitleSelector(org: BasicOrganization) {
     return org.title;
 }
 
+function organizationTitleWithStatusSelector(org: BasicOrganization) {
+    const title = org.mergedAs ? org.mergedAs.title : org.title;
+
+    return (
+        <div className={styles.organization}>
+            {title}
+            {org.verified && (
+                <Tag
+                    spacing="compact"
+                    variant="gradient1"
+                >
+                    Verified
+                </Tag>
+            )}
+        </div>
+    );
+}
+
 function OrganizationSearchMultiSelectInput<K extends string>(
     props: OrganizationMultiSelectInputProps<K>,
 ) {
     const {
         className,
+        usedInProject,
         ...otherProps
     } = props;
 
@@ -74,7 +104,11 @@ function OrganizationSearchMultiSelectInput<K extends string>(
         search: debouncedSearchText,
         page: 1,
         pageSize: 10,
-    }), [debouncedSearchText]);
+        usedInProject,
+    }), [
+        debouncedSearchText,
+        usedInProject,
+    ]);
 
     const {
         data,
@@ -130,6 +164,7 @@ function OrganizationSearchMultiSelectInput<K extends string>(
             className={className}
             keySelector={keySelector}
             labelSelector={organizationTitleSelector}
+            optionLabelSelector={organizationTitleWithStatusSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.organizations?.results}
             optionsPending={loading}

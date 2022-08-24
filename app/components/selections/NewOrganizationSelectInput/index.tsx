@@ -1,30 +1,42 @@
 import React, { useState, useMemo } from 'react';
-import { SearchSelectInput, SearchSelectInputProps } from '@the-deep/deep-ui';
+import {
+    SearchSelectInput,
+    SearchSelectInputProps,
+    Tag,
+} from '@the-deep/deep-ui';
 import { useQuery, gql } from '@apollo/client';
+
 import {
     OrganizationOptionsQuery,
     OrganizationOptionsQueryVariables,
 } from '#generated/types';
+import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
 
 import useDebouncedValue from '#hooks/useDebouncedValue';
 
+import styles from './styles.css';
+
 const ORGANIZATIONS = gql`
+    ${ORGANIZATION_FRAGMENT}
     query OrganizationOptions($search: String) {
         organizations(search: $search) {
             results {
-                id
-                title
-                mergedAs {
-                    id
-                    title
-                }
+                ...OrganizationGeneralResponse
             }
             totalCount
         }
     }
 `;
 
-export type BasicOrganization = NonNullable<NonNullable<NonNullable<OrganizationOptionsQuery['organizations']>['results']>[number]>;
+export type BasicOrganization = {
+    id: string;
+    title: string;
+    verified?: boolean;
+    mergedAs?: {
+        id: string;
+        title: string;
+    } | null | undefined;
+};
 
 type Def = { containerClassName?: string };
 type NewOrganizationSelectInputProps<K extends string> = SearchSelectInputProps<
@@ -41,6 +53,24 @@ export function organizationTitleSelector(org: BasicOrganization) {
         return org.mergedAs.title;
     }
     return org.title;
+}
+
+function organizationTitleWithStatusSelector(org: BasicOrganization) {
+    const title = org.mergedAs ? org.mergedAs.title : org.title;
+
+    return (
+        <div className={styles.organization}>
+            {title}
+            {org.verified && (
+                <Tag
+                    spacing="compact"
+                    variant="gradient1"
+                >
+                    Verified
+                </Tag>
+            )}
+        </div>
+    );
 }
 
 function NewOrganizationSelectInput<K extends string>(props: NewOrganizationSelectInputProps<K>) {
@@ -71,6 +101,7 @@ function NewOrganizationSelectInput<K extends string>(props: NewOrganizationSele
             className={className}
             keySelector={keySelector}
             labelSelector={organizationTitleSelector}
+            optionLabelSelector={organizationTitleWithStatusSelector}
             onSearchValueChange={setSearchText}
             searchOptions={data?.organizations?.results}
             optionsPending={loading}
