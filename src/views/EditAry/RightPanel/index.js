@@ -49,6 +49,7 @@ const propTypes = {
     editAryFaramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     changeAry: PropTypes.func.isRequired,
     onActiveSectorChange: PropTypes.func,
+    protectionInfoItems: PropTypes.arrayOf(PropTypes.object),
     pending: PropTypes.bool,
     readOnly: PropTypes.bool,
     editAryIsPristine: PropTypes.bool.isRequired,
@@ -68,6 +69,7 @@ const defaultProps = {
     editAryFaramErrors: {},
     editAryFaramValues: {},
     onActiveSectorChange: undefined,
+    protectionInfoItems: [],
 
     activeLeadId: undefined,
     activeLeadGroupId: undefined,
@@ -147,6 +149,7 @@ export default class RightPanel extends React.PureComponent {
             focuses: {
                 rendererParams: () => ({
                     pending: this.props.pending,
+                    protectionInfoItems: this.props.protectionInfoItems,
                 }),
                 component: Focuses,
             },
