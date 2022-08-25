@@ -5,12 +5,14 @@ import {
     listToGroupList,
     isDefined,
     randomString,
+    unique,
 } from '@togglecorp/fujs';
 import {
     Error,
     SetValueArg,
     analyzeErrors,
 } from '@togglecorp/toggle-form';
+import { compareTwoStrings } from 'string-similarity';
 import {
     ConfirmButton,
     ListView,
@@ -33,6 +35,7 @@ import {
     AssistedPredictionTagsQuery,
 } from '#generated/types';
 import generateString from '#utils/string';
+import ProgressLine from '#components/ProgressLine';
 
 import {
     getMatrix2dPossibleMappings,
@@ -47,9 +50,8 @@ import CellGroup from './CellGroup';
 
 import styles from './styles.css';
 
-// TODO: Implement fuzzy search later
-function isCaseInsensitiveMatch(foo: string | undefined, bar: string | undefined) {
-    return foo?.toLowerCase() === bar?.toLowerCase();
+function isCaseInsensitiveMatch(foo: string | undefined = '', bar: string | undefined = '') {
+    return (compareTwoStrings(foo?.toLowerCase(), bar?.toLowerCase()) > 0.7);
 }
 
 type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
@@ -136,6 +138,28 @@ function AssistedTagging<K extends string>(props: Props<K>) {
             () => true,
         )
     ), [mappings]);
+
+    const possibleTagsInFramework = useMemo(() => (
+        widgets?.map((widget) => {
+            if (widget.widgetId === 'MATRIX2D') {
+                return getMatrix2dPossibleMappings(widget);
+            }
+            if (widget.widgetId === 'MATRIX1D') {
+                return getMatrix1dPossibleMappings(widget);
+            }
+            if (
+                widget.widgetId === 'SCALE'
+            || widget.widgetId === 'SELECT'
+            || widget.widgetId === 'MULTISELECT'
+            ) {
+                return getOptionTypePossibleMappings(widget);
+            }
+            if (widget.widgetId === 'ORGANIGRAM') {
+                return getOrganigramPossibleMappings(widget);
+            }
+            return [];
+        }).flat()
+    ), [widgets]);
 
     const handleTagClick = useCallback((newTag: string) => {
         setSelectedTag((oldTag) => (oldTag === newTag ? undefined : newTag));
@@ -225,27 +249,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
     ]);
 
     const handleAutoMatchClick = useCallback(() => {
-        const items = widgets?.map((widget) => {
-            if (widget.widgetId === 'MATRIX2D') {
-                return getMatrix2dPossibleMappings(widget);
-            }
-            if (widget.widgetId === 'MATRIX1D') {
-                return getMatrix1dPossibleMappings(widget);
-            }
-            if (
-                widget.widgetId === 'SCALE'
-                || widget.widgetId === 'SELECT'
-                || widget.widgetId === 'MULTISELECT'
-            ) {
-                return getOptionTypePossibleMappings(widget);
-            }
-            if (widget.widgetId === 'ORGANIGRAM') {
-                return getOrganigramPossibleMappings(widget);
-            }
-            return [];
-        }).flat();
-
-        const mapping = items?.map((item) => (
+        const mapping = possibleTagsInFramework?.map((item) => (
             predictionTags?.reduce((acc, tag) => {
                 if (!isCaseInsensitiveMatch(item?.label, tag.name)) {
                     return acc;
@@ -264,9 +268,23 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         // FIXME: MappingsItem requires id, but its not required at first
         setMappings(mapping as MappingsItem[]);
     }, [
+        possibleTagsInFramework,
         setMappings,
         predictionTags,
-        widgets,
+    ]);
+
+    const uniqueMappedPercent = useMemo(() => {
+        if (!categoricalMappings || !possibleTagsInFramework) {
+            return 0;
+        }
+        const uniqueMappings = unique(
+            categoricalMappings,
+            (map) => JSON.stringify(map?.association),
+        ).length;
+        return Math.round((uniqueMappings / possibleTagsInFramework.length) * 10000) / 100;
+    }, [
+        categoricalMappings,
+        possibleTagsInFramework,
     ]);
 
     return (
@@ -319,6 +337,14 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                         >
                             Auto Match
                         </ConfirmButton>
+                        <ProgressLine
+                            className={styles.progressLine}
+                            progress={uniqueMappedPercent}
+                            titleClassName={styles.title}
+                            title={`Matching = ${uniqueMappedPercent}%`}
+                            variant="accent"
+                            hideInfoCircle
+                        />
                     </>
                 )}
             />

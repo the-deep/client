@@ -10,7 +10,6 @@
         right: -0.5em;
         align-items: center;
         justify-content: center;
-        z-index: 1;
         border: var(--dui-width-separator-thin) solid var(--color-nlp-tag);
         /* NOTE: Want to move this a bit up */
         border-radius: 1em;

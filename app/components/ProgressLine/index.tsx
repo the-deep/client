@@ -14,21 +14,25 @@ export interface Props {
     className?: string;
     progressClassName?: string;
     title?: string;
+    titleClassName?: string;
     progress?: number;
-    variant?: 'complement1' | 'complement2' | 'complement3';
+    variant?: 'complement1' | 'complement2' | 'complement3' | 'accent';
     size?: 'small' | 'large';
     hideInfoCircle?: boolean;
+    hideInfoCircleBackground?: boolean;
 }
 
 function ProgressLine(props: Props) {
     const {
         className,
         progressClassName,
+        titleClassName,
         progress,
         title,
         variant = 'complement1',
         size = 'small',
         hideInfoCircle = false,
+        hideInfoCircleBackground = false,
     } = props;
 
     const progressWidth = `${bound(isDefined(progress) ? progress : 0, 0, 100)}%`;
@@ -38,25 +42,28 @@ function ProgressLine(props: Props) {
             className={_cs(
                 styles.progressBar,
                 className,
-                hideInfoCircle && styles.noCircle,
+                hideInfoCircleBackground && styles.noCircle,
             )}
         >
-            <div
-                className={_cs(
-                    styles.numberCircle,
-                    variant === 'complement1' && styles.complement1,
-                    variant === 'complement2' && styles.complement2,
-                    variant === 'complement3' && styles.complement3,
-                )}
-            >
-                <NumberOutput
-                    value={progress}
-                    precision={0}
-                    suffix="%"
-                />
-            </div>
+            {!hideInfoCircle && (
+                <div
+                    className={_cs(
+                        styles.numberCircle,
+                        variant === 'complement1' && styles.complement1,
+                        variant === 'complement2' && styles.complement2,
+                        variant === 'complement3' && styles.complement3,
+                        variant === 'accent' && styles.accent,
+                    )}
+                >
+                    <NumberOutput
+                        value={progress}
+                        precision={0}
+                        suffix="%"
+                    />
+                </div>
+            )}
             <div className={styles.right}>
-                <div>
+                <div className={titleClassName}>
                     {title}
                 </div>
                 <div
