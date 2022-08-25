@@ -292,6 +292,10 @@ const requestOptions = {
             });
         },
     },
+    assessmentOptionsRequest: {
+        url: '/assessment-options/',
+        onMount: true,
+    },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -416,6 +420,7 @@ export default class EditAry extends React.PureComponent {
                 arySaveRequest,
                 leadRequest,
                 projectGetRequest,
+                assessmentOptionsRequest,
             },
 
             activeLeadId,
@@ -520,6 +525,10 @@ export default class EditAry extends React.PureComponent {
                                 <RightPanel
                                     onActiveSectorChange={this.handleActiveSectorChange}
                                     onUploadPending={this.handleUploadPending}
+                                    protectionInfoItems={(
+                                        assessmentOptionsRequest
+                                            ?.response?.methodologyProtectionInfo
+                                    )}
                                     pending={
                                         arySaveRequest.pending || assessmentRequest.pending
                                     }

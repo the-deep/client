@@ -26,53 +26,20 @@ import Header from '../Header';
 
 import styles from './styles.scss';
 
-const protectionInfoItems = [
-    {
-        id: 1,
-        title: 'Protection Monitoring',
-    },
-    {
-        id: 2,
-        title: 'Protection Needs Assessment',
-    },
-    {
-        id: 3,
-        title: 'Case Management',
-    },
-    {
-        id: 4,
-        title: 'Population Data',
-    },
-    {
-        id: 5,
-        title: 'Protection Response',
-    },
-    {
-        id: 6,
-        title: 'Communicating with(in) Affected Communities',
-    },
-    {
-        id: 7,
-        title: 'Security & Situational Awareness',
-    },
-    {
-        id: 8,
-        title: 'Sectoral Systems/Other',
-    },
-];
-
 const propTypes = {
     affectedGroups: PropTypes.arrayOf(PropTypes.object).isRequired,
     focuses: PropTypes.arrayOf(PropTypes.object).isRequired,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.arrayOf(PropTypes.object).isRequired,
+    protectionInfoItems: PropTypes.arrayOf(PropTypes.object),
     pending: PropTypes.bool,
     showProtectionInfo: PropTypes.bool,
 };
 
 const defaultProps = {
     geoOptions: {},
+    protectionInfoItems: [],
     pending: false,
     showProtectionInfo: false,
 };
@@ -88,7 +55,9 @@ const mapStateToProps = state => ({
 });
 
 const idSelector = d => String(d.id);
+const keySelector = d => String(d.key);
 const titleSelector = d => d.title;
+const valueSelector = d => d.value;
 
 @connect(mapStateToProps)
 export default class Focuses extends React.PureComponent {
@@ -108,6 +77,7 @@ export default class Focuses extends React.PureComponent {
             geoOptions,
             pending,
             showProtectionInfo,
+            protectionInfoItems,
         } = this.props;
 
         const focusesTitle = _ts('editAssessment.methodology', 'focusesTitle');
@@ -157,8 +127,8 @@ export default class Focuses extends React.PureComponent {
                                     faramElementName="protectionInfo"
                                     options={protectionInfoItems}
                                     className={styles.content}
-                                    keySelector={idSelector}
-                                    labelSelector={titleSelector}
+                                    keySelector={keySelector}
+                                    labelSelector={valueSelector}
                                 />
                             </>
                         )}
