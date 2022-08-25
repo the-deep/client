@@ -12,6 +12,7 @@ import {
     SetValueArg,
     analyzeErrors,
 } from '@togglecorp/toggle-form';
+import { compareTwoStrings } from 'string-similarity';
 import {
     ConfirmButton,
     ListView,
@@ -49,9 +50,8 @@ import CellGroup from './CellGroup';
 
 import styles from './styles.css';
 
-// TODO: Implement fuzzy search later
-function isCaseInsensitiveMatch(foo: string | undefined, bar: string | undefined) {
-    return foo?.toLowerCase() === bar?.toLowerCase();
+function isCaseInsensitiveMatch(foo: string | undefined = '', bar: string | undefined = '') {
+    return (compareTwoStrings(foo?.toLowerCase(), bar?.toLowerCase()) > 0.7);
 }
 
 type AssistedTag = NonNullable<NonNullable<NonNullable<AssistedPredictionTagsQuery>['assistedTagging']>['predictionTags']>[number];
