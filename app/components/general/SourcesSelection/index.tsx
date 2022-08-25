@@ -24,6 +24,7 @@ import { useQuery, gql } from '@apollo/client';
 import { organizationTitleSelector } from '#components/selections/NewOrganizationSelectInput';
 import SourcesFilter, { getProjectSourcesQueryVariables } from '#components/leadFilters/SourcesFilter';
 import { PartialFormType, FormType as FilterFormType } from '#components/leadFilters/SourcesFilter/schema';
+import { ORGANIZATION_FRAGMENT } from '#gqlFragments';
 import {
     LeadOrderingEnum,
     ProjectSourceListQuery,
@@ -33,6 +34,7 @@ import { isFiltered } from '#utils/common';
 import styles from './styles.css';
 
 const PROJECT_LEADS = gql`
+    ${ORGANIZATION_FRAGMENT}
     query ProjectSourceList(
         $projectId: ID!,
         $page: Int,

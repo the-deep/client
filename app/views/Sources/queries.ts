@@ -1,8 +1,13 @@
 import { gql } from '@apollo/client';
 
-import { SOURCE_FILTER_DATA_FRAGMENT, SOURCE_FILTER_FRAGMENT } from '#gqlFragments';
+import {
+    ORGANIZATION_FRAGMENT,
+    SOURCE_FILTER_DATA_FRAGMENT,
+    SOURCE_FILTER_FRAGMENT,
+} from '#gqlFragments';
 
 export const PROJECT_SOURCES = gql`
+    ${ORGANIZATION_FRAGMENT}
     query ProjectSources(
         $projectId: ID!,
         $page: Int,
