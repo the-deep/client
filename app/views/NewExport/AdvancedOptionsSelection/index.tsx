@@ -95,7 +95,7 @@ function AdvancedOptionsSelection(props: Props) {
 
     return (
         <Modal
-            className={exportFileFormat !== 'XLSX' ? styles.modal : undefined}
+            className={exportFileFormat !== 'XLSX' ? styles.reportModal : styles.excelModal}
             heading={`Advanced Options - ${exportTypeTitle[exportFileFormat]}`}
             onCloseButtonClick={onCloseButtonClick}
             bodyClassName={styles.body}

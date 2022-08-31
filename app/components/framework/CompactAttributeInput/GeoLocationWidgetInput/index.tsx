@@ -44,6 +44,8 @@ export interface Props <N extends string>{
     widgetHints?: string[];
     suggestionMode?: boolean;
     recommendedValue?: GeoLocationValue | null | undefined;
+
+    rightComponent?: React.ReactNode;
 }
 
 function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
@@ -63,6 +65,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
         widgetHints,
         recommendedValue,
         suggestionMode,
+        rightComponent,
     } = props;
 
     const error = getErrorObject(riskyError);
@@ -136,6 +139,7 @@ function GeoLocationWidgetInput<N extends string>(props: Props<N>) {
                             geoAreaOptions={geoAreaOptions}
                             onGeoAreaOptionsChange={onGeoAreaOptionsChange}
                             hint={widgetHints && widgetHints.length > 0 && widgetHints.join(', ')}
+                            rightComponent={rightComponent}
                         />
                     ) : (
                         <MultiBadgeInput

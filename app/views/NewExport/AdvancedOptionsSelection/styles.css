@@ -1,4 +1,4 @@
-.modal {
+.report-modal {
     width: auto !important;
     height: 800px !important;
 
@@ -57,16 +57,28 @@
     }
 }
 
-.excel-options-container {
-    display: flex;
-    gap: var(--dui-spacing-large);
+.excel-modal {
+    height: 96vh !important;
 
-    .excel-info {
-        flex-basis: 35%;
-        flex-shrink: 0;
-    }
-
-    .excel-columns-container {
+    .body {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
+        overflow-y: auto;
+
+        .excel-options-container {
+            display: flex;
+            overflow-y: auto;
+            gap: var(--dui-spacing-large);
+
+            .excel-info {
+                flex-basis: 35%;
+                flex-shrink: 0;
+            }
+
+            .excel-columns-container {
+                flex-grow: 1;
+            }
+        }
     }
 }
