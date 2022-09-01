@@ -16,6 +16,7 @@ import { compareTwoStrings } from 'string-similarity';
 import {
     ConfirmButton,
     ListView,
+    useAlert,
     Card,
     Container,
     ContainerCard,
@@ -89,6 +90,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         onChange,
         disabled,
     } = props;
+    const alert = useAlert();
 
     const [selectedTag, setSelectedTag] = useState<string | undefined>();
 
@@ -248,7 +250,24 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         handleWidgetMappingsChange,
     ]);
 
+    const uniqueMappedPercent = useMemo(() => {
+        if (!categoricalMappings || !possibleTagsInFramework) {
+            return 0;
+        }
+        const uniqueMappings = unique(
+            categoricalMappings,
+            (map) => JSON.stringify(map?.association),
+        ).length;
+        return Math.round((uniqueMappings / possibleTagsInFramework.length) * 10000) / 100;
+    }, [
+        categoricalMappings,
+        possibleTagsInFramework,
+    ]);
+
     const handleAutoMatchClick = useCallback(() => {
+        if (!possibleTagsInFramework) {
+            return;
+        }
         const mapping = possibleTagsInFramework?.map((item) => (
             predictionTags?.reduce((acc, tag) => {
                 if (!isCaseInsensitiveMatch(item?.label, tag.name)) {
@@ -263,28 +282,31 @@ function AssistedTagging<K extends string>(props: Props<K>) {
                     ...acc,
                 ]);
             }, [] as Omit<MappingsItem, 'id'>[])
-        )).flat();
+        )).flat().filter(isDefined);
 
         // FIXME: MappingsItem requires id, but its not required at first
         setMappings(mapping as MappingsItem[]);
+        const newMappings = (mapping ?? []) as MappingsItem[];
+        const uniqueMappings = unique(
+            newMappings.filter(isCategoricalMappings),
+            (map) => JSON.stringify(map?.association),
+        ).length;
+        const newMappedPercent = Math.round(
+            (uniqueMappings / possibleTagsInFramework.length) * 10000,
+        ) / 100;
+
+        alert.show(
+            `DEEP was able to match ${newMappedPercent}% tags in your framework. Please, verify the matches and add the ones that are missing.`,
+            {
+                variant: 'success',
+                duration: 6000,
+            },
+        );
     }, [
+        alert,
         possibleTagsInFramework,
         setMappings,
         predictionTags,
-    ]);
-
-    const uniqueMappedPercent = useMemo(() => {
-        if (!categoricalMappings || !possibleTagsInFramework) {
-            return 0;
-        }
-        const uniqueMappings = unique(
-            categoricalMappings,
-            (map) => JSON.stringify(map?.association),
-        ).length;
-        return Math.round((uniqueMappings / possibleTagsInFramework.length) * 10000) / 100;
-    }, [
-        categoricalMappings,
-        possibleTagsInFramework,
     ]);
 
     return (
