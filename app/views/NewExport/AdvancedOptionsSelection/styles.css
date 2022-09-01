@@ -78,6 +78,17 @@
 
             .excel-columns-container {
                 flex-grow: 1;
+
+                .column-label {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: var(--dui-spacing-small);
+
+                    .tag {
+                        font-size: var(--dui-font-size-small);
+                    }
+                }
             }
         }
     }

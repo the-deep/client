@@ -3,6 +3,7 @@ import {
     Container,
     Modal,
     Checkbox,
+    Tag,
 } from '@the-deep/deep-ui';
 
 import TreeSelection from '#components/TreeSelection';
@@ -21,6 +22,43 @@ import {
 
 import { ExcelColumnNode } from '..';
 import styles from './styles.css';
+
+function columnsLabelSelector(node: ExcelColumnNode) {
+    const isEntryMetadata = node.key.includes('ENTRY');
+
+    return (
+        <div className={styles.columnLabel}>
+            {node.title}
+            {node.isWidget && (
+                <Tag
+                    className={styles.tag}
+                    spacing="compact"
+                    variant="gradient1"
+                >
+                    Tag
+                </Tag>
+            )}
+            {(!node.isWidget && isEntryMetadata) && (
+                <Tag
+                    className={styles.tag}
+                    spacing="compact"
+                    variant="gradient2"
+                >
+                    Entry
+                </Tag>
+            )}
+            {(!node.isWidget && !isEntryMetadata) && (
+                <Tag
+                    className={styles.tag}
+                    spacing="compact"
+                    variant="complement1"
+                >
+                    Lead
+                </Tag>
+            )}
+        </div>
+    );
+}
 
 const exportTypeTitle: { [key in ExportFormatEnum]: string } = {
     DOCX: 'Word',
@@ -233,6 +271,7 @@ function AdvancedOptionsSelection(props: Props) {
                             <TreeSelection
                                 name="columns"
                                 value={widgetColumns}
+                                labelSelector={columnsLabelSelector}
                                 onChange={onWidgetColumnChange}
                                 direction="vertical"
                             />

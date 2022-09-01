@@ -268,7 +268,7 @@ function AssistedTagging<K extends string>(props: Props<K>) {
         if (!possibleTagsInFramework) {
             return;
         }
-        const mapping = possibleTagsInFramework?.map((item) => (
+        const mapping = possibleTagsInFramework.map((item) => (
             predictionTags?.reduce((acc, tag) => {
                 if (!isCaseInsensitiveMatch(item?.label, tag.name)) {
                     return acc;

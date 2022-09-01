@@ -13,6 +13,15 @@
             margin-bottom: calc(var(--spacing) * -1);
             border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
             background-color: var(--dui-color-foreground);
+
+            .heading-container {
+                display: flex;
+                flex-direction: row;
+
+                .heading {
+                    flex-grow: 1;
+                }
+            }
         }
 
         .drag-handle {
