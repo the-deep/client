@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     ExpandableContainer,
@@ -42,28 +42,40 @@ interface SortableNodeProps<T extends Node> {
     onCheckboxClick: (newVal: boolean, key: string) => void;
     onChildrenChange: (children: T[], key: string) => void;
     checkboxHidden?: boolean;
+    labelSelector?: (val: T) => React.ReactNode;
 }
 
 function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
     const {
         index,
-        node: {
-            selected,
-            key,
-            nodes,
-            title,
-        },
+        node,
         onCheckboxClick,
         onChildrenChange,
         attributes,
         listeners,
         checkboxHidden,
+        labelSelector,
     } = props;
+
+    const {
+        selected,
+        key,
+        nodes,
+        title,
+    } = node;
 
     const selectedNodesLength = nodes?.filter((n) => n.selected)?.length ?? 0;
     const totalNodesLength = nodes?.length ?? 0;
     const disableExpansionButton = !nodes || nodes.length === 0;
     const indeterminate = selectedNodesLength !== 0 && selectedNodesLength !== totalNodesLength;
+
+    const label = useMemo(() => (
+        labelSelector ? labelSelector(node) : title
+    ), [
+        labelSelector,
+        node,
+        title,
+    ]);
 
     return (
         <ExpandableContainer
@@ -92,11 +104,13 @@ function SortableNode<T extends Node>(props: SortableNodeProps<T>) {
                     )}
                 </>
             )}
-            heading={title}
+            heading={label}
             headingSize="extraSmall"
             spacing="compact"
             contentClassName={styles.sortableContent}
             headerClassName={styles.header}
+            headingContainerClassName={styles.headingContainer}
+            headingClassName={styles.heading}
             expansionTriggerArea="arrow"
             expansionButtonClassName={(
                 disableExpansionButton
@@ -125,6 +139,7 @@ interface Props<N extends string, T extends Node> {
     value?: T[] | undefined;
     onChange: (newVal: T[], name: N) => void;
     direction?: 'vertical' | 'horizontal';
+    labelSelector?: (val: T) => React.ReactNode;
     checkboxHidden?: boolean;
 }
 
@@ -138,6 +153,7 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
         className,
         direction = 'vertical',
         checkboxHidden,
+        labelSelector,
     } = props;
 
     // Handle toggling the state of checkbox including its children
@@ -177,7 +193,13 @@ function TreeSelection<N extends string, T extends Node>(props: Props<N, T>) {
         onChildrenChange: handleChildrenChange,
         node: data,
         checkboxHidden,
-    }), [handleCheckboxChange, handleChildrenChange, checkboxHidden]);
+        labelSelector,
+    }), [
+        handleCheckboxChange,
+        handleChildrenChange,
+        checkboxHidden,
+        labelSelector,
+    ]);
 
     return (
         <SortableList
